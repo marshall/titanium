@@ -1,0 +1,11 @@
+URL: http://growl.info/documentation/developer/
+Version: 1.1.4
+         Downloaded from http://growl.info/files/source/Growl-1.1.4-src.tar.bz2
+         Only checked in framework classes and other headers they include.
+License: BSD
+License File: License.txt
+Description: Growl lets Mac OS X applications unintrusively tell you when things happen. 
+
+Local Modifications:
+- Added this file (README.google).
+- Changed import directives to work with third_party.

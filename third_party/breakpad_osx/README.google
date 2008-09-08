@@ -1,0 +1,29 @@
+URL: http://code.google.com/p/google-breakpad/
+Version: Snapshot of Subversion trunk, revision [281]
+         (http://google-breakpad.googlecode.com/svn/trunk/)
+License: BSD
+         Note: Breakpad was developed by Google, and Google holds the
+         copyright.  Any contributions accepted from non-Google employees were
+         accepted under a Google contributor license agreement
+         (http://code.google.com/legal/individual-cla-v1.0.html or
+         http://code.google.com/legal/corporate-cla-v1.0.html)
+License File: COPYING (but see above)
+Description: Breakpad is an open-source library for generating and processing
+             crash reports from multiple platforms.
+
+Local Modifications:
+- Added this file (README.google).
+- Removed directories src/processor/testdata/ & tools/ except for tools/mac/dump_syms/
+- Pruned the tree to remove any directories containing the strings linux 
+  or windows or solaris, by deleting all the directories returned by:
+  > find -E . -regex ".*windows|.*solaris|.*linux" -type d
+  or, in one fell swoop:
+  > find -E . -regex ".*windows|.*solaris|.*linux" -type d -exec rm -rf {} \;
+- Built dump_syms binary by running the following commands:
+ > cd src/tools/mac/dump_syms
+ > xcodebuild -configuration Release
+ > mv build/Release/dump_syms .
+ > rm -rf build
+- changed <limits.h> include to <sys/syslimits.h> to fix 10.4 compilation in:
+  src/common/mac/file_id.h
+  src/common/mac/macho_id.h

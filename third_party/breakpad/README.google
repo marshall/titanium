@@ -1,0 +1,19 @@
+URL: http://code.google.com/p/google-breakpad/
+Version: Snapshot of Subversion trunk, revision [164]
+         (http://google-breakpad.googlecode.com/svn/trunk/)
+License: BSD
+         Note: Breakpad was developed by Google, and Google holds the
+         copyright.  Any contributions accepted from non-Google employees were
+         accepted under a Google contributor license agreement
+         (http://code.google.com/legal/individual-cla-v1.0.html or
+         http://code.google.com/legal/corporate-cla-v1.0.html)
+License File: COPYING (but see above)
+Description: Breakpad is an open-source library for generating and processing
+             crash reports from multiple platforms.
+
+Local Modifications:
+- Added this file (README.google).
+- Added support for "#define BREAKPAD_AVOID_STREAMS" to address build problems
+    in certain configurations.
+- Added a version of WriteMinidump() that exposes the exception parameters.
+- Added src/client/exception_handler_stub.cc for Chrome

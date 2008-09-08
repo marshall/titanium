@@ -1,0 +1,20 @@
+--- jsoncpp.orig/include/json/autolink.h	2006-06-26 19:52:43.000000000 -0700
++++ autolink.h	2006-06-26 18:10:09.000000000 -0700
+@@ -1,7 +1,7 @@
+ #ifndef JSON_AUTOLINK_H_INCLUDED
+ # define JSON_AUTOLINK_H_INCLUDED
+ 
+-# include "config.h"
++# include "third_party/jsoncpp/config.h"
+ 
+ # ifdef JSON_IN_CPPTL
+ #  include <cpptl/cpptl_autolink.h>
+@@ -13,7 +13,7 @@
+ #  ifdef JSON_DLL
+ #   define CPPTL_AUTOLINK_DLL
+ #  endif
+-#  include "autolink.h"
++#  include "third_party/jsoncpp/autolink.h"
+ # endif
+ 
+ #endif // JSON_AUTOLINK_H_INCLUDED

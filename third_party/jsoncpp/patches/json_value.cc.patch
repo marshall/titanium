@@ -1,0 +1,183 @@
+--- jsoncpp.orig/src/lib_json/json_value.cpp	2006-06-26 19:52:43.000000000 -0700
++++ json_value.cc	2006-06-26 18:11:50.000000000 -0700
+@@ -1,5 +1,5 @@
+-#include <json/value.h>
+-#include <json/writer.h>
++#include "third_party/jsoncpp/value.h"
++#include "third_party/jsoncpp/writer.h"
+ #include <utility>
+ #include "assert.h"
+ #ifdef JSON_USE_CPPTL
+@@ -7,7 +7,7 @@
+ #endif
+ #include <stddef.h>    // size_t
+ #ifndef JSON_USE_SIMPLE_INTERNAL_ALLOCATOR
+-# include "json_batchallocator.h"
++# include "third_party/jsoncpp/json_batchallocator.h"
+ #endif // #ifndef JSON_USE_SIMPLE_INTERNAL_ALLOCATOR
+ 
+ #define JSON_ASSERT_UNREACHABLE assert( false )
+@@ -116,11 +116,11 @@
+ // //////////////////////////////////////////////////////////////////
+ // //////////////////////////////////////////////////////////////////
+ #ifdef JSON_VALUE_USE_INTERNAL_MAP
+-# include "json_internalarray.inl"
+-# include "json_internalmap.inl"
++# include "third_party/jsoncpp/json_internalarray.inl.h"
++# include "third_party/jsoncpp/json_internalmap.inl.h"
+ #endif // JSON_VALUE_USE_INTERNAL_MAP
+ 
+-# include "json_valueiterator.inl"
++# include "third_party/jsoncpp/json_valueiterator.inl.h"
+ 
+ 
+ // //////////////////////////////////////////////////////////////////
+@@ -261,11 +261,11 @@
+  */
+ Value::Value( ValueType type )
+    : type_( type )
+-   , comments_( 0 )
+    , allocated_( 0 )
+ # ifdef JSON_VALUE_USE_INTERNAL_MAP
+    , itemIsUsed_( 0 )
+ #endif
++   , comments_( 0 )
+ {
+    switch ( type )
+    {
+@@ -305,10 +305,10 @@
+ 
+ Value::Value( Int value )
+    : type_( intValue )
+-   , comments_( 0 )
+ # ifdef JSON_VALUE_USE_INTERNAL_MAP
+    , itemIsUsed_( 0 )
+ #endif
++   , comments_( 0 )
+ {
+    value_.int_ = value;
+ }
+@@ -316,20 +316,20 @@
+ 
+ Value::Value( UInt value )
+    : type_( uintValue )
+-   , comments_( 0 )
+ # ifdef JSON_VALUE_USE_INTERNAL_MAP
+    , itemIsUsed_( 0 )
+ #endif
++   , comments_( 0 )
+ {
+    value_.uint_ = value;
+ }
+ 
+ Value::Value( double value )
+    : type_( realValue )
+-   , comments_( 0 )
+ # ifdef JSON_VALUE_USE_INTERNAL_MAP
+    , itemIsUsed_( 0 )
+ #endif
++   , comments_( 0 )
+ {
+    value_.real_ = value;
+ }
+@@ -337,10 +337,10 @@
+ Value::Value( const char *value )
+    : type_( stringValue )
+    , allocated_( true )
+-   , comments_( 0 )
+ # ifdef JSON_VALUE_USE_INTERNAL_MAP
+    , itemIsUsed_( 0 )
+ #endif
++   , comments_( 0 )
+ {
+    value_.string_ = valueAllocator()->duplicateStringValue( value );
+ }
+@@ -348,10 +348,10 @@
+ Value::Value( const std::string &value )
+    : type_( stringValue )
+    , allocated_( true )
+-   , comments_( 0 )
+ # ifdef JSON_VALUE_USE_INTERNAL_MAP
+    , itemIsUsed_( 0 )
+ #endif
++   , comments_( 0 )
+ {
+    value_.string_ = valueAllocator()->duplicateStringValue( value.c_str(), 
+                                                             (unsigned int)value.length() );
+@@ -361,10 +361,10 @@
+ Value::Value( const StaticString &value )
+    : type_( stringValue )
+    , allocated_( false )
+-   , comments_( 0 )
+ # ifdef JSON_VALUE_USE_INTERNAL_MAP
+    , itemIsUsed_( 0 )
+ #endif
++   , comments_( 0 )
+ {
+    value_.string_ = const_cast<char *>( value.c_str() );
+ }
+@@ -374,10 +374,10 @@
+ Value::Value( const CppTL::ConstString &value )
+    : type_( stringValue )
+    , allocated_( true )
+-   , comments_( 0 )
+ # ifdef JSON_VALUE_USE_INTERNAL_MAP
+    , itemIsUsed_( 0 )
+ #endif
++   , comments_( 0 )
+ {
+    value_.string_ = valueAllocator()->duplicateStringValue( value, value.length() );
+ }
+@@ -385,10 +385,10 @@
+ 
+ Value::Value( bool value )
+    : type_( booleanValue )
+-   , comments_( 0 )
+ # ifdef JSON_VALUE_USE_INTERNAL_MAP
+    , itemIsUsed_( 0 )
+ #endif
++   , comments_( 0 )
+ {
+    value_.bool_ = value;
+ }
+@@ -396,10 +396,10 @@
+ 
+ Value::Value( const Value &other )
+    : type_( other.type_ )
+-   , comments_( 0 )
+ # ifdef JSON_VALUE_USE_INTERNAL_MAP
+    , itemIsUsed_( 0 )
+ #endif
++   , comments_( 0 )
+ {
+    switch ( type_ )
+    {
+@@ -1433,22 +1433,22 @@
+ 
+ 
+ PathArgument::PathArgument( Value::UInt index )
+-   : kind_( kindIndex )
+-   , index_( index )
++   : index_( index )
++   , kind_( kindIndex )
+ {
+ }
+ 
+ 
+ PathArgument::PathArgument( const char *key )
+-   : kind_( kindKey )
+-   , key_( key )
++   : key_( key )
++   , kind_( kindKey )
+ {
+ }
+ 
+ 
+ PathArgument::PathArgument( const std::string &key )
+-   : kind_( kindKey )
+-   , key_( key.c_str() )
++   : key_( key.c_str() )
++   , kind_( kindKey )
+ {
+ }
+ 

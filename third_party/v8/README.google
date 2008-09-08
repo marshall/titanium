@@ -1,0 +1,8 @@
+was built from https://svn/r/googleclient/v8/branches/beta@128918 with the
+following env vars set:
+  CHROME_BUILD_TYPE=_official
+
+bindings_vendor contains a pristine copy of:
+  https://svn/chrome/trunk/webkit/port/bindings/v8/ @50809
+
+bindings_local contains our local modifications to that version.

@@ -1,0 +1,80 @@
+Instructions for importing a new release of sqlite from sqlite.org.
+
+First, you need to be on Linux.
+
+Find the release you want at:
+  http://www.sqlite.org/cvstrac/timeline
+
+Search for "Milestone", and find the appropriate release.  Click
+through, and snag the "Date" for use in DATE line below.
+Unfortunately, the actual displayed date string on that page will not
+work, you have to make it YYYY/MM/DD.  [TODO(shess) Determine if the
+fact that sqlite.org thinks it's running under UTC is relevant.]
+
+DATE='2007/01/24 09:54:56'
+
+# Get to the third_party directory in your Gears client.
+cd ../third_party/
+
+g4 edit sqlite_vendor/...
+cvs -d :pserver:anonymous@www.sqlite.org:/sqlite login
+# Enter "anonymous" for password.
+
+cvs -d :pserver:anonymous@www.sqlite.org:/sqlite \
+  checkout -P -D "$DATE" -d sqlite_vendor sqlite
+# Back out anything not changed relative to perforce.
+g4 revert -a sqlite_vendor/...
+# Add anything new that perforce doesn't have.
+g4 nothave sqlite_vendor/ | xargs g4 add
+# Check to see if anything was deleted.  Fixing left as exercise for
+# the reader.
+for file in `g4 maptofiles sqlite_vendor/...`; do
+  if [ ! -e $file ] ; then echo $file; fi
+done
+# TODO(shess) If we don't want the CVS dirs.
+# find sqlite_vendor -name CVS -execdir rm -rf {} + -prune
+g4 mail sqlite_vendor/...
+# Find a sucker.
+# TODO(shess) Describe an appropriate comment style.  Seems like it
+# should include the DATE line, and the sqlite version number.
+
+g4 integrate sqlite_vendor/... sqlite_google/...
+# Resolve any conflicts.
+# NOTE(shess): The following will produce different output on grhat
+# versus goobuntu; I've been running it on goobuntu.
+(cd sqlite_google ; ./google_generate_preprocessed.sh)
+g4 mail sqlite_google/...
+
+
+--------------------------------------------
+
+Why all this convolution?  The problem being solved is that we want to
+harvest changes from the sqlite CVS tree, and merge them with any
+local changes we make.  In CVS, you would do this using a "vendor
+import", which is essentially a branch dedictated to the vendor
+version which is merged with local changes.
+
+third_party/sqlite_vendor/... is the CVS checkout for a particular
+build from sqlite.org.  third_party/sqlite_google/... is the local
+version, with our local modifications.  So we update the sqlite_vendor
+tree, then use perforce to downintegrate changes into our
+locally-modified tree.  The downintegrate will call out any
+conflicting changes, but will otherwise just merge things together.
+Basically, sqlite_vendor is a gateway between CVS and perforce.
+
+Scott Hess <shess@google.com>, April 9, 2007.
+
+--------------------------------------------
+
+How to run the SQLite tests for the Gears version of SQLite on Linux.
+
+cd ../third_party/sqlite_google/
+mkdir build
+cd build
+make -f ../Makefile.linux-gcc testfixture
+make -f ../Makefile.linux-gcc test > /tmp/test.log
+egrep -v 'Ok$' /tmp/test.log
+# When run on a locally-mounted disk, my output ends with:
+# 0 errors out of 57887 tests
+
+Scott Hess <shess@google.com>, December 11, 2007

@@ -1,0 +1,26 @@
+URL: http://www.gtk.org
+Version: 2.8.20
+License: GPL v2
+License File: LICENSE
+
+Description:
+  GTK+ 2.8.20 retrieved on February 7, 2008.
+
+Retrieved headers from:
+  ftp://ftp.gtk.org/pub/gtk/v2.8/
+
+Packages retrieved:  
+  glib-2.8.6.tar.bz2
+  pango-1.10.4.tar.bz2
+  atk-1.10.3.tar.bz2
+  gtk+-2.8.20.tar.bz2
+  dependencies/cairo-1.0.2.tar.gz
+
+Local Modifications:
+  Header files were extracted for use in Firefox. Firefox requires GTK+ 2
+  therefore the library will be on the system.
+
+  The library for GTK+ 2 was made for use by notifer_test and notifier
+  daemon. The code downloaded from the above site was build on Ubuntu 6.06.
+  The resulting library "libgtk-x11-2.0.so" was copied from
+  gtk+-2.8.20/gtk/.libs to linux/lib.

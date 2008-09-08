@@ -1,0 +1,49 @@
+Win32, Linux-i386 and OSX prerelease version of Gecko 1.9 SDK.
+
+The win32 and linux subdirectories were downloaded from here on 21 May 2008:
+
+       http://ftp.mozilla.org/pub/mozilla.org/xulrunner/nightly/latest-trunk/xulrunner-1.9pre.en-US.*.sdk.*
+
+The osx subdirectory was incomplete. The xpidl utility was missing and the
+libraries were only compiled for PPC.
+
+To get the osx directory, we built a universal gecko SDK from scratch:
+
+1) Copy third_party/gecko_1.9/osx/mozconfig to ~/.mozconfig (note leading period)
+2) cvs -d :pserver:anonymous@cvs-mirror.mozilla.org:/cvsroot co -r BRANCH mozilla/client.mk mozilla/browser/config/mozconfig mozilla/build/macosx/universal/mozconfig
+  * Note: replace BRANCH with the tag of the release you want to checkout, eg
+    FIREFOX_3_0b4_RELEASE.
+  * Note: If you already have a checkout and want to update it to a different tag, use this command:
+    cvs up -r BRANCH client.mk
+  * Note: If you want to see what tags are available, one way is urls like:
+    http://bonsai.mozilla.org/cvsgraph.cgi?file=mozilla/xpcom/io/nsIFile.idl&rev=1.63
+3) make -f client.mk checkout
+  * Note: I noticed that the cvs client on my mac did not work correctly with
+    mozilla's cvs server. I was getting many errors attempting to move
+    directories. I worked around this by checking out on a linux workstation.
+4) make -f client.mk build
+   - You will need to install libIDL2. I got this from macports.
+5) Sometimes at this point, universal libraries are now available in %TOPSRCDIR%/obj-xulrunner/ppc/dist/universal/xulrunner/XUL.framework/Versions/Current. Create any missing universal libraries using tools/universify.sh.
+6) A universal version of libxpcomglue_s.a was created using tools/universify.sh.
+7) The bin/ directory was copied from the i386 directory (these are only used at
+   build-time and do not need to work on ppc). However, bin/xpidl requires several dylibs that
+   aren't installed on the build machines. To workaroud, I:
+   - Added libIDL-2.0.dylib, libglib-2.0.dylib, libiconv.2.dylib, and libintl.8.dylib to bin/.
+   - Modified xpidl to refer to them:
+     * otool -L xpidl
+     * for each library: install_name_tool -change <currentpath> @executable_path/<libfilename> xpidl
+
+Steps similar to 1-4 (but perhaps without the reference to universal in
+mozconfig) should be used to create a fresh copy of the SDK for all platforms
+when FF3 is final.
+
+gecko_internal can be updated by running the following from a cygwin bash prompt:
+  cp `ls | xargs -I{} /usr/bin/find /cygdrive/c/firefox-3.0rc1-source/mozilla/ -name {}` ./
+nsIDOMClassInfo.h will then need to be updated by removing "nsCRT::" in NS_DOMCI_EXTENSION_ENTRY_BEGIN(_class)
+
+Note: the Win32 xpidl.exe and xpt_link.exe were apparently built with default
+vs2005 project settings that embeds a manifest for Microsoft.VC80.CRT, and they
+try to load msvcr80.dll in runtime. Added a DLL and manifests to make it work
+on a machine without VS2005 runtime installed.
+
+
