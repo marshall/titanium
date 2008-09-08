@@ -1,0 +1,14 @@
+<string id="string-cancel">Hætta við</string>
+<string id="string-cancel-accesskey">H</string>
+<string id="string-apply">Nota</string>
+<string id="string-apply-accesskey">L</string>
+<string id="string-nosites">Engin vefsvæði.</string>
+<string id="string-allowed">Leyft</string>
+<string id="string-denied">Hafnað</string>
+<string id="string-local-storage">Staðbundin geymsla</string>
+<string id="string-location-data">Staðsetning</string>
+<string id="string-gears-settings">Stillingar Gears</string>
+<string id="string-permissions-description">Taflan hér fyrir neðan sýnir þær heimildir sem þú hefur veitt hverju svæði sem hefur reynt að nota Gears.</string>
+<string id="string-version">Gears útgáfa PRODUCT_VERSION</string>
+<string id="string-html-title">Stillingar Gears</string>
+<string id="string-remove">Fjarlægja</string>

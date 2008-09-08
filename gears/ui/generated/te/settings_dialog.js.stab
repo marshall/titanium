@@ -1,0 +1,14 @@
+<string id="string-cancel">రద్దు చెయ్యి</string>
+<string id="string-cancel-accesskey">C</string>
+<string id="string-apply">వర్తించు</string>
+<string id="string-apply-accesskey">A</string>
+<string id="string-nosites">సైట్లు లేవు.</string>
+<string id="string-allowed">అనుమతించబడిన</string>
+<string id="string-denied">అనుమతి లేని</string>
+<string id="string-local-storage">స్థానిక నిల్వ</string>
+<string id="string-location-data">స్థానం</string>
+<string id="string-gears-settings">Gears సెట్టింగులు</string>
+<string id="string-permissions-description">ఈ క్రింది పట్టిక, మీరు ఏ సైట్లకి  Gears ఉపయోగించడానికి అనుమతి ఇచ్చారో, చూపిస్తుంది.</string>
+<string id="string-version">PRODUCT_VERSION Gears వర్షన్</string>
+<string id="string-html-title">Gears సెట్టింగులు</string>
+<string id="string-remove">తొలగించు</string>

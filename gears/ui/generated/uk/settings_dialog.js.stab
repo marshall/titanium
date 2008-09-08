@@ -1,0 +1,14 @@
+<string id="string-cancel">Скасувати</string>
+<string id="string-cancel-accesskey">C</string>
+<string id="string-apply">Застосувати</string>
+<string id="string-apply-accesskey">A</string>
+<string id="string-nosites">Сайти відсутні.</string>
+<string id="string-allowed">Дозволено</string>
+<string id="string-denied">Відхилено</string>
+<string id="string-local-storage">Збереження на локальному диску</string>
+<string id="string-location-data">Розташування</string>
+<string id="string-gears-settings">Налаштування Gears</string>
+<string id="string-permissions-description">У нижченаведеній таблиці наведено дозволи, надані кожному сайту, який намагається використовувати Gears.</string>
+<string id="string-version">Gears версії PRODUCT_VERSION</string>
+<string id="string-html-title">Налаштування Gears</string>
+<string id="string-remove">Видалити</string>

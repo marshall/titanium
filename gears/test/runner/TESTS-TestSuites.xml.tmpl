@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<testsuites>
+  #set $id = 0
+  #for $browser, $browser_results in $data.items()
+    #if $browser_results == "TIMED-OUT"
+      #set $id = $id + 1
+      <testsuite errors="1" failures="0" id="$id" name="NONE" package="$browser" tests="0" time="0">
+        <testcase classname="placeholder" name="timedout-test-placeholder" time="0">
+          <error message="timeout" type="placeholder">Tests timed-out</error>
+        </testcase>
+      </testsuite>
+    #else
+      #for $suite, $suite_properties in $browser_results["suites"].items()
+        #set $id = $id + 1
+	#set $suite_results = $suite_properties['file_results']
+        <testsuite errors="0" failures="0" id="$id" name="$suite" package="$browser" tests="0" time="$suite_properties['elapsed']">
+          <properties>
+           <property name="url"  value="$browser_results['url']"></property>
+           <property name="browser_info"  value="$browser_results['browser_info']"></property>
+           <property name="gears_info"  value="$browser_results['gears_info']"></property>
+          </properties>  
+          
+          #for $file_test_results in $suite_results
+            #for $testcase_name, $test_results in $file_test_results['results'].items()
+              <testcase classname="$file_test_results['filename']" name="$testcase_name" time="$test_results['elapsed']">
+                #if $test_results["status"] == 'failed'
+                 <failure message="test failure" type="">
+                    #if $test_results.has_key("message")
+                      <![CDATA[$test_results["message"]]]>
+                    #end if
+                  </failure>
+                #else if $test_results["status"] == 'error'
+                 <error message="test error" type="">
+                    #if $test_results.has_key("message")
+                      <![CDATA[$test_results["message"]]]>
+                    #end if
+                 </error>
+                #else if $test_results["status"] == 'started'
+                 <error message="test timed-out" type="">Test has timed out</error>               
+                #end if
+              </testcase>
+            #end for         
+          #end for       
+         </testsuite>
+      #end for
+    #end if
+  #end for
+</testsuites>

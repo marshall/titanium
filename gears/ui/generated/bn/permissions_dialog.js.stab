@@ -1,0 +1,33 @@
+<string id="string-html-title">Gears নিরাপত্তা সতর্কবাণী</string>
+<string id="string-allow">মঞ্জুরি দিন</string>
+<string id="string-allow-accesskey">A</string>
+<string id="string-deny">অস্বীকার</string>
+<string id="string-deny-accesskey">D</string>
+<string id="string-cancel">বাতিল</string>
+<string id="string-never-allow-link">কখনই এই সাইটটির মঞ্জুরি দেবেন না</string>
+<string id="string-never-allow-link-wince">এটিকে কখনই অনুমতি দেয় না</string>
+<string id="string-description">
+  Gears একটি মুক্ত স্রোত ব্রাউসার যা ওয়েব অ্যাপ্লিকেশান প্রদান করে  JavaScript APIs ব্যবহার করে অফলাইন ফাংশানালিটি প্রদান করে :
+</string>
+<string id="string-localserver-desc">
+  প্রয়োগ সম্পদ স্থানীয়ভানে সঞ্চয় এবং পরিবেশন করুন
+</string>
+<string id="string-database-desc">
+  একটি পূর্ণ-সন্ধানযোগ্য সম্পর্কযুক্ত ডেটাবেসে স্থানীয়ভাবে ডেটা সঞ্চয় করুন
+</string>
+<string id="string-workerpool-desc">
+  প্রয়োগ প্রতিক্রিয়া উন্নত করতে অ্যাসিঙ্ক্রোনাস জাভাস্ক্রিপ্ট রান করুন
+</string>
+<string id="string-query-data">
+  নিচের ওয়েবসাইটটি আপনার কম্পিউটারে তথ্য সঞ্চয় করতে চায় Gears ব্যহার করে ׀
+</string>
+<string id="string-query-location">
+  নিচের ওয়েবসাইটটি আপনার Gears ব্যবহার করার অবস্থানের সম্পর্কে তথ্য অ্যাকসেস করতে চায় ׀
+</string>
+<string id="string-location-privacy-statement">
+  এই সাইটের গোপনীয়তা নীতি পড়ুন আপনার অবস্থান কি ভাবে ব্যবহার করা হবে তা দেখতে׀
+</string>
+<string id="string-trust-site">
+  আমি এই সাইটে বিশ্বাস করি׀  Gears ব্যবহার করতে অনুমতি দিন ׀
+</string>
+<string id="string-trust-site-accesskey">t</string>

@@ -1,0 +1,100 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+
+<html>
+
+<!--
+Copyright 2008, Google Inc.
+
+Redistribution and use in source and binary forms, with or without 
+modification, are permitted provided that the following conditions are met:
+
+ 1. Redistributions of source code must retain the above copyright notice, 
+    this list of conditions and the following disclaimer.
+ 2. Redistributions in binary form must reproduce the above copyright notice,
+    this list of conditions and the following disclaimer in the documentation
+    and/or other materials provided with the distribution.
+ 3. Neither the name of Google Inc. nor the names of its contributors may be
+    used to endorse or promote products derived from this software without
+    specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
+OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<head>
+
+<title>Gears Inspector</title>
+<link rel="stylesheet" type="text/css" href="common/styles.css" />
+<!--[if lte IE 6]>
+  <link rel="stylesheet" type="text/css" href="common/ie6hacks.css" />
+<![endif]-->
+<style type="text/css">
+  #content {
+    padding-left: 30px;
+    padding-right: 30px;
+  }
+
+  a, a:hover, a:active {
+    color: #0000CC;
+  }
+
+  td.center {
+    text-align: center;
+  }
+</style>
+
+</head>
+<body>
+
+<script type="text/javascript" src="common/inspector_links.js"></script>
+
+<div id="heading">
+  <div class="controls">
+    <!-- Must leave this div here even if it is empty or the heading will
+    break in IE -->
+  </div>
+  <h1 class="heading-text">Gears Inspector</h1>
+</div>
+
+<div id="content">
+  <table style="border: 0px;" cellpadding="5">
+    <tr style="margin-bottom: 30px;">
+      <td colspan="2">
+        <p>Welcome to the Gears Inspector.</p>
+        <p><br />The following tools are available to help you build your
+        Gears-enabled application:</p>
+      </td>
+    </tr>
+    <tr>
+      <td class="center"><img src="common/icon_32x32.png" /></td>
+      <td><a href="console.html">Console</a> - View log events from the
+        Gears Console in real-time.
+      </td>
+    </tr>
+    <tr>
+      <td class="center"><img src="common/database.gif" /></td>
+      <td><a href="database.html">Database</a> - Perform SQL queries on a
+        Gears Database.
+      </td>
+    </tr>
+    <tr>
+      <td class="center"><img src="common/localserver.gif" /></td>
+      <td><a href="localserver.html">LocalServer</a> - Inspect
+        ResourceStores and ManagedResourceStores created with Gears
+        LocalServer.
+      </td>
+    </tr>
+  </table>
+</div>
+
+</body>
+</html>

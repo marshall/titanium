@@ -1,0 +1,33 @@
+<string id="string-html-title">Varnostno opozorilo programa Gears</string>
+<string id="string-allow">Dovoli</string>
+<string id="string-allow-accesskey">A</string>
+<string id="string-deny">Zavrni</string>
+<string id="string-deny-accesskey">R</string>
+<string id="string-cancel">Prekliči</string>
+<string id="string-never-allow-link">Nikoli ne dovoli tega spletnega mesta</string>
+<string id="string-never-allow-link-wince">Nikoli ne dovoli</string>
+<string id="string-description">
+  Gears je odprtokodna razširitev brskalnika, ki z uporabo teh programskih vmesnikov z JavaScriptom omogoča delovanje spletnih programov brez povezave:
+</string>
+<string id="string-localserver-desc">
+  Lokalno shranjevanje in omogočanje virov za aplikacije
+</string>
+<string id="string-database-desc">
+  Lokalno shranjevanje podatkov v relacijsko podatkovno zbirko, po kateri je mogoče iskati
+</string>
+<string id="string-workerpool-desc">
+  Zaženi asinhroni javascript, da bo odzivnost aplikacij boljša
+</string>
+<string id="string-query-data">
+  To spletno mesto želi shraniti informacije o računalniku, v katerem se uporablja program Gears.
+</string>
+<string id="string-query-location">
+  To spletno mesto želi omogočiti dostop do informacij o lokaciji, ki uporablja program Gears.
+</string>
+<string id="string-location-privacy-statement">
+  Če želite izvedeti, kako bo uporabljena vaša lokacija, preberite pravilnik o zasebnosti, ki velja za to spletno mesto.
+</string>
+<string id="string-trust-site">
+  Temu spletnemu mestu zaupam. Dovoli mu uporabo programa Gears.
+</string>
+<string id="string-trust-site-accesskey">t</string>

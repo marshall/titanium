@@ -1,0 +1,33 @@
+<string id="string-html-title">Säkerhetsvarning i Gears</string>
+<string id="string-allow">Tillåt</string>
+<string id="string-allow-accesskey">T</string>
+<string id="string-deny">Neka</string>
+<string id="string-deny-accesskey">E</string>
+<string id="string-cancel">Avbryt</string>
+<string id="string-never-allow-link">Tillåt aldrig den här webbplatsen</string>
+<string id="string-never-allow-link-wince">Tillåt aldrig</string>
+<string id="string-description">
+  Gears är ett webbläsartillägg med öppen källkod som gör att webbprogram kan ge offlinefunktionalitet med följande JavaScript-API:er:
+</string>
+<string id="string-localserver-desc">
+  Spara och hantera programresurser lokalt
+</string>
+<string id="string-database-desc">
+  Spara data lokalt i en helt sökbar relationsdatabas
+</string>
+<string id="string-workerpool-desc">
+  Kör asynkron JavaScript som förbättrar programmets responsivitet
+</string>
+<string id="string-query-data">
+  Webbplatsen nedan vill ha tillgång till information om din plats som använder Gears.
+</string>
+<string id="string-query-location">
+  Webbplatsen nedan will ha tillgång till information om din plats som använder Gears.
+</string>
+<string id="string-location-privacy-statement">
+  Läs webbplatsens sekretesspolicy för att se hur din plats kommer att användas.
+</string>
+<string id="string-trust-site">
+  Jag litar på den här platsen Tillåt den använda Gears.
+</string>
+<string id="string-trust-site-accesskey">t</string>

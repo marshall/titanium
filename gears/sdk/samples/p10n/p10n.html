@@ -1,0 +1,122 @@
+<!--
+Copyright 2007, Google Inc.
+
+Redistribution and use in source and binary forms, with or without 
+modification, are permitted provided that the following conditions are met:
+
+ 1. Redistributions of source code must retain the above copyright notice, 
+    this list of conditions and the following disclaimer.
+ 2. Redistributions in binary form must reproduce the above copyright notice,
+    this list of conditions and the following disclaimer in the documentation
+    and/or other materials provided with the distribution.
+ 3. Neither the name of Google Inc. nor the names of its contributors may be
+    used to endorse or promote products derived from this software without
+    specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
+OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<!DOCTYPE html>
+
+<html>
+<head>
+<!-- [naming] -->
+<title>Introducing Gears</title>
+<!-- style sheet links -->
+<link rel="stylesheet" href="p10n.css" type="text/css">
+<script src="../../gears_init.js"></script>
+<script src="jquery.js" type="text/javascript"></script>
+<script src="p10n.js" type="text/javascript"></script>
+</head>
+<body>
+
+<div id="header" style="position:absolute; left:0; top:0;">
+  <div style="margin:1em;">
+    <img src="logo.png" width="168" height="66">
+  </div>
+</div>
+
+<div id="status" style="position:absolute; top:1em; right:1em;"></div>
+
+<div class="place" id="body" style="margin:100px 3em"></div>
+
+<div id="footer" style="position:absolute; bottom:0; left:0;">
+<table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr>
+    <td valign="middle" align="left" width="33%">
+      <div style="margin:1em;">
+        <b>Google Developer Day 2007</b><br>
+        <em>Sydney, Australia</em>
+      </div>
+    </td>
+    <td valign="bottom" align="center" width="33%">
+      <div style="margin:1em; font-size:0.6em;">
+        Copyright 2007, Google Inc.
+      </div>
+    </td>
+    <td valign="bottom" align="right" width="33%">
+      <div style="margin:1em">
+        <span id="slide_number"></span> / <span id="num_slides"></span>
+      </div>
+    </td>
+  </tr>
+</table>
+</div>
+
+<div style="display:none">
+  <!-- Home page -->
+  <div class="template" id="home">
+    <h1>Gears: An Open Source Offline Toolkit</h1>
+    <h3><b>Aaron Boodman, Gears Engineer</b></h3>
+  </div>
+
+  <!-- Last page -->
+  <div class="template" id="last">
+    <div id="questions">
+      <h1>Questions</h1>
+      <br>
+      <br>
+      <div>
+        <!-- [naming] -->
+        <h2>Learn more:
+          <a href="http://gears.google.com/">gears.google.com</a>
+        </h2>
+      </div>
+    </div>
+  </div>
+
+  <!-- Display contents of a slide. -->
+  <div class="template" id="slide-template">
+    <h1></h1>
+    <ul>
+      <li></li>
+    </ul>
+  </div>
+
+  <!-- Display contents of a search result. -->
+  <div class="template" id="search-template">
+    <div>
+      <h2><a></a></h2>
+      <p></p>
+      <p class="url"></p>
+    </div>
+  </div>
+
+</div>
+
+<script type="text/javascript">
+if (db) {
+  render();
+}
+</script>
+</body>
+</html>

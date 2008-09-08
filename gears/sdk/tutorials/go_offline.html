@@ -1,0 +1,75 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<!--
+Copyright 2007, Google Inc.
+
+Redistribution and use in source and binary forms, with or without 
+modification, are permitted provided that the following conditions are met:
+
+ 1. Redistributions of source code must retain the above copyright notice, 
+    this list of conditions and the following disclaimer.
+ 2. Redistributions in binary form must reproduce the above copyright notice,
+    this list of conditions and the following disclaimer in the documentation
+    and/or other materials provided with the distribution.
+ 3. Neither the name of Google Inc. nor the names of its contributors may be
+    used to endorse or promote products derived from this software without
+    specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
+OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<script type="text/javascript" src="../gears_init.js"></script>
+<script type="text/javascript" src="go_offline.js"></script>
+
+<title>Enable Offline Usage</title>
+<style type="text/css">
+<!--
+.style1 {
+	color: #003399;
+	font-style: italic;
+	font-weight: bold;
+	font-size: large;
+}
+.style3 {
+	color: #009933;
+	font-weight: bold;
+	font-style: italic;
+}
+-->
+</style>
+</head>
+
+<body onload="init()">
+<h2>Getting offline-enabled documents with Gears </h2>
+<p>&nbsp;</p>
+<div>
+  <p class="style1">Status Message: <span id="textOut" class="style3"></span></p>
+</div>
+
+
+<p><strong>Q:</strong> I want to see these documents when I'm not online! What must I do?<br />
+<strong>A:</strong> <a href="http://gears.google.com/">Install Gears</a> on your computer and then click &quot;Capture&quot; to store the documents to your computer. You can then access the URLs without a network connection. </p>
+<p>
+  <button onclick="createStore()" > Capture </button>
+ </p>
+
+
+<p><strong>Q:</strong> I want to remove my offline access to these documents. What must I do?<br />
+<strong>A: </strong>Click &quot;Erase&quot; below to removed the &quot;captured&quot; documents from your computer.  The documents will no longer be available without a network connection. </p>
+<p>
+  <button onclick="removeStore()" > Erase </button>
+</p>
+</body>
+</html>

@@ -1,0 +1,14 @@
+<string id="string-cancel">İptal</string>
+<string id="string-cancel-accesskey">a</string>
+<string id="string-apply">Uygula</string>
+<string id="string-apply-accesskey">V</string>
+<string id="string-nosites">Site yok.</string>
+<string id="string-allowed">İzin verildi</string>
+<string id="string-denied">Reddedildi</string>
+<string id="string-local-storage">Yerel depolama</string>
+<string id="string-location-data">Konum</string>
+<string id="string-gears-settings">Gears Ayarları</string>
+<string id="string-permissions-description">Aşağıdaki tablo Gears kullanan her site için sağladığınız izinleri gösterir.</string>
+<string id="string-version">Gears sürüm PRODUCT_VERSION</string>
+<string id="string-html-title">Gears Ayarları</string>
+<string id="string-remove">Kaldır</string>

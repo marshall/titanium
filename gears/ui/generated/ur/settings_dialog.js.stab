@@ -1,0 +1,14 @@
+<string id="string-cancel">منسوخ</string>
+<string id="string-cancel-accesskey">C</string>
+<string id="string-apply">اطلاق کریں</string>
+<string id="string-apply-accesskey">A</string>
+<string id="string-nosites">کوئی سائٹ نہیں۔</string>
+<string id="string-allowed">اجازت ہے</string>
+<string id="string-denied">مسترد</string>
+<string id="string-local-storage">ذخیرہ کرنے کی مقامی جگہ</string>
+<string id="string-location-data">جائے وقوع</string>
+<string id="string-gears-settings">گیئرز کی ترتیبات</string>
+<string id="string-permissions-description">ذیل کا جدول ان اجازتوں کو دکھاتا ہے جو آپ نے ان سائٹوں کیلئے دی ہیں جنہوں نے گیئرز کے استعمال کی کوشش کی تھی۔</string>
+<string id="string-version">گیئرز ورژنPRODUCT_VERSION</string>
+<string id="string-html-title">گیئرز کی ترتیبات</string>
+<string id="string-remove">حذف کریں</string>

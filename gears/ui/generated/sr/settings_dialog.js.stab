@@ -1,0 +1,14 @@
+<string id="string-cancel">Откажи</string>
+<string id="string-cancel-accesskey">О</string>
+<string id="string-apply">Примени</string>
+<string id="string-apply-accesskey">M</string>
+<string id="string-nosites">Ниједан сајт.</string>
+<string id="string-allowed">Дозвољен приступ</string>
+<string id="string-denied">Забрањен приступ</string>
+<string id="string-local-storage">Локални простор за складиштење</string>
+<string id="string-location-data">Локација</string>
+<string id="string-gears-settings">Gears подешавања</string>
+<string id="string-permissions-description">Табела испод приказује дозволе које сте одобрили сваком сајту који је покушао да користи Gears.</string>
+<string id="string-version">Gears верзија PRODUCT_VERSION</string>
+<string id="string-html-title">Gears подешавања</string>
+<string id="string-remove">Уклони</string>

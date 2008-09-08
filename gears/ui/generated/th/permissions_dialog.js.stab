@@ -1,0 +1,33 @@
+<string id="string-html-title">คำเตือนด้านความปลอดภัยของ Gears</string>
+<string id="string-allow">อนุญาต</string>
+<string id="string-allow-accesskey">อ</string>
+<string id="string-deny">ปฏิเสธ</string>
+<string id="string-deny-accesskey">ป</string>
+<string id="string-cancel">ยกเลิก</string>
+<string id="string-never-allow-link">ไม่อนุญาตไซต์นี้</string>
+<string id="string-never-allow-link-wince">ไม่อนุญาต</string>
+<string id="string-description">
+  Gears เป็นส่วนขยายเบราว์เซอร์แบบโอเพ่นซอร์สที่ช่วยให้แอปพลิเคชันทางเว็บมีการทำงานแบบออฟไลน์โดยใช้ JavaScript API ต่อไปนี้:
+</string>
+<string id="string-localserver-desc">
+  จัดเก็บและรองรับทรัพยากรของแอปพลิเคชันในเครื่อง
+</string>
+<string id="string-database-desc">
+  จัดเก็บข้อมูลในตัวเครื่องในฐานข้อมูลที่สัมพันธ์กันและสามารถค้นหาได้อย่างสมบูรณ์
+</string>
+<string id="string-workerpool-desc">
+  เรียกใช้ JavaScript อะซิงโครนัสเพื่อปรับปรุงการตอบสนองของแอปพลิเคชัน
+</string>
+<string id="string-query-data">
+  เว็บไซต์ต่อไปนี้ต้องการเก็บข้อมูลในคอมพิวเตอร์ของคุณโดยใช้ Gears
+</string>
+<string id="string-query-location">
+  เว็บไซต์ต่อไปนี้ต้องการเข้าถึงข้อมูลเกี่ยวกับตำแหน่งของคุณโดยใช้ Gears
+</string>
+<string id="string-location-privacy-statement">
+  อ่านนโยบายส่วนบุคคลของไซต์เพื่อดูว่าตำแหน่งของคุณจะถูกนำมาใช้อย่างไร
+</string>
+<string id="string-trust-site">
+  ฉันเชื่อถือไซต์นี้ อนุญาตให้ใช้ Gears
+</string>
+<string id="string-trust-site-accesskey">t</string>

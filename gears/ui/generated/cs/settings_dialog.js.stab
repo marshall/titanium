@@ -1,0 +1,14 @@
+<string id="string-cancel">Zrušit</string>
+<string id="string-cancel-accesskey">R</string>
+<string id="string-apply">Použít</string>
+<string id="string-apply-accesskey">P</string>
+<string id="string-nosites">Žádné weby.</string>
+<string id="string-allowed">Povoleno</string>
+<string id="string-denied">Zamítnuto</string>
+<string id="string-local-storage">Místní úložiště</string>
+<string id="string-location-data">Lokalita</string>
+<string id="string-gears-settings">Nastavení aplikace Gears</string>
+<string id="string-permissions-description">Následující tabulka zobrazuje oprávnění udělená každému webu, který se pokusil použít aplikaci Gears.</string>
+<string id="string-version">Gears verze PRODUCT_VERSION</string>
+<string id="string-html-title">Nastavení aplikace Gears</string>
+<string id="string-remove">Odebrat</string>

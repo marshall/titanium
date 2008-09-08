@@ -1,0 +1,33 @@
+<string id="string-html-title">Gears-tietoturvavaroitus</string>
+<string id="string-allow">Salli</string>
+<string id="string-allow-accesskey">A</string>
+<string id="string-deny">Estä</string>
+<string id="string-deny-accesskey">D</string>
+<string id="string-cancel">Peruuta</string>
+<string id="string-never-allow-link">Älä koskaan salli tätä sivustoa</string>
+<string id="string-never-allow-link-wince">Älä koskaan salli</string>
+<string id="string-description">
+  Gears on avoimen lähdekoodin selainlaajennus, jonka avulla verkkosovelluksia voi käyttää offline-tilassa seuraavilla JavaScript API -liittymillä:
+</string>
+<string id="string-localserver-desc">
+  Tallenna ja käytä sovellusten resurssitiedostoja paikallisesti
+</string>
+<string id="string-database-desc">
+  Tallenna tietoja paikallisesti täysin haettaviin relaatiotietokantoihin
+</string>
+<string id="string-workerpool-desc">
+  Paranna sovellusten suorituskykyä käyttämällä asynkronista JavaScriptiä
+</string>
+<string id="string-query-data">
+  Alla oleva sivusto haluaa tallentaa tietoja tietokoneellesi käyttämällä Gearsia.
+</string>
+<string id="string-query-location">
+  Alla oleva sivusto haluaa päästä sijaintitietoihisi käyttämällä Gearsia.
+</string>
+<string id="string-location-privacy-statement">
+  Lukemalla tämän sivuston tietosuojakäytännön näet, miten sijaintiasi käytetään.
+</string>
+<string id="string-trust-site">
+  Luotan tähän sivustoon. Anna sen käyttää Gearsia.
+</string>
+<string id="string-trust-site-accesskey">t</string>

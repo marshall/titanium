@@ -1,0 +1,14 @@
+<string id="string-cancel">ரத்துசெய்</string>
+<string id="string-cancel-accesskey">C</string>
+<string id="string-apply">பயன்படுத்து</string>
+<string id="string-apply-accesskey">A</string>
+<string id="string-nosites">தளங்கள் இல்லை.</string>
+<string id="string-allowed">அனுமதிக்கப்பட்டது</string>
+<string id="string-denied">அனுமதி மறுத்தது</string>
+<string id="string-local-storage">உள்ளக சேமிப்பிடம்</string>
+<string id="string-location-data">இருப்பிடம்</string>
+<string id="string-gears-settings">Gears அமைப்புகள்</string>
+<string id="string-permissions-description">கீழே உள்ள அட்டவணை Gears ஐப் பயன்படுத்த ஒவ்வொரு தளங்களுக்கும் நீங்கள் அளித்த அனுமதிகளை காட்டுகிறது.</string>
+<string id="string-version">Gears பதிப்பு PRODUCT_VERSION</string>
+<string id="string-html-title">Gears அமைப்புகள்</string>
+<string id="string-remove">அகற்று</string>

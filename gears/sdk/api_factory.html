@@ -1,0 +1,232 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "DTD/xhtml1-transitional.dtd">
+
+<!--
+Copyright 2007, Google Inc.
+
+Redistribution and use in source and binary forms, with or without 
+modification, are permitted provided that the following conditions are met:
+
+ 1. Redistributions of source code must retain the above copyright notice, 
+    this list of conditions and the following disclaimer.
+ 2. Redistributions in binary form must reproduce the above copyright notice,
+    this list of conditions and the following disclaimer in the documentation
+    and/or other materials provided with the distribution.
+ 3. Neither the name of Google Inc. nor the names of its contributors may be
+    used to endorse or promote products derived from this software without
+    specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
+OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<html>
+  <head>
+    <title>Factory API</title>
+    <link rel="stylesheet" type="text/css" href="gears.css" />
+  </head>
+
+<body>
+
+<h1>Factory API</h1>
+
+<div id="pagecontent">
+
+<p>The Factory class is used to instantiate all other Gears
+objects. Using the <code>create</code> method, an
+application specifies the interface version it uses.</p>
+
+<p>Use <a href='tools.html#gears_init'>gears_init.js</a> in your
+application for the easiest way to create a Factory object.  The
+script defines <code>google.gears.factory</code> to refer to a Factory
+object.</p>
+
+
+<p><a name="factoryclass" id="factoryclass"></a></p>
+
+<h2 id="Factory">Factory class</h2>
+
+<pre><code>Object  <b>create</b>(className, [classVersion])
+string  <b>getBuildInfo</b>()
+boolean <b>getPermission</b>([siteName], [imageUrl], [extraMessage])
+readonly attribute boolean <b>hasPermission</b>
+readonly attribute string <b>version</b>
+</code></pre>
+
+
+<p>Code Example:</p>
+<pre><code>// gears_init.js defines google.gears.factory.
+&lt;script type="text/javascript" src="<a href='tools.html#gears_init'>gears_init.js</a>"&gt;&lt;/script&gt;
+&lt;script type="text/javascript"&gt;
+
+// Check whether Gears is installed.
+if (window.google && google.gears) {
+  // Instantiate Gears objects
+  var db = google.gears.factory.create('beta.database');
+  db.open();
+}
+&lt;/script&gt;</code></pre>
+
+<h3>Methods</h3>
+
+<table>
+  <tr class="odd">
+    <th colspan="2"><code>Object create(className, [classVersion])</code></th>
+  </tr>
+  <tr class="odd">
+    <td width="113">Summary:</td>
+    <td width="550" class="odd">Creates a Gears object of the given class.</td>
+  </tr>
+  <tr class="odd">
+    <td>Parameters:</td>
+    <td class="odd">
+      <code>className</code>
+      - Type of object to create.
+      <br>
+      <code>classVersion</code>
+      - Deprecated. There is no longer any need to pass this parameter. The only
+        allowed value is <code>'1.0'</code>.
+        (To see if the machine has the minimum version of Gears you require, use
+        <code>factory.version</code> instead.)
+      </td>
+  </tr>
+  <tr class="odd">
+    <td>Return value:</td>
+    <td class="odd">The new object.</td>
+  </tr>
+  <tr class="odd">
+    <td>Details:</td>
+    <td class="odd">
+      An exception is thrown if the given <code>className</code> is not
+      recognized.
+      <p>
+      The supported class names are:
+      <table width="79%" border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <th width="177">className</th>
+          <th width="216">Gears class created</th>
+        </tr>
+        <tr>
+          <td class="code">beta.database</td>
+          <td><a href="api_database.html">Database</a></td>
+        </tr>
+        <tr>
+          <td class="code">beta.desktop</td>
+          <td><a href="api_desktop.html">Desktop</a></td>
+        </tr>
+        <tr>
+          <td class="code">beta.geolocation</td>
+          <td><a href="api_geolocation.html">Geolocation</a></td>
+        </tr>        
+        <tr>
+          <td class="code">beta.httprequest</td>
+          <td><a href="api_httprequest.html">HttpRequest</a></td>
+        </tr>        
+        <tr>
+          <td class="code">beta.localserver</td>
+          <td><a href="api_localserver.html">LocalServer</a></td>
+        </tr>
+        <tr>
+          <td class="code">beta.timer</td>
+          <td><a href="api_timer.html">Timer</a></td>
+        </tr>
+        <tr>
+          <td class="code">beta.workerpool</td>
+          <td><a href="api_workerpool.html">WorkerPool</a></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+
+<table>
+  <tr class="odd">
+    <th colspan="2"><code>string getBuildInfo()</code></th>
+  </tr>
+  <tr class="odd">
+    <td width="113">Summary:</td>
+    <td width="550" class="odd">Returns a description of the build of Gears installed.</td>
+  </tr>
+  <tr class="odd">
+    <td>Return value:</td>
+    <td class="odd">The build description string.</td>
+  </tr>
+  <tr class="odd">
+    <td>Details:</td>
+    <td class="odd">This string is purely informational.  Application developers
+      should not rely on the format of data returned.  The contents and layout
+      may change over time.
+    </td>
+  </tr>
+</table>
+
+<a name="getpermission"></a>
+<table>
+  <tr class="odd">
+    <th colspan="2"><code>boolean getPermission([siteName], [imageUrl], [extraMessage])</code></th>
+  </tr>
+  <tr class="odd">
+    <td width="113">Summary:</td>
+    <td width="550" class="odd">Lets a site manually trigger the Gears security dialog, optionally with UI customizations.</td>
+  </tr>
+  <tr class="odd">
+    <td>Parameters:</td>
+    <td class="odd">
+      <code>siteName</code>
+      - Optional. Friendly name of the site requesting permission.
+      <br>
+      <code>imageUrl</code>
+      - Optional. URL of a .png file to display in the dialog.
+      <br>
+      <code>extraMessage</code>
+      - Optional. Site-specific text to display to users in the security dialog.
+      </td>
+  </tr>
+  <tr class="odd">
+    <td>Return value:</td>
+    <td class="odd">Indicates whether the site has permission to use Gears.</td>
+  </tr>
+  <tr class="odd">
+    <td>Details:</td>
+    <td class="odd">It is always safe to call this function; it will return
+    immediately if the site already has permission to use Gears.
+    <br><br>
+    All arguments are optional. The dialog will only show those that are
+    specified.
+    </td>
+  </tr>
+</table>
+
+<h3>Attributes</h3>
+
+<table>
+  <tr class="odd">
+    <th width="113">Attribute</th>
+    <th width="113">Type</th>
+    <th width="437">Description</th>
+  </tr>
+  <tr class="odd">
+    <td><code><b>version</b></code></td>
+    <td>readonly string</td>
+    <td>Returns the version of Gears installed, as a string of the form <code>Major.Minor.Build.Patch</code> (e.g., '0.10.2.0').
+  </tr>
+  <tr class="odd">
+    <td><code><b>hasPermission</b></code></td>
+    <td>readonly boolean</td>
+    <td>Returns true if the site already has permission to use Gears.
+  </tr>
+</table>
+
+<br>
+
+
+</div>
+</body>
+</html>

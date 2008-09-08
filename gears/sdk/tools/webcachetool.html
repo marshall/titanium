@@ -1,0 +1,349 @@
+<!--
+Copyright 2007, Google Inc.
+
+Redistribution and use in source and binary forms, with or without 
+modification, are permitted provided that the following conditions are met:
+
+ 1. Redistributions of source code must retain the above copyright notice, 
+    this list of conditions and the following disclaimer.
+ 2. Redistributions in binary form must reproduce the above copyright notice,
+    this list of conditions and the following disclaimer in the documentation
+    and/or other materials provided with the distribution.
+ 3. Neither the name of Google Inc. nor the names of its contributors may be
+    used to endorse or promote products derived from this software without
+    specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
+OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<HTML>
+  <HEAD>
+    <TITLE>Manual Gears WebCache Tests</TITLE>
+    <script type="text/javascript" src="../gears_init.js"></script>
+    <script type="text/javascript" language="javascript">
+
+      var localServer;
+      var nameInput;
+      var cookieInput;
+
+      function OnLoad() {
+        nameInput = document.getElementById("nameInput");
+        cookieInput = document.getElementById("cookieInput");
+        localServer = 
+          google.gears.factory.create("beta.localserver");
+      }
+
+      function Now() {
+        return new Date().getTime();
+      }
+
+      //----------------------------------------------------------
+      // LocalServer tests
+      //----------------------------------------------------------
+
+      var managedStore = null;
+      var store = null;
+      var fileSubmitter = null;
+
+      function CreateManagedStore() {
+        managedStore =  localServer.createManagedStore(nameInput.value,
+                                                       cookieInput.value);
+        return managedStore != null;
+       }
+
+      function OpenManagedStore() {
+        managedStore =  localServer.openManagedStore(nameInput.value,
+                                                     cookieInput.value);
+         return managedStore != null;
+     }
+
+      function RemoveManagedStore() {
+        localServer.removeManagedStore(nameInput.value,
+                                       cookieInput.value);        
+      }
+
+      function ShowManagedStoreInfo() {
+        var info = "";
+        info += "enabled = " + managedStore.enabled + "\n";
+        info += "name = " + managedStore.name + "\n";
+        info += "requiredCookie = " + managedStore.requiredCookie + "\n";
+        info += "manifestUrl = " + managedStore.manifestUrl + "\n";
+        info += "updateStatus = " + managedStore.updateStatus + "\n";
+        info += "lastUpdateCheckTime = " + managedStore.lastUpdateCheckTime + "\n";
+        info += "lastUpdateCheckTime as Date = " + new Date(managedStore.lastUpdateCheckTime * 1000) + "\n";
+        info += "lastErrorMessage = " + managedStore.lastErrorMessage + "\n";
+        info += "currentVersion = " + managedStore.currentVersion + "\n";
+        alert(info);
+      }
+
+      function CreateStore() {
+        store = localServer.createStore(nameInput.value,
+                                        cookieInput.value);
+        return store != null;
+      }
+
+      function OpenStore() {
+        store = localServer.openStore(nameInput.value,
+                                      cookieInput.value);
+        return store != null;
+      }
+
+      function RemoveStore() {
+        localServer.removeStore(nameInput.value,
+                                cookieInput.value);        
+      }
+
+      function ShowStoreInfo() {
+        var info = "";
+        info += "enabled = " + store.enabled + "\n";
+        info += "name = " + store.name + "\n";
+        info += "requiredCookie = " + store.requiredCookie + "\n";
+        alert(info);
+      }
+
+      function CaptureCallback(url, success, id) {
+        alert(url + "\n" + success + " " + id);
+      }
+
+
+      function CanServeLocally(url) {
+        try {
+          display_text(localServer.canServeLocally(url));
+        } catch (e) {
+          display_text(e.message);
+        }
+      }
+
+      //----------------------------------------------------------
+      // XmlHttpRequest tests
+      //----------------------------------------------------------
+
+      function NewXHR() {
+        if (window.XMLHttpRequest) {
+          return new XMLHttpRequest();
+        } else if (window.ActiveXObject) {
+          return new ActiveXObject("Msxml2.XMLHTTP");
+        } else {
+          return null;
+        }
+      }
+      
+      function DoXmlHttpRequest(url, verb, data) {
+        var xmlhttp = NewXHR();
+        var statesReached = [0, 0, 0, 0, 0];
+        xmlhttp.onreadystatechange = function() {
+          var state = xmlhttp.readyState;
+          statesReached[state] += 1;
+          if (state >= 3) {
+            var responseText = "";
+            var statusText = "";
+            var headers = "";
+            var status = 0;
+            try { 
+              headers = xmlhttp.getAllResponseHeaders();
+              status = xmlhttp.status;
+              statusText = xmlhttp.statusText;
+              responseText = xmlhttp.responseText;
+            } catch (e) {
+            }
+            display_text(statesReached + "\n" +
+                         status + " " + statusText + "\n" +
+                         headers +
+                         "----------------------------\n" +
+                         responseText);
+          }
+        }
+        xmlhttp.open(verb, url, true);
+        xmlhttp.send(data)
+      }
+      
+
+      //----------------------------------------------------------
+      // Gears.HttpRequest tests
+      //----------------------------------------------------------
+
+      function NewGearsHR() {
+        return google.gears.factory.create("beta.httprequest");
+      }
+      
+      function DoGearsHttpRequest(url, verb, data) {
+        var gearshttp = NewGearsHR();
+        var statesReached = [0, 0, 0, 0, 0];
+        gearshttp.onreadystatechange = function() {
+          var state = gearshttp.readyState;
+          statesReached[state] += 1;
+          if (state >= 3) {
+            var responseText = "";
+            try { responseText = gearshttp.responseText; }
+            catch (e) {}
+            display_text(statesReached + "\n" +
+                         gearshttp.status + " " + gearshttp.statusText + "\n" +
+                         gearshttp.getAllResponseHeaders() +
+                         "----------------------------\n" +
+                         responseText);
+          }
+        }
+        gearshttp.open(verb, url, true);
+        gearshttp.send(data)
+      }
+
+      //----------------------------------------------------------
+      // CopyMany
+      //----------------------------------------------------------
+
+      function CopyMany(capturedUrl, count) {
+        var startTime = Now();
+        for (var i = 0; i < count; ++i) {
+          store.copy(capturedUrl, capturedUrl + i);
+        }
+        var timeTaken = Now() - startTime;
+        display_text(count + " copies made in " + timeTaken + " msecs");
+      }
+
+      //----------------------------------------------------------
+      // GetMany
+      //----------------------------------------------------------
+      
+      var getmany;   // either an XmlHttpRequest or a Gears.HttpReqeust
+      var getmany_baseurl;
+      var getmany_num_to_get;
+      var getmany_num_got;
+      var getmany_start_time;
+
+      function DoXhrGetMany(urlbase, count) {
+        DoGetMany(NewXHR(), urlbase, count);
+      }
+      
+      function DoGearsGetMany(urlbase, count) {
+        DoGetMany(NewGearsHR(), urlbase, count);
+      }
+
+      function DoGetMany(request, urlbase, count) {
+        if (getmany) {
+          alert("Already getting many");
+          return;
+        }
+        getmany = request;
+        getmany_baseurl = urlbase;
+        getmany_num_to_get = count;
+        getmany_num_got = 0;
+        getmany_start_time = Now();
+        DoGetOne();
+      }
+
+      function DoGetOne() {          
+        if (getmany_num_got >= getmany_num_to_get) {
+          display_text("Got all in " + (Now() - getmany_start_time) + " msecs");
+          getmany = null;
+          return;
+        }  
+        var url = getmany_baseurl + getmany_num_got++;
+        getmany.open("GET", url, true);
+        getmany.onreadystatechange = function() {
+          if (getmany.readyState==4) {
+            display_text("Got " + getmany_num_got +
+                         " of " + getmany_num_to_get);
+            setTimeout(DoGetOne, 0);
+          }
+        }
+        getmany.send(null);
+      }
+
+
+      //----------------------------------------------------------
+      // Output stuff to the results div
+      //----------------------------------------------------------
+
+      function display_text(text) {
+        var html = '<pre>' + text + '</pre>';
+        var div = document.getElementById("result");
+        div.innerHTML = html;
+        // TODO(michaeln): this doesn't always clear previous contents in FF
+      }
+
+      function display_result(url, status) {
+        var text;
+        if (status) {
+          text = url + " captured";
+        } else {
+          text = url + " NOT captured";
+        }
+        display_text(text);
+      }
+
+    </script>
+  </HEAD>
+  <BODY onload="OnLoad()">
+    <form method="post" enctype="multipart/form-data">
+      name:<input type="text" size="10" name="nameInput" id="nameInput">
+      cookie:<input type="text" size="10" name="cookieInput" id="cookieInput">
+      <br>
+      url:<input type="text" size="50" name="urlinput" id="urlinput"> <input type="button" value="SetLink->" onclick="link.href=urlinput.value;">
+      <a id="link">link</a><br>
+      url2:<input type="text" size="50" name="url2input" id="url2input">
+
+      <!-- LocalServer --><h5>LocalServer</h5>
+      <input type="button" value="CreateManagedStore" onclick="CreateManagedStore(); display_text(managedStore != null)">
+      <input type="button" value="OpenManagedStore" onclick="OpenManagedStore(); display_text(managedStore != null)">
+      <input type="button" value="RemoveManagedStore" onclick="RemoveManagedStore(); display_text('removed')">
+      <br>
+      <input type="button" value="CreateStore" onclick="CreateStore(); display_text(store != null)">
+      <input type="button" value="OpenStore" onclick="OpenStore(); display_text(store != null)">
+      <input type="button" value="RemoveStore" onclick="RemoveStore(); display_text('removed')">
+      <br>
+      <input type="button" value="CanServeLocally(url)" onclick="CanServeLocally( urlinput.value )">
+
+      <!-- ManagedResourceStore --><h5>ManagedResourceStore</h5>
+      <input type="button" value="ShowInfo" onclick="ShowManagedStoreInfo()">
+      <input type="button" value="enable" onclick="managedStore.enabled = true">
+      <input type="button" value="disable" onclick="managedStore.enabled = false">
+      <br>
+      <input type="button" value="manifestUrl = url" onclick="display_text((managedStore.manifestUrl = urlinput.value))">
+      <input type="button" value="checkForUpdate()" onclick="managedStore.checkForUpdate()">
+
+      <!-- ResourceStore --><h5>ResourceStore</h5>
+      <input type="button" value="ShowInfo" onclick="ShowStoreInfo()">
+      <input type="button" value="enable" onclick="store.enabled = true">
+      <input type="button" value="disable" onclick="store.enabled = false">
+      <br>
+      <input type="button" value="capture(url)" onclick="url2input.value = store.capture( urlinput.value, CaptureCallback)" >
+      <input type="button" value="capture([url,url2])" onclick="url2input.value = store.capture( [urlinput.value, url2input.value], CaptureCallback)">
+
+      <input type="button" value="abort(url2)" onclick="store.abortCapture( url2input.value)">
+      <br>
+      <input type="button" value="isCaptured(url)" onclick="display_result(urlinput.value, store.isCaptured( urlinput.value ))">
+      <input type="button" value="remove(url)" onclick="store.remove( urlinput.value ); display_text('removed')">
+      <br>
+      <input type="button" value="rename(url, url2)" onclick="store.rename(urlinput.value, url2input.value)">
+      <input type="button" value="copy(url, url2)" onclick="store.copy(urlinput.value, url2input.value)">
+      <input type="button" value="copyMany(url, url2AsNumber)" onclick="CopyMany(urlinput.value, url2input.value)">
+      <br>
+      <input type="button" value="getHeader(url, url2AsName)" onclick="display_text(store.getHeader( urlinput.value, url2input.value ))">
+      <input type="button" value="getAllHeaders(url)" onclick="display_text(store.getAllHeaders( urlinput.value ))">
+
+      <!-- Misc --><h5>Misc</h5>
+      <br><!-- XmlHttp -->
+      <input type="button" value="XmlHttpGET(url)" onclick="DoXmlHttpRequest( urlinput.value, 'GET' )">
+      <input type="button" value="XmlHttpHEAD(url)" onclick="DoXmlHttpRequest( urlinput.value, 'HEAD' )">
+      <input type="button" value="XmlHttpPOST(url, url2AsData)" onclick="DoXmlHttpRequest( urlinput.value, 'POST', url2input.value )">
+      <br><!-- GearsHttp -->
+      <input type="button" value="GearsHttpGET(url)" onclick="DoGearsHttpRequest( urlinput.value, 'GET', null )">
+      <input type="button" value="GearsHttpHEAD(url)" onclick="DoGearsHttpRequest( urlinput.value, 'HEAD', null )">
+      <input type="button" value="GearsHttpPOST(url, url2AsData)" onclick="DoGearsHttpRequest( urlinput.value, 'POST', url2input.value )">
+      <br>
+      <input type="button" value="XHR.GetMany(urlAsBase, url2AsNumber)" onclick="DoXhrGetMany(urlinput.value, url2input.value)">
+      <input type="button" value="Gears.GetMany(urlAsBase, url2AsNumber)" onclick="DoGearsGetMany(urlinput.value, url2input.value)">
+    </form>
+
+    <div id="result"></div>
+  </BODY>
+</HTML>

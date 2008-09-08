@@ -1,0 +1,33 @@
+<string id="string-html-title">Cảnh báo Bảo mật của Gears</string>
+<string id="string-allow">Cho phép</string>
+<string id="string-allow-accesskey">P</string>
+<string id="string-deny">Từ chối</string>
+<string id="string-deny-accesskey">T</string>
+<string id="string-cancel">Huỷ</string>
+<string id="string-never-allow-link">Không bao giờ cho phép trang web này</string>
+<string id="string-never-allow-link-wince">Không bao giờ cho phép Gears trên trang web này</string>
+<string id="string-description">
+  Gears là một tiện ích bổ sung nguồn mở của trình duyệt cho phép ứng dụng web cung cấp tính năng ngoại tuyến bằng cách sử dụng các JavaScript API dưới đây:
+</string>
+<string id="string-localserver-desc">
+  Lưu trữ và phục vụ các tài nguyên ứng dụng cục bộ
+</string>
+<string id="string-database-desc">
+  Lưu dữ liệu cục bộ trong cơ sở dữ liệu quan hệ có thể tìm kiếm đầy đủ
+</string>
+<string id="string-workerpool-desc">
+  Chạy JavaScript không đồng bộ để tăng khả năng phản hồi của ứng dụng
+</string>
+<string id="string-query-data">
+  Trang web dưới đây muốn lưu trữ thông tin trên máy tính của bạn bằng cách sử dụng Gears.
+</string>
+<string id="string-query-location">
+  Trang web dưới đây muốn truy cập vào thông tin về vị trí của bạn bằng cách sử dụng Gears.
+</string>
+<string id="string-location-privacy-statement">
+  Đọc chính sách bảo mật của trang để xem vị trí của bạn sẽ được sử dụng thế nào.
+</string>
+<string id="string-trust-site">
+  Tôi tin cậy trang này. Cho phép trang web này sử dụng Gears.
+</string>
+<string id="string-trust-site-accesskey">t</string>

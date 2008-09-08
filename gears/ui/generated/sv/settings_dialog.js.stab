@@ -1,0 +1,14 @@
+<string id="string-cancel">Avbryt</string>
+<string id="string-cancel-accesskey">A</string>
+<string id="string-apply">Tillämpa</string>
+<string id="string-apply-accesskey">T</string>
+<string id="string-nosites">Inga webbplatser</string>
+<string id="string-allowed">Tillåten</string>
+<string id="string-denied">Nekad</string>
+<string id="string-local-storage">Lokal lagring</string>
+<string id="string-location-data">Plats</string>
+<string id="string-gears-settings">Inställningar i Gears</string>
+<string id="string-permissions-description">Tabellen nedan visar beviljade tillstånd för varje webbplats som har försökt att använda Gears.</string>
+<string id="string-version">Gears version PRODUCT_VERSION</string>
+<string id="string-html-title">Inställningar i Gears</string>
+<string id="string-remove">Ta bort</string>

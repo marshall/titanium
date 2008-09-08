@@ -1,0 +1,14 @@
+<string id="string-cancel">Peruuta</string>
+<string id="string-cancel-accesskey">P</string>
+<string id="string-apply">Ota käyttöön</string>
+<string id="string-apply-accesskey">A</string>
+<string id="string-nosites">Ei sivustoja.</string>
+<string id="string-allowed">Sallittu</string>
+<string id="string-denied">Estetty</string>
+<string id="string-local-storage">Paikallinen tallennus</string>
+<string id="string-location-data">Sijainti</string>
+<string id="string-gears-settings">Gearsin asetukset</string>
+<string id="string-permissions-description">Oheisesta taulukosta näet luvat, jotka olet myöntänyt jokaiselle sivustolle, joka on yrittänyt käyttää Gearsia.</string>
+<string id="string-version">Gearsin versio PRODUCT_VERSION</string>
+<string id="string-html-title">Gearsin asetukset</string>
+<string id="string-remove">Poista</string>

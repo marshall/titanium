@@ -1,0 +1,14 @@
+<string id="string-cancel">Anulaţi</string>
+<string id="string-cancel-accesskey">A</string>
+<string id="string-apply">Aplicaţi</string>
+<string id="string-apply-accesskey">P</string>
+<string id="string-nosites">Niciun site.</string>
+<string id="string-allowed">Permis</string>
+<string id="string-denied">Refuzat</string>
+<string id="string-local-storage">Stocare locală</string>
+<string id="string-location-data">Locaţie</string>
+<string id="string-gears-settings">Setări Gears</string>
+<string id="string-permissions-description">Tabelul de mai jos afişează permisiunile pe care le-aţi acordat fiecărui site care a încercat să utilizeze Gears.</string>
+<string id="string-version">Versiune Gears PRODUCT_VERSION</string>
+<string id="string-html-title">Setări Gears</string>
+<string id="string-remove">Eliminaţi</string>

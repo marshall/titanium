@@ -1,0 +1,1218 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "DTD/xhtml1-transitional.dtd">
+
+<!--
+Copyright 2007, Google Inc.
+
+Redistribution and use in source and binary forms, with or without 
+modification, are permitted provided that the following conditions are met:
+
+ 1. Redistributions of source code must retain the above copyright notice, 
+    this list of conditions and the following disclaimer.
+ 2. Redistributions in binary form must reproduce the above copyright notice,
+    this list of conditions and the following disclaimer in the documentation
+    and/or other materials provided with the distribution.
+ 3. Neither the name of Google Inc. nor the names of its contributors may be
+    used to endorse or promote products derived from this software without
+    specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
+OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<html>
+  <head>
+    <title>LocalServer API</title>
+    <link rel="stylesheet" type="text/css" href="gears.css" />
+  </head>
+
+<body>
+
+<h1>LocalServer API</h1>
+
+<div id="pagecontent">
+
+<p>The LocalServer module allows a web application to cache and serve its HTTP
+resources locally, without a network connection.</p>
+<h3>Contents</h3>
+<ol class="toc">
+  <li><a href="#overview">Overview</a></li>
+  <li><a href="#example">Example</a>
+  <li><a href="#classes">Classes
+    </a>
+    <ol>
+      <li><a href="#LocalServer" >LocalServer</a></li>
+      <li><a href="#ManagedResourceStore">ManagedResourceStore</a></li>
+      <li><a href="#ResourceStore">ResourceStore</a></li>
+      <li><a href="#FileSubmitter">FileSubmitter</a></li>
+    </ol>
+  </li>
+  <li><a href="#manifest_file">Manifest file</a></li>
+  <li><a href="#required_cookie">Cookies and the LocalServer</a></li>
+  <li><a href="#filesystem_location">Location of cached files</a></li> 
+</ol>
+
+
+<h2 id="overview">Overview</h2>
+
+<p>The LocalServer module is a specialized URL cache that the web application 
+controls. Requests for URLs in the LocalServer's cache are intercepted and 
+served locally from the user's disk.</p>
+
+<p>Applications manage the cache using two classes:</p>
+
+<ul>
+  <li><a href="#ResourceStore">ResourceStore</a> - for capturing ad-hoc URLs 
+  using JavaScript. The ResourceStore allows an application to capture user data 
+  files that need to be addressed with a URL, such as a PDF file or an 
+  image.</li>
+  <li><a href="#ManagedResourceStore">ManagedResourceStore</a> - for capturing a 
+  related set of URLs that are declared in a <em>manifest file</em>, and are 
+  updated automatically. The ManagedResourceStore allows the set of resources 
+  needed to run a web application to be captured.</li>
+</ul>  
+
+<p>For both types of stores, the set of URLs captured is explicitly controlled by the web application.</p>
+
+<h3>Serving and updating cached resources</h3>
+<p>The LocalServer intercepts HTTP/HTTPS requests and serves them from the cache when all of these conditions are met:</p>
+<ul>
+  <li>The URL is cached in a ResourceStore or ManagedResourceStore,</li>
+  <li>The store's <code>enabled</code> attribute is set to true, and </li>
+  <li>If the store has a <code>requiredCookie</code> attribute,
+      the request must have a cookie that matches. For further details read <a href="#required_cookie">Cookies and the LocalServer</a>.</li>
+</ul>  
+
+<p>The LocalServer <em>always</em> serves a cached resource when the conditions are met, regardless of the network connection. The URLs contained in a store
+are eligible for local serving without requiring the application to open the  store.</p>
+
+<p>To disable local serving of stored resources and force URLs to be served using the regular network connection, the application can set
+the store's <code>enabled</code> attribute to false.</p>
+
+<p>A key difference between the two types of stores is how resources are 
+updated. The contents of a ManagedResourceStore are automatically updated 
+periodically by Gears, even if the web developer never calls
+<a href="#checkforupdate">checkForUpdate()</a>. For more information, see
+<a href="#ManagedResourceStoreUpdates">ManagedResourceStore Updates</a>. 
+The ResourceStore's contents are never automatically updated, and are only 
+updated when the developer explicitly calls <code>capture()</code>.</p>
+
+<h3>Permission</h3>
+
+<p>This API requires user permission.  If you would like to customize the 
+default dialog, you can explicitly call 
+<code>google.gears.factory.getPermission()</code> - <a 
+href="api_factory.html">see how.</a></p>
+  
+  <p>&nbsp;</p>
+
+
+<h2 id="example">Example</h2>
+
+<pre><code>&lt;script type="text/javascript" src="<a href='tools.html#gears_init'>gears_init.js</a>"&gt;&lt;/script&gt;
+&lt;script type="text/javascript"&gt;
+var localServer = google.gears.factory.create('beta.localserver');
+var store = localServer.createManagedStore('test-store');
+store.manifestUrl = 'site-manifest.txt';
+store.checkForUpdate();
+&lt;/script&gt;</code></pre>
+<pre><code>// site-manifest.txt
+{
+  "betaManifestVersion": 1,
+  "version": "site_version_string",
+  "entries": [
+    { "url": "site.html" },
+    { "url": "gears_init.js" }
+  ]
+}</code></pre>
+
+<h3 id="classes">Classes</h3>
+  <pre><code><a href="#LocalServer" class="section">LocalServer class</a>
+   boolean              <b>canServeLocally</b>(string url)
+   ResourceStore        <b>createStore</b>(string name, [string requiredCookie])
+   ResourceStore        <b>openStore</b>(string name, [string requiredCookie])
+   void                 <b>removeStore</b>(string name, [string requiredCookie])
+   ManagedResourceStore <b>createManagedStore</b>(string name, [string requiredCookie])
+   ManagedResourceStore <b>openManagedStore</b>(string name, [string requiredCookie])
+   void                 <b>removeManagedStore</b>(string name, [string requiredCookie])</code></pre>
+
+
+  <pre><code><a href="#ManagedResourceStore">ManagedResourceStore class</a>
+   readonly  attribute string  <b>name</b>
+   readonly  attribute string  <b>requiredCookie</b>
+   readwrite attribute boolean <b>enabled</b>
+   readwrite attribute string  <b>manifestUrl</b>
+   readonly  attribute int     <b>lastUpdateCheckTime</b>
+   readonly  attribute int     <b>updateStatus</b>
+   readonly  attribute string  <b>lastErrorMessage</b>
+   readonly  attribute string  <b>currentVersion</b>
+   event void <b>oncomplete</b>(Object details)
+   event void <b>onerror</b>(Error error)
+   event void <b>onprogress</b>(Object details)
+   void <b>checkForUpdate</b>()</code></pre>
+
+  <pre><code><a href="#ResourceStore">ResourceStore class</a>
+   readonly  attribute string  <b>name</b>
+   readonly  attribute string  <b>requiredCookie</b>
+   readwrite attribute boolean <b>enabled</b>
+   int           <b>capture</b>(string urlOrUrlArray, completionCallback)
+   void          <b>abortCapture</b>(int captureId)
+   void          <b>remove</b>(string url)
+   void          <b>rename</b>(string srcUrl, string destUrl)
+   void          <b>copy</b>(string srcUrl, string destUrl)
+   boolean       <b>isCaptured</b>(string url)
+   void          <b>captureFile</b>(fileInputElement, url)
+   string        <b>getCapturedFileName</b>(url)
+   string        <b>getHeader</b>(string url, string name)
+   string        <b>getAllHeaders</b>(string url)
+   FileSubmitter <b>createFileSubmitter</b>()</code></pre>
+
+  <pre><code><a href="api_localserver.html#FileSubmitter">FileSubmitter class</a>
+   void      <b>setFileInputElement</b>(htmlElement el, string url)</code></pre>
+
+  <p>
+    <!------------------------------------------------------------->
+    <!-- LocalServer                                             -->
+    <!------------------------------------------------------------->
+
+    <br>
+    <a name="LocalServer"></a>  </p>
+  <h2>LocalServer class</h2>
+
+
+  <p>The LocalServer is a factory and container for the set of
+    ResourceStores and ManagedResourceStores your application creates and uses. Use resource stores to enable your JavaScript application to execute without a network connection. </p>
+
+  <p>To create a LocalServer object, use the Gears Factory as follows:</p>
+
+  <pre><code>&lt;script type="text/javascript" src="<a href='tools.html#gears_init'>gears_init.js</a>"&gt;&lt;/script&gt;
+&lt;script type="text/javascript"&gt;
+var localServer = google.gears.factory.create('beta.localserver');
+&lt;/script&gt;</code></pre>
+
+  <h4>Methods</h4>
+  <table width="696">
+    <tr class="odd">
+      <th colspan="2"><div align="left"><code><strong>canServeLocally(string url)</strong></code></div></th>
+    </tr>
+    <tr class="odd">
+      <td width="105">Return Value </td>
+        <td width="579" >boolean</td>
+    </tr>
+    <tr class="odd">
+      <td>Parameters</td>
+        <td class="odd"><strong><code>url</code></strong> - relative or absolute URL that is from the same origin as the current page </td>
+    </tr>
+    <tr class="odd">
+      <td>Exceptions</td>
+        <td class="" >Throws an exception if the URL is not from the same origin
+          as the current page.          </td>
+    </tr>
+    <tr class="odd">
+      <td>Description</td>
+        <td class="odd">
+          Returns true if a request for the URL can be satisfied from any of the resource stores available,
+          taking into account whether the containing store is enabled and if its requiredCookie matches.
+        Relative URLs are interpreted according to the current page location.</td>
+    </tr>
+  </table>
+  <table width="699">
+    <tr class="odd">
+      <th colspan="2"><div align="left"><code><strong>createStore(string name, [string requiredCookie])</strong></code></div></th>
+    </tr>
+    <tr class="odd">
+      <td width="108">Return Value </td>
+        <td width="579"><code>ResourceStore </code></td>
+    </tr>
+    <tr class="odd">
+      <td>Parameters</td>
+        <td><code>name</code>
+                - string identifying the store. <br />
+            <code>requiredCookie</code> - optional.<br />
+            The combination of name and requiredCookie (along with the domain) identify a unique store. <br />
+          Expected cookie format is &quot;name=value&quot;. </td>
+    </tr>
+    <tr class="odd">
+      <td>Exceptions</td>
+        <td class="" >Throws a JavaScript exception if an errors occurs.</td>
+    </tr>
+    <tr class="odd">
+      <td>Description</td>
+        <td class="odd">Opens an existing ResourceStore or creates a new one if
+      no such store exists.<br />
+      <br />
+      If a requiredCookie is given, creates a ResourceStore that requires the cookie to be present in the client in order to serve the contents from the store.
+    </tr>
+  </table>
+  <table width="695">
+    <tr class="odd">
+      <th colspan="2"><div align="left"><code><strong>openStore(string name, [string requiredCookie])</strong></code></div></th>
+    </tr>
+    <tr class="odd">
+      <td width="137">Return Value </td>
+        <td width="546"><code>ResourceStore </code><br />
+      <code>null</code> - if no such store exists</td>
+    </tr>
+    <tr class="odd">
+      <td>Parameters</td>
+        <td><code>name</code> - string identifying the store. <br />
+  <code>requiredCookie</code> - optional.<br />
+The combination of name and requiredCookie (along with the domain) identify a unique store. <br />
+Expected cookie format is &quot;name=value&quot;.</td>
+    </tr>
+    <tr class="odd">
+      <td>Exceptions</td>
+        <td class="" > Throws a JavaScript exception if an errors occurs. </td>
+    </tr>
+    <tr class="odd">
+      <td>Description</td>
+      <td class="odd">Opens an existing ResourceStore or returns null if no such store exists. If the store was originally created with a requiredCookie, the same value must be provided in order to open this ResourceStore.
+    </tr>
+  </table>
+  <table>
+    <tr class="odd">
+      <th colspan="2" width="100%"><div align="left"><code><strong> removeStore(string name, [string requiredCookie])</strong></code></div></th>
+    </tr>
+    <tr class="odd">
+      <td width="113">Return Value </td>
+        <td width="489" >void</td>
+    </tr>
+    <tr class="odd">
+      <td>Parameters</td>
+        <td><code>name</code> - string identifying the store. <br>
+          <code>requiredCookie</code> - optional.<br />
+          The combination of name and requiredCookie (along with the domain) identify a unique store. <br />
+      Expected cookie format is &quot;name=value&quot;.</td>
+    </tr>
+    <tr class="odd">
+      <td>Exceptions</td>
+        <td class="" >Throws a JavaScript exception if an errors occurs.</td>
+    </tr>
+    <tr class="odd">
+      <td>Description</td>
+        <td class="odd">Removes a ResourceStore and deletes all of its contents. </td>
+    </tr>
+  </table>
+  <table width="699">
+    <tr class="odd">
+      <th colspan="2"><div align="left"><code><strong>createManagedStore(string name, [string requiredCookie])</strong></code></div></th>
+    </tr>
+    <tr class="odd">
+      <td width="125">Return Value </td>
+        <td width="562"><code>ManagedResourceStore </code></td>
+    </tr>
+    <tr class="odd">
+      <td>Parameters</td>
+        <td><code>name</code> - string identifying the store.<br />
+  <code>requiredCookie</code> - optional.<br />
+  The combination of name and requiredCookie (along with the domain) identify a unique store. <br />
+  Expected cookie format is &quot;name=value&quot;.</td>
+    </tr>
+    <tr class="odd">
+      <td>Exceptions</td>
+        <td class="" >Throws a JavaScript exception if an errors occurs.</td>
+    </tr>
+    <tr class="odd">
+      <td>Description</td>
+        <td class="odd">Opens an existing ManagedResourceStore or creates a new one if
+      no such store exists.          </tr>
+  </table>
+  <table>
+    <tr class="odd">
+      <th colspan="2" width="100%"><div align="left"><code><strong>openManagedStore(string name, [string requiredCookie])</strong></code></div></th>
+    </tr>
+    <tr class="odd">
+      <td width="113">Return Value </td>
+        <td width="489"><code>ManagedResourceStore</code></td>
+    </tr>
+    <tr class="odd">
+      <td>Parameters</td>
+        <td><code>name</code>           - string identifying the store.<br />
+<code>requiredCookie</code> - optional.<br />
+The combination of name and requiredCookie (along with the domain) identify a unique store. <br />
+Expected cookie format is &quot;name=value&quot;.</td>
+    </tr>
+    <tr class="odd">
+      <td>Exceptions</td>
+        <td class="" > Throws a JavaScript exception if an errors occurs. </td>
+    </tr>
+    <tr class="odd">
+      <td>Description</td>
+      <td class="odd">Opens an existing ManagedResourceStore or returns null if no such store exists.          </tr>
+  </table>
+  <table width="699">
+    <tr class="odd">
+      <th colspan="2"><div align="left"><code><strong> removeManagedStore(string name, [string requiredCookie])</strong></code></div></th>
+    </tr>
+    <tr class="odd">
+      <td width="129">Return Value </td>
+        <td width="558" >void</td>
+    </tr>
+    <tr class="odd">
+      <td>Parameters</td>
+        <td><code>name</code> - string identifying the store.<br>
+        <code>[requiredCookie]</code></td>
+    </tr>
+    <tr class="odd">
+      <td>Exceptions</td>
+        <td class="" >Throws a JavaScript exception if an errors occurs.</td>
+    </tr>
+    <tr class="odd">
+      <td>Description</td>
+        <td class="odd">Removes a ManagedResourceStore and all of its contained URLs
+          from the local cache.          </td>
+    </tr>
+  </table>
+</ul>
+
+<!------------------------------------------------------------->
+<!-- ManagedResourceStore                                    -->
+<!------------------------------------------------------------->
+  <p><br>
+    <a name="ManagedResourceStore"></a>  </p>
+
+
+  <h2>ManagedResourceStore class </h2>
+
+
+  <p>The ManagedResourceStore class is designed to cache a set of
+    inter-dependent resources. For example, it can cache the set of resources required
+    to bootstrap an application. The contents of a ManagedResourceStore are
+    determined by the URLs listed in a <a href="#manifest_file">manifest file</a>. When all resources listed
+    in the manifest have been captured, the LocalServer makes the set eligible
+    for use. Periodically, the LocalServer checks for an updated manifest file. If the manifest file has been updated, LocalServer automatically downloads the updated set of resources.</p>
+
+
+  <p>A ManagedResourceStore is a container of cached URLs. Each distinct ManagedResourceStore is uniquely identified by these attributes: </p>
+
+  <ul>
+      <li><code>name</code> - a string identifying the store.<br>
+        <i>Currently the name must consist  only of visible ASCII characters excluding the following:</i>
+        <br><kbr>/ \ : * ? " &lt; &gt; | ; , </kbr><br>
+        <i>Before finalization of the API we expect to remove this restriction.</i></li>
+      <li><code>requiredCookie</code> - a cookie of the format &quot;name=value&quot; or null </li>
+      <li><code>origin</code> - the scheme, domain, and port of the current page.</li>
+  </ul>
+
+
+  <p> An application can have many <code>ManagedResourceStores</code>.</p>
+  <p>The ManagedResourceStores class requires a <em>manifest file</em> to define the URLs to store. The <a href="#manifest_file">manifest file</a> is described in detail, below. </p>
+
+  <h3>Attributes</h3>
+  <table>
+    <tr class="odd">
+      <th width="158">Attribute</th>
+        <th >Type</th>
+        <th >Description</th>
+    </tr>
+    <tr class="odd">
+      <td width="158"><strong>name</strong></td>
+        <td width="109" >readonly attribute string</td>
+        <td width="432" >The name of this managed resource store. </td>
+    </tr>
+    <tr class="odd">
+      <td><strong><a name="MRScookie" id="MRScookie"></a>requiredCookie</strong></td>
+        <td class="" >readonly attribute string </td>
+        <td class="" >The cookie requirements of the store.<br>
+        For further details see <a href="#required_cookie">Cookies and the LocalServer</a>.
+        If empty, resources within this store are always served locally, provided the store is <code>enabled</code>.</td>
+    </tr>
+    <tr class="odd">
+      <td><strong>enabled</strong></td>
+        <td class="odd">readwrite attribute boolean </td>
+        <td class="odd">Enables  local serving of URLs from this store when <code>enabled=true</code>. Disables local serving otherwise. </td>
+    </tr>
+    <tr class="odd">
+      <td><strong>manifestUrl</strong></td>
+        <td class="odd">readwrite attribute string </td>
+        <td class="odd">The location of the manifest file.</td>
+    </tr>
+    <tr class="odd">
+      <td><strong>lastUpdateCheckTime</strong></td>
+        <td class="odd">readonly attribute int</td>
+        <td class="odd">Time in second when the last update check
+        occurred.</td>
+    </tr>
+    <tr class="odd">
+      <td><strong>updateStatus</strong></td>
+        <td class="odd">readonly attribute int</td>
+        <td class="odd">
+	      Can be one of four values:
+	      <table class="noborders">
+	        <tr>
+	          <td><strong>0</strong>
+	          <td>Update OK. An update is not running. The last update to run succeeded.
+            <tr>
+              <td><strong>1</strong>
+              <td>Update checking. Gears is checking for a new manifest file.
+            <tr>
+              <td><strong>2</strong>
+              <td>Update downloading. Gears is found a new manifest and is downloading the new resources.
+            <tr>
+              <td><strong>3</strong>
+              <td>Update failed. An update is not running. The last update to run failed, and the error message is in the <code>lastErrorMessage</code> property.
+       </table>
+    </td>
+    </tr>
+    <tr class="odd">
+      <td><strong> lastErrorMessage</strong> </td>
+        <td class="odd">readonly attribute string</td>
+        <td class="odd">When updateStatus is <strong>3</strong> (update failed), this property contains details about the error.</td>
+    </tr>
+    <tr class="odd">
+      <td><strong>currentVersion</strong></td>
+        <td class="odd">readonly attribute string </td>
+        <td class="odd">The version of the set of resources that is currently being served locally, or empty string if no version is
+              currently in use. This value reflects the <code>version</code> attribute from the manifest file only after all resources listed in the
+        manifest file have been cached locally.</td>
+    </tr>
+  </table>
+
+
+  <a name="events"></a>
+  <h3>Events</h3>
+  <table>
+    <tr class="odd">
+      <th colspan="2"><code><strong>event void oncomplete(Object
+        details)</strong></code></th>
+    </tr>
+    <tr class="odd">
+      <td>Parameters</td>
+      <td>
+        <code>details</code> An object containing information about the update.
+        Contains one property:
+        <br>&nbsp; &nbsp; &bull; <code>String newVersion</code> - The new
+        version of the ManagedResourceStore if the version changed. Otherwise,
+        an empty string.
+      </td>
+    </tr>
+    <tr class="odd">
+      <td>Description</td>
+      <td>
+        <p>This event is fired when a ManagedResourceStore completes an
+      update. Note that updates can be either started explicitly, by calling
+      <code>checkForUpdate()</code>, or implicitly, when resources are
+      served from the store.
+        <p>An update may or may not result in a new version of the store. If
+        a new version results, the <code>newVersion</code> property of the
+        <code>details</code> object will contain the store's new version string.
+      </td>
+    </tr>
+  </table>
+
+  <table>
+    <tr class="odd">
+      <th colspan="2"><code><strong>event void onerror(Error
+        error)</strong></code></th>
+    </tr>
+    <tr class="odd">
+      <td>Parameters</td>
+      <td>
+        <code>error</code> Contains details about the error that occured.
+        Contains one property:
+        <br>&nbsp; &nbsp; &bull; <code>String message</code> - The error
+        message.
+      </td>
+    </tr>
+    <tr class="odd">
+      <td>Description</td>
+      <td>This event is fired when a ManagedResourceStore update fails. Note
+      that update failure may occur normally when an application is running
+      offline, or if the server is down.</td>
+    </tr>
+  </table>
+
+  <table>
+    <tr class="odd">
+      <th colspan="2"><code><strong>event void onprogress(Object
+        details)</strong></code></th>
+    </tr>
+    <tr class="odd">
+      <td>Parameters</td>
+      <td>
+        <code>details</code> Contains information about the progress of a
+        ManagedResourceStore update. Contains the following properties:
+        <br>&nbsp; &nbsp; &bull; <code>Number filesComplete</code> - The number
+        of files that have been captured so far in the current update.
+        <br>&nbsp; &nbsp; &bull; <code>Number filesTotal</code> - The total
+        number of files that need to be captured in the current update.
+      </td>
+    </tr>
+    <tr class="odd">
+      <td>Description</td>
+      <td>This event is fired periodically during a ManagedResourceStore update.
+      The <code>filesTotal</code> property contains the total number of files
+      found in the manifest that need to be fetched. The
+      <code>filesComplete</code> property contains the number of files that have
+      been fetched so far. You can use this information to show progress
+      information to the user.</td>
+    </tr>
+  </table>
+
+  <a name="checkforupdate" id="checkforupdate"></a>
+  <h3>Methods</h3>
+<table>
+  <tr class="odd">
+    <th colspan="2"><div align="left"><code><strong>void checkForUpdate()</strong></code></div></th>
+  </tr>
+  <tr class="odd">
+    <td width="91">Return Value </td>
+    <td width="594" >void</td>
+  </tr>
+  <tr class="odd">
+    <td >Parameters</td>
+    <td class="odd">&nbsp;</td>
+  </tr>
+  <tr class="odd">
+    <td >Exceptions</td>
+    <td class="" >&nbsp;</td>
+  </tr>
+  <tr class="odd">
+    <td >Description</td>
+    <td class="odd"><p>Explicitly initiates an update that runs asynchronously in the background, and returns immediately. For more details, see <a href="#ManagedResourceStoreUpdates">Managed Resource Store Updates</a>.
+    </td>
+  </tr>
+</table>
+<br><br>
+
+<a name="ManagedResourceStoreUpdates"></a>
+<h3>ManagedResourceStore Updates</h3>
+
+<p>ManagedResourceStores can be updated both manually and automatically.
+
+<p>An update can be started manually by calling <code>checkForUpdate()</code>. 
+Many web applications will only ever need to manually update a 
+ManagedResourceStore the very first time, to capture the intial version of an 
+application. An automatic update is started each time Gears intercepts and
+serves a request from a ManagedResourceStore. Both types of updates are limited so that they do not occur more frequently than once every 10 seconds.
+
+<p>An update first issues a conditional GET of the manifest file from 
+<code>manifestUrl</code>. If a response body is returned, the JSON data is 
+parsed and the 'version' attribute is compared with the 
+<code>currentVersion</code> property of the store. If they are different, the 
+update proceeds to GET each resource listed in the new manifest file. If 
+the previous version contained a resource listed in the new version, the update 
+will issue an If-Modified-Since conditional request.
+
+<p>Note that Gears compares manifest version strings for equality. Any change in 
+a version string, even numerical changes like <code>"2"</code> to 
+<code>"1"</code>, will  trigger an update.
+
+<p>While an update is in progress, resources from the previous version (if any) 
+will continue to be served locally. After all resources have been downloaded, 
+the <code>currentVersion</code> property will be updated to indicate
+that the new set of a resources are now being served locally and the previous 
+version has been removed.
+
+<h4>Manifest Validation</h4>
+
+<p>After all the resources in a manifest have been successfully updated, Gears
+sends a final conditional GET request for the manifest to ensure that its 
+version has not changed since the update started.
+
+<p>In this request, Gears sends the special HTTP header
+<code>X-Gears-Reason: validate-manifest</code>. The server can respond with the
+manifest contents, or with <code>304 Not Modified</code>.
+
+<p>If the manifest version changes in this second request, Gears retries the
+entire update once.
+
+
+<h4>Retrying Resources</h4>
+
+<p>A server can indicate that Gears should retry the request for a particular 
+resource by responding with <code>503 Service Unavailable</code> and the HTTP 
+header <code>Retry-After: 0</code>.
+
+<p>Gears will try requesting a particular resource up to three times. If the
+third attempt fails, Gears restarts the entire update from the beginning. Gears
+will try up to three updates.
+
+<p>The retry feature can be useful for applications that are load-balanced 
+across a server farm where updates roll out slowly over the entire farm.
+If a server cannot serve a particular resource, it can indicate that Gears
+should try again.
+
+
+<h4>Other Details</h4>
+<p>An additional HTTP header is added when Gears is capturing URLs:<br>
+  <code>X-Gears-Google: 1</code><br>
+Applications can use this header to return different resources to a Gears 
+capture request than they would normally serve for the same URL.
+
+<p>If an update fails for any reason, such as a network error or server error,
+the next update first re-fetches the manifest to see if the version number has
+changed since the last run. If the version number is the same, the update 
+resumes where the previous update left off. Otherwise, the previous update is 
+discarded and the new update starts again at the first resource.
+
+<p>&nbsp;</p>
+
+<br>
+<!------------------------------------------------------------->
+<!-- ResourceStore                                     -->
+<!------------------------------------------------------------->
+<a name="ResourceStore"></a>
+<h2>ResourceStore class </h2>
+
+<p>A <code>ResourceStore</code> is a container of cached URLs.
+Each distinct <code>ResourceStores</code> is uniquely identified by three attributes:
+<ul>
+  <li> <code>name</code> - a  string name identifying the ResourceStore<br>
+        <i>Currently the name must consist  only of visible ASCII characters excluding the following:</i>
+        <br><kbr>/ \ : * ? " &lt; &gt; | ; , </kbr><br>
+        <i>Before finalization of the API we expect to remove this restriction.</i></li>
+  <li><code>requiredCookie</code> - a cookie of the format &quot;name=value&quot; or null </li>
+  <li><code>domain</code> -  the domain, protocol and port of the current page.</li>
+  </ul>
+</p>
+
+ <p>There can be many <code>ResourceStores</code> in the system. </p>
+ <p>
+A <code>ResourceStore</code> is populated with URLs explicitly through the use of the JavaScript API
+that this class provides.</p>
+
+  <h3>Attributes  </h3>
+  <table width="647">
+    <tr class="odd">
+      <th width="123">Attribute</th>
+      <th >Type</th>
+      <th >Description</th>
+    </tr>
+    <tr class="odd">
+      <td width="123"><strong>name</strong></td>
+      <td width="126" >readonly attribute string</td>
+      <td width="382" >The name of the store that you provided upon creating this object. </td>
+    </tr>
+    <tr class="odd">
+      <td><strong>requiredCookie</strong></td>
+      <td class="" >readonly attribute string </td>
+      <td class="" >The cookie requirements of the store.
+        For further details see <a href="#required_cookie">Cookies and the LocalServer</a>.<br>
+        If requiredCookie is empty, then resources within this store are always served locally, provided the store is <code>enabled</code>.</td>
+    </tr>
+    <tr class="odd">
+      <td><strong>enabled</strong></td>
+      <td class="odd">readwrite attribute boolean </td>
+      <td class="odd">Enables  local serving of URLs from this store when <code>enabled=true</code>. Disables local serving otherwise. </td>
+    </tr>
+  </table>
+  <p>&nbsp;</p>
+  <h3>Methods</h3>
+  <table width="645">
+    <tr class="odd">
+      <th colspan="2"><div align="left"><code> <strong>capture(urlOrUrlArray, callback)</strong> </code></div></th>
+    </tr>
+    <tr class="odd">
+      <td width="113">Return Value </td>
+      <td width="489" >int</td>
+    </tr>
+    <tr class="odd">
+      <td>Parameters</td>
+      <td class="odd"><code>urlOrUrlArray</code><br />
+        <br />
+      <code>callback(string url, boolean success, int captureId)</code></td>
+    </tr>
+    <tr class="odd">
+      <td>Exceptions</td>
+      <td class="" >Throws an exception if any of the URLs is not from the same
+      origin as the current page.</td>
+    </tr>
+    <tr class="odd">
+      <td>Description</td>
+      <td class="odd"><p>Initiates an update that runs asynchronously in the
+      background, and returns immediately. The return value is a <code>captureId</code> which
+      can be passed to <code>abortCapture</code> to cancel the update. <br />
+      <br />
+      Relative URLs are
+      interpreted according to the current page's location. Upon completion of each URL the <code>callback</code> function is invoked.
+      <p>An additional HTTP header is added when Gears is capturing  URLs<br><code>X-Gears-Google: 1</code></td>
+    </tr>
+  </table>
+
+  <table>
+    <tr class="odd">
+      <th colspan="2" width="100%"><div align="left"><code><strong> abortCapture(int captureId)</strong></code></div></th>
+    </tr>
+    <tr class="odd">
+      <td width="113">Return Value </td>
+      <td width="489" >void</td>
+    </tr>
+    <tr class="odd">
+      <td>Parameters</td>
+      <td class="odd"><code>captureId</code></td>
+    </tr>
+    <tr class="odd">
+      <td>Exceptions</td>
+      <td class="" >&nbsp;</td>
+    </tr>
+    <tr class="odd">
+      <td>Description</td>
+      <td class="odd">Aborts a capture.</td>
+    </tr>
+  </table>
+  <table width="648">
+    <tr class="odd">
+      <th colspan="2"><div align="left"><code> <strong> remove(string url)</strong></code></div></th>
+    </tr>
+    <tr class="odd">
+      <td width="113">Return Value </td>
+      <td width="489" >void</td>
+    </tr>
+    <tr class="odd">
+      <td>Parameters</td>
+      <td><code>url</code></td>
+    </tr>
+    <tr class="odd">
+      <td>Exceptions</td>
+      <td class="" >Throws an exception if URL is not from the same
+      origin as the current page.</td>
+    </tr>
+    <tr class="odd">
+      <td>Description</td>
+      <td class="odd">Removes a cached URL from the store.</td>
+    </tr>
+  </table>
+  <table width="651">
+    <tr class="odd">
+      <th colspan="2"><div align="left"><code><strong>rename(string srcUrl, string destUrl)</strong></code></div></th>
+    </tr>
+    <tr class="odd">
+      <td width="131">Return Value </td>
+      <td width="508" >void</td>
+    </tr>
+    <tr class="odd">
+      <td>Parameters</td>
+      <td><code>srcUrl</code> <br />
+        <br />
+      <code>destUrl</code></td>
+    </tr>
+    <tr class="odd">
+      <td>Exceptions</td>
+      <td class="" >Throws an exception if the source or destination URL is not from the same
+      origin as the current page.</td>
+    </tr>
+    <tr class="odd">
+      <td>Description</td>
+      <td class="odd">Renames a  URL that is cached in the resource store. </td>
+    </tr>
+  </table>
+  <table width="652">
+    <tr class="odd">
+      <th colspan="2"><div align="left"><code><strong>copy(string srcUrl, string destUrl)</strong></code></div></th>
+    </tr>
+    <tr class="odd">
+      <td width="113">Return Value </td>
+      <td width="489" >void</td>
+    </tr>
+    <tr class="odd">
+      <td>Parameters</td>
+      <td><code>srcUrl</code> <br />
+        <br />
+        <code>destUrl</code></td>
+    </tr>
+    <tr class="odd">
+      <td>Exceptions</td>
+      <td class="" >Throws an exception if the source or destination URL is not from the same
+      origin as the current page.</td>
+    </tr>
+    <tr class="odd">
+      <td>Description</td>
+      <td class="odd">Copies a cached URL.</td>
+    </tr>
+  </table>
+  <table>
+    <tr class="odd">
+      <th colspan="2" width="100%"><div align="left"><code><strong>isCaptured(string url)</strong></code></div></th>
+    </tr>
+    <tr class="odd">
+      <td width="113">Return Value </td>
+      <td width="489" >boolean</td>
+    </tr>
+    <tr class="odd">
+      <td>Parameters</td>
+      <td><code>url</code></td>
+    </tr>
+    <tr class="odd">
+      <td>Exceptions</td>
+      <td class="" >Throws an exception if the URL is not from the same
+      origin as the current page.</td>
+    </tr>
+    <tr class="odd">
+      <td>Description</td>
+      <td class="odd">Returns true if the URL is cached in the store.</td>
+    </tr>
+  </table>
+  <table>
+    <tr class="odd">
+      <th colspan="2" width="100%"><div align="left"><code><strong>captureFile(HtmlElement fileInputElement, string url)</strong></code></div></th>
+    </tr>
+    <tr class="odd">
+      <td width="113">Return Value </td>
+      <td width="489" >void</td>
+    </tr>
+    <tr class="odd">
+      <td>Parameters</td>
+      <td><code>fileInputElement</code><br/>
+                       <br/>
+                       <code>url</code></td>
+    </tr>
+    <tr class="odd">
+      <td>Exceptions</td>
+      <td class="" >Throws an exception if the URL is not from the same
+      origin as the current page or if the file cannot be read.</td>
+    </tr>
+    <tr class="odd">
+      <td>Description</td>
+      <td class="odd">Captures the contents of the file indicated by the
+        <code>fileInputElement</code> into the store and associates
+        that content with the given URL. The <code>fileInputElement</code>
+        argument must be a reference to an<code> &lt;input type=file&gt;</code>
+        HTML element.
+        <br />
+        <b>DEPRECATED.</b> This is currently only implemented in IE & Firefox 2.
+        A future version of Gears may support mapping Blobs to URLs.</td>
+    </tr>
+  </table>
+  <table>
+    <tr class="odd">
+      <th colspan="2" width="100%"><div align="left"><code><strong>getCapturedFileName(string url)</strong></code></div></th>
+    </tr>
+    <tr class="odd">
+      <td width="113">Return Value </td>
+      <td width="489" >string</td>
+    </tr>
+    <tr class="odd">
+      <td>Parameters</td>
+      <td><code>url</code></td>
+    </tr>
+    <tr class="odd">
+      <td>Exceptions</td>
+      <td class="" >Throws an exception if the <code>url</code> is not from the same
+      origin as the current page.</td>
+    </tr>
+    <tr class="odd">
+      <td>Description</td>
+      <td class="odd">Returns the leaf file name associated with <code>url</code> that was previously captured by
+      calling <code>captureFile</code>. Note that if <code>url</code> was captured by a method other than calling
+      <code>captureFile</code> then an empty string will be returned and no exception will be thrown.
+      <br />
+      <b>DEPRECATED.</b> This is currently only implemented in IE & Firefox 2.
+      A future version of Gears may support mapping Blobs to URLs.</td>
+    </tr>
+  </table>
+  <table>
+    <tr class="odd">
+      <th colspan="2" width="100%"><div align="left"><code><strong>getHeader(string url, string name)</strong></code></div></th>
+    </tr>
+    <tr class="odd">
+      <td width="113">Return Value </td>
+      <td width="489" >string</td>
+    </tr>
+    <tr class="odd">
+      <td>Parameters</td>
+      <td><code>url</code><br/><br/>
+      <code>name</code> name of the header you want to retrieve, e.g. 'Content-Length'.</td>
+    </tr>
+    <tr class="odd">
+      <td>Exceptions</td>
+      <td class="" >Throws an exception if the <code>url</code> is not from the same
+      origin as the current page.</td>
+    </tr>
+    <tr class="odd">
+      <td>Description</td>
+      <td width="489">Returns a specific HTTP header associated with the captured URL. </td>
+    </tr>
+  </table>
+  <table>
+    <tr class="odd">
+      <th colspan="2" width="100%"><div align="left"><code><strong>getAllHeaders(string url)</strong></code></div></th>
+    </tr>
+    <tr class="odd">
+      <td width="113">Return Value </td>
+      <td width="489" >string</td>
+    </tr>
+    <tr class="odd">
+      <td>Parameters</td>
+      <td class="odd"><code>url</code></td>
+    </tr>
+    <tr class="odd">
+      <td>Exceptions</td>
+      <td class="" >Throws an exception if the <code>url</code> is not from the same
+      origin as the current page.</td>
+    </tr>
+    <tr class="odd">
+      <td>Description</td>
+      <td width="489">Returns all HTTP headers associated with the captured <code>url</code>.</td>
+    </tr>
+  </table>
+  <table>
+    <tr class="odd">
+      <th colspan="2" width="100%"><div align="left"><code><strong>createFileSubmitter()</strong></code></div></th>
+    </tr>
+    <tr class="odd">
+      <td width="113">Return Value </td>
+      <td width="489"><code>FileSubmitter</code></td>
+    </tr>
+    <tr class="odd">
+      <td>Description</td>
+      <td width="489">Returns a <code>FileSubmitter</code> object, which is used to submit URLs that are contained in this  store
+      in HTML form submissions.</td>
+    </tr>
+  </table>
+<br>
+
+<!------------------------------------------------------------->
+<!-- FileSubmitter                                           -->
+<!------------------------------------------------------------->
+<a name="FileSubmitter"></a>
+<h2>FileSubmitter class </h2>
+
+<p><b>DEPRECATED.</b> <code>FileSubmitter</code> is currently only implemented in IE & Firefox 2.
+Whenever possible, prefer the Blob support provided by <code><a
+href="api_desktop.html">desktop.openFiles()</a></code> and the <code><a
+href="api_httprequest.html">HttpRequest</a></code> module.</p>
+
+<p>The <code>FileSubmitter</code> object facilitates the submission of local files, that
+  were previously captured using <code>ResourceStore.captureFile</code>, in
+  multipart/form-data encoded form submissions. </p>
+<p>To create a <code>FileSubmitter</code>, call
+  <code>ResourceStore.createFileSubmitter()</code>. The returned object allows only
+  URLs contained in the originating resource store to be submitted. </p>
+
+  <h3>Methods</h3>
+  <table>
+    <tr class="odd">
+      <th colspan="2" width="100%"><div align="left"><code><strong>setFileInputElement(htmlElement, url)</strong></code></div></th>
+    </tr>
+    <tr class="odd">
+      <td width="113">Return Value </td>
+      <td width="489"><code>void</code></td>
+    </tr>
+    <tr class="odd">
+      <td>Parameters</td>
+      <td><code>htmlElement</code><br/><br/>
+                       <code>url</code></td>
+    </tr>
+    <tr class="odd">
+      <td>Exceptions</td>
+      <td class="" >Throws an exception if the URL is not from the same
+      origin as the current page.</td>
+    </tr>
+    <tr class="odd">
+      <td>Description</td>
+      <td width="489"><p>Prepares the htmlElement to submit the file indicated by url. The htmlElement
+      must be contained in an html form. When the form is submitted the file will be
+      included as part of the resulting POST. The url is the captured resource's
+      key in the originating Store. Relative URLs are interpreted according to the
+      current page's location. The name attribute of htmlElement determines the
+      parameter name associated with the uploaded file. </p>
+      <p>Due to differences between Firefox and Internet Explorer, this method's
+        behavior is browser specific. </p>
+      <ul>
+        <li> Firefox: The <code>htmlElement</code> must be a reference to an<code> &lt;input type=&quot;file&quot;&gt;</code>
+          element. </li>
+        <li> Internet Explorer: The <code>htmlElement</code> must NOT be a reference to an &lt;input&gt;
+          of any type. </li>
+      </ul>
+      <b>DEPRECATED.</b> This is currently only implemented in IE & Firefox 2.
+      Whenever possible, prefer the Blob support provided by <code><a
+      href="api_desktop.html">desktop.openFiles()</a></code> and the <code><a
+      href="api_httprequest.html">HttpRequest</a></code> module.</td>
+    </tr>
+  </table>
+
+  <pre><code>&lt;form method="POST" enctype="multipart/form-data" /&gt;
+  &lt;input id="fileinput" type="file" name="formFieldName" /&gt;
+  &lt;link id="iefileinput" name="formFieldName" /&gt;
+&lt;/form&gt;
+
+&lt;script&gt;
+  var fileSubmitter = store.createFileSubmitter();
+  var htmlElement = isIE ? document.getElementById("iefileinput")
+                         : document.getElementById("fileinput");
+  fileSubmitter.setFileInputElement(htmlElement, urlOfStoredResource);
+&lt;/script&gt;</code></pre>
+
+<!------------------------------------------------------------->
+<!-- Manifest File Format                                    -->
+<!------------------------------------------------------------->
+  <p>&nbsp;</p>
+  <a name="manifest_file" id="manifest_file"></a>
+  <h2>Manifest File  </h2>
+  <p>A manifest file lists all of the URLs to be captured by a ManagedResourceStore. It also contains the version  for the manifest file format, the version  of the contents of the manifest, and an optional redirection URL. </p>
+  <p> Using the ManagedResourceStore requires that you create a manifest file.</p>
+  <p>The manifest file and all the URLs listed in it must follow the &quot;same-origin policy&quot;, which means that all the URLs must originate from the same URI scheme, host, and port. See <a href="security.html">Gears and Security</a> for more information. </p>
+  <p>An application can have any number of manifest files and ManagedResourceStores. You specify which manifest file to use when you create an instance of ManagedResourceStore.</p>
+  <p>The manifest file is written in <a href="http://www.google.com/url?sa=D&amp;q=http://www.json.org">JavaScript Object Notation</a> (JSON) format.  </p>
+  <p><strong>Sample manifest file</strong></p>
+  <pre>{
+  // version of the manifest file format
+  &quot;betaManifestVersion&quot;: 1,
+
+  // version of the set of resources described in this manifest file
+  &quot;version&quot;: &quot;my_version_string&quot;,
+
+  // optional
+  // If the store specifies a requiredCookie, when a request would hit
+  // an entry contained in the manifest except the requiredCookie is
+  // not present, the local server responds with a redirect to this URL.
+  &quot;redirectUrl&quot;:  &quot;login.html&quot;,
+
+  // URLs to be cached (URLs are given relative to the manifest URL)
+  &quot;entries&quot;: [
+      { &quot;url&quot;: &quot;main.html&quot;, &quot;src&quot;: &quot;main_offline.html&quot; },
+      { &quot;url&quot;: &quot;.&quot;, &quot;redirect&quot;: &quot;main.html&quot; },
+      { &quot;url&quot;: &quot;main.js&quot; }
+      { &quot;url&quot;: &quot;formHandler.html&quot;, &quot;ignoreQuery&quot;: true },
+    ]
+}</pre>
+
+    <h3>Contents of a manifest file </h3>
+    <p>Manifest File JSON object: A single object contains the  attribute-value pairs described below.</p>
+    <p>Note: All URLs can be provided as relative to the manifest file, or as fully-qualifed URIs. </p>
+    <table>
+      <tr class="odd">
+        <th width="186"><div align="center" >Attribute</div></th>
+		<th width="208"><div align="center" >Value</div></th>
+        <th width="336"><div align="center" >Notes</div></th>
+      </tr>
+      <tr class="odd">
+        <td width="186"><code>&quot;betaManifestVersion&quot;</code></td>
+        <td width="208"><code>1</code></td>
+        <td width="336" >Required. Represents the version of the manifest file format itself. The manifest file is recognized only if this attribute and value appear and are correct. </td>
+      </tr>
+      <tr class="odd">
+        <td><code>&quot;version&quot;</code></td>
+        <td class="odd">string<strong></td>
+        <td class="odd">Required. Represents the version, which you determine, of the manifest file's contents. This version is usually your application's version. 
+          <ul>
+            <li>Version string is any  value determined by your application. </li>
+            <li>String is case sensitive. </li>
+            <li>Any change in the version string indicates to Gears that the manifest file has changed. </li>
+        </ul></td>
+      </tr>
+      <tr class="odd">
+        <td><code>&quot;redirectUrl&quot;</code></td>
+        <td class="" >URL</td>
+        <td class="" >Optional. The redirect URL is returned from the localServer if a &quot;<a href="#MRScookie">requiredCookie</a>&quot; is not present for the URL requested. </td>
+      </tr>
+      <tr class="odd">
+        <td><code>&quot;entries&quot;</code></td>
+        <td width="208">An array of URL resources,  in JavaScript object format. (See table below for details.) </td>
+        <td width="336">Lists the URLs of all the resources to be captured for this manifest file. </td>
+      </tr>
+    </table>
+    <p>&nbsp;</p>
+    <p>The <code>&quot;entries&quot;</code> attribute in the manifest file is an array of URL resources,  in  JavaScript object format. The resource objects'  attribute-value pairs are described below.</p>
+    <table>
+      <tr class="odd">
+        <th width="186"><div align="center" >Attribute</div></th>
+        <th width="179"><div align="center" >Value</div></th>
+        <th width="365"><div align="center" >Notes</div></th>
+      </tr>
+      <tr class="odd">
+        <td width="186"><code>&quot;url&quot;</code></td>
+        <td width="179"  >URL</td>
+        <td width="365" >Required. A URL of a resource to be stored locally and served when <code>&quot;url&quot;</code> is requested locally. <br />
+          <br />
+        All URLs must follow the same-origin <a href="security.html">security</a> policy. </td>
+      </tr>
+      <tr class="odd">
+        <td><code>&quot;src&quot;</code></td>
+        <td class="odd">URL<strong></td>
+        <td class="odd">Optional.
+        If <code>&quot;src&quot;</code> is present, the given URL is fetched and
+        served when <code>&quot;url&quot;</code> is requested locally.<br />
+        <br />
+        The<code>&quot;src&quot;</code> and <code>&quot;redirect&quot;</code> are mutually
+      exclusive.</td>
+      </tr>
+      <tr class="odd">
+        <td><code>&quot;redirect&quot;</code></td>
+        <td class="" >URL</td>
+        <td class="" >Optional. If  <code>&quot;redirect&quot;</code> is present, the
+        local server responds with a 302 redirect to the given URL when <code>&quot;url&quot;</code> is
+         requested locally.<br />
+         <br />
+         The<code>&quot;src&quot;</code> and <code>&quot;redirect&quot;</code> are mutually
+      exclusive.</td>
+      </tr>
+      <tr class="odd">
+        <td><code>&quot;ignoreQuery&quot;</code></td>
+        <td width="179">boolean (default is <code>false</code>) </td>
+        <td width="365">Optional. If the value is <code>true</code> the query string in the request URL is ignored when matching against this entry's URL.<br />
+          <br/>
+        For example, a request for <code>formHandler.html?name=value</code> can match the entries for the full URL including the query, or just the <code>formHandler.html</code> portion of the URL. <br />
+        <br/>
+        Note: An entry with an exact URL match takes precedence over a match found by ignoring the query string. </td>
+      </tr>
+    </table>
+
+<!------------------------------------------------------------->
+<!-- Cookies and the LocalServer                             -->
+<!------------------------------------------------------------->
+  <p>&nbsp;</p>
+  <a name="required_cookie"></a>
+  <h2>Cookies and the LocalServer</h2>
+  <p>Both the <code>ResourceStore</code> and <code>ManagedResourceStore</code>
+  support an optional <code>requiredCookie</code> attribute. 
+  This value causes LocalServer to examine cookies when
+  deciding which resource to serve for a request. The attribute is used as follows:</p>
+  
+  <table>
+    <tr class="odd">
+      <th><div align="center" >requiredCookie</div></th>
+      <th width="100%"><div align="center" >Behavior</div></th>
+    </tr>
+    <tr class="odd">
+      <td><code>&quot;foo=bar&quot;</code></td>
+      <td>Serves the resource from the store if cookie <code>foo</code> is present in the request, and
+        has the value <code>bar</code>.
+      </td>
+    </tr>
+    <tr class="odd">
+      <td><code>&quot;foo=;NONE;&quot;</code></td>
+      <td class="odd">Serves the resource from the store if cookie <code>foo</code>
+        is <b>not</b> present in the request.
+      </td>
+    </tr>
+  </table>
+
+<!------------------------------------------------------------->
+<!-- File system location                                    -->
+<!------------------------------------------------------------->
+  <p>&nbsp;</p>
+  <a name="filesystem_location"></a>
+  <h2>Location of cached files</h2>
+  <p>The LocalServer stores files that your application captures in a location determined by the browser and platform. </p>
+  <p><strong>Windows Vista - Internet Explorer </strong></p>
+  <p> Location: {FOLDERID_LocalAppDataLow}\Google\Appcelerator Titanium for Internet Explorer<br />
+    Example: C:\Users\Bob\AppData\LocalLow\Google\Appcelerator Titanium for Internet Explorer</p>
+  <p><strong>Windows Vista - Firefox </strong>- Files are stored in the user local profile directory. </p>
+  <p>Location: C:\Users\&lt;username&gt;\AppData\Local\Mozilla\Firefox\Profiles\{profile}.default\Appcelerator Titanium for Firefox <br />
+    Example:  C:\Users\Bob\AppData\Local\Mozilla\Firefox\Profiles\uelib44s.default\Appcelerator Titanium for Firefox  </p>
+  <p><strong>Windows XP - Internet Explorer </strong>- Files are stored in the user local profile directory. </p>
+  <p> Location: C:\Documents and Settings\&lt;username&gt;\Local Settings\Application Data\Google\Appcelerator Titanium for Internet Explorer<br />
+    Example: C:\Documents and Settings\Bob\Local Settings\Application Data\Google\Appcelerator Titanium for Internet Explorer</p>
+  <p><strong> Windows XP - Firefox </strong>- Files are stored in the user local profile directory. </p>
+  <p>Location: C:\Documents and Settings\&lt;username&gt;\Local Settings\Application Data\Mozilla\Firefox\Profiles\{profile}\Appcelerator Titanium for Firefox<br />
+    Example: C:\Documents and Settings\Bob\Local Settings\Application Data\Mozilla\Firefox\Profiles\uelib44s.default\Appcelerator Titanium for Firefox</p>
+  <p><strong>Mac OS/X - Firefox </strong>- Files are stored in the user local profile directory. </p>
+  <p>Location: Users/&lt;username&gt;/Library/Caches/Firefox/Profiles/{profile}.default/Appcelerator Titanium for Firefox <br />
+    Example: Users/Bob/Library/Caches/Firefox/Profiles/08ywpi3q.default/Appcelerator Titanium for Firefox</p>
+  <p><strong>Linux - Firefox </strong>- Files are stored in the user home directory.</p>
+  <p>Location: ~<em>bob</em>/.mozilla/firefox/&lt;firefox's profile id&gt;/Appcelerator Titanium for Firefox <br />
+    Example: ~bob/.mozilla/firefox/08ywpi3q.default/Appcelerator Titanium for Firefox </p>
+
+
+</div>
+</body>
+</html>

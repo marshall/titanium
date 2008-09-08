@@ -1,0 +1,33 @@
+<string id="string-html-title">Gears सुरक्षा चेतावनी</string>
+<string id="string-allow">अनुमति दें</string>
+<string id="string-allow-accesskey">अनुमति दें</string>
+<string id="string-deny">इंकार करें</string>
+<string id="string-deny-accesskey">इंकार करें</string>
+<string id="string-cancel">रद्द करें</string>
+<string id="string-never-allow-link">इस साइट को कभी अनुमति न दें</string>
+<string id="string-never-allow-link-wince">उसे कभी अनुमति न दें</string>
+<string id="string-description">
+  Gears एक खुला स्रोत ब्राउज़र एक्सटेंशन है जो वेब अनुप्रयोगों को निम्नलिखित JavaScript APIs का उपयोग कर ऑफ़लाइन कार्यक्षमताएँ उपलब्ध कराने देता है:
+</string>
+<string id="string-localserver-desc">
+  अनुप्रयोग संसाधन स्थानीय रूप से संचित और सर्व करें
+</string>
+<string id="string-database-desc">
+  डेटा को स्थानीय रूप से एक पूर्ण रूप से खोजने योग्य रिलेशनल डेटाबेस में संचित करें
+</string>
+<string id="string-workerpool-desc">
+  अनुप्रयोग की प्रतिक्रियात्मकता में सुधार लाने के लिए एसिंक्रॉनस JavaScript चलाएँ
+</string>
+<string id="string-query-data">
+  नीचे दी गई वेबसाइट Gears का उपयोग कर आपके कंप्यूटर पर जानकारी संग्रहीत करना चाहती है.
+</string>
+<string id="string-query-location">
+  नीचे दी गई वेबसाइट Gears का उपयोग कर आपकी स्थिति के बारे में जानकारी पर पहुँचना चाहती है.
+</string>
+<string id="string-location-privacy-statement">
+  यह देखने के लिए कि आपकी स्थिति का किस प्रकार उपयोग किया जाएगा साइट की गोपनीयता नीति पढ़ें.
+</string>
+<string id="string-trust-site">
+  मैं इस साइट पर भरोसा करता हूँ. इसे Gears का उपयोग करने दें.
+</string>
+<string id="string-trust-site-accesskey">t</string>

@@ -1,0 +1,33 @@
+<string id="string-html-title">Advertencia de seguridad Gears</string>
+<string id="string-allow">Permitir</string>
+<string id="string-allow-accesskey">P</string>
+<string id="string-deny">Denegar</string>
+<string id="string-deny-accesskey">D</string>
+<string id="string-cancel">Cancelar</string>
+<string id="string-never-allow-link">No permitir nunca este sitio</string>
+<string id="string-never-allow-link-wince">No permitirlo nunca</string>
+<string id="string-description">
+  Gears es una extensión del navegador de software libre que permite a las aplicaciones web funcionar sin conexión a través de las siguientes interfaces de programación de aplicaciones (API) de Javascript:
+</string>
+<string id="string-localserver-desc">
+  Almacenar y proporcionar recursos de aplicaciones de forma local.
+</string>
+<string id="string-database-desc">
+  Almacenar datos localmente en una base de datos relacional que admite búsquedas completas
+</string>
+<string id="string-workerpool-desc">
+  Ejecutar JavaScript asíncrono para mejorar la capacidad de respuesta de la aplicación
+</string>
+<string id="string-query-data">
+  El siguiente sitio Web desea almacenar información en tu equipo utilizando Gears.
+</string>
+<string id="string-query-location">
+  El siguiente sitio web desea acceder a información sobre tu ubicación con Gears.
+</string>
+<string id="string-location-privacy-statement">
+  Lee la política de privacidad de este sitio para ver cómo se utilizará tu ubicación.
+</string>
+<string id="string-trust-site">
+  Confío en este sitio. Permitir utilizar Gears.
+</string>
+<string id="string-trust-site-accesskey">t</string>

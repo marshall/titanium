@@ -1,0 +1,5 @@
+<string id="IDS_VERSION_COLLISION_TITLE">ದಯವಿಟ್ಟು ನಿಮ್ಮ ಬ್ರೌಸರನ್ನು ಪುನರಾರಂಭಿಸಿ</string>
+<string id="IDS_VERSION_COLLISION_TEXT">ಒಂದು Gears ನವೀಕರಣವನ್ನು ಡೌನ್ಲೋಡ್ ಮಾಡಲಾಗಿದೆ.\n\nನವೀಕರಣ ಪ್ರಕ್ರಿಯೆಯನ್ನು ಪೂರ್ಣಗೊಳಿಸಲು ದಯವಿಟ್ಟು ಎಲ್ಲಾ ಬ್ರೌಸರ್ ವಿಂಡೋಗಳನ್ನು ಮುಚ್ಚಿ.\n</string>
+<string id="IDS_REGISTRY_MENU_TEXT">&Gears ಸೆಟ್ಟಿಂಗ್ಸ್</string>
+<string id="IDS_REGISTRY_MENU_STATUS_BAR">‘ಯಾವ ಸೈಟ್ ಗಳು Gears ನ್ನು ಪಡೆಯಬಹುದೆಂಬುದನ್ನು ನಿರ್ವಹಿಸಿ’</string>
+

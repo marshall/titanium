@@ -1,0 +1,14 @@
+<string id="string-cancel">Huỷ</string>
+<string id="string-cancel-accesskey">H</string>
+<string id="string-apply">Áp dụng</string>
+<string id="string-apply-accesskey">P</string>
+<string id="string-nosites">Không có trang web nào.</string>
+<string id="string-allowed">Được phép</string>
+<string id="string-denied">Bị từ chối</string>
+<string id="string-local-storage">Bộ nhớ cục bộ</string>
+<string id="string-location-data">Vị trí</string>
+<string id="string-gears-settings">Cài đặt Gears</string>
+<string id="string-permissions-description">Bảng dưới đây hiển thị các quyền bạn cấp cho mỗi trang đã cố gắng sử dụng Gears.</string>
+<string id="string-version">Gears phiên bản PRODUCT_VERSION</string>
+<string id="string-html-title">Cài đặt Gears</string>
+<string id="string-remove">Xoá</string>

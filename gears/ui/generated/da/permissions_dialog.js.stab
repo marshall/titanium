@@ -1,0 +1,33 @@
+<string id="string-html-title">Gears-sikkerhedsadvarsel</string>
+<string id="string-allow">Tillad</string>
+<string id="string-allow-accesskey">I</string>
+<string id="string-deny">Afvis</string>
+<string id="string-deny-accesskey">F</string>
+<string id="string-cancel">Annuller</string>
+<string id="string-never-allow-link">Tillad aldrig dette websted</string>
+<string id="string-never-allow-link-wince">Giv aldrig tilladelse</string>
+<string id="string-description">
+  Gears er en open source-browserudvidelse, som gør det muligt for webprogrammer at stille offlinefunktioner til rådighed ved hjælp af følgende JavaScript-API'er:
+</string>
+<string id="string-localserver-desc">
+  Gem og servicer applikationsressourcer lokalt
+</string>
+<string id="string-database-desc">
+  Gem data lokalt i en fuldt søgbar relationel database
+</string>
+<string id="string-workerpool-desc">
+  Kør asynkron JavaScript for at forbedre programmernes svartid
+</string>
+<string id="string-query-data">
+  Nedenstående websted ønsker at gemme oplysninger på din computer ved hjælp af Gears.
+</string>
+<string id="string-query-location">
+  Nedenstående websted ønsker at få adgang til oplysninger om din placering ved hjælp af Gears.
+</string>
+<string id="string-location-privacy-statement">
+  Læs webstedets politik til beskyttelse af personlige oplysninger for at få mere at vide om, hvordan din placering vil blive brugt.
+</string>
+<string id="string-trust-site">
+  Jeg har tillid til dette websted. Giv tilladelse til, at det bruger Gears.
+</string>
+<string id="string-trust-site-accesskey">t</string>

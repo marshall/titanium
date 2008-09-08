@@ -1,0 +1,316 @@
+<!--
+Copyright 2007, Google Inc.
+
+Redistribution and use in source and binary forms, with or without 
+modification, are permitted provided that the following conditions are met:
+
+ 1. Redistributions of source code must retain the above copyright notice, 
+    this list of conditions and the following disclaimer.
+ 2. Redistributions in binary form must reproduce the above copyright notice,
+    this list of conditions and the following disclaimer in the documentation
+    and/or other materials provided with the distribution.
+ 3. Neither the name of Google Inc. nor the names of its contributors may be
+    used to endorse or promote products derived from this software without
+    specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
+OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<!DOCTYPE html>
+
+<html>
+<head>
+<title>Primes</title>
+<style type="text/css">
+body, td {
+  font-size:1.2em;
+  font-family:georgia,serif;
+}
+
+h2 {
+  font-family:arial,sans-serif;
+}
+
+#pb {
+  position:relative;
+  background:white;
+  border:1px solid #aaa;
+  padding:1px;
+  height:0.8em;
+  width:300px;
+  overflow:hidden;
+}
+
+#thumb {
+  position:relative;
+  width:10%;
+  height:100%;
+  left:0;
+  background:navy;
+}
+
+</style>
+<script src="../../gears_init.js"></script>
+<script>
+
+// Class exposing next(current, cb), which calculates the next item in
+// the sequence from current, and passes it to cb when finished.
+function Generator() {
+  function isPrime(probe) {
+    if (probe % 2 == 0) return false;
+    for (var factor = 3; factor * factor <= probe; factor += 2) {
+      if (probe % factor == 0) return false;
+    }
+    return true;
+  }
+
+  // Return the next prime number after previous.
+  function nextPrime(previous) {
+    if (previous < 2) return 2;
+    if (previous == 2) return 3;
+    previous += 1 + previous % 2;
+    while (!isPrime(previous)) {
+      previous++;
+    }
+    return previous;
+  }
+
+  // Return the first prime of the next prime pair after previous.
+  function nextTwin(previous) {
+    previous = nextPrime(previous);
+    while (nextPrime(previous) - previous != 2) {
+      previous = nextPrime(previous);
+    }
+    return previous;
+  }
+
+  function nextQuad(previous) {
+    previous = nextTwin(previous);
+    while (nextTwin(previous) - previous != 6) {
+      previous = nextTwin(previous);
+    }
+    return previous;
+  }
+
+  this.error = false;
+
+  this.next = function(current, cb) {
+    cb(nextQuad(current));
+  }
+}
+
+// Just like the generator class, except that the generator instance
+// is in a WorkerPool child.
+function BackgroundGenerator() {
+  try {
+    this.workerPool = google.gears.factory.create('beta.workerpool');
+  } catch (e) {
+    setError('Could not create workerpool: ' + e.message);
+    this.error = true;
+    return;
+  }
+  this.childId = null;
+  this.cb = null;
+
+  this.child = function(g) {
+    var ff = new g();
+    google.gears.workerPool.onmessage = function(messageText,senderId,message) {
+      ff.next(Number(message.text), function(val) {
+        google.gears.workerPool.sendMessage(String(val), message.sender);
+      });
+    }
+  }
+
+  // A generic handler because we have to.
+  this.workerPool.onmessage = function(messageText, senderId, message) {
+    alert(message.text);
+  };
+
+  try {
+    this.childId = this.workerPool.createWorker(
+      '(' + this.child + ')(' + Generator + ')'
+    );
+  } catch (e) {
+    setError('Could not create worker: ' + e.message);
+    this.error = true;
+    return;
+  }
+
+  this.error = false;
+
+  this.next = function(prime, cb) {
+    var self = this;
+    this.cb = cb;
+    this.workerPool.onmessage = function(messageText, senderId, message) {
+      self.cb(Number(message.text));
+    };
+    this.workerPool.sendMessage(String(prime), this.childId);
+  }
+}
+
+BackgroundGenerator.prototype.error = false;
+
+
+// Repeatedly call on the generator to get new elements, and insert
+// them into the element named by outputElement.
+function Outputter(outputElement, generator) {
+  this.running = false;
+  this.generator = generator;
+
+  this.outputElement = outputElement;
+
+  if (generator.error) {
+    var container = document.getElementById(this.outputElement);
+    while (container && container.tagName != 'TD') {
+      container = container.parentNode;
+    }
+    if (!container) {
+      return;
+    }
+    var buttons = container.getElementsByTagName('button');
+    for (var i = 0, el; el = buttons[i]; i++) {
+      el.disabled = true;
+    }
+  }
+
+  this.found = function(prime) {
+    var elt = document.getElementById(this.outputElement);
+    elt.insertBefore(document.createElement('br'), elt.firstChild);
+    var tn = document.createTextNode(
+        "("+ [prime, prime + 2, prime + 6, prime + 8].join(', ') + ')');
+    elt.insertBefore(tn, elt.firstChild);
+
+    if (this.running) {
+      var self = this;
+      window.setTimeout(function() {
+        self.generator.next(prime, function(prime) {
+          self.found(prime);
+        });
+      }, 100);
+    }
+  }
+
+  this.stop = function() {
+    this.running = false;
+    return false;
+  }
+
+  this.go = function() {
+    if (!this.running) {
+      var elt = document.getElementById(this.outputElement);
+      elt.removeChild(elt.firstChild);
+
+      var self = this;
+      this.running = true;
+      this.generator.next(5, function(prime) {
+        self.found(prime);
+      });
+    }
+    return false;
+  }
+}
+
+function setError(s) {
+  var el = document.getElementById('status');
+  el.innerHTML = s;
+}
+
+// The saw function goes from 0 to 1 for half the duration and back to 0 in
+// the second half.
+function saw(t, dur) {
+  t = t % dur;
+  v = t / dur;
+  if (v > 0.5) {
+    v = 1 - v;
+  }
+  return v * 2
+}
+
+function animateThumb() {
+  if (fg.running || bg.running || bg2.running) {
+    var thumb = document.getElementById('thumb');
+    var t = new Date - 0;
+    thumb.style.left = Math.round(saw(t, 4000) * 90) + '%';
+  }
+  window.setTimeout(animateThumb, 40);
+}
+
+window.onload = animateThumb;
+
+</script>
+</head>
+
+<body>
+
+<h2>Calculate some prime quadruplets</h2>
+
+<p id="status" style="color:red"></p>
+
+
+<p><em>A prime quadruplet (sometimes called prime quadruple) is four primes
+of the form {p, p+2, p+6, p+8}.</em> --
+<a href="http://en.wikipedia.org/wiki/Prime_quadruplet">Wikipedia</a>
+
+<br>
+<hr>
+<br>
+
+<div id="pb">
+  <div id="thumb"></div>
+</div>
+
+<br>
+
+<table width=100%>
+  <tr>
+    <th align=left>Foreground</th>
+    <th align=left>WorkerPool</th>
+    <th align=left>WorkerPool2</th>
+  </tr>
+  <tr>
+    <td valign=top width=33%>
+      <p>
+      <button onclick="return fg.go();">Go!</button>
+      <button onclick="return fg.stop();">Stop!</button>
+
+      <p>Prime quads:<br>
+      <span id="fg_primes">TBD</span>
+    </td>
+    <td valign=top width=33%>
+      <p>
+      <button onclick="return bg.go();">Go!</button>
+      <button onclick="return bg.stop();">Stop!</button>
+
+      <p>Prime quads:<br>
+      <span id="bg_primes">TBD</span>
+    </td>
+    <td valign=top width=33%>
+      <p>
+      <button onclick="return bg2.go();">Go!</button>
+      <button onclick="return bg2.stop();">Stop!</button>
+
+      <p>Prime quads:<br>
+      <span id="bg2_primes">TBD</span>
+    </td>
+  </tr>
+</table>
+
+<script>
+
+var fg = new Outputter('fg_primes', new Generator());
+var bg = new Outputter('bg_primes', new BackgroundGenerator());
+var bg2 = new Outputter('bg2_primes', new BackgroundGenerator());
+
+</script>
+
+</body>
+</html>

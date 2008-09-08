@@ -1,0 +1,14 @@
+<string id="string-cancel">Annuller</string>
+<string id="string-cancel-accesskey">A</string>
+<string id="string-apply">Anvend</string>
+<string id="string-apply-accesskey">I</string>
+<string id="string-nosites">Ingen websteder.</string>
+<string id="string-allowed">Tilladt</string>
+<string id="string-denied">Afvist</string>
+<string id="string-local-storage">Lokalt lager</string>
+<string id="string-location-data">Placering</string>
+<string id="string-gears-settings">Indstillinger til Gears</string>
+<string id="string-permissions-description">Nedenstående tabel indeholder en oversigt over de tilladelser, du har givet til de websteder, der har forsøgt at få adgang til at bruge Gears.</string>
+<string id="string-version">Gears-version PRODUKT_VERSION</string>
+<string id="string-html-title">Indstillinger til Gears</string>
+<string id="string-remove">Fjern</string>

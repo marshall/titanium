@@ -1,0 +1,155 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "DTD/xhtml1-transitional.dtd">
+
+<!--
+Copyright 2007, Google Inc.
+
+Redistribution and use in source and binary forms, with or without 
+modification, are permitted provided that the following conditions are met:
+
+ 1. Redistributions of source code must retain the above copyright notice, 
+    this list of conditions and the following disclaimer.
+ 2. Redistributions in binary form must reproduce the above copyright notice,
+    this list of conditions and the following disclaimer in the documentation
+    and/or other materials provided with the distribution.
+ 3. Neither the name of Google Inc. nor the names of its contributors may be
+    used to endorse or promote products derived from this software without
+    specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
+OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<html>
+  <head>
+    <title>Gears and Security</title>
+    <link rel="stylesheet" type="text/css" href="gears.css" />
+  </head>
+
+<body>
+
+<h1>Gears and Security</h1>
+
+<div id="pagecontent">
+
+<p>This page describes the security model used in Gears, and
+  discusses what developers can do to build secure applications.
+
+
+<h1>Contents</h1>
+<div>
+  <ol class="toc">
+  <li><a href="#model">Basic Security Model</a></li>
+  <li><a href="#permissions">Permissions Dialog</a></li>
+  <li><a href="#enduserdata">Security of End-User Data</a></li>
+  <li><a href="#bestpractices">Best Practices</a></li>
+  </ol>
+</div>
+
+
+
+<a name="model" id="model"></a>
+<h1>Basic Security Model</h1>
+
+<p>Gears uses the
+  <a href="http://en.wikipedia.org/wiki/Same_origin_policy">same origin
+  policy</a> as its underlying security model. A web page with a
+  particular <i>scheme, host, and port</i> can only access resources with the
+  same <i>scheme, host, and port</i>.
+
+<p>This means a site using Gears:
+  <ul>
+  <li>Database: Can only open databases created for that site's origin.
+  <li>LocalServer: Can only capture URLs and use manifests from the site's
+      origin.
+  </ul>
+
+<p>Sometimes web applications on different origins may want to share resources.
+  We are investigating ideas for granting permissions across origins.
+
+
+
+<a name="permissions" id="permissions"></a>
+<h1>Permissions Dialog</h1>
+
+<p>To protect users, Gears shows a warning dialog when a site
+  first attempts to use the Gears API. User opt-in is important
+  because Gears allows applications to store data on the user's
+  hard disk.
+
+<p>Users can grant or deny access for each security origin.  When a user grants
+access to Gears for a particular origin, Gears remembers this decision for
+future visits. Denying access is only until the page is reloaded, though users
+can also choose to never allow a particular site to access Gears. Remembered
+decisions can later be changed using the Gears Settings dialog, located
+in the browser's Tools menu.
+
+
+
+<a name="enduserdata" id="enduserdata"></a>
+<h1>Security of End-User Data</h1>
+
+<p>Gears data files are protected with the user's operating system
+  login credentials. Users with separate login names cannot access each other's
+  Gears data files, as enforced by the operating system.
+
+<p>On the other hand, two people using the same OS login could theoretically
+  access each other's Gears data files, just as they could access any other
+  file on the machine.
+
+
+
+<a name="bestpractices" id="bestpractices"></a>
+<h1>Best Practices</h1>
+
+
+<h2>Database Security</h2>
+&nbsp;
+
+  <p class="caution"><strong>Best Practice:</strong>:
+    Avoid SQL injection attacks. Never insert user input directly into a
+    SQL statement. Instead, use substitution parameters in
+    <span class="code">Database.execute()</span>.
+  </p>
+
+<p>An attacker may run unintended SQL commands using a technique called
+<a href="http://en.wikipedia.org/wiki/SQL_injection">SQL injection</a>.
+
+<p>To avoid this, developers should pass user input to SQL statements
+  <i>only</i> through the question mark (<code>?</code>)
+  substitution parameter.  This way, the input will get correctly escaped
+  before being executed.
+
+<p>For example, write this:<br>
+  &nbsp; &nbsp;
+  <code>db.execute('insert into MyTable values (?)', data);</code><br>
+instead of this:<br>
+  &nbsp; &nbsp;
+  <code>db.execute('insert into MyTable values (' + data + ')');</code>
+
+
+
+<h3>User Opt-In</h3>
+&nbsp;
+
+  <p class="caution"><strong>Best Practice</strong>:
+    Store offline preferences locally. Applications should treat a user's
+    "enable offline features" choice as a per-machine setting.
+  </p>
+
+<p>Users may run your application from multiple machines, and they may
+  not want their data stored locally on every machine.  For this reason,
+  store the choice in a local database.
+
+
+
+</div>
+</body>
+</html>

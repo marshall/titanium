@@ -1,0 +1,5 @@
+<string id="IDS_VERSION_COLLISION_TITLE">โปรดเริ่มต้นเบราว์เซอร์ใหม่</string>
+<string id="IDS_VERSION_COLLISION_TEXT">ดาวน์โหลดการอัปเดตของ Gears\n\nโปรดปิดหน้าต่างของเบราว์เซอร์ทั้งหมด เพื่อให้กระบวนการอัปเกรดสมบูรณ์\n</string>
+<string id="IDS_REGISTRY_MENU_TEXT">การตั้งค่า &Gears</string>
+<string id="IDS_REGISTRY_MENU_STATUS_BAR">'จัดการว่าไซต์ใดสามารถเข้าถึง Gears'</string>
+

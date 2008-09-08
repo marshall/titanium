@@ -1,0 +1,33 @@
+<string id="string-html-title">Beveiligingswaarschuwing voor Gears</string>
+<string id="string-allow">Toestaan</string>
+<string id="string-allow-accesskey">A</string>
+<string id="string-deny">Weigeren</string>
+<string id="string-deny-accesskey">D</string>
+<string id="string-cancel">Annuleren</string>
+<string id="string-never-allow-link">Deze site nooit toestaan</string>
+<string id="string-never-allow-link-wince">Nooit toestaan</string>
+<string id="string-description">
+  Gears is een browseruitbreiding met open broncode waarmee webtoepassingen offline functionaliteit kunnen bieden met de volgende JavaScript-API's:
+</string>
+<string id="string-localserver-desc">
+  Toepassingsbronnen lokaal opslaan en aanbieden
+</string>
+<string id="string-database-desc">
+  Gegevens lokaal opslaan in een volledig doorzoekbare relationele database
+</string>
+<string id="string-workerpool-desc">
+  Asynchroon JavaScript uitvoeren om ontvankelijkheid van toepassing te verbeteren
+</string>
+<string id="string-query-data">
+  De website hieronder probeert via Gears informatie op uw computer op te slaan.
+</string>
+<string id="string-query-location">
+  De website hieronder probeert via Gears informatie te krijgen over uw locatie.
+</string>
+<string id="string-location-privacy-statement">
+  Lees het privacybeleid op de site voor informatie over het gebruik van uw locatie.
+</string>
+<string id="string-trust-site">
+  Ik vertrouw deze site. Sta deze site toe Gears te gebruiken.
+</string>
+<string id="string-trust-site-accesskey">t</string>

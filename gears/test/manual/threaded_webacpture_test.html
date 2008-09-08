@@ -1,0 +1,89 @@
+<!--
+Copyright 2007, Google Inc.
+
+Redistribution and use in source and binary forms, with or without 
+modification, are permitted provided that the following conditions are met:
+
+ 1. Redistributions of source code must retain the above copyright notice, 
+    this list of conditions and the following disclaimer.
+ 2. Redistributions in binary form must reproduce the above copyright notice,
+    this list of conditions and the following disclaimer in the documentation
+    and/or other materials provided with the distribution.
+ 3. Neither the name of Google Inc. nor the names of its contributors may be
+    used to endorse or promote products derived from this software without
+    specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
+OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<HTML>
+  <HEAD>
+    <TITLE>LocalServer in Threads Tests</TITLE>
+    <script type="text/javascript" src="../../sdk/gears_init.js"></script>
+    <script type="text/javascript" language="javascript">
+
+      var threadManager;
+      var workerThreadId;
+      
+      function OnLoad() {
+        threadManager = 
+            google.gears.factory.create("beta.workerpool", "1.1");
+        threadManager.onmessage = OnThreadMessage;
+        var threadCode = Fetch("threaded_webcapture_test.js");
+        workerThreadId = threadManager.createWorker(threadCode);
+        Send("Init");
+      }
+        
+      function Send(msg) {
+        threadManager.sendMessage(msg, workerThreadId);
+      }
+      
+      function OnThreadMessage(text, sender, m) {
+        TextOut(m.text);
+        if (m.text == "Init OK") {
+          DoTests();
+        }
+      }
+      
+      function DoTests() {
+        TextOut("--------------------------------");
+        Send("TestLocalServer");
+        Send("TestManagedResourceStore");
+        Send("TestResourceStore");
+      }
+      
+      function Fetch(url) {
+        var xmlhttp;
+        if (window.XMLHttpRequest) {
+          xmlhttp = new XMLHttpRequest();
+        } else if (window.ActiveXObject) {
+          xmlhttp = new ActiveXObject("Msxml2.XMLHTTP");
+        }
+        xmlhttp.open("GET", url, false);
+        xmlhttp.send(null);
+        return xmlhttp.responseText;
+      }
+            
+      function TextOut(s) {
+        var out = document.createElement("div");
+        document.body.appendChild(out);
+        out.innerHTML = s;
+      }      
+    </script>
+  </HEAD>
+  <BODY onload="OnLoad()">
+    <form>
+      <input type="button" value="DoTests" onclick="DoTests()">
+    </form>
+    <hr>
+  </BODY>
+</HTML>

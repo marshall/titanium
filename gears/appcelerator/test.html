@@ -1,0 +1,48 @@
+<html>
+<head>
+	<script src="titanium_init.js" type="text/javascript"></script>
+	<script>
+	 var appcelerator = appcelerator.titanium.factory.create('beta.appcelerator');
+
+	 function $(id)
+	 {
+	   return document.getElementById(id);	
+	 }
+	 function do_exec()
+	 {
+		 var cmd = $('command');
+		 $('output').value = 'Executing: '+cmd.value;
+		 window.started = false;
+		 appcelerator.compileProject(cmd.value,function(output)
+		 {
+			$('output').value = $('output').value + output;
+		 },
+		 function(rc)
+		 {
+			//alert('completed with exit code: '+rc);
+		 });
+	 }
+	 function do_write()
+	 {
+		 var cmd = $('command');
+		 appcelerator.writeFile(cmd.value,$('output').value);
+	 }
+	 function do_read()
+	 {
+		 var cmd = $('command');
+		 $('output').value = appcelerator.readFile(cmd.value);
+	 }
+	</script>
+</head>
+<body>
+	<div>
+		<input type="text" id="command" value="/Users/jhaynie/tmp/test.rb" style="width:400px" />
+		<input type="button" value="Execute" onclick="do_exec()" />
+		<input type="button" value="Write" onclick="do_write()" />
+		<input type="button" value="Read" onclick="do_read()" />
+	</div>
+	<div>
+		<textarea id="output" cols="100" rows="10"></textarea>
+	</div>
+</body>
+</html>

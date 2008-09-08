@@ -1,0 +1,33 @@
+<string id="string-html-title">„Gears“ įspėjimas apie saugą</string>
+<string id="string-allow">Leisti</string>
+<string id="string-allow-accesskey">A</string>
+<string id="string-deny">Atmesti</string>
+<string id="string-deny-accesskey">D</string>
+<string id="string-cancel">Atšaukti</string>
+<string id="string-never-allow-link">Niekada neleisti šios svetainės</string>
+<string id="string-never-allow-link-wince">Niekada neleisti</string>
+<string id="string-description">
+  „Gears“ – tai atvirojo kodo naršyklės plėtinys, leidžiantis žiniatinklio programoms naudoti atjungties funkcines galimybes su šiais „JavaScript“ API:
+</string>
+<string id="string-localserver-desc">
+  Saugokite ir prižiūrėkite programos išteklius vietoje
+</string>
+<string id="string-database-desc">
+  Išsaugokite duomenis vietoje, sąryšinėje duomenų bazėje su veikiančia paieškos funkcija
+</string>
+<string id="string-workerpool-desc">
+  Padidinkite programos jautrumą paleisdami asinchroninę „Javascript“
+</string>
+<string id="string-query-data">
+  Žemiau nurodyta interneto svetainė bando išsaugoti informaciją apie jūsų vietovę naudojant „Gears“.
+</string>
+<string id="string-query-location">
+  Žemiau nurodyta interneto svetainė bando prieiti prie informacijos apie jūsų vietovę naudojant „Gears“.
+</string>
+<string id="string-location-privacy-statement">
+  Perskaitykite svetainės privatumo politiką, kad sužinotumėte, kaip bus naudojama jūsų vietovė.
+</string>
+<string id="string-trust-site">
+  Pasitikiu šia svetaine. Leisti jai naudoti „Gears“.
+</string>
+<string id="string-trust-site-accesskey">t</string>

@@ -1,0 +1,33 @@
+<string id="string-html-title">Gears 安全性警告</string>
+<string id="string-allow">允許</string>
+<string id="string-allow-accesskey">A</string>
+<string id="string-deny">拒絕</string>
+<string id="string-deny-accesskey">D</string>
+<string id="string-cancel">取消</string>
+<string id="string-never-allow-link">永不允許這個網站</string>
+<string id="string-never-allow-link-wince">永不允許</string>
+<string id="string-description">
+  Gears 是一種開放程式碼的瀏覽器擴充功能，它透過下列 JavaScript API 為網路應用程式提供離線功能：
+</string>
+<string id="string-localserver-desc">
+  在本機儲存並提供應用程式資源
+</string>
+<string id="string-database-desc">
+  在本機將資料儲存到完全可搜尋的關聯式資料庫中
+</string>
+<string id="string-workerpool-desc">
+  執行非同步 JavaScript 以提升應用程式的回應速度
+</string>
+<string id="string-query-data">
+  下方的網站要使用 Gears 在您的電腦上儲存資訊。
+</string>
+<string id="string-query-location">
+  下方的網站要使用 Gears 存取您位置的相關資訊。
+</string>
+<string id="string-location-privacy-statement">
+  閱讀網站的隱私權政策以查看網站會如何使用您的位置。
+</string>
+<string id="string-trust-site">
+  我相信這個網站。 讓它使用 Gears。
+</string>
+<string id="string-trust-site-accesskey">t</string>

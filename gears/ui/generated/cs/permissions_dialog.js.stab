@@ -1,0 +1,33 @@
+<string id="string-html-title">Výstraha zabezpečení aplikace Gears</string>
+<string id="string-allow">Povolit</string>
+<string id="string-allow-accesskey">P</string>
+<string id="string-deny">Zamítnout</string>
+<string id="string-deny-accesskey">Z</string>
+<string id="string-cancel">Zrušit</string>
+<string id="string-never-allow-link">Nikdy nepovolit tyto stránky</string>
+<string id="string-never-allow-link-wince">Nikdy nepovolit tuto aplikaci</string>
+<string id="string-description">
+  Gears je rozšíření typu open source pro webové prohlížeče, které umožňuje webovým aplikacím pracovat v režimu offline pomocí následujících rozhraní API prostředí JavaScript:
+</string>
+<string id="string-localserver-desc">
+  Ukládat a nabízet zdroje aplikací lokálně
+</string>
+<string id="string-database-desc">
+  Ukládat data lokálně v relační databázi, ve které lze vyhledávat
+</string>
+<string id="string-workerpool-desc">
+  Spouštět asynchronní JavaScript ke zlepšení odezvy aplikace
+</string>
+<string id="string-query-data">
+  Následující webová stránka chce pomocí aplikace Gears uložit informace do vašeho počítače.
+</string>
+<string id="string-query-location">
+  Následující webová stránka se pomocí aplikace Gears pokouší získat informace o vaší lokalitě.
+</string>
+<string id="string-location-privacy-statement">
+  Přečtěte si zásady ochrany osobních údajů tohoto webu, kde zjistíte, jakým způsobem budou použity informace o vaší lokalitě.
+</string>
+<string id="string-trust-site">
+  Důvěřuji tomuto webu. Umožnit používání aplikace Gears.
+</string>
+<string id="string-trust-site-accesskey">d</string>

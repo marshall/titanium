@@ -1,0 +1,8 @@
+{
+  "betaManifestVersion": 1,
+  "version": "1",
+  "entries": [
+    {"url": "/testcases/manifest-url1.txt"},
+    {"url": "testcases/cgi/server_redirect.py?location=/testcases/manifest-url1.txt" }
+  ]
+}

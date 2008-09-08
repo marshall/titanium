@@ -1,0 +1,423 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "DTD/xhtml1-transitional.dtd">
+
+<!--
+Copyright 2007, Google Inc.
+
+Redistribution and use in source and binary forms, with or without 
+modification, are permitted provided that the following conditions are met:
+
+ 1. Redistributions of source code must retain the above copyright notice, 
+    this list of conditions and the following disclaimer.
+ 2. Redistributions in binary form must reproduce the above copyright notice,
+    this list of conditions and the following disclaimer in the documentation
+    and/or other materials provided with the distribution.
+ 3. Neither the name of Google Inc. nor the names of its contributors may be
+    used to endorse or promote products derived from this software without
+    specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
+OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<html>
+  <head>
+    <title>WorkerPool API</title>
+    <link rel="stylesheet" type="text/css" href="gears.css" />
+  </head>
+
+<body>
+
+<h1>WorkerPool API</h1>
+
+<div id="pagecontent">
+
+<p>The WorkerPool API allows web applications to run JavaScript code
+in the background, without blocking the main page's script execution.
+
+
+<h3>Contents</h3>
+
+  <ol class="toc">
+  <li><a href="#overview">Overview</a>
+  <li><a href="#example">Example</a>
+  <li><a href="#details">Details</a>
+    <ol>
+    <li><a href="#isolation">Code and data isolation</a>
+    <li><a href="#limitations">Limitations</a>
+    <li><a href="#typical_use">Usage pattern</a>
+    </ol>
+  <li><a href="#workerpool_class">WorkerPool class</a>
+  </ol>
+
+
+
+<h2 id="overview">Overview</h2>
+
+<p>In web browsers a single time-intensive operation, such as I/O or
+heavy computation, can make the UI unresponsive.  The WorkerPool API
+runs operations in the background, without blocking the UI.
+Scripts executing in the WorkerPool will not trigger the browser's
+"unresponsive script" dialog.
+<h4>Permission</h4>
+
+<p>This API requires user permission.  If you would like to customize the default dialog, you can explicitly call <code>google.gears.factory.getPermission()</code> - <a href="api_factory.html">see how.</a></p>
+
+<h2 id="example">Example</h2>
+
+<pre><code>&lt;script type="text/javascript" src="<a href='tools.html#gears_init'>gears_init.js</a>"&gt;&lt;/script&gt;
+&lt;script type="text/javascript"&gt;
+// main.js
+var workerPool = google.gears.factory.create('beta.workerpool');
+
+workerPool.onmessage = function(a, b, message) {
+  alert('Received message from worker ' + message.sender + ': \n' + message.body);
+};
+
+var childWorkerId = workerPool.createWorkerFromUrl('worker.js');
+
+workerPool.sendMessage(["3..2..", 1, {helloWorld: "Hello world!"}], childWorkerId);
+&lt;/script&gt;</code></pre>
+
+<pre><code>// worker.js
+var wp = google.gears.workerPool;
+wp.onmessage = function(a, b, message) {
+  var reply = message.body[0] + message.body[1] + "... " + message.body[2].helloWorld;
+  wp.sendMessage(reply, message.sender);
+}</code></pre>
+
+
+<h2 id="details">Details</h2>
+
+<h3 id="isolation">Code and data isolation</h3>
+
+<p>The WorkerPool behaves like a collection of processes, rather than threads.
+<b>Workers do not share any execution state.</b>  Changing a variable in
+one worker has no effect in any other worker.  And created workers do not
+automatically inherit script code from their parents.
+
+<p>Members of a WorkerPool interact with each other only by sending message
+objects.
+
+<h3 id="limitations">Limitations</h3>
+
+<p>A created worker does not have access to the DOM; objects like
+<code>document</code> and <code>window</code> exist only on the main page.
+This is a consequence of workers not sharing any execution state.
+
+<p>However, workers do have access to all JavaScript built-in functions.  Most
+Gears methods can also be used, through a global variable that is
+automatically defined: <code>google.gears.factory</code>.  (One exception is
+the LocalServer file submitter, which requires the DOM.)  For other
+functionality, created workers can ask the main page to carry out requests.
+
+
+<h3 id="typical_use">Usage pattern</h3>
+
+<p>To understand how to use the WorkerPool API, it is useful to look at
+a typical example.
+
+  <h4>Initialization sequence</h4>
+
+<ol>
+<li>JavaScript code (the "parent" worker) uses <code>google.gears.factory</code>
+    to create a WorkerPool <code>wp</code>.
+<li>The parent indicates where incoming messages should go by setting
+    <code>wp.onmessage</code>.  It does this <i>before</i> calling
+    <code>createWorker()</code> to help ensure no messages will be lost.
+<li>For each new worker (a "child" worker):
+
+  <ol class="alpha">
+  <li>The parent calls <code>wp.createWorkerFromUrl()</code> with a URL that
+      returns the full body of script the child will contain.
+  <li><code>createWorkerFromUrl()</code> returns immediately and the parent
+      continues running.
+  <li>In parallel, the child fetches its script code and runs through it once.
+      During this time the child must set its <code>onmessage</code> handler,
+      on the predefined global variable <code>google.gears.workerPool</code>.
+  </ol>
+</ol>
+
+
+  <h4>Communication</h4>
+
+<p>Workers send messages to each other using <code>sendMessage()</code>.
+Any member of a particular WorkerPool can communicate with any other member.
+  
+<p>Each sent message triggers the receiver's <code>onmessage</code> handler.
+Message events are handled like all other JavaScript events.  In particular,
+processing is interleaved the same way: there is an event queue, and the next
+event handler is not called until the previous one returns.
+
+<p>The WorkerPool is <i>not</i> a singleton.  A page can create multiple
+WorkerPool instances, and these pools are isolated from each other.  This
+enables multiple gadgets on a page, for example, to use the WorkerPool API
+without fear of collision.
+  
+
+<p>How does script know which worker ID to send messages to?  There are two
+common ways:
+
+<ol>
+<li>Use the second parameter to <code>onmessage</code>, which contains the
+    sender's worker ID.  A "grunt" worker whose purpose is to <u>execute
+    requests asynchronously</u> will often use this method, blindly
+    responding to whichever worker made the request.
+<li>Use the value returned by <code>createWorker()</code>, which is the ID
+    of the newly created worker.  A worker whose purpose is to <u>coordinate
+    tasks</u> (usually the application's "main" JavaScript code) will often use
+    this method.  The ID can be sent to, and used by, any member of the
+    WorkerPool, but this is seldom necessary.
+</ol>
+
+
+
+
+<h2 id="workerpool_class">WorkerPool class</h2>
+
+<pre><code>callback <b>onmessage</b>(messageText, senderId, messageObject)
+callback <b>onerror</b>(errorObject)
+int  <b>createWorker</b>(scriptText)
+int  <b>createWorkerFromUrl</b>(scriptUrl)
+void <b>sendMessage</b>(message, destWorkerId)
+void <b>allowCrossOrigin</b>()
+</code></pre>
+<br>
+
+<h3>Event Handlers</h3>
+
+<table>
+  <tr class="odd">
+    <th colspan="2"><code>callback onmessage(messageText, senderId, messageObject)</code></th>
+  </tr>
+  <tr class="odd">
+    <td width="113">Summary:</td>
+    <td width="550" class="odd">Specifies the function to call when this worker receives a message.</td>
+  </tr>
+  <tr class="odd">
+    <td>Parameters:</td>
+    <td class="odd">
+      <code>messageText</code>
+      - The message contents. <i>(Deprecated. Prefer <code>messageObject.text</code>.)</i>
+      <br>
+      <code>senderId</code>
+      - ID of the source worker. <i>(Deprecated. Prefer <code>messageObject.sender</code>.)</i>
+      <br>
+      <code>messageObject</code>
+        An object containing all information about the message. Has these properties:
+        <!-- TODO: Create a CSS class for an indented list of object properties, which doesn't space things out as much as vanilla <ul> does. -->
+        <br>&nbsp; &nbsp; &bull; <code>body</code> - The message content object.
+        <br>&nbsp; &nbsp; &bull; <code>sender</code> - ID of the source worker.
+        <br>&nbsp; &nbsp; &bull; <code>origin</code> - The sender's origin, represented as a string of the form: SCHEME://DOMAIN[:PORT].
+        <br>&nbsp; &nbsp; The port is omitted for standard ports (http port 80, https port 443).
+        <br>&nbsp; &nbsp; &bull; <code>text</code> - The message content string <i>(Deprecated. Prefer <code>message.body</code> instead. If the message sent was a string, this property contains the message. If the message sent was some other type, it will be the empty string.</i>)
+    </td>
+  </tr>
+</table>
+
+<a name="onerror" id="onerror"></a>
+<table>
+  <tr class="odd">
+    <th colspan="2"><code>callback onerror(errorObject)</code></th>
+  </tr>
+  <tr class="odd">
+    <td width="113">Summary:</td>
+    <td width="550" class="odd">
+      Specifies a handler for unhandled errors inside a worker.
+    </td>
+  </tr>
+  <tr class="odd">
+    <td>Parameters:</td>
+    <td class="odd">
+      <code>errorObject</code>
+      - An object of type "Error" that explains the problem. Has these properties:
+        <br>&nbsp; &nbsp; &bull; <code>message</code> - Description of the error.
+        <br>&nbsp; &nbsp; &bull; <code>lineNumber</code> - The line number on which the error occurred.
+    </td>
+  </tr>
+  <tr class="odd">
+    <td>Return value:</td>
+    <td>Return <code>true</code> to indicate the error was handled, which prevents it from bubbling
+up to the parent.</td>
+  </tr>
+  <tr class="odd">
+    <td>Details:</td>
+    <td class="odd">
+      This callback provides functionality in workers similar to the
+      <code><a href="http://developer.mozilla.org/en/docs/DOM:window.onerror"
+      >window.onerror</code></a> property. If set, it will be
+      called for any unhandled errors that occur inside a worker.<br><br>
+
+      You can use this callback to implement "last-chance" error handling for
+      your workers. For example, you could log all unhandled errors into the
+      <a href="api_database.html">Database API</a>.<br><br>
+
+      <span color='red'>NOTE:</span> This callback can only be set from child workers.
+    </td>
+  </tr>
+</table>
+
+<h3>Methods</h3>
+
+<table>
+  <tr class="odd">
+    <th colspan="2"><code>int createWorker(scriptText)</code></th>
+  </tr>
+  <tr class="odd">
+    <td width="113">Summary:</td>
+    <td width="550" class="odd">
+      Creates a worker from a string of JavaScript code.
+    </td>
+  </tr>
+  <tr class="odd">
+    <td>Parameters:</td>
+    <td class="odd">
+      <code>scriptText</code>
+      - The entire body of JavaScript code the worker will contain.
+    </td>
+  </tr>
+  <tr class="odd">
+    <td>Return value:</td>
+    <td>The ID of the created worker.</td>
+  </tr>
+  <tr class="odd">
+    <td>Details:</td>
+    <td class="odd">
+      Gears guarantees the code in <code>scriptText</code> will run
+      once before any messages are delivered.  The code must set an
+      <code>onmessage</code> handler during that initial execution,
+      otherwise the worker will never receive messages.
+      <br><br>
+      Two global objects are inserted into the namespace of every created worker:<br>
+      &bull; <code>google.gears.factory</code> - Provides a Factory for the worker.<br>
+      &bull; <code>google.gears.workerPool</code> - Gives access to the WorkerPool that created the worker.
+      <br><br>
+      Worker IDs are guaranteed to be unique values that are never reused within the same WorkerPool.
+    </td>
+  </tr>
+</table>
+
+<a name="createworkerfromurl" id="createworkerfromurl"></a>
+<table>
+  <tr class="odd">
+    <th colspan="2"><code>int createWorkerFromUrl(scriptUrl)</code></th>
+  </tr>
+  <tr class="odd">
+    <td width="113">Summary:</td>
+    <td width="550" class="odd">
+      Creates a worker using the JavaScript code fetched from a URL.
+    </td>
+  </tr>
+  <tr class="odd">
+    <td>Parameters:</td>
+    <td class="odd">
+      <code>scriptUrl</code>
+      - The URL to fetch, which returns the full JavaScript code the worker will contain.<br>
+      A relative URL is resolved using these rules:<br>
+      &bull; When called from a window, use <code>window.location</code>.<br>
+      &bull; When called from a worker, use the worker's base URL.<br>
+      &nbsp; &nbsp; - For workers created by <code>createWorkerFromUrl()</code>, the base URL is the script URL.<br>
+      &nbsp; &nbsp; - For workers created by <code>createWorker()</code>, the base URL is inherited from the creator.<br>
+    </td>
+  </tr>
+  <tr class="odd">
+    <td>Return value:</td>
+    <td>The ID of the created worker.</td>
+  </tr>
+  <tr class="odd">
+    <td>Details:</td>
+    <td class="odd">
+      <span style="color:red">Note:</span> If called from a worker,
+      <code>createWorkerFromUrl()</code> always fails today, due to a
+      technical issue that will be addressed in a future release.
+      <br><br>
+      Gears guarantees the URL will be fetched and the code returned will run
+      once before any messages are delivered.  The code must set an
+      <code>onmessage</code> handler during that initial execution,
+      otherwise the worker will never receive messages.
+      <br><br>
+      Two global objects are inserted into the namespace of every created worker:<br>
+      &bull; <code>google.gears.factory</code> - Provides a Factory for the worker.<br>
+      &bull; <code>google.gears.workerPool</code> - Gives access to the WorkerPool that created the worker.
+      <br><br>
+      Worker IDs are guaranteed to be unique values that are never reused within the same WorkerPool.
+    </td>
+  </tr>
+</table>
+
+<a name="sendmessage"></a>
+<table>
+  <tr class="odd">
+    <th colspan="2"><code>void sendMessage(message, destWorkerId)</code></th>
+  </tr>
+  <tr class="odd">
+    <td width="113">Summary:</td>
+    <td width="550" class="odd">
+      Sends <code>message</code> to the worker specified by <code>destWorkerId</code>.
+    </td>
+  </tr>
+  <tr class="odd">
+    <td>Parameters:</td>
+    <td class="odd">
+      <code>message</code>
+      - The message to send. A message can be a boolean, string, number, array,
+      object, or Blob. Array and object messages can contain booleans, strings, 
+      numbers, nulls, Blobs, or references to other arrays and objects which also 
+      follow these rules.
+      <br>
+      <code>destWorkerId</code>
+      - ID of the destination worker.
+    </td>
+  </tr>
+  <tr class="odd">
+    <td>Details:</td>
+    <td class="odd">
+      Messages sent from worker 1 to worker 2 in a particular order will be received in the same order.
+      <br><br>
+      Messages can be sent and received only between members of the same WorkerPool.
+      <br><br>
+      Messages are copied between workers. Changes to a message received in one 
+      worker will not be reflected in the sending worker.
+    </td>
+  </tr>
+</table>
+
+<a name="allowcrossorigin" id="allowcrossorigin"></a>
+<table>
+  <tr class="odd">
+    <th colspan="2"><code>void allowCrossOrigin()</code></th>
+  </tr>
+  <tr class="odd">
+    <td width="113">Summary:</td>
+    <td width="550" class="odd">
+      A child worker must call this method if it expects to be used across origins. 
+    </td>
+  </tr>
+  <tr class="odd">
+    <td>Details:</td>
+    <td class="odd">
+      If a worker was created from a different origin, all methods on
+      <code>google.gears.factory</code> will fail in that worker until
+      <code>allowCrossOrigin()</code> is called.
+      <br><br>
+      This prevents cross-site scripting attacks where the attacker could load
+      a worker URL from another domain, then send malicious messages to that
+      worker (e.g. "delete-all-data").
+      <br><br>
+      Workers that call <code>allowCrossOrigin()</code> should check
+      <code>messageObject.origin</code> and ignore messages from unexpected
+      origins.
+    </td>
+  </tr>
+</table>
+
+</div>
+</body>
+</html>

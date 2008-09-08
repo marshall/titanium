@@ -1,0 +1,201 @@
+// NOTE: this file *is not* valid JSON so that we can use + to break up long lines
+
+{
+  visibleSlideCount: 22,
+  slides: [
+    { title: "Why bother? (you're not on a plane!)",
+      points: [
+        "Reliability - 1% of downtime can hurt at the wrong time",
+        "Performance - Local acceleration",
+        "Convenience - not having to find a connection",
+        "You are offline more than you think"
+      ]
+    },
+    {
+      title: "In a perfect world...",
+      points: [
+        "One application, one URL",
+        "Seamless transitions between online and offline",
+        "Ability to use local data, even when online",
+        "Available to all users on all platforms",
+        "... and a pony"
+      ]
+    },
+    { title: "Many possible solutions",
+      points: [
+        "<div class='img'><img src='chart.png'></div>"
+      ]
+    },
+    { title: "An incremental approach",
+      points: [
+        "Browser plugin",
+        "IE, Firefox (Windows, Mac, Linux), and Safari (almost!)",
+        "Do for offline what XMLHttpRequest did for web apps",
+        "Open Source: <a href=http://code.google.com/p/google-gears/>code.google.com</a> (New BSD)"
+      ]
+    },
+    { title: "What do Gears apps look like?",
+      points: [
+        "Read and write using local store",
+        "Changes are queued for later synchronization",
+        "Server communication is completely decoupled from UI actions, happens periodically whenever there is a connection"
+      ]
+    },
+    { title: "AJAX application architecture",
+      points: [
+        "<div class='img'><img src='arch1.jpg'></div>"
+      ]
+    },
+    { title: "Gears application architecture",
+      points: [
+        "<div class='img' style='text-align:left;'><img src='arch2.jpg'></div>"
+      ]
+    },
+    { title: "Traditional Web Traffic Patterns",
+      points: [
+        "<div class='img'><img src='traffic1.png'></div>"
+      ]
+    },
+    { title: "AJAX Traffic Patterns",
+      points: [
+        "<div class='img'><img src='traffic2.png'></div>"
+      ]
+    },
+    { title: "Gears Traffic Patterns",
+      points: [
+        "<div class='img'><img src='traffic3.png'></div>"
+      ]
+    },
+    { title: "What APIs would one need?",
+      points: [
+        "<b>LocalServer</b>, to access the application offline",
+        "<b>Database</b>, to store large amounts of structured data",
+        "<b>WorkerPool</b>, to perform long sync operations when you reconnect"
+      ]
+    },
+    { title: "LocalServer: Run web applications offline",
+      points: [
+        "Two types of \"offline caches\"",
+        "ResourceStore: capture individual URLs",
+        "ManagedResourceStore: capture entire applications"
+      ]
+    },
+    { title: "ResourceStore: Capture individual URLs",
+      points: [
+        "captureURL(url_string, callback_function)",
+        "Useful for capturing user resources",
+        "But we found we needed more to capture an application..."
+      ]
+    },
+    { title: "ManagedResourceStore: Capture entire applications",
+      points: [
+        "List application resources in a separate <em class='highlight'>manifest</em>",
+        "Gears captures and updates the list atomically",
+        "Gears autoupdates automatically on each view (within reason)",
+        "Supports multiple users per application"
+      ]
+    },
+    { title: "ManagedResourceStore Code Sample",
+      points: [
+        "<pre><span class='title'>myapp.js</span><br>" +
+          "var localserver = google.gears.factory.create('beta.localserver');<br>" +
+          "var store = localserver.createManagedStore('mystore');<br>" +
+          "store.manifestUrl = 'http://myapp.com/offline-manifest.json';<br>" +
+          "store.checkForUpdates();</pre>",
+        "<pre><span class='title'>offline-manifest.json</span><br>" +
+          "{<br>" +
+          "  \"betaManifestVersion\": <span class='string'>1</span>,<br>" +
+          "  \"version\": <span class='string'>\"v0.5\"</span>,<br>" +
+          "  \"entries\": [<br>" +
+          "    { \"url\": <span class='string'>\"myapp.html\"</span> },<br>" +
+          "    { \"url\": <span class='string'>\"myapp.js\"</span> },<br>" +
+          "    { \"url\": <span class='string'>\"logo.png\"</span> }<br>" +
+          "  ];<br>" +
+          "}</pre>"
+      ]
+    },
+    { title: "Demo: Offline Presentation",
+      points: [
+        "<a href=\"#\" onclick=\"capture(); return false;\">This presentation is the demo</a>"
+      ]
+    },
+    { title: "Database: local SQL storage",
+      points: [
+        "SQLite: Open source, mature, small (343K), fast, full-featured relational database",
+        "Gigabytes of storage capacity",
+        "Strict same-origin security model"
+      ]
+    },
+    { title: "Database Code Sample",
+      points: [
+        "<pre>var db = google.gears.factory.create('beta.database');<br>" +
+        "db.execute('insert into Delicious (Name, NumStars) values (?, ?)',<br>" +
+        "           ['burrito', 5]);<br><br>" +
+        "var rs = db.execute('select * from Delicious order by NumStars desc');<br>" +
+        "while (rs.isValidRow()) {<br>" +
+        "  console.log(rs.fieldByName('name'));<br>" +
+        "}<br>" +
+        "rs.close();</pre>"
+      ]
+    },
+    { title: "Demo: Database",
+      points: [
+        "These slides are <a href=\"dbquery.html?dbinfo=slides\">database-driven</a>",
+        "Gears comes with dbquery.html - a web-based command line for local databases",
+        "There are also many 3rd party SQLite tools available"
+      ]
+    },
+    { title: "WorkerPool: Run JavaScript in the background",
+      points: [
+        "Provides thread-like functionality to JavaScript",
+        "No more blocking the browser UI",
+        "Communication is via IPC, no shared state or threading primitives"
+      ]
+    },
+    { title: "WorkerPool Code Sample",
+      points: [
+        "<pre>function nextPrime(n) {<br>" +
+        "  <span class='comment'>// TODO: New top-secret prime-finding algorithm goes here.</span><br>" +
+        "  google.gears.workerPool.sendMessage(result);<br>" +
+        "}<br><br>" +
+        "var pool = google.gears.factory.create('beta.workerpool');<br>" +
+        "pool.onmessage = function(message) {<br>" +
+        "  alert('next prime is: ' + message);<br>" +
+        "}<br><br>" +
+        "var worker = pool.createWorker(String(nextPrime) + '; nextPrime()');</pre>"
+      ]
+    },
+    { title: "Demo: WorkerPool",
+      points: [
+        "<a href=\"primes.html\">Find prime quadruplets</a>: {p, p+2, p+6, p+8}",
+        "Simple algorithm is O(n^2) and takes seconds as numbers increase",
+        "Browser stay responsive, even with multiple concurrent tight loops"
+      ]
+    },
+    { title: "The End ... Or is it?",
+      points: [
+        "<form onsubmit='return search()'><input type=text id=query> " +
+        "<button type=submit>Search</button></form>" +
+        "<div id=search-result></div>"
+      ]
+    },
+    { title: "Bonus: Full Text Search",
+      points: [
+        "Joint project with SQLite - also open source",
+        "FTS2: Millions of documents",
+        "FTS3: Tens of millions (not done yet)",
+        "Multilingual search coming soon"
+      ]
+    },
+    { title: "Full Text Search Code Sample",
+      points: [
+        "<pre><span class='keyword'>CREATE VIRTUAL TABLE</span> Search <span class='keyword'>USING FTS2</span>(title, content);</pre>",
+        "<pre><span class='keyword'>SELECT</span> title <span class='keyword'>FROM</span> Search <span class='keyword'>WHERE</span> title <span class='keyword'>MATCH</span> 'sql';<br>" +
+        "<span class='keyword'>SELECT</span> snippet(Search) <span class='keyword'>FROM</span> Search <span class='keyword'>WHERE</span> Search <span class='keyword'>MATCH</span> 'sql';</pre>",
+        "<pre><span class='keyword'>INSERT INTO</span> Data <span class='keyword'>VALUES</span> (<span class='string'>1</span>, <span class='string'>2</span>, <span class='string'>3</span>);<br>" +
+        "<span class='keyword'>INSERT INTO</span> Search (rowid, title, data) <span class='keyword'>VALUES</span><br>" +
+        "&nbsp;&nbsp;&nbsp;&nbsp;(<span class='keyword'>LAST_INSERT_ROWID()</span>, 'My Slide', 'Hello World');</pre>"
+      ]
+    }
+  ]
+}

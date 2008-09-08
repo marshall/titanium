@@ -1,0 +1,33 @@
+<string id="string-html-title">اخطار امنیتی Gears</string>
+<string id="string-allow">مجاز</string>
+<string id="string-allow-accesskey">مجاز</string>
+<string id="string-deny">رد</string>
+<string id="string-deny-accesskey">رد كردن</string>
+<string id="string-cancel">لغو</string>
+<string id="string-never-allow-link">هرگز به این سایت اجازه داده نشود</string>
+<string id="string-never-allow-link-wince">هرگز اجازه داده نشود</string>
+<string id="string-description">
+  Gears یک پسوند مرورگر منبع باز است که با استفاده از برنامه های JavaScript زیر امکان عملکرد برنامه های وب در حالت آفلاین را فراهم می سازد:
+</string>
+<string id="string-localserver-desc">
+  منابع برنامه را به صورت محلی ذخیره و استفاده کنید
+</string>
+<string id="string-database-desc">
+  داده ها را در یک پایگاه داده مربوطه که کاملاً قابل جستجو باشد به صورت محلی ذخیره کنید
+</string>
+<string id="string-workerpool-desc">
+  JavaScript ناهمزمان را برای بهبود پاسخگویی برنامه اجرا کنید.
+</string>
+<string id="string-query-data">
+  وب سایت زیر می خواهد با استفاده از Gears اطلاعات را در رایانه شما ذخیره کند.
+</string>
+<string id="string-query-location">
+  وب سایت زیر می خواهد با استفاده از Gears به اطلاعاتی در مورد موقعیت شما دست یابد.
+</string>
+<string id="string-location-privacy-statement">
+  برای اطلاع از نحوه استفاده از موقعیت خود، سیاست حفظ حقوق خصوصی سایت را مطالعه کنید.
+</string>
+<string id="string-trust-site">
+  من به این سایت اعتماد دارم. به آن اجازه دهید از Gears استفاده کند.
+</string>
+<string id="string-trust-site-accesskey">t</string>

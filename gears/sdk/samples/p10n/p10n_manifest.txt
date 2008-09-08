@@ -1,0 +1,23 @@
+{
+  "betaManifestVersion": 1,
+  "version": "v0.6",
+
+  "entries": [
+    { "url": "p10n.js" },
+    { "url": "p10n.html", "ignoreQuery": true },
+    { "url": "p10n.css" },
+    { "url": "../../gears_init.js" },
+    { "url": "jquery.js" },
+    { "url": "database.txt" },
+    { "url": "logo.png" },
+    { "url": "chart.png" },
+    { "url": "arch1.jpg" },
+    { "url": "arch2.jpg" },
+    { "url": "traffic1.png" },
+    { "url": "traffic2.png" },
+    { "url": "traffic3.png" },
+    { "url": "primes.html" },
+    { "url": "p10n_dump.html" },
+    { "url": "dbquery.html", "ignoreQuery": true }
+  ]
+}

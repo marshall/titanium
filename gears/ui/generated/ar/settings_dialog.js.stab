@@ -1,0 +1,14 @@
+<string id="string-cancel">إلغاء</string>
+<string id="string-cancel-accesskey">غ</string>
+<string id="string-apply">تطبيق</string>
+<string id="string-apply-accesskey">س</string>
+<string id="string-nosites">لا توجد مواقع.</string>
+<string id="string-allowed">مسموح</string>
+<string id="string-denied">مرفوض</string>
+<string id="string-local-storage">تخزين محلي</string>
+<string id="string-location-data">الموقع</string>
+<string id="string-gears-settings">إعدادات Gears</string>
+<string id="string-permissions-description">يوضح الجدول أدناه الأذونات التي قمت بمنحها لكل موقع حاول استخدام Gears.</string>
+<string id="string-version">Gears الإصدار PRODUCT_VERSION</string>
+<string id="string-html-title">إعدادات Gears</string>
+<string id="string-remove">إزالة</string>

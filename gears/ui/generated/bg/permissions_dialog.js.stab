@@ -1,0 +1,33 @@
+<string id="string-html-title">Предупреждение за защита на Gears</string>
+<string id="string-allow">Разрешаване</string>
+<string id="string-allow-accesskey">A</string>
+<string id="string-deny">Забраняване</string>
+<string id="string-deny-accesskey">D</string>
+<string id="string-cancel">Отказ</string>
+<string id="string-never-allow-link">Не давам разрешението си за този сайт</string>
+<string id="string-never-allow-link-wince">Не се разрешава изобщо</string>
+<string id="string-description">
+  Gears е разширение за браузъри с отворен код, което позволява на уеб приложенията да функционират в офлайн режим чрез следните приложни програмни интерфейси на JavaScript:
+</string>
+<string id="string-localserver-desc">
+  Съхранявайте и използайте локално ресурсите на приложенията
+</string>
+<string id="string-database-desc">
+  Съхранявайте информация локално в база от сродни данни с възможност за пълно търсене в тях
+</string>
+<string id="string-workerpool-desc">
+  Изпълнявайте асинхронен JavaScript, за да подобрите скоростта на работа на приложенията
+</string>
+<string id="string-query-data">
+  Уебсайтът по-долу иска да съхрани информация на компютъра ви чрез Gears.
+</string>
+<string id="string-query-location">
+  Уебсайтът по-долу иска да получи достъп до информацията за вашето местоположение чрез Gears.
+</string>
+<string id="string-location-privacy-statement">
+  Прочетете декларацията за поверителност на сайта, за да разберете как ще се използва информацията за местоположението ви.
+</string>
+<string id="string-trust-site">
+  Имам доверие на този сайт. Нека да може да използва Gears.
+</string>
+<string id="string-trust-site-accesskey">й</string>

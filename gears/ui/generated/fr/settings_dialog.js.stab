@@ -1,0 +1,14 @@
+<string id="string-cancel">Annuler</string>
+<string id="string-cancel-accesskey">U</string>
+<string id="string-apply">Appliquer</string>
+<string id="string-apply-accesskey">A</string>
+<string id="string-nosites">Aucun site.</string>
+<string id="string-allowed">Autorisé</string>
+<string id="string-denied">Refusé</string>
+<string id="string-local-storage">Stockage local</string>
+<string id="string-location-data">Emplacement</string>
+<string id="string-gears-settings">Paramètres de Appcelerator Titanium</string>
+<string id="string-permissions-description">Le tableau ci-dessous montre les autorisations que vous avez accordées à chaque site ayant tenté d'utiliser Appcelerator Titanium.</string>
+<string id="string-version">Version PRODUCT_VERSION de Appcelerator Titanium</string>
+<string id="string-html-title">Paramètres de Appcelerator Titanium</string>
+<string id="string-remove">Supprimer</string>

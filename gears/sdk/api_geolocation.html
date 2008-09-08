@@ -1,0 +1,473 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "DTD/xhtml1-transitional.dtd">
+<!--
+Copyright 2008, Google Inc.
+
+Redistribution and use in source and binary forms, with or without 
+modification, are permitted provided that the following conditions are met:
+
+ 1. Redistributions of source code must retain the above copyright notice, 
+    this list of conditions and the following disclaimer.
+ 2. Redistributions in binary form must reproduce the above copyright notice,
+    this list of conditions and the following disclaimer in the documentation
+    and/or other materials provided with the distribution.
+ 3. Neither the name of Google Inc. nor the names of its contributors may be
+    used to endorse or promote products derived from this software without
+    specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
+OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<html>
+  <head>
+    <title>Geolocation API</title>
+    <link rel="stylesheet" type="text/css" href="gears.css" />
+</head>
+
+<body>
+
+<h1>Geolocation API</h1>
+
+<div id="pagecontent">
+
+<p>The Geolocation API enables a web application to obtain a user's
+geographical position.</p>
+
+<h3>Contents</h3>
+
+<ol class="toc">
+  <li><a href="#overview">Overview</a></li>
+  <li><a href="#example">Example</a></li>
+  <li><a href="#classes">Classes</a>
+      <ol>
+      <li><a href="#geolocation">Geolocation class</a> </li>  
+      <li><a href="#position">Position class</a></li>
+      <li><a href="#positionoptions">PositionOptions class</a></li>      
+      <li><a href="#positionerror">PositionError class</a></li>
+      <li><a href="#address">Address class</a></li>
+    </ol>
+    </li>
+  </ol>
+
+<h2 id="overview">Overview</h2>
+
+<p>The Geolocation API enables a web application to:</p>
+
+<ul>
+<li>Obtain the user's current position, using the <code><a href="#getCurrent">getCurrentPosition</a></code> method</li>  
+<li>Watch the user's position as it changes over time, using the <code><a href="#watchPosition">watchPosition</a></code> method</li>
+<li>Quickly and cheaply obtain the user's last known position, using
+the <code><a href="#lastPosition">lastPosition</a></code> property</li>
+</ul>
+
+<p>The Geolocation API provides the best estimate of the user's position
+using a number of sources (called location providers). These providers
+may be onboard (GPS for example) or server-based (a network location
+provider). The <code><a href="#getCurrent">getCurrentPosition</a></code> and <code><a href="#watchPosition">watchPosition</a></code> methods
+support an optional parameter of type <code><a href="#positionoptions">PositionOptions</a></code> which lets you specify which location providers to use. </p>
+
+<p>To find out how to implement your own network location provider for use with the Geolocation
+API, see the <a href="http://code.google.com/p/gears/wiki/GeolocationAPI">Geolocation
+API design document</a>.</p>
+
+<h4>Permission</h4>
+
+<p>A site's permission to use location information is separate from the
+permission required by other Gears APIs. Permission is granted by the user
+in the same way as for other Gears APIs, through a dialog. If you would like
+to customize the default dialog, you can explicitly call the
+<code><a href="#getpermission">getPermission</a></code> method.</p>
+
+
+<h2 id="example">Example</h2>
+
+<pre><code>&lt;script type="text/javascript" src="<a href='tools.html#gears_init'>gears_init.js</a>"&gt;&lt;/script&gt;
+&lt;script type="text/javascript"&gt;
+var geo = google.gears.factory.create('beta.geolocation');
+
+function updatePosition(position) {
+  alert('Current lat/lon is: ' + position.latitude + ',' + position.longitude);
+}
+
+function handleError(positionError) {
+  alert('Attempt to get location failed: ' + positionError.message);
+}
+
+geo.getCurrentPosition(updatePosition, handleError);
+&lt;/script&gt;</code></pre>
+
+
+<h2 id="classes">Classes</h2>
+
+<pre><code><a href="#geolocation">Geolocation class</a> 
+  readonly attribute Position lastPosition
+  void getCurrentPosition(successCallback, [errorCallback], [options])
+  int  watchPosition(successCallback, [errorCallback], [options])
+  void clearWatch(int watchId)
+  boolean getPermission([siteName], [imageUrl], [extraMessage])</code></pre>
+  
+<pre><code><a href="#position">Position class</a>
+  readonly attribute double latitude
+  readonly attribute double longitude
+  readonly attribute double accuracy
+  readonly attribute double altitude
+  readonly attribute double altitudeAccuracy
+  readonly attribute Date timestamp
+  readonly attribute Address gearsAddress</code></pre>
+
+<pre><code><a href="#positionoptions">PositionOptions class</a>
+  readwrite attribute bool enableHighAccuracy
+  readwrite attribute bool gearsRequestAddress
+  readwrite attribute string gearsAddressLanguage
+  readwrite attribute string[] gearsLocationProviderUrls</code></pre>
+
+<pre><code><a href="#positionerror">PositionError class</a>
+  readonly attribute int code
+  readonly attribute string message</code></pre>
+
+<pre><code><a href="#address">Address class</a>
+  readonly attribute string streetNumber
+  readonly attribute string street
+  readonly attribute string premises
+  readonly attribute string city
+  readonly attribute string county
+  readonly attribute string region
+  readonly attribute string country
+  readonly attribute string countryCode
+  readonly attribute string postalCode</code></pre>
+  
+
+<h2 id="geolocation">Geolocation class</h2>
+
+<h3>Methods</h3>
+
+<table>
+  <tr class="odd">
+  <th colspan="2"><code><a name="getCurrent" id="getCurrent"></a>void getCurrentPosition(successCallback, [errorCallback], [options])</code></th>
+</tr>
+  <tr class="odd">
+    <td width="113">Return value: </td>
+    <td width="489" class="code">This method has no return value.</td>
+  </tr>
+<tr class="odd">
+<td>Parameters:</td>
+<td class="odd"><code>successCallback(Position position)</code>
+    <br />
+    <code>errorCallback</code> <code>(PositionError error)</code> - optional,
+    pass <code>null</code> if you do not want to make use of the callback.
+    <br />
+    <code>options</code> - optional, specifies the options to use for this
+    request, see <code><a href="#positionoptions">PositionOptions</a></code>.</td>
+</tr><tr class="odd">
+    <td>Description:</td>
+    <td class="odd">Obtains a new position. Obtains a new position. If
+successful, the success callback function is called exactly once with a
+good position. If none of the location providers find a good fix, the
+error callback is called exactly once with an error message unless you
+have passed <code>null</code> for <code>errorCallback</code>. <br />
+<br />
+The signature of the success callback is:<br />
+<code>function successCallback(Position position)</code><br />
+<br />The signature of the error callback is:<br />
+<code>function errorCallback(PositionError error)</code></td>
+  </tr>
+</table>
+
+<table>
+  <tr class="odd">
+  <th colspan="2"><code><a name="watchPosition" id="watchPosition"></a>int
+watchPosition(function successCallback,
+[function errorCallback], [PositionOptions options])</code></th>
+</tr>
+  <tr class="odd">
+    <td width="113">Return value: </td>
+    <td width="489" class="code">A unique watch identifier.</td>
+  </tr>
+<tr class="odd">
+<td>Parameters:</td>
+<td class="odd"><code>successCallback(Position position)</code><br />
+<code>errorCallback</code> <code>(PositionError error)</code> - optional,
+pass <code>null</code> if you do not want to make use of the callback.<br />
+<code>options</code> - optional, specifies the options to use for this
+request, see <code><a href="#positionoptions">PositionOptions</a></code>.</td>
+</tr>
+  <tr class="odd">
+    <td>Description:</td>
+    <td class="odd">Repeatedly obtains a new position. The success callback
+function is called as soon as a good position is available, or whenever
+the position changes significantly, subject to a maximum callback frequency.<br />
+The error callback is called if a fatal error occurs which will prevent
+a position fix from ever being obtained by this watch  unless you
+have passed <code>null</code> for <code>errorCallback</code>.<br />
+<br />
+The signature of the success callback is:<br />
+<code>function successCallback(Position position)</code><br />
+<br />
+The signature of the error callback is:<br />
+<code>function errorCallback(PositionError error)</code> </td>
+</tr>
+</table>
+
+<table>
+  <tr class="odd">
+  <th colspan="2"><code>void clearWatch(int watchId)</code></th>
+  </tr>
+  <tr class="odd">
+    <td width="113">Return value: </td>
+    <td width="489" class="code">This method has no return value.</td>
+  </tr>
+  <tr class="odd">
+<td>Parameter:</td>
+<td class="odd"><code>watchId</code> - the identifier of the watch to stop.</td>
+</tr>
+<tr class="odd">
+  <td>Description:</td>
+  <td class="odd">Stop watching the current position.</td>
+  </tr>
+</table>
+
+<a name="getpermission"></a>
+<table>
+  <tr class="odd">
+    <th colspan="2"><code>boolean getPermission([siteName], [imageUrl], [extraMessage])</code></th>
+  </tr>
+  <tr class="odd">
+    <td width="113">Return value:</td>
+    <td width="550" class="odd">Indicates whether the site has permission to access the user's location through Gears.</td>
+</tr>
+  <tr class="odd">
+    <td>Parameters:</td>
+    <td class="odd">
+      <code>siteName</code>
+      - optional, friendly name of the site requesting permission.
+      <br>
+      <code>imageUrl</code>
+      - optional, URL of a .png file to display in the dialog.
+      <br>
+      <code>extraMessage</code>
+      - optional, site-specific text to display to users in the security dialog.</td>
+  </tr>
+  <tr class="odd">
+    <td>Description:</td>
+  <td class="odd">Lets a site manually trigger the Gears location security
+dialog, optionally with UI customizations.<br />
+<br />
+It is always safe to call this function; it will return
+    immediately if the site already has permission to access the user's
+location through Gears. All arguments are optional. The dialog will only
+show those that are specified.    </td>
+</tr>
+</table>
+
+<h3>Attributes</h3>
+
+<table>
+<tr class="odd">
+  <th width="158">Attribute</th>
+  <th width="109">Type</th>
+  <th width="432">Description</th>
+</tr>
+<tr class="odd">
+  <td><strong><code><a name="lastPosition" id="lastPosition"></a></code>lastPosition</strong></td>
+  <td class="odd">readonly  Position</td>
+  <td class="odd">The last known position, or null if there is no last known
+  position. This does not actively trigger obtaining a new position fix,
+  so it is quick and does not consume power or computational resources.</td>
+</tr>
+</table>
+
+
+<h2 id="position">Position class</h2>
+
+<h3>Attributes</h3> 
+
+<table>
+<tr class="odd">
+  <th width="158">Attribute</th>
+  <th width="109">Type</th>
+  <th width="432">Description</th>
+</tr>
+<tr class="odd">
+  <td width="158"><strong>latitude</strong></td>
+  <td width="109" >readonly double</td>
+  <td width="432" > Latitude in degrees using the World Geodetic System 1984
+  (WGS84) datum.</td>
+</tr>
+<tr class="odd">
+  <td><strong>longitude</strong></td>
+  <td class="" >readonly double</td>
+  <td class="" > Longitude in degrees (WGS84 datum).</td>
+</tr>
+<tr class="odd">
+  <td><strong>accuracy</strong></td>
+  <td class="odd">readonly double</td>
+  <td class="odd">The horizontal accuracy of the position in meters, or null
+  if not available.</td>
+</tr>
+<tr class="odd">
+  <td><strong>altitude</strong></td>
+  <td class="odd">readonly double</td>
+  <td class="odd"> Height in meters (WGS84 datum), or null if not available.</td>
+</tr>
+<tr class="odd">
+  <td><strong>altitudeAccuracy</strong></td>
+  <td class="odd">readonly double </td>
+  <td class="odd">The vertical accuracy of the position in meters, or null
+  if not available.</td>
+</tr>
+<tr class="odd">
+  <td><strong>timestamp</strong></td>
+  <td class="odd">readonly Date</td>
+  <td class="odd"> The time when the location was established.</td>
+</tr>
+<tr class="odd">
+  <td><strong>gearsAddress</strong></td>
+  <td class="odd">readonly Address</td>
+  <td class="odd"> A reverse-geocoded address, if requested and available.
+  See <code><a href="#address">Address</a></code>.</td>
+</tr>
+</table>
+
+
+<h2 id="positionoptions">PositionOptions class</h2>
+
+<h3>Attributes</h3>
+
+<table>
+<tr class="odd">
+  <th width="158">Attribute</th>
+  <th width="109">Type</th>
+  <th width="432">Description</th>
+</tr>
+<tr class="odd">
+  <td><strong><a name="enableHigh" id="enableHigh"></a>enableHighAccuracy</strong></td>
+  <td class="odd">readwrite bool</td>
+  <td class="odd">Optional, requests the most accurate possible results.
+  This may result in slower response times or increased battery consumption.
+  Also, there is no guarantee that the device will be able to provide more
+  accurate results than if this flag is not specified. The default value
+  is false.</td>
+</tr>
+<tr class="odd">
+  <td><strong>gearsRequestAddress</strong></td>
+  <td class="odd">readwrite bool</td>
+  <td class="odd">Optional, requests reverse geocoded address information
+  as part of the position data. Reverse geocoding is not performed if this
+  flag is not specified or if it is set to false.</td>
+</tr>
+<tr class="odd">
+  <td><strong>gearsAddressLanguage</strong></td>
+  <td class="odd">readwrite string</td>
+  <td class="odd">Optional, specifies the language in which the address (if
+  requested) should be returned. Specify the language in accordance with
+  RFC 3066, en-GB for British English for example.
+  <br><br>
+  If this is not specified, the address is provided in the default
+  language of the location provider used to perform the reverse geocoding.</td>
+</tr>
+<tr class="odd">
+  <td><strong><a name="providerURLs" id="providerURLs"></a>gearsLocationProviderUrls</strong></td>
+  <td class="odd">readwrite string[]</td>
+  <td class="odd">Optional, specifies one or more URLs to contact to convert
+  geolocation signals into positions. Note that these must be complete URLs
+  which include the scheme, e.g.  http://gears.mylocationprovider.com.  If
+  unset, defaults to a single Google-implemented service. The array can also be
+  cleared, or set to null, so that no location providers are used.</td>
+</tr>
+</table>
+
+
+<h2 id="positionerror">PositionError class</h2>
+
+<h3>Attributes</h3>
+
+<table>
+<tr class="odd">
+  <th width="158">Attribute</th>
+  <th width="109">Type</th>
+  <th width="432">Description</th>
+</tr>
+<tr class="odd">
+  <td><strong>code</strong></td>
+  <td class="odd">readonly int</td>
+  <td class="odd">A unique identifier for this type of message.</td>
+</tr>
+<tr class="odd">
+  <td><strong>message</strong></td>
+  <td class="odd">readonly string</td>
+  <td class="odd">A human readable message, suitable for logs.</td>
+</tr>
+</table>
+
+
+<h2 id="address">Address class</h2> 
+
+<h3>Attributes</h3>
+
+<table>
+<tr class="odd">
+  <th width="158">Attribute</th>
+  <th width="109">Type</th>
+  <th width="432">Description</th>
+</tr>
+<tr class="odd">
+  <td><strong>streetNumber</strong></td>
+  <td class="odd">readonly string</td>
+  <td class="odd"> The building's street number.</td>
+</tr>
+<tr class="odd">
+  <td><strong>street</strong></td>
+  <td class="odd">readonly string</td>
+  <td class="odd">Street name.</td>
+</tr>
+<tr class="odd">
+  <td><strong>premises</strong></td>
+  <td class="odd">readonly string</td>
+  <td class="odd">Premises, e.g. building name.</td>
+</tr>
+<tr class="odd">
+  <td><strong>city</strong></td>
+  <td class="odd">readonly string</td>
+  <td class="odd">City name.</td>
+</tr>
+<tr class="odd">
+  <td><strong>county</strong></td>
+  <td class="odd">readonly string</td>
+  <td class="odd">County name.</td>
+</tr>
+<tr class="odd">
+  <td><strong>region</strong></td>
+  <td class="odd">readonly string</td>
+  <td class="odd">Region, e.g. a state in the US.</td>
+</tr>
+<tr class="odd">
+  <td><strong>country</strong></td>
+  <td class="odd">readonly string</td>
+  <td class="odd">Country.</td>
+</tr>
+<tr class="odd">
+  <td><strong>countryCode</strong></td>
+  <td class="odd">readonly string</td>
+  <td class="odd">Country code (ISO 3166-1).</td>
+</tr>
+<tr class="odd">
+  <td><strong>postalCode</strong></td>
+  <td class="odd">readonly string</td>
+  <td class="odd">Postal code. This is the zip code in the US and postcode in the UK.</td>
+</tr>
+</table>
+
+
+
+
+</div>
+</body>
+</html>

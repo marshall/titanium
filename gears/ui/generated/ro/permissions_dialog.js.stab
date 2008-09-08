@@ -1,0 +1,33 @@
+<string id="string-html-title">Avertizare de securitate Gears</string>
+<string id="string-allow">Permiteţi</string>
+<string id="string-allow-accesskey">P</string>
+<string id="string-deny">Respingeţi</string>
+<string id="string-deny-accesskey">R</string>
+<string id="string-cancel">Anulaţi</string>
+<string id="string-never-allow-link">Nu permiteţi niciodată acest site</string>
+<string id="string-never-allow-link-wince">Nu permiteţi niciodată</string>
+<string id="string-description">
+  Gears este o extensie de browser cu sursă liberă care permite aplicaţiilor Web să ofere funcţionalitate offline, utilizând următoarele API-uri JavaScript:
+</string>
+<string id="string-localserver-desc">
+  Stocaţi şi livraţi local resurse ale aplicaţiei
+</string>
+<string id="string-database-desc">
+  Stocaţi date local într-o bază de date relaţională în care se pot efectua căutări complete
+</string>
+<string id="string-workerpool-desc">
+  Rulaţi JavaScript asincron, pentru a îmbunătăţi viteza de răspuns a aplicaţiei
+</string>
+<string id="string-query-data">
+  Site-ul Web de mai jos doreşte să salveze informaţii pe computerul dvs. utilizând Gears.
+</string>
+<string id="string-query-location">
+  Site-ul Web de mai jos doreşte să acceseze informaţii despre locaţia dvs. utilizând Gears.
+</string>
+<string id="string-location-privacy-statement">
+  Citiţi politica de confidenţialitate a site-ului pentru a afla cum va fi utilizată locaţia dvs.
+</string>
+<string id="string-trust-site">
+  Am încredere în acest site. Îi permit să utilizeze Gears.
+</string>
+<string id="string-trust-site-accesskey">t</string>

@@ -1,0 +1,14 @@
+<string id="string-cancel">取消</string>
+<string id="string-cancel-accesskey">C</string>
+<string id="string-apply">应用</string>
+<string id="string-apply-accesskey">A</string>
+<string id="string-nosites">没有网站。</string>
+<string id="string-allowed">允许</string>
+<string id="string-denied">已拒绝</string>
+<string id="string-local-storage">本地存储</string>
+<string id="string-location-data">位置</string>
+<string id="string-gears-settings">Gears 设置</string>
+<string id="string-permissions-description">下表显示了您向试图使用 Gears 的每个网站授予了哪些权限。</string>
+<string id="string-version">Gears 版本 PRODUCT_VERSION</string>
+<string id="string-html-title">Gears 设置</string>
+<string id="string-remove">删除</string>

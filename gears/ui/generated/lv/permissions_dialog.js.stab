@@ -1,0 +1,33 @@
+<string id="string-html-title">Gears drošības brīdinājums</string>
+<string id="string-allow">Atļaut</string>
+<string id="string-allow-accesskey">A</string>
+<string id="string-deny">Aizliegt</string>
+<string id="string-deny-accesskey">D</string>
+<string id="string-cancel">Atcelt</string>
+<string id="string-never-allow-link">Nekad neļaut piekļūt šai vietnei</string>
+<string id="string-never-allow-link-wince">Nekad to neatļaut</string>
+<string id="string-description">
+  Gears ir atklāta pirmkoda pārlūkprogramma, ar kuru tīmekļa lietojumprogrammas nodrošina funkcionalitāti bezsaistē, izmantojot šādas JavaScript API:
+</string>
+<string id="string-localserver-desc">
+  Lietojumprogrammu resursu saglabāšana un apkalpošana lokāli
+</string>
+<string id="string-database-desc">
+  Datu glabāšana lokāli pilnībā pārmeklējamā relāciju datu bāzē
+</string>
+<string id="string-workerpool-desc">
+  Palaidiet asinhrono JavaScript, lai uzlabotu lietojumprogrammas atbildēšanas iespējas
+</string>
+<string id="string-query-data">
+  Tālāk minētā vietne vēlas saglabāt informāciju par jūsu datoru, lietojot Gears.
+</string>
+<string id="string-query-location">
+  Tālāk minētā vietne vēlas piekļūt informācijai par jūsu atrašanās vietu, lietojot Gears.
+</string>
+<string id="string-location-privacy-statement">
+  Izlasiet vietnes konfidencialitātes politiku, lai redzētu, kā tiks izmantota jūsu atrašanās vieta.
+</string>
+<string id="string-trust-site">
+  Es uzticos šai vietnei. Atļaujiet tai lietot Gears.
+</string>
+<string id="string-trust-site-accesskey">t</string>

@@ -1,0 +1,14 @@
+<string id="string-cancel">Batalkan</string>
+<string id="string-cancel-accesskey">C</string>
+<string id="string-apply">Terapkan</string>
+<string id="string-apply-accesskey">A</string>
+<string id="string-nosites">Tiada situs.</string>
+<string id="string-allowed">Diizinkan</string>
+<string id="string-denied">Ditolak</string>
+<string id="string-local-storage">Penyimpanan lokal</string>
+<string id="string-location-data">Lokasi</string>
+<string id="string-gears-settings">Pengaturan Gears</string>
+<string id="string-permissions-description">Tabel berikut menunjukkan izin yang telah Anda berikan ke setiap situs yang berusaha menggunakan Gears.</string>
+<string id="string-version">Versi Gears PRODUCT_VERSION</string>
+<string id="string-html-title">Pengaturan Gears</string>
+<string id="string-remove">Hapus</string>

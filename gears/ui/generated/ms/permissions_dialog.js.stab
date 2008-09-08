@@ -1,0 +1,33 @@
+<string id="string-html-title">Amaran Keselamatan Gear</string>
+<string id="string-allow">Benarkan</string>
+<string id="string-allow-accesskey">N</string>
+<string id="string-deny">Tolak</string>
+<string id="string-deny-accesskey">L</string>
+<string id="string-cancel">Batal</string>
+<string id="string-never-allow-link">Jangan sekali-kali benarkan laman ini</string>
+<string id="string-never-allow-link-wince">Jangan sekali-kali benarkannya</string>
+<string id="string-description">
+  Gear adalah lanjutan penyemak imbas sumber terbuka yang membolehkan aplikasi web untuk menyediakan kefungsian luar talian menggunakan JavaScript APIs yang berikut:
+</string>
+<string id="string-localserver-desc">
+  Simpan dan berikan sumber aplikasi setempat
+</string>
+<string id="string-database-desc">
+  Simpan data setempat dalam pangkalan data hubungan boleh cari sepenuhnya
+</string>
+<string id="string-workerpool-desc">
+  Jalankan JavaScript tak segerak untuk meningkatkan kesambutan aplikasi
+</string>
+<string id="string-query-data">
+  Laman web di bawah mahu menyimpan maklumat pada komputer anda dengan menggunakan Gear.
+</string>
+<string id="string-query-location">
+  Laman web di bawah mahu mengakses maklumat mengenai lokasi anda dengan menggunakan Gear.
+</string>
+<string id="string-location-privacy-statement">
+  Baca dasar privasi tapak untuk melihat bagaimana lokasi anda akan digunakan.
+</string>
+<string id="string-trust-site">
+  Saya percaya tapak ini. Benarkannya untuk menggunakan Gear.
+</string>
+<string id="string-trust-site-accesskey">t</string>

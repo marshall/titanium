@@ -1,0 +1,14 @@
+<string id="string-cancel">ರದ್ದುಮಾಡು</string>
+<string id="string-cancel-accesskey">C</string>
+<string id="string-apply">ಅನ್ವಯಿಸಿ</string>
+<string id="string-apply-accesskey">A</string>
+<string id="string-nosites">ಸೈಟುಗಳಿಲ್ಲ.</string>
+<string id="string-allowed">ಅನುಮತಿಸಲಾಗಿದೆ</string>
+<string id="string-denied">ನಿರಾಕರಿಸಲಾಗಿದೆ</string>
+<string id="string-local-storage">ಸ್ಥಳೀಯ ಶೇಖರಣೆ</string>
+<string id="string-location-data">ಸ್ಥಳ</string>
+<string id="string-gears-settings">Gears ಸೆಟ್ಟಿಂಗ್ಸ್</string>
+<string id="string-permissions-description">ಕೆಳಗಿನ ಟೇಬಲ್ Gears ಬಳಸಲು ಪ್ರಯತ್ನಿಸಿದ ಪ್ರತಿಯೊಂದು ಸೈಟ್ ಗೂ ನೀವು ನೀಡಿದ ಅನುಮತಿಗಳನ್ನು ತೋರಿಸುತ್ತಿದೆ.</string>
+<string id="string-version">PRODUCT_VERSION Gears ಆವೃತ್ತಿ</string>
+<string id="string-html-title">Gears ಸೆಟ್ಟಿಂಗ್ಸ್</string>
+<string id="string-remove">ತೆಗೆಯಿರಿ</string>

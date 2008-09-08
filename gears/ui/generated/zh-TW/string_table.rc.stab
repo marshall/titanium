@@ -1,0 +1,5 @@
+<string id="IDS_VERSION_COLLISION_TITLE">請重新啟動您的瀏覽器</string>
+<string id="IDS_VERSION_COLLISION_TEXT">已下載 Gears 更新。\n\n請關閉所有瀏覽器視窗以完成升級程序。\n</string>
+<string id="IDS_REGISTRY_MENU_TEXT">Gears 設定(&G)</string>
+<string id="IDS_REGISTRY_MENU_STATUS_BAR">「管理可以存取 Gears 的網站。」</string>
+

@@ -1,0 +1,5 @@
+<string id="IDS_VERSION_COLLISION_TITLE">Перезапустите браузер</string>
+<string id="IDS_VERSION_COLLISION_TEXT">Загружено обновление для Gears.\n\nДля того чтобы завершить обновление, закройте все окна браузера.\n</string>
+<string id="IDS_REGISTRY_MENU_TEXT">&Настройки Gears</string>
+<string id="IDS_REGISTRY_MENU_STATUS_BAR">"Определить, какие сайты могут получать доступ к Gears".</string>
+

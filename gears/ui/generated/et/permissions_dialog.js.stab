@@ -1,0 +1,33 @@
+<string id="string-html-title">Gearsi turvahoiatus</string>
+<string id="string-allow">Luba</string>
+<string id="string-allow-accesskey">L</string>
+<string id="string-deny">Keeldu</string>
+<string id="string-deny-accesskey">K</string>
+<string id="string-cancel">Tühista</string>
+<string id="string-never-allow-link">Ära luba seda saiti kunagi</string>
+<string id="string-never-allow-link-wince">Ära luba seda kunagi</string>
+<string id="string-description">
+  Gears on avatud lähtekoodiga brauserilaiendus, mis võimaldab veebirakendustel võrguühenduseta töötada, kasutades järgmisi JavaScripti rakendusliideseid:
+</string>
+<string id="string-localserver-desc">
+  Salvestage ja kasutage rakenduse vahendeid lokaalselt
+</string>
+<string id="string-database-desc">
+  Salvestage andmed lokaalselt otsingu täisfunktsiooniga relatsioonandmebaasi
+</string>
+<string id="string-workerpool-desc">
+  Käivita asünkroonne JavaScript, et rakenduse töö kiirust parandada
+</string>
+<string id="string-query-data">
+  Alljärgnev veebisait soovib Gearsi kasutades salvestada teavet teie arvutisse.
+</string>
+<string id="string-query-location">
+  Alljärgnev veebisait soovib Gearsi kasutades juurdepääsu teabele teie asukoha kohta.
+</string>
+<string id="string-location-privacy-statement">
+  Kui soovite teada, kuidas teie asukohateavet kasutatakse, lugege saidi privaatsuspõhimõtteid.
+</string>
+<string id="string-trust-site">
+  Usaldan seda saiti. Luba sellel Gearsi kasutada.
+</string>
+<string id="string-trust-site-accesskey">t</string>

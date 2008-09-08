@@ -1,0 +1,33 @@
+<string id="string-html-title">Sikkerhetsadvarsel for Gears</string>
+<string id="string-allow">Tillat</string>
+<string id="string-allow-accesskey">T</string>
+<string id="string-deny">Avvis</string>
+<string id="string-deny-accesskey">V</string>
+<string id="string-cancel">Avbryt</string>
+<string id="string-never-allow-link">Avvis alltid dette nettstedet</string>
+<string id="string-never-allow-link-wince">Avvis alltid</string>
+<string id="string-description">
+  Gears er en nettleserutvidelse med åpen kildekode som lar nettprogrammer fungere i frakoblet modus ved hjelp av følgende JavaScript API-er:
+</string>
+<string id="string-localserver-desc">
+  Lagre og bruk programressurser lokalt
+</string>
+<string id="string-database-desc">
+  Lagre data lokalt i en fullt søkbar relasjonsdatabase
+</string>
+<string id="string-workerpool-desc">
+  Kjør asynkront JavaScript for å forbedre programmets respons
+</string>
+<string id="string-query-data">
+  Nettstedet nedenfor ønsker å bruke Gears til å lagre informasjon om datamaskinen.
+</string>
+<string id="string-query-location">
+  Nettstedet nedenfor ønsker å bruke Gears for å få tilgang på informasjon om hvor du befinner deg.
+</string>
+<string id="string-location-privacy-statement">
+  Les retningslinjene for personvern for nettstedet for å se hvordan området brukes.
+</string>
+<string id="string-trust-site">
+  Jeg stoler på dette nettstedet. Tillat at det bruker Gears.
+</string>
+<string id="string-trust-site-accesskey">t</string>

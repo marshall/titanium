@@ -1,0 +1,33 @@
+<string id="string-html-title">Gears безбедносно упозорење</string>
+<string id="string-allow">Дозволи</string>
+<string id="string-allow-accesskey">M</string>
+<string id="string-deny">Забрани приступ</string>
+<string id="string-deny-accesskey">X</string>
+<string id="string-cancel">Откажи</string>
+<string id="string-never-allow-link">Никада не дозволи овом сајту</string>
+<string id="string-never-allow-link-wince">Никада не дозволи</string>
+<string id="string-description">
+  Gears је проширење прегледача отвореног кода којe веб апликацијама омогућава функционисање ван мреже помоћу следећих JavaScript API-ја:
+</string>
+<string id="string-localserver-desc">
+  Складиштите и пружајте ресурсе апликације локално
+</string>
+<string id="string-database-desc">
+  Складиштите податке локално у потпуно претраживој релационој бази података
+</string>
+<string id="string-workerpool-desc">
+  Покрените асинхрони JavaScript како бисте побољшали реакције апликације
+</string>
+<string id="string-query-data">
+  Веб сајт испод жели да ускладишти информације на вашем рачунару помоћу услуге Gears.
+</string>
+<string id="string-query-location">
+  Веб сајт испод жели да приступи информацијама о вашој локацији помоћу услуге Gears.
+</string>
+<string id="string-location-privacy-statement">
+  Прочитајте политику приватности сајта да бисте видели како ће се ваша локација користити.
+</string>
+<string id="string-trust-site">
+  Имам поверења у овај сајт. Дозволи му да користи Gears.
+</string>
+<string id="string-trust-site-accesskey">t</string>

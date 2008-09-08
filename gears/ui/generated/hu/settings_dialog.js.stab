@@ -1,0 +1,14 @@
+<string id="string-cancel">Mégse</string>
+<string id="string-cancel-accesskey">M</string>
+<string id="string-apply">OK</string>
+<string id="string-apply-accesskey">E</string>
+<string id="string-nosites">Nincsenek webhelyek.</string>
+<string id="string-allowed">Engedélyezve</string>
+<string id="string-denied">Megtagadva</string>
+<string id="string-local-storage">Helyi tárolás</string>
+<string id="string-location-data">Hely</string>
+<string id="string-gears-settings">A Szinkron beállításai</string>
+<string id="string-permissions-description">Az alábbi táblázat azt mutatja, hogy a Szinkron használatát megkísérlő webhelyeknek milyen engedélyeket adott.</string>
+<string id="string-version">A Szinkron verziószáma: PRODUCT_VERSION</string>
+<string id="string-html-title">A Szinkron beállításai</string>
+<string id="string-remove">Eltávolítás</string>

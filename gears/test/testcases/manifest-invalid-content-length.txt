@@ -1,0 +1,7 @@
+{
+  "betaManifestVersion": 1,
+  "version": "1",
+  "entries": [
+    {"url": "custom_header_mismatch", "src": "/testcases/cgi/send_response_of_invalid_size.py?size=10"}
+  ]
+}

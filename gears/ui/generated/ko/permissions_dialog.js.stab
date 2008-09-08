@@ -1,0 +1,33 @@
+<string id="string-html-title">Gears 보안경고</string>
+<string id="string-allow">허용</string>
+<string id="string-allow-accesskey">A</string>
+<string id="string-deny">금지</string>
+<string id="string-deny-accesskey">D</string>
+<string id="string-cancel">취소</string>
+<string id="string-never-allow-link">사이트를 허용하지 않음</string>
+<string id="string-never-allow-link-wince">허용하지 않음</string>
+<string id="string-description">
+  Gears는 다음과 같은 자바스크립트 API를 통해 오프라인에서 웹 애플리케이션을 사용할 수 있게 해 주는 오픈 소스 브라우저 확장 프로그램입니다.
+</string>
+<string id="string-localserver-desc">
+  로컬 컴퓨터에서 애플리케이션 리소스 저장 및 사용
+</string>
+<string id="string-database-desc">
+  완벽한 검색이 가능한 관계형 데이터베이스의 형태로 데이터를 로컬 컴퓨터에 저장
+</string>
+<string id="string-workerpool-desc">
+  비동기 자바스크립트를 실행하여 응용 프로그램 응답성 개선
+</string>
+<string id="string-query-data">
+  다음 웹사이트가 Gears를 사용하여 컴퓨터에 정보를 저장하려고 합니다.
+</string>
+<string id="string-query-location">
+  다음 웹사이트가 Gears를 사용하여 사용자의 위치 정보에 액세스하려고 합니다.
+</string>
+<string id="string-location-privacy-statement">
+  위치가 사용되는 방법을 보려면 사이트의 개인정보 보호정책을 읽어 보세요.
+</string>
+<string id="string-trust-site">
+  이 사이트를 신뢰합니다. Gears 사용을 허용합니다.
+</string>
+<string id="string-trust-site-accesskey">t</string>

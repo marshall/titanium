@@ -1,0 +1,5 @@
+<string id="IDS_VERSION_COLLISION_TITLE">Ponovo pokrenite preglednik</string>
+<string id="IDS_VERSION_COLLISION_TEXT">Preuzeto je ažuriranje za Gears.\n\nDa biste dovršili postupak nadogradnje, zatvorite sve prozore preglednika.\n</string>
+<string id="IDS_REGISTRY_MENU_TEXT">&Postavke Gearsa</string>
+<string id="IDS_REGISTRY_MENU_STATUS_BAR">"Odredi koje web-lokacije mogu pristupati Gearsu."</string>
+

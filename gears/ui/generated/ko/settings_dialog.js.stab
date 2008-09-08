@@ -1,0 +1,14 @@
+<string id="string-cancel">취소</string>
+<string id="string-cancel-accesskey">C</string>
+<string id="string-apply">적용</string>
+<string id="string-apply-accesskey">A</string>
+<string id="string-nosites">사이트가 없습니다.</string>
+<string id="string-allowed">허용</string>
+<string id="string-denied">거부됨</string>
+<string id="string-local-storage">로컬 저장소</string>
+<string id="string-location-data">위치</string>
+<string id="string-gears-settings">Gears 설정</string>
+<string id="string-permissions-description">다음 표는 Gears를 사용하려 시도했던 각 사이트에 대해 승인받은 사용권한을 보여줍니다.</string>
+<string id="string-version">Gears 버전 PRODUCT_VERSION</string>
+<string id="string-html-title">Gears 설정</string>
+<string id="string-remove">삭제</string>

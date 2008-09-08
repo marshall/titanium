@@ -1,0 +1,33 @@
+<string id="string-html-title">Gears Güvenlik Uyarısı</string>
+<string id="string-allow">İzin ver</string>
+<string id="string-allow-accesskey">V</string>
+<string id="string-deny">Reddet</string>
+<string id="string-deny-accesskey">R</string>
+<string id="string-cancel">İptal</string>
+<string id="string-never-allow-link">Bu siteye asla izin verme</string>
+<string id="string-never-allow-link-wince">Asla izin verme</string>
+<string id="string-description">
+  Gears, web uygulamalarının aşağıdaki JavaScript API'larını kullanarak çevrimdışı çalışmasına olanak tanıyan açık kaynaklı bir tarayıcı uzantısıdır:
+</string>
+<string id="string-localserver-desc">
+  Uygulama kaynaklarını yerel olarak saklar ve sunar
+</string>
+<string id="string-database-desc">
+  Verileri tamamen aratılabilir ilişkisel veritabanında yerel olarak sakla
+</string>
+<string id="string-workerpool-desc">
+  Uygulamanın daha iyi yanıt vermesi için asenkron olarak Javascript yürütür
+</string>
+<string id="string-query-data">
+  Aşağıdaki web sitesi Gears'ı kullanarak bilgisayarınızda bilgi depolamak istiyor.
+</string>
+<string id="string-query-location">
+  Aşağıdaki web sitesi Gears'ı kullanarak konumunuzla ilgili bilgilere erişmek istiyor.
+</string>
+<string id="string-location-privacy-statement">
+  Konumunuzun nasıl kullanılacağını öğrenmek için sitenin gizlilik politikasını okuyun.
+</string>
+<string id="string-trust-site">
+  Bu siteye güveniyorum. Gears'ı kullanmasına izin ver.
+</string>
+<string id="string-trust-site-accesskey">t</string>

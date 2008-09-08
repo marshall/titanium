@@ -1,0 +1,14 @@
+<string id="string-cancel">বাতিল</string>
+<string id="string-cancel-accesskey">C</string>
+<string id="string-apply">প্রয়োগ</string>
+<string id="string-apply-accesskey">A</string>
+<string id="string-nosites">কোন সাইটগুলি  ׀</string>
+<string id="string-allowed">অনুমতিপ্রাপ্ত</string>
+<string id="string-denied">অস্বীকৃত</string>
+<string id="string-local-storage">স্থানিয় স্টোরেজ</string>
+<string id="string-location-data">অবস্থান</string>
+<string id="string-gears-settings">Gears সেটিংস</string>
+<string id="string-permissions-description">নিচের সারণিটির অনুসারে আপনি প্রত্যেকটি সাইটটিকে অনুমতি দিয়েছেন যা Gears ব্যবহার করতে চেয়েছে  ׀</string>
+<string id="string-version">Gears সংস্করণ PRODUCT_VERSION</string>
+<string id="string-html-title">Gears সেটিংস</string>
+<string id="string-remove">সরান</string>

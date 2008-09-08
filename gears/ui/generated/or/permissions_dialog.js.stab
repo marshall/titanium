@@ -1,0 +1,33 @@
+<string id="string-html-title">Gears ସୁରକ୍ଷା ଚେତାବନୀ</string>
+<string id="string-allow">ଅନୁମତି</string>
+<string id="string-allow-accesskey">A</string>
+<string id="string-deny">ଅଗ୍ରାହ୍ୟ</string>
+<string id="string-deny-accesskey">D</string>
+<string id="string-cancel">ବାତିଲ୍</string>
+<string id="string-never-allow-link">କେବେ ମଧ୍ୟ ଏହି ସାଇଟ୍‌କୁ ଅନୁମତି କରନ୍ତୁ ନାହିଁ</string>
+<string id="string-never-allow-link-wince">ଏହାକୁ କେବେ ମଧ୍ୟ ଅନୁମତି କରନ୍ତୁ ନାହିଁ</string>
+<string id="string-description">
+  Gears ଏକ ଖୋଲା ଉତ୍ସ ବ୍ରାଉଜର୍ ବିସ୍ତାର , ଯାହା ଅଫଲାଇନ୍ କାର୍ଯ୍ୟକ୍ଷମତା ପ୍ରଦାନ କରିବାକୁ ନିମ୍ନ JavaScript APIs ବ୍ୟବହାର କରି ୱେବ୍ ଅନୁପ୍ରୟୋଗ ସକ୍ଷମ କରେ
+</string>
+<string id="string-localserver-desc">
+  ଅନୁପ୍ରୟୋଗ ଉତ୍ସଗୁଡିକୁ ସ୍ଥାନୀୟ ଭାବରେ ଗଚ୍ଛିତ ଏବଂ ପରିବେଷିତ କରନ୍ତୁ
+</string>
+<string id="string-database-desc">
+  ପୂର୍ଣ୍ଣ-ସନ୍ଧାନ ଯୋଗ୍ୟ ସମ୍ପର୍କିତ ଡାଟାବେସ୍‌‌ରେ ଡାଟା ସ୍ଥାନୀୟ ଭାବରେ ଗଚ୍ଛିତ କରନ୍ତୁ
+</string>
+<string id="string-workerpool-desc">
+  ଅନୁପ୍ରୟୋଗ ଶୀଘ୍ର ପ୍ରତିକ୍ରିୟା କରିବାକୁ ଏକ ଏସିଂକ୍ରୋନିୟସ୍ JavaScript ଚଲାନ୍ତୁ
+</string>
+<string id="string-query-data">
+  Gears ବ୍ୟବହାର କରି ନିମ୍ନ ୱେବସାଇଟ୍ ଆପଣଙ୍କ କମ୍ପ୍ୟୁଟରରେ ସୂଚନା ଗଚ୍ଛିତ କରିବାକୁ ଚାହୁଁଛି |
+</string>
+<string id="string-query-location">
+  Gears ବ୍ୟବହାର କରି ନିମ୍ନ ୱେବସାଇଟ୍ ଆପଣଙ୍କ ଅବସ୍ଥାନ ସମ୍ବନ୍ଧରେ ସୂଚନା ଆସେସ୍ କରିବାକୁ ଚାହୁଁଛି |
+</string>
+<string id="string-location-privacy-statement">
+  ଆଣଙ୍କର ଅବସ୍ଥାନ କିପରି ବ୍ୟବହୃତ ହେବ ଦେଖିବାକୁ ଏହି ସାଇଟର ଗୋପନୀୟତା ନୀତି ପଢନ୍ତୁ |
+</string>
+<string id="string-trust-site">
+  ମୁଁ ଏହି ସାଇଟକୁ ବିଶ୍ବାସ କରେ,ଏହାକୁ Gears ବ୍ୟବହାର କରିବାକୁ ଅନୁମତି ପ୍ରଦାନ କରନ୍ତୁ |
+</string>
+<string id="string-trust-site-accesskey">t</string>

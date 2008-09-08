@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+
+<!--
+Copyright 2007, Google Inc.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+ 1. Redistributions of source code must retain the above copyright notice,
+    this list of conditions and the following disclaimer.
+ 2. Redistributions in binary form must reproduce the above copyright notice,
+    this list of conditions and the following disclaimer in the documentation
+    and/or other materials provided with the distribution.
+ 3. Neither the name of Google Inc. nor the names of its contributors may be
+    used to endorse or promote products derived from this software without
+    specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+-->
+
+<html>
+<head>
+  <title>Unit Tests</title>
+  <link rel='stylesheet' href='gui.css'>
+  <script src='../../sdk/gears_init.js'></script>
+  <script src='xplat.js'></script>
+  <script src='lang.js'></script>
+  <script src='assert.js'></script>
+  <script src='../testcases/config.js'></script>
+  <script src='file_test_results.js'></script>
+</head>
+<body>
+
+<h1>Unit Tests</h1>
+<div><i>Note that this implementation assumes a frameset.</i></div>
+<div id='load-error' class='failure'></div>
+<div id='content' style='display:none;'>
+  <p>
+    <b>Version/Build:</b> <span id='gears-info'></span><br>
+    <b>Browser UA:</b> <span id='browser-info'></span><br>
+    <b>Test Target:</b> <span id='target-info'></span>
+  </p>
+
+  <p id='suite-choices'>
+    <a href='gui.html' target='_top'>All Tests</a>
+  </p>
+
+  <div id='results'></div>
+</div>
+<script>
+var selectedSuite = '';
+var ifc = top.ifc;
+var startTime = new Date().getTime();
+window.onload = init;
+
+/**
+ * Initializes the test runner. Sets up the UI and runs the tests selected by
+ * the user.
+ */
+function init() {
+  if (!ifc) {
+    displayLoadError('IFC missing; frameset resource not found.');
+    return;
+  }
+
+  if (!ifc.isWebProtocol()) {
+    displayLoadError('Must run unit tests from an http or https URL.');
+    return;
+  }
+
+  if (!ifc.isInstalled()) {
+    displayLoadError('Gears is not installed.');
+    return;
+  }
+
+  // Set our execution target.
+  selectedSuite = ifc.getSuite();
+
+
+  // Set versioning information and make it visible.
+  setDOMNodeText('gears-info', ifc.getBuildInfo());
+  setDOMNodeText('browser-info', ifc.getUserAgent());
+  setDOMNodeText('target-info', (!selectedSuite) ? 'All Tests' : selectedSuite);
+  getDOMElementById('content').style.display = 'block';
+
+  // Initialize our list of test suites.
+  initSuiteChoices();
+  initSuiteResultBlocks();
+
+  // Set the result publishing timeout.
+  setTimeout(ifc.getResultsPublisher().postbackTestResultsOnTimeout,
+             TEST_TIMEOUT_SECONDS);
+
+  runNextTestFile();
+}
+
+/**
+ * Displays an error loading the test runner.
+ * @param message The error to display.
+ */
+function displayLoadError(message) {
+  setDOMNodeText('load-error',message);
+}
+
+/**
+ * Initializes the choices for what test suites to run.
+ */
+function initSuiteChoices() {
+  for (var i = 0, suite; suite = suites[i]; i++) {
+    var href = 'gui.html?' + suite.name;
+    appendAnchor('suite-choices', href, "_top", suite.name);
+  }
+}
+
+/**
+ * Initializes all of the header and result blocks for all tests
+ * to be run as a part of this test run.  This allows us to better
+ * see when test runs are incomplete or terminate early, and
+ * provide a better mechanism for replacing inner content on
+ * platforms that can't do dom modifications (e.g., PocketIE)
+ */
+function initSuiteResultBlocks() {
+  for (var i = 0, suite; suite = suites[i]; i++) {
+    if (!shouldSkipTestcase(suite.name)) {
+      var suiteId = 'result-s' + i;
+      appendSimpleElement('results', 'div', suiteId, '');
+      appendSimpleElement(suiteId, 'h2', null, suite.name);
+      for (var j = 0, file; file = suite.files[j]; j++) {
+        var fileId = suiteId + '-f' + j;
+        appendSimpleElement(suiteId, 'div', fileId, '');
+        appendSimpleElement(fileId, 'h3', null, file.relativePath);
+      }
+    }
+  }
+}
+
+var suiteIndex = 0;
+var fileIndex = 0;
+
+/**
+ * Test if current suite should be skipped, if it was not selected for testing.
+ */
+function shouldSkipTestcase(suiteName) {
+  return selectedSuite && suiteName != selectedSuite;
+}
+
+/**
+ * Test files are run serially and are asynchronous. This function picks the
+ * next test to run and starts it.
+ * TODO(gblock): This has similar recursive issues to the harness; fix it
+ * the same way, by scheduling future runs instead of recursing.
+ * TODO(gblock): Use arguments instead of globals.
+ */
+function runNextTestFile() {
+  // If we're done, post results.
+  if (suiteIndex == suites.length) {
+    ifc.log('All test suites complete. Elapsed time: ' +
+            ((new Date().getTime() - startTime) / 1000) + 's');
+    
+    var publisher = ifc.getResultsPublisher();
+    publisher.allAvailableTestsStarted = true;
+    publisher.postbackTestResults();
+    return;
+  }
+
+  // Skip tests which aren't included in this run.
+  if (shouldSkipTestcase(suites[suiteIndex].name)) {
+    suiteIndex++;
+    fileIndex = 0;
+    runNextTestFile();
+    return;
+  }
+
+  // If we've hit the last file in the current suite, hop to the next suite.
+  if (fileIndex == suites[suiteIndex].files.length) {
+    suiteIndex++;
+    fileIndex = 0;
+    runNextTestFile();
+    return;
+  }
+
+  // If we're here, we're going to execute.
+  // Start up a new FileTestResults object on the node to insert results into.
+  var resultNode = 'result-s' + suiteIndex + '-f' + fileIndex;
+  var fileTestResults = new FileTestResults(ifc);
+  fileTestResults.onAllTestsComplete = partial(handleTestsComplete,
+                                               fileTestResults);
+  fileTestResults.start(resultNode, suites[suiteIndex].files[fileIndex],
+                        suites[suiteIndex].name);
+
+  // Once execution has been started, ensure runNextTestFile runs the
+  // next test file.
+  fileIndex++;
+}
+
+/**
+ * Called as all the test cases are started. In current implementation
+ * onAllSyncTestsComplete is synonymous to starting all the tests.
+ * @param fileTestResults
+ */
+function handleTestsComplete(fileTestResults) {
+  ifc.getResultsPublisher().addFileTestResults(fileTestResults);
+  runNextTestFile();
+}
+</script>
+</body>
+</html>

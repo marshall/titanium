@@ -1,0 +1,14 @@
+<string id="string-cancel">ยกเลิก</string>
+<string id="string-cancel-accesskey">ย</string>
+<string id="string-apply">ใช้</string>
+<string id="string-apply-accesskey">อ</string>
+<string id="string-nosites">ไม่มีไซต์</string>
+<string id="string-allowed">อนุญาต</string>
+<string id="string-denied">ปฏิเสธ</string>
+<string id="string-local-storage">พื้นที่เก็บข้อมูลในเครื่อง</string>
+<string id="string-location-data">ตำแหน่ง</string>
+<string id="string-gears-settings">การตั้งค่า Gears</string>
+<string id="string-permissions-description">ตารางต่อไปนี้แสดงสิทธิ์ที่คุณให้แก่แต่ละไซต์ที่พยายามใช้ Gears</string>
+<string id="string-version">Gears เวอร์ชัน PRODUCT_VERSION</string>
+<string id="string-html-title">การตั้งค่า Gears</string>
+<string id="string-remove">ลบ</string>

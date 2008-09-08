@@ -1,0 +1,234 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "DTD/xhtml1-transitional.dtd">
+
+<!--
+Copyright 2007, Google Inc.
+
+Redistribution and use in source and binary forms, with or without 
+modification, are permitted provided that the following conditions are met:
+
+ 1. Redistributions of source code must retain the above copyright notice, 
+    this list of conditions and the following disclaimer.
+ 2. Redistributions in binary form must reproduce the above copyright notice,
+    this list of conditions and the following disclaimer in the documentation
+    and/or other materials provided with the distribution.
+ 3. Neither the name of Google Inc. nor the names of its contributors may be
+    used to endorse or promote products derived from this software without
+    specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
+OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<html>
+  <head>
+    <title>Timer API</title>
+    <link rel="stylesheet" type="text/css" href="gears.css" />
+  </head>
+
+<body>
+
+<h1>Timer API</h1>
+
+<div id="pagecontent">
+
+<p>The Timer module implements the <a
+  href="http://www.whatwg.org/specs/web-apps/current-work/multipage/section-timers.html">WhatWG
+  Timer specification</a>, and makes it available in both workers and the main
+  HTML page.  This is the same timer API that is traditionally available in
+  browsers on the <code>window</code> object.
+
+
+<h3>Contents</h3>
+
+  <ol class="toc">
+  <li><a href="#overview">Overview</a>
+  <li><a href="#example">Example</a>
+  <li><a href="#timer_class">Timer class</a>
+  </ol>
+
+
+
+<h2 id="overview">Overview</h2>
+
+<p>Since workers don't have access to the window object, they also don't have
+access to the standard timer functionality.  The Timer module exposes similar
+functionality that can be used both in the main page and in workers.  This
+allows code to be shared across both contexts.
+<h4>Permission</h4>
+
+<p>Does not require user permission.</p>
+
+<h2 id="example">Example</h2>
+
+<pre><code>&lt;script type="text/javascript" src="<a href='tools.html#gears_init'>gears_init.js</a>"&gt;&lt;/script&gt;
+&lt;script type="text/javascript"&gt;
+var timer = google.gears.factory.create('beta.timer');
+timer.setTimeout(function() { alert('Hello, from the future!'); },
+                 1000);
+&lt;/script&gt;</code></pre>
+
+
+<h2 id="timer_class">Timer class</h2>
+
+<pre><code>int  <b>setTimeout</b>(fullScript, msecDelay)
+int  <b>setTimeout</b>(function, msecDelay)
+int  <b>setInterval</b>(fullScript, msecDelay)
+int  <b>setInterval</b>(function, msecDelay)
+void <b>clearTimeout</b>(timerId)
+void <b>clearInterval</b>(timerId)</code></pre>
+<br>
+
+
+<h3>Methods</h3>
+
+<table>
+  <tr class="odd">
+    <th colspan="2"><div align="left"><code>setTimeout(function, msecDelay)</code></div></th>
+  </tr>
+  <tr class="odd">
+    <td>Parameters:</td>
+    <td class="odd"><code>function</code> <br />
+      <code>msecDelay</code></td>
+  </tr>
+  <tr class="odd">
+    <td width="113">Return value:</td>
+    <td width="489">The ID of the new timeout.</td>
+  </tr>
+  <tr class="odd">
+    <td>Description:</td>
+    <td class="odd">
+      Creates a timeout that will call <code>function</code> after
+      <code>msecDelay</code> milliseconds have elapsed.
+      <br><br>
+      Timer IDs are guaranteed to be unique values that are never reused
+      within the same Timer.
+    </td>
+  </tr>
+</table>
+<table>
+  <tr class="odd">
+    <th colspan="2"><div align="left"><code>setTimeout(fullScript, msecDelay)</code></div></th>
+  </tr>
+  <tr class="odd">
+    <td>Parameters:</td>
+    <td class="odd"><code>fullScript</code><code> <br />
+      <code>msecDelay</code></td>
+  </tr>
+  <tr class="odd">
+    <td width="113">Return value: </td>
+    <td width="489">The ID of the new timeout.</td>
+  </tr>
+  <tr class="odd">
+    <td>Description:</td>
+    <td class="odd">
+      Creates a timeout that will evaluate <code>fullScript</code>
+      after <code>msecDelay</code> milliseconds have elapsed.
+      <br><br>
+      Timer IDs are guaranteed to be unique values that are never reused
+      within the same Timer.
+    </td>
+  </tr>
+</table>
+<table>
+  <tr class="odd">
+    <th colspan="2"><div align="left"><code>setInterval(function, msecDelay)</code></div></th>
+  </tr>
+  <tr class="odd">
+    <td>Parameters:</td>
+    <td class="odd"><code>function</code><code> <br />
+      <code>msecDelay</code></td>
+  </tr>
+  <tr class="odd">
+    <td width="113">Return value:</td>
+    <td width="489">The ID of the new interval.</td>
+  </tr>
+  <tr class="odd">
+    <td>Description:</td>
+    <td class="odd">
+      Creates an interval that will call <code>function</code>
+      after every <code>msecDelay</code> milliseconds have elapsed.
+      It will continue to fire until you call clearInterval() with this
+      interval's ID, or the page is unloaded.
+      <br><br>
+      Timer IDs are guaranteed to be unique values that are never reused
+      within the same Timer.
+    </td>
+  </tr>
+</table>
+<table>
+  <tr class="odd">
+    <th colspan="2"><div align="left"><code>setInterval(fullScript, msecDelay)</code></div></th>
+  </tr>
+  <tr class="odd">
+    <td>Parameters:</td>
+    <td class="odd"><code>fullScript</code><code> <br />
+      <code>msecDelay</code></td>
+  </tr>
+  <tr class="odd">
+    <td width="113">Return value:</td>
+    <td width="489">The ID of the new interval.</td>
+  </tr>
+  <tr class="odd">
+    <td>Description:</td>
+    <td class="odd">
+      Creates an interval that will evaluate <code>fullScript</code>
+      after every <code>msecDelay</code> milliseconds have elapsed.
+      It will continue to fire until you call clearInterval() with this
+      interval's ID, or the page is unloaded.
+      <br><br>
+      Timer IDs are guaranteed to be unique values that are never reused
+      within the same Timer.
+    </td>
+  </tr>
+</table>
+<table>
+  <tr class="odd">
+    <th colspan="2"><div align="left"><code>clearTimeout(timeoutId)</code></div></th>
+  </tr>
+  <tr class="odd">
+    <td>Parameters:</td>
+    <td class="odd"><code>timeoutId</code>
+    - The ID of the timeout to remove.
+    </td>
+  </tr>
+  <tr class="odd">
+    <td>Description:</td>
+    <td class="odd">
+      Works with timeouts
+      created with either the <code>fullScript</code> or
+      <code>function</code> version.
+    </td>
+  </tr>
+</table>
+<table>
+  <tr class="odd">
+    <th colspan="2"><div align="left"><code>clearInterval(intervalId)</code></div></th>
+  </tr>
+  <tr class="odd">
+    <td>Parameters:</td>
+    <td class="odd"><code>intervalId</code>
+    - The ID of the interval to remove.
+    </td>
+  </tr>
+  <tr class="odd">
+    <td>Description:</td>
+    <td class="odd">
+      Works with intervals created with either the
+      <code>fullScript</code> or <code>function</code>
+      version.  No future events will fire from the given interval.  
+    </td>
+  </tr>
+</table>
+
+
+</div>
+</body>
+</html>

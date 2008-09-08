@@ -1,0 +1,14 @@
+<string id="string-cancel">لغو</string>
+<string id="string-cancel-accesskey">C</string>
+<string id="string-apply">اعمال</string>
+<string id="string-apply-accesskey">مجاز</string>
+<string id="string-nosites">سایتی وجود ندارد.</string>
+<string id="string-allowed">مجاز</string>
+<string id="string-denied">مردود</string>
+<string id="string-local-storage">مکان ذخیره</string>
+<string id="string-location-data">موقعیت</string>
+<string id="string-gears-settings">تنظیمات Gears</string>
+<string id="string-permissions-description">جدول زیر مجوزهای شما برای دستیابی به سایتهایی که از Gears استفاده می کند را نشان می دهد.</string>
+<string id="string-version">Gears نسخه PRODUCT_VERSION</string>
+<string id="string-html-title">تنظیمات Gears</string>
+<string id="string-remove">حذف</string>

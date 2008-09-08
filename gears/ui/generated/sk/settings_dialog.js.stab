@@ -1,0 +1,14 @@
+<string id="string-cancel">Zrušiť</string>
+<string id="string-cancel-accesskey">R</string>
+<string id="string-apply">Použiť</string>
+<string id="string-apply-accesskey">P</string>
+<string id="string-nosites">Žiadne lokality.</string>
+<string id="string-allowed">Povolené</string>
+<string id="string-denied">Odmietnuté</string>
+<string id="string-local-storage">Lokálny ukladací priestor</string>
+<string id="string-location-data">Umiestnenie</string>
+<string id="string-gears-settings">Nastavenia rozšírenia Gears</string>
+<string id="string-permissions-description">V nižšie uvedenej tabuľke sú uvedené povolenia, ktoré máte udelené pre všetky lokality, ktoré sa pokúsili použiť rozšírenie Gears.</string>
+<string id="string-version">Gears, verzia PRODUCT_VERSION</string>
+<string id="string-html-title">Nastavenia rozšírenia Gears</string>
+<string id="string-remove">Odstrániť</string>

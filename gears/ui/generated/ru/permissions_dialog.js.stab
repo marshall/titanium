@@ -1,0 +1,33 @@
+<string id="string-html-title">Предупреждение безопасности Gears</string>
+<string id="string-allow">Разрешить</string>
+<string id="string-allow-accesskey">A</string>
+<string id="string-deny">Запретить</string>
+<string id="string-deny-accesskey">D</string>
+<string id="string-cancel">Отмена</string>
+<string id="string-never-allow-link">Никогда не разрешать этому сайту</string>
+<string id="string-never-allow-link-wince">Никогда не разрешать</string>
+<string id="string-description">
+  Gears – это расширение для браузера с открытым исходным кодом, позволяющее веб-приложениям работать в автономном режиме с помощью следующих API JavaScript:
+</string>
+<string id="string-localserver-desc">
+  Сохраняйте и размещайте ресурсы приложений на локальном компьютере
+</string>
+<string id="string-database-desc">
+  Сохраняйте данные на компьютере пользователя в виде реляционной БД с возможностью поиска по ним
+</string>
+<string id="string-workerpool-desc">
+  Запустить асинхронный JavaScript, чтобы ускорить работу приложения
+</string>
+<string id="string-query-data">
+  Указанный ниже веб-сайт запрашивает разрешение на хранение информации на компьютере с помощью Gears.
+</string>
+<string id="string-query-location">
+  Указанный ниже веб-сайт запрашивает разрешение на получение информации о местонахождении с помощью Gears.
+</string>
+<string id="string-location-privacy-statement">
+  Для того чтобы узнать о том, как будет использована информация о местонахождении, ознакомьтесь с политикой конфиденциальности сайта.
+</string>
+<string id="string-trust-site">
+  Я доверяю этому сайту. Разрешить использование Gears.
+</string>
+<string id="string-trust-site-accesskey">t</string>

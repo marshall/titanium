@@ -1,0 +1,14 @@
+<string id="string-cancel">キャンセル</string>
+<string id="string-cancel-accesskey">C</string>
+<string id="string-apply">適用</string>
+<string id="string-apply-accesskey">A</string>
+<string id="string-nosites">サイトがありません。</string>
+<string id="string-allowed">許可</string>
+<string id="string-denied">拒否</string>
+<string id="string-local-storage">ローカル保存</string>
+<string id="string-location-data">場所</string>
+<string id="string-gears-settings">Gears の設定</string>
+<string id="string-permissions-description">下記の表は、Gears を使用しようとした各サイトに与えた権限を示しています。</string>
+<string id="string-version">Gears バージョン PRODUCT_VERSION</string>
+<string id="string-html-title">Gears の設定</string>
+<string id="string-remove">削除</string>

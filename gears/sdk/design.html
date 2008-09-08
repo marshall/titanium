@@ -1,0 +1,93 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "DTD/xhtml1-transitional.dtd">
+
+<!--
+Copyright 2007, Google Inc.
+
+Redistribution and use in source and binary forms, with or without 
+modification, are permitted provided that the following conditions are met:
+
+ 1. Redistributions of source code must retain the above copyright notice, 
+    this list of conditions and the following disclaimer.
+ 2. Redistributions in binary form must reproduce the above copyright notice,
+    this list of conditions and the following disclaimer in the documentation
+    and/or other materials provided with the distribution.
+ 3. Neither the name of Google Inc. nor the names of its contributors may be
+    used to endorse or promote products derived from this software without
+    specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
+OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<html>
+  <head>
+    <title>Getting Started</title>
+    <link rel="stylesheet" type="text/css" href="gears.css" />
+  </head>
+
+<body>
+
+<h1>Getting Started</h1>
+
+<div id="pagecontent">
+
+<p>A short introduction to enabling an application to work offline using Gears.</p>
+<h3>Contents</h3>
+<ol class="toc">
+  <li><a href="#start">Getting Started   </a></li>
+  <li><a href="#detecting">Nuts and Bolts: Detecting and Installing Gears </a></li>
+      <a name="start" id="start"></a>
+      </li>
+</ol>
+<h1>Getting Started </h1>
+<p>First, if you haven't already, <a href="install.html">install</a> Gears on your computer to be able to use the sample applications and tools. </p>
+<h2>Going Offline </h2>
+<p>The first thing you need to run a web application offline is the ability to start it without an Internet connection. This is the purpose of the <a href="api_localserver.html">LocalServer module</a>. </p>
+<p>For a fast introduction to taking web content offline, work through the tutorial <a href="tutorial.html">Enabling Static Files to Work Offline using Gears</a>. You will be introduced  to the <a href="api_localserver.html">LocalServer API</a> and the <a href="api_localserver.html#manifest_file">manifest file</a>, the key components that cache your application's resources and make it available offline. </p>
+<h2>Storing User's Data  </h2>
+<p>Applications that are more than just static files  have data that is typically stored on the server. For the application to be useful offline, this data must be accessible locally. The <a href="api_database.html">Database module</a> provides a relational database for storing data. On the <a href="architecture.html">Architecture</a> page you will find a discussion of  strategies for designing the local storage that your application needs.</p>
+<p>When an offline application reconnects, you will need to <em>synchronize</em> any changes made in the local database with the server. There are many different approaches to synchronizing data, and there is no single perfect approach. The Architecture page describes some strategies for synching. </p>
+<p>An additional feature of the Gears database is Full-Text Search, providing a fast way to search text within a database file. Read the <a href="api_database.html#sqlite_fts">details</a> here. </p>
+<h2>Performance</h2>
+</p>
+<p>When synchronizing large amounts of data, you may find that the database operations begin to affect the responsiveness of the browser. The <a href="api_workerpool.html">WorkerPool</a> allows you to move your database operations to the background to keep the browser responsive.</p>
+<p>The WorkerPool is useful for any expensive operations that  slow down the UI.</p>
+<h2>Next Steps </h2>
+<p>Check out the Resources and Tools page to download useful files and sample applications. </p>
+<p>See the FAQ to find answers to common questions. And finally, we invite you to participate in the Developer Forum for Gears. </p>
+<p><a name="detecting" id="detecting"></a></p>
+<h1>Nuts and Bolts: Detecting and Installing Gears </h1>
+  <p>Your web application needs to detect whether or not Gears is installed on a user's system before calling the APIs, and also to determine when to display an installation prompt to the user.</p>
+  <p>Always initialize Gears using <code><a href="tools.html#gears_init">gears_init.js</a></code> . If Gears is installed, then <code>google.gears</code> will be defined. If Gears isn't installed, you can direct the user to a customized installation page, as shown below.
+  <p><b>Note:</b> Always use gears_init.js to access Gears. Other uses may not be supported in the future.
+
+<pre><code>&lt;script src="<a href="tools.html#gears_init">gears_init.js</a>"&gt;&lt;/script&gt;
+&lt;script&gt;
+  if (!window.google || !google.gears) {
+    location.href = "http://gears.google.com/?action=install&amp;message=&lt;your welcome message&gt;" +<br>                    "&amp;return=&lt;your website url&gt;";
+  }
+&lt;/script&gt;</code></pre>
+  <p>Use the  URL in the code above to access the Gears installation page. Substitute your customized message and your URL in the parameters. </p>
+
+<h2>Parameters</h2>
+
+<ul>
+  <li><code>action</code>: Enables applications to customize the Gears install page to provide context during the installation process. There are two allowed values: <code>install</code> or  <code>upgrade</code>. Use the <code>install</code> value to prompt the user to install Gears. Use the <code>upgrade</code> parameter if you detect that the version of Gears the user has installed is too old for your application (but note that Gears autodates itself, so typically the vast majority of users all have the latest version). Either of these values enable the rest of the customization parameters.
+  <li><code>icon_src</code>: Provide the URL to a 48x48 icon for your application. The icon can be any format displayable by web browsers.
+  <li><code>name</code>: Provide the name of your application. This value can be up to 150 characters in length.
+  <li><code>message</code>: Provide any text up to 150 characters. This message appears at the top of the installation page. For example: &quot;Install Gears to enable MyGreatApp's offline features!&quot;</li>
+  <li><code>return</code>: Provide your application's URL. The user will be directed back to this URL when installation is complete. </li>
+</ul>
+
+
+</div>
+</body>
+</html>

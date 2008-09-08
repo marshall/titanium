@@ -1,0 +1,104 @@
+/*
+Copyright 2007, Google Inc.
+
+Redistribution and use in source and binary forms, with or without 
+modification, are permitted provided that the following conditions are met:
+
+ 1. Redistributions of source code must retain the above copyright notice, 
+    this list of conditions and the following disclaimer.
+ 2. Redistributions in binary form must reproduce the above copyright notice,
+    this list of conditions and the following disclaimer in the documentation
+    and/or other materials provided with the distribution.
+ 3. Neither the name of Google Inc. nor the names of its contributors may be
+    used to endorse or promote products derived from this software without
+    specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
+OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
+body, html {
+  background-color:white;
+  padding:0;
+  margin:0;
+  height:100%;
+  overflow:hidden;
+  cursor:default;
+
+  /* 
+    Makes the text unselectable in mozilla. See html_diaog.js for IE
+    implementation.
+  */
+  -moz-user-select:none;
+}
+
+body, td, input, select, button {
+  font-family:arial,sans-serif;
+  font-size:13px;
+}
+
+p {
+  margin:0;
+  margin-bottom:1em;
+}
+
+a {
+  color:blue;
+  text-decoration:underline;
+}
+
+button {
+  /*
+  It would be better to express margins in ems, but it causes layout
+  artifacts (presumably because of rounding errors) when combined with
+  the -moz-border-radius property used in button.css on Firefox 2.
+
+  Also: bizarely, if I try to use the more natural margin-left:10px, I get
+  a bug where the buttons bounce on IE when you hover over them.
+  */
+  position:relative;
+  margin-right:7px;
+  left:7px;
+}
+
+#head {
+  padding:1em;
+}
+
+#foot {
+m4_ifelse(PRODUCT_OS,~android~,m4_dnl
+~
+  /*
+  On Android we do not use position:absolute due to some
+  rendering limitations (absolute positioning works, but
+  the automatic resizing of dialog is confused by the
+  variable content and the display is wrong, while if we
+  remove the absolute positioning, #foot is back in the
+  flow and the dialog displays correctly)
+  */
+~,~
+  position:absolute;
+~)
+  background:white;
+  bottom:0;
+  width:100%;
+}
+
+#button-row {
+  margin:1em;
+}
+
+.accesskey {
+  text-decoration: underline;
+
+  /* IE CSS extension */
+  accelerator: true;
+}

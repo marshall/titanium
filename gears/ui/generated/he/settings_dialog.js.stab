@@ -1,0 +1,14 @@
+<string id="string-cancel">ביטול</string>
+<string id="string-cancel-accesskey">ביטול</string>
+<string id="string-apply">החל</string>
+<string id="string-apply-accesskey">א</string>
+<string id="string-nosites">ללא אתרים.</string>
+<string id="string-allowed">מותר</string>
+<string id="string-denied">נדחה</string>
+<string id="string-local-storage">אחסון מקומי</string>
+<string id="string-location-data">מיקום</string>
+<string id="string-gears-settings">הגדרות Gears</string>
+<string id="string-permissions-description">הטבלה שלהלן מראה את ההרשאות שהענקת לכל אתר שניסה להשתמש ב-Gears.</string>
+<string id="string-version">Gears בגרסה PRODUCT_VERSION</string>
+<string id="string-html-title">הגדרות Gears</string>
+<string id="string-remove">הסר</string>

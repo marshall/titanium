@@ -1,0 +1,33 @@
+<string id="string-html-title">Gears 安全警告</string>
+<string id="string-allow">允许</string>
+<string id="string-allow-accesskey">A</string>
+<string id="string-deny">拒绝</string>
+<string id="string-deny-accesskey">D</string>
+<string id="string-cancel">取消</string>
+<string id="string-never-allow-link">永不允许该网站</string>
+<string id="string-never-allow-link-wince">永不允许</string>
+<string id="string-description">
+  Gears 是一种开放源代码的浏览器扩展程序，通过该扩展程序网络应用程序可以使用以下 JavaScript API 提供脱机功能：
+</string>
+<string id="string-localserver-desc">
+  在本地存储和提供应用程序资源
+</string>
+<string id="string-database-desc">
+  在本地将数据存储到可全面搜索的关系数据库中
+</string>
+<string id="string-workerpool-desc">
+  运行异步 JavaScript 以提高应用程序响应速度
+</string>
+<string id="string-query-data">
+  下列网站要使用 Gears 在您的计算机上存储信息。
+</string>
+<string id="string-query-location">
+  下列网站要使用 Gears 访问有关您的位置的信息。
+</string>
+<string id="string-location-privacy-statement">
+  阅读网站的隐私政策，了解该网站会如何使用您的位置。
+</string>
+<string id="string-trust-site">
+  我信任该网站。 允许其使用 Gears。
+</string>
+<string id="string-trust-site-accesskey">t</string>
