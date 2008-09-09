@@ -10,6 +10,7 @@
 		5073E0CB09E734E500EC74B6 /* titanium_plugin.cp in Sources */ = {isa = PBXBuildFile; fileRef = 5073E0C409E734A800EC74B6 /* titanium_plugin.cp */; };
 		ABA2AB8B0E76F2B80035CB1C /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ABA2AB8A0E76F2B80035CB1C /* WebKit.framework */; };
 		ABA2AC770E76FBFD0035CB1C /* titanium_plugin_Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = ABA2AC760E76FBFD0035CB1C /* titanium_plugin_Prefix.pch */; };
+		ABA2ADA10E772A950035CB1C /* libscintilla.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ABA2ADA00E772A950035CB1C /* libscintilla.a */; };
 		D2AAC0B105546B7500DB518D /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08FB77AAFE841565C02AAC07 /* Carbon.framework */; };
 /* End PBXBuildFile section */
 
@@ -20,6 +21,7 @@
 		5073E0C709E734A800EC74B6 /* titanium_pluginTarget.xcconfig */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xcconfig; path = titanium_pluginTarget.xcconfig; sourceTree = "<group>"; };
 		ABA2AB8A0E76F2B80035CB1C /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = /System/Library/Frameworks/WebKit.framework; sourceTree = "<absolute>"; };
 		ABA2AC760E76FBFD0035CB1C /* titanium_plugin_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = titanium_plugin_Prefix.pch; sourceTree = "<group>"; };
+		ABA2ADA00E772A950035CB1C /* libscintilla.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libscintilla.a; path = ../../../../../../Source/scintilla/bin/libscintilla.a; sourceTree = SOURCE_ROOT; };
 		D2AAC09D05546B4700DB518D /* libtitanium_plugin.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libtitanium_plugin.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -30,6 +32,7 @@
 			files = (
 				D2AAC0B105546B7500DB518D /* Carbon.framework in Frameworks */,
 				ABA2AB8B0E76F2B80035CB1C /* WebKit.framework in Frameworks */,
+				ABA2ADA10E772A950035CB1C /* libscintilla.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -58,6 +61,7 @@
 		0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				ABA2ADA00E772A950035CB1C /* libscintilla.a */,
 				ABA2AB8A0E76F2B80035CB1C /* WebKit.framework */,
 				08FB77AAFE841565C02AAC07 /* Carbon.framework */,
 			);
@@ -159,6 +163,10 @@
 					"_GLIBCXX_DEBUG=1",
 					"_GLIBCXX_DEBUG_PEDANTIC=1",
 				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../../../../../Source/scintilla/bin\"",
+				);
 			};
 			name = Debug;
 		};
@@ -171,6 +179,10 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = titanium_plugin_Prefix.pch;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../../../../../Source/scintilla/bin\"",
+				);
 				STRIP_INSTALLED_PRODUCT = YES;
 				STRIP_STYLE = "non-global";
 			};
@@ -185,8 +197,14 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = /System/Library/Frameworks/WebKit.framework/Headers;
+				HEADER_SEARCH_PATHS = (
+					/Users/marshall/Source/scintilla/src,
+					/Users/marshall/Source/scintilla/include,
+					/System/Library/Frameworks/WebKit.framework/Headers,
+					/Users/marshall/Source/scintilla/macosx,
+				);
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = "-DSCI_NAMESPACE";
 				PREBINDING = NO;
 				SDKROOT = macosx10.5;
 			};
