@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 45;
+	objectVersion = 44;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -21,7 +21,7 @@
 		5073E0C709E734A800EC74B6 /* titanium_pluginTarget.xcconfig */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xcconfig; path = titanium_pluginTarget.xcconfig; sourceTree = "<group>"; };
 		ABA2AB8A0E76F2B80035CB1C /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = /System/Library/Frameworks/WebKit.framework; sourceTree = "<absolute>"; };
 		ABA2AC760E76FBFD0035CB1C /* titanium_plugin_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = titanium_plugin_Prefix.pch; sourceTree = "<group>"; };
-		ABA2ADA00E772A950035CB1C /* libscintilla.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libscintilla.a; path = ../../../../../../Source/scintilla/bin/libscintilla.a; sourceTree = SOURCE_ROOT; };
+		ABA2ADA00E772A950035CB1C /* libscintilla.a */ = {isa = PBXFileReference; explicitFileType = file; path = libscintilla.a; sourceTree = "<group>"; };
 		D2AAC09D05546B4700DB518D /* libtitanium_plugin.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libtitanium_plugin.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -123,7 +123,7 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 1DEB916408733D950010E9CD /* Build configuration list for PBXProject "titanium_plugin" */;
-			compatibilityVersion = "Xcode 3.1";
+			compatibilityVersion = "Xcode 3.0";
 			hasScannedForEncodings = 1;
 			mainGroup = 0867D691FE84028FC02AAC07 /* titanium_plugin */;
 			productRefGroup = 034768DDFF38A45A11DB9C8B /* Products */;
