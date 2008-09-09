@@ -3,7 +3,7 @@
  *  titanium_plugin
  *
  *  Created by Marshall on 9/9/08.
- *  Copyright 2008 Redhat. All rights reserved.
+ *  Copyright 2008 Appcelerator, Inc. All rights reserved.
  *
  */
 
