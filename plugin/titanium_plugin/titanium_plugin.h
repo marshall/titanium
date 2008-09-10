@@ -7,19 +7,18 @@
  *
  */
 
-#ifndef titanium_plugin_
-#define titanium_plugin_
 
-/* The classes below are exported */
-#pragma GCC visibility push(default)
+#include "npapi.h"
+#include "npruntime.h"
+#include <iostream>
+#include <string>
+#include <fstream>
+#include <Carbon/Carbon.h>
+#include "TView.h"
+#include "TCarbonEvent.h"
+#include "SciLexer.h"
+#include "ScintillaMacOSX.h"
 
-#include "plugin.h"
-
-class titanium_plugin
-{
-	public:
-		void HelloWorld(const char *);
-};
-
-#pragma GCC visibility pop
-#endif
+CGrafPtr gPtr = NULL;
+NP_Port *port = NULL;
+std::string filePath;

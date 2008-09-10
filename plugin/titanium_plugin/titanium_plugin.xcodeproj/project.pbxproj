@@ -11,6 +11,10 @@
 		ABA2AB8B0E76F2B80035CB1C /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ABA2AB8A0E76F2B80035CB1C /* WebKit.framework */; };
 		ABA2AC770E76FBFD0035CB1C /* titanium_plugin_Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = ABA2AC760E76FBFD0035CB1C /* titanium_plugin_Prefix.pch */; };
 		ABA2ADA10E772A950035CB1C /* libscintilla.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ABA2ADA00E772A950035CB1C /* libscintilla.a */; };
+		ABA2AE090E773FBC0035CB1C /* titanium_plugin.h in Headers */ = {isa = PBXBuildFile; fileRef = ABA2AE080E773FBC0035CB1C /* titanium_plugin.h */; };
+		ABA2B02F0E775D220035CB1C /* PluginObject.h in Headers */ = {isa = PBXBuildFile; fileRef = ABA2B02D0E775D220035CB1C /* PluginObject.h */; };
+		ABA2B0300E775D220035CB1C /* PluginObject.c in Sources */ = {isa = PBXBuildFile; fileRef = ABA2B02E0E775D220035CB1C /* PluginObject.c */; };
+		ABA2B03D0E77707E0035CB1C /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ABA2B03C0E77707E0035CB1C /* CoreFoundation.framework */; };
 		D2AAC0B105546B7500DB518D /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08FB77AAFE841565C02AAC07 /* Carbon.framework */; };
 /* End PBXBuildFile section */
 
@@ -22,6 +26,11 @@
 		ABA2AB8A0E76F2B80035CB1C /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = /System/Library/Frameworks/WebKit.framework; sourceTree = "<absolute>"; };
 		ABA2AC760E76FBFD0035CB1C /* titanium_plugin_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = titanium_plugin_Prefix.pch; sourceTree = "<group>"; };
 		ABA2ADA00E772A950035CB1C /* libscintilla.a */ = {isa = PBXFileReference; explicitFileType = file; path = libscintilla.a; sourceTree = "<group>"; };
+		ABA2AE060E773EA10035CB1C /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		ABA2AE080E773FBC0035CB1C /* titanium_plugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = titanium_plugin.h; sourceTree = "<group>"; };
+		ABA2B02D0E775D220035CB1C /* PluginObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginObject.h; sourceTree = "<group>"; };
+		ABA2B02E0E775D220035CB1C /* PluginObject.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = PluginObject.c; sourceTree = "<group>"; };
+		ABA2B03C0E77707E0035CB1C /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = /System/Library/Frameworks/CoreFoundation.framework; sourceTree = "<absolute>"; };
 		D2AAC09D05546B4700DB518D /* libtitanium_plugin.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libtitanium_plugin.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -33,6 +42,7 @@
 				D2AAC0B105546B7500DB518D /* Carbon.framework in Frameworks */,
 				ABA2AB8B0E76F2B80035CB1C /* WebKit.framework in Frameworks */,
 				ABA2ADA10E772A950035CB1C /* libscintilla.a in Frameworks */,
+				ABA2B03D0E77707E0035CB1C /* CoreFoundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -61,6 +71,7 @@
 		0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				ABA2B03C0E77707E0035CB1C /* CoreFoundation.framework */,
 				ABA2ADA00E772A950035CB1C /* libscintilla.a */,
 				ABA2AB8A0E76F2B80035CB1C /* WebKit.framework */,
 				08FB77AAFE841565C02AAC07 /* Carbon.framework */,
@@ -73,6 +84,9 @@
 			children = (
 				5073E0C409E734A800EC74B6 /* titanium_plugin.cp */,
 				ABA2AC760E76FBFD0035CB1C /* titanium_plugin_Prefix.pch */,
+				ABA2AE080E773FBC0035CB1C /* titanium_plugin.h */,
+				ABA2B02D0E775D220035CB1C /* PluginObject.h */,
+				ABA2B02E0E775D220035CB1C /* PluginObject.c */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -82,6 +96,7 @@
 			children = (
 				5073E0C609E734A800EC74B6 /* titanium_pluginProj.xcconfig */,
 				5073E0C709E734A800EC74B6 /* titanium_pluginTarget.xcconfig */,
+				ABA2AE060E773EA10035CB1C /* Info.plist */,
 			);
 			name = "Configuration Files";
 			sourceTree = "<group>";
@@ -94,6 +109,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				ABA2AC770E76FBFD0035CB1C /* titanium_plugin_Prefix.pch in Headers */,
+				ABA2AE090E773FBC0035CB1C /* titanium_plugin.h in Headers */,
+				ABA2B02F0E775D220035CB1C /* PluginObject.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -141,6 +158,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5073E0CB09E734E500EC74B6 /* titanium_plugin.cp in Sources */,
+				ABA2B0300E775D220035CB1C /* PluginObject.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -167,6 +185,9 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/../../../../../../Source/scintilla/bin\"",
 				);
+				MACH_O_TYPE = mh_dylib;
+				STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = dynamic;
+				WRAPPER_EXTENSION = plugin;
 			};
 			name = Debug;
 		};
@@ -192,7 +213,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5073E0C609E734A800EC74B6 /* titanium_pluginProj.xcconfig */;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				ARCHS = "$(ONLY_ACTIVE_ARCH_PRE_XCODE_3_1)";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
@@ -203,10 +224,13 @@
 					/System/Library/Frameworks/WebKit.framework/Headers,
 					/Users/marshall/Source/scintilla/macosx,
 				);
-				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CFLAGS = "-DSCI_NAMESPACE";
+				ONLY_ACTIVE_ARCH_PRE_XCODE_3_1 = "$(NATIVE_ARCH)";
+				OTHER_CFLAGS = (
+					"-DSCI_NAMESPACE",
+					"-DSCI_OWNREGEX",
+				);
 				PREBINDING = NO;
-				SDKROOT = macosx10.5;
+				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
 			};
 			name = Debug;
 		};
@@ -214,12 +238,13 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5073E0C609E734A800EC74B6 /* titanium_pluginProj.xcconfig */;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				ARCHS = "$(ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1 = "ppc i386";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				PREBINDING = NO;
-				SDKROOT = macosx10.5;
+				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
 			};
 			name = Release;
 		};
