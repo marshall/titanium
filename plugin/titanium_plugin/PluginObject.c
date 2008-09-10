@@ -83,14 +83,7 @@ bool pluginGetProperty(NPObject *obj, NPIdentifier name, NPVariant *variant)
 {
     PluginObject *plugin = (PluginObject *)obj;
     if (name == pluginPropertyIdentifiers[ID_FILE_PROPERTY]) {
-        NPString *string = (NPString *) malloc(sizeof(NPString)+1);
-		
-		char *filename = plugin->filename;
-		string->UTF8Characters = strdup(filename);
-		string->UTF8Length = strlen(filename);
-		
-        browser->retainobject(string);
-        OBJECT_TO_NPVARIANT(string, *variant);
+		STRINGZ_TO_NPVARIANT(plugin->filename, *variant);
         return true;
     }
     return false;
@@ -105,15 +98,7 @@ bool pluginInvoke(NPObject *obj, NPIdentifier name, const NPVariant *args, uint3
 {
     PluginObject *plugin = (PluginObject *)obj;
     if (name == pluginMethodIdentifiers[ID_GETFILE_METHOD]) {
-        NPString *string = (NPString *) malloc(sizeof(NPString)+1);
-		
-		char *filename = plugin->filename;
-		string->UTF8Characters = strdup(filename);
-		string->UTF8Length = strlen(filename);
-		
-        browser->retainobject(string);
-		
-        OBJECT_TO_NPVARIANT(string, *result);
+		STRINGZ_TO_NPVARIANT(plugin->filename, *result);
         return true;
     }
     return false;

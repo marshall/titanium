@@ -308,6 +308,17 @@
 			ABA2B0600E7771180035CB1C /* PBXTextBookmark */ = ABA2B0600E7771180035CB1C /* PBXTextBookmark */;
 			ABA2B0610E7771180035CB1C /* PBXTextBookmark */ = ABA2B0610E7771180035CB1C /* PBXTextBookmark */;
 			ABA2B0620E7771180035CB1C /* PBXTextBookmark */ = ABA2B0620E7771180035CB1C /* PBXTextBookmark */;
+			ABA2B0670E77729E0035CB1C /* PBXTextBookmark */ = ABA2B0670E77729E0035CB1C /* PBXTextBookmark */;
+			ABA2B0680E77729E0035CB1C /* PBXTextBookmark */ = ABA2B0680E77729E0035CB1C /* PBXTextBookmark */;
+			ABA2B0690E77729E0035CB1C /* PBXTextBookmark */ = ABA2B0690E77729E0035CB1C /* PBXTextBookmark */;
+			ABA2B06A0E77729E0035CB1C /* PBXTextBookmark */ = ABA2B06A0E77729E0035CB1C /* PBXTextBookmark */;
+			ABA2B06B0E77729E0035CB1C /* PBXTextBookmark */ = ABA2B06B0E77729E0035CB1C /* PBXTextBookmark */;
+			ABA2B06F0E77739E0035CB1C /* PBXTextBookmark */ = ABA2B06F0E77739E0035CB1C /* PBXTextBookmark */;
+			ABA2B0700E77739E0035CB1C /* PBXTextBookmark */ = ABA2B0700E77739E0035CB1C /* PBXTextBookmark */;
+			ABA2B0710E77739E0035CB1C /* PBXTextBookmark */ = ABA2B0710E77739E0035CB1C /* PBXTextBookmark */;
+			ABA2B0720E77739E0035CB1C /* PBXTextBookmark */ = ABA2B0720E77739E0035CB1C /* PBXTextBookmark */;
+			ABA2B0730E77739E0035CB1C /* PBXTextBookmark */ = ABA2B0730E77739E0035CB1C /* PBXTextBookmark */;
+			ABA2B0740E77739E0035CB1C /* PBXTextBookmark */ = ABA2B0740E77739E0035CB1C /* PBXTextBookmark */;
 		};
 		sourceControlManager = ABA2AB880E76F2B60035CB1C /* Source Control */;
 		userBuildSettings = {
@@ -2080,6 +2091,7 @@
 	};
 	ABA2AE210E77449E0035CB1C /* PluginObject.c */ = {
 		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.c.c;
 		name = PluginObject.c;
 		path = /Developer/Examples/WebKit/NetscapeMoviePlugIn/PluginObject.c;
 		sourceTree = "<absolute>";
@@ -2664,17 +2676,17 @@
 	};
 	ABA2B02D0E775D220035CB1C /* PluginObject.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1030, 632}}";
-			sepNavSelRange = "{196, 0}";
+			sepNavIntBoundsRect = "{{0, 0}, {1030, 916}}";
+			sepNavSelRange = "{400, 0}";
 			sepNavVisRange = "{0, 400}";
 			sepNavWindowFrame = "{{701, -13}, {863, 833}}";
 		};
 	};
 	ABA2B02E0E775D220035CB1C /* PluginObject.c */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {720, 2128}}";
-			sepNavSelRange = "{2806, 0}";
-			sepNavVisRange = "{2529, 394}";
+			sepNavIntBoundsRect = "{{0, 0}, {1030, 1890}}";
+			sepNavSelRange = "{2912, 0}";
+			sepNavVisRange = "{2170, 1541}";
 		};
 	};
 	ABA2B0420E7771180035CB1C /* PBXTextBookmark */ = {
@@ -2727,8 +2739,8 @@
 		isa = PBXTextBookmark;
 		fRef = ABA2B02E0E775D220035CB1C /* PluginObject.c */;
 		name = "PluginObject.c: 114";
-		rLen = 7;
-		rLoc = 3459;
+		rLen = 0;
+		rLoc = 3025;
 		rType = 0;
 		vrLen = 1426;
 		vrLoc = 0;
@@ -2815,9 +2827,16 @@
 	};
 	ABA2B0500E7771180035CB1C /* npruntime.h */ = {
 		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.c.h;
 		name = npruntime.h;
 		path = /Developer/SDKs/MacOSX10.5.sdk/System/Library/Frameworks/WebKit.framework/Versions/A/Headers/npruntime.h;
 		sourceTree = "<absolute>";
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1062, 5040}}";
+			sepNavSelRange = "{7546, 0}";
+			sepNavVisRange = "{5620, 3602}";
+			sepNavWindowFrame = "{{39, 81}, {863, 833}}";
+		};
 	};
 	ABA2B0510E7771180035CB1C /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
@@ -2834,7 +2853,7 @@
 		fRef = ABA2B02E0E775D220035CB1C /* PluginObject.c */;
 		name = "PluginObject.c: 141";
 		rLen = 0;
-		rLoc = 4052;
+		rLoc = 3587;
 		rType = 0;
 		vrLen = 1120;
 		vrLoc = 3144;
@@ -2854,7 +2873,7 @@
 		fRef = ABA2B02E0E775D220035CB1C /* PluginObject.c */;
 		name = "PluginObject.c: 140";
 		rLen = 0;
-		rLoc = 4052;
+		rLoc = 3587;
 		rType = 0;
 		vrLen = 1426;
 		vrLoc = 0;
@@ -2964,7 +2983,7 @@
 		fRef = ABA2B02E0E775D220035CB1C /* PluginObject.c */;
 		name = "PluginObject.c: 92";
 		rLen = 0;
-		rLoc = 2819;
+		rLoc = 2594;
 		rType = 0;
 		vrLen = 1278;
 		vrLoc = 2170;
@@ -2983,8 +3002,8 @@
 		isa = PBXTextBookmark;
 		fRef = ABA2B02E0E775D220035CB1C /* PluginObject.c */;
 		name = "PluginObject.c: 114";
-		rLen = 7;
-		rLoc = 3459;
+		rLen = 0;
+		rLoc = 3025;
 		rType = 0;
 		vrLen = 1426;
 		vrLoc = 0;
@@ -2998,6 +3017,116 @@
 		rType = 0;
 		vrLen = 400;
 		vrLoc = 0;
+	};
+	ABA2B0670E77729E0035CB1C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = ABA2B02E0E775D220035CB1C /* PluginObject.c */;
+		name = "PluginObject.c: 111";
+		rLen = 0;
+		rLoc = 3025;
+		rType = 0;
+		vrLen = 1426;
+		vrLoc = 0;
+	};
+	ABA2B0680E77729E0035CB1C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = ABA2B02D0E775D220035CB1C /* PluginObject.h */;
+		name = "PluginObject.h: 12";
+		rLen = 0;
+		rLoc = 196;
+		rType = 0;
+		vrLen = 400;
+		vrLoc = 0;
+	};
+	ABA2B0690E77729E0035CB1C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = ABA2B02D0E775D220035CB1C /* PluginObject.h */;
+		name = "PluginObject.h: 12";
+		rLen = 0;
+		rLoc = 196;
+		rType = 0;
+		vrLen = 400;
+		vrLoc = 0;
+	};
+	ABA2B06A0E77729E0035CB1C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = ABA2B02E0E775D220035CB1C /* PluginObject.c */;
+		name = "PluginObject.c: 111";
+		rLen = 0;
+		rLoc = 3025;
+		rType = 0;
+		vrLen = 1426;
+		vrLoc = 0;
+	};
+	ABA2B06B0E77729E0035CB1C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = ABA2B02D0E775D220035CB1C /* PluginObject.h */;
+		name = "PluginObject.h: 21";
+		rLen = 0;
+		rLoc = 400;
+		rType = 0;
+		vrLen = 365;
+		vrLoc = 0;
+	};
+	ABA2B06F0E77739E0035CB1C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = ABA2B02D0E775D220035CB1C /* PluginObject.h */;
+		name = "PluginObject.h: 24";
+		rLen = 0;
+		rLoc = 400;
+		rType = 0;
+		vrLen = 400;
+		vrLoc = 0;
+	};
+	ABA2B0700E77739E0035CB1C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = ABA2B0500E7771180035CB1C /* npruntime.h */;
+		name = "npruntime.h: 184";
+		rLen = 0;
+		rLoc = 7546;
+		rType = 0;
+		vrLen = 3602;
+		vrLoc = 5620;
+	};
+	ABA2B0710E77739E0035CB1C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = ABA2B02E0E775D220035CB1C /* PluginObject.c */;
+		name = "PluginObject.c: 113";
+		rLen = 20;
+		rLoc = 3025;
+		rType = 0;
+		vrLen = 1626;
+		vrLoc = 2401;
+	};
+	ABA2B0720E77739E0035CB1C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = ABA2B02D0E775D220035CB1C /* PluginObject.h */;
+		name = "PluginObject.h: 24";
+		rLen = 0;
+		rLoc = 400;
+		rType = 0;
+		vrLen = 400;
+		vrLoc = 0;
+	};
+	ABA2B0730E77739E0035CB1C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = ABA2B0500E7771180035CB1C /* npruntime.h */;
+		name = "npruntime.h: 184";
+		rLen = 0;
+		rLoc = 7546;
+		rType = 0;
+		vrLen = 3602;
+		vrLoc = 5620;
+	};
+	ABA2B0740E77739E0035CB1C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = ABA2B02E0E775D220035CB1C /* PluginObject.c */;
+		name = "PluginObject.c: 98";
+		rLen = 0;
+		rLoc = 2912;
+		rType = 0;
+		vrLen = 1541;
+		vrLoc = 2170;
 	};
 	D2AAC09C05546B4700DB518D /* titanium_plugin */ = {
 		activeExec = 0;

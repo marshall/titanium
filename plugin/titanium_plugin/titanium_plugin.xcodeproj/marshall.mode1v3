@@ -228,8 +228,6 @@
 			<key>Layout</key>
 			<array>
 				<dict>
-					<key>BecomeActive</key>
-					<true/>
 					<key>ContentConfiguration</key>
 					<dict>
 						<key>PBXBottomSmartGroupGIDs</key>
@@ -277,7 +275,7 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>9</integer>
+									<integer>10</integer>
 									<integer>5</integer>
 									<integer>0</integer>
 								</array>
@@ -313,12 +311,14 @@
 					<key>Dock</key>
 					<array>
 						<dict>
+							<key>BecomeActive</key>
+							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>PluginObject.h</string>
+								<string>PluginObject.c</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -326,11 +326,11 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>PluginObject.h</string>
+										<string>PluginObject.c</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>ABA2B0620E7771180035CB1C</string>
+										<string>ABA2B0740E77739E0035CB1C</string>
 										<key>history</key>
 										<array>
 											<string>ABA2AC6E0E76FBA60035CB1C</string>
@@ -341,12 +341,16 @@
 											<string>ABA2AE1D0E77449E0035CB1C</string>
 											<string>ABA2AE1E0E77449E0035CB1C</string>
 											<string>ABA2B0220E7758CA0035CB1C</string>
-											<string>ABA2B0420E7771180035CB1C</string>
 											<string>ABA2B0440E7771180035CB1C</string>
 											<string>ABA2B0450E7771180035CB1C</string>
 											<string>ABA2B0460E7771180035CB1C</string>
-											<string>ABA2B0470E7771180035CB1C</string>
-											<string>ABA2B0480E7771180035CB1C</string>
+											<string>ABA2B06F0E77739E0035CB1C</string>
+											<string>ABA2B0700E77739E0035CB1C</string>
+											<string>ABA2B0710E77739E0035CB1C</string>
+										</array>
+										<key>nextStack</key>
+										<array>
+											<string>ABA2B0730E77739E0035CB1C</string>
 										</array>
 										<key>prevStack</key>
 										<array>
@@ -390,12 +394,9 @@
 											<string>ABA2B04E0E7771180035CB1C</string>
 											<string>ABA2B04F0E7771180035CB1C</string>
 											<string>ABA2B0510E7771180035CB1C</string>
-											<string>ABA2B0520E7771180035CB1C</string>
 											<string>ABA2B0530E7771180035CB1C</string>
-											<string>ABA2B0540E7771180035CB1C</string>
 											<string>ABA2B0550E7771180035CB1C</string>
 											<string>ABA2B0560E7771180035CB1C</string>
-											<string>ABA2B0570E7771180035CB1C</string>
 											<string>ABA2B0580E7771180035CB1C</string>
 											<string>ABA2B0590E7771180035CB1C</string>
 											<string>ABA2B05A0E7771180035CB1C</string>
@@ -403,9 +404,9 @@
 											<string>ABA2B05C0E7771180035CB1C</string>
 											<string>ABA2B05D0E7771180035CB1C</string>
 											<string>ABA2B05E0E7771180035CB1C</string>
-											<string>ABA2B05F0E7771180035CB1C</string>
 											<string>ABA2B0600E7771180035CB1C</string>
-											<string>ABA2B0610E7771180035CB1C</string>
+											<string>ABA2B0690E77729E0035CB1C</string>
+											<string>ABA2B0720E77739E0035CB1C</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -417,14 +418,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 0}, {1091, 664}}</string>
+								<string>{{0, 0}, {1091, 948}}</string>
 								<key>RubberWindowFrame</key>
 								<string>177 152 1386 994 0 0 1920 1178 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
 							<key>Proportion</key>
-							<string>664pt</string>
+							<string>948pt</string>
 						</dict>
 						<dict>
 							<key>ContentConfiguration</key>
@@ -437,14 +438,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 669}, {1091, 284}}</string>
+								<string>{{0, 953}, {1091, 0}}</string>
 								<key>RubberWindowFrame</key>
 								<string>177 152 1386 994 0 0 1920 1178 </string>
 							</dict>
 							<key>Module</key>
 							<string>XCDetailModule</string>
 							<key>Proportion</key>
-							<string>284pt</string>
+							<string>0pt</string>
 						</dict>
 					</array>
 					<key>Proportion</key>
@@ -599,8 +600,6 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>ABA2B0630E7771180035CB1C</string>
-		<string>ABA2B0640E7771180035CB1C</string>
 		<string>ABA2AB9C0E76F2F10035CB1C</string>
 		<string>/Users/marshall/Code/appcelerator/appcelerator_titanium/trunk/plugin/titanium_plugin/titanium_plugin.xcodeproj</string>
 	</array>
@@ -626,7 +625,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CD0528F0623707200166675</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>PluginObject.c</string>
+								<string>titanium_plugin.cp</string>
 								<key>StatusBarVisibility</key>
 								<true/>
 							</dict>
