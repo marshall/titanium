@@ -29,7 +29,7 @@
 		ABA2AE060E773EA10035CB1C /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		ABA2AE080E773FBC0035CB1C /* titanium_plugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = titanium_plugin.h; sourceTree = "<group>"; };
 		ABA2B02D0E775D220035CB1C /* PluginObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginObject.h; sourceTree = "<group>"; };
-		ABA2B02E0E775D220035CB1C /* PluginObject.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = PluginObject.c; sourceTree = "<group>"; };
+		ABA2B02E0E775D220035CB1C /* PluginObject.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; path = PluginObject.c; sourceTree = "<group>"; };
 		ABA2B03C0E77707E0035CB1C /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = /System/Library/Frameworks/CoreFoundation.framework; sourceTree = "<absolute>"; };
 		D2AAC09D05546B4700DB518D /* libtitanium_plugin.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libtitanium_plugin.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */

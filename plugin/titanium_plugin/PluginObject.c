@@ -118,7 +118,7 @@ void pluginInvalidate(NPObject *obj)
 
 NPObject *pluginAllocate(NPP npp, NPClass *theClass)
 {
-    PluginObject *newInstance = malloc(sizeof(PluginObject));
+    PluginObject *newInstance = (PluginObject *)malloc(sizeof(PluginObject));
     
     if (!identifiersInitialized) {
         identifiersInitialized = true;

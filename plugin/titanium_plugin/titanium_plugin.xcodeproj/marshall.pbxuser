@@ -349,6 +349,9 @@
 			ABA2B1130E777C260035CB1C /* PBXTextBookmark */ = ABA2B1130E777C260035CB1C /* PBXTextBookmark */;
 			ABA2B1140E777C260035CB1C /* PBXTextBookmark */ = ABA2B1140E777C260035CB1C /* PBXTextBookmark */;
 			ABA2B1150E777C260035CB1C /* PBXTextBookmark */ = ABA2B1150E777C260035CB1C /* PBXTextBookmark */;
+			ABA2B1180E777CA70035CB1C /* PBXTextBookmark */ = ABA2B1180E777CA70035CB1C /* PBXTextBookmark */;
+			ABA2B1230E777E3B0035CB1C /* PBXTextBookmark */ = ABA2B1230E777E3B0035CB1C /* PBXTextBookmark */;
+			ABA2B1240E777E3B0035CB1C /* PBXTextBookmark */ = ABA2B1240E777E3B0035CB1C /* PBXTextBookmark */;
 		};
 		sourceControlManager = ABA2AB880E76F2B60035CB1C /* Source Control */;
 		userBuildSettings = {
@@ -364,9 +367,9 @@
 	};
 	5073E0C409E734A800EC74B6 /* titanium_plugin.cp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1030, 4536}}";
-			sepNavSelRange = "{1391, 0}";
-			sepNavVisRange = "{3, 1624}";
+			sepNavIntBoundsRect = "{{0, 0}, {664, 4690}}";
+			sepNavSelRange = "{1601, 55}";
+			sepNavVisRange = "{1505, 262}";
 			sepNavWindowFrame = "{{428, 84}, {863, 833}}";
 		};
 	};
@@ -2650,6 +2653,7 @@
 	};
 	ABA2B0270E7758CA0035CB1C /* AutoComplete.cxx */ = {
 		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.cpp.cpp;
 		name = AutoComplete.cxx;
 		path = /Users/marshall/Source/scintilla/src/AutoComplete.cxx;
 		sourceTree = "<absolute>";
@@ -2716,7 +2720,7 @@
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {1030, 1848}}";
 			sepNavSelRange = "{830, 0}";
-			sepNavVisRange = "{1306, 1974}";
+			sepNavVisRange = "{1056, 1237}";
 			sepNavWindowFrame = "{{352, 96}, {863, 833}}";
 		};
 	};
@@ -2884,7 +2888,7 @@
 		fRef = ABA2B02E0E775D220035CB1C /* PluginObject.c */;
 		name = "PluginObject.c: 141";
 		rLen = 0;
-		rLoc = 3621;
+		rLoc = 3637;
 		rType = 0;
 		vrLen = 1120;
 		vrLoc = 3144;
@@ -2904,7 +2908,7 @@
 		fRef = ABA2B02E0E775D220035CB1C /* PluginObject.c */;
 		name = "PluginObject.c: 140";
 		rLen = 0;
-		rLoc = 3621;
+		rLoc = 3637;
 		rType = 0;
 		vrLen = 1426;
 		vrLoc = 0;
@@ -3452,6 +3456,36 @@
 		rType = 0;
 		vrLen = 1974;
 		vrLoc = 1306;
+	};
+	ABA2B1180E777CA70035CB1C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = ABA2B02E0E775D220035CB1C /* PluginObject.c */;
+		name = "PluginObject.c: 21";
+		rLen = 0;
+		rLoc = 830;
+		rType = 0;
+		vrLen = 1776;
+		vrLoc = 1056;
+	};
+	ABA2B1230E777E3B0035CB1C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = ABA2B02E0E775D220035CB1C /* PluginObject.c */;
+		name = "PluginObject.c: 21";
+		rLen = 0;
+		rLoc = 830;
+		rType = 0;
+		vrLen = 1237;
+		vrLoc = 1056;
+	};
+	ABA2B1240E777E3B0035CB1C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = ABA2B02E0E775D220035CB1C /* PluginObject.c */;
+		name = "PluginObject.c: 21";
+		rLen = 0;
+		rLoc = 830;
+		rType = 0;
+		vrLen = 1237;
+		vrLoc = 1056;
 	};
 	D2AAC09C05546B4700DB518D /* titanium_plugin */ = {
 		activeExec = 0;
