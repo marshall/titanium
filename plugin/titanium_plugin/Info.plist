@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleExecutable</key>
-	<string>titanium_plugin</string>
+	<string>Titanium</string>
 	<key>CFBundleIconFile</key>
 	<string></string>
 	<key>CFBundleIdentifier</key>
@@ -53,6 +53,6 @@
 		</dict>
 	</dict>
 	<key>WebPluginName</key>
-	<string>Appcelerator Titanium</string>
+	<string>Titanium</string>
 </dict>
 </plist>

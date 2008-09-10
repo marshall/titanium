@@ -271,15 +271,11 @@
 								<string>0867D69AFE84028FC02AAC07</string>
 								<string>034768DDFF38A45A11DB9C8B</string>
 								<string>1C37FBAC04509CD000000102</string>
-								<string>ABA2B0410E7771180035CB1C</string>
-								<string>ABA2B1220E777E3B0035CB1C</string>
 								<string>1C37FABC05509CD000000102</string>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>24</integer>
-									<integer>22</integer>
 									<integer>19</integer>
 									<integer>18</integer>
 								</array>
@@ -329,10 +325,6 @@
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
 										<string>PluginObject.c</string>
-										<key>_historyCapacity</key>
-										<integer>0</integer>
-										<key>bookmark</key>
-										<string>ABA2B1240E777E3B0035CB1C</string>
 										<key>history</key>
 										<array>
 											<string>ABA2AC6E0E76FBA60035CB1C</string>
@@ -348,7 +340,6 @@
 											<string>ABA2B1090E777C260035CB1C</string>
 											<string>ABA2B10A0E777C260035CB1C</string>
 											<string>ABA2B10B0E777C260035CB1C</string>
-											<string>ABA2B1230E777E3B0035CB1C</string>
 										</array>
 										<key>prevStack</key>
 										<array>
@@ -361,64 +352,11 @@
 											<string>ABA2AD630E7702D50035CB1C</string>
 											<string>ABA2ADE60E7737180035CB1C</string>
 											<string>ABA2AE2C0E77449E0035CB1C</string>
-											<string>ABA2AE2D0E77449E0035CB1C</string>
-											<string>ABA2AE2E0E77449E0035CB1C</string>
-											<string>ABA2AE2F0E77449E0035CB1C</string>
 											<string>ABA2AE300E77449E0035CB1C</string>
-											<string>ABA2AE310E77449E0035CB1C</string>
-											<string>ABA2AE320E77449E0035CB1C</string>
-											<string>ABA2AE330E77449E0035CB1C</string>
-											<string>ABA2AE340E77449E0035CB1C</string>
-											<string>ABA2AE350E77449E0035CB1C</string>
-											<string>ABA2AE360E77449E0035CB1C</string>
-											<string>ABA2AE370E77449E0035CB1C</string>
-											<string>ABA2AE380E77449E0035CB1C</string>
-											<string>ABA2AE390E77449E0035CB1C</string>
-											<string>ABA2AE3A0E77449E0035CB1C</string>
-											<string>ABA2AE3B0E77449E0035CB1C</string>
-											<string>ABA2AE3C0E77449E0035CB1C</string>
-											<string>ABA2AE3D0E77449E0035CB1C</string>
-											<string>ABA2AE830E7752330035CB1C</string>
-											<string>ABA2B0190E7756A40035CB1C</string>
 											<string>ABA2B0260E7758CA0035CB1C</string>
-											<string>ABA2B0280E7758CA0035CB1C</string>
-											<string>ABA2B0290E7758CA0035CB1C</string>
-											<string>ABA2B02A0E7758CA0035CB1C</string>
-											<string>ABA2B0490E7771180035CB1C</string>
 											<string>ABA2B04A0E7771180035CB1C</string>
-											<string>ABA2B04B0E7771180035CB1C</string>
-											<string>ABA2B04C0E7771180035CB1C</string>
-											<string>ABA2B04D0E7771180035CB1C</string>
-											<string>ABA2B04E0E7771180035CB1C</string>
 											<string>ABA2B04F0E7771180035CB1C</string>
-											<string>ABA2B0510E7771180035CB1C</string>
-											<string>ABA2B0530E7771180035CB1C</string>
-											<string>ABA2B0550E7771180035CB1C</string>
-											<string>ABA2B0560E7771180035CB1C</string>
-											<string>ABA2B0580E7771180035CB1C</string>
-											<string>ABA2B0590E7771180035CB1C</string>
-											<string>ABA2B05A0E7771180035CB1C</string>
-											<string>ABA2B05B0E7771180035CB1C</string>
-											<string>ABA2B05C0E7771180035CB1C</string>
-											<string>ABA2B05D0E7771180035CB1C</string>
-											<string>ABA2B05E0E7771180035CB1C</string>
-											<string>ABA2B0600E7771180035CB1C</string>
-											<string>ABA2B0690E77729E0035CB1C</string>
-											<string>ABA2B0720E77739E0035CB1C</string>
 											<string>ABA2B0F40E777AC90035CB1C</string>
-											<string>ABA2B0F50E777AC90035CB1C</string>
-											<string>ABA2B0F60E777AC90035CB1C</string>
-											<string>ABA2B0F70E777AC90035CB1C</string>
-											<string>ABA2B0F80E777AC90035CB1C</string>
-											<string>ABA2B1010E777AF90035CB1C</string>
-											<string>ABA2B10D0E777C260035CB1C</string>
-											<string>ABA2B10E0E777C260035CB1C</string>
-											<string>ABA2B10F0E777C260035CB1C</string>
-											<string>ABA2B1100E777C260035CB1C</string>
-											<string>ABA2B1110E777C260035CB1C</string>
-											<string>ABA2B1120E777C260035CB1C</string>
-											<string>ABA2B1130E777C260035CB1C</string>
-											<string>ABA2B1140E777C260035CB1C</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -476,9 +414,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>ABA2AE030E773C470035CB1C</string>
+				<string>ABA2B12F0E7780E80035CB1C</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>ABA2AE040E773C470035CB1C</string>
+				<string>ABA2B1300E7780E80035CB1C</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -612,7 +550,6 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>1CD10A99069EF8BA00B06720</string>
 		<string>/Users/marshall/Code/appcelerator/appcelerator_titanium/trunk/plugin/titanium_plugin/titanium_plugin.xcodeproj</string>
 		<string>ABA2AB9C0E76F2F10035CB1C</string>
 	</array>
@@ -633,14 +570,12 @@
 					<key>Dock</key>
 					<array>
 						<dict>
-							<key>BecomeActive</key>
-							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
 								<string>1CD0528F0623707200166675</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>PluginObject.c</string>
+								<string></string>
 								<key>StatusBarVisibility</key>
 								<true/>
 							</dict>
@@ -657,10 +592,12 @@
 							<string>230pt</string>
 						</dict>
 						<dict>
+							<key>BecomeActive</key>
+							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXBuildLogShowsTranscriptDefaultKey</key>
-								<string>{{0, 253}, {725, 283}}</string>
+								<string>{{0, 206}, {725, 330}}</string>
 								<key>PBXProjectModuleGUID</key>
 								<string>XCMainBuildResultsModuleGUID</string>
 								<key>PBXProjectModuleLabel</key>
@@ -698,7 +635,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>ABA2AB9C0E76F2F10035CB1C</string>
-				<string>ABA2AE050E773C470035CB1C</string>
+				<string>ABA2B1310E7780E80035CB1C</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>
