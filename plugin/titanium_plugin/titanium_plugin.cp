@@ -12,6 +12,8 @@
 
 using namespace Scintilla;
 
+NPNetscapeFuncs* browser;
+
 const char keywords[]="and and_eq asm auto bitand bitor bool break "
 "case catch char class compl const const_cast continue "
 "default delete do double dynamic_cast else enum explicit export extern false float for "
@@ -300,3 +302,9 @@ NPError NPP_SetValue(NPP instance, NPNVariable variable,
 }
 
 
+// Mach-o entry points
+NPError NP_Initialize(NPNetscapeFuncs* browserFuncs)
+{
+    browser = browserFuncs;
+    return NPERR_NO_ERROR;
+}

@@ -7,9 +7,9 @@
  *
  */
 
-#include "npapi.h"
-#include "npruntime.h"
-#include "npfunctions.h"
+#import <WebKit/npapi.h>
+#import <WebKit/npfunctions.h>
+#import <WebKit/npruntime.h>
 
 typedef struct PluginObject {
     NPObject header;
@@ -19,5 +19,3 @@ typedef struct PluginObject {
 } PluginObject;
 
 NPClass *getPluginClass(void);
-
-extern NPNetscapeFuncs* browser;

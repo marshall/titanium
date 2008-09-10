@@ -319,6 +319,36 @@
 			ABA2B0720E77739E0035CB1C /* PBXTextBookmark */ = ABA2B0720E77739E0035CB1C /* PBXTextBookmark */;
 			ABA2B0730E77739E0035CB1C /* PBXTextBookmark */ = ABA2B0730E77739E0035CB1C /* PBXTextBookmark */;
 			ABA2B0740E77739E0035CB1C /* PBXTextBookmark */ = ABA2B0740E77739E0035CB1C /* PBXTextBookmark */;
+			ABA2B0EE0E777AB80035CB1C /* PBXBookmark */ = ABA2B0EE0E777AB80035CB1C /* PBXBookmark */;
+			ABA2B0F00E777AC90035CB1C /* PBXTextBookmark */ = ABA2B0F00E777AC90035CB1C /* PBXTextBookmark */;
+			ABA2B0F10E777AC90035CB1C /* PBXTextBookmark */ = ABA2B0F10E777AC90035CB1C /* PBXTextBookmark */;
+			ABA2B0F20E777AC90035CB1C /* PBXTextBookmark */ = ABA2B0F20E777AC90035CB1C /* PBXTextBookmark */;
+			ABA2B0F30E777AC90035CB1C /* PBXTextBookmark */ = ABA2B0F30E777AC90035CB1C /* PBXTextBookmark */;
+			ABA2B0F40E777AC90035CB1C /* PBXTextBookmark */ = ABA2B0F40E777AC90035CB1C /* PBXTextBookmark */;
+			ABA2B0F50E777AC90035CB1C /* PBXTextBookmark */ = ABA2B0F50E777AC90035CB1C /* PBXTextBookmark */;
+			ABA2B0F60E777AC90035CB1C /* PBXTextBookmark */ = ABA2B0F60E777AC90035CB1C /* PBXTextBookmark */;
+			ABA2B0F70E777AC90035CB1C /* PBXTextBookmark */ = ABA2B0F70E777AC90035CB1C /* PBXTextBookmark */;
+			ABA2B0F80E777AC90035CB1C /* PBXTextBookmark */ = ABA2B0F80E777AC90035CB1C /* PBXTextBookmark */;
+			ABA2B0F90E777AC90035CB1C /* PBXTextBookmark */ = ABA2B0F90E777AC90035CB1C /* PBXTextBookmark */;
+			ABA2B0FC0E777AC90035CB1C /* PBXTextBookmark */ = ABA2B0FC0E777AC90035CB1C /* PBXTextBookmark */;
+			ABA2B0FF0E777AF90035CB1C /* PBXTextBookmark */ = ABA2B0FF0E777AF90035CB1C /* PBXTextBookmark */;
+			ABA2B1000E777AF90035CB1C /* PBXTextBookmark */ = ABA2B1000E777AF90035CB1C /* PBXTextBookmark */;
+			ABA2B1010E777AF90035CB1C /* PBXTextBookmark */ = ABA2B1010E777AF90035CB1C /* PBXTextBookmark */;
+			ABA2B1020E777AF90035CB1C /* PBXTextBookmark */ = ABA2B1020E777AF90035CB1C /* PBXTextBookmark */;
+			ABA2B1030E777AF90035CB1C /* PBXTextBookmark */ = ABA2B1030E777AF90035CB1C /* PBXTextBookmark */;
+			ABA2B1090E777C260035CB1C /* PBXTextBookmark */ = ABA2B1090E777C260035CB1C /* PBXTextBookmark */;
+			ABA2B10A0E777C260035CB1C /* PBXTextBookmark */ = ABA2B10A0E777C260035CB1C /* PBXTextBookmark */;
+			ABA2B10B0E777C260035CB1C /* PBXTextBookmark */ = ABA2B10B0E777C260035CB1C /* PBXTextBookmark */;
+			ABA2B10C0E777C260035CB1C /* PBXTextBookmark */ = ABA2B10C0E777C260035CB1C /* PBXTextBookmark */;
+			ABA2B10D0E777C260035CB1C /* PBXTextBookmark */ = ABA2B10D0E777C260035CB1C /* PBXTextBookmark */;
+			ABA2B10E0E777C260035CB1C /* PBXTextBookmark */ = ABA2B10E0E777C260035CB1C /* PBXTextBookmark */;
+			ABA2B10F0E777C260035CB1C /* PBXTextBookmark */ = ABA2B10F0E777C260035CB1C /* PBXTextBookmark */;
+			ABA2B1100E777C260035CB1C /* PBXTextBookmark */ = ABA2B1100E777C260035CB1C /* PBXTextBookmark */;
+			ABA2B1110E777C260035CB1C /* PBXTextBookmark */ = ABA2B1110E777C260035CB1C /* PBXTextBookmark */;
+			ABA2B1120E777C260035CB1C /* PBXTextBookmark */ = ABA2B1120E777C260035CB1C /* PBXTextBookmark */;
+			ABA2B1130E777C260035CB1C /* PBXTextBookmark */ = ABA2B1130E777C260035CB1C /* PBXTextBookmark */;
+			ABA2B1140E777C260035CB1C /* PBXTextBookmark */ = ABA2B1140E777C260035CB1C /* PBXTextBookmark */;
+			ABA2B1150E777C260035CB1C /* PBXTextBookmark */ = ABA2B1150E777C260035CB1C /* PBXTextBookmark */;
 		};
 		sourceControlManager = ABA2AB880E76F2B60035CB1C /* Source Control */;
 		userBuildSettings = {
@@ -334,9 +364,9 @@
 	};
 	5073E0C409E734A800EC74B6 /* titanium_plugin.cp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {664, 4550}}";
-			sepNavSelRange = "{1574, 55}";
-			sepNavVisRange = "{1478, 237}";
+			sepNavIntBoundsRect = "{{0, 0}, {1030, 4536}}";
+			sepNavSelRange = "{1391, 0}";
+			sepNavVisRange = "{3, 1624}";
 			sepNavWindowFrame = "{{428, 84}, {863, 833}}";
 		};
 	};
@@ -389,7 +419,7 @@
 		fRef = 5073E0C409E734A800EC74B6 /* titanium_plugin.cp */;
 		name = "titanium_plugin.cp: 20";
 		rLen = 0;
-		rLoc = 8495;
+		rLoc = 8522;
 		rType = 0;
 		vrLen = 475;
 		vrLoc = 0;
@@ -419,7 +449,7 @@
 		fRef = 5073E0C409E734A800EC74B6 /* titanium_plugin.cp */;
 		name = "titanium_plugin.cp: 20";
 		rLen = 0;
-		rLoc = 8495;
+		rLoc = 8522;
 		rType = 0;
 		vrLen = 475;
 		vrLoc = 0;
@@ -439,7 +469,7 @@
 		fRef = 5073E0C409E734A800EC74B6 /* titanium_plugin.cp */;
 		name = "titanium_plugin.cp: 16";
 		rLen = 0;
-		rLoc = 8495;
+		rLoc = 8522;
 		rType = 0;
 		vrLen = 275;
 		vrLoc = 0;
@@ -459,7 +489,7 @@
 		fRef = 5073E0C409E734A800EC74B6 /* titanium_plugin.cp */;
 		name = "titanium_plugin.cp: 20";
 		rLen = 0;
-		rLoc = 8495;
+		rLoc = 8522;
 		rType = 0;
 		vrLen = 475;
 		vrLoc = 0;
@@ -479,7 +509,7 @@
 		fRef = 5073E0C409E734A800EC74B6 /* titanium_plugin.cp */;
 		name = "titanium_plugin.cp: 16";
 		rLen = 0;
-		rLoc = 8495;
+		rLoc = 8522;
 		rType = 0;
 		vrLen = 275;
 		vrLoc = 0;
@@ -507,7 +537,7 @@
 		fRef = 5073E0C409E734A800EC74B6 /* titanium_plugin.cp */;
 		name = "titanium_plugin.cp: 15";
 		rLen = 0;
-		rLoc = 8494;
+		rLoc = 8521;
 		rType = 0;
 		vrLen = 247;
 		vrLoc = 0;
@@ -547,7 +577,7 @@
 		fRef = 5073E0C409E734A800EC74B6 /* titanium_plugin.cp */;
 		name = "titanium_plugin.cp: 15";
 		rLen = 0;
-		rLoc = 8494;
+		rLoc = 8521;
 		rType = 0;
 		vrLen = 247;
 		vrLoc = 0;
@@ -603,7 +633,7 @@
 		fRef = 5073E0C409E734A800EC74B6 /* titanium_plugin.cp */;
 		name = "titanium_plugin.cp: 12";
 		rLen = 0;
-		rLoc = 8495;
+		rLoc = 8522;
 		rType = 0;
 		vrLen = 163;
 		vrLoc = 0;
@@ -653,7 +683,7 @@
 		fRef = 5073E0C409E734A800EC74B6 /* titanium_plugin.cp */;
 		name = "titanium_plugin.cp: 12";
 		rLen = 0;
-		rLoc = 8495;
+		rLoc = 8522;
 		rType = 0;
 		vrLen = 163;
 		vrLoc = 0;
@@ -663,7 +693,7 @@
 		fRef = 5073E0C409E734A800EC74B6 /* titanium_plugin.cp */;
 		name = "titanium_plugin.cp: 12";
 		rLen = 0;
-		rLoc = 8495;
+		rLoc = 8522;
 		rType = 0;
 		vrLen = 163;
 		vrLoc = 0;
@@ -1000,7 +1030,7 @@
 		fRef = 5073E0C409E734A800EC74B6 /* titanium_plugin.cp */;
 		name = "titanium_plugin.cp: 12";
 		rLen = 0;
-		rLoc = 8495;
+		rLoc = 8522;
 		rType = 0;
 		vrLen = 163;
 		vrLoc = 0;
@@ -1097,7 +1127,7 @@
 		fRef = 5073E0C409E734A800EC74B6 /* titanium_plugin.cp */;
 		name = "titanium_plugin.cp: 12";
 		rLen = 0;
-		rLoc = 8495;
+		rLoc = 8522;
 		rType = 0;
 		vrLen = 163;
 		vrLoc = 0;
@@ -1193,7 +1223,7 @@
 		fRef = 5073E0C409E734A800EC74B6 /* titanium_plugin.cp */;
 		name = "titanium_plugin.cp: 12";
 		rLen = 0;
-		rLoc = 8495;
+		rLoc = 8522;
 		rType = 0;
 		vrLen = 163;
 		vrLoc = 0;
@@ -1203,7 +1233,7 @@
 		fRef = 5073E0C409E734A800EC74B6 /* titanium_plugin.cp */;
 		name = "titanium_plugin.cp: 93";
 		rLen = 0;
-		rLoc = 8291;
+		rLoc = 8318;
 		rType = 0;
 		vrLen = 697;
 		vrLoc = 0;
@@ -1223,7 +1253,7 @@
 		fRef = 5073E0C409E734A800EC74B6 /* titanium_plugin.cp */;
 		name = "titanium_plugin.cp: 20";
 		rLen = 0;
-		rLoc = 969;
+		rLoc = 996;
 		rType = 0;
 		vrLen = 719;
 		vrLoc = 0;
@@ -1243,7 +1273,7 @@
 		fRef = 5073E0C409E734A800EC74B6 /* titanium_plugin.cp */;
 		name = "titanium_plugin.cp: 30";
 		rLen = 0;
-		rLoc = 1438;
+		rLoc = 1465;
 		rType = 0;
 		vrLen = 806;
 		vrLoc = 84;
@@ -1263,7 +1293,7 @@
 		fRef = 5073E0C409E734A800EC74B6 /* titanium_plugin.cp */;
 		name = "titanium_plugin.cp: 108";
 		rLen = 0;
-		rLoc = 7523;
+		rLoc = 7550;
 		rType = 0;
 		vrLen = 850;
 		vrLoc = 1356;
@@ -1283,7 +1313,7 @@
 		fRef = 5073E0C409E734A800EC74B6 /* titanium_plugin.cp */;
 		name = "titanium_plugin.cp: 110";
 		rLen = 0;
-		rLoc = 7851;
+		rLoc = 7878;
 		rType = 0;
 		vrLen = 777;
 		vrLoc = 526;
@@ -1303,7 +1333,7 @@
 		fRef = 5073E0C409E734A800EC74B6 /* titanium_plugin.cp */;
 		name = "titanium_plugin.cp: 36";
 		rLen = 0;
-		rLoc = 1643;
+		rLoc = 1670;
 		rType = 0;
 		vrLen = 819;
 		vrLoc = 0;
@@ -1323,7 +1353,7 @@
 		comments = "error: expected initializer before '|' token";
 		fRef = 5073E0C409E734A800EC74B6 /* titanium_plugin.cp */;
 		rLen = 1;
-		rLoc = 113;
+		rLoc = 115;
 		rType = 1;
 	};
 	ABA2AD820E77064D0035CB1C /* PBXTextBookmark */ = {
@@ -1331,7 +1361,7 @@
 		fRef = 5073E0C409E734A800EC74B6 /* titanium_plugin.cp */;
 		name = "titanium_plugin.cp: 84";
 		rLen = 0;
-		rLoc = 5427;
+		rLoc = 5454;
 		rType = 0;
 		vrLen = 725;
 		vrLoc = 930;
@@ -1351,7 +1381,7 @@
 		fRef = 5073E0C409E734A800EC74B6 /* titanium_plugin.cp */;
 		name = "titanium_plugin.cp: 73";
 		rLen = 0;
-		rLoc = 2475;
+		rLoc = 2502;
 		rType = 0;
 		vrLen = 0;
 		vrLoc = 0;
@@ -1361,7 +1391,7 @@
 		fRef = 5073E0C409E734A800EC74B6 /* titanium_plugin.cp */;
 		name = "titanium_plugin.cp: 84";
 		rLen = 0;
-		rLoc = 5465;
+		rLoc = 5492;
 		rType = 0;
 		vrLen = 774;
 		vrLoc = 0;
@@ -1381,7 +1411,7 @@
 		fRef = 5073E0C409E734A800EC74B6 /* titanium_plugin.cp */;
 		name = "titanium_plugin.cp: 84";
 		rLen = 0;
-		rLoc = 5465;
+		rLoc = 5492;
 		rType = 0;
 		vrLen = 774;
 		vrLoc = 0;
@@ -1391,7 +1421,7 @@
 		fRef = 5073E0C409E734A800EC74B6 /* titanium_plugin.cp */;
 		name = "titanium_plugin.cp: 44";
 		rLen = 0;
-		rLoc = 1749;
+		rLoc = 1776;
 		rType = 0;
 		vrLen = 999;
 		vrLoc = 139;
@@ -1411,7 +1441,7 @@
 		fRef = 5073E0C409E734A800EC74B6 /* titanium_plugin.cp */;
 		name = "titanium_plugin.cp: 44";
 		rLen = 0;
-		rLoc = 1741;
+		rLoc = 1768;
 		rType = 0;
 		vrLen = 1080;
 		vrLoc = 139;
@@ -1431,7 +1461,7 @@
 		comments = "error: cannot convert 'OpaqueGrafPtr*' to 'OpaqueWindowPtr*' for argument '1' to 'OpaqueControlRef* HIViewGetRoot(OpaqueWindowPtr*)'";
 		fRef = 5073E0C409E734A800EC74B6 /* titanium_plugin.cp */;
 		rLen = 0;
-		rLoc = 75;
+		rLoc = 77;
 		rType = 1;
 	};
 	ABA2AD960E7724CF0035CB1C /* PBXTextBookmark */ = {
@@ -1439,7 +1469,7 @@
 		fRef = 5073E0C409E734A800EC74B6 /* titanium_plugin.cp */;
 		name = "titanium_plugin.cp: 46";
 		rLen = 10;
-		rLoc = 1787;
+		rLoc = 1814;
 		rType = 0;
 		vrLen = 0;
 		vrLoc = 0;
@@ -1449,7 +1479,7 @@
 		fRef = 5073E0C409E734A800EC74B6 /* titanium_plugin.cp */;
 		name = "titanium_plugin.cp: 46";
 		rLen = 10;
-		rLoc = 1787;
+		rLoc = 1814;
 		rType = 0;
 		vrLen = 1099;
 		vrLoc = 258;
@@ -1469,7 +1499,7 @@
 		fRef = 5073E0C409E734A800EC74B6 /* titanium_plugin.cp */;
 		name = "titanium_plugin.cp: 39";
 		rLen = 0;
-		rLoc = 1643;
+		rLoc = 1670;
 		rType = 0;
 		vrLen = 1099;
 		vrLoc = 258;
@@ -1489,7 +1519,7 @@
 		fRef = 5073E0C409E734A800EC74B6 /* titanium_plugin.cp */;
 		name = "titanium_plugin.cp: 125";
 		rLen = 0;
-		rLoc = 8276;
+		rLoc = 8303;
 		rType = 0;
 		vrLen = 1027;
 		vrLoc = 1516;
@@ -1509,7 +1539,7 @@
 		fRef = 5073E0C409E734A800EC74B6 /* titanium_plugin.cp */;
 		name = "titanium_plugin.cp: 126";
 		rLen = 0;
-		rLoc = 4927;
+		rLoc = 4954;
 		rType = 0;
 		vrLen = 2339;
 		vrLoc = 1340;
@@ -1529,7 +1559,7 @@
 		fRef = 5073E0C409E734A800EC74B6 /* titanium_plugin.cp */;
 		name = "titanium_plugin.cp: 133";
 		rLen = 0;
-		rLoc = 5077;
+		rLoc = 5104;
 		rType = 0;
 		vrLen = 1435;
 		vrLoc = 2749;
@@ -1569,7 +1599,7 @@
 		fRef = 5073E0C409E734A800EC74B6 /* titanium_plugin.cp */;
 		name = "titanium_plugin.cp: 142";
 		rLen = 0;
-		rLoc = 5220;
+		rLoc = 5247;
 		rType = 0;
 		vrLen = 1486;
 		vrLoc = 2614;
@@ -1589,7 +1619,7 @@
 		fRef = 5073E0C409E734A800EC74B6 /* titanium_plugin.cp */;
 		name = "titanium_plugin.cp: 143";
 		rLen = 0;
-		rLoc = 5223;
+		rLoc = 5250;
 		rType = 0;
 		vrLen = 1247;
 		vrLoc = 2957;
@@ -1609,7 +1639,7 @@
 		fRef = 5073E0C409E734A800EC74B6 /* titanium_plugin.cp */;
 		name = "titanium_plugin.cp: 137";
 		rLen = 0;
-		rLoc = 5117;
+		rLoc = 5144;
 		rType = 0;
 		vrLen = 2250;
 		vrLoc = 1777;
@@ -1629,7 +1659,7 @@
 		fRef = 5073E0C409E734A800EC74B6 /* titanium_plugin.cp */;
 		name = "titanium_plugin.cp: 26";
 		rLen = 0;
-		rLoc = 866;
+		rLoc = 893;
 		rType = 0;
 		vrLen = 2225;
 		vrLoc = 1739;
@@ -1649,7 +1679,7 @@
 		fRef = 5073E0C409E734A800EC74B6 /* titanium_plugin.cp */;
 		name = "titanium_plugin.cp: 154";
 		rLen = 0;
-		rLoc = 5338;
+		rLoc = 5365;
 		rType = 0;
 		vrLen = 1966;
 		vrLoc = 2797;
@@ -1669,7 +1699,7 @@
 		fRef = 5073E0C409E734A800EC74B6 /* titanium_plugin.cp */;
 		name = "titanium_plugin.cp: 154";
 		rLen = 0;
-		rLoc = 5338;
+		rLoc = 5365;
 		rType = 0;
 		vrLen = 1921;
 		vrLoc = 1512;
@@ -1696,7 +1726,7 @@
 		fRef = 5073E0C409E734A800EC74B6 /* titanium_plugin.cp */;
 		name = "titanium_plugin.cp: 18";
 		rLen = 0;
-		rLoc = 234;
+		rLoc = 261;
 		rType = 0;
 		vrLen = 1060;
 		vrLoc = 4586;
@@ -1721,7 +1751,7 @@
 		fRef = 5073E0C409E734A800EC74B6 /* titanium_plugin.cp */;
 		name = "titanium_plugin.cp: 18";
 		rLen = 0;
-		rLoc = 234;
+		rLoc = 261;
 		rType = 0;
 		vrLen = 1060;
 		vrLoc = 4586;
@@ -1748,7 +1778,7 @@
 		fRef = 5073E0C409E734A800EC74B6 /* titanium_plugin.cp */;
 		name = "titanium_plugin.cp: 216";
 		rLen = 0;
-		rLoc = 8508;
+		rLoc = 8670;
 		rType = 0;
 		vrLen = 0;
 		vrLoc = 0;
@@ -1790,7 +1820,7 @@
 		fRef = 5073E0C409E734A800EC74B6 /* titanium_plugin.cp */;
 		name = "titanium_plugin.cp: 216";
 		rLen = 0;
-		rLoc = 8508;
+		rLoc = 8670;
 		rType = 0;
 		vrLen = 0;
 		vrLoc = 0;
@@ -1927,7 +1957,7 @@
 	};
 	ABA2AE080E773FBC0035CB1C /* titanium_plugin.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1030, 632}}";
+			sepNavIntBoundsRect = "{{0, 0}, {1030, 916}}";
 			sepNavSelRange = "{322, 0}";
 			sepNavVisRange = "{0, 439}";
 			sepNavWindowFrame = "{{649, 60}, {863, 833}}";
@@ -2249,7 +2279,7 @@
 		fRef = 5073E0C409E734A800EC74B6 /* titanium_plugin.cp */;
 		name = "titanium_plugin.cp: 105";
 		rLen = 0;
-		rLoc = 2518;
+		rLoc = 2545;
 		rType = 0;
 		vrLen = 1670;
 		vrLoc = 1542;
@@ -2269,7 +2299,7 @@
 		fRef = 5073E0C409E734A800EC74B6 /* titanium_plugin.cp */;
 		name = "titanium_plugin.cp: 38";
 		rLen = 0;
-		rLoc = 1004;
+		rLoc = 1031;
 		rType = 0;
 		vrLen = 1472;
 		vrLoc = 84;
@@ -2309,7 +2339,7 @@
 		fRef = 5073E0C409E734A800EC74B6 /* titanium_plugin.cp */;
 		name = "titanium_plugin.cp: 128";
 		rLen = 0;
-		rLoc = 4490;
+		rLoc = 4517;
 		rType = 0;
 		vrLen = 2370;
 		vrLoc = 1923;
@@ -2329,7 +2359,7 @@
 		fRef = 5073E0C409E734A800EC74B6 /* titanium_plugin.cp */;
 		name = "titanium_plugin.cp: 130";
 		rLen = 0;
-		rLoc = 4536;
+		rLoc = 4563;
 		rType = 0;
 		vrLen = 1431;
 		vrLoc = 0;
@@ -2349,7 +2379,7 @@
 		fRef = 5073E0C409E734A800EC74B6 /* titanium_plugin.cp */;
 		name = "titanium_plugin.cp: 130";
 		rLen = 0;
-		rLoc = 4536;
+		rLoc = 4563;
 		rType = 0;
 		vrLen = 2406;
 		vrLoc = 1922;
@@ -2479,7 +2509,7 @@
 		fRef = 5073E0C409E734A800EC74B6 /* titanium_plugin.cp */;
 		name = "titanium_plugin.cp: 242";
 		rLen = 0;
-		rLoc = 8398;
+		rLoc = 8425;
 		rType = 0;
 		vrLen = 918;
 		vrLoc = 5046;
@@ -2489,7 +2519,7 @@
 		fRef = 5073E0C409E734A800EC74B6 /* titanium_plugin.cp */;
 		name = "titanium_plugin.cp: 242";
 		rLen = 0;
-		rLoc = 8398;
+		rLoc = 8425;
 		rType = 0;
 		vrLen = 918;
 		vrLoc = 5046;
@@ -2505,7 +2535,7 @@
 		fRef = 5073E0C409E734A800EC74B6 /* titanium_plugin.cp */;
 		name = "titanium_plugin.cp: 242";
 		rLen = 0;
-		rLoc = 8398;
+		rLoc = 8425;
 		rType = 0;
 		vrLen = 918;
 		vrLoc = 5046;
@@ -2519,7 +2549,7 @@
 		fRef = 5073E0C409E734A800EC74B6 /* titanium_plugin.cp */;
 		name = "titanium_plugin.cp: 242";
 		rLen = 0;
-		rLoc = 8398;
+		rLoc = 8425;
 		rType = 0;
 		vrLen = 918;
 		vrLoc = 5046;
@@ -2659,7 +2689,7 @@
 		fRef = 5073E0C409E734A800EC74B6 /* titanium_plugin.cp */;
 		name = "titanium_plugin.cp: 230";
 		rLen = 0;
-		rLoc = 8223;
+		rLoc = 8250;
 		rType = 0;
 		vrLen = 901;
 		vrLoc = 5293;
@@ -2669,7 +2699,7 @@
 		fRef = 5073E0C409E734A800EC74B6 /* titanium_plugin.cp */;
 		name = "titanium_plugin.cp: 230";
 		rLen = 0;
-		rLoc = 8223;
+		rLoc = 8250;
 		rType = 0;
 		vrLen = 901;
 		vrLoc = 5293;
@@ -2677,16 +2707,17 @@
 	ABA2B02D0E775D220035CB1C /* PluginObject.h */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {1030, 916}}";
-			sepNavSelRange = "{400, 0}";
-			sepNavVisRange = "{0, 400}";
+			sepNavSelRange = "{383, 0}";
+			sepNavVisRange = "{0, 384}";
 			sepNavWindowFrame = "{{701, -13}, {863, 833}}";
 		};
 	};
 	ABA2B02E0E775D220035CB1C /* PluginObject.c */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1030, 1890}}";
-			sepNavSelRange = "{2912, 0}";
-			sepNavVisRange = "{2170, 1541}";
+			sepNavIntBoundsRect = "{{0, 0}, {1030, 1848}}";
+			sepNavSelRange = "{830, 0}";
+			sepNavVisRange = "{1306, 1974}";
+			sepNavWindowFrame = "{{352, 96}, {863, 833}}";
 		};
 	};
 	ABA2B0420E7771180035CB1C /* PBXTextBookmark */ = {
@@ -2740,7 +2771,7 @@
 		fRef = ABA2B02E0E775D220035CB1C /* PluginObject.c */;
 		name = "PluginObject.c: 114";
 		rLen = 0;
-		rLoc = 3025;
+		rLoc = 3059;
 		rType = 0;
 		vrLen = 1426;
 		vrLoc = 0;
@@ -2750,7 +2781,7 @@
 		fRef = ABA2B02D0E775D220035CB1C /* PluginObject.h */;
 		name = "PluginObject.h: 12";
 		rLen = 0;
-		rLoc = 196;
+		rLoc = 149;
 		rType = 0;
 		vrLen = 400;
 		vrLoc = 0;
@@ -2760,7 +2791,7 @@
 		fRef = 5073E0C409E734A800EC74B6 /* titanium_plugin.cp */;
 		name = "titanium_plugin.cp: 230";
 		rLen = 0;
-		rLoc = 8223;
+		rLoc = 8250;
 		rType = 0;
 		vrLen = 901;
 		vrLoc = 5293;
@@ -2800,7 +2831,7 @@
 		fRef = ABA2B02D0E775D220035CB1C /* PluginObject.h */;
 		name = "PluginObject.h: 13";
 		rLen = 0;
-		rLoc = 317;
+		rLoc = 335;
 		rType = 0;
 		vrLen = 282;
 		vrLoc = 0;
@@ -2810,7 +2841,7 @@
 		fRef = ABA2B02D0E775D220035CB1C /* PluginObject.h */;
 		name = "PluginObject.h: 11";
 		rLen = 0;
-		rLoc = 214;
+		rLoc = 232;
 		rType = 0;
 		vrLen = 324;
 		vrLoc = 0;
@@ -2843,7 +2874,7 @@
 		fRef = ABA2B02D0E775D220035CB1C /* PluginObject.h */;
 		name = "PluginObject.h: 16";
 		rLen = 0;
-		rLoc = 317;
+		rLoc = 335;
 		rType = 0;
 		vrLen = 341;
 		vrLoc = 0;
@@ -2853,7 +2884,7 @@
 		fRef = ABA2B02E0E775D220035CB1C /* PluginObject.c */;
 		name = "PluginObject.c: 141";
 		rLen = 0;
-		rLoc = 3587;
+		rLoc = 3621;
 		rType = 0;
 		vrLen = 1120;
 		vrLoc = 3144;
@@ -2863,7 +2894,7 @@
 		fRef = ABA2B02D0E775D220035CB1C /* PluginObject.h */;
 		name = "PluginObject.h: 16";
 		rLen = 0;
-		rLoc = 317;
+		rLoc = 335;
 		rType = 0;
 		vrLen = 341;
 		vrLoc = 0;
@@ -2873,7 +2904,7 @@
 		fRef = ABA2B02E0E775D220035CB1C /* PluginObject.c */;
 		name = "PluginObject.c: 140";
 		rLen = 0;
-		rLoc = 3587;
+		rLoc = 3621;
 		rType = 0;
 		vrLen = 1426;
 		vrLoc = 0;
@@ -2883,7 +2914,7 @@
 		fRef = 5073E0C409E734A800EC74B6 /* titanium_plugin.cp */;
 		name = "titanium_plugin.cp: 230";
 		rLen = 0;
-		rLoc = 8223;
+		rLoc = 8250;
 		rType = 0;
 		vrLen = 1179;
 		vrLoc = 181;
@@ -2893,7 +2924,7 @@
 		fRef = ABA2B02D0E775D220035CB1C /* PluginObject.h */;
 		name = "PluginObject.h: 16";
 		rLen = 0;
-		rLoc = 317;
+		rLoc = 335;
 		rType = 0;
 		vrLen = 341;
 		vrLoc = 0;
@@ -2903,7 +2934,7 @@
 		fRef = ABA2B02E0E775D220035CB1C /* PluginObject.c */;
 		name = "PluginObject.c: 22";
 		rLen = 0;
-		rLoc = 890;
+		rLoc = 924;
 		rType = 0;
 		vrLen = 1426;
 		vrLoc = 0;
@@ -2963,7 +2994,7 @@
 		fRef = ABA2B02D0E775D220035CB1C /* PluginObject.h */;
 		name = "PluginObject.h: 12";
 		rLen = 0;
-		rLoc = 196;
+		rLoc = 149;
 		rType = 0;
 		vrLen = 400;
 		vrLoc = 0;
@@ -2983,7 +3014,7 @@
 		fRef = ABA2B02E0E775D220035CB1C /* PluginObject.c */;
 		name = "PluginObject.c: 92";
 		rLen = 0;
-		rLoc = 2594;
+		rLoc = 2628;
 		rType = 0;
 		vrLen = 1278;
 		vrLoc = 2170;
@@ -2993,7 +3024,7 @@
 		fRef = ABA2B02D0E775D220035CB1C /* PluginObject.h */;
 		name = "PluginObject.h: 12";
 		rLen = 0;
-		rLoc = 196;
+		rLoc = 149;
 		rType = 0;
 		vrLen = 400;
 		vrLoc = 0;
@@ -3003,7 +3034,7 @@
 		fRef = ABA2B02E0E775D220035CB1C /* PluginObject.c */;
 		name = "PluginObject.c: 114";
 		rLen = 0;
-		rLoc = 3025;
+		rLoc = 3059;
 		rType = 0;
 		vrLen = 1426;
 		vrLoc = 0;
@@ -3013,7 +3044,7 @@
 		fRef = ABA2B02D0E775D220035CB1C /* PluginObject.h */;
 		name = "PluginObject.h: 12";
 		rLen = 0;
-		rLoc = 196;
+		rLoc = 149;
 		rType = 0;
 		vrLen = 400;
 		vrLoc = 0;
@@ -3023,7 +3054,7 @@
 		fRef = ABA2B02E0E775D220035CB1C /* PluginObject.c */;
 		name = "PluginObject.c: 111";
 		rLen = 0;
-		rLoc = 3025;
+		rLoc = 3059;
 		rType = 0;
 		vrLen = 1426;
 		vrLoc = 0;
@@ -3033,7 +3064,7 @@
 		fRef = ABA2B02D0E775D220035CB1C /* PluginObject.h */;
 		name = "PluginObject.h: 12";
 		rLen = 0;
-		rLoc = 196;
+		rLoc = 149;
 		rType = 0;
 		vrLen = 400;
 		vrLoc = 0;
@@ -3043,7 +3074,7 @@
 		fRef = ABA2B02D0E775D220035CB1C /* PluginObject.h */;
 		name = "PluginObject.h: 12";
 		rLen = 0;
-		rLoc = 196;
+		rLoc = 149;
 		rType = 0;
 		vrLen = 400;
 		vrLoc = 0;
@@ -3053,7 +3084,7 @@
 		fRef = ABA2B02E0E775D220035CB1C /* PluginObject.c */;
 		name = "PluginObject.c: 111";
 		rLen = 0;
-		rLoc = 3025;
+		rLoc = 3059;
 		rType = 0;
 		vrLen = 1426;
 		vrLoc = 0;
@@ -3063,7 +3094,7 @@
 		fRef = ABA2B02D0E775D220035CB1C /* PluginObject.h */;
 		name = "PluginObject.h: 21";
 		rLen = 0;
-		rLoc = 400;
+		rLoc = 384;
 		rType = 0;
 		vrLen = 365;
 		vrLoc = 0;
@@ -3073,7 +3104,7 @@
 		fRef = ABA2B02D0E775D220035CB1C /* PluginObject.h */;
 		name = "PluginObject.h: 24";
 		rLen = 0;
-		rLoc = 400;
+		rLoc = 384;
 		rType = 0;
 		vrLen = 400;
 		vrLoc = 0;
@@ -3093,7 +3124,7 @@
 		fRef = ABA2B02E0E775D220035CB1C /* PluginObject.c */;
 		name = "PluginObject.c: 113";
 		rLen = 20;
-		rLoc = 3025;
+		rLoc = 3059;
 		rType = 0;
 		vrLen = 1626;
 		vrLoc = 2401;
@@ -3103,7 +3134,7 @@
 		fRef = ABA2B02D0E775D220035CB1C /* PluginObject.h */;
 		name = "PluginObject.h: 24";
 		rLen = 0;
-		rLoc = 400;
+		rLoc = 384;
 		rType = 0;
 		vrLen = 400;
 		vrLoc = 0;
@@ -3123,10 +3154,304 @@
 		fRef = ABA2B02E0E775D220035CB1C /* PluginObject.c */;
 		name = "PluginObject.c: 98";
 		rLen = 0;
-		rLoc = 2912;
+		rLoc = 2946;
 		rType = 0;
 		vrLen = 1541;
 		vrLoc = 2170;
+	};
+	ABA2B0EE0E777AB80035CB1C /* PBXBookmark */ = {
+		isa = PBXBookmark;
+		fRef = ABA2B02D0E775D220035CB1C /* PluginObject.h */;
+	};
+	ABA2B0F00E777AC90035CB1C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = ABA2AE080E773FBC0035CB1C /* titanium_plugin.h */;
+		name = "titanium_plugin.h: 19";
+		rLen = 0;
+		rLoc = 322;
+		rType = 0;
+		vrLen = 439;
+		vrLoc = 0;
+	};
+	ABA2B0F10E777AC90035CB1C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 5073E0C409E734A800EC74B6 /* titanium_plugin.cp */;
+		name = "titanium_plugin.cp: 302";
+		rLen = 0;
+		rLoc = 8534;
+		rType = 0;
+		vrLen = 1629;
+		vrLoc = 0;
+	};
+	ABA2B0F20E777AC90035CB1C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = ABA2B02D0E775D220035CB1C /* PluginObject.h */;
+		name = "PluginObject.h: 21";
+		rLen = 0;
+		rLoc = 383;
+		rType = 0;
+		vrLen = 384;
+		vrLoc = 0;
+	};
+	ABA2B0F30E777AC90035CB1C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = ABA2B02E0E775D220035CB1C /* PluginObject.c */;
+		name = "PluginObject.c: 98";
+		rLen = 0;
+		rLoc = 2946;
+		rType = 0;
+		vrLen = 2044;
+		vrLoc = 0;
+	};
+	ABA2B0F40E777AC90035CB1C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = ABA2B02E0E775D220035CB1C /* PluginObject.c */;
+		name = "PluginObject.c: 98";
+		rLen = 0;
+		rLoc = 2946;
+		rType = 0;
+		vrLen = 2044;
+		vrLoc = 0;
+	};
+	ABA2B0F50E777AC90035CB1C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = ABA2B02D0E775D220035CB1C /* PluginObject.h */;
+		name = "PluginObject.h: 12";
+		rLen = 0;
+		rLoc = 231;
+		rType = 0;
+		vrLen = 418;
+		vrLoc = 0;
+	};
+	ABA2B0F60E777AC90035CB1C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = ABA2AE080E773FBC0035CB1C /* titanium_plugin.h */;
+		name = "titanium_plugin.h: 19";
+		rLen = 0;
+		rLoc = 322;
+		rType = 0;
+		vrLen = 439;
+		vrLoc = 0;
+	};
+	ABA2B0F70E777AC90035CB1C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 5073E0C409E734A800EC74B6 /* titanium_plugin.cp */;
+		name = "titanium_plugin.cp: 302";
+		rLen = 0;
+		rLoc = 8534;
+		rType = 0;
+		vrLen = 1629;
+		vrLoc = 0;
+	};
+	ABA2B0F80E777AC90035CB1C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = ABA2B02D0E775D220035CB1C /* PluginObject.h */;
+		name = "PluginObject.h: 21";
+		rLen = 0;
+		rLoc = 383;
+		rType = 0;
+		vrLen = 384;
+		vrLoc = 0;
+	};
+	ABA2B0F90E777AC90035CB1C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = ABA2B02E0E775D220035CB1C /* PluginObject.c */;
+		name = "PluginObject.c: 12";
+		rLen = 0;
+		rLoc = 173;
+		rType = 0;
+		vrLen = 2065;
+		vrLoc = 0;
+	};
+	ABA2B0FC0E777AC90035CB1C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = ABA2B02D0E775D220035CB1C /* PluginObject.h */;
+		name = "PluginObject.h: 12";
+		rLen = 0;
+		rLoc = 231;
+		rType = 0;
+		vrLen = 384;
+		vrLoc = 0;
+	};
+	ABA2B0FF0E777AF90035CB1C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = ABA2B02E0E775D220035CB1C /* PluginObject.c */;
+		name = "PluginObject.c: 12";
+		rLen = 27;
+		rLoc = 179;
+		rType = 0;
+		vrLen = 2065;
+		vrLoc = 0;
+	};
+	ABA2B1000E777AF90035CB1C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 5073E0C409E734A800EC74B6 /* titanium_plugin.cp */;
+		name = "titanium_plugin.cp: 302";
+		rLen = 0;
+		rLoc = 8534;
+		rType = 0;
+		vrLen = 1629;
+		vrLoc = 0;
+	};
+	ABA2B1010E777AF90035CB1C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = ABA2B02E0E775D220035CB1C /* PluginObject.c */;
+		name = "PluginObject.c: 12";
+		rLen = 27;
+		rLoc = 179;
+		rType = 0;
+		vrLen = 2065;
+		vrLoc = 0;
+	};
+	ABA2B1020E777AF90035CB1C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 5073E0C409E734A800EC74B6 /* titanium_plugin.cp */;
+		name = "titanium_plugin.cp: 16";
+		rLen = 0;
+		rLoc = 261;
+		rType = 0;
+		vrLen = 1599;
+		vrLoc = 0;
+	};
+	ABA2B1030E777AF90035CB1C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = ABA2B02D0E775D220035CB1C /* PluginObject.h */;
+		name = "PluginObject.h: 12";
+		rLen = 0;
+		rLoc = 231;
+		rType = 0;
+		vrLen = 384;
+		vrLoc = 0;
+	};
+	ABA2B1090E777C260035CB1C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = ABA2AE080E773FBC0035CB1C /* titanium_plugin.h */;
+		name = "titanium_plugin.h: 19";
+		rLen = 0;
+		rLoc = 322;
+		rType = 0;
+		vrLen = 439;
+		vrLoc = 0;
+	};
+	ABA2B10A0E777C260035CB1C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 5073E0C409E734A800EC74B6 /* titanium_plugin.cp */;
+		name = "titanium_plugin.cp: 55";
+		rLen = 0;
+		rLoc = 1391;
+		rType = 0;
+		vrLen = 1598;
+		vrLoc = 3;
+	};
+	ABA2B10B0E777C260035CB1C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = ABA2B02D0E775D220035CB1C /* PluginObject.h */;
+		name = "PluginObject.h: 21";
+		rLen = 0;
+		rLoc = 383;
+		rType = 0;
+		vrLen = 384;
+		vrLoc = 0;
+	};
+	ABA2B10C0E777C260035CB1C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = ABA2B02E0E775D220035CB1C /* PluginObject.c */;
+		name = "PluginObject.c: 21";
+		rLen = 0;
+		rLoc = 830;
+		rType = 0;
+		vrLen = 1901;
+		vrLoc = 1379;
+	};
+	ABA2B10D0E777C260035CB1C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 5073E0C409E734A800EC74B6 /* titanium_plugin.cp */;
+		name = "titanium_plugin.cp: 55";
+		rLen = 0;
+		rLoc = 1391;
+		rType = 0;
+		vrLen = 1653;
+		vrLoc = 3;
+	};
+	ABA2B10E0E777C260035CB1C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = ABA2B02D0E775D220035CB1C /* PluginObject.h */;
+		name = "PluginObject.h: 21";
+		rLen = 0;
+		rLoc = 383;
+		rType = 0;
+		vrLen = 384;
+		vrLoc = 0;
+	};
+	ABA2B10F0E777C260035CB1C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = ABA2B02E0E775D220035CB1C /* PluginObject.c */;
+		name = "PluginObject.c: 21";
+		rLen = 0;
+		rLoc = 830;
+		rType = 0;
+		vrLen = 2065;
+		vrLoc = 0;
+	};
+	ABA2B1100E777C260035CB1C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = ABA2B02D0E775D220035CB1C /* PluginObject.h */;
+		name = "PluginObject.h: 21";
+		rLen = 0;
+		rLoc = 383;
+		rType = 0;
+		vrLen = 384;
+		vrLoc = 0;
+	};
+	ABA2B1110E777C260035CB1C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = ABA2AE080E773FBC0035CB1C /* titanium_plugin.h */;
+		name = "titanium_plugin.h: 19";
+		rLen = 0;
+		rLoc = 322;
+		rType = 0;
+		vrLen = 439;
+		vrLoc = 0;
+	};
+	ABA2B1120E777C260035CB1C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 5073E0C409E734A800EC74B6 /* titanium_plugin.cp */;
+		name = "titanium_plugin.cp: 55";
+		rLen = 0;
+		rLoc = 1391;
+		rType = 0;
+		vrLen = 1598;
+		vrLoc = 3;
+	};
+	ABA2B1130E777C260035CB1C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = ABA2B02E0E775D220035CB1C /* PluginObject.c */;
+		name = "PluginObject.c: 21";
+		rLen = 0;
+		rLoc = 830;
+		rType = 0;
+		vrLen = 1901;
+		vrLoc = 1379;
+	};
+	ABA2B1140E777C260035CB1C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = ABA2B02D0E775D220035CB1C /* PluginObject.h */;
+		name = "PluginObject.h: 21";
+		rLen = 0;
+		rLoc = 383;
+		rType = 0;
+		vrLen = 384;
+		vrLoc = 0;
+	};
+	ABA2B1150E777C260035CB1C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = ABA2B02E0E775D220035CB1C /* PluginObject.c */;
+		name = "PluginObject.c: 21";
+		rLen = 0;
+		rLoc = 830;
+		rType = 0;
+		vrLen = 1974;
+		vrLoc = 1306;
 	};
 	D2AAC09C05546B4700DB518D /* titanium_plugin */ = {
 		activeExec = 0;

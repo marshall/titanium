@@ -9,6 +9,8 @@
 
 #import "PluginObject.h"
 
+extern NPNetscapeFuncs* browser;
+
 static void pluginInvalidate(NPObject *obj);
 static bool pluginHasProperty(NPObject *obj, NPIdentifier name);
 static bool pluginHasMethod(NPObject *obj, NPIdentifier name);

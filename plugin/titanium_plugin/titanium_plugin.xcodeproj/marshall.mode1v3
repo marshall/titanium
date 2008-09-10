@@ -228,6 +228,8 @@
 			<key>Layout</key>
 			<array>
 				<dict>
+					<key>BecomeActive</key>
+					<true/>
 					<key>ContentConfiguration</key>
 					<dict>
 						<key>PBXBottomSmartGroupGIDs</key>
@@ -311,8 +313,6 @@
 					<key>Dock</key>
 					<array>
 						<dict>
-							<key>BecomeActive</key>
-							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
@@ -330,7 +330,7 @@
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>ABA2B0740E77739E0035CB1C</string>
+										<string>ABA2B1150E777C260035CB1C</string>
 										<key>history</key>
 										<array>
 											<string>ABA2AC6E0E76FBA60035CB1C</string>
@@ -341,16 +341,12 @@
 											<string>ABA2AE1D0E77449E0035CB1C</string>
 											<string>ABA2AE1E0E77449E0035CB1C</string>
 											<string>ABA2B0220E7758CA0035CB1C</string>
-											<string>ABA2B0440E7771180035CB1C</string>
-											<string>ABA2B0450E7771180035CB1C</string>
 											<string>ABA2B0460E7771180035CB1C</string>
-											<string>ABA2B06F0E77739E0035CB1C</string>
 											<string>ABA2B0700E77739E0035CB1C</string>
-											<string>ABA2B0710E77739E0035CB1C</string>
-										</array>
-										<key>nextStack</key>
-										<array>
-											<string>ABA2B0730E77739E0035CB1C</string>
+											<string>ABA2B1090E777C260035CB1C</string>
+											<string>ABA2B10A0E777C260035CB1C</string>
+											<string>ABA2B10B0E777C260035CB1C</string>
+											<string>ABA2B10C0E777C260035CB1C</string>
 										</array>
 										<key>prevStack</key>
 										<array>
@@ -407,6 +403,20 @@
 											<string>ABA2B0600E7771180035CB1C</string>
 											<string>ABA2B0690E77729E0035CB1C</string>
 											<string>ABA2B0720E77739E0035CB1C</string>
+											<string>ABA2B0F40E777AC90035CB1C</string>
+											<string>ABA2B0F50E777AC90035CB1C</string>
+											<string>ABA2B0F60E777AC90035CB1C</string>
+											<string>ABA2B0F70E777AC90035CB1C</string>
+											<string>ABA2B0F80E777AC90035CB1C</string>
+											<string>ABA2B1010E777AF90035CB1C</string>
+											<string>ABA2B10D0E777C260035CB1C</string>
+											<string>ABA2B10E0E777C260035CB1C</string>
+											<string>ABA2B10F0E777C260035CB1C</string>
+											<string>ABA2B1100E777C260035CB1C</string>
+											<string>ABA2B1110E777C260035CB1C</string>
+											<string>ABA2B1120E777C260035CB1C</string>
+											<string>ABA2B1130E777C260035CB1C</string>
+											<string>ABA2B1140E777C260035CB1C</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
