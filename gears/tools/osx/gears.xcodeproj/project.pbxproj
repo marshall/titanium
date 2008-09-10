@@ -32,6 +32,10 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		241867E00E778D130028D4DB /* libscintilla.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 241867DF0E778D130028D4DB /* libscintilla.a */; };
+		2418683F0E77A79F0028D4DB /* appcelerator.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2418683B0E77A79F0028D4DB /* appcelerator.cc */; };
+		241868400E77A79F0028D4DB /* test.html in Resources */ = {isa = PBXBuildFile; fileRef = 2418683D0E77A79F0028D4DB /* test.html */; };
+		241868410E77A79F0028D4DB /* titanium_init.js in Sources */ = {isa = PBXBuildFile; fileRef = 2418683E0E77A79F0028D4DB /* titanium_init.js */; };
 		79272FE10DC2141800CDF577 /* geolocation.cc in Sources */ = {isa = PBXBuildFile; fileRef = 79272FDD0DC2141700CDF577 /* geolocation.cc */; };
 		79272FE20DC2141800CDF577 /* location_provider.cc in Sources */ = {isa = PBXBuildFile; fileRef = 79272FDF0DC2141800CDF577 /* location_provider.cc */; };
 		7954654C0DE71F5700F1EDE9 /* progress_input_stream.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7954654B0DE71F5700F1EDE9 /* progress_input_stream.mm */; };
@@ -714,6 +718,11 @@
 /* Begin PBXFileReference section */
 		089C167EFE841241C02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		08EA7FFBFE8413EDC02AAC07 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
+		241867DF0E778D130028D4DB /* libscintilla.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libscintilla.a; path = ../../../plugin/titanium_plugin/scintilla/libscintilla.a; sourceTree = SOURCE_ROOT; };
+		2418683B0E77A79F0028D4DB /* appcelerator.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = appcelerator.cc; sourceTree = "<group>"; };
+		2418683C0E77A79F0028D4DB /* appcelerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = appcelerator.h; sourceTree = "<group>"; };
+		2418683D0E77A79F0028D4DB /* test.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = test.html; sourceTree = "<group>"; };
+		2418683E0E77A79F0028D4DB /* titanium_init.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = titanium_init.js; sourceTree = "<group>"; };
 		79272FDD0DC2141700CDF577 /* geolocation.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = geolocation.cc; path = ../../geolocation/geolocation.cc; sourceTree = SOURCE_ROOT; };
 		79272FDE0DC2141800CDF577 /* geolocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = geolocation.h; path = ../../geolocation/geolocation.h; sourceTree = SOURCE_ROOT; };
 		79272FDF0DC2141800CDF577 /* location_provider.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = location_provider.cc; path = ../../geolocation/location_provider.cc; sourceTree = SOURCE_ROOT; };
@@ -1491,6 +1500,7 @@
 				B544DB720D2EE93800D30561 /* Cocoa.framework in Frameworks */,
 				B58E00C30D5BB9AB00B0A65D /* WebKit.framework in Frameworks */,
 				B59AC9ED0E267D3800961DD4 /* CoreAudio.framework in Frameworks */,
+				241867E00E778D130028D4DB /* libscintilla.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1612,6 +1622,7 @@
 		089C1671FE841209C02AAC07 /* External Frameworks and Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				241867DF0E778D130028D4DB /* libscintilla.a */,
 				08EA7FFBFE8413EDC02AAC07 /* Carbon.framework */,
 				B544DB710D2EE93800D30561 /* Cocoa.framework */,
 				B59AC9EC0E267D3800961DD4 /* CoreAudio.framework */,
@@ -1662,6 +1673,18 @@
 			);
 			name = Products;
 			sourceTree = "<group>";
+		};
+		2418683A0E77A79F0028D4DB /* appcelerator */ = {
+			isa = PBXGroup;
+			children = (
+				2418683B0E77A79F0028D4DB /* appcelerator.cc */,
+				2418683C0E77A79F0028D4DB /* appcelerator.h */,
+				2418683D0E77A79F0028D4DB /* test.html */,
+				2418683E0E77A79F0028D4DB /* titanium_init.js */,
+			);
+			name = appcelerator;
+			path = ../../appcelerator;
+			sourceTree = SOURCE_ROOT;
 		};
 		79272FD00DC213E900CDF577 /* geolocation */ = {
 			isa = PBXGroup;
@@ -1912,6 +1935,7 @@
 		B544D9480D2EE5D000D30561 /* Gears */ = {
 			isa = PBXGroup;
 			children = (
+				2418683A0E77A79F0028D4DB /* appcelerator */,
 				B544D9670D2EE5D000D30561 /* base */,
 				79C3E9380DB8D89D00346806 /* blob */,
 				B5E1436E0E47742700A09974 /* canvas */,
@@ -3547,6 +3571,7 @@
 				B5A2DC410E2FD0D400C69CE7 /* location_permissions_dialog.nib in Resources */,
 				B5A2DC420E2FD0D400C69CE7 /* shortcuts_dialog.nib in Resources */,
 				8D01CCCA0486CAD60068D4B7 /* InfoPlist.strings in Resources */,
+				241868400E77A79F0028D4DB /* test.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3924,6 +3949,8 @@
 				B5E1438F0E47752B00A09974 /* window_utils.cc in Sources */,
 				B5E143920E47755E00A09974 /* i18n_strings.cc in Sources */,
 				B5A945750E50C4840042D05A /* fail_blob.cc in Sources */,
+				2418683F0E77A79F0028D4DB /* appcelerator.cc in Sources */,
+				241868410E77A79F0028D4DB /* titanium_init.js in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4338,9 +4365,11 @@
 					"$(inherited)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_3)",
 				);
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SYSTEM_LIBRARY_DIR)/Frameworks/JavaScriptCore.framework\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2 = "\"$(SYSTEM_LIBRARY_DIR)/Frameworks/JavaScriptCore.framework\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_3 = "\"$(SRCROOT)/../../../plugin/titanium_plugin/scintilla\"";
 				LINK_WITH_STANDARD_LIBRARIES = YES;
 				OTHER_CFLAGS = (
 					"-DBROWSER_SAFARI=1",
@@ -4412,9 +4441,11 @@
 					"$(inherited)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_3)",
 				);
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SYSTEM_LIBRARY_DIR)/Frameworks/JavaScriptCore.framework\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2 = "\"$(SYSTEM_LIBRARY_DIR)/Frameworks/JavaScriptCore.framework\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_3 = "\"$(SRCROOT)/../../../plugin/titanium_plugin/scintilla\"";
 				OTHER_CFLAGS = (
 					"-DBROWSER_SAFARI=1",
 					"-DBROWSER_NPAPI=1",
@@ -4453,6 +4484,7 @@
 			buildSettings = {
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = ../plugin/titanium_plugin/scintilla;
 				PREBINDING = NO;
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 			};
@@ -4463,6 +4495,7 @@
 			buildSettings = {
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = ../plugin/titanium_plugin/scintilla;
 				PREBINDING = NO;
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 			};

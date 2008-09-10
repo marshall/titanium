@@ -46,6 +46,8 @@
 #include "gears/factory/factory_np.h"
 #include "genfiles/product_constants.h"
 
+#include "gears/base/safari/messagebox.h"
+
 std::string16 g_user_agent;  // Access externally via BrowserUtils class.
 
 #ifdef OS_ANDROID
@@ -69,8 +71,8 @@ NPError NPP_New(NPMIMEType pluginType,
 #ifdef OS_ANDROID
   ThreadLocals::SetValue(kNPPInstance, instance, NULL);
 #endif
-  NPObject* obj = CreateGearsFactoryWrapper(instance);
-  instance->pdata = obj;
+  
+//  MessageBox(std::string16(STRING16(L"foo")).c_str(),std::string16(STRING16(L"foo")).c_str());
 
   // Keep a copy of the user agent string.
   // Note that this will initialize exactly once on the main thread.
@@ -83,13 +85,34 @@ NPError NPP_New(NPMIMEType pluginType,
   }
 
   // Make this a windowless plugin.
-  return NPN_SetValue(instance, NPPVpluginWindowBool, NULL);
+//JGH:  return NPN_SetValue(instance, NPPVpluginWindowBool, NULL);
+  bool returnValue = false;
+  
+  
+	for (int i = 0; i < argc; i++) {
+		if (strcmp(argn[i], "width") == 0 && strcmp(argv[i],"0") != 0) {
+			returnValue = true;
+			break;
+		}
+	}
+	if (returnValue)
+	{
+		instance->pdata = NULL;
+	}
+	else
+	{
+	  NPObject* obj = CreateGearsFactoryWrapper(instance);
+	  instance->pdata = obj;
+	}
+   
+
+  return NPN_SetValue(instance, NPPVpluginWindowBool, &returnValue);
 }
 
 // here is the place to clean up and destroy the NPObject object
 NPError NPP_Destroy(NPP instance, NPSavedData** save)
 {
-  if (instance == NULL)
+  if (instance == NULL) 
     return NPERR_INVALID_INSTANCE_ERROR;
 
   NotifyNPInstanceDestroyed(instance);
@@ -105,8 +128,152 @@ NPError NPP_Destroy(NPP instance, NPSavedData** save)
   return NPERR_NO_ERROR;
 }
 
+NP_Port* globalPort;
+CGrafPtr globalCGrafPtr;
+
+#include "ScintillaMacOSX.h"
+#include "SciLexer.h"
+using namespace Scintilla;
+const char keywords[]="and and_eq asm auto bitand bitor bool break "
+"case catch char class compl const const_cast continue "
+"default delete do double dynamic_cast else enum explicit export extern false float for "
+"friend goto if inline int long mutable namespace new not not_eq "
+"operator or or_eq private protected public "
+"register reinterpret_cast return short signed sizeof static static_cast struct switch "
+"template this throw true try typedef typeid typename union unsigned using "
+"virtual void volatile wchar_t while xor xor_eq";
+
+
+void init_scintilla (HIViewRef sciView, int x, int y)
+{
+	ScintillaMacOSX *scintilla = NULL;
+	GetControlProperty(sciView, scintillaMacOSType, 0, sizeof(scintilla), NULL, &scintilla);
+	
+	scintilla->WndProc( SCI_SETLEXER, SCLEX_CPP, 0);
+	scintilla->WndProc( SCI_SETSTYLEBITS, 5, 0);
+	
+	scintilla->WndProc(SCI_STYLESETFORE, 0, 0x808080);  // White space
+	scintilla->WndProc(SCI_STYLESETFORE, 1, 0x007F00);  // Comment
+	scintilla->WndProc(SCI_STYLESETITALIC, 1, 1); // Comment
+	scintilla->WndProc(SCI_STYLESETFORE, 2, 0x007F00);  // Line comment
+	scintilla->WndProc(SCI_STYLESETITALIC, 2, 1); // Line comment
+	scintilla->WndProc(SCI_STYLESETFORE, 3, 0x3F703F);  // Doc comment
+	scintilla->WndProc(SCI_STYLESETITALIC, 3, 1); // Doc comment
+	scintilla->WndProc(SCI_STYLESETFORE, 4, 0x7F7F00);  // Number
+	scintilla->WndProc(SCI_STYLESETFORE, 5, 0x7F0000);  // Keyword
+	scintilla->WndProc(SCI_STYLESETBOLD, 5, 1); // Keyword
+	scintilla->WndProc(SCI_STYLESETFORE, 6, 0x7F007F);  // String
+	scintilla->WndProc(SCI_STYLESETFORE, 7, 0x7F007F);  // Character
+	scintilla->WndProc(SCI_STYLESETFORE, 8, 0x804080);  // UUID
+	scintilla->WndProc(SCI_STYLESETFORE, 9, 0x007F7F);  // Preprocessor
+	scintilla->WndProc(SCI_STYLESETFORE,10, 0x000000);  // Operators
+	scintilla->WndProc(SCI_STYLESETBOLD,10, 1); // Operators
+	scintilla->WndProc(SCI_STYLESETFORE,11, 0x000000);  // Identifiers
+	
+	scintilla->WndProc(SCI_SETKEYWORDS, 0, (sptr_t)(char *)keywords); // Keyword
+	
+	scintilla->WndProc( SCI_SETMARGINTYPEN, 0, (long int)SC_MARGIN_NUMBER);
+	scintilla->WndProc( SCI_SETMARGINWIDTHN, 0, (long int)30);
+	scintilla->WndProc( SCI_SETMARGINTYPEN, 1, (long int)SC_MARGIN_SYMBOL);
+	scintilla->WndProc( SCI_SETMARGINMASKN, 1, (long int)SC_MASK_FOLDERS);
+	scintilla->WndProc( SCI_SETMARGINWIDTHN, 1, (long int)20);
+	scintilla->WndProc( SCI_SETMARGINTYPEN, 2, (long int)SC_MARGIN_SYMBOL);
+	scintilla->WndProc( SCI_SETMARGINWIDTHN, 2, (long int)16);
+	
+//	std::ifstream filestream;
+//	filestream.open(filePath.c_str());
+//	if (filestream.is_open()) {
+//		std::string str, contents;
+//		std::getline(filestream, str);
+//		while (filestream) {
+//			contents += str + "\n";
+//			std::getline(filestream, str);
+//		}
+//		scintilla->WndProc( SCI_SETTEXT, 0, (sptr_t)contents.c_str());
+//	}
+
+std::string contents = "hello,world";
+scintilla->WndProc( SCI_SETTEXT, 0, (sptr_t)contents.c_str());
+	
+	HIRect boundsRect;
+	boundsRect.origin.x = 0;
+	boundsRect.origin.y = 0;
+	boundsRect.size.width = 300;
+	boundsRect.size.height = 300;
+	
+	HIViewSetFrame(sciView, &boundsRect);
+}
+
+extern "C" HIViewRef scintilla_new(void);
+
+const HILayoutInfo kBindToParentLayout = {
+  kHILayoutInfoVersionZero,
+  { { NULL, kHILayoutBindTop }, { NULL, kHILayoutBindLeft }, { NULL, kHILayoutBindBottom }, { NULL, kHILayoutBindRight } },
+  { { NULL, kHILayoutScaleAbsolute, 0 }, { NULL, kHILayoutScaleAbsolute, 0 } },
+  { { NULL, kHILayoutPositionTop, 0 }, { NULL, kHILayoutPositionLeft, 0 } }
+};
+
+
 NPError NPP_SetWindow(NPP instance, NPWindow* pNPWindow)
 {    
+   // NULL will be set if it's not a gears bootstrap and a actual window
+   if (instance->pdata == NULL)
+   {
+	  // NOTE: The browser calls NPP_SetWindow after creating the instance to allow drawing to begin. 
+	  // Subsequent calls to NPP_SetWindow indicate changes in size or position; 
+   
+//      MessageBox(std::string16(STRING16(L"set window")).c_str(),std::string16(STRING16(L"set window")).c_str());
+	  globalPort = (NP_Port *) pNPWindow->window;
+	  globalCGrafPtr = globalPort->port;
+	
+	  WindowPtr windowPtr = (WindowPtr)globalCGrafPtr;
+	  HIViewRef viewRef = (HIViewRef)windowPtr;
+	  HIRect boundsRect;
+      HIViewGetBounds(viewRef, &boundsRect);
+ 	 
+	  char debug[512];
+	  sprintf(debug,"x=%f,y=%f,w=%f,h=%f",boundsRect.origin.x,boundsRect.origin.y,boundsRect.size.width,boundsRect.size.height);
+      MessageBox(std::string16(STRING16(L"set window")).c_str(),UTF8ToString16(debug).c_str());
+ 	    
+	  /*
+	  HIViewRef root = HIViewGetRoot(window);
+
+	  Rect cBounds, sBounds;
+	  GetWindowBounds(windowPtr, kWindowContentRgn, &cBounds);
+	  GetWindowBounds(windowPtr, kWindowStructureRgn, &sBounds);
+	  boundsRect.origin.x = cBounds.left - sBounds.left;
+	  boundsRect.origin.y = cBounds.top - sBounds.top;
+	  boundsRect.size.width = cBounds.right - cBounds.left;
+	  boundsRect.size.height = cBounds.bottom - cBounds.top;
+*/
+	  
+	  HIViewRef sciView = scintilla_new();
+      HIViewAddSubview(viewRef, sciView);
+	  
+//	  init_scintilla(sciView, globalPort->portx, globalPort->porty);
+	  init_scintilla(sciView, 0, 0);
+
+	  // bind the size of scintilla to the size of it's container window
+      HIViewSetLayoutInfo(sciView, &kBindToParentLayout);
+	
+      
+	  //SetAutomaticControlDragTrackingEnabledForWindow(windowPtr, true);
+      // The window was created hidden so show it.
+      //ShowWindow( windowPtr );
+	
+/*
+	  HIViewAddSubview(viewRef,sciView);
+*/	  
+	  HIViewSetVisible(sciView,true);
+	  HIViewSetNeedsDisplay( sciView, true );
+	  HIViewRender( sciView );
+	  HIWindowFlush( HIViewGetWindow( sciView ) );
+	
+	  ShowControl(sciView);
+
+//      MessageBox(std::string16(STRING16(L"after set window")).c_str(),std::string16(STRING16(L"after set window")).c_str());
+   }
+
   return NPERR_NO_ERROR;
 }
 
@@ -218,8 +385,8 @@ NPError NPP_SetValue(NPP instance, NPNVariable variable, void *value)
 }
 
 int16 NPP_HandleEvent(NPP instance, void* event)
-{
-  return 0;
+{	
+    return 0;
 }
 
 NPObject *NPP_GetScriptableInstance(NPP instance)

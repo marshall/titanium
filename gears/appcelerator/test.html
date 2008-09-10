@@ -35,6 +35,7 @@
 	</script>
 </head>
 <body>
+<!--
 	<div>
 		<input type="text" id="command" value="/Users/jhaynie/tmp/test.rb" style="width:400px" />
 		<input type="button" value="Execute" onclick="do_exec()" />
@@ -44,5 +45,18 @@
 	<div>
 		<textarea id="output" cols="100" rows="10"></textarea>
 	</div>
+-->	
+	<div id="editor" style="border:1px solid red;margin:0;padding:0">
+	</div>
+	<script>
+	   var editor = document.createElement("object");
+        editor.width = '300';
+        editor.height = '300';
+		editor.style.width='300px';
+		editor.style.height='300px';
+		editor.editor = 'true';
+        editor.type = "application/x-googlegears";
+		$('editor').appendChild(editor);
+	</script>
 </body>
 </html>

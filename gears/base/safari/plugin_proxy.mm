@@ -80,6 +80,12 @@ void NP_Shutdown(void) {
   }
 }
 
+//NPError NPP_New(NPMIMEType pluginType, NPP instance,
+//uint16 mode, int16 argc, char* argn[],
+//char* argv[], NPSavedData* saved)
+//{
+//}
+
 // Empty class, so we can use obj-c to get the path to the current bundle.
 @interface GearsProxyClass : NSObject
 @end

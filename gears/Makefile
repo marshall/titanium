@@ -31,6 +31,11 @@ include tools/version.mk
 include tools/config.mk
 include tools/sanity.mk
 
+
+INCLUDES += -I../plugin/titanium_plugin/scintilla -DSCI_NAMESPACE -DSCI_OWNREGEX
+LIBS += -L../plugin/titanium_plugin/scintilla -lscintilla
+EXEFLAGS += -L../plugin/titanium_plugin/scintilla -lscintilla
+
 MODULE		= $(SHORT_NAME)
 
 #-----------------------------------------------------------------------------
@@ -649,6 +654,8 @@ CHROME_CPPSRCS	+= \
 
 V8_DIR = ../third_party/v8/bin-$(MODE)
 CHROME_LINK_EXTRAS += $(V8_DIR)/libv8core.lib $(V8_DIR)/libjscre.lib $(V8_DIR)/no_snapshotv8.lib 
+
+
 
 #-----------------------------------------------------------------------------
 # third_party/zlib
