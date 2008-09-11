@@ -238,64 +238,77 @@ const HILayoutInfo kBindToParentLayout = {
 };
 
 
+//MAC: these two functions were copied from https://wiki.mozilla.org/Mac:NPAPI_Drawing_Models
+// basically sets up a context ref that can be drawn into from a widget etc
+static CGContextRef beginQDPluginUpdate(NPWindow *window)
+{
+    // window->window is an NPPort* since the browser is using QuickDraw
+    NP_Port *npPort = ((NP_Port *)window->window);
+	
+    // Get the CGContext for the port
+    CGContextRef cgContext;
+    QDBeginCGContext(npPort->port, &cgContext);
+    CGContextSaveGState(cgContext);
+	
+    // Set the CG clip path to the port's clip region -- QDBeginCGContext()
+    // does not automatically respect the QuickDraw port's clip region.
+    RgnHandle clipRegion = NewRgn();
+    GetPortClipRegion(npPort->port, clipRegion);
+    Rect portBounds;
+    GetPortBounds(npPort->port, &portBounds);
+    ClipCGContextToRegion(cgContext, &portBounds, clipRegion);
+    DisposeRgn(clipRegion);
+	
+    // Flip the CG context vertically -- its origin is at the lower left,
+    // but QuickDraw's origin is at the upper left.
+    CGContextTranslateCTM(cgContext, 0.0, portBounds.bottom - portBounds.top);
+    CGContextScaleCTM(cgContext, 1.0, -1.0);
+	
+    return cgContext;
+}
+
+static void endQDPluginUpdate(NPWindow *window, CGContextRef cgContext)
+{
+    // Restore state (it was saved in beginQDPluginUpdate())
+    CGContextRestoreGState(cgContext);
+	
+    // If we had to prepare the CGContext for use in a QuickDraw-only browser,
+    // restore its state and notify QD that the CG drawing sequence is over.
+    CGContextFlush(cgContext);
+    QDEndCGContext(((NP_Port *)window->window)->port, &cgContext);
+}
+
+
 bool initialized = FALSE;
 HIViewRef sciView;
+NPWindow *window;
 
 NPError NPP_SetWindow(NPP instance, NPWindow* pNPWindow)
-{    
+{
    // NULL will be set if it's not a gears bootstrap and a actual window
    if (instance->pdata == NULL)
    {
 	   if (!initialized) {
 		  // NOTE: The browser calls NPP_SetWindow after creating the instance to allow drawing to begin. 
 		  // Subsequent calls to NPP_SetWindow indicate changes in size or position; 
-
-		  globalPort = (NP_Port *) pNPWindow->window;
-		  globalCGrafPtr = globalPort->port;
-		
-		   char debug[512];
-		   sprintf(debug, "portX=%ld,portY=%ld", globalPort->portx, globalPort->porty);
-		   debugConsole(debug);
-		  WindowPtr windowPtr = GetWindowFromPort(globalCGrafPtr);
-		   HIViewRef viewRef = NULL;
-		  HIRect boundsRect;
-			//MAC: attempting to replicate content view lookup (see below).. still can't get sciView to draw in the root window
-		   HIViewFindByID (HIViewGetRoot(windowPtr),kHIViewWindowContentID,
-						   &viewRef);
-		   
-		   
+		  
 		   sciView = scintilla_new();
 		   init_scintilla(sciView, 0, 0);
-
-		   ShowWindow( windowPtr );
-		  
-		   //MAC: just load it up in an external window, to show that we aren't going insane for now ... 
-		   WindowRef myPrefsWindow;
-		   HIViewRef myContentView;
-		   HIRect hiRect;
-		   Rect myBounds = {100, 100, 500, 500};
-		   
-		   
-		   CreateNewWindow (kMovableModalWindowClass, kWindowStandardHandlerAttribute|
-							kWindowCompositingAttribute, &myBounds,&myPrefsWindow);
-		   
-		   		   
-		   HIViewSetVisible (sciView, true);
-		   
-		   HIViewFindByID (HIViewGetRoot(myPrefsWindow),kHIViewWindowContentID,
-						   &myContentView);
-		   
-		   
-		   HIViewAddSubview (myContentView, sciView);
-		   HIViewPlaceInSuperviewAt(sciView, 25.0, 55.0);
-		   
-		   ShowWindow( myPrefsWindow );
+		   window = pNPWindow;
 
 		   debugConsole("after set window");
 		   initialized = TRUE;
 	   } else {
-			HIViewRender( sciView );
-		   HIWindowFlush( HIViewGetWindow( sciView ) );
+		//MAC: draw the widget off screen then copy it to the context ref
+		window = pNPWindow;
+		CGContextRef context = beginQDPluginUpdate(pNPWindow);
+		   
+		HIRect frame;
+		CGImageRef image;
+		HIViewCreateOffscreenImage(sciView, 0, &frame, &image);
+		HIViewDrawCGImage(context, &frame, image);
+		   
+		endQDPluginUpdate(pNPWindow, context);
 	   }
    }
 
@@ -410,7 +423,20 @@ NPError NPP_SetValue(NPP instance, NPNVariable variable, void *value)
 }
 
 int16 NPP_HandleEvent(NPP instance, void* event)
-{	
+{
+	EventRecord *eventRecord = (EventRecord *)event;
+	
+	if (eventRecord->what == updateEvt) {
+		CGContextRef context = beginQDPluginUpdate(window);
+		
+		HIRect frame;
+		CGImageRef image;
+		HIViewCreateOffscreenImage(sciView, 0, &frame, &image);
+		HIViewDrawCGImage(context, &frame, image);
+		
+		endQDPluginUpdate(window, context);
+	}
+	
     return 0;
 }
 
