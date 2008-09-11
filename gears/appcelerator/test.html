@@ -32,6 +32,13 @@
 		 var cmd = $('command');
 		 $('output').value = appcelerator.readFile(cmd.value);
 	 }
+	 function debugConsole(str) {
+			var html = $('messages').innerHTML;
+			html += '[titanium] ' + str + '<br/>';
+			$('messages').innerHTML = html;	
+			$('messages').scrollTop = $('messages').scrollHeight;
+		}
+
 	</script>
 </head>
 <body>
@@ -46,9 +53,14 @@
 		<textarea id="output" cols="100" rows="10"></textarea>
 	</div>
 -->	
-	<div id="editor" style="border:1px solid red;margin:0;padding:0">
+	<div id="editor" style="border:1px solid red;margin:0;padding:0;">
+		<object width="300" height="300" editor="true" type="application/x-googlegears">
+		</object>
 	</div>
-	<script>
+	<b><pre>Debug Console</pre></b>
+	<div id="messages" style="width: 90%; height: 200px; border: 1px solid black; background-color: black; color: white; font-family: monospace; font-size: 10pt; overflow: auto;">
+	</div>
+	<!--script>
 	   var editor = document.createElement("object");
         editor.width = '300';
         editor.height = '300';
@@ -57,6 +69,8 @@
 		editor.editor = 'true';
         editor.type = "application/x-googlegears";
 		$('editor').appendChild(editor);
-	</script>
+		debugConsole('finished creating and appending editor object');
+	</script-->
+
 </body>
 </html>

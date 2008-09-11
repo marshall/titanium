@@ -47,12 +47,32 @@
 #include "genfiles/product_constants.h"
 
 #include "gears/base/safari/messagebox.h"
+#include "gears/base/common/module_wrapper.h"
+#include "gears/base/common/base_class.h"
+#include "gears/base/common/js_runner.h"
+#include "gears/base/npapi/browser_utils.h"
+#include "gears/base/common/js_runner_utils.h"
 
 std::string16 g_user_agent;  // Access externally via BrowserUtils class.
 
 #ifdef OS_ANDROID
 const ThreadLocals::Slot kNPPInstance = ThreadLocals::Alloc();
 #endif
+
+
+//MAC: a simple javascript callback that calls the function "debugConsole" (defined in test.html for now)
+ModuleWrapper *wrapper = NULL;
+void debugConsole (const char *message) {
+	JsRunnerInterface *jsRunner = wrapper->GetModuleImplBaseClass()->GetJsRunner();
+	
+	std::string16 script =
+		std::string16(STRING16(L"debugConsole('")) +
+		EscapeMessage(UTF8ToString16(message).c_str()) +
+		std::string16(STRING16(L"');"));
+	
+	jsRunner->Eval(script);
+}
+
 
 // here the plugin creates an instance of our NPObject object which 
 // will be associated with this newly created plugin instance and 
@@ -102,11 +122,12 @@ NPError NPP_New(NPMIMEType pluginType,
 	else
 	{
 	  NPObject* obj = CreateGearsFactoryWrapper(instance);
+		wrapper = static_cast<ModuleWrapper*>(obj);
 	  instance->pdata = obj;
 	}
    
 
-  return NPN_SetValue(instance, NPPVpluginWindowBool, &returnValue);
+  return NPN_SetValue(instance, NPPVpluginWindowBool, &returnValue);	
 }
 
 // here is the place to clean up and destroy the NPObject object
@@ -192,16 +213,19 @@ void init_scintilla (HIViewRef sciView, int x, int y)
 //		scintilla->WndProc( SCI_SETTEXT, 0, (sptr_t)contents.c_str());
 //	}
 
-std::string contents = "hello,world";
-scintilla->WndProc( SCI_SETTEXT, 0, (sptr_t)contents.c_str());
+std::string contents = "hello,world\ni am some multi-lined text\n\nyo!";
+
 	
 	HIRect boundsRect;
-	boundsRect.origin.x = 0;
-	boundsRect.origin.y = 0;
+	boundsRect.origin.x = 5;
+	boundsRect.origin.y = 5;
 	boundsRect.size.width = 300;
 	boundsRect.size.height = 300;
 	
+	//HIViewPlaceInSuperviewAt (myCombo, 25.0, 25.0);
 	HIViewSetFrame(sciView, &boundsRect);
+	
+	scintilla->WndProc( SCI_SETTEXT, 0, (sptr_t) contents.c_str());
 }
 
 extern "C" HIViewRef scintilla_new(void);
@@ -214,64 +238,65 @@ const HILayoutInfo kBindToParentLayout = {
 };
 
 
+bool initialized = FALSE;
+HIViewRef sciView;
+
 NPError NPP_SetWindow(NPP instance, NPWindow* pNPWindow)
 {    
    // NULL will be set if it's not a gears bootstrap and a actual window
    if (instance->pdata == NULL)
    {
-	  // NOTE: The browser calls NPP_SetWindow after creating the instance to allow drawing to begin. 
-	  // Subsequent calls to NPP_SetWindow indicate changes in size or position; 
-   
-//      MessageBox(std::string16(STRING16(L"set window")).c_str(),std::string16(STRING16(L"set window")).c_str());
-	  globalPort = (NP_Port *) pNPWindow->window;
-	  globalCGrafPtr = globalPort->port;
-	
-	  WindowPtr windowPtr = (WindowPtr)globalCGrafPtr;
-	  HIViewRef viewRef = (HIViewRef)windowPtr;
-	  HIRect boundsRect;
-      HIViewGetBounds(viewRef, &boundsRect);
- 	 
-	  char debug[512];
-	  sprintf(debug,"x=%f,y=%f,w=%f,h=%f",boundsRect.origin.x,boundsRect.origin.y,boundsRect.size.width,boundsRect.size.height);
-      MessageBox(std::string16(STRING16(L"set window")).c_str(),UTF8ToString16(debug).c_str());
- 	    
-	  /*
-	  HIViewRef root = HIViewGetRoot(window);
+	   if (!initialized) {
+		  // NOTE: The browser calls NPP_SetWindow after creating the instance to allow drawing to begin. 
+		  // Subsequent calls to NPP_SetWindow indicate changes in size or position; 
 
-	  Rect cBounds, sBounds;
-	  GetWindowBounds(windowPtr, kWindowContentRgn, &cBounds);
-	  GetWindowBounds(windowPtr, kWindowStructureRgn, &sBounds);
-	  boundsRect.origin.x = cBounds.left - sBounds.left;
-	  boundsRect.origin.y = cBounds.top - sBounds.top;
-	  boundsRect.size.width = cBounds.right - cBounds.left;
-	  boundsRect.size.height = cBounds.bottom - cBounds.top;
-*/
-	  
-	  HIViewRef sciView = scintilla_new();
-      HIViewAddSubview(viewRef, sciView);
-	  
-//	  init_scintilla(sciView, globalPort->portx, globalPort->porty);
-	  init_scintilla(sciView, 0, 0);
+		  globalPort = (NP_Port *) pNPWindow->window;
+		  globalCGrafPtr = globalPort->port;
+		
+		   char debug[512];
+		   sprintf(debug, "portX=%ld,portY=%ld", globalPort->portx, globalPort->porty);
+		   debugConsole(debug);
+		  WindowPtr windowPtr = GetWindowFromPort(globalCGrafPtr);
+		   HIViewRef viewRef = NULL;
+		  HIRect boundsRect;
+			//MAC: attempting to replicate content view lookup (see below).. still can't get sciView to draw in the root window
+		   HIViewFindByID (HIViewGetRoot(windowPtr),kHIViewWindowContentID,
+						   &viewRef);
+		   
+		   
+		   sciView = scintilla_new();
+		   init_scintilla(sciView, 0, 0);
 
-	  // bind the size of scintilla to the size of it's container window
-      HIViewSetLayoutInfo(sciView, &kBindToParentLayout);
-	
-      
-	  //SetAutomaticControlDragTrackingEnabledForWindow(windowPtr, true);
-      // The window was created hidden so show it.
-      //ShowWindow( windowPtr );
-	
-/*
-	  HIViewAddSubview(viewRef,sciView);
-*/	  
-	  HIViewSetVisible(sciView,true);
-	  HIViewSetNeedsDisplay( sciView, true );
-	  HIViewRender( sciView );
-	  HIWindowFlush( HIViewGetWindow( sciView ) );
-	
-	  ShowControl(sciView);
+		   ShowWindow( windowPtr );
+		  
+		   //MAC: just load it up in an external window, to show that we aren't going insane for now ... 
+		   WindowRef myPrefsWindow;
+		   HIViewRef myContentView;
+		   HIRect hiRect;
+		   Rect myBounds = {100, 100, 500, 500};
+		   
+		   
+		   CreateNewWindow (kMovableModalWindowClass, kWindowStandardHandlerAttribute|
+							kWindowCompositingAttribute, &myBounds,&myPrefsWindow);
+		   
+		   		   
+		   HIViewSetVisible (sciView, true);
+		   
+		   HIViewFindByID (HIViewGetRoot(myPrefsWindow),kHIViewWindowContentID,
+						   &myContentView);
+		   
+		   
+		   HIViewAddSubview (myContentView, sciView);
+		   HIViewPlaceInSuperviewAt(sciView, 25.0, 55.0);
+		   
+		   ShowWindow( myPrefsWindow );
 
-//      MessageBox(std::string16(STRING16(L"after set window")).c_str(),std::string16(STRING16(L"after set window")).c_str());
+		   debugConsole("after set window");
+		   initialized = TRUE;
+	   } else {
+			HIViewRender( sciView );
+		   HIWindowFlush( HIViewGetWindow( sciView ) );
+	   }
    }
 
   return NPERR_NO_ERROR;
