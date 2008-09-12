@@ -173,10 +173,10 @@ const char keywords[]="and and_eq asm auto bitand bitor bool break "
 "template this throw true try typedef typeid typename union unsigned using "
 "virtual void volatile wchar_t while xor xor_eq";
 
+ScintillaMacOSX *scintilla = NULL;
 
 void init_scintilla (HIViewRef sciView, int x, int y)
 {
-	ScintillaMacOSX *scintilla = NULL;
 	GetControlProperty(sciView, scintillaMacOSType, 0, sizeof(scintilla), NULL, &scintilla);
 	
 	scintilla->WndProc( SCI_SETLEXER, SCLEX_XML, 0);
@@ -509,12 +509,46 @@ NPError NPP_SetValue(NPP instance, NPNVariable variable, void *value)
 int16 NPP_HandleEvent(NPP instance, void* event)
 {
 	EventRecord *eventRecord = (EventRecord *)event;
+	char *eventType;
+	
+	int16 handled = 0;
+	
+	switch (eventRecord->what) {
+		case updateEvt: eventType = "update"; break;
+		case nullEvent: eventType = "null"; break;
+		case mouseDown: eventType = "mouse down"; break;
+		case mouseUp: eventType = "mouse up"; break;
+		case keyDown: eventType = "key down"; break;
+		case keyUp: eventType = "key up"; break;
+		case autoKey: eventType = "auto key"; break;
+		case diskEvt: eventType = "disk"; break;
+		case activateEvt: eventType = "activate"; break;
+		case osEvt: eventType = "operating system"; break;
+		case kHighLevelEvent: eventType = "high level"; break;
+	}
 	
 	if (eventRecord->what == updateEvt) {
 		drawEditor();
+		handled = 1;
+	} else if (eventRecord->what == mouseDown) {
+		scintilla->MouseDown(eventRecord);
+		handled = 1;
+	} else if (eventRecord->what == mouseUp) {
+		scintilla->MouseUp(eventRecord);
+		handled = 1;
+	} else if (eventRecord->what == keyUp || eventRecord->what == autoKey) {
+		
+		scintilla->NotifyKey(eventRecord->message & keyCodeMask, eventRecord->modifiers);
+		handled = 1;
 	}
 	
-    return 0;
+	if (handled==1) {
+		char message[512];
+		sprintf(message, "handled %s event message: %ld", eventType, eventRecord->message);
+		debugConsole(message);
+	}
+	
+    return 1;
 }
 
 NPObject *NPP_GetScriptableInstance(NPP instance)
