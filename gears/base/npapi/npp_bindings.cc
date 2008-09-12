@@ -179,7 +179,7 @@ void init_scintilla (HIViewRef sciView, int x, int y)
 	ScintillaMacOSX *scintilla = NULL;
 	GetControlProperty(sciView, scintillaMacOSType, 0, sizeof(scintilla), NULL, &scintilla);
 	
-	scintilla->WndProc( SCI_SETLEXER, SCLEX_RUBY, 0);
+	scintilla->WndProc( SCI_SETLEXER, SCLEX_XML, 0);
 	scintilla->WndProc( SCI_SETSTYLEBITS, 5, 0);
 	
 	scintilla->WndProc(SCI_STYLESETFORE, 0, 0x808080);  // White space
