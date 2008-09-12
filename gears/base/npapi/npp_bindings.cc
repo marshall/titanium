@@ -53,6 +53,8 @@
 #include "gears/base/npapi/browser_utils.h"
 #include "gears/base/common/js_runner_utils.h"
 
+#include <fstream>
+
 std::string16 g_user_agent;  // Access externally via BrowserUtils class.
 
 #ifdef OS_ANDROID
@@ -73,6 +75,8 @@ void debugConsole (const char *message) {
 	jsRunner->Eval(script);
 }
 
+
+std::string filepath;
 
 // here the plugin creates an instance of our NPObject object which 
 // will be associated with this newly created plugin instance and 
@@ -112,7 +116,9 @@ NPError NPP_New(NPMIMEType pluginType,
 	for (int i = 0; i < argc; i++) {
 		if (strcmp(argn[i], "width") == 0 && strcmp(argv[i],"0") != 0) {
 			returnValue = true;
-			break;
+			//break;
+		} else if (strcmp(argn[i], "src") == 0) {
+			filepath = argv[i];
 		}
 	}
 	if (returnValue)
@@ -154,6 +160,9 @@ CGrafPtr globalCGrafPtr;
 
 #include "ScintillaMacOSX.h"
 #include "SciLexer.h"
+#include "TCarbonEvent.h"
+#include <Carbon/Carbon.h>
+
 using namespace Scintilla;
 const char keywords[]="and and_eq asm auto bitand bitor bool break "
 "case catch char class compl const const_cast continue "
@@ -170,7 +179,7 @@ void init_scintilla (HIViewRef sciView, int x, int y)
 	ScintillaMacOSX *scintilla = NULL;
 	GetControlProperty(sciView, scintillaMacOSType, 0, sizeof(scintilla), NULL, &scintilla);
 	
-	scintilla->WndProc( SCI_SETLEXER, SCLEX_CPP, 0);
+	scintilla->WndProc( SCI_SETLEXER, SCLEX_RUBY, 0);
 	scintilla->WndProc( SCI_SETSTYLEBITS, 5, 0);
 	
 	scintilla->WndProc(SCI_STYLESETFORE, 0, 0x808080);  // White space
@@ -198,34 +207,34 @@ void init_scintilla (HIViewRef sciView, int x, int y)
 	scintilla->WndProc( SCI_SETMARGINTYPEN, 1, (long int)SC_MARGIN_SYMBOL);
 	scintilla->WndProc( SCI_SETMARGINMASKN, 1, (long int)SC_MASK_FOLDERS);
 	scintilla->WndProc( SCI_SETMARGINWIDTHN, 1, (long int)20);
-	scintilla->WndProc( SCI_SETMARGINTYPEN, 2, (long int)SC_MARGIN_SYMBOL);
-	scintilla->WndProc( SCI_SETMARGINWIDTHN, 2, (long int)16);
+	//scintilla->WndProc( SCI_SETMARGINTYPEN, 2, (long int)SC_MARGIN_SYMBOL);
+	//scintilla->WndProc( SCI_SETMARGINWIDTHN, 2, (long int)16);
 	
-//	std::ifstream filestream;
-//	filestream.open(filePath.c_str());
-//	if (filestream.is_open()) {
-//		std::string str, contents;
-//		std::getline(filestream, str);
-//		while (filestream) {
-//			contents += str + "\n";
-//			std::getline(filestream, str);
-//		}
-//		scintilla->WndProc( SCI_SETTEXT, 0, (sptr_t)contents.c_str());
-//	}
+	std::ifstream filestream;
+	filestream.open(filepath.c_str());
+	if (filestream.is_open()) {
+		std::string str, contents;
+		std::getline(filestream, str);
+		while (filestream) {
+			contents += str + "\n";
+			std::getline(filestream, str);
+		}
+		scintilla->WndProc( SCI_SETTEXT, 0, (sptr_t)contents.c_str());
+	}
 
-std::string contents = "hello,world\ni am some multi-lined text\n\nyo!";
+//std::string contents = "hello,world\ni am some multi-lined text\n\nyo!";
 
 	
-	HIRect boundsRect;
-	boundsRect.origin.x = 5;
-	boundsRect.origin.y = 5;
-	boundsRect.size.width = 300;
-	boundsRect.size.height = 300;
+	//HIRect boundsRect;
+	//boundsRect.origin.x = 5;
+	//boundsRect.origin.y = 5;
+	//boundsRect.size.width = 300;
+	//boundsRect.size.height = 300;
 	
 	//HIViewPlaceInSuperviewAt (myCombo, 25.0, 25.0);
-	HIViewSetFrame(sciView, &boundsRect);
+	//HIViewSetFrame(sciView, &boundsRect);
 	
-	scintilla->WndProc( SCI_SETTEXT, 0, (sptr_t) contents.c_str());
+	//scintilla->WndProc( SCI_SETTEXT, 0, (sptr_t) contents.c_str());
 }
 
 extern "C" HIViewRef scintilla_new(void);
@@ -283,33 +292,108 @@ bool initialized = FALSE;
 HIViewRef sciView;
 NPWindow *window;
 
+static void drawEditor ()
+{
+	/*CGContextRef context = beginQDPluginUpdate(pNPWindow);
+	
+	HIRect frame;
+	CGImageRef image;
+	HIViewCreateOffscreenImage(sciView, 0, &frame, &image);
+	HIViewDrawCGImage(context, &frame, image);
+	
+	endQDPluginUpdate(pNPWindow, context);*/
+	HIViewSetNeedsDisplay(sciView, TRUE);
+}
+
+pascal OSStatus WindowEventHandler(EventHandlerCallRef  inCallRef,
+								   EventRef   inEvent,
+								   void*          inUserData )
+{
+	HIViewRef sciView = *reinterpret_cast<HIViewRef*>( inUserData );
+	WindowRef window = GetControlOwner(sciView);
+	ScintillaMacOSX* scintilla;
+	GetControlProperty( sciView, scintillaMacOSType, 0, sizeof( scintilla ), NULL, &scintilla );
+	TCarbonEvent event( inEvent );
+	
+	// If the window is not active, let the standard window handler execute.
+	if ( ! IsWindowActive( window ) ) return eventNotHandledErr;
+	
+	const HIViewRef rootView = HIViewGetRoot( window );
+	assert( rootView != NULL );
+	
+	if ( event.GetKind() == kEventMouseDown )
+    {
+		UInt32 inKeyModifiers;
+		event.GetParameter( kEventParamKeyModifiers, &inKeyModifiers );
+		
+		EventMouseButton inMouseButton;
+		event.GetParameter<EventMouseButton>( kEventParamMouseButton, typeMouseButton, &inMouseButton );
+		if (inMouseButton == kEventMouseButtonTertiary) {
+			if (inKeyModifiers & optionKey) {
+				const char *test = "\001This is a test calltip This is a test calltip This is a test calltip";
+				scintilla->WndProc( SCI_CALLTIPSHOW, 0, (long int)test );
+			} else {
+				char *list = "test_1?0 test_2 test_3 test_4 test_5 test_6 test_7 test_8 test_9 test_10 test_11 test_12";
+				scintilla->WndProc( SCI_AUTOCSHOW, 0, (long int)list );
+			}
+			return noErr;
+		}
+    }
+	
+	return eventNotHandledErr;
+}
+
 NPError NPP_SetWindow(NPP instance, NPWindow* pNPWindow)
 {
    // NULL will be set if it's not a gears bootstrap and a actual window
    if (instance->pdata == NULL)
    {
+	   window = pNPWindow;
+	   
+	   NP_Port *port = (NP_Port *)window->window;
+	   WindowPtr windowRef = GetWindowFromPort(port->port);
+	   HIViewRef root = HIViewGetRoot(windowRef);
+	   
+	   
 	   if (!initialized) {
 		  // NOTE: The browser calls NPP_SetWindow after creating the instance to allow drawing to begin. 
 		  // Subsequent calls to NPP_SetWindow indicate changes in size or position; 
 		  
 		   sciView = scintilla_new();
 		   init_scintilla(sciView, 0, 0);
-		   window = pNPWindow;
-
+		   HIViewAddSubview(root, sciView);
+		   
+		   
+		   HIRect sciRect, rootRect;
+		   HIViewGetFrame(root, &rootRect);
+		   sciRect.origin.x = window->x + window->clipRect.left;
+		   sciRect.origin.y = window->y + window->clipRect.top;
+		   sciRect.size.width = window->clipRect.right - window->clipRect.left;
+		   sciRect.size.height = window->clipRect.bottom - window->clipRect.top;
+		   HIViewSetFrame(sciView, &sciRect);
+		   
+		   char message[512];
+		   sprintf(message, "x=%f,y=%f,width=%f,height=%f", sciRect.origin.x, sciRect.origin.y, sciRect.size.width, sciRect.size.height);
+		   debugConsole(message);
+		   
+		   //HIViewPlaceInSuperviewAt(sciView, window->clipRect.top, window->clipRect.left)
+		   HIViewSetVisible(sciView, TRUE);
+		   
+		   static const EventTypeSpec kWindowMouseEvents[] =
+		   {
+			   { kEventClassMouse, kEventMouseDown },
+		   };
+		   
+		   InstallEventHandler( GetWindowEventTarget( windowRef ), WindowEventHandler,
+							   GetEventTypeCount( kWindowMouseEvents ), kWindowMouseEvents, &sciView, NULL );
+		   
+		   ShowControl(sciView);
+		   SetAutomaticControlDragTrackingEnabledForWindow(windowRef, true);
 		   debugConsole("after set window");
 		   initialized = TRUE;
-	   } else {
-		//MAC: draw the widget off screen then copy it to the context ref
-		window = pNPWindow;
-		CGContextRef context = beginQDPluginUpdate(pNPWindow);
-		   
-		HIRect frame;
-		CGImageRef image;
-		HIViewCreateOffscreenImage(sciView, 0, &frame, &image);
-		HIViewDrawCGImage(context, &frame, image);
-		   
-		endQDPluginUpdate(pNPWindow, context);
 	   }
+
+	   drawEditor();
    }
 
   return NPERR_NO_ERROR;
@@ -427,14 +511,7 @@ int16 NPP_HandleEvent(NPP instance, void* event)
 	EventRecord *eventRecord = (EventRecord *)event;
 	
 	if (eventRecord->what == updateEvt) {
-		CGContextRef context = beginQDPluginUpdate(window);
-		
-		HIRect frame;
-		CGImageRef image;
-		HIViewCreateOffscreenImage(sciView, 0, &frame, &image);
-		HIViewDrawCGImage(context, &frame, image);
-		
-		endQDPluginUpdate(window, context);
+		drawEditor();
 	}
 	
     return 0;
