@@ -10,6 +10,7 @@
 #include "EditorObject.h"
 
 void debug (std::string message);
+#define debugf(format, args...) do { char message[512]; sprintf(message, format, args); debug(message); } while(0);
 
 static void pluginInvalidate(NPObject *obj);
 static bool pluginHasProperty(NPObject *obj, NPIdentifier name);
@@ -56,12 +57,12 @@ static const NPUTF8 *pluginPropertyIdentifierNames[NumberOfProperties] = {
 };
 
 enum {
-	OpenFileMethod, SetSelectionMethod, SetLanguageMethod, NumberOfMethods
+	OpenFileMethod, SetTextMethod, SetSelectionMethod, SetLanguageMethod, NumberOfMethods
 };
 
 static NPIdentifier pluginMethodIdentifiers[NumberOfMethods];
 static const NPUTF8 *pluginMethodIdentifierNames[NumberOfMethods] = {
-	"openFile", "setSelection", "setLanguage"
+	"openFile", "setText", "setSelection", "setLanguage"
 };
 
 static void initializeIdentifiers(void)
@@ -109,6 +110,7 @@ bool pluginSetProperty(NPObject *obj, NPIdentifier name, const NPVariant *varian
 }
 
 void EditorObject::openFile (std::string filename) {
+	debug("open file: " + filename);
 	std::ifstream filestream;
 	filestream.open(filename.c_str());
 	if (filestream.is_open()) {
@@ -118,12 +120,27 @@ void EditorObject::openFile (std::string filename) {
 			contents += str + "\n";
 			std::getline(filestream, str);
 		}
-		scintilla->WndProc(SCI_SETTEXT, 0, (sptr_t)contents.c_str());
+		setText(contents);
 	}	
 }
 
+void EditorObject::setText (std::string text) {
+	scintilla->WndProc(SCI_SETTEXT, 0, (sptr_t) text.c_str());
+}
+
 void EditorObject::setLanguage (std::string language) {
+	debug("set language: " + language);
 	scintilla->WndProc(SCI_SETLEXERLANGUAGE, 0, (sptr_t) language.c_str());	
+}
+
+std::string NPStringToString (NPString string) {
+	debugf("NPStringToString, utf8len=%d, str=%s", string.UTF8Length, string.UTF8Characters);
+	
+	const NPUTF8 *chars = string.UTF8Characters;
+	std::string newString = chars;
+	
+	newString.erase(string.UTF8Length);
+	return newString;
 }
 
 bool pluginInvoke(NPObject *obj, NPIdentifier name, const NPVariant *args, uint32_t argCount, NPVariant *result)
@@ -131,16 +148,22 @@ bool pluginInvoke(NPObject *obj, NPIdentifier name, const NPVariant *args, uint3
     EditorObject *editor = (EditorObject *)obj;
     if (name == pluginMethodIdentifiers[OpenFileMethod]) {
 		
-		editor->openFile(NPVARIANT_TO_STRING(args[0]).UTF8Characters);
+		editor->openFile(NPStringToString(NPVARIANT_TO_STRING(args[0])));
 		NULL_TO_NPVARIANT(*result);
         return true;
     }
 	else if (name == pluginMethodIdentifiers[SetLanguageMethod]) {
-		editor->setLanguage(NPVARIANT_TO_STRING(args[0]).UTF8Characters);
+		editor->setLanguage(NPStringToString(NPVARIANT_TO_STRING(args[0])));
 
 		NULL_TO_NPVARIANT(*result);
         return true;
     }
+	else if (name == pluginMethodIdentifiers[SetTextMethod]) {
+		editor->setText(NPStringToString(NPVARIANT_TO_STRING(args[0])));
+		
+		NULL_TO_NPVARIANT(*result);
+		return true;
+	}
     return false;
 }
 
@@ -168,16 +191,21 @@ const char keywords[]="and and_eq asm auto bitand bitor bool break "
 
 void EditorObject::setWindow (NPWindow *window)
 {
+	debugf("in set window, window addres=%d", this->window);
+	
+	NP_Port *port = (NP_Port *)window->window;
+	WindowPtr windowRef = GetWindowFromPort(port->port);
+	HIViewRef root = HIViewGetRoot(windowRef);
+	
 	if (this->window == NULL) {
 		this->window = window;
 		
-		NP_Port *port = (NP_Port *)window->window;
-		WindowPtr windowRef = GetWindowFromPort(port->port);
-		HIViewRef root = HIViewGetRoot(windowRef);
+		debug("creating scintilla view...");
 		sciView = scintilla_new();
 		
 		GetControlProperty(sciView, scintillaMacOSType, 0, sizeof(this->scintilla), NULL, &(this->scintilla));
 		
+		debug("initializing scintilla view...");
 		//scintilla->WndProc(SCI_SETLEXER, SCLEX_CPP, 0);
 		scintilla->WndProc(SCI_SETSTYLEBITS, 5, 0);
 		
@@ -208,27 +236,30 @@ void EditorObject::setWindow (NPWindow *window)
 		scintilla->WndProc(SCI_SETMARGINWIDTHN, 1, (long int)20);
 		//scintilla->WndProc( SCI_SETMARGINTYPEN, 2, (long int)SC_MARGIN_SYMBOL);
 		//scintilla->WndProc( SCI_SETMARGINWIDTHN, 2, (long int)16);
+		scintilla->SetMouseCapture(true);
 		
+		debug("adding to browser window...");
 		HIViewAddSubview(root, sciView);
-		
-		HIRect sciRect, rootRect;
-		HIViewGetFrame(root, &rootRect);
-		sciRect.origin.x = window->x + window->clipRect.left;
-		sciRect.origin.y = window->y + window->clipRect.top;
-		sciRect.size.width = window->clipRect.right - window->clipRect.left;
-		sciRect.size.height = window->clipRect.bottom - window->clipRect.top;
-		HIViewSetFrame(sciView, &sciRect);
-		HIViewSetVisible(sciView, TRUE);
-		
-		ShowControl(sciView);
-		SetAutomaticControlDragTrackingEnabledForWindow(windowRef, true);
 		
 		if (filename.length() > 0) {
 			openFile(filename);
+			filename = "";
 		}
-	} else {
-		redraw();
 	}
+	
+	HIRect sciRect, rootRect;
+	HIViewGetFrame(root, &rootRect);
+	sciRect.origin.x = window->x + window->clipRect.left;
+	sciRect.origin.y = window->y + window->clipRect.top;
+	sciRect.size.width = window->clipRect.right - window->clipRect.left;
+	sciRect.size.height = window->clipRect.bottom - window->clipRect.top;
+	HIViewSetFrame(sciView, &sciRect);
+	HIViewSetVisible(sciView, TRUE);
+	
+	ShowControl(sciView);
+	SetAutomaticControlDragTrackingEnabledForWindow(windowRef, true);
+	
+	redraw();
 }
 
 void EditorObject::redraw ()

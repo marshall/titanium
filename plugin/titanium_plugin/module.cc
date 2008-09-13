@@ -43,16 +43,22 @@
 #include "common_sf.h"
 #endif
 #include "module.h"
+#include <string>
 
 #ifndef HIBYTE
 #define HIBYTE(x) ((((uint32)(x)) & 0xff00) >> 8)
 #endif
+
+
+NPNetscapeFuncs *g_browser_funcs;
 
 #ifdef BROWSER_WEBKIT
 static bool g_allow_npinit = true;
 #else
 static bool g_allow_npinit = false;
 #endif
+
+void debug(std::string message);
 
 void AllowNPInit(bool allow) {
   g_allow_npinit = allow;
@@ -131,29 +137,40 @@ NPError STDCALL NP_GetEntryPoints(NPPluginFuncs* funcs)
 
 NPError STDCALL NP_Initialize(NPNetscapeFuncs* funcs)
 {
-  if (!g_allow_npinit)
-    return NPERR_INCOMPATIBLE_VERSION_ERROR;
+	char message[128];
+	sprintf(message, "size=%d, sizeof(NPNetscapeFuncs)=%d, version=%d", funcs->size, sizeof(NPNetscapeFuncs), funcs->version);
+	
+	debug ("NP_Initialize.. " + std::string(message));
+	
+	if (!g_allow_npinit) {
+		debug ("don't allow init!");
+		return NPERR_INCOMPATIBLE_VERSION_ERROR;
+	}
+	
+	if (funcs == NULL) {
+		debug("Crap, funcs == NULL");
+    return NPERR_INVALID_FUNCTABLE_ERROR;
+	}
 
-  if (funcs == NULL)
+	if (HIBYTE(funcs->version) > NP_VERSION_MAJOR) {
+		debug("Incompatible version");
+    return NPERR_INCOMPATIBLE_VERSION_ERROR;
+	}
+
+	if (funcs->size < sizeof(NPNetscapeFuncs))
     return NPERR_INVALID_FUNCTABLE_ERROR;
 
-  if (HIBYTE(funcs->version) > NP_VERSION_MAJOR)
-    return NPERR_INCOMPATIBLE_VERSION_ERROR;
-
-  if (funcs->size < sizeof(NPNetscapeFuncs))
-    return NPERR_INVALID_FUNCTABLE_ERROR;
-
-#ifdef BROWSER_WEBKIT
-  assert(funcs->size >= sizeof(g_browser_funcs));
-  g_browser_funcs = *(GearsNPNetscapeFuncs *)funcs;
-#else
-  g_browser_funcs = *funcs;
-#endif
+//#ifdef BROWSER_WEBKIT
+//  assert(funcs->size >= sizeof(g_browser_funcs));
+//  g_browser_funcs = *(GearsNPNetscapeFuncs *)funcs;
+//#else
+  g_browser_funcs = funcs;
+//#endif
 
 // NPN_SetException is buggy in WebKit, see 
 // http://bugs.webkit.org/show_bug.cgi?id=16829
 #ifdef BROWSER_WEBKIT
-  g_browser_funcs.setexception = WebKitNPN_SetException;
+ // g_browser_funcs.setexception = WebKitNPN_SetException;
 #endif
   
   //ThreadLocals::SetValue(kNPNFuncsKey, &g_browser_funcs, NULL);

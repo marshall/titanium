@@ -40,15 +40,9 @@
 // the plugin calls to talk to the browser.
 //
 #include "module.h"
+#include <string>
 
-
-#ifdef BROWSER_WEBKIT
-// Work around a bug in the WebKit NPAPI headers, see 
-// gears/base/safari/npapi_patches.h for details.
-typedef GearsNPNetscapeFuncs NetscapeFuncs;
-#else
-typedef NPNetscapeFuncs NetscapeFuncs;
-#endif
+void debug (std::string message);
 
 #ifndef HIBYTE
 #define HIBYTE(x) ((((uint32)(x)) & 0xff00) >> 8)
@@ -58,29 +52,31 @@ typedef NPNetscapeFuncs NetscapeFuncs;
 #define LOBYTE(W) ((W) & 0xFF)
 #endif
 
-static const NetscapeFuncs &GetNPNFuncs() {
+extern NPNetscapeFuncs *g_browser_funcs;
+
+static const NPNetscapeFuncs *GetNPNFuncs() {
 	return g_browser_funcs;
 }
 
 void NPN_Version(int* plugin_major, int* plugin_minor,
                  int* netscape_major, int* netscape_minor)
 {
-  const NetscapeFuncs &funcs = GetNPNFuncs();
+  const NPNetscapeFuncs *funcs = GetNPNFuncs();
   *plugin_major   = NP_VERSION_MAJOR;
   *plugin_minor   = NP_VERSION_MINOR;
-  *netscape_major = HIBYTE(funcs.version);
-  *netscape_minor = LOBYTE(funcs.version);
+  *netscape_major = HIBYTE(funcs->version);
+  *netscape_minor = LOBYTE(funcs->version);
 }
 
 NPError NPN_GetURLNotify(NPP instance, const char *url, const char *target,
                          void* notifyData)
 {
-  const NetscapeFuncs &funcs = GetNPNFuncs();
-  int navMinorVers = funcs.version & 0xFF;
+  const NPNetscapeFuncs *funcs = GetNPNFuncs();
+  int navMinorVers = funcs->version & 0xFF;
   NPError rv = NPERR_NO_ERROR;
 
   if (navMinorVers >= NPVERS_HAS_NOTIFICATION)
-    rv = funcs.geturlnotify(instance, url, target, notifyData);
+    rv = funcs->geturlnotify(instance, url, target, notifyData);
   else
     rv = NPERR_INCOMPATIBLE_VERSION_ERROR;
 
@@ -89,7 +85,12 @@ NPError NPN_GetURLNotify(NPP instance, const char *url, const char *target,
 
 NPError NPN_GetURL(NPP instance, const char *url, const char *target)
 {
-  NPError rv = GetNPNFuncs().geturl(instance, url, target);
+	debug(std::string("getURL: ") + url + ", target: " + target);
+	char message[128];
+	sprintf(message, "npnfuncs address=%ld", GetNPNFuncs());
+	debug(message);
+	
+  NPError rv = GetNPNFuncs()->geturl(instance, url, target);
   return rv;
 }
 
@@ -97,12 +98,12 @@ NPError NPN_PostURLNotify(NPP instance, const char* url, const char* window,
                           uint32 len, const char* buf, NPBool file,
                           void* notifyData)
 {
-  const NetscapeFuncs &funcs = GetNPNFuncs();
-  int navMinorVers = funcs.version & 0xFF;
+  const NPNetscapeFuncs *funcs = GetNPNFuncs();
+  int navMinorVers = funcs->version & 0xFF;
   NPError rv = NPERR_NO_ERROR;
 
   if (navMinorVers >= NPVERS_HAS_NOTIFICATION) {
-    rv = funcs.posturlnotify(instance, url, window, len, buf, file, notifyData);
+    rv = funcs->posturlnotify(instance, url, window, len, buf, file, notifyData);
   } else {
     rv = NPERR_INCOMPATIBLE_VERSION_ERROR;
   }
@@ -113,26 +114,26 @@ NPError NPN_PostURLNotify(NPP instance, const char* url, const char* window,
 NPError NPN_PostURL(NPP instance, const char* url, const char* window,
                     uint32 len, const char* buf, NPBool file)
 {
-  NPError rv = GetNPNFuncs().posturl(instance, url, window, len, buf, file);
+  NPError rv = GetNPNFuncs()->posturl(instance, url, window, len, buf, file);
   return rv;
 } 
 
 NPError NPN_RequestRead(NPStream* stream, NPByteRange* rangeList)
 {
-  NPError rv = GetNPNFuncs().requestread(stream, rangeList);
+  NPError rv = GetNPNFuncs()->requestread(stream, rangeList);
   return rv;
 }
 
 NPError NPN_NewStream(NPP instance, NPMIMEType type, const char* target,
                       NPStream** stream)
 {
-  const NetscapeFuncs &funcs = GetNPNFuncs();
-  int navMinorVersion = funcs.version & 0xFF;
+  const NPNetscapeFuncs *funcs = GetNPNFuncs();
+  int navMinorVersion = funcs->version & 0xFF;
 
   NPError rv = NPERR_NO_ERROR;
 
   if ( navMinorVersion >= NPVERS_HAS_STREAMOUTPUT )
-    rv = funcs.newstream(instance, type, target, stream);
+    rv = funcs->newstream(instance, type, target, stream);
   else
     rv = NPERR_INCOMPATIBLE_VERSION_ERROR;
 
@@ -141,12 +142,12 @@ NPError NPN_NewStream(NPP instance, NPMIMEType type, const char* target,
 
 int32 NPN_Write(NPP instance, NPStream *stream, int32 len, void *buffer)
 {
-  const NetscapeFuncs &funcs = GetNPNFuncs();
-  int navMinorVersion = funcs.version & 0xFF;
+  const NPNetscapeFuncs *funcs = GetNPNFuncs();
+  int navMinorVersion = funcs->version & 0xFF;
   int32 rv = 0;
 
   if ( navMinorVersion >= NPVERS_HAS_STREAMOUTPUT )
-    rv = funcs.write(instance, stream, len, buffer);
+    rv = funcs->write(instance, stream, len, buffer);
   else
     rv = -1;
 
@@ -155,12 +156,12 @@ int32 NPN_Write(NPP instance, NPStream *stream, int32 len, void *buffer)
 
 NPError NPN_DestroyStream(NPP instance, NPStream* stream, NPError reason)
 {
-  const NetscapeFuncs &funcs = GetNPNFuncs();
-  int navMinorVersion = funcs.version & 0xFF;
+  const NPNetscapeFuncs *funcs = GetNPNFuncs();
+  int navMinorVersion = funcs->version & 0xFF;
   NPError rv = NPERR_NO_ERROR;
 
   if ( navMinorVersion >= NPVERS_HAS_STREAMOUTPUT )
-    rv = funcs.destroystream(instance, stream, reason);
+    rv = funcs->destroystream(instance, stream, reason);
   else
     rv = NPERR_INCOMPATIBLE_VERSION_ERROR;
 
@@ -169,90 +170,90 @@ NPError NPN_DestroyStream(NPP instance, NPStream* stream, NPError reason)
 
 void NPN_Status(NPP instance, const char *message)
 {
-  GetNPNFuncs().status(instance, message);
+  GetNPNFuncs()->status(instance, message);
 }
 
 const char* NPN_UserAgent(NPP instance)
 {
   const char * rv = NULL;
-  rv = GetNPNFuncs().uagent(instance);
+  rv = GetNPNFuncs()->uagent(instance);
   return rv;
 }
 
 void* NPN_MemAlloc(uint32 size)
 {
   void * rv = NULL;
-  rv = GetNPNFuncs().memalloc(size);
+  rv = GetNPNFuncs()->memalloc(size);
   return rv;
 }
 
 void NPN_MemFree(void* ptr)
 {
-  GetNPNFuncs().memfree(ptr);
+  GetNPNFuncs()->memfree(ptr);
 }
 
 uint32 NPN_MemFlush(uint32 size)
 {
-  uint32 rv = GetNPNFuncs().memflush(size);
+  uint32 rv = GetNPNFuncs()->memflush(size);
   return rv;
 }
 
 void NPN_ReloadPlugins(NPBool reloadPages)
 {
-  GetNPNFuncs().reloadplugins(reloadPages);
+  GetNPNFuncs()->reloadplugins(reloadPages);
 }
 
 NPError NPN_GetValue(NPP instance, NPNVariable variable, void *value)
 {
-  NPError rv = GetNPNFuncs().getvalue(instance, variable, value);
+  NPError rv = GetNPNFuncs()->getvalue(instance, variable, value);
   return rv;
 }
 
 NPError NPN_SetValue(NPP instance, NPPVariable variable, void *value)
 {
-  NPError rv = GetNPNFuncs().setvalue(instance, variable, value);
+  NPError rv = GetNPNFuncs()->setvalue(instance, variable, value);
   return rv;
 }
 
 void NPN_InvalidateRect(NPP instance, NPRect *invalidRect)
 {
-  GetNPNFuncs().invalidaterect(instance, invalidRect);
+  GetNPNFuncs()->invalidaterect(instance, invalidRect);
 }
 
 void NPN_InvalidateRegion(NPP instance, NPRegion invalidRegion)
 {
-  GetNPNFuncs().invalidateregion(instance, invalidRegion);
+  GetNPNFuncs()->invalidateregion(instance, invalidRegion);
 }
 
 void NPN_ForceRedraw(NPP instance)
 {
-  GetNPNFuncs().forceredraw(instance);
+  GetNPNFuncs()->forceredraw(instance);
 }
 
 NPIdentifier NPN_GetStringIdentifier(const NPUTF8 *name)
 {
-  return GetNPNFuncs().getstringidentifier(name);
+  return GetNPNFuncs()->getstringidentifier(name);
 }
 
 void NPN_GetStringIdentifiers(const NPUTF8 **names, int32_t nameCount,
                               NPIdentifier *identifiers)
 {
-  return GetNPNFuncs().getstringidentifiers(names, nameCount, identifiers);
+  return GetNPNFuncs()->getstringidentifiers(names, nameCount, identifiers);
 }
 
 NPIdentifier NPN_GetIntIdentifier(int32_t intid)
 {
-  return GetNPNFuncs().getintidentifier(intid);
+  return GetNPNFuncs()->getintidentifier(intid);
 }
 
 bool NPN_IdentifierIsString(NPIdentifier identifier)
 {
-  return GetNPNFuncs().identifierisstring(identifier);
+  return GetNPNFuncs()->identifierisstring(identifier);
 }
 
 NPUTF8 *NPN_UTF8FromIdentifier(NPIdentifier identifier)
 {
-  return GetNPNFuncs().utf8fromidentifier(identifier);
+  return GetNPNFuncs()->utf8fromidentifier(identifier);
 }
 
 int32_t NPN_IntFromIdentifier(NPIdentifier identifier)
@@ -262,41 +263,42 @@ int32_t NPN_IntFromIdentifier(NPIdentifier identifier)
   // filled in (see WebNetscapePluginPackage.m#526 in WebKit source tree).
   return reinterpret_cast<int>(identifier) >> 1;
 #else
-  return GetNPNFuncs().intfromidentifier(identifier);
+  return GetNPNFuncs()->intfromidentifier(identifier);
 #endif
 }
 
 NPObject *NPN_CreateObject(NPP npp, NPClass *aClass)
 {
-  return GetNPNFuncs().createobject(npp, aClass);
+	debug("NPN_CreateObject");
+  return GetNPNFuncs()->createobject(npp, aClass);
 }
 
 NPObject *NPN_RetainObject(NPObject *obj)
 {
-  return GetNPNFuncs().retainobject(obj);
+  return GetNPNFuncs()->retainobject(obj);
 }
 
 void NPN_ReleaseObject(NPObject *obj)
 {
-  return GetNPNFuncs().releaseobject(obj);
+  return GetNPNFuncs()->releaseobject(obj);
 }
 
 bool NPN_Invoke(NPP npp, NPObject* obj, NPIdentifier methodName,
                 const NPVariant *args, uint32_t argCount, NPVariant *result)
 {
-  return GetNPNFuncs().invoke(npp, obj, methodName, args, argCount, result);
+  return GetNPNFuncs()->invoke(npp, obj, methodName, args, argCount, result);
 }
 
 bool NPN_InvokeDefault(NPP npp, NPObject* obj, const NPVariant *args,
                        uint32_t argCount, NPVariant *result)
 {
-  return GetNPNFuncs().invokeDefault(npp, obj, args, argCount, result);
+  return GetNPNFuncs()->invokeDefault(npp, obj, args, argCount, result);
 }
 
 bool NPN_Evaluate(NPP npp, NPObject* obj, NPString *script,
                   NPVariant *result)
 {
-  return GetNPNFuncs().evaluate(npp, obj, script, result);
+  return GetNPNFuncs()->evaluate(npp, obj, script, result);
 }
 
 bool NPN_GetProperty(NPP npp, NPObject* obj, NPIdentifier propertyName,
@@ -310,26 +312,26 @@ bool NPN_GetProperty(NPP npp, NPObject* obj, NPIdentifier propertyName,
 #ifdef BROWSER_WEBKIT
   result->type = static_cast<NPVariantType>(-1);
   
-  bool ret = GetNPNFuncs().getproperty(npp, obj, propertyName, result);
+  bool ret = GetNPNFuncs()->getproperty(npp, obj, propertyName, result);
   
   if (result->type != -1 && !ret) {
     ret = true;
   }
   return ret;
 #else
-  return GetNPNFuncs().getproperty(npp, obj, propertyName, result);
+  return GetNPNFuncs()->getproperty(npp, obj, propertyName, result);
 #endif
 }
 
 bool NPN_SetProperty(NPP npp, NPObject* obj, NPIdentifier propertyName,
                      const NPVariant *value)
 {
-  return GetNPNFuncs().setproperty(npp, obj, propertyName, value);
+  return GetNPNFuncs()->setproperty(npp, obj, propertyName, value);
 }
 
 bool NPN_RemoveProperty(NPP npp, NPObject* obj, NPIdentifier propertyName)
 {
-  return GetNPNFuncs().removeproperty(npp, obj, propertyName);
+  return GetNPNFuncs()->removeproperty(npp, obj, propertyName);
 }
 
 #ifdef BROWSER_WEBKIT
@@ -337,7 +339,7 @@ bool NPN_RemoveProperty(NPP npp, NPObject* obj, NPIdentifier propertyName)
 #else
 bool NPN_HasProperty(NPP npp, NPObject* obj, NPIdentifier propertyName)
 {
-  return GetNPNFuncs().hasproperty(npp, obj, propertyName);
+  return GetNPNFuncs()->hasproperty(npp, obj, propertyName);
 }
 #endif
 
@@ -346,29 +348,30 @@ bool NPN_HasProperty(NPP npp, NPObject* obj, NPIdentifier propertyName)
 #else
 bool NPN_HasMethod(NPP npp, NPObject* obj, NPIdentifier methodName)
 {
-  return GetNPNFuncs().hasmethod(npp, obj, methodName);
+  return GetNPNFuncs()->hasmethod(npp, obj, methodName);
 }
 #endif
 
 void NPN_ReleaseVariantValue(NPVariant *variant)
 {
-  GetNPNFuncs().releasevariantvalue(variant);
+  GetNPNFuncs()->releasevariantvalue(variant);
 }
 
 void NPN_SetException(NPObject* obj, const NPUTF8 *message)
 {
-  GetNPNFuncs().setexception(obj, message);
+  GetNPNFuncs()->setexception(obj, message);
 }
 
 bool NPN_Enumerate(NPP npp, NPObject *obj, NPIdentifier **identifier,
                    uint32_t *count)
 {
+	/*
 #ifdef BROWSER_WEBKIT
   // See gears/base/safari/npapi_patches.h for details.
-  const NetscapeFuncs &tmp = GetNPNFuncs();
-  const GearsNPNetscapeFuncs *funcs = (const GearsNPNetscapeFuncs *)&tmp;
+  const NPNetscapeFuncs *tmp = GetNPNFuncs();
+  const GearsNPNPNetscapeFuncs *funcs = (const GearsNPNPNetscapeFuncs *)&tmp;
   return funcs->enumerate(npp, obj, identifier, count);
-#else
-  return GetNPNFuncs().enumerate(npp, obj, identifier, count);
-#endif
+#else*/
+  return GetNPNFuncs()->enumerate(npp, obj, identifier, count);
+//#endif
 }

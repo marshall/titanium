@@ -35,7 +35,7 @@ NPError NPP_New(NPMIMEType pluginType, NPP instance,
 								 char* argv[], NPSavedData* saved)
 {
 	debug("NPP_New");
-	
+						   
 	for (int i = 0; i < argc; i++) {
 		if (strcmp(argn[i], "src") == 0) {
 			filePath = argv[i];
@@ -68,10 +68,16 @@ NPError NPP_SetWindow(NPP instance, NPWindow* window)
 	debug("NPP_SetWindow");
 	
 	EditorObject *editor = (EditorObject *) instance->pdata;
+
+	char message[128];
+	sprintf(message, "editor address=%d, setWindow", editor);
+	debug(message);
+	
 	editor->setWindow(window);
 	
 	if (filePath.length() > 0) {
 		editor->openFile(filePath);
+		filePath = "";
 	}
 	
 	return NPERR_NO_ERROR;
@@ -122,8 +128,6 @@ void NPP_Print(NPP instance, NPPrint* platformPrint)
 
 int16 NPP_HandleEvent(NPP instance, void* event)
 {
-	debug("NPP_HandleEvent");
-	
 	EditorObject *editor = (EditorObject *) instance->pdata;
 	return editor->handleEvent((EventRecord*)event);
 }

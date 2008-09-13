@@ -33,13 +33,11 @@
 #include "npapi_patches.h" 
 #endif
 
-#ifdef BROWSER_WEBKIT
+//#ifdef BROWSER_WEBKIT
 // Work around a bug in the WebKit NPAPI headers, see 
 // gears/base/safari/npapi_patches.h for details.
-static GearsNPNetscapeFuncs g_browser_funcs;
-#else
-static NPNetscapeFuncs g_browser_funcs;
-#endif
+//static GearsNPNetscapeFuncs g_browser_funcs;
+//#else//#endif
 
 void AllowNPInit(bool allow);
 

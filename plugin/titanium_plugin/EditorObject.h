@@ -35,13 +35,14 @@ public:
 	HIViewRef sciView;
 	ScintillaMacOSX *scintilla;
 
-	EditorObject() { }
-	EditorObject(std::string filename) { this->filename = filename; }
+	EditorObject() { this->window = NULL; }
+	EditorObject(std::string filename) { this->window = NULL; this->filename = filename; }
 	
 	void setWindow(NPWindow *window);
 	int16 handleEvent(EventRecord *event);
 	void redraw();
 	
+	void setText(std::string text);
 	void openFile(std::string filename);
 	void setLanguage(std::string language);
 	
