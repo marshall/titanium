@@ -303,6 +303,7 @@ bool FileDialog::FilesToJsObjectArray(const StringList& selected_files,
   // selected_files, blobs and base_names are aligned
   const int size = selected_files.size();
   StringList base_names;
+	StringList full_paths;
   base_names.reserve(size);
   std::vector< scoped_refptr<BlobInterface> > blobs;
   blobs.reserve(size);
@@ -312,6 +313,7 @@ bool FileDialog::FilesToJsObjectArray(const StringList& selected_files,
        it != selected_files.end(); ++it) {
     std::string16 base_name;
     if (File::GetBaseName(*it, &base_name)) {
+			full_paths.push_back(*it);
       base_names.push_back(base_name);
       blobs.push_back(new FileBlob(it->c_str()));
     } else {
@@ -333,6 +335,10 @@ bool FileDialog::FilesToJsObjectArray(const StringList& selected_files,
       return false;
     }
 
+		if (!obj->SetPropertyString(STRING16(L"fullPath"), full_paths[i])) {
+			*error = STRING16(L"Failed to set full path property on File.");
+			return false;
+		}
     if (!obj->SetPropertyString(STRING16(L"name"), base_names[i])) {
       *error = STRING16(L"Failed to set name property on File.");
       return false;
