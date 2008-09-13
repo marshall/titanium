@@ -11,17 +11,6 @@
 
 #include "npapi.h"
 #include "npruntime.h"
-#include <iostream>
-#include <string>
-#include <fstream>
-#include <Carbon/Carbon.h>
-#include <TView.h>
-#include "TCarbonEvent.h"
-#include "SciLexer.h"
-#include "ScintillaMacOSX.h"
 
-CGrafPtr gPtr = NULL;
-NP_Port *port = NULL;
-std::string filePath;
 
 #endif

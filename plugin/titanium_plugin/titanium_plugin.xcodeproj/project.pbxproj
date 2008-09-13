@@ -8,29 +8,138 @@
 
 /* Begin PBXBuildFile section */
 		241867AB0E7780700028D4DB /* libscintilla.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 241867AA0E7780700028D4DB /* libscintilla.a */; };
-		5073E0CB09E734E500EC74B6 /* titanium_plugin.cp in Sources */ = {isa = PBXBuildFile; fileRef = 5073E0C409E734A800EC74B6 /* titanium_plugin.cp */; };
+		5073E0CB09E734E500EC74B6 /* titanium_plugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5073E0C409E734A800EC74B6 /* titanium_plugin.cpp */; };
 		ABA2AB8B0E76F2B80035CB1C /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ABA2AB8A0E76F2B80035CB1C /* WebKit.framework */; };
 		ABA2AC770E76FBFD0035CB1C /* titanium_plugin_Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = ABA2AC760E76FBFD0035CB1C /* titanium_plugin_Prefix.pch */; };
 		ABA2AE090E773FBC0035CB1C /* titanium_plugin.h in Headers */ = {isa = PBXBuildFile; fileRef = ABA2AE080E773FBC0035CB1C /* titanium_plugin.h */; };
-		ABA2B02F0E775D220035CB1C /* PluginObject.h in Headers */ = {isa = PBXBuildFile; fileRef = ABA2B02D0E775D220035CB1C /* PluginObject.h */; };
-		ABA2B0300E775D220035CB1C /* PluginObject.c in Sources */ = {isa = PBXBuildFile; fileRef = ABA2B02E0E775D220035CB1C /* PluginObject.c */; };
 		ABA2B03D0E77707E0035CB1C /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ABA2B03C0E77707E0035CB1C /* CoreFoundation.framework */; };
+		ABA50E1E0E79BD15003F5824 /* Accessor.h in Headers */ = {isa = PBXBuildFile; fileRef = ABA50DEF0E79BD15003F5824 /* Accessor.h */; };
+		ABA50E1F0E79BD15003F5824 /* AutoComplete.h in Headers */ = {isa = PBXBuildFile; fileRef = ABA50DF00E79BD15003F5824 /* AutoComplete.h */; };
+		ABA50E200E79BD15003F5824 /* CallTip.h in Headers */ = {isa = PBXBuildFile; fileRef = ABA50DF10E79BD15003F5824 /* CallTip.h */; };
+		ABA50E210E79BD15003F5824 /* CellBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = ABA50DF20E79BD15003F5824 /* CellBuffer.h */; };
+		ABA50E220E79BD15003F5824 /* CharacterSet.h in Headers */ = {isa = PBXBuildFile; fileRef = ABA50DF30E79BD15003F5824 /* CharacterSet.h */; };
+		ABA50E230E79BD15003F5824 /* CharClassify.h in Headers */ = {isa = PBXBuildFile; fileRef = ABA50DF40E79BD15003F5824 /* CharClassify.h */; };
+		ABA50E240E79BD15003F5824 /* ContractionState.h in Headers */ = {isa = PBXBuildFile; fileRef = ABA50DF50E79BD15003F5824 /* ContractionState.h */; };
+		ABA50E250E79BD15003F5824 /* Decoration.h in Headers */ = {isa = PBXBuildFile; fileRef = ABA50DF60E79BD15003F5824 /* Decoration.h */; };
+		ABA50E260E79BD15003F5824 /* Document.h in Headers */ = {isa = PBXBuildFile; fileRef = ABA50DF70E79BD15003F5824 /* Document.h */; };
+		ABA50E270E79BD15003F5824 /* DocumentAccessor.h in Headers */ = {isa = PBXBuildFile; fileRef = ABA50DF80E79BD15003F5824 /* DocumentAccessor.h */; };
+		ABA50E280E79BD15003F5824 /* Editor.h in Headers */ = {isa = PBXBuildFile; fileRef = ABA50DF90E79BD15003F5824 /* Editor.h */; };
+		ABA50E290E79BD15003F5824 /* ExternalLexer.h in Headers */ = {isa = PBXBuildFile; fileRef = ABA50DFA0E79BD15003F5824 /* ExternalLexer.h */; };
+		ABA50E2A0E79BD15003F5824 /* ExtInput.h in Headers */ = {isa = PBXBuildFile; fileRef = ABA50DFB0E79BD15003F5824 /* ExtInput.h */; };
+		ABA50E2B0E79BD15003F5824 /* Indicator.h in Headers */ = {isa = PBXBuildFile; fileRef = ABA50DFC0E79BD15003F5824 /* Indicator.h */; };
+		ABA50E2C0E79BD15003F5824 /* KeyMap.h in Headers */ = {isa = PBXBuildFile; fileRef = ABA50DFD0E79BD15003F5824 /* KeyMap.h */; };
+		ABA50E2D0E79BD15003F5824 /* KeyWords.h in Headers */ = {isa = PBXBuildFile; fileRef = ABA50DFE0E79BD15003F5824 /* KeyWords.h */; };
+		ABA50E2E0E79BD15003F5824 /* libscintilla.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ABA50DFF0E79BD15003F5824 /* libscintilla.a */; };
+		ABA50E2F0E79BD15003F5824 /* LineMarker.h in Headers */ = {isa = PBXBuildFile; fileRef = ABA50E000E79BD15003F5824 /* LineMarker.h */; };
+		ABA50E300E79BD15003F5824 /* Partitioning.h in Headers */ = {isa = PBXBuildFile; fileRef = ABA50E010E79BD15003F5824 /* Partitioning.h */; };
+		ABA50E310E79BD15003F5824 /* Platform.h in Headers */ = {isa = PBXBuildFile; fileRef = ABA50E020E79BD15003F5824 /* Platform.h */; };
+		ABA50E320E79BD15003F5824 /* PlatMacOSX.h in Headers */ = {isa = PBXBuildFile; fileRef = ABA50E030E79BD15003F5824 /* PlatMacOSX.h */; };
+		ABA50E330E79BD15003F5824 /* PositionCache.h in Headers */ = {isa = PBXBuildFile; fileRef = ABA50E040E79BD15003F5824 /* PositionCache.h */; };
+		ABA50E340E79BD15003F5824 /* PropSet.h in Headers */ = {isa = PBXBuildFile; fileRef = ABA50E050E79BD15003F5824 /* PropSet.h */; };
+		ABA50E350E79BD15003F5824 /* QuartzTextLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = ABA50E060E79BD15003F5824 /* QuartzTextLayout.h */; };
+		ABA50E360E79BD15003F5824 /* QuartzTextStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = ABA50E070E79BD15003F5824 /* QuartzTextStyle.h */; };
+		ABA50E370E79BD15003F5824 /* QuartzTextStyleAttribute.h in Headers */ = {isa = PBXBuildFile; fileRef = ABA50E080E79BD15003F5824 /* QuartzTextStyleAttribute.h */; };
+		ABA50E380E79BD15003F5824 /* RESearch.h in Headers */ = {isa = PBXBuildFile; fileRef = ABA50E090E79BD15003F5824 /* RESearch.h */; };
+		ABA50E390E79BD15003F5824 /* RunStyles.h in Headers */ = {isa = PBXBuildFile; fileRef = ABA50E0A0E79BD15003F5824 /* RunStyles.h */; };
+		ABA50E3A0E79BD15003F5824 /* SciLexer.h in Headers */ = {isa = PBXBuildFile; fileRef = ABA50E0B0E79BD15003F5824 /* SciLexer.h */; };
+		ABA50E3B0E79BD15003F5824 /* Scintilla.h in Headers */ = {isa = PBXBuildFile; fileRef = ABA50E0C0E79BD15003F5824 /* Scintilla.h */; };
+		ABA50E3C0E79BD15003F5824 /* ScintillaBase.h in Headers */ = {isa = PBXBuildFile; fileRef = ABA50E0D0E79BD15003F5824 /* ScintillaBase.h */; };
+		ABA50E3D0E79BD15003F5824 /* ScintillaCallTip.h in Headers */ = {isa = PBXBuildFile; fileRef = ABA50E0E0E79BD15003F5824 /* ScintillaCallTip.h */; };
+		ABA50E3E0E79BD15003F5824 /* ScintillaListBox.h in Headers */ = {isa = PBXBuildFile; fileRef = ABA50E0F0E79BD15003F5824 /* ScintillaListBox.h */; };
+		ABA50E3F0E79BD15003F5824 /* ScintillaMacOSX.h in Headers */ = {isa = PBXBuildFile; fileRef = ABA50E100E79BD15003F5824 /* ScintillaMacOSX.h */; };
+		ABA50E400E79BD15003F5824 /* ScintillaWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = ABA50E110E79BD15003F5824 /* ScintillaWidget.h */; };
+		ABA50E410E79BD15003F5824 /* SplitVector.h in Headers */ = {isa = PBXBuildFile; fileRef = ABA50E120E79BD15003F5824 /* SplitVector.h */; };
+		ABA50E420E79BD15003F5824 /* SString.h in Headers */ = {isa = PBXBuildFile; fileRef = ABA50E130E79BD15003F5824 /* SString.h */; };
+		ABA50E430E79BD15003F5824 /* Style.h in Headers */ = {isa = PBXBuildFile; fileRef = ABA50E140E79BD15003F5824 /* Style.h */; };
+		ABA50E440E79BD15003F5824 /* StyleContext.h in Headers */ = {isa = PBXBuildFile; fileRef = ABA50E150E79BD15003F5824 /* StyleContext.h */; };
+		ABA50E450E79BD15003F5824 /* SVector.h in Headers */ = {isa = PBXBuildFile; fileRef = ABA50E160E79BD15003F5824 /* SVector.h */; };
+		ABA50E460E79BD15003F5824 /* TCarbonEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = ABA50E170E79BD15003F5824 /* TCarbonEvent.h */; };
+		ABA50E470E79BD15003F5824 /* TRect.h in Headers */ = {isa = PBXBuildFile; fileRef = ABA50E180E79BD15003F5824 /* TRect.h */; };
+		ABA50E480E79BD15003F5824 /* TView.h in Headers */ = {isa = PBXBuildFile; fileRef = ABA50E190E79BD15003F5824 /* TView.h */; };
+		ABA50E490E79BD15003F5824 /* UniConversion.h in Headers */ = {isa = PBXBuildFile; fileRef = ABA50E1A0E79BD15003F5824 /* UniConversion.h */; };
+		ABA50E4A0E79BD15003F5824 /* ViewStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = ABA50E1B0E79BD15003F5824 /* ViewStyle.h */; };
+		ABA50E4B0E79BD15003F5824 /* WindowAccessor.h in Headers */ = {isa = PBXBuildFile; fileRef = ABA50E1C0E79BD15003F5824 /* WindowAccessor.h */; };
+		ABA50E4C0E79BD15003F5824 /* XPM.h in Headers */ = {isa = PBXBuildFile; fileRef = ABA50E1D0E79BD15003F5824 /* XPM.h */; };
+		ABDC2AB20E7B7C8700EE8627 /* EditorObject.h in Headers */ = {isa = PBXBuildFile; fileRef = ABDC2AB00E7B7C8700EE8627 /* EditorObject.h */; };
+		ABDC2AB30E7B7C8700EE8627 /* EditorObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ABDC2AB10E7B7C8700EE8627 /* EditorObject.cpp */; };
+		ABDC2B590E7B97E600EE8627 /* module.cc in Sources */ = {isa = PBXBuildFile; fileRef = ABDC2B560E7B97E600EE8627 /* module.cc */; };
+		ABDC2B5A0E7B97E600EE8627 /* module.h in Headers */ = {isa = PBXBuildFile; fileRef = ABDC2B580E7B97E600EE8627 /* module.h */; };
+		ABDC2B5D0E7B9AC000EE8627 /* npn_bindings.cc in Sources */ = {isa = PBXBuildFile; fileRef = ABDC2B5C0E7B9AC000EE8627 /* npn_bindings.cc */; };
+		ABDC2B5F0E7B9B0700EE8627 /* npapi_patches.h in Headers */ = {isa = PBXBuildFile; fileRef = ABDC2B5E0E7B9B0700EE8627 /* npapi_patches.h */; };
+		ABDC2C120E7BA47C00EE8627 /* common_sf.h in Headers */ = {isa = PBXBuildFile; fileRef = ABDC2C100E7BA47C00EE8627 /* common_sf.h */; };
+		ABDC2C130E7BA47C00EE8627 /* common_sf.mm in Sources */ = {isa = PBXBuildFile; fileRef = ABDC2C110E7BA47C00EE8627 /* common_sf.mm */; };
+		ABDC2C4C0E7BA71500EE8627 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ABDC2C4B0E7BA71500EE8627 /* Foundation.framework */; };
 		D2AAC0B105546B7500DB518D /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08FB77AAFE841565C02AAC07 /* Carbon.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		08FB77AAFE841565C02AAC07 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
 		241867AA0E7780700028D4DB /* libscintilla.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libscintilla.a; path = scintilla/libscintilla.a; sourceTree = "<group>"; };
-		5073E0C409E734A800EC74B6 /* titanium_plugin.cp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = titanium_plugin.cp; sourceTree = "<group>"; };
+		5073E0C409E734A800EC74B6 /* titanium_plugin.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = titanium_plugin.cpp; sourceTree = "<group>"; };
 		5073E0C609E734A800EC74B6 /* titanium_pluginProj.xcconfig */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xcconfig; path = titanium_pluginProj.xcconfig; sourceTree = "<group>"; };
 		5073E0C709E734A800EC74B6 /* titanium_pluginTarget.xcconfig */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xcconfig; path = titanium_pluginTarget.xcconfig; sourceTree = "<group>"; };
 		ABA2AB8A0E76F2B80035CB1C /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = /System/Library/Frameworks/WebKit.framework; sourceTree = "<absolute>"; };
 		ABA2AC760E76FBFD0035CB1C /* titanium_plugin_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = titanium_plugin_Prefix.pch; sourceTree = "<group>"; };
 		ABA2AE060E773EA10035CB1C /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		ABA2AE080E773FBC0035CB1C /* titanium_plugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = titanium_plugin.h; sourceTree = "<group>"; };
-		ABA2B02D0E775D220035CB1C /* PluginObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginObject.h; sourceTree = "<group>"; };
-		ABA2B02E0E775D220035CB1C /* PluginObject.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; path = PluginObject.c; sourceTree = "<group>"; };
 		ABA2B03C0E77707E0035CB1C /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = /System/Library/Frameworks/CoreFoundation.framework; sourceTree = "<absolute>"; };
+		ABA50DEF0E79BD15003F5824 /* Accessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Accessor.h; sourceTree = "<group>"; };
+		ABA50DF00E79BD15003F5824 /* AutoComplete.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutoComplete.h; sourceTree = "<group>"; };
+		ABA50DF10E79BD15003F5824 /* CallTip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallTip.h; sourceTree = "<group>"; };
+		ABA50DF20E79BD15003F5824 /* CellBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CellBuffer.h; sourceTree = "<group>"; };
+		ABA50DF30E79BD15003F5824 /* CharacterSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CharacterSet.h; sourceTree = "<group>"; };
+		ABA50DF40E79BD15003F5824 /* CharClassify.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CharClassify.h; sourceTree = "<group>"; };
+		ABA50DF50E79BD15003F5824 /* ContractionState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContractionState.h; sourceTree = "<group>"; };
+		ABA50DF60E79BD15003F5824 /* Decoration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Decoration.h; sourceTree = "<group>"; };
+		ABA50DF70E79BD15003F5824 /* Document.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Document.h; sourceTree = "<group>"; };
+		ABA50DF80E79BD15003F5824 /* DocumentAccessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocumentAccessor.h; sourceTree = "<group>"; };
+		ABA50DF90E79BD15003F5824 /* Editor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Editor.h; sourceTree = "<group>"; };
+		ABA50DFA0E79BD15003F5824 /* ExternalLexer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExternalLexer.h; sourceTree = "<group>"; };
+		ABA50DFB0E79BD15003F5824 /* ExtInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExtInput.h; sourceTree = "<group>"; };
+		ABA50DFC0E79BD15003F5824 /* Indicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Indicator.h; sourceTree = "<group>"; };
+		ABA50DFD0E79BD15003F5824 /* KeyMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyMap.h; sourceTree = "<group>"; };
+		ABA50DFE0E79BD15003F5824 /* KeyWords.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyWords.h; sourceTree = "<group>"; };
+		ABA50DFF0E79BD15003F5824 /* libscintilla.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libscintilla.a; sourceTree = "<group>"; };
+		ABA50E000E79BD15003F5824 /* LineMarker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LineMarker.h; sourceTree = "<group>"; };
+		ABA50E010E79BD15003F5824 /* Partitioning.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Partitioning.h; sourceTree = "<group>"; };
+		ABA50E020E79BD15003F5824 /* Platform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Platform.h; sourceTree = "<group>"; };
+		ABA50E030E79BD15003F5824 /* PlatMacOSX.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatMacOSX.h; sourceTree = "<group>"; };
+		ABA50E040E79BD15003F5824 /* PositionCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PositionCache.h; sourceTree = "<group>"; };
+		ABA50E050E79BD15003F5824 /* PropSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PropSet.h; sourceTree = "<group>"; };
+		ABA50E060E79BD15003F5824 /* QuartzTextLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuartzTextLayout.h; sourceTree = "<group>"; };
+		ABA50E070E79BD15003F5824 /* QuartzTextStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuartzTextStyle.h; sourceTree = "<group>"; };
+		ABA50E080E79BD15003F5824 /* QuartzTextStyleAttribute.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuartzTextStyleAttribute.h; sourceTree = "<group>"; };
+		ABA50E090E79BD15003F5824 /* RESearch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RESearch.h; sourceTree = "<group>"; };
+		ABA50E0A0E79BD15003F5824 /* RunStyles.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RunStyles.h; sourceTree = "<group>"; };
+		ABA50E0B0E79BD15003F5824 /* SciLexer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SciLexer.h; sourceTree = "<group>"; };
+		ABA50E0C0E79BD15003F5824 /* Scintilla.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Scintilla.h; sourceTree = "<group>"; };
+		ABA50E0D0E79BD15003F5824 /* ScintillaBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScintillaBase.h; sourceTree = "<group>"; };
+		ABA50E0E0E79BD15003F5824 /* ScintillaCallTip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScintillaCallTip.h; sourceTree = "<group>"; };
+		ABA50E0F0E79BD15003F5824 /* ScintillaListBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScintillaListBox.h; sourceTree = "<group>"; };
+		ABA50E100E79BD15003F5824 /* ScintillaMacOSX.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScintillaMacOSX.h; sourceTree = "<group>"; };
+		ABA50E110E79BD15003F5824 /* ScintillaWidget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScintillaWidget.h; sourceTree = "<group>"; };
+		ABA50E120E79BD15003F5824 /* SplitVector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SplitVector.h; sourceTree = "<group>"; };
+		ABA50E130E79BD15003F5824 /* SString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SString.h; sourceTree = "<group>"; };
+		ABA50E140E79BD15003F5824 /* Style.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Style.h; sourceTree = "<group>"; };
+		ABA50E150E79BD15003F5824 /* StyleContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleContext.h; sourceTree = "<group>"; };
+		ABA50E160E79BD15003F5824 /* SVector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVector.h; sourceTree = "<group>"; };
+		ABA50E170E79BD15003F5824 /* TCarbonEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCarbonEvent.h; sourceTree = "<group>"; };
+		ABA50E180E79BD15003F5824 /* TRect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TRect.h; sourceTree = "<group>"; };
+		ABA50E190E79BD15003F5824 /* TView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TView.h; sourceTree = "<group>"; };
+		ABA50E1A0E79BD15003F5824 /* UniConversion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UniConversion.h; sourceTree = "<group>"; };
+		ABA50E1B0E79BD15003F5824 /* ViewStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewStyle.h; sourceTree = "<group>"; };
+		ABA50E1C0E79BD15003F5824 /* WindowAccessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WindowAccessor.h; sourceTree = "<group>"; };
+		ABA50E1D0E79BD15003F5824 /* XPM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XPM.h; sourceTree = "<group>"; };
+		ABDC2AB00E7B7C8700EE8627 /* EditorObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditorObject.h; sourceTree = "<group>"; };
+		ABDC2AB10E7B7C8700EE8627 /* EditorObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EditorObject.cpp; sourceTree = "<group>"; };
+		ABDC2B560E7B97E600EE8627 /* module.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = module.cc; sourceTree = "<group>"; };
+		ABDC2B570E7B97E600EE8627 /* module.def */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = module.def; sourceTree = "<group>"; };
+		ABDC2B580E7B97E600EE8627 /* module.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = module.h; sourceTree = "<group>"; };
+		ABDC2B5C0E7B9AC000EE8627 /* npn_bindings.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = npn_bindings.cc; sourceTree = "<group>"; };
+		ABDC2B5E0E7B9B0700EE8627 /* npapi_patches.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = npapi_patches.h; sourceTree = "<group>"; };
+		ABDC2C100E7BA47C00EE8627 /* common_sf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = common_sf.h; sourceTree = "<group>"; };
+		ABDC2C110E7BA47C00EE8627 /* common_sf.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = common_sf.mm; sourceTree = "<group>"; };
+		ABDC2C4B0E7BA71500EE8627 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		D2AAC09D05546B4700DB518D /* libtitanium_plugin.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libtitanium_plugin.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -43,6 +152,8 @@
 				ABA2AB8B0E76F2B80035CB1C /* WebKit.framework in Frameworks */,
 				ABA2B03D0E77707E0035CB1C /* CoreFoundation.framework in Frameworks */,
 				241867AB0E7780700028D4DB /* libscintilla.a in Frameworks */,
+				ABA50E2E0E79BD15003F5824 /* libscintilla.a in Frameworks */,
+				ABDC2C4C0E7BA71500EE8627 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -71,6 +182,7 @@
 		0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				ABDC2C4B0E7BA71500EE8627 /* Foundation.framework */,
 				241867AA0E7780700028D4DB /* libscintilla.a */,
 				ABA2B03C0E77707E0035CB1C /* CoreFoundation.framework */,
 				ABA2AB8A0E76F2B80035CB1C /* WebKit.framework */,
@@ -82,11 +194,19 @@
 		08FB77ACFE841707C02AAC07 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				5073E0C409E734A800EC74B6 /* titanium_plugin.cp */,
+				ABDC2C100E7BA47C00EE8627 /* common_sf.h */,
+				ABDC2C110E7BA47C00EE8627 /* common_sf.mm */,
+				ABDC2B5E0E7B9B0700EE8627 /* npapi_patches.h */,
+				ABDC2B5C0E7B9AC000EE8627 /* npn_bindings.cc */,
+				ABDC2B560E7B97E600EE8627 /* module.cc */,
+				ABDC2B570E7B97E600EE8627 /* module.def */,
+				ABDC2B580E7B97E600EE8627 /* module.h */,
+				ABA50DEE0E79BD15003F5824 /* scintilla */,
+				5073E0C409E734A800EC74B6 /* titanium_plugin.cpp */,
 				ABA2AC760E76FBFD0035CB1C /* titanium_plugin_Prefix.pch */,
 				ABA2AE080E773FBC0035CB1C /* titanium_plugin.h */,
-				ABA2B02D0E775D220035CB1C /* PluginObject.h */,
-				ABA2B02E0E775D220035CB1C /* PluginObject.c */,
+				ABDC2AB00E7B7C8700EE8627 /* EditorObject.h */,
+				ABDC2AB10E7B7C8700EE8627 /* EditorObject.cpp */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -101,6 +221,60 @@
 			name = "Configuration Files";
 			sourceTree = "<group>";
 		};
+		ABA50DEE0E79BD15003F5824 /* scintilla */ = {
+			isa = PBXGroup;
+			children = (
+				ABA50DEF0E79BD15003F5824 /* Accessor.h */,
+				ABA50DF00E79BD15003F5824 /* AutoComplete.h */,
+				ABA50DF10E79BD15003F5824 /* CallTip.h */,
+				ABA50DF20E79BD15003F5824 /* CellBuffer.h */,
+				ABA50DF30E79BD15003F5824 /* CharacterSet.h */,
+				ABA50DF40E79BD15003F5824 /* CharClassify.h */,
+				ABA50DF50E79BD15003F5824 /* ContractionState.h */,
+				ABA50DF60E79BD15003F5824 /* Decoration.h */,
+				ABA50DF70E79BD15003F5824 /* Document.h */,
+				ABA50DF80E79BD15003F5824 /* DocumentAccessor.h */,
+				ABA50DF90E79BD15003F5824 /* Editor.h */,
+				ABA50DFA0E79BD15003F5824 /* ExternalLexer.h */,
+				ABA50DFB0E79BD15003F5824 /* ExtInput.h */,
+				ABA50DFC0E79BD15003F5824 /* Indicator.h */,
+				ABA50DFD0E79BD15003F5824 /* KeyMap.h */,
+				ABA50DFE0E79BD15003F5824 /* KeyWords.h */,
+				ABA50DFF0E79BD15003F5824 /* libscintilla.a */,
+				ABA50E000E79BD15003F5824 /* LineMarker.h */,
+				ABA50E010E79BD15003F5824 /* Partitioning.h */,
+				ABA50E020E79BD15003F5824 /* Platform.h */,
+				ABA50E030E79BD15003F5824 /* PlatMacOSX.h */,
+				ABA50E040E79BD15003F5824 /* PositionCache.h */,
+				ABA50E050E79BD15003F5824 /* PropSet.h */,
+				ABA50E060E79BD15003F5824 /* QuartzTextLayout.h */,
+				ABA50E070E79BD15003F5824 /* QuartzTextStyle.h */,
+				ABA50E080E79BD15003F5824 /* QuartzTextStyleAttribute.h */,
+				ABA50E090E79BD15003F5824 /* RESearch.h */,
+				ABA50E0A0E79BD15003F5824 /* RunStyles.h */,
+				ABA50E0B0E79BD15003F5824 /* SciLexer.h */,
+				ABA50E0C0E79BD15003F5824 /* Scintilla.h */,
+				ABA50E0D0E79BD15003F5824 /* ScintillaBase.h */,
+				ABA50E0E0E79BD15003F5824 /* ScintillaCallTip.h */,
+				ABA50E0F0E79BD15003F5824 /* ScintillaListBox.h */,
+				ABA50E100E79BD15003F5824 /* ScintillaMacOSX.h */,
+				ABA50E110E79BD15003F5824 /* ScintillaWidget.h */,
+				ABA50E120E79BD15003F5824 /* SplitVector.h */,
+				ABA50E130E79BD15003F5824 /* SString.h */,
+				ABA50E140E79BD15003F5824 /* Style.h */,
+				ABA50E150E79BD15003F5824 /* StyleContext.h */,
+				ABA50E160E79BD15003F5824 /* SVector.h */,
+				ABA50E170E79BD15003F5824 /* TCarbonEvent.h */,
+				ABA50E180E79BD15003F5824 /* TRect.h */,
+				ABA50E190E79BD15003F5824 /* TView.h */,
+				ABA50E1A0E79BD15003F5824 /* UniConversion.h */,
+				ABA50E1B0E79BD15003F5824 /* ViewStyle.h */,
+				ABA50E1C0E79BD15003F5824 /* WindowAccessor.h */,
+				ABA50E1D0E79BD15003F5824 /* XPM.h */,
+			);
+			path = scintilla;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -110,7 +284,56 @@
 			files = (
 				ABA2AC770E76FBFD0035CB1C /* titanium_plugin_Prefix.pch in Headers */,
 				ABA2AE090E773FBC0035CB1C /* titanium_plugin.h in Headers */,
-				ABA2B02F0E775D220035CB1C /* PluginObject.h in Headers */,
+				ABA50E1E0E79BD15003F5824 /* Accessor.h in Headers */,
+				ABA50E1F0E79BD15003F5824 /* AutoComplete.h in Headers */,
+				ABA50E200E79BD15003F5824 /* CallTip.h in Headers */,
+				ABA50E210E79BD15003F5824 /* CellBuffer.h in Headers */,
+				ABA50E220E79BD15003F5824 /* CharacterSet.h in Headers */,
+				ABA50E230E79BD15003F5824 /* CharClassify.h in Headers */,
+				ABA50E240E79BD15003F5824 /* ContractionState.h in Headers */,
+				ABA50E250E79BD15003F5824 /* Decoration.h in Headers */,
+				ABA50E260E79BD15003F5824 /* Document.h in Headers */,
+				ABA50E270E79BD15003F5824 /* DocumentAccessor.h in Headers */,
+				ABA50E280E79BD15003F5824 /* Editor.h in Headers */,
+				ABA50E290E79BD15003F5824 /* ExternalLexer.h in Headers */,
+				ABA50E2A0E79BD15003F5824 /* ExtInput.h in Headers */,
+				ABA50E2B0E79BD15003F5824 /* Indicator.h in Headers */,
+				ABA50E2C0E79BD15003F5824 /* KeyMap.h in Headers */,
+				ABA50E2D0E79BD15003F5824 /* KeyWords.h in Headers */,
+				ABA50E2F0E79BD15003F5824 /* LineMarker.h in Headers */,
+				ABA50E300E79BD15003F5824 /* Partitioning.h in Headers */,
+				ABA50E310E79BD15003F5824 /* Platform.h in Headers */,
+				ABA50E320E79BD15003F5824 /* PlatMacOSX.h in Headers */,
+				ABA50E330E79BD15003F5824 /* PositionCache.h in Headers */,
+				ABA50E340E79BD15003F5824 /* PropSet.h in Headers */,
+				ABA50E350E79BD15003F5824 /* QuartzTextLayout.h in Headers */,
+				ABA50E360E79BD15003F5824 /* QuartzTextStyle.h in Headers */,
+				ABA50E370E79BD15003F5824 /* QuartzTextStyleAttribute.h in Headers */,
+				ABA50E380E79BD15003F5824 /* RESearch.h in Headers */,
+				ABA50E390E79BD15003F5824 /* RunStyles.h in Headers */,
+				ABA50E3A0E79BD15003F5824 /* SciLexer.h in Headers */,
+				ABA50E3B0E79BD15003F5824 /* Scintilla.h in Headers */,
+				ABA50E3C0E79BD15003F5824 /* ScintillaBase.h in Headers */,
+				ABA50E3D0E79BD15003F5824 /* ScintillaCallTip.h in Headers */,
+				ABA50E3E0E79BD15003F5824 /* ScintillaListBox.h in Headers */,
+				ABA50E3F0E79BD15003F5824 /* ScintillaMacOSX.h in Headers */,
+				ABA50E400E79BD15003F5824 /* ScintillaWidget.h in Headers */,
+				ABA50E410E79BD15003F5824 /* SplitVector.h in Headers */,
+				ABA50E420E79BD15003F5824 /* SString.h in Headers */,
+				ABA50E430E79BD15003F5824 /* Style.h in Headers */,
+				ABA50E440E79BD15003F5824 /* StyleContext.h in Headers */,
+				ABA50E450E79BD15003F5824 /* SVector.h in Headers */,
+				ABA50E460E79BD15003F5824 /* TCarbonEvent.h in Headers */,
+				ABA50E470E79BD15003F5824 /* TRect.h in Headers */,
+				ABA50E480E79BD15003F5824 /* TView.h in Headers */,
+				ABA50E490E79BD15003F5824 /* UniConversion.h in Headers */,
+				ABA50E4A0E79BD15003F5824 /* ViewStyle.h in Headers */,
+				ABA50E4B0E79BD15003F5824 /* WindowAccessor.h in Headers */,
+				ABA50E4C0E79BD15003F5824 /* XPM.h in Headers */,
+				ABDC2AB20E7B7C8700EE8627 /* EditorObject.h in Headers */,
+				ABDC2B5A0E7B97E600EE8627 /* module.h in Headers */,
+				ABDC2B5F0E7B9B0700EE8627 /* npapi_patches.h in Headers */,
+				ABDC2C120E7BA47C00EE8627 /* common_sf.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -157,8 +380,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5073E0CB09E734E500EC74B6 /* titanium_plugin.cp in Sources */,
-				ABA2B0300E775D220035CB1C /* PluginObject.c in Sources */,
+				5073E0CB09E734E500EC74B6 /* titanium_plugin.cpp in Sources */,
+				ABDC2AB30E7B7C8700EE8627 /* EditorObject.cpp in Sources */,
+				ABDC2B590E7B97E600EE8627 /* module.cc in Sources */,
+				ABDC2B5D0E7B9AC000EE8627 /* npn_bindings.cc in Sources */,
+				ABDC2C130E7BA47C00EE8627 /* common_sf.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -228,7 +454,7 @@
 				ONLY_ACTIVE_ARCH_PRE_XCODE_3_1 = "$(NATIVE_ARCH)";
 				OTHER_CFLAGS = (
 					"-DSCI_NAMESPACE",
-					"-DSCI_OWNREGEX",
+					"-DBROWSER_WEBKIT",
 				);
 				PREBINDING = NO;
 				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
