@@ -1,12 +1,48 @@
 <html>
+	<head>
+		<script src="gears_init.js"/>
+		<script type="text/javascript">
+			var desktop = google.gears.factory.create('beta.desktop');
+
+			function $(id) { return document.getElementById(id); }
+			function browse () {
+				desktop.openFiles(function (files) { 
+					var file = files[0];
+
+					$('filename').value = file.fullPath;
+					var extension = file.name.substr(file.name.lastIndexOf('.')+1);
+					editor.openFile(file.fullPath);
+
+					if (extension == "py") {
+						editor.setLanguage("python");
+					} else if (extension == "rb") {
+						editor.setLanguage("ruby");
+					} else if (extension == "html") {
+						editor.setLanguage("html");
+					} else if (extension == "pl") {
+						editor.setLanguage("perl");
+					} else if (extension == "js") {
+						editor.setLanguage("javascript");
+					}
+				}, {singleFile: true});
+			}
+		</script>	
+	</head>
 	<body>
+		<input type="text" id="filename" size="50"/>
+		<button onclick="browse();">Open File...</button>
 		<object
 			src="/Users/marshall/Code/appcelerator/appcelerator_sdk/trunk/components/build.rb"
 			type="application/x-scintilla"
 			width="500"
 			height="700"
 			style="border: 1px solid black;"
+			id="editor"
 		>
 		</object>	
+
+		<script>
+			editor.setLanguage("ruby");
+		</script>
 	</body>
 </html>
