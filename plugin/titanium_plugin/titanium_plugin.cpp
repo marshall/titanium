@@ -42,6 +42,7 @@ NPError NPP_New(NPMIMEType pluginType, NPP instance,
 		}
 	}
 	
+	NPN_SetValue(instance, (NPPVariable)NPNVpluginDrawingModel, (void *) NPDrawingModelCoreGraphics);
 	debug("editor for " + filePath + ", creating..");
 	
     instance->pdata = NPN_CreateObject(instance, EditorObject::getPluginClass());

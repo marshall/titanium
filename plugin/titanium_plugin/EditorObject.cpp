@@ -57,25 +57,26 @@ static const NPUTF8 *pluginPropertyIdentifierNames[NumberOfProperties] = {
 };
 
 enum {
-	OpenFileMethod, SetTextMethod, SetSelectionMethod, SetLanguageMethod, NumberOfMethods
+	OpenFileMethod, SetTextMethod, SetSelectionMethod, SetLanguageMethod,
+	SetStyleForegroundMethod, SetStyleBackgroundMethod, SetStyleItalicMethod, SetStyleBoldMethod,
+	RedrawMethod, NumberOfMethods
 };
 
 static NPIdentifier pluginMethodIdentifiers[NumberOfMethods];
 static const NPUTF8 *pluginMethodIdentifierNames[NumberOfMethods] = {
-	"openFile", "setText", "setSelection", "setLanguage"
+	"openFile", "setText", "setSelection", "setLanguage",
+	"setStyleForeground", "setStyleBackground", "setStyleItalic", "setStyleBold",
+	"redraw"
 };
 
 static void initializeIdentifiers(void)
 {
-	debug ("initializing identifiers..");
     NPN_GetStringIdentifiers(pluginPropertyIdentifierNames, NumberOfProperties, pluginPropertyIdentifiers);
     NPN_GetStringIdentifiers(pluginMethodIdentifierNames, NumberOfMethods, pluginMethodIdentifiers);
-	debug ("done");
 }
 
 bool pluginHasProperty(NPObject *obj, NPIdentifier name)
 {
-	debug("has property?..");
     int i;
     for (i = 0; i < NumberOfProperties; i++)
         if (name == pluginPropertyIdentifiers[i])
@@ -85,7 +86,6 @@ bool pluginHasProperty(NPObject *obj, NPIdentifier name)
 
 bool pluginHasMethod(NPObject *obj, NPIdentifier name)
 {
-	debug("has method?..");
     int i;
     for (i = 0; i < NumberOfMethods; i++)
         if (name == pluginMethodIdentifiers[i])
@@ -95,7 +95,6 @@ bool pluginHasMethod(NPObject *obj, NPIdentifier name)
 
 bool pluginGetProperty(NPObject *obj, NPIdentifier name, NPVariant *variant)
 {
-	debug("get property..");
     EditorObject *editor = (EditorObject *)obj;
     if (name == pluginPropertyIdentifiers[FileNameProperty]) {
 		STRINGZ_TO_NPVARIANT(editor->filename.c_str(), *variant);
@@ -133,14 +132,53 @@ void EditorObject::setLanguage (std::string language) {
 	scintilla->WndProc(SCI_SETLEXERLANGUAGE, 0, (sptr_t) language.c_str());	
 }
 
-std::string NPStringToString (NPString string) {
-	debugf("NPStringToString, utf8len=%d, str=%s", string.UTF8Length, string.UTF8Characters);
+void EditorObject::setStyleForeground(int style, int foreground) {
+	debugf("set style foreground: %d, %x", style, foreground);
 	
+	scintilla->WndProc(SCI_STYLESETFORE, style, foreground);
+}
+
+void EditorObject::setStyleBackground(int style, int background) {
+	debugf("set style background: %d, %x", style, background);
+	
+	scintilla->WndProc(SCI_STYLESETBACK, style, background);
+}
+
+void EditorObject::setStyleItalic(int style, bool italic) {
+	debugf("set style italic: %d, %d", style, italic);
+	
+	scintilla->WndProc(SCI_STYLESETITALIC, style, (italic?1:0));
+}
+
+void EditorObject::setStyleBold(int style, bool bold) {
+	debugf("set style bold: %d, %d", style, bold);
+	
+	scintilla->WndProc(SCI_STYLESETBOLD, style, (bold?1:0));
+}
+
+std::string NPStringToString (NPString string) {
 	const NPUTF8 *chars = string.UTF8Characters;
 	std::string newString = chars;
 	
 	newString.erase(string.UTF8Length);
 	return newString;
+}
+
+int NPStringToColor (NPString string) {
+	std::string hexString = NPStringToString(string);
+	
+	if (hexString[0] == '#') {
+		hexString = hexString.substr(1);
+	}
+	
+	long color = strtol(hexString.c_str(), NULL, 16);
+	
+	// switch red and blue.. scintilla likes GBR syntax, HTML likes RGB
+	int red = ((color >> 16) & 0xFF);
+	int blue = (color & 0xFF) << 16;
+	
+	color = blue | (color & 0xFF00) | red;
+	return color;
 }
 
 bool pluginInvoke(NPObject *obj, NPIdentifier name, const NPVariant *args, uint32_t argCount, NPVariant *result)
@@ -160,6 +198,37 @@ bool pluginInvoke(NPObject *obj, NPIdentifier name, const NPVariant *args, uint3
     }
 	else if (name == pluginMethodIdentifiers[SetTextMethod]) {
 		editor->setText(NPStringToString(NPVARIANT_TO_STRING(args[0])));
+		
+		NULL_TO_NPVARIANT(*result);
+		return true;
+	}
+	else if (name == pluginMethodIdentifiers[SetStyleBackgroundMethod]) {
+		// for some reason ints are being passed as doubles??
+		editor->setStyleBackground((int)NPVARIANT_TO_DOUBLE(args[0]), NPStringToColor(NPVARIANT_TO_STRING(args[1])));
+		
+		NULL_TO_NPVARIANT(*result);
+		return true;
+	}
+	else if (name == pluginMethodIdentifiers[SetStyleForegroundMethod]) {
+		editor->setStyleForeground((int)NPVARIANT_TO_DOUBLE(args[0]), NPStringToColor(NPVARIANT_TO_STRING(args[1])));
+		
+		NULL_TO_NPVARIANT(*result);
+		return true;
+	}
+	else if (name == pluginMethodIdentifiers[SetStyleBoldMethod]) {
+		editor->setStyleBold(NPVARIANT_TO_DOUBLE(args[0]), NPVARIANT_TO_BOOLEAN(args[1]));
+		
+		NULL_TO_NPVARIANT(*result);
+		return true;
+	}
+	else if (name == pluginMethodIdentifiers[SetStyleItalicMethod]) {
+		editor->setStyleItalic(NPVARIANT_TO_DOUBLE(args[0]), NPVARIANT_TO_BOOLEAN(args[1]));
+		
+		NULL_TO_NPVARIANT(*result);
+		return true;
+	}
+	else if (name == pluginMethodIdentifiers[RedrawMethod]) {
+		editor->redraw();
 		
 		NULL_TO_NPVARIANT(*result);
 		return true;
@@ -193,9 +262,9 @@ void EditorObject::setWindow (NPWindow *window)
 {
 	debugf("in set window, window addres=%d", this->window);
 	
-	NP_Port *port = (NP_Port *)window->window;
-	WindowPtr windowRef = GetWindowFromPort(port->port);
-	HIViewRef root = HIViewGetRoot(windowRef);
+	NP_CGContext *context = (NP_CGContext *)window->window;
+	WindowRef windowRef = context->window;
+	HIViewRef viewRef = HIViewGetRoot(windowRef);
 	
 	if (this->window == NULL) {
 		this->window = window;
@@ -207,11 +276,17 @@ void EditorObject::setWindow (NPWindow *window)
 		
 		debug("initializing scintilla view...");
 		//scintilla->WndProc(SCI_SETLEXER, SCLEX_CPP, 0);
-		scintilla->WndProc(SCI_SETSTYLEBITS, 5, 0);
+		/*scintilla->WndProc(SCI_SETSTYLEBITS, 5, 0);
 		
-		scintilla->WndProc(SCI_STYLESETFORE, 0, 0x808080);  // White space
+		scintilla->WndProc(SCI_STYLESETFORE, STYLE_LINENUMBER, 0x7C7C7C);
+		scintilla->WndProc(SCI_STYLESETBACK, STYLE_LINENUMBER, 0x5E5E5E);
+		
+		scintilla->WndProc(SCI_STYLESETFORE, STYLE_DEFAULT, 0xF8F8F8);  // White space
+		scintilla->WndProc(SCI_STYLESETBACK, STYLE_DEFAULT, 0x2B2B2B);
+		
 		scintilla->WndProc(SCI_STYLESETFORE, 1, 0x007F00);  // Comment
 		scintilla->WndProc(SCI_STYLESETITALIC, 1, 1); // Comment
+		
 		scintilla->WndProc(SCI_STYLESETFORE, 2, 0x007F00);  // Line comment
 		scintilla->WndProc(SCI_STYLESETITALIC, 2, 1); // Line comment
 		scintilla->WndProc(SCI_STYLESETFORE, 3, 0x3F703F);  // Doc comment
@@ -225,7 +300,7 @@ void EditorObject::setWindow (NPWindow *window)
 		scintilla->WndProc(SCI_STYLESETFORE, 9, 0x007F7F);  // Preprocessor
 		scintilla->WndProc(SCI_STYLESETFORE,10, 0x000000);  // Operators
 		scintilla->WndProc(SCI_STYLESETBOLD,10, 1); // Operators
-		scintilla->WndProc(SCI_STYLESETFORE,11, 0x000000);  // Identifiers
+		scintilla->WndProc(SCI_STYLESETFORE,11, 0x000000);  // Identifiers*/
 		
 		scintilla->WndProc(SCI_SETKEYWORDS, 0, (sptr_t)(char *)keywords); // Keyword
 		
@@ -233,13 +308,17 @@ void EditorObject::setWindow (NPWindow *window)
 		scintilla->WndProc(SCI_SETMARGINWIDTHN, 0, (long int)30);
 		scintilla->WndProc(SCI_SETMARGINTYPEN, 1, (long int)SC_MARGIN_SYMBOL);
 		scintilla->WndProc(SCI_SETMARGINMASKN, 1, (long int)SC_MASK_FOLDERS);
-		scintilla->WndProc(SCI_SETMARGINWIDTHN, 1, (long int)20);
+		scintilla->WndProc(SCI_SETMARGINWIDTHN, 1, (long int)0);
+		
+		//scintilla->WndProc(SCI_STYLESETFORE, STYLE_LINENUMBER, 0x7c7c7c);
+		//scintilla->WndProc(SCI_STYLESETBACK, STYLE_LINENUMBER, 0x5e5e5e);
+		
 		//scintilla->WndProc( SCI_SETMARGINTYPEN, 2, (long int)SC_MARGIN_SYMBOL);
 		//scintilla->WndProc( SCI_SETMARGINWIDTHN, 2, (long int)16);
 		scintilla->SetMouseCapture(true);
 		
 		debug("adding to browser window...");
-		HIViewAddSubview(root, sciView);
+		HIViewAddSubview(viewRef, sciView);
 		
 		if (filename.length() > 0) {
 			openFile(filename);
@@ -247,12 +326,13 @@ void EditorObject::setWindow (NPWindow *window)
 		}
 	}
 	
-	HIRect sciRect, rootRect;
-	HIViewGetFrame(root, &rootRect);
-	sciRect.origin.x = window->x + window->clipRect.left;
-	sciRect.origin.y = window->y + window->clipRect.top;
-	sciRect.size.width = window->clipRect.right - window->clipRect.left;
-	sciRect.size.height = window->clipRect.bottom - window->clipRect.top;
+	HIRect sciRect;
+
+	sciRect.origin.x = window->clipRect.left;
+	sciRect.origin.y = window->clipRect.top;
+	sciRect.size.width = window->width; //window->clipRect.right - window->clipRect.left;
+	sciRect.size.height = window->height; //window->clipRect.bottom - window->clipRect.top;
+	
 	HIViewSetFrame(sciView, &sciRect);
 	HIViewSetVisible(sciView, TRUE);
 	

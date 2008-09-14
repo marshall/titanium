@@ -34,7 +34,7 @@ public:
 	
 	HIViewRef sciView;
 	ScintillaMacOSX *scintilla;
-
+	
 	EditorObject() { this->window = NULL; }
 	EditorObject(std::string filename) { this->window = NULL; this->filename = filename; }
 	
@@ -45,6 +45,11 @@ public:
 	void setText(std::string text);
 	void openFile(std::string filename);
 	void setLanguage(std::string language);
+	
+	void setStyleForeground(int style, int foreground);
+	void setStyleBackground(int style, int background);
+	void setStyleItalic(int style, bool italic);
+	void setStyleBold(int style, bool bold);
 	
 	static NPClass* getPluginClass();
 };
