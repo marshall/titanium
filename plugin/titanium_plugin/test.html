@@ -1,12 +1,38 @@
 <html>
 	<head>
 		<script src="gears_init.js"/>
+		<script src="titanium_styles.js"/>
 		<script type="text/javascript">
 			var desktop = google.gears.factory.create('beta.desktop');
 
 			function $(id) { return document.getElementById(id); }
+			function applyStyle (styleDef) {
+				for (style in styleDef) {
+					var props = styleDef[style];
+					var styleNumber = 0;
+					if (style == "_default") { styleNumber = 32; }
+					else if (style == "_lineNumber") { styleNumber = 33; }
+					else { styleNumber = parseInt(style); }
+				
+					if ('foreground' in props) {
+						editor.setStyleForeground(styleNumber, props.foreground);
+					}
+					if ('background' in props) {
+						editor.setStyleBackground(styleNumber, props.background);
+					}
+					if ('bold' in props) {
+						editor.setStyleBold(styleNumber, props.bold);
+					}
+					if ('italic' in props) {
+						editor.setStyleItalic(styleNumber, props.italic);
+					}
+				}
+				editor.redraw();
+			}
+
 			function browse () {
 				desktop.openFiles(function (files) { 
+					var editor = $('editor');
 					var file = files[0];
 
 					$('filename').value = file.fullPath;
@@ -17,32 +43,41 @@
 						editor.setLanguage("python");
 					} else if (extension == "rb") {
 						editor.setLanguage("ruby");
-					} else if (extension == "html") {
-						editor.setLanguage("html");
+					} else if (extension == "html")  {
+						editor.setLanguage("hypertext");
+					} else if (extension == "xml") {
+						editor.setLanguage("xml");
 					} else if (extension == "pl") {
 						editor.setLanguage("perl");
 					} else if (extension == "js") {
 						editor.setLanguage("javascript");
 					}
+
+					var style = styles[extension];
+					if (style != null) applyStyle(style);
 				}, {singleFile: true});
 			}
 		</script>	
 	</head>
 	<body>
 		<input type="text" id="filename" size="50"/>
-		<button onclick="browse();">Open File...</button>
+		<button onclick="browse();" style="clear: both;">Open File...</button><br/>
+		<div style="width: 100px; height: 700px; float: left; clear: left;">
+			This might be a toolbar of some kind
+		</div>
 		<object
-			src="/Users/marshall/Code/appcelerator/appcelerator_sdk/trunk/components/build.rb"
+			src="test.xml"
 			type="application/x-scintilla"
 			width="500"
 			height="700"
-			style="border: 1px solid black;"
+			style="border: 1px solid black; float: right;"
 			id="editor"
 		>
 		</object>	
 
 		<script>
-			editor.setLanguage("ruby");
+			$('editor').setLanguage("xml");
+			applyStyle(styles["xml"]);
 		</script>
 	</body>
 </html>
