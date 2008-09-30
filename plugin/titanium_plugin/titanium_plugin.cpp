@@ -43,12 +43,13 @@ NPError NPP_New(NPMIMEType pluginType, NPP instance,
 	}
 	
 	NPN_SetValue(instance, (NPPVariable)NPNVpluginDrawingModel, (void *) NPDrawingModelCoreGraphics);
-	debug("editor for " + filePath + ", creating..");
 	
-    instance->pdata = NPN_CreateObject(instance, EditorObject::getPluginClass());
-	
-	if(instance == NULL)
-		return NPERR_INVALID_INSTANCE_ERROR;
+	if (strcmp(pluginType, "application/x-scintilla") == 0) {
+		instance->pdata = NPN_CreateObject(instance, EditorObject::getPluginClass());
+		
+		if(instance == NULL)
+			return NPERR_INVALID_INSTANCE_ERROR;
+	}
 	
 	NPError rv = NPERR_NO_ERROR;
 	return rv;

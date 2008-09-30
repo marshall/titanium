@@ -1,12 +1,16 @@
 
-var styles = new Object();
+Appcelerator.Titanium.Styles = new Object();
 
-styles.xml =  {
+Appcelerator.Titanium.Styles.xml =  {
 	_lineNumber: {
 		foreground: '#9c9c9c', background: '#5e5e5e'
 	},
 	_default: {
-		foreground: '#f8f8f8', background: '#2b2b2b', bold: true
+		foreground: '#f8f8f8', background: '#2b2b2b', bold: true,
+		font: 'Monaco'
+	},
+	_caret: {
+		foreground: '#f8f8f8'
 	},
 	0: { /* Whitespace */
 		foreground:	'#f8f8f8', background: '#2b2b2b'
@@ -18,10 +22,10 @@ styles.xml =  {
 		foreground: '#7f90aa', background: '#2b2b2b'
 	},
 	3: { /* Known attributes */
-		foreground: '#61ce3c', background: '#2b2b2b'
+		foreground: '#7f90aa', background: '#2b2b2b'
 	},
 	4: { /* Unknown attributes */
-		foreground: '#61ce3c', background: '#2b2b2b'
+		foreground: '#7f90aa', background: '#2b2b2b'
 	},
 	5: { /* Numbers */
 		foreground: '#61ce3c', background: '#2b2b2b'
@@ -30,7 +34,7 @@ styles.xml =  {
 		foreground: '#61ce3c', background: '#2b2b2b'
 	},
 	7: { /* Single quoted string */
-		foreground: '#61ce3c', background: '#2b2b2b'
+		foreground: '#81ee5c', background: '#2b2b2b'
 	},
 	8: { /* "Other" inside tring */
 		foreground: '#61ce3c', background: '#2b2b2b'
@@ -50,6 +54,12 @@ styles.xml =  {
 	13: { /* ?> identifier end */
 		foreground: '#61ce3c', background: '#2b2b2b'
 	},
+	17: { /* CDATA */
+		foreground: '#61ce3c', background: '#2b2b2b'
+	},
+	21: { /* SGML default */
+		foreground: '#000000', background: '#a6caf0'
+	},
 	24: { /* SGML double string? */
 		foreground: '#61ce3c', background: '#2b2b2b'
 	},
@@ -58,4 +68,4 @@ styles.xml =  {
 	},
 };
 
-styles.html = styles.xml;
+Appcelerator.Titanium.Styles.html = Appcelerator.Titanium.Styles.xml;
