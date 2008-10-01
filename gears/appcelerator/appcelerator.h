@@ -27,6 +27,7 @@ class Appcelerator
   void ReadFile(JsCallContext *context);
   void WriteFile(JsCallContext *context);
   void CompileProject(JsCallContext *context);
+  void CreateProject(JsCallContext *context);
 
   void ProcessCallback(int eventType,JsRootedCallback *cb,void *event);
 

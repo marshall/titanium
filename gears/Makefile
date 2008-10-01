@@ -32,9 +32,13 @@ include tools/config.mk
 include tools/sanity.mk
 
 
-INCLUDES += -I../plugin/titanium_plugin/scintilla -DSCI_NAMESPACE -DSCI_OWNREGEX
-LIBS += -L../plugin/titanium_plugin/scintilla -lscintilla
-EXEFLAGS += -L../plugin/titanium_plugin/scintilla -lscintilla
+INCLUDES += -I../scintilla/src -I../scintilla/include -DSCI_NAMESPACE -DSCI_OWNREGEX
+LIBS += -L../scintilla/bin -lscintilla
+EXEFLAGS += -L../scintilla/bin -lscintilla
+
+ifeq ($(OS),osx)
+INCLUDES += -I../scintilla/macosx
+endif
 
 MODULE		= $(SHORT_NAME)
 
@@ -1370,6 +1374,8 @@ $(BROWSER)_CPPSRCS += \
 		file_dialog_gtk.cc \
 		file_dialog_osx.cc \
 		file_dialog_win32.cc \
+		dir_dialog.cc \
+		dir_dialog_osx.cc \
 		$(NULL)
 
 # The browser module also needs these files, to communicate with the notifier.

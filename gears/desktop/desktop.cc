@@ -46,6 +46,7 @@
 #include "gears/blob/blob_interface.h"
 #include "gears/desktop/drag_and_drop_registry.h"
 #include "gears/desktop/file_dialog.h"
+#include "gears/desktop/dir_dialog.h"
 #include "gears/desktop/notification_message_orderer.h"
 #include "gears/notifier/notification.h"
 #include "gears/localserver/common/http_constants.h"
@@ -60,6 +61,7 @@ template<>
 void Dispatcher<GearsDesktop>::Init() {
   RegisterMethod("createShortcut", &GearsDesktop::CreateShortcut);
   RegisterMethod("openFiles", &GearsDesktop::OpenFiles);
+	RegisterMethod("openDirs", &GearsDesktop::OpenDirs);
 
 #ifdef OFFICIAL_BUILD
   // The notification API has not been finalized for official builds.
@@ -437,6 +439,47 @@ void GearsDesktop::OpenFiles(JsCallContext *context) {
 
   std::string16 error;
   scoped_ptr<FileDialog> dialog(FileDialog::Create(this));
+  if (!dialog.get()) {
+    context->SetException(STRING16(L"Failed to create dialog."));
+    return;
+  }
+  if (!dialog->Open(options, callback.release(), &error)) {
+    context->SetException(error);
+    return;
+  }
+  // The dialog will destroy itself when it completes.
+  dialog.release();
+}
+
+void GearsDesktop::OpenDirs(JsCallContext *context) {
+  if (EnvIsWorker()) {
+    context->SetException(
+                 STRING16(L"openDirs is not supported in workers."));
+    return;
+  }
+
+  scoped_ptr<JsRootedCallback> callback;
+  JsObject options_map;
+  JsArgument argv[] = {
+    { JSPARAM_REQUIRED, JSPARAM_FUNCTION, as_out_parameter(callback) },
+    { JSPARAM_OPTIONAL, JSPARAM_OBJECT, &options_map },
+  };
+  int argc = context->GetArguments(ARRAYSIZE(argv), argv);
+  if (context->is_exception_set()) return;
+
+  // TODO(cdevries): set focus to tab where this function was called
+
+  FileDialog::Options options;
+  if (argc > 1) {
+    if (!FileDialog::ParseOptions(context, options_map, &options)) {
+      assert(context->is_exception_set());
+      return;
+    }
+  }
+
+  std::string16 error;
+  scoped_ptr<DirDialog> dialog(DirDialog::Create(this));
+
   if (!dialog.get()) {
     context->SetException(STRING16(L"Failed to create dialog."));
     return;

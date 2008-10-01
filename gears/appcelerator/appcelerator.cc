@@ -12,6 +12,8 @@
 #include "gears/base/common/module_wrapper.h"
 #include "gears/base/common/js_runner.h"
 
+#include <iostream>
+
 DECLARE_DISPATCHER(Appcelerator);
 
 // static
@@ -20,6 +22,7 @@ void Dispatcher<Appcelerator>::Init()
 {
   RegisterMethod("readFile", &Appcelerator::ReadFile);
   RegisterMethod("writeFile", &Appcelerator::WriteFile);
+  RegisterMethod("createProject", &Appcelerator::CreateProject);
   RegisterMethod("compileProject", &Appcelerator::CompileProject);
 }
 
@@ -129,15 +132,16 @@ void ProcessThread::Run()
 
 	JsRootedCallback *ocb = this->outputCallback.get();
 
-	std::string16 output;
 	char str[LINE_MAX];
 
 	while ( fgets(str,LINE_MAX,f) != NULL )
 	{
-		output.append(UTF8ToString16(str));
-	}
+		std::string16 output = UTF8ToString16(str);
+		std::cout << output.c_str() << std::endl;
 
     AsyncRouter::GetInstance()->CallAsync(this->threadid, new ProcessOutputFunctor(this->listener.get(),ocb,output));
+	}
+
 
 	int rc = pclose(f);
     AsyncRouter::GetInstance()->CallAsync(this->threadid, new ProcessCompleteFunctor(this->listener.get(),this->completeCallback.get(),rc));
@@ -192,6 +196,48 @@ void Appcelerator::CompileProject(JsCallContext *context)
 	ProcessThread *t = new ProcessThread(cmd.c_str(),output,complete,this);
 	t->Start();
 
+	bool returnValue = true;
+	context->SetReturnValue(JSPARAM_BOOL, &returnValue);
+}
+
+std::string String16ToString (std::string16 string16) {
+	std::string str;
+	String16ToUTF8(string16.c_str(), &str);
+	return str;
+}
+
+void Appcelerator::CreateProject(JsCallContext *context)
+{
+	std::string16 path, name, service, serverURL;
+	JsRootedCallback *complete = NULL, *output = NULL;
+	
+	JsArgument argv[] = {
+		{ JSPARAM_REQUIRED, JSPARAM_STRING16, &path },
+		{ JSPARAM_REQUIRED, JSPARAM_STRING16, &name },
+		{ JSPARAM_REQUIRED, JSPARAM_STRING16, &service },
+		{ JSPARAM_OPTIONAL, JSPARAM_STRING16, &serverURL },
+		{ JSPARAM_OPTIONAL, JSPARAM_FUNCTION, &output },
+		{ JSPARAM_OPTIONAL, JSPARAM_FUNCTION, &complete }
+	};
+	
+	context->GetArguments(ARRAYSIZE(argv), argv);
+	
+	if (context->is_exception_set()) {
+		return;
+	}
+	
+	std::string command = "/usr/bin/app create:project ";
+	command += "\"" + String16ToString(path) + "\" ";
+	command += "\"" + String16ToString(name) + "\" ";
+	command += "\"" + String16ToString(service) + "\" ";
+	if (serverURL.length() > 0) {
+		command += " --server=" + String16ToString(serverURL);
+	}
+	
+	std::cout << "executing: " << command << std::endl;
+	ProcessThread *t = new ProcessThread(command.c_str(), output, complete, this);
+	t->Start();
+	
 	bool returnValue = true;
 	context->SetReturnValue(JSPARAM_BOOL, &returnValue);
 }
