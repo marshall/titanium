@@ -1,0 +1,123 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:app="http://www.appcelerator.org">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<script type="text/javascript">var start = new Date().getTime();</script>
+		
+		<!--script src="script/appcelerator-debug.js"/-->
+		<script src="script/deps/prototype.js"/>
+		<script src="script/deps/scriptaculous.js"/>
+		<script src="script/deps/gears_init.js"/>
+
+		<script src="script/titanium_init.js"/>
+		<script src="script/titanium_core.js"/>
+		<script src="script/titanium_constants.js"/>
+		<script src="script/titanium_styles.js"/>
+		<script src="script/titanium_editor.js"/>
+		
+		<script type="text/javascript">
+			var desktop = google.gears.factory.create('beta.desktop');
+			var appcelerator = Appcelerator.Titanium.GearsFactory.create('beta.appcelerator');
+			
+			var tiEditor = new Appcelerator.Titanium.Editor();	
+			Appcelerator.Titanium.Styles.init("script/titanium_styles.xml");
+			var initialized = false;
+			
+			function openEditor (filePath) {
+				if (!initialized) {
+					var editorArea = $('editor_area');
+					var object = document.createElement("object");
+					object.setAttribute("src", "");
+					object.setAttribute("type", "application/x-scintilla");
+					object.setAttribute("id", "editor");
+					editorArea.appendChild(object);
+					
+					tiEditor.init($('editor'));
+					initialized = true;
+				}
+				
+				tiEditor.openFile(filePath);
+			}
+			
+			function browse () {
+				desktop.openFiles(function (files) { 
+					var file = files[0];
+					openEditor(file.fullPath);
+				}, {singleFile: true});
+			}
+			
+			function save () {
+				if (initialized) {
+					tiEditor.saveFile();
+				}
+			}
+			
+			var debugging = true;
+			function _debug(msg) {
+				if (debugging) {
+					Appcelerator.Titanium.Core.Console.appendDebug(msg);
+				}
+			}
+			
+			function createNewProject_receivedMessage (message) {
+				Appcelerator.Titanium.Core.Console.appendInfo(message);
+			}
+			
+			function createNewProject () {
+				//alert("effect="+Effect.Appear);
+				$('new_project_create_button').disabled = 'disabled';
+				
+				var projectName = $('project_name').value;
+				var directory = $('directory').value;
+				var serviceType = $('service_type').options[$('service_type').selectedIndex].text;
+				
+				_debug('projectName='+projectName+',dir='+directory+',service='+serviceType);
+				
+				appcelerator.createProject(directory, projectName, serviceType, "",
+					createNewProject_receivedMessage,
+					function (returnCode) {
+						Appcelerator.Titanium.Core.Console.appendInfo("Finished creating project.");
+						Effect.Fade('new_project_dialog', {duration: 0.5});
+						
+						openEditor(directory + "/" + projectName + "/public/index.html");
+						$('new_project_create_button').disabled = null;
+					}
+				);
+			}
+		</script>
+		<link rel="stylesheet" type="text/css" href="stylesheets/main.css"/>
+	</head>
+	<body>
+		<div id="topbar">
+			<div id="logo"><img src="images/titanium_logo.png"/></div>
+			<div id="toolbar">
+				<a href="#new" onclick="Effect.Appear('new_project_dialog', {duration: 0.5}); return false;">new project</a> |
+				<a href="#open" onclick="browse(); return false;">open...</a> |
+				<a href="#save" onclick="save(); return false;">save</a>
+				
+				<div id="new_project_dialog" style="display: none; ">
+					<table width="100%">
+					<tr><td>name of project:</td><td colspan="2"><input type="text" id="project_name" size="20"/></td></tr>
+					<tr><td>directory:</td><td><input type="text" id="directory" size="20"/></td><td><a href="" onclick="">browse...</a></td><td>
+					<tr><td>service type:</td><td colspan="2"><select id="service_type"><option>ruby</option></select></td>
+					</table>
+					<button id="new_project_create_button" onclick="createNewProject();">create project</button>
+				</div>
+			</div>
+		</div>
+		<div id="sidebar">
+			Eventually this will have a project browser / etc
+		</div>
+		<div id="editor_area">
+		</div>
+		<div id="console">
+			<div id="console_bar">Titanium Console</div>
+		</div>
+		<script>
+			var ms = new Date().getTime() - start;
+			Appcelerator.Titanium.Core.Console.appendInfo("Titanium 0.1 Loaded in " + ms + " ms.");
+			Appcelerator.Titanium.Core.Console.appendInfo("Copyright (c) 2008 Appcelerator, Inc.");
+		</script>
+	</body>
+</html>

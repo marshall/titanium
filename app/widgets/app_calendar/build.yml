@@ -1,0 +1,11 @@
+--- 
+:type: widget
+:name: app:calendar
+:version: 1.0.5
+:dependencies: 
+- :type: websdk
+  :version: ">=2.1"
+  :name: websdk
+:tags: [ uicontrol, datetime, yui ]
+:licenses: [6]
+:description: "app:calendar is a simple pop-up calendar control that uses the YUI calendar component from Yahoo!"

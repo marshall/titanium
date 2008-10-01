@@ -1,0 +1,36 @@
+.table_cell
+{
+	padding: 3px;
+	border-right: 1px solid #aaa;
+	border-left: 1px solid #aaa;
+}
+.table_cell_header
+{
+	padding-top: 3px;
+	padding-bottom: 3px;
+	padding-left: 5px;
+	padding-right: 5px;
+	background-color: #eee;
+	border-right: 1px solid #aaa;
+	border-left: 1px solid #aaa;
+	border-bottom: 1px solid #aaa;
+	cursor: pointer;
+}
+.table_row_even
+{
+	padding: 3px;
+	border-right: 1px solid #aaa;
+	border-left: 1px solid #aaa;
+	background-color: #f9f9f9;
+}
+.table_row_odd
+{
+	padding: 3px;
+	border-right: 1px solid #aaa;
+	border-left: 1px solid #aaa;
+	background-color: #fff;		
+}
+.pagination_links
+{
+	cursor: pointer;
+}

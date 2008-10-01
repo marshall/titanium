@@ -1,0 +1,97 @@
+<public:component>
+<public:attach event="onpropertychange" onevent="fixIEImages(0)" />
+
+<script type="text/javascript">
+
+function buildIEImage(img,width,height,src)
+{
+    var imgID = (img.id) ? "id='" + img.id + "' " : "";
+    var imgClass = (img.className) ? "class='" + img.className + "' " : "";
+    var imgTitle = (img.title) ? "title='" + img.title + "' " : "title='" + img.alt + "' ";
+    var imgStyle = "display:inline-block;" + img.style.cssText ;
+    if (img.align == "left") imgStyle = "float:left;" + imgStyle;
+    if (img.align == "right") imgStyle = "float:right;" + imgStyle;
+    if (img.parentElement && img.parentElement.href) imgStyle = "cursor:hand;" + imgStyle;
+    var strNewHTML = "<img " + imgID + imgClass + imgTitle;
+    var sizing = "width:" + width + "px; height:" + height + "px;";
+    strNewHTML+= " style=\"" + sizing + imgStyle + ";"
+    + "filter:progid:DXImageTransform.Microsoft.AlphaImageLoader"
+    + "(src=\'" + (src||img.src) + "\', sizingMethod='image');\" src='"+Appcelerator.ImagePath+"blank_1x1.gif' />" ;
+    return strNewHTML;
+};
+
+function fixBackgroundPNG(obj)
+{
+    var filterName = 'DXImageTransform.Microsoft.AlphaImageLoader';
+    var bg = obj.currentStyle.backgroundImage;
+    var bgsrc = bg.substring(5,bg.length-2);
+    var scale = obj.currentStyle.backgroundRepeat == 'no-repeat' ? 'image' : 'scale';
+    obj.style.backgroundImage = "url("+Appcelerator.ImagePath+"blank_1x1.gif)";    
+
+    if (filters[filterName])
+    {
+        filters[filterName].enabled = true;
+        with (filters[filterName]) { src = bgsrc };
+    }
+    else
+    {
+        obj.style.filter = "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='" + bgsrc + "', sizingMethod='"+scale+"')";
+    }
+}
+
+function fixIEImages(init)
+{
+    var evt = init ? { propertyName: 'src,background' } : event;
+    var isSrc = /src/.test(evt.propertyName);
+    var isBg = /background/.test(evt.propertyName);
+    var isClass = !init && ((this.className != this._png_class) && (this.className || this._png_class));
+    if (!(isSrc || isBg || isClass)) return;
+    this._png_class = this.className;
+    
+    // Required for Whatever:hover support - erase any set BG if className changes.
+    if (isClass && ((style.backgroundImage.indexOf('url(') == -1) || (style.backgroundImage.indexOf('blank_1x1') > -1)))
+    {
+        setTimeout(function() { this.style.backgroundImage = '' }, 0);
+        return;
+    }
+    var bgSrc = currentStyle.backgroundImage || style.backgroundImage;
+    
+    if (this.nodeName == 'IMG')
+    {
+        value = this.src;
+        if (value)
+        {
+            var imgName = value.toUpperCase();
+            if (imgName.substring(imgName.length-3, imgName.length) == "PNG")
+            {
+                var height = this.height, width = this.width;
+                if (!height || !width)
+                {
+                    // in this case, we're not visible so IE won't load the image in some cases
+                    // so we are going to force a pre-load of the image to calculate the size and then
+                    // replace it once the image is loaded instead
+                    var original = $(this.id);
+                    var tempImage = new Image();
+                    tempImage.onload = function()
+                    {
+                        original.outerHTML = buildIEImage(original,tempImage.width,tempImage.height,value);
+                    };
+                    tempImage.src = value;
+                }
+                else
+                {
+                    this.outerHTML = buildIEImage(this,width,height,value);
+                }
+            }
+        }
+    }
+    else if (((bgSrc + this.src).indexOf('blank_1x1') == -1) && this.currentStyle.backgroundImage.match(/(\.png)|(blank_1x1\.gif)/i) != null)
+    {
+        fixBackgroundPNG(this);
+    }
+}
+
+fixIEImages(1);
+
+</script>
+</public:component>

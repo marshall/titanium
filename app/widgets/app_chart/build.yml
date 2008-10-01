@@ -1,0 +1,11 @@
+--- 
+:type: widget
+:name: app:chart
+:version: 1.1.1
+:dependencies: 
+- :type: websdk
+  :version: ">=2.1"
+  :name: websdk
+:tags: [ uicontrol, charting ]
+:licenses: [6]
+:description: "app:chart is a flash-based charting component that allows you do to either static or dynamic bar charts, line charts and pie charts"

@@ -1,0 +1,118 @@
+
+body {
+	margin: 0px;
+	top: 0px;
+	left: 0px;
+	
+	border-style: solid;
+	border-width: 5px;
+	border-color: #181818;
+	
+	width: 800px;
+	height: 600px;
+}
+
+#logo {
+	background-image: url('../images/toolbar_bg.png');
+	background-repeat: repeat-x;
+	
+	padding: 0px;
+	padding-top: 15px;
+	padding-left: 10px;
+	margin: 0px;
+	
+	height: 37px;
+	width: 230px;
+	float: left;
+}
+
+#toolbar {
+	background-image: url('../images/toolbar_bg.png');
+	background-repeat: repeat-x;
+	
+	padding: 0px;
+	margin: 0px;
+	padding-top: 15px;
+	height: 37px;
+	
+	font-size: 16px;
+	font-family: Verdana, sans-serif;
+}
+
+#toolbar a {
+	color: #181818;
+	text-decoration: none;
+	font-weight: bold;
+}
+
+#topbar {
+	padding: 0px;
+	margin: 0px;
+}
+
+#sidebar {
+	width: 230px;
+	height: 551px;
+	
+	float: left;
+	clear: left;
+}
+
+#editor_area {
+	width: 560px;
+	height: 446px;
+	margin: 0px;
+	padding: 0px;
+	
+	border: 1px solid black;
+	float: right;
+}
+
+#editor {
+	width: 560px;
+	height: 446px;
+	
+	margin: 0px;
+	padding: 0px;
+}
+
+#console_bar {
+	background-color: #000;
+	color: #eee;
+	font-size: 11px;
+	padding-left: 5px;
+	font-weight: bold;
+	font-family: Verdana, sans-serif;
+}
+
+#console {
+	background-color: #2b2b2b;
+	color: #fff;
+	
+	font-family: monospace;
+	font-size: 10pt;
+	
+	height: 100px;
+	width: 560px;
+	float: right;
+	margin: 0px;
+	
+	overflow: auto;
+}
+
+#new_project_dialog {
+	position: absolute;
+	left: 225px; top: 225px;
+	
+	width: 350px;
+	height: 150px;
+	background-color: #ccc;
+	color: #333;
+	font-size: 12px;
+	
+	border: 3px solid #000;
+}
+
+#new_project_dialog a {
+	color: #666;
+}

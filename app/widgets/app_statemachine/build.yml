@@ -1,0 +1,11 @@
+--- 
+:type: widget
+:name: app:statemachine
+:version: 1.0
+:dependencies: 
+- :type: websdk
+  :version: ">=2.1"
+  :name: websdk
+:tags: [ logic ]
+:licenses: [6]
+:description: "app:statemachine is a non-visual widget for controlling states based on messages"
