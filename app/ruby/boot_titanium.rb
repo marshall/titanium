@@ -16,9 +16,10 @@
 
 require 'yaml'
 
+titanium = TitaniumBoot.new
+
 def die(msg=nil, exit_value=1)
-  STDERR.puts " *ERROR: #{msg}" unless msg.nil?
-  STDERR.flush
+	titanium.die(msg) unless msg.nil?
   exit exit_value
 end
 
@@ -58,11 +59,11 @@ end
 
 def confirm(q,canforce=true,die_if_fails=true,default='y')
     return true if OPTIONS[:force]
-    answer = ask(q)
-    answer = default if not answer or answer == ''
-    OPTIONS[:force]=true if canforce and ['A','a'].index(answer)
-    if not ['y','Y','a','A'].index(answer)
-      die('Cancelled!') if die_if_fails
+		answer = titanium.confirm(q,canforce)
+		answer = default if not answer or answer == ''
+    OPTIONS[:force]=true if canforce and answer == 'Always'
+		if answer != 'Yes' or answer != 'Always'
+      die('Aborted by User') if die_if_fails
       return false
     end
     true
