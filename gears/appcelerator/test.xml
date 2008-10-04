@@ -1,5 +1,0 @@
-<?xml version="1.0"?>
-<titanium:helloworld
- xmlns:titanium="http://titanium.appcelerator.com">
-	<message>Hello World</message>
-</titanium:helloworld>

@@ -1,0 +1,8 @@
+interface TitaniumBoot {
+	bool confirm (in string message, in string canForce);
+	void die (in string message);
+	
+	string askForProxy();
+	object showLoginForm();
+	object showSignupForm ();
+};

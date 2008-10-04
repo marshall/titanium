@@ -8,6 +8,8 @@
 #include "gears/base/common/thread.h"
 #include "gears/base/common/async_router.h"
 
+#include "gears/appcelerator/ruby_wrapper.h"
+
 class ProcessThreadListener {
  public:
   virtual void ProcessCallback(int eventType,JsRootedCallback *cb,void *event){}
@@ -19,7 +21,10 @@ class Appcelerator
       public JsEventHandlerInterface {
  public:
   static const std::string kModuleName;
-
+  JsObject bootCallback;
+  bool rubyBooted;
+  RubyWrapper rubyWrapper;
+  
   Appcelerator();
 
   // IN: -
@@ -28,9 +33,11 @@ class Appcelerator
   void WriteFile(JsCallContext *context);
   void CompileProject(JsCallContext *context);
   void CreateProject(JsCallContext *context);
+  void BootAppcelerator(JsCallContext *context);
 
   void ProcessCallback(int eventType,JsRootedCallback *cb,void *event);
-
+  JsObject& GetBootCallback() { return bootCallback; }
+  
  private:
 
   // JsEventHandlerInterface implementation.
@@ -78,6 +85,4 @@ class ProcessThread : public Thread
 		scoped_ptr<ProcessThreadListener> listener;
 		ThreadId threadid;
 };
-
-
 #endif // GEARS_APPCELERATOR_H__

@@ -14,7 +14,10 @@
 
 #include <iostream>
 
+
 DECLARE_DISPATCHER(Appcelerator);
+
+Appcelerator *app;
 
 // static
 template<>
@@ -24,12 +27,15 @@ void Dispatcher<Appcelerator>::Init()
   RegisterMethod("writeFile", &Appcelerator::WriteFile);
   RegisterMethod("createProject", &Appcelerator::CreateProject);
   RegisterMethod("compileProject", &Appcelerator::CompileProject);
+  RegisterMethod("boot", &Appcelerator::BootAppcelerator);
 }
 
 const std::string Appcelerator::kModuleName("Appcelerator");
 
 Appcelerator::Appcelerator() : ModuleImplBaseClass(kModuleName) 
 {
+	app = this;
+	rubyBooted = false;
 }
 
 Appcelerator::~Appcelerator() 
@@ -240,4 +246,21 @@ void Appcelerator::CreateProject(JsCallContext *context)
 	
 	bool returnValue = true;
 	context->SetReturnValue(JSPARAM_BOOL, &returnValue);
+}
+
+void Appcelerator::BootAppcelerator (JsCallContext *context)
+{
+	std::string16 path;
+	
+	JsArgument argv[] = {
+		{ JSPARAM_REQUIRED, JSPARAM_STRING16, &path },
+		{ JSPARAM_REQUIRED, JSPARAM_OBJECT, &this->bootCallback }
+	};
+	
+	context->GetArguments(ARRAYSIZE(argv), argv);
+	if (context->is_exception_set()) {
+		return;
+	}
+	
+	rubyWrapper.RunScript(String16ToUTF8(path).c_str());
 }
