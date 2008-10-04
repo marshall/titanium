@@ -478,6 +478,7 @@ ifeq ($(BROWSER),SF)
 DLLFLAGS += -mmacosx-version-min=10.4 -framework WebKit -lcurl
 DLLFLAGS += -Ltools/osx -lleopard_support
 DLLFLAGS += -L../scintilla/bin -lscintilla
+DLLFLAGS += -L/System/Library/Frameworks/Ruby.framework/Versions/Current/usr/lib -lruby
 else
 DLLFLAGS += -Wl,-exported_symbols_list -Wl,tools/xpcom-ld-script.darwin
 endif

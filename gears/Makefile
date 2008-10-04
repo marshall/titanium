@@ -31,10 +31,16 @@ include tools/version.mk
 include tools/config.mk
 include tools/sanity.mk
 
+RUBY_INCLUDE_PATH=
+RUBY_LIB_PATH=
+ifeq ($(OS),osx)
+RUBY_INCLUDE_PATH += /System/Library/Frameworks/Ruby.framework/Headers
+RUBY_LIB_PATH += /System/Library/Frameworks/Ruby.framework/Versions/Current/usr/lib
+endif
 
-INCLUDES += -I../scintilla/src -I../scintilla/include -DSCI_NAMESPACE -DSCI_OWNREGEX
-LIBS += -L../scintilla/bin -lscintilla
-EXEFLAGS += -L../scintilla/bin -lscintilla
+INCLUDES += -I../scintilla/src -I../scintilla/include -DSCI_NAMESPACE -DSCI_OWNREGEX -I$(RUBY_INCLUDE_PATH)
+LIBS += -L../scintilla/bin -lscintilla -lruby
+EXEFLAGS += -L../scintilla/bin -L$(RUBY_LIB_PATH) -lscintilla
 
 ifeq ($(OS),osx)
 INCLUDES += -I../scintilla/macosx
@@ -1374,8 +1380,6 @@ $(BROWSER)_CPPSRCS += \
 		file_dialog_gtk.cc \
 		file_dialog_osx.cc \
 		file_dialog_win32.cc \
-		dir_dialog.cc \
-		dir_dialog_osx.cc \
 		$(NULL)
 
 # The browser module also needs these files, to communicate with the notifier.
@@ -2037,6 +2041,8 @@ $(BROWSER)_VPATH += \
 
 $(BROWSER)_CPPSRCS += \
 		appcelerator.cc \
+		ruby_wrapper.cc \
+		TitaniumBoot.cc \
 		$(NULL)
 
 
