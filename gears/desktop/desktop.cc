@@ -61,7 +61,7 @@ template<>
 void Dispatcher<GearsDesktop>::Init() {
   RegisterMethod("createShortcut", &GearsDesktop::CreateShortcut);
   RegisterMethod("openFiles", &GearsDesktop::OpenFiles);
-	RegisterMethod("openDirs", &GearsDesktop::OpenDirs);
+	//RegisterMethod("openDirs", &GearsDesktop::OpenDirs);
 
 #ifdef OFFICIAL_BUILD
   // The notification API has not been finalized for official builds.
@@ -450,7 +450,7 @@ void GearsDesktop::OpenFiles(JsCallContext *context) {
   // The dialog will destroy itself when it completes.
   dialog.release();
 }
-
+/*
 void GearsDesktop::OpenDirs(JsCallContext *context) {
   if (EnvIsWorker()) {
     context->SetException(
@@ -491,6 +491,7 @@ void GearsDesktop::OpenDirs(JsCallContext *context) {
   // The dialog will destroy itself when it completes.
   dialog.release();
 }
+*/
 
 // Handle all the icon creation and creation call required to actually install
 // a shortcut.

@@ -186,7 +186,7 @@ class GearsDesktop : public ModuleImplBaseClass {
   // OUT: void
   void OpenFiles(JsCallContext *context);
 
-	void OpenDirs(JsCallContext *context);
+	//void OpenDirs(JsCallContext *context);
 
 #if defined(OFFICIAL_BUILD) || defined(OS_ANDROID)
   // The notification API has not been finalized for official builds.
