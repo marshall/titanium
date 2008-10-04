@@ -6,15 +6,16 @@
 		<script type="text/javascript">var start = new Date().getTime();</script>
 		
 		<!--script src="script/appcelerator-debug.js"/-->
-		<script src="script/deps/prototype.js"/>
-		<script src="script/deps/scriptaculous.js"/>
-		<script src="script/deps/gears_init.js"/>
-
-		<script src="script/titanium_init.js"/>
-		<script src="script/titanium_core.js"/>
-		<script src="script/titanium_constants.js"/>
-		<script src="script/titanium_styles.js"/>
-		<script src="script/titanium_editor.js"/>
+		<script src="script/deps/gears_init.js"></script>
+		<script src="script/deps/jquery-1.2.6.min.js"></script>
+		<script src="script/deps/jquery-ui-personalized-1.6rc2.min.js"></script>
+		
+		<script src="script/titanium_init.js"></script>
+		<script src="script/titanium_core.js"></script>
+		<script src="script/titanium_constants.js"></script>
+		<script src="script/titanium_styles.js"></script>
+		<script src="script/titanium_boot.js"></script>
+		<script src="script/titanium_editor.js"></script>
 		
 		<script type="text/javascript">
 			var desktop = google.gears.factory.create('beta.desktop');
@@ -26,14 +27,14 @@
 			
 			function openEditor (filePath) {
 				if (!initialized) {
-					var editorArea = $('editor_area');
+					var editorArea = $('#editor_area');
 					var object = document.createElement("object");
 					object.setAttribute("src", "");
 					object.setAttribute("type", "application/x-scintilla");
 					object.setAttribute("id", "editor");
-					editorArea.appendChild(object);
+					editorArea.append(object);
 					
-					tiEditor.init($('editor'));
+					tiEditor.init(document.getElementById('editor'));
 					initialized = true;
 				}
 				
@@ -66,11 +67,11 @@
 			
 			function createNewProject () {
 				//alert("effect="+Effect.Appear);
-				$('new_project_create_button').disabled = 'disabled';
+				$('#new_project_create_button').disabled = 'disabled';
 				
-				var projectName = $('project_name').value;
-				var directory = $('directory').value;
-				var serviceType = $('service_type').options[$('service_type').selectedIndex].text;
+				var projectName = $('#project_name').value;
+				var directory = $('#directory').value;
+				var serviceType = $('#service_type').options[$('#service_type').selectedIndex].text;
 				
 				_debug('projectName='+projectName+',dir='+directory+',service='+serviceType);
 				
@@ -78,21 +79,28 @@
 					createNewProject_receivedMessage,
 					function (returnCode) {
 						Appcelerator.Titanium.Core.Console.appendInfo("Finished creating project.");
-						Effect.Fade('new_project_dialog', {duration: 0.5});
+						//Effect.Fade('new_project_dialog', {duration: 0.5});
 						
 						openEditor(directory + "/" + projectName + "/public/index.html");
-						$('new_project_create_button').disabled = null;
+						$('#new_project_create_button').disabled = null;
 					}
 				);
 			}
+
+		function testRuby () {
+			appcelerator.boot("/Users/marshall/Code/appcelerator/appcelerator_titanium/trunk/app/boot_titanium.rb", Appcelerator.Titanium.Boot);
+			
+			//Appcelerator.Titanium.Boot.confirm("Create project?", false);
+		}
 		</script>
 		<link rel="stylesheet" type="text/css" href="stylesheets/main.css"/>
+		  <link rel="stylesheet" href="http://dev.jquery.com/view/tags/ui/latest/themes/flora/flora.all.css" type="text/css" media="screen" title="Flora (Default)"/>
 	</head>
 	<body>
 		<div id="topbar">
 			<div id="logo"><img src="images/titanium_logo.png"/></div>
 			<div id="toolbar">
-				<a href="#new" onclick="Effect.Appear('new_project_dialog', {duration: 0.5}); return false;">new project</a> |
+				<a href="#new" onclick="">new project</a> |
 				<a href="#open" onclick="browse(); return false;">open...</a> |
 				<a href="#save" onclick="save(); return false;">save</a>
 				
@@ -104,6 +112,7 @@
 					</table>
 					<button id="new_project_create_button" onclick="createNewProject();">create project</button>
 				</div>
+				<div id="confirm_dialog" class="flora" title="Confirmation">Confirmation dialog</div>
 			</div>
 		</div>
 		<div id="sidebar">
@@ -118,6 +127,8 @@
 			var ms = new Date().getTime() - start;
 			Appcelerator.Titanium.Core.Console.appendInfo("Titanium 0.1 Loaded in " + ms + " ms.");
 			Appcelerator.Titanium.Core.Console.appendInfo("Copyright (c) 2008 Appcelerator, Inc.");
+
+			testRuby();
 		</script>
 	</body>
 </html>

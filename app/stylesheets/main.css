@@ -116,3 +116,9 @@ body {
 #new_project_dialog a {
 	color: #666;
 }
+
+#confirm_dialog {
+	font-weight: bold;
+	font-family: Verdana, sans-serif;
+	font-size: 14px;	
+}

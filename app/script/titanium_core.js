@@ -4,19 +4,16 @@ Appcelerator.Titanium.Core.Console = {
 	
 	appendMessage: function (message, level, color)
 	{
-		var console = $('console');
+		var console = $('#console');
+		
 		var span = document.createElement("span");
 		if (color != null) {
 			span.setAttribute("style", "color: " + color + ";");
 		}
 		
 		span.innerHTML = "["+level+"] " + message;
-		console.appendChild(span);
-		
-		var br = document.createElement("br");
-		console.appendChild(br);
-		
-		console.scrollTop = console.scrollHeight;
+		$("#console").append(span).append("<br/>").attr("scrollTop", $("#console").attr("scrollHeight"));
+
 	},
 	
 	appendInfo: function (message)
