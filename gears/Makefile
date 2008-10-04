@@ -34,8 +34,8 @@ include tools/sanity.mk
 RUBY_INCLUDE_PATH=
 RUBY_LIB_PATH=
 ifeq ($(OS),osx)
-RUBY_INCLUDE_PATH += /System/Library/Frameworks/Ruby.framework/Headers
-RUBY_LIB_PATH += /System/Library/Frameworks/Ruby.framework/Versions/Current/usr/lib
+RUBY_INCLUDE_PATH+=/System/Library/Frameworks/Ruby.framework/Headers
+RUBY_LIB_PATH+=/System/Library/Frameworks/Ruby.framework/Versions/Current/usr/lib
 endif
 
 INCLUDES += -I../scintilla/src -I../scintilla/include -DSCI_NAMESPACE -DSCI_OWNREGEX -I$(RUBY_INCLUDE_PATH)
