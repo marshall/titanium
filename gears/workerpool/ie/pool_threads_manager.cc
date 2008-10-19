@@ -346,6 +346,14 @@ bool PoolThreadsManager::PutPoolMessage(MarshaledJsToken *mjt,
   return true;  // succeeded
 }
 
+void PoolThreadsManager::ProcessMessages ()
+{
+	int current_worker_id = GetCurrentPoolWorkerId();
+  JavaScriptWorkerInfo *wi = worker_info_[current_worker_id];
+  while (!wi->message_queue.empty()) {
+    ProcessMessage(wi, *GetPoolMessage());
+  }
+}
 
 WorkerPoolMessage *PoolThreadsManager::GetPoolMessage() {
   MutexLock lock(&mutex_);

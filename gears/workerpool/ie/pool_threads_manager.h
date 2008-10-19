@@ -72,6 +72,7 @@ class PoolThreadsManager
   bool PutPoolMessage(MarshaledJsToken *mjt, const std::string16 &text,
                       int dest_worker_id, const SecurityOrigin &src_origin);
 
+	void ProcessMessages();
   // Worker initialization that must be done from the worker's thread.
   bool InitWorkerThread(JavaScriptWorkerInfo *wi);
   void UninitWorkerThread();

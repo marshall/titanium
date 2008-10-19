@@ -54,6 +54,8 @@ void Dispatcher<GearsWorkerPool>::Init() {
                    &GearsWorkerPool::SetOnmessage);
   RegisterProperty("onerror", &GearsWorkerPool::GetOnerror,
                    &GearsWorkerPool::SetOnerror);
+
+	RegisterMethod("processMessages", &GearsWorkerPool::ProcessMessages);
 #ifdef DEBUG
   RegisterMethod("forceGC", &GearsWorkerPool::ForceGC);
 #endif
@@ -86,6 +88,10 @@ void GearsWorkerPool::SetThreadsManager(PoolThreadsManager *manager) {
 
   // Leave owns_threads_manager_ set to false.
   assert(!owns_threads_manager_);
+}
+
+void GearsWorkerPool::ProcessMessages(JsCallContext *context) {
+	threads_manager_->ProcessMessages();	
 }
 
 void GearsWorkerPool::SetOnmessage(JsCallContext *context) {
@@ -272,8 +278,15 @@ void GearsWorkerPool::SendMessage(JsCallContext *context) {
     { JSPARAM_REQUIRED, JSPARAM_INT, &dest_worker_id },
   };
   context->GetArguments(ARRAYSIZE(argv), argv);
-  if (context->is_exception_set())
+  if (context->is_exception_set()) {
+		if (message_body_type == JSPARAM_STRING16) {
+			std::string16 text;
+			JsTokenToString_NoCoerce(message_body, GetJsRunner()->GetContext(), &text);
+			printf("String arg = %s\n", String16ToUTF8(text).c_str());
+		}
+		printf("GearsWorkerPool::SendMessage exception set\n");
     return;
+	}
 
   std::string16 error;
   JsContextPtr cx = GetJsRunner()->GetContext();
@@ -295,11 +308,11 @@ void GearsWorkerPool::SendMessage(JsCallContext *context) {
 
   bool succeeded = threads_manager_->PutPoolMessage(mjt,
                                                     text,
-                                                    dest_worker_id,
+                                                    (int)dest_worker_id,
                                                     EnvPageSecurityOrigin());
   if (!succeeded) {
     std::string16 error(STRING16(L"Worker "));
-    error += IntegerToString16(dest_worker_id);
+    error += IntegerToString16((int)dest_worker_id);
     error += STRING16(L" does not exist.");
     context->SetException(error);
   }

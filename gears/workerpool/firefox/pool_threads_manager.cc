@@ -512,6 +512,14 @@ bool PoolThreadsManager::InvokeOnErrorHandler(JavaScriptWorkerInfo *wi,
   return js_retval;
 }
 
+void PoolThreadsManager::ProcessMessages ()
+{
+	int current_worker_id = GetCurrentPoolWorkerId();
+  JavaScriptWorkerInfo *wi = worker_info_[current_worker_id];
+  while (!wi->message_queue.empty()) {
+    ProcessMessage(wi, *GetPoolMessage());
+  }
+}
 
 bool PoolThreadsManager::PutPoolMessage(MarshaledJsToken* mjt,
                                         const std::string16 &text,

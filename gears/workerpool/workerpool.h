@@ -80,6 +80,15 @@ class GearsWorkerPool
   void ForceGC(JsCallContext *context);
 #endif
 
+	/*
+	* Marshall's additions.. allow for periodic
+	* processing of the message event queue
+	*/
+
+	// IN: worker_id
+	// OUT: -
+	void ProcessMessages(JsCallContext *context);
+
   void HandleEvent(JsEventType event_type);
 
  private:
