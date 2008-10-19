@@ -2041,8 +2041,8 @@ $(BROWSER)_VPATH += \
 
 $(BROWSER)_CPPSRCS += \
 		appcelerator.cc \
-		ruby_wrapper.cc \
-		TitaniumBoot.cc \
+		ruby_util.cc \
+		app_command.cc \
 		$(NULL)
 
 
