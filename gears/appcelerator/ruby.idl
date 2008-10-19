@@ -1,8 +1,30 @@
 interface TitaniumBoot {
-	bool confirm (in string message, in string canForce);
+	
+	// since most windows/inputs in javascript are non-blocking,
+	// responses to dialogs are handled with a "callback" object.
+	// in practice this is a ruby object with a function named "callback"
+	// that accepts a single hashtable argument with the various results of the dialog
+	
+	string confirm (in string message, in bool canForce);
+	string confirmInstallComponents (in string components);
+	
+	void info (in string message);
+	void debug (in string message);
+	void error (in string message);
 	void die (in string message);
 	
-	string askForProxy();
-	object showLoginForm();
-	object showSignupForm ();
+	void askForProxy();
+	void showLoginForm();
+	void showLoginFormError(in string message);
+	
+	void showSignupForm ();
+	void showVerificationForm ();
+	void showVerificationFormError (in string message);
+	
+	void finishedCreatingProject (in string projectName, in string directory);
+	
+	void openProgress(in string id, in int max);
+	void setProgressMessage(in string id, in string message);
+	void incrementProgress(in string id, in int amount);
+	void closeProgress(in string id);
 };

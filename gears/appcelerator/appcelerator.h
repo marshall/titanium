@@ -8,7 +8,20 @@
 #include "gears/base/common/thread.h"
 #include "gears/base/common/async_router.h"
 
-#include "gears/appcelerator/ruby_wrapper.h"
+#include <sys/types.h>
+#include <sys/dir.h>
+#include <sys/stat.h>
+
+//#define DEBUG_TITANIUM
+void _debug (const char* file, int line, const char* message);
+
+#ifdef DEBUG_TITANIUM
+#define debug(message) _debug(__FILE__, __LINE__, message)
+#define debugf(message, f...) { char x[512]; sprintf(x, message, f); debug(x); }
+#else
+#define debug(message)
+#define debugf(message, f...)
+#endif
 
 class ProcessThreadListener {
  public:
@@ -23,7 +36,6 @@ class Appcelerator
   static const std::string kModuleName;
   JsObject bootCallback;
   bool rubyBooted;
-  RubyWrapper rubyWrapper;
   
   Appcelerator();
 
@@ -31,12 +43,14 @@ class Appcelerator
   // OUT: -
   void ReadFile(JsCallContext *context);
   void WriteFile(JsCallContext *context);
-  void CompileProject(JsCallContext *context);
-  void CreateProject(JsCallContext *context);
-  void BootAppcelerator(JsCallContext *context);
+	void GetFileTree(JsCallContext *context);
+	
+	void GetUserHome(JsCallContext *context);
+	
+	void AddToFileTree(std::string path, DIR *dir, JsArray *array);
+	void CreateJsFileObject(std::string16 path, std::string16 name, int size, bool isDir, JsObject *object);
 
   void ProcessCallback(int eventType,JsRootedCallback *cb,void *event);
-  JsObject& GetBootCallback() { return bootCallback; }
   
  private:
 

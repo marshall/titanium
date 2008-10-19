@@ -13,6 +13,11 @@
 #include "gears/base/common/js_runner.h"
 
 #include <iostream>
+#include <fstream>
+
+void _debug (const char* file, int line, const char* message) {
+	printf("[titanium] [%s:%d] %s\n", file, line, message);
+}
 
 
 DECLARE_DISPATCHER(Appcelerator);
@@ -25,9 +30,8 @@ void Dispatcher<Appcelerator>::Init()
 {
   RegisterMethod("readFile", &Appcelerator::ReadFile);
   RegisterMethod("writeFile", &Appcelerator::WriteFile);
-  RegisterMethod("createProject", &Appcelerator::CreateProject);
-  RegisterMethod("compileProject", &Appcelerator::CompileProject);
-  RegisterMethod("boot", &Appcelerator::BootAppcelerator);
+	RegisterMethod("getFileTree", &Appcelerator::GetFileTree);
+	RegisterMethod("getUserHome", &Appcelerator::GetUserHome);
 }
 
 const std::string Appcelerator::kModuleName("Appcelerator");
@@ -87,7 +91,7 @@ void Appcelerator::WriteFile(JsCallContext *context)
 void Appcelerator::ReadFile(JsCallContext *context) 
 {
   std::string16 filename;
-
+	
   JsArgument argv[] = {
     { JSPARAM_REQUIRED, JSPARAM_STRING16, &filename }
   };
@@ -97,21 +101,27 @@ void Appcelerator::ReadFile(JsCallContext *context)
   if (context->is_exception_set())
     return;
 
-  std::vector<uint8> data;
-  if (File::ReadFileToVector(filename.c_str(), &data)) 
-  {
-	  std::string16 content;
-	  if (data.size() > 0 && UTF8ToString16(reinterpret_cast<char*>(&data[0]), &content)) 
-	  {
-		  if (content.length() > 0)
-		  {
-			  	context->SetReturnValue(JSPARAM_STRING16, &content);
-				return;
-		  }
-	  }
-  }
-  std::string16 empty = std::string16(STRING16(L""));
-  context->SetReturnValue(JSPARAM_STRING16, &empty);
+	printf("opening file %s\n", String16ToUTF8(filename).c_str());
+	
+	std::ifstream filestream;
+	std::string contents;
+	
+	filestream.open(String16ToUTF8(filename).c_str());
+	if (filestream.is_open()) {
+		std::string str;
+		std::getline(filestream, str);
+		while (filestream) {
+			contents += std::string(str + "\n");
+			std::getline(filestream, str);
+		}
+		filestream.close();
+		
+		printf("return value: %s\n", contents.c_str());
+	}
+	
+	std::string16 contents16(UTF8ToString16(contents).c_str());
+	
+  context->SetReturnValue(JSPARAM_STRING16, &contents16);
 }
 
 ProcessThread::ProcessThread(const char* c, JsRootedCallback *oc,  JsRootedCallback *cc,ProcessThreadListener *l)  : cmd(c)
@@ -178,6 +188,7 @@ void Appcelerator::ProcessCallback(int eventType,JsRootedCallback *handler,void 
 	}
 }
 
+/*
 void Appcelerator::CompileProject(JsCallContext *context)
 {
 	std::string16 filename;
@@ -246,21 +257,112 @@ void Appcelerator::CreateProject(JsCallContext *context)
 	
 	bool returnValue = true;
 	context->SetReturnValue(JSPARAM_BOOL, &returnValue);
-}
+}*/
 
-void Appcelerator::BootAppcelerator (JsCallContext *context)
+/**
+ * Retrieve all files and directories under a specific file system path
+ */
+void Appcelerator::GetFileTree(JsCallContext *context)
 {
-	std::string16 path;
+	std::string16 path16;
+	bool recursive = true;
 	
 	JsArgument argv[] = {
-		{ JSPARAM_REQUIRED, JSPARAM_STRING16, &path },
-		{ JSPARAM_REQUIRED, JSPARAM_OBJECT, &this->bootCallback }
+		{ JSPARAM_REQUIRED, JSPARAM_STRING16, &path16 },
+		{ JSPARAM_OPTIONAL, JSPARAM_BOOL, &recursive}
 	};
 	
 	context->GetArguments(ARRAYSIZE(argv), argv);
-	if (context->is_exception_set()) {
+	if (context->is_exception_set()) return;
+	
+	std::string path = String16ToUTF8(path16);
+	
+	DIR *dir;
+	if ((dir = opendir(path.c_str())) == NULL) {
+		std::cerr << "Error(" << errno << ") opening " << path << std::endl;
 		return;
 	}
 	
-	rubyWrapper.RunScript(String16ToUTF8(path).c_str());
+	scoped_ptr<JsArray> fileTree(GetJsRunner()->NewArray());
+	AddToFileTree(path, dir, fileTree.get());
+	
+	closedir(dir);
+	
+	context->SetReturnValue(JSPARAM_ARRAY, fileTree.get());
+}
+
+void Appcelerator::AddToFileTree(std::string path, DIR *dir, JsArray *array)
+{	
+	struct dirent *dirEntry;
+	int i = 0;
+	while ((dirEntry = readdir(dir)) != NULL) {
+		if (strcmp(dirEntry->d_name, ".") == 0) continue;
+		if (strcmp(dirEntry->d_name, "..") == 0) continue;
+	
+		scoped_ptr<JsObject> fileObject(GetJsRunner()->NewObject());
+		
+		if (dirEntry->d_type == DT_DIR) {
+			DIR *dir;
+			std::string newpath = path + "/" + dirEntry->d_name;
+			
+			if ((dir = opendir(newpath.c_str())) == NULL) {
+				std::cerr << "Error(" << errno << ") opening " << newpath << std::endl;
+				return;
+			}
+
+			CreateJsFileObject(UTF8ToString16(newpath.c_str()), UTF8ToString16(dirEntry->d_name), 0, true, fileObject.get());
+			
+			scoped_ptr<JsArray> fileTree(GetJsRunner()->NewArray());
+			AddToFileTree(newpath, dir, fileTree.get());
+			
+			closedir(dir);
+			
+			if (!fileObject->SetPropertyArray(STRING16(L"files"), fileTree.get()))
+			{
+				std::cerr << "Error: couldn't set \"files\" property on object" << std::endl;
+				return;
+			}
+		}
+		else if (dirEntry->d_type == DT_REG) {
+			struct stat fileStats;
+			std::string filePath = path + "/" + dirEntry->d_name;
+			
+			stat(filePath.c_str(), &fileStats);
+			
+			CreateJsFileObject(UTF8ToString16(filePath.c_str()), UTF8ToString16(dirEntry->d_name), (int)fileStats.st_size, false, fileObject.get());
+		}
+		
+		if (!array->SetElementObject(i, fileObject.get())) {
+			std::cerr << "Failed to add File to array." << std::endl;
+			return;
+    }
+		i++;
+	}
+}
+
+void Appcelerator::CreateJsFileObject(std::string16 path, std::string16 name, int size, bool isDir, JsObject *object)
+{
+	if (!object->SetPropertyString(STRING16(L"path"), path)) {
+		std::cerr << "Failed to set property \"path\" on file object." << std::endl;
+	}
+	if (!object->SetPropertyString(STRING16(L"name"), name)) {
+		std::cerr << "Failed to set property \"name\" on file object." << std::endl;
+	}
+	if (!object->SetPropertyInt(STRING16(L"size"), size)) {
+		std::cerr << "Failed to set property \"size\" on file object." << std::endl;
+	}
+	if (!object->SetPropertyBool(STRING16(L"isDir"), isDir)) {
+		std::cerr << "Failed to set property \"isDir\" on file object." << std::endl;
+	}
+}
+
+#include <pwd.h>
+#include <unistd.h>
+void Appcelerator::GetUserHome(JsCallContext *context)
+{
+	char *username = getlogin();
+	struct passwd *pwent = getpwnam(username);
+	std::string16 homeDir(UTF8ToString16(std::string(pwent->pw_dir)).c_str());
+	
+	context->SetReturnValue(JSPARAM_STRING16, &homeDir);
 }
