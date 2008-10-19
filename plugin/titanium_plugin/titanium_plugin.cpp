@@ -131,6 +131,8 @@ void NPP_Print(NPP instance, NPPrint* platformPrint)
 int16 NPP_HandleEvent(NPP instance, void* event)
 {
 	EditorObject *editor = (EditorObject *) instance->pdata;
+	editor->npp = instance;
+	
 	return editor->handleEvent((EventRecord*)event);
 }
 

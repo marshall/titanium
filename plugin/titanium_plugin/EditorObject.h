@@ -57,6 +57,7 @@ public:
 	void setStyleBold(int style, bool bold);
 	void setCaretForeground(int foreground);
 	void setStyleFont(int style, std::string font);
+	void scrollTo(int line);
 	
 	static NPClass* getPluginClass();
 };

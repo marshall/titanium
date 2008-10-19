@@ -59,14 +59,15 @@ static const NPUTF8 *pluginPropertyIdentifierNames[NumberOfProperties] = {
 enum {
 	OpenFileMethod, SendMessageMethod, SetTextMethod, SetSelectionMethod, SetLanguageMethod, SetLexerMethod,
 	SetStyleForegroundMethod, SetStyleBackgroundMethod, SetStyleItalicMethod, SetStyleBoldMethod,
-	SetStyleFontMethod, SetCaretForegroundMethod, RedrawMethod, GetTextMethod, SaveFileMethod, NumberOfMethods
+	SetStyleFontMethod, SetCaretForegroundMethod, RedrawMethod, GetTextMethod, SaveFileMethod, ScrollToMethod,
+	NumberOfMethods
 };
 
 static NPIdentifier pluginMethodIdentifiers[NumberOfMethods];
 static const NPUTF8 *pluginMethodIdentifierNames[NumberOfMethods] = {
 	"openFile", "sendMessage", "setText", "setSelection", "setLanguage", "setLexer",
 	"setStyleForeground", "setStyleBackground", "setStyleItalic", "setStyleBold",
-	"setStyleFont", "setCaretForeground", "redraw", "getText", "saveFile"
+	"setStyleFont", "setCaretForeground", "redraw", "getText", "saveFile", "scrollTo"
 };
 
 static void initializeIdentifiers(void)
@@ -201,6 +202,11 @@ void EditorObject::setCaretForeground(int foreground)
 	scintilla->WndProc(SCI_SETCARETFORE, foreground, 0);
 }
 
+void EditorObject::scrollTo(int line)
+{
+	scintilla->DoScrollTo(line);
+}
+
 std::string NPStringToString (NPString string) {
 	const NPUTF8 *chars = string.UTF8Characters;
 	std::string newString = chars;
@@ -332,6 +338,12 @@ bool pluginInvoke(NPObject *obj, NPIdentifier name, const NPVariant *args, uint3
 		
 		return true;
 	}
+	else if (name == pluginMethodIdentifiers[ScrollToMethod]) {
+		editor->scrollTo((int)NPVARIANT_TO_DOUBLE(args[0]));
+		NULL_TO_NPVARIANT(*result);
+		
+		return true;
+	}
     return false;
 }
 
@@ -375,7 +387,7 @@ void EditorObject::setWindow (NPWindow *window)
 		GetControlProperty(sciView, scintillaMacOSType, 0, sizeof(this->scintilla), NULL, &(this->scintilla));
 		
 		debug("initializing scintilla view...");
-		scintilla->WndProc(SCI_USEPOPUP, FALSE, 0);
+		//scintilla->WndProc(SCI_USEPOPUP, FALSE, 0);
 		//scintilla->WndProc(SCI_SETFOCUS, FALSE, 0);
 		scintilla->WndProc(SCI_STYLECLEARALL, 0, 0);
 		//scintilla->WndProc(SCI_SETMOUSEDOWNCAPTURES, FALSE, 0);
@@ -430,34 +442,45 @@ void EditorObject::setWindow (NPWindow *window)
 			openFile(filename);
 			filename = "";
 		}
+	
+		scintilla->Resize(window->width, window->height);
+		HIViewSetVisible(sciView, true);
+		HIViewSetDrawingEnabled(sciView, true);
+		
+		ShowControl(sciView);
+		SetAutomaticControlDragTrackingEnabledForWindow(windowRef, true);
+
+		redraw();	
+		scintilla->SetTicking(true);
+		
 	}
 	
 	HIRect sciRect;
-
+	
 	sciRect.origin.x = window->clipRect.left;
 	sciRect.origin.y = window->clipRect.top;
 	sciRect.size.width = window->width; //window->clipRect.right - window->clipRect.left;
 	sciRect.size.height = window->height; //window->clipRect.bottom - window->clipRect.top;
 	
 	HIViewSetFrame(sciView, &sciRect);
-	scintilla->Resize(window->width, window->height);
-	HIViewSetVisible(sciView, true);
-	HIViewSetDrawingEnabled(sciView, true);
-	
-	ShowControl(sciView);
-	SetAutomaticControlDragTrackingEnabledForWindow(windowRef, true);
-
-	redraw();	
-	scintilla->SetTicking(true);
 	//InstallStandardEventHandler(GetWindowEventTarget(windowRef));
 
 }
 
 void EditorObject::redraw ()
 {
-	HIViewSetNeedsDisplay(sciView, true);
-	scintilla->SyncPaint(context, scintilla->GetClientRectangle());
-	scintilla->ReconfigureScrollBars();
+	NP_CGContext *context = (NP_CGContext *)window->window;
+	CGRect clipRect = CGContextGetClipBoundingBox(context->context);
+	debugf("clip rect: (%u, %u) %u x %u", clipRect.origin.x, clipRect.origin.y, clipRect.size.width, clipRect.size.height);
+
+	HIViewSetNeedsDisplayInRect(sciView, &clipRect, true);
+	NPN_InvalidateRegion(npp, &(window->clipRect));
+	
+	//HIViewSetNeedsDisplayInRect(sciView, &clipRect, true);
+	
+	//HIViewSetNeedsDisplay(sciView, true);
+	//scintilla->SyncPaint(context, scintilla->GetClientRectangle());
+	//scintilla->ReconfigureScrollBars();
 }
 
 int16 EditorObject::handleEvent (EventRecord *event)
@@ -515,7 +538,8 @@ int16 EditorObject::handleEvent (EventRecord *event)
 		
 		debugf("handled key up, key code: %d", keyCode);
 	}
-	else if (event->what != nullEvent) {
+	
+	if (event->what != nullEvent) {
 		debugf("handled unknown event, type: %s (%d), message: %d", eventType, event->what, event->message);
 	}
 	
