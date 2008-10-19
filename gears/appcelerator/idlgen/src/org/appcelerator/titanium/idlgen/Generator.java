@@ -4,5 +4,5 @@ import java.util.List;
 
 public interface Generator {
 
-	public List<GeneratedArtifact> generateArtifacts(IDLInterface iface);
+	public List<GeneratedArtifact> generateArtifacts(List<IDLInterface> iface);
 }

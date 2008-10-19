@@ -20,21 +20,21 @@ public abstract class FreemarkerGenerator implements Generator {
 		configuration.setObjectWrapper(new DefaultObjectWrapper());
 	}
 	
-	protected HashMap<String,Object> setupRoot (IDLInterface iface)
+	protected HashMap<String,Object> setupRoot (Object object)
 	{
 		HashMap<String,Object> map = new HashMap<String,Object>();
-		map.put("interface", iface);
+		//map.put("interface", iface);
 		
 		return map;
 	}
 	
-	protected StringBuffer processTemplate (String path, IDLInterface iface)
+	protected StringBuffer processTemplate (String path, Object object)
 	{
 		try {
 			Template template = configuration.getTemplate(path);
 			StringWriter writer = new StringWriter();
 			
-			template.process(setupRoot(iface), writer);
+			template.process(setupRoot(object), writer);
 			
 			return writer.getBuffer();
 		} catch (IOException e) {

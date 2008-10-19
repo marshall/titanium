@@ -1,7 +1,5 @@
 package org.appcelerator.titanium.idlgen.npapi;
 
-import java.io.IOException;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,12 +12,17 @@ import org.appcelerator.titanium.idlgen.IDLAttribute;
 import org.appcelerator.titanium.idlgen.IDLInterface;
 import org.appcelerator.titanium.idlgen.IDLMethod;
 
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
 import freemarker.template.TemplateMethodModel;
 import freemarker.template.TemplateModelException;
 
 public class NPAPIGenerator extends FreemarkerGenerator {
+	@Override
+	protected HashMap<String, Object> setupRoot(Object object) {
+		HashMap<String, Object> map = super.setupRoot(object);
+		map.put("interface", object);
+		
+		return map;
+	}
 	
 	protected String generateToNPVariant (IDLAttribute attr) {
 		return generateToNPVariant(attr.getType(), "instance->_" + attr.getName(), "variant");
@@ -207,13 +210,17 @@ public class NPAPIGenerator extends FreemarkerGenerator {
 		return processTemplate("constants.js.fm", iface);
 	}
 	
-	public List<GeneratedArtifact> generateArtifacts (IDLInterface iface)
+	public List<GeneratedArtifact> generateArtifacts (List<IDLInterface> ifaces)
 	{
 		ArrayList<GeneratedArtifact> artifacts = new ArrayList<GeneratedArtifact>();
-		artifacts.add(new GeneratedArtifact(iface.getName() + "_np.h", generateProxyHeader(iface)));
-		artifacts.add(new GeneratedArtifact(iface.getName() + "_np.cpp", generateProxy(iface)));
-		artifacts.add(new GeneratedArtifact(iface.getName() + ".h", generateClassHeader(iface)));
-		artifacts.add(new GeneratedArtifact(iface.getName() + "_constants.js", generateConstants(iface)));
+		
+		for (IDLInterface iface : ifaces)
+		{
+			artifacts.add(new GeneratedArtifact(iface.getName() + "_np.h", generateProxyHeader(iface)));
+			artifacts.add(new GeneratedArtifact(iface.getName() + "_np.cpp", generateProxy(iface)));
+			artifacts.add(new GeneratedArtifact(iface.getName() + ".h", generateClassHeader(iface)));
+			artifacts.add(new GeneratedArtifact(iface.getName() + "_constants.js", generateConstants(iface)));
+		}
 		
 		return artifacts;
 	}

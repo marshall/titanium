@@ -3,6 +3,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
 
 import org.appcelerator.titanium.idlgen.gen.IDLLexer;
 import org.appcelerator.titanium.idlgen.gen.IDLParser;
@@ -100,30 +101,31 @@ public class IDLGen {
 	
 	public static void main(String[] args) {
 		try {
-			InputStream stream = null;
 			Generator generator = null;
 			
-			if (args.length > 1) {
+			if (args.length >= 3) {
 				if (args[0].equalsIgnoreCase("npapi"))
 					generator = new NPAPIGenerator();
 				else if (args[0].equalsIgnoreCase("rubyjs"))
 					generator = new RubyJsGenerator();
-				
-				stream = new FileInputStream(args[1]);
 			}
 
-			if (generator != null && stream != null) {
-				IDLLexer lexer = new IDLLexer(stream);
-				IDLParser parser = new IDLParser(lexer);
-				parser.specification();
-				
+			if (generator != null) {
 				IDLGen idlGen = new IDLGen();
+
+				File root = new File(args[1]);
+				ArrayList<IDLInterface> ifaces = new ArrayList<IDLInterface>();
+				for (int i = 2; i < args.length; i++) {
+					FileInputStream stream = new FileInputStream(args[i]);
+					IDLLexer lexer = new IDLLexer(stream);
+					IDLParser parser = new IDLParser(lexer);
+					parser.specification();
+					
+					ifaces.add(idlGen.parseAST(parser.getAST()));
+				}
 				
-				IDLInterface iface = idlGen.parseAST(parser.getAST());
 				
-				File root = new File(args[2]);
-				
-				for (GeneratedArtifact artifact : generator.generateArtifacts(iface))
+				for (GeneratedArtifact artifact : generator.generateArtifacts(ifaces))
 				{
 					FileOutputStream out = new FileOutputStream(new File(root, artifact.getFilename()));
 					out.write(artifact.getContents().toString().getBytes());
