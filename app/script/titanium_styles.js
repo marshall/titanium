@@ -3,13 +3,6 @@ Appcelerator.Titanium.Styles = {
 	styles: {}
 };
 
-function parseXML (url) {
-    var req = new XMLHttpRequest();
-	req.open('GET', url, false); 
-	req.send(null);
-	return req.responseXML;
-};
-
 Appcelerator.Titanium.Styles.createToken = function (tokenNode)
 {
 	var tokenId = tokenNode.getAttribute("id");
@@ -63,7 +56,7 @@ Appcelerator.Titanium.Styles.createLanguage = function (styleName, languageNode)
 
 Appcelerator.Titanium.Styles.init = function (url)
 {
-	var doc = parseXML(url);
+	var doc = Appcelerator.Titanium.Core.XML.parseFromURL(url);
 	var stylesNode = doc.childNodes[0];
 	
 	for (var i = 0; i < stylesNode.childNodes.length; i++) {

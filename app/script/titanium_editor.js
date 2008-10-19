@@ -1,4 +1,3 @@
-
 function colorToInt (color) {
 		var c = color;
 		if (color.charAt(0) == '#') {
@@ -17,7 +16,10 @@ function colorToInt (color) {
 		return value;
 }
 
-Appcelerator.Titanium.Editor = function () { };
+Appcelerator.Titanium.Editor = function (id) {
+	this.divId = id;
+	this.initialized = false;
+};
 
 Appcelerator.Titanium.Editor.prototype.init = function (editor) {
 	this.editor = editor;
@@ -68,6 +70,17 @@ Appcelerator.Titanium.Editor.prototype.setStyleFont = function (styleNumber, fon
 	//	Appcelerator.Titanium.Constants.SCI_STYLESETFONT,
 	//	styleNumber,
 	//	font);
+};
+
+Appcelerator.Titanium.Editor.prototype.getCurrentLine = function ()
+{
+	var currentPos = this.editor.sendMessage(Appcelerator.Titanium.Constants.SCI_GETCURRENTPOS);
+	return this.editor.sendMessage(Appcelerator.Titanium.Constants.SCI_LINEFROMPOSITION, currentPos);
+};
+
+Appcelerator.Titanium.Editor.prototype.scroll = function (amount)
+{
+	return this.editor.sendMessage(Appcelerator.Titanium.Constants.SCI_LINESCROLL, 0, amount);
 };
 
 Appcelerator.Titanium.Editor.prototype.setLexer = function (lexer) {
@@ -132,12 +145,28 @@ Appcelerator.Titanium.Editor.prototype.applyStyle = function (styleName) {
 		this.applyStyleToken(token);
 	}
 	
-	this.editor.redraw();
+	//this.editor.redraw();
 };
 
 Appcelerator.Titanium.Editor.prototype.openFile = function (fullPath) {
-	var extension = fullPath.substr(fullPath.lastIndexOf('.')+1);
-	this.editor.openFile(fullPath);
+	if (!this.initialized) {
+		var editorArea = $('#'+this.divId);
+		var object = document.createElement("object");
+		object.setAttribute("src", "");
+		object.setAttribute("type", "application/x-scintilla");
+		object.setAttribute("id", "editor");
+		editorArea.append(object);
+		
+		this.init(document.getElementById('editor'));
+		this.initialized = true;
+	}
+	
+	var path = fullPath;
+	if (typeof(fullPath) == 'object') {
+		path = fullPath.getPath();
+	}
+	
+	var extension = path.substr(path.lastIndexOf('.')+1);
 
 	if (extension == "py") {
 		this.setLexer(Appcelerator.Titanium.Constants.SCLEX_PYTHON);
@@ -160,8 +189,12 @@ Appcelerator.Titanium.Editor.prototype.openFile = function (fullPath) {
 	}
 
 	this.applyStyle("default");
+	this.editor.openFile(path);
 };
 
 Appcelerator.Titanium.Editor.prototype.saveFile = function () {
 	this.editor.saveFile();
 };
+
+var tiEditor = new Appcelerator.Titanium.Editor('editor_area');	
+Appcelerator.Titanium.Styles.init("script/titanium_styles.xml");

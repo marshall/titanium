@@ -1,38 +1,62 @@
+Appcelerator.Titanium.isDebugging = true;
 Appcelerator.Titanium.Core = {};
+Appcelerator.Titanium.Core.XML = {};
+
+Appcelerator.Titanium.Core.XML.parseFromString = function (string)
+{
+	var doc = Sarissa.getDomDocument();
+	return (new DOMParser()).parseFromString(string, "text/xml");	
+};
+
+Appcelerator.Titanium.Core.XML.parseFromURL = function (url) {
+  var req = new XMLHttpRequest();
+	req.open('GET', url, false); 
+	req.send(null);
+	return req.responseXML;
+};
+
+Appcelerator.Titanium.Core.XML.newDocument = function () {
+	return Sarissa.getDomDocument();
+}
 
 Appcelerator.Titanium.Core.Console = {
 	
 	appendMessage: function (message, level, color)
 	{
-		var console = $('#console');
-		
 		var span = document.createElement("span");
 		if (color != null) {
 			span.setAttribute("style", "color: " + color + ";");
 		}
 		
 		span.innerHTML = "["+level+"] " + message;
-		$("#console").append(span).append("<br/>").attr("scrollTop", $("#console").attr("scrollHeight"));
-
+		$("#console_text").append(span).append("<br/>");
+		$("#console_text").attr("scrollTop", $("#console_text").attr("scrollHeight"));
 	},
 	
-	appendInfo: function (message)
+	info: function (message)
 	{
 		Appcelerator.Titanium.Core.Console.appendMessage(message, "INFO", null);
 	},
 	
-	appendWarning: function (message)
+	warning: function (message)
 	{
-		Appcelerator.Titanium.Core.Console.appendMessage(message, "WARN", '#ff0');
+		Appcelerator.Titanium.Core.Console.appendMessage(message, "WARN", '#e5680c');
 	},
 	
-	appendError: function (message)
+	error: function (message)
 	{
-		Appcelerator.Titanium.Core.Console.appendMessage(message, "ERROR", '#f00');
+		Appcelerator.Titanium.Core.Console.appendMessage(message, "ERROR", '#e13e3e');
 	},
 	
-	appendDebug: function (message)
+	debug: function (message)
 	{
-		Appcelerator.Titanium.Core.Console.appendMessage(message, "DEBUG", null);
+		Appcelerator.Titanium.Core.Console.appendMessage(message, "DEBUG", "#d8e50c");
+	},
+	
+	clear: function ()
+	{
+		$("#console_text").html("");
 	}
 };
+
+var console = Appcelerator.Titanium.Core.Console;
