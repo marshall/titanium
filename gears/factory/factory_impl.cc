@@ -48,6 +48,7 @@
 #include "third_party/scoped_ptr/scoped_ptr.h"
 
 #include "gears/appcelerator/appcelerator.h"
+#include "gears/appcelerator/app_command.h"
 
 
 #ifdef OFFICIAL_BUILD
@@ -222,6 +223,9 @@ void GearsFactoryImpl::Create(JsCallContext *context) {
                                   context, &object);
   } else if (module_name == STRING16(L"beta.appcelerator")) {
     CreateModule<Appcelerator>(module_environment_.get(),
+                                  context, &object);
+  } else if (module_name == STRING16(L"beta.appcommand")) {
+    CreateModule<AppCommand>(module_environment_.get(),
                                   context, &object);
 #ifdef OFFICIAL_BUILD
   // The Canvas, Console, Database2, Image and Media APIs have not
