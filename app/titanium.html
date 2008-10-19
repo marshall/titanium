@@ -8,7 +8,15 @@
 		<!--script src="script/appcelerator-debug.js"/-->
 		<script src="script/deps/gears_init.js"></script>
 		<script src="script/deps/jquery-1.2.6.min.js"></script>
-		<script src="script/deps/jquery-ui-personalized-1.6rc2.min.js"></script>
+		<script src="http://dev.jquery.com/view/tags/ui/latest/ui/ui.core.js"></script>
+		<script type="text/javascript" src="http://dev.jquery.com/view/tags/ui/latest/ui/ui.dialog.js"></script>
+		<script type="text/javascript" src="http://dev.jquery.com/view/tags/ui/latest/ui/ui.resizable.js"></script>
+		<script type="text/javascript" src="http://dev.jquery.com/view/tags/ui/latest/ui/ui.draggable.js"></script>
+		
+		<link rel='stylesheet' type='text/css' href='stylesheets/skin/ui.dynatree.css' />
+		<script src='script/deps/jquery.dynatree.js' type='text/javascript'></script>
+		<script src='script/deps/jquery.event.wheel.js' type='text/javascript'></script>
+		<script src="script/deps/sarissa.js"></script>
 		
 		<script src="script/titanium_init.js"></script>
 		<script src="script/titanium_core.js"></script>
@@ -16,119 +24,135 @@
 		<script src="script/titanium_styles.js"></script>
 		<script src="script/titanium_boot.js"></script>
 		<script src="script/titanium_editor.js"></script>
+		<script src="script/titanium_project.js"></script>
 		
 		<script type="text/javascript">
 			var desktop = google.gears.factory.create('beta.desktop');
-			var appcelerator = Appcelerator.Titanium.GearsFactory.create('beta.appcelerator');
-			
-			var tiEditor = new Appcelerator.Titanium.Editor();	
-			Appcelerator.Titanium.Styles.init("script/titanium_styles.xml");
-			var initialized = false;
-			
-			function openEditor (filePath) {
-				if (!initialized) {
-					var editorArea = $('#editor_area');
-					var object = document.createElement("object");
-					object.setAttribute("src", "");
-					object.setAttribute("type", "application/x-scintilla");
-					object.setAttribute("id", "editor");
-					editorArea.append(object);
-					
-					tiEditor.init(document.getElementById('editor'));
-					initialized = true;
-				}
-				
-				tiEditor.openFile(filePath);
-			}
+			var appcelerator = google.gears.factory.create('beta.appcelerator');
 			
 			function browse () {
 				desktop.openFiles(function (files) { 
 					var file = files[0];
-					openEditor(file.fullPath);
+					tiEditor.openFile(file.fullPath);
 				}, {singleFile: true});
 			}
 			
 			function save () {
-				if (initialized) {
+				if (editorInitialized) {
 					tiEditor.saveFile();
 				}
 			}
 			
-			var debugging = true;
-			function _debug(msg) {
-				if (debugging) {
-					Appcelerator.Titanium.Core.Console.appendDebug(msg);
-				}
-			}
-			
-			function createNewProject_receivedMessage (message) {
-				Appcelerator.Titanium.Core.Console.appendInfo(message);
+			function showProjectForm () {
+				$('#new_project_dialog').dialog("open");
 			}
 			
 			function createNewProject () {
 				//alert("effect="+Effect.Appear);
-				$('#new_project_create_button').disabled = 'disabled';
+				$('#new_project_create_button').attr('disabled', 'disabled');
 				
-				var projectName = $('#project_name').value;
-				var directory = $('#directory').value;
-				var serviceType = $('#service_type').options[$('#service_type').selectedIndex].text;
+				var projectName = $('#project_name').val();
+				var directory = $('#directory').val();
+				var serviceType = $('#service_type').val();
 				
-				_debug('projectName='+projectName+',dir='+directory+',service='+serviceType);
+				console.debug('projectName='+projectName+',dir='+directory+',service='+serviceType);
+				console.info("Creating project: \"" + projectName + "\"");
 				
-				appcelerator.createProject(directory, projectName, serviceType, "",
-					createNewProject_receivedMessage,
-					function (returnCode) {
-						Appcelerator.Titanium.Core.Console.appendInfo("Finished creating project.");
-						//Effect.Fade('new_project_dialog', {duration: 0.5});
-						
-						openEditor(directory + "/" + projectName + "/public/index.html");
-						$('#new_project_create_button').disabled = null;
+				workerPool.sendMessage({
+					action: "app_command", 
+					/*install path of appcelerator, probably defined elsewhere later*/
+					path: "/Library/Appcelerator",
+					options: {
+						command: "create:project",
+						service: serviceType,
+						projectName: projectName,
+						dir: directory
 					}
-				);
+				}, bootWorkerId);
 			}
-
-		function testRuby () {
-			appcelerator.boot("/Users/marshall/Code/appcelerator/appcelerator_titanium/trunk/app/boot_titanium.rb", Appcelerator.Titanium.Boot);
 			
-			//Appcelerator.Titanium.Boot.confirm("Create project?", false);
-		}
+			function mouseWheelHandler (event, delta)
+			{
+				if (tiEditor != null) {
+					tiEditor.scroll(-delta);
+					//editor.redraw();
+				}
+			}
+			
+			$(function(){
+				$("#confirm_dialog,#login_dialog,#signup_dialog,#verification_dialog").css({display: "none"});
+		        $("#sidetree").dynatree({
+		            onSelect: function(dtnode) {
+		                if ('path' in dtnode.data) {
+							console.debug("open: " + dtnode.data.path);
+							tiEditor.openFile(dtnode.data.path);
+						}
+		            },
+					title: "Appcelerator Project Explorer",
+					rootVisible: false,
+					focusRoot: false,
+					imagePath: "stylesheets/skin/"
+		        });
+				
+				$("body").bind('wheel', mouseWheelHandler);
+				$("#new_project_dialog").dialog().dialog("close");
+				
+				Appcelerator.Titanium.projects = TiProject.loadProjects();
+				if (Appcelerator.Titanium.projects.length > 0) {
+					var project = Appcelerator.Titanium.projects[0];
+					if (project.openFiles.length > 0) {
+						console.debug("selecting file: " + project.openFiles[0].getPath());
+						$("#sidetree").dynatree("getTree").selectKey(project.openFiles[0].getPath());
+					}
+				}
+				//$("#create_project_progress").progressBar();
+		    });
 		</script>
 		<link rel="stylesheet" type="text/css" href="stylesheets/main.css"/>
-		  <link rel="stylesheet" href="http://dev.jquery.com/view/tags/ui/latest/themes/flora/flora.all.css" type="text/css" media="screen" title="Flora (Default)"/>
+		  <link rel="stylesheet" href="stylesheets/titanium.dialog.css" type="text/css" media="screen" title="Titanium"/>
 	</head>
 	<body>
 		<div id="topbar">
 			<div id="logo"><img src="images/titanium_logo.png"/></div>
 			<div id="toolbar">
-				<a href="#new" onclick="">new project</a> |
+				<a href="#new" onclick="showProjectForm(); return false; ">new project</a> |
 				<a href="#open" onclick="browse(); return false;">open...</a> |
 				<a href="#save" onclick="save(); return false;">save</a>
 				
-				<div id="new_project_dialog" style="display: none; ">
+				<div id="new_project_dialog" title="Create Appcelerator Project" class="titanium">
 					<table width="100%">
 					<tr><td>name of project:</td><td colspan="2"><input type="text" id="project_name" size="20"/></td></tr>
 					<tr><td>directory:</td><td><input type="text" id="directory" size="20"/></td><td><a href="" onclick="">browse...</a></td><td>
 					<tr><td>service type:</td><td colspan="2"><select id="service_type"><option>ruby</option></select></td>
 					</table>
+					<div id="create_project_progress_message"> </div>
+					<div id="create_project_progress" style="display: none;"> </div>
 					<button id="new_project_create_button" onclick="createNewProject();">create project</button>
 				</div>
-				<div id="confirm_dialog" class="flora" title="Confirmation">Confirmation dialog</div>
+				<div id="confirm_dialog" class="titanium" title="Confirmation" >Confirmation dialog</div>
+				<div id="login_dialog" class="titanium" title="Appcelerator Dev Network Login">
+					<b>Username</b>: <input id="login_username" type="text" size="30"/><br/>
+					<b>Password</b>: <input id="login_password" type="password" size="30"/><br/>
+					Don't have an account? <a href="#">Create one</a>.
+				</div>
 			</div>
 		</div>
 		<div id="sidebar">
-			Eventually this will have a project browser / etc
+			<div id="sidetree"> </div>
 		</div>
 		<div id="editor_area">
-		</div>
+		</div>		
 		<div id="console">
-			<div id="console_bar">Titanium Console</div>
+			<div id="console_bar">
+				CONSOLE
+				<span id="console_bar_buttons"><a onclick="console.clear();">clear</a></span>
+			</div>
+			<div id="console_text"></div>
 		</div>
 		<script>
 			var ms = new Date().getTime() - start;
-			Appcelerator.Titanium.Core.Console.appendInfo("Titanium 0.1 Loaded in " + ms + " ms.");
-			Appcelerator.Titanium.Core.Console.appendInfo("Copyright (c) 2008 Appcelerator, Inc.");
-
-			testRuby();
+			console.info("Titanium 0.1 Loaded in " + ms + " ms.");
+			console.info("Copyright (c) 2008 Appcelerator, Inc.");
 		</script>
 	</body>
 </html>
