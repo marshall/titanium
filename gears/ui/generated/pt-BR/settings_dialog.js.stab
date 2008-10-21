@@ -1,0 +1,14 @@
+<string id="string-cancel">Cancelar</string>
+<string id="string-cancel-accesskey">C</string>
+<string id="string-apply">Aplicar</string>
+<string id="string-apply-accesskey">P</string>
+<string id="string-nosites">Nenhum site.</string>
+<string id="string-allowed">Permitido</string>
+<string id="string-denied">Negado</string>
+<string id="string-local-storage">Armazenamento local</string>
+<string id="string-location-data">Local</string>
+<string id="string-gears-settings">Configurações do Gears</string>
+<string id="string-permissions-description">A tabela abaixo mostra as permissões concedidas por você a cada site que tentou usar o Gears.</string>
+<string id="string-version">Gears versão PRODUCT_VERSION</string>
+<string id="string-html-title">Configurações do Gears</string>
+<string id="string-remove">Remover</string>

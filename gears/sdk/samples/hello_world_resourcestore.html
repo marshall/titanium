@@ -1,0 +1,162 @@
+<!--
+Copyright 2007, Google Inc.
+
+Redistribution and use in source and binary forms, with or without 
+modification, are permitted provided that the following conditions are met:
+
+ 1. Redistributions of source code must retain the above copyright notice, 
+    this list of conditions and the following disclaimer.
+ 2. Redistributions in binary form must reproduce the above copyright notice,
+    this list of conditions and the following disclaimer in the documentation
+    and/or other materials provided with the distribution.
+ 3. Neither the name of Google Inc. nor the names of its contributors may be
+    used to endorse or promote products derived from this software without
+    specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
+OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<!DOCTYPE html>
+
+<html>
+<head>
+<title>Hello World ResourceStore</title>
+<link rel="stylesheet" type="text/css" href="sample.css">
+</head>
+<body>
+
+<h1>Gears ResourceStore Demo</h1>
+<div id="view-source">&nbsp;</div>
+
+<form>
+<input type="button" value="Create Store" onclick="createStore();">
+<input type="button" value="Capture" onclick="capture();">
+<input type="button" value="Uncapture" onclick="uncapture();">
+<input type="button" value="Remove Store" onclick="removeStore();">
+</form>
+<p id="status">
+<p id="status-1"></p>
+<hr>
+<p><b>This page demonstrates basic usage of ResourceStore.</b>
+
+<p>Things you can do:
+<ul>
+  <li>Press the 'CreateStore' button to create a resource store to contain captured resources.
+  <li>Press the 'Capture' button to capture this page.
+    <ul>
+      <li>Unplug the network cable and verify that you can still access this page.
+      <li>Delete your browser cache and verify that you can still access this page.
+    </ul>
+  <li>Press the 'Uncapture' button to remove the page from the ResourceStore. Verify
+    that you can no longer access the page offline.
+  <li>Press the 'RemoveStore' button to remove the resource store.
+</ul>
+
+<!-- ====================================== -->
+<!-- End HTML code.  Begin JavaScript code. -->
+
+<script type="text/javascript" src="../gears_init.js"></script>
+<script type="text/javascript" src="sample.js"></script>
+<script>
+var STORE_NAME = 'helloworld-store'
+var localServer;
+var store;
+
+var filesToCapture = [
+  location.pathname,
+  'sample.js',
+  'sample.css',
+  '../gears_init.js'
+];
+
+init();
+
+function init() {
+  if (!window.google || !google.gears) {
+    addStatus('Gears is not installed', 'error');
+    return;
+  }
+
+  try {
+    localServer =
+        google.gears.factory.create('beta.localserver');
+  } catch (ex) {
+    var buttons = document.forms[0].elements;
+    for (var i = 0, el; el = buttons[i]; i++) {
+      el.disabled = true;
+    }
+
+    setError('Could not create local server: ' + ex.message);
+
+    return;
+  }
+  store = localServer.openStore(STORE_NAME);
+  addStatus('Ready');
+}
+
+function createStore() {
+  if (!checkProtocol()) return;
+
+  // If the store already exists, it will be opened
+  store = localServer.createStore(STORE_NAME);
+
+  clearStatus();
+  addStatus('Created the store');
+}
+
+function capture() {
+  if (!store) {
+    setError('Please create a store for the captured resources');
+    return;
+  }
+
+  clearStatus();
+  addStatus('Capturing...');
+
+  // Capture this page and the js library we need to run offline.
+  store.capture(filesToCapture, captureCallback);
+}
+
+function captureCallback(url, success, captureId) {
+  addStatus(url + ' captured ' + (success ? 'succeeded' : 'failed'));
+}
+
+function uncapture() {
+  if (!store) {
+    setError('Please create a store for the captured resources');
+    return;
+  }
+
+  for (var i = 0; i < filesToCapture.length; i++) {
+    store.remove(filesToCapture[i]);
+  }
+
+  clearStatus();
+  addStatus('Removed files from the store');
+}
+
+function removeStore() {
+  // We call openStore() to test for it's existence prior to removing it
+  if (localServer.openStore(STORE_NAME)) {
+    localServer.removeStore(STORE_NAME);
+    store = null;
+    clearStatus();
+    addStatus('Removed the store');
+  } else {
+    clearStatus();
+    addStatus('The store does not exist', 'error');
+  }
+}
+
+</script>
+</body>
+</html>

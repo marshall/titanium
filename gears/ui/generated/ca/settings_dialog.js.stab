@@ -1,0 +1,14 @@
+<string id="string-cancel">Cancel·la</string>
+<string id="string-cancel-accesskey">C</string>
+<string id="string-apply">Aplica</string>
+<string id="string-apply-accesskey">P</string>
+<string id="string-nosites">Cap lloc.</string>
+<string id="string-allowed">Permès</string>
+<string id="string-denied">Denegat</string>
+<string id="string-local-storage">Emmagatzematge local</string>
+<string id="string-location-data">Ubicació</string>
+<string id="string-gears-settings">Configuració de Gears</string>
+<string id="string-permissions-description">La taula següent mostra els permisos que teniu a cada lloc que ha intentat utilizar Gears.</string>
+<string id="string-version">Versió de Gears PRODUCT_VERSION</string>
+<string id="string-html-title">Configuració de Gears</string>
+<string id="string-remove">Elimina</string>

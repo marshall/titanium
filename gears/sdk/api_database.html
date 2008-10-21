@@ -1,0 +1,603 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "DTD/xhtml1-transitional.dtd">
+
+<!--
+Copyright 2007, Google Inc.
+
+Redistribution and use in source and binary forms, with or without 
+modification, are permitted provided that the following conditions are met:
+
+ 1. Redistributions of source code must retain the above copyright notice, 
+    this list of conditions and the following disclaimer.
+ 2. Redistributions in binary form must reproduce the above copyright notice,
+    this list of conditions and the following disclaimer in the documentation
+    and/or other materials provided with the distribution.
+ 3. Neither the name of Google Inc. nor the names of its contributors may be
+    used to endorse or promote products derived from this software without
+    specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
+OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<html>
+  <head>
+    <title>Database API</title>
+    <link rel="stylesheet" type="text/css" href="gears.css" />
+  </head>
+
+<body>
+
+<h1>Database API</h1>
+
+<div id="pagecontent">
+
+<p>The Database API provides browser-local relational data storage to
+your JavaScript web application. Gears uses the open source
+<a href="http://www.google.com/url?sa=D&amp;q=http://www.sqlite.org/">SQLite</a>
+database system.</p>
+
+<h3>Contents</h3>
+<ol class="toc">
+  <li><a href="#overview">Overview</a></li>
+  <li><a href="#example">Example</a></li>
+  <li><a href="#classes">Classes
+    </a>
+    <ol>
+      <li><a href="#Database" >Database</a></li>
+      <li><a href="#ResultSet">ResultSet</a></li>
+      </ol>
+	  <li><a href="#directories">Location of Database Files</a> </li>
+	  <li><a href="#sqlite_changes">Local Modifications to SQLite</a> </li>
+	  <li><a href="#sqlite_fts">Full-Text Search</a> </li>
+      </li>
+</ol>
+
+<h2 id="overview">Overview</h2>
+<p>The Database API is used to persistently store an application user's data on the user's computer.  Data is stored using the same-origin security policy, meaning that a web application cannot access data outside of its domain (see <a href="security.html#model">Security</a>).</p>
+<p>Data is stored and retrieved by executing SQL statements.  For information on the SQL syntax supported, see the SQLite document &quot;<a href="http://www.google.com/url?sa=D&amp;q=http://www.sqlite.org/lang.html">SQL as Understood By SQLite</a>&quot;, and also <a href="#sqlite_changes">local modifications to SQLite</a>, below.  Gears includes SQLite's <a href="#sqlite_fts">full-text search</a> extension fts2.</p>
+<h4>Security considerations</h4>
+<p>SQL statements passed to <code>execute()</code> can and should use bind parameters (<code>?</code>) to prevent SQL injection attacks.  Read about <a href="security.html#database">database security</a> best practices on the Security page. </p>
+<h4>Permission</h4>
+
+<p>This API requires user permission.  If you would like to customize the default dialog, you can explicitly call <code>google.gears.factory.getPermission()</code> - <a href="api_factory.html">see how.</a></p>
+
+
+<h2 id="example">Example</h2>
+
+<pre><code>&lt;script type="text/javascript" src="<a href='tools.html#gears_init'>gears_init.js</a>"&gt;&lt;/script&gt;
+&lt;script type="text/javascript"&gt;
+var db = google.gears.factory.create('beta.database');
+db.open('database-test');
+db.execute('create table if not exists Test' +
+           ' (Phrase text, Timestamp int)');
+db.execute('insert into Test values (?, ?)', ['Monkey!', new Date().getTime()]);
+var rs = db.execute('select * from Test order by Timestamp desc');
+
+while (rs.isValidRow()) {
+  alert(rs.field(0) + '@' + rs.field(1));
+  rs.next();
+}
+rs.close();
+&lt;/script&gt;</code></pre>
+
+
+<h2 id="classes">Classes</h2>
+
+<pre><code><a href="#Database">Database class</a>
+   void      <b>open</b>([name])
+   ResultSet <b>execute</b>(sqlStatement, [argArray])
+   void      <b>close</b>()
+   readonly attribute int <b>lastInsertRowId</b>
+   readonly attribute int <b>rowsAffected</b>
+</code></pre>
+
+<pre><code><a href="#ResultSet">ResultSet class</a>
+   boolean <b>isValidRow</b>()
+   void    <b>next</b>()
+   void    <b>close</b>()
+   int     <b>fieldCount</b>()
+   string  <b>fieldName</b>(int fieldIndex)
+   variant <b>field</b>(int fieldIndex)
+   variant <b>fieldByName</b>(string fieldName)
+</code></pre>
+
+
+
+<!------------------------------------------------------------->
+<!-- Database                                            -->
+<!------------------------------------------------------------->
+<br>
+<a name="Database"></a>
+<h2>Database class</h2>
+
+<h3>Methods</h3>
+<table>
+  <tr class="odd">
+    <th colspan="2"><a href="#Database-open" name="Database-open" class="code">open([name])</a></th>
+    </tr>
+  <tr class="odd">
+    <td width="113">Return value: </td>
+    <td width="489" class="code">void</td>
+    </tr>
+  <tr class="odd">
+    <td>Parameters:</td>
+    <td class="odd">
+        <code>name</code> - optional.
+    </td>
+  </tr>
+  <tr class="odd">
+    <td>Exceptions:</td>
+    <td class="" >Throws an exception if an error occurs.<br><br>
+      <i>Currently the name, if supplied and of length greater than zero, must consist only of visible ASCII characters excluding the following
+        characters:<br />
+          <br />
+        </i><kbd>/ \ : * ? &quot; &lt; &gt; | ; ,</kbd><br />
+          <br />
+          <i>Otherwise, open() will throw an exception. Before finalization of the API we
+      expect to remove this restriction.</i></td>
+    </tr>
+  <tr class="odd">
+    <td>Description:</td>
+    <td class="odd">
+        Opens the database <code>name</code>, or an unnamed database if <code>name</code> is omitted.  <code>name</code> is local to the application's origin (see <a href="security.html#model">Security</a>).
+  </td>
+    </tr>
+</table>
+<table>
+  <tr class="odd">
+    <th colspan="2"><a href="#Database-execute" name="Database-execute" class="code">execute(sqlStatement, [argArray])</a></th>
+  </tr>
+  <tr class="odd">
+    <td width="113">Return Value </td>
+    <td width="489" class="code"><a href="#ResultSet">ResultSet</a></td>
+  </tr>
+  <tr class="odd">
+    <td>Parameters</td>
+    <td class="odd"><code>sqlStatement</code> is a string containing a SQL statement, with <code>?</code> as a placeholder for bind parameters.<br />
+      <br />
+      <code>argArray</code> is an optional array of bind parameters to be substituted for the placeholders.</td>
+  </tr>
+  <tr class="odd">
+    <td>Exceptions</td>
+    <td class="" >
+      Throws an exception if the SQL statement fails to execute. See the exception object's <code>message</code> attribute for details.
+      <br><br>
+      <p class="note">Note: If multiple processes (including <a href="api_workerpool.html">Workers</a>) attempt to write to the
+        database at the same time, one can fail. It is up to the application to retry in these situations.</p>
+  </tr>
+  <tr class="odd">
+    <td>Description</td>
+    <td class="odd">
+      Substitute zero or more bind parameters from <code>argArray</code> into <code>sqlStatement</code> and execute the resulting SQL statement.  There must be exactly as many items in <code>argArray</code> as their are <code>?</code> placeholders in <code>sqlStatement</code>.  <code>argArray</code> can be omitted if there are no placeholders.  The results of executing the statement are returned in a <a href="#ResultSet">ResultSet</a>.<br/>
+      <br/>
+      <code>open()</code> must be called and must return successfully before calling <code>execute().</code><br/>
+      <h4>Example: </h4><br/>
+      <code>resultSet = db.execute (<br/>
+      &nbsp;&nbsp;'INSERT INTO MYTABLE VALUES (?, ?, ?) WHERE id=?',<br/>
+      &nbsp;&nbsp;[1, 2, 'three four', 5]<br/>
+      );</code><br/>
+      <br/>
+      SQLite automatically quote-escapes bind parameters, so in execution the statement expands to:<br />
+        <code class="code">'INSERT INTO MYTABLE VALUES (1, 2, "three four") WHERE id=5'<br />
+        </code>
+      <br />
+      For information on  SQL  syntax, see the SQLite documentation &quot;<a href="http://www.google.com/url?sa=D&amp;q=http://www.sqlite.org/lang.html">SQL as Understood By SQLite</a>&quot;
+        <br />
+        </p>      </td>
+  </tr>
+</table>
+<table>
+  <tr class="odd">
+    <th colspan="2"><a href="#Database-close" name="Database-close" class="code">close() </a></th>
+  </tr>
+  <tr class="odd">
+    <td width="113">Return value: </td>
+    <td width="489" class="code">void</td>
+  </tr>
+
+  <tr class="odd">
+    <td>Exceptions:</td>
+    <td class="" >Throws an exception if an error occurs. </td>
+  </tr>
+  <tr class="odd">
+    <td>Description:</td>
+    <td class="odd">Closes the database connection, if any, currently associated with this Database
+  instance. Calling Database.close() is not required.<br />
+  <br />
+  </td></tr>
+</table>
+<table>
+  <tr class="odd">
+    <th colspan="2"><a href="#Database-lastInsertRowId" name="Database-lastInsertRowId" class="code">lastInsertRowId</a></th>
+  </tr>
+  <tr class="odd">
+    <td width="113">Return value: </td>
+    <td width="489" class="code">readonly attribute int</td>
+  </tr>
+
+  <tr class="odd">
+    <td>Description:</td>
+    <td class="odd">Represents the <span class="code">rowid</span> of the most recent insert on this Database instance.<br />
+      Returns zero if no
+      inserts have ever occurred on this instance.<br />
+      <br />
+      Note that
+      all rows in every table have a <span class="code">rowid</span>, even rows in tables that do not have
+      integer-type primary keys. Thus, every successful insert updates this
+      attribute.</td>
+  </tr>
+</table>
+<table>
+  <tr class="odd">
+    <th colspan="2"><a href="#Database-rowsAffected" name="Database-rowsAffected" class="code">rowsAffected</a></th>
+  </tr>
+  <tr class="odd">
+    <td width="113">Return value: </td>
+    <td width="489" class="code">readonly attribute int</td>
+  </tr>
+
+  <tr class="odd">
+    <td>Description:</td>
+    <td class="odd">Represents the number of database rows that were changed,
+      inserted, or deleted by the most recently completed INSERT, UPDATE, or
+      DELETE statement on this Database instance.
+      <br /><br />
+      Returns zero if no row changes have ever occurred on this instance.
+      <br /><br />
+      <b>Note:</b> An unconstrained delete of all rows in a table (<code>DELETE
+      FROM table</code>) will return zero rather than the number of rows
+      that were originally present in the table; if you need the number of
+      rows, use <code>DELETE FROM table WHERE 1</code> instead, though be
+      aware that this is slower than an unconstrained delete.</td>
+  </tr>
+</table>
+
+
+<p>&nbsp;</p>
+
+<a name="ResultSet"></a>
+<h2>ResultSet class</h2>
+
+<p class="backtotop"><a href="#top">Back to top</a></p>
+<p>
+ A <code>ResultSet</code> is returned from a successful call to <code>Database.execute()</code>.  It contains the results of executing the SQL statement.</p>
+<p>A <code>ResultSet</code> is immutable, subsequent changes to the
+  underlying database do not affect the contents. </p>
+<p>Iterate over the rows of the result set using <code>isValidRow()</code>, <code>next()</code>, and <code>close()</code>, calling data extraction methods for valid rows.  For example:
+</p>
+<pre><code>while (rs.isValidRow()) {
+  console.log(rs.fieldName(0) + " == " + rs.field(0));
+  rs.next();
+}
+rs.close();</code></pre>
+
+<h3>Methods</h3>
+
+<table>
+  <tr class="odd">
+    <th colspan="2"><a href="#ResultSet-isValidRow" name="ResultSet-isValidRow" class="code">isValidRow()</a></th>
+  </tr>
+  <tr class="odd">
+    <td width="113">Return value: </td>
+    <td width="489" class="code">boolean</td>
+  </tr>
+
+  <tr class="odd">
+    <td>Description:</td>
+    <td class="odd">Returns true if you can call <a href="#extraction">data extraction methods</a>.</td>
+  </tr>
+</table>
+
+<table>
+  <tr class="odd">
+    <th colspan="2"><a href="#ResultSet-next" name="ResultSet-next" class="code">next()</a></th>
+  </tr>
+  <tr class="odd">
+    <td width="113">Return value: </td>
+    <td width="489" class="code">void</td>
+  </tr>
+  <tr class="odd">
+    <td>Description:</td>
+    <td class="odd">Advances to the next row of the results.</td>
+  </tr>
+</table>
+
+<table>
+  <tr class="odd">
+    <th colspan="2"><a href="#ResultSet-close" name="ResultSet-close" class="code">close()</a></th>
+  </tr>
+  <tr class="odd">
+    <td width="113">Return value: </td>
+    <td width="489" class="code">void</td>
+  </tr>
+  <tr class="odd">
+    <td>Exceptions:</td>
+    <td class="odd">Throws an exception if an error occurs.</td>
+  </tr>
+  <tr class="odd">
+    <td>Description:</td>
+    <td class="odd">Releases the state associated with this result set<br/>
+        <br />
+      You are required to call close() when you are finished with any result set.<br/>
+      <br/>
+      <em>Note: there is currently a feature request to have close called automatically when the result set goes out of scope.</em>
+    </td>
+  </tr>
+</table>
+<p>&nbsp;</p>
+
+
+<a name="extraction" id="extraction"></a>
+<h3>Methods for extracting data</h3>
+
+<table>
+  <tr class="odd">
+    <th colspan="2"><a href="#ResultSet-fieldCount" name="ResultSet-fieldCount" class="code">fieldCount()</a></th>
+  </tr>
+  <tr class="odd">
+    <td width="113">Return value: </td>
+    <td width="489" class="code">int</td>
+  </tr>
+
+  <tr class="odd">
+    <td>Description:</td>
+    <td class="odd">Returns the <i>number</i> of fields in this result set.</td>
+  </tr>
+</table>
+
+<table>
+  <tr class="odd">
+    <th colspan="2"><a href="#ResultSet-fieldName" name="ResultSet-fieldName" class="code">fieldName(int fieldIndex)</a></th>
+  </tr>
+  <tr class="odd">
+    <td width="113">Return value: </td>
+    <td width="489" class="code">string</td>
+  </tr>
+  <tr class="odd">
+    <td>Exceptions:</td>
+    <td class="" >Throws an exception if <code>fieldIndex</code> is out of range.</td>
+  </tr>
+  <tr class="odd">
+    <td>Parameters:</td>
+    <td class="odd"><code>fieldIndex</code> : the zero-based index of the desired field </td>
+  </tr>
+  <tr class="odd">
+    <td>Description:</td>
+    <td class="odd">Returns the <i>name</i> of the specified field in the
+      current result set.  This name is derived from the SQL statement which was executed.</td>
+  </tr>
+</table>
+
+<table>
+  <tr class="odd">
+    <th colspan="2"><a href="#ResultSet-field" name="ResultSet-field" class="code">field(int fieldIndex)</a></th>
+  </tr>
+  <tr class="odd">
+    <td width="113">Return value: </td>
+    <td width="489" class="code">variant</td>
+  </tr>
+  <tr class="odd">
+    <td>Exceptions:</td>
+    <td class="" >Throws an exception if <code>fieldIndex</code> is out of range.</td>
+  </tr>
+  <tr class="odd">
+    <td>Parameters:</td>
+    <td class="odd"><code>fieldIndex</code> : the zero-based index of the desired field </td>
+  </tr>
+  <tr class="odd">
+    <td>Description:</td>
+    <td class="odd">Returns the <i>contents</i> of the specified  field in the
+      current row.</td>
+  </tr>
+</table>
+<table>
+  <tr class="odd">
+    <th colspan="2"><a href="#ResultSet-fieldByName" name="ResultSet-fieldByName" class="code">fieldByName(string fieldName)</a></th>
+  </tr>
+  <tr class="odd">
+    <td width="113">Return value: </td>
+    <td width="489" class="code">variant</td>
+  </tr>
+  <tr class="odd">
+    <td>Exceptions:</td>
+    <td class="" >Throws an exception if <code>fieldName</code> names a nonexistent field.</td>
+  </tr>
+  <tr class="odd">
+    <td>Parameters:</td>
+    <td class="odd"><code>fieldName</code>: the name of the desired field </td>
+  </tr>
+  <tr class="odd">
+    <td>Description:</td>
+    <td class="odd">Returns the <i>contents</i> of the specified  field in the
+      current row.</td>
+  </tr>
+</table>
+<a name="directories" id="directories"></a><br />
+<br />
+
+<h2>Location of Database File </h2>
+<p>Database files that your application creates are stored on the user's computer in a location that is determined by the browser being used and the platform. </p>
+<p><strong>Windows Vista - Internet Explorer </strong></p>
+<p> Location: {FOLDERID_LocalAppDataLow}\Google\Appcelerator Titanium for Internet Explorer<br />
+  Example: C:\Users\Bob\AppData\LocalLow\Google\Appcelerator Titanium for Internet Explorer</p>
+<p><strong>Windows Vista - Firefox </strong>- Database files are stored in the user local profile directory. </p>
+<p>Location: C:\Users\&lt;username&gt;\AppData\Local\Mozilla\Firefox\Profiles\{profile}.default\Appcelerator Titanium for Firefox <br />
+  Example:  C:\Users\Bob\AppData\Local\Mozilla\Firefox\Profiles\uelib44s.default\Appcelerator Titanium for Firefox  </p>
+<p><strong>Windows XP - Internet Explorer </strong>- Database files are stored in the user local profile directory. </p>
+<p> Location: C:\Documents and Settings\&lt;username&gt;\Local Settings\Application Data\Google\Appcelerator Titanium for Internet Explorer<br />
+  Example: C:\Documents and Settings\Bob\Local Settings\Application Data\Google\Appcelerator Titanium for Internet Explorer</p>
+<p><strong> Windows XP - Firefox </strong>- Database files are stored in the user local profile directory. </p>
+<p>Location: C:\Documents and Settings\&lt;username&gt;\Local Settings\Application Data\Mozilla\Firefox\Profiles\{profile}\Appcelerator Titanium for Firefox<br />
+  Example: C:\Documents and Settings\Bob\Local Settings\Application Data\Mozilla\Firefox\Profiles\uelib44s.default\Appcelerator Titanium for Firefox</p>
+<p><strong>Mac OS/X - Firefox </strong>- Database files are stored in the user local profile directory. </p>
+<p>Location: Users/&lt;username&gt;/Library/Caches/Firefox/Profiles/{profile}.default/Appcelerator Titanium for Firefox <br />
+  Example: Users/Bob/Library/Caches/Firefox/Profiles/08ywpi3q.default/Appcelerator Titanium for Firefox</p>
+<p><strong>Linux - Firefox </strong>- Database files are stored in the user home directory.</p>
+<p>Location: ~<em>bob</em>/.mozilla/firefox/&lt;firefox's profile id&gt;/Appcelerator Titanium for Firefox <br />
+  Example: ~bob/.mozilla/firefox/08ywpi3q.default/Appcelerator Titanium for Firefox </p>
+<p><strong>Windows Mobile 5.0 and 6.0</strong></p>
+<p> Location: \Application Data\Google\Appcelerator Titanium for Internet Explorer</p>
+
+<a name="sqlite_changes" id="sqlite_changes"></a><br />
+<br />
+
+<h2>Local Modifications to SQLite</h2>
+<p>This section describes  modifications that Gears makes to SQLite. </p>
+<h4>Attached databases</h4>
+<p>The SQLite <a href="http://www.sqlite.org/lang_attach.html">ATTACH
+and DETACH</a> commands can be used to open an arbitrary SQLite
+database on the user's disk.  For this reason, these commands have
+been disabled in Gears.  In the future this functionality may
+be exposed in a way which respects the same-origin security
+policy.</p>
+
+<h4>PRAGMA settings</h4>
+
+<p>The SQLite <a href="http://www.sqlite.org/pragma.html">PRAGMA</a>
+command allows setting and inspection of various platform settings,
+including certain settings which could potentially be used to
+compromise security.  At this time, Gears disables PRAGMA,
+though it is possible that specific PRAGMA uses may be re-enabled or
+exposed in the Database interface.</p>
+
+<p>The default PRAGMA settings for Gears which differ from the
+SQLite defaults:
+<ul>
+  <li>PRAGMA encoding = 'UTF-8';<br/>
+      This controls the encoding used to store textual data on disk.
+      UTF-16 encoding on disk is almost never a win on desktop
+      machines, it is generally faster to read the smaller amount of
+      UTF-8 data and decode it on the fly.
+
+  <li>PRAGMA auto_vacuum = 1;<br/>
+      Over time database files can become filled with gaps where data
+      has been deleted.  These gaps can be recovered with the VACUUM
+      command, but VACUUM can lock the database for extended periods
+      of time, making it a challenge to integrate into interactive
+      applications.  auto_vacuum mode recovers these gaps
+      incrementally as they are generated.
+
+  <li>PRAGMA page_size = 4096;<br/>
+      Desktop operating systems mostly have default virtual memory and
+      disk block sizes of 4k and higher.
+
+  <li>PRAGMA cache_size = 2048;<br/>
+      Provides 8M of page cache.
+
+  <li>PRAGMA synchronous = NORMAL;<br/>
+      Synchronous controls whether data is synchronized to disk before
+      COMMIT commands return (commands not in transactions are
+      implicitly wrapped in one).  Setting synchronous to OFF can
+      provide a significant performance boost, at the expense of
+      potential data corruption.  Much of the benefit of turning
+      synchronous off can generally be achieved by using a combination
+      of large transactions and WorkerPool.
+
+</ul>
+
+<a name="sqlite_fts" id="sqlite_fts"></a><br />
+<br />
+
+<h2>Full-Text Search</h2>
+
+<p>Gears includes an SQLite extension called <a
+href="http://www.sqlite.org/cvstrac/wiki?p=FtsTwo">fts2</a>, for
+"Full-Text Search".  fts2 allows you to create a table and search for words in TEXT data.
+An fts2 table is created as follows:</p>
+
+<pre><code>db.execute('CREATE VIRTUAL TABLE recipe USING fts2(dish, ingredients)');</code></pre>
+
+<p>This creates an fts2 table named 'recipe', with fields 'dish' and
+'ingredients'.  All fts2 fields are of type TEXT.  Data in the table
+is manipulated using standard SQL commands such as INSERT, UPDATE, and
+DELETE.  Like other SQLite tables, the fts2 table has an implicit
+unique rowid field, which acts as a unique index.  </p>
+<p>fts2 tables have some unique properties:</p>
+<ul>
+  <li> No indices other
+    than the rowid and full-text indices are allowed.</li>
+  <li> fts2 tables contain a special field with the same
+    name as the table. This field is used in search queries, as described below. </li>
+  <li>Because the special field exists,  is important to always list the specific fields being
+    inserted in INSERT statements, and list specific result fields in
+    SELECT statements.  <em>SELECT * will throw exceptions when run on an fts2
+    table.</em></li>
+</ul>
+<h3>Full-text Query Syntax </h3>
+<p>To query using the full-text index, use the MATCH operator as
+follows:</p>
+
+<pre><code>&lt;table_or_field_name&gt; MATCH &lt;query&gt;</code></pre>
+
+<ul>
+  <li>If <code>&lt;table_or_field_name&gt;</code> is the name of the
+    table, then the match is done against all fields of the table.</li>
+	<li>If
+    <code>&lt;table_or_field_name&gt;</code> is the name of a field, then
+    the match is done   against that field.</li>
+	</ul>
+<p>&nbsp;</p>
+<ul>
+  The following
+  returns the names of all recipes which include 'tomatoes' in any
+  field:
+  </li>
+</ul>
+<pre><code>var rs = db.execute('SELECT dish FROM recipe WHERE recipe MATCH ?', ['tomatoes']);</code></pre>
+
+<p>Examples of  fts2 query syntax:</p>
+<dl>
+<dt>cheese tomatoes</td>
+<dd>Find rows containing 'cheese' and 'tomatoes' in any field.</dd>
+<dt>dish:stew tomatoes</td>
+<dd>Find rows with 'stew' in the <code>dish</code> field, and 'tomatoes' in any field.</dd>
+<dt>cheese OR tomatoes</td>
+<dd>Find rows containing either 'cheese' or 'tomatoes' in any field.  Note that OR operator must be capitalized.</dd>
+<dt>"green tomatoes"</td>
+<dd>Find rows where 'green' is immediately followed by 'tomatoes', in any single field.</dd>
+<dt>cheese -tomatoes</td>
+<dd>Find rows containing 'cheese' in any field, and not containing 'tomatoes' in any field.</dd>
+<dt>ch*</td>
+<dd>Find rows containing words which start with 'ch', including rows containing 'cheese' or 'chowder'.  The '*' must come at the end of the word.</dd>
+</dl>
+
+<h3>Using Indices with fts2 </h3>
+<p>fts2 tables are restricted to contain only TEXT fields and the
+full-text index.  To simulate additional indices or non-TEXT fields,
+an auxiliary table can be used:</p>
+
+<pre><code>db.execute('CREATE TABLE recipe_aux (dish TEXT PRIMARY KEY, rating INTEGER)');
+db.execute('CREATE VIRTUAL TABLE recipe USING fts2(dish, ingredients)');</code></pre>
+
+<p>A logical row is  split across the <code>recipe</code> and
+<code>recipe_aux</code> tables, joined on the rowid.  The
+<code>recipe_aux</code> table constrains <code>dish</code> to be
+unique, and adds field <code>rating</code>, which will not be included
+in the full-text index.  For example, to search for recipes with
+'cheese' that have <code>rating</code> higher than 3:</p>
+
+<pre><code>var rs = db.execute('SELECT recipe.rowid FROM recipe, recipe_aux ' +
+                    ' WHERE recipe.rowid = recipe_aux.rowid AND recipe_aux.rating > ? AND recipe MATCH ?',
+                    [3, 'cheese']);</code></pre>
+
+<p>Insertions, deletions, and updates should be done within
+transactions to keep the tables consistent:</p>
+
+<pre><code>db.execute('BEGIN');
+db.execute('INSERT INTO recipe_aux (dish, rating) VALUES (?, ?)', ['soup', 3]);
+db.execute('INSERT INTO recipe (rowid, dish, ingredients) ' +
+           'VALUES (last_insert_rowid(), ?, ?)',
+           ['soup', 'meat carrots celery noodles']);
+db.execute('COMMIT');</code></pre>
+
+</div>
+</body>
+</html>

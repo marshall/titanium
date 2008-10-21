@@ -1,0 +1,67 @@
+Description
+===========
+
+jsoncpp is an implementation of a JSON (http://json.org) reader and writer in
+C++. JSON (JavaScript Object Notation) is a lightweight data-interchange
+format. It is easy for humans to read and write. It is easy for machines to
+parse and generate. [From website]
+
+Homepage
+========
+
+http://jsoncpp.sourceforge.net/
+http://sourceforge.net/projects/jsoncpp/
+
+License
+=======
+
+"The json-cpp library and this documentation are in Public Domain."
+[doc/html/index.html, generated from doc/jsoncpp.dox]
+
+Source files and modifications
+==============================
+
+The files in the initial submission to third_party/jsoncpp contain SVN revision
+#23, that was checked out using the following command:
+
+$ svn co https://svn.sourceforge.net/svnroot/jsoncpp jsoncpp
+..
+Checked out revision 23.
+
+The original distribution uses Scons build system which was too complicated and
+unneccessary. The files were ported to the make build system.
+
+The following changes were made:
+# src/lib_json/*.cpp files were renamed to .cc and moved to main directory,
+# include/json/.h files were moved to main directory,
+# src/lib_json/*.inl files were renamed to .h and moved to main directory,
+# include file paths were changed to "third_party/jsoncpp/*.h",
+# an unnecessary typedef was removed to make gcc happy,
+# several changes were made to fix gcc warnings caused by wrong initialization
+  order in constructors,
+# files in original doc/* were copied to doc/*, except for "sconscript", HTML
+  documentation was generated using doxygen.
+# tests were moved from tests/ to testdata, test_large_0[12] were added.
+# a few static_cast<>s were made to fix gcc warnings about signed vs unsigned
+  comparisons and assignments
+# modified some lines exceeding 80 characters to fit within 80 chars
+# include paths were changed to match Gears's build environment
+# json_writer.cc was modified to include the escaping code that was added to the
+  jsoncpp project at revision 33.
+# and more. To see all changes, diff against the original files
+  (see below for how to find them).
+
+
+The original files (revision 23) can be found in jsoncpp_orig.tar.gz.
+Patches from original files can be found in patches/ subdirectory.
+
+Some of the changes were submitted back to the package author.
+
+Unittests
+=========
+
+src/jsontestrunner/main.cpp was renamed to json_test.cc, which compiles to
+json_test binary.
+
+test/runjsontests.py was renamed to json_unittest.py and heavily modified. It
+runs the json_test binary on testdata/*.json and reports if any of them fail.

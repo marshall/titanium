@@ -1,0 +1,33 @@
+<string id="string-html-title">Попередження системи безпеки Gears</string>
+<string id="string-allow">Дозволити</string>
+<string id="string-allow-accesskey">A</string>
+<string id="string-deny">Відхилити</string>
+<string id="string-deny-accesskey">D</string>
+<string id="string-cancel">Скасувати</string>
+<string id="string-never-allow-link">Ніколи не дозволяти цьому веб-сайту</string>
+<string id="string-never-allow-link-wince">Ніколи не дозволяти</string>
+<string id="string-description">
+  Gears – це розширення веб-браузера з відкритим кодом, яке дозволяє веб-програмам працювати в автономному режимі за допомогою таких інтерфейсів API JavaScript:
+</string>
+<string id="string-localserver-desc">
+  Локальне збереження та обслуговування програмних ресурсів
+</string>
+<string id="string-database-desc">
+  Дані зберігаються локально у відповідній базі даних із повною підтримкою функцій пошуку
+</string>
+<string id="string-workerpool-desc">
+  Запустіть асинхронний сценарій Javascript, щоб підвищити швидкість реагування програми
+</string>
+<string id="string-query-data">
+  Нижченаведений веб-сайт намагається зберегти інформацію на Вашому комп’ютері за допомогою Gears.
+</string>
+<string id="string-query-location">
+  Нижченаведений веб-сайт намагається отримати доступ до інформації про Ваше розташування за допомогою Gears.
+</string>
+<string id="string-location-privacy-statement">
+  Ознайомтеся з політикою конфіденційності веб-сайту, щоб дізнатися, як буде використовуватися Ваше розташування.
+</string>
+<string id="string-trust-site">
+  Я довіряю цьому сайту. Дозволити йому використовувати Gears.
+</string>
+<string id="string-trust-site-accesskey">t</string>

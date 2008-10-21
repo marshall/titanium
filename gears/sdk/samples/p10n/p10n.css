@@ -1,0 +1,140 @@
+/*
+Copyright 2007, Google Inc.
+
+Redistribution and use in source and binary forms, with or without 
+modification, are permitted provided that the following conditions are met:
+
+ 1. Redistributions of source code must retain the above copyright notice, 
+    this list of conditions and the following disclaimer.
+ 2. Redistributions in binary form must reproduce the above copyright notice,
+    this list of conditions and the following disclaimer in the documentation
+    and/or other materials provided with the distribution.
+ 3. Neither the name of Google Inc. nor the names of its contributors may be
+    used to endorse or promote products derived from this software without
+    specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
+OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
+body {
+  font-family:arial,sans-serif;
+}
+
+#home {
+  margin-top:10em;
+}
+
+h1 {
+  font-size:2.5em;
+}
+
+ul {
+  margin-bottom:4em;
+}
+
+li {
+  font-family:georgia,serif;
+  font-size:1.75em;
+  margin-top:1.5em;
+}
+
+#questions {
+  margin-top:4em;
+  text-align:center;
+}
+
+.green {
+  color:#090;
+}
+
+.orange {
+  color:#FF7735;
+}
+
+.red {
+  color:#F00;
+}
+
+pre {
+  position:relative;
+  background:white;
+  margin:-0.5em -1em;
+  font-weight:bold;
+  font-size:0.9em;
+}
+
+pre .title {
+  font-weight:normal;
+  color:#060;
+}
+
+pre .keyword {
+  color:#009;
+}
+
+pre .string {
+  color:#900;
+}
+
+pre .comment {
+  color:#090;
+}
+
+.img {
+  position:relative;
+  margin:-0.5em -1em;
+  background:white;
+}
+
+input, button {
+  font-size:0.8em;
+  font-weight:bold;
+}
+
+.highlight {
+  background:yellow;
+}
+
+.hoverable:hover {
+  background:yellow;
+  -moz-user-select:none;
+  cursor:default;
+}
+
+.hoverable:hover * {
+  color:black!important;
+}
+
+#search-result {
+  font-family:arial, sans-serif;
+  font-size:45%;
+}
+
+#search-result p {
+  margin-top:0;
+  margin-bottom:0;
+}
+
+#search-result .url {
+  color:green;
+  margin-top:0;
+}
+
+#search-result h2 {
+  margin-bottom:0;
+  font-size:130%;
+  font-weight:normal;
+}
+
+#search-result a {
+  color:#00c;
+}

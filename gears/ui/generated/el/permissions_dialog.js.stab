@@ -1,0 +1,33 @@
+<string id="string-html-title">Προειδοποίηση ασφαλείας Gears</string>
+<string id="string-allow">Να επιτρέπεται</string>
+<string id="string-allow-accesskey">A</string>
+<string id="string-deny">Απόρριψη</string>
+<string id="string-deny-accesskey">D</string>
+<string id="string-cancel">Άκυρο</string>
+<string id="string-never-allow-link">Να μην επιτρέπεται ποτέ αυτός ο ιστότοπος</string>
+<string id="string-never-allow-link-wince">Να μην επιτρέπεται ποτέ</string>
+<string id="string-description">
+  Το Gears είναι μια επέκταση προγράμματος περιήγησης ανοιχτής προέλευσης που επιτρέπει τις εφαρμογές ιστού να παρέχουν λειτουργίες εκτός σύνδεσης χρησιμοποιώντας τα ακόλουθα JavaScript API:
+</string>
+<string id="string-localserver-desc">
+  Αποθήκευση και διανομή πόρων εφαρμογών τοπικά
+</string>
+<string id="string-database-desc">
+  Αποθήκευση δεδομένων τοπικά σε μια σχεσιακή βάση δεδομένων με δυνατότητα πλήρους αναζήτησης
+</string>
+<string id="string-workerpool-desc">
+  Εκτέλεση ασύγχρονου JavaScript για βελτίωση απόκρισης εφαρμογών
+</string>
+<string id="string-query-data">
+  Ο παρακάτω ιστότοπος επιθυμεί να αποθηκεύει πληροφορίες στον υπολογιστή σας χρησιμοποιώντας το Gears.
+</string>
+<string id="string-query-location">
+  Ο παρακάτω ιστότοπος επιθυμεί να αποκτήσει πρόσβαση σε πληροφορίες σχετικά με την τοποθεσία σας μέσω του Gears.
+</string>
+<string id="string-location-privacy-statement">
+  Διαβάστε την πολιτική για θέματα ιδιωτικού περιεχομένου του ιστότοπου για να δείτε πώς θα χρησιμοποιηθεί η τοποθεσία σας.
+</string>
+<string id="string-trust-site">
+  Εμπιστεύομαι αυτόν τον ιστότοπο. Να επιτρέπεται να χρησιμοποιεί το Gears.
+</string>
+<string id="string-trust-site-accesskey">t</string>

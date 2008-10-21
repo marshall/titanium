@@ -1,0 +1,33 @@
+<string id="string-html-title">Peringatan Keamanan Gears</string>
+<string id="string-allow">OK</string>
+<string id="string-allow-accesskey">A</string>
+<string id="string-deny">Tolak</string>
+<string id="string-deny-accesskey">D</string>
+<string id="string-cancel">Batalkan</string>
+<string id="string-never-allow-link">Jangan pernah izinkan situs ini</string>
+<string id="string-never-allow-link-wince">Jangan pernah mengizinkannya</string>
+<string id="string-description">
+  Gears adalah ekstensi browser open source yang memungkinkan aplikasi web untuk menyediakan fungsionalitas offline dengan menggunakan JavaScript API:
+</string>
+<string id="string-localserver-desc">
+  Menyimpan dan menggunakan sumber daya aplikasi secara lokal
+</string>
+<string id="string-database-desc">
+  Menyimpan data secara lokal pada basis data relasional yang dapat cari
+</string>
+<string id="string-workerpool-desc">
+  Menjalankan JavaScript asinkron untuk meningkatkan respons aplikasi
+</string>
+<string id="string-query-data">
+  Website berikut ingin menyimpan informasi di komputer Anda dengan menggunakan Gears.
+</string>
+<string id="string-query-location">
+  Website berikut ingin mengakses informasi tentang lokasi Anda dengan menggunakan Gears.
+</string>
+<string id="string-location-privacy-statement">
+  Baca kebijakan privasi situs untuk melihat bagaimana lokasi Anda akan digunakan.
+</string>
+<string id="string-trust-site">
+  Saya mempercayai situs ini. Izinkan untuk menggunakan Gears.
+</string>
+<string id="string-trust-site-accesskey">t</string>

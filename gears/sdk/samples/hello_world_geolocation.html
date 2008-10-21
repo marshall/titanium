@@ -1,0 +1,91 @@
+<!--
+Copyright 2008, Google Inc.
+
+Redistribution and use in source and binary forms, with or without 
+modification, are permitted provided that the following conditions are met:
+
+ 1. Redistributions of source code must retain the above copyright notice, 
+    this list of conditions and the following disclaimer.
+ 2. Redistributions in binary form must reproduce the above copyright notice,
+    this list of conditions and the following disclaimer in the documentation
+    and/or other materials provided with the distribution.
+ 3. Neither the name of Google Inc. nor the names of its contributors may be
+    used to endorse or promote products derived from this software without
+    specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
+OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<!DOCTYPE html>
+
+<html>
+<head>
+<title>Hello World Geolocation</title>
+<link rel="stylesheet" type="text/css" href="sample.css">
+</head>
+<body>
+
+<h1>Gears Geolocation Demo</h1>
+<div id="view-source">&nbsp;</div>
+
+<p id="status"></p>
+
+<p><b>This page demonstrates basic usage of the Geolocation API.</b></p>
+
+<!-- ====================================== -->
+<!-- End HTML code.  Begin JavaScript code. -->
+
+<script type="text/javascript" src="../gears_init.js"></script>
+<script type="text/javascript" src="sample.js"></script>
+<script>
+
+init();
+
+function init() {
+  if (!window.google || !google.gears) {
+    addStatus('Gears is not installed', 'error');
+    return;
+  }
+
+  addStatus('Getting location...');
+
+  function successCallback(p) {
+    var address = p.gearsAddress.city + ', '
+                  + p.gearsAddress.region + ', '
+                  + p.gearsAddress.country + ' ('
+                  + p.latitude + ', '
+                  + p.longitude + ')';
+
+    clearStatus();
+    addStatus('Your address is: ' + address);
+  }
+
+  function errorCallback(err) {
+    var msg = 'Error retrieving your location: ' + err.message;
+    setError(msg);
+  }
+
+  try {
+    var geolocation = google.gears.factory.create('beta.geolocation');
+    geolocation.getCurrentPosition(successCallback,
+                                   errorCallback,
+                                   { enableHighAccuracy: true,
+                                     gearsRequestAddress: true });
+  } catch (e) {
+    setError('Error using Geolocation API: ' + e.message);
+    return;
+  }
+
+}
+</script>
+</body>
+</html>

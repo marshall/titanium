@@ -1,0 +1,138 @@
+/* ***** BEGIN LICENSE BLOCK *****
+ * Version: MPL 1.1/GPL 2.0/LGPL 2.1
+ * 
+ * The contents of this file are subject to the Mozilla Public License
+ * Version 1.1 (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ * 
+ * Software distributed under the License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific language governing rights and limitations
+ * under the License.
+ * 
+ * The Original Code is Komodo code.
+ * 
+ * The Initial Developer of the Original Code is ActiveState Software Inc.
+ * Portions created by ActiveState Software Inc are Copyright (C) 2000-2007
+ * ActiveState Software Inc. All Rights Reserved.
+ * 
+ * Contributor(s):
+ *   ActiveState Software Inc
+ * 
+ * Alternatively, the contents of this file may be used under the terms of
+ * either the GNU General Public License Version 2 or later (the "GPL"), or
+ * the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
+ * in which case the provisions of the GPL or the LGPL are applicable instead
+ * of those above. If you wish to allow use of your version of this file only
+ * under the terms of either the GPL or the LGPL, and not to allow others to
+ * use your version of this file under the terms of the MPL, indicate your
+ * decision by deleting the provisions above and replace them with the notice
+ * and other provisions required by the GPL or the LGPL. If you do not delete
+ * the provisions above, a recipient may use your version of this file under
+ * the terms of any one of the MPL, the GPL or the LGPL.
+ * 
+ * ***** END LICENSE BLOCK ***** */
+
+// ISciMoz.idl
+// Interface to the Scintilla Mozilla plugin.
+// Author: Neil Hodgson
+
+// *************** This is *NOT* a valid IDL file. *****************
+// It is a template from which a valid IDL file is generated.
+// *****************************************************************
+
+#include "nsISupports.idl"
+#include "nsIDOMEvent.idl"
+
+//interface ISciMozEvents;
+// An interface purely to get around a 128 vtable limitation
+// on some parts of xpcom.
+// Mainly used by object that need to call Scintilla
+// via a proxy. See Mozilla bug 54471
+// If you need some other calls, add them in XPFacer.py, in the liteFeatures list.
+// There is a maximum number of entries we'll be able to use here until the Moz
+// bug is fixed.
+//[scriptable, uuid(5f8641d6-def9-4236-a77d-63b46fb34386)]
+interface ISciMoz : nsISupports {
+	// Manually created features
+	attribute DOMString name; // a "name" for debugging/diagnostic purposes.
+	void hookEvents(in ISciMozEvents eventListener);
+	void hookEventsWithStrongReference(in ISciMozEvents eventListener);
+	void hookSomeEvents(in ISciMozEvents eventListener, in PRUint32 mask);
+	void hookSomeEventsWithStrongReference(in ISciMozEvents eventListener, in PRUint32 mask);
+	void unhookEvents(in ISciMozEvents eventListener);
+	void setCommandUpdateTarget( in nsISupports window);
+	// this one is more of a hack to avoid exposing the
+	// non-scriptable nsIDOMWindow to Python!
+	void sendUpdateCommands( in string text);
+	void getStyledText(in long min, in long max, out unsigned long count, 
+		out octet str);
+	long getCurLine(out wstring text);
+	void assignCmdKey(in long key, in long modifiers, in long msg);
+	void clearCmdKey(in long key, in long modifiers);
+
+	wstring getTextRange(in long min, in long max);
+	attribute wstring text;
+	readonly attribute wstring selText;
+	
+	// stuff to minimize some of our eventist usage
+	attribute long lastCharCodeAdded;
+	void doBraceMatch();
+	
+        // utility function to save every man and his dog from doing the int->char conversion.
+        wchar getWCharAt(in long pos);
+        // Indicates if Scintilla is currently "owned" by the plugin instance.
+        // ie, if it is "visible".  However, "visible" is too overloaded (ie, could
+        // mean simply scrolled out of view, so went for this!
+        readonly attribute boolean isOwned;
+        
+        // computes the char position for the current byte position
+        // if position < 0 then the currentPos is used
+        long charPosAtPosition(in long position);
+        
+        // Is the underlying Window visible?  (To prevent paint flicker as we
+        // init the control, MSWindows creates the Windows invisible, and never
+        // automatically sets it to visible - this property *must* be set.)
+        attribute boolean visible;
+    
+        void addChar(in PRUint32 ch);
+        long getLine(in long line, out wstring text);
+	
+        // Needed on linux because of the way Mozilla works...
+        // We do a grab_add on mousedown, but if you start dragging after that,
+        // the widget never receives a mouseup and thus we never do a
+        // grab_remove.. here is our chance.
+        void endDrop();
+
+	// used to prevent context menu's on the scrollbars while scrollbar
+	// tracking is occuring
+	readonly attribute boolean isTracking;
+        // used on OSX to see if scintilla initiated a drag session
+        readonly attribute boolean inDragSession;
+
+	wstring handleTextEvent(in nsIDOMEvent event);
+//++Autogenerated
+// BEGIN GENERATED SECTION - ISciMoz.idl - "lite" interface
+// All code in this section has been automatically generated.
+// DO NOT EDIT THIS SECTION
+
+__ISCIMOZ_INTERFACE__
+__ISCIMOZ_LITE_INTERFACE__
+
+// END GENERATED SECTION.
+//--Autogenerated
+
+//};
+
+//[scriptable, uuid(1ef5ac2f-6b7b-4266-a214-cf9875f4184e)]
+//interface ISciMoz : ISciMozLite {
+	// Manually created features go in the "lite" version - hopefully
+	// will never be 128 total there!
+
+	// Other functions required due to our special event processing.
+	void buttonDown(in long x, in long y, in PRUint16 button, in PRUint64 timeStamp, in boolean bShift, in boolean bCtrl, in boolean bAlt);
+	void buttonUp(in long x, in long y, in PRUint16 button, in PRUint64 timeStamp, in boolean bShift, in boolean bCtrl, in boolean bAlt);
+	void buttonMove(in long x, in long y);
+};
+

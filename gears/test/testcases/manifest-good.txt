@@ -1,0 +1,14 @@
+{
+  "betaManifestVersion": 1,
+  "version": "1",
+  "entries": [
+    {"url": "manifest-url1.txt" },
+    {"url": "manifest-url1.txt", "ignoreQuery": true, "src": "manifest-url1.txt" },
+    {"url": "alias-to-manifest-url1.txt", "src": "manifest-url1.txt"},
+    {"url": "redirect-to-manifest-url1.txt", "redirect": "manifest-url1.txt"},
+    {"url": "unicode?foo\u003Dbar", "src": "manifest-url1.txt" },
+    {"url": "redirect-out-of-origin", "redirect": "http://www.google.com/" },
+    {"url": "test_file_1024.txt", "contentLength": 1024},
+    {"url": "custom_content_length_header", "src": "/testcases/cgi/send_response_of_size.py?size=10"}
+  ]
+}

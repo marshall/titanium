@@ -1,0 +1,14 @@
+<string id="string-cancel">ବାତିଲ୍</string>
+<string id="string-cancel-accesskey">C</string>
+<string id="string-apply">ଲାଗୁ କରନ୍ତୁ</string>
+<string id="string-apply-accesskey">A</string>
+<string id="string-nosites">କୌଣସି ସାଇଟମାନ ନାହିଁ |</string>
+<string id="string-allowed">ଅନୁମତି ପ୍ରାପ୍ତ କରନ୍ତୁ</string>
+<string id="string-denied">ମନାକରନ୍ତୁ</string>
+<string id="string-local-storage">ସ୍ଥାନୀୟ ସଂଞ୍ଚୟ</string>
+<string id="string-location-data">ସ୍ଥାନ</string>
+<string id="string-gears-settings">Gears ସେଟିଂସମୂହ</string>
+<string id="string-permissions-description">ନିମ୍ନ ସାରଣୀ ଆପଣ ପ୍ରତ୍ୟେକ ସାଇଟକୁ ପ୍ରଦାନ କରିଥିବା ସ୍ବୀକୃତି ଦର୍ଶାଉଛି,ଯାହା Gears ବ୍ୟବହାର କରିବାକୁ ପଦକ୍ଷେପ ନେଇଛି |</string>
+<string id="string-version">Gears ସଂସ୍କରଣ PRODUCT_VERSION</string>
+<string id="string-html-title">Gears ସେଟିଂସମୂହ</string>
+<string id="string-remove">ଅପସାରଣ</string>

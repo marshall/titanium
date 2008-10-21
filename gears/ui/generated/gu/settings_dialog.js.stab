@@ -1,0 +1,14 @@
+<string id="string-cancel">રદ કરો</string>
+<string id="string-cancel-accesskey">C</string>
+<string id="string-apply">લાગુ કરો</string>
+<string id="string-apply-accesskey">A</string>
+<string id="string-nosites">કોઇ સાઇટ્સ નથીં.</string>
+<string id="string-allowed">મંજુર કરેલ</string>
+<string id="string-denied">નકારેલું</string>
+<string id="string-local-storage">સ્થાનિક સ્ટોરેજ</string>
+<string id="string-location-data">સ્થાન</string>
+<string id="string-gears-settings">Gears સેટિંગ્સ</string>
+<string id="string-permissions-description">નીચેનુ કોષ્ટક દર્શાવે છે કે તમે જુદી-જુદી સાઇટ્સને કઇ પરવાનગીઓ આપેલી છે કે જેમણે Gearsનો ઉપયોગ કરવાનો પ્રયત્ન કર્યો છે.</string>
+<string id="string-version">Gears સંસ્કરણ PRODUCT_VERSION</string>
+<string id="string-html-title">Gears સેટિંગ્સ</string>
+<string id="string-remove">દૂર કરો</string>

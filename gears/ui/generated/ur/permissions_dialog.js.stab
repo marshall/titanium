@@ -1,0 +1,33 @@
+<string id="string-html-title">گیئرز کی تحفظاتی تنبیہ</string>
+<string id="string-allow">اجازت دیں</string>
+<string id="string-allow-accesskey">A</string>
+<string id="string-deny">مسترد</string>
+<string id="string-deny-accesskey">D</string>
+<string id="string-cancel">منسوخ</string>
+<string id="string-never-allow-link">کبھی بھی اس سائٹ کی اجازت نہ دیں۔</string>
+<string id="string-never-allow-link-wince">کبھی بھی اس کی اجازت نہ دیں</string>
+<string id="string-description">
+  گیئرز براؤزر کی ایک کھلے وسائل والی توسیع ہے جو ویب اطلاقات کو درج ذیل جاوا اسکرپٹ اطلاقات کا استعمال کرتے ہوئے آف لائن کارکردگی فراہم کرنے کے قابل بناتا ہے:
+</string>
+<string id="string-localserver-desc">
+  اطلاقی وسائل کو مقامی طور پر جمع اور استعمال کریں
+</string>
+<string id="string-database-desc">
+  ایک پوری طرح قابل تلاش متعلقہ ڈیٹا بیس
+</string>
+<string id="string-workerpool-desc">
+  اپلی کیشن کا رد عمل بہتر بنانے کیلئے مطابقت پذیر جاوا اسکرپٹ چلائیں
+</string>
+<string id="string-query-data">
+  ذیل کی ویب سائٹ گیئرز کا استعمال کرتے ہوئے آپ کے کمپیوٹر پر معلومات جمع کرنا چاہتی ہے۔
+</string>
+<string id="string-query-location">
+  ذیل کی ویب سائٹ گیئرز کا استعمال کرتے ہوئے آپ کے مقام سے متعلق معلومات تک رسائی حاصل کرنا چاہتی ہے۔
+</string>
+<string id="string-location-privacy-statement">
+  یہ دیکھنے کیلئے کہ آپ کے جائے وقوع کا استعمال کس طرح کیا جائے گا، اس سائٹ کی رازداری کی پالیسی کو پڑھیں۔
+</string>
+<string id="string-trust-site">
+  میں اس سائٹ پر اعتبار کرتا ہوں۔ اسے گیئرز استعمال کرنے کی اجازت دیں۔
+</string>
+<string id="string-trust-site-accesskey">t</string>

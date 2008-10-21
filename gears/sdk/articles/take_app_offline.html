@@ -1,0 +1,415 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "DTD/xhtml1-transitional.dtd">
+
+<!--
+  Copyright 2007, Google Inc.
+
+  Redistribution and use in source and binary forms, with or without 
+  modification, are permitted provided that the following conditions are met:
+
+  1. Redistributions of source code must retain the above copyright notice, 
+  this list of conditions and the following disclaimer.
+  2. Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+  3. Neither the name of Google Inc. nor the names of its contributors may be
+  used to endorse or promote products derived from this software without
+  specific prior written permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+  EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
+  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<html>
+<head>
+  <title>Taking Web Applications Offline with Gears</title>
+  <link rel="stylesheet" type="text/css" href="gears.css" />
+</head>
+
+<body>
+  <h1>Taking Web Applications Offline with Gears</h1>
+
+  <div id="pagecontent">
+    <div>
+      <em>Omar Kilani, Remember The Milk<br> August 2007</em>
+      <ul>
+        <li>
+          <a href="#introduction">Introduction</a>
+        </li>
+        <li>
+          <a href="#whatis">What is Remember The Milk?</a>
+        </li>
+        <li>
+          <a href="#overview">A quick overview of Gears</a>
+        </li>
+        <li>
+          <a href="#architecture">Architecture considerations</a>
+        </li>
+        <li>
+          <a href="#strategy">Choosing a mode strategy</a>
+        </li>
+        <li>
+          <a href="#steps">The five steps to offline conversion</a>
+        </li>
+        <li>
+          <a href="#tips">Tips and caveats</a>
+        </li>
+        <li>
+          <a href="#conclusion">Conclusion</a>
+        </li>
+      </ul>
+      <a name="introduction"></a>
+      <h2>Introduction</h2>
+      <p class="para">
+        Gears, an open source set of JavaScript APIs that lets you build offline web applications, was announced at Google Developer Day 2007. We spent the following four caffeine-fueled days furiously building offline support for our service, Remember The Milk, with Gears. We learned a lot over the course of those four days—and even more after launching the functionality—and hoped to share this knowledge with other developers looking to work with Gears. So when the folks at Google asked us if we'd write about our experiences, we were more than happy to oblige.
+      </p>
+      <p class="para">
+        We hope that this article helps you to offline-enable your applications quickly and with a minimum amount of pain.
+      </p>
+      <a name="whatis"></a>
+      <h2>What is Remember The Milk?</h2>
+      <p class="para">
+        <a href="http://www.rememberthemilk.com">Remember The Milk</a> (RTM) is a task management service available in 21 languages and used by over 250,000 people. The main interface to the service is a rich web application, but users can also interact with RTM via email, a mobile version, a public API, iGoogle and Google Calendar gadgets, Twitter, and more.
+      </p>
+      <p class="para">
+        Offline access was an oft-requested feature from our users and Gears turned out to perfectly fit our implementation requirements, as we didn't wish to create a desktop application or build an offline solution based on a proprietary architecture. Adding Gears support enabled us to take the majority of RTM functionality offline and provide an experience similar to a native client-side application for our users.
+      </p>
+      <a name="overview"></a>
+      <h2>A quick overview of Gears</h2>
+      <p class="para">
+        There are three key components to Gears: LocalServer, Database, and WorkerPool. It's important to look at these components as low-level fundamental building blocks, similar in utility to an object like XMLHttpRequest, and not as a complete and easy solution to taking a web application offline. For example, Gears gives you the necessary means to enable data synchronization by providing a persistent data store (Database) and JavaScript threading support (WorkerPool) for intensive synchronization processing, but doesn't provide the synchronization functionality itself.
+      </p>
+      <p class="para">
+        With that in mind, let's look at the three components in some detail, and how RTM uses each one.
+      </p>
+      <h4>LocalServer</h4>
+      <p class="para">
+        The LocalServer allows the storage of resources such as images, style sheets, JavaScript, and HTML pages, in named stores. These stores can be either ResourceStores or ManagedResourceStores, and an application can reference multiple stores of different types.
+      </p>
+      <p class="para">
+        LocalServer intercepts all requests originating from the browser (with some exceptions, e.g., POST requests are not intercepted) and serves resources that match these requests. You can view the LocalServer as an infinite, non-evicting cache that allows access to contained resources in all states of connectivity.
+      </p>
+      <p class="para">
+        While the ResourceStore requires an application to manually handle fetching resources for offline use, the ManagedResourceStore allows the developer to provide a manifest (in JSON format) that references all the resources required offline by the application. Additionally, the ManagedResourceStore allows versioning of offline manifests and intelligently handles the retrieval of resources, atomically switching between manifest versions, etc.
+      </p>
+      <p class="para">
+        Remember The Milk uses a single ManagedResourceStore for its offline implementation, which is described in detail in the sections below.
+      </p>
+      <h4>Database</h4>
+      <p class="para">
+        Gears provides a persistent, always-accessible data store in the form of the SQLite 3 relational database management system. SQLite is a powerful and full-featured database, providing the majority of SQL92 functionality, including features such as transactions, primary keys, views, etc. An application may access multiple SQLite databases.
+      </p>
+      <p class="para">
+        The offline functionality in Remember The Milk uses a single database (databases are namespaced by RTM username).</p>
+        <h4>WorkerPool</h4>
+        <p class="para">
+          WorkerPool brings threading to JavaScript. It does this by executing code in its own JavaScript interpreter instance and uses message passing as a means of communication. One important aspect of this implementation is that WorkerPool threads don't share any state. There are some limitations to the code that can be run in a thread—for example, it cannot reference any DOM objects (such as window, document, etc) and currently does not have access to objects such as XMLHttpRequest (though these are on the Gears roadmap).
+        </p>
+        <p class="para">
+          Remember The Milk doesn't currently make use of WorkerPool, but certain functionality is slated to be converted—for example, the searching/filtering functionality of RTM is completely implemented in the client-side and is processing intensive. Also, database interaction is a prime candidate for conversion to WorkerPool, as there is noticeable "lag" while executing many INSERTs or waiting on a large SELECT to run. Another piece of functionality which fits very well with the WorkerPool architecture is iCalendar recurrence generation, and this is also on the RTM roadmap for implementation.
+        </p>
+        <a name="architecture"></a>
+        <h2>Architecture considerations</h2>
+        <p class="para">
+          The difficulty of adding offline support to an application essentially depends on which features are to be made available offline and how much application logic already resides in the client.
+        </p>
+        <p class="para">
+          For example, RTM was designed as a client-side application from inception. The server-side portion of RTM is mainly used as a "dumb" data store, and the application periodically synchronizes with the server. In this case, using Gears to provide offline access was a natural fit, and was relatively quick to implement as we had some prior experience with data synchronization protocols.
+        </p>
+        <p class="para">
+          There were some features of the online experience that could not be carried over to the offline mode. One of these was the Google Maps integration, in which users can geolocate their tasks and quickly visualize where their tasks are occurring in the real world. As Google Maps requires access to Google servers to fetch map tiles and data, and such a data set is quite large and thus hard to cache, this functionality is disabled once the user enters offline mode.
+        </p>
+        <p class="para">
+          The undo feature of RTM is also unavailable in the offline version as this is a complex server-side operation (due to the multi-user nature of RTM and the ability to share tasks and lists). Instead, the user is presented with a dialog box asking for confirmation if they execute a destructive action such as delete. Undo functionality in offline mode is on the RTM roadmap, however.
+        </p>
+        <p class="para">
+          In terms of code footprint, an offline implementation with Gears adds a fairly trivial amount of code to your code base. The Remember The Milk web application is a relatively large JavaScript application, weighing in at around 30,000 LOC prior to the inclusion of offline access. Around 700 lines of code were written to supplant functionality that relied on server access (this was mainly related to the implementation of reoccurring tasks). A further 1300 lines of Gears-specific code was written to interact with the LocalServer and Database, provide functionality to detect network availability, and display interface elements such as dialog boxes and connectivity indicators.
+        </p>
+        <a name="strategy"></a>
+        <h2>Choosing a mode strategy</h2>
+        <p class="para">
+          One of the trickiest problems faced in implementing and launching offline support for RTM was user messaging and presentation of state.
+        </p>
+        <p class="para">
+          A fundamental design decision is whether to implement offline support as "modal" or "modeless." Choosing which style to implement will, in most cases, be dictated by the type of data the application works with and how much of that data will be available offline. One style is not necessarily superior to the other, and, for example, it's much easier to implement a modeless style for tasks (in RTM) than it is for feed items (in Google Reader) based on the size of data items and the total data set alone.
+        </p>
+        <p class="para">
+          Modal implies that the user must manually switch the application to an offline mode. During this switch, the application synchronizes state with the server—transferring the necessary information to allow the user to view their data offline. For example, Google Reader provides modal offline functionality. When a user first logs in to Google Reader with Gears enabled, they see the following icon:
+        </p><div style="padding-bottom: 5px; padding-left: 5px;">
+          <img src="http://www.google.com/help/hc/images/gears.online.png" alt="online icon" style="border: 1px solid black;">
+          <br>
+          <font size="1"><em>Google Reader in online mode</em></font>
+        </div>
+        <p></p>
+        <p class="para">
+          This icon indicates that the user is in online mode. If this icon is clicked, the icon changes to an animated icon and Google Reader prepares for offline mode by downloading up to 2000 feed items:
+        </p>
+        <div style="padding-bottom: 5px; padding-left: 5px;">
+          <img src="http://www.google.com/help/hc/images/gears.sync.png" alt="sync icon" style="border: 1px solid black;">
+          <br>
+          <font size="1"><em>Synchronizing feed items in Google Reader</em></font>
+        </div>
+        <p class="para">
+          Finally, Google Reader enters offline mode, which is indicated by the following icon:
+        </p>
+        <div style="padding-bottom: 5px; padding-left: 5px;">
+          <img src="http://www.google.com/help/hc/images/gears.offline.png" alt="offline icon" style="border: 1px solid black;">
+          <br>
+          <font size="1"><em>Offline mode in Google Reader</em></font>
+        </div>
+        <p class="para">
+          The user messaging and presentation of state in Google Reader is clear and strongly suggests that the application must be switched into an offline mode before you can "pull the plug."
+        </p>
+        <p class="para">
+          Modeless operation, on the other hand, implies that the application is always up-to-date with the latest data on the server, and allows the user to pull the plug at any moment without the need for a manual offline switch. Remember The Milk is an example of an almost-modeless application: application state is always "in sync" with the server and the application has an awareness of connectivity and an ability to seamlessly manage the transition between online and offline states. It is "almost" modeless in the sense that it relies on functionality, such as Google Maps, which requires online access, and thus, certain aspects of the application are unavailable offline.
+        </p>
+        <p class="para">
+          When we implemented the offline functionality in RTM, we decided to use the same three icons used in Google Reader to indicate different application states to ensure consistency with the only other application using Gears and to draw on the strengths of Google's UI expertise.
+        </p>
+        <p class="para">
+          This decision had a positive consequence: users who were familiar with the Google Reader synchronization process instantly recognized that RTM now had similar offline functionality. It also had a negative consequence: users assumed that RTM was also modal and that a manual switch was necessary in order to enter offline mode.
+        </p>
+        <p class="para">
+          Over several iterations, the messaging and presentation of state were improved. For example, the first time a user launches RTM with Gears installed, the following message is displayed:
+        </p>
+        <div style="padding-bottom: 5px; padding-left: 5px;">
+          <img src="http://www.google.com/help/hc/images/gears.rtm1.png" alt="RTM launch" style="border: 1px solid black;">
+          <br>
+          <font size="1"><em>A message displayed in RTM on first launch while waiting for a manifest to download</em></font>
+        </div>
+        <p class="para">
+          This message is only displayed once—even though the application state is already "in sync" at this point, it's still necessary to prepare the application for offline use by downloading a manifest and associated resources at least once through the ManagedResourceStore. When this process is complete, the following is displayed:
+        </p>
+        <div style="padding-bottom: 5px; padding-left: 5px;">
+          <img src="http://www.google.com/help/hc/images/gears.rtm2.png" alt="RTM sync" style="border: 1px solid black;">
+          <br>
+          <font size="1"><em>A message displayed in RTM once offline use is possible</em></font>
+        </div>
+        <p class="para">
+          From this point on, the user has the ability to use the application offline without switching to offline mode (a manual switch is still provided however, to give the user more control over the operation of this functionality).
+        </p>
+        <p class="para">
+          If RTM detects that the user has lost connectivity and the user attempts to perform an action which would normally require online access, a dialog message is displayed announcing the loss of some functionality (such as Google Maps, etc), and the following icon is displayed:
+        </p>
+        <div style="padding-bottom: 5px; padding-left: 5px;">
+          <img src="http://www.google.com/help/hc/images/gears.rtm3.png" alt="RTM offline" style="border: 1px solid black;">
+          <br>
+          <font size="1"><em>RTM in its offline state</em></font>
+        </div>
+        <p class="para">
+          These changes in messaging and presentation helped make the operation of this functionality clearer, and reduced user confusion surrounding the offline feature.
+        </p>
+        <a name="steps"></a>
+        <h2>The five steps to offline conversion</h2>
+        <p class="para">
+          At first, converting a large online-only web application to use Gears looks like a daunting exercise. By breaking this project down into more manageable tasks, we were able to see immediate progress, and this encouraged us to rapidly progress through the rest of the implementation. In essence, there were five steps to implementing offline access in RTM.
+        </p>
+        <h4>1. Ensuring resources are available offline</h4>
+        <p class="para">
+          The first step is to generate a manifest file for the ManagedResourceStore to ensure that your resources are available offline.
+        </p>
+        <p class="para">
+          In addition to analyzing your HTML, CSS, and JavaScript for resource references to add to the manifest, a quick and easy way to see references that you may have missed is to view the <em>Page Info</em> in Firefox, and check the <em>Links</em> and <em>Media</em> tabs.
+        </p>
+        <p class="para">
+          Another aspect of manifest generation to consider is how to version your manifests. This should take into account the different combinations of resources your application relies on when providing functionality determined by a user preference (e.g., interface language). In RTM, for example, the manifest version is a function of the RTM username, the application build version, and the language that the user has selected to view RTM in.
+        </p>
+        <p class="para">
+          One thing to be aware of when preparing the offline manifest is that LocalServer enforces a strict single-origin policy. References to resources on static resource servers (e.g., static.example.com or cdn.example.com) must be modified for Gears users to point to the same domain as the application itself—it may be easier to always use relative URLs for resources for Gears users.
+        </p>
+        <h4>2. Decoupling the application from the network</h4>
+        <p class="para">
+          The next step is to ensure that the application can operate without a network connection and to handle any user interface changes needed once connectivity is lost.
+        </p>
+        <p class="para">
+          Decoupling from the network may be relatively difficult if your application isn't a "single page application." In this case, the application may have to be converted to use AJAX functionality, or all pages on the server may need to be added to the offline manifest and each page must then become offline aware.
+        </p>
+        <p class="para">
+          If the application is a single page application and already communicates with the server in an asynchronous fashion via XMLHttpRequest, then this is relatively easy to accomplish. As network calls will fail when a loss of connectivity is detected, the application must take steps to provide the requested functionality without network access, e.g., by intercepting these network calls and responding to them in client-side code.
+        </p>
+        <p class="para">
+          Remember The Milk intercepts network calls in the transaction manager—the part of the code base responsible for issuing and monitoring XMLHttpRequests. The transaction manager implements a form of RPC where both a method name and arguments (as a JavaScript object/hash) are provided. Under certain circumstances, i.e., when the application is offline or when an outstanding call fails, these RPC calls are re-routed to a faux-server implemented in the client. This "server" then responds to these RPC calls as if it were the "real" online server (with some slight variations).
+        </p>
+        <h4>3. Persisting data on the client</h4>
+        <p class="para">
+          Now that the application is decoupled from the network, you can move on to persisting data using the Database feature of Gears. In most cases, i.e., when a relational database is used on the server-side, it may be a simple matter of porting the schema to SQLite and mirroring the data on the server in the client-side database.
+        </p>
+        <p class="para">
+          Depending on the application, the Gears database may be used as a write-back or write-through cache.
+        </p>
+        <p class="para">
+          RTM uses Gears as a write-through cache, keeping all data in browser memory for performance reasons and modifying the client-side SQLite database whenever a JS object is modified. Each set of modifications is converted to an INSERT statement which inserts a new version of an object into the database (UPDATE and DELETE are seldom used). A pruning algorithm is used to keep database size to a minimum: database objects are marked for pruning before the application starts, and are then DELETEd in batch at the end of the startup process.
+        </p>
+        <p class="para">
+          For example, instead of using the following to update the priority of a task in memory:
+        </p>
+      <pre>State.tasks_[1234].priority = 2;
+      </pre>
+        <p class="para">
+          The function:
+        </p>
+      <pre>State.updateTask = function(id, fields) {
+        for (var f in fields) {
+          State.tasks_[id][f] = fields[f];
+        }
+
+        if (Offline.isReady()) {
+          Offline.DB.updateTask(State.tasks_[id]);
+        }
+      };
+      </pre>
+      was written, and the above code was re-written to:
+      <pre>State.updateTask(1234, {"priority": 2});
+      </pre>
+      <p></p>
+      <p class="para">
+      In this case, the <code>Offline.DB.updateTask</code> function would convert the JS task object to the equivalent persisted and versioned database entry.
+      </p>
+      <h4>4. Re-creating application state from persisted data</h4>
+      <p class="para">
+      After persisting the application state in the client-side database, the next step is to transform this data into a form which can be used to bootstrap and launch an application.
+      </p>
+      <p class="para">
+      This is achieved in RTM by intercepting and re-routing the bootstrap process, retrieving the latest version of each object by ID and injecting these objects into the application as if they were sent from the server.
+      </p>
+      <h4>5. Developing a synchronization strategy</h4>
+      <p class="para">
+      Now that basic offline access has been enabled, you need to figure out a way to keep the state of data on the client and server synchronized. Data synchronization is hard—providing a generic synchronization framework that works in the majority of use cases is even more so. Gears doesn't, as yet, attempt to provide a synchronization framework, so data synchronization is left to the application developer.
+      </p>
+      <p class="para">
+      Fortunately, there are many resources and specifications available to aid in the development of an application-specific synchronization strategy. Examples of specifications that may be helpful include <a href="http://en.wikipedia.org/wiki/SyncML">SyncML</a> (used to synchronize PIM data such as calendar events, contacts, tasks, and notes) and the Microsoft <a href="http://en.wikipedia.org/wiki/Simple_Sharing_Extensions">Simple Sharing Extensions</a> for OPML/RSS (which are also somewhat applicable to the JSON format).
+      </p>
+      <p class="para">
+      A by-product of synchronization is conflict resolution, which must also be considered when developing the synchronization portion of an application. Conflict resolution is yet another application-specific part of synchronization—the properties of the problem domain must be taken into account in order to resolve data inconsistencies in a correct way.
+      </p>
+      <p class="para">
+      Remember The Milk implements synchronization using a sorted action log that specifies which actions were taken offline and properties affected by these actions, and a local addition table that holds the locally assigned unique IDs (LUIDs) of any objects created by the client.
+      </p>
+      <p class="para">
+      When synchronization is initiated, the client sends the action log and any local object additions to the server, which automatically handles conflicts. (Conflict resolution was already implemented in RTM to handle cases where multiple users may be working with the same task list.)
+      </p>
+      <p class="para">
+      If there were client-side additions, the unique IDs assigned to those objects may differ from the IDs chosen by the server during the synchronization process. To account for this, the server sends the client a local-to-global ID map, which is used to remap the IDs of client-created in-memory objects and database entries to those on the server.
+      </p>
+      <p class="para">
+      Once synchronization is finished, the client then requests the latest versions of its data set from the server to retrieve any server-side changes that occurred while the client was offline.
+      </p>
+      <p class="para">
+      RTM attempts to synchronize with the server on every application launch (if connectivity is detected).
+      </p>
+      <a name="tips"></a>
+      <h2>Tips and caveats: what we learned during Gears implementation</h2>
+      <p class="para">
+      In implementing the offline functionality in RTM, we've collected some tips and tricks that may be helpful when using Gears.
+      </p>
+      <h4>Dealing with LocalServer</h4>
+      <p class="para">
+      Some things to be aware of when working with LocalServer:
+      </p><ul>
+       <li>Detecting changes in ManagedResourceStore state currently requires polling <em>currentVersion</em> and <em>updateStatus</em>. Notification via events is on the Gears roadmap.</li>
+       <li>Long manifests can take a long time to download. Gears polls to see if every resource has changed, so even if a HTTP response of 304 (Not Modified) is returned, there is still a time cost associated with each poll.</li>
+       <li>Keep the above in mind in user messaging and presentation. Even if an application is modeless and always in sync, it still can't truly go offline without a copy of the manifest and all resources.</li>
+       <li>If your resources include many images, it may be worth implementing CSS sprites. If you're using GWT, take a look at the new <a href="http://code.google.com/webtoolkit/releases/release-notes-1.4.10.html#ImageBundle">ImageBundle</a> functionality in 1.4.</li>
+      </ul>
+      <p></p>
+      <h4>When to go offline?</h4>
+      <p class="para">
+      In the initial release of RTM's offline support, the application would switch to an offline state whenever it detected connectivity failure. This was an annoyance to users with intermittent connections and those who were switching between different modes of connectivity (for example, wired to wireless) on a laptop.
+      </p>
+      <p class="para">
+      The application was modified to only switch to an offline state if the user performs an action while connectivity is unavailable.
+      </p>
+      <p class="para">
+      To present a seamless experience, the action that triggered the state switch is then handled by the offline machinery, so that a user action is never lost.
+      </p>
+      <h4>The different types of offline: ensuring consistency across application launches</h4>
+      <p class="para">
+      There are three important scenarios to test in order to ensure that application state remains consistent in a variety of settings:
+      </p><ol>
+        <li>Start the application online, trigger a loss of connectivity, then re-establish connectivity.</li>
+        <li>Start the application offline, and establish connectivity.</li>
+        <li>Start the application offline, modify application state, shut down the browser, then re-launch the application offline.</li>
+      </ol>
+      <p></p>
+      <p class="para">
+      The "Work Offline" functionality found in Firefox or Internet Explorer may be helpful when testing these scenarios.
+      </p>
+      <h4>Defensive coding</h4>
+      <p class="para">
+      When dealing with unreliable and intermittent variables such as connectivity and database operations that may fail, you may need to take greater care in programming with failure in mind.
+      </p>
+      <p class="para">
+      For example, there are many different ways in which browsers indicate that an XMLHttpRequest has failed. Firefox and Internet Explorer 7 allow an <em>onerror</em> handler to be set on the XMLHttpRequest instance, whereas Internet Explorer 6 does not. In some cases, Internet Explorer will throw an exception on a call to the send method of an XMLHttpRequest instance.
+      </p>
+      <p class="para">
+      Additionally, most operations in Gears indicate failure by throwing exceptions. For example, a call to the execute method of a Gears database object can throw an exception if there is an error with the SQL statement provided (a malformed query or a non-existent table are examples of situations where exceptions may be thrown).
+      </p>
+      <p class="para">
+      To determine if Gears is available, you should wrap any calls to <code>google.gears.factory.create</code> in a try/catch block, in addition to checking for the existence of the <em>google</em> object in window and the <em>gears</em> object in google. For example:
+      </p><pre>var hasGears = !!(window.google &amp;&amp; google.gears); // The Gears plug-in is active, but has the user given permission for this site to use Gears?
+
+      try {
+        var ls = google.gears.factory.create('beta.localserver', '1.0');
+      } catch (e) {
+        hasGears = false; // No, the user hit the "Deny" button.
+      }
+      </pre>
+      <p></p>
+      <h4>Debugging</h4>
+      <p class="para">
+      If you're using Firefox, check out <a href="http://www.getfirebug.com">Firebug</a>. Firebug is an awesome extension which provides a JavaScript console and profiler, live CSS and HTML editor, network activity monitor, and more.
+      </p>
+      <p class="para">
+      To make debugging Gears integration easier, it may help to develop a set of easily accessible functions (which can be called from the Firebug console) to drop all databases, disable or remove LocalServer stores, execute arbitrary SQL queries, etc. It may also be worthwhile to log all exceptions thrown by Gears to the Firebug console while in the development stages of the integration.
+      </p>
+      <h4>Coding with upgrades in mind</h4>
+      <p class="para">
+      Instead of viewing Gears-using applications as web applications, think of them as you'd think about desktop applications—i.e., these applications now must handle upgrades to application resources, database structure and, possibly, client/server protocol changes.
+      </p>
+      <p class="para">
+      Fortunately, ManagedResourceStore in LocalServer makes the first easy. The second—database schema upgrades—must be handled specifically by your application. It may be helpful to version each schema in the database, and upon the launch of a newer version of the application that requires a different structure, execute ALTER TABLE commands to bring the structure in-line with application expectations. Downgrades should also be considered, and may be handled in a similar way.
+      </p>
+      <p class="para">
+      Backwards compatibility in client/server protocol versions may also be important, and is another application-specific issue that needs to be considered.
+      </p>
+      <a name="conclusion"></a>
+      <h2>Conclusion</h2>
+      <p class="para">
+      By now, you should be itching to add offline support to your web application (we hope!). If you should take anything away from this article, it's that taking your application offline isn't as hard or complex as it may first seem, and that Gears is a joy to work with (and it'll become even easier and more fun as the project matures and is used by more applications).
+      </p>
+      <p class="para">
+      As for us at RTM, we couldn't be happier with Gears. The speed at which we were able to provide offline functionality (four days from reading the documentation to a launchable implementation) is a testament to the quality, ease of use, and production-readiness of Gears. Many thanks to the Gears engineers for their foresight and for making this an open source project to which members of the Internet community can contribute.
+      </p>
+      <h4>More information and helpful resources</h4>
+      <p class="para">
+      The Gears plugin can be found, with a related <a href="http://code.google.com/support/bin/topic.py?topic=11628">FAQ</a>, at the <a href="http://gears.google.com/">Gears site</a>.
+      </p>
+      <p class="para">
+      Developer information regarding Gears, specifically, <a href="http://code.google.com/apis/gears/api_localserver.html">LocalServer</a> (its <a href="http://code.google.com/apis/gears/api_localserver.html#ResourceStore">ResourceStore</a> and <a href="http://code.google.com/apis/gears/api_localserver.html#ManagedResourceStore">ManagedResourceStore</a>), <a href="http://code.google.com/apis/gears/api_database.html">Database</a>, and <a href="http://code.google.com/apis/gears/api_workerpool.html">WorkerPool</a> can be located at the <a href="http://code.google.com/apis/gears/">Gears developer site</a>. An active <a href="http://groups.google.com/group/gears-users">developer forum</a> is also available.
+      </p>
+      <p class="para">
+      Additional code libraries for working with the Gears Database are: <a href="http://code.google.com/p/google-gears/wiki/DatabaseHelpers">DatabaseHelpers</a> (common database functions), <a href="http://code.google.com/p/gears-dblib/">GearsDB</a> (a simple database abstraction layer), <a href="http://labs.urielkatz.com/wiki/GearsORM">GearsORM</a> (an object-relational mapper for Gears), and <a href="http://m.ac.nz/gearshift/">Gearshift</a> (database schema migration).
+      </p>
+      <p class="para">
+      A code library which makes using WorkerPool more pleasant is Aaron Boodman's <a href="http://groups.google.com/group/gears-users/msg/67f494497639b641">Worker2</a>.
+      </p>
+      <p class="para">
+      For an example Gears application, check out "<a href="http://code.google.com/support/bin/answer.py?answer=70654&amp;topic=11369">Using Google Base and Gears for a Performant, Offline Experience</a>" by Dion Almaer and Pamela Fox.
+      </p>
+      <p class="para">
+      If you're using GWT, then the <a href="http://code.google.com/p/gwt-google-apis/">Google API Library for Google Web Toolkit</a> with support for Gears may be useful. Alternatively, if the <a href="http://dojotoolkit.org/">Dojo Toolkit</a> is your framework of choice, take a look at <a href="http://dojotoolkit.org/2007/07/06/new-dojo-offline-release">Dojo Offline</a>.
+      </p>
+      <p class="para">
+      If you'd like to play with some Gears applications, check out <a href="http://reader.google.com/">Google Reader</a> and <a href="http://www.rememberthemilk.com/">Remember The Milk</a>.
+      </p>
+    </div>
+  </div>
+</body>
+</html>

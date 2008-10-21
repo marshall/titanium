@@ -1,0 +1,21 @@
+--- jsoncpp.orig/src/lib_json/json_reader.cpp	2006-06-26 19:52:43.000000000 -0700
++++ json_reader.cc	2006-06-26 17:12:31.000000000 -0700
+@@ -1,5 +1,5 @@
+-#include <json/reader.h>
+-#include <json/value.h>
++#include "third_party/jsoncpp/reader.h"
++#include "third_party/jsoncpp/value.h"
+ #include <utility>
+ #include <stdio.h>
+ #include <assert.h>
+@@ -583,7 +583,9 @@
+    {
+       Char c = *current++;
+       unicode *= 16;
+-      if ( c >=0  &&  c <= 9 )
++      // Changed by girts: fix warning for always true:
++      // if ( c >=0  &&  c <= 9 )
++      if ( c <= 9 )
+          unicode += c - '0';
+       else if ( c >= 'a'  &&  c <= 'f' )
+          unicode += c - 'a' + 10;

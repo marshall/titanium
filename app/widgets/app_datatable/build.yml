@@ -1,0 +1,11 @@
+--- 
+:type: widget
+:name: app:datatable
+:version: 1.2.3
+:dependencies: 
+- :type: websdk
+  :version: ">=2.1"
+  :name: websdk
+:tags: [ uicontrol ]
+:licenses: [6]
+:description: "app:datatable is a dynamic table UI control which allows you to dynamically display table-oriented data in columns and rows and supports sorting either on the client or server-side"

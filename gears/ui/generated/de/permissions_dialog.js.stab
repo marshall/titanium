@@ -1,0 +1,33 @@
+<string id="string-html-title">Gears-Sicherheitswarnung</string>
+<string id="string-allow">Zulassen</string>
+<string id="string-allow-accesskey">Z</string>
+<string id="string-deny">Verweigern</string>
+<string id="string-deny-accesskey">V</string>
+<string id="string-cancel">Abbrechen</string>
+<string id="string-never-allow-link">Diese Website nie zulassen</string>
+<string id="string-never-allow-link-wince">Nie zulassen</string>
+<string id="string-description">
+  Gears ist eine Open-Source-Browsererweiterung, mit der Webanwendungen unter Verwendung der folgenden JavaScript-APIs Offline-Funktionen anbieten können:
+</string>
+<string id="string-localserver-desc">
+  Anwendungsressourcen lokal speichern und bereitstellen
+</string>
+<string id="string-database-desc">
+  Daten lokal in einer voll durchsuchbaren relationalen Datenbank speichern
+</string>
+<string id="string-workerpool-desc">
+  Asynchrones JavaScript zum Verbessern der Anwendungsreaktion ausführen
+</string>
+<string id="string-query-data">
+  Die untenstehende Website möchte über Gears Informationen auf Ihrem Computer speichern.
+</string>
+<string id="string-query-location">
+  Die untenstehende Website fordert über Gears Zugriffsinformationen zu Ihrem Speicherort an.
+</string>
+<string id="string-location-privacy-statement">
+  Lesen Sie die Datenschutzrichtlinien für die Site, um zu erfahren, wie Ihr Speicherort verwendet wird.
+</string>
+<string id="string-trust-site">
+  Ich vertraue dieser Site. Verwendung von Gears zulassen.
+</string>
+<string id="string-trust-site-accesskey">t</string>

@@ -1,0 +1,19 @@
+Gearpad is a sample Gears-enabled web application that implements a basic 
+notepad. The notepad can be viewed and edited offline, and Gearpad will 
+transition seamlessly between connected and disconnected. Changes that were made
+offline are synchronized in the background when a connection becomes available.
+
+You can run Gearpad on your own server to experiment with it and learn how to
+make your own offline-enabled application.
+
+Prerequisites:
+- PHP (http://php.net)
+- MySQL (http://mysql.com)
+
+Setup:
+- Create a new database in MySQL called 'gearpad'.
+- Import db.sql to initialize the new database's schema, like this:
+  mysql -u myusername -p gearpad < db.sql
+- Copy the gearpad directory into your PHP web root.
+- Modify _dbconfig.php and add the details about the database and user to use
+  with MySQL.

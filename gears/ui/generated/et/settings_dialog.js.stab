@@ -1,0 +1,14 @@
+<string id="string-cancel">Tühista</string>
+<string id="string-cancel-accesskey">T</string>
+<string id="string-apply">Rakenda</string>
+<string id="string-apply-accesskey">L</string>
+<string id="string-nosites">Saidid puuduvad.</string>
+<string id="string-allowed">Lubatud</string>
+<string id="string-denied">Keelatud</string>
+<string id="string-local-storage">Kohalik salvestamine</string>
+<string id="string-location-data">Asukoht</string>
+<string id="string-gears-settings">Gearsi seaded</string>
+<string id="string-permissions-description">Alljärgnev tabel näitab lubasid, mille olete igale Gearsi kasutada püüdnud saidile andnud.</string>
+<string id="string-version">Gearsi versioon PRODUCT_VERSION</string>
+<string id="string-html-title">Gearsi seaded</string>
+<string id="string-remove">Eemalda</string>

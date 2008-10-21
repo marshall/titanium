@@ -1,0 +1,33 @@
+<string id="string-html-title">Varovanie zabezpečenia rozšírenia Gears</string>
+<string id="string-allow">Povoliť</string>
+<string id="string-allow-accesskey">P</string>
+<string id="string-deny">Zakázať</string>
+<string id="string-deny-accesskey">K</string>
+<string id="string-cancel">Zrušiť</string>
+<string id="string-never-allow-link">Nikdy nepovoliť túto lokalitu</string>
+<string id="string-never-allow-link-wince">Nikdy nepovoliť</string>
+<string id="string-description">
+  Gears je rozšírenie prehliadača typu open source, ktoré umožňuje webovým aplikáciám poskytovať funkcie v režime offline prostredníctvom nasledujúcich rozhraní JavaScript API:
+</string>
+<string id="string-localserver-desc">
+  Uložiť a sprístupniť zdroje aplikácie lokálne
+</string>
+<string id="string-database-desc">
+  Uložiť informácie lokálne v relačnej databáze, s možnosťou úplného prehľadávania
+</string>
+<string id="string-workerpool-desc">
+  Spustiť asynchrónny Javascript na zlepšenie reakcie aplikácie
+</string>
+<string id="string-query-data">
+  Nižšie uvedená webová lokalita chce použiť rozšírenie Gears na uchovávanie informácií vo vašom počítači.
+</string>
+<string id="string-query-location">
+  Nižšie uvedená webová lokalita chce použiť rozšírenie Gears na získanie prístupu k informáciám o vašom umiestnení.
+</string>
+<string id="string-location-privacy-statement">
+  Ak chcete zistiť, na aké účely sa použijú informácie o vašom umiestnení, prečítajte si zásady ochrany osobných údajov pre túto lokalitu.
+</string>
+<string id="string-trust-site">
+  Považujem túto lokalitu za dôveryhodnú. Povoliť, aby mohla používať rozšírenie Gears.
+</string>
+<string id="string-trust-site-accesskey">t</string>

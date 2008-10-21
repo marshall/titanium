@@ -1,0 +1,14 @@
+<string id="string-cancel">Atšaukti</string>
+<string id="string-cancel-accesskey">C</string>
+<string id="string-apply">Taikyti</string>
+<string id="string-apply-accesskey">A</string>
+<string id="string-nosites">Nėra svetainių.</string>
+<string id="string-allowed">Leidžiama</string>
+<string id="string-denied">Neleidžiama</string>
+<string id="string-local-storage">Vietinė saugykla</string>
+<string id="string-location-data">Vietovė</string>
+<string id="string-gears-settings">„Gears“ nuostatos</string>
+<string id="string-permissions-description">Žemiau pateikta lentelėje rodomi leidimai, kuriuos suteikėte kiekvienai svetainei, bandžiusiai naudoti „Gears“.</string>
+<string id="string-version">„Gears“ versija PRODUCT_VERSION</string>
+<string id="string-html-title">„Gears“ nuostatos</string>
+<string id="string-remove">Pašalinti</string>

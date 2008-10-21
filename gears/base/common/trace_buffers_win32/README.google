@@ -1,0 +1,9 @@
+This code is provided as a separate library for simplicity.  It must be built
+without the /callcap flag, while the code it's profiling must use that flag.
+
+You can re-build the library from the provided source code as follows:
+
+  del trace_buffers_win32.lib trace_buffers_win32.pdb
+  cl /c /Ox /Zi /Zl /Fd"trace_buffers_win32.pdb" trace_buffers_win32.cc
+  lib /NODEFAULTLIB trace_buffers_win32.obj 
+  del trace_buffers_win32.obj

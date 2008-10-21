@@ -1,0 +1,46 @@
+/Users/marshall/Code/appcelerator/appcelerator_titanium/trunk/gears/tools/osx/../../base/npapi/npp_bindings.cc:161:29: error: ScintillaMacOSX.h: No such file or directory
+/Users/marshall/Code/appcelerator/appcelerator_titanium/trunk/gears/tools/osx/../../base/npapi/npp_bindings.cc:162:22: error: SciLexer.h: No such file or directory
+/Users/marshall/Code/appcelerator/appcelerator_titanium/trunk/gears/tools/osx/../../base/npapi/npp_bindings.cc:163:26: error: TCarbonEvent.h: No such file or directory
+/Users/marshall/Code/appcelerator/appcelerator_titanium/trunk/gears/tools/osx/../../base/npapi/npp_bindings.cc:166: error: expected namespace-name before ';' token
+/Users/marshall/Code/appcelerator/appcelerator_titanium/trunk/gears/tools/osx/../../base/npapi/npp_bindings.cc:166: error: '<type error>' is not a namespace
+/Users/marshall/Code/appcelerator/appcelerator_titanium/trunk/gears/tools/osx/../../base/npapi/npp_bindings.cc:176: error: expected constructor, destructor, or type conversion before '*' token
+/Users/marshall/Code/appcelerator/appcelerator_titanium/trunk/gears/tools/osx/../../base/npapi/npp_bindings.cc: In function 'void init_scintilla(OpaqueControlRef*, int, int)':
+/Users/marshall/Code/appcelerator/appcelerator_titanium/trunk/gears/tools/osx/../../base/npapi/npp_bindings.cc:180: error: 'scintillaMacOSType' was not declared in this scope
+/Users/marshall/Code/appcelerator/appcelerator_titanium/trunk/gears/tools/osx/../../base/npapi/npp_bindings.cc:180: error: 'scintilla' was not declared in this scope
+/Users/marshall/Code/appcelerator/appcelerator_titanium/trunk/gears/tools/osx/../../base/npapi/npp_bindings.cc:182: error: 'SCI_SETLEXER' was not declared in this scope
+/Users/marshall/Code/appcelerator/appcelerator_titanium/trunk/gears/tools/osx/../../base/npapi/npp_bindings.cc:182: error: 'SCLEX_XML' was not declared in this scope
+/Users/marshall/Code/appcelerator/appcelerator_titanium/trunk/gears/tools/osx/../../base/npapi/npp_bindings.cc:183: error: 'SCI_SETSTYLEBITS' was not declared in this scope
+/Users/marshall/Code/appcelerator/appcelerator_titanium/trunk/gears/tools/osx/../../base/npapi/npp_bindings.cc:185: error: 'SCI_STYLESETFORE' was not declared in this scope
+/Users/marshall/Code/appcelerator/appcelerator_titanium/trunk/gears/tools/osx/../../base/npapi/npp_bindings.cc:187: error: 'SCI_STYLESETITALIC' was not declared in this scope
+/Users/marshall/Code/appcelerator/appcelerator_titanium/trunk/gears/tools/osx/../../base/npapi/npp_bindings.cc:194: error: 'SCI_STYLESETBOLD' was not declared in this scope
+/Users/marshall/Code/appcelerator/appcelerator_titanium/trunk/gears/tools/osx/../../base/npapi/npp_bindings.cc:203: error: 'SCI_SETKEYWORDS' was not declared in this scope
+/Users/marshall/Code/appcelerator/appcelerator_titanium/trunk/gears/tools/osx/../../base/npapi/npp_bindings.cc:203: error: 'sptr_t' was not declared in this scope
+/Users/marshall/Code/appcelerator/appcelerator_titanium/trunk/gears/tools/osx/../../base/npapi/npp_bindings.cc:203: error: expected primary-expression before 'char'
+/Users/marshall/Code/appcelerator/appcelerator_titanium/trunk/gears/tools/osx/../../base/npapi/npp_bindings.cc:205: error: 'SCI_SETMARGINTYPEN' was not declared in this scope
+/Users/marshall/Code/appcelerator/appcelerator_titanium/trunk/gears/tools/osx/../../base/npapi/npp_bindings.cc:205: error: 'SC_MARGIN_NUMBER' was not declared in this scope
+/Users/marshall/Code/appcelerator/appcelerator_titanium/trunk/gears/tools/osx/../../base/npapi/npp_bindings.cc:206: error: 'SCI_SETMARGINWIDTHN' was not declared in this scope
+/Users/marshall/Code/appcelerator/appcelerator_titanium/trunk/gears/tools/osx/../../base/npapi/npp_bindings.cc:207: error: 'SC_MARGIN_SYMBOL' was not declared in this scope
+/Users/marshall/Code/appcelerator/appcelerator_titanium/trunk/gears/tools/osx/../../base/npapi/npp_bindings.cc:208: error: 'SCI_SETMARGINMASKN' was not declared in this scope
+/Users/marshall/Code/appcelerator/appcelerator_titanium/trunk/gears/tools/osx/../../base/npapi/npp_bindings.cc:208: error: 'SC_MASK_FOLDERS' was not declared in this scope
+/Users/marshall/Code/appcelerator/appcelerator_titanium/trunk/gears/tools/osx/../../base/npapi/npp_bindings.cc:222: error: 'SCI_SETTEXT' was not declared in this scope
+/Users/marshall/Code/appcelerator/appcelerator_titanium/trunk/gears/tools/osx/../../base/npapi/npp_bindings.cc:222: error: expected `)' before 'contents'
+/Users/marshall/Code/appcelerator/appcelerator_titanium/trunk/gears/tools/osx/../../base/npapi/npp_bindings.cc: In function 'CGContext* beginQDPluginUpdate(NPWindow*)':
+/Users/marshall/Code/appcelerator/appcelerator_titanium/trunk/gears/tools/osx/../../base/npapi/npp_bindings.cc:264: warning: 'NewRgn' is deprecated (declared at /Developer/SDKs/MacOSX10.4u.sdk/System/Library/Frameworks/ApplicationServices.framework/Frameworks/QD.framework/Headers/Quickdraw.h:2877)
+/Users/marshall/Code/appcelerator/appcelerator_titanium/trunk/gears/tools/osx/../../base/npapi/npp_bindings.cc:264: warning: 'NewRgn' is deprecated (declared at /Developer/SDKs/MacOSX10.4u.sdk/System/Library/Frameworks/ApplicationServices.framework/Frameworks/QD.framework/Headers/Quickdraw.h:2877)
+/Users/marshall/Code/appcelerator/appcelerator_titanium/trunk/gears/tools/osx/../../base/npapi/npp_bindings.cc:268: warning: 'ClipCGContextToRegion' is deprecated (declared at /Developer/SDKs/MacOSX10.4u.sdk/System/Library/Frameworks/ApplicationServices.framework/Frameworks/QD.framework/Headers/Quickdraw.h:7474)
+/Users/marshall/Code/appcelerator/appcelerator_titanium/trunk/gears/tools/osx/../../base/npapi/npp_bindings.cc:268: warning: 'ClipCGContextToRegion' is deprecated (declared at /Developer/SDKs/MacOSX10.4u.sdk/System/Library/Frameworks/ApplicationServices.framework/Frameworks/QD.framework/Headers/Quickdraw.h:7474)
+/Users/marshall/Code/appcelerator/appcelerator_titanium/trunk/gears/tools/osx/../../base/npapi/npp_bindings.cc:269: warning: 'DisposeRgn' is deprecated (declared at /Developer/SDKs/MacOSX10.4u.sdk/System/Library/Frameworks/ApplicationServices.framework/Frameworks/QD.framework/Headers/Quickdraw.h:2997)
+/Users/marshall/Code/appcelerator/appcelerator_titanium/trunk/gears/tools/osx/../../base/npapi/npp_bindings.cc:269: warning: 'DisposeRgn' is deprecated (declared at /Developer/SDKs/MacOSX10.4u.sdk/System/Library/Frameworks/ApplicationServices.framework/Frameworks/QD.framework/Headers/Quickdraw.h:2997)
+/Users/marshall/Code/appcelerator/appcelerator_titanium/trunk/gears/tools/osx/../../base/npapi/npp_bindings.cc: In function 'OSStatus WindowEventHandler(OpaqueEventHandlerCallRef*, OpaqueEventRef*, void*)':
+/Users/marshall/Code/appcelerator/appcelerator_titanium/trunk/gears/tools/osx/../../base/npapi/npp_bindings.cc:314: error: 'ScintillaMacOSX' was not declared in this scope
+/Users/marshall/Code/appcelerator/appcelerator_titanium/trunk/gears/tools/osx/../../base/npapi/npp_bindings.cc:314: error: 'scintilla' was not declared in this scope
+/Users/marshall/Code/appcelerator/appcelerator_titanium/trunk/gears/tools/osx/../../base/npapi/npp_bindings.cc:315: error: 'scintillaMacOSType' was not declared in this scope
+/Users/marshall/Code/appcelerator/appcelerator_titanium/trunk/gears/tools/osx/../../base/npapi/npp_bindings.cc:316: error: 'TCarbonEvent' was not declared in this scope
+/Users/marshall/Code/appcelerator/appcelerator_titanium/trunk/gears/tools/osx/../../base/npapi/npp_bindings.cc:316: error: expected `;' before 'event'
+/Users/marshall/Code/appcelerator/appcelerator_titanium/trunk/gears/tools/osx/../../base/npapi/npp_bindings.cc:324: error: 'event' was not declared in this scope
+/Users/marshall/Code/appcelerator/appcelerator_titanium/trunk/gears/tools/osx/../../base/npapi/npp_bindings.cc:330: error: expected primary-expression before '>' token
+/Users/marshall/Code/appcelerator/appcelerator_titanium/trunk/gears/tools/osx/../../base/npapi/npp_bindings.cc:334: error: 'SCI_CALLTIPSHOW' was not declared in this scope
+/Users/marshall/Code/appcelerator/appcelerator_titanium/trunk/gears/tools/osx/../../base/npapi/npp_bindings.cc:337: error: 'SCI_AUTOCSHOW' was not declared in this scope
+/Users/marshall/Code/appcelerator/appcelerator_titanium/trunk/gears/tools/osx/../../base/npapi/npp_bindings.cc: In function 'int16 NPP_HandleEvent(NPP_t*, void*)':
+/Users/marshall/Code/appcelerator/appcelerator_titanium/trunk/gears/tools/osx/../../base/npapi/npp_bindings.cc:534: error: 'scintilla' was not declared in this scope
+/Users/marshall/Code/appcelerator/appcelerator_titanium/trunk/gears/tools/osx/../../base/npapi/npp_bindings.cc:537: error: 'scintilla' was not declared in this scope

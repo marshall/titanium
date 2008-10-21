@@ -1,0 +1,11 @@
+--- jsoncpp.orig/include/json/value.h	2006-06-26 19:52:43.000000000 -0700
++++ value.h	2006-06-26 18:12:23.000000000 -0700
+@@ -1,7 +1,7 @@
+ #ifndef CPPTL_JSON_H_INCLUDED
+ # define CPPTL_JSON_H_INCLUDED
+ 
+-# include "forwards.h"
++# include "third_party/jsoncpp/forwards.h"
+ # include <string>
+ # include <vector>
+ 

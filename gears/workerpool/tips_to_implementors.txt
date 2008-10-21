@@ -1,0 +1,17 @@
+TIPS FOR ADDING THREADS SUPPORT TO A NEW PLATFORM:
+
+A useful sequence of investigative steps is:
+- Learn how to create a worker thread on the platform.
+   - And how to wait for the worker to signal an 'init-done' event.
+   - And how to send/receive messages in a worker thread.
+   - And how to send/receive messages in the parent thread.
+- Learn how to spin up a new JS engine (empty context)
+   - And how to set the body of code running there.
+   - And how to insert named objects into that code's globals.
+- Learn how to make the main JS thread run code synchronously, relative
+  to its other JS execution (i.e. wait until code returns to top level).
+   - And how to pump/handle messages in worker threads.
+   - Note: thread creator must wait synchronously for JS init code to run.
+- Learn how to set/save a JS function token.
+   - And how to invoke that JS function token.
+   - Note: parent and workers may require different implementations.

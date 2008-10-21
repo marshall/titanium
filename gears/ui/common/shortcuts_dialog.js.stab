@@ -1,0 +1,18 @@
+<string id="string-title-default"><TRANS_BLOCK desc="Window title for default style">Gears - Create Desktop Shortcut</TRANS_BLOCK></string>
+<string id="string-title-simple"><TRANS_BLOCK desc="Window title for the simple style">Create Application Shortcuts</TRANS_BLOCK></string>
+<string id="string-header-desktop"><TRANS_BLOCK desc="Tells the user that the application wants to create one shortcut on the desktop.">This website wants to create a shortcut on your computer. Do you want to allow this?</TRANS_BLOCK></string>
+<string id="string-header-wince"><TRANS_BLOCK desc="Tells the user that the application wants to create one shortcut under 'Start'.">This website wants to create a shortcut in your list of programs. Do you want to allow this?</TRANS_BLOCK></string>
+<string id="string-ok"><TRANS_BLOCK desc="Confirms creating the shortcut.">OK</TRANS_BLOCK></string>
+<string id="string-ok-accesskey"><TRANS_BLOCK desc="Access key for OK button">O</TRANS_BLOCK></string>
+<string id="string-cancel"><TRANS_BLOCK desc="Cancels the dialog">Cancel</TRANS_BLOCK></string>
+<string id="string-cancel-accesskey"><TRANS_BLOCK desc="Access key for Cancel button">C</TRANS_BLOCK></string>
+<string id="string-yes"><TRANS_BLOCK desc="Allows the shortcut to be created. Used when the dialog header is phrased as a question.">Yes</TRANS_BLOCK></string>
+<string id="string-yes-accesskey"><TRANS_BLOCK desc="Access key for Yes button">Y</TRANS_BLOCK></string>
+<string id="string-no"><TRANS_BLOCK desc="Denies the shortcut to be created. Used when the dialog header is phrased as a question.">No</TRANS_BLOCK></string>
+<string id="string-no-accesskey"><TRANS_BLOCK desc="Access key for No button">N</TRANS_BLOCK></string>
+<string id="string-never-allow"><TRANS_BLOCK desc="Button or link the user can press to permanently disallow Gears from creating this shortcut.">Never allow this shortcut</TRANS_BLOCK></string>
+<string id="string-never-allow-wince"><TRANS_BLOCK desc="Button or link the user can press to permanently disallow Gears from creating this shortcut, short version.">Never allow</TRANS_BLOCK></string>
+<string id="string-location-query"><TRANS_BLOCK desc="Asks the user to choose the locations to create a shortcut in. Only used when a platform supports multiple locations.">Create shortcuts in the following locations:</TRANS_BLOCK></string>
+<string id="string-desktop"><TRANS_BLOCK desc="Label for the checkbox allowing a user to create a shortcut on the desktop">Desktop</TRANS_BLOCK></string>
+<string id="string-startmenu"><TRANS_BLOCK desc="Label for the checkbox allowing a user to create a shortcut on the Windows start menu">Start menu</TRANS_BLOCK></string>
+<string id="string-quicklaunch"><TRANS_BLOCK desc="Label for the checkbox allowing a user to create a shortcut on the Windows quick launch bar">Quick launch bar</TRANS_BLOCK></string>

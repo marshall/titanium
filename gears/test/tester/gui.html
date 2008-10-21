@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+
+<!--
+Copyright 2007, Google Inc.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+ 1. Redistributions of source code must retain the above copyright notice,
+    this list of conditions and the following disclaimer.
+ 2. Redistributions in binary form must reproduce the above copyright notice,
+    this list of conditions and the following disclaimer in the documentation
+    and/or other materials provided with the distribution.
+ 3. Neither the name of Google Inc. nor the names of its contributors may be
+    used to endorse or promote products derived from this software without
+    specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+-->
+
+<html>
+<head>
+  <title>Unit Tests</title>
+  <script src='../../sdk/gears_init.js'></script>
+  <script src='../../../third_party/jsonjs/json_noeval.js'></script>
+  <script src='lang.js'></script>
+  <script src='xplat.js'></script>
+  <script src='results_publisher.js'></script>
+  <script src='ifc.js'></script>
+  <script src='runner_base.js'></script>
+  <script src='iframe_host.js'></script>
+  <script src='worker_host.js'></script>
+</head>
+<script>
+// Add an inter-frame coordinator instance to the window.
+var ifc = new IFC();
+if (!ifc.isInstalled) {
+  window.alert("Unable to prepare inter-frame communication.");
+}
+</script>
+<frameset rows="*,15%,0" BORDER=1>
+<frame name="report" id="report" src="report.html"></frame>
+<frame name="log" id="log" src="log.html"></frame>
+<frame name="exec" id="exec" src="blank.html"></frame>
+<script>
+</script>
+</frameset>
+</html>

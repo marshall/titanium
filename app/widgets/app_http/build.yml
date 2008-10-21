@@ -1,0 +1,11 @@
+--- 
+:type: widget
+:name: app:http
+:version: 1.0.2
+:dependencies: 
+- :type: websdk
+  :version: ">=2.1"
+  :name: websdk
+:tags: [ rest, network ]
+:licenses: [6]
+:description: "app:http is a non-visual control for executing REST-style services"

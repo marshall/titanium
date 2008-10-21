@@ -1,0 +1,482 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "DTD/xhtml1-transitional.dtd">
+
+<!--
+  Copyright 2007, Google Inc.
+
+  Redistribution and use in source and binary forms, with or without 
+  modification, are permitted provided that the following conditions are met:
+
+  1. Redistributions of source code must retain the above copyright notice, 
+  this list of conditions and the following disclaimer.
+  2. Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+  3. Neither the name of Google Inc. nor the names of its contributors may be
+  used to endorse or promote products derived from this software without
+  specific prior written permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+  EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
+  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<html>
+<head>
+  <title>Using Google Base and Gears for a Performant, Offline Experience</title>
+  <link rel="stylesheet" type="text/css" href="gears.css" />
+</head>
+
+<body>
+  <h1>Using Google Base and Gears for a Performant, Offline Experience</h1>
+
+  <div id="pagecontent">
+      <div class="i">
+      <style type="text/css">
+      .funcTable {
+        margin-left: 30px;
+      }
+      .funcTable td {
+        border: 1px solid grey;
+        padding: 5px;
+        font-size: 11px;
+      }
+      </style>
+      <em>First article in the "Building Better Ajax Applications with Google APIs" series.<br><br>
+      Dion Almaer and Pamela Fox, Google
+      <br>June 2007</em>
+      <ul>
+        <li><a href="#introduction">Introduction</a></li>
+        <li><a href="#section1">Understanding the App</a></li>
+        <li><a href="#section2">Using Google Base data API Feeds</a></li>
+        <li><a href="#section3">Adding Gears to the App</a></li>
+        <li><a href="#section4">Debugging the Offline App</a></li>
+        <li><a href="#conclusion">Conclusion</a></li>
+      </ul>
+      <a name="introduction"></a><h3>Introduction</h3>
+      <p class="para">
+      Combining Google Base with Gears, we demonstrate how to create an application that can be used offline.
+      After reading through this article, you will be more familiar with the Google Base API, as well as understand how to use Gears for storing and accessing user preferences and data.
+      </p>
+      <a name="section1"></a><h3>Understanding the App</h3>
+      <p class="para">
+      To understand this app, you should first be familiar with <a href="http://base.google.com/" target="_blank">Google Base</a>, which is basically a big database of items spanning various categories like products, reviews, recipes, events, and more.
+      </p><p>
+      Each item is annotated with a title, description, link to original source of the data (if exists), plus additional attributes that vary per category type. Google Base takes advantage of the fact that items in the same category share a common set of attributes—for example, all recipes have ingredients.
+      Google Base items will even occasionally show up in search results from Google web search or Google product search.
+      </p>
+      <p>
+      <a href="http://google-ajax-examples.googlecode.com/svn/trunk/basewithgears/index.html" target="_blank" title="Go to the Google Base on a Plane Application"><img src="http://code.google.com/articles/support/gearsbase_screenshot.jpg" style="border: 1px solid grey; margin-left: 2em;" border="0" width="600"></a>
+      </p>
+      <p class="para">
+      Our demo app, <a href="http://google-ajax-examples.googlecode.com/svn/trunk/basewithgears/index.html" target="_blank">Base with Gears</a>, lets you store and display common searches you might perform on Google Base—like finding recipes with "chocolate" (yum) or personal ads with "walks on the beach" (romantic!). You can think of it as a "Google Base Reader" that lets you subscribe to searches and see the updated results when you revisit the app, or when the app goes out to look for updated feeds every 15 minutes.
+      </p>
+      <p class="para">
+      Developers looking to extend the app could add more features, like visually alerting the user when the search results contain new results, letting the user bookmark (star) favorite items (offline + online), and letting the user do category-specific attribute searches like Google Base.
+      </p>
+      <a name="section2"></a><h3>Using Google Base data API Feeds</h3>
+      <p class="para">
+      Google Base can be queried programmatically with the Google Base data API, which is compliant with the Google data API framework. The Google data API protocol provides a simple protocol for reading and writing on the web, and is used by many Google products: Picasa, Spreadsheets, Blogger, Calendar, Notebook, and more.
+      </p>
+      <p class="para">
+      The Google data API format is based on XML and the Atom Publishing Protocol, so most of the read/write interactions are in XML.
+      </p>
+      <p class="para">
+      An example of a Google Base feed based on the Google data API is:
+      <br>
+      <a href="http://www.google.com/base/feeds/snippets/-/products?bq=digital+camera" target="_blank">
+      http://www.google.com/base/feeds/snippets/-/products?bq=digital+camera
+      </a>
+      </p>
+      <p class="para">
+      The <code>snippets</code> feed type gives us the publicly available feed of items. The <code>-/products</code> lets us restrict the feed to the products category. And the <code>bq=</code> parameter lets us restrict the feed further, to only results containing the keyword "digital camera." If you view this feed in the browser, you'll see XML containing <code>&lt;entry&gt;</code> nodes with matching results. Each entry contains the typical author, title, content, and link elements, but also comes with additional category-specific attributes (like "price" for items in the products category).
+      </p>
+      <p class="para">
+      Due to the cross-domain restriction of XMLHttpRequest in the browser, we aren't allowed to directly read in an XML feed from www.google.com in our JavaScript code. We could set up a server-side proxy to read in the XML and spit it back out at a location on the same domain as our app, but we would like to avoid server-side programming altogether. Luckily, there is an alternative.
+      </p>
+      <!--
+      <pre>
+      &lt;feed&gt;
+        &lt;id&gt;http://www.google.com/base/feeds/snippets&lt;/id&gt;
+        &lt;updated&gt;2007-06-12T18:02:12.298Z&lt;/updated&gt;
+        &lt;title type="text"&gt;
+        Items matching query: (digital camera) [item type:products]
+        &lt;/title&gt;
+        &lt;link rel="alternate" type="text/html" href="http://base.google.com"/&gt;
+        &lt;link rel="http://schemas.google.com/g/2005#feed" type="application/atom+xml" href="http://www.google.com/base/feeds/snippets"/&gt;
+        &lt;link rel="http://schemas.google.com/g/2005#batch" type="application/atom+xml" href="http://www.google.com/base/feeds/snippets/batch"/&gt;
+        &lt;link rel="self" type="application/atom+xml" href="http://www.google.com/base/feeds/snippets/-/products?start-index=1&max-results=25&bq=digital+camera"/&gt;
+        &lt;link rel="next" type="application/atom+xml" href="http://www.google.com/base/feeds/snippets/-/products?start-index=26&max-results=25&bq=digital+camera"/&gt;
+        &lt;author&gt;
+        &lt;name&gt;Google Inc.&lt;/name&gt;
+        &lt;email&gt;base@google.com&lt;/email&gt;
+        &lt;/author&gt;
+        &lt;generator version="1.0" uri="http://base.google.com"&gt;GoogleBase&lt;/generator&gt;
+        &lt;openSearch:totalResults&gt;2029806&lt;/openSearch:totalResults&gt;
+        &lt;openSearch:startIndex&gt;1&lt;/openSearch:startIndex&gt;
+        &lt;openSearch:itemsPerPage&gt;25&lt;/openSearch:itemsPerPage&gt;
+        &lt;entry&gt;
+        &lt;id&gt;
+        http://www.google.com/base/feeds/snippets/3227780769114240311
+        &lt;/id&gt;
+        &lt;published&gt;2007-06-06T12:19:12.000Z&lt;/published&gt;
+        &lt;updated&gt;2007-06-11T13:31:23.000Z&lt;/updated&gt;
+        &lt;category scheme="http://base.google.com/categories/itemtypes" term="Products"/&gt;
+        &lt;title type="text"&gt;
+        Digital Camera Battery Power Cable for Sony Digital Cameras (Replaces Sony AC-LS5) ACLS5) Camera Connecting Cables
+        &lt;/title&gt;
+        &lt;content type="html"&gt;
+        Power Cable for Sony Digital Cameras (Compatible with cameras that use Sony AC-LS5 AC Power Supply) This cable is compatible with Sony digital cameras that use the Sony AC-LS5 Power Supply and will power the following devices. DSC-F88 DSC-H1 DSC-L1 ...
+        &lt;/content&gt;
+        &lt;link rel="alternate" type="text/html" href="http://www.bhphotovideo.com/bnh/controller/home?O=productlist&A=details&Q=&sku=413656&is=REG&kw=DIDCB6167&BI=583"/&gt;
+        &lt;link rel="self" type="application/atom+xml" href="http://www.google.com/base/feeds/snippets/3227780769114240311"/&gt;
+        &lt;author&gt;
+        &lt;name&gt;B&H Photo-Video-Audio Top rated since 1973&lt;/name&gt;
+        &lt;email&gt;anon-szot0wdsq0at@base.google.com&lt;/email&gt;
+        &lt;/author&gt;
+        &lt;g:manufacturer_id type="text"&gt;DCB6167&lt;/g:manufacturer_id&gt;
+        &lt;g:item_type type="text"&gt;Products&lt;/g:item_type&gt;
+        &lt;g:image_link type="url"&gt;
+        http://www.bhphotovideo.com/images/items/413656.jpg
+        &lt;/g:image_link&gt;
+        &lt;g:category type="text"&gt;
+        Digital Photography&gt;On Camera Accessories&gt;Batteries & Power Supplies&gt;Camera Connecting Cables
+        &lt;/g:category&gt;
+        ....
+        &lt;/entry&gt;
+      &lt;/feed&gt;
+      </pre>
+      -->
+      <p class="para">
+      Like the other Google data APIs, the Google Base data API has a JSON output option, in addition to standard XML. The output for the feed we saw earlier in JSON format would be at this URL:
+      <br>
+      <a href="http://www.google.com/base/feeds/snippets/-/products?bq=digital+camera&amp;alt=json" target="_blank">http://www.google.com/base/feeds/snippets/-/products?bq=digital+camera&amp;alt=json</a>
+      </p>
+      <p class="para">
+      JSON is a lightweight interchange format that allows for hierarchical nesting as well as various data types. But more importantly, JSON output is native JavaScript code itself, and so it can be loaded into your web page just by referencing it in a script tag, bypassing the cross-domain restriction.</p>
+      <p class="para">
+      The Google data APIs also let you specify a "json-in-script" output with a callback function to execute once the JSON is loaded. This makes the JSON output even easier to work with, as we can dynamically append script tags to the page and specify different callback functions for each.
+      </p>
+      <p class="para">
+      So, to dynamically load a Base API JSON feed into the page, we could use the following function that creates a script tag with the feed URL (appended with <code>alt</code><code>callback</code> values) and appends it to the page.</p>
+      <pre>function getJSON() {
+  var script = document.createElement('script');
+
+  var url = "http://www.google.com/base/feeds/snippets/-/products?bq=digital+camera";
+  script.setAttribute('src', url + "&amp;alt=json-in-script&amp;callback=listResults");
+  script.setAttribute('type', 'text/JavaScript');
+  document.documentElement.firstChild.appendChild(script);
+}</pre>
+      <p class="para">
+      So our callback function <code>listResults</code> can now iterate through the JSON—passed in as the only parameter—and display information on each entry found in a bulleted list.
+      </p>
+      <pre>function listTasks(root) {
+  var feed = root.feed;
+  var html = [''];
+  html.push('&lt;ul&gt;');
+  for (var i = 0; i &lt; feed.entry.length; ++i) {
+    var entry = feed.entry[i];
+    var title = entry.title.$t;
+    var content = entry.content.$t;
+    html.push('&lt;li&gt;', title, ' (', content, ')&lt;/li&gt;');
+  }
+  html.push('&lt;/ul&gt;');
+
+  document.getElementById("agenda").innerHTML = html.join("");
+}</pre>
+      <a name="section3"></a><h3>Adding Gears</h3>
+      <p class="para">
+      Now that we have an application that is able to talk to Google Base via the Google data API, we want to enable this application to run offline. This is where Gears comes in.
+      </p>
+      <p class="para">
+      There are various architecture choices when it comes to writing an application that can go offline. You will be asking yourself questions about how the application should work online vs. offline (e.g. Does it work exactly the same? Are some features disabled, such as search? How will you handle syncing?)
+      </p>
+      <p class="para">
+      In our case, we wanted to make sure that the users on browsers without Gears can still use the app, while giving users who do have the plug-in the benefits of offline use and a more responsive UI.
+      </p>
+      <p>
+      Our architecture looks like this:
+      </p><ul>
+      <li>We have a JavaScript object that is in charge of storing your search queries and returning back results from these queries.</li>
+      <li>If you have Gears installed, you get a Gears version that stores everything in the local database.</li>
+      <li>If you do not have Gears installed, you get a version that stores the queries in a cookie and doesn't store the full results at all (hence the slightly slower responsiveness), as the results are too large to store in a cookie.</li>
+      </ul>
+      What is nice about this architecture is that you do not have to do checks for <code>if (online) {}</code> all over the shop. Instead, the application has one Gears check, and then the correct adapter is used.
+      <p></p>
+      <br>
+      <strong>Using a Gears Local Database</strong>
+      <p class="para">
+      One of the components of Gears is the local SQLite database that is embedded and ready for your use. There is a simple database API that would look familiar to you if you have previously used APIs for server-side databases like MySQL or Oracle.
+      </p>
+      <p class="para">
+      The steps to using a local database are quite simple:
+        </p><ul>
+        <li>Initialize the Gears objects</li>
+        <li>Get a database factory object, and open a database</li>
+        <li>Start executing SQL requests</li>
+        </ul>
+      <p>
+      </p><p class="para">
+      Let's walk through these quickly.
+      </p>
+      <br>
+      <strong>Initialize the Gears Objects</strong>
+      <p class="para">
+      Your application should read in the contents of <a href="http://code.google.com/apis/gears/samples/gears_init.js" target="_blank">http://code.google.com/apis/gears/samples/gears_init.js</a> either directly, or by pasting in the code to your own JavaScript file. Once you have <code>&lt;script src="..../gears_init.js" type="text/JavaScript"&gt;&lt;/script&gt;</code> going, you have access to the <b>google.gears</b> namespace.
+      </p>
+      <br>
+      <strong>Get a Database Factory Object &amp; Open a Database</strong>
+      <pre>var db = google.gears.factory.create('beta.database', '1.0');
+db.open('testdb');</pre>
+      <p class="para">
+      This one call will give you a database object that allows you to open a database schema. When you open databases, they are scoped via the same origin policy rules, so your "testdb" won't clash with my "testdb."
+      </p>
+      <br>
+      <strong>Start Executing SQL Requests</strong>
+      <p class="para">
+      Now we are ready to send SQL requests to the database. When we send "select" requests, we get back a result set that we can iterate through for desired data:
+      </p>
+      <pre>var rs = db.execute('select * from foo where name = ?', [ name ]);</pre>
+      <p class="para">
+      You can operate on the returned result set with the following methods:
+      </p>
+      <table class="funcTable">
+      <tbody><tr><td><code>boolean</code></td><td><code>isValidRow()</code></td></tr>
+      <tr><td><code>void</code></td><td><code>next()</code></td></tr>
+      <tr><td><code>void</code></td><td><code>close()</code></td></tr>
+      <tr><td><code>int</code></td><td><code>fieldCount()</code></td></tr>
+      <tr><td><code>string</code></td><td><code>fieldName(int fieldIndex)</code></td></tr>
+      <tr><td><code>variant</code></td><td><code>field(int fieldIndex)</code></td></tr>
+      <tr><td><code>variant</code></td><td><code>fieldByName(string fieldname)</code></td></tr>
+      </tbody></table>
+      <p class="para">
+      For more details, please see the <a href="http://code.google.com/apis/gears/api_database.html">Database Module API documentation</a>.
+      </p>
+      <br>
+      <strong>Using GearsDB to Encapsulate the Low Level API</strong>
+      <p class="para">
+      We wanted to encapsulate and make more convenient some of the common database tasks. For example,
+      </p>
+      <ul>
+       <li>We wanted to have a nice way to log the SQL that was generated when we were debugging the application.</li>
+        <li>We wanted to handle exceptions in one place instead of having to <code>try{}catch(){}</code> all over the place.</li>
+        <li>We wanted to deal with JavaScript objects instead of result sets when reading or writing data.</li>
+      </ul>
+      <p class="para">
+      To handle these issues in a generic way, we created <a href="http://code.google.com/p/gears-dblib" target="_blank">GearsDB</a>, an open source library that wraps the Database object. We will now show how to make use of GearsDB.
+      </p>
+      <strong>Initial Setup</strong>
+      <p class="para">
+      In our <a href="http://google-ajax-examples.googlecode.com/svn/trunk/basewithgears/gears_base.js">window.onload</a> code, we need to make sure that the database tables that we rely on are in place. If the user has Gears installed when the following code runs, they will create a <code>GearsBaseContent</code> object:
+      </p>
+      <pre>content = hasGears() ? new GearsBaseContent() : new CookieBaseContent();</pre>
+      <p class="para">
+      Next, we open the database and create tables if they don't already exist:
+      </p>
+      <pre>db = new GearsDB('gears-base'); // db is defined as a global for reuse later!
+if (db) {
+  db.run('create table if not exists BaseQueries (Phrase varchar(255), Itemtype varchar(100))');
+  db.run('create table if not exists BaseFeeds  (id varchar(255), JSON text)');
+}</pre>
+      <p class="para">
+      At this point, we are sure that we have a table to store the queries and the feeds. The code <code>new GearsDB(name)</code> will encapsulate the opening of a database with the given name. The <code>run</code> method wraps the lower level <code>execute</code> method but also handles debugging output to a console and trapping exceptions.
+      </p>
+      <br>
+      <strong>Adding a Search Term</strong>
+      <p class="para">
+      When you first run the app, you won't have any searches. If you try to search for a Nintendo Wii in products, we will save this search term in the BaseQueries table.
+      </p>
+      <p class="para">
+      The Gears version of the <code>addQuery</code> method does this by taking the input and saving it via <code>insertRow</code>:
+      </p>
+      <pre>var searchterm = { Phrase: phrase, Itemtype: itemtype };
+db.insertRow('BaseQueries', searchterm);</pre>
+      <p class="para">
+      <code>insertRow</code> takes a JavaScript object (<code>searchterm</code>) and handles INSERTing it into the table for you. It also lets you define constraints (for example, uniqueness—block insertion of more than one "Bob"). However, most of the time you will be handling these constraints in the database itself.
+      </p>
+      <br>
+      <strong> Getting All Search Terms</strong>
+      <p class="para">
+      To populate your list of past searches, we use a nice select wrapper named <code>selectAll</code>:
+      </p>
+      <pre>GearsBaseContent.prototype.getQueries = function() {
+  return this.db.selectAll('select * from BaseQueries');
+}</pre>
+      <p class="para">
+      This will return an array of JavaScript objects that match the rows in the database (e.g. <code>[ { Phrase: 'Nintendo Wii', Itemtype: 'product' }, { ... }, ...]</code>).
+      </p>
+      <p class="para">
+      In this case, it's fine to return the full list. But if you have a lot of data, you'll probably want to use a callback in the select call so that you can operate on each returned row as it comes in:
+      </p>
+      <pre>db.selectAll('select * from BaseQueries where Itemtype = ?', ['product'], function(row) {
+  ... do something with this row ...
+});</pre>
+      <p class="para">
+      Here are some other helpful select methods in GearsDB:
+      </p>
+      <table class="funcTable">
+      <tbody><tr><td><code>selectOne(sql, args)</code></td><td>Return first/one matching JavaScript object</td></tr>
+      <tr><td><code>selectRow(table, where, args, select)</code></td><td>Normally used in simple cases to ignore SQL</td></tr>
+      <tr><td><code>selectRows(table, where, args, callback, select)</code></td><td>Same as selectRow, but for multiple results.</td></tr>
+      </tbody></table>
+      <br>
+      <strong>Loading a Feed</strong>
+      <p class="para">
+      When we get the results feed from Google Base, we need to save it to the database:
+      </p>
+      <pre>content.setFeed({ id: id, JSON: json.toJSONString() });
+... which calls ...
+GearsBaseContent.prototype.setFeed = function(feed) {
+  this.db.forceRow('BaseFeeds', feed);
+}</pre>
+      <p class="para">
+      We first take the JSON feed and return it as a String using the <code>toJSONString</code> method. Then we create the <code>feed</code> object and pass that into the <code>forceRow</code> method. <code>forceRow</code> will INSERT an entry if one doesn't already exist, or UPDATE an existing entry.
+      </p>
+      <br>
+      <strong>Displaying Search Results</strong>
+      <p class="para">
+      Our app displays the results for a given search on the right panel of the page. Here's how we retrieve the feed associated with the search term:
+      </p>
+      <pre>GearsBaseContent.prototype.getFeed = function(url) {
+  var row = this.db.selectRow('BaseFeeds', 'id = ?', [ url ]);
+  return row.JSON;
+}</pre>
+      <p class="para">
+      Now that we have the JSON for a row, we can <code>eval()</code> it to get the objects back:
+      </p>
+      <pre>eval("var json = " + jsonString + ";");</pre>
+      <p class="para">
+      We are off to the races and can start innerHTMLing content from JSON into our page.
+      </p>
+      <br>
+      <strong>Using a Resource Store for Offline Access</strong>
+      <p class="para">
+      Since we are getting content from a local database, this app should also work offline, right?
+      </p>
+      <p class="para">
+      Well, no. The problem is that to kick off this app, you need to load its web resources, such as its JavaScript, CSS, HTML, and images. As it currently stands, if your user took the following steps, the app might still work: start <em>online</em>, do some searches, <em>don't</em> close browser, go <em>offline</em>. This could work as the items would still be in the browser's cache. But what if this isn't the case? We want our users to be able to access the app from scratch, after a reboot, etc.
+      </p>
+      <p class="para">
+      To do this, we use the LocalServer component and capture our resources. When you capture a resource (such as the HTML and JavaScript required to run the application), Gears will save away these items and will also trap requests from the browser to return them. The local server will act as a traffic cop and return the saved contents from the store.
+      </p>
+      <p class="para">
+      We also make use of the ResourceStore component, which requires you to manually tell the system which files you want to capture. In many scenarios, you want to version your application and allow for upgrades in a transactional way. A set of resources together define a version, and when you release a new set of resources you will want your users to have a seamless upgrade of the files. If that's your model, then you will be using the ManagedResourceStore API.
+      </p>
+      <p class="para">
+      To capture our resources, the GearsBaseContent object will:
+      </p>
+      <ol>
+       <li>Set up an array of files that needs capturing</li>
+       <li>Create a LocalServer</li>
+       <li>Open or create a new ResourceStore</li>
+       <li>Call out to capture the pages into the store</li>
+      </ol>
+      <pre>// Step 1
+this.storeName = 'gears-base';
+this.pageFiles = [
+  location.pathname,
+  'gears_base.js',
+  '../scripts/gears_db.js',
+  '../scripts/firebug/firebug.js',
+  '../scripts/firebug/firebug.html',
+  '../scripts/firebug/firebug.css',
+  '../scripts/json_util.js',    'style.css',
+  'capture.gif' ];
+
+// Step 2
+try {
+  this.localServer = google.gears.factory.create('beta.localserver', '1.0');
+} catch (e) {
+  alert('Could not create local server: ' + e.message);
+  return;
+}
+
+// Step 3
+this.store = this.localServer.openStore(this.storeName) || this.localServer.createStore(this.storeName);
+
+// Step 4
+this.capturePageFiles();
+
+... which calls ...
+
+GearsBaseContent.prototype.capturePageFiles = function() {
+  this.store.capture(this.pageFiles, function(url, success, captureId) {
+    console.log(url + ' capture ' + (success ? 'succeeded' : 'failed'));
+  });
+}</pre>
+      <p class="para">
+      What is important to note here is that you can only capture resources on your own domain. We ran into this limitation when we tried to access the GearsDB JavaScript file directly from the original "gears_db.js" file in its SVN trunk. The solution is simple, of course: you need to download any external resources and place them under your domain. Note that 302 or 301 redirects will not work, as LocalServer only accepts 200 (Success) or 304 (Not Modified) server codes.
+      </p>
+      <p class="para">
+      This has implications. If you place your images on images.yourdomain.com, you will not be able to capture them. www1 and www2 can't see each other. You could set up server-side proxies, but that would defeat the purpose of splitting out your application to multiple domains.
+      </p>
+      <a name="section4"></a><h3>Debugging the Offline Application</h3>
+      <p class="para">
+      Debugging an offline application is a little more complicated. There are now more scenarios to test:
+      </p><p>
+      </p><ul>
+        <li>I am online with the app fully running in cache</li>
+        <li>I am online but have not accessed the app, and nothing in cache</li>
+        <li>I am offline but have accessed the app</li>
+        <li>I am offline and have never accessed the app (not a good place to be!)</li>
+      </ul>
+      <p class="para">
+      To make life easier, we used the following pattern:
+      </p>
+      <ul>
+        <li>We disable the cache in Firefox (or your browser of choice) when we need to make sure that the browser isn't just picking something up from the cache</li>
+        <li>We debug using Firebug (and Firebug Lite for testing on other browsers); we use <code>console.log()</code> all over the place, and detect for the console just in case</li>
+        <li>We add helper JavaScript code to:
+        <ul>
+        <li>allow us to clear out the database and give us a clean slate</li>
+        <li>remove the captured files, so when you reload, it goes out to the Internet to get them again (useful when you are iterating on development ;) </li>
+        </ul>
+        </li>
+      </ul>
+      <p class="para">
+      The debug widget shows up on the left side of the page only if you have Gears installed. It has callouts to clean-up code:
+      </p>
+      <pre>GearsBaseContent.prototype.clearServer = function() {
+  if (this.localServer.openStore(this.storeName)) {
+    this.localServer.removeStore(this.storeName);
+    this.store = null;
+  }
+}
+
+GearsBaseContent.prototype.clearTables = function() {
+  if (this.db) {
+    this.db.run('delete from BaseQueries');
+    this.db.run('delete from BaseFeeds');
+  }
+  displayQueries();
+}</pre>
+      <a name="conclusion"></a><h3>Conclusion</h3>
+      <p class="para">
+      You can see that working with Gears is actually fairly simple. We used GearsDB to make the Database component even easier, and used the manual ResourceStore, which worked just fine for our example.
+      </p>
+      <p class="para">
+      The area where you spend the most time is defining the strategy for when to get data online, and how to store it offline. It is important to spend time on defining the database schema. If you do need to change the schema in the future, you will need to manage that change since your current users will have a version of the database already. This means that you will need to ship script code with any db upgrade. Obviously, it helps to minimize this, and you may want to try out <a href="http://soapbox.co.nz/past/2007/6/5/introducing-gearshift/">GearShift</a>, a small library that may help you manage revisions.
+      </p>
+      <p class="para">
+      We could have also used ManagedResourceStore to keep track of our files, with the following consequences:
+      </p><ul>
+      <li>We would be good citizens and version our files to enable clean future upgrades</li>
+      <li>There is a feature of the ManagedResourceStore that lets you alias a URL to another piece of content. A valid architecture choice would be to have gears_base.js be a non-Gears version, and alias that so Gears itself would download gears_base_withgears.js which would have all of the offline support.</li>
+      </ul>
+      For our app, we felt it was easier just to have one interface and implement that interface in two ways.
+      <p></p>
+      <p class="para">
+      We hope you found Gearing up applications fun and easy! Please join us in the <a href="http://groups.google.com/group/gears-users" target="_blank">Gears</a> forum if you have questions or an app to share.
+      </p>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>

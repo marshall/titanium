@@ -1,0 +1,1942 @@
+bplist00“
+_WebMainResource_WebSubresources”	^WebResourceURL_WebResourceMIMEType_WebResourceData_file:///settings_dialog.htmlYtext/htmlOÍ‰Ôªø<!DOCTYPE html>
+
+<!--
+Copyright 2007, Google Inc.
+
+Redistribution and use in source and binary forms, with or without 
+modification, are permitted provided that the following conditions are met:
+
+ 1. Redistributions of source code must retain the above copyright notice, 
+    this list of conditions and the following disclaimer.
+ 2. Redistributions in binary form must reproduce the above copyright notice,
+    this list of conditions and the following disclaimer in the documentation
+    and/or other materials provided with the distribution.
+ 3. Neither the name of Google Inc. nor the names of its contributors may be
+    used to endorse or promote products derived from this software without
+    specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
+OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<html>
+<head>
+  <style type="text/css">
+
+/*
+Copyright 2007, Google Inc.
+
+Redistribution and use in source and binary forms, with or without 
+modification, are permitted provided that the following conditions are met:
+
+ 1. Redistributions of source code must retain the above copyright notice, 
+    this list of conditions and the following disclaimer.
+ 2. Redistributions in binary form must reproduce the above copyright notice,
+    this list of conditions and the following disclaimer in the documentation
+    and/or other materials provided with the distribution.
+ 3. Neither the name of Google Inc. nor the names of its contributors may be
+    used to endorse or promote products derived from this software without
+    specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
+OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
+button.custom  {
+  font: bold 13px arial,sans-serif;
+  color: #222;
+  background: white url(button_bg.gif) repeat-x;
+  background-position:left 1px;
+  border: 1px solid #aaa;
+  padding: 2px 7px 3px;
+  white-space:nowrap;
+  cursor:pointer;
+
+  /* Start out hidden. We unhide after setting the initial width in button.js */
+  visibility:hidden;
+
+  /* Mozilla has proprietary native support for rounded corners */
+  -moz-border-radius:3px;
+
+  /* WebKit also knows how to do it, but it looks better at 2px on webkit */
+  -webkit-border-radius:2px;
+
+  /* The following styles are necesary on IE to combat it adding weird
+  extra padding. See: http://jehiah.cz/archive/button-width-in-ie */
+  width:auto;
+  overflow:visible;
+}
+
+/* IE specific changes -- this class is added by button.js */
+button.custom.ie {
+  padding:2px 9px 1px;
+  background-position:left top;
+}
+
+/* We don't use the :hover psuedo-class because it doesn't work in IE6 and
+lower. JavaScript sets this class manually on rollover. */
+button.custom.hover {
+  border-color: #9cf #69e #69e #7af;
+}
+
+button.custom.disabled {
+  color: #999 !important;
+  border-color: #ccc !important;
+  cursor:default!important;
+}
+
+button.custom span.accesskey {
+  text-decoration: underline;
+  /* IE CSS extension */
+  accelerator: true;
+}
+
+/*
+Copyright 2007, Google Inc.
+
+Redistribution and use in source and binary forms, with or without 
+modification, are permitted provided that the following conditions are met:
+
+ 1. Redistributions of source code must retain the above copyright notice, 
+    this list of conditions and the following disclaimer.
+ 2. Redistributions in binary form must reproduce the above copyright notice,
+    this list of conditions and the following disclaimer in the documentation
+    and/or other materials provided with the distribution.
+ 3. Neither the name of Google Inc. nor the names of its contributors may be
+    used to endorse or promote products derived from this software without
+    specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
+OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
+body, html {
+  background-color:white;
+  padding:0;
+  margin:0;
+  height:100%;
+  overflow:hidden;
+  cursor:default;
+
+  /* 
+    Makes the text unselectable in mozilla. See html_diaog.js for IE
+    implementation.
+  */
+  -moz-user-select:none;
+}
+
+body, td, input, select, button {
+  font-family:arial,sans-serif;
+  font-size:13px;
+}
+
+p {
+  margin:0;
+  margin-bottom:1em;
+}
+
+a {
+  color:blue;
+  text-decoration:underline;
+}
+
+button {
+  /*
+  It would be better to express margins in ems, but it causes layout
+  artifacts (presumably because of rounding errors) when combined with
+  the -moz-border-radius property used in button.css on Firefox 2.
+
+  Also: bizarely, if I try to use the more natural margin-left:10px, I get
+  a bug where the buttons bounce on IE when you hover over them.
+  */
+  position:relative;
+  margin-right:7px;
+  left:7px;
+}
+
+#head {
+  padding:1em;
+}
+
+#foot {
+
+  position:absolute;
+
+  background:white;
+  bottom:0;
+  width:100%;
+}
+
+#button-row {
+  margin:1em;
+}
+
+.accesskey {
+  text-decoration: underline;
+
+  /* IE CSS extension */
+  accelerator: true;
+}
+
+    h1 {
+      font-size:1.2em;
+      margin:0;
+    }
+
+    h2 {
+      font-size:1.1em;
+      margin:0;
+    }
+
+    /* TODO(aa): Move into standard stylesheet if used in all dialogs? */
+    #icon {
+      margin-right:0.5em;
+    }
+
+    #content {
+      overflow-x:hidden;
+      overflow-y:auto;
+
+      margin:0 1em;
+
+    }
+
+    #content table {
+      border: 1px #ccc;
+      /* Only set the sides and bottom border of the table because
+      border-colapse doesn't work on WinCE. */
+      border-style: none solid;
+      border-collapse: collapse;
+      /* A bug in Mozilla with border-collapse:collapse along with the overflow
+      settings we have on the scroll element causes the left border to be
+      placed 1px to the left, making the element invisible. */
+      margin-left:1px;
+    }
+
+    #content td {
+
+      padding: 4px; 
+
+    }
+
+    #content table.permissions {
+      border-bottom-style: solid;
+    }
+
+    #version {
+      font-size:0.8em;
+      font-style:italic;
+    }
+
+    #content td.left {
+      width: 100%;
+
+      padding-left: 20px;
+
+    }
+
+    #content td.right {
+
+      padding-right: 20px;
+
+    }
+
+    .app-icon {
+      width: 30px;
+    }
+
+    .app-name {
+      width: 150px;
+    }
+
+    .app-origin {
+      width: 70px;
+    }
+
+
+
+    td.origin-name {
+      font-weight: bold;
+      width: 100%;
+    }
+
+
+    div.radio-buttons {
+width: 130px;
+
+    }
+
+
+
+
+  </style>
+</head>
+<body>
+  <div id="strings" style="display:none;">
+    <div id="string-cancel"></div>
+    <div id="string-cancel-accesskey"></div>
+    <div id="string-apply"></div>
+    <div id="string-apply-accesskey"></div>
+    <div id="string-nosites"></div>
+    <div id="string-allowed"></div>
+    <div id="string-denied"></div>
+    <div id="string-local-storage"></div>
+    <div id="string-location-data"></div>
+    <div id="string-remove"></div>
+  </div>
+  
+  <div id="head">
+    <table width="100%" cellpadding="0" cellspacing="0" border="0">
+      <tr>
+        <td valign="middle">
+
+          <img id="icon" src="icon_32x32.png" width="32" height="32">
+
+          <!-- Some browsers automatically focus the first focusable item. We
+          don't want anything focused, so we add this fake item. -->
+          <a href="#" id="focus-thief"></a>
+        </td>
+        <td width="100%" valign="middle">
+          <h1>
+          <span id="string-gears-settings"></span>
+          </h1>
+        </td>
+      </tr>
+    </table>
+  </div>
+  <div id="content">
+    <p>
+      <span id="string-permissions-description"></span>
+    </p>
+    <div id='div-permissions'>
+    </div>
+    <br>
+    <br>
+    <div id="string-version"></div>
+  </div>
+  <div id="foot">
+    <div id="button-row">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+
+          <td nowrap="true" align="right" valign="middle">
+            <button id="confirm-button" class="custom"
+                onclick="saveAndClose(calculateDiff()); return false;"
+              ></button
+            ><button id="cancel-button" accesskey="C" class="custom"
+                onclick="saveAndClose(null); return false;"
+              ></button>
+          </td>
+
+        </tr>
+      </table>
+    </div>
+  </div>
+
+
+</body>
+
+<script>
+/*
+Copyright (c) 2005 JSON.org
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The Software shall be used for Good, not Evil.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+
+//Array.prototype.______array = '______array';
+
+var JSON = {
+    org: 'http://www.JSON.org',
+    copyright: '(c)2005 JSON.org',
+    license: 'http://www.crockford.com/JSON/license.html',
+
+    stringify: function (arg) {
+        var c, i, l, s = '', v;
+
+        switch (typeof arg) {
+        case 'object':
+            if (arg) {
+                if (arg.constructor == Array.prototype.constructor) {
+                    for (i = 0; i < arg.length; ++i) {
+                        v = this.stringify(arg[i]);
+                        if (s) {
+                            s += ',';
+                        }
+                        s += v;
+                    }
+                    return '[' + s + ']';
+                } else if (typeof arg.toString != 'undefined') {
+                    for (i in arg) {
+                        v = arg[i];
+                        if (typeof v != 'undefined' && typeof v != 'function') {
+                            v = this.stringify(v);
+                            if (s) {
+                                s += ',';
+                            }
+                            s += this.stringify(i) + ':' + v;
+                        }
+                    }
+                    return '{' + s + '}';
+                }
+            }
+            return 'null';
+        case 'number':
+            return isFinite(arg) ? String(arg) : 'null';
+        case 'string':
+            l = arg.length;
+            s = '"';
+            for (i = 0; i < l; i += 1) {
+                c = arg.charAt(i);
+                if (c >= ' ') {
+                    if (c == '\\' || c == '"') {
+                        s += '\\';
+                    }
+                    s += c;
+                } else {
+                    switch (c) {
+                        case '\b':
+                            s += '\\b';
+                            break;
+                        case '\f':
+                            s += '\\f';
+                            break;
+                        case '\n':
+                            s += '\\n';
+                            break;
+                        case '\r':
+                            s += '\\r';
+                            break;
+                        case '\t':
+                            s += '\\t';
+                            break;
+                        default:
+                            c = c.charCodeAt();
+                            s += '\\u00' + Math.floor(c / 16).toString(16) +
+                                (c % 16).toString(16);
+                    }
+                }
+            }
+            return s + '"';
+        case 'boolean':
+            return String(arg);
+        default:
+            return 'null';
+        }
+    },
+    parse: function (text) {
+        var at = 0;
+        var ch = ' ';
+
+        function error(m) {
+            throw {
+                name: 'JSONError',
+                message: m,
+                at: at - 1,
+                text: text
+            };
+        }
+
+        function next() {
+            ch = text.charAt(at);
+            at += 1;
+            return ch;
+        }
+
+        function white() {
+            while (ch) {
+                if (ch <= ' ') {
+                    next();
+                } else if (ch == '/') {
+                    switch (next()) {
+                        case '/':
+                            while (next() && ch != '\n' && ch != '\r') {}
+                            break;
+                        case '*':
+                            next();
+                            for (;;) {
+                                if (ch) {
+                                    if (ch == '*') {
+                                        if (next() == '/') {
+                                            next();
+                                            break;
+                                        }
+                                    } else {
+                                        next();
+                                    }
+                                } else {
+                                    error("Unterminated comment");
+                                }
+                            }
+                            break;
+                        default:
+                            error("Syntax error");
+                    }
+                } else {
+                    break;
+                }
+            }
+        }
+
+        function string() {
+            var i, s = '', t, u;
+
+            if (ch == '"') {
+outer:          while (next()) {
+                    if (ch == '"') {
+                        next();
+                        return s;
+                    } else if (ch == '\\') {
+                        switch (next()) {
+                        case 'b':
+                            s += '\b';
+                            break;
+                        case 'f':
+                            s += '\f';
+                            break;
+                        case 'n':
+                            s += '\n';
+                            break;
+                        case 'r':
+                            s += '\r';
+                            break;
+                        case 't':
+                            s += '\t';
+                            break;
+                        case 'u':
+                            u = 0;
+                            for (i = 0; i < 4; i += 1) {
+                                t = parseInt(next(), 16);
+                                if (!isFinite(t)) {
+                                    break outer;
+                                }
+                                u = u * 16 + t;
+                            }
+                            s += String.fromCharCode(u);
+                            break;
+                        default:
+                            s += ch;
+                        }
+                    } else {
+                        s += ch;
+                    }
+                }
+            }
+            error("Bad string");
+        }
+
+        function array() {
+            var a = [];
+
+            if (ch == '[') {
+                next();
+                white();
+                if (ch == ']') {
+                    next();
+                    return a;
+                }
+                while (ch) {
+                    a.push(value());
+                    white();
+                    if (ch == ']') {
+                        next();
+                        return a;
+                    } else if (ch != ',') {
+                        break;
+                    }
+                    next();
+                    white();
+                }
+            }
+            error("Bad array");
+        }
+
+        function object() {
+            var k, o = {};
+
+            if (ch == '{') {
+                next();
+                white();
+                if (ch == '}') {
+                    next();
+                    return o;
+                }
+                while (ch) {
+                    k = string();
+                    white();
+                    if (ch != ':') {
+                        break;
+                    }
+                    next();
+                    o[k] = value();
+                    white();
+                    if (ch == '}') {
+                        next();
+                        return o;
+                    } else if (ch != ',') {
+                        break;
+                    }
+                    next();
+                    white();
+                }
+            }
+            error("Bad object");
+        }
+
+        function number() {
+            var n = '', v;
+            if (ch == '-') {
+                n = '-';
+                next();
+            }
+            while (ch >= '0' && ch <= '9') {
+                n += ch;
+                next();
+            }
+            if (ch == '.') {
+                n += '.';
+                while (next() && ch >= '0' && ch <= '9') {
+                    n += ch;
+                }
+            }
+            if (ch == 'e' || ch == 'E') {
+                n += 'e';
+                next();
+                if (ch == '-' || ch == '+') {
+                    n += ch;
+                    next();
+                }
+                while (ch >= '0' && ch <= '9') {
+                    n += ch;
+                    next();
+                }
+            }
+            v = +n;
+            if (!isFinite(v)) {
+                ////error("Bad number");
+            } else {
+                return v;
+            }
+        }
+
+        function word() {
+            switch (ch) {
+                case 't':
+                    if (next() == 'r' && next() == 'u' && next() == 'e') {
+                        next();
+                        return true;
+                    }
+                    break;
+                case 'f':
+                    if (next() == 'a' && next() == 'l' && next() == 's' &&
+                            next() == 'e') {
+                        next();
+                        return false;
+                    }
+                    break;
+                case 'n':
+                    if (next() == 'u' && next() == 'l' && next() == 'l') {
+                        next();
+                        return null;
+                    }
+                    break;
+            }
+            error("Syntax error");
+        }
+
+        function value() {
+            white();
+            switch (ch) {
+                case '{':
+                    return object();
+                case '[':
+                    return array();
+                case '"':
+                    return string();
+                case '-':
+                    return number();
+                default:
+                    return ch >= '0' && ch <= '9' ? number() : word();
+            }
+        }
+
+        return value();
+    }
+};
+
+// Copyright 2008, Google Inc.
+//
+// Redistribution and use in source and binary forms, with or without 
+// modification, are permitted provided that the following conditions are met:
+//
+//  1. Redistributions of source code must retain the above copyright notice, 
+//     this list of conditions and the following disclaimer.
+//  2. Redistributions in binary form must reproduce the above copyright notice,
+//     this list of conditions and the following disclaimer in the documentation
+//     and/or other materials provided with the distribution.
+//  3. Neither the name of Google Inc. nor the names of its contributors may be
+//     used to endorse or promote products derived from this software without
+//     specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+// WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
+// MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+// EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+// SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+// PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+// OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+// WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
+// OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+// ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+//=============================================================================
+// Various basic JavaScript utilities.
+//=============================================================================
+
+/**
+ * Check that the type is not undefined (we do it here as on
+ * some devices typeof returns unknown instead of undefined...).
+ * We have to pass the evaluation of (typeof elem) (i.e., a string)
+ * to the function rather than simply (element) -- passing an 
+ * undefined object would make the function crash on PIE.
+ */
+function isDefined(type) {
+  return type != 'undefined' && type != 'unknown';
+}
+
+/**
+ * Returns true if val is a function.
+ */
+function isFunction(val) {
+  return typeof val == "function";
+}
+
+// TODO(aa): more basic type checking here.
+
+
+/**
+ * Creates a 'bound' function that calls the current function with a preset
+ * 'this' object and set of arguments.
+ */
+Function.prototype.bind = function(obj) {
+  var preArgs = Array.prototype.slice.call(arguments, 1);
+  var self = this;
+  return function() {
+    var postArgs = Array.prototype.slice.call(arguments, 0);
+    var totalArgs = preArgs.concat(postArgs);
+    return self.apply(obj, totalArgs);
+  }
+};
+
+/**
+ * Creates a partially applied function that calls the current function with
+ * a preset set of arguments.
+ */
+Function.prototype.partial = function() {
+  var args = Array.prototype.slice.call(arguments, 0);
+  return this.bind(null, args);
+};
+
+/**
+ * Binds all the methods in obj to obj.
+ */
+function bindMethods(obj) {
+  for (var p in obj) {
+    if (isFunction(obj[p])) {
+      obj[p] = obj[p].bind(obj);
+    }
+  }
+}
+
+
+/**
+ * Trim leading and trailing whitespace from a string.
+ */
+String.prototype.trim = function(str) {
+  return this.replace(/^\s+/, "").replace(/\s+$/, "");
+};
+
+
+/**
+ * Find the index of a given element in an array. Returns -1 if the item does
+ * not exist.
+ */
+Array.prototype.indexOf = function(item) {
+  for (var i = 0; i < this.length; i++) {
+    if (this[i] === item) {
+      return i;
+    }
+  }
+  return -1;
+};
+
+/**
+ * Makes a deep copy of an object.
+ */
+function cloneObject(original) {
+  var newObject = new Object();
+  for (i in original) {
+    if (typeof original[i] == 'object') {
+      newObject[i] = cloneObject(original[i]);
+    }
+    else {
+      newObject[i] = original[i];
+    }
+  }
+  newObject.length = original.length;
+  return newObject;
+}
+
+var browser = {};
+
+(function() {
+  var ua = navigator.userAgent;
+  browser.opera = typeof opera != "undefined";
+  browser.ie = !browser.opera && ua.indexOf("MSIE") > -1;
+  browser.ie_mobile = (ua.indexOf("Windows CE") > -1) &&
+      (ua.indexOf("MSIE") > -1);
+  browser.webkit = ua.indexOf("WebKit") > -1;
+  // WebKit also gives product == "gecko".
+  browser.mozilla = !browser.webkit && navigator.product == "Gecko";
+  browser.safari = ua.indexOf("Safari") > -1;
+  browser.mac = navigator.platform.indexOf("Mac") > -1;
+  browser.linux = navigator.platform.indexOf("Linux") > -1;
+  browser.windows = navigator.platform.indexOf("Win") > -1;
+  browser.android = ua.indexOf("Android") > -1;
+  browser.chrome = window.chrome;  // TODO(mpcomplete): use ua string
+  if (browser.android || browser.chrome) {
+    browser.safari = false;
+  }
+  // TODO(aa): Add detection for more browsers, as necessary.
+})();
+
+// Copyright 2008, Google Inc.
+//
+// Redistribution and use in source and binary forms, with or without 
+// modification, are permitted provided that the following conditions are met:
+//
+//  1. Redistributions of source code must retain the above copyright notice, 
+//     this list of conditions and the following disclaimer.
+//  2. Redistributions in binary form must reproduce the above copyright notice,
+//     this list of conditions and the following disclaimer in the documentation
+//     and/or other materials provided with the distribution.
+//  3. Neither the name of Google Inc. nor the names of its contributors may be
+//     used to endorse or promote products derived from this software without
+//     specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+// WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
+// MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+// EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+// SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+// PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+// OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+// WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
+// OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+// ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+//=============================================================================
+// DOM manipulation utilities.
+// Requires: base.js
+//=============================================================================
+
+var dom = {};
+
+/**
+ * Provides a cross-browser way of getting an element by its id
+ */
+dom.getElementById = function(id) {
+  if (isDefined(typeof document.getElementById)) {
+    return document.getElementById(id);
+  } else if (isDefined(typeof document.all)) {
+    return document.all[id];
+  }
+  throw new Error("Failed to get element by ID.");
+};
+
+/**
+ * Gets the position and dimensions of an element in pixels in relation
+ * to the window origin.
+ */
+dom.getPosition = function(elem) {
+  var ret = { 'left'   : 0,
+              'top'    : 0,
+              'width'  : elem.width,
+              'height' : elem.height };
+  
+  if (!elem.offsetParent) return ret;
+  
+  var left = 0;
+  var top = 0;
+  while (elem) {
+    left += elem.offsetLeft;
+    top += elem.offsetTop;
+    elem = elem.offsetParent
+  }
+  ret.left = left;
+  ret.top = top;
+  return ret;
+};
+
+/**
+ * Returns the height of the inside of the window.
+ */
+dom.getWindowInnerHeight = function() {
+  if (isDefined(typeof window.innerHeight)) { // Firefox
+    return window.innerHeight;
+  } else if (isDefined(typeof document.body.offsetHeight)) { // IE
+    return document.body.offsetHeight;
+  }
+
+  throw new Error("Could not get windowInnerHeight.");
+};
+
+/**
+ * Add an event listener to an element cross-browser.
+ */
+dom.addEvent = function(element, eventName, handler) {
+  var wrapper = dom._callEventHandler.bind(dom, handler);
+
+  if (isDefined(typeof element.addEventListener)) {
+    // Standards-compatible browsers
+    element.addEventListener(eventName, wrapper, false);
+  } else if (isDefined(typeof element.attachEvent)) {
+    // IE
+    element.attachEvent("on" + eventName, wrapper);
+  } else {
+    throw new Error('Failed to attach event.');
+  }
+};
+
+/**
+ * Private helper for calling event handlers compatibly across browsers.
+ */
+dom._callEventHandler = function(handler, e) {
+  // Older versions of IE don't pass event to the handler.
+  if (!e) e = window.event;
+
+  // TODO(aa): Normalize event object properties.
+
+  return handler(e);
+};
+
+/**
+ * Gets the CSS classes for an element.
+ */
+dom.getClasses = function(elm) {
+  return elm.className.split(/\s+/);
+};
+
+/**
+ * Check is an element has a particular CSS class name.
+ */
+dom.hasClass = function(elm, className) {
+  return this.getClasses(elm).indexOf(className) > -1;
+};
+
+/**
+ * Adds a CSS class to an element. Do nothing if the class already exists.
+ */
+dom.addClass = function(elm, className) {
+  var classes = this.getClasses(elm);
+  if (classes.indexOf(className) > -1) {
+    return;
+  }
+  classes.push(className);
+  elm.className = classes.join(" ");
+};
+
+/**
+ * Removes a CSS class from an element. Do nothing if the class doesn't exist.
+ */
+dom.removeClass = function(elm, className) {
+  var classes = this.getClasses(elm);
+  var index = classes.indexOf(className);
+  if (index == -1) {
+    return;
+  }
+  classes.splice(index, 1);
+  elm.className = classes.join(" ");
+};
+
+/**
+ * Gets the text (non-html) content of an element.
+ */
+dom.getTextContent = function(elm) {
+  if (isDefined(typeof elm.textContent)) {
+    return elm.textContent;
+  } else if (isDefined(typeof elm.innerText)) {
+    return elm.innerText;
+  } else {
+    throw new Error("Could not find a property to get text content.");
+  }
+};
+
+/**
+ * Sets the text (non-html) contents of an element.
+ */
+dom.setTextContent = function(elm, text) {
+  if (isDefined(typeof elm.textContent)) {
+    elm.textContent = text;
+  } else if (isDefined(typeof elm.innerText)) {
+    elm.innerText = text;
+  } else {
+    throw new Error("Could not find a property to set text content.");
+  }
+};
+
+// Copyright 2007, Google Inc.
+//
+// Redistribution and use in source and binary forms, with or without 
+// modification, are permitted provided that the following conditions are met:
+//
+//  1. Redistributions of source code must retain the above copyright notice, 
+//     this list of conditions and the following disclaimer.
+//  2. Redistributions in binary form must reproduce the above copyright notice,
+//     this list of conditions and the following disclaimer in the documentation
+//     and/or other materials provided with the distribution.
+//  3. Neither the name of Google Inc. nor the names of its contributors may be
+//     used to endorse or promote products derived from this software without
+//     specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+// WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
+// MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+// EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+// SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+// PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+// OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+// WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
+// OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+// ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+/**
+ * Initialize the base functionality of the dialog.
+ */
+function initDialog() {
+  if (!browser.ie_mobile) {
+    dom.addEvent(document, "keyup", handleKeyUp);
+  } else {
+    var buttonRowElem = null;
+    if (window.pie_dialog.IsSmartPhone()) {
+      buttonRowElem = dom.getElementById("button-row-smartphone");
+    } else {
+      buttonRowElem = dom.getElementById("button-row");
+    }
+    if (buttonRowElem) {
+      buttonRowElem.style.display = 'block';
+    }
+  }
+  if (browser.ie_mobile) {
+    window.pie_dialog.SetScriptContext(window);
+    window.pie_dialog.ResizeDialog();
+  }
+}
+
+/**
+ * Set the label of an input button, and optionally, its accesskey.
+ */
+function setButtonLabel(textID, elemID, accessKeyID) {
+  var textElem = dom.getElementById(textID);
+  var buttonElem = dom.getElementById(elemID);
+  if (textElem == null || buttonElem == null) {
+    return;
+  }
+
+  var accessKeyElem = null;
+  if (isDefined(typeof accessKeyID)) {
+    accessKeyElem = dom.getElementById(accessKeyID);
+  }
+
+  // This function works for two different kinds of buttons. Simple buttons
+  // based on the <input type="button"> tag, and custom buttons based on a
+  // <button> tag with the css class "custom".
+  // Note that on Windows Mobile 5, the tagName property is not defined.
+  // We can therefore safely assume that the converse is also true:
+  // if tagName is not defined, then the platform must be Windows Mobile 5.  
+  if (!isDefined(typeof buttonElem.tagName) ||
+      buttonElem.tagName.toLowerCase() == "input") {
+    buttonElem.value = dom.getTextContent(textElem).trim();
+    if (accessKeyElem != null) {
+      buttonElem.accessKey = dom.getTextContent(accessKeyElem).trim();
+    }
+  } else if (buttonElem.tagName.toLowerCase() == "button") {
+    var text = dom.getTextContent(textElem).trim();
+
+    if (accessKeyElem != null) {
+      // Some browsers use the accessKey attribute of the the anchor tag.
+      var accessKey = dom.getTextContent(accessKeyElem).trim();
+      buttonElem.accessKey = accessKey;
+
+      // Find the first matching character in the text and mark it.
+      // Note: this form of String.replace() only replaces the first occurence.
+      text = text.replace(accessKey,
+                          "<span class='accesskey'>" + accessKey + "</span>");
+    }
+
+    buttonElem.innerHTML = text;
+  } else {
+    throw new Error("Unexpected button tag name: " + buttonElem.tagName);
+  }
+}
+
+/**
+ * Allows a dialog to do custom layout when the window changes sizes. The
+ * provided function will be called with the height of the content area when the
+ * dialog should relayout.
+ */
+function initCustomLayout(layoutFunction) {
+  function doLayout() {
+    layoutFunction(getContentHeight());
+  }
+
+  doLayout();
+
+  // We do an additional layout in onload because sometimes things aren't
+  // stabilized when the first doLayout() is called above.
+  dom.addEvent(window, "load", doLayout);
+  dom.addEvent(window, "resize", doLayout);
+
+  // Mozilla doesn't fire continuous events during resize, so if we want to get
+  // somewhat smooth resizing, we need to run our own timer loop. This still
+  // doesn't look perfect, because the timer goes off out of sync with the
+  // browser's internal reflow, but I think it's better than nothing.
+  // TODO(aa): Keep looking for a way to get an event for each reflow, like IE.
+  if (browser.mozilla) {
+    var lastHeight = -1;
+
+    function maybeDoLayout() {
+      var currentHeight = dom.getWindowInnerHeight();
+      if (currentHeight != lastHeight) {
+        lastHeight = currentHeight;
+        doLayout();
+      }
+    }
+
+    window.setInterval(maybeDoLayout, 30);
+  }
+}
+
+/**
+ * Get the JSON-formatted arguments that were passed by the caller.
+ */
+function getArguments() {
+  var argsString;
+  if (browser.ie_mobile) {
+    argsString = window.pie_dialog.GetDialogArguments();
+  } else if (browser.ie) {
+    argsString = window.external.GetDialogArguments();
+  } else if (browser.mozilla) {
+    argsString = getFirefoxArguments(window.arguments[0]);
+  } else if (browser.safari) {
+    argsString = window.gears_dialogArguments;
+  } else if (browser.android) {
+    argsString = "" + window.bridge.getDialogArguments();
+  } else if (browser.chrome) {
+    argsString = chrome.dialogArguments;
+  }
+
+  if (typeof argsString == "string") {
+    return JSON.parse(argsString);
+  } else {
+    return null;
+  }
+}
+
+/**
+ * Helper used by getArguments(). Getting the arguments in the right type is
+ * more involved in Firefox.
+ */
+function getFirefoxArguments(windowArguments) {
+  var Ci = Components.interfaces;
+  windowArguments.QueryInterface(Ci.nsIProperties);
+  var supportsString = 
+    windowArguments.get("dialogArguments", Ci.nsISupportsString);
+  return supportsString.data;
+}
+
+/**
+ * Close the dialog, sending the specified result back to the caller.
+ */
+function saveAndClose(resultObject) {
+  var resultString = JSON.stringify(resultObject);
+  if (browser.ie_mobile) {
+    window.pie_dialog.CloseDialog(resultString);
+  } else if (browser.ie) {
+    window.external.CloseDialog(resultString);
+  } else if (browser.mozilla) {
+    saveFirefoxResults(resultString);
+    window.close();
+  } else if (browser.safari) {
+    window.gears_dialog.setResults(resultString);
+  } else if (browser.android) {
+    window.bridge.closeDialog(resultString);
+  } else if (browser.chrome) {
+    saveChromeResults(resultString);
+    window.close();
+  }
+}
+
+function saveChromeResults(resultString) {
+  chrome.send("DialogClose", [resultString]);
+}
+
+/**
+ * Helper used by endDialog() for Firefox.
+ */
+function saveFirefoxResults(resultString) {
+  var Cc = Components.classes;
+  var Ci = Components.interfaces;
+  
+  var props = window.arguments[0].QueryInterface(Ci.nsIProperties);
+  var supportsString = Cc["@mozilla.org/supports-string;1"]
+      .createInstance(Ci.nsISupportsString);
+      
+  supportsString.data = resultString;
+  props.set("dialogResult", supportsString);
+}
+
+/**
+ * Returns the height of the content area of the dialog.
+ */
+function getContentHeight() {
+  var head = dom.getElementById("head");
+  var foot = dom.getElementById("foot");
+  return dom.getWindowInnerHeight() - head.offsetHeight - foot.offsetHeight;
+}
+
+/**
+ * For some reason ESC doesn't work on HTML dialogs in either Firefox or IE. So
+ * we implement it manually.
+ */
+function handleKeyUp(e) {
+  var ESC_KEY_CODE = 27;
+  
+  if (e.keyCode == ESC_KEY_CODE) {
+    saveAndClose(null);
+  }
+}
+
+/**
+ * Disables a button in the right way, whether it is normal or custom.
+ */
+function disableButton(buttonElem) {
+  buttonElem.disabled = true;
+
+  if (browser.ie_mobile) {
+    window.pie_dialog.SetButtonEnabled(false);
+  }
+
+  if (!isDefined(typeof buttonElem.tagName) || 
+      buttonElem.tagName.toLowerCase() == "input") {
+    buttonElem.style.color = "gray";
+  } else if (buttonElem.tagName.toLowerCase() == "button") {
+    dom.addClass(buttonElem, "disabled");
+  } else {
+    throw new Error("Unexpected tag name: " + buttonElem.tagName);
+  }
+}
+
+/**
+ * Enables a button in the right way, whether it is normal or custom.
+ */
+function enableButton(buttonElem) {
+  buttonElem.disabled = false;
+
+  if (browser.ie_mobile) {
+    window.pie_dialog.SetButtonEnabled(true);
+  }
+  
+  if (!isDefined(typeof buttonElem.tagName) ||
+      buttonElem.tagName.toLowerCase() == "input") {
+    buttonElem.style.color = "black";
+  } else if (buttonElem.tagName.toLowerCase() == "button") {
+    dom.removeClass(buttonElem, "disabled");
+  } else {
+    throw new Error("Unexpected tag name: " + buttonElem.tagName);
+  }
+}
+
+/**
+ * Returns a wrapped domain (useful for small screens dialogs, 
+ * e.g. windows mobile devices)
+ */
+function wrapDomain(str) {
+  if (!browser.ie_mobile) {
+    return str;
+  }
+
+  // Replace occurences of '.' with an image representing a dot. This allows the
+  // browser to wrap the URL at these points as if there were whitespace
+  // present.
+  var dotImage = "<img height='2px' width='2px' " +
+                 "style='background-color: black; margin: 0px 1px;'>";
+  return str.replace(/[.]/g, dotImage);
+}
+
+/**
+ * Resizes the dialog to fit the content size.
+ */
+function resizeDialogToFitContent(opt_minDialogInnerHeight) {
+  // This does not work on PIE (no height measurement)
+  if (browser.ie_mobile) {
+    window.pie_dialog.ResizeDialog();
+    return;
+  }
+  // window.resize() is not working on Android, we bail out.
+  if (browser.android) {
+    return;
+  }
+
+  // Resize the window to fit
+  var contentDiv = dom.getElementById("content");
+  var contentHeightProvided = getContentHeight();
+  var contentHeightDesired = contentDiv.offsetHeight;
+
+  var dialogHeightProvided = dom.getWindowInnerHeight();
+  var dialogHeightDesired =
+      dialogHeightProvided + (contentHeightDesired - contentHeightProvided);
+
+  var minDialogHeight = opt_minDialogInnerHeight || 0;
+  var maxDialogHeight = 400; // arbitrary max height for a dialog to resize to
+  
+  var targetHeight = Math.max(dialogHeightDesired, minDialogHeight);
+  targetHeight = Math.min(dialogHeightDesired, maxDialogHeight);
+
+  if (targetHeight != dialogHeightProvided) {
+    var dy = targetHeight - dialogHeightProvided;
+    window.resizeBy(0, dy);
+  }
+}
+
+/**
+ * Safari running on OSX 10.4 can't load images dynamically from the network,
+ * this helper function calls gears-specific code to work around this
+ * limitation.
+ */
+function loadImage(elem, image_url) {
+  if (browser.safari) {
+    var position = dom.getPosition(elem);
+    window.gears_dialog.loadImageIntoElement(image_url, position.top,
+                                             position.left,
+                                             position.width,
+                                             position.height);
+  } else {
+    elem.src = image_url;
+  }
+}
+
+// Copyright 2008, Google Inc.
+//
+// Redistribution and use in source and binary forms, with or without 
+// modification, are permitted provided that the following conditions are met:
+//
+//  1. Redistributions of source code must retain the above copyright notice, 
+//     this list of conditions and the following disclaimer.
+//  2. Redistributions in binary form must reproduce the above copyright notice,
+//     this list of conditions and the following disclaimer in the documentation
+//     and/or other materials provided with the distribution.
+//  3. Neither the name of Google Inc. nor the names of its contributors may be
+//     used to endorse or promote products derived from this software without
+//     specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+// WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
+// MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+// EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+// SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+// PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+// OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+// WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
+// OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+// ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+//=============================================================================
+// Implements the behavior of our custom buttons. There is no native support in
+// IE for rounded corners on HTML elements, so this script also implements a
+// hack to simulate them in that browser.
+//
+// Requires: base.js, dom.js
+//=============================================================================
+
+/**
+ * Constructor.
+ */
+function CustomButton(htmlButton) {
+  bindMethods(this);
+  
+  this._focused = false;
+  this._htmlButton = htmlButton;
+
+  if (!document.all) {  // not IE
+    dom.addEvent(htmlButton, "mouseover", this._handleMouseOver);
+    dom.addEvent(htmlButton, "mouseout", this._handleMouseOut);
+  } else {  // IE
+    // mouseover/mouseout behave badly with nested elements in IE. Luckily,
+    // mouseenter/mouseleave are provided and have the equivalent semantics.
+    dom.addEvent(htmlButton, "mouseenter", this._handleMouseOver);
+    dom.addEvent(htmlButton, "mouseleave", this._handleMouseOut);
+
+    // We also handle focus and blur in IE so that we can update the corners
+    // to match the black border IE provides.
+    dom.addEvent(htmlButton, "focusin", this._handleFocus);
+    dom.addEvent(htmlButton, "blur", this._handleBlur);
+
+    dom.addClass(htmlButton, "ie");
+    this._createCorners();
+  }
+
+  // Limit button widths to a minimum of 60px. They look funny skinnier.  
+  if (htmlButton.offsetWidth < 60) {
+    htmlButton.style.width = "60px";
+  }
+
+  htmlButton.style.visibility = "visible";
+}
+
+/**
+ * Initializes all the custom buttons on the page.
+ */
+CustomButton.initializeAll = function() {
+  var buttons = document.getElementsByTagName("button");
+  for (var i = 0, button; button = buttons[i]; i++) {
+    if (dom.hasClass(button, "custom")) {
+      new CustomButton(button);
+    }
+  }
+};
+
+/**
+ * Highlights the button on mouseover. Note that this gets called multiple
+ * times while the mouse goes over sub elements inside the button.
+ */
+CustomButton.prototype._handleMouseOver = function() {
+  if (!this._htmlButton.disabled && !this._focused) {
+    dom.addClass(this._htmlButton, "hover");
+    this._setCornerColor("blue");
+  }
+};
+
+/**
+ * Undoes the highlighting of the button on mouseout. Note that this gets called
+ * multiple times when the mouse moves out of sub elements, even if it is still
+ * over the button. That is OK, as long as there is immediately a mouseover
+ * event.
+ */
+CustomButton.prototype._handleMouseOut = function() {
+  if (!this._htmlButton.disabled && !this._focused) {
+    dom.removeClass(this._htmlButton, "hover");
+    this._setCornerColor("grey");
+  }
+};
+
+/**
+ * Highlights the button on focus. Currently only used for IE.
+ * TODO(aa): The black highlight looks cool. Consider for other browsers.
+ */
+CustomButton.prototype._handleFocus = function() {
+  dom.removeClass(this._htmlButton, "hover");
+  this._setCornerColor("black");
+  this._focused = true;
+};
+
+/**
+ * Undoes the highlighting of the button on blur.
+ */
+CustomButton.prototype._handleBlur = function() {
+  this._setCornerColor("grey");
+  this._focused = false;
+};
+
+/**
+ * Helper to create the graphics that make the button have rounded corners in
+ * IE.
+ */
+CustomButton.prototype._createCorners = function() {
+  // Making the button position:relative makes it possible to position things
+  // inside it relative to it's border.
+  this._htmlButton.style.position = "relative";
+
+  var verticalEdges = ["left", "right"];
+  var horizontalEdges = ["top", "bottom"];
+  var colors = ["grey", "blue", "black"];
+
+  for (var i = 0; i < verticalEdges.length; i++) {
+    for (var j = 0; j < horizontalEdges.length; j++) {
+      for (var k = 0; k < colors.length; k++) {
+        var img = document.createElement("img");
+        img.src = "button_corner_" + colors[k]  + ".gif";
+        img.color  = colors[k];
+        img.style.position = "absolute";
+        img.style[verticalEdges[i]] = "-2px";
+        img.style[horizontalEdges[j]] = "-2px";
+        img.style.filter =
+            "progid:DXImageTransform.Microsoft.BasicImage(Rotation=" + 
+            (i + j) + ")";
+        this._htmlButton.appendChild(img);
+      }
+    }
+  }
+
+  this._setCornerColor("grey");
+};
+
+/**
+ * Sets the color of the corners in IE by changing the stack order of the corner
+ * images.
+ */
+CustomButton.prototype._setCornerColor = function(newColor) {
+  var imgs = this._htmlButton.getElementsByTagName("img");
+  for (var i = 0, img; img = imgs[i]; i++) {
+    img.style.zIndex = Number(img.color == newColor);
+  }
+};
+
+var localized_strings = {
+  "en-US": {
+    "string-denied": "Denied",
+    "string-apply-accesskey": "A",
+    "string-remove": "Remove",
+    "string-gears-settings": "Gears Settings",
+    "string-apply": "Apply",
+    "string-cancel-accesskey": "C",
+    "string-cancel": "Cancel",
+    "string-html-title": "Gears Settings",
+    "string-allowed": "Allowed",
+    "string-local-storage": "Local storage",
+    "string-nosites": "No sites.",
+    "string-permissions-description": "The table below shows the permissions you have granted to each site that has attempted to use Gears.",
+    "string-location-data": "Location",
+    "string-version": "Gears version 0.4.20.0"
+  }
+};
+
+// Insert all localized strings for the specified locale into the div or span
+// matching the id.
+function loadI18nStrings(locale) {
+  var rtl_languages = ['he', 'ar', 'fa', 'ur'];
+
+  if (!locale) {
+    locale = 'en-US';
+  } else {
+    if (!localized_strings[locale]) {
+      // For xx-YY locales, determine what the base locale is.
+      var base_locale = locale.split('-')[0];
+
+      if (localized_strings[base_locale]) {
+        locale = base_locale;
+      } else {
+        locale = 'en-US';
+      }
+    }
+  }
+
+  var strings = localized_strings[locale];
+
+  // If the specified locale is an right to left language, change the direction
+  // of the page.
+  for (index in rtl_languages) {
+    if (locale == rtl_languages[index]) {
+      document.body.dir = "rtl";
+      break;
+    }
+  }
+
+  // Copy each string to the proper UI element, if it exists.
+  for (name in strings) {
+    if (name == 'string-html-title') {
+      if (!browser.ie_mobile) {
+        // IE Mobile dialogs don't have a title bar.
+        // Furthermore, document.title is undefined in IE Mobile on WinMo 5.
+        // It's also impossible to add properties to the window object.
+        // (see http://code.google.com/apis/gears/mobile.html)
+        document.title = strings[name];
+      }
+    } else {
+      var element = dom.getElementById(name);
+      if (element) {
+        element.innerHTML = strings[name];
+      }
+    }
+  }
+}
+
+
+</script>
+<script>
+  var debug = false;
+  var permissions;
+  var originalPermissions;
+
+  // Must match values in permission_db.h
+  var PERMISSION_NOT_SET = 0;
+  var PERMISSION_ALLOWED = 1;
+  var PERMISSION_DENIED  = 2;
+
+  if (debug && browser.ie_mobile) {
+    // Handy for debugging layout.
+    // Remember to remove the pie_dialog object tag above when debugging on
+    // WinMo 5, otherwise the assignement below will fail with "the object does
+    // not support this property or method".
+    pie_dialog = new Object();
+    pie_dialog.IsSmartPhone = function() { return false; };
+    pie_dialog.SetCancelButton = function() {};
+    pie_dialog.SetButton = function() {};
+    pie_dialog.SetButtonEnabled = function() {};
+    pie_dialog.SetScriptContext = function() {};
+    pie_dialog.ResizeDialog = function() {};
+  }
+
+  initDialog();
+
+  initSettings();
+
+  setButtonLabel("string-cancel", "cancel-button", "string-cancel-accesskey");
+  setButtonLabel("string-apply", "confirm-button", "string-apply-accesskey");
+
+  if (!browser.ie_mobile) {
+    CustomButton.initializeAll();
+    if (!browser.android) {
+      initCustomLayout(layoutSettings);
+    }
+  } else {
+    var applyText = dom.getElementById("string-apply");
+    if (applyText) {
+      window.pie_dialog.SetButton(applyText.innerText, 
+        "saveAndClose(calculateDiff());");
+    }
+    var cancelText = dom.getElementById("string-cancel");
+    if (cancelText) {
+      window.pie_dialog.SetCancelButton(cancelText.innerText);
+    }
+    window.pie_dialog.SetButtonEnabled(true);
+  }
+
+  // Start out with only cancel enabled, just for clarity.
+  disableButton(dom.getElementById("confirm-button"));
+
+  function initSettings() {
+    var args;
+
+    if (debug) {
+      // Handy for debugging layout:
+      var args = {
+        locale: "en-US",
+        permissions: [
+          {
+            name: "http://www.google.com",
+            localStorage: { permissionState: 1 },
+            locationData: { permissionState: 0 }
+          },
+          { 
+            name: "http://www.aaronboodman.com",
+            localStorage: { permissionState: 1 },
+            locationData: { permissionState: 1 }
+          },
+          { 
+            name: "http://www.evil.org",
+            localStorage: { permissionState: 2 },
+            locationData: { permissionState: 2 }
+          }
+        ]
+      };
+    } else {
+      args = getArguments();
+    }
+    loadI18nStrings(args.locale);
+    permissions = args.permissions;
+    originalPermissions = cloneObject(permissions);
+
+    updatePermissionsList();
+  }
+
+  function updatePermissionsList() {
+    var table = dom.getElementById('div-permissions');
+
+    var content = "";
+    var isFirstOrigin = true;
+    for (var index = 0; index < permissions.length; index++) {
+      content += renderOrigin(index, permissions[index], isFirstOrigin);
+      isFirstOrigin = false;
+    }
+    if (content == "") {
+      content = "<table style=\"border-style: solid;\"><tbody>";
+      content += "<tr><td class=\"left\"><em>";
+      var noSitesText = dom.getElementById("string-nosites");
+      if (noSitesText) {
+        if (isDefined(typeof noSitesText.innerText)) {
+          content += noSitesText.innerText;
+        } else {
+          content += noSitesText.textContent;
+        }
+      }
+      content += "</em></td><td></td></tr></tbody></table>";
+    } 
+    table.innerHTML = content;
+  }
+
+  function renderOrigin(index, originData, isFirstOrigin) {
+    var localStorageContent =
+        renderLocalStorage(index, originData.localStorage);
+    var locationDataContent =
+        renderLocationData(index, originData.locationData);
+
+    // Defend against an origin having no data for any permission class.
+    if (localStorageContent == "" && locationDataContent == "") {
+      return "";
+    }
+    var content = "<table";
+    if (isFirstOrigin) {
+      content += " style=\"border-top-style: solid;\"";
+    }
+    content += "><tbody>";
+    content += "<tr><td class=\"origin-name\">";
+    content += wrapDomain(originData.name);
+    content += "</td><td><a href='#' onclick='handleRemoveClick(";
+    content += index;
+    content += ");'>";
+    content += getString("string-remove");
+    content += "</a></td>";
+    content += "</td></tr></tbody></table>";
+
+    content += "<table class=\"permissions\"><tbody>";
+    if (localStorageContent != "") {
+      content += "<tr>";
+      content += localStorageContent;
+      content += "</tr>";
+    }
+    if (locationDataContent != "") {
+      content += "<tr>";
+      content += locationDataContent;
+      content += "</tr>";
+    }
+    content += "</td></tr></tbody></table>";
+    return content;
+  }
+
+  function renderLocalStorage(index, data) {
+    if (data == null || data.permissionState == PERMISSION_NOT_SET) {
+      return "";
+    }
+    var content = "";
+    content += "<td class=\"left\">";
+    content += getString("string-local-storage");
+    content += "</td><td class=\"right\">";
+    content += renderRadioButtons(index, "localStorage",
+                                  data.permissionState);
+    content += "</td>";
+    // Permission class-specific content goes here;
+    return content;
+  }
+
+  function renderLocationData(index, data) {
+    if (data == null || data.permissionState == PERMISSION_NOT_SET) {
+      return "";
+    }
+    var content = "";
+    content += "<td class=\"left\">";
+    content += getString("string-location-data");
+    content += "</td><td class=\"right\">";
+    content += renderRadioButtons(index, "locationData",
+                                  data.permissionState);
+    content += "</td>";
+    // Permission class-specific content goes here;
+    return content;
+  }
+
+  function getString(stringId) {
+    var textElement = dom.getElementById(stringId);
+    if (!isDefined(typeof textElement)) {
+      return "";
+    }
+    return dom.getTextContent(textElement);
+  }
+
+  function renderRadioButtons(index, permissionClass, permissionState) {
+    var radioButtonName = getRadioButtonName(index, permissionClass);
+    var content = "<div class=\"radio-buttons\">";
+    content += "<input type=\"radio\" name=\"" + radioButtonName + "\"";
+    content += " id=\"" + radioButtonName + "-allow\"";
+
+    if (permissionState == PERMISSION_ALLOWED) {
+      content += "checked=\"true\"";
+    }
+    content += " onclick='handleRadioClick(" + index + ", \"" +
+               permissionClass + "\", " + PERMISSION_ALLOWED + ");'>";
+    content += "</input>";
+    content += "<label for=\"" + radioButtonName + "-allow\">";
+    content += getString("string-allowed");
+    content += "</label>";
+
+    content += "<input type=\"radio\" name=\"" + radioButtonName + "\"";
+    content += " id=\"" + radioButtonName + "-deny\"";
+
+    if (permissionState == PERMISSION_DENIED) {
+      content += "checked=\"true\"";
+    }
+    content += " onclick='handleRadioClick(" + index + ", \"" +
+               permissionClass + "\", " + PERMISSION_DENIED + ");'>";
+    content += "</input>";
+    content += "<label for=\"" + radioButtonName + "-deny\">";
+    content += getString("string-denied");
+    content += "</label>";
+    content += "</div>";
+    return content;
+  }
+
+  function getRadioButtonName(index, permissionClass) {
+    return index + "-" + permissionClass + "-radio";
+  }
+
+  function handleRadioClick(index, permissionClass, permissionState) {
+    updatePermission(index, permissionClass, permissionState);
+
+    // Return false to prevent the default link action (scrolling up to top of
+    // page in this case).
+    return false;
+  }
+
+  function handleRemoveClick(index) {
+    updatePermission(index, "localStorage", PERMISSION_NOT_SET);
+    updatePermission(index, "locationData", PERMISSION_NOT_SET);
+    updatePermissionsList();
+
+    // Return false to prevent the default link action (scrolling up to top of
+    // page in this case).
+    return false;
+  }
+
+  function updatePermission(index, permissionClass, permissionState) {
+    if (permissions[index][permissionClass]) {
+      if (permissions[index][permissionClass].permissionState !=
+          permissionState) {
+        permissions[index][permissionClass].permissionState =
+          permissionState;
+        enableButton(dom.getElementById("confirm-button"));
+      }
+    }
+  }
+
+  function layoutSettings(contentHeight) {
+    var content = dom.getElementById("content");
+
+    content.style.height = Math.max(contentHeight, 0) + "px";
+
+    // If a scrollbar is going to be visible, then add some padding between it
+    // and the inner right edge of the content. We don't want to have this in
+    // all the time or else there will be double-padding when the scrollbar
+    // isn't visible.
+    if (content.scrollHeight > contentHeight) {
+      content.style.paddingRight = "1em";
+    } else {
+      content.style.paddingRight = "";
+    }
+  }
+
+  function calculateDiff() {
+    var permissionClasses = ["localStorage", "locationData"];
+    var result = { "modifiedOrigins": [] };
+    for (var index = 0; index < originalPermissions.length; index++) {
+      var originalOriginData = originalPermissions[index];
+      var originData = permissions[index];
+      // Defend against a mis-match between the origins in each list.
+      if (isDefined(typeof originData) && 
+          originData.name == originalOriginData.name) {
+        var modifiedOriginData = new Object();
+        var modified = false;
+        for (var i = 0; i < permissionClasses.length; i++) {
+          var permissionClass = permissionClasses[i];
+          // The data may not include entries for all permission classes.
+          if (isDefined(typeof originalOriginData[permissionClass])) {
+            var originalState =
+                originalOriginData[permissionClass]["permissionState"];
+            var state = originData[permissionClass]["permissionState"];
+            if (originalState != state) {
+              modified = true;
+              modifiedOriginData[permissionClass] = new Object();
+              modifiedOriginData[permissionClass]["permissionState"] = state;
+            }
+          }
+        }
+        if (modified) {
+          modifiedOriginData.name = originData.name;
+          result.modifiedOrigins.push(modifiedOriginData);
+        }
+      }
+    }
+    return result;
+  }
+
+</script>
+</html>
+ß”_file:///button_bg.gifYimage/gifO;GIF89a  ’  ˙˚˚¯¯˘ﬁﬁﬁÌÌÌÍÍÍÚÒÚΩºΩŒŒŒ   øøøÙÙÙ◊◊◊ƒƒƒ¡¡¡‡‡‡———‰‰‰ªªª‘‘‘ˇˇˇËËË˛˛˛⁄ŸŸ„‰„ÔÔÔ»««ÔÔ«««‡ﬂ‡¸¸˝€€€‰„‰ˆ˜ˆŸŸ⁄ÁËËˆˆ˜ÊÂÂÊÊÊ·‚·˜ˆ˜˜˜ˆ˛˝˛‹‹€ÊÂÊ€‹‹ﬂ‡‡ﬂﬂﬂ‚‚·ŸŸŸ‹€€⁄⁄ŸÂÂÊÂÊÊ»»«€‹€„„‰ÊÊÂÔÔ···‚··‚·‚˝˝¸˝¸˝ˇˇˇ!˘  ? ,       X¿âpH,è«T•¢dvzΩßØ®ZÅ¨6 BÅFﬂìbLVŒËì”`4öÅ|> ÿÔä^D·ìf8%+34Ü7&:ç</;-.ô.öôùôA ;”_file:///button_corner_black.gifOZGIF89a  ≥     ˇˇˇ˘˘˘‰‰‰„„„xxxuuuKKKˇˇˇ               !˘  
+ ,       PTŒH$D ;”_file:///button_corner_blue.gifOZGIF89a  ≥     ˇˇˇ¸˝ˇÑ≤ˇ∑“ˇˆˇ´œˇ£—ˇ»„ˇÙ˙ˇˇˇˇ               !˘  
+ ,       P†CL%D ;”_file:///button_corner_grey.gifOZGIF89a  ≥     ˇˇˇ˝˝˝ˆˆˆ“““———√√√≥≥≥≤≤≤ˇˇˇ                  !˘  	 ,       PîCÃ@#D ;”_file:///icon_32x32.pngYimage/pngO	uâPNG
+
+   IHDR           szzÙ  	<IDATx^≠’Ylú’›Áúwùyg˜,«Òûÿé«é1éùƒY(êêêî ÅÑJlΩhF@"qä“¶ü˙]Ä†Râ
+%– Q”
+“ÑŸg3qÏxè«cœ>ÔÃªvÑ∏©(RÛª8WG:=Gœ9ƒ4MÃF¨Á	Ùú˙Ü&L⁄∂»^+Áç˙h\´ó,¸ü$1©ªi7DOæ≈,±,EˇHsÉB•ÕÓŸ[\∂Moë„7ΩWSƒ›§¯Üë†¸ée1ù–a/c)©H p˙ÿÁS9∫5óç9≤Òwﬂ·'∂û‹◊uß™»?Ï Á˚s∏°1Ä†ﬂ±ô∑ÿ°»S†hià>[ÊÌ—”ø;9un«I{{fÏ≥=üÔ{a„$àÎîù<‰Ô?‘4œ;§¯<Œ-ˆ¿ç?' 4ME6∞,‡q[¡∞∆|ìQ`™q,ú$˚Ô}W’ÿ÷µ˜Ï∏x›Ëj
+·KØ=ÕÈ_˙}nÿ‹e@~ΩΩΩ8p<>îHÈ«≠∆®(±4∑7πÎä‹LCE4°¢o8€›∫ˆÜ°Y%êôæË6‘ÿ∑ØrÏ"ÙTc·˛˙œ»·Ê≈’[ $bhI§2ÜÌlÔÙ-EõΩnW'’∆•€ûoÈÿòôUf&ŒVÖ∆G´Â‰e`ö¿g©Eı•]wmX©Ø≤£¶ÃÅ"'óû◊tÁC3I}êR
+û%ú¿3˙¨[PRﬂÈÌ∏˜tœ`&Å™àÃ®=Us»˘ÃL?®ëÜ›J¡±6ò‡®vV◊Ã)∂"9µJ”îŸ¿ãv‹vﬂKàÆ∫«3≤J	,"c¬@…ß¡∞C ÁÛ‡D7úﬁ™ú…zP‚∑£Æ8ÙÃ¡=èÔ»…IÎ¨j»∞<ówı—xé≈Ç*©y:ñZ41%„ p=ó∏2j¬%Œî:›¡Ä!ÊWyÖÓ£{ûÈø‹]Çv˙◊OÇ¿Ñ¿≤0Ü@`(ﬁ!a€j´ÑÈ©©çqMB«yBCú@≥Cˆ{KaÊÜ∞∏Œn;ﬂózCQi◊–Ñ¸%É:öÀöƒ‹—?ÚŒär5À∞àÃ‰ÀyŸÏﬁAê©[€Õ´ÿ=4≈0 ”DÖ’ÇRIƒª#ËjoE0ì‹jZ≠oÀy”…dÙB4˝Iq-˜Ë“_UÔw∏™óÊb¿≤òúŒÎÜIèŸÌ.›Â	6ã6ü=Ì¡ôsÖ√’ÃÿxÃ¥:{ÍÖΩFK-º?:	√SÑªk*IhdàRõCÔü¿÷∫jî(≤◊¥€w;◊@ªÿÉ¢h‘{2°l∏ò’_*ß§*˝2é"õ”¡q ÉF7…2 ŸAêB"tˇ¯|Tåñº∞nÛ#Ôµ˘Êègﬂ"]’•»Å‡…∫*∞öÚrX—:b™∂∑àcˇn%X$H∂áãóØ\°áCPØˆÉPä}Öd.e“--∑:‚|9ãÈæë	˘àÀŒÍuUR˚¢y6APb‚‚ïûÛ>˚‹Æ˝;A¯Ógex<⁄∂¶¶<$T‘<R≥†°πRw∏ä<'ΩıØœYﬁπ°1#É†Ñ ∫ÜóAVÿNéë	=äUS[vÛö∫ŒÜ€Í»¥≤™˜jvÑÚÕµLFsêlÆﬂ˛¥%‡/Àmäâ›éπe@<Ü"QÄﬂ·†C«‘âØ–◊sÒ$"Y•®rÿ∞"‡æã˘¨∏èÔlsŒ”>û˙âÀdÛ´ƒc0µÌü~9ä∑>∫ö˝Ï¯¯Ò≤ÚÚ!|Ú‚¬t˙<ÅIE9ÿËv-∞ò:éÉ™j8K‡H4¶ÑrÍ	ÀDäE°≤ŸmontŸ!1r t¬√4ÅØFAW¯oiΩoÒßä¨0ÁØ§W:%ÑÀÍ|πÆyΩŒr"˛≤kÒ|4∫ùàÁïÕïíÂù
+ßùWGß„ÿ3<~úÑ_,t9œp∫
+ñRkB’ÓØ≥Kˇ◊ÊqZEñï$ˆ‡TÔ◊8„.›˝ƒˇî∑p¯_QëRûòBÖU<¬äbî±J…9òò¨“=è≠Yyfse)ö\v>€ÊqºS¥ÆP.o¢¿Hß°ƒcÄh¡Ÿ/nÓ;u‘ák@ˇ6AmI1,Aõ√È''FRDıΩ¬4\,ßac(]ÄRÑeÈ-Y7.ãL¶ÒŒÖÀŸ⁄Mw>Wµ∏9çk@∑,^Ä’ïÂ–Teì{n9´…Y§4é;ùå«16ìÕÇp<Z>\J¶òäD…$ı!G)ˆédKnYwˇ≥ª_≈Íp»∏Ïz+ÎM>Ë_∞h'I»^úÑK`„ø¶®à¡$6ã'CaÑU"«q•>¡È∆p?fDÈ¸ˆwæœÛ<Æ%3Oqn˜.Gm=î°P®î¨¬Éy”§yñ˚Ê•|ıBﬁÏ¬]sãaÉŸÓ,+Ø
+)°§∫&\‰Û„z–∞¢~0KL(›'Aí	òî¿'rh˜:õ“öˆK î`Í:~VSÜym¢íÙ≤≥~óÜﬂÂD™ÁLpÏÚ◊Æ9¥∫ìr~øìe÷QJ·8˙Üådeåes›VÜ˘»√2£•ÀÏsÊlÒ6µÿî˛ÀPáÜ¡·Ò0‰÷eèl€ıáWDª◊Çú∏y)zô5gb…≠MáO‰É-n˚˙è6áŸt9MÖP‰É≠ºÇÕ˘j?î±apèüI‡ı›g_<p∏≠n˘
+◊Ä=09ÉV∑„ ‡8XàÑ¶≤]ñ˝ÌBñµ≤¶;œÅ%&≤Wp)<âëTœ°B“!Î>N5ﬁ}Ô”eçã\#∂—iÉ†¬fE&¢Ÿ<j˝æó¶c±’äiﬁaµà–s9$¶"809ç/¢Òn≈0ˇR$ÚyâaÓàNO/ëjÏ(TSÓ:Z¿¸ˇíz¯E>õÑ†’ÇØ„	D¿CIëI∞^ †ÈéÕ$Ò·h¯=ü”π~[mıóAÇSºÆΩY∑n√˚Ï¸˝ó?`‡:∞j6 ’(!&>Di©ˇ»'·»%f9%T:K∆‹VÀˆ[ó(∂Hö¶B◊Ú∏˝—«Æ⁄Ê◊‚zQqŸ*X;oÇe˘*∞+Q{ÛZ¥ﬂæ¡U?:ﬂpÎ⁄VOÁö°£∞‹∂~”[∑^ÃõG'n\øm∑ok±b6˛∆¨¶/Éπ]    IENDÆB`Ç”_file:///local_data.pngOâPNG
+
+   IHDR           szzÙ   tEXtSoftware Adobe ImageReadyq…e<  ≥IDATx⁄ƒW[hU˛Ê∂˜$ÿ§°	ƒÑb∞íVcÌKÛb≠-¶µ5 DRåU(Jã†}ê<XÒÜæhÕKÉàÜVë‘ Z∂"ƒ€§≈zIjsiH‹dì›Õ\◊ˇú›ôΩÕvVÊáœô≥g˛ˇ;ˇıåêJ•∞û$bùI˛‡˝é~∫˝95ÇiY∞Lçys>ö4Z0ö¶A◊uŒMMïhæ≠:W‘e‚]áû;≥TÄ)¨≥>ü¿ÊÊ,‘÷¶s¯hòd
+l·ÜûÇnò47iû^S5…DÒxâD≠w˙—›UIœ)ñ¬˜√â÷h‘∫p‚ΩE  RÆ‰,ôƒü)ä‚i¬Ω˜W`˜Æ∑ ô°8˝ŸüÙ^ #:E≤ÅˆΩU¯˙\å@òhÒÓ" ŒP∞,À≤'Ä∫∫ ZÔ™‰Û—+	Ñ√a‡À»∞ê>†H n¡¿È˘V∏j ú8M÷ø≤Ä( Œ~Yˆ!
+BÒ˘dJBr¬ˇ
+@í≤ $„'Âä\†d∞A»öZÁπ0 ˆ~ëÊ¥$)|MlôÚÕ‰ó…y.ﬂ¢F¶wD…ñ!zñõ4Ä<Ñ∫Û\Äk◊-%x¸6n8»ìÈmÅ|≈W¨≤\ü–16ûtÍÑ"+T7.Éjœ œ»›˚ù˘ì]≥%^S2º)8˘äOÚvÅ dD*§ˇ∑¢˛/≠©Ç'∫Ô)@æâûyvpMîS£Ûl∏báÏRíÛÈÍür∂inÏg˜ΩÉ’Â%è3ññ-{U*FK”ì8ˇf/R¶ues„ø PQâ_ø˙úÍÄÄ±oÜ∞Á•W—∞cß[©ÚvAnñ"-æÇÍ∆&®ë0bSX†∂¨å@O&ë\^$ê°¡ÂΩBŸıuõú˘ÙÃ¨Ì)áã…OßçœﬂÄA}ﬂ‘5$ëàFa1›V5æßD±.î›î·çåËT*õà˘w∏Ô]‘ln¶”&»¸cÿˆP⁄ΩHJk†—EDîEåÙÛò(6AëÏ∆of≈DÃ∆¢X±ì¿©ß:±∫0ı˘Ë‰ÿˇ∆	l}Q4ﬂ˜ :˚†+»*¶._ƒ«è‡AYÁy≤ÖkÏˆ„ôÏ‰~Ú;3Ω@Õ¶ˆˆñºˇÔÿ◊ãÆhña°™~SπY¿Æ‚≥ﬁ/⁄Åb≥[®Ä¶°Q,ÒÁ\˙˝ªsÄÏ£Nπ°ãlÉx¡3YZÌ9v⁄™
+u9ÜHMæ<v◊ŒüÂÓ<Ú4&∆…:B’±≥Á⁄z^
+BFq‚DYuÄôºΩ˜-úÏ∏oÖ©&ÒÌÎ/SFh§XOì~⁄zûÁqQF`o,⁄∆óRó˛ê©uX§Tî…§‘rSVäü>R≥¡ª⁄Áﬂ˘¢Ã¸N)ûôù«»ËU>∫3ø/RÖd,FÒGÌñVliòÚ_•€è%)]òÔmNS"„Ç,ºŸô9åé˛Dπ·ﬁ8™Í–}Íl¶Ó«∞˚Ë+|}Î˛GpÈìì‹¸lè´˛b,dÇ0†•e∂oﬂ¡FFØî4faÄ±¯ÿ◊˚vY_UU{aﬁ6?HüK%ø◊öË;Ú£„Ø˝xê XÄı˛<ˇGÄ .›Vﬁ{‹u    IENDÆB`Ç” !_file:///location_data.pngOhâPNG
+
+   IHDR           szzÙ   	pHYs     öú    cHRM  n'  sØ  ˛É  [  L  ¯ˆ  1Î  »≠Ôº  ÓIDATx⁄ÏóKl\g«ﬂ„>f<ˆå'µÎƒ«ip“¥UÉ⁄§j†^—¶HS±@Ä®4<Ñ⁄E#±AÜ% &À]@Î
+6)î.(HnäÄ;!4∂ì¯5ÚÃ8„Òº<sÁﬁπ,Ê⁄u¬£c ÜO:˙§Ûù˚ùˇy~Á
+ﬂ˜πóKrè◊ˇà›~pnx 
+<å É{ò.úùZﬁ¯ü87<ê&§÷1Ø·°Ö2BH<◊≈s uvj˘ıvÔTªP>*µÒrÔ·√∂S*„7}¥©—¶âäF±;;Ìz•ÚÖ”}]ºµ∫Òˆ]pnx ©ÛÂÉ'ü§ú[•≤∂é2[÷+”Dô&⁄21;:ww≥Yÿ9}◊Ù[´≥w+	œû8E£V¶∏ö•gËè=ˇebâ—˛~Ü?ˇE‚ÉáêZcwu—3t‡|;Îv¨7;"ÉV$Lfˆ2^√Â»ÈO”34ƒæGè!ïÅê
+ª+∆ï_˛•M∫˙¢‰œ$?*⁄Ò¿ÒÓƒ Î+T÷
+H≠0:¬))ÁrV“©0Baî6êÜÅ2∫˜ ø!8Óπu÷ó”Äœ”£ﬂ&∂/AÓ⁄5˛8Ò
+ó~˙cÚÛDzÔÁ‰Wæé“JõXù—∂ Ë6  π,µbe(ÃpBJj• –(≠©óÀ!1,e¥»˜<Ä¬› ∞X€(#îBj≈ü~¯ü¯“Û8ÒÅ2åf√ÂÍoﬁ@jeXl7∂‘Ç©%R+
++i÷Æ_C…¡'?≈‡üDI)õ°^,¢|(¨,„6˝_ò¶%wê”¥⁄pvj˘0âﬂDiÖ“ö ⁄^£¡¬Ôﬁa·›ã4]ór.XoíΩ6C√©ø=z5{0 3ÿç¿Î¶iµÄΩÜ;Èπ^ÃÏ–¸Ì“ŸôPñçaá»œﬂ@€aªÉ|zâïÀÔo,U£@láBhu`h ^[ç(B™^™‡7}§÷Hm¥ N» ÒúJô≈?\‰Ê¶˚“˜◊o˜Ì†û`ÔÏ†ã∂ü„†°§ä´YÑî-Åb•[qüõ¸5ÛÁª„˘À@/∞'BË
+ˆn ¥˛]Õgßñ_ÛõÕ≈L•Õ†ÊîarÛ/”™µw~∞∏˛€¿¬≠x´ØÆÑ†xÄˇü$©j>_p6´(£’t™Îyrã7J?Jæ%w(Ù 7à˚- îﬁÓ'¢`‡8øûN∑º`ò¨Œ¸ïLÕ˝… ¶[	¨ırÅJ†t9†[A˙éSˇË*K‚∏ΩºµÍÙÊõ◊Ò.B:◊séıá?˚‡ﬁB†ï;;/í◊]◊{Ûïâ©• åÔ8ıˆ&¢Ò±‰(êäDBÉëH®Âœ¶áÔ{H•X˚’,F©!%Usù¸Pé„
+i∞Ÿ∑◊¢TvHß7Ap¯Œ◊æÒ˙F[#Ÿ¯XÚ’x<ö:y‚Q˙˙‚xèπŸl[±†á‹‹*?˚Êxé√«æzí\z{-b›äpHpÙ¡0BxîJu.˛>O&„L#wÇêˇ\y,uÊôˆÓÌŸÊ◊ju≤Ÿ[Ùˆv–3tVß [“€<˛xßNı»√Q
+ózΩ	@$¢x˙túCÿ«Å…Ò±dÙ_z`|,˘j¢?ö⁄èaö∆é\Ú©’Í∏ÆG$b„„ÉÔÛ¡ƒü©V$>˜}}v ïäã÷`Ybõ>Èïôl˘6Oà€-ÔN=ı‘	§ÿ™û&–ƒm8\Ω:«—£—Z‡”ﬂ√€t í@ﬂo}„∫≥≥eé±P™π}èeπº˜~ôÛçm‚CÂÒ‘≥g>ÉiIΩ @+Èñóñ(W <Ù–A› Äª-≥%∑ï+‡qÂJëhó$ëê;‰ZÁﬂ≠rcﬁùF‘¯XÚÖx|œ∑û=s”2¥∫ﬁsÃÃÃqËÅl{Á˘ÌrwÚ,ÎÙ˜Î8ﬂü¨fºæJ≈_„c…$0qg≠oO,Z≤'&ì-Ô∫e∆¢6Öç⁄øyN‹ÎﬂÛø hÄ›|˚Ë∆    IENDÆB`Ç        1  8  G  ]  o  é  ò ÎÄ Îà Îè Îß Î± Ï Ï˜ Ì Ìv Ì} Ìû Ì˚ Ó Ó# ÓÄ Óá Ó† Ó™ ¯# ¯* ¯C ˝X ˝_ ˝{             "             Á

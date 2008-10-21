@@ -1,0 +1,1 @@
+Sample file to test that loading unsupported formats into a canvas fails.

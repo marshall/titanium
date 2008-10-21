@@ -1,0 +1,11 @@
+--- 
+:type: widget
+:name: app:editinplace
+:version: 1.0.2
+:dependencies: 
+- :type: websdk
+  :version: ">=2.1"
+  :name: websdk
+:tags: [ uicontrol ]
+:licenses: [6]
+:description: "app:editinplace is a ui control for displaying text and then supporting edit-in-place on the value when clicked"

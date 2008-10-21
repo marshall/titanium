@@ -1,0 +1,52 @@
+
+                          mod_resume
+
+  What is it?
+  -----------
+
+  This is an Apache module implementing the resumable HTTP request proposal
+  specified in:
+
+   http://code.google.com/p/google-gears/wiki/ResumableHttpRequestsProposal
+
+  Requirements
+  ------------
+
+    - Apache 2.2
+    - mod_cache
+    - mod_disk_cache (recommended)
+
+  Installation
+  -----------
+
+    apxs -I <apache_2.2_source_code> -c mod_resume.c
+    apxs -i mod_resume.la
+
+  Configuration
+  -------------
+
+  mod_resume depends on mod_cache, which is used to cache responses sent to
+  resumable requests, allowing them to be replayed if necessary. The
+  recommended cache provider is mod_disk_cache, as it will persist cache
+  entries beyond server restart, but mod_mem_cache can also be used.
+
+  The minimum httpd.conf configuration requirements include the following
+  parameters (though of course the settings could vary):
+
+    LoadModule cache_module modules/mod_cache.so
+    LoadModule disk_cache_module modules/mod_disk_cache.so
+    LoadModule resume_module modules/mod_resume.so
+    ResumeEnable disk /
+    ResumeInputCacheRoot /var/cache/apache2/mod_resume
+    CacheRoot /var/cache/apache2/mod_disk_cache
+
+  Note that CacheRoot is a mod_disk_cache configuration parameter, but is
+  nonetheless required when ResumeEnable uses the "disk" provider.
+
+  Both mod_cache and mod_disk_cache (or mod_mem_cache) could be compiled into
+  Apache, in which case they would not need to be explicitly loaded.
+
+  Directives
+  -------------
+
+  TODO(fry)

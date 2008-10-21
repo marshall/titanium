@@ -1,0 +1,452 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "DTD/xhtml1-transitional.dtd">
+
+<!--
+  Copyright 2007, Google Inc.
+
+  Redistribution and use in source and binary forms, with or without 
+  modification, are permitted provided that the following conditions are met:
+
+  1. Redistributions of source code must retain the above copyright notice, 
+  this list of conditions and the following disclaimer.
+  2. Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+  3. Neither the name of Google Inc. nor the names of its contributors may be
+  used to endorse or promote products derived from this software without
+  specific prior written permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+  EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
+  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<html>
+<head>
+  <title>Gearsmonkey: Gears + Greasemonkey</title>
+  <link rel="stylesheet" type="text/css" href="gears.css" />
+</head>
+
+<body>
+  <h1>Gearsmonkey: Gears + Greasemonkey</h1>
+
+  <div id="pagecontent">
+      <div class="i">
+        <style type="text/css" media="screen">
+        .calloutBox {
+          border: 1px solid #999;
+          background:orange;
+        }
+        </style>
+        <div class="calloutBox">
+          By using Gears with the Firefox Greasemonkey plugin, you can inject Gears code into any website that you want. Don't wait for your favorite website to enable offline support -- do it yourself.
+        </div>
+        <p class="para">
+          <em>
+            Ben Lisbakken, Gears API team
+            <br>
+            November 2007
+          </em>
+        </p>
+        <ul>
+          <li><b><a href="http://gears-monkey.googlecode.com/svn/trunk/WikipediaOffline/wikipedia_offline.user.js">Download Wikipedia Offline Script (UPDATED)</a></b> (Must have Gears &amp; Greasemonkey installed to use)</li>
+          <li><a href="#indroduction">Introduction</a></li>
+          <li><a href="#Section1">Section 1: Setup and Initialize Gears</a></li>
+          <li><a href="#Section2">Section 2: Take the HTML &amp; CSS 'offline'</a></li>
+          <li><a href="#Section3">Section 3: Grabbing the media files ('offlining' cross-origin resources)</a></li>
+          <li><a href="#Conclusion">Conclusion</a></li>
+        </ul>
+        <a name="introduction"></a>
+        <h2>Introduction</h2>
+        <img src="http://www.google.com/help/hc/images/wiki_offline_greasemonkey_trans.png" align="right">
+        <p class="para">
+          I am a support engineer on Gears, and I'm in love with it. Everyday
+          I sit down and think about what projects, sites, mashups, or fun little tools
+          could benefit from Gears. Well, the truth is there's a lot. Sites
+          with a lot of static information -- Wikipedia, any API documentation, web-based
+          email -- would be great to be able to use when no internet connection is
+          available. But what if you're a user that always has an internet
+          connection? Then adding Gears to a site doesn't do much, right?
+          Wrong. Imagine your favorite website is now stored on your computer, and
+          it syncs whenever there's altered content. Whenever you look at the site,
+          your browser is grabbing everything straight from your hard drive. Did you
+          just make a search for your best friend on Facebook? Don't wait 5 seconds
+          the next time that search runs, have the results immediately! Meanwhile,
+          save the webmasters' precious bandwidth/server power!
+        </p>
+        <p class="para">
+          But alas, if only it were a reality that every site was Gears enabled -- the
+          internet faster and available anywhere. You'd need every site to implement Gears -- GearsMonkey to the rescue!
+        </p>
+        <p class="para">
+          By using Gears with the Firefox Greasemonkey plugin, you can inject
+          Gears code into any website that you want. Don't wait for your favorite
+          website to enable offline support -- do it yourself.
+        </p>
+        <p class="para">
+          Follow along as I show you step-by-step how to take Wikipedia offline.
+        </p>
+        <h3>
+          What you need: The Architecture
+        </h3>
+        <p class="para">
+          You need the following tools to take websites offline:
+        </p>
+        <ol>
+          <li>
+            <a href="http://www.greasespot.net/">Greasemonkey</a> - Use Greasemonkey to inject Gears code onto a webpage after it loads
+          </li>
+          <li>
+            <a href="http://gears.google.com/">Gears</a> - You'll be utilizing all three components that make up Gears:
+            <ul>
+              <li>
+                <i><a href="http://code.google.com/apis/gears/api_localserver.html">LocalServer</a></i>: Capture any URL
+              </li>
+              <li>
+                <i><a href="http://code.google.com/apis/gears/api_database.html">Database</a> (local to computer):</i> Keep track of what URLs you have stored, personal preferences, etc.
+              </li>
+              <li>
+                <i><a href="http://code.google.com/apis/gears/api_workerpool.html">WorkerPool</a> (threading):</i> Keep the UI snappy -- run heavy computations, data synchronizations, etc. in the background. Also can help overcome cross-origin dilemmas.
+              </li>
+            </ul>
+          </li><li>
+            iFrame - Use in conjunction with Greasemonkey to allow for capture of cross-origin resources.
+          </li>
+        </ol>
+        <h3>Steps to taking Wikipedia offline</h3>
+        <p class="para">
+          Here is an outline of what we need to do to take Wikipedia offline. It is a step-by-step guide of what needs to happen as soon as a Wikipedia page is loaded.
+        </p>
+        <ol>
+          <li>
+            Initialize Gears on page
+            <ul>
+              <li> Check if site has been allowed, if not, trigger allow dialog
+              </li>
+            </ul>
+          </li>
+          <li>
+            Insert iFrame
+          </li>
+          <li>
+            Initialize Gears on iFrame
+            <ul>
+              <li> Check if site has been allowed, if not, trigger allow dialog
+              </li>
+            </ul>
+          </li>
+          <li> If Gears is initialized on both, insert Cache Page link (unless page is cached)
+          </li>
+          <li> When user clicks Cache Page:
+            <ul>
+              <li> Capture the HTML and CSS of the Main Page
+              </li>
+              <li> Store the URLs of all links to HTML, CSS, and media files in the Gears database (so we can remove them from the ResourceStore later, if needed)
+              </li>
+              <li> Create an iFrame whose src is in the domain of upload.wikimedia.org. Pass all media file URLs to the iFrame in the src URL after the hash, e.g. src="http://upload.wikimedia.org/#thisimgloc.jpg||anotherimgloc.jpg||lastimgloc.jpg"
+              </li>
+              <li> Initialize Gears in iFrame
+              </li>
+              <li> Capture all URLs from the iFrame's href hash.
+              </li>
+            </ul>
+          </li>
+          <li>
+            When user clicks [x] to remove an article from cache:
+            <ul>
+              <li> Grab all URLs from the Gears database that correspond to that article
+              </li>
+              <li> Remove all URLs from the ResourceStore of the Main Page that contain the string "en.wikipedia.org"
+              </li>
+              <li> Remove all URLs from the Gears database that correspond to that article
+              </li>
+              <li> Create an iFrame whose src is in the domain of upload.wikimedia.org. Pass all media file URLs to the iFrame in the src URL after the hash, e.g. src="http://upload.wikimedia.org/#thisimgloc.jpg||anotherimgloc.jpg||lastimgloc.jpg||remove||"
+              </li>
+              <li> Initialize Gears in iFrame
+              </li>
+              <li> Remove all URLs from the ResourceStore that are listed in the iFrame's href hash.
+              </li>
+            </ul>
+          </li>
+        </ol>
+        <a name="Section1"></a>
+        <h2>Section 1: Setup and Initialize Gears</h2>
+        <h3>Setup</h3><br/>
+        <div style="float: right; padding-bottom: 5px; padding-left: 5px;">
+          <a href="http://www.google.com/help/hc/images/wiki_offline_Step1.jpg"><img style="border: 1px solid black;" alt="Section 1" src="http://www.google.com/help/hc/images/wiki_offline_Step1_small.jpg" border="0"></a>
+          <br>
+          <b>Results of Section 1</b>
+        </div>
+        <a href="http://code.google.com/articles/support/wiki_offline_step1.user.js">[step 1 code]</a>
+        <p class="para">
+          First, I created two scripts, wikipedia_offline.user.js and wikipedia_offline_img_grabber.user.js, to grab stuff from en.wikipedia.org (HTML and CSS) and upload.wikimedia.org (images, sound clips, videos), respectively. I also needed to use an iFrame whose source was in the origin of upload.wikimedia.org in order to be able to download the media files from that origin. By having two files, it was much easier to separate the logic in the main window from that in the iFrame. After I was satisfied with the scripts, I placed them in the same file.
+        </p>
+        <h3> Initializing Gears
+        </h3>
+        <p class="para"> After setting up the files with the correct @include origins, the next step is to inject the code to initialize Gears. Normally, we would just use code like this:
+        </p>
+        <pre>// WRONG GEARS INIT CODE
+var server = null;
+var store = null;
+function init() {
+  if (!window.google ||!google.gears) {
+    return;
+  }
+  try {
+    localServer = google.gears.factory.create('beta.localserver','1.0');
+  } catch (ex) {}
+  store = localServer.openStore(STORE_NAME);
+}</pre>
+        <p class="para"> However, this won't do in our case for two reasons. First, our being in the (safe) Greasemonkey sandbox prevents us from being able to access window.google. The second reason is because Gears doesn't allow us to create an instance until the user has "allowed Gears to run on this site". Normally, this dialog would come up as soon as we tried to do a <i>google.gears.factory.create</i>, but this dialog will only trigger if an event is fired which does a <i>GearsFactory().create</i>. This behavior is specific to running Gears in Greasemonkey.
+        </p>
+        <p class="para">So how do we get around these issues?
+        </p>
+        <p class="para"> For the first, instead of using window.google we will be using <i>unsafeWindow.google</i>. <i>unsafeWindow</i> is actually window.wrappedJSObject which is the raw window object inside the XPCNativeWrapper provided by the Greasemonkey sandbox. To learn more about it (and the security risks of using it!) look here: <font color="#0000ff"><u><a href="http://wiki.greasespot.net/UnsafeWindow">http://wiki.greasespot.net/UnsafeWindow</a></u></font>
+        </p>
+        <p class="para"> Now our code looks like this:
+        </p>
+        <pre>// Correct gears init code
+var server = null;
+var store = null;
+function initGears() {
+if (!unsafeWindow.google) unsafeWindow.google= {};
+if (!unsafeWindow.google.gears){
+  unsafeWindow.google.gears= {factory: new GearsFactory()};
+  try {
+    server = unsafeWindow.google.gears.factory.create('beta.localserver', '1.0');
+    store = server.createStore("wikipedia_offline");
+  } catch(e) {}
+}</pre>
+        <p class="para"> For the second issue, all we have to do is call <i>initGears()</i> when the script loads. If <em>server</em> == null, we know that Gears hasn't initialized correctly and we need to make an event trigger that does a <em>GearsFactory().create</em>. The best event for this is the <i>load</i> event on the window. That way, as soon as the user navigates to a Wikipedia article they will be asked to allow Gears to run on en.wikipedia.org as well as upload.wikimedia.org.
+        </p>
+        <p class="para"> Here we check if we need to trigger the load event:
+        </p>
+        <pre>initGears();
+if (!server){
+  triggerAllowWikipediaDialog();
+}</pre>
+        <p class="para"> In the <em>triggerAllowWikipediaDialog()</em> function, we have:
+        </p>
+        <pre>function triggerAllowWikipediaDialog(){
+window.addEventListener("load",
+  function(){
+    new GearsFactory().create('beta.localserver', '1.0');
+    location.href = location.href;
+    return false;
+  }, true);
+}</pre>
+      <p class="para"> What we just did was get around the fact that the allow dialog won't pop up when creating a gears factory unless an event is triggered to do this. After the allow dialog is accepted, the page will reload and we can create our Gears factory and stores.
+      </p>
+      <a name="Section2"></a>
+      <h2>
+        Section 2: Take the HTML &amp; CSS 'offline'
+      </h2>
+      <div style="float: right; padding-bottom: 5px; padding-left: 5px;">
+        <a href="http://www.google.com/help/hc/images/wiki_offline_Step2.jpg"><img style="border: 1px solid black;" alt="Section 1" src="http://www.google.com/help/hc/images/wiki_offline_Step2_small.jpg" border="0"></a>
+        <br>
+        <b>Results of Section 2</b>
+      </div>
+      <a href="http://code.google.com/articles/support/wiki_offline_step2.user.js">[step 2 code]</a>
+      <p class="para">
+        We now have a Gears factory with a Gears ResourceStore on en.wikipedia.org! From here we need to insert a link that will trigger the capture of the HTML + CSS. The function <em>insertCacheLink</em> inserts a [Cache Page] link.
+      </p>
+      <p class="para">
+        Next, we need to create a database so that we can store the URLs that have been captured. Here is the new initGears function that includes the creation of the database.
+      </p>
+      <pre>function initGears() {
+  if (!unsafeWindow.google) unsafeWindow.google= {};
+  if (!unsafeWindow.google.gears){
+    unsafeWindow.google.gears= {factory: new GearsFactory()};
+  }try{
+    server = unsafeWindow.google.gears.factory.create('beta.localserver', '1.0');
+    store = server.createStore("wikipedia_offline");
+    db = unsafeWindow.google.gears.factory.create('beta.database', '1.0');
+    if (db) {
+      db.open('wikpedia_offline');
+      db.execute('create table if not exists WikiOffline' +
+      ' (Article varchar(255), URL varchar(255), ' +
+      'TransactionID int)');
+    }
+  } catch(e) {}
+}</pre>
+    <p class="para">
+      Now, we have to create the functionality for the [Cache Page] link. This means we have to grab all URLs to be stored, with <em>getCSSLinks</em>, then store the links in the new database, with <em>saveInCacheHistory</em>, and lastly call <em>capture</em> to actually store the resources in Gears.
+    </p>
+    <p class="para">
+      For <em>saveInCacheHistory</em>, we want to be sure to use unique IDs for the article entries so that we can delete all the resources from the article when needed. The most important piece of code for this function is just inserting an entry into the database.
+    </p><pre>db.execute('insert into WikiOffline values (?, ?, ?)', [docTitle, cssURLs[cssURLs.length-1], maxTID]);</pre>
+    The reason why we don't insert all CSS links in there is because we won't remove all CSS when we remove this article -- all articles use the same CSS so no point in continually adding/removing it.
+    <p></p>
+    <p class="para">
+      Now we call <em>capture</em> on the array of CSS + HTML URLs. The <em>capture</em> function is pretty simple -- if the ResourceStore exists then we call the ResourceStore method, and give it a callback function for when it completes.
+    </p><pre>function capture(url) {
+  if (!store) {
+    setError('Please create a store for the captured resources');
+    return;
+  }
+  store.capture(url, function(url, success, captureId){
+      console.log("Captured: "+url);
+  });
+}</pre>
+    Now all CSS and HTML has been stored!
+    <p></p>
+    <a name="Section3"></a>
+    <h2>
+      Section 3: Grabbing the media files ('offlining' cross-origin resources)
+    </h2>
+    <div style="float: right; padding-bottom: 5px; padding-left: 5px;">
+      <a href="http://www.google.com/help/hc/images/wiki_offline_Step3.jpg"><img style="border: 1px solid black;" alt="Section 1" src="http://www.google.com/help/hc/images/wiki_offline_Step3_small.jpg" border="0"></a>
+      <br>
+      <b>Results of Section 3</b>
+    </div>
+    <a href="http://code.google.com/articles/support/wiki_offline_step3.user.js">[step 3 code]</a>
+    <p class="para">
+      Here's where things get a little ugly. You will notice that each image (or for that matter, any media) link is from another origin. All HTML and CSS are from en.wikipedia.org and all media are from upload.wikimedia.org. Due to security risks, Gears prevents cross-origin captures. Thus, we can't do a capture of any media files stored on upload.wikimedia.org from code being run on en.wikipedia.org.
+    </p>
+    <p class="para">
+      There are two ways around this, both of them involving iFrames:
+    </p>
+    <ol>
+      <li><p class="para">
+        Insert an iFrame into the page with the src being in the
+        upload.wikimedia.org origin and the resource URLs to grab after the hash in
+        the src. Then run a Greasemonkey script on upload.wikimedia.org that will
+        initialize Gears and capture the URLs located after the hash in the iFrames
+        href.
+      </p>
+    </li>
+    <li><p class="para">
+      Do the same as method 1, except use the cross-origin WorkerPool. This is a new feature in Gears versions 0.2+. It allows you to initialize a worker thread from a JavaScript located on another origin.
+    </p></li>
+  </ol>
+  <p class="para">
+  </p><h3>What's the difference between the two methods?</h3>
+  <p></p>
+  <p class="para">
+    In method 1, when the user first runs this script, we will have to trigger an event
+    to initialize Gears to run on upload.wikimedia.org. This will cause the "Allow
+    Gears to run on this site" security dialog. This will be inelegant because
+    upon first use, the user will have to click the "always allow" for two
+    security dialogs (note: one for each domain we grab resources from).
+  </p>
+  <p class="para">
+    But, using method 2, we can sneak our way around the second security dialog! In
+    Gears, the WorkerPool is allowed to use cross-origin workers (read:
+    threads). When these workers are initialized, they are given a block of code
+    which will be what they run. This block of code can be a literal block of
+    code, or a URL to a .js file. If that .js file is on another origin, it is
+    allowed to run as long as the .js file has <i>worker.allowCrossOrigin</i> in
+    it.
+  </p>
+  <p class="para">
+    So why use a cross-origin worker? By default, as soon as a cross-origin worker
+    is used, Gears automatically adds that site to the list of sites allowed to
+    run Gears. Now we can initialize Gears silently without having the annoying
+    "Allow upload.wikimedia.org to run Gears" popup!
+  </p>
+  <p class="para">
+    However, we can't use this option with Wikipedia because we would need to get
+    Wikipedia to host the worker.js file! So we are stuck with method 1.
+  </p>
+  <p class="para">
+  </p><h3>Cross-origin iFrame magic</h3>
+  <p></p>
+  <p class="para">
+    First step is to get that iFrame in there! Thinking ahead, there are three times we will want to insert an iFrame:
+  </p><ol>
+    <li>We want to insert an iFrame whenever we load a page on en.wikiepdia.org so that we can prompt the user to allow upload.wikimedia.org if they haven't already.</li>
+    <li>If the user wants to cache a page, we need to capture all of the media resources.</li>
+    <ul>
+      <li>In this case, we need to send a list of resources to grab to the iFrame. It's not possible to access the DOM of the new iFrame from the parent window, so we can't pass them in that way. Instead, we will pass them to the iFrame in the src URL.</li>
+    </ul>
+    <li>If the user wants to remove a page from cache, we need to remove all of the media resources.</li>
+    <ul>
+      <li>Same as in the case of caching a page, we need to communicate with the iFrame and tell it what resources it needs to remove. Send a list of them in the src URL of the iFrame.</li>
+    </ul>
+  </ol>
+  <pre>function insertIFrame(imgLinks) {
+  var offlineControlsDiv = document.getElementById('offlineControlsDiv');
+  var iFrame = document.createElement('iframe');
+  var iFrameSRC = "http://upload.wikimedia.org/";
+  iFrame.name = 'grabPictures';
+  iFrame.width = '500px';
+  iFrame.height = '40px';
+  iFrame.frameBorder = 0;
+  iFrame.style.overflow = "hidden";
+  iFrame.style.align = "left";
+  iFrame.style.display = "block";
+  iFrame.style.fontSize = "10px";
+  if (imgLinks != ""){
+    iFrameSRC += "#" + imgLinks;
+    iFrame.src = iFrameSRC;
+  } else {
+    iFrame.src = iFrameSRC;
+  }
+  offlineControlsDiv.appendChild(iFrame);
+}</pre>
+<p class="para">
+  Now we will work on logic for whenever our Greasemonkey script runs on the upload.wikimedia.org domain. In our script we should be doing a quick check to see what domain we're on -- upload.wikimedia.org or en.wikipedia.org -- because that will determine what logic we should use.
+</p>
+<pre>function isMediaPage() {
+  if (location.href.indexOf('upload.wikimedia.org') != -1) {
+    return true;
+  } else {
+    return false;
+  }
+}			
+</pre>
+<p class="para">
+  Here is the main code we run when we are in the iFrame:
+</p>
+<pre>if (isMediaPage()) {
+  hideHTML();
+  if(errorMsgs.indexOf('Uncheck "Work Offline" in the File menu') == -1 &amp;&amp; errorMsgs.indexOf('Server not found') == -1) {
+    initUploadGears();
+    if (!server){
+      triggerAllowWikimediaDialog();
+    } else{
+      if ( location.hash.length &gt; 5 &amp;&amp; location.hash != "#undefined") {
+        var parameters = location.hash.substring(1,location.hash.length);
+        var removeLoc = parameters.indexOf("||remove||");
+        if(removeLoc == -1) {
+          addToStore(parameters);
+        } else {
+          parameters = parameters.substring(0,removeLoc);
+          removeFromStore(parameters);
+        }
+      }
+    }
+  }	
+}			
+</pre>
+<p class="para">There's a few interesting things to note here. First, we check if the page says anything about 'Uncheck "Work Offline" in the File menu' or 'Server not found'. If Gears is initialized on an error page, it will crash the browser. This is specific to Greasemonkey + Gears -- if you just had Gears code on a page (i.e. not injected by Greasemonkey) then if there was an error accessing the page, the Gears code would never run!</p>
+<p class="para">The next thing is that we have <em>initUploadGears</em>. This is a different function than the en.wikipedia.org init. They are different because we don't need the database in the iFrame.</p>
+<p class="para"><em>triggerAllowWikimediaDialog</em> is essentially the same thing as <em>triggerAllowEnDialog</em> -- it just triggers the "Allow this site to run Gears" dialog for upload.wikimedia.org.</p>
+<p class="para">
+  If the server has been initialized, though, then we are going to look at the hash in the current URL. If we have something in the hash, then that means we are either adding or removing resources from the ResourceStore. When the iFrame was created, ||remove|| was inserted into the hash if we were removing the resources listed in the hash; otherwise we assume that we are caching them.
+</p>
+<p class="para">
+  The logic for adding and removing from stores is very simple: either call <em>store.capture</em> on the URL array, or loop through it, calling <em>store.remove</em> on the URLs.
+</p>
+<p class="para">
+  After adding some UI touchups and a few modifications to the functions, we have our final product!
+</p>
+<a name="Conclusion"></a>
+<h2>Conclusion</h2>
+<p class="para">
+  Hopefully you have learned what it takes to inject Gears code into any webpage by using Greasemonkey. Using the full functionality of the Gears library, there's a lot that can be done with existing web applications. The whole process is fairly simple, unless there are resources on a page that come from different domains. That's when you have to start using the more complex iFrame approach to sidestep the anti-cross-origin policies in the Gears ResourceStore.
+</p>
+<p class="para">Good luck creating your own GearsMonkeys!</p>
+</div>
+  </div>
+</div>
+
+</body>
+
+</html>

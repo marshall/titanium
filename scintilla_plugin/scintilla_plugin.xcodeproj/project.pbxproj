@@ -1,0 +1,436 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 45;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		AB0481460E81A93B0061BA3C /* System.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AB0481450E81A93B0061BA3C /* System.framework */; };
+		AB0481690E81B38B0061BA3C /* ISciDoc.h in Headers */ = {isa = PBXBuildFile; fileRef = AB0481590E81B38B0061BA3C /* ISciDoc.h */; };
+		AB04816A0E81B38B0061BA3C /* ISciDoc_np.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AB04815A0E81B38B0061BA3C /* ISciDoc_np.cpp */; };
+		AB04816B0E81B38B0061BA3C /* ISciDoc_np.h in Headers */ = {isa = PBXBuildFile; fileRef = AB04815B0E81B38B0061BA3C /* ISciDoc_np.h */; };
+		AB04816C0E81B38B0061BA3C /* ISciMoz.h in Headers */ = {isa = PBXBuildFile; fileRef = AB04815C0E81B38B0061BA3C /* ISciMoz.h */; };
+		AB04816D0E81B38B0061BA3C /* ISciMoz_np.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AB0481600E81B38B0061BA3C /* ISciMoz_np.cpp */; };
+		AB04816E0E81B38B0061BA3C /* ISciMoz_np.h in Headers */ = {isa = PBXBuildFile; fileRef = AB0481610E81B38B0061BA3C /* ISciMoz_np.h */; };
+		AB04816F0E81B38B0061BA3C /* ISciMozController.h in Headers */ = {isa = PBXBuildFile; fileRef = AB0481620E81B38B0061BA3C /* ISciMozController.h */; };
+		AB0481700E81B38B0061BA3C /* ISciMozController_np.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AB0481630E81B38B0061BA3C /* ISciMozController_np.cpp */; };
+		AB0481710E81B38B0061BA3C /* ISciMozController_np.h in Headers */ = {isa = PBXBuildFile; fileRef = AB0481640E81B38B0061BA3C /* ISciMozController_np.h */; };
+		AB0481720E81B38B0061BA3C /* ISciMozEvents.h in Headers */ = {isa = PBXBuildFile; fileRef = AB0481650E81B38B0061BA3C /* ISciMozEvents.h */; };
+		AB0481730E81B38B0061BA3C /* ISciMozEvents_np.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AB0481660E81B38B0061BA3C /* ISciMozEvents_np.cpp */; };
+		AB0481740E81B38B0061BA3C /* ISciMozEvents_np.h in Headers */ = {isa = PBXBuildFile; fileRef = AB0481670E81B38B0061BA3C /* ISciMozEvents_np.h */; };
+		AB0481750E81B38B0061BA3C /* npscimoz_gen.h in Headers */ = {isa = PBXBuildFile; fileRef = AB0481680E81B38B0061BA3C /* npscimoz_gen.h */; };
+		AB0481D30E81B7410061BA3C /* npSupport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AB0481D10E81B7410061BA3C /* npSupport.cpp */; };
+		AB0481D40E81B7410061BA3C /* npSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = AB0481D20E81B7410061BA3C /* npSupport.h */; };
+		AB0483980E830D7E0061BA3C /* libnspr4.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = AB0483970E830D7E0061BA3C /* libnspr4.dylib */; };
+		AB0484A60E83F7910061BA3C /* npSciDoc.h in Headers */ = {isa = PBXBuildFile; fileRef = AB0484A50E83F7910061BA3C /* npSciDoc.h */; };
+		ABAE14640E7EF03B005AB650 /* npmac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ABAE14510E7EF03B005AB650 /* npmac.cpp */; };
+		ABAE14660E7EF03B005AB650 /* npSciDoc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ABAE14550E7EF03B005AB650 /* npSciDoc.cpp */; };
+		ABAE14670E7EF03B005AB650 /* npSciMoz.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ABAE14560E7EF03B005AB650 /* npSciMoz.cpp */; };
+		ABAE14680E7EF03B005AB650 /* npSciMoz.h in Headers */ = {isa = PBXBuildFile; fileRef = ABAE14570E7EF03B005AB650 /* npSciMoz.h */; };
+		ABAE146A0E7EF03B005AB650 /* npSciMozMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ABAE14590E7EF03B005AB650 /* npSciMozMac.cpp */; };
+		ABAE146C0E7EF03B005AB650 /* plugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ABAE145B0E7EF03B005AB650 /* plugin.cpp */; };
+		ABAE146D0E7EF03B005AB650 /* plugin.h in Headers */ = {isa = PBXBuildFile; fileRef = ABAE145C0E7EF03B005AB650 /* plugin.h */; };
+		ABAE146E0E7EF03B005AB650 /* prefix.h in Headers */ = {isa = PBXBuildFile; fileRef = ABAE145D0E7EF03B005AB650 /* prefix.h */; };
+		ABAE146F0E7EF03B005AB650 /* SciMozEvents.h in Headers */ = {isa = PBXBuildFile; fileRef = ABAE14600E7EF03B005AB650 /* SciMozEvents.h */; };
+		ABAE14700E7EF03B005AB650 /* sendscintilla.cxx in Sources */ = {isa = PBXBuildFile; fileRef = ABAE14610E7EF03B005AB650 /* sendscintilla.cxx */; };
+		ABAE14710E7EF03B005AB650 /* sendscintilla.h in Headers */ = {isa = PBXBuildFile; fileRef = ABAE14620E7EF03B005AB650 /* sendscintilla.h */; };
+		ABAE15320E7EF05B005AB650 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ABAE15310E7EF05B005AB650 /* WebKit.framework */; };
+		ABAE15340E7EF072005AB650 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ABAE15330E7EF072005AB650 /* CoreFoundation.framework */; };
+		D2AAC0B105546B7500DB518D /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08FB77AAFE841565C02AAC07 /* Carbon.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		08FB77AAFE841565C02AAC07 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
+		5073E0C609E734A800EC74B6 /* scintilla_pluginProj.xcconfig */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xcconfig; path = scintilla_pluginProj.xcconfig; sourceTree = "<group>"; };
+		5073E0C709E734A800EC74B6 /* scintilla_pluginTarget.xcconfig */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xcconfig; path = scintilla_pluginTarget.xcconfig; sourceTree = "<group>"; };
+		AB0481450E81A93B0061BA3C /* System.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = System.framework; path = /System/Library/Frameworks/System.framework; sourceTree = "<absolute>"; };
+		AB0481590E81B38B0061BA3C /* ISciDoc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ISciDoc.h; sourceTree = "<group>"; };
+		AB04815A0E81B38B0061BA3C /* ISciDoc_np.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ISciDoc_np.cpp; sourceTree = "<group>"; };
+		AB04815B0E81B38B0061BA3C /* ISciDoc_np.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ISciDoc_np.h; sourceTree = "<group>"; };
+		AB04815C0E81B38B0061BA3C /* ISciMoz.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ISciMoz.h; sourceTree = "<group>"; };
+		AB04815D0E81B38B0061BA3C /* ISciMoz.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ISciMoz.idl; sourceTree = "<group>"; };
+		AB04815E0E81B38B0061BA3C /* ISciMoz_gen.idl.fragment */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ISciMoz_gen.idl.fragment; sourceTree = "<group>"; };
+		AB04815F0E81B38B0061BA3C /* ISciMoz_lite_gen.idl.fragment */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ISciMoz_lite_gen.idl.fragment; sourceTree = "<group>"; };
+		AB0481600E81B38B0061BA3C /* ISciMoz_np.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ISciMoz_np.cpp; sourceTree = "<group>"; };
+		AB0481610E81B38B0061BA3C /* ISciMoz_np.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ISciMoz_np.h; sourceTree = "<group>"; };
+		AB0481620E81B38B0061BA3C /* ISciMozController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ISciMozController.h; sourceTree = "<group>"; };
+		AB0481630E81B38B0061BA3C /* ISciMozController_np.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ISciMozController_np.cpp; sourceTree = "<group>"; };
+		AB0481640E81B38B0061BA3C /* ISciMozController_np.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ISciMozController_np.h; sourceTree = "<group>"; };
+		AB0481650E81B38B0061BA3C /* ISciMozEvents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ISciMozEvents.h; sourceTree = "<group>"; };
+		AB0481660E81B38B0061BA3C /* ISciMozEvents_np.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ISciMozEvents_np.cpp; sourceTree = "<group>"; };
+		AB0481670E81B38B0061BA3C /* ISciMozEvents_np.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ISciMozEvents_np.h; sourceTree = "<group>"; };
+		AB0481680E81B38B0061BA3C /* npscimoz_gen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = npscimoz_gen.h; sourceTree = "<group>"; };
+		AB0481D10E81B7410061BA3C /* npSupport.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = npSupport.cpp; sourceTree = "<group>"; };
+		AB0481D20E81B7410061BA3C /* npSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = npSupport.h; sourceTree = "<group>"; };
+		AB0483970E830D7E0061BA3C /* libnspr4.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libnspr4.dylib; path = /Library/Frameworks/XUL.framework/Versions/1.8.1.3/libnspr4.dylib; sourceTree = "<absolute>"; };
+		AB0484A50E83F7910061BA3C /* npSciDoc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = npSciDoc.h; sourceTree = "<group>"; };
+		ABAE14480E7EF03B005AB650 /* English */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = English; path = InfoPlist.strings; sourceTree = "<group>"; };
+		ABAE14490E7EF03B005AB650 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		ABAE144A0E7EF03B005AB650 /* ISciDoc.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ISciDoc.idl; sourceTree = "<group>"; };
+		ABAE144B0E7EF03B005AB650 /* ISciMoz.template.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ISciMoz.template.idl; sourceTree = "<group>"; };
+		ABAE144E0E7EF03B005AB650 /* ISciMozController.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ISciMozController.idl; sourceTree = "<group>"; };
+		ABAE144F0E7EF03B005AB650 /* ISciMozEvents.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ISciMozEvents.idl; sourceTree = "<group>"; };
+		ABAE14500E7EF03B005AB650 /* koScintillaController.p.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = koScintillaController.p.py; sourceTree = "<group>"; };
+		ABAE14510E7EF03B005AB650 /* npmac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = npmac.cpp; sourceTree = "<group>"; };
+		ABAE14520E7EF03B005AB650 /* npscimoz.def */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = npscimoz.def; sourceTree = "<group>"; };
+		ABAE14530E7EF03B005AB650 /* npscimoz.rc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = npscimoz.rc; sourceTree = "<group>"; };
+		ABAE14550E7EF03B005AB650 /* npSciDoc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = npSciDoc.cpp; sourceTree = "<group>"; };
+		ABAE14560E7EF03B005AB650 /* npSciMoz.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = npSciMoz.cpp; sourceTree = "<group>"; };
+		ABAE14570E7EF03B005AB650 /* npSciMoz.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = npSciMoz.h; sourceTree = "<group>"; };
+		ABAE14590E7EF03B005AB650 /* npSciMozMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = npSciMozMac.cpp; sourceTree = "<group>"; };
+		ABAE145B0E7EF03B005AB650 /* plugin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = plugin.cpp; sourceTree = "<group>"; };
+		ABAE145C0E7EF03B005AB650 /* plugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = plugin.h; sourceTree = "<group>"; };
+		ABAE145D0E7EF03B005AB650 /* prefix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = prefix.h; sourceTree = "<group>"; };
+		ABAE145E0E7EF03B005AB650 /* SciMoz.r */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.rez; path = SciMoz.r; sourceTree = "<group>"; };
+		ABAE145F0E7EF03B005AB650 /* SciMozDemonstration.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = SciMozDemonstration.html; sourceTree = "<group>"; };
+		ABAE14600E7EF03B005AB650 /* SciMozEvents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SciMozEvents.h; sourceTree = "<group>"; };
+		ABAE14610E7EF03B005AB650 /* sendscintilla.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sendscintilla.cxx; sourceTree = "<group>"; };
+		ABAE14620E7EF03B005AB650 /* sendscintilla.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sendscintilla.h; sourceTree = "<group>"; };
+		ABAE14630E7EF03B005AB650 /* XPFacer.p.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = XPFacer.p.py; sourceTree = "<group>"; };
+		ABAE15310E7EF05B005AB650 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = /System/Library/Frameworks/WebKit.framework; sourceTree = "<absolute>"; };
+		ABAE15330E7EF072005AB650 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = /System/Library/Frameworks/CoreFoundation.framework; sourceTree = "<absolute>"; };
+		D2AAC09D05546B4700DB518D /* libscintilla_plugin.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libscintilla_plugin.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		D2AAC09B05546B4700DB518D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D2AAC0B105546B7500DB518D /* Carbon.framework in Frameworks */,
+				ABAE15320E7EF05B005AB650 /* WebKit.framework in Frameworks */,
+				ABAE15340E7EF072005AB650 /* CoreFoundation.framework in Frameworks */,
+				AB0481460E81A93B0061BA3C /* System.framework in Frameworks */,
+				AB0483980E830D7E0061BA3C /* libnspr4.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		034768DDFF38A45A11DB9C8B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				D2AAC09D05546B4700DB518D /* libscintilla_plugin.dylib */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		0867D691FE84028FC02AAC07 /* scintilla_plugin */ = {
+			isa = PBXGroup;
+			children = (
+				AB0483970E830D7E0061BA3C /* libnspr4.dylib */,
+				5073E0CA09E734BC00EC74B6 /* Configuration Files */,
+				08FB77ACFE841707C02AAC07 /* Source */,
+				0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */,
+				034768DDFF38A45A11DB9C8B /* Products */,
+			);
+			name = scintilla_plugin;
+			sourceTree = "<group>";
+		};
+		0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */ = {
+			isa = PBXGroup;
+			children = (
+				AB0481450E81A93B0061BA3C /* System.framework */,
+				ABAE15330E7EF072005AB650 /* CoreFoundation.framework */,
+				08FB77AAFE841565C02AAC07 /* Carbon.framework */,
+				ABAE15310E7EF05B005AB650 /* WebKit.framework */,
+			);
+			name = "External Frameworks and Libraries";
+			sourceTree = "<group>";
+		};
+		08FB77ACFE841707C02AAC07 /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				AB0481D10E81B7410061BA3C /* npSupport.cpp */,
+				AB0481D20E81B7410061BA3C /* npSupport.h */,
+				AB0480540E81A7400061BA3C /* gen */,
+				ABAE14460E7EF03B005AB650 /* English.lproj */,
+				ABAE14490E7EF03B005AB650 /* Info.plist */,
+				ABAE144A0E7EF03B005AB650 /* ISciDoc.idl */,
+				ABAE144B0E7EF03B005AB650 /* ISciMoz.template.idl */,
+				ABAE144E0E7EF03B005AB650 /* ISciMozController.idl */,
+				ABAE144F0E7EF03B005AB650 /* ISciMozEvents.idl */,
+				ABAE14500E7EF03B005AB650 /* koScintillaController.p.py */,
+				ABAE14510E7EF03B005AB650 /* npmac.cpp */,
+				ABAE14520E7EF03B005AB650 /* npscimoz.def */,
+				ABAE14530E7EF03B005AB650 /* npscimoz.rc */,
+				ABAE14550E7EF03B005AB650 /* npSciDoc.cpp */,
+				ABAE14560E7EF03B005AB650 /* npSciMoz.cpp */,
+				ABAE14570E7EF03B005AB650 /* npSciMoz.h */,
+				ABAE14590E7EF03B005AB650 /* npSciMozMac.cpp */,
+				ABAE145B0E7EF03B005AB650 /* plugin.cpp */,
+				ABAE145C0E7EF03B005AB650 /* plugin.h */,
+				ABAE145D0E7EF03B005AB650 /* prefix.h */,
+				ABAE145E0E7EF03B005AB650 /* SciMoz.r */,
+				ABAE145F0E7EF03B005AB650 /* SciMozDemonstration.html */,
+				ABAE14600E7EF03B005AB650 /* SciMozEvents.h */,
+				ABAE14610E7EF03B005AB650 /* sendscintilla.cxx */,
+				ABAE14620E7EF03B005AB650 /* sendscintilla.h */,
+				ABAE14630E7EF03B005AB650 /* XPFacer.p.py */,
+				AB0484A50E83F7910061BA3C /* npSciDoc.h */,
+			);
+			name = Source;
+			sourceTree = "<group>";
+		};
+		5073E0CA09E734BC00EC74B6 /* Configuration Files */ = {
+			isa = PBXGroup;
+			children = (
+				5073E0C609E734A800EC74B6 /* scintilla_pluginProj.xcconfig */,
+				5073E0C709E734A800EC74B6 /* scintilla_pluginTarget.xcconfig */,
+			);
+			name = "Configuration Files";
+			sourceTree = "<group>";
+		};
+		AB0480540E81A7400061BA3C /* gen */ = {
+			isa = PBXGroup;
+			children = (
+				AB0481590E81B38B0061BA3C /* ISciDoc.h */,
+				AB04815A0E81B38B0061BA3C /* ISciDoc_np.cpp */,
+				AB04815B0E81B38B0061BA3C /* ISciDoc_np.h */,
+				AB04815C0E81B38B0061BA3C /* ISciMoz.h */,
+				AB04815D0E81B38B0061BA3C /* ISciMoz.idl */,
+				AB04815E0E81B38B0061BA3C /* ISciMoz_gen.idl.fragment */,
+				AB04815F0E81B38B0061BA3C /* ISciMoz_lite_gen.idl.fragment */,
+				AB0481600E81B38B0061BA3C /* ISciMoz_np.cpp */,
+				AB0481610E81B38B0061BA3C /* ISciMoz_np.h */,
+				AB0481620E81B38B0061BA3C /* ISciMozController.h */,
+				AB0481630E81B38B0061BA3C /* ISciMozController_np.cpp */,
+				AB0481640E81B38B0061BA3C /* ISciMozController_np.h */,
+				AB0481650E81B38B0061BA3C /* ISciMozEvents.h */,
+				AB0481660E81B38B0061BA3C /* ISciMozEvents_np.cpp */,
+				AB0481670E81B38B0061BA3C /* ISciMozEvents_np.h */,
+				AB0481680E81B38B0061BA3C /* npscimoz_gen.h */,
+			);
+			path = gen;
+			sourceTree = "<group>";
+		};
+		ABAE14460E7EF03B005AB650 /* English.lproj */ = {
+			isa = PBXGroup;
+			children = (
+				ABAE14470E7EF03B005AB650 /* InfoPlist.strings */,
+			);
+			path = English.lproj;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		D2AAC09905546B4700DB518D /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				ABAE14680E7EF03B005AB650 /* npSciMoz.h in Headers */,
+				ABAE146D0E7EF03B005AB650 /* plugin.h in Headers */,
+				ABAE146E0E7EF03B005AB650 /* prefix.h in Headers */,
+				ABAE146F0E7EF03B005AB650 /* SciMozEvents.h in Headers */,
+				ABAE14710E7EF03B005AB650 /* sendscintilla.h in Headers */,
+				AB0481690E81B38B0061BA3C /* ISciDoc.h in Headers */,
+				AB04816B0E81B38B0061BA3C /* ISciDoc_np.h in Headers */,
+				AB04816C0E81B38B0061BA3C /* ISciMoz.h in Headers */,
+				AB04816E0E81B38B0061BA3C /* ISciMoz_np.h in Headers */,
+				AB04816F0E81B38B0061BA3C /* ISciMozController.h in Headers */,
+				AB0481710E81B38B0061BA3C /* ISciMozController_np.h in Headers */,
+				AB0481720E81B38B0061BA3C /* ISciMozEvents.h in Headers */,
+				AB0481740E81B38B0061BA3C /* ISciMozEvents_np.h in Headers */,
+				AB0481750E81B38B0061BA3C /* npscimoz_gen.h in Headers */,
+				AB0481D40E81B7410061BA3C /* npSupport.h in Headers */,
+				AB0484A60E83F7910061BA3C /* npSciDoc.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		D2AAC09C05546B4700DB518D /* scintilla_plugin */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1DEB916008733D950010E9CD /* Build configuration list for PBXNativeTarget "scintilla_plugin" */;
+			buildPhases = (
+				AB0481EF0E81B7D20061BA3C /* ShellScript */,
+				D2AAC09905546B4700DB518D /* Headers */,
+				D2AAC09B05546B4700DB518D /* Frameworks */,
+				D2AAC09A05546B4700DB518D /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = scintilla_plugin;
+			productName = libscintilla_plugin;
+			productReference = D2AAC09D05546B4700DB518D /* libscintilla_plugin.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		0867D690FE84028FC02AAC07 /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 1DEB916408733D950010E9CD /* Build configuration list for PBXProject "scintilla_plugin" */;
+			compatibilityVersion = "Xcode 3.1";
+			hasScannedForEncodings = 1;
+			mainGroup = 0867D691FE84028FC02AAC07 /* scintilla_plugin */;
+			productRefGroup = 034768DDFF38A45A11DB9C8B /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				D2AAC09C05546B4700DB518D /* scintilla_plugin */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		AB0481EF0E81B7D20061BA3C /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = ./generate_code.sh;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		D2AAC09A05546B4700DB518D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				ABAE14640E7EF03B005AB650 /* npmac.cpp in Sources */,
+				ABAE14660E7EF03B005AB650 /* npSciDoc.cpp in Sources */,
+				ABAE14670E7EF03B005AB650 /* npSciMoz.cpp in Sources */,
+				ABAE146A0E7EF03B005AB650 /* npSciMozMac.cpp in Sources */,
+				ABAE146C0E7EF03B005AB650 /* plugin.cpp in Sources */,
+				ABAE14700E7EF03B005AB650 /* sendscintilla.cxx in Sources */,
+				AB04816A0E81B38B0061BA3C /* ISciDoc_np.cpp in Sources */,
+				AB04816D0E81B38B0061BA3C /* ISciMoz_np.cpp in Sources */,
+				AB0481700E81B38B0061BA3C /* ISciMozController_np.cpp in Sources */,
+				AB0481730E81B38B0061BA3C /* ISciMozEvents_np.cpp in Sources */,
+				AB0481D30E81B7410061BA3C /* npSupport.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		ABAE14470E7EF03B005AB650 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				ABAE14480E7EF03B005AB650 /* English */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		1DEB916108733D950010E9CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5073E0C709E734A800EC74B6 /* scintilla_pluginTarget.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = scintilla_plugin_Prefix.pch;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"_GLIBCXX_DEBUG=1",
+					"_GLIBCXX_DEBUG_PEDANTIC=1",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(LOCAL_LIBRARY_DIR)/Frameworks/XUL.framework/Versions/1.8.1.3\"",
+				);
+			};
+			name = Debug;
+		};
+		1DEB916208733D950010E9CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5073E0C709E734A800EC74B6 /* scintilla_pluginTarget.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = scintilla_plugin_Prefix.pch;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(LOCAL_LIBRARY_DIR)/Frameworks/XUL.framework/Versions/1.8.1.3\"",
+				);
+				STRIP_INSTALLED_PRODUCT = YES;
+				STRIP_STYLE = "non-global";
+			};
+			name = Release;
+		};
+		1DEB916508733D950010E9CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5073E0C609E734A800EC74B6 /* scintilla_pluginProj.xcconfig */;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					../scintilla/macosx,
+					../scintilla/include,
+					../scintilla/src,
+					/System/Library/Frameworks/Webkit.framework/Headers,
+					gen,
+				);
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = (
+					"-DSCI_NAMESPACE",
+					"-DXP_MACOSX",
+				);
+				PREBINDING = NO;
+				SDKROOT = macosx10.4;
+			};
+			name = Debug;
+		};
+		1DEB916608733D950010E9CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5073E0C609E734A800EC74B6 /* scintilla_pluginProj.xcconfig */;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				PREBINDING = NO;
+				SDKROOT = macosx10.5;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1DEB916008733D950010E9CD /* Build configuration list for PBXNativeTarget "scintilla_plugin" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DEB916108733D950010E9CD /* Debug */,
+				1DEB916208733D950010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1DEB916408733D950010E9CD /* Build configuration list for PBXProject "scintilla_plugin" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DEB916508733D950010E9CD /* Debug */,
+				1DEB916608733D950010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 0867D690FE84028FC02AAC07 /* Project object */;
+}

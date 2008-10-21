@@ -1,0 +1,33 @@
+<string id="string-html-title">Biztonsági figyelmeztetés a Szinkrontól</string>
+<string id="string-allow">Engedélyezés</string>
+<string id="string-allow-accesskey">E</string>
+<string id="string-deny">Tiltás</string>
+<string id="string-deny-accesskey">T</string>
+<string id="string-cancel">Mégse</string>
+<string id="string-never-allow-link">Soha ne engedélyezze ezt a webhelyet</string>
+<string id="string-never-allow-link-wince">Soha ne engedélyezze</string>
+<string id="string-description">
+  A Szinkron nyílt forráskódú böngészőbővítmény, amely lehetővé teszi a webes alkalmazások számára, hogy kapcsolaton kívüli funkciókat kínáljanak a következő JavaScript API-k segítségével:
+</string>
+<string id="string-localserver-desc">
+  Alkalmazás-erőforrások helyi tárolása és kiszolgálása
+</string>
+<string id="string-database-desc">
+  Adatok helyi tárolása egy teljes mértékben kereshető relációs adatbázisban
+</string>
+<string id="string-workerpool-desc">
+  Aszinkron JavaScript futtatása az alkalmazás jobb kezelhetősége érdekében
+</string>
+<string id="string-query-data">
+  Az alábbi webhely a Szinkron szolgáltatás használatával adatokat szeretne tárolni az Ön számítógépén.
+</string>
+<string id="string-query-location">
+  Az alábbi webhely a Szinkron szolgáltatás használatával adatokat szeretne megtudni az Ön helyéről.
+</string>
+<string id="string-location-privacy-statement">
+  Olvassa el a webhely adatvédelmi szabályzatát, hogy megtudja, hogyan kezelik a felhasználók helyét.
+</string>
+<string id="string-trust-site">
+  Megbízom ebben a webhelyben. Használhatja a Szinkron szolgáltatást.
+</string>
+<string id="string-trust-site-accesskey">t</string>

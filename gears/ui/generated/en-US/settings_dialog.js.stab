@@ -1,0 +1,14 @@
+<string id="string-cancel"><TRANS_BLOCK desc="Button user can press to cancel the dialog.">Cancel</TRANS_BLOCK></string>
+<string id="string-cancel-accesskey"><TRANS_BLOCK desc="Access key for cancel button.">C</TRANS_BLOCK></string>
+<string id="string-apply"><TRANS_BLOCK desc="Button user can press to apply changes.">Apply</TRANS_BLOCK></string>
+<string id="string-apply-accesskey"><TRANS_BLOCK desc="Access key for apply button.">A</TRANS_BLOCK></string>
+<string id="string-nosites"><TRANS_BLOCK desc="States that there are no sites.">No sites.</TRANS_BLOCK></string>
+<string id="string-allowed"><TRANS_BLOCK desc="States that a site is allowed to use this permission class.">Allowed</TRANS_BLOCK></string>
+<string id="string-denied"><TRANS_BLOCK desc="States that a site is denied from using this permission class.">Denied</TRANS_BLOCK></string>
+<string id="string-local-storage"><TRANS_BLOCK desc="Describes the permission class for storing local data.">Local storage</TRANS_BLOCK></string>
+<string id="string-location-data"><TRANS_BLOCK desc="Describes the permission class for accessing location information.">Location</TRANS_BLOCK></string>
+<string id="string-gears-settings"><TRANS_BLOCK>Gears Settings</TRANS_BLOCK></string>
+<string id="string-permissions-description"><TRANS_BLOCK desc="Description of table listing permissions granted to each site.">The table below shows the permissions you have granted to each site that has attempted to use Gears.</TRANS_BLOCK></string>
+<string id="string-version"><TRANS_BLOCK desc="Version string.">Gears version PRODUCT_VERSION</TRANS_BLOCK></string>
+<string id="string-html-title"><TRANS_BLOCK>Gears Settings</TRANS_BLOCK></string>
+<string id="string-remove"><TRANS_BLOCK desc="Button user can press to remove a site from the list.">Remove</TRANS_BLOCK></string>

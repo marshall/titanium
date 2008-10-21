@@ -1,0 +1,33 @@
+<string id="string-html-title">אזהרת אבטחה של Gears</string>
+<string id="string-allow">אפשר</string>
+<string id="string-allow-accesskey">א</string>
+<string id="string-deny">דחה</string>
+<string id="string-deny-accesskey">ד</string>
+<string id="string-cancel">ביטול</string>
+<string id="string-never-allow-link">לעולם אין לאפשר אתר זה</string>
+<string id="string-never-allow-link-wince">לעולם אל תאפשר שירות זה</string>
+<string id="string-description">
+  Gears הוא הרחבת דפדפן בעלת קוד פתוח. ההרחבה מאפשרת ליישומי אינטרנט לספק פונקציונליות באופן לא מקוון באמצעות ממשקי JavaScript API הבאים:
+</string>
+<string id="string-localserver-desc">
+  אחסן משאבי יישומים והגש אותם באופן מקומי
+</string>
+<string id="string-database-desc">
+  אחסן מידע באופן מקומי במסד נתונים טבלאי הניתן לחיפוש במלואו
+</string>
+<string id="string-workerpool-desc">
+  הפעל Javascript אסינכרוני כדי לשפר את היענות היישום
+</string>
+<string id="string-query-data">
+  אתר האינטרנט שלהלן מבקש לאחסן באמצעות Gears מידע במחשב שלך.
+</string>
+<string id="string-query-location">
+  אתר האינטרנט שלהלן מבקש גישה באמצעות Gears למידע לגבי המיקום שלך.
+</string>
+<string id="string-location-privacy-statement">
+  עיין בהצהרת הפרטיות של האתר כדי לראות את אופן השימוש במיקומך.
+</string>
+<string id="string-trust-site">
+  אני נותן אמון באתר זה. אפשר לו להשתמש ב-Gears.
+</string>
+<string id="string-trust-site-accesskey">t</string>

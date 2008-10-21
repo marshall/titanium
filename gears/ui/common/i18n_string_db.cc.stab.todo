@@ -1,0 +1,3 @@
+<string id="SK_AllReadableDocuments"><TRANS_BLOCK desc="Dialog filter that displays files of recommended types.">All Readable Documents</TRANS_BLOCK></string>
+<string id="SK_AllDocuments"><TRANS_BLOCK desc="Dialog filter that displays files of any type.">All Documents</TRANS_BLOCK></string>
+<string id="SK_OpenFile"><TRANS_BLOCK desc="Dialog title when user is selecting a file.">Open File</TRANS_BLOCK></string>

@@ -1,0 +1,33 @@
+<string id="string-html-title">Gears பாதுகாப்பு எச்சரிக்கை</string>
+<string id="string-allow">அனுமதி</string>
+<string id="string-allow-accesskey">A</string>
+<string id="string-deny">மறு</string>
+<string id="string-deny-accesskey">D</string>
+<string id="string-cancel">ரத்துசெய்</string>
+<string id="string-never-allow-link">இந்த தளத்தை எப்போதும் அனுமதிக்காதே</string>
+<string id="string-never-allow-link-wince">எப்போதும் அனுமதிக்காதே</string>
+<string id="string-description">
+  Gears ஒரு ஓப்பன் சோர்ஸ் உலாவி விரிவாக்கல், பின்வரும் JavaScript APIகளைப் பயன்படுத்தி ஆஃப்லைனில் வலை பயன்பாடுகளை அணுக உதவுகிறது:
+</string>
+<string id="string-localserver-desc">
+  பயன்பாட்டின் ஆதாரங்களை உங்கள் கணினியில் சேமிக்கவும் மற்றும் வழங்கவும்
+</string>
+<string id="string-database-desc">
+  தரவுகளை உங்கள் கணினியிலேயே, முழுமையாகத் தேடப்படக்கூடிய, ரிலேஷனல் டேடாபேஸில் சேமிக்கவும்
+</string>
+<string id="string-workerpool-desc">
+  பயன்பாட்டின் செயல்திறனை மேம்படுத்த ஒத்திசையாத JavaScript ஐ இயக்கவும்.
+</string>
+<string id="string-query-data">
+  கீழே உள்ள வலைத்தளம் Gears ஐப் பயன்படுத்தி உங்கள் கணினியில் தகவலைச் சேமிக்க நினைக்கிறது.
+</string>
+<string id="string-query-location">
+  கீழே உள்ள வலைத்தளம் Gears ஐப் பயன்படுத்தி உங்கள் இருப்பிடம் பற்றிய தகவலை அணுக நினைக்கிறது.
+</string>
+<string id="string-location-privacy-statement">
+  உங்கள் இருப்பிடத்தை எங்கு உபயோகப்படுத்தப்படும் என்று காண தளங்களின் தனியுரிமை கொள்கையைப் படிக்கவும்.
+</string>
+<string id="string-trust-site">
+  நான் இந்த தளத்தை நம்புகிறேன். Gears ஐப் பயன்படுத்த அனுமதிக்கவும்.
+</string>
+<string id="string-trust-site-accesskey">t</string>

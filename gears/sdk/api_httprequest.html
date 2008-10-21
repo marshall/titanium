@@ -1,0 +1,399 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "DTD/xhtml1-transitional.dtd">
+
+<!--
+Copyright 2007, Google Inc.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+ 1. Redistributions of source code must retain the above copyright notice,
+    this list of conditions and the following disclaimer.
+ 2. Redistributions in binary form must reproduce the above copyright notice,
+    this list of conditions and the following disclaimer in the documentation
+    and/or other materials provided with the distribution.
+ 3. Neither the name of Google Inc. nor the names of its contributors may be
+    used to endorse or promote products derived from this software without
+    specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<html>
+  <head>
+    <title>HttpRequest API</title>
+    <link rel="stylesheet" type="text/css" href="gears.css" />
+  </head>
+
+<body>
+
+<h1>HttpRequest API</h1>
+
+<div id="pagecontent">
+
+<p>The HttpRequest API implements a subset of the
+   <a href="http://www.w3.org/TR/XMLHttpRequest/">W3C XmlHttpRequest
+   specification</a>, and makes it available in both workers and the
+   main HTML page.</p>
+
+<h3>Contents</h3>
+<ol class="toc">
+  <li><a href="#overview">Overview</a></li>
+  <li><a href="#example">Example</a></li>
+  <li><a href="#interfaces">Interfaces</a>
+    <ol>
+      <li><a href="#HttpRequest">HttpRequest</a></li>
+      <li><a href="#HttpRequestUpload">HttpRequestUpload</a></li>
+      <li><a href="#ProgressEvent">ProgressEvent</a></li>
+    </ol>
+  </li>
+</ol>
+
+<a name="overview"></a><h2>Overview</h2>
+  <p>Since the browser's XmlHttpRequest object is not available in the context of
+     a worker, Gears provides its own HttpRequest object to fill that need. Gears HttpRequest
+     provides most of the features of XmlHttpRequest except for the ability to access the response
+     as an XML DOM object and the ability to send a request synchronously.
+  </p>
+  <h4>Permission</h4>
+
+  <p>Does not require user permission.</p>
+<a name="example"></a><h2>Example</h2>
+
+<pre><code>&lt;script type="text/javascript" src="<a href='tools.html#gears_init'>gears_init.js</a>"&gt;&lt;/script&gt;
+&lt;script type="text/javascript"&gt;
+var request = google.gears.factory.create('beta.httprequest');
+request.open('GET', '/index.html');
+request.onreadystatechange = function() {
+  if (request.readyState == 4) {
+    console.write(request.responseText);
+  }
+};
+request.send();
+&lt;/script&gt;</code></pre>
+
+
+<h3 id="interfaces">Interfaces</h3>
+<pre><code><a href="#HttpRequest" class="section">HttpRequest class</a>
+    void <b>open</b>(method, url)
+    void <b>setRequestHeader</b>(name, value)
+    void <b>send</b>([postData])
+    void <b>abort</b>()
+    string <b>getResponseHeader</b>(name)
+    string <b>getAllResponseHeaders</b>()
+    callback <b>onprogress</b>(progressEvent)
+    callback <b>onreadystatechange</b>()
+    readonly attribute int <b>readyState</b>
+    readonly attribute Blob <b>responseBlob</b>
+    readonly attribute string <b>responseText</b>
+    readonly attribute int <b>status</b>
+    readonly attribute string <b>statusText</b>
+    readonly attribute HttpRequestUpload <b>upload</b>
+</code></pre>
+<pre><code><a href="#HttpRequestUpload" class="section">HttpRequestUpload class</a>
+    callback <b>onprogress</b>(progressEvent)
+</code></pre>
+<pre><code><a href="#ProgressEvent" class="section">ProgressEvent class</a>
+    readonly attribute int <b>total</b>
+    readonly attribute int <b>loaded</b>
+    readonly attribute bool <b>lengthComputable</b>
+</code></pre>
+
+
+<br>
+<a name="HttpRequest"></a>
+<h2>HttpRequest class</h2>
+
+<!-- ########## Methods ########## -->
+<h3>Methods</h3>
+<table>
+  <tr class="odd">
+    <th colspan="2"><div align="left"><code>abort()</code></div></th>
+    </tr>
+  <tr class="odd">
+    <td width="113">Return value: </td>
+    <td width="489" ><code>void</code></td>
+    </tr>
+  <tr class="odd">
+    <td>Description:</td>
+    <td class="odd">
+        Cancels the request.
+    </td>
+  </tr>
+</table>
+<table>
+  <tr class="odd">
+    <th colspan="2"><div align="left"><code>getAllResponseHeaders()</code></div></th>
+    </tr>
+  <tr class="odd">
+    <td width="113">Return value: </td>
+    <td width="489"><code>string</code></td>
+    </tr>
+  <tr class="odd">
+    <td>Description:</td>
+    <td class="odd">
+        Returns a string containing the entire set of HTTP headers in the server response.
+    </td>
+  </tr>
+</table>
+<table>
+  <tr class="odd">
+    <th colspan="2"><div align="left"><code>getResponseHeader(headerName)</code></div></th>
+    </tr>
+  <tr class="odd">
+    <td width="113">Return value: </td>
+    <td width="489"><code>string</code></td>
+    </tr>
+  <tr class="odd">
+      <td>Parameters:</td>
+      <td class="odd">
+          <code>headerName</code>
+      </td>
+    </tr>
+  <tr class="odd">
+    <td>Description:</td>
+    <td class="odd">
+        Returns the value of a specific HTTP header in the server response.
+    </td>
+  </tr>
+</table>
+<table>
+  <tr class="odd">
+    <th colspan="2"><div align="left"><code>open(method, url)</code></div></th>
+    </tr>
+  <tr class="odd">
+    <td width="113">Return value: </td>
+    <td width="489"><code>void</code></td>
+    </tr>
+  <tr class="odd">
+    <td>Parameters:</td>
+    <td class="odd">
+        <code>method</code><br/>
+        <code>url</code>
+    </td>
+  </tr>
+  <tr class="odd">
+    <td>Description:</td>
+    <td class="odd">
+        Specifies the method and URL of a request.
+        <p>The method parameter can have a value of "GET", "POST", "HEAD" or another HTTP method listed in the W3C specification.</p>
+        <p>The URL parameter may be either a relative or complete URL and must be from the same origin as the current context.</p>
+    </td>
+  </tr>
+</table>
+<table>
+  <tr class="odd">
+    <th colspan="2"><div align="left"><code>send([postData])</code></div></th>
+    </tr>
+  <tr class="odd">
+    <td width="113">Return value: </td>
+    <td width="489"><code>void</code></td>
+    </tr>
+  <tr class="odd">
+    <td>Parameters:</td>
+    <td class="odd">
+        <code>postData</code> - an optional string or Blob to be sent as the body of a POST or PUT request.<br/>
+    </td>
+  </tr>
+  <tr class="odd">
+    <td>Description:</td>
+    <td class="odd">
+        Sends the request.
+    </td>
+  </tr>
+</table>
+<table>
+  <tr class="odd">
+    <th colspan="2"><div align="left"><code>setRequestHeader(name, value)</code></div></th>
+    </tr>
+  <tr class="odd">
+    <td width="113">Return value: </td>
+    <td width="489"><code>void</code></td>
+    </tr>
+  <tr class="odd">
+    <td>Parameters:</td>
+    <td class="odd">
+        <code>name</code> - the HTTP header to set<br/>
+        <code>value</code> - the value of the header<br/>
+    </td>
+  </tr>
+  <tr class="odd">
+    <td>Description:</td>
+    <td class="odd">
+        Adds the header to the set of HTTP headers to be sent.
+    </td>
+  </tr>
+</table>
+
+<!-- ########## Events ########## -->
+<h3>Event Handlers</h3>
+<table>
+  <tr class="odd">
+    <th colspan="2">
+      <div align="left"><code>callback onprogress(progressEvent)</code></div>
+    </th>
+  </tr>
+  <tr class="odd">
+    <td width="113">Parameters: </td>
+    <td width="489">
+      <code>progressEvent</code> - A <a href="#ProgressEvent">ProgressEvent</a> object.
+    </td>
+  </tr>
+  <tr class="odd">
+    <td width="113">Description: </td>
+    <td width="489">
+      An event handler that fires as response data is downloaded.
+    </td>
+  </tr>
+</table>
+<table>
+  <tr class="odd">
+    <th colspan="2"><div align="left"><code>callback onreadystatechange()</code></div></th>
+    </tr>
+  <tr class="odd">
+    <td width="113">Description: </td>
+    <td width="489">An event handler that fires at every state change and repeatedly as new responseText data becomes available while the request is in the Interactive state.</td>
+    </tr>
+</table>
+
+<!-- ########## Attributes ########## -->
+<h3>Attributes</h3>
+  <table>
+    <tr class="odd">
+      <th width="158">Attribute</th>
+      <th >Type</th>
+      <th >Description</th>
+    </tr>
+    <tr class="odd">
+      <td width="158"><strong>readyState</strong></td>
+        <td width="109" >readonly int</td>
+        <td width="432" > Returns the state of the object:
+	        <table class="noborders">
+	          <tr>
+	            <td><strong>0</strong></td>
+	            <td>Uninitialized</td>
+            </tr>
+            <tr>
+              <td><strong>1</strong></td>
+              <td>Open</td>
+            </tr>
+            <tr>
+              <td><strong>2</strong></td>
+              <td>Sent</td>
+            </tr>
+            <tr>
+              <td><strong>3</strong></td>
+              <td>Interactive</td>
+            </tr>
+            <tr>
+              <td><strong>4</strong></td>
+              <td>Complete</td>
+          </table>
+        </td>
+    </tr>
+    <tr class="odd">
+      <td><strong>responseBlob</strong></td>
+        <td class="" >readonly Blob</td>
+        <td class="" >Returns the response body as a Blob. This property can be read when the request is in the Complete state.</td>
+    </tr>
+    <tr class="odd">
+      <td><strong>responseText</strong></td>
+        <td class="" >readonly string </td>
+        <td class="" >Returns the response body as a string. This property can be read when the request is in the Interactive or Complete state.</td>
+    </tr>
+    <tr class="odd">
+      <td><strong>status</strong></td>
+        <td class="odd">readonly int</td>
+        <td class="odd">Returns the status as a number (e.g. 404 for "Not Found" or 200 for "OK"). This property can be read when the request is in the Interactive or Complete state.</td>
+    </tr>
+    <tr class="odd">
+      <td><strong>statusText</strong></td>
+        <td class="odd">readonly string </td>
+        <td class="odd">Returns the status as a string (e.g. "Not Found" or "OK"). This property can be read when the request is in the Interactive or Complete state.</td>
+    </tr>
+    <tr class="odd">
+      <td><strong>upload</strong></td>
+      <td class="odd">readonly Object</td>
+      <td class="odd">Returns an
+        <a href="#HttpRequestUpload">HttpRequestUpload</a> object for
+        accessing properties associated with POST or PUT data uploads.
+      </td>
+    </tr>
+  </table>
+
+<!-- ########## Class Reference ########## -->
+
+<br>
+<a name="HttpRequestUpload"></a>
+<h2>HttpRequestUpload class</h2>
+
+<!-- ########## Events ########## -->
+<h3>Event Handlers</h3>
+<table>
+  <tr class="odd">
+    <th colspan="2">
+      <div align="left"><code>callback onprogress(progressEvent)</code></div>
+    </th>
+  </tr>
+  <tr class="odd">
+    <td width="113">Parameters: </td>
+    <td width="489">
+      <code>progressEvent</code> - A <a href="#ProgressEvent">ProgressEvent</a> object.
+    </td>
+  </tr>
+  <tr class="odd">
+    <td width="113">Description: </td>
+    <td width="489">
+      An event handler that fires as PUT or POST data is uploaded.
+    </td>
+  </tr>
+</table>
+
+<!-- ########## Class Reference ########## -->
+
+<br>
+<a name="ProgressEvent"></a>
+<h2>ProgressEvent class</h2>
+
+<!-- ########## Attributes ########## -->
+<h3>Attributes</h3>
+  <table>
+    <tr class="odd">
+      <th width="158">Attribute</th>
+      <th >Type</th>
+      <th >Description</th>
+    </tr>
+    <tr class="odd">
+      <td><strong>total</strong></td>
+      <td class="" >readonly int</td>
+      <td class="" >
+        Returns the total number of bytes to be loaded.
+        Returns 0 if unknown (i.e. - lengthComputable is false).
+      </td>
+    </tr>
+    <tr class="odd">
+      <td><strong>loaded</strong></td>
+      <td class="" >readonly int</td>
+      <td class="" >Returns the total number of bytes currently loaded.</td>
+    </tr>
+    <tr class="odd">
+      <td><strong>lengthComputable</strong></td>
+      <td class="" >readonly bool</td>
+      <td class="" >
+         Returns true if the total number of bytes to be transferred is known.
+      </td>
+    </tr>
+  </table>
+
+
+</div>
+</body>
+</html>

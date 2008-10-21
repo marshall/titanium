@@ -1,0 +1,30 @@
+{
+    IBClasses = (
+        {
+            ACTIONS = {allow = id; deny = id; neverAllow = id; trustCheckboxValueChanged = id; }; 
+            CLASS = BaseNativeDialog; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                "allow_button_" = NSButton; 
+                "dialog_origin_description_" = NSTextView; 
+                "dialog_origin_subtitle_" = NSTextField; 
+                "dialog_origin_title_" = NSTextField; 
+                "dialog_text_" = NSTextField; 
+                "gears_imageview_" = NSImageView; 
+                "location_dialog_label_" = NSTextField; 
+                "never_allow_link_" = NSTextField; 
+                "site_imageview_" = NSImageView; 
+                "top_label_" = NSTextField; 
+                "trust_checkbox_" = NSButton; 
+                "window_" = NSWindow; 
+            }; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {
+            CLASS = NativePermissionsDialog; 
+            LANGUAGE = ObjC; 
+            SUPERCLASS = BaseNativeDialog; 
+        }
+    ); 
+    IBVersion = 1; 
+}

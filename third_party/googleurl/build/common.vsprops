@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioPropertySheet
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="common"
+	OutputDirectory="$(SolutionDir)$(ConfigurationName)"
+	IntermediateDirectory="$(SolutionDir)$(ConfigurationName)\obj\$(ProjectName)"
+	CharacterSet="1"
+	>
+	<Tool
+		Name="VCCLCompilerTool"
+		AdditionalIncludeDirectories="$(SolutionDir)..\.."
+		PreprocessorDefinitions="_WIN32_WINNT=0x0501;WINVER=0x0501;WIN32;_WINDOWS"
+		MinimalRebuild="false"
+		EnableFunctionLevelLinking="true"
+		BufferSecurityCheck="true"
+		WarnAsError="true"
+		Detect64BitPortabilityProblems="true"
+		WarningLevel="3"
+		DebugInformationFormat="3"
+	/>
+</VisualStudioPropertySheet>

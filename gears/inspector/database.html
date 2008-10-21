@@ -1,0 +1,387 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+
+<html>
+
+<!--
+Copyright 2007, Google Inc.
+
+Redistribution and use in source and binary forms, with or without 
+modification, are permitted provided that the following conditions are met:
+
+ 1. Redistributions of source code must retain the above copyright notice, 
+    this list of conditions and the following disclaimer.
+ 2. Redistributions in binary form must reproduce the above copyright notice,
+    this list of conditions and the following disclaimer in the documentation
+    and/or other materials provided with the distribution.
+ 3. Neither the name of Google Inc. nor the names of its contributors may be
+    used to endorse or promote products derived from this software without
+    specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
+OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<head>
+
+<title>Database - Gears Inspector</title>
+<link rel="stylesheet" type="text/css" href="common/styles.css" />
+<!--[if lte IE 6]>
+  <link rel="stylesheet" type="text/css" href="common/ie6hacks.css" />
+<![endif]-->
+<style type="text/css">
+  #heading {
+    background-image: url(common/database.gif);
+  }
+
+  table {
+    border: 1px solid ThreeDShadow;
+  }
+
+  td, th {
+    font: icon;
+    padding: 2px 5px;
+  }
+
+  thead {
+    background-color: ThreeDFace;
+  }
+
+  th {
+    border: 1px solid;
+    border-color: ThreeDHighlight ThreeDShadow ThreeDShadow ThreeDHighlight;
+  }
+
+  td.even {
+    background-color: #f5f5f5;
+  }
+
+  #content {
+    margin-left: 15px;
+    margin-right: 15px;
+  }
+</style>
+
+<script type="text/javascript" src="common/gears_init.js"></script>
+<script type="text/javascript" src="common/base.js"></script>
+<script type="text/javascript" src="common/dom.js"></script>
+<script type="text/javascript">
+
+/**
+ * Global reference to the database. Set in init.
+ * @type GearsDatabase
+ */
+var db;
+
+
+/**
+ * Executes an SQL statement and outputs the result to the document
+ * @param {GearsDatabase} db  The database object.
+ * @param {String} sql  The SQL statement to execute.
+ */
+function executeAndPrintResult(db, sql) {
+  var rs, error = false, errorMessage;
+
+  try {
+    rs = db.execute(sql);
+  } catch (ex) {
+    error = true;
+    errorMessage = ex.message || ex.description || String(ex);
+  }
+
+  var i, cols, sb, row;
+  sb = [];
+  sb.push('<h3>', escapeHtml(sql), '</h3>');
+  sb.push('<table cellspacing=0><thead><tr>');
+  if (!rs || error) {
+    sb.push('<th>Error</th><thead><tbody><tr><td>',
+            errorMessage || 'Unknown error',
+            '</td></tr>');
+
+  // If we did an update, insert, delete etc. we would not have a valid row
+  } else if (rs.isValidRow()) {
+
+    // headers
+    cols = rs.fieldCount()
+    for (i = 0; i < cols; i++) {
+      sb.push('<th>', escapeHtml(rs.fieldName(i)), '</th>');
+    }
+    sb.push('</tr></thead><tbody>');
+
+    var odd = true;
+    while (rs.isValidRow()) {
+      sb.push('<tr>');
+        for (i = 0; i < cols; i++) {
+        sb.push('<td class=' + (odd ? 'odd' : 'even') + '>',
+                escapeHtml(rs.field(i)),/* ' [', typeof rs.field(i), ']',*/
+                '</td>');
+      }
+      odd = !odd;
+      sb.push('</tr>');
+      rs.next();
+    }
+    rs.close();
+  }
+  sb.push('</tbody></table>');
+  var output = document.createElement('div');
+  document.getElementById('output').insertBefore(output,
+      document.getElementById('output').firstChild);
+  output.innerHTML = sb.join('');
+}
+
+
+function escapeHtml(s) {
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;');
+}
+
+
+function openDatabase() {
+  clearOutput();
+  db = google.gears.factory.create('beta.database');
+  db.open(dom.getElementById('database-name').value);
+}
+
+
+function init() {
+  openDatabase();
+
+  // set up events
+  var ta = document.getElementById('ta');
+  var button = document.getElementById('bt');
+
+  ta.onkeypress = function (e) {
+    if (!e) {
+      e = window.event;
+    }
+    if (e.keyCode == 13) {
+      if (!e.shiftKey && !e.ctrlKey) { // Enter
+        execute();
+        return false;
+      }
+    }
+    updateTextAreaRows(ta);
+  };
+
+  ta.onkeydown = function (e) {
+    if (!e) {
+      e = window.event;
+    }
+
+    if (e.keyCode == 38 && isCursorOnFirstLine(ta)) {
+      return previousCommand();
+    } else if (e.keyCode == 40 && isCursorOnLastLine(ta)) {
+      return nextCommand();
+    }
+    updateTextAreaRows(ta);
+  };
+
+  var label = 'Enter SQL statement here';
+
+  ta.onblur = function() {
+    if (/^\s*$/.test(ta.value)) {
+      ta.value = label;
+      ta.className = 'label';
+    }
+  };
+
+  ta.onfocus = function() {
+    if (ta.value == label) {
+      ta.className = '';
+      ta.value = '';
+    }
+  };
+
+  ta.value = 'select * from sqlite_master';
+  taFocus();
+}
+
+
+function isCursorOnFirstLine(ta) {
+  if (typeof ta.selectionStart == 'number') {
+    var index = ta.value.indexOf('\n');
+    return index == -1 || ta.selectionStart <= index;
+  } else {
+    // Get the range representing the text before the cursor. Then get the
+    // number of rects that is and see if we have more than one
+    var selectionRange = document.selection.createRange();
+    var range = selectionRange.duplicate();
+    range.moveToElementText(ta);
+    range.setEndPoint('EndToStart', selectionRange);
+    return range.getClientRects().length == 1;
+  }
+}
+
+
+function isCursorOnLastLine(ta) {
+  if (typeof ta.selectionEnd == 'number') {
+    var index = ta.value.substr(ta.selectionEnd).indexOf('\n');
+    return index == -1;
+  } else {
+    // Get the range representing the text before the cursor. Then get the
+    // number of rects that is and see if we have more than one
+    var selectionRange = document.selection.createRange();
+    var range = selectionRange.duplicate();
+    range.moveToElementText(ta);
+    range.setEndPoint('StartToEnd', selectionRange);
+    return range.getClientRects().length == 1;
+  }
+}
+
+
+/**
+ * Updates the rows property of a textarea depending on the content
+ * @param {HTMLTextareaElement} ta  The textarea to modify
+ */
+function updateTextAreaRows(ta) {
+  ta.rows = ta.value.split(/\n/).length + 2;
+}
+
+
+/**
+ * Hides the installation message
+ */
+function hideInstallMessage() {
+  var el = document.getElementById('install-message');
+  if (el) {
+    el.parentNode.removeChild(el);
+    el = document.getElementById('command-area');
+    el.style.display = '';
+  }
+}
+
+var currentCommandIndex = 0;
+var commandHistory = [];
+
+
+/**
+ * Called when the user clicks the 'Execute' button.
+ */
+function execute() {
+  var ta = document.getElementById('ta');
+  var val = ta.value.replace(/(^\s+)|(\s+$)/g, '');
+  if (val != '') {
+    add(val);
+    executeSql(val);
+    ta.value = '';
+    ta.rows = 2;
+    taFocus();
+  }
+}
+
+
+/**
+ * Changes the value of the textarea to the next command
+ */
+function previousCommand() {
+  if (currentCommandIndex > 0) {
+    save();
+    currentCommandIndex--;
+    var ta = document.getElementById('ta');
+    ta.value = commandHistory[currentCommandIndex];
+    updateTextAreaRows(ta);
+    return false;
+  }
+}
+
+
+/**
+ * Changes the value of the textarea to the next command
+ */
+function nextCommand() {
+  if (currentCommandIndex < commandHistory.length - 1) {
+    save();
+    currentCommandIndex++;
+    var ta = document.getElementById('ta');
+    ta.value = commandHistory[currentCommandIndex];
+    updateTextAreaRows(ta);
+    return false;
+  }
+}
+
+
+/**
+ * Saves the current value of the textarea to the command history
+ */
+function save() {
+  var ta = document.getElementById('ta');
+  commandHistory[currentCommandIndex] = ta.value;
+}
+
+
+/**
+ * Adds an entry to the command history
+ * @param {String} val  The command to add
+ */
+function add(val) {
+  if (commandHistory[commandHistory.length - 1] == '') {
+    commandHistory[commandHistory.length - 1] = val;
+  } else if (val != commandHistory[commandHistory.length - 1]) {
+    commandHistory.push(val);
+  }
+  currentCommandIndex = commandHistory.length;
+}
+
+
+/**
+ * Clears the previous outputted results
+ */
+function clearOutput() {
+  document.getElementById('output').innerHTML = '';
+  taFocus();
+}
+
+
+function executeSql(sql) {
+  executeAndPrintResult(db, sql);
+}
+
+
+// work around IE bug
+function taFocus() {
+  window.setTimeout(function() {
+    document.getElementById('ta').focus();
+  }, 100);
+}
+
+
+</script>
+
+</head>
+<body>
+
+<script type="text/javascript" src="common/inspector_links.js"></script>
+
+<div id="heading">
+  <div class="controls">
+    <form onsubmit="init(); return false;" style="display:inline; margin-right:5px;">
+      <input id="database-name" />
+    </form>
+    <button onclick="openDatabase();" style="font-weight: bold;">Open Database</button>
+  </div>
+  <h1 class="heading-text">Database</h1>
+</div>
+
+<div id="content">
+
+  <div id="command-area">
+    <textarea id="ta" cols="80" rows="2" spellcheck="false"></textarea>
+    <br /><button onclick="execute()">Execute</button>
+  </div>
+
+  <div id=output></div>
+</div>
+
+<script type="text/javascript">
+  init();
+</script>
+
+</body>
+</html>

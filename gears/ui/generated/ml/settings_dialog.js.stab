@@ -1,0 +1,14 @@
+<string id="string-cancel">റദ്ദാക്കൂ</string>
+<string id="string-cancel-accesskey">C</string>
+<string id="string-apply">അപേക്ഷിക്കുക</string>
+<string id="string-apply-accesskey">A</string>
+<string id="string-nosites">സൈറ്റുകളൊന്നുമില്ല.</string>
+<string id="string-allowed">അനുവദിച്ചു</string>
+<string id="string-denied">തടഞ്ഞു</string>
+<string id="string-local-storage">പ്രാദേശിക ശേഖരം</string>
+<string id="string-location-data">ലൊക്കേഷന്</string>
+<string id="string-gears-settings">Gears ക്രമീകരണങ്ങള്</string>
+<string id="string-permissions-description">താഴെക്കാണുന്ന പട്ടിക Gears ഉപയോഗിക്കാന് ശ്രമിച്ച ഓരോ സൈറ്റിലേക്കും അനുവദിച്ചവ കാണിക്കുന്നു.</string>
+<string id="string-version">Gears പതിപ്പ് PRODUCT_VERSION</string>
+<string id="string-html-title">Gears ക്രമീകരണങ്ങള്</string>
+<string id="string-remove">നീക്കംചെയ്യൂ</string>

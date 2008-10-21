@@ -1,0 +1,14 @@
+<string id="string-cancel">Odustani</string>
+<string id="string-cancel-accesskey">C</string>
+<string id="string-apply">Primijeni</string>
+<string id="string-apply-accesskey">A</string>
+<string id="string-nosites">Nema web-lokacija.</string>
+<string id="string-allowed">Dopušteno</string>
+<string id="string-denied">Odbijeno</string>
+<string id="string-local-storage">Lokalna pohrana</string>
+<string id="string-location-data">Lokacija</string>
+<string id="string-gears-settings">Postavke Gearsa</string>
+<string id="string-permissions-description">U dolje navedenoj tablici navedene su dozvole koje ste dali svakoj web-lokaciji koja je pokušala koristiti Gears.</string>
+<string id="string-version">Verzija Gearsa PRODUCT_VERSION</string>
+<string id="string-html-title">Postavke Gearsa</string>
+<string id="string-remove">Ukloni</string>

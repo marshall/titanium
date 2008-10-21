@@ -1,0 +1,16 @@
+URL: http://code.google.com/p/googletest/
+Version: 1.0.0
+         (Downloaded gtest-1.0.0.zip 
+          from http://code.google.com/p/googletest/downloads/list)
+License: BSD
+         Note: gtest was developed by Google, and Google holds the
+         copyright.  Any contributions accepted from non-Google employees were
+         accepted under a Google contributor license agreement
+         (http://code.google.com/legal/individual-cla-v1.0.html or
+         http://code.google.com/legal/corporate-cla-v1.0.html)
+License File: COPYING (but see above)
+Description: gtest is an open-source unit test framework.
+
+Local Modifications:
+- Added this file (README.google).
+- Only added the top level files and those under src and include.

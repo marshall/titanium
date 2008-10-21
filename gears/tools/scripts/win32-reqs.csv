@@ -1,0 +1,4 @@
+sdk,c:\Program Files\Microsoft Platform SDK for Windows Server 2003 R2\,c:\Program Files\Microsoft Platform SDK for Windows Server 2003 R2\SetEnv.cmd,c,http://www.microsoft.com/downloads/details.aspx?FamilyId=0BAF2B35-C656-4969-ACE8-E4C0C0716ADB&displaylang=en,Microsoft Windows Server 2003 R2 Platform SDK
+unx,c:\unix\,c:\unix\usr\local\wbin\zsh.exe,p,http://google-gears.googlecode.com/files/UnxUtils.zip,UnxUtils: GNU tools for Windows
+py,c:\Python24\,c:\Python24\python.exe,p,http://www.python.org/ftp/python/2.4.4/python-2.4.4.msi,Python 2.4
+svn,c:\Program Files\Subversion\,c:\Program Files\Subversion\bin\svn.exe,p,http://subversion.tigris.org/files/documents/15/39559/svn-1.4.5-setup.exe,Subversion 1.4

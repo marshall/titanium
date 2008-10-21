@@ -1,0 +1,33 @@
+<string id="string-html-title">Gears સુરક્ષા ચેતવણી</string>
+<string id="string-allow">મંજૂરી આપો</string>
+<string id="string-allow-accesskey">A</string>
+<string id="string-deny">નકારો</string>
+<string id="string-deny-accesskey">D</string>
+<string id="string-cancel">રદ કરો</string>
+<string id="string-never-allow-link">આ સાઇટને ક્યારેય મંજૂરી આપશો નહીં</string>
+<string id="string-never-allow-link-wince">તેને ક્યારેય મંજૂર કરશો નહીં</string>
+<string id="string-description">
+  Gears એક ઓપન સોર્સ બ્રાઉઝર એક્સ્ટેંશન છે જે નીચેની JavaScript APIsનો ઉપયોગ કરીને ઓફલાઇન ફંક્શનાલિટી આપવા વેબ એપ્લિકેશંસને એનેબલ કરે છે.
+</string>
+<string id="string-localserver-desc">
+  એપ્લિકેશન સાધનોને સ્થાનિક રીતે સ્ટોર અને સર્વ કરો
+</string>
+<string id="string-database-desc">
+  ડેટાને સ્થાનિક રીતે સંપૂર્ણ રીતે શોધી શકાય તેવા રિલેશનલ ડેટાબેસમાં સ્ટોર કરો
+</string>
+<string id="string-workerpool-desc">
+  એપ્લિકેશનની રિસ્પોંસિવનેસ વધારવા માટે અસિંક્રોનસ JavaScript ચલાવો
+</string>
+<string id="string-query-data">
+  નીચેની વેબસાઇટ Gearsનો ઉપયોગ કરીને તમારા કમ્પ્યુટર પર માહિતી સંગ્રહિત કરવા માંગે છે.
+</string>
+<string id="string-query-location">
+  નીચેની વેબસાઇટ Gearsનો ઉપયોગ કરીને તમારા સ્થાન વિશેની માહિતી એક્સેસ કરવા માંગે છે.
+</string>
+<string id="string-location-privacy-statement">
+  તમારા સ્થળનો ઉપયોગ કેવી રીતે થશે તે જોવા સાઇટની ગોપનીયતા નીતિ વાંચો.
+</string>
+<string id="string-trust-site">
+  આ સાઇટ પર મને વિષ્વાસ છે. તેને Gearsનો ઉપયોગ કરવાની મંજુરી આપો.
+</string>
+<string id="string-trust-site-accesskey">t</string>

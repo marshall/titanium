@@ -1,0 +1,33 @@
+<string id="string-html-title">Gearsovo upozorenje o sigurnosti</string>
+<string id="string-allow">Dopusti</string>
+<string id="string-allow-accesskey">A</string>
+<string id="string-deny">Odbij</string>
+<string id="string-deny-accesskey">O</string>
+<string id="string-cancel">Odustani</string>
+<string id="string-never-allow-link">Nikad ne dopuštaj ovu web lokaciju</string>
+<string id="string-never-allow-link-wince">Nikad ne dopuštaj</string>
+<string id="string-description">
+  Gears je pregledničko proširenje otvorenog izvornog koda koje web-aplikacijama omogućuje izvanmrežno funkcioniranje pomoću sljedećih API-ja za JavaScript:
+</string>
+<string id="string-localserver-desc">
+  Izvore aplikacije pohrani i poslužuj lokalno
+</string>
+<string id="string-database-desc">
+  Podatke spremi lokalno u potpuno pretraživoj relacijskoj bazi podataka
+</string>
+<string id="string-workerpool-desc">
+  Pokrenite asinkroni JavaScript kako biste poboljšali odziv aplikacije
+</string>
+<string id="string-query-data">
+  Dolje navedena web-lokacija želi pomoću Gearsa pohraniti informacije na Vaše računalo.
+</string>
+<string id="string-query-location">
+  Dolje navedena web-lokacija želi pristupiti informacijama o vašoj lokaciji pomoću Gearsa.
+</string>
+<string id="string-location-privacy-statement">
+  Pročitajte pravila o zaštiti privatnosti te web-lokacije da biste saznali kako će se koristiti Vaša lokacija.
+</string>
+<string id="string-trust-site">
+  Ovu web-lokaciju smatram pouzdanom. Dopusti joj da koristi Gears.
+</string>
+<string id="string-trust-site-accesskey">t</string>

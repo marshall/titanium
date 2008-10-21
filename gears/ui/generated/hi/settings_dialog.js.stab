@@ -1,0 +1,14 @@
+<string id="string-cancel">रद्द करें</string>
+<string id="string-cancel-accesskey">रद्द करें</string>
+<string id="string-apply">लागू करें</string>
+<string id="string-apply-accesskey">अनुमति दें</string>
+<string id="string-nosites">कोई साइट नहीं.</string>
+<string id="string-allowed">स्वीकार्य</string>
+<string id="string-denied">अस्वीकृत</string>
+<string id="string-local-storage">स्थानीय संग्रहण</string>
+<string id="string-location-data">स्थिति</string>
+<string id="string-gears-settings">Gears सेटिंग्स</string>
+<string id="string-permissions-description">नीचे दी गई टेबल वे अनुमतियाँ दिखाती है जो आपने उन साइटों को दी है जिन्होंने Gears का उपयोग करने का प्रयास किया है.</string>
+<string id="string-version">Gears संस्करण PRODUCT_VERSION</string>
+<string id="string-html-title">Gears सेटिंग्स</string>
+<string id="string-remove">निकालें</string>

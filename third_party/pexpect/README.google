@@ -1,0 +1,9 @@
+URL: http://pexpect.sourceforge.net/
+Version: 2.3
+License: MIT
+
+Description: 
+Pexpect is a pure Python Expect. It allows easy control of other applications.
+
+Local Modifications:
+Removed docs, examples, and setup.py

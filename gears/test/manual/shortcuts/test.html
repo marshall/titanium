@@ -1,0 +1,114 @@
+<head>
+  <script src='../../../sdk/gears_init.js'></script>
+</head>
+<body>
+<script>
+var f = google.gears.factory;
+var d = f.create("beta.desktop");
+var icons = {
+  "16x16": "16.png",
+  "32x32": "32.png",
+  "48x48": "48.png",
+  "128x128": "128.png"
+};
+
+function valid(app_name) {
+  d.createShortcut(app_name, "test.html", icons,
+                   "This \"application\" lets you do things!");
+}
+
+function threeLineDescription() {
+  var longSentence = []
+  for (var i = 0; i < 3; i++) {
+    longSentence.push("TallChars:MOpy_PlusPaddingForOneWordPerLine");
+  }
+  d.createShortcut("My Cool Application", ".", icons,
+                   longSentence.join(" "));
+}
+
+function longDescription() {
+  var longSentence = [];
+  for (var i = 0; i < 80; i++) {
+    longSentence.push("foo");
+  }
+  d.createShortcut("My Cool Application", "test.html", icons,
+                   longSentence.join(" "));
+}
+
+function noDescription() {
+  d.createShortcut("My Spiffy Application", "test.html", icons);
+}
+
+function reportError(f) {
+  try {
+    f();
+  } catch (e) {
+    window.setTimeout("throw new Error('" + e.message + "')", 0);
+  }
+}
+
+function badArgs() {
+  var bigString = [];
+  // 64 is max length from paths.cc::kUserPathComponentMaxChars
+  for (var i = 0; i < 65; i++) {
+    bigString.push("x");
+  }
+  
+  reportError(function() { d.createShortcut() });
+  reportError(function() { d.createShortcut("", "url", icons, "description") });
+  reportError(function() { d.createShortcut(bigString.join(""), "url", icons, "description") });
+  reportError(function() { d.createShortcut("foo\\bar", "url", icons, "description") });
+  reportError(function() { d.createShortcut("name", "url", {}, "description") });
+  reportError(function() { d.createShortcut("name", "url", {"16x16": "32.png"}, "description") });
+  reportError(function() { d.createShortcut("name", "url", {"16x16": "test.html"}, "description") });
+  reportError(function() { d.createShortcut("name", "url", {"16x16": "does_not_exist"}, "description") });
+}
+
+// Create a shortcut on page load.
+valid("My Application");
+</script>
+
+<p>
+<!-- Use a different app name than the call to valid called on page load to 
+      force redisplay of the UI. -->
+<button onclick="valid('My Snazzy Application')">valid</button><br />
+This button should create a shortcut on the desktop called "My Application"
+with a monkey head icon that launches this page.
+</p>
+
+<p>
+<button onclick="threeLineDescription()">three-line description</button><br />
+This one should create the same shortcut, but the dialog should be able to
+display a three-line description without scroll bars.
+</p>
+
+<p>
+<button onclick="longDescription()">long description</button><br />
+This one should create the same shortcut, but the dialog should have a
+very long description.
+</p>
+
+<p>
+<button onclick="noDescription()">No description</button><br />
+This one should create the same shortcut as above, but the dialog should have
+no description displayed.
+</p>
+
+<p>
+<button onclick="badArgs()">bad args</button><br />
+This one should cause the following 7 errors to be reported. The dialog
+pops up for some of these, but there should be no shortcuts created on the
+desktop.<br />
+
+<ol>
+  <li>Required argument 1 is missing.
+  <li>Name cannot exceed 64 characters: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.
+  <li>Name contains invalid characters: fooar.
+  <li>Invalid value for icon parameter. At least one icon must be specified.
+  <li>Icon http://localhost:8001/manual/shortcuts/32.png has incorrect size. Expected 16x16.
+  <li>Could not decode PNG data for icon http://localhost:8001/manual/shortcuts/test.html.
+  <li>Could not load icon http://localhost:8001/manual/shortcuts/does_not_exist.
+</ol>
+
+</p>
+</body>

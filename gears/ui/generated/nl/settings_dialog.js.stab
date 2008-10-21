@@ -1,0 +1,14 @@
+<string id="string-cancel">Annuleren</string>
+<string id="string-cancel-accesskey">C</string>
+<string id="string-apply">Toepassen</string>
+<string id="string-apply-accesskey">A</string>
+<string id="string-nosites">Geen sites.</string>
+<string id="string-allowed">Toegestaan</string>
+<string id="string-denied">Geweigerd</string>
+<string id="string-local-storage">Lokale opslag</string>
+<string id="string-location-data">Locatie</string>
+<string id="string-gears-settings">Instellingen voor Gears</string>
+<string id="string-permissions-description">Voor elke site die heeft geprobeerd Gears te gebruiken, worden in de tabel hieronder de machtigingen weergegeven die u aan deze site hebt verleend.</string>
+<string id="string-version">Gears-versie PRODUCT_VERSION</string>
+<string id="string-html-title">Instellingen voor Gears</string>
+<string id="string-remove">Verwijderen</string>

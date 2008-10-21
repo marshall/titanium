@@ -1,0 +1,14 @@
+<string id="string-cancel">Batal</string>
+<string id="string-cancel-accesskey">B</string>
+<string id="string-apply">Gunakan</string>
+<string id="string-apply-accesskey">N</string>
+<string id="string-nosites">Tiada tapak.</string>
+<string id="string-allowed">Dibenarkan</string>
+<string id="string-denied">Ditolak</string>
+<string id="string-local-storage">Penyimpanan setempat</string>
+<string id="string-location-data">Lokasi</string>
+<string id="string-gears-settings">Tetapan Gear</string>
+<string id="string-permissions-description">Jadual di bawah menunjukkan kebenaran yang telah anda berikan kepada setiap tapak yang telah cuba menggunakan Gear.</string>
+<string id="string-version">Versi Gear PRODUCT_VERSION</string>
+<string id="string-html-title">Tetapan Gear</string>
+<string id="string-remove">Keluarkan</string>

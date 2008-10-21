@@ -1,0 +1,13 @@
+--- jsoncpp.orig/include/json/reader.h	2006-06-26 19:52:43.000000000 -0700
++++ reader.h	2006-06-26 18:12:13.000000000 -0700
+@@ -1,8 +1,8 @@
+ #ifndef CPPTL_JSON_READER_H_INCLUDED
+ # define CPPTL_JSON_READER_H_INCLUDED
+ 
+-# include "forwards.h"
+-# include "value.h"
++# include "third_party/jsoncpp/forwards.h"
++# include "third_party/jsoncpp/value.h"
+ # include <deque>
+ # include <stack>
+ # include <string>

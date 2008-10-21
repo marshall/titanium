@@ -1,0 +1,183 @@
+<!--
+Copyright 2008, Google Inc.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+ 1. Redistributions of source code must retain the above copyright notice,
+    this list of conditions and the following disclaimer.
+ 2. Redistributions in binary form must reproduce the above copyright notice,
+    this list of conditions and the following disclaimer in the documentation
+    and/or other materials provided with the distribution.
+ 3. Neither the name of Google Inc. nor the names of its contributors may be
+    used to endorse or promote products derived from this software without
+    specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<!DOCTYPE html>
+
+<html>
+
+  <head>
+    <title>Gears Notification Test Page</title>
+  </head>
+
+  <body>
+
+    <h1>Gears Notification Test Page</h1>
+
+    <div>
+      <p>Title: <input id="title" value="Good morning!"/> Counter: <span
+        id="counter"></span></p>
+      <p>Subtitle:
+        <input id="subtitle" value="test 1 2 3..."/></p>
+      <p>Description:
+        <input id="description"
+        value="Lorem ipsum dolor sit amet, consectetur adipisicing elit."/>
+      </p>
+      <p>Delay (for displayAt):
+        <input id="delay" value="0"/></p>
+      <p><button onclick="onPost()">Post</button></p>
+    </div>
+    <label for="status">Posted Notifications:</label>
+    <div style="border:1px solid navy;" id="posted_list"></div>
+    <label for="status">Status:</label>
+    <div style="border:1px solid orange;" id="status"></div>
+
+<!-- ====================================== -->
+<!--            JavaScript code             -->
+<script type="text/javascript" src="../../sdk/gears_init.js"></script>
+<script type="text/javascript">
+var console;
+var workerPool;
+var loggerWorkerId;
+var counter;
+var desktop;
+
+function addStatus(msg) {
+  document.getElementById('status').insertBefore(
+  document.createElement('br'),
+  document.getElementById('status').firstChild);
+  document.getElementById('status').insertBefore(
+  document.createTextNode(msg),
+  document.getElementById('status').firstChild);
+}
+
+function sendNotification(id, title, subtitle, description, delay) {
+  try {
+    var notification = desktop.createNotification();
+    notification.id = "foo" + id;
+    notification.title = title;
+    notification.icon = 'icon_48x48.png';
+    notification.subtitle = subtitle;
+    notification.description = description;
+    var delayMs = parseInt(delay, 10);
+    if (!isNaN(delayMs) && delayMs > 0) {
+      var displayAtTime = new Date();
+      displayAtTime.setTime(displayAtTime.getTime() + delayMs);
+      notification.displayAtTime = displayAtTime;
+    }
+    desktop.showNotification(notification);
+  } catch (ex) {
+    addStatus('Error: ' + ex.description);
+    return false;
+  }
+  return true;
+}
+
+function deleteNotification(id) {
+  try {
+    desktop.removeNotification("foo" + id);
+  } catch (ex) {
+    addStatus('Error: ' + ex.description);
+    return false;
+  }
+  addStatus('Deleted notification with id=' + id);
+}
+
+function updateNotification(id, title, subtitle, description, delay) {
+  if (!sendNotification(id, title, subtitle, description, delay)) {
+    return;
+  }
+  addStatus('Updated: ' + title + '/' + subtitle + '/' + description +
+    '/' + delay);
+}
+
+function postNotification(id, title, subtitle, description, delay) {
+  if (!sendNotification(id, title, subtitle, description, delay)) {
+    return;
+  }
+  // Add the notification to the 'posted list' so it can be later
+  // deleted/updated.
+  var html =
+    'Notification: id=' +
+    id +
+    '&nbsp;<input id="title' +
+    id +
+    '" value="' +
+    title + '"/>&nbsp;<input id="subtitle' +
+    id +
+    '" value="' +
+    subtitle + '"/>&nbsp;<input id="description' +
+    id +
+    '" value="' +
+    description + '"/>&nbsp;<input id="delay' +
+    id +
+    '" value="' +
+    delay + '"/>&nbsp;' +
+    '<button onclick=\'updateNotification(' +
+    id + ', document.getElementById("title' +
+    id + '").value, document.getElementById("subtitle' +
+    id + '").value, document.getElementById("description' +
+    id + '").value, document.getElementById("delay' +
+    id + '").value)\'>Update</button>&nbsp;' +
+    '<button onclick="deleteNotification(' +
+    id + ')">Delete</button>';
+
+  var container = document.createElement('p');
+  document.getElementById('posted_list').insertBefore(
+      container,
+      document.getElementById('posted_list').firstChild);
+  container.innerHTML = html;
+
+  addStatus('Posted: ' + title + ', ' + description);
+}
+
+function onPost() {
+  var title = document.getElementById('title').value;
+  var subtitle = document.getElementById('subtitle').value;
+  var description = document.getElementById('description').value;
+  var delay = document.getElementById('delay').value;
+  description += ' (' + counter + ')';
+  postNotification(counter, title, subtitle, description, delay);
+  ++counter;
+  document.getElementById('counter').innerText = counter;
+}
+
+function init() {
+  if (!window.google || !google.gears) {
+    addStatus('Appcelerator Titanium is not installed');
+    return;
+  }
+  counter = 0;
+  desktop = google.gears.factory.create('beta.desktop');
+  addStatus('Ready. Press "Post" button to send notification.');
+}
+
+init();
+
+</script>
+
+</body>
+</html>

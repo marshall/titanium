@@ -1,0 +1,31 @@
+Description
+===========
+
+This is the scoped_ptr from Boost with some additions by Google.
+
+Homepage
+========
+
+http://www.boost.org/
+http://www.boost.org/libs/smart_ptr/scoped_ptr.htm
+
+License
+=======
+
+http://boost.org/LICENSE_1_0.txt
+
+Source files and modifications
+==============================
+
+scoped_ptr_malloc added in by Ray Sidney of Google.  When one of these goes
+out of scope, instead of doing a delete or delete[], it calls free().
+scoped_ptr_malloc<char> is likely to see much more use than any other
+specializations.
+
+"typedef char type_must_be_complete[sizeof(T)];" was removed from 
+scoped_ptr_malloc because this condition interfered with using scoped_ptr_malloc
+in places, and this condition isn't necessary.
+
+release() added in by Spencer Kimball of Google. Use this to conditionally
+transfer ownership of a heap-allocated object to the caller, usually on
+method success.

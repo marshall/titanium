@@ -1,0 +1,149 @@
+<!--
+Copyright 2007, Google Inc.
+
+Redistribution and use in source and binary forms, with or without 
+modification, are permitted provided that the following conditions are met:
+
+ 1. Redistributions of source code must retain the above copyright notice, 
+    this list of conditions and the following disclaimer.
+ 2. Redistributions in binary form must reproduce the above copyright notice,
+    this list of conditions and the following disclaimer in the documentation
+    and/or other materials provided with the distribution.
+ 3. Neither the name of Google Inc. nor the names of its contributors may be
+    used to endorse or promote products derived from this software without
+    specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
+OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<!DOCTYPE html>
+
+<html>
+<head>
+<title>Gears Database Demo</title>
+<link rel="stylesheet" type="text/css" href="sample.css">
+</head>
+
+<body>
+<h1>Gears Database Demo</h1>
+<div id="view-source">&nbsp;</div>
+
+<form onsubmit="handleSubmit(); return false;">
+  <b>Enter a phrase to store in the database:</b>&nbsp;<br>
+  <table>
+    <tr>
+      <td valign="middle"><input type="text" id="submitValue"
+        style="width:20em;"></td>
+      <td valign="middle"><input type="submit" value="OK"></td>
+    </tr>
+  </table>
+</form>
+
+<p><b>Your last three phrases were:</b>
+
+<p><span id="status">&nbsp;</span>
+
+<p><i>This page uses Gears to record your entries on the local disk.
+   If you navigate away and revisit this page, all your data will still
+   be here.  Try it!</i>
+
+<!-- ====================================== -->
+<!-- End HTML code.  Begin JavaScript code. -->
+
+<script type="text/javascript"  src="../gears_init.js"></script>
+<script type="text/javascript" src="sample.js"></script>
+<script>
+
+var db;
+init();
+
+// Open this page's local database.
+function init() {
+  var success = false;
+
+  if (window.google && google.gears) {
+    try {
+      db = google.gears.factory.create('beta.database');
+
+      if (db) {
+        db.open('database-demo');
+        db.execute('create table if not exists Demo' +
+                   ' (Phrase varchar(255), Timestamp int)');
+
+        success = true;
+        // Initialize the UI at startup.
+        displayRecentPhrases();
+      }
+
+    } catch (ex) {
+      setError('Could not create database: ' + ex.message);
+    }
+  }
+
+  // Enable or disable UI elements
+
+  var inputs = document.forms[0].elements;
+  for (var i = 0, el; el = inputs[i]; i++) {
+    el.disabled = !success;
+  }
+
+}
+
+function handleSubmit() {
+  if (!google.gears.factory || !db) {
+    return;
+  }
+
+  var elm = getElementById('submitValue');
+  var phrase = elm.value;
+  var currTime = new Date().getTime();
+
+  // Insert the new item.
+  // The Gears database automatically escapes/unescapes inserted values.
+  db.execute('insert into Demo values (?, ?)', [phrase, currTime]);
+
+  // Update the UI.
+  elm.value = '';
+  displayRecentPhrases();
+}
+
+
+function displayRecentPhrases() {
+  var recentPhrases = ['', '', ''];
+
+  // Get the 3 most recent entries. Delete any others.
+  var rs = db.execute('select * from Demo order by Timestamp desc');
+  var index = 0;
+  while (rs.isValidRow()) {
+    if (index < 3) {
+      recentPhrases[index] = rs.field(0);
+    } else {
+      db.execute('delete from Demo where Timestamp=?', [rs.field(1)]);
+    }
+    ++index;
+    rs.next();
+  }
+  rs.close();
+
+  var status = getElementById('status');
+  status.innerHTML = '';
+  for (var i = 0; i < recentPhrases.length; ++i) {
+    var id = 'phrase' + i;
+    status.innerHTML += '<span id="' + id + '"></span><br>';
+    var bullet = '(' + (i + 1) + ') ';
+    setTextContent(getElementById(id), bullet + recentPhrases[i]);
+  }
+}
+
+</script>
+</body>
+</html>

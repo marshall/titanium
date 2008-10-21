@@ -1,0 +1,11 @@
+--- 
+:type: widget
+:name: app:upload
+:version: 1.0
+:dependencies: 
+- :type: websdk
+  :version: ">=2.1"
+  :name: websdk
+:tags: [ ]
+:licenses: [6]
+:description: "app:upload is a component which makes dynamic upload of multipart attachments simple."

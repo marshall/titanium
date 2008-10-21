@@ -1,0 +1,14 @@
+<string id="string-cancel">रद्द करा</string>
+<string id="string-cancel-accesskey">C</string>
+<string id="string-apply">लागू करा</string>
+<string id="string-apply-accesskey">A</string>
+<string id="string-nosites">साइट नाहीत.</string>
+<string id="string-allowed">अनुमत</string>
+<string id="string-denied">अननुमत</string>
+<string id="string-local-storage">स्थानिक संचय</string>
+<string id="string-location-data">स्थान</string>
+<string id="string-gears-settings">Gears सेटिंग्ज</string>
+<string id="string-permissions-description">निम्न सारणी Gears वापरण्याचा प्रयत्न केलेल्या प्रत्येक साइटकरिता आपल्याकडे किती परवानग्या आहेत हे दर्शविते.</string>
+<string id="string-version">Gears आवृत्ती PRODUCT_VERSION</string>
+<string id="string-html-title">Gears सेटिंग्ज</string>
+<string id="string-remove">काढा</string>

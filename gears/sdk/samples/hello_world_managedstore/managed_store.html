@@ -1,0 +1,78 @@
+<!--
+Copyright 2007, Google Inc.
+
+Redistribution and use in source and binary forms, with or without 
+modification, are permitted provided that the following conditions are met:
+
+ 1. Redistributions of source code must retain the above copyright notice, 
+    this list of conditions and the following disclaimer.
+ 2. Redistributions in binary form must reproduce the above copyright notice,
+    this list of conditions and the following disclaimer in the documentation
+    and/or other materials provided with the distribution.
+ 3. Neither the name of Google Inc. nor the names of its contributors may be
+    used to endorse or promote products derived from this software without
+    specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
+OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <title>Gears ManagedResourceStore Demo (online)</title>
+    <link rel="stylesheet" type="text/css" href="../sample.css">
+    <style>
+      div {
+        background: #f8f8f8;
+      }
+    </style>
+    <script type="text/javascript" src="../../gears_init.js"></script>
+    <script type="text/javascript" src="../sample.js"></script>
+    <script type="text/javascript" src="managed_store.js"></script>
+    <script type="text/javascript" src="managed_store_demo_utils.js"></script>
+  </head>
+  <body>
+    <h1>Gears ManagedResourceStore Demo (online)</h1><br>
+    <p id=status></p>
+
+    <form>
+      <input type='button' onclick='createManagedStore()'
+             value='Create Managed Store'>
+      <span id='textOut'></span>
+    </form>
+
+    <p>Press the 'CreateManagedStore' button to execute the
+    script shown below. The script initiates the capture of the resources
+    listed in the manifest file and informs you when it's done.</p>
+
+    <hr>
+
+    <p>The file 'managed_store.js' for the online version in use now.</p>
+
+    <div id="managedStoreJsSourceDisplay"></div>
+
+    <p>The manifest file for the offline version v1 which will be captured
+        after pressing the 'CreateManagedStore' button.
+
+    <div id="manifestFileSourceDisplay"></div>
+
+    <script type="text/javascript">
+
+    showSourceFileInline('managed_store.js', 'managedStoreJsSourceDisplay');
+    showSourceFileInline('manifest_v1.json', 'manifestFileSourceDisplay');
+    if (!canDemo()) {
+      getElementById('create-button').disabled = true;
+    }
+    </script>
+  </body>
+</html>

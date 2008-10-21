@@ -1,0 +1,14 @@
+<string id="string-cancel">Ikansela</string>
+<string id="string-cancel-accesskey">I</string>
+<string id="string-apply">Ilapat</string>
+<string id="string-apply-accesskey">P</string>
+<string id="string-nosites">Walang mga site.</string>
+<string id="string-allowed">Pinahintulutan</string>
+<string id="string-denied">Tinganggihan</string>
+<string id="string-local-storage">Lokal na imbakan</string>
+<string id="string-location-data">Lokasyon</string>
+<string id="string-gears-settings">Mga Setting ng Gear</string>
+<string id="string-permissions-description">Ang talahanayan sa ibaba ay nagpapakita ng mga pahintulot na naibigay mo sa bawat site na sinubukang gumamit ng Mga Gear.</string>
+<string id="string-version">bersyon ng Mga Gear PRODUCT_VERSION</string>
+<string id="string-html-title">Mga Setting ng Gear</string>
+<string id="string-remove">Alisin</string>

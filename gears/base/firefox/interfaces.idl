@@ -1,0 +1,58 @@
+// Copyright 2006, Google Inc.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are met:
+//
+//  1. Redistributions of source code must retain the above copyright notice,
+//     this list of conditions and the following disclaimer.
+//  2. Redistributions in binary form must reproduce the above copyright notice,
+//     this list of conditions and the following disclaimer in the documentation
+//     and/or other materials provided with the distribution.
+//  3. Neither the name of Google Inc. nor the names of its contributors may be
+//     used to endorse or promote products derived from this software without
+//     specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+// WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+// MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+// EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+// SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+// PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+// OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+// WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+// OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+// ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+#include "nsISupports.idl"
+
+
+interface FFHttpRequest; // defined in C++
+[ptr] native FFHttpRequestPtr(FFHttpRequest);
+
+[noscript, uuid(c1aa6650-21da-4b68-bde4-a2f8cf5cc091)]
+interface SpecialHttpRequestInterface : nsISupports {
+  // This is an interface for use by CacheIntercept.  We QueryInterface
+  // for it to see whether a given request came from Gears.
+  [noscript] FFHttpRequestPtr getNativeHttpRequest();
+};
+
+
+// Notionally, this interface is for the GearsFactory object returned by a
+// "new GearsFactory()" call in JavaScript. The method names are accurate, but
+// the arguments, and the return value, are considered only advisory. The
+// underlying GearsFactoryFF implementation delegates to something which is not
+// an XPCOM object, but instead interfaces directly with the JS engine, and not
+// via XPConnect. Hence, we don't need to specify the exact function signature.
+[scriptable, uuid(8A06E8B5-60D2-4268-B2F6-C9AEEAAF8392)]
+interface GearsFactoryInterface : nsISupports {
+  // Args: string className.
+  nsISupports create();
+
+  // Optional args: string siteName, string imageUrl, string extraMessage.
+  boolean getPermission();
+
+  AString getBuildInfo();
+
+  readonly attribute boolean hasPermission;
+  readonly attribute AString version;
+};

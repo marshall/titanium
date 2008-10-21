@@ -1,0 +1,14 @@
+<string id="string-cancel">Atcelt</string>
+<string id="string-cancel-accesskey">C</string>
+<string id="string-apply">Lietot</string>
+<string id="string-apply-accesskey">A</string>
+<string id="string-nosites">Nav vietņu.</string>
+<string id="string-allowed">Atļauts</string>
+<string id="string-denied">Neatļauts</string>
+<string id="string-local-storage">Vietējā atmiņa</string>
+<string id="string-location-data">Atrašanās vieta</string>
+<string id="string-gears-settings">Gears iestatījumi</string>
+<string id="string-permissions-description">Tālāk minētā tabula rāda atļaujas, kuras esat piešķīris katrai vietnei, kas mēģināja lietot Gears.</string>
+<string id="string-version">Gears versija PRODUCT_VERSION</string>
+<string id="string-html-title">Gears iestatījumi</string>
+<string id="string-remove">Noņemt</string>

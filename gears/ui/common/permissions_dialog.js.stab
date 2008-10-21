@@ -1,0 +1,53 @@
+<string id="string-html-title"><TRANS_BLOCK>Gears Security Warning</TRANS_BLOCK></string>
+<string id="string-allow"><TRANS_BLOCK desc="Button user can press to allow the use of Gears.">Allow</TRANS_BLOCK></string>
+<string id="string-allow-accesskey"><TRANS_BLOCK desc="Access key for the allow button.">A</TRANS_BLOCK></string>
+<string id="string-deny"><TRANS_BLOCK desc="Button user can press to disallow the use of Gears.">Deny</TRANS_BLOCK></string>
+<string id="string-deny-accesskey"><TRANS_BLOCK desc="Access key for the deny button.">D</TRANS_BLOCK></string>
+<string id="string-cancel"><TRANS_BLOCK desc="Button user can press to cancel the dialog.">Cancel</TRANS_BLOCK></string>
+<string id="string-never-allow-link"><TRANS_BLOCK desc="Link that disallows Gears on this site.">Never allow this site</TRANS_BLOCK></string>
+<string id="string-never-allow-link-wince"><TRANS_BLOCK desc="Link that disallows Gears on this site for WinCE.">Never allow it</TRANS_BLOCK></string>
+<string id="string-description">
+  <TRANS_BLOCK desc="Header for basic help section.">
+    Gears is an open source browser extension that enables
+    web applications to provide offline functionality using the following
+    JavaScript APIs:
+  </TRANS_BLOCK>
+</string>
+<string id="string-localserver-desc">
+  <TRANS_BLOCK desc="Short explanation of localserver">
+    Store and serve application resources locally
+  </TRANS_BLOCK>
+</string>
+<string id="string-database-desc">
+  <TRANS_BLOCK desc="Short explanation of database">
+    Store data locally in a fully-searchable relational database
+  </TRANS_BLOCK>
+</string>
+<string id="string-workerpool-desc">
+  <TRANS_BLOCK desc="Short explanation of workerpool">
+    Run asynchronous JavaScript to improve application responsiveness
+  </TRANS_BLOCK>
+</string>
+<string id="string-query-data">
+  <TRANS_BLOCK desc="Asks the user if they want to let the site use Gears to store data locally on her device / computer.">
+    The website below wants to store information on your computer
+    using Gears.
+  </TRANS_BLOCK>
+</string>
+<string id="string-query-location">
+  <TRANS_BLOCK desc="Asks the user if they want to let the site use Gears to access her geolocation information">
+    The website below wants to access information about your location
+    using Gears.
+  </TRANS_BLOCK>
+</string>
+<string id="string-location-privacy-statement">
+  <TRANS_BLOCK desc="Tells the users to read the website's privacy policy to see how their location information will be used.">
+    Read the site's privacy policy to see how your location will be used.
+  </TRANS_BLOCK>
+</string>
+<string id="string-trust-site">
+  <TRANS_BLOCK desc="This is the Trust string.  It indicates the user lets the site use Gears.">
+    I trust this site. Allow it to use Gears.
+  </TRANS_BLOCK>
+</string>
+<string id="string-trust-site-accesskey"><TRANS_BLOCK desc="Access key for the trust check.  This should match an important character in the Trust string.">t</TRANS_BLOCK></string>

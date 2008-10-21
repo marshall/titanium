@@ -1,0 +1,8 @@
+{
+  "betaManifestVersion": 1,
+  "version": "1",
+  "entries": [
+    {"url": "manifest-url1.txt"},
+    {"url": "manifest-url2.txt"}
+  ]
+}

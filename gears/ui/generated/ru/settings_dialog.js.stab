@@ -1,0 +1,14 @@
+<string id="string-cancel">Отмена</string>
+<string id="string-cancel-accesskey">C</string>
+<string id="string-apply">Применить</string>
+<string id="string-apply-accesskey">A</string>
+<string id="string-nosites">Нет сайтов.</string>
+<string id="string-allowed">Разрешено</string>
+<string id="string-denied">Отказано</string>
+<string id="string-local-storage">Локальное хранилище</string>
+<string id="string-location-data">Местонахождение</string>
+<string id="string-gears-settings">Настройки Gears</string>
+<string id="string-permissions-description">В таблице ниже перечислены разрешения, предоставленные каждому сайту, который пытался воспользоваться Gears.</string>
+<string id="string-version">Gears версии PRODUCT_VERSION</string>
+<string id="string-html-title">Настройки Gears</string>
+<string id="string-remove">Удалить</string>

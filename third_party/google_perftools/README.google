@@ -1,0 +1,33 @@
+URL: http://code.google.com/p/google-perftools/
+Version: Snapshot of Subversion trunk, revision [51]
+         (http://google-perftools.googlecode.com/svn/trunk/)
+License: BSD
+         Note: Google-perftools was developed by Google, and Google holds the
+         copyright.  Any contributions accepted from non-Google employees were
+         accepted under a Google contributor license agreement
+         (http://code.google.com/legal/individual-cla-v1.0.html or
+         http://code.google.com/legal/corporate-cla-v1.0.html)
+License File: LICENSE.txt (but see above)
+Description: Currently this is only used for getting a list of memory mapped 
+             regions in a process.
+
+             Official description of code:
+             These tools are for use by developers so that they can create more
+             robust applications. Especially of use to those developing
+             multi-threaded applications in C++ with templates. Includes
+             TCMalloc, heap-checker, heap-profiler and cpu-profiler.
+             
+Local Modifications:
+  - Added this file, README.google.
+  - Remove the code for GetenvBeforeMain(), GetUniquePathFromEnv(), 
+    CyclesPerSecond(), NumCPUs() because these were not needed and 
+    had extra dependencies.
+  - Fixed bug in ProcMapsIterator::~ProcMapsIterator by removing
+    duplicate  "delete dynamic_buffer_;". (Sent mail to author.)
+  - Expanded path to include files to avoid picking up copies from
+    googleurl/base/basictypes.h, googleurl/base/logging.h
+  - Replaced base/basictypes.h with a version that includes gear's
+    basictypes.h to avoid conflics between these headers (and retains
+    the scanf defines that are needed by perftools).
+  - Replaced base/logging.h with a stubbed-out version.
+

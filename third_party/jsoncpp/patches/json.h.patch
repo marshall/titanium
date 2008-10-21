@@ -1,0 +1,16 @@
+--- jsoncpp.orig/include/json/json.h	2006-06-26 19:52:43.000000000 -0700
++++ json.h	2006-06-26 18:09:43.000000000 -0700
+@@ -1,9 +1,9 @@
+ #ifndef JSON_JSON_H_INCLUDED
+ # define JSON_JSON_H_INCLUDED
+ 
+-# include "autolink.h"
+-# include "value.h"
+-# include "reader.h"
+-# include "writer.h"
++# include "third_party/jsoncpp/autolink.h"
++# include "third_party/jsoncpp/value.h"
++# include "third_party/jsoncpp/reader.h"
++# include "third_party/jsoncpp/writer.h"
+ 
+ #endif // JSON_JSON_H_INCLUDED

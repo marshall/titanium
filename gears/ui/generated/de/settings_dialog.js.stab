@@ -1,0 +1,14 @@
+<string id="string-cancel">Abbrechen</string>
+<string id="string-cancel-accesskey">A</string>
+<string id="string-apply">Anwenden</string>
+<string id="string-apply-accesskey">Z</string>
+<string id="string-nosites">Keine Sites.</string>
+<string id="string-allowed">Zulässig</string>
+<string id="string-denied">Verweigert</string>
+<string id="string-local-storage">Lokaler Speicherplatz</string>
+<string id="string-location-data">Speicherort</string>
+<string id="string-gears-settings">Gears-Einstellungen</string>
+<string id="string-permissions-description">Die untenstehende Tabelle zeigt die Berechtigungen an, die Sie jeder Site gewährt haben, die versucht hat, Gears zu verwenden.</string>
+<string id="string-version">Gears-Version PRODUKT_VERSION</string>
+<string id="string-html-title">Gears-Einstellungen</string>
+<string id="string-remove">Entfernen</string>

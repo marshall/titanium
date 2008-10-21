@@ -1,0 +1,33 @@
+<string id="string-html-title">Babala sa Seguridad ng Mga Gear</string>
+<string id="string-allow">Payagan</string>
+<string id="string-allow-accesskey">P</string>
+<string id="string-deny">Tanggihan</string>
+<string id="string-deny-accesskey">T</string>
+<string id="string-cancel">Ikansela</string>
+<string id="string-never-allow-link">Huwag kailanman payagan ang site na ito</string>
+<string id="string-never-allow-link-wince">Huwag kailanman ito papayagan</string>
+<string id="string-description">
+  Ang mga Gear ay isang open source browser extension na pinagana ng mga web application ng offline na pagpapaandar gamit ang sumusunod na Mga JavaScript API:
+</string>
+<string id="string-localserver-desc">
+  Mag-imbak at maghatid nang lokal ng mga mapagkukunan ng application
+</string>
+<string id="string-database-desc">
+  I-imbak ang data nang lokal sa isang ganap na mahahanapan na relational database
+</string>
+<string id="string-workerpool-desc">
+  Magpatakbo ng hindi magkakasabay na JavaScript upang mapagbuti ang kakayahang tumugon ng application
+</string>
+<string id="string-query-data">
+  Nais lagyan ng impormasyon ang website sa ibaba sa iyong computer gamit ang Mga Gear.
+</string>
+<string id="string-query-location">
+  Nais i-access ng website sa ibaba ang impormasyon tungkol sa iyong lokasyon gamit ang mga Gear.
+</string>
+<string id="string-location-privacy-statement">
+  Basahin ang patakaran sa privacy ng site upang makita kung paano magagamit ang iyong lokasyon.
+</string>
+<string id="string-trust-site">
+  Pinagkakatiwalaan ko ang site na ito. Pinahihintulutan na gamitin ang mga Gear na ito.
+</string>
+<string id="string-trust-site-accesskey">t</string>

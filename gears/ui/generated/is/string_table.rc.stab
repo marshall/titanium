@@ -1,0 +1,5 @@
+<string id="IDS_VERSION_COLLISION_TITLE">Vinsamlegast endurræstu vafrann</string>
+<string id="IDS_VERSION_COLLISION_TEXT">Uppfærslu á Gears hefur verið hlaðið niður.\n\nVinsamlegast lokaðu öllum vafragluggum til að ljúka við uppfærsluna.\n</string>
+<string id="IDS_REGISTRY_MENU_TEXT">&Stillingar Gears</string>
+<string id="IDS_REGISTRY_MENU_STATUS_BAR">'Stjórna því hvaða svæði hafa aðgang að Gears.'</string>
+

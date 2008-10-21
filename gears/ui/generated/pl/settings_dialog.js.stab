@@ -1,0 +1,14 @@
+<string id="string-cancel">Anuluj</string>
+<string id="string-cancel-accesskey">A</string>
+<string id="string-apply">Zastosuj</string>
+<string id="string-apply-accesskey">Z</string>
+<string id="string-nosites">Brak witryn.</string>
+<string id="string-allowed">Zezwolono</string>
+<string id="string-denied">Zabroniono</string>
+<string id="string-local-storage">Przechowywanie danych lokalnie</string>
+<string id="string-location-data">Lokalizacja</string>
+<string id="string-gears-settings">Ustawienia wtyczki Gears</string>
+<string id="string-permissions-description">Poniższa tabela zawiera uprawnienia, jakie przyznano każdej z witryn próbujących użyć wtyczki Gears.</string>
+<string id="string-version">Gears PRODUCT_VERSION</string>
+<string id="string-html-title">Ustawienia wtyczki Gears</string>
+<string id="string-remove">Usuń</string>

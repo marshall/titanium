@@ -1,0 +1,14 @@
+<string id="string-cancel">Άκυρο</string>
+<string id="string-cancel-accesskey">C</string>
+<string id="string-apply">Εφαρμογή</string>
+<string id="string-apply-accesskey">A</string>
+<string id="string-nosites">Δεν υπάρχουν ιστότοποι.</string>
+<string id="string-allowed">Επιτρέπονται</string>
+<string id="string-denied">Δεν επιτρέπονται</string>
+<string id="string-local-storage">Τοπικός αποθηκευτικός χώρος</string>
+<string id="string-location-data">Τοποθεσία</string>
+<string id="string-gears-settings">Ρυθμίσεις Gears</string>
+<string id="string-permissions-description">Ο παρακάτω πίνακας δείχνει τα δικαιώματα που χορηγήσατε σε κάθε ιστότοπο που επιχείρησε να χρησιμοποιήσει το Gears.</string>
+<string id="string-version">Έκδοση Gears PRODUCT_VERSION</string>
+<string id="string-html-title">Ρυθμίσεις Gears</string>
+<string id="string-remove">Κατάργηση</string>

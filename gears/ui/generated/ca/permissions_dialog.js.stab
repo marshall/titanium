@@ -1,0 +1,33 @@
+<string id="string-html-title">Advertència de seguretat de Gears</string>
+<string id="string-allow">Permet</string>
+<string id="string-allow-accesskey">P</string>
+<string id="string-deny">Denega</string>
+<string id="string-deny-accesskey">D</string>
+<string id="string-cancel">Cancel·la</string>
+<string id="string-never-allow-link">No permetis mai aquest lloc</string>
+<string id="string-never-allow-link-wince">No permetre'l mai</string>
+<string id="string-description">
+  Gear és una extensió de navegador de codi obert que permet que les aplicacions web proporcionin funcionalitat fora de línia mitjançant les següents API de JavaScript:
+</string>
+<string id="string-localserver-desc">
+  Desar i servir recursos d'aplicacions localment
+</string>
+<string id="string-database-desc">
+  Desar dades localment en una base de dades relacional amb funció de cerca completa
+</string>
+<string id="string-workerpool-desc">
+  Executar JavaScript asíncron per millorar la sensibilitat de les aplicacions
+</string>
+<string id="string-query-data">
+  El lloc web següent vol emmagatzemar informació al vostre ordinador mitjançant Gears.
+</string>
+<string id="string-query-location">
+  El lloc web següent vol accedir a informació sobre la vostra ubicació mitjançant Gears.
+</string>
+<string id="string-location-privacy-statement">
+  Llegiu la política de privadesa del lloc per veure com es farà servir la vostra ubicació.
+</string>
+<string id="string-trust-site">
+  Confio en aquest lloc. Permet que utilitzi Gears.
+</string>
+<string id="string-trust-site-accesskey">t</string>

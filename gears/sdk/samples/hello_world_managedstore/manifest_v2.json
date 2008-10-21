@@ -1,0 +1,13 @@
+{
+  "betaManifestVersion": 1,
+  "version": "v2",
+  "entries": [
+    { "url": "managed_store.html",
+      "src": "managed_store_v2.html" },
+    { "url": "managed_store.js",
+      "src": "managed_store_v2.js" },
+    { "url": "managed_store_demo_utils.js" },
+    { "url": "sample.css", "src": "../sample.css" },
+    { "url": "sample.js", "src": "../sample.js" },
+    { "url": "gears_init.js", "src": "../../gears_init.js" } ]
+}

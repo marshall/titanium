@@ -1,0 +1,33 @@
+<string id="string-html-title">Gears Security Warning</string>
+<string id="string-allow">Allow</string>
+<string id="string-allow-accesskey">A</string>
+<string id="string-deny">Deny</string>
+<string id="string-deny-accesskey">D</string>
+<string id="string-cancel">Cancel</string>
+<string id="string-never-allow-link">Never allow this site</string>
+<string id="string-never-allow-link-wince">Never allow</string>
+<string id="string-description">
+  Gears is an open source browser extension that enables web applications to provide offline functionality using the following JavaScript APIs:
+</string>
+<string id="string-localserver-desc">
+  Store and serve application resources locally
+</string>
+<string id="string-database-desc">
+  Store data locally in a fully-searchable relational database
+</string>
+<string id="string-workerpool-desc">
+  Run asynchronous JavaScript to improve application responsiveness
+</string>
+<string id="string-query-data">
+  The website below wants to store information on your computer using Gears.
+</string>
+<string id="string-query-location">
+  The website below wants to access information about your location using Gears.
+</string>
+<string id="string-location-privacy-statement">
+  Read the site's privacy policy to see how your location will be used.
+</string>
+<string id="string-trust-site">
+  I trust this site. Allow it to use Gears.
+</string>
+<string id="string-trust-site-accesskey">t</string>

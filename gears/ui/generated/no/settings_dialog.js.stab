@@ -1,0 +1,14 @@
+<string id="string-cancel">Avbryt</string>
+<string id="string-cancel-accesskey">A</string>
+<string id="string-apply">Bruk</string>
+<string id="string-apply-accesskey">T</string>
+<string id="string-nosites">Ingen steder.</string>
+<string id="string-allowed">Tillatt</string>
+<string id="string-denied">Ikke tillatt</string>
+<string id="string-local-storage">Lokal lagring</string>
+<string id="string-location-data">Område</string>
+<string id="string-gears-settings">Innstillinger for Gears</string>
+<string id="string-permissions-description">Tabellen nedenfor viser tillatelsene du har gitt til hvert nettsted som har forsøkt å bruke Gears.</string>
+<string id="string-version">Gears versjon PRODUCT_VERSION</string>
+<string id="string-html-title">Innstillinger for Gears</string>
+<string id="string-remove">Fjern</string>

@@ -1,0 +1,11 @@
+--- 
+:type: widget
+:name: app:script
+:version: '1.0.1'
+:dependencies: 
+- :type: websdk
+  :version: ">=2.1"
+  :name: websdk
+:tags: [ logic ]
+:licenses: [6]
+:description: "app:script is a non-visual control for executing javascript based on a message or when the page loads"

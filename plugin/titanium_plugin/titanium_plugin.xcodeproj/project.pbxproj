@@ -1,0 +1,312 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 44;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		241867AB0E7780700028D4DB /* libscintilla.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 241867AA0E7780700028D4DB /* libscintilla.a */; };
+		5073E0CB09E734E500EC74B6 /* titanium_plugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5073E0C409E734A800EC74B6 /* titanium_plugin.cpp */; };
+		AB96ABB50E8D8DEE00D36C4D /* Ruby.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AB96ABB40E8D8DEE00D36C4D /* Ruby.framework */; };
+		ABA2AB8B0E76F2B80035CB1C /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ABA2AB8A0E76F2B80035CB1C /* WebKit.framework */; };
+		ABA2AC770E76FBFD0035CB1C /* titanium_plugin_Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = ABA2AC760E76FBFD0035CB1C /* titanium_plugin_Prefix.pch */; };
+		ABA2AE090E773FBC0035CB1C /* titanium_plugin.h in Headers */ = {isa = PBXBuildFile; fileRef = ABA2AE080E773FBC0035CB1C /* titanium_plugin.h */; };
+		ABA2B03D0E77707E0035CB1C /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ABA2B03C0E77707E0035CB1C /* CoreFoundation.framework */; };
+		ABDC2AB20E7B7C8700EE8627 /* EditorObject.h in Headers */ = {isa = PBXBuildFile; fileRef = ABDC2AB00E7B7C8700EE8627 /* EditorObject.h */; };
+		ABDC2AB30E7B7C8700EE8627 /* EditorObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ABDC2AB10E7B7C8700EE8627 /* EditorObject.cpp */; };
+		ABDC2B590E7B97E600EE8627 /* module.cc in Sources */ = {isa = PBXBuildFile; fileRef = ABDC2B560E7B97E600EE8627 /* module.cc */; };
+		ABDC2B5A0E7B97E600EE8627 /* module.h in Headers */ = {isa = PBXBuildFile; fileRef = ABDC2B580E7B97E600EE8627 /* module.h */; };
+		ABDC2B5D0E7B9AC000EE8627 /* npn_bindings.cc in Sources */ = {isa = PBXBuildFile; fileRef = ABDC2B5C0E7B9AC000EE8627 /* npn_bindings.cc */; };
+		ABDC2B5F0E7B9B0700EE8627 /* npapi_patches.h in Headers */ = {isa = PBXBuildFile; fileRef = ABDC2B5E0E7B9B0700EE8627 /* npapi_patches.h */; };
+		ABDC2C120E7BA47C00EE8627 /* common_sf.h in Headers */ = {isa = PBXBuildFile; fileRef = ABDC2C100E7BA47C00EE8627 /* common_sf.h */; };
+		ABDC2C130E7BA47C00EE8627 /* common_sf.mm in Sources */ = {isa = PBXBuildFile; fileRef = ABDC2C110E7BA47C00EE8627 /* common_sf.mm */; };
+		ABDC2C4C0E7BA71500EE8627 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ABDC2C4B0E7BA71500EE8627 /* Foundation.framework */; };
+		D2AAC0B105546B7500DB518D /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08FB77AAFE841565C02AAC07 /* Carbon.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		08FB77AAFE841565C02AAC07 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
+		241867AA0E7780700028D4DB /* libscintilla.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libscintilla.a; path = scintilla/libscintilla.a; sourceTree = "<group>"; };
+		5073E0C409E734A800EC74B6 /* titanium_plugin.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = titanium_plugin.cpp; sourceTree = "<group>"; };
+		5073E0C609E734A800EC74B6 /* titanium_pluginProj.xcconfig */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xcconfig; path = titanium_pluginProj.xcconfig; sourceTree = "<group>"; };
+		5073E0C709E734A800EC74B6 /* titanium_pluginTarget.xcconfig */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xcconfig; path = titanium_pluginTarget.xcconfig; sourceTree = "<group>"; };
+		AB96ABB40E8D8DEE00D36C4D /* Ruby.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Ruby.framework; path = /System/Library/Frameworks/Ruby.framework; sourceTree = "<absolute>"; };
+		ABA2AB8A0E76F2B80035CB1C /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = /System/Library/Frameworks/WebKit.framework; sourceTree = "<absolute>"; };
+		ABA2AC760E76FBFD0035CB1C /* titanium_plugin_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = titanium_plugin_Prefix.pch; sourceTree = "<group>"; };
+		ABA2AE060E773EA10035CB1C /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		ABA2AE080E773FBC0035CB1C /* titanium_plugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = titanium_plugin.h; sourceTree = "<group>"; };
+		ABA2B03C0E77707E0035CB1C /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = /System/Library/Frameworks/CoreFoundation.framework; sourceTree = "<absolute>"; };
+		ABDC2AB00E7B7C8700EE8627 /* EditorObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditorObject.h; sourceTree = "<group>"; };
+		ABDC2AB10E7B7C8700EE8627 /* EditorObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EditorObject.cpp; sourceTree = "<group>"; };
+		ABDC2B560E7B97E600EE8627 /* module.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = module.cc; sourceTree = "<group>"; };
+		ABDC2B570E7B97E600EE8627 /* module.def */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = module.def; sourceTree = "<group>"; };
+		ABDC2B580E7B97E600EE8627 /* module.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = module.h; sourceTree = "<group>"; };
+		ABDC2B5C0E7B9AC000EE8627 /* npn_bindings.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = npn_bindings.cc; sourceTree = "<group>"; };
+		ABDC2B5E0E7B9B0700EE8627 /* npapi_patches.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = npapi_patches.h; sourceTree = "<group>"; };
+		ABDC2C100E7BA47C00EE8627 /* common_sf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = common_sf.h; sourceTree = "<group>"; };
+		ABDC2C110E7BA47C00EE8627 /* common_sf.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = common_sf.mm; sourceTree = "<group>"; };
+		ABDC2C4B0E7BA71500EE8627 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
+		D2AAC09D05546B4700DB518D /* libtitanium_plugin.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libtitanium_plugin.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		D2AAC09B05546B4700DB518D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D2AAC0B105546B7500DB518D /* Carbon.framework in Frameworks */,
+				ABA2AB8B0E76F2B80035CB1C /* WebKit.framework in Frameworks */,
+				ABA2B03D0E77707E0035CB1C /* CoreFoundation.framework in Frameworks */,
+				241867AB0E7780700028D4DB /* libscintilla.a in Frameworks */,
+				ABDC2C4C0E7BA71500EE8627 /* Foundation.framework in Frameworks */,
+				AB96ABB50E8D8DEE00D36C4D /* Ruby.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		034768DDFF38A45A11DB9C8B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				D2AAC09D05546B4700DB518D /* libtitanium_plugin.dylib */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		0867D691FE84028FC02AAC07 /* titanium_plugin */ = {
+			isa = PBXGroup;
+			children = (
+				5073E0CA09E734BC00EC74B6 /* Configuration Files */,
+				08FB77ACFE841707C02AAC07 /* Source */,
+				0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */,
+				034768DDFF38A45A11DB9C8B /* Products */,
+			);
+			name = titanium_plugin;
+			sourceTree = "<group>";
+		};
+		0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */ = {
+			isa = PBXGroup;
+			children = (
+				AB96ABB40E8D8DEE00D36C4D /* Ruby.framework */,
+				ABDC2C4B0E7BA71500EE8627 /* Foundation.framework */,
+				241867AA0E7780700028D4DB /* libscintilla.a */,
+				ABA2B03C0E77707E0035CB1C /* CoreFoundation.framework */,
+				ABA2AB8A0E76F2B80035CB1C /* WebKit.framework */,
+				08FB77AAFE841565C02AAC07 /* Carbon.framework */,
+			);
+			name = "External Frameworks and Libraries";
+			sourceTree = "<group>";
+		};
+		08FB77ACFE841707C02AAC07 /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				ABDC2C100E7BA47C00EE8627 /* common_sf.h */,
+				ABDC2C110E7BA47C00EE8627 /* common_sf.mm */,
+				ABDC2B5E0E7B9B0700EE8627 /* npapi_patches.h */,
+				ABDC2B5C0E7B9AC000EE8627 /* npn_bindings.cc */,
+				ABDC2B560E7B97E600EE8627 /* module.cc */,
+				ABDC2B570E7B97E600EE8627 /* module.def */,
+				ABDC2B580E7B97E600EE8627 /* module.h */,
+				5073E0C409E734A800EC74B6 /* titanium_plugin.cpp */,
+				ABA2AC760E76FBFD0035CB1C /* titanium_plugin_Prefix.pch */,
+				ABA2AE080E773FBC0035CB1C /* titanium_plugin.h */,
+				ABDC2AB00E7B7C8700EE8627 /* EditorObject.h */,
+				ABDC2AB10E7B7C8700EE8627 /* EditorObject.cpp */,
+			);
+			name = Source;
+			sourceTree = "<group>";
+		};
+		5073E0CA09E734BC00EC74B6 /* Configuration Files */ = {
+			isa = PBXGroup;
+			children = (
+				5073E0C609E734A800EC74B6 /* titanium_pluginProj.xcconfig */,
+				5073E0C709E734A800EC74B6 /* titanium_pluginTarget.xcconfig */,
+				ABA2AE060E773EA10035CB1C /* Info.plist */,
+			);
+			name = "Configuration Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		D2AAC09905546B4700DB518D /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				ABA2AC770E76FBFD0035CB1C /* titanium_plugin_Prefix.pch in Headers */,
+				ABA2AE090E773FBC0035CB1C /* titanium_plugin.h in Headers */,
+				ABDC2AB20E7B7C8700EE8627 /* EditorObject.h in Headers */,
+				ABDC2B5A0E7B97E600EE8627 /* module.h in Headers */,
+				ABDC2B5F0E7B9B0700EE8627 /* npapi_patches.h in Headers */,
+				ABDC2C120E7BA47C00EE8627 /* common_sf.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		D2AAC09C05546B4700DB518D /* titanium_plugin */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1DEB916008733D950010E9CD /* Build configuration list for PBXNativeTarget "titanium_plugin" */;
+			buildPhases = (
+				D2AAC09905546B4700DB518D /* Headers */,
+				D2AAC09B05546B4700DB518D /* Frameworks */,
+				D2AAC09A05546B4700DB518D /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = titanium_plugin;
+			productName = libtitanium_plugin;
+			productReference = D2AAC09D05546B4700DB518D /* libtitanium_plugin.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		0867D690FE84028FC02AAC07 /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 1DEB916408733D950010E9CD /* Build configuration list for PBXProject "titanium_plugin" */;
+			compatibilityVersion = "Xcode 3.0";
+			hasScannedForEncodings = 1;
+			mainGroup = 0867D691FE84028FC02AAC07 /* titanium_plugin */;
+			productRefGroup = 034768DDFF38A45A11DB9C8B /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				D2AAC09C05546B4700DB518D /* titanium_plugin */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		D2AAC09A05546B4700DB518D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5073E0CB09E734E500EC74B6 /* titanium_plugin.cpp in Sources */,
+				ABDC2AB30E7B7C8700EE8627 /* EditorObject.cpp in Sources */,
+				ABDC2B590E7B97E600EE8627 /* module.cc in Sources */,
+				ABDC2B5D0E7B9AC000EE8627 /* npn_bindings.cc in Sources */,
+				ABDC2C130E7BA47C00EE8627 /* common_sf.mm in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		1DEB916108733D950010E9CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5073E0C709E734A800EC74B6 /* titanium_pluginTarget.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = titanium_plugin_Prefix.pch;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"_GLIBCXX_DEBUG=1",
+					"_GLIBCXX_DEBUG_PEDANTIC=1",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../../../../../Source/scintilla/bin\"",
+					"\"$(SRCROOT)/scintilla\"",
+				);
+				MACH_O_TYPE = mh_dylib;
+				STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = dynamic;
+				WRAPPER_EXTENSION = plugin;
+			};
+			name = Debug;
+		};
+		1DEB916208733D950010E9CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5073E0C709E734A800EC74B6 /* titanium_pluginTarget.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = titanium_plugin_Prefix.pch;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../../../../../Source/scintilla/bin\"",
+					"\"$(SRCROOT)/scintilla\"",
+				);
+				STRIP_INSTALLED_PRODUCT = YES;
+				STRIP_STYLE = "non-global";
+			};
+			name = Release;
+		};
+		1DEB916508733D950010E9CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5073E0C609E734A800EC74B6 /* titanium_pluginProj.xcconfig */;
+			buildSettings = {
+				ARCHS = "$(ONLY_ACTIVE_ARCH_PRE_XCODE_3_1)";
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					../../scintilla/src,
+					/System/Library/Frameworks/WebKit.framework/Headers,
+					../../scintilla/macosx,
+					../../scintilla/include,
+				);
+				LIBRARY_SEARCH_PATHS = ../../scintilla/bin;
+				ONLY_ACTIVE_ARCH_PRE_XCODE_3_1 = "$(NATIVE_ARCH)";
+				OTHER_CFLAGS = (
+					"-DSCI_NAMESPACE",
+					"-DBROWSER_WEBKIT",
+				);
+				PREBINDING = NO;
+				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
+			};
+			name = Debug;
+		};
+		1DEB916608733D950010E9CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5073E0C609E734A800EC74B6 /* titanium_pluginProj.xcconfig */;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1 = "ppc i386";
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				PREBINDING = NO;
+				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1DEB916008733D950010E9CD /* Build configuration list for PBXNativeTarget "titanium_plugin" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DEB916108733D950010E9CD /* Debug */,
+				1DEB916208733D950010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1DEB916408733D950010E9CD /* Build configuration list for PBXProject "titanium_plugin" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DEB916508733D950010E9CD /* Debug */,
+				1DEB916608733D950010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 0867D690FE84028FC02AAC07 /* Project object */;
+}

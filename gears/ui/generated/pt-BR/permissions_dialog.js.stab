@@ -1,0 +1,33 @@
+<string id="string-html-title">Aviso de segurança do Gears</string>
+<string id="string-allow">Permitir</string>
+<string id="string-allow-accesskey">P</string>
+<string id="string-deny">Negar</string>
+<string id="string-deny-accesskey">D</string>
+<string id="string-cancel">Cancelar</string>
+<string id="string-never-allow-link">Nunca permitir este site</string>
+<string id="string-never-allow-link-wince">Nunca permiti-lo</string>
+<string id="string-description">
+  O Gears é uma extensão de navegador de código aberto que permite que aplicativos da web forneçam funcionalidades off-line utilizando estas APIs em JavaScript:
+</string>
+<string id="string-localserver-desc">
+  Armazenar e atender a recursos de aplicativo localmente
+</string>
+<string id="string-database-desc">
+  Armazenar os dados em um banco de dados relacional local completamente pesquisável
+</string>
+<string id="string-workerpool-desc">
+  Executar o JavaScript assíncrono para melhorar a resposta do aplicativo
+</string>
+<string id="string-query-data">
+  O site abaixo deseja armazenar informações sobre o computador que usa o Gears.
+</string>
+<string id="string-query-location">
+  O site abaixo deseja acessar informações sobre o local que usa o Gears.
+</string>
+<string id="string-location-privacy-statement">
+  Leia as políticas de privacidade dos sites para ver como seu local será usado.
+</string>
+<string id="string-trust-site">
+  Este site é confiável. Permita que ele use o Gears.
+</string>
+<string id="string-trust-site-accesskey">t</string>

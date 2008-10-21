@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IBClasses</key>
+	<array>
+		<dict>
+			<key>CLASS</key>
+			<string>NativeShortcutsDialog</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>BaseNativeDialog</string>
+		</dict>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>allow</key>
+				<string>id</string>
+				<key>deny</key>
+				<string>id</string>
+				<key>neverAllow</key>
+				<string>id</string>
+				<key>trustCheckboxValueChanged</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>BaseNativeDialog</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>allow_button_</key>
+				<string>NSButton</string>
+				<key>dialog_origin_description_</key>
+				<string>NSTextView</string>
+				<key>dialog_origin_subtitle_</key>
+				<string>NSTextField</string>
+				<key>dialog_origin_title_</key>
+				<string>NSTextField</string>
+				<key>dialog_text_</key>
+				<string>NSTextField</string>
+				<key>gears_imageview_</key>
+				<string>NSImageView</string>
+				<key>location_dialog_label_</key>
+				<string>NSTextField</string>
+				<key>never_allow_link_</key>
+				<string>NSTextField</string>
+				<key>site_imageview_</key>
+				<string>NSImageView</string>
+				<key>top_label_</key>
+				<string>NSTextField</string>
+				<key>trust_checkbox_</key>
+				<string>NSButton</string>
+				<key>window_</key>
+				<string>NSWindow</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+	</array>
+	<key>IBVersion</key>
+	<string>1</string>
+</dict>
+</plist>

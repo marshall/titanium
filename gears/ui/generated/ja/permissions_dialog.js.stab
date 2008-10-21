@@ -1,0 +1,33 @@
+<string id="string-html-title">Gears のセキュリティ警告</string>
+<string id="string-allow">許可</string>
+<string id="string-allow-accesskey">A</string>
+<string id="string-deny">拒否</string>
+<string id="string-deny-accesskey">D</string>
+<string id="string-cancel">キャンセル</string>
+<string id="string-never-allow-link">このサイトを常に拒否する</string>
+<string id="string-never-allow-link-wince">常に拒否する</string>
+<string id="string-description">
+  Gears は、ウェブ アプリケーションの機能をオフラインで使えるようにするオープン ソースのブラウザ拡張ツールです。使用している JavaScript API は、次のとおりです。
+</string>
+<string id="string-localserver-desc">
+  アプリケーション リソースをクライアント PC 側で格納して提供
+</string>
+<string id="string-database-desc">
+  検索できるローカルのリレーショナル データベースにデータを保存
+</string>
+<string id="string-workerpool-desc">
+  Asynchronous JavaScript により、アプリケーションのレスポンスを向上
+</string>
+<string id="string-query-data">
+  下記のウェブサイトは、Gears を使用してパソコンに情報を保存します。
+</string>
+<string id="string-query-location">
+  下記のウェブサイトは、Gears を使用して場所に関する情報にアクセスします。
+</string>
+<string id="string-location-privacy-statement">
+  場所の使用方法については、サイトのプライバシー ポリシーをご覧ください。
+</string>
+<string id="string-trust-site">
+  このサイトを信頼します。Gears の使用を許可します。
+</string>
+<string id="string-trust-site-accesskey">t</string>

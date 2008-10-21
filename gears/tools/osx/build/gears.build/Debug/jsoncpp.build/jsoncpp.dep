@@ -1,0 +1,4 @@
+0000000048c59ffd000000000000516d cffcf4ef04e781ef60ed3ea7dd256bee ffffffffffffffffffffffffffffffff 293064 /Users/marshall/Code/appcelerator/appcelerator_titanium/trunk/gears/tools/osx/build/gears.build/Debug/jsoncpp.build/Objects-normal/i386/json_reader.o
+0000000000fc73590000000000008b4b ba7f6347704549ac3e299c1ba41fc18a ffffffffffffffffffffffffffffffff 407524 /Users/marshall/Code/appcelerator/appcelerator_titanium/trunk/gears/tools/osx/build/gears.build/Debug/jsoncpp.build/Objects-normal/i386/json_value.o
+00000000000035dc0000000000005a94 cf16cd56471997a34b52aed3d58121c1 ffffffffffffffffffffffffffffffff 146964 /Users/marshall/Code/appcelerator/appcelerator_titanium/trunk/gears/tools/osx/build/gears.build/Debug/jsoncpp.build/Objects-normal/i386/json_writer.o
+ba955afe33bb68f715960c6facbb0bf9 0f1277b27205aefaf42706b5b77753d0 ffffffffffffffffffffffffffffffff 906828 /Users/marshall/Code/appcelerator/appcelerator_titanium/trunk/gears/tools/osx/build/Debug/libjsoncpp.a
