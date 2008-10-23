@@ -1,0 +1,673 @@
+<?xml version='1.0' ?>
+
+<!--
+Copyright 2007, Google Inc.
+
+Redistribution and use in source and binary forms, with or without 
+modification, are permitted provided that the following conditions are met:
+
+ 1. Redistributions of source code must retain the above copyright notice, 
+    this list of conditions and the following disclaimer.
+ 2. Redistributions in binary form must reproduce the above copyright notice,
+    this list of conditions and the following disclaimer in the documentation
+    and/or other materials provided with the distribution.
+ 3. Neither the name of Google Inc. nor the names of its contributors may be
+    used to endorse or promote products derived from this software without
+    specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
+OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<Wix xmlns='http://schemas.microsoft.com/wix/2006/wi'>
+  <Product Id='$(var.OurWin32ProductId)' Name='Appcelerator Titanium'
+    Language='1033' Version='$(var.OurMsiVersion)'
+    Manufacturer='Google' UpgradeCode='D91DF85A-1C3B-4d62-914B-DEEEF73AD78C'>
+    <Package Description='Appcelerator Titanium'
+      Comments='Appcelerator Titanium' Manufacturer='Google'
+      InstallerVersion='200' Compressed='yes' />
+    <Media Id='1' Cabinet='product.cab' EmbedCab='yes'
+      CompressionLevel='high' />
+    <Upgrade Id='D91DF85A-1C3B-4d62-914B-DEEEF73AD78C'>
+      <UpgradeVersion Property='UPGRADING' OnlyDetect='no'
+        Minimum='0.0.0.0' IncludeMinimum='yes'
+        Maximum='$(var.OurMsiVersion)' IncludeMaximum='no' />
+      <UpgradeVersion Property='NEWERVERSIONDETECTED' OnlyDetect='yes'
+        Minimum='$(var.OurMsiVersion)' IncludeMinimum='no' />
+    </Upgrade>
+    <Directory Id='TARGETDIR' Name='SourceDir'>
+      <Directory Id='ProgramFilesFolder' Name='PFiles'>
+        <Directory Id='GoogleDir' Name='Google'>
+          <Directory Id='ProductDir' Name='Appcelerator Titanium'>
+
+            <Component Id='OurIERegistry' Guid='$(var.OurComponentGUID_IERegistry)'>
+              <RegistryValue
+                Root='HKLM' Key='Software\Google\Update\Clients\{283EAF47-8817-4c2b-A801-AD1FADFB7BAA}'
+                Name='pv' Value='0.4.20.0'
+                Action='write' Type='string' />
+              <RegistryValue
+                Root='HKLM' Key='Software\Google\Update\Clients\{283EAF47-8817-4c2b-A801-AD1FADFB7BAA}'
+                Name='ap' Value=''
+                Action='write' Type='string' />
+              <!-- Automatically enable control by adding to IE7's pre-approved list. See
+                http://msdn.microsoft.com/library/default.asp?url=/library/en-us/IETechCol/cols/dnexpie/activex_security.asp?frame=true -->
+              <RegistryKey Root='HKLM' Action='createAndRemoveOnUninstall'
+                Key='Software\Microsoft\Windows\CurrentVersion\Ext\PreApproved\{C93A7319-17B3-4504-87CD-03EFC6103E6E}' />
+              <!-- For vista, a setting that allows us to silently load the our dll with low integrity using rundll32.exe. 
+                See http://msdn2.microsoft.com/en-us/library/bb250462.aspx -->
+              <RegistryKey Root='HKLM' Action='createAndRemoveOnUninstall'
+                Key='Software\Microsoft\Internet Explorer\Low Rights\RunDll32Policy\gears.dll' />
+              <!-- For vista, a setting that allows us to silently run vista_broker.exe with medium integrity level (3) -->
+              <RegistryValue
+                Root='HKLM' Key='Software\Microsoft\Internet Explorer\Low Rights\ElevationPolicy\{A553FC79-0F5A-4DDE-A7AE-920F6EE4E264}'
+                Name='AppName' Value='vista_broker.exe'
+                Action='write' Type='string' />
+              <RegistryValue
+                Root='HKLM' Key='Software\Microsoft\Internet Explorer\Low Rights\ElevationPolicy\{A553FC79-0F5A-4DDE-A7AE-920F6EE4E264}'
+                Name='AppPath' Value='[OurIEVersionedDir]'
+                Action='write' Type='string' />
+              <RegistryValue
+                Root='HKLM' Key='Software\Microsoft\Internet Explorer\Low Rights\ElevationPolicy\{A553FC79-0F5A-4DDE-A7AE-920F6EE4E264}'
+                Name='Policy' Value='3'
+                Action='write' Type='integer' />
+            </Component>
+
+            <Component Id='OurFFRegistry' Guid='$(var.OurComponentGUID_FFRegistry)'>
+              <!-- IMPORTANT: the 'Name' field below MUST match our <em:id> value in install.rdf.m4 -->
+              <RegistryValue
+                Root='HKLM' Key='Software\Mozilla\Firefox\Extensions'
+                Name='{000a9d1c-beef-4f90-9363-039d445309b8}' Value='[OurFFDir]'
+                Action='write' Type='string' />
+            </Component>
+
+            <!-- [naming] --> 
+            <Component Id='OurSharedRegistry' Guid='$(var.OurComponentGUID_SharedRegistry)'>
+              <RegistryValue
+                Root='HKLM' Key='Software\Google\Gears'
+                Name='install_dir' Value='[ProductDir]'
+                Action='write' Type='string' />
+              <RegistryValue
+                Root='HKLM' Key='Software\Google\Gears'
+                Name='install_ver' Value='0.4.20.0'
+                Action='write' Type='string' />
+            </Component>
+
+            <!-- IMPORTANT: the OurShared* 'Name' fields MUST match the WIN32 paths in /{firefox,ie}/PathUtils.cc -->
+            <Directory Id='OurSharedDir' Name='Shared'>
+              <Component Id='OurSharedDirFiles' Guid='$(var.OurComponentGUID_SharedFiles)'>
+                <File Id='notifier_exe' Name='notifier.exe' DiskId='1'
+                  Source="$(var.OurCommonPath)/notifier.exe" />
+              </Component>
+              <Directory Id='OurSharedVersionedDir' Name='0.4.20.0'>
+                <Component Id='OurSharedVersionedDirFiles' Guid='$(var.OurComponentGUID_SharedVersionedFiles)'>
+                  <File Id='notifier_dll' Name='notifier.dll' DiskId='1'
+                    Source="$(var.OurCommonPath)/notifier.dll" />
+                  <File Id='shared_crash_sender' Name='crash_sender.exe' DiskId='1'
+                    Source="$(var.OurCommonPath)/crash_sender.exe" />
+
+                </Component>
+              </Directory>
+            </Directory>
+
+            <Directory Id='OurIEDir' Name='Internet Explorer'>
+              <Directory Id='OurIEVersionedDir' Name='0.4.20.0'>
+                <Component Id='OurIEDirFiles' Guid='$(var.OurComponentGUID_IEFiles)'>
+                  <File Id='ie_crash_sender' Name='crash_sender.exe' DiskId='1'
+                    Source="$(var.OurCommonPath)/crash_sender.exe" />
+
+                  <File Id='ie_dll' Name='gears.dll' DiskId='1'
+                    Source="$(var.OurIEPath)/gears.dll" SelfRegCost='1' />
+
+                  <File Id='vista_broker' Name='vista_broker.exe' DiskId='1'
+                    Source="$(var.OurIEPath)/vista_broker.exe" />
+
+                  <File Id='ie_notifier_test_exe' Name='notifier_test.exe' DiskId='1'
+                    Source="$(var.OurCommonPath)/notifier_test.exe" />
+                  <File Id='ie_ipc_test_exe' Name='ipc_test.exe' DiskId='1'
+                    Source="$(var.OurIpcTestPath)/ipc_test.exe" />
+
+                </Component>
+              </Directory>
+            </Directory>
+
+            <!-- Firefox avoids a versioned dir because the Extension Manager
+                 sometimes gets confused and disables the updated version. -->
+            <Directory Id='OurFFDir' Name='Firefox'>
+              <Component Id='OurFFDirFiles' Guid='$(var.OurComponentGUID_FFDirFiles)'>
+                <File Id='ff_chrome.manifest' Name='chrome.manifest' DiskId='1'
+                  Source="$(var.OurFFPath)/chrome.manifest" />
+                <File Id='ff_crash_sender' Name='crash_sender.exe' DiskId='1'
+                  Source="$(var.OurCommonPath)/crash_sender.exe" />
+
+                <File Id='ff_install.rdf' Name='install.rdf' DiskId='1'
+                  Source="$(var.OurFFPath)/install.rdf" />
+              </Component>
+              <Directory Id='OurFFComponentsDir' Name='components'>
+                <Component Id='OurFFComponentsDirFiles'
+                  Guid='$(var.OurComponentGUID_FFComponentsDirFiles)'>
+                  <File Id='ff_bootstrap.js' Name='bootstrap.js'
+                    DiskId='1' Source="$(var.OurFFPath)/components/bootstrap.js" />
+                  <File Id='ff_xpt' Name='gears.xpt' DiskId='1'
+                    Source="$(var.OurFFPath)/components/gears.xpt" />
+                  <File Id='ff2_dll' Name='gears_ff2.dll' DiskId='1'
+                    Source="$(var.OurFFPath)/components/gears_ff2.dll" />
+
+                  <File Id='ff3_dll' Name='gears.dll' DiskId='1'
+                    Source="$(var.OurFFPath)/components/gears.dll" />
+
+                  <File Id='ff_notifier_test_exe' Name='notifier_test.exe' DiskId='1'
+                    Source="$(var.OurCommonPath)/notifier_test.exe" />
+                  <File Id='ff_ipc_test_exe' Name='ipc_test.exe' DiskId='1'
+                    Source="$(var.OurIpcTestPath)/ipc_test.exe" />
+
+                </Component>
+              </Directory>
+
+              <!-- Begin: resource lists that MUST be kept in sync with 'rules.mk' -->
+              <Directory Id='OurFFChromeDir' Name='chrome'>
+                <Directory Id='OurFFChromeFilesDir' Name='chromeFiles'>
+                  <Directory Id='OurFFContentDir' Name='content'>
+                    <Component Id='OurFFContentDirFiles'
+                      Guid='$(var.OurComponentGUID_FFContentDirFiles)'>
+                      <File Id='button_bg.gif' Name='button_bg.gif'
+                        DiskId='1' Source="$(var.OurFFPath)/chrome/chromeFiles/content/button_bg.gif" />
+                      <File Id='button_corner_black.gif' Name='button_corner_black.gif'
+                        DiskId='1' Source="$(var.OurFFPath)/chrome/chromeFiles/content/button_corner_black.gif" />
+                      <File Id='button_corner_blue.gif' Name='button_corner_blue.gif'
+                        DiskId='1' Source="$(var.OurFFPath)/chrome/chromeFiles/content/button_corner_blue.gif" />
+                      <File Id='button_corner_grey.gif' Name='button_corner_grey.gif'
+                        DiskId='1' Source="$(var.OurFFPath)/chrome/chromeFiles/content/button_corner_grey.gif" />
+                      <File Id='ff_browser_overlay.js' Name='browser-overlay.js'
+                        DiskId='1' Source="$(var.OurFFPath)/chrome/chromeFiles/content/browser-overlay.js" />
+                      <File Id='ff_browser_overlay.xul' Name='browser-overlay.xul'
+                        DiskId='1' Source="$(var.OurFFPath)/chrome/chromeFiles/content/browser-overlay.xul" />
+                      <File Id='ff_icon_32x32.png' Name='icon_32x32.png'
+                        DiskId='1' Source="$(var.OurFFPath)/chrome/chromeFiles/content/icon_32x32.png" />
+                      <File Id='ff_local_data.png' Name='local_data.png'
+                        DiskId='1' Source="$(var.OurFFPath)/chrome/chromeFiles/content/local_data.png" />
+                      <File Id='ff_location_data.png' Name='location_data.png'
+                        DiskId='1' Source="$(var.OurFFPath)/chrome/chromeFiles/content/location_data.png" />
+                      <File Id='ff_permissions_dialog.html' Name='permissions_dialog.html'
+                        DiskId='1' Source="$(var.OurFFPath)/chrome/chromeFiles/content/permissions_dialog.html" />
+                      <File Id='ff_settings_dialog.html' Name='settings_dialog.html'
+                        DiskId='1' Source="$(var.OurFFPath)/chrome/chromeFiles/content/settings_dialog.html" />
+                      <File Id='ff_shortcuts_dialog.html' Name='shortcuts_dialog.html'
+                        DiskId='1' Source="$(var.OurFFPath)/chrome/chromeFiles/content/shortcuts_dialog.html" />
+                    </Component>
+                  </Directory>
+                  <Directory Id='OurFFLocaleDir' Name='locale'>
+                    <Directory Id='Ouren_USDir' Name='en-US'>
+                      <Component Id='OurFFen_USDirFiles'
+                        Guid='$(var.OurComponentGUID_FFLangen_USDirFiles)'>
+                        <File Id='ff_en_US_i18n.dtd' Name='i18n.dtd'
+                          DiskId='1' Source="$(var.OurFFPath)/chrome/chromeFiles/locale/en-US/i18n.dtd" />
+                      </Component>
+                    </Directory>
+                    <Directory Id='OurarDir' Name='ar'>
+                      <Component Id='OurFFarDirFiles'
+                        Guid='$(var.OurComponentGUID_FFLangarDirFiles)'>
+                        <File Id='ff_ar_i18n.dtd' Name='i18n.dtd'
+                          DiskId='1' Source="$(var.OurFFPath)/chrome/chromeFiles/locale/ar/i18n.dtd" />
+                      </Component>
+                    </Directory>
+                    <Directory Id='OurbgDir' Name='bg'>
+                      <Component Id='OurFFbgDirFiles'
+                        Guid='$(var.OurComponentGUID_FFLangbgDirFiles)'>
+                        <File Id='ff_bg_i18n.dtd' Name='i18n.dtd'
+                          DiskId='1' Source="$(var.OurFFPath)/chrome/chromeFiles/locale/bg/i18n.dtd" />
+                      </Component>
+                    </Directory>
+                    <Directory Id='OurcaDir' Name='ca'>
+                      <Component Id='OurFFcaDirFiles'
+                        Guid='$(var.OurComponentGUID_FFLangcaDirFiles)'>
+                        <File Id='ff_ca_i18n.dtd' Name='i18n.dtd'
+                          DiskId='1' Source="$(var.OurFFPath)/chrome/chromeFiles/locale/ca/i18n.dtd" />
+                      </Component>
+                    </Directory>
+                    <Directory Id='OurcsDir' Name='cs'>
+                      <Component Id='OurFFcsDirFiles'
+                        Guid='$(var.OurComponentGUID_FFLangcsDirFiles)'>
+                        <File Id='ff_cs_i18n.dtd' Name='i18n.dtd'
+                          DiskId='1' Source="$(var.OurFFPath)/chrome/chromeFiles/locale/cs/i18n.dtd" />
+                      </Component>
+                    </Directory>
+                    <Directory Id='OurdaDir' Name='da'>
+                      <Component Id='OurFFdaDirFiles'
+                        Guid='$(var.OurComponentGUID_FFLangdaDirFiles)'>
+                        <File Id='ff_da_i18n.dtd' Name='i18n.dtd'
+                          DiskId='1' Source="$(var.OurFFPath)/chrome/chromeFiles/locale/da/i18n.dtd" />
+                      </Component>
+                    </Directory>
+                    <Directory Id='OurdeDir' Name='de'>
+                      <Component Id='OurFFdeDirFiles'
+                        Guid='$(var.OurComponentGUID_FFLangdeDirFiles)'>
+                        <File Id='ff_de_i18n.dtd' Name='i18n.dtd'
+                          DiskId='1' Source="$(var.OurFFPath)/chrome/chromeFiles/locale/de/i18n.dtd" />
+                      </Component>
+                    </Directory>
+                    <Directory Id='OurelDir' Name='el'>
+                      <Component Id='OurFFelDirFiles'
+                        Guid='$(var.OurComponentGUID_FFLangelDirFiles)'>
+                        <File Id='ff_el_i18n.dtd' Name='i18n.dtd'
+                          DiskId='1' Source="$(var.OurFFPath)/chrome/chromeFiles/locale/el/i18n.dtd" />
+                      </Component>
+                    </Directory>
+                    <Directory Id='Ouren_GBDir' Name='en-GB'>
+                      <Component Id='OurFFen_GBDirFiles'
+                        Guid='$(var.OurComponentGUID_FFLangen_GBDirFiles)'>
+                        <File Id='ff_en_GB_i18n.dtd' Name='i18n.dtd'
+                          DiskId='1' Source="$(var.OurFFPath)/chrome/chromeFiles/locale/en-GB/i18n.dtd" />
+                      </Component>
+                    </Directory>
+                    <Directory Id='OuresDir' Name='es'>
+                      <Component Id='OurFFesDirFiles'
+                        Guid='$(var.OurComponentGUID_FFLangesDirFiles)'>
+                        <File Id='ff_es_i18n.dtd' Name='i18n.dtd'
+                          DiskId='1' Source="$(var.OurFFPath)/chrome/chromeFiles/locale/es/i18n.dtd" />
+                      </Component>
+                    </Directory>
+                    <Directory Id='OuretDir' Name='et'>
+                      <Component Id='OurFFetDirFiles'
+                        Guid='$(var.OurComponentGUID_FFLangetDirFiles)'>
+                        <File Id='ff_et_i18n.dtd' Name='i18n.dtd'
+                          DiskId='1' Source="$(var.OurFFPath)/chrome/chromeFiles/locale/et/i18n.dtd" />
+                      </Component>
+                    </Directory>
+                    <Directory Id='OurfaDir' Name='fa'>
+                      <Component Id='OurFFfaDirFiles'
+                        Guid='$(var.OurComponentGUID_FFLangfaDirFiles)'>
+                        <File Id='ff_fa_i18n.dtd' Name='i18n.dtd'
+                          DiskId='1' Source="$(var.OurFFPath)/chrome/chromeFiles/locale/fa/i18n.dtd" />
+                      </Component>
+                    </Directory>
+                    <Directory Id='OurfiDir' Name='fi'>
+                      <Component Id='OurFFfiDirFiles'
+                        Guid='$(var.OurComponentGUID_FFLangfiDirFiles)'>
+                        <File Id='ff_fi_i18n.dtd' Name='i18n.dtd'
+                          DiskId='1' Source="$(var.OurFFPath)/chrome/chromeFiles/locale/fi/i18n.dtd" />
+                      </Component>
+                    </Directory>
+                    <Directory Id='OurfilDir' Name='fil'>
+                      <Component Id='OurFFfilDirFiles'
+                        Guid='$(var.OurComponentGUID_FFLangfilDirFiles)'>
+                        <File Id='ff_fil_i18n.dtd' Name='i18n.dtd'
+                          DiskId='1' Source="$(var.OurFFPath)/chrome/chromeFiles/locale/fil/i18n.dtd" />
+                      </Component>
+                    </Directory>
+                    <Directory Id='OurfrDir' Name='fr'>
+                      <Component Id='OurFFfrDirFiles'
+                        Guid='$(var.OurComponentGUID_FFLangfrDirFiles)'>
+                        <File Id='ff_fr_i18n.dtd' Name='i18n.dtd'
+                          DiskId='1' Source="$(var.OurFFPath)/chrome/chromeFiles/locale/fr/i18n.dtd" />
+                      </Component>
+                    </Directory>
+                    <Directory Id='OurheDir' Name='he'>
+                      <Component Id='OurFFheDirFiles'
+                        Guid='$(var.OurComponentGUID_FFLangheDirFiles)'>
+                        <File Id='ff_he_i18n.dtd' Name='i18n.dtd'
+                          DiskId='1' Source="$(var.OurFFPath)/chrome/chromeFiles/locale/he/i18n.dtd" />
+                      </Component>
+                    </Directory>
+                    <Directory Id='OurhiDir' Name='hi'>
+                      <Component Id='OurFFhiDirFiles'
+                        Guid='$(var.OurComponentGUID_FFLanghiDirFiles)'>
+                        <File Id='ff_hi_i18n.dtd' Name='i18n.dtd'
+                          DiskId='1' Source="$(var.OurFFPath)/chrome/chromeFiles/locale/hi/i18n.dtd" />
+                      </Component>
+                    </Directory>
+                    <Directory Id='OurhrDir' Name='hr'>
+                      <Component Id='OurFFhrDirFiles'
+                        Guid='$(var.OurComponentGUID_FFLanghrDirFiles)'>
+                        <File Id='ff_hr_i18n.dtd' Name='i18n.dtd'
+                          DiskId='1' Source="$(var.OurFFPath)/chrome/chromeFiles/locale/hr/i18n.dtd" />
+                      </Component>
+                    </Directory>
+                    <Directory Id='OurhuDir' Name='hu'>
+                      <Component Id='OurFFhuDirFiles'
+                        Guid='$(var.OurComponentGUID_FFLanghuDirFiles)'>
+                        <File Id='ff_hu_i18n.dtd' Name='i18n.dtd'
+                          DiskId='1' Source="$(var.OurFFPath)/chrome/chromeFiles/locale/hu/i18n.dtd" />
+                      </Component>
+                    </Directory>
+                    <Directory Id='OuridDir' Name='id'>
+                      <Component Id='OurFFidDirFiles'
+                        Guid='$(var.OurComponentGUID_FFLangidDirFiles)'>
+                        <File Id='ff_id_i18n.dtd' Name='i18n.dtd'
+                          DiskId='1' Source="$(var.OurFFPath)/chrome/chromeFiles/locale/id/i18n.dtd" />
+                      </Component>
+                    </Directory>
+                    <Directory Id='OurisDir' Name='is'>
+                      <Component Id='OurFFisDirFiles'
+                        Guid='$(var.OurComponentGUID_FFLangisDirFiles)'>
+                        <File Id='ff_is_i18n.dtd' Name='i18n.dtd'
+                          DiskId='1' Source="$(var.OurFFPath)/chrome/chromeFiles/locale/is/i18n.dtd" />
+                      </Component>
+                    </Directory>
+                    <Directory Id='OuritDir' Name='it'>
+                      <Component Id='OurFFitDirFiles'
+                        Guid='$(var.OurComponentGUID_FFLangitDirFiles)'>
+                        <File Id='ff_it_i18n.dtd' Name='i18n.dtd'
+                          DiskId='1' Source="$(var.OurFFPath)/chrome/chromeFiles/locale/it/i18n.dtd" />
+                      </Component>
+                    </Directory>
+                    <Directory Id='OurjaDir' Name='ja'>
+                      <Component Id='OurFFjaDirFiles'
+                        Guid='$(var.OurComponentGUID_FFLangjaDirFiles)'>
+                        <File Id='ff_ja_i18n.dtd' Name='i18n.dtd'
+                          DiskId='1' Source="$(var.OurFFPath)/chrome/chromeFiles/locale/ja/i18n.dtd" />
+                      </Component>
+                    </Directory>
+                    <Directory Id='OurkoDir' Name='ko'>
+                      <Component Id='OurFFkoDirFiles'
+                        Guid='$(var.OurComponentGUID_FFLangkoDirFiles)'>
+                        <File Id='ff_ko_i18n.dtd' Name='i18n.dtd'
+                          DiskId='1' Source="$(var.OurFFPath)/chrome/chromeFiles/locale/ko/i18n.dtd" />
+                      </Component>
+                    </Directory>
+                    <Directory Id='OurltDir' Name='lt'>
+                      <Component Id='OurFFltDirFiles'
+                        Guid='$(var.OurComponentGUID_FFLangltDirFiles)'>
+                        <File Id='ff_lt_i18n.dtd' Name='i18n.dtd'
+                          DiskId='1' Source="$(var.OurFFPath)/chrome/chromeFiles/locale/lt/i18n.dtd" />
+                      </Component>
+                    </Directory>
+                    <Directory Id='OurlvDir' Name='lv'>
+                      <Component Id='OurFFlvDirFiles'
+                        Guid='$(var.OurComponentGUID_FFLanglvDirFiles)'>
+                        <File Id='ff_lv_i18n.dtd' Name='i18n.dtd'
+                          DiskId='1' Source="$(var.OurFFPath)/chrome/chromeFiles/locale/lv/i18n.dtd" />
+                      </Component>
+                    </Directory>
+                    <Directory Id='OurmsDir' Name='ms'>
+                      <Component Id='OurFFmsDirFiles'
+                        Guid='$(var.OurComponentGUID_FFLangmsDirFiles)'>
+                        <File Id='ff_ms_i18n.dtd' Name='i18n.dtd'
+                          DiskId='1' Source="$(var.OurFFPath)/chrome/chromeFiles/locale/ms/i18n.dtd" />
+                      </Component>
+                    </Directory>
+                    <Directory Id='OurnlDir' Name='nl'>
+                      <Component Id='OurFFnlDirFiles'
+                        Guid='$(var.OurComponentGUID_FFLangnlDirFiles)'>
+                        <File Id='ff_nl_i18n.dtd' Name='i18n.dtd'
+                          DiskId='1' Source="$(var.OurFFPath)/chrome/chromeFiles/locale/nl/i18n.dtd" />
+                      </Component>
+                    </Directory>
+                    <Directory Id='OurnoDir' Name='no'>
+                      <Component Id='OurFFnoDirFiles'
+                        Guid='$(var.OurComponentGUID_FFLangnoDirFiles)'>
+                        <File Id='ff_no_i18n.dtd' Name='i18n.dtd'
+                          DiskId='1' Source="$(var.OurFFPath)/chrome/chromeFiles/locale/no/i18n.dtd" />
+                      </Component>
+                    </Directory>
+                    <Directory Id='OurplDir' Name='pl'>
+                      <Component Id='OurFFplDirFiles'
+                        Guid='$(var.OurComponentGUID_FFLangplDirFiles)'>
+                        <File Id='ff_pl_i18n.dtd' Name='i18n.dtd'
+                          DiskId='1' Source="$(var.OurFFPath)/chrome/chromeFiles/locale/pl/i18n.dtd" />
+                      </Component>
+                    </Directory>
+                    <Directory Id='Ourpt_BRDir' Name='pt-BR'>
+                      <Component Id='OurFFpt_BRDirFiles'
+                        Guid='$(var.OurComponentGUID_FFLangpt_BRDirFiles)'>
+                        <File Id='ff_pt_BR_i18n.dtd' Name='i18n.dtd'
+                          DiskId='1' Source="$(var.OurFFPath)/chrome/chromeFiles/locale/pt-BR/i18n.dtd" />
+                      </Component>
+                    </Directory>
+                    <Directory Id='Ourpt_PTDir' Name='pt-PT'>
+                      <Component Id='OurFFpt_PTDirFiles'
+                        Guid='$(var.OurComponentGUID_FFLangpt_PTDirFiles)'>
+                        <File Id='ff_pt_PT_i18n.dtd' Name='i18n.dtd'
+                          DiskId='1' Source="$(var.OurFFPath)/chrome/chromeFiles/locale/pt-PT/i18n.dtd" />
+                      </Component>
+                    </Directory>
+                    <Directory Id='OurroDir' Name='ro'>
+                      <Component Id='OurFFroDirFiles'
+                        Guid='$(var.OurComponentGUID_FFLangroDirFiles)'>
+                        <File Id='ff_ro_i18n.dtd' Name='i18n.dtd'
+                          DiskId='1' Source="$(var.OurFFPath)/chrome/chromeFiles/locale/ro/i18n.dtd" />
+                      </Component>
+                    </Directory>
+                    <Directory Id='OurruDir' Name='ru'>
+                      <Component Id='OurFFruDirFiles'
+                        Guid='$(var.OurComponentGUID_FFLangruDirFiles)'>
+                        <File Id='ff_ru_i18n.dtd' Name='i18n.dtd'
+                          DiskId='1' Source="$(var.OurFFPath)/chrome/chromeFiles/locale/ru/i18n.dtd" />
+                      </Component>
+                    </Directory>
+                    <Directory Id='OurskDir' Name='sk'>
+                      <Component Id='OurFFskDirFiles'
+                        Guid='$(var.OurComponentGUID_FFLangskDirFiles)'>
+                        <File Id='ff_sk_i18n.dtd' Name='i18n.dtd'
+                          DiskId='1' Source="$(var.OurFFPath)/chrome/chromeFiles/locale/sk/i18n.dtd" />
+                      </Component>
+                    </Directory>
+                    <Directory Id='OurslDir' Name='sl'>
+                      <Component Id='OurFFslDirFiles'
+                        Guid='$(var.OurComponentGUID_FFLangslDirFiles)'>
+                        <File Id='ff_sl_i18n.dtd' Name='i18n.dtd'
+                          DiskId='1' Source="$(var.OurFFPath)/chrome/chromeFiles/locale/sl/i18n.dtd" />
+                      </Component>
+                    </Directory>
+                    <Directory Id='OursrDir' Name='sr'>
+                      <Component Id='OurFFsrDirFiles'
+                        Guid='$(var.OurComponentGUID_FFLangsrDirFiles)'>
+                        <File Id='ff_sr_i18n.dtd' Name='i18n.dtd'
+                          DiskId='1' Source="$(var.OurFFPath)/chrome/chromeFiles/locale/sr/i18n.dtd" />
+                      </Component>
+                    </Directory>
+                    <Directory Id='OursvDir' Name='sv'>
+                      <Component Id='OurFFsvDirFiles'
+                        Guid='$(var.OurComponentGUID_FFLangsvDirFiles)'>
+                        <File Id='ff_sv_i18n.dtd' Name='i18n.dtd'
+                          DiskId='1' Source="$(var.OurFFPath)/chrome/chromeFiles/locale/sv/i18n.dtd" />
+                      </Component>
+                    </Directory>
+                    <Directory Id='OurthDir' Name='th'>
+                      <Component Id='OurFFthDirFiles'
+                        Guid='$(var.OurComponentGUID_FFLangthDirFiles)'>
+                        <File Id='ff_th_i18n.dtd' Name='i18n.dtd'
+                          DiskId='1' Source="$(var.OurFFPath)/chrome/chromeFiles/locale/th/i18n.dtd" />
+                      </Component>
+                    </Directory>
+                    <Directory Id='OurtrDir' Name='tr'>
+                      <Component Id='OurFFtrDirFiles'
+                        Guid='$(var.OurComponentGUID_FFLangtrDirFiles)'>
+                        <File Id='ff_tr_i18n.dtd' Name='i18n.dtd'
+                          DiskId='1' Source="$(var.OurFFPath)/chrome/chromeFiles/locale/tr/i18n.dtd" />
+                      </Component>
+                    </Directory>
+                    <Directory Id='OurukDir' Name='uk'>
+                      <Component Id='OurFFukDirFiles'
+                        Guid='$(var.OurComponentGUID_FFLangukDirFiles)'>
+                        <File Id='ff_uk_i18n.dtd' Name='i18n.dtd'
+                          DiskId='1' Source="$(var.OurFFPath)/chrome/chromeFiles/locale/uk/i18n.dtd" />
+                      </Component>
+                    </Directory>
+                    <Directory Id='OururDir' Name='ur'>
+                      <Component Id='OurFFurDirFiles'
+                        Guid='$(var.OurComponentGUID_FFLangurDirFiles)'>
+                        <File Id='ff_ur_i18n.dtd' Name='i18n.dtd'
+                          DiskId='1' Source="$(var.OurFFPath)/chrome/chromeFiles/locale/ur/i18n.dtd" />
+                      </Component>
+                    </Directory>
+                    <Directory Id='OurviDir' Name='vi'>
+                      <Component Id='OurFFviDirFiles'
+                        Guid='$(var.OurComponentGUID_FFLangviDirFiles)'>
+                        <File Id='ff_vi_i18n.dtd' Name='i18n.dtd'
+                          DiskId='1' Source="$(var.OurFFPath)/chrome/chromeFiles/locale/vi/i18n.dtd" />
+                      </Component>
+                    </Directory>
+                    <Directory Id='Ourzh_CNDir' Name='zh-CN'>
+                      <Component Id='OurFFzh_CNDirFiles'
+                        Guid='$(var.OurComponentGUID_FFLangzh_CNDirFiles)'>
+                        <File Id='ff_zh_CN_i18n.dtd' Name='i18n.dtd'
+                          DiskId='1' Source="$(var.OurFFPath)/chrome/chromeFiles/locale/zh-CN/i18n.dtd" />
+                      </Component>
+                    </Directory>
+                    <Directory Id='Ourzh_TWDir' Name='zh-TW'>
+                      <Component Id='OurFFzh_TWDirFiles'
+                        Guid='$(var.OurComponentGUID_FFLangzh_TWDirFiles)'>
+                        <File Id='ff_zh_TW_i18n.dtd' Name='i18n.dtd'
+                          DiskId='1' Source="$(var.OurFFPath)/chrome/chromeFiles/locale/zh-TW/i18n.dtd" />
+                      </Component>
+                    </Directory>
+                    <Directory Id='OurmlDir' Name='ml'>
+                      <Component Id='OurFFmlDirFiles'
+                        Guid='$(var.OurComponentGUID_FFLangmlDirFiles)'>
+                        <File Id='ff_ml_i18n.dtd' Name='i18n.dtd'
+                          DiskId='1' Source="$(var.OurFFPath)/chrome/chromeFiles/locale/ml/i18n.dtd" />
+                      </Component>
+                    </Directory>
+                    <Directory Id='OurteDir' Name='te'>
+                      <Component Id='OurFFteDirFiles'
+                        Guid='$(var.OurComponentGUID_FFLangteDirFiles)'>
+                        <File Id='ff_te_i18n.dtd' Name='i18n.dtd'
+                          DiskId='1' Source="$(var.OurFFPath)/chrome/chromeFiles/locale/te/i18n.dtd" />
+                      </Component>
+                    </Directory>
+                    <Directory Id='OurguDir' Name='gu'>
+                      <Component Id='OurFFguDirFiles'
+                        Guid='$(var.OurComponentGUID_FFLangguDirFiles)'>
+                        <File Id='ff_gu_i18n.dtd' Name='i18n.dtd'
+                          DiskId='1' Source="$(var.OurFFPath)/chrome/chromeFiles/locale/gu/i18n.dtd" />
+                      </Component>
+                    </Directory>
+                    <Directory Id='OurknDir' Name='kn'>
+                      <Component Id='OurFFknDirFiles'
+                        Guid='$(var.OurComponentGUID_FFLangknDirFiles)'>
+                        <File Id='ff_kn_i18n.dtd' Name='i18n.dtd'
+                          DiskId='1' Source="$(var.OurFFPath)/chrome/chromeFiles/locale/kn/i18n.dtd" />
+                      </Component>
+                    </Directory>
+                    <Directory Id='OurorDir' Name='or'>
+                      <Component Id='OurFForDirFiles'
+                        Guid='$(var.OurComponentGUID_FFLangorDirFiles)'>
+                        <File Id='ff_or_i18n.dtd' Name='i18n.dtd'
+                          DiskId='1' Source="$(var.OurFFPath)/chrome/chromeFiles/locale/or/i18n.dtd" />
+                      </Component>
+                    </Directory>
+                    <Directory Id='OurbnDir' Name='bn'>
+                      <Component Id='OurFFbnDirFiles'
+                        Guid='$(var.OurComponentGUID_FFLangbnDirFiles)'>
+                        <File Id='ff_bn_i18n.dtd' Name='i18n.dtd'
+                          DiskId='1' Source="$(var.OurFFPath)/chrome/chromeFiles/locale/bn/i18n.dtd" />
+                      </Component>
+                    </Directory>
+                    <Directory Id='OurtaDir' Name='ta'>
+                      <Component Id='OurFFtaDirFiles'
+                        Guid='$(var.OurComponentGUID_FFLangtaDirFiles)'>
+                        <File Id='ff_ta_i18n.dtd' Name='i18n.dtd'
+                          DiskId='1' Source="$(var.OurFFPath)/chrome/chromeFiles/locale/ta/i18n.dtd" />
+                      </Component>
+                    </Directory>
+                    <Directory Id='OurmrDir' Name='mr'>
+                      <Component Id='OurFFmrDirFiles'
+                        Guid='$(var.OurComponentGUID_FFLangmrDirFiles)'>
+                        <File Id='ff_mr_i18n.dtd' Name='i18n.dtd'
+                          DiskId='1' Source="$(var.OurFFPath)/chrome/chromeFiles/locale/mr/i18n.dtd" />
+                      </Component>
+                    </Directory>
+                  </Directory>
+                </Directory>
+              </Directory>
+              <!-- End: resource lists that MUST be kept in sync with 'rules.mk' -->
+
+              <Directory Id='OurFFLibDir' Name='lib'>
+                <Component Id='OurFFLibDirFiles'
+                  Guid='$(var.OurComponentGUID_FFLibDirFiles)'>
+                  <File Id='ff_updater.js' Name='updater.js'
+                    DiskId='1' Source="$(var.OurFFPath)/lib/updater.js" />
+                </Component>
+              </Directory>
+            </Directory>
+
+          </Directory>
+        </Directory>
+      </Directory>
+    </Directory>
+    <Feature Id='gears' Title='Appcelerator Titanium' Level='1'>
+      <ComponentRef Id='OurIERegistry' />
+      <ComponentRef Id='OurFFRegistry' />
+      <ComponentRef Id='OurSharedRegistry' />
+      <ComponentRef Id='OurIEDirFiles' />
+      <ComponentRef Id='OurFFDirFiles' />
+      <ComponentRef Id='OurFFComponentsDirFiles' />
+      <ComponentRef Id='OurFFLibDirFiles' />
+      <ComponentRef Id='OurFFContentDirFiles' />
+      <ComponentRef Id='OurSharedDirFiles' />
+      <ComponentRef Id='OurSharedVersionedDirFiles' />
+      <ComponentRef Id='OurFFen_USDirFiles' />
+      <ComponentRef Id='OurFFarDirFiles' />
+      <ComponentRef Id='OurFFbgDirFiles' />
+      <ComponentRef Id='OurFFcaDirFiles' />
+      <ComponentRef Id='OurFFcsDirFiles' />
+      <ComponentRef Id='OurFFdaDirFiles' />
+      <ComponentRef Id='OurFFdeDirFiles' />
+      <ComponentRef Id='OurFFelDirFiles' />
+      <ComponentRef Id='OurFFen_GBDirFiles' />
+      <ComponentRef Id='OurFFesDirFiles' />
+      <ComponentRef Id='OurFFetDirFiles' />
+      <ComponentRef Id='OurFFfaDirFiles' />
+      <ComponentRef Id='OurFFfiDirFiles' />
+      <ComponentRef Id='OurFFfilDirFiles' />
+      <ComponentRef Id='OurFFfrDirFiles' />
+      <ComponentRef Id='OurFFheDirFiles' />
+      <ComponentRef Id='OurFFhiDirFiles' />
+      <ComponentRef Id='OurFFhrDirFiles' />
+      <ComponentRef Id='OurFFhuDirFiles' />
+      <ComponentRef Id='OurFFidDirFiles' />
+      <ComponentRef Id='OurFFisDirFiles' />
+      <ComponentRef Id='OurFFitDirFiles' />
+      <ComponentRef Id='OurFFjaDirFiles' />
+      <ComponentRef Id='OurFFkoDirFiles' />
+      <ComponentRef Id='OurFFltDirFiles' />
+      <ComponentRef Id='OurFFlvDirFiles' />
+      <ComponentRef Id='OurFFmsDirFiles' />
+      <ComponentRef Id='OurFFnlDirFiles' />
+      <ComponentRef Id='OurFFnoDirFiles' />
+      <ComponentRef Id='OurFFplDirFiles' />
+      <ComponentRef Id='OurFFpt_BRDirFiles' />
+      <ComponentRef Id='OurFFpt_PTDirFiles' />
+      <ComponentRef Id='OurFFroDirFiles' />
+      <ComponentRef Id='OurFFruDirFiles' />
+      <ComponentRef Id='OurFFskDirFiles' />
+      <ComponentRef Id='OurFFslDirFiles' />
+      <ComponentRef Id='OurFFsrDirFiles' />
+      <ComponentRef Id='OurFFsvDirFiles' />
+      <ComponentRef Id='OurFFthDirFiles' />
+      <ComponentRef Id='OurFFtrDirFiles' />
+      <ComponentRef Id='OurFFukDirFiles' />
+      <ComponentRef Id='OurFFurDirFiles' />
+      <ComponentRef Id='OurFFviDirFiles' />
+      <ComponentRef Id='OurFFzh_CNDirFiles' />
+      <ComponentRef Id='OurFFzh_TWDirFiles' />
+      <ComponentRef Id='OurFFmlDirFiles' />
+      <ComponentRef Id='OurFFteDirFiles' />
+      <ComponentRef Id='OurFFguDirFiles' />
+      <ComponentRef Id='OurFFknDirFiles' />
+      <ComponentRef Id='OurFForDirFiles' />
+      <ComponentRef Id='OurFFbnDirFiles' />
+      <ComponentRef Id='OurFFtaDirFiles' />
+      <ComponentRef Id='OurFFmrDirFiles' />
+    </Feature>
+    <Condition Message='Appcelerator Titanium has already been updated.'>
+      NOT NEWERVERSIONDETECTED
+    </Condition>
+    <InstallExecuteSequence>
+      <RemoveExistingProducts After='InstallValidate'>UPGRADING</RemoveExistingProducts>
+    </InstallExecuteSequence>
+    <Property Id='UILevel'>1</Property>
+    <Property Id='ALLUSERS'>1</Property>
+    <!-- Set the icon in Add/Remove Programs -->
+    <Property Id='ARPPRODUCTICON'>MainIcon</Property>
+    <Icon Id='MainIcon' SourceFile="ui/common/icon_merged.ico" />
+  </Product>
+</Wix>
