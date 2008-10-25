@@ -13,6 +13,7 @@
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		ABC333C90E9325710041EE43 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ABC333C80E9325710041EE43 /* WebKit.framework */; };
 		ABC333D00E9325E10041EE43 /* AppWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = ABC333CF0E9325E10041EE43 /* AppWindowController.m */; };
+		ABF42A2B0EAFFE5B008AD83F /* TitaniumJS.m in Sources */ = {isa = PBXBuildFile; fileRef = ABF42A2A0EAFFE5B008AD83F /* TitaniumJS.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,6 +30,8 @@
 		ABC333C80E9325710041EE43 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = /System/Library/Frameworks/WebKit.framework; sourceTree = "<absolute>"; };
 		ABC333CE0E9325E10041EE43 /* AppWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppWindowController.h; sourceTree = "<group>"; };
 		ABC333CF0E9325E10041EE43 /* AppWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppWindowController.m; sourceTree = "<group>"; };
+		ABF42A290EAFFE5B008AD83F /* TitaniumJS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TitaniumJS.h; sourceTree = "<group>"; };
+		ABF42A2A0EAFFE5B008AD83F /* TitaniumJS.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TitaniumJS.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -97,6 +100,8 @@
 			children = (
 				32CA4F630368D1EE00C91783 /* webkit_shell_Prefix.pch */,
 				29B97316FDCFA39411CA2CEA /* main.m */,
+				ABF42A290EAFFE5B008AD83F /* TitaniumJS.h */,
+				ABF42A2A0EAFFE5B008AD83F /* TitaniumJS.m */,
 			);
 			name = "Other Sources";
 			sourceTree = "<group>";
@@ -177,6 +182,7 @@
 			files = (
 				8D11072D0486CEB800E47090 /* main.m in Sources */,
 				ABC333D00E9325E10041EE43 /* AppWindowController.m in Sources */,
+				ABF42A2B0EAFFE5B008AD83F /* TitaniumJS.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

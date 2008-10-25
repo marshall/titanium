@@ -1,0 +1,61 @@
+require 'fileutils'
+require 'zip/zip'
+require 'build.rb'
+require 'yaml'
+
+RUNTIME_DIR = Dir.pwd
+WEBKIT_SHELL_DIR = File.join 'webkit_shell', (is_mac? ? 'osx' : (is_win? ? 'win32' : 'linux'))
+
+task :default => [:build_shell,:gather]
+
+task :build_shell do
+  FileUtils.cd WEBKIT_SHELL_DIR
+  if is_mac?
+    system 'xcodebuild'
+  end
+end
+
+def platform_string
+  return "osx" if is_mac?
+  return "win32" if is_win?
+  return "linux" if is_linux?
+end
+
+task :gather do
+  FileUtils.cd RUNTIME_DIR
+  build = YAML::load(File.open('build.yml'))
+  filename = File.join(STAGE_DIR, "titanium_runtime_" + build[:version].to_s + "_" + platform_string + ".zip")
+  
+  if File.exists?(filename)
+    puts "rm #{filename}"
+    FileUtils.rm filename
+  end
+  
+  Zip::ZipFile.open(filename, Zip::ZipFile::CREATE) {
+    |zipfile|
+    
+    if is_mac?
+      basedir = File.join WEBKIT_SHELL_DIR, 'build', 'Release', 'webkit_shell.app'
+      zipfile.mkdir('webkit_shell.app')
+      
+      dofiles(basedir) do |f|
+        filename = f.to_s
+        zipfile.add(File.join('webkit_shell.app', filename), File.join(basedir, filename))
+      end
+    end
+    
+    Dir["src/**/*"].each do |filepath|
+      filename = File.basename(filepath)
+      zipfile.add(filename, filepath)
+    end
+    
+    zipfile.mkdir("support")
+    dofiles("../sdk/support") do |f|
+      filename = f.to_s
+      zipfile.add(File.join('support', filename), File.join('..', 'sdk', 'support', filename))
+    end
+    
+    zipfile.add('build.yml', 'build.yml')
+    zipfile.add('install.rb', 'install.rb')
+  }
+end

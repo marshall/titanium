@@ -8,9 +8,11 @@
 
 #import <Cocoa/Cocoa.h>
 #import <WebKit/WebKit.h>
+#import "TitaniumJS.h"
 
 @interface AppWindowController : NSObject {
-	IBOutlet WebView* webView;	
+	IBOutlet WebView* webView;
+	TitaniumJS *titanium_js;
 }
 
 - (IBAction)loadApp:(id)sender;

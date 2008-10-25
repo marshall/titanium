@@ -7,13 +7,26 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#include <stdio.h>
+#include <unistd.h>
 
 int argCount;
 char** args;
 
 int main(int argc, char *argv[])
 {
+	/*umask(022);
+	int stderrSave = dup(STDERR_FILENO);
+	FILE *newStderr = freopen("/tmp/webkit_shell.log", "a", stderr);*/
+	
 	argCount = argc;
 	args = argv;
-	return NSApplicationMain(argc,  (const char **) argv);
+	int retval = NSApplicationMain(argc,  (const char **) argv);
+	
+	/*fflush(stderr);
+	dup2(stderrSave, STDERR_FILENO);
+	close(stderrSave);*/
+	
+
+	return retval;
 }

@@ -1,7 +1,7 @@
 --- 
 :type: titanium
 :dependencies:
-- :type: plugin
+- :type: tiplugin
   :name: gears
   :version: ">=0.4"
 :name: titanium
