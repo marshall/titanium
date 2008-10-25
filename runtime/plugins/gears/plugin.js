@@ -10,5 +10,3 @@ function GearsPlugin() {
 }
 
 titanium.plugins.push(new GearsPlugin());
-
-debug("gears plugin loaded");

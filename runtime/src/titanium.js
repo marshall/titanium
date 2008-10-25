@@ -13,20 +13,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-function debug (x) {
-	TiNative.debug(x);
-}
-
 titanium = {};
 
-titanium.include = function(x) {
-	TiNative.include(x);
+titanium.debug = function (msg) {
+	TiNative.debug(msg);
 }
 
-debug("loading..");
+titanium.include = function(path) {
+	TiNative.include(path);
+}
 
 
 titanium.appName = TiNative.getAppName();
 titanium.endPoint = TiNative.getEndpoint();
 
-debug("set vars..");
+titanium.window = {};
+titanium.window.width = TiNative.getWindowWidth();
+titanium.window.height = TiNative.getWindowHeight();
+titanium.window.title = TiNative.getWindowTitle();
+
+if (titanium.window.title)
+{
+	$('title').text(title);
+}
