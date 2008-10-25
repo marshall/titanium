@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ti:app
+ xmlns:ti="http://ti.appcelerator.org"
+ xmlns:appc="http://www.appcelerator.org">
+	
+	<name><%= @@project.config[:name] %></name>
+	<% if not @@endpoint.nil? %>
+	<appc:endpoint><%= @@endpoint %></appc:endpoint>
+    <% end %>
+	
+	<window width="800" height="600">
+		<title><%= @@project.config[:name] %></title>
+		<start>public/index.html</start>
+	</window>
+
+</ti:app>

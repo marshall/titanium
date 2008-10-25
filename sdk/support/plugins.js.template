@@ -1,0 +1,10 @@
+debug("init");
+titanium.plugins = [];
+debug("loading plugins..");
+
+<% @@plugins.each do |plugin| %>
+titanium.include("titanium/<%= plugin.data[:name] %>/plugin.js");
+<% end %>
+
+debug("here2 " + window.titanium);
+

@@ -1,0 +1,8 @@
+--- 
+:type: titanium
+:dependencies:
+- :type: plugin
+  :name: gears
+  :version: ">=0.4"
+:name: titanium
+:version: 0.1

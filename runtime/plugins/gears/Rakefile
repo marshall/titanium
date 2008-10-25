@@ -1,0 +1,70 @@
+require 'fileutils'
+require 'zip/zip'
+require '../../build.rb'
+
+task :default => [:get_src,:build,:gather]
+
+task :get_src do
+  if not File.directory? 'gears_svn'
+  	system 'svn co http://gears.googlecode.com/svn/trunk gears_svn'
+  	FileUtils.cd 'gears_svn'
+  else
+    FileUtils.cd 'gears_svn'
+    system 'svn up'
+  end
+end
+
+task :build do
+	FileUtils.cd 'gears'
+	
+	browser = 'SF' if is_mac?
+	browser = 'NPAPI' if is_win? or is_linux?
+	
+	# The part after "||" is to work around a make bug
+	system "make BROWSER=#{browser} || make BROWSER=#{browser}"
+	FileUtils.cd '../..'
+end
+
+def create_zip(basedir, plugin_name, version, embed_folder=true)
+  path = File.join STAGE_DIR, "tiplugin_#{plugin_name}_#{version}.zip"
+  if File.exists?(path)
+    FileUtils.rm path
+  end
+  
+  Zip::ZipFile.open(path, Zip::ZipFile::CREATE) {
+   |zipfile|
+   
+   dirname = File.basename(basedir)
+   
+   if (embed_folder)
+    zipfile.mkdir(dirname)
+   end
+   
+   dofiles(basedir) do |f|
+     filename = f.to_s
+     if embed_folder
+       zipfile.add(File.join(dirname, filename), File.join(basedir, filename))
+     else
+       zipfile.add(filename, File.join(basedir, filename))
+     end
+   end
+   
+    yield zipfile
+  }
+end
+
+task :gather do
+  basedir = nil
+	if is_mac?
+	  basedir = File.join('gears_svn', 'gears', 'bin-dbg', 'installers', 'Safari', 'Gears.plugin')
+  end
+  
+  if not basedir.nil?
+    create_zip(basedir, 'gears', '0.4') do |zipfile|
+      zipfile.add('build.yml', 'build.yml')
+      zipfile.add('plugin.rb', 'plugin.rb')
+      zipfile.add('plugin.js', 'plugin.js')
+      zipfile.add('gears_init.js', File.join('gears_svn', 'gears', 'sdk', 'gears_init.js'))
+    end
+  end
+end

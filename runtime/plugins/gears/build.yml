@@ -1,0 +1,7 @@
+--- 
+:type: tiplugin
+:name: gears
+:version: 0.4
+:files:
+- plugin.js
+- gears_init.js
