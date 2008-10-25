@@ -1,0 +1,25 @@
+require 'fileutils'
+require 'zip/zip'
+require '../../build.rb'
+require 'yaml'
+
+task :default => [:gather]
+
+task :gather do
+  build = YAML::load(File.open('build.yml'))
+  
+  path = File.join STAGE_DIR, "tiplugin_#{build[:name]}_#{build[:version]}.zip"
+  if File.exists?(path)
+    FileUtils.rm path
+  end
+  
+  Zip::ZipFile.open(path, Zip::ZipFile::CREATE) {
+   |zipfile|
+   
+   zipfile.add('build.yml', 'build.yml')
+   zipfile.add('plugin.rb', 'plugin.rb')
+   build[:files].each do |file|
+    zipfile.add(file, file)
+   end
+  }
+end
