@@ -23,6 +23,13 @@ titanium.include = function(path) {
 	TiNative.include(path);
 }
 
+titanium.pluginsLoaded = function ()
+{
+	if (titanium.window.title)
+	{
+		document.title = titanium.window.title;
+	}
+}
 
 titanium.appName = TiNative.getAppName();
 titanium.endPoint = TiNative.getEndpoint();
@@ -32,7 +39,3 @@ titanium.window.width = TiNative.getWindowWidth();
 titanium.window.height = TiNative.getWindowHeight();
 titanium.window.title = TiNative.getWindowTitle();
 
-if (titanium.window.title)
-{
-	$('title').text(title);
-}
