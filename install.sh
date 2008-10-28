@@ -15,7 +15,7 @@ ln -s runtime/plugins/tiplugin.rb $APPC_PATH/titanium/tiplugin.rb
 ln -s runtime/src/titanium.js $APPC_PATH/titanium/titanium.js
 ln -s runtime/webkit_shell $APPC_PATH/titanium/webkit_shell
 
-cd plugins/gears
+cd runtime/plugins/gears
 mkdir $APPC_PATH/titanium/plugins/gears
 rake && unzip -o ../../stage/tiplugin_gears*.zip -d $APPC_PATH/titanium/plugins/gears
 
