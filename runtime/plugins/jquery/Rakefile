@@ -8,6 +8,7 @@ task :default => [:gather]
 task :gather do
   build = YAML::load(File.open('build.yml'))
   
+  FileUtils.mkdir_p STAGE_DIR
   path = File.join STAGE_DIR, "tiplugin_#{build[:name]}_#{build[:version]}.zip"
   if File.exists?(path)
     FileUtils.rm path
