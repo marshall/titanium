@@ -34,6 +34,12 @@ def is_linux?
   RUBY_PLATFORM.downcase.include?("linux")
 end
 
+def platform_string
+  return "osx" if is_mac?
+  return "win32" if is_win?
+  return "linux" if is_linux?
+end
+
 VERBOSE = ENV['v'] || ENV['verbose'] || ENV['VERBOSE']
 COMPRESS = ENV['nomin'] ? false : true 
 CWD = File.expand_path "#{File.dirname(__FILE__)}"
