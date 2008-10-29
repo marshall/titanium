@@ -36,6 +36,7 @@ def create_zip(basedir, plugin_name, version, embed_folder=true)
     FileUtils.rm path
   end
   
+  FileUtils.mkdir_p STAGE_DIR
   Zip::ZipFile.open(path, Zip::ZipFile::CREATE) {
    |zipfile|
    

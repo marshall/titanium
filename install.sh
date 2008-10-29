@@ -20,10 +20,12 @@ cd runtime/webkit_shell/osx
 xcodebuild
 
 ln -s build/Release/webkit_shell.app webkit_shell.app
+cd ../../..
 
 cd runtime/plugins/gears
 mkdir $APPC_PATH/titanium/plugins/gears
 rake && unzip -o ../../stage/tiplugin_gears*.zip -d $APPC_PATH/titanium/plugins/gears
+
 
 cd ../jquery
 mkdir $APPC_PATH/titanium/plugins/jquery
