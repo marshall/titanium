@@ -1,6 +1,6 @@
 --- 
 :type: tiplugin
-:name: gears
+:name: gears_<%= platform_string %>
 :version: 0.4
 :files:
 - plugin.js

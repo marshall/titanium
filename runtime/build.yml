@@ -2,7 +2,10 @@
 :type: titanium
 :dependencies:
 - :type: tiplugin
-  :name: gears
+  :name: gears_<%= platform_string %>
   :version: ">=0.4"
-:name: titanium
+- :type: tiplugin
+  :name: jquery
+  :version: ">=1.2.6"
+:name: titanium_<%= platform_string %>
 :version: 0.1

@@ -1,6 +1,8 @@
 require 'fileutils'
 require 'zip/zip'
 require '../../build.rb'
+require 'yaml'
+require 'erb'
 
 task :default => [:get_src,:build,:gather]
 
@@ -21,12 +23,15 @@ task :build do
 	browser = 'NPAPI' if is_win? or is_linux?
 	
 	# The part after "||" is to work around a make bug
-	system "make BROWSER=#{browser} || make BROWSER=#{browser}"
+	system "make BROWSER=#{browser} MODE=opt || make BROWSER=#{browser}"
 	FileUtils.cd '../..'
 end
 
 def create_zip(basedir, plugin_name, version, embed_folder=true)
-  path = File.join STAGE_DIR, "tiplugin_#{plugin_name}_#{version}.zip"
+	filename = "tiplugin_#{plugin_name}_#{version}"
+  filename += "_" + platform_string
+
+  path = File.join STAGE_DIR, "#{filename}.zip"
   if File.exists?(path)
     FileUtils.rm path
   end
@@ -55,13 +60,19 @@ end
 
 task :gather do
   basedir = nil
+	template = nil
+	File.open('build.yml') { |f| template = ERB.new(f.read()) }
+
+	build_yml = template.result(binding)
+	build = YAML::load(build_yml)
+	
 	if is_mac?
-	  basedir = File.join('gears_svn', 'gears', 'bin-dbg', 'installers', 'Safari', 'Gears.plugin')
+	  basedir = File.join('gears_svn', 'gears', 'bin-opt', 'installers', 'Safari', 'Gears.plugin')
   end
   
   if not basedir.nil?
-    create_zip(basedir, 'gears', '0.4') do |zipfile|
-      zipfile.add('build.yml', 'build.yml')
+    create_zip(basedir, 'gears', build[:version]) do |zipfile|
+      zipfile.get_output_stream('build.yml') { |f| f.write(build_yml) }
       zipfile.add('plugin.rb', 'plugin.rb')
       zipfile.add('plugin.js', 'plugin.js')
       zipfile.add('gears_init.js', File.join('gears_svn', 'gears', 'sdk', 'gears_init.js'))

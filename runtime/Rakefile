@@ -2,6 +2,7 @@ require 'fileutils'
 require 'zip/zip'
 require 'build.rb'
 require 'yaml'
+require 'erb'
 
 RUNTIME_DIR = Dir.pwd
 WEBKIT_SHELL_DIR = File.join 'webkit_shell', (is_mac? ? 'osx' : (is_win? ? 'win32' : 'linux'))
@@ -15,15 +16,13 @@ task :build_shell do
   end
 end
 
-def platform_string
-  return "osx" if is_mac?
-  return "win32" if is_win?
-  return "linux" if is_linux?
-end
-
 task :gather do
   FileUtils.cd RUNTIME_DIR
-  build = YAML::load(File.open('build.yml'))
+	template = nil
+	File.open('build.yml') { |f| template = ERB.new(f.read()) }
+
+	build_yml = template.result(binding)
+  build = YAML::load(build_yml)
   filename = File.join(STAGE_DIR, "titanium_runtime_" + build[:version].to_s + "_" + platform_string + ".zip")
   
   if File.exists?(filename)
@@ -55,7 +54,7 @@ task :gather do
       zipfile.add(File.join('support', filename), File.join('..', 'sdk', 'support', filename))
     end
     
-    zipfile.add('build.yml', 'build.yml')
+    zipfile.get_output_stream('build.yml') { |f| f.write(build_yml) }
     zipfile.add('install.rb', 'install.rb')
   }
 end
