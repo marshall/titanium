@@ -2,7 +2,7 @@ require 'fileutils'
 
 class GearsPlugin < Titanium::Plugin
   def initialize
-    super("gears")
+    super("gears_" + platform_string)
   end
   
   def install(project, basedir, executable_name)

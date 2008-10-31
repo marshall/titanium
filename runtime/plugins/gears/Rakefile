@@ -23,7 +23,7 @@ task :build do
 	browser = 'NPAPI' if is_win? or is_linux?
 	
 	# The part after "||" is to work around a make bug
-	system "make BROWSER=#{browser} MODE=opt || make BROWSER=#{browser}"
+	system "make BROWSER=#{browser} MODE=opt || make BROWSER=#{browser} MODE=opt"
 	FileUtils.cd '../..'
 end
 

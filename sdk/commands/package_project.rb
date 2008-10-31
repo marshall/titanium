@@ -70,7 +70,8 @@ CommandRegistry.registerCommand('package:project', 'package an Appcelerator proj
   'package:project ~/myproject MyProject',
   'package:project ~/myproject MyProject ~/bin'
 ]) do |args,options|
-  
+    Titanium::Titanium.init
+    
     path = File.expand_path(args[:path] || Dir.pwd)
     if Project.is_project_dir?(path)
       project = options[:project] || Project.load(path)

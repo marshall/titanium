@@ -1,16 +1,14 @@
 require 'yaml'
 
-TIPLUGINDIR = File.join(SYSTEMDIR, 'titanium', 'plugins')
-
 module Titanium
   class Plugin
     attr_accessor :data
     
     def initialize(name)
-     @plugindir = File.join(TIPLUGINDIR, name)
-     @name = name
-     @data = YAML::load(File.open(File.join(@plugindir, 'build.yml')))
-     puts @data.inspect
+      @name = name
+      @component = Installer.get_current_installed_component({:name=>@name, :type=>'tiplugin'})
+      @plugindir = Titanium.get_plugin_dir(@component)
+      @data = YAML::load(File.open(File.join(@plugindir, 'build.yml')))
     end
     
     def get_project_path(basedir, executable_name)

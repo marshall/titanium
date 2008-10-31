@@ -15,7 +15,7 @@
 
 titanium.plugins = [];
 
-<% @@plugins.each do |plugin| %>
+<% Titanium.each_plugin do |plugin| %>
 titanium.include("titanium/<%= plugin.data[:name] %>/plugin.js");
 <% end %>
 

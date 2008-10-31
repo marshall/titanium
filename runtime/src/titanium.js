@@ -34,6 +34,10 @@ titanium.pluginsLoaded = function ()
 titanium.appName = TiNative.getAppName();
 titanium.endPoint = TiNative.getEndpoint();
 
+if (navigator.appVersion.indexOf("Win")!=-1) titanium.platform = "win32";
+if (navigator.appVersion.indexOf("Mac")!=-1) titanium.platform = "osx";
+if (navigator.appVersion.indexOf("Linux")!=-1) titanium.platform = "linux";
+
 titanium.window = {};
 titanium.window.width = TiNative.getWindowWidth();
 titanium.window.height = TiNative.getWindowHeight();
