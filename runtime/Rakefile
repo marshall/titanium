@@ -1,10 +1,9 @@
 require 'fileutils'
 require 'zip/zip'
-require 'build.rb'
 require 'yaml'
 require 'erb'
+require '../build.rb'
 
-RUNTIME_DIR = Dir.pwd
 WEBKIT_SHELL_DIR = File.join 'webkit_shell', (is_mac? ? 'osx' : (is_win? ? 'win32' : 'linux'))
 
 task :default => [:build_shell,:gather]

@@ -21,6 +21,18 @@ require 'zip/zip'
 require 'yaml'
 require 'digest/md5'
 
+TITANIUM_DIR = File.expand_path(File.dirname(__FILE__))
+RUNTIME_DIR = File.join(TITANIUM_DIR, 'runtime')
+PLUGINS_DIR = File.join(RUNTIME_DIR, 'plugins')
+
+def rake (dir)
+  cur_dir = Dir.pwd
+  FileUtils.cd dir
+	call_rake
+
+  FileUtils.cd cur_dir
+end
+
 def is_mac?
   RUBY_PLATFORM.downcase.include?("darwin")
 end

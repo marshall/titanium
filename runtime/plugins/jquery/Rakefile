@@ -1,6 +1,6 @@
 require 'fileutils'
 require 'zip/zip'
-require '../../build.rb'
+require '../../../build.rb'
 require 'yaml'
 
 task :default => [:gather]
