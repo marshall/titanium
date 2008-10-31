@@ -47,11 +47,11 @@ task :gather do
       filename = File.basename(filepath)
       zipfile.add(filename, filepath)
     end
-    
+  
     zipfile.mkdir("support")
-    dofiles("../sdk/support") do |f|
+    dofiles("support") do |f|
       filename = f.to_s
-      zipfile.add(File.join('support', filename), File.join('..', 'sdk', 'support', filename))
+      zipfile.add(File.join('support', filename), File.join('support', filename))
     end
     
     zipfile.get_output_stream('build.yml') { |f| f.write(build_yml) }
