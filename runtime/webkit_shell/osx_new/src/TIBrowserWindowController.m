@@ -125,7 +125,7 @@ typedef enum {
 #pragma mark -
 #pragma mark WebPolicyDelegate
 
-- (void)webView:(WebView *)webView decidePolicyForNavigationAction:(NSDictionary *)actionInformation request:(NSURLRequest *)request frame:(WebFrame *)frame decisionListener:(id<WebPolicyDecisionListener>)listener {
+- (void)webView:(WebView *)sender decidePolicyForNavigationAction:(NSDictionary *)actionInformation request:(NSURLRequest *)request frame:(WebFrame *)frame decisionListener:(id<WebPolicyDecisionListener>)listener {
     WebNavigationType navType = [[actionInformation objectForKey:WebActionNavigationTypeKey] intValue];
 	
     if ([WebView _canHandleRequest:request]) {
@@ -143,12 +143,39 @@ typedef enum {
 }
 
 
-- (void)webView:(WebView *)webView decidePolicyForNewWindowAction:(NSDictionary *)actionInformation request:(NSURLRequest *)request newFrameName:(NSString *)frameName decisionListener:(id<WebPolicyDecisionListener>)listener {
-	[listener use];
+- (void)webView:(WebView *)sender decidePolicyForNewWindowAction:(NSDictionary *)actionInformation request:(NSURLRequest *)request newFrameName:(NSString *)frameName decisionListener:(id<WebPolicyDecisionListener>)listener {
+	
+	if ([@"_blank" isEqualToString:frameName] || [@"_new" isEqualToString:frameName]) { // force new window
+		[listener use];
+		return;
+	}
+	
+	// look for existing frame with this name. if found, use it
+	NSWindow *existingWindow = nil;
+	WebFrame *existingFrame = nil;
+	
+	for (NSDocument *nsdoc in [[TIAppDelegate instance] documents]) {
+		TIBrowserDocument *doc = (TIBrowserDocument *)nsdoc;
+		existingFrame = [[[doc webView] mainFrame] findFrameNamed:frameName];
+		if (existingFrame) {
+			existingWindow = [[doc browserWindowController] window];
+			break;
+		}
+	}
+	
+	if (existingFrame) {
+		// found an existing frame with frameName. use it
+		[existingWindow makeKeyAndOrderFront:self];
+		[existingFrame loadRequest:request];
+		[listener ignore];
+	} else {
+		// no existing frame for frameName. allow a new window to be created
+		[listener use];
+	}
 }
 
 
-- (void)webView:(WebView *)webView decidePolicyForMIMEType:(NSString *)type request:(NSURLRequest *)request frame:(WebFrame *)frame decisionListener:(id<WebPolicyDecisionListener>)listener {
+- (void)webView:(WebView *)sender decidePolicyForMIMEType:(NSString *)type request:(NSURLRequest *)request frame:(WebFrame *)frame decisionListener:(id<WebPolicyDecisionListener>)listener {
     id response = [[frame provisionalDataSource] response];
 	
     if (response && [response respondsToSelector:@selector(allHeaderFields)]) {
