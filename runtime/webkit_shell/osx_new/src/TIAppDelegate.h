@@ -11,6 +11,7 @@
 @class TIAppDelegate;
 @class TIBrowserDocument;
 @class TIBrowserWindowController;
+@class WebFrame;
 
 TIBrowserWindowController *TIFirstController();
 TIBrowserWindowController *TIFrontController();
@@ -27,7 +28,8 @@ TIBrowserWindowController *TIFrontController();
 
 - (IBAction)showPreferencesWindow:(id)sender;
 
-- (TIBrowserDocument *)newDocumentWithRequest:(NSURLRequest *)request makeKey:(BOOL)makeKey;
+- (TIBrowserDocument *)newDocumentWithRequest:(NSURLRequest *)request display:(BOOL)display;
+- (WebFrame *)findFrameNamed:(NSString *)frameName;
 
 - (void)parseTiAppXml;
 

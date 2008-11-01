@@ -10,6 +10,7 @@
 #import "TIBrowserDocument.h"
 #import "TIBrowserWindowController.h"
 #import "TIPreferencesWindowController.h"
+#import <WebKit/WebKit.h>
 
 static TIBrowserDocument *firstDocument = nil;
 
@@ -18,7 +19,7 @@ TIBrowserWindowController *TIFirstController() {
 }
 
 TIBrowserWindowController *TIFrontController() {
-	TIBrowserDocument *doc = (TIBrowserDocument *)[[TIAppDelegate instance] currentDocument];
+	TIBrowserDocument *doc = [[TIAppDelegate instance] currentDocument];
 	if (doc) {
 		return [doc browserWindowController];
 	} else {
@@ -55,7 +56,7 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 @implementation TIAppDelegate
 
 + (id)instance {
-	return (TIAppDelegate *)[NSApp delegate];
+	return [NSApp delegate];
 }
 
 
@@ -98,49 +99,51 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 #pragma mark -
 #pragma mark Public
 
-- (TIBrowserDocument *)newDocumentWithRequest:(NSURLRequest *)request makeKey:(BOOL)makeKey {
-	TIBrowserDocument *oldDoc = [self currentDocument];
-	TIBrowserDocument *newDoc = [self openUntitledDocumentAndDisplay:makeKey error:nil];
+- (TIBrowserDocument *)newDocumentWithRequest:(NSURLRequest *)request display:(BOOL)display {
+	NSError *err = nil;
+	TIBrowserDocument *newDoc = [self openUntitledDocumentAndDisplay:display error:&err];
 	
-	if (!makeKey) {
+	if (err) {
+		return nil;
+	}
+	
+	if (!display) {
 		[newDoc makeWindowControllers];
+		[[newDoc browserWindowController] window]; // force window loading from nib
 	}
 	
 	[newDoc loadRequest:request];
 	
-	if (!makeKey) {
-		NSWindow *oldWindow = [[oldDoc browserWindowController] window];
-		NSWindow *newWindow = [[newDoc browserWindowController] window];
-		[newWindow orderWindow:NSWindowBelow relativeTo:oldWindow.windowNumber];
+	return newDoc;
+}
+
+
+- (WebFrame *)findFrameNamed:(NSString *)frameName {
+	// look for existing frame in any open browser document with this name.
+	WebFrame *existingFrame = nil;
+	
+	for (TIBrowserDocument *doc in [[TIAppDelegate instance] documents]) {
+		existingFrame = [[[doc webView] mainFrame] findFrameNamed:frameName];
+		if (existingFrame) {
+			break;
+		}
 	}
 	
-	return newDoc;
+	return existingFrame;
+}
+
+
+#pragma mark -
+#pragma mark NSAppDelegate
+
+- (BOOL)applicationShouldOpenUntitledFile:(NSApplication *)sender {
+	return NO; // this causes the app to *not* open an untitled browser window on launch
 }
 
 
 #pragma mark -
 #pragma mark NSDocumentController
 
-- (id)makeUntitledDocumentOfType:(NSString *)typeName error:(NSError **)outError {
-	id result = [super makeUntitledDocumentOfType:typeName error:outError];
-	
-	if ([typeName isEqualToString:@"BrowserDocument"]) {
-		TIBrowserDocument *doc = (TIBrowserDocument *)result;
-
-		// the first time a browser document is created, keep a reference to it as the 'firstDocument'
-		static BOOL hasBeenCalled = NO;
-		
-		@synchronized (self) {
-			if (!hasBeenCalled) {
-				hasBeenCalled = YES;
-				firstDocument = doc;
-				[doc setIsFirst:YES];
-			}
-		}
-	}
-	
-	return result;
-}
 
 
 #pragma mark -
@@ -202,8 +205,11 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 	
 	if (url) {
 		NSURLRequest *request = [NSURLRequest requestWithURL:url];
-		TIBrowserWindowController *winController = TIFrontController();
-		[winController loadRequest:request];
+		
+		// set display:NO so we don't show the first window until the first page has loaded.
+		// this avoids seeing ugly loading on launch.
+		firstDocument = [self newDocumentWithRequest:request display:NO];
+		[firstDocument setIsFirst:YES];
 	} else {
 		NSLog(@"Error: could not load base url");
 	}

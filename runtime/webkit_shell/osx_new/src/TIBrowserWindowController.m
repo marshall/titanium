@@ -13,6 +13,10 @@
 #import "TIJavaScriptPromptWindowController.h"
 #import <WebKit/WebKit.h>
 
+@interface NSApplication (DeclarationStolenFromAppKit)
+- (void)_cycleWindowsReversed:(BOOL)reversed;
+@end
+
 typedef enum {
     WebNavigationTypePlugInRequest = WebNavigationTypeOther + 1
 } WebExtraNavigationType;
@@ -22,6 +26,7 @@ typedef enum {
 @end
 
 @interface TIBrowserWindowController (Private)
+- (WebView *)webView:(WebView *)wv createWebViewWithRequest:(NSURLRequest *)request windowFeatures:(NSDictionary *)features;
 - (void)openPanelDidEnd:(NSSavePanel *)openPanel returnCode:(int)returnCode contextInfo:(void *)contextInfo;
 @end
 
@@ -85,40 +90,43 @@ typedef enum {
 #pragma mark -
 #pragma mark WebFrameLoadDelegate
 
-- (void)webView:(WebView *)sender didStartProvisionalLoadForFrame:(WebFrame *)frame {
+- (void)webView:(WebView *)wv didStartProvisionalLoadForFrame:(WebFrame *)frame {
 	
 }
 
 
-- (void)webView:(WebView *)sender didFailProvisionalLoadWithError:(NSError *)error forFrame:(WebFrame *)frame {
-	if (webView != sender) return;
+- (void)webView:(WebView *)wv didFailProvisionalLoadWithError:(NSError *)error forFrame:(WebFrame *)frame {
+	if (webView != wv) return;
 	[self handleLoadError:error];
 }
 
 
-- (void)webView:(WebView *)sender didCommitLoadForFrame:(WebFrame *)frame {
+- (void)webView:(WebView *)wv didCommitLoadForFrame:(WebFrame *)frame {
 	
 }
 
 
-- (void)webView:(WebView *)sender didReceiveTitle:(NSString *)title forFrame:(WebFrame *)frame {
+- (void)webView:(WebView *)wv didReceiveTitle:(NSString *)title forFrame:(WebFrame *)frame {
 	
 }
 
 
-- (void)webView:(WebView *)sender didFinishLoadForFrame:(WebFrame *)frame {
-	
+- (void)webView:(WebView *)wv didFinishLoadForFrame:(WebFrame *)frame {
+	// we don't show the first window until the first page has loaded. avoids seeing ugly loading on launch
+	if ([self isFirst] && ![[self window] isVisible]) {
+		[[self window] makeKeyAndOrderFront:self];
+	}
 }
 
 
-- (void)webView:(WebView *)sender didFailLoadWithError:(NSError *)error forFrame:(WebFrame *)frame {
-	if (webView != sender) return;
+- (void)webView:(WebView *)wv didFailLoadWithError:(NSError *)error forFrame:(WebFrame *)frame {
+	if (webView != wv) return;
 	[self handleLoadError:error];
 }
 
 
-- (void)webView:(WebView *)sender windowScriptObjectAvailable:(WebScriptObject *)windowScriptObject {
-	if (webView != sender) return;
+- (void)webView:(WebView *)wv windowScriptObjectAvailable:(WebScriptObject *)windowScriptObject {
+	if (webView != wv) return;
 	TIJavaScriptObject *javaScriptObject = [[TIJavaScriptObject alloc] initWithWebView:webView];
 	[windowScriptObject setValue:javaScriptObject forKey:@"TiNative"];
 	[javaScriptObject include:@"titanium/titanium.js"];
@@ -130,7 +138,7 @@ typedef enum {
 #pragma mark -
 #pragma mark WebPolicyDelegate
 
-- (void)webView:(WebView *)sender decidePolicyForNavigationAction:(NSDictionary *)actionInformation request:(NSURLRequest *)request frame:(WebFrame *)frame decisionListener:(id<WebPolicyDecisionListener>)listener {
+- (void)webView:(WebView *)wv decidePolicyForNavigationAction:(NSDictionary *)actionInformation request:(NSURLRequest *)request frame:(WebFrame *)frame decisionListener:(id<WebPolicyDecisionListener>)listener {
     WebNavigationType navType = [[actionInformation objectForKey:WebActionNavigationTypeKey] intValue];
 	
     if ([WebView _canHandleRequest:request]) {
@@ -148,7 +156,7 @@ typedef enum {
 }
 
 
-- (void)webView:(WebView *)sender decidePolicyForNewWindowAction:(NSDictionary *)actionInformation request:(NSURLRequest *)request newFrameName:(NSString *)frameName decisionListener:(id<WebPolicyDecisionListener>)listener {
+- (void)webView:(WebView *)wv decidePolicyForNewWindowAction:(NSDictionary *)actionInformation request:(NSURLRequest *)request newFrameName:(NSString *)frameName decisionListener:(id<WebPolicyDecisionListener>)listener {
 	
 	if ([@"_blank" isEqualToString:frameName] || [@"_new" isEqualToString:frameName]) { // force new window
 		[listener use];
@@ -156,21 +164,11 @@ typedef enum {
 	}
 	
 	// look for existing frame with this name. if found, use it
-	NSWindow *existingWindow = nil;
-	WebFrame *existingFrame = nil;
-	
-	for (NSDocument *nsdoc in [[TIAppDelegate instance] documents]) {
-		TIBrowserDocument *doc = (TIBrowserDocument *)nsdoc;
-		existingFrame = [[[doc webView] mainFrame] findFrameNamed:frameName];
-		if (existingFrame) {
-			existingWindow = [[doc browserWindowController] window];
-			break;
-		}
-	}
+	WebFrame *existingFrame = [[TIAppDelegate instance] findFrameNamed:frameName];
 	
 	if (existingFrame) {
-		// found an existing frame with frameName. use it
-		[existingWindow makeKeyAndOrderFront:self];
+		// found an existing frame with frameName. use it, and suppress new window creation
+		[[[existingFrame webView] window] makeKeyAndOrderFront:self];
 		[existingFrame loadRequest:request];
 		[listener ignore];
 	} else {
@@ -180,7 +178,7 @@ typedef enum {
 }
 
 
-- (void)webView:(WebView *)sender decidePolicyForMIMEType:(NSString *)type request:(NSURLRequest *)request frame:(WebFrame *)frame decisionListener:(id<WebPolicyDecisionListener>)listener {
+- (void)webView:(WebView *)wv decidePolicyForMIMEType:(NSString *)type request:(NSURLRequest *)request frame:(WebFrame *)frame decisionListener:(id<WebPolicyDecisionListener>)listener {
     id response = [[frame provisionalDataSource] response];
 	
     if (response && [response respondsToSelector:@selector(allHeaderFields)]) {
@@ -227,13 +225,94 @@ typedef enum {
 #pragma mark -
 #pragma mark WebUIDelegate
 
-- (WebView *)webView:(WebView *)sender createWebViewWithRequest:(NSURLRequest *)request {
-	TIBrowserDocument *doc = [[TIAppDelegate instance] newDocumentWithRequest:request makeKey:YES];
+- (void)webViewClose:(WebView *)wv {
+	[[wv window] close];
+}
+
+
+- (void)webViewFocus:(WebView *)wv {
+	[[wv window] makeKeyAndOrderFront:wv];
+}
+
+
+- (void)webViewUnfocus:(WebView *)wv {
+	if ([[wv window] isKeyWindow] || [[[wv window] attachedSheet] isKeyWindow]) {
+		[NSApp _cycleWindowsReversed:FALSE];
+	}
+}
+
+
+- (NSResponder *)webViewFirstResponder:(WebView *)wv {
+	return [[wv window] firstResponder];
+}
+
+
+- (void)webView:(WebView *)wv makeFirstResponder:(NSResponder *)responder {
+	[[wv window] makeFirstResponder:responder];
+}
+
+
+- (NSString *)webViewStatusText:(WebView *)wv {
+	return nil;
+}
+
+
+- (BOOL)webViewIsResizable:(WebView *)wv {
+	return [[wv window] showsResizeIndicator];
+}
+
+
+- (void)webView:(WebView *)wv setResizable:(BOOL)resizable; {
+    // FIXME: This doesn't actually change the resizability of the window,
+    // only visibility of the indicator.
+    [[wv window] setShowsResizeIndicator:resizable];
+}
+
+
+- (void)webView:(WebView *)wv setFrame:(NSRect)frame {
+	[[wv window] setFrame:frame display:YES];
+}
+
+
+- (NSRect)webViewFrame:(WebView *)wv {
+	NSWindow *window = [wv window];
+	return window == nil ? NSZeroRect : [window frame];
+}
+
+
+- (BOOL)webViewAreToolbarsVisible:(WebView *)wv {
+	return NO;
+}
+
+
+- (BOOL)webViewIsStatusBarVisible:(WebView *)wv {
+	return NO;
+}
+
+
+- (WebView *)webView:(WebView *)wv createWebViewWithRequest:(NSURLRequest *)request {
+	return [self webView:wv createWebViewWithRequest:request windowFeatures:nil];
+}
+
+
+- (WebView *)webView:(WebView *)wv createWebViewWithRequest:(NSURLRequest *)request windowFeatures:(NSDictionary *)features {
+//	WebFrame *existingFrame = [[TIAppDelegate instance] findFrameNamed:frameName];
+//	if (existingFrame) {
+//		
+//	} else {
+//		
+//	}
+	TIBrowserDocument *doc = [[TIAppDelegate instance] newDocumentWithRequest:request display:NO];
 	return [doc webView];
 }
 
 
-- (void)webView:(WebView *)sender runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WebFrame *)frame {
+- (void)webViewShow:(WebView *)wv {
+	[[wv window] makeKeyAndOrderFront:self];
+}
+
+
+- (void)webView:(WebView *)wv runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WebFrame *)frame {
 	NSRunInformationalAlertPanel(NSLocalizedString(@"JavaScript", @""),	// title
 								 message,								// message
 								 NSLocalizedString(@"OK", @""),			// default button
@@ -242,7 +321,7 @@ typedef enum {
 }
 
 
-- (BOOL)webView:(WebView *)sender runJavaScriptConfirmPanelWithMessage:(NSString *)message initiatedByFrame:(WebFrame *)frame {
+- (BOOL)webView:(WebView *)wv runJavaScriptConfirmPanelWithMessage:(NSString *)message initiatedByFrame:(WebFrame *)frame {
 	NSInteger result = NSRunInformationalAlertPanel(NSLocalizedString(@"JavaScript", @""),	// title
 													message,								// message
 													NSLocalizedString(@"OK", @""),			// default button
@@ -252,7 +331,7 @@ typedef enum {
 }
 
 
-- (NSString *)webView:(WebView *)sender runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText initiatedByFrame:(WebFrame *)frame {
+- (NSString *)webView:(WebView *)wv runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText initiatedByFrame:(WebFrame *)frame {
 	TIJavaScriptPromptWindowController *promptController = [[[TIJavaScriptPromptWindowController alloc] initWithWindowNibName:@"JavaScriptPromptWindow"] autorelease];
 	[promptController setLabelText:prompt];
 	[promptController setUserText:defaultText];
@@ -269,7 +348,7 @@ typedef enum {
 }
 
 
-- (BOOL)webView:(WebView *)sender runBeforeUnloadConfirmPanelWithMessage:(NSString *)message initiatedByFrame:(WebFrame *)frame {
+- (BOOL)webView:(WebView *)wv runBeforeUnloadConfirmPanelWithMessage:(NSString *)message initiatedByFrame:(WebFrame *)frame {
 	NSInteger result = NSRunInformationalAlertPanel(NSLocalizedString(@"JavaScript", @""),	// title
 													message,								// message
 													NSLocalizedString(@"OK", @""),			// default button
@@ -279,7 +358,7 @@ typedef enum {
 }
 
 
-- (void)webView:(WebView *)sender runOpenPanelForFileButtonWithResultListener:(id <WebOpenPanelResultListener>)resultListener {
+- (void)webView:(WebView *)wv runOpenPanelForFileButtonWithResultListener:(id <WebOpenPanelResultListener>)resultListener {
 	NSOpenPanel *openPanel = [NSOpenPanel openPanel];
 	[openPanel beginSheetForDirectory:nil 
 								 file:nil 
@@ -295,6 +374,35 @@ typedef enum {
 	if (NSOKButton == returnCode) {
 		[resultListener chooseFilename:[openPanel filename]];
 	}
+}
+
+
+- (BOOL)webView:(WebView *)wv shouldReplaceUploadFile:(NSString *)path usingGeneratedFilename:(NSString **)filename {
+    return NO;
+}
+
+
+- (NSString *)webView:(WebView *)wv generateReplacementFile:(NSString *)path {
+	return nil;
+}
+
+
+- (BOOL)webView:(WebView *)wv shouldBeginDragForElement:(NSDictionary *)element dragImage:(NSImage *)dragImage mouseDownEvent:(NSEvent *)mouseDownEvent mouseDraggedEvent:(NSEvent *)mouseDraggedEvent {
+	return YES;
+}
+
+
+- (NSUInteger)webView:(WebView *)wv dragDestinationActionMaskForDraggingInfo:(id <NSDraggingInfo>)draggingInfo {
+	return WebDragDestinationActionAny;
+}
+
+
+- (void)webView:(WebView *)webView willPerformDragDestinationAction:(WebDragDestinationAction)action forDraggingInfo:(id <NSDraggingInfo>)draggingInfo {
+}
+
+
+- (NSUInteger)webView:(WebView *)wv dragSourceActionMaskForPoint:(NSPoint)point; {
+	return WebDragSourceActionAny;
 }
 
 
