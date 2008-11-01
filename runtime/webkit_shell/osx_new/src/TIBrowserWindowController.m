@@ -10,6 +10,7 @@
 #import "TIAppDelegate.h"
 #import "TIBrowserDocument.h"
 #import "TIJavaScriptObject.h"
+#import "TIJavaScriptPromptWindowController.h"
 #import <WebKit/WebKit.h>
 
 typedef enum {
@@ -220,8 +221,19 @@ typedef enum {
 
 
 - (NSString *)webView:(WebView *)sender runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText initiatedByFrame:(WebFrame *)frame {
-	// TODO
-	return nil;
+	TIJavaScriptPromptWindowController *promptController = [[[TIJavaScriptPromptWindowController alloc] initWithWindowNibName:@"JavaScriptPromptWindow"] autorelease];
+	[promptController setLabelText:prompt];
+	[promptController setUserText:defaultText];
+	
+	[promptController showWindow:self];
+
+	NSInteger result = [NSApp runModalForWindow:[promptController window]];
+	
+	if (NSOKButton == result) {
+		return [promptController userText];
+	} else {
+		return nil;
+	}
 }
 
 
