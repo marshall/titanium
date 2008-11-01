@@ -13,8 +13,9 @@
 
 @interface TIBrowserDocument : NSDocument {
 	TIBrowserWindowController *browserWindowController;
+	BOOL isFirst;
 }
-
+- (BOOL)isFirst;
 - (void)loadRequest:(NSURLRequest *)request;
 - (TIBrowserWindowController *)browserWindowController;
 - (WebView *)webView;

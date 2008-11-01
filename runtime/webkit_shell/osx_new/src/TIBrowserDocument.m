@@ -11,6 +11,10 @@
 #import "TIAppDelegate.h"
 #import <WebKit/WebKit.h>
 
+@interface TIBrowserDocument (Friend)
+- (void)setIsFirst:(BOOL)yn;
+@end
+
 @implementation TIBrowserDocument
 
 - (id)init {
@@ -57,6 +61,19 @@
 
 - (TIBrowserWindowController *)browserWindowController {
 	return browserWindowController;
+}
+
+
+#pragma mark -
+#pragma mark Accessors
+
+- (BOOL)isFirst {
+	return isFirst;
+}
+
+
+- (void)setIsFirst:(BOOL)yn {
+	isFirst = yn;
 }
 
 

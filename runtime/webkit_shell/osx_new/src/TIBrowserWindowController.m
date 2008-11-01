@@ -42,7 +42,12 @@ typedef enum {
 
 
 - (void)awakeFromNib {
-	[[self window] center];
+	if ([self isFirst]) {
+		CGFloat w = [[TIAppDelegate instance] windowWidth];
+		CGFloat h = [[TIAppDelegate instance] windowHeight];
+		[[self window] setFrame:NSMakeRect(0.0, 0.0, w, h) display:NO];
+		[[self window] center];
+	}
 }
 
 
@@ -295,6 +300,12 @@ typedef enum {
 
 #pragma mark -
 #pragma mark Accessors
+
+- (BOOL)isFirst {
+	TIBrowserDocument *doc = (TIBrowserDocument *)[self document];
+	return [doc isFirst];
+}
+
 
 - (WebView *)webView {
 	return webView;

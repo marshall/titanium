@@ -42,6 +42,10 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 	return [[el attributeForName:name] stringValue];
 }
 
+@interface TIBrowserDocument (Friend)
+- (void)setIsFirst:(BOOL)yn;
+@end
+
 @interface TIAppDelegate (Private)
 - (void)parseTiAppXml;
 - (void)loadFirstPage;
@@ -128,6 +132,7 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 			if (!hasBeenCalled) {
 				hasBeenCalled = YES;
 				firstDocument = doc;
+				[doc setIsFirst:YES];
 			}
 		}
 	}
