@@ -109,8 +109,8 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 	[newDoc loadRequest:request];
 	
 	if (!makeKey) {
-		NSWindow *oldWindow = [[[oldDoc windowControllers] objectAtIndex:0] window];
-		NSWindow *newWindow = [[[newDoc windowControllers] objectAtIndex:0] window];;
+		NSWindow *oldWindow = [[oldDoc browserWindowController] window];
+		NSWindow *newWindow = [[newDoc browserWindowController] window];
 		[newWindow orderWindow:NSWindowBelow relativeTo:oldWindow.windowNumber];
 	}
 	
@@ -212,10 +212,8 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 
 - (void)updateAppNameInMainMenu {
 	// fixup App Menu
-	NSMenuItem *appMenuItem = [[NSApp mainMenu] itemAtIndex:0];
-	[appMenuItem setTitle:appName];
-	
-	NSMenu *appMenu = [appMenuItem submenu];
+	NSMenu *appMenu = [[[NSApp mainMenu] itemAtIndex:0] submenu];
+
 	NSMenuItem *aboutItem = [appMenu itemWithTitle:NSLocalizedString(@"About Titanium", @"")];
 	[aboutItem setTitle:[NSString stringWithFormat:@"%@ %@", NSLocalizedString(@"About", @""), appName]];
 
