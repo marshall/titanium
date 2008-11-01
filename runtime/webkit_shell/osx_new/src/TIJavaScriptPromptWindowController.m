@@ -34,6 +34,7 @@
 - (IBAction)showWindow:(id)sender {
 	[super showWindow:sender];
 	[[self window] center];
+	[textView selectAll:self];
 }
 
 

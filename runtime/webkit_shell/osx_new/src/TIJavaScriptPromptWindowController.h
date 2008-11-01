@@ -9,6 +9,7 @@
 #import <Cocoa/Cocoa.h>
 
 @interface TIJavaScriptPromptWindowController : NSWindowController {
+	IBOutlet NSTextView *textView;
 	NSString *labelText;
 	NSString *userText;
 }
