@@ -121,12 +121,8 @@
 				D31B34DC0EBBE908006F3012 /* TIBrowserDocument.m */,
 				D31B34D80EBBE8E7006F3012 /* TIBrowserWindowController.h */,
 				D31B34D90EBBE8E7006F3012 /* TIBrowserWindowController.m */,
-				D31B34F80EBBED00006F3012 /* TIPreferencesWindowController.h */,
-				D31B34F90EBBED00006F3012 /* TIPreferencesWindowController.m */,
-				D31B35460EBBF093006F3012 /* TIJavaScriptObject.h */,
-				D31B35470EBBF093006F3012 /* TIJavaScriptObject.m */,
-				D31B38860EBCE61D006F3012 /* TIJavaScriptPromptWindowController.h */,
-				D31B38870EBCE61D006F3012 /* TIJavaScriptPromptWindowController.m */,
+				D31B393E0EBCFA53006F3012 /* JavaScript Bridge */,
+				D31B393D0EBCFA3A006F3012 /* Auxiliary Windows */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -164,6 +160,26 @@
 				1058C7A8FEA54F5311CA2CBB /* Other Frameworks */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		D31B393D0EBCFA3A006F3012 /* Auxiliary Windows */ = {
+			isa = PBXGroup;
+			children = (
+				D31B34F80EBBED00006F3012 /* TIPreferencesWindowController.h */,
+				D31B34F90EBBED00006F3012 /* TIPreferencesWindowController.m */,
+				D31B38860EBCE61D006F3012 /* TIJavaScriptPromptWindowController.h */,
+				D31B38870EBCE61D006F3012 /* TIJavaScriptPromptWindowController.m */,
+			);
+			name = "Auxiliary Windows";
+			sourceTree = "<group>";
+		};
+		D31B393E0EBCFA53006F3012 /* JavaScript Bridge */ = {
+			isa = PBXGroup;
+			children = (
+				D31B35460EBBF093006F3012 /* TIJavaScriptObject.h */,
+				D31B35470EBBF093006F3012 /* TIJavaScriptObject.m */,
+			);
+			name = "JavaScript Bridge";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

@@ -49,6 +49,7 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 @interface TIAppDelegate (Private)
 - (void)parseTiAppXml;
 - (void)loadFirstPage;
+- (void)updateAppNameInMainMenu;
 @end
 
 @implementation TIAppDelegate
@@ -77,6 +78,7 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 
 - (void)awakeFromNib {
 	[self parseTiAppXml];
+	[self updateAppNameInMainMenu];
 }
 
 
@@ -205,6 +207,29 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 	} else {
 		NSLog(@"Error: could not load base url");
 	}
+}
+
+
+- (void)updateAppNameInMainMenu {
+	// fixup App Menu
+	NSMenuItem *appMenuItem = [[NSApp mainMenu] itemAtIndex:0];
+	[appMenuItem setTitle:appName];
+	
+	NSMenu *appMenu = [appMenuItem submenu];
+	NSMenuItem *aboutItem = [appMenu itemWithTitle:NSLocalizedString(@"About Titanium", @"")];
+	[aboutItem setTitle:[NSString stringWithFormat:@"%@ %@", NSLocalizedString(@"About", @""), appName]];
+
+	NSMenuItem *hideItem = [appMenu itemWithTitle:NSLocalizedString(@"Hide Titanium", @"")];
+	[hideItem setTitle:[NSString stringWithFormat:@"%@ %@", NSLocalizedString(@"Hide", @""), appName]];
+
+	NSMenuItem *quitItem = [appMenu itemWithTitle:NSLocalizedString(@"Quit Titanium", @"")];
+	[quitItem setTitle:[NSString stringWithFormat:@"%@ %@", NSLocalizedString(@"Quit", @""), appName]];
+
+	// fixup Help Menu
+	NSMenu *helpMenu = [[[NSApp mainMenu] itemWithTitle:NSLocalizedString(@"Help", @"")] submenu];
+
+	NSMenuItem *helpItem = [helpMenu itemWithTitle:NSLocalizedString(@"Titanium Help", @"")];
+	[helpItem setTitle:[NSString stringWithFormat:@"%@ %@", appName, NSLocalizedString(@"Help", @"")]];
 }
 
 
