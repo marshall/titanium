@@ -9,11 +9,12 @@
 #import <Cocoa/Cocoa.h>
 
 @class TIAppDelegate;
+@class TIBrowserDocument;
 @class TIBrowserWindowController;
 
 TIBrowserWindowController *TIFrontController();
 
-@interface TIAppDelegate : NSObject {
+@interface TIAppDelegate : NSDocumentController {
 	CGFloat windowWidth;
 	CGFloat windowHeight;
 	NSString *endpoint;
@@ -24,6 +25,9 @@ TIBrowserWindowController *TIFrontController();
 + (id)instance;
 
 - (IBAction)showPreferencesWindow:(id)sender;
+
+- (TIBrowserDocument *)newDocumentWithRequest:(NSURLRequest *)request makeKey:(BOOL)makeKey;
+
 - (void)parseTiAppXml;
 
 - (CGFloat)windowWidth;

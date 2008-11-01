@@ -7,8 +7,9 @@
 //
 
 #import "TIBrowserWindowController.h"
+#import "TIAppDelegate.h"
+#import "TIBrowserDocument.h"
 #import "TIJavaScriptObject.h"
-#import "NSDocumentController+TIAdditions.h"
 #import <WebKit/WebKit.h>
 
 typedef enum {
@@ -56,7 +57,7 @@ typedef enum {
 
 
 - (void)includeScript:(NSString*)path {
-	DOMDocument *doc = [[webView windowScriptObject] valueForKey:@"document"];
+	DOMDocument *doc = [webView mainFrameDocument];
 	if (!doc) return;
 
 	DOMNodeList *headEls = [doc getElementsByTagName:@"head"];
@@ -194,8 +195,7 @@ typedef enum {
 #pragma mark WebUIDelegate
 
 - (WebView *)webView:(WebView *)sender createWebViewWithRequest:(NSURLRequest *)request {
-	NSDocumentController *docController = [NSDocumentController sharedDocumentController];
-	TIBrowserDocument *doc = [docController newDocumentWithRequest:request makeKey:YES];
+	TIBrowserDocument *doc = [[TIAppDelegate instance] newDocumentWithRequest:request makeKey:YES];
 	return [doc webView];
 }
 

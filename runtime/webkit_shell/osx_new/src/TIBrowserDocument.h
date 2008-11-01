@@ -9,9 +9,13 @@
 #import <Cocoa/Cocoa.h>
 
 @class WebView;
+@class TIBrowserWindowController;
 
 @interface TIBrowserDocument : NSDocument {
-
+	TIBrowserWindowController *browserWindowController;
 }
+
+- (void)loadRequest:(NSURLRequest *)request;
+- (TIBrowserWindowController *)browserWindowController;
 - (WebView *)webView;
 @end

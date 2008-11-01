@@ -8,6 +8,7 @@
 
 #import "TIBrowserDocument.h"
 #import "TIBrowserWindowController.h"
+#import "TIAppDelegate.h"
 #import <WebKit/WebKit.h>
 
 @implementation TIBrowserDocument
@@ -21,14 +22,18 @@
 
 
 - (void)dealloc {
+	browserWindowController = nil;
 	[super dealloc];
 }
 
 
+#pragma mark -
+#pragma mark NSDocument
+
 - (void)makeWindowControllers {
-	TIBrowserWindowController *winController = [[TIBrowserWindowController alloc] initWithWindowNibName:@"BrowserWindow"];
-	[self addWindowController:winController];
-	[winController release];
+	browserWindowController = [[TIBrowserWindowController alloc] initWithWindowNibName:@"BrowserWindow"];
+	[self addWindowController:browserWindowController];
+	[browserWindowController release];
 }
 
 
@@ -37,13 +42,26 @@
 }
 
 
+- (NSString *)displayName {
+	return [[TIAppDelegate instance] windowTitle];
+}
+
+
+#pragma mark -
+#pragma mark Public
+
+- (void)loadRequest:(NSURLRequest *)request {
+	[[[self webView] mainFrame] loadRequest:request];
+}
+
+
+- (TIBrowserWindowController *)browserWindowController {
+	return browserWindowController;
+}
+
+
 - (WebView *)webView {
-	if ([[self windowControllers] count]) {
-		TIBrowserWindowController *winController = [[self windowControllers] objectAtIndex:0];
-		return [winController webView];
-	} else {
-		return nil;
-	}
+	return [browserWindowController webView];
 }
 
 @end

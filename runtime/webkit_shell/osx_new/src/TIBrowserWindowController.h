@@ -13,6 +13,7 @@
 @interface TIBrowserWindowController : NSWindowController {
 	IBOutlet WebView *webView;
 }
+
 - (void)loadRequest:(NSURLRequest *)request;
 - (WebView *)webView;
 @end

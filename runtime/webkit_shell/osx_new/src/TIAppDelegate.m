@@ -7,13 +7,20 @@
 //
 
 #import "TIAppDelegate.h"
+#import "TIBrowserDocument.h"
 #import "TIBrowserWindowController.h"
 #import "TIPreferencesWindowController.h"
 
+static TIBrowserDocument *firstDocument = nil;
+
+TIBrowserWindowController *TIFirstController() {
+	return [firstDocument browserWindowController];
+}
+
 TIBrowserWindowController *TIFrontController() {
-	NSWindow *mainWindow = [NSApp mainWindow];
-	if (mainWindow) {
-		return (TIBrowserWindowController *)[mainWindow windowController];
+	TIBrowserDocument *doc = (TIBrowserDocument *)[[TIAppDelegate instance] currentDocument];
+	if (doc) {
+		return [doc browserWindowController];
 	} else {
 		return nil;
 	}
@@ -64,9 +71,13 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 }
 
 
-- (void)applicationDidFinishLaunching:(NSNotification *)n {
+- (void)awakeFromNib {
 	[self parseTiAppXml];
-	[self loadFirstPage];
+}
+
+
+- (void)applicationDidFinishLaunching:(NSNotification *)n {
+	[self loadFirstPage];	
 }
 
 
@@ -75,6 +86,53 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 
 - (IBAction)showPreferencesWindow:(id)sender {
 	[[TIPreferencesWindowController instance] showWindow:sender];
+}
+
+
+#pragma mark -
+#pragma mark Public
+
+- (TIBrowserDocument *)newDocumentWithRequest:(NSURLRequest *)request makeKey:(BOOL)makeKey {
+	TIBrowserDocument *oldDoc = [self currentDocument];
+	TIBrowserDocument *newDoc = [self openUntitledDocumentAndDisplay:makeKey error:nil];
+	
+	if (!makeKey) {
+		[newDoc makeWindowControllers];
+	}
+	
+	[newDoc loadRequest:request];
+	
+	if (!makeKey) {
+		NSWindow *oldWindow = [[[oldDoc windowControllers] objectAtIndex:0] window];
+		NSWindow *newWindow = [[[newDoc windowControllers] objectAtIndex:0] window];;
+		[newWindow orderWindow:NSWindowBelow relativeTo:oldWindow.windowNumber];
+	}
+	
+	return newDoc;
+}
+
+
+#pragma mark -
+#pragma mark NSDocumentController
+
+- (id)makeUntitledDocumentOfType:(NSString *)typeName error:(NSError **)outError {
+	id result = [super makeUntitledDocumentOfType:typeName error:outError];
+	
+	if ([typeName isEqualToString:@"DocumentType"]) {
+		TIBrowserDocument *doc = (TIBrowserDocument *)result;
+
+		// the first time a browser document is created, keep a reference to it as the 'firstDocument'
+		static BOOL hasBeenCalled = NO;
+		
+		@synchronized (self) {
+			if (!hasBeenCalled) {
+				hasBeenCalled = YES;
+				firstDocument = doc;
+			}
+		}
+	}
+	
+	return result;
 }
 
 
@@ -175,6 +233,7 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 		endpoint = [s copy];
 	}
 }
+
 
 - (NSString *)appName {
 	return [[appName copy] autorelease];

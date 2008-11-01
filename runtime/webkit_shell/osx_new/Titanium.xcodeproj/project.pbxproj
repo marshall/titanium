@@ -20,7 +20,6 @@
 		D31B34FA0EBBED00006F3012 /* TIPreferencesWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = D31B34F90EBBED00006F3012 /* TIPreferencesWindowController.m */; };
 		D31B35000EBBEE04006F3012 /* PreferencesWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = D31B34FE0EBBEE04006F3012 /* PreferencesWindow.xib */; };
 		D31B35480EBBF093006F3012 /* TIJavaScriptObject.m in Sources */ = {isa = PBXBuildFile; fileRef = D31B35470EBBF093006F3012 /* TIJavaScriptObject.m */; };
-		D31B35F90EBC05B2006F3012 /* NSDocumentController+TIAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = D31B35F80EBC05B2006F3012 /* NSDocumentController+TIAdditions.m */; };
 		D31B36280EBC07C1006F3012 /* tiapp.xml in Resources */ = {isa = PBXBuildFile; fileRef = D31B36270EBC07C1006F3012 /* tiapp.xml */; };
 		D31B36390EBC0832006F3012 /* index.html in Resources */ = {isa = PBXBuildFile; fileRef = D31B36380EBC0832006F3012 /* index.html */; };
 		D31B36650EBC0946006F3012 /* appcelerator.icns in Resources */ = {isa = PBXBuildFile; fileRef = D31B36640EBC0946006F3012 /* appcelerator.icns */; };
@@ -51,8 +50,6 @@
 		D31B34FF0EBBEE04006F3012 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/PreferencesWindow.xib; sourceTree = "<group>"; };
 		D31B35460EBBF093006F3012 /* TIJavaScriptObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TIJavaScriptObject.h; path = src/TIJavaScriptObject.h; sourceTree = "<group>"; };
 		D31B35470EBBF093006F3012 /* TIJavaScriptObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TIJavaScriptObject.m; path = src/TIJavaScriptObject.m; sourceTree = "<group>"; };
-		D31B35F70EBC05B2006F3012 /* NSDocumentController+TIAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSDocumentController+TIAdditions.h"; path = "src/NSDocumentController+TIAdditions.h"; sourceTree = "<group>"; };
-		D31B35F80EBC05B2006F3012 /* NSDocumentController+TIAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSDocumentController+TIAdditions.m"; path = "src/NSDocumentController+TIAdditions.m"; sourceTree = "<group>"; };
 		D31B36270EBC07C1006F3012 /* tiapp.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = tiapp.xml; path = res/tiapp.xml; sourceTree = "<group>"; };
 		D31B36380EBC0832006F3012 /* index.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = index.html; path = res/index.html; sourceTree = "<group>"; };
 		D31B36640EBC0946006F3012 /* appcelerator.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = appcelerator.icns; path = res/appcelerator.icns; sourceTree = "<group>"; };
@@ -113,8 +110,6 @@
 		2A37F4ABFDCFA73011CA2CEA /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				D31B35F70EBC05B2006F3012 /* NSDocumentController+TIAdditions.h */,
-				D31B35F80EBC05B2006F3012 /* NSDocumentController+TIAdditions.m */,
 				D31B34F40EBBEB9E006F3012 /* TIAppDelegate.h */,
 				D31B34F50EBBEB9E006F3012 /* TIAppDelegate.m */,
 				D31B34DB0EBBE908006F3012 /* TIBrowserDocument.h */,
@@ -230,7 +225,6 @@
 				D31B34F60EBBEB9E006F3012 /* TIAppDelegate.m in Sources */,
 				D31B34FA0EBBED00006F3012 /* TIPreferencesWindowController.m in Sources */,
 				D31B35480EBBF093006F3012 /* TIJavaScriptObject.m in Sources */,
-				D31B35F90EBC05B2006F3012 /* NSDocumentController+TIAdditions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
