@@ -12,6 +12,7 @@
 @class TIBrowserDocument;
 @class TIBrowserWindowController;
 
+TIBrowserWindowController *TIFirstController();
 TIBrowserWindowController *TIFrontController();
 
 @interface TIAppDelegate : NSDocumentController {

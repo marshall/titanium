@@ -118,7 +118,7 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 - (id)makeUntitledDocumentOfType:(NSString *)typeName error:(NSError **)outError {
 	id result = [super makeUntitledDocumentOfType:typeName error:outError];
 	
-	if ([typeName isEqualToString:@"DocumentType"]) {
+	if ([typeName isEqualToString:@"BrowserDocument"]) {
 		TIBrowserDocument *doc = (TIBrowserDocument *)result;
 
 		// the first time a browser document is created, keep a reference to it as the 'firstDocument'
