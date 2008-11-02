@@ -107,6 +107,7 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 		return nil;
 	}
 	
+	
 	if (!display) {
 		[newDoc makeWindowControllers];
 		[[newDoc browserWindowController] window]; // force window loading from nib
@@ -207,7 +208,7 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 		NSURLRequest *request = [NSURLRequest requestWithURL:url];
 		
 		// set display:NO so we don't show the first window until the first page has loaded.
-		// this avoids seeing ugly loading on launch.
+		// this avoids seeing ugly loading on launch. show window in webView:didFinishLoadForFrame:
 		firstDocument = [self newDocumentWithRequest:request display:NO];
 		[firstDocument setIsFirst:YES];
 	} else {

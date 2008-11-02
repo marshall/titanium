@@ -1,4 +1,6 @@
 <p><a href="http://google.com" target="_self">_self</a>
+<p><a href="http://google.com" target="_parent">_parent</a>
+<p><a href="http://google.com" target="_top">_top</a>
 <p><a href="http://google.com" target="_new">_new</a>
 <p><a href="http://google.com" target="_blank">_blank</a>
 <p><a href="http://google.com" target="foobar">foobar</a>
@@ -9,3 +11,5 @@
 <p><button onclick="var res = prompt('I CAN HAZ...', 'CHEEZBURGER'); setTimeout(function(){alert(res);}, 0);">PROMPT</a>
 
 <p><button onclick="window.open('http://google.com');">window.open('google.com')</button>
+<p><button onclick="window.open('http://google.com', '_new', 'scrollbars=yes,fullscreen=yes,left=500,top=100,width=200,height=30,resizable=no');">window.open('google.com', '_new', features)</button>
+

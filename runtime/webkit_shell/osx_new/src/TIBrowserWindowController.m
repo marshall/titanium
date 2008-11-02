@@ -28,6 +28,7 @@ typedef enum {
 @interface TIBrowserWindowController (Private)
 - (WebView *)webView:(WebView *)wv createWebViewWithRequest:(NSURLRequest *)request windowFeatures:(NSDictionary *)features;
 - (void)openPanelDidEnd:(NSSavePanel *)openPanel returnCode:(int)returnCode contextInfo:(void *)contextInfo;
+- (void)showWindowIfFirst;
 @end
 
 @implementation TIBrowserWindowController
@@ -88,6 +89,17 @@ typedef enum {
 
 
 #pragma mark -
+#pragma mark Private
+
+- (void)showWindowIfFirst {
+	// we don't show the first window until the first page has loaded. avoids seeing ugly loading on launch
+	if ([self isFirst] && ![[self window] isVisible]) {
+		[[self window] makeKeyAndOrderFront:self];
+	}
+}
+
+
+#pragma mark -
 #pragma mark WebFrameLoadDelegate
 
 - (void)webView:(WebView *)wv didStartProvisionalLoadForFrame:(WebFrame *)frame {
@@ -96,7 +108,7 @@ typedef enum {
 
 
 - (void)webView:(WebView *)wv didFailProvisionalLoadWithError:(NSError *)error forFrame:(WebFrame *)frame {
-	if (webView != wv) return;
+	if (frame != [webView mainFrame]) return;
 	[self handleLoadError:error];
 }
 
@@ -112,21 +124,19 @@ typedef enum {
 
 
 - (void)webView:(WebView *)wv didFinishLoadForFrame:(WebFrame *)frame {
-	// we don't show the first window until the first page has loaded. avoids seeing ugly loading on launch
-	if ([self isFirst] && ![[self window] isVisible]) {
-		[[self window] makeKeyAndOrderFront:self];
-	}
+	if (frame != [webView mainFrame]) return;
+	[self showWindowIfFirst];
 }
 
 
 - (void)webView:(WebView *)wv didFailLoadWithError:(NSError *)error forFrame:(WebFrame *)frame {
-	if (webView != wv) return;
+	if (frame != [webView mainFrame]) return;
 	[self handleLoadError:error];
 }
 
 
 - (void)webView:(WebView *)wv windowScriptObjectAvailable:(WebScriptObject *)windowScriptObject {
-	if (webView != wv) return;
+	if (wv != webView) return;
 	TIJavaScriptObject *javaScriptObject = [[TIJavaScriptObject alloc] initWithWebView:webView];
 	[windowScriptObject setValue:javaScriptObject forKey:@"TiNative"];
 	[javaScriptObject include:@"titanium/titanium.js"];
@@ -296,13 +306,43 @@ typedef enum {
 
 
 - (WebView *)webView:(WebView *)wv createWebViewWithRequest:(NSURLRequest *)request windowFeatures:(NSDictionary *)features {
-//	WebFrame *existingFrame = [[TIAppDelegate instance] findFrameNamed:frameName];
-//	if (existingFrame) {
-//		
-//	} else {
-//		
-//	}
+	// TODO handle fullscreen feature
+	//BOOL fullscreen = [[features objectForKey:@"fullscreen"] boolValue];
+
 	TIBrowserDocument *doc = [[TIAppDelegate instance] newDocumentWithRequest:request display:NO];
+	
+	// handle frame features
+	id xObj = [features objectForKey:@"x"];
+	id yObj = [features objectForKey:@"y"];
+	id wObj = [features objectForKey:@"width"];
+	id hObj = [features objectForKey:@"height"];
+	
+	NSWindow *window = [[doc browserWindowController] window];
+	NSRect winFrame = [window frame];
+	NSRect screenFrame = [[window screen] frame];
+
+	CGFloat y = yObj ? [yObj floatValue] : winFrame.origin.y;
+	CGFloat w = wObj ? [wObj floatValue] : winFrame.size.width;
+	CGFloat h = hObj ? [hObj floatValue] : winFrame.size.height;
+
+	// Cocoa screen coords are from bottom left. but web coords are top right. must convert origin.x
+	CGFloat x = winFrame.origin.x;
+	if (xObj) {
+		x = [xObj floatValue];
+		x = screenFrame.size.height - x - h;
+	}
+
+	[window setFrame:NSMakeRect(x, y, w, h) display:NO];
+	
+	// handle resizable feature
+	// for some reason, this is always reported as 1 by WebKit. dunno why
+//	BOOL resizable = [[features objectForKey:@"resizable"] boolValue];
+//	[window setShowsResizeIndicator:resizable];
+	
+	// handle scrollbars feature
+	BOOL scrollbarsVisible = [[features objectForKey:@"scrollbarsVisible"] boolValue];
+	[[[[doc webView] mainFrame] frameView] setAllowsScrolling:scrollbarsVisible];
+
 	return [doc webView];
 }
 
