@@ -10,6 +10,8 @@
 #import "TIBrowserDocument.h"
 #import "TIBrowserWindowController.h"
 #import "TIPreferencesWindowController.h"
+#import "WebViewPrivate.h"
+#import "WebInspector.h"
 #import <WebKit/WebKit.h>
 
 static TIBrowserDocument *firstDocument = nil;
@@ -52,12 +54,18 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 - (void)loadFirstPage;
 - (void)updateAppNameInMainMenu;
 - (void)setupWebPreferences;
+- (WebInspector *)webInspectorForFrontWindowController;
 @end
 
 @implementation TIAppDelegate
 
 + (id)instance {
 	return [NSApp delegate];
+}
+
+
++ (void)load {
+	[[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"WebKitDeveloperExtras"];
 }
 
 
@@ -95,6 +103,21 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 
 - (IBAction)showPreferencesWindow:(id)sender {
 	[[TIPreferencesWindowController instance] showWindow:sender];
+}
+
+
+- (IBAction)showWebInspector:(id)sender {
+	[[self webInspectorForFrontWindowController] show:sender];
+}
+
+
+- (IBAction)showErrorConsole:(id)sender {
+	[[self webInspectorForFrontWindowController] showConsole:sender];
+}
+
+
+- (IBAction)showNetworkTimeline:(id)sender {
+	[[self webInspectorForFrontWindowController] showTimeline:sender];	
 }
 
 
@@ -252,6 +275,12 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 	[webPrefs setPlugInsEnabled:NO]; // ?? this disallows Flash content
 	[webPrefs setJavaEnabled:NO]; // ?? this disallows Java Craplets
 	[webPrefs setJavaScriptEnabled:YES];
+}
+
+
+- (WebInspector *)webInspectorForFrontWindowController {
+	TIBrowserWindowController *winController = TIFrontController();
+	return [[winController webView] inspector];
 }
 
 

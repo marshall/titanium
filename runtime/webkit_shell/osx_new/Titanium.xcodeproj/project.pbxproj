@@ -58,6 +58,9 @@
 		D31B38810EBCE51D006F3012 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/JavaScriptPromptWindow.xib; sourceTree = "<group>"; };
 		D31B38860EBCE61D006F3012 /* TIJavaScriptPromptWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TIJavaScriptPromptWindowController.h; path = src/TIJavaScriptPromptWindowController.h; sourceTree = "<group>"; };
 		D31B38870EBCE61D006F3012 /* TIJavaScriptPromptWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TIJavaScriptPromptWindowController.m; path = src/TIJavaScriptPromptWindowController.m; sourceTree = "<group>"; };
+		D31B3CDC0EBD71F5006F3012 /* WebInspector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebInspector.h; path = src/WebInspector.h; sourceTree = "<group>"; };
+		D31B3CFA0EBD7530006F3012 /* WebViewPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebViewPrivate.h; path = src/WebViewPrivate.h; sourceTree = "<group>"; };
+		D31B3D070EBD757E006F3012 /* WebFramePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebFramePrivate.h; path = src/WebFramePrivate.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -123,6 +126,7 @@
 				D31B34D90EBBE8E7006F3012 /* TIBrowserWindowController.m */,
 				D31B393E0EBCFA53006F3012 /* JavaScript Bridge */,
 				D31B393D0EBCFA3A006F3012 /* Auxiliary Windows */,
+				D31B3CDD0EBD71FA006F3012 /* WebKitPrivate */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -143,8 +147,8 @@
 				2A37F4B9FDCFA73011CA2CEA /* Credits.rtf */,
 				8D15AC360486D014006FF6A4 /* Info.plist */,
 				089C165FFE840EACC02AAC07 /* InfoPlist.strings */,
-				1DDD58280DA1D0D100B32029 /* BrowserWindow.xib */,
 				1DDD582A0DA1D0D100B32029 /* MainMenu.xib */,
+				1DDD58280DA1D0D100B32029 /* BrowserWindow.xib */,
 				D31B34FE0EBBEE04006F3012 /* PreferencesWindow.xib */,
 				D31B38800EBCE51D006F3012 /* JavaScriptPromptWindow.xib */,
 				D31B36270EBC07C1006F3012 /* tiapp.xml */,
@@ -180,6 +184,16 @@
 				D31B35470EBBF093006F3012 /* TIJavaScriptObject.m */,
 			);
 			name = "JavaScript Bridge";
+			sourceTree = "<group>";
+		};
+		D31B3CDD0EBD71FA006F3012 /* WebKitPrivate */ = {
+			isa = PBXGroup;
+			children = (
+				D31B3CFA0EBD7530006F3012 /* WebViewPrivate.h */,
+				D31B3D070EBD757E006F3012 /* WebFramePrivate.h */,
+				D31B3CDC0EBD71F5006F3012 /* WebInspector.h */,
+			);
+			name = WebKitPrivate;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

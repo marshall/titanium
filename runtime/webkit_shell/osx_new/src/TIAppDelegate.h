@@ -27,6 +27,9 @@ TIBrowserWindowController *TIFrontController();
 + (id)instance;
 
 - (IBAction)showPreferencesWindow:(id)sender;
+- (IBAction)showWebInspector:(id)sender;
+- (IBAction)showErrorConsole:(id)sender;
+- (IBAction)showNetworkTimeline:(id)sender;
 
 - (TIBrowserDocument *)newDocumentWithRequest:(NSURLRequest *)request display:(BOOL)display;
 - (WebFrame *)findFrameNamed:(NSString *)frameName;

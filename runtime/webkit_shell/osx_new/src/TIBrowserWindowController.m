@@ -11,6 +11,7 @@
 #import "TIBrowserDocument.h"
 #import "TIJavaScriptObject.h"
 #import "TIJavaScriptPromptWindowController.h"
+#import "WebViewPrivate.h"
 #import <WebKit/WebKit.h>
 
 @interface NSApplication (DeclarationStolenFromAppKit)
@@ -20,10 +21,6 @@
 typedef enum {
     WebNavigationTypePlugInRequest = WebNavigationTypeOther + 1
 } WebExtraNavigationType;
-
-@interface WebView (TIPrivateAdditions)
-+ (BOOL)_canHandleRequest:(NSURLRequest *)request;
-@end
 
 @interface TIBrowserWindowController (Private)
 - (WebView *)webView:(WebView *)wv createWebViewWithRequest:(NSURLRequest *)request windowFeatures:(NSDictionary *)features;
