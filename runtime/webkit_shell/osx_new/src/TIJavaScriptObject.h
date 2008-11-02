@@ -15,10 +15,11 @@
 }
 - (id)initWithWebView:(WebView *)wv;
 
-- (NSString *)toString;
-
 - (void)include:(NSString *)s;
 - (void)debug:(NSString *)s;
+- (void)minimize;
+- (void)beep;
+- (void)playSoundNamed:(NSString *)s;
 
 - (CGFloat)windowWidth;
 - (CGFloat)windowHeight;

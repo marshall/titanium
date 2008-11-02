@@ -28,18 +28,7 @@
 
 
 - (NSString *)description {
-	return [NSString stringWithFormat:@"<TIJavaScriptObject appName='%@', endpoint='%@', windowTitle='%@', startPath='%@'>",
-			[self appName], [self endpoint], [self windowTitle], [self startPath]];
-}
-
-
-- (NSString *)toString {
 	return @"[TiNative object]";
-}
-
-
-- (void)debug:(NSString *)s {
-	NSLog(@"%@\n", s);
 }
 
 
@@ -48,6 +37,26 @@
 	NSString *scriptPath = [[resPath stringByAppendingPathComponent:@"public"] stringByAppendingPathComponent:s];
 	NSString *script = [NSString stringWithContentsOfFile:scriptPath];
 	[[webView windowScriptObject] evaluateWebScript:script];
+}
+
+
+- (void)debug:(NSString *)s {
+	NSLog(@"%@\n", s);
+}
+
+
+- (void)minimize {
+	[[webView window] miniaturize:self];
+}
+
+
+- (void)beep {
+	NSBeep();
+}
+
+
+- (void)playSoundNamed:(NSString *)s {
+	[[NSSound soundNamed:s] play];
 }
 
 
@@ -67,8 +76,12 @@
 		return @"include";
 	} else if (sel == @selector(debug:)) {
 		return @"debug";
-	} else if (sel == @selector(toString)) {
-		return @"toString";
+	} else if (sel == @selector(minimize)) {
+		return @"minimize";
+	} else if (sel == @selector(beep)) {
+		return @"beep";
+	} else if (sel == @selector(playSoundNamed:)) {
+		return @"playSound";
 	} else if (sel == @selector(windowWidth)) {
 		return @"getWindowWidth";
 	} else if (sel == @selector(windowHeight)) {
