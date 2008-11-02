@@ -51,6 +51,7 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 - (void)parseTiAppXml;
 - (void)loadFirstPage;
 - (void)updateAppNameInMainMenu;
+- (void)setupWebPreferences;
 @end
 
 @implementation TIAppDelegate
@@ -80,6 +81,7 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 - (void)awakeFromNib {
 	[self parseTiAppXml];
 	[self updateAppNameInMainMenu];
+	[self setupWebPreferences];
 }
 
 
@@ -235,6 +237,21 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 
 	NSMenuItem *helpItem = [helpMenu itemWithTitle:NSLocalizedString(@"Titanium Help", @"")];
 	[helpItem setTitle:[NSString stringWithFormat:@"%@ %@", appName, NSLocalizedString(@"Help", @"")]];
+}
+
+
+- (void)setupWebPreferences {
+	WebPreferences *webPrefs = [WebPreferences standardPreferences];
+	// This indicates that WebViews in this app will not browse multiple pages, but rather show a small number.
+	// this reduces memory cache footprint significantly.
+	
+	// if we expect to browse a slightly larger number of documents, we might set this to WebCacheModelDocumentBrowser instead
+	// that would increase memory cache footprint some tho.
+	[webPrefs setCacheModel:WebCacheModelDocumentViewer];
+	
+	[webPrefs setPlugInsEnabled:NO]; // ?? this disallows Flash content
+	[webPrefs setJavaEnabled:NO]; // ?? this disallows Java Craplets
+	[webPrefs setJavaScriptEnabled:YES];
 }
 
 

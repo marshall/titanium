@@ -28,6 +28,8 @@ typedef enum {
 @interface TIBrowserWindowController (Private)
 - (WebView *)webView:(WebView *)wv createWebViewWithRequest:(NSURLRequest *)request windowFeatures:(NSDictionary *)features;
 - (void)openPanelDidEnd:(NSSavePanel *)openPanel returnCode:(int)returnCode contextInfo:(void *)contextInfo;
+- (void)updateWindowFrameIfFirst;
+- (void)customizeUserAgent;
 - (void)showWindowIfFirst;
 @end
 
@@ -48,12 +50,8 @@ typedef enum {
 
 
 - (void)awakeFromNib {
-	if ([self isFirst]) {
-		CGFloat w = [[TIAppDelegate instance] windowWidth];
-		CGFloat h = [[TIAppDelegate instance] windowHeight];
-		[[self window] setFrame:NSMakeRect(0.0, 0.0, w, h) display:NO];
-		[[self window] center];
-	}
+	[self updateWindowFrameIfFirst];
+	[self customizeUserAgent];
 }
 
 
@@ -91,6 +89,23 @@ typedef enum {
 #pragma mark -
 #pragma mark Private
 
+- (void)updateWindowFrameIfFirst {
+	if ([self isFirst]) {
+		CGFloat w = [[TIAppDelegate instance] windowWidth];
+		CGFloat h = [[TIAppDelegate instance] windowHeight];
+		[[self window] setFrame:NSMakeRect(0.0, 0.0, w, h) display:NO];
+		[[self window] center];
+	}
+}
+
+
+- (void)customizeUserAgent {
+	// produces something like:
+	// Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_5_5; en-us) AppleWebKit/525.18 (KHTML, like Gecko) Appcelerator Titanium
+	[webView setApplicationNameForUserAgent:@"Appcelerator Titanium"];	
+}
+
+
 - (void)showWindowIfFirst {
 	// we don't show the first window until the first page has loaded. avoids seeing ugly loading on launch
 	if ([self isFirst] && ![[self window] isVisible]) {
@@ -125,7 +140,7 @@ typedef enum {
 
 - (void)webView:(WebView *)wv didFinishLoadForFrame:(WebFrame *)frame {
 	if (frame != [webView mainFrame]) return;
-	[self showWindowIfFirst];
+	[self performSelector:@selector(showWindowIfFirst) withObject:nil afterDelay:0.0]; // show window in next runloop
 }
 
 
