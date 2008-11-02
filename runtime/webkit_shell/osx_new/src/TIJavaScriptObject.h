@@ -17,6 +17,9 @@
 
 - (void)include:(NSString *)s;
 - (void)debug:(NSString *)s;
+- (void)terminate;
+- (void)activate;
+- (void)hide;
 - (void)minimize;
 - (void)beep;
 - (void)playSoundNamed:(NSString *)s;

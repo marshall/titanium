@@ -45,6 +45,21 @@
 }
 
 
+- (void)terminate {
+	[NSApp terminate:self];
+}
+
+
+- (void)activate {
+	[NSApp activateIgnoringOtherApps:YES];
+}
+
+
+- (void)hide {
+	[NSApp hide:self];
+}
+
+
 - (void)minimize {
 	[[webView window] miniaturize:self];
 }
@@ -76,6 +91,12 @@
 		return @"include";
 	} else if (sel == @selector(debug:)) {
 		return @"debug";
+	} else if (sel == @selector(terminate)) {
+		return @"terminate";
+	} else if (sel == @selector(activate)) {
+		return @"activate";
+	} else if (sel == @selector(hide)) {
+		return @"hide";
 	} else if (sel == @selector(minimize)) {
 		return @"minimize";
 	} else if (sel == @selector(beep)) {
