@@ -50,6 +50,8 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 @end
 
 @interface TIAppDelegate (Private)
++ (void)setupDefaults;
+
 - (void)parseTiAppXml;
 - (void)loadFirstPage;
 - (void)updateAppNameInMainMenu;
@@ -64,8 +66,21 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 }
 
 
-+ (void)load {
-	[[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"WebKitDeveloperExtras"];
++ (void)initialize {
+	[self setupDefaults];
+}
+
+
++ (void)setupDefaults {
+	NSString *path = [[NSBundle mainBundle] pathForResource:@"DefaultValues" ofType:@"plist"];
+
+	NSMutableDictionary *defaultValues = [NSMutableDictionary dictionaryWithContentsOfFile:path];
+	NSLog(@"%@", defaultValues);
+	
+	[[NSUserDefaultsController sharedUserDefaultsController] setInitialValues:defaultValues];
+	
+	[[NSUserDefaults standardUserDefaults] registerDefaults:defaultValues];
+	[[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 

@@ -25,6 +25,7 @@
 		D31B36650EBC0946006F3012 /* appcelerator.icns in Resources */ = {isa = PBXBuildFile; fileRef = D31B36640EBC0946006F3012 /* appcelerator.icns */; };
 		D31B38820EBCE51D006F3012 /* JavaScriptPromptWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = D31B38800EBCE51D006F3012 /* JavaScriptPromptWindow.xib */; };
 		D31B38880EBCE61D006F3012 /* TIJavaScriptPromptWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = D31B38870EBCE61D006F3012 /* TIJavaScriptPromptWindowController.m */; };
+		D31B3D230EBD7DF7006F3012 /* DefaultValues.plist in Resources */ = {isa = PBXBuildFile; fileRef = D31B3D220EBD7DF7006F3012 /* DefaultValues.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -61,6 +62,7 @@
 		D31B3CDC0EBD71F5006F3012 /* WebInspector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebInspector.h; path = src/WebInspector.h; sourceTree = "<group>"; };
 		D31B3CFA0EBD7530006F3012 /* WebViewPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebViewPrivate.h; path = src/WebViewPrivate.h; sourceTree = "<group>"; };
 		D31B3D070EBD757E006F3012 /* WebFramePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebFramePrivate.h; path = src/WebFramePrivate.h; sourceTree = "<group>"; };
+		D31B3D220EBD7DF7006F3012 /* DefaultValues.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = DefaultValues.plist; path = res/DefaultValues.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -153,6 +155,7 @@
 				D31B38800EBCE51D006F3012 /* JavaScriptPromptWindow.xib */,
 				D31B36270EBC07C1006F3012 /* tiapp.xml */,
 				D31B36380EBC0832006F3012 /* index.html */,
+				D31B3D220EBD7DF7006F3012 /* DefaultValues.plist */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -248,6 +251,7 @@
 				D31B36390EBC0832006F3012 /* index.html in Resources */,
 				D31B36650EBC0946006F3012 /* appcelerator.icns in Resources */,
 				D31B38820EBCE51D006F3012 /* JavaScriptPromptWindow.xib in Resources */,
+				D31B3D230EBD7DF7006F3012 /* DefaultValues.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
