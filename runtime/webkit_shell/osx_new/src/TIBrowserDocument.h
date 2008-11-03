@@ -2,7 +2,6 @@
 //  TIBrowserDocument.h
 //  Titanium
 //
-//  Created by Todd Ditchendorf on 10/31/08.
 //  Copyright __MyCompanyName__ 2008 . All rights reserved.
 //
 

@@ -2,7 +2,6 @@
 //  TIAppDelegate.m
 //  Titanium
 //
-//  Created by Todd Ditchendorf on 10/31/08.
 //  Copyright 2008 __MyCompanyName__. All rights reserved.
 //
 
@@ -75,7 +74,6 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 	NSString *path = [[NSBundle mainBundle] pathForResource:@"DefaultValues" ofType:@"plist"];
 
 	NSMutableDictionary *defaultValues = [NSMutableDictionary dictionaryWithContentsOfFile:path];
-	NSLog(@"%@", defaultValues);
 	
 	[[NSUserDefaultsController sharedUserDefaultsController] setInitialValues:defaultValues];
 	

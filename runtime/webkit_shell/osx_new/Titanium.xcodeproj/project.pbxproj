@@ -26,6 +26,9 @@
 		D31B38820EBCE51D006F3012 /* JavaScriptPromptWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = D31B38800EBCE51D006F3012 /* JavaScriptPromptWindow.xib */; };
 		D31B38880EBCE61D006F3012 /* TIJavaScriptPromptWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = D31B38870EBCE61D006F3012 /* TIJavaScriptPromptWindowController.m */; };
 		D31B3D230EBD7DF7006F3012 /* DefaultValues.plist in Resources */ = {isa = PBXBuildFile; fileRef = D31B3D220EBD7DF7006F3012 /* DefaultValues.plist */; };
+		D31B3D3D0EBD8496006F3012 /* TIBrowserWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = D31B3D3C0EBD8496006F3012 /* TIBrowserWindow.m */; };
+		D31B3D830EBD8A1A006F3012 /* TIThemeFrame.m in Sources */ = {isa = PBXBuildFile; fileRef = D31B3D820EBD8A1A006F3012 /* TIThemeFrame.m */; };
+		D31B3E050EBD90CD006F3012 /* resizeIndicator.png in Resources */ = {isa = PBXBuildFile; fileRef = D31B3E040EBD90CD006F3012 /* resizeIndicator.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -63,6 +66,15 @@
 		D31B3CFA0EBD7530006F3012 /* WebViewPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebViewPrivate.h; path = src/WebViewPrivate.h; sourceTree = "<group>"; };
 		D31B3D070EBD757E006F3012 /* WebFramePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebFramePrivate.h; path = src/WebFramePrivate.h; sourceTree = "<group>"; };
 		D31B3D220EBD7DF7006F3012 /* DefaultValues.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = DefaultValues.plist; path = res/DefaultValues.plist; sourceTree = "<group>"; };
+		D31B3D3B0EBD8496006F3012 /* TIBrowserWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TIBrowserWindow.h; path = src/TIBrowserWindow.h; sourceTree = "<group>"; };
+		D31B3D3C0EBD8496006F3012 /* TIBrowserWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TIBrowserWindow.m; path = src/TIBrowserWindow.m; sourceTree = "<group>"; };
+		D31B3D7D0EBD89F4006F3012 /* NSFrameView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSFrameView.h; path = src/NSFrameView.h; sourceTree = "<group>"; };
+		D31B3D7E0EBD89F4006F3012 /* NSThemeFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSThemeFrame.h; path = src/NSThemeFrame.h; sourceTree = "<group>"; };
+		D31B3D7F0EBD89F4006F3012 /* NSTitledFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSTitledFrame.h; path = src/NSTitledFrame.h; sourceTree = "<group>"; };
+		D31B3D810EBD8A1A006F3012 /* TIThemeFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TIThemeFrame.h; path = src/TIThemeFrame.h; sourceTree = "<group>"; };
+		D31B3D820EBD8A1A006F3012 /* TIThemeFrame.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TIThemeFrame.m; path = src/TIThemeFrame.m; sourceTree = "<group>"; };
+		D31B3DCB0EBD8E7D006F3012 /* WebDashboardRegion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebDashboardRegion.h; path = src/WebDashboardRegion.h; sourceTree = "<group>"; };
+		D31B3E040EBD90CD006F3012 /* resizeIndicator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = resizeIndicator.png; path = res/resizeIndicator.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -126,6 +138,9 @@
 				D31B34DC0EBBE908006F3012 /* TIBrowserDocument.m */,
 				D31B34D80EBBE8E7006F3012 /* TIBrowserWindowController.h */,
 				D31B34D90EBBE8E7006F3012 /* TIBrowserWindowController.m */,
+				D31B3D3B0EBD8496006F3012 /* TIBrowserWindow.h */,
+				D31B3D3C0EBD8496006F3012 /* TIBrowserWindow.m */,
+				D31B3D800EBD89FA006F3012 /* Themes */,
 				D31B393E0EBCFA53006F3012 /* JavaScript Bridge */,
 				D31B393D0EBCFA3A006F3012 /* Auxiliary Windows */,
 				D31B3CDD0EBD71FA006F3012 /* WebKitPrivate */,
@@ -156,6 +171,7 @@
 				D31B36270EBC07C1006F3012 /* tiapp.xml */,
 				D31B36380EBC0832006F3012 /* index.html */,
 				D31B3D220EBD7DF7006F3012 /* DefaultValues.plist */,
+				D31B3E040EBD90CD006F3012 /* resizeIndicator.png */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -195,8 +211,21 @@
 				D31B3CFA0EBD7530006F3012 /* WebViewPrivate.h */,
 				D31B3D070EBD757E006F3012 /* WebFramePrivate.h */,
 				D31B3CDC0EBD71F5006F3012 /* WebInspector.h */,
+				D31B3DCB0EBD8E7D006F3012 /* WebDashboardRegion.h */,
 			);
 			name = WebKitPrivate;
+			sourceTree = "<group>";
+		};
+		D31B3D800EBD89FA006F3012 /* Themes */ = {
+			isa = PBXGroup;
+			children = (
+				D31B3D810EBD8A1A006F3012 /* TIThemeFrame.h */,
+				D31B3D820EBD8A1A006F3012 /* TIThemeFrame.m */,
+				D31B3D7D0EBD89F4006F3012 /* NSFrameView.h */,
+				D31B3D7E0EBD89F4006F3012 /* NSThemeFrame.h */,
+				D31B3D7F0EBD89F4006F3012 /* NSTitledFrame.h */,
+			);
+			name = Themes;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -252,6 +281,7 @@
 				D31B36650EBC0946006F3012 /* appcelerator.icns in Resources */,
 				D31B38820EBCE51D006F3012 /* JavaScriptPromptWindow.xib in Resources */,
 				D31B3D230EBD7DF7006F3012 /* DefaultValues.plist in Resources */,
+				D31B3E050EBD90CD006F3012 /* resizeIndicator.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -269,6 +299,8 @@
 				D31B34FA0EBBED00006F3012 /* TIPreferencesWindowController.m in Sources */,
 				D31B35480EBBF093006F3012 /* TIJavaScriptObject.m in Sources */,
 				D31B38880EBCE61D006F3012 /* TIJavaScriptPromptWindowController.m in Sources */,
+				D31B3D3D0EBD8496006F3012 /* TIBrowserWindow.m in Sources */,
+				D31B3D830EBD8A1A006F3012 /* TIThemeFrame.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

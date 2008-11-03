@@ -2,7 +2,6 @@
 //  TIBrowserWindowController.m
 //  Titanium
 //
-//  Created by Todd Ditchendorf on 10/31/08.
 //  Copyright 2008 __MyCompanyName__. All rights reserved.
 //
 
@@ -49,6 +48,13 @@ typedef enum {
 - (void)awakeFromNib {
 	[self updateWindowFrameIfFirst];
 	[self customizeUserAgent];
+
+	// customize WebView/Window
+	[[[webView mainFrame] frameView] setAllowsScrolling:NO];
+	[webView setBackgroundColor:[NSColor clearColor]];
+	[[self window] setShowsResizeIndicator:NO];
+	
+//	[webView setBackgroundColor:[NSColor colorWithDeviceRed:0. green:0. blue:1. alpha:.2]];
 }
 
 
