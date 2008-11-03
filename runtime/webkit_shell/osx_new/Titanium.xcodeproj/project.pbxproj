@@ -28,7 +28,7 @@
 		D31B3D230EBD7DF7006F3012 /* DefaultValues.plist in Resources */ = {isa = PBXBuildFile; fileRef = D31B3D220EBD7DF7006F3012 /* DefaultValues.plist */; };
 		D31B3D3D0EBD8496006F3012 /* TIBrowserWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = D31B3D3C0EBD8496006F3012 /* TIBrowserWindow.m */; };
 		D31B3D830EBD8A1A006F3012 /* TIThemeFrame.m in Sources */ = {isa = PBXBuildFile; fileRef = D31B3D820EBD8A1A006F3012 /* TIThemeFrame.m */; };
-		D31B3E050EBD90CD006F3012 /* resizeIndicator.png in Resources */ = {isa = PBXBuildFile; fileRef = D31B3E040EBD90CD006F3012 /* resizeIndicator.png */; };
+		D31B3EF70EBE88B3006F3012 /* resizeIndicator.png in Resources */ = {isa = PBXBuildFile; fileRef = D31B3EF60EBE88B3006F3012 /* resizeIndicator.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -74,7 +74,7 @@
 		D31B3D810EBD8A1A006F3012 /* TIThemeFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TIThemeFrame.h; path = src/TIThemeFrame.h; sourceTree = "<group>"; };
 		D31B3D820EBD8A1A006F3012 /* TIThemeFrame.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TIThemeFrame.m; path = src/TIThemeFrame.m; sourceTree = "<group>"; };
 		D31B3DCB0EBD8E7D006F3012 /* WebDashboardRegion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebDashboardRegion.h; path = src/WebDashboardRegion.h; sourceTree = "<group>"; };
-		D31B3E040EBD90CD006F3012 /* resizeIndicator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = resizeIndicator.png; path = res/resizeIndicator.png; sourceTree = "<group>"; };
+		D31B3EF60EBE88B3006F3012 /* resizeIndicator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = resizeIndicator.png; path = res/resizeIndicator.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -160,6 +160,7 @@
 		2A37F4B8FDCFA73011CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				D31B3EF80EBE88B5006F3012 /* Images */,
 				D31B36640EBC0946006F3012 /* appcelerator.icns */,
 				2A37F4B9FDCFA73011CA2CEA /* Credits.rtf */,
 				8D15AC360486D014006FF6A4 /* Info.plist */,
@@ -171,7 +172,6 @@
 				D31B36270EBC07C1006F3012 /* tiapp.xml */,
 				D31B36380EBC0832006F3012 /* index.html */,
 				D31B3D220EBD7DF7006F3012 /* DefaultValues.plist */,
-				D31B3E040EBD90CD006F3012 /* resizeIndicator.png */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -228,6 +228,14 @@
 			name = Themes;
 			sourceTree = "<group>";
 		};
+		D31B3EF80EBE88B5006F3012 /* Images */ = {
+			isa = PBXGroup;
+			children = (
+				D31B3EF60EBE88B3006F3012 /* resizeIndicator.png */,
+			);
+			name = Images;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -281,7 +289,7 @@
 				D31B36650EBC0946006F3012 /* appcelerator.icns in Resources */,
 				D31B38820EBCE51D006F3012 /* JavaScriptPromptWindow.xib in Resources */,
 				D31B3D230EBD7DF7006F3012 /* DefaultValues.plist in Resources */,
-				D31B3E050EBD90CD006F3012 /* resizeIndicator.png in Resources */,
+				D31B3EF70EBE88B3006F3012 /* resizeIndicator.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
