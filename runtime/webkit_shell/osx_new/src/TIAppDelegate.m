@@ -235,6 +235,7 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 		}
 	} else {
 		NSString *relativePath = [self startPath];
+		NSLog(@"starting with path:%@\n", relativePath);
 		
 		if ([relativePath length]) {
 			NSString *fullPath = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:relativePath];
@@ -285,7 +286,7 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 	// that would increase memory cache footprint some tho.
 	[webPrefs setCacheModel:WebCacheModelDocumentViewer];
 	
-	[webPrefs setPlugInsEnabled:NO]; // ?? this disallows Flash content
+	[webPrefs setPlugInsEnabled:YES]; // ?? this disallows Flash content
 	[webPrefs setJavaEnabled:NO]; // ?? this disallows Java Craplets
 	[webPrefs setJavaScriptEnabled:YES];
 }
