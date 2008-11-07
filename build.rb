@@ -25,10 +25,10 @@ TITANIUM_DIR = File.expand_path(File.dirname(__FILE__))
 RUNTIME_DIR = File.join(TITANIUM_DIR, 'runtime')
 PLUGINS_DIR = File.join(RUNTIME_DIR, 'plugins')
 
-def rake (dir)
+def rake (dir,target='default')
   cur_dir = Dir.pwd
   FileUtils.cd dir
-	call_rake
+	call_rake " #{target}"
 
   FileUtils.cd cur_dir
 end
@@ -55,7 +55,7 @@ end
 VERBOSE = ENV['v'] || ENV['verbose'] || ENV['VERBOSE']
 COMPRESS = ENV['nomin'] ? false : true 
 CWD = File.expand_path "#{File.dirname(__FILE__)}"
-STAGE_DIR = File.expand_path "#{CWD}/stage"
+STAGE_DIR = File.expand_path File.join(RUNTIME_DIR, 'stage')
 
 def md5(file)
   Digest::MD5.hexdigest File.read(file)

@@ -70,13 +70,13 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 246910585;
-			PBXWorkspaceStateSaveDate = 246910585;
+			PBXPerProjectTemplateStateSaveDate = 247612339;
+			PBXWorkspaceStateSaveDate = 247612339;
 		};
 		perUserProjectItems = {
-			AB3F9CDD0EB78E890053C470 /* PBXTextBookmark */ = AB3F9CDD0EB78E890053C470 /* PBXTextBookmark */;
-			AB3F9CDE0EB78E890053C470 /* PBXTextBookmark */ = AB3F9CDE0EB78E890053C470 /* PBXTextBookmark */;
-			AB3F9CDF0EB78E890053C470 /* PBXTextBookmark */ = AB3F9CDF0EB78E890053C470 /* PBXTextBookmark */;
+			AB38B6630EBD6E18003EB01C /* PBXTextBookmark */ = AB38B6630EBD6E18003EB01C /* PBXTextBookmark */;
+			AB3EAB680EC243CB00611601 /* PBXTextBookmark */ = AB3EAB680EC243CB00611601 /* PBXTextBookmark */;
+			AB3EAB6C0EC243D200611601 /* PBXTextBookmark */ = AB3EAB6C0EC243D200611601 /* PBXTextBookmark */;
 			ABC333950E9323500041EE43 /* PBXTextBookmark */ = ABC333950E9323500041EE43 /* PBXTextBookmark */;
 			ABC333960E9323500041EE43 /* PBXTextBookmark */ = ABC333960E9323500041EE43 /* PBXTextBookmark */;
 			ABC333DF0E932BD70041EE43 /* PBXTextBookmark */ = ABC333DF0E932BD70041EE43 /* PBXTextBookmark */;
@@ -92,7 +92,6 @@
 			ABF42BFC0EB28F0E008AD83F /* PBXTextBookmark */ = ABF42BFC0EB28F0E008AD83F /* PBXTextBookmark */;
 			ABF42C3C0EB58AF2008AD83F /* PBXTextBookmark */ = ABF42C3C0EB58AF2008AD83F /* PBXTextBookmark */;
 			ABF42C3D0EB58AF2008AD83F /* PBXTextBookmark */ = ABF42C3D0EB58AF2008AD83F /* PBXTextBookmark */;
-			ABF42C3E0EB58AF2008AD83F /* PBXTextBookmark */ = ABF42C3E0EB58AF2008AD83F /* PBXTextBookmark */;
 		};
 		sourceControlManager = ABC333870E9321C00041EE43 /* Source Control */;
 		userBuildSettings = {
@@ -118,35 +117,35 @@
 			ABC333790E9321BF0041EE43 /* webkit_shell */,
 		);
 	};
-	AB3F9CDD0EB78E890053C470 /* PBXTextBookmark */ = {
+	AB38B6630EBD6E18003EB01C /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
-		fRef = ABF42A2A0EAFFE5B008AD83F /* TitaniumJS.m */;
-		name = "TitaniumJS.m: 18";
-		rLen = 0;
-		rLoc = 273;
-		rType = 0;
-		vrLen = 955;
-		vrLoc = 140;
-	};
-	AB3F9CDE0EB78E890053C470 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = ABF42A2A0EAFFE5B008AD83F /* TitaniumJS.m */;
-		name = "TitaniumJS.m: 18";
-		rLen = 0;
-		rLoc = 273;
-		rType = 0;
-		vrLen = 955;
-		vrLoc = 140;
-	};
-	AB3F9CDF0EB78E890053C470 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = ABC333CF0E9325E10041EE43 /* AppWindowController.m */;
+		fRef = ABF42BF10EB28E31008AD83F /* AppWindowController.m */;
 		name = "AppWindowController.m: 102";
 		rLen = 0;
 		rLoc = 2763;
 		rType = 0;
-		vrLen = 1629;
-		vrLoc = 1904;
+		vrLen = 1660;
+		vrLoc = 882;
+	};
+	AB3EAB680EC243CB00611601 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = ABF42A2A0EAFFE5B008AD83F /* TitaniumJS.m */;
+		name = "TitaniumJS.m: 18";
+		rLen = 0;
+		rLoc = 273;
+		rType = 0;
+		vrLen = 742;
+		vrLoc = 0;
+	};
+	AB3EAB6C0EC243D200611601 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = ABF42A2A0EAFFE5B008AD83F /* TitaniumJS.m */;
+		name = "TitaniumJS.m: 18";
+		rLen = 0;
+		rLoc = 273;
+		rType = 0;
+		vrLen = 742;
+		vrLoc = 0;
 	};
 	ABC333790E9321BF0041EE43 /* webkit_shell */ = {
 		isa = PBXExecutable;
@@ -238,9 +237,9 @@
 	};
 	ABF42A2A0EAFFE5B008AD83F /* TitaniumJS.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {750, 1652}}";
+			sepNavIntBoundsRect = "{{0, 0}, {750, 1666}}";
 			sepNavSelRange = "{273, 0}";
-			sepNavVisRange = "{140, 955}";
+			sepNavVisRange = "{0, 742}";
 			sepNavWindowFrame = "{{61, 141}, {862, 990}}";
 		};
 	};
@@ -382,11 +381,6 @@
 		name = AppWindowController.m;
 		path = /Users/marshall/Code/appcelerator/titanium/runtime/webkit_shell/osx/AppWindowController.m;
 		sourceTree = "<absolute>";
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {828, 1946}}";
-			sepNavSelRange = "{2763, 0}";
-			sepNavVisRange = "{1904, 1629}";
-		};
 	};
 	ABF42BFC0EB28F0E008AD83F /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
@@ -417,15 +411,5 @@
 		rType = 0;
 		vrLen = 596;
 		vrLoc = 0;
-	};
-	ABF42C3E0EB58AF2008AD83F /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = ABF42BF10EB28E31008AD83F /* AppWindowController.m */;
-		name = "AppWindowController.m: 102";
-		rLen = 0;
-		rLoc = 2763;
-		rType = 0;
-		vrLen = 1455;
-		vrLoc = 2031;
 	};
 }

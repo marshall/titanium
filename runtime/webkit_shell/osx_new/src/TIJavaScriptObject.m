@@ -114,6 +114,8 @@
 		return @"getWindowTitle";
 	} else if (sel == @selector(startPath)) {
 		return @"getStartPath";
+	} else if (sel == @selector(resourcePath)) {
+		return @"getResourcePath";
 	} else {
 		return nil;
 	}
@@ -160,6 +162,10 @@
 
 - (NSString *)startPath {
 	return [[TIAppDelegate instance] startPath];
+}
+
+- (NSString *)resourcePath {
+	return [[NSBundle mainBundle] resourcePath];
 }
 
 @end

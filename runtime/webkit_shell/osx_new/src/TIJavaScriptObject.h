@@ -29,4 +29,5 @@
 - (NSString *)appName;
 - (NSString *)windowTitle;
 - (NSString *)startPath;
+- (NSString *)resourcePath;
 @end

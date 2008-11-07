@@ -168,14 +168,18 @@ typedef enum {
 
 - (void)webView:(WebView *)wv decidePolicyForNavigationAction:(NSDictionary *)actionInformation request:(NSURLRequest *)request frame:(WebFrame *)frame decisionListener:(id<WebPolicyDecisionListener>)listener {
     WebNavigationType navType = [[actionInformation objectForKey:WebActionNavigationTypeKey] intValue];
+	NSLog(@"decide policy for navigation: %@\n", [request URL]);
 	
     if ([WebView _canHandleRequest:request]) {
+		NSLog(@"WebView can handle this request\n");
 		[listener use];
     } else if (navType == WebNavigationTypePlugInRequest) {
+		NSLog(@"Plug-in request\n");
         [listener use];
     } else {
 		// A file URL shouldn't fall through to here, but if it did,
 		// it would be a security risk to open it.
+		NSLog(@"Opening URL if not file url..\n");
 		if (![[request URL] isFileURL]) {
 			[[NSWorkspace sharedWorkspace] openURL:[request URL]];
         }
@@ -208,6 +212,7 @@ typedef enum {
 
 - (void)webView:(WebView *)wv decidePolicyForMIMEType:(NSString *)type request:(NSURLRequest *)request frame:(WebFrame *)frame decisionListener:(id<WebPolicyDecisionListener>)listener {
     id response = [[frame provisionalDataSource] response];
+	NSLog(@"decide policy for MIME: %@\n", type);
 	
     if (response && [response respondsToSelector:@selector(allHeaderFields)]) {
         NSDictionary *headers = [response allHeaderFields];

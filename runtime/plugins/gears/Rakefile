@@ -4,15 +4,30 @@ require '../../../build.rb'
 require 'yaml'
 require 'erb'
 
-task :default => [:get_src,:build,:gather]
+GEARS_REPO = 'git://github.com/marshall/gears-titanium.git'
+
+task :default => [:link_src,:build,:gather]
+task :production => [:get_src,:build,:gather]
+
+task :link_src do
+  if ENV['GEARS_TITANIUM']
+    if not File.directory? 'gears_titanium'
+      system 'ln -s ' + ENV['GEARS_TITANIUM'] + ' gears_titanium'
+    end
+    FileUtils.cd 'gears_titanium'
+  else
+    STDERR.puts 'Error: GEARS_TITANIUM environment variable not set'
+    exit -1
+  end
+end
 
 task :get_src do
-  if not File.directory? 'gears_svn'
-  	system 'svn co http://gears.googlecode.com/svn/trunk gears_svn'
-  	FileUtils.cd 'gears_svn'
+  if not File.directory? 'gears_titanium'
+    system "git clone #{GEARS_REPO} gears_titanium"
+  	FileUtils.cd 'gears_titanium'
   else
-    FileUtils.cd 'gears_svn'
-    system 'svn up'
+    FileUtils.cd 'gears_titanium'
+    system 'git pull'
   end
 end
 
@@ -24,7 +39,7 @@ task :build do
 	
 	# The part after "||" is to work around a make bug
 	system "make BROWSER=#{browser} MODE=opt || make BROWSER=#{browser} MODE=opt"
-	FileUtils.cd '../..'
+	FileUtils.cd File.join(PLUGINS_DIR, 'gears')
 end
 
 def create_zip(basedir, plugin_name, version, embed_folder=true)
@@ -57,6 +72,8 @@ def create_zip(basedir, plugin_name, version, embed_folder=true)
    
     yield zipfile
   }
+  
+  puts "Created zipfile: #{path}"
 end
 
 task :gather do
@@ -68,7 +85,7 @@ task :gather do
 	build = YAML::load(build_yml)
 	
 	if is_mac?
-	  basedir = File.join('gears_svn', 'gears', 'bin-opt', 'installers', 'Safari', 'Gears.plugin')
+	  basedir = File.join('gears_titanium', 'gears', 'bin-opt', 'installers', 'Safari', 'Gears.plugin')
   end
   
   if not basedir.nil?
@@ -76,7 +93,7 @@ task :gather do
       zipfile.get_output_stream('build.yml') { |f| f.write(build_yml) }
       zipfile.add('plugin.rb', 'plugin.rb')
       zipfile.add('plugin.js', 'plugin.js')
-      zipfile.add('gears_init.js', File.join('gears_svn', 'gears', 'sdk', 'gears_init.js'))
+      zipfile.add('gears_init.js', File.join('gears_titanium', 'gears', 'sdk', 'gears_init.js'))
     end
   end
 end

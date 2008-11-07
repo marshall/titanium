@@ -287,7 +287,7 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 	[webPrefs setCacheModel:WebCacheModelDocumentViewer];
 	
 	[webPrefs setPlugInsEnabled:YES]; // ?? this disallows Flash content
-	[webPrefs setJavaEnabled:NO]; // ?? this disallows Java Craplets
+	[webPrefs setJavaEnabled:YES]; // ?? this disallows Java Craplets
 	[webPrefs setJavaScriptEnabled:YES];
 }
 

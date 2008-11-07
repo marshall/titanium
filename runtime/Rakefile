@@ -33,12 +33,12 @@ task :gather do
     |zipfile|
     
     if is_mac?
-      basedir = File.join WEBKIT_SHELL_DIR, 'build', 'Release', 'webkit_shell.app'
-      zipfile.mkdir('webkit_shell.app')
+      basedir = File.join WEBKIT_SHELL_DIR, 'build', 'Release', 'Titanium.app'
+      zipfile.mkdir('Titanium.app')
       
       dofiles(basedir) do |f|
         filename = f.to_s
-        zipfile.add(File.join('webkit_shell.app', filename), File.join(basedir, filename))
+        zipfile.add(File.join('Titanium.app', filename), File.join(basedir, filename))
       end
     end
     

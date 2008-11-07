@@ -14,6 +14,7 @@
 // limitations under the License.
 
 titanium = {};
+var ti = titanium;
 
 titanium.debug = function (msg) {
 	TiNative.debug(msg);
@@ -25,21 +26,21 @@ titanium.include = function(path) {
 
 titanium.pluginsLoaded = function ()
 {
-	if (titanium.window.title)
-	{
-		document.title = titanium.window.title;
-	}
+	ti.debug("including titanium_file");
+	ti.include("titanium/titanium_file.js");
+	ti.debug("ti.File = " + ti.File + ", ti.Path.resource = " + ti.Path.resource + ", ti.Path.join = " + ti.Path.join);
+	
+	ti.debug("including titanium_xml");
+	ti.include("titanium/titanium_xml.js");
+	ti.debug("ti.XML = " + ti.XML + ", ti.XML.Document=" + ti.XML.Document + ", ti.XML.Element="+ti.XML.Element);
+	
+	ti.debug("including titanium_app");
+	ti.include("titanium/titanium_app.js");
+	
+	ti.debug("parsing xml... ti.App=" + ti.App);
+	ti.App.parseXML();
 }
-
-titanium.appName = TiNative.getAppName();
-titanium.endPoint = TiNative.getEndpoint();
 
 if (navigator.appVersion.indexOf("Win")!=-1) titanium.platform = "win32";
 if (navigator.appVersion.indexOf("Mac")!=-1) titanium.platform = "osx";
 if (navigator.appVersion.indexOf("Linux")!=-1) titanium.platform = "linux";
-
-titanium.window = {};
-titanium.window.width = TiNative.getWindowWidth();
-titanium.window.height = TiNative.getWindowHeight();
-titanium.window.title = TiNative.getWindowTitle();
-

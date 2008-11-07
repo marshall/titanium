@@ -8,4 +8,4 @@
   :name: jquery
   :version: ">=1.2.6"
 :name: titanium_<%= platform_string %>
-:version: 0.1
+:version: 0.1.1

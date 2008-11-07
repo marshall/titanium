@@ -20,10 +20,10 @@
 	NSString *scriptPath = [[[[NSBundle mainBundle] resourcePath] stringByAppendingString:@"/public/"]
 		 stringByAppendingString:s];
 	
-	NSLog(@"%@\n", scriptPath);
+	//NSLog(@"%@\n", scriptPath);
 	
 	NSString *script = [NSString stringWithContentsOfFile:scriptPath];
-	NSLog(@"%@\n", script);
+	//NSLog(@"%@\n", script);
 	
 	[[webView windowScriptObject] evaluateWebScript:script];
 	
