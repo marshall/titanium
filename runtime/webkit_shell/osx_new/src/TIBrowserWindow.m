@@ -4,6 +4,7 @@
 //
 
 #import "TIBrowserWindow.h"
+#import "TIAppDelegate.h"
 #import "TIThemeFrame.h"
 #import "TIBrowserWindowController.h"
 #import "WebViewPrivate.h"
@@ -11,21 +12,27 @@
 #import <WebKit/WebKit.h>
 
 @interface NSWindow ()
-+ (Class)frameViewClassForStyleMask:(unsigned int)styleMask;
++ (Class)frameViewClassForStyleMask:(NSUInteger)styleMask;
 @end
 
 @implementation TIBrowserWindow
 
 // must override the ThemeFrame class to force no drawing of titlebar when window is resizable
-+ (Class)frameViewClassForStyleMask:(unsigned int)styleMask {
-	return [TIThemeFrame class];
++ (Class)frameViewClassForStyleMask:(NSUInteger)styleMask {
+	if ([[TIAppDelegate instance] isFullScreen]) {
+		return [TIThemeFrame class];
+	} else {
+		return [super frameViewClassForStyleMask:styleMask];
+	}
 }
 
 
 // override designated initializer to cause window to be borderless.
-- (id)initWithContentRect:(NSRect)contentRect styleMask:(NSUInteger)aStyle backing:(NSBackingStoreType)bufferingType defer:(BOOL)flag {
-	NSUInteger mask = aStyle;
-	//NSUInteger mask = NSClosableWindowMask|NSMiniaturizableWindowMask|NSTitledWindowMask|NSResizableWindowMask; //|NSBorderlessWindowMask|NSTitledWindowMask|NSClosableWindowMask|NSMiniaturizableWindowMask|NSResizableWindowMask;
+- (id)initWithContentRect:(NSRect)contentRect styleMask:(NSUInteger)mask backing:(NSBackingStoreType)bufferingType defer:(BOOL)flag {
+	if ([[TIAppDelegate instance] isFullScreen]) {
+		mask = NSTitledWindowMask|NSClosableWindowMask|NSBorderlessWindowMask;
+	}
+	//mask = NSClosableWindowMask|NSMiniaturizableWindowMask|NSTitledWindowMask|NSResizableWindowMask; //|NSBorderlessWindowMask|NSTitledWindowMask|NSClosableWindowMask|NSMiniaturizableWindowMask|NSResizableWindowMask;
 	self = [super initWithContentRect:contentRect styleMask:mask backing:bufferingType defer:flag];
 	if (self != nil) {
 		[self setOpaque:NO];
@@ -36,27 +43,27 @@
 
 
 - (void)moveWindow:(NSEvent *)event {
-    NSPoint startLocation = [event locationInWindow];
-    NSPoint lastLocation = startLocation;
-    BOOL mouseUpOccurred = NO;
+	NSPoint startLocation = [event locationInWindow];
+	NSPoint lastLocation = startLocation;
+	BOOL mouseUpOccurred = NO;
 	
-    while (!mouseUpOccurred) {
-        // set mouseUp flag here, but process location of event before exiting from loop, leave mouseUp in queue
-        event = [self nextEventMatchingMask:(NSLeftMouseDraggedMask | NSLeftMouseUpMask) untilDate:[NSDate distantFuture] inMode:NSEventTrackingRunLoopMode dequeue:YES];
+	while (!mouseUpOccurred) {
+		// set mouseUp flag here, but process location of event before exiting from loop, leave mouseUp in queue
+		event = [self nextEventMatchingMask:(NSLeftMouseDraggedMask | NSLeftMouseUpMask) untilDate:[NSDate distantFuture] inMode:NSEventTrackingRunLoopMode dequeue:YES];
 		
-        if ([event type] == NSLeftMouseUp)
-            mouseUpOccurred = YES;
+		if ([event type] == NSLeftMouseUp)
+			mouseUpOccurred = YES;
 		
-        NSPoint newLocation = [event locationInWindow];
-        if (NSEqualPoints(newLocation, lastLocation))
-            continue;
+		NSPoint newLocation = [event locationInWindow];
+		if (NSEqualPoints(newLocation, lastLocation))
+			continue;
 		
-        NSPoint origin = [self frame].origin;
+		NSPoint origin = [self frame].origin;
 		NSPoint newOrigin = NSMakePoint(origin.x + newLocation.x - startLocation.x, origin.y + newLocation.y - startLocation.y);
 		
-        [self setFrameOrigin:newOrigin];
-        lastLocation = newLocation;
-    }
+		[self setFrameOrigin:newOrigin];
+		lastLocation = newLocation;
+	}
 	
 	[super sendEvent:event];
 }
@@ -114,7 +121,7 @@
 		}
 	}
 	
-    [super sendEvent:evt];
+	[super sendEvent:evt];
 }
 
 @end

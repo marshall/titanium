@@ -51,7 +51,10 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 @interface TIAppDelegate (Private)
 + (void)setupDefaults;
 
-- (void)parseTiAppXml;
+- (void)registerForAppleEvents;
+- (void)unregisterForAppleEvents;
+- (void)handleGetURLEvent:(NSAppleEventDescriptor *)event replyEvent:(NSAppleEventDescriptor *)replyEvent;
+- (void)parseTiAppXML;
 - (void)loadFirstPage;
 - (void)updateAppNameInMainMenu;
 - (void)setupWebPreferences;
@@ -85,12 +88,15 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 - (id)init {
 	self = [super init];
 	if (self != nil) {
+		[self registerForAppleEvents];
 	}
 	return self;
 }
 
 
 - (void)dealloc {
+	[self unregisterForAppleEvents];
+	[self setFullScreenScreen:nil];
 	[self setEndpoint:nil];
 	[self setAppName:nil];
 	[self setWindowTitle:nil];
@@ -100,7 +106,7 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 
 
 - (void)awakeFromNib {
-	[self parseTiAppXml];
+	[self parseTiAppXML];
 	[self updateAppNameInMainMenu];
 	[self setupWebPreferences];
 }
@@ -119,6 +125,34 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 }
 
 
+// we can use this for total customization of the About window.
+// OR, just allow the developer to provide a 'Credits.rtf' file in the app bundle
+// and remove this. that will show those credits in the default About window template
+- (IBAction)showAboutWindow:(id)sender {
+	NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+
+	NSAttributedString *as = [[NSAttributedString alloc] initWithString:@"These are Credits"];
+	[dict setObject:as forKey:@"Credits"];
+	[as release];
+	
+	[dict setObject:[self appName] forKey:@"ApplicationName"];
+
+//	NSImage *image = [NSImage imageNamed:@"NSApplicationIcon"];
+//	if (image) [dict setObject: forKey:@"ApplicationIcon"];
+	
+	NSString *copyright = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"NSHumanReadableCopyright"];
+	if (copyright) [dict setObject:copyright forKey:@"Copyright"];
+	
+	NSString *version = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"];
+	if (version) [dict setObject:version forKey:@"Version"];
+	
+	NSString *shortVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
+	if (shortVersion) [dict setObject:shortVersion forKey:@"ApplicationVersion"];
+
+	[NSApp orderFrontStandardAboutPanelWithOptions:dict];
+}
+
+
 - (IBAction)showWebInspector:(id)sender {
 	[[self webInspectorForFrontWindowController] show:sender];
 }
@@ -134,6 +168,49 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 }
 
 
+- (IBAction)toggleFullScreen:(id)sender {
+	NSScreen *screen = nil;
+	id webArchive = nil;
+	WebView *wv = nil;
+	
+	TIBrowserWindowController *winController = TIFrontController();
+	
+	if (winController) {
+		screen = [[winController window] screen];
+		
+		wv = [winController webView];
+		[wv stopLoading:self];
+		webArchive = [[[wv mainFrame] dataSource] webArchive];
+
+		[[winController document] close];
+	}	
+	
+	if (!screen) {
+		screen = [NSScreen mainScreen];
+	}
+	
+	[self setFullScreenScreen:screen];
+	[self setIsFullScreen:![self isFullScreen]];
+
+	// hide the system main menu
+	[NSMenu setMenuBarVisible:![self isFullScreen]];
+	
+	TIBrowserDocument *doc = [self openUntitledDocumentAndDisplay:YES error:nil];
+	winController = [doc browserWindowController];
+	
+	if ([self isFullScreen]) {
+		NSRect frame = [screen frame];
+		[[winController window] setFrame:frame display:YES];
+	}
+	
+	wv = [winController webView];
+	[wv stopLoading:self];
+	if (webArchive) {
+		[[wv mainFrame] loadArchive:webArchive];
+	}
+}
+
+
 #pragma mark -
 #pragma mark Public
 
@@ -144,7 +221,6 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 	if (err) {
 		return nil;
 	}
-	
 	
 	if (!display) {
 		[newDoc makeWindowControllers];
@@ -186,13 +262,62 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 
 
 #pragma mark -
+#pragma mark NSApplicationDelegate
+
+- (BOOL)application:(NSApplication *)app openFile:(NSString *)filename {
+	NSURL *URL = nil;
+	@try {
+		URL = [NSURL fileURLWithPath:filename];
+	} @catch (NSException *e) {
+		URL = [NSURL URLWithString:filename];
+	}
+	NSURLRequest *request = [NSURLRequest requestWithURL:URL];
+	[self newDocumentWithRequest:request display:YES];
+	return YES;
+}
+
+
+- (void)application:(NSApplication *)app openFiles:(NSArray *)filenames {
+	for (NSString *filename in filenames) {
+		[self application:app openFile:filename];
+	}
+}
+
+
+#pragma mark -
 #pragma mark Private
 
-- (void)parseTiAppXml {
-	NSString *appXmlPath = [[NSBundle mainBundle] pathForResource:@"tiapp" ofType:@"xml"];
+- (void)registerForAppleEvents {
+	[[NSAppleEventManager sharedAppleEventManager] setEventHandler:self
+													   andSelector:@selector(handleGetURLEvent:replyEvent:)
+													 forEventClass:kInternetEventClass
+														andEventID:kAEGetURL];
+}
+
+
+- (void)unregisterForAppleEvents {
+	[[NSAppleEventManager sharedAppleEventManager] removeEventHandlerForEventClass:kInternetEventClass andEventID:kAEGetURL];
+}
+
+
+- (void)handleGetURLEvent:(NSAppleEventDescriptor *)event replyEvent:(NSAppleEventDescriptor *)replyEvent {
+	NSString *URLString = [[event paramDescriptorForKeyword:keyDirectObject] stringValue];
+
+	NSString *tiScheme = @"ti://";
+	if ([URLString hasPrefix:tiScheme]) {
+		URLString = [NSString stringWithFormat:@"http://%@", [URLString substringFromIndex:[tiScheme length]]];
+	}
+
+	NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:URLString]];
+	[self newDocumentWithRequest:request display:YES];
+}
+
+
+- (void)parseTiAppXML {
+	NSString *appXMLPath = [[NSBundle mainBundle] pathForResource:@"tiapp" ofType:@"xml"];
 	
 	NSError *error = nil;
-	NSURL *furl = [NSURL fileURLWithPath:appXmlPath];
+	NSURL *furl = [NSURL fileURLWithPath:appXMLPath];
 	
 	NSXMLDocument *doc = [[[NSXMLDocument alloc] initWithContentsOfURL:furl options:0 error:&error] autorelease];
 	
@@ -225,13 +350,12 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 	
 	if ([args count] == 3) {
 		NSString *arg1 = [args objectAtIndex:1];
+		NSString *arg2 = [args objectAtIndex:2];
+		
 		if ([arg1 isEqualToString:@"-file"]) {
-			NSString *pathString = [args objectAtIndex:2];
-			url = [NSURL fileURLWithPath:pathString];
-			
+			url = [NSURL fileURLWithPath:arg2];
 		} else if ([arg1 isEqualToString:@"-url"]) {
-			NSString *urlString = [args objectAtIndex:2];
-			url = [NSURL URLWithString:urlString];
+			url = [NSURL URLWithString:arg2];
 		}
 	} else {
 		NSString *relativePath = [self startPath];
@@ -300,6 +424,26 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 
 #pragma mark -
 #pragma mark Accessors
+
+- (BOOL)isFullScreen {
+	return isFullScreen;
+}
+
+
+- (void)setIsFullScreen:(BOOL)yn {
+	isFullScreen = yn;
+}
+
+
+- (NSScreen *)fullScreenScreen {
+	return fullScreenScreen;
+}
+
+
+- (void)setFullScreenScreen:(NSScreen *)s {
+	fullScreenScreen = s; // assign only to avoid retain loop
+}
+
 
 - (CGFloat)windowWidth {
 	return windowWidth;

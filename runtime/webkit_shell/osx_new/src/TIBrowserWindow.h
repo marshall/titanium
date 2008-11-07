@@ -9,7 +9,7 @@
 #import <Cocoa/Cocoa.h>
 
 @interface TIBrowserWindow : NSWindow {
-    BOOL mouseInRegion;
+	BOOL mouseInRegion;
 }
 
 @end
