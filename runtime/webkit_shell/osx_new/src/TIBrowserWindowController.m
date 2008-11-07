@@ -18,7 +18,7 @@
 @end
 
 typedef enum {
-    WebNavigationTypePlugInRequest = WebNavigationTypeOther + 1
+	WebNavigationTypePlugInRequest = WebNavigationTypeOther + 1
 } WebExtraNavigationType;
 
 @interface TIBrowserWindowController (Private)
@@ -167,20 +167,20 @@ typedef enum {
 #pragma mark WebPolicyDelegate
 
 - (void)webView:(WebView *)wv decidePolicyForNavigationAction:(NSDictionary *)actionInformation request:(NSURLRequest *)request frame:(WebFrame *)frame decisionListener:(id<WebPolicyDecisionListener>)listener {
-    WebNavigationType navType = [[actionInformation objectForKey:WebActionNavigationTypeKey] intValue];
+	WebNavigationType navType = [[actionInformation objectForKey:WebActionNavigationTypeKey] intValue];
 	
-    if ([WebView _canHandleRequest:request]) {
+	if ([WebView _canHandleRequest:request]) {
 		[listener use];
-    } else if (navType == WebNavigationTypePlugInRequest) {
-        [listener use];
-    } else {
+	} else if (navType == WebNavigationTypePlugInRequest) {
+		[listener use];
+	} else {
 		// A file URL shouldn't fall through to here, but if it did,
 		// it would be a security risk to open it.
 		if (![[request URL] isFileURL]) {
 			[[NSWorkspace sharedWorkspace] openURL:[request URL]];
-        }
+		}
 		[listener ignore];
-    }
+	}
 }
 
 
@@ -207,46 +207,46 @@ typedef enum {
 
 
 - (void)webView:(WebView *)wv decidePolicyForMIMEType:(NSString *)type request:(NSURLRequest *)request frame:(WebFrame *)frame decisionListener:(id<WebPolicyDecisionListener>)listener {
-    id response = [[frame provisionalDataSource] response];
+	id response = [[frame provisionalDataSource] response];
 	
-    if (response && [response respondsToSelector:@selector(allHeaderFields)]) {
-        NSDictionary *headers = [response allHeaderFields];
-        
-        NSString *contentDisposition = [[headers objectForKey:@"Content-Disposition"] lowercaseString];
-        if (contentDisposition && NSNotFound != [contentDisposition rangeOfString:@"attachment"].location) {
+	if (response && [response respondsToSelector:@selector(allHeaderFields)]) {
+		NSDictionary *headers = [response allHeaderFields];
+		
+		NSString *contentDisposition = [[headers objectForKey:@"Content-Disposition"] lowercaseString];
+		if (contentDisposition && NSNotFound != [contentDisposition rangeOfString:@"attachment"].location) {
 			if (![[[request URL] absoluteString] hasSuffix:@".user.js"]) { // don't download userscripts
 				//[listener download];
 				[listener ignore]; // ignoring for now. do we want a download manager?
 				return;
 			}
-        }
-        
-        NSString *contentType = [[headers objectForKey:@"Content-Type"] lowercaseString];
-        if (contentType && NSNotFound != [contentType rangeOfString:@"application/octet-stream"].location) {
+		}
+		
+		NSString *contentType = [[headers objectForKey:@"Content-Type"] lowercaseString];
+		if (contentType && NSNotFound != [contentType rangeOfString:@"application/octet-stream"].location) {
 			//[listener download];
 			[listener ignore]; // ignoring for now. do we want a download manager?
-            return;
-        }
-    }
+			return;
+		}
+	}
 	
 	
-    if ([[request URL] isFileURL]) {
-        BOOL isDirectory = NO;
-        [[NSFileManager defaultManager] fileExistsAtPath:[[request URL] path] isDirectory:&isDirectory];
-        
-        if (isDirectory) {
-            [listener ignore];
-        } else if ([WebView canShowMIMEType:type]) {
-            [listener use];
-        } else{
-            [listener ignore];
-        }
-    } else if ([WebView canShowMIMEType:type]) {
-        [listener use];
-    } else {
+	if ([[request URL] isFileURL]) {
+		BOOL isDirectory = NO;
+		[[NSFileManager defaultManager] fileExistsAtPath:[[request URL] path] isDirectory:&isDirectory];
+		
+		if (isDirectory) {
+			[listener ignore];
+		} else if ([WebView canShowMIMEType:type]) {
+			[listener use];
+		} else{
+			[listener ignore];
+		}
+	} else if ([WebView canShowMIMEType:type]) {
+		[listener use];
+	} else {
 		//[listener download];
 		[listener ignore]; // ignoring for now. do we want a download manager?
-    }
+	}
 }
 
 
@@ -291,9 +291,9 @@ typedef enum {
 
 
 - (void)webView:(WebView *)wv setResizable:(BOOL)resizable; {
-    // FIXME: This doesn't actually change the resizability of the window,
-    // only visibility of the indicator.
-    [[wv window] setShowsResizeIndicator:resizable];
+	// FIXME: This doesn't actually change the resizability of the window,
+	// only visibility of the indicator.
+	[[wv window] setShowsResizeIndicator:resizable];
 }
 
 
@@ -343,7 +343,7 @@ typedef enum {
 	CGFloat w = wObj ? [wObj floatValue] : winFrame.size.width;
 	CGFloat h = hObj ? [hObj floatValue] : winFrame.size.height;
 
-	// Cocoa screen coords are from bottom left. but web coords are top right. must convert origin.x
+	// Cocoa screen coords are from bottom left. but web coords are from top left. must convert origin.x
 	CGFloat x = winFrame.origin.x;
 	if (xObj) {
 		x = [xObj floatValue];
@@ -436,7 +436,7 @@ typedef enum {
 
 
 - (BOOL)webView:(WebView *)wv shouldReplaceUploadFile:(NSString *)path usingGeneratedFilename:(NSString **)filename {
-    return NO;
+	return NO;
 }
 
 

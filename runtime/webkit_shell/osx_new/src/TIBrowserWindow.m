@@ -36,27 +36,27 @@
 
 
 - (void)moveWindow:(NSEvent *)event {
-    NSPoint startLocation = [event locationInWindow];
-    NSPoint lastLocation = startLocation;
-    BOOL mouseUpOccurred = NO;
+	NSPoint startLocation = [event locationInWindow];
+	NSPoint lastLocation = startLocation;
+	BOOL mouseUpOccurred = NO;
 	
-    while (!mouseUpOccurred) {
-        // set mouseUp flag here, but process location of event before exiting from loop, leave mouseUp in queue
-        event = [self nextEventMatchingMask:(NSLeftMouseDraggedMask | NSLeftMouseUpMask) untilDate:[NSDate distantFuture] inMode:NSEventTrackingRunLoopMode dequeue:YES];
+	while (!mouseUpOccurred) {
+		// set mouseUp flag here, but process location of event before exiting from loop, leave mouseUp in queue
+		event = [self nextEventMatchingMask:(NSLeftMouseDraggedMask | NSLeftMouseUpMask) untilDate:[NSDate distantFuture] inMode:NSEventTrackingRunLoopMode dequeue:YES];
 		
-        if ([event type] == NSLeftMouseUp)
-            mouseUpOccurred = YES;
+		if ([event type] == NSLeftMouseUp)
+			mouseUpOccurred = YES;
 		
-        NSPoint newLocation = [event locationInWindow];
-        if (NSEqualPoints(newLocation, lastLocation))
-            continue;
+		NSPoint newLocation = [event locationInWindow];
+		if (NSEqualPoints(newLocation, lastLocation))
+			continue;
 		
-        NSPoint origin = [self frame].origin;
+		NSPoint origin = [self frame].origin;
 		NSPoint newOrigin = NSMakePoint(origin.x + newLocation.x - startLocation.x, origin.y + newLocation.y - startLocation.y);
 		
-        [self setFrameOrigin:newOrigin];
-        lastLocation = newLocation;
-    }
+		[self setFrameOrigin:newOrigin];
+		lastLocation = newLocation;
+	}
 	
 	[super sendEvent:event];
 }
@@ -114,7 +114,7 @@
 		}
 	}
 	
-    [super sendEvent:evt];
+	[super sendEvent:evt];
 }
 
 @end
