@@ -96,6 +96,7 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 
 - (void)dealloc {
 	[self unregisterForAppleEvents];
+	[self setFullScreenScreen:nil];
 	[self setEndpoint:nil];
 	[self setAppName:nil];
 	[self setWindowTitle:nil];
@@ -164,6 +165,49 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 
 - (IBAction)showNetworkTimeline:(id)sender {
 	[[self webInspectorForFrontWindowController] showTimeline:sender];	
+}
+
+
+- (IBAction)toggleFullScreen:(id)sender {
+	NSScreen *screen = nil;
+	id webArchive = nil;
+	WebView *wv = nil;
+	
+	TIBrowserWindowController *winController = TIFrontController();
+	
+	if (winController) {
+		screen = [[winController window] screen];
+		
+		wv = [winController webView];
+		[wv stopLoading:self];
+		webArchive = [[[wv mainFrame] dataSource] webArchive];
+
+		[[winController document] close];
+	}	
+	
+	if (!screen) {
+		screen = [NSScreen mainScreen];
+	}
+	
+	[self setFullScreenScreen:screen];
+	[self setIsFullScreen:![self isFullScreen]];
+
+	// hide the system main menu
+	[NSMenu setMenuBarVisible:![self isFullScreen]];
+	
+	TIBrowserDocument *doc = [self openUntitledDocumentAndDisplay:YES error:nil];
+	winController = [doc browserWindowController];
+	
+	if ([self isFullScreen]) {
+		NSRect frame = [screen frame];
+		[[winController window] setFrame:frame display:YES];
+	}
+	
+	wv = [winController webView];
+	[wv stopLoading:self];
+	if (webArchive) {
+		[[wv mainFrame] loadArchive:webArchive];
+	}
 }
 
 
@@ -306,13 +350,12 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 	
 	if ([args count] == 3) {
 		NSString *arg1 = [args objectAtIndex:1];
+		NSString *arg2 = [args objectAtIndex:2];
+		
 		if ([arg1 isEqualToString:@"-file"]) {
-			NSString *pathString = [args objectAtIndex:2];
-			url = [NSURL fileURLWithPath:pathString];
-			
+			url = [NSURL fileURLWithPath:arg2];
 		} else if ([arg1 isEqualToString:@"-url"]) {
-			NSString *urlString = [args objectAtIndex:2];
-			url = [NSURL URLWithString:urlString];
+			url = [NSURL URLWithString:arg2];
 		}
 	} else {
 		NSString *relativePath = [self startPath];
@@ -380,6 +423,26 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 
 #pragma mark -
 #pragma mark Accessors
+
+- (BOOL)isFullScreen {
+	return isFullScreen;
+}
+
+
+- (void)setIsFullScreen:(BOOL)yn {
+	isFullScreen = yn;
+}
+
+
+- (NSScreen *)fullScreenScreen {
+	return fullScreenScreen;
+}
+
+
+- (void)setFullScreenScreen:(NSScreen *)s {
+	fullScreenScreen = s; // assign only to avoid retain loop
+}
+
 
 - (CGFloat)windowWidth {
 	return windowWidth;

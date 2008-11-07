@@ -50,9 +50,9 @@ typedef enum {
 	[self customizeUserAgent];
 
 	// customize WebView/Window
-	[[[webView mainFrame] frameView] setAllowsScrolling:NO];
-	[webView setBackgroundColor:[NSColor clearColor]];
-	[[self window] setShowsResizeIndicator:NO];
+//	[[[webView mainFrame] frameView] setAllowsScrolling:NO];
+//	[webView setBackgroundColor:[NSColor clearColor]];
+//	[[self window] setShowsResizeIndicator:NO];
 	
 //	[webView setBackgroundColor:[NSColor colorWithDeviceRed:0. green:0. blue:1. alpha:.2]];
 }

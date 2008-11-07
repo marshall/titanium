@@ -16,6 +16,9 @@ TIBrowserWindowController *TIFirstController();
 TIBrowserWindowController *TIFrontController();
 
 @interface TIAppDelegate : NSDocumentController {
+	BOOL isFullScreen;
+	NSScreen *fullScreenScreen;
+
 	CGFloat windowWidth;
 	CGFloat windowHeight;
 	NSString *endpoint;
@@ -30,11 +33,17 @@ TIBrowserWindowController *TIFrontController();
 - (IBAction)showWebInspector:(id)sender;
 - (IBAction)showErrorConsole:(id)sender;
 - (IBAction)showNetworkTimeline:(id)sender;
+- (IBAction)toggleFullScreen:(id)sender;
 
 - (TIBrowserDocument *)newDocumentWithRequest:(NSURLRequest *)request display:(BOOL)display;
 - (WebFrame *)findFrameNamed:(NSString *)frameName;
 
 - (void)parseTiAppXML;
+
+- (BOOL)isFullScreen;
+- (void)setIsFullScreen:(BOOL)yn;
+- (NSScreen *)fullScreenScreen;
+- (void)setFullScreenScreen:(NSScreen *)s;
 
 - (CGFloat)windowWidth;
 - (CGFloat)windowHeight;
