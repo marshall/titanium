@@ -123,6 +123,34 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 }
 
 
+// we can use this for total customization of the About window.
+// OR, just allow the developer to provide a 'Credits.rtf' file in the app bundle
+// and remove this. that will show those credits in the default About window template
+- (IBAction)showAboutWindow:(id)sender {
+	NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+
+	NSAttributedString *as = [[NSAttributedString alloc] initWithString:@"These are Credits"];
+	[dict setObject:as forKey:@"Credits"];
+	[as release];
+	
+	[dict setObject:[self appName] forKey:@"ApplicationName"];
+
+//	NSImage *image = [NSImage imageNamed:@"NSApplicationIcon"];
+//	if (image) [dict setObject: forKey:@"ApplicationIcon"];
+	
+	NSString *copyright = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"NSHumanReadableCopyright"];
+	if (copyright) [dict setObject:copyright forKey:@"Copyright"];
+	
+	NSString *version = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"];
+	if (version) [dict setObject:version forKey:@"Version"];
+	
+	NSString *shortVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
+	if (shortVersion) [dict setObject:shortVersion forKey:@"ApplicationVersion"];
+
+	[NSApp orderFrontStandardAboutPanelWithOptions:dict];
+}
+
+
 - (IBAction)showWebInspector:(id)sender {
 	[[self webInspectorForFrontWindowController] show:sender];
 }

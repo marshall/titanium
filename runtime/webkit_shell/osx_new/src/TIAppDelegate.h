@@ -26,6 +26,7 @@ TIBrowserWindowController *TIFrontController();
 + (id)instance;
 
 - (IBAction)showPreferencesWindow:(id)sender;
+- (IBAction)showAboutWindow:(id)sender;
 - (IBAction)showWebInspector:(id)sender;
 - (IBAction)showErrorConsole:(id)sender;
 - (IBAction)showNetworkTimeline:(id)sender;
