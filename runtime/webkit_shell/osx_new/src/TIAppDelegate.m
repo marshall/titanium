@@ -51,7 +51,8 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 @interface TIAppDelegate (Private)
 + (void)setupDefaults;
 
-- (void)parseTiAppXml;
+- (void)registerForAppleEventHandling;
+- (void)parseTiAppXML;
 - (void)loadFirstPage;
 - (void)updateAppNameInMainMenu;
 - (void)setupWebPreferences;
@@ -85,12 +86,15 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 - (id)init {
 	self = [super init];
 	if (self != nil) {
+		[self registerForAppleEventHandling];
 	}
 	return self;
 }
 
 
 - (void)dealloc {
+	[[NSAppleEventManager sharedAppleEventManager] removeEventHandlerForEventClass:kInternetEventClass andEventID:kAEGetURL];
+
 	[self setEndpoint:nil];
 	[self setAppName:nil];
 	[self setWindowTitle:nil];
@@ -100,7 +104,7 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 
 
 - (void)awakeFromNib {
-	[self parseTiAppXml];
+	[self parseTiAppXML];
 	[self updateAppNameInMainMenu];
 	[self setupWebPreferences];
 }
@@ -186,9 +190,54 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 
 
 #pragma mark -
+#pragma mark NSApplicationDelegate
+
+- (BOOL)application:(NSApplication *)app openFile:(NSString *)filename {
+	NSURL *URL = nil;
+	@try {
+		URL = [NSURL fileURLWithPath:filename];
+	} @catch (NSException *e) {
+		URL = [NSURL URLWithString:filename];
+	}
+	NSURLRequest *request = [NSURLRequest requestWithURL:URL];
+	[self newDocumentWithRequest:request display:YES];
+	return YES;
+}
+
+
+- (void)application:(NSApplication *)app openFiles:(NSArray *)filenames {
+	for (NSString *filename in filenames) {
+		[self application:app openFile:filename];
+	}
+}
+
+
+#pragma mark -
 #pragma mark Private
 
-- (void)parseTiAppXml {
+- (void)registerForAppleEventHandling {
+	[[NSAppleEventManager sharedAppleEventManager] setEventHandler:self
+													   andSelector:@selector(handleInternetOpenContentsEvent:replyEvent:)
+													 forEventClass:kInternetEventClass
+														andEventID:kAEGetURL];
+}
+
+
+- (void)handleInternetOpenContentsEvent:(NSAppleEventDescriptor *)event replyEvent:(NSAppleEventDescriptor *)replyEvent {
+	NSString *URLString = [[event paramDescriptorForKeyword:keyDirectObject] stringValue];
+
+	NSString *tiScheme = @"ti://";
+	if ([URLString hasPrefix:tiScheme]) {
+		URLString = [NSString stringWithFormat:@"http://%@", [URLString substringFromIndex:[tiScheme length]]];
+	}
+	NSURL *URL = [NSURL URLWithString:URLString];
+	
+	NSURLRequest *request = [NSURLRequest requestWithURL:URL];
+	[self newDocumentWithRequest:request display:YES];
+}
+
+
+- (void)parseTiAppXML {
 	NSString *appXmlPath = [[NSBundle mainBundle] pathForResource:@"tiapp" ofType:@"xml"];
 	
 	NSError *error = nil;

@@ -33,7 +33,7 @@ TIBrowserWindowController *TIFrontController();
 - (TIBrowserDocument *)newDocumentWithRequest:(NSURLRequest *)request display:(BOOL)display;
 - (WebFrame *)findFrameNamed:(NSString *)frameName;
 
-- (void)parseTiAppXml;
+- (void)parseTiAppXML;
 
 - (CGFloat)windowWidth;
 - (CGFloat)windowHeight;
