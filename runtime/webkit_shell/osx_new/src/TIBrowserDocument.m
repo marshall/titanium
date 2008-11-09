@@ -50,6 +50,14 @@
 }
 
 
+- (void)close {
+	if ([[TIAppDelegate instance] isFullScreen]) {
+		[[TIAppDelegate instance] setIsFullScreen:NO];
+	}
+	[super close];
+}
+
+
 #pragma mark -
 #pragma mark Public
 

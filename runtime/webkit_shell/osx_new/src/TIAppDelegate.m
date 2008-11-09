@@ -96,7 +96,6 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 
 - (void)dealloc {
 	[self unregisterForAppleEvents];
-	[self setFullScreenScreen:nil];
 	[self setEndpoint:nil];
 	[self setAppName:nil];
 	[self setWindowTitle:nil];
@@ -174,6 +173,8 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 	WebView *wv = nil;
 	
 	TIBrowserWindowController *winController = TIFrontController();
+
+	BOOL enteringFullScreen = ![self isFullScreen];
 	
 	if (winController) {
 		screen = [[winController window] screen];
@@ -185,15 +186,15 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 		[[winController document] close];
 	}	
 	
+	if (enteringFullScreen) {
+		[self setIsFullScreen:YES];
+	} 
+	// dont setIsFullScreen:NO, cuz that is handled automatically by -[TIBrowserDocument close]
+	// so that closing a fullscreen window returns the main menu bar
+
 	if (!screen) {
 		screen = [NSScreen mainScreen];
 	}
-	
-	[self setFullScreenScreen:screen];
-	[self setIsFullScreen:![self isFullScreen]];
-
-	// hide the system main menu
-	[NSMenu setMenuBarVisible:![self isFullScreen]];
 	
 	TIBrowserDocument *doc = [self openUntitledDocumentAndDisplay:YES error:nil];
 	winController = [doc browserWindowController];
@@ -432,16 +433,8 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 
 - (void)setIsFullScreen:(BOOL)yn {
 	isFullScreen = yn;
-}
-
-
-- (NSScreen *)fullScreenScreen {
-	return fullScreenScreen;
-}
-
-
-- (void)setFullScreenScreen:(NSScreen *)s {
-	fullScreenScreen = s; // assign only to avoid retain loop
+	// hide the system main menu
+	[NSMenu setMenuBarVisible:!yn];
 }
 
 
