@@ -26,6 +26,7 @@ typedef enum {
 - (void)openPanelDidEnd:(NSSavePanel *)openPanel returnCode:(int)returnCode contextInfo:(void *)contextInfo;
 - (void)updateWindowFrameIfFirst;
 - (void)customizeUserAgent;
+- (void)customizeWebView;
 - (void)showWindowIfFirst;
 @end
 
@@ -48,15 +49,12 @@ typedef enum {
 - (void)awakeFromNib {
 	[self updateWindowFrameIfFirst];
 	[self customizeUserAgent];
-
-	// customize WebView/Window
-//	[[[webView mainFrame] frameView] setAllowsScrolling:NO];
-//	[webView setBackgroundColor:[NSColor clearColor]];
-//	[[self window] setShowsResizeIndicator:NO];
-	
-//	[webView setBackgroundColor:[NSColor colorWithDeviceRed:0. green:0. blue:1. alpha:.2]];
+//	[self customizeWebView];
 }
 
+
+#pragma mark -
+#pragma mark Public
 
 - (void)loadRequest:(NSURLRequest *)request {
 	[[webView mainFrame] loadRequest:request];
@@ -106,6 +104,14 @@ typedef enum {
 	// produces something like:
 	// Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_5_5; en-us) AppleWebKit/525.18 (KHTML, like Gecko) Appcelerator Titanium
 	[webView setApplicationNameForUserAgent:@"Appcelerator Titanium"];	
+}
+
+
+- (void)customizeWebView {
+	// this stuff adjusts the webview/window for chromeless windows.
+	[[[webView mainFrame] frameView] setAllowsScrolling:NO];
+	[webView setBackgroundColor:[NSColor clearColor]];
+	[[self window] setShowsResizeIndicator:NO];
 }
 
 
@@ -325,34 +331,45 @@ typedef enum {
 
 
 - (WebView *)webView:(WebView *)wv createWebViewWithRequest:(NSURLRequest *)request windowFeatures:(NSDictionary *)features {
-	// TODO handle fullscreen feature
-	//BOOL fullscreen = [[features objectForKey:@"fullscreen"] boolValue];
+
+	BOOL fullscreen = [[features objectForKey:@"fullscreen"] boolValue];
+	[[TIAppDelegate instance] setIsFullScreen:fullscreen];
 
 	TIBrowserDocument *doc = [[TIAppDelegate instance] newDocumentWithRequest:request display:NO];
 	
-	// handle frame features
-	id xObj = [features objectForKey:@"x"];
-	id yObj = [features objectForKey:@"y"];
-	id wObj = [features objectForKey:@"width"];
-	id hObj = [features objectForKey:@"height"];
-	
 	NSWindow *window = [[doc browserWindowController] window];
-	NSRect winFrame = [window frame];
-	NSRect screenFrame = [[window screen] frame];
-
-	CGFloat y = yObj ? [yObj floatValue] : winFrame.origin.y;
-	CGFloat w = wObj ? [wObj floatValue] : winFrame.size.width;
-	CGFloat h = hObj ? [hObj floatValue] : winFrame.size.height;
-
-	// Cocoa screen coords are from bottom left. but web coords are from top left. must convert origin.x
-	CGFloat x = winFrame.origin.x;
-	if (xObj) {
-		x = [xObj floatValue];
-		x = screenFrame.size.height - x - h;
+	NSRect newFrame = NSZeroRect;
+	NSScreen *screen = [[self window] screen];
+	if (!screen) {
+		screen = [NSScreen mainScreen];
 	}
-
-	[window setFrame:NSMakeRect(x, y, w, h) display:NO];
+	NSRect screenFrame = [screen frame];
 	
+	if (fullscreen) {
+		newFrame = screenFrame;
+	} else {
+		// handle frame features
+		id xObj = [features objectForKey:@"x"];
+		id yObj = [features objectForKey:@"y"];
+		id wObj = [features objectForKey:@"width"];
+		id hObj = [features objectForKey:@"height"];
+		
+		NSRect winFrame = [window frame];
+		
+		CGFloat y = yObj ? [yObj floatValue] : winFrame.origin.y;
+		CGFloat w = wObj ? [wObj floatValue] : winFrame.size.width;
+		CGFloat h = hObj ? [hObj floatValue] : winFrame.size.height;
+		
+		// Cocoa screen coords are from bottom left. but web coords are from top left. must convert origin.x
+		CGFloat x = winFrame.origin.x;
+		if (xObj) {
+			x = [xObj floatValue];
+			x = screenFrame.size.height - x - h;
+		}
+		newFrame = NSMakeRect(x, y, w, h);
+	}
+	[window setFrame:newFrame display:NO];
+
 	// handle resizable feature
 	// for some reason, this is always reported as 1 by WebKit. dunno why
 //	BOOL resizable = [[features objectForKey:@"resizable"] boolValue];

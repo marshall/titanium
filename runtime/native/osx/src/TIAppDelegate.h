@@ -17,7 +17,6 @@ TIBrowserWindowController *TIFrontController();
 
 @interface TIAppDelegate : NSDocumentController {
 	BOOL isFullScreen;
-	NSScreen *fullScreenScreen;
 
 	CGFloat windowWidth;
 	CGFloat windowHeight;
@@ -42,8 +41,6 @@ TIBrowserWindowController *TIFrontController();
 
 - (BOOL)isFullScreen;
 - (void)setIsFullScreen:(BOOL)yn;
-- (NSScreen *)fullScreenScreen;
-- (void)setFullScreenScreen:(NSScreen *)s;
 
 - (CGFloat)windowWidth;
 - (CGFloat)windowHeight;
