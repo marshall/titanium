@@ -4,12 +4,12 @@ require 'yaml'
 require 'erb'
 require '../build.rb'
 
-WEBKIT_SHELL_DIR = File.join 'webkit_shell', (is_mac? ? 'osx' : (is_win? ? 'win32' : 'linux'))
+NATIVE_DIR = File.join 'tishell', (is_mac? ? 'osx' : (is_win? ? 'win32' : 'linux'))
 
 task :default => [:build_shell,:gather]
 
 task :build_shell do
-  FileUtils.cd WEBKIT_SHELL_DIR
+  FileUtils.cd NATIVE_DIR
   if is_mac?
     system 'xcodebuild'
   end
@@ -33,7 +33,7 @@ task :gather do
     |zipfile|
     
     if is_mac?
-      basedir = File.join WEBKIT_SHELL_DIR, 'build', 'Release', 'Titanium.app'
+      basedir = File.join NATIVE_DIR, 'build', 'Release', 'Titanium.app'
       zipfile.mkdir('Titanium.app')
       
       dofiles(basedir) do |f|

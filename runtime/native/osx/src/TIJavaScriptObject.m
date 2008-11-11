@@ -73,7 +73,6 @@
 	[[NSSound soundNamed:s] play];
 }
 
-
 #pragma mark -
 #pragma mark WebScripting
 
@@ -116,6 +115,8 @@
 		return @"getStartPath";
 	} else if (sel == @selector(resourcePath)) {
 		return @"getResourcePath";
+	} else if (sel == @selector(loadPage)) {
+		return @"loadPage";
 	} else {
 		return nil;
 	}

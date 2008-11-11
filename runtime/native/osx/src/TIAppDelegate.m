@@ -113,7 +113,7 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 
 
 - (void)applicationDidFinishLaunching:(NSNotification *)n {
-	[self loadFirstPage];	
+	[self loadFirstPage];
 }
 
 
@@ -341,6 +341,12 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 	
 	[self setWindowTitle:elementText(window, @"title")];
 	[self setStartPath:elementText(window, @"start")];
+}
+
++ (void)setFirstDocument:(TIBrowserDocument *)document
+{
+	firstDocument = document;
+	[firstDocument setIsFirst:YES];
 }
 
 

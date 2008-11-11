@@ -26,19 +26,13 @@ titanium.include = function(path) {
 
 titanium.pluginsLoaded = function ()
 {
-	ti.debug("including titanium_file");
-	ti.include("titanium/titanium_file.js");
-	ti.debug("ti.File = " + ti.File + ", ti.Path.resource = " + ti.Path.resource + ", ti.Path.join = " + ti.Path.join);
-	
-	ti.debug("including titanium_xml");
+	ti.include("titanium/titanium_file.js");	
 	ti.include("titanium/titanium_xml.js");
-	ti.debug("ti.XML = " + ti.XML + ", ti.XML.Document=" + ti.XML.Document + ", ti.XML.Element="+ti.XML.Element);
-	
-	ti.debug("including titanium_app");
 	ti.include("titanium/titanium_app.js");
+	ti.include("titanium/titanium_chrome.js");
 	
-	ti.debug("parsing xml... ti.App=" + ti.App);
 	ti.App.parseXML();
+	ti.Chrome.run();
 }
 
 if (navigator.appVersion.indexOf("Win")!=-1) titanium.platform = "win32";

@@ -1,50 +1,49 @@
 
-ti.debug("here 1");
 ti.XML = {};
 ti.XML.ElementNode = 1;
 ti.XML.AttributeNode = 2;
 ti.XML.TextNode = 3;
-ti.debug("here 2");
+
 function TitaniumElement (element)
 {
 	this.name = element.nodeName;
 	this.type = ti.XML.ElementNode;
-	this.attributes = {};
-	this.elements = [];
+	this.attributeList = {};
+	this.elementList = [];
 	this.value = "";
 	
 	for (var i = 0; i < element.attributes.length; i++)
 	{
 		var attr = element.attributes.item(i);
-		this.attributes[attr.nodeName] = attr.nodeValue;
+		this.attributeList[attr.nodeName] = attr.nodeValue;
 	}
 	
 	for (var i = 0; i < element.childNodes.length; i++)
 	{
 		if (element.childNodes[i].nodeType == ti.XML.ElementNode) {
-			this.children.push(new TitaniumElement(element.childNodes[i]));
+			this.elementList.push(new TitaniumElement(element.childNodes[i]));
 		}
 		else if (element.childNodes[i].nodeType == ti.XML.TextNode) {
 			this.value += element.childNodes[i].nodeValue;
 		}
 	}
 }
-ti.debug("here 3");
+
 TitaniumElement.prototype.attr = function(name, value)
 {
 	if (value != null) {
-		attribute[name] = value;
+		this.attributeList[name] = value;
 	}
-	return attributes[name];
+	return this.attributeList[name];
 };
-ti.debug("here 4");
+
 TitaniumElement.prototype.elements = function(name)
 {
-	if (name == null) return this.elements;
+	if (name == null) return this.elementList;
 	
 	var els = [];
-	for (var i = 0; i < this.elements.length; i++) {
-		if (this.elements[i].name == name) els.push(this.elements[i]);
+	for (var i = 0; i < this.elementList.length; i++) {
+		if (this.elementList[i].name == name) els.push(this.elementList[i]);
 	}
 	
 	return els;
@@ -94,17 +93,13 @@ TitaniumElement.prototype.eachElement = function (name, f)
 
 function TitaniumDocument (contents)
 {
-	ti.debug('doc constructor');
-	
-	if ('childNodes' in contents)
+	if (typeof(contents) == 'string')
 	{
-		ti.debug("init from dom");
-		this.initFromDOM(contents)
+			this.initFromString(contents);
 	}
-	else
+	else if ('childNodes' in contents)
 	{
-		ti.debug("init from string");
-		this.initFromString(contents);
+		this.initFromDOM(contents)
 	}
 };
 
@@ -115,13 +110,10 @@ TitaniumDocument.prototype.initFromDOM = function(doc)
 
 TitaniumDocument.prototype.initFromString = function(string)
 {
-	ti.debug("parsing string: " + string);
-	
 	var parser = new DOMParser();
 	var doc = parser.parseFromString(string, "text/xml");
 	
-	ti.debug("initializing ti.XML.Doc from " + doc);
-	this.initFromDoc(doc);
+	this.initFromDOM(doc);
 };
 
 TitaniumDocument.prototype.root = function() {
