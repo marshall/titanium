@@ -22,7 +22,7 @@
 #include <shlwapi.h>
 #include <wininet.h>
 #include <commctrl.h>
-
+#include "ti_utils.h"
 #include "webkit/glue/webpreferences.h"
 #include "webkit/glue/weburlrequest.h"
 #include "webkit/glue/webframe.h"
@@ -47,10 +47,16 @@
 #include "simple_resource_loader_bridge.h"
 #include "test_shell_request_context.h"
 
-void ti_debug(char *s) {
-	// TODO - concatenate the string first, then just print the one string
-	printf(s);
-	printf("\n");
+#ifdef TIDEBUG
+bool ti_debugging = true;
+#else
+bool ti_debugging = false;
+#endif
+
+void ti_debug_internal(char *message, char* filename, int line) {
+	if (ti_debugging) {
+		fprintf(stderr, "[titanium %s:%d] %s\n", filename, line, message);
+	}
 }
 
 void ti_initWebPrefs(WebPreferences* web_prefs_) {

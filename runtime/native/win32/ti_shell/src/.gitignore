@@ -1,0 +1,5 @@
+ti_shell.vcproj.*.user
+*.ncb
+build
+*.aps
+*.suo

@@ -30,7 +30,7 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDI_CHROME_SHELL3       ICON                    "chrome_shell.ico"
+IDI_CHROME_SHELL3       ICON                    "ti_shell.ico"
 IDI_SMALL               ICON                    "small.ico"
 
 /////////////////////////////////////////////////////////////////////////////

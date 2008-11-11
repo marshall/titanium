@@ -1,0 +1,30 @@
+require 'fileutils'
+
+task :default =>[:check_chromedir,:check_devenv,:build]
+
+$devenv_path = nil
+
+task :check_chromedir do
+	if not ENV.contains?("CHROMEDIR")
+		STDERR.puts "Error: The environment variable CHROMEDIR needs to be point the location of the chromium \"src\" directory, but it wasn't defined.\n"
+		exit -1		
+	end
+end
+
+task :check_devenv do
+	$devenv_path = `which devenv.com`
+	if $devenv_path =~ /which: no devenv/
+
+		$devenv_path = 'C:\Program Files\Microsoft Visual Studio 8\Common7\IDE\devenv.com'
+
+		if not File.exists?($devenv_path)
+			STDERR.puts "Error: Could not find devenv.com on the PATH. Please make sure you add your installation of VC++ 2005 to the PATH, including the subdirectory Common7/IDE"
+			exit -1
+		end
+	end
+end
+
+task :build do
+	FileUtils.cd 'src'
+	system $devenv_path + ' ti_shell.sln /build Release'
+end

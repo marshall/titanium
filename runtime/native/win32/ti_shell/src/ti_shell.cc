@@ -25,7 +25,7 @@
 #include <wininet.h>
 #include <commctrl.h>
 
-#include "chrome_shell.h"
+#include "ti_shell.h"
 #include "webkit/glue/webpreferences.h"
 #include "webkit/glue/weburlrequest.h"
 #include "webkit/glue/webframe.h"

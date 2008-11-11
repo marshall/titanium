@@ -17,5 +17,13 @@
 
 #include "webkit/glue/webpreferences.h"
 
-void ti_debug(char *s);
+#ifdef TIDEBUG
+#define ti_debug(s) ti_debug_internal(s, __FILE__, __LINE__);
+#else
+#define ti_debug(s)
+#endif
+
+
+void ti_debug_internal(char *message, char *filename, int line);
 void ti_initWebPrefs(WebPreferences* web_prefs_);
+

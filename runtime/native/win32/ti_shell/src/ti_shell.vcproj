@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
-	Name="chrome_shell"
+	Name="ti_shell"
 	ProjectGUID="{7BDCE76E-D7B9-4859-A114-A48E8995E2B0}"
-	RootNamespace="chrome_shell3"
+	RootNamespace="ti_shell"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
@@ -17,10 +17,10 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			OutputDirectory="build\$(ConfigurationName)"
+			IntermediateDirectory="build\$(ConfigurationName)\obj\$(ProjectName)"
 			ConfigurationType="1"
-			InheritedPropertySheets="$(SolutionDir)..\build\debug.vsprops;$(SolutionDir)..\testing\using_gtest.vsprops"
+			InheritedPropertySheets=".\essential.vsprops;.\chromium_build.vsprops"
 			UseOfMFC="0"
 			>
 			<Tool
@@ -40,7 +40,9 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS"
+				AdditionalIncludeDirectories="&quot;$(ChromeDir)&quot;;&quot;$(ChromeDir)\skia\include\corecg&quot;;&quot;$(ChromeDir)\skia\include&quot;"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;UNICODE;_UNICODE"
+				UsePrecompiledHeader="0"
 				WarnAsError="false"
 			/>
 			<Tool
@@ -54,6 +56,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="activex_shim.lib base.lib base_gfx.lib breakpad_handler.lib bzip2.lib common.lib default_plugin.lib Glue.lib googleurl.lib icu.lib JavaScriptCore_pcre.lib libjpeg.lib libpng.lib libxml.lib libxslt.lib modp_b64.lib net.lib plugin.lib Port.lib sdch.lib skia.lib v8.lib v8_snapshot.lib v8bindings.lib WebCore.lib WTF.lib zlib.lib"
+				AdditionalLibraryDirectories="&quot;$(ChromeDir)\chrome\$(ConfigurationName)\lib&quot;"
+				IgnoreDefaultLibraryNames="libcmt.lib"
 				SubSystem="1"
 				EntryPointSymbol=""
 				ResourceOnlyDLL="false"
@@ -85,8 +90,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			OutputDirectory="build\$(ConfigurationName)"
+			IntermediateDirectory="build\$(ConfigurationName)\obj\$(ProjectName)"
 			ConfigurationType="1"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
@@ -108,9 +113,10 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="&quot;$(ChromeDir)&quot;;&quot;$(ChromeDir)\skia\include\corecg&quot;;&quot;$(ChromeDir)\skia\include&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS"
 				RuntimeLibrary="2"
-				UsePrecompiledHeader="2"
+				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
@@ -126,7 +132,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="activex_shim.lib base.lib base_gfx.lib breakpad_handler.lib bzip2.lib common.lib default_plugin.lib Glue.lib googleurl.lib icu.lib JavaScriptCore_pcre.lib libjpeg.lib libpng.lib libxml.lib libxslt.lib modp_b64.lib net.lib plugin.lib Port.lib sdch.lib skia.lib v8.lib v8_snapshot.lib v8bindings.lib WebCore.lib WTF.lib zlib.lib"
 				LinkIncremental="1"
+				AdditionalLibraryDirectories="&quot;$(ChromeDir)\chrome\$(ConfigurationName)\lib&quot;"
+				IgnoreDefaultLibraryNames=""
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -168,15 +177,15 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\chrome_shell.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\simple_resource_loader_bridge.cc"
 				>
 			</File>
 			<File
 				RelativePath=".\test_shell_request_context.cc"
+				>
+			</File>
+			<File
+				RelativePath=".\ti_shell.cc"
 				>
 			</File>
 			<File
@@ -192,7 +201,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\webkit_glue.cpp"
+				RelativePath=".\webkit_glue.cc"
 				>
 			</File>
 			<File
@@ -210,10 +219,6 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\chrome_shell.h"
-				>
-			</File>
-			<File
 				RelativePath=".\Resource.h"
 				>
 			</File>
@@ -223,6 +228,10 @@
 			</File>
 			<File
 				RelativePath=".\test_shell_request_context.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ti_shell.h"
 				>
 			</File>
 			<File
@@ -252,22 +261,18 @@
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
 			<File
-				RelativePath=".\chrome_shell.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\chrome_shell.rc"
-				>
-			</File>
-			<File
 				RelativePath=".\small.ico"
 				>
 			</File>
+			<File
+				RelativePath=".\ti_shell.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\ti_shell.rc"
+				>
+			</File>
 		</Filter>
-		<File
-			RelativePath=".\ReadMe.txt"
-			>
-		</File>
 	</Files>
 	<Globals>
 	</Globals>
