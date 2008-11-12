@@ -40,9 +40,9 @@ TIWebShell::~TIWebShell(void) {
 	ti_debug("destroying TIWebSehll...");
 }
 
-void TIWebShell::init() {
+void TIWebShell::init(TiApp *ti_app) {
 	ti_debug("initializing TIWebShell...");
-
+	this->ti_app = ti_app;
 
 	std::wstring cache_path;
 	PathService::Get(base::DIR_EXE, &cache_path);
@@ -65,12 +65,28 @@ void TIWebShell::init() {
 	this->host = WebViewHost::Create(this->hWnd, &delegate, web_prefs_);
 	delegate.setHost(this->host);
 
+	if (ti_app) {
+		sizeTo(ti_app->getWidth(), ti_app->getHeight());
+		std::string startPath = ti_app->getStartPath();
+		std::wstring fileURL = L"file://";
+		fileURL += resourcesPath;
+		fileURL += L"/";
+		fileURL += UTF8ToWide(ti_app->getStartPath());
+
+		size_t index;
+		while ((index = fileURL.find(file_util::kPathSeparator)) != std::string::npos) {
+			fileURL.replace(index, 1, L"/");
+		}
+
+		loadURL(WideToUTF8(fileURL).c_str());
+	}
+
 	ti_debug("done initializing TIWebShell");
 }
 
 
-void TIWebShell::loadURL(char* url) {
-	ti_debug("loadURL() called");
+void TIWebShell::loadURL(const char* url) {
+	printf("loadURL: %s\n", url);
 
 	WebRequest *request = WebRequest::Create(GURL(url));
 	WebFrame *frame = host->webview()->GetMainFrame();
@@ -83,6 +99,23 @@ void TIWebShell::loadURL(char* url) {
 	ShowWindow(host->window_handle(), SW_SHOW);
 }
 
+
+void TIWebShell::sizeTo(int width, int height) {
+	RECT rc, rw;
+	GetClientRect(hWnd, &rc);
+	GetWindowRect(hWnd, &rw);
+
+	int client_width = rc.right - rc.left;
+	int window_width = rw.right - rw.left;
+	window_width = (window_width - client_width) + width;
+
+	int client_height = rc.bottom - rc.top;
+	int window_height = rw.bottom - rw.top;
+	window_height = (window_height - client_height) + height;
+
+	SetWindowPos(hWnd, NULL, 0, 0, window_width, window_height,
+		SWP_NOMOVE | SWP_NOZORDER);
+}
 
 WebViewHost* TIWebShell::getHost() {
 	return this->host;

@@ -67,7 +67,6 @@ TCHAR szWindowClass[MAX_LOADSTRING];			// the main window class name
 ATOM				MyRegisterClass(HINSTANCE hInstance);
 LRESULT CALLBACK	WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK	About(HWND, UINT, WPARAM, LPARAM);
-void				SizeTo(HWND, int, int);
 void				ResizeSubViews();
 
 int main (int argc, char **argv) {
@@ -87,9 +86,18 @@ int main (int argc, char **argv) {
 	MessageLoopForUI message_loop;
 	process_util::EnableTerminationOnHeapCorruption();
 
+	std::wstring resourcesPath;
+	PathService::Get(base::DIR_EXE, &resourcesPath);
+	file_util::AppendToPath(&resourcesPath, L"Resources");
+
+	std::wstring tiAppXmlPath = resourcesPath;
+	file_util::AppendToPath(&tiAppXmlPath, L"tiapp.xml");
+
 	tiWebShell = new TIWebShell(hInstance, hWnd);
-	tiWebShell->init();
-	tiWebShell->loadURL("http://www.yahoo.com");
+	tiWebShell->setResourcesPath(resourcesPath);
+
+	TiApp *ti_app = new TiApp(tiAppXmlPath);
+	tiWebShell->init(ti_app);
 	
 	////////////////////////////////////////////////////
 
@@ -105,25 +113,6 @@ int main (int argc, char **argv) {
 
 	return 0;
 }
-
-
-void SizeTo(HWND hWnd, int width, int height) {
-	RECT rc, rw;
-	GetClientRect(hWnd, &rc);
-	GetWindowRect(hWnd, &rw);
-
-	int client_width = rc.right - rc.left;
-	int window_width = rw.right - rw.left;
-	window_width = (window_width - client_width) + width;
-
-	int client_height = rc.bottom - rc.top;
-	int window_height = rw.bottom - rw.top;
-	window_height = (window_height - client_height) + height;
-
-	SetWindowPos(hWnd, NULL, 0, 0, window_width, window_height,
-		SWP_NOMOVE | SWP_NOZORDER);
-}
-
 
 void ResizeSubViews() {
 	if (tiWebShell == NULL) return;

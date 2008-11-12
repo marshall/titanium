@@ -1,10 +1,7 @@
 require 'fileutils'
+require '../../../../build.rb'
 
 task :default =>[:check_chromedir,:check_devenv,:build]
-
-def is_cygwin?
-	return RUBY_PLATFORM.include?("cygwin")
-end
 
 $devenv_path = nil
 

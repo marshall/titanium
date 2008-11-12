@@ -36,6 +36,7 @@
 #include "webkit/glue/webkit_glue.h"
 #include "base/gfx/point.h"
 #include "base/file_util.h"
+#include "base/string_util.h"
 #include "base/basictypes.h"
 #include "base/resource_util.h"
 #include "base/ref_counted.h"
@@ -50,6 +51,8 @@
 #include "simple_resource_loader_bridge.h"
 #include "test_shell_request_context.h"
 
+#include "ti_app.h"
+
 class TIWebShell
 {
 private:
@@ -57,15 +60,22 @@ private:
 	HWND hWnd;
 	TIWebViewDelegate delegate;
 	WebViewHost *host;
+	std::wstring resourcesPath;
+	TiApp *ti_app;
 
 public:
 	TIWebShell(HINSTANCE hInstance, HWND hWnd);
 	~TIWebShell(void);
 
-	void init();
+	void init(TiApp *ti_app);
 
-	void loadURL(char* url);
+	void loadURL(const char* url);
+	void sizeTo(int width, int height);
 
 	WebViewHost* getHost();
 	HWND getHWnd();
+
+	std::wstring& getResourcesPath() { return resourcesPath; }
+	void setResourcesPath(std::wstring& path) { resourcesPath = path; }
+
 };

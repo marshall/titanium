@@ -40,7 +40,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(ChromeDir)&quot;;&quot;$(ChromeDir)\skia\include\corecg&quot;;&quot;$(ChromeDir)\skia\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(ChromeDir)\third_party\npapi&quot;;&quot;$(ChromeDir)&quot;;&quot;$(ChromeDir)\skia\include\corecg&quot;;&quot;$(ChromeDir)\skia\include&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;UNICODE;_UNICODE"
 				UsePrecompiledHeader="0"
 				WarnAsError="false"
@@ -56,7 +56,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="activex_shim.lib base.lib base_gfx.lib breakpad_handler.lib bzip2.lib common.lib default_plugin.lib Glue.lib googleurl.lib icu.lib JavaScriptCore_pcre.lib libjpeg.lib libpng.lib libxml.lib libxslt.lib modp_b64.lib net.lib plugin.lib Port.lib sdch.lib skia.lib v8.lib v8_snapshot.lib v8bindings.lib WebCore.lib WTF.lib zlib.lib"
+				AdditionalDependencies="activex_shim.lib base.lib base_gfx.lib breakpad_handler.lib bzip2.lib common.lib default_plugin.lib Glue.lib googleurl.lib icu.lib JavaScriptCore_pcre.lib libjpeg.lib libpng.lib libxml.lib libxslt.lib modp_b64.lib net.lib plugin.lib Port.lib sdch.lib skia.lib v8.lib v8_snapshot.lib v8bindings.lib WebCore.lib WTF.lib zlib.lib comsuppwd.lib"
 				AdditionalLibraryDirectories="&quot;$(ChromeDir)\chrome\$(ConfigurationName)\lib&quot;"
 				IgnoreDefaultLibraryNames="libcmt.lib"
 				SubSystem="1"
@@ -114,7 +114,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(ChromeDir)&quot;;&quot;$(ChromeDir)\skia\include\corecg&quot;;&quot;$(ChromeDir)\skia\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(ChromeDir)\third_party\npapi&quot;;&quot;$(ChromeDir)&quot;;&quot;$(ChromeDir)\skia\include\corecg&quot;;&quot;$(ChromeDir)\skia\include&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -132,7 +132,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="activex_shim.lib base.lib base_gfx.lib breakpad_handler.lib bzip2.lib common.lib default_plugin.lib Glue.lib googleurl.lib icu.lib JavaScriptCore_pcre.lib libjpeg.lib libpng.lib libxml.lib libxslt.lib modp_b64.lib net.lib plugin.lib Port.lib sdch.lib skia.lib v8.lib v8_snapshot.lib v8bindings.lib WebCore.lib WTF.lib zlib.lib"
+				AdditionalDependencies="activex_shim.lib base.lib base_gfx.lib breakpad_handler.lib bzip2.lib common.lib default_plugin.lib Glue.lib googleurl.lib icu.lib JavaScriptCore_pcre.lib libjpeg.lib libpng.lib libxml.lib libxslt.lib modp_b64.lib net.lib plugin.lib Port.lib sdch.lib skia.lib v8.lib v8_snapshot.lib v8bindings.lib WebCore.lib WTF.lib zlib.lib comsuppwd.lib"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;$(ChromeDir)\chrome\$(ConfigurationName)\lib&quot;"
 				IgnoreDefaultLibraryNames=""
@@ -185,6 +185,18 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ti_app.cc"
+				>
+			</File>
+			<File
+				RelativePath=".\ti_app.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ti_native.cc"
+				>
+			</File>
+			<File
 				RelativePath=".\ti_shell.cc"
 				>
 			</File>
@@ -228,6 +240,10 @@
 			</File>
 			<File
 				RelativePath=".\test_shell_request_context.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ti_native.h"
 				>
 			</File>
 			<File

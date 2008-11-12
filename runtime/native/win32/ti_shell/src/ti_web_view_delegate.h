@@ -1,17 +1,18 @@
-//
-// Copyright 2006-2008 Appcelerator, Inc.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+/*
+* Copyright 2006-2008 Appcelerator, Inc.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
 
 #pragma once
 
@@ -31,6 +32,7 @@
 #include "webkit/glue/webview_delegate.h"
 #include "webkit/glue/webwidget_delegate.h"
 #include "webkit/glue/plugins/webplugin_delegate_impl.h"
+#include "webkit/glue/plugins/plugin_list.h"
 #include "webkit/glue/webkit_glue.h"
 #include "base/gfx/point.h"
 #include "base/file_util.h"
@@ -48,6 +50,8 @@
 #include "simple_resource_loader_bridge.h"
 #include "test_shell_request_context.h"
 
+#include "ti_native.h"
+
 class TIWebViewDelegate: 
 	public base::RefCounted<TIWebViewDelegate>,
 	public WebViewDelegate
@@ -55,6 +59,7 @@ class TIWebViewDelegate:
 private:
 	WebViewHost *host;
 	HWND hWnd;
+	TiNative *ti_native;
 
 public:
 	TIWebViewDelegate();
@@ -126,4 +131,12 @@ public:
 
 	// Returns true if the widget is in a background tab.
 	virtual bool IsHidden();
+
+	virtual void WindowObjectCleared(WebFrame *webFrame);
+
+	virtual WebPluginDelegate* CreatePluginDelegate(
+		WebView *webview, const GURL &url,
+		const std::string &mime_type, const std::string &clsid,
+		std::string *actual_mime_type);
+
 };

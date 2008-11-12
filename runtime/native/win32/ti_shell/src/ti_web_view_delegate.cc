@@ -1,17 +1,18 @@
-//
-// Copyright 2006-2008 Appcelerator, Inc.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+/*
+* Copyright 2006-2008 Appcelerator, Inc.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
 
 #include "ti_web_view_delegate.h"
 #include "ti_utils.h"
@@ -136,14 +137,38 @@ void TIWebViewDelegate::RunModal(WebWidget* webwidget){
 
 // Owners depend on the delegates living as long as they do, so we ref them.
 void TIWebViewDelegate::AddRef() {
-	base::RefCounted<TIWebViewDelegate>::AddRef();
+	//base::RefCounted<TIWebViewDelegate>::AddRef();
 }
 
 void TIWebViewDelegate::Release() {
-	base::RefCounted<TIWebViewDelegate>::Release();
+	//base::RefCounted<TIWebViewDelegate>::Release();
 }
 
 // Returns true if the widget is in a background tab.
 bool TIWebViewDelegate::IsHidden() {
 	return false;
+}
+
+void TIWebViewDelegate::WindowObjectCleared(WebFrame *webFrame)
+{
+	ti_native = new TiNative();
+	ti_native->BindToJavascript(webFrame, L"TiNative");
+}
+
+WebPluginDelegate* TIWebViewDelegate::CreatePluginDelegate(
+		WebView *webview, const GURL &url,
+		const std::string &mime_type, const std::string &clsid,
+		std::string *actual_mime_type)
+{
+	bool allow_wildcard = true;
+	WebPluginInfo info;
+	if (!NPAPI::PluginList::Singleton()->GetPluginInfo(url, mime_type, clsid,
+		allow_wildcard, &info,
+		actual_mime_type))
+		return NULL;
+
+	if (actual_mime_type && !actual_mime_type->empty())
+		return WebPluginDelegateImpl::Create(info.file, *actual_mime_type, host->window_handle());
+	else
+		return WebPluginDelegateImpl::Create(info.file, mime_type, host->window_handle());
 }
