@@ -29,7 +29,7 @@ std::string TINetResourceProvider(int key) {
 	return TIGetDataResource(::GetModuleHandle(NULL), key);
 }
 
-TIWebShell::TIWebShell(HINSTANCE hInstance, HWND hWnd) {
+TIWebShell::TIWebShell(HINSTANCE hInstance, HWND hWnd) : delegate(this) {
 	ti_debug("creating TIWebShell...");
 
 	this->hInstance = hInstance;

@@ -50,6 +50,8 @@
 #include "simple_resource_loader_bridge.h"
 #include "test_shell_request_context.h"
 
+class TIWebShell;
+
 #include "ti_native.h"
 
 class TIWebViewDelegate: 
@@ -59,10 +61,11 @@ class TIWebViewDelegate:
 private:
 	WebViewHost *host;
 	HWND hWnd;
+	TIWebShell *ti_web_shell;
 	TiNative *ti_native;
 
 public:
-	TIWebViewDelegate();
+	TIWebViewDelegate(TIWebShell *ti_web_shell);
 	~TIWebViewDelegate(void);
 
 	void setHost(WebViewHost* host);

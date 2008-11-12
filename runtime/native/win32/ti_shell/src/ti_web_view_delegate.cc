@@ -17,7 +17,8 @@
 #include "ti_web_view_delegate.h"
 #include "ti_utils.h"
 
-TIWebViewDelegate::TIWebViewDelegate() {
+TIWebViewDelegate::TIWebViewDelegate(TIWebShell *ti_web_shell) {
+	this->ti_web_shell = ti_web_shell;
 }
 
 TIWebViewDelegate::~TIWebViewDelegate() {
@@ -151,7 +152,7 @@ bool TIWebViewDelegate::IsHidden() {
 
 void TIWebViewDelegate::WindowObjectCleared(WebFrame *webFrame)
 {
-	ti_native = new TiNative();
+	ti_native = new TiNative(ti_web_shell);
 	ti_native->BindToJavascript(webFrame, L"TiNative");
 }
 

@@ -51,7 +51,10 @@
 #include "simple_resource_loader_bridge.h"
 #include "test_shell_request_context.h"
 
+
 #include "ti_app.h"
+
+class TIWebViewDelegate;
 
 class TIWebShell
 {
