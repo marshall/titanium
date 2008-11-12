@@ -31,18 +31,46 @@ task :get_src do
   end
 end
 
+def get_make_command
+	if is_mac?
+		args = "BROWSER=SF MODE=opt"
+		return "make #{args} || make #{args}"
+	elsif is_win?	
+		args = "BROWSER=NPAPI MODE=opt OS=win32 CHROME_SINGLEPROCESS=1"
+		if is_cygwin?
+			return "cmd /C make #{args}"
+		else
+			return "make #{args}"
+		end
+	end
+end
+
 task :build do
 	FileUtils.cd 'gears'
-	
-	browser = 'SF' if is_mac?
-	browser = 'NPAPI' if is_win? or is_linux?
-	
-	# The part after "||" is to work around a make bug
-	system "make BROWSER=#{browser} MODE=opt || make BROWSER=#{browser} MODE=opt"
+
+	puts get_make_command()	
+	system get_make_command()
 	FileUtils.cd File.join(PLUGINS_DIR, 'gears')
 end
 
-def create_zip(basedir, plugin_name, version, embed_folder=true)
+def bundle_plugin_mac(zipfile)
+  basedir = File.join('gears_titanium', 'gears', 'bin-opt', 'installers', 'Safari', 'Gears.plugin')
+
+	dirname = File.basename(basedir)
+	zipfile.mkdir(dirname)
+   
+	dofiles(basedir) do |f|
+		filename = f.to_s
+		zipfile.add(File.join(dirname, filename), File.join(basedir, filename))
+	end
+end
+
+def bundle_plugin_win(zipfile)
+	zipfile.add('gears_titanium.dll', File.join('gears_titanium', 'gears', 'bin-opt', 'win32-i386', 'npapi', 'gears_titanium.dll'))
+end
+
+
+def create_zip(plugin_name, version, embed_folder=true)
 	filename = "tiplugin_#{plugin_name}_#{version}"
   filename += "_" + platform_string
 
@@ -54,21 +82,12 @@ def create_zip(basedir, plugin_name, version, embed_folder=true)
   FileUtils.mkdir_p STAGE_DIR
   Zip::ZipFile.open(path, Zip::ZipFile::CREATE) {
    |zipfile|
-   
-   dirname = File.basename(basedir)
-   
-   if (embed_folder)
-    zipfile.mkdir(dirname)
-   end
-   
-   dofiles(basedir) do |f|
-     filename = f.to_s
-     if embed_folder
-       zipfile.add(File.join(dirname, filename), File.join(basedir, filename))
-     else
-       zipfile.add(filename, File.join(basedir, filename))
-     end
-   end
+ 
+		if is_mac? 
+			bundle_plugin_mac(zipfile)
+		elsif is_win?
+			bundle_plugin_win(zipfile)
+		end
    
     yield zipfile
   }
@@ -77,23 +96,17 @@ def create_zip(basedir, plugin_name, version, embed_folder=true)
 end
 
 task :gather do
-  basedir = nil
 	template = nil
 	File.open('build.yml') { |f| template = ERB.new(f.read()) }
 
 	build_yml = template.result(binding)
 	build = YAML::load(build_yml)
 	
-	if is_mac?
-	  basedir = File.join('gears_titanium', 'gears', 'bin-opt', 'installers', 'Safari', 'Gears.plugin')
-  end
-  
-  if not basedir.nil?
-    create_zip(basedir, 'gears', build[:version]) do |zipfile|
-      zipfile.get_output_stream('build.yml') { |f| f.write(build_yml) }
-      zipfile.add('plugin.rb', 'plugin.rb')
-      zipfile.add('plugin.js', 'plugin.js')
-      zipfile.add('gears_init.js', File.join('gears_titanium', 'gears', 'sdk', 'gears_init.js'))
-    end
-  end
+
+	create_zip('gears', build[:version]) do |zipfile|
+		zipfile.get_output_stream('build.yml') { |f| f.write(build_yml) }
+		zipfile.add('plugin.rb', 'plugin.rb')
+		zipfile.add('plugin.js', 'plugin.js')
+		zipfile.add('gears_init.js', File.join('gears_titanium', 'gears', 'sdk', 'gears_init.js'))
+	end
 end

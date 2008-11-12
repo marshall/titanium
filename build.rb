@@ -37,14 +37,19 @@ def is_mac?
   RUBY_PLATFORM.downcase.include?("darwin")
 end
 
+def is_cygwin?
+	RUBY_PLATFORM.downcase.include?("cygwin")
+end
+
 def is_win?
-  RUBY_PLATFORM.downcase.include?("mswin")
+  RUBY_PLATFORM.downcase.include?("mswin") || is_cygwin?
   
 end
 
 def is_linux?
   RUBY_PLATFORM.downcase.include?("linux")
 end
+
 
 def platform_string
   return "osx" if is_mac?

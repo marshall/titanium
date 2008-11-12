@@ -4,7 +4,7 @@ require 'yaml'
 require 'erb'
 require '../build.rb'
 
-NATIVE_DIR = File.join 'tishell', (is_mac? ? 'osx' : (is_win? ? 'win32' : 'linux'))
+NATIVE_DIR = File.join 'native', (is_mac? ? 'osx' : (is_win? ? 'win32' : 'linux'))
 
 task :default => [:build_shell,:gather]
 
@@ -12,7 +12,23 @@ task :build_shell do
   FileUtils.cd NATIVE_DIR
   if is_mac?
     system 'xcodebuild'
+	elsif is_win?
+		rake('ti_shell')
   end
+end
+
+def gather_mac(zipfile)
+	basedir = File.join NATIVE_DIR, 'build', 'Release', 'Titanium.app'
+	zipfile.mkdir('Titanium.app')
+      
+	dofiles(basedir) do |f|
+		filename = f.to_s
+		zipfile.add(File.join('Titanium.app', filename), File.join(basedir, filename))
+	end
+end
+
+def gather_win(zipfile)
+	zipfile.add('ti_shell.exe', File.join(NATIVE_DIR, 'ti_shell', 'src', 'build', 'Release', 'ti_shell.exe'))
 end
 
 task :gather do
@@ -33,24 +49,27 @@ task :gather do
     |zipfile|
     
     if is_mac?
-      basedir = File.join NATIVE_DIR, 'build', 'Release', 'Titanium.app'
-      zipfile.mkdir('Titanium.app')
-      
-      dofiles(basedir) do |f|
-        filename = f.to_s
-        zipfile.add(File.join('Titanium.app', filename), File.join(basedir, filename))
-      end
+			gather_mac(zipfile)
+		elsif is_win?
+			gather_win(zipfile)
     end
     
     Dir["src/**/*"].each do |filepath|
       filename = File.basename(filepath)
       zipfile.add(filename, filepath)
     end
-  
+ 
     zipfile.mkdir("support")
-    dofiles("support") do |f|
+		Dir["support/*"].each do |filepath|
+			filename = File.basename(filepath)
+			if filename !~ /(osx|win32|linux)/
+      	zipfile.add(File.join('support', filename), File.join('support', filename))
+			end
+		end
+ 
+    dofiles("support/" + platform_string) do |f|
       filename = f.to_s
-      zipfile.add(File.join('support', filename), File.join('support', filename))
+     	zipfile.add(File.join('support', platform_string, filename), File.join('support', platform_string, filename))
     end
     
     zipfile.get_output_stream('build.yml') { |f| f.write(build_yml) }
