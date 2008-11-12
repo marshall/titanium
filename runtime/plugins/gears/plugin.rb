@@ -7,10 +7,11 @@ class GearsPlugin < Titanium::Plugin
   
   def install(project, basedir, executable_name)
     super(project, basedir, executable_name)
+      
     if is_mac?
-      plugins_dir = File.join(basedir, executable_name+".app", 'Contents', 'Plug-ins')
-      FileUtils.mkdir_p plugins_dir
-      FileUtils.cp_r File.join(@plugindir, 'Gears.plugin'), plugins_dir
+      FileUtils.cp_r File.join(@plugindir, 'Gears.plugin'), @plugins_path
+	elsif is_win?
+	  FileUtils.cp File.join(@plugindir, 'gears_titanium.dll'), File.join(@plugins_path, 'npgears_titanium.dll')
     end
   end
 end

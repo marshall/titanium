@@ -11,23 +11,35 @@ module Titanium
       @data = YAML::load(File.open(File.join(@plugindir, 'build.yml')))
     end
     
-    def get_project_path(basedir, executable_name)
+	def get_project_path(basedir, executable_name)
       if is_mac?
         return File.join(basedir, executable_name+".app",
           'Contents', 'Resources', 'public')
+	  elsif is_win?
+	  	return File.join(basedir, executable_name, 'Resources', 'public')
       end
     end
     
+    def get_plugins_path(basedir, executable_name)
+    	if is_mac?
+    		return File.join(basedir, executable_name+".app", 'Contents', 'Plug-ins')
+		elsif is_win?
+			return File.join(basedir, executable_name, 'plugins')
+		end
+	end
+    
     def install(project, basedir, executable_name)
-      project_path = get_project_path(basedir, executable_name)
-      titanium_path = File.join project_path, 'titanium'
-      plugin_path = File.join titanium_path, @name
+      @project_path = get_project_path(basedir, executable_name)
+      @plugins_path = get_plugins_path(basedir, executable_name)
+
+      @titanium_path = File.join @project_path, 'titanium'
+      @plugin_path = File.join @titanium_path, @name
       
-      FileUtils.mkdir_p [titanium_path, plugin_path]
+      FileUtils.mkdir_p [@titanium_path, @plugins_path, @plugin_path]
       @data[:files].each do |glob|
         glob = File.join(@plugindir, glob)
         Dir.glob(glob) do |filename|
-          FileUtils.cp filename, plugin_path 
+          FileUtils.cp filename, @plugin_path 
         end
       end
     end
