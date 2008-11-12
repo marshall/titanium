@@ -79,6 +79,7 @@ void TIWebShell::init(TiApp *ti_app) {
 		}
 
 		loadURL(WideToUTF8(fileURL).c_str());
+		SetWindowText(hWnd, UTF8ToWide(ti_app->getTitle()).c_str());
 	}
 
 	ti_debug("done initializing TIWebShell");
