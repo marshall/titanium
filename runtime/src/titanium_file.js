@@ -6,15 +6,20 @@ ti.Path.Separator = ti.File.pathSeparator;
 
 ti.Path.resource = function(path)
 {
+	var resourcePath = ti.Path.Resources;
 	if (typeof(path) == 'array') {
-		var resourcePath = ti.Path.Resources;
 		for (var i = 0; i < path.length; i++) {
 			resourcePath = ti.Path.join(resourcePath, path[i]);
 		}
 		return resourcePath;
 	}
 	
-	return ti.Path.join(ti.Path.Resources, path);
+	for (var i = 0; i < arguments.length; i++) {
+		var token = arguments[i].replace(/[\/]+/g, ti.Path.Separator);
+		resourcePath = ti.Path.join(resourcePath, arguments[i]);
+	}
+	
+	return resourcePath;
 }
 
 ti.Path.join = function ()

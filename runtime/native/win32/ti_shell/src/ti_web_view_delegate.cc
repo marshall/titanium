@@ -15,9 +15,10 @@
 */
 
 #include "ti_web_view_delegate.h"
+#include "ti_web_shell.h"
 #include "ti_utils.h"
 
-TIWebViewDelegate::TIWebViewDelegate(TIWebShell *ti_web_shell) {
+TIWebViewDelegate::TIWebViewDelegate(TIWebShell *ti_web_shell) : bootstrapTitanium(false) {
 	this->ti_web_shell = ti_web_shell;
 }
 
@@ -152,8 +153,14 @@ bool TIWebViewDelegate::IsHidden() {
 
 void TIWebViewDelegate::WindowObjectCleared(WebFrame *webFrame)
 {
-	ti_native = new TiNative(ti_web_shell);
-	ti_native->BindToJavascript(webFrame, L"TiNative");
+	if (bootstrapTitanium) {
+		bootstrapTitanium = false;
+
+		ti_native = new TiNative(ti_web_shell);
+		ti_native->BindToJavascript(webFrame, L"TiNative");
+		std::string titanium_js = "ti:///titanium.js";
+		ti_web_shell->include(titanium_js);
+	}
 }
 
 WebPluginDelegate* TIWebViewDelegate::CreatePluginDelegate(
@@ -170,6 +177,25 @@ WebPluginDelegate* TIWebViewDelegate::CreatePluginDelegate(
 
 	if (actual_mime_type && !actual_mime_type->empty())
 		return WebPluginDelegateImpl::Create(info.file, *actual_mime_type, host->window_handle());
-	else
+	else {
 		return WebPluginDelegateImpl::Create(info.file, mime_type, host->window_handle());
+	}
+}
+
+void TIWebViewDelegate::AddMessageToConsole(WebView* webview,
+	const std::wstring& message,
+	unsigned int line_no,
+	const std::wstring& source_id) {
+
+	if (source_id.size() == 0 && line_no == 0) {
+		printf("[ti:info] %ls\n", message.c_str());
+	}
+	else {
+		printf("[ti:error] %ls:%d Line %ls\n", source_id.c_str(), line_no, message.c_str());
+	}
+	
+}
+
+void TIWebViewDelegate::DidFinishLoadForFrame(WebView* webview, WebFrame* frame) {
+
 }

@@ -94,7 +94,6 @@
 			IntermediateDirectory="build\$(ConfigurationName)\obj\$(ProjectName)"
 			ConfigurationType="1"
 			InheritedPropertySheets=".\essential.vsprops;.\chromium_build.vsprops"
-			CharacterSet="1"
 			WholeProgramOptimization="1"
 			>
 			<Tool
@@ -201,6 +200,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ti_url.cc"
+				>
+			</File>
+			<File
 				RelativePath=".\ti_utils.cc"
 				>
 			</File>
@@ -248,6 +251,10 @@
 			</File>
 			<File
 				RelativePath=".\ti_shell.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ti_url.h"
 				>
 			</File>
 			<File

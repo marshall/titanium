@@ -65,6 +65,7 @@ private:
 	TiNative *ti_native;
 
 public:
+	bool bootstrapTitanium;
 	TIWebViewDelegate(TIWebShell *ti_web_shell);
 	~TIWebViewDelegate(void);
 
@@ -142,4 +143,11 @@ public:
 		const std::string &mime_type, const std::string &clsid,
 		std::string *actual_mime_type);
 
+	virtual void AddMessageToConsole(WebView* webview,
+		const std::wstring& message,
+		unsigned int line_no,
+		const std::wstring& source_id);
+
+	virtual void DidFinishLoadForFrame(WebView* webview,
+                                     WebFrame* frame);
 };

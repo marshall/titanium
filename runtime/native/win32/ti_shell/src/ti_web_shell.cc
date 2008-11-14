@@ -16,6 +16,8 @@
 #include "ti_web_shell.h"
 #include "ti_utils.h"
 
+#include <fstream>
+
 std::string TIGetDataResource(HMODULE module, int resource_id) {
 	void *data_ptr;
 	size_t data_size;
@@ -77,7 +79,8 @@ void TIWebShell::init(TiApp *ti_app) {
 		while ((index = fileURL.find(file_util::kPathSeparator)) != std::string::npos) {
 			fileURL.replace(index, 1, L"/");
 		}
-
+		
+		delegate.bootstrapTitanium = true;
 		loadURL(WideToUTF8(fileURL).c_str());
 		SetWindowText(hWnd, UTF8ToWide(ti_app->getTitle()).c_str());
 	}
@@ -87,8 +90,6 @@ void TIWebShell::init(TiApp *ti_app) {
 
 
 void TIWebShell::loadURL(const char* url) {
-	printf("loadURL: %s\n", url);
-
 	WebRequest *request = WebRequest::Create(GURL(url));
 	WebFrame *frame = host->webview()->GetMainFrame();
 
@@ -124,4 +125,26 @@ WebViewHost* TIWebShell::getHost() {
 
 HWND TIWebShell::getHWnd() {
 	return this->hWnd;
+}
+
+void TIWebShell::include(std::string& relativePath)
+{
+	std::string absolutePath;
+
+	if (relativePath.find_first_of("://") != std::string::npos) {
+		absolutePath = TiURL::absolutePathForURL(ti_app, relativePath);
+	}
+	else {
+		absolutePath = WideToUTF8(getResourcesPath());
+		absolutePath += "\\";
+		absolutePath += relativePath;
+	}
+	std::ifstream in(absolutePath.c_str());
+	std::string s, line;
+	while(getline(in, line)) {
+		s += line + "\n";
+	}
+
+	WebView *webview = getHost()->webview();
+	webview->GetMainFrame()->ExecuteJavaScript(s, absolutePath);
 }

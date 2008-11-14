@@ -24,17 +24,37 @@ titanium.include = function(path) {
 	TiNative.include(path);
 }
 
+titanium.eachPlugin = function (f) {
+	for (var i = 0; i < ti.plugins.length; i++) {
+		f(ti.plugins[i]);
+	}
+}
+
+titanium.pluginEvent = function(event) {
+	titanium.eachPlugin(function(plugin) {
+		if (event in plugin) {
+			plugin[event]();
+		}
+	});
+}
+
 titanium.pluginsLoaded = function ()
 {
-	ti.include("titanium/titanium_file.js");	
-	ti.include("titanium/titanium_xml.js");
-	ti.include("titanium/titanium_app.js");
-	ti.include("titanium/titanium_chrome.js");
-	
-	ti.App.parseXML();
-	ti.Chrome.run();
+	$(document).ready(function() {
+		ti.pluginEvent("documentReady");
+		
+		ti.include("ti:///titanium_file.js");	
+		ti.include("ti:///titanium_xml.js");
+		ti.include("ti:///titanium_app.js");
+		ti.include("ti:///titanium_chrome.js");
+		ti.App.parseXML();
+		ti.Chrome.run();
+	});
 }
 
 if (navigator.appVersion.indexOf("Win")!=-1) titanium.platform = "win32";
 if (navigator.appVersion.indexOf("Mac")!=-1) titanium.platform = "osx";
 if (navigator.appVersion.indexOf("Linux")!=-1) titanium.platform = "linux";
+
+ti.include("ti:///plugins.js");
+ti.pluginsLoaded();

@@ -14,9 +14,9 @@ module Titanium
 	def get_project_path(basedir, executable_name)
       if is_mac?
         return File.join(basedir, executable_name+".app",
-          'Contents', 'Resources', 'public')
+          'Contents', 'Resources')
 	  elsif is_win?
-	  	return File.join(basedir, executable_name, 'Resources', 'public')
+	  	return File.join(basedir, executable_name, 'Resources')
       end
     end
     

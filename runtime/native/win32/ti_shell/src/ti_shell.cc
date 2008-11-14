@@ -72,7 +72,7 @@ void				ResizeSubViews();
 int main (int argc, char **argv) {
 	// win32 stuff
 	hInstance = ::GetModuleHandle(NULL);
-
+	
 	LoadString(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
 	LoadString(hInstance, IDC_CHROME_SHELL3, szWindowClass, MAX_LOADSTRING);
 	MyRegisterClass(hInstance);
@@ -120,7 +120,6 @@ void ResizeSubViews() {
 	RECT rc;
 	GetClientRect(tiWebShell->getHWnd(), &rc);
 
-	printf("MoveWebViewTo: %d,%d (%d x %d)\n", 0, 0, rc.right, rc.bottom);
 	MoveWindow(tiWebShell->getHost()->window_handle(), 0, 0, rc.right, rc.bottom, TRUE);
 }
 

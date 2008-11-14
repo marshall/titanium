@@ -53,6 +53,7 @@
 
 
 #include "ti_app.h"
+#include "ti_url.h"
 
 class TIWebViewDelegate;
 
@@ -81,4 +82,5 @@ public:
 	std::wstring& getResourcesPath() { return resourcesPath; }
 	void setResourcesPath(std::wstring& path) { resourcesPath = path; }
 
+	void include (std::string& relativePath);
 };

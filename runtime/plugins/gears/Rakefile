@@ -35,12 +35,11 @@ def get_make_command
 	if is_mac?
 		args = "BROWSER=SF MODE=opt"
 		return "make #{args} || make #{args}"
-	elsif is_win?	
-		args = "BROWSER=NPAPI MODE=opt OS=win32 CHROME_SINGLEPROCESS=1"
+	elsif is_win?
 		if is_cygwin?
-			return "cmd /C make #{args}"
+			return "cmd /C build.bat"
 		else
-			return "make #{args}"
+			return "build.bat"
 		end
 	end
 end
