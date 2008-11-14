@@ -52,7 +52,7 @@ TitaniumElement.prototype.elements = function(name)
 TitaniumElement.prototype.element = function(name, value)
 {
 	var elements = this.elements(name);
-	if (elements.length != 1) return;
+	if (elements.length < 1) return null;
 	var element = elements[0];
 	
 	if (value != null) {

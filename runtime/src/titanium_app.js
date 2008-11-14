@@ -10,6 +10,14 @@ TitaniumApp.prototype.parseXML = function ()
 	var doc = new ti.XML.Document(contents);
 
 	this.name = doc.root().elementValue("name");
+	
+	var endpoint = doc.root().element("appc:endpoint");
+	if (endpoint != null) {
+		this.appceleratorEndpoint = endpoint.value;
+	} else {
+		this.appceleratorEndpoint = null;
+	}
+	
 	this.windows = [];
 	
 	var app = this;
@@ -29,6 +37,11 @@ TitaniumApp.prototype.getName = function ()
 TitaniumApp.prototype.getWindows = function ()
 {
 	return this.windows;
+};
+
+TitaniumApp.prototype.getAppceleratorEndpoint = function()
+{
+	return this.appceleratorEndpoint;
 };
 
 ti.App = new TitaniumApp();
