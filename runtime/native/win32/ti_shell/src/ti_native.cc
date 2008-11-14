@@ -30,17 +30,6 @@ void TiNative::include(const CppArgumentList &args, CppVariant *result)
 {
 	if (args.size() > 0) {
 		std::string relativeName = args[0].ToString();
-		std::string relativePath = WideToUTF8(ti_web_shell->getResourcesPath());
-		relativePath += "\\";
-		relativePath += relativeName;
-
-		std::ifstream in(relativePath.c_str());
-		std::string s, line;
-		while(getline(in, line)) {
-			s += line + "\n";
-		}
-
-		WebView *webview = ti_web_shell->getHost()->webview();
-		webview->GetMainFrame()->ExecuteJavaScript(s, relativePath);
+		ti_web_shell->include(relativeName);
 	}
 }
