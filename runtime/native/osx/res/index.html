@@ -1,29 +1,36 @@
-<div style="background:white; height:100%; -webkit-border-radius:20px; overflow:hidden">
-	
-<p><a href="http://google.com" target="_self">_self</a>
-<p><a href="http://google.com" target="_parent">_parent</a>
-<p><a href="http://google.com" target="_top">_top</a>
-<p><a href="http://google.com" target="_new">_new</a>
-<p><a href="http://google.com" target="_blank">_blank</a>
-<p><a href="http://google.com" target="foobar">foobar</a>
-<p><a href="http://yahoo.com" target="foobar">foobar</a>
 
-<p><button onclick="alert(1)">ALERT</a>
-<p><button onclick="var res = confirm('ORLY????'); alert(res);">CONFIRM</a>
-<p><button onclick="var res = prompt('I CAN HAZ...', 'CHEEZBURGER'); setTimeout(function(){alert(res);}, 0);">PROMPT</a>
+<script type="text/javascript">
+window.onload=function()
+{
+	try
+	{
+		var menu = TiNative.createSystemMenu("ti://favicon.ico",function(sysmenu)
+		{
+			alert("system menu hit:" + sysmenu);
+		});
 
-<p><button onclick="window.open('http://google.com');">window.open('google.com')</button>
-<p><button onclick="window.open('http://google.com', '_new', 'scrollbars=yes,fullscreen=no,left=500,top=100,width=200,height=30,resizable=no');">window.open('google.com', '_new', features)</button>
-<p><button onclick="window.open('http://google.com', '_new', 'scrollbars=yes,fullscreen=yes');">window.open('google.com', '_new', fullscreen)</button>
+		menu.addItem("Hello 1",function(title)
+		{
+			alert("menu hit! "+title);
+			menu.hide();
+			setTimeout(function()
+			{
+				menu.show();
+			},4000);
+		});
 
-<p><script>document.write(navigator.userAgent)</script>
+		menu.addSeparator();
 
-<p><button onclick="TiNative.minimize();">Minimize</button>
-<p><button onclick="TiNative.beep();">Beep</button>
-	
-<p><button onclick="TiNative.playSound('Frog');">Play Sound 'Frog'</button>
-<p><button onclick="TiNative.hide();">Hide</button></p>
-<p><button onclick="TiNative.terminate();">Terminate</button></p>
-<p><button onclick="setTimeout(function(){TiNative.activate();}, 5000)">Activate after 5 seconds</button></p>
+		menu.addItem("Hello 2",function(title)
+		{
+			alert("menu hit! "+title);
+		});
+	}
+	catch (e)
+	{
+		alert("exception: "+e);
+	}
+};
+</script>
+<h1>Hello world</h1>
 
-</div>
