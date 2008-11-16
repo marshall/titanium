@@ -99,7 +99,7 @@
 	}
 	
 	NSURLResponse *response = [[NSURLResponse alloc] initWithURL:url MIMEType:mime expectedContentLength:-1 textEncodingName:@"utf-8"];
-	[client URLProtocol:self didReceiveResponse:response cacheStoragePolicy:NSURLCacheStorageNotAllowed];
+	[client URLProtocol:self didReceiveResponse:response cacheStoragePolicy:NSURLCacheStorageAllowed];
 	[client URLProtocol:self didLoadData:data];
 	[client URLProtocolDidFinishLoading:self];
 	[response release];
