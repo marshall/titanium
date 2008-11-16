@@ -15,6 +15,7 @@
 
 #pragma once
 
+#include "base/scoped_ptr.h"
 #include "webkit/glue/webpreferences.h"
 
 #ifdef TIDEBUG

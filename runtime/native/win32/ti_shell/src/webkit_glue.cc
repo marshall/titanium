@@ -130,7 +130,7 @@ bool EnsureFontLoaded(HFONT font) {
 }
 
 MONITORINFOEX GetMonitorInfoForWindow(HWND window) {
-  return webkit_glue::GetMonitorInfoForWindowHelper(window);
+  return webkit_glue::GetMonitorInfoForWindow(window);
 }
 
 bool DownloadUrl(const std::string& url, HWND caller_window) {
@@ -147,6 +147,10 @@ bool IsDefaultPluginEnabled() {
 
 std::wstring GetWebKitLocale() {
   return L"en-US";
+}
+
+ScreenInfo GetScreenInfo(gfx::ViewHandle window) {
+  return GetScreenInfoHelper(window);
 }
 
 } 
