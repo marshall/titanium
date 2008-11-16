@@ -16,8 +16,24 @@
  * limitations under the License. 
  */
 
-#import <Cocoa/Cocoa.h>
 
-int main(int argc, char *argv[]) {
-	return NSApplicationMain(argc, (const char **) argv);
+#import <Cocoa/Cocoa.h>
+#import "TIMenuAction.h"
+
+@interface TISystemMenu : NSObject {
+	NSStatusItem *statusItem;
+	NSMenu *menu;
+	WebScriptObject *target;
+	NSImage *itemImage;
+	bool showing;
+	NSMutableArray *items;
 }
+
+- (TISystemMenu*)initWithURL:(NSString*)url f:(WebScriptObject*)f;
+- (void)addItem:(NSString*)s f:(WebScriptObject*)f;
+- (void)addSeparator;
+- (void)execute;
+- (void)hide;
+- (void)show;
+
+@end

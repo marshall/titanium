@@ -16,8 +16,16 @@
  * limitations under the License. 
  */
 
-#import <Cocoa/Cocoa.h>
 
-int main(int argc, char *argv[]) {
-	return NSApplicationMain(argc, (const char **) argv);
+#import <Cocoa/Cocoa.h>
+#import <WebKit/WebKit.h>
+
+@interface TIMenuAction : NSMenuItem {
+	WebScriptObject *target;
+	NSString *title;
 }
+
+- (TIMenuAction*)initWithFunc:(WebScriptObject*)f title:(NSString*)t;
+- (void)execute;
+
+@end

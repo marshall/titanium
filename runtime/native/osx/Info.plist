@@ -27,10 +27,12 @@
 	</array>
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
+   <key>CFBundleShortVersionString</key>
+   <string>0.1</string>
 	<key>CFBundleIconFile</key>
 	<string>appcelerator</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.appcelerator.${PRODUCT_NAME:identifier}</string>
+	<string>org.appcelerator.${PRODUCT_NAME:identifier}</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
@@ -49,7 +51,7 @@
 	<array>
 		<dict>
 			<key>CFBundleURLName</key>
-			<string>com.appcelerator.${PRODUCT_NAME:identifier}</string>
+			<string>org.appcelerator.${PRODUCT_NAME:identifier}</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>http</string>

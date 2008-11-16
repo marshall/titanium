@@ -17,7 +17,14 @@
  */
 
 #import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
+#import <Foundation/NSURLRequest.h>
+#import <Foundation/NSURLProtocol.h>
 
-int main(int argc, char *argv[]) {
-	return NSApplicationMain(argc, (const char **) argv);
+@interface TIProtocol : NSURLProtocol {
 }
+
++ (NSString*) specialProtocolScheme;
++ (void) registerSpecialProtocol;
+
+@end

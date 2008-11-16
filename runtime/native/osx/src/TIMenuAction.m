@@ -16,8 +16,34 @@
  * limitations under the License. 
  */
 
-#import <Cocoa/Cocoa.h>
+#import "TIMenuAction.h"
 
-int main(int argc, char *argv[]) {
-	return NSApplicationMain(argc, (const char **) argv);
+@implementation TIMenuAction
+
+- (void)dealloc {
+	[target dealloc];
+	[title dealloc];
+	[super dealloc];
 }
+
+
+- (TIMenuAction*)initWithFunc:(WebScriptObject*)f title:(NSString*)t
+{
+	self = [super init];
+	target = f;
+	title = t;
+	[target retain];
+	[title retain];
+	return self;
+}
+
+- (void)execute
+{
+	NSMutableArray *result = [[NSMutableArray alloc] init];
+	[result addObject:target]; // scope
+	[result addObject:title]; // argument
+	[target callWebScriptMethod:@"call" withArguments:result];
+}
+
+@end
+

@@ -1,9 +1,20 @@
-//
-//  TIAppDelegate.m
-//  Titanium
-//
-//  Copyright 2008 __MyCompanyName__. All rights reserved.
-//
+/**
+ * This file is part of Appcelerator's Titanium project.
+ *
+ * Copyright 2008 Appcelerator, Inc.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. 
+ */
 
 #import "TIAppDelegate.h"
 #import "TIBrowserDocument.h"
@@ -304,9 +315,31 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 - (void)handleGetURLEvent:(NSAppleEventDescriptor *)event replyEvent:(NSAppleEventDescriptor *)replyEvent {
 	NSString *URLString = [[event paramDescriptorForKeyword:keyDirectObject] stringValue];
 
+	
+	NSRunInformationalAlertPanel(NSLocalizedString(@"JavaScript", @""),	// title
+								 URLString,								// message
+								 NSLocalizedString(@"OK", @""),			// default button
+								 nil,									// alt button
+								 nil);									// other button	
+	
 	NSString *tiScheme = @"ti://";
 	if ([URLString hasPrefix:tiScheme]) {
-		URLString = [NSString stringWithFormat:@"http://%@", [URLString substringFromIndex:[tiScheme length]]];
+		
+		//NSString *filePath = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:substringFromIndex:[tiScheme length]];
+
+		NSString *s = [URLString substringFromIndex:[tiScheme length]];
+		NSString *resPath = [[NSBundle mainBundle] resourcePath];
+//		NSString *scriptPath = [[resPath stringByAppendingPathComponent:@"public"] stringByAppendingPathComponent:s];
+		NSString *scriptPath = [resPath stringByAppendingPathComponent:s];
+		URLString = [NSString stringWithContentsOfFile:scriptPath];
+		//URLString = [NSString stringWithFormat:@"http://%@", [URLString substringFromIndex:[tiScheme length]]];
+
+		NSRunInformationalAlertPanel(NSLocalizedString(@"JavaScript", @""),	// title
+									 s,								// message
+									 NSLocalizedString(@"OK", @""),			// default button
+									 nil,									// alt button
+									 nil);									// other button	
+		
 	}
 
 	NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:URLString]];

@@ -1,15 +1,28 @@
-//
-//  TIBrowserWindowController.m
-//  Titanium
-//
-//  Copyright 2008 __MyCompanyName__. All rights reserved.
-//
+/**
+ * This file is part of Appcelerator's Titanium project.
+ *
+ * Copyright 2008 Appcelerator, Inc.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. 
+ */
+
 
 #import "TIBrowserWindowController.h"
 #import "TIAppDelegate.h"
 #import "TIBrowserDocument.h"
 #import "TIJavaScriptObject.h"
 #import "TIJavaScriptPromptWindowController.h"
+#import "TIProtocol.h"
 #import "WebViewPrivate.h"
 #import <WebKit/WebKit.h>
 
@@ -35,7 +48,7 @@ typedef enum {
 - (id)initWithWindowNibName:(NSString *)nibName {
 	self = [super initWithWindowNibName:nibName];
 	if (self != nil) {
-		
+
 	}
 	return self;
 }
@@ -45,12 +58,30 @@ typedef enum {
 	[super dealloc];
 }
 
+- (void) registerProtocols
+{
+	[TIProtocol registerSpecialProtocol];
+	//	[WebView registerURLSchemeAsLocal:TIProtocol];
+}
+
+- (void) setupDock
+{
+	//http://th30z.netsons.org/2008/10/cocoa-notification-badge/
+	NSDockTile *dockicon = [NSApp dockTile];
+	[dockicon setShowsApplicationBadge:YES];
+	[dockicon setBadgeLabel:@"45"];
+}
 
 - (void)awakeFromNib {
 	[self updateWindowFrameIfFirst];
 	[self customizeUserAgent];
+	[self registerProtocols];
+	[self setupDock];
+	
 //	[self customizeWebView];
 }
+
+
 
 
 #pragma mark -
@@ -102,8 +133,12 @@ typedef enum {
 
 - (void)customizeUserAgent {
 	// produces something like:
-	// Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_5_5; en-us) AppleWebKit/525.18 (KHTML, like Gecko) Appcelerator Titanium
-	[webView setApplicationNameForUserAgent:@"Appcelerator Titanium"];	
+	// Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_5_5; en-us) AppleWebKit/525.18 (KHTML, like Gecko) Titanium/1.0
+	NSString *shortVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
+	if (!shortVersion) 
+		shortVersion = @"0.0";
+	NSString *version = [NSString stringWithFormat:@"Titanium/%@", shortVersion];
+	[webView setApplicationNameForUserAgent:version];	
 }
 
 
@@ -165,6 +200,7 @@ typedef enum {
 	[windowScriptObject setValue:javaScriptObject forKey:@"TiNative"];
 	[javaScriptObject include:@"titanium/titanium.js"];
 	[javaScriptObject include:@"titanium/plugins.js"];
+//	[windowScriptObject evaluateWebScript:@"alert(1);"];
 	[javaScriptObject release];
 }
 
@@ -404,6 +440,11 @@ typedef enum {
 													NSLocalizedString(@"Cancel", @""),		// alt button
 													nil);
 	return NSAlertDefaultReturn == result;	
+}
+
+-(NSURLRequest *)webView:(WebView *)sender resource:(id)identifier willSendRequest:(NSURLRequest *)request redirectResponse:(NSURLResponse *)redirectResponse fromDataSource:(WebDataSource *)dataSource
+{
+	return request;
 }
 
 
