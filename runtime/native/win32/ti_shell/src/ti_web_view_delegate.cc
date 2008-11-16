@@ -199,3 +199,49 @@ void TIWebViewDelegate::AddMessageToConsole(WebView* webview,
 void TIWebViewDelegate::DidFinishLoadForFrame(WebView* webview, WebFrame* frame) {
 
 }
+
+// Displays a JavaScript alert panel associated with the given view. Clients
+// should visually indicate that this panel comes from JavaScript. The panel
+// should have a single OK button.
+void TIWebViewDelegate::RunJavaScriptAlert(WebView* webview, const std::wstring& message) {
+	MessageBox(this->hWnd, (LPCTSTR) message.c_str(), L"Alert", MB_OK | MB_ICONQUESTION);
+}
+
+// Displays a JavaScript confirm panel associated with the given view.
+// Clients should visually indicate that this panel comes
+// from JavaScript. The panel should have two buttons, e.g. "OK" and
+// "Cancel". Returns true if the user hit OK, or false if the user hit Cancel.
+bool TIWebViewDelegate::RunJavaScriptConfirm(WebView* webview, const std::wstring& message) {
+	int result = MessageBox(this->hWnd, (LPCTSTR) message.c_str(), L"Confirm", MB_YESNO | MB_ICONEXCLAMATION);
+
+	return (result == IDYES);
+}
+
+// Displays a JavaScript text input panel associated with the given view.
+// Clients should visually indicate that this panel comes from JavaScript.
+// The panel should have two buttons, e.g. "OK" and "Cancel", and an area to
+// type text. The default_value should appear as the initial text in the
+// panel when it is shown. If the user hit OK, returns true and fills result
+// with the text in the box.  The value of result is undefined if the user
+// hit Cancel.
+bool TIWebViewDelegate::RunJavaScriptPrompt(WebView* webview,
+                               const std::wstring& message,
+                               const std::wstring& default_value,
+                               std::wstring* result) {
+
+	ti_debug("::: RunJavaScriptPrompt");
+
+	printf("JS prompt: '%ls' (%ls)\n", message.c_str(), default_value.c_str());
+
+	return false;
+}
+
+// Displays a "before unload" confirm panel associated with the given view.
+// The panel should have two buttons, e.g. "OK" and "Cancel", where OK means
+// that the navigation should continue, and Cancel means that the navigation
+// should be cancelled, leaving the user on the current page.  Returns true
+// if the user hit OK, or false if the user hit Cancel.
+bool TIWebViewDelegate::RunBeforeUnloadConfirm(WebView* webview,
+                                  const std::wstring& message) {
+	return true;  // OK, continue to navigate away
+}
