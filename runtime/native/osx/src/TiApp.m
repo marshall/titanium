@@ -55,7 +55,7 @@
 }
 
 
-- (void)terminate {
+- (void)quit {
 	[NSApp terminate:self];
 }
 
@@ -98,8 +98,8 @@
 		return @"include";
 	} else if (sel == @selector(debug:)) {
 		return @"debug";
-	} else if (sel == @selector(terminate)) {
-		return @"terminate";
+	} else if (sel == @selector(quit)) {
+		return @"quit";
 	} else if (sel == @selector(activate)) {
 		return @"activate";
 	} else if (sel == @selector(hide)) {

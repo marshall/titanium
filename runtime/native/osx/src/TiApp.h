@@ -30,7 +30,7 @@
 
 - (void)include:(NSString *)s;
 - (void)debug:(NSString *)s;
-- (void)terminate;
+- (void)quit;
 - (void)activate;
 - (void)hide;
 - (void)minimize;
