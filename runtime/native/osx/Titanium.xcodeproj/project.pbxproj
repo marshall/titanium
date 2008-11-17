@@ -25,7 +25,7 @@
 		2433DE210ED102DB00813747 /* TiSystemDock.m in Sources */ = {isa = PBXBuildFile; fileRef = 2433DE1D0ED102DB00813747 /* TiSystemDock.m */; };
 		2433DE220ED102DB00813747 /* TiUserMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = 2433DE1F0ED102DB00813747 /* TiUserMenu.m */; };
 		2433DF6D0ED1122000813747 /* TiWindowOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 2433DF6C0ED1122000813747 /* TiWindowOptions.m */; };
-		2433E33D0ED15C4A00813747 /* favicon.ico in Resources */ = {isa = PBXBuildFile; fileRef = 2433E33C0ED15C4A00813747 /* favicon.ico */; };
+		24DA9C0C0ED15E9000DECFFC /* favicon.ico in Resources */ = {isa = PBXBuildFile; fileRef = 24DA9C0B0ED15E9000DECFFC /* favicon.ico */; };
 		8D15AC2C0486D014006FF6A4 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 2A37F4B9FDCFA73011CA2CEA /* Credits.rtf */; };
 		8D15AC2F0486D014006FF6A4 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165FFE840EACC02AAC07 /* InfoPlist.strings */; };
 		8D15AC320486D014006FF6A4 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A37F4B0FDCFA73011CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
@@ -81,7 +81,7 @@
 		2433DE1F0ED102DB00813747 /* TiUserMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TiUserMenu.m; path = src/TiUserMenu.m; sourceTree = "<group>"; };
 		2433DF6B0ED1122000813747 /* TiWindowOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TiWindowOptions.h; path = src/TiWindowOptions.h; sourceTree = "<group>"; };
 		2433DF6C0ED1122000813747 /* TiWindowOptions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TiWindowOptions.m; path = src/TiWindowOptions.m; sourceTree = "<group>"; };
-		2433E33C0ED15C4A00813747 /* favicon.ico */ = {isa = PBXFileReference; lastKnownFileType = image.ico; name = favicon.ico; path = res/favicon.ico; sourceTree = "<group>"; };
+		24DA9C0B0ED15E9000DECFFC /* favicon.ico */ = {isa = PBXFileReference; lastKnownFileType = image.ico; name = favicon.ico; path = res/favicon.ico; sourceTree = "<group>"; };
 		2A37F4B0FDCFA73011CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		2A37F4BAFDCFA73011CA2CEA /* English */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = English; path = English.lproj/Credits.rtf; sourceTree = "<group>"; };
 		2A37F4C4FDCFA73011CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
@@ -146,7 +146,6 @@
 		2A37F4AAFDCFA73011CA2CEA /* Titanium */ = {
 			isa = PBXGroup;
 			children = (
-				2433E33C0ED15C4A00813747 /* favicon.ico */,
 				2A37F4ABFDCFA73011CA2CEA /* Classes */,
 				2A37F4AFFDCFA73011CA2CEA /* Other Sources */,
 				2A37F4B8FDCFA73011CA2CEA /* Resources */,
@@ -274,6 +273,7 @@
 		D31B3EF80EBE88B5006F3012 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				24DA9C0B0ED15E9000DECFFC /* favicon.ico */,
 				D31B3EF60EBE88B3006F3012 /* resizeIndicator.png */,
 			);
 			name = Images;
@@ -333,7 +333,7 @@
 				D31B38820EBCE51D006F3012 /* JavaScriptPromptWindow.xib in Resources */,
 				D31B3D230EBD7DF7006F3012 /* DefaultValues.plist in Resources */,
 				D31B3EF70EBE88B3006F3012 /* resizeIndicator.png in Resources */,
-				2433E33D0ED15C4A00813747 /* favicon.ico in Resources */,
+				24DA9C0C0ED15E9000DECFFC /* favicon.ico in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
