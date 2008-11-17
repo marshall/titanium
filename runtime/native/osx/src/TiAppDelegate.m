@@ -26,37 +26,43 @@
 
 static TiBrowserDocument *firstDocument = nil;
 
-TiBrowserWindowController *TIFirstController() {
+TiBrowserWindowController *TIFirstController() 
+{
 	return [firstDocument browserWindowController];
 }
 
-TiBrowserWindowController *TIFrontController() {
+TiBrowserWindowController *TIFrontController() 
+{
 	TiBrowserDocument *doc = [[TiAppDelegate instance] currentDocument];
-	if (doc) {
+	if (doc) 
+	{
 		return [doc browserWindowController];
-	} else {
-		return nil;
 	}
+	return nil;
 }
 
-static BOOL containsElement(NSXMLElement *el, NSString *name) {
+static BOOL containsElement(NSXMLElement *el, NSString *name) 
+{
 	NSArray *array = [el elementsForName:name];
 	if (!array) return false;
 	return [array count] > 0;
 }
 
-static NSXMLElement *getElement(NSXMLElement *el, NSString *name) {
+static NSXMLElement *getElement(NSXMLElement *el, NSString *name) 
+{
 	NSArray *array = [el elementsForName:name];
 	if (!array || [array count] == 0) return nil;
 	return [array objectAtIndex:0];
 }
 
-static NSString *elementText(NSXMLElement *el, NSString *name) {
+static NSString *elementText(NSXMLElement *el, NSString *name) 
+{
 	NSXMLElement *elem = getElement(el, name);
 	return elem ? [elem stringValue] : nil;
 }
 
-static NSString *attrText(NSXMLElement *el, NSString *name) {
+static NSString *attrText(NSXMLElement *el, NSString *name) 
+{
 	NSXMLNode *node = [el attributeForName:name];
 	if (!node) return nil;
 	return [node stringValue];
@@ -81,17 +87,20 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 
 @implementation TiAppDelegate
 
-+ (id)instance {
++ (id)instance 
+{
 	return [NSApp delegate];
 }
 
 
-+ (void)initialize {
++ (void)initialize 
+{
 	[self setupDefaults];
 }
 
 
-+ (void)setupDefaults {
++ (void)setupDefaults 
+{
 	NSString *path = [[NSBundle mainBundle] pathForResource:@"DefaultValues" ofType:@"plist"];
 
 	NSMutableDictionary *defaultValues = [NSMutableDictionary dictionaryWithContentsOfFile:path];
@@ -103,33 +112,36 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 }
 
 
-- (id)init {
+- (id)init 
+{
 	self = [super init];
-	if (self != nil) {
+	if (self != nil) 
+	{
 		[self registerForAppleEvents];
 	}
 	return self;
 }
 
 
-- (void)dealloc {
+- (void)dealloc 
+{
 	[self unregisterForAppleEvents];
 	[self setEndpoint:nil];
 	[self setAppName:nil];
-//	[self setWindowTitle:nil];
-//	[self setStartPath:nil];
 	[super dealloc];
 }
 
 
-- (void)awakeFromNib {
+- (void)awakeFromNib 
+{
 	[self parseTiAppXML];
 	[self updateAppNameInMainMenu];
 	[self setupWebPreferences];
 }
 
 
-- (void)applicationDidFinishLaunching:(NSNotification *)n {
+- (void)applicationDidFinishLaunching:(NSNotification *)n 
+{
 	[self loadFirstPage];
 }
 
@@ -137,7 +149,8 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 #pragma mark -
 #pragma mark Actions
 
-- (IBAction)showPreferencesWindow:(id)sender {
+- (IBAction)showPreferencesWindow:(id)sender 
+{
 	[[TiPreferencesWindowController instance] showWindow:sender];
 }
 
@@ -145,7 +158,8 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 // we can use this for total customization of the About window.
 // OR, just allow the developer to provide a 'Credits.rtf' file in the app bundle
 // and remove this. that will show those credits in the default About window template
-- (IBAction)showAboutWindow:(id)sender {
+- (IBAction)showAboutWindow:(id)sender 
+{
 	NSMutableDictionary *dict = [NSMutableDictionary dictionary];
 
 	NSAttributedString *as = [[NSAttributedString alloc] initWithString:@"These are Credits"];
@@ -170,29 +184,33 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 }
 
 
-- (IBAction)showWebInspector:(id)sender {
+- (IBAction)showWebInspector:(id)sender 
+{
 	[[self webInspectorForFrontWindowController] show:sender];
 }
 
 
-- (IBAction)showErrorConsole:(id)sender {
+- (IBAction)showErrorConsole:(id)sender 
+{
 	[[self webInspectorForFrontWindowController] showConsole:sender];
 }
 
 
-- (IBAction)showNetworkTimeline:(id)sender {
+- (IBAction)showNetworkTimeline:(id)sender 
+{
 	[[self webInspectorForFrontWindowController] showTimeline:sender];	
 }
 
 
-- (IBAction)toggleFullScreen:(id)sender {
+- (IBAction)toggleFullScreen:(id)sender 
+{
 	NSScreen *screen = nil;
 	id webArchive = nil;
 	WebView *wv = nil;
 	
 	TiBrowserWindowController *winController = TIFrontController();
 
-	BOOL enteringFullScreen = ![self isFullScreen];
+	BOOL enteringFullScreen = ![windowOptions isFullscreen];
 	
 	if (winController) {
 		screen = [[winController window] screen];
@@ -205,7 +223,9 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 	}	
 	
 	if (enteringFullScreen) {
-		[self setIsFullScreen:YES];
+	//	[self setIsFullScreen:YES];
+		//FIXME FIXME
+		
 	} 
 	// dont setIsFullScreen:NO, cuz that is handled automatically by -[TIBrowserDocument close]
 	// so that closing a fullscreen window returns the main menu bar
@@ -216,8 +236,9 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 	
 	TiBrowserDocument *doc = [self openUntitledDocumentAndDisplay:YES error:nil];
 	winController = [doc browserWindowController];
+
 	
-	if ([self isFullScreen]) {
+	if ([windowOptions isFullscreen]) {
 		NSRect frame = [screen frame];
 		[[winController window] setFrame:frame display:YES];
 	}
@@ -571,7 +592,8 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 }
 
 
-- (WebInspector *)webInspectorForFrontWindowController {
+- (WebInspector *)webInspectorForFrontWindowController 
+{
 	TiBrowserWindowController *winController = TIFrontController();
 	return [[winController webView] inspector];
 }
@@ -580,83 +602,35 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 #pragma mark -
 #pragma mark Accessors
 
-- (BOOL)isFullScreen {
-	return isFullScreen;
-}
-
-
-- (void)setIsFullScreen:(BOOL)yn {
-	isFullScreen = yn;
-	// hide the system main menu
-	[NSMenu setMenuBarVisible:!yn];
-}
-
-
-//- (CGFloat)windowWidth {
-//	return windowWidth;
-//}
-//
-//
-//- (CGFloat)windowHeight {
-//	return windowHeight;
-//}
-//
-
-//- (void)setWindowWidth:(CGFloat)w height:(CGFloat)h {
-//	windowWidth = w;
-//	windowHeight = h;
-//}
-//
-
-- (NSString *)endpoint {
+- (NSString *)endpoint 
+{
 	return [[endpoint copy] autorelease];
 }
 
 
-- (void)setEndpoint:(NSString*)s {
-	if (endpoint != s) {
+- (void)setEndpoint:(NSString*)s 
+{
+	if (endpoint != s) 
+	{
 		[endpoint autorelease];
 		endpoint = [s copy];
 	}
 }
 
 
-- (NSString *)appName {
+- (NSString *)appName 
+{
 	return [[appName copy] autorelease];
 }
 
 
-- (void)setAppName:(NSString*)s {
-	if (appName != s) {
+- (void)setAppName:(NSString*)s 
+{
+	if (appName != s) 
+	{
 		[appName autorelease];
 		appName = [s copy];
 	}
 }
-
-
-//- (NSString *)windowTitle {
-//	return [[windowTitle copy] autorelease];
-//}
-//
-//
-//- (void)setWindowTitle:(NSString *)s {
-//	if (windowTitle != s) {
-//		[windowTitle autorelease];
-//		windowTitle = [s copy];
-//	}
-//}
-//
-//
-//- (NSString *)startPath {
-//	return [[startPath copy] autorelease];
-//}
-//
-//
-//- (void)setStartPath:(NSString*)s {
-//	if (startPath != s) {
-//		[startPath autorelease];
-//		startPath = [s copy];
-//	}
-//}
 
 @end

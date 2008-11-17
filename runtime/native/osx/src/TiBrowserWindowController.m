@@ -401,7 +401,7 @@ typedef enum {
 - (WebView *)webView:(WebView *)wv createWebViewWithRequest:(NSURLRequest *)request windowFeatures:(NSDictionary *)features 
 {
 	BOOL fullscreen = [[features objectForKey:@"fullscreen"] boolValue];
-	[[TiAppDelegate instance] setIsFullScreen:fullscreen];
+//FIXME:	[[TiAppDelegate instance] setIsFullScreen:fullscreen];
 	
 	//FIXME: use the TiUserWindow to do this
 
