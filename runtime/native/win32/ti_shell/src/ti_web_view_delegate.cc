@@ -262,8 +262,6 @@ LRESULT CALLBACK JsPromptDlgProc(HWND hWndDlg, UINT Msg, WPARAM wParam, LPARAM l
 		case WM_DESTROY:
 			EndDialog(hWndDlg, JSPROMPTIDCANCEL);
 			return TRUE;
-		default:
-			printf("wParam = %d\n", wParam);
 		}
 		break;
 	}
