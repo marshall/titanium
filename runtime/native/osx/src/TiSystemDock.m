@@ -25,6 +25,7 @@
 	self = [super init];
 	if (self != nil) {
 		webView = wv; // assign only. don't retain. prevents retain loop memory leak
+		[self setupDock];
 	}
 	return self;
 }
@@ -39,5 +40,50 @@
 	return @"[TiSystemDock native]";
 }
 
+- (void)setupDock
+{
+	//more details: http://th30z.netsons.org/2008/10/cocoa-notification-badge/
+}
+
+- (void)setBadge:(NSString*)s
+{
+	NSDockTile *dockicon = [NSApp dockTile];
+	if (nil != s)
+	{
+		[dockicon setShowsApplicationBadge:YES];
+		[dockicon setBadgeLabel:s];
+	}
+	else
+	{
+		[dockicon setShowsApplicationBadge:NO];
+		[dockicon setBadgeLabel:@""];
+	}
+}
+
+#pragma mark -
+#pragma mark WebScripting
+
++ (BOOL)isSelectorExcludedFromWebScript:(SEL)sel {
+	return (nil == [self webScriptNameForSelector:sel]);
+}
+
+
++ (NSString *)webScriptNameForSelector:(SEL)sel 
+{
+	if (sel == @selector(setBadge:)) {
+		return @"setBadge";
+	}
+	return nil;
+}
+
+
++ (BOOL)isKeyExcludedFromWebScript:(const char*)key {
+	return YES;
+}
+
+
++ (NSString *)webScriptNameForKey:(const char *)name {
+	return nil;
+}
 
 @end

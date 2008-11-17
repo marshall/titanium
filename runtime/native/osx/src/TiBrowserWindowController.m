@@ -66,23 +66,11 @@ typedef enum {
 	//	[WebView registerURLSchemeAsLocal:TiProtocol];
 }
 
-- (void) setupDock
-{
-	//http://th30z.netsons.org/2008/10/cocoa-notification-badge/
-	NSDockTile *dockicon = [NSApp dockTile];
-	[dockicon setShowsApplicationBadge:YES];
-	[dockicon setBadgeLabel:@"45"];
-	
-	
-//	[[NSApplication sharedApplication] requestUserAttention:NSCriticalRequest];
-}
-
 - (void)awakeFromNib 
 {
 	[self updateWindowFrameIfFirst];
 	[self customizeUserAgent];
 	[self registerProtocols];
-	[self setupDock];
 	
 //	[self customizeWebView];
 }

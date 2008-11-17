@@ -25,5 +25,8 @@
 	WebView *webView;
 }
 - (id)initWithWebView:(WebView *)wv;
+- (void)setupDock;
+- (void)setBadge:(NSString*)s;
+
 
 @end

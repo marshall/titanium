@@ -25,12 +25,14 @@ window.onload=function()
 			try
 			{
 				win.show();
+				TiNative.getDock().setBadge(null);
 			}
 			catch(E)
 			{
 				alert(E);
 			}
 		}
+		TiNative.getDock().setBadge("1");
 		//win.show();
 
 /*
