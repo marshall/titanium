@@ -16,18 +16,38 @@
  * limitations under the License. 
  */
 #import "TiWindowOptions.h"
+#import <WebKit/WebKit.h>
 
 @implementation TiWindowOptions
 
 - (id) init
 {
 	self = [super init];
+
+	// setup defaults
+	x=0;
+	y=0;
+	width=400;
+	height=500;
+	title=@"Titanium Application";
+	url=@"index.html";
+	chrome=NO;
+	transparency=1.0;
+	visible=YES;
+	minimizable=YES;
+	maximizable=YES;
+	resizable=YES;
+	fullscreen=NO;
+	closeable=YES;
+	scrollbars=YES;
+
 	return self;
 }
 
 - (void)dealloc
 {
 	title = nil;
+	url = nil;
 	[super dealloc];
 }
 
@@ -215,9 +235,93 @@
 	{
 		mask |= NSTitledWindowMask;
 	}		
-	
-	//mask = NSClosableWindowMask|NSMiniaturizableWindowMask|NSTitledWindowMask|NSResizableWindowMask; //|NSBorderlessWindowMask|NSTitledWindowMask|NSClosableWindowMask|NSMiniaturizableWindowMask|NSResizableWindowMask;
 	return mask;
 }
+
+
+#pragma mark -
+#pragma mark WebScripting
+
++ (BOOL)isSelectorExcludedFromWebScript:(SEL)sel {
+	return (nil == [self webScriptNameForSelector:sel]);
+}
+
+
++ (NSString *)webScriptNameForSelector:(SEL)sel 
+{
+	if (sel == @selector(getX)) {
+		return @"getX";
+	} else if (sel == @selector(setX:)) {
+		return @"setX";
+	} else if (sel == @selector(getY)) {
+		return @"getY";
+	} else if (sel == @selector(setY:)) {
+		return @"setY";
+	} else if (sel == @selector(getWidth)) {
+		return @"getWidth";
+	} else if (sel == @selector(setWidth:)) {
+		return @"setWidth";
+	} else if (sel == @selector(getHeight)) {
+		return @"getHeight";
+	} else if (sel == @selector(setHeight:)) {
+		return @"setHeight";
+	} else if (sel == @selector(setFullscreen:)) {
+		return @"setFullscreen";
+	} else if (sel == @selector(isFullscreen)) {
+		return @"isFullscreen";
+	} else if (sel == @selector(isResizable)) {
+		return @"isResizable";
+	} else if (sel == @selector(setResizable:)) {
+		return @"setResizable";
+	} else if (sel == @selector(isMaximizable)) {
+		return @"isMaximizable";
+	} else if (sel == @selector(setMaximizable:)) {
+		return @"setMaximizable";
+	} else if (sel == @selector(isMinimizable)) {
+		return @"isMinimizable";
+	} else if (sel == @selector(setMinimizable:)) {
+		return @"setMinimizable";
+	} else if (sel == @selector(isChrome)) {
+		return @"isChrome";
+	} else if (sel == @selector(setChrome:)) {
+		return @"setChrome";
+	} else if (sel == @selector(isScrollbars)) {
+		return @"isScrollbars";
+	} else if (sel == @selector(setScrollbars:)) {
+		return @"setScrollbars";
+	} else if (sel == @selector(setTransparency:)) {
+		return @"setTransparency";
+	} else if (sel == @selector(getTransparency)) {
+		return @"getTransparency";
+	} else if (sel == @selector(isCloseable)) {
+		return @"isCloseable";
+	} else if (sel == @selector(setCloseable:)) {
+		return @"setCloseable";
+	} else if (sel == @selector(isVisible)) {
+		return @"isVisible";
+	} else if (sel == @selector(setVisible:)) {
+		return @"setVisible";
+	} else if (sel == @selector(setTitle:)) {
+		return @"setTitle";
+	} else if (sel == @selector(getTitle)) {
+		return @"getTitle";
+	} else if (sel == @selector(setURL:)) {
+		return @"setURL";
+	} else if (sel == @selector(getURL)) {
+		return @"getURL";
+	}
+	return nil;
+}
+
+
++ (BOOL)isKeyExcludedFromWebScript:(const char*)key {
+	return YES;
+}
+
+
++ (NSString *)webScriptNameForKey:(const char *)name {
+	return nil;
+}
+
 
 @end

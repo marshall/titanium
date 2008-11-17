@@ -34,6 +34,7 @@
 
 - (TiSystemMenu *)createSystemMenu:(NSString*)url f:(WebScriptObject*)f;
 - (TiUserWindow *)createWindow;
+- (TiWindowOptions *)createWindowOptions;
 
 - (TiApp*) getApp;
 - (TiSystemDock*) getDock;

@@ -54,8 +54,14 @@
 
 - (TiUserWindow *)createWindow
 {
-	TiUserWindow *win = [[TiUserWindow alloc] init];
+	TiUserWindow *win = [TiUserWindow new];
 	return win;
+}
+
+- (TiWindowOptions*)createWindowOptions
+{
+	TiWindowOptions *opts = [TiWindowOptions new];
+	return opts;
 }
 
 - (TiApp*) getApp
@@ -82,6 +88,8 @@
 		return @"createSystemMenu";
 	} else if (sel == @selector(createWindow)) {
 		return @"createWindow";
+	} else if (sel == @selector(createWindowOptions)) {
+		return @"createWindowOptions";
 	} else if (sel == @selector(getApp)) {
 		return @"getApp";
 	} else if (sel == @selector(getDock)) {
