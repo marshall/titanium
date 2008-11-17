@@ -17,6 +17,7 @@
  */
 
 #import <Cocoa/Cocoa.h>
+#import "TiWindowOptions.h"
 
 @class TiAppDelegate;
 @class TiBrowserDocument;
@@ -26,15 +27,18 @@
 TiBrowserWindowController *TIFirstController();
 TiBrowserWindowController *TIFrontController();
 
+//TODO: refactor this below
+
 @interface TiAppDelegate : NSDocumentController {
 	BOOL isFullScreen;
 
-	CGFloat windowWidth;
-	CGFloat windowHeight;
+//	CGFloat windowWidth;
+//	CGFloat windowHeight;
 	NSString *endpoint;
 	NSString *appName;
-	NSString *windowTitle;
-	NSString *startPath;
+//	NSString *windowTitle;
+//	NSString *startPath;
+	TiWindowOptions *windowOptions;
 }
 + (id)instance;
 
@@ -47,22 +51,32 @@ TiBrowserWindowController *TIFrontController();
 
 - (TiBrowserDocument *)newDocumentWithRequest:(NSURLRequest *)request display:(BOOL)display;
 - (TiBrowserDocument *)newDocumentWithDisplay:(BOOL)display;
+
+- (TiBrowserDocument *)newDocumentWithOptions:(NSURLRequest *)request options:(TiWindowOptions*)options;
+
+
 - (WebFrame *)findFrameNamed:(NSString *)frameName;
 
 - (void)parseTiAppXML;
 
 - (BOOL)isFullScreen;
 - (void)setIsFullScreen:(BOOL)yn;
+- (void)setWindowOptions:(TiWindowOptions*)o;
+- (TiWindowOptions*)getWindowOptions;
 
-- (CGFloat)windowWidth;
-- (CGFloat)windowHeight;
-- (void)setWindowWidth:(CGFloat)w height:(CGFloat)h;
+
+
+//TODO: refactor these
+//- (CGFloat)windowWidth;
+//- (CGFloat)windowHeight;
+//- (void)setWindowWidth:(CGFloat)w height:(CGFloat)h;
 - (NSString *)endpoint;
 - (void)setEndpoint:(NSString *)s;
 - (NSString *)appName;
 - (void)setAppName:(NSString *)s;
-- (NSString *)windowTitle;
-- (void)setWindowTitle:(NSString *)s;
-- (NSString *)startPath;
-- (void)setStartPath:(NSString *)s;
+//- (NSString *)windowTitle;
+//- (void)setWindowTitle:(NSString *)s;
+//- (NSString *)startPath;
+//- (void)setStartPath:(NSString *)s;
+
 @end

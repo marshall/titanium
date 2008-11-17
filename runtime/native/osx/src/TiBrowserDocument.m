@@ -19,6 +19,8 @@
 #import "TiBrowserDocument.h"
 #import "TiBrowserWindowController.h"
 #import "TiAppDelegate.h"
+#import "TiWindowOptions.h"
+
 #import <WebKit/WebKit.h>
 
 @interface TiBrowserDocument (Friend)
@@ -27,43 +29,92 @@
 
 @implementation TiBrowserDocument
 
-- (id)init {
+- (id)init 
+{
 	self = [super init];
 	if (self) {
 	}
 	return self;
 }
 
-
-- (void)dealloc {
+- (void)dealloc 
+{
 	browserWindowController = nil;
+	//TODO: need to release options?
+	windowOptions = nil;
 	[super dealloc];
+}
+
+- (TiWindowOptions*)getOptions
+{
+	return windowOptions;
+}
+
+- (void)setOptions:(TiWindowOptions*)opts
+{
+	windowOptions = opts;
+	NSUInteger mask = 0;
+	if ([windowOptions isResizable])
+	{
+		mask |= NSResizableWindowMask;
+	}
+	if ([windowOptions isCloseable])
+	{
+		mask |= NSClosableWindowMask;
+	}
+	if ([windowOptions isMinimizable])
+	{
+		mask |= NSMiniaturizableWindowMask;
+	}
+	if ([windowOptions isMaximizable])
+	{
+		//???
+	}
+	if (![windowOptions isChrome])
+	{
+		mask |= NSBorderlessWindowMask;
+	}
+	else
+	{
+		mask |= NSTitledWindowMask;
+	}		
+	
+	//mask = NSClosableWindowMask|NSMiniaturizableWindowMask|NSTitledWindowMask|NSResizableWindowMask; //|NSBorderlessWindowMask|NSTitledWindowMask|NSClosableWindowMask|NSMiniaturizableWindowMask|NSResizableWindowMask;
+
+	//we set it on the delegate since he's a singleton and these options are "sticky"
+	[[TiAppDelegate instance] setWindowOptions:opts];
 }
 
 
 #pragma mark -
 #pragma mark NSDocument
 
-- (void)makeWindowControllers {
+- (void)makeWindowControllers 
+{
 	browserWindowController = [[TiBrowserWindowController alloc] initWithWindowNibName:@"BrowserWindow"];
 	[self addWindowController:browserWindowController];
 	[browserWindowController release];
 }
 
 
-- (BOOL)isDocumentEdited {
+- (BOOL)isDocumentEdited 
+{
 	return NO;
 }
 
 
-- (NSString *)displayName {
-	return [[TiAppDelegate instance] windowTitle];
+- (NSString *)displayName 
+{
+	return [[[TiAppDelegate instance] getWindowOptions] getTitle];
 }
 
 
-- (void)close {
-	if ([[TiAppDelegate instance] isFullScreen]) {
-		[[TiAppDelegate instance] setIsFullScreen:NO];
+- (void)close 
+{
+	if ([[self getOptions] isFullscreen])
+	{
+		//FIXME: fullscreen
+		//[[TiAppDelegate instance] setIsFullScreen:NO];
 	}
 	[super close];
 }
@@ -72,12 +123,14 @@
 #pragma mark -
 #pragma mark Public
 
-- (void)loadRequest:(NSURLRequest *)request {
+- (void)loadRequest:(NSURLRequest *)request 
+{
 	[[[self webView] mainFrame] loadRequest:request];
 }
 
 
-- (TiBrowserWindowController *)browserWindowController {
+- (TiBrowserWindowController *)browserWindowController 
+{
 	return browserWindowController;
 }
 
@@ -85,17 +138,20 @@
 #pragma mark -
 #pragma mark Accessors
 
-- (BOOL)isFirst {
+- (BOOL)isFirst 
+{
 	return isFirst;
 }
 
 
-- (void)setIsFirst:(BOOL)yn {
+- (void)setIsFirst:(BOOL)yn 
+{
 	isFirst = yn;
 }
 
 
-- (WebView *)webView {
+- (WebView *)webView 
+{
 	return [browserWindowController webView];
 }
 

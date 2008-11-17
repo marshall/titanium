@@ -23,6 +23,7 @@
 #import "TiNative.h"
 #import "TiJavaScriptPromptWindowController.h"
 #import "TiProtocol.h"
+#import "TiBrowserWindow.h"
 #import "WebViewPrivate.h"
 #import <WebKit/WebKit.h>
 
@@ -71,8 +72,7 @@ typedef enum {
 	[self updateWindowFrameIfFirst];
 	[self customizeUserAgent];
 	[self registerProtocols];
-	
-//	[self customizeWebView];
+	[self customizeWebView];
 }
 
 
@@ -94,27 +94,27 @@ typedef enum {
 }
 
 
-- (void)includeScript:(NSString*)path 
-{
-	//TODO: do we need this anymore?
-	
-	DOMDocument *doc = [webView mainFrameDocument];
-	if (!doc) return;
-
-	DOMNodeList *headEls = [doc getElementsByTagName:@"head"];
-	if (![headEls length]) return;
-	
-	DOMElement *headEl = (DOMElement *)[headEls item:0];
-	if (!headEl) return;
-	
-	DOMElement *scriptEl = [doc createElement:@"script"];
-	[scriptEl setAttribute:@"src" value:path];
-	[scriptEl setAttribute:@"type" value:@"text/javascript"];
-	//DOMText *text = [doc createTextNode:@""];
-	//[script appendChild:text];
-
-	[headEl appendChild:scriptEl];
-}
+//- (void)includeScript:(NSString*)path 
+//{
+//	//TODO: do we need this anymore?
+//	
+//	DOMDocument *doc = [webView mainFrameDocument];
+//	if (!doc) return;
+//
+//	DOMNodeList *headEls = [doc getElementsByTagName:@"head"];
+//	if (![headEls length]) return;
+//	
+//	DOMElement *headEl = (DOMElement *)[headEls item:0];
+//	if (!headEl) return;
+//	
+//	DOMElement *scriptEl = [doc createElement:@"script"];
+//	[scriptEl setAttribute:@"src" value:path];
+//	[scriptEl setAttribute:@"type" value:@"text/javascript"];
+//	//DOMText *text = [doc createTextNode:@""];
+//	//[script appendChild:text];
+//
+//	[headEl appendChild:scriptEl];
+//}
 
 
 #pragma mark -
@@ -146,9 +146,21 @@ typedef enum {
 - (void)customizeWebView 
 {
 	// this stuff adjusts the webview/window for chromeless windows.
-	[[[webView mainFrame] frameView] setAllowsScrolling:NO];
+	
+	//FIXME:
+	TiBrowserWindow *win = (TiBrowserWindow*)[self window];
+	if ([[win getOptions] isScrollbars])
+	{
+		[[[webView mainFrame] frameView] setAllowsScrolling:YES];
+		[[self window] setShowsResizeIndicator:YES];
+	}
+	else
+	{
+		[[[webView mainFrame] frameView] setAllowsScrolling:NO];
+		[[self window] setShowsResizeIndicator:NO];
+	}
+	
 	[webView setBackgroundColor:[NSColor clearColor]];
-	[[self window] setShowsResizeIndicator:NO];
 }
 
 
@@ -390,6 +402,8 @@ typedef enum {
 {
 	BOOL fullscreen = [[features objectForKey:@"fullscreen"] boolValue];
 	[[TiAppDelegate instance] setIsFullScreen:fullscreen];
+	
+	//FIXME: use the TiUserWindow to do this
 
 	TiBrowserDocument *doc = [[TiAppDelegate instance] newDocumentWithRequest:request display:NO];
 	

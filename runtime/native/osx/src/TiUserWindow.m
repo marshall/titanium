@@ -19,7 +19,7 @@
 #import "TiBrowserDocument.h"
 #import "TiAppDelegate.h"
 
-
+ 
 @implementation TiUserWindow
 
 - (TiUserWindow*) init
@@ -27,7 +27,11 @@
 	self = [super init];
 	NSURL *url = [[NSURL alloc] initWithString:@"about:blank"];
 	NSURLRequest *req = [[NSURLRequest alloc] initWithURL:url];
-	doc = [[TiAppDelegate instance] newDocumentWithRequest:req display:NO];
+
+	TiWindowOptions *options = [[TiWindowOptions alloc] init];
+	[options setWidth:500];
+	[options setMaximizable:NO];
+	doc = [[TiAppDelegate instance] newDocumentWithOptions:req options:options];
 	
 	NSWindow *window = [[doc browserWindowController] window];
 	NSRect newFrame = NSZeroRect;

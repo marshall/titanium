@@ -31,30 +31,49 @@
 
 @implementation TiBrowserWindow
 
+- (void)dealloc
+{
+	[options release];
+	[super dealloc];
+}
+
+-(TiWindowOptions*)getOptions
+{
+	return options;
+}
+
 // must override the ThemeFrame class to force no drawing of titlebar when window is resizable
-+ (Class)frameViewClassForStyleMask:(NSUInteger)styleMask {
-	if ([[TiAppDelegate instance] isFullScreen]) {
++ (Class)frameViewClassForStyleMask:(NSUInteger)styleMask 
+{
+	TiWindowOptions *options = [[TiAppDelegate instance] getWindowOptions];
+	if ([options isFullscreen] || [options isChrome])
+	{
 		return [TiThemeFrame class];
-	} else {
-		return [super frameViewClassForStyleMask:styleMask];
 	}
+	
+	return [super frameViewClassForStyleMask:styleMask];
 }
 
 
-// override designated initializer to cause window to be borderless.
 - (id)initWithContentRect:(NSRect)contentRect styleMask:(NSUInteger)mask backing:(NSBackingStoreType)bufferingType defer:(BOOL)flag {
-	if ([[TiAppDelegate instance] isFullScreen]) {
-		mask = NSTitledWindowMask|NSClosableWindowMask|NSBorderlessWindowMask;
-	}
-	//mask = NSClosableWindowMask|NSMiniaturizableWindowMask|NSTitledWindowMask|NSResizableWindowMask; //|NSBorderlessWindowMask|NSTitledWindowMask|NSClosableWindowMask|NSMiniaturizableWindowMask|NSResizableWindowMask;
+	options = [[TiAppDelegate instance] getWindowOptions];
+	[options retain];
+	mask = [options toWindowMask];
 	self = [super initWithContentRect:contentRect styleMask:mask backing:bufferingType defer:flag];
 	if (self != nil) {
 		[self setOpaque:NO];
-		
+		[self setHasShadow:YES];
+		[self setBackgroundColor:[NSColor clearColor]];
+		[self setAlphaValue:[options getTransparency]];
+		[self setAlphaValue:1.0];
 	}
 	return self;
 }
 
+ -(BOOL) canBecomeKeyWindow
+{
+	return YES;
+}
 
 - (void)moveWindow:(NSEvent *)event {
 	NSPoint startLocation = [event locationInWindow];
@@ -78,7 +97,6 @@
 		[self setFrameOrigin:newOrigin];
 		lastLocation = newLocation;
 	}
-	
 	[super sendEvent:event];
 }
 
@@ -91,10 +109,8 @@
 //		return;
 //	}
 	
-
-///	BOOL isDraggable = [[TiAppDelegate instance] isFullScreen];
 	//JGH: we only want to do the moveWindow below if we have custom shape window, otherwise internal drag-n-drop doesn't work
-	BOOL isDraggable=NO; //FIXME: for now, turn it off
+	BOOL isDraggable = [options isChrome];
 	
 	if (isDraggable) {		
 

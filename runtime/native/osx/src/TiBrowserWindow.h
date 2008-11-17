@@ -16,11 +16,14 @@
  * limitations under the License. 
  */
 
-
 #import <Cocoa/Cocoa.h>
+#import "TiWindowOptions.h"
 
 @interface TiBrowserWindow : NSWindow {
 	BOOL mouseInRegion;
+	TiWindowOptions *options;
 }
+
+-(TiWindowOptions*)getOptions;
 
 @end
