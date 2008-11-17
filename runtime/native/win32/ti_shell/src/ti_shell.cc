@@ -26,6 +26,7 @@
 #include <commctrl.h>
 
 #include "ti_shell.h"
+#include "base/scoped_ptr.h"
 #include "webkit/glue/webpreferences.h"
 #include "webkit/glue/weburlrequest.h"
 #include "webkit/glue/webframe.h"
@@ -44,7 +45,10 @@
 #include "base/process_util.h"
 #include "base/message_loop.h"
 #include "base/icu_util.h"
+#include "base/win_util.h"
 #include "net/base/net_module.h"
+#include "sandbox/src/sandbox_factory.h"
+#include "sandbox/src/dep.h"
 #include "webview_host.h"
 #include "webwidget_host.h"
 #include "simple_resource_loader_bridge.h"
@@ -84,7 +88,16 @@ int main (int argc, char **argv) {
 	////////////////////////////////////////////////////
 	base::AtExitManager at_exit_manager;
 	MessageLoopForUI message_loop;
-	process_util::EnableTerminationOnHeapCorruption();
+	base::EnableTerminationOnHeapCorruption();
+
+	win_util::WinVersion win_version = win_util::GetWinVersion();
+	if (win_version == win_util::WINVERSION_XP ||
+		win_version == win_util::WINVERSION_SERVER_2003) {
+		// On Vista, this is unnecessary since it is controlled through the
+		// /NXCOMPAT linker flag.
+		// Enforces strong DEP support.
+		sandbox::SetCurrentProcessDEP(sandbox::DEP_ENABLED);
+	}
 
 	std::wstring resourcesPath;
 	PathService::Get(base::DIR_EXE, &resourcesPath);

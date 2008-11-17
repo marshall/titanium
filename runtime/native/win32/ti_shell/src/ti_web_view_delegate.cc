@@ -18,6 +18,8 @@
 #include "ti_web_shell.h"
 #include "ti_utils.h"
 
+#include "Resource.h"
+
 TIWebViewDelegate::TIWebViewDelegate(TIWebShell *ti_web_shell) : bootstrapTitanium(false) {
 	this->ti_web_shell = ti_web_shell;
 }
@@ -198,4 +200,159 @@ void TIWebViewDelegate::AddMessageToConsole(WebView* webview,
 
 void TIWebViewDelegate::DidFinishLoadForFrame(WebView* webview, WebFrame* frame) {
 
+}
+
+// Displays a JavaScript alert panel associated with the given view. Clients
+// should visually indicate that this panel comes from JavaScript. The panel
+// should have a single OK button.
+void TIWebViewDelegate::RunJavaScriptAlert(WebView* webview, const std::wstring& message) {
+	MessageBox(this->hWnd, (LPCTSTR) message.c_str(), L"Alert", MB_OK | MB_ICONQUESTION);
+}
+
+// Displays a JavaScript confirm panel associated with the given view.
+// Clients should visually indicate that this panel comes
+// from JavaScript. The panel should have two buttons, e.g. "OK" and
+// "Cancel". Returns true if the user hit OK, or false if the user hit Cancel.
+bool TIWebViewDelegate::RunJavaScriptConfirm(WebView* webview, const std::wstring& message) {
+	int result = MessageBox(this->hWnd, (LPCTSTR) message.c_str(), L"Confirm", MB_YESNO | MB_ICONEXCLAMATION);
+
+	return (result == IDYES);
+}
+
+std::wstring jsPromptLabel;
+std::wstring jsPromptDefaultText;
+std::wstring jsPromptText;
+
+void SaveJSPromptText(HWND hWndDlg) {
+	int len = GetWindowTextLength(GetDlgItem(hWndDlg, JSPROMPTTEXT));
+
+	if(len > 0) {
+		wchar_t buffer[2049];
+		GetDlgItemText(hWndDlg, JSPROMPTTEXT, (LPWSTR) buffer, len + 1);
+		jsPromptText.assign(buffer);
+	}
+	else {
+		jsPromptText.clear();
+	}
+}
+
+
+LRESULT CALLBACK JsPromptDlgProc(HWND hWndDlg, UINT Msg, WPARAM wParam, LPARAM lParam)
+{
+	switch(Msg)
+	{
+	case WM_INITDIALOG:
+		{
+			SetDlgItemText(hWndDlg, JSPROMPTLABEL, (LPCWSTR)jsPromptLabel.c_str());
+			SetDlgItemText(hWndDlg, JSPROMPTTEXT, (LPCWSTR)jsPromptDefaultText.c_str());
+
+			return TRUE;
+		}
+
+	case WM_COMMAND:
+		switch(wParam)
+		{
+		case JSPROMPTIDOK:
+			SaveJSPromptText(hWndDlg);
+			EndDialog(hWndDlg, JSPROMPTIDOK);
+			return TRUE;
+		case JSPROMPTIDCANCEL:
+			EndDialog(hWndDlg, JSPROMPTIDCANCEL);
+			return TRUE;
+		case WM_DESTROY:
+			EndDialog(hWndDlg, JSPROMPTIDCANCEL);
+			return TRUE;
+		}
+		break;
+	}
+
+	return FALSE;
+}
+
+
+// Displays a JavaScript text input panel associated with the given view.
+// Clients should visually indicate that this panel comes from JavaScript.
+// The panel should have two buttons, e.g. "OK" and "Cancel", and an area to
+// type text. The default_value should appear as the initial text in the
+// panel when it is shown. If the user hit OK, returns true and fills result
+// with the text in the box.  The value of result is undefined if the user
+// hit Cancel.
+bool TIWebViewDelegate::RunJavaScriptPrompt(WebView* webview,
+                               const std::wstring& message,
+                               const std::wstring& default_value,
+                               std::wstring* result) {
+
+	jsPromptLabel = message;
+	jsPromptDefaultText = default_value;
+
+	INT_PTR r = DialogBox(::GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_JSPROMPT),
+		this->hWnd, reinterpret_cast<DLGPROC>(JsPromptDlgProc));
+
+	if(r == JSPROMPTIDOK) {
+		result->assign(jsPromptText);
+
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+// Displays a "before unload" confirm panel associated with the given view.
+// The panel should have two buttons, e.g. "OK" and "Cancel", where OK means
+// that the navigation should continue, and Cancel means that the navigation
+// should be cancelled, leaving the user on the current page.  Returns true
+// if the user hit OK, or false if the user hit Cancel.
+bool TIWebViewDelegate::RunBeforeUnloadConfirm(WebView* webview,
+                                  const std::wstring& message) {
+	return true;  // OK, continue to navigate away
+}
+
+// The output from these methods in non-interactive mode should match that
+// expected by the layout tests.  See EditingDelegate.m in DumpRenderTree.
+bool TIWebViewDelegate::ShouldBeginEditing(WebView* webview, 
+                                             std::wstring range) {
+	return true;
+}
+
+bool TIWebViewDelegate::ShouldEndEditing(WebView* webview, 
+                                           std::wstring range) {
+	return true;
+}
+
+bool TIWebViewDelegate::ShouldInsertNode(WebView* webview, 
+                                           std::wstring node, 
+                                           std::wstring range,
+                                           std::wstring action) {
+  return true;
+}
+
+bool TIWebViewDelegate::ShouldInsertText(WebView* webview, 
+                                           std::wstring text, 
+                                           std::wstring range,
+                                           std::wstring action) {
+  return true;
+}
+
+bool TIWebViewDelegate::ShouldChangeSelectedRange(WebView* webview, 
+                                                    std::wstring fromRange, 
+                                                    std::wstring toRange, 
+                                                    std::wstring affinity, 
+                                                    bool stillSelecting) {
+  return true;
+}
+
+bool TIWebViewDelegate::ShouldDeleteRange(WebView* webview, 
+                                            std::wstring range) {
+  return true;
+}
+
+bool TIWebViewDelegate::ShouldApplyStyle(WebView* webview, 
+                                           std::wstring style,
+                                           std::wstring range) {
+  return true;
+}
+
+bool TIWebViewDelegate::SmartInsertDeleteEnabled() {
+  return true;
 }
