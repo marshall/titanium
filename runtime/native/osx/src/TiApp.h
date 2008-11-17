@@ -31,12 +31,14 @@
 - (void)include:(NSString *)s;
 - (void)debug:(NSString *)s;
 - (void)quit;
-- (void)activate;
 - (void)hide;
+- (void)show;
+- (void)activate;
 - (void)minimize;
 - (void)beep;
 - (void)playSoundNamed:(NSString *)s;
 
+//TODO: review these
 - (CGFloat)windowWidth;
 - (CGFloat)windowHeight;
 - (NSString *)endpoint;

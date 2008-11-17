@@ -65,8 +65,13 @@
 }
 
 
+- (void)show {
+	[[webView window] makeKeyAndOrderFront:nil];
+}
+
 - (void)hide {
-	[NSApp hide:self];
+//	[NSApp hide:self];
+	[[webView window] orderOut:nil];
 }
 
 
@@ -104,6 +109,8 @@
 		return @"activate";
 	} else if (sel == @selector(hide)) {
 		return @"hide";
+	} else if (sel == @selector(show)) {
+		return @"show";
 	} else if (sel == @selector(minimize)) {
 		return @"minimize";
 	} else if (sel == @selector(beep)) {

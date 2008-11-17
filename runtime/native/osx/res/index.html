@@ -10,11 +10,11 @@ window.onload=function()
 		{
 			if (visible)
 			{
-				TiNative.hide();
+				TiNative.getApp().hide();
 			}
 			else
 			{
-				TiNative.activate();
+				TiNative.getApp().show();
 			}
 			visible = !visible;
 		});

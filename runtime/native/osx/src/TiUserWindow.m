@@ -76,8 +76,14 @@
 	[doc close];
 }
 
+- (void)hide {
+	NSWindow *window = [[doc browserWindowController] window];
+	[window orderOut:nil]; // to hide it
+}
+
 - (void)show {
-	[doc showWindows];
+	NSWindow *window = [[doc browserWindowController] window];
+	[window makeKeyAndOrderFront:nil]; // to show it
 }
 
 + (NSString *) webScriptNameForSelector:(SEL)sel{
@@ -88,6 +94,10 @@
 	else if (sel == @selector(close))
 	{
 		return @"close";
+	}
+	else if (sel == @selector(hide))
+	{
+		return @"hide";
 	}
 	return nil;
 }
