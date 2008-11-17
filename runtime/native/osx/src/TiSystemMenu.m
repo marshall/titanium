@@ -65,7 +65,7 @@
 }
 
 - (NSString *)description {
-	return @"[TiSystemMenu object]";
+	return @"[TiSystemMenu native]";
 }
 
 - (void)itemClicked:(id)sender{

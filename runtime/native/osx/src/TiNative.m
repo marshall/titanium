@@ -26,6 +26,8 @@
 	self = [super init];
 	if (self != nil) {
 		webView = wv; // assign only. don't retain. prevents retain loop memory leak
+		app = [[TiApp alloc] initWithWebView:webView];
+		dock = [[TiSystemDock alloc] initWithWebView:webView];
 	}
 	return self;
 }
@@ -33,12 +35,14 @@
 
 - (void)dealloc {
 	webView = nil;
+	[app dealloc];
+	[dock dealloc];
 	[super dealloc];
 }
 
 
 - (NSString *)description {
-	return @"[TiNative object]";
+	return @"[TiNative native]";
 }
 
 - (TiSystemMenu *)createSystemMenu:(NSString*)url f:(WebScriptObject*)f
@@ -54,47 +58,15 @@
 	return win;
 }
 
-- (void)include:(NSString *)s {
-	NSString *resPath = [[NSBundle mainBundle] resourcePath];
-	NSString *scriptPath = [[resPath stringByAppendingPathComponent:@"public"] stringByAppendingPathComponent:s];
-	NSString *script = [NSString stringWithContentsOfFile:scriptPath];
-	[[webView windowScriptObject] evaluateWebScript:script];
+- (TiApp*) getApp
+{
+	return app;
 }
 
-
-- (void)debug:(NSString *)s {
-	NSLog(@"%@\n", s);
+- (TiSystemDock*) getDock
+{
+	return dock;
 }
-
-
-- (void)terminate {
-	[NSApp terminate:self];
-}
-
-
-- (void)activate {
-	[NSApp activateIgnoringOtherApps:YES];
-}
-
-
-- (void)hide {
-	[NSApp hide:self];
-}
-
-
-- (void)minimize {
-	[[webView window] miniaturize:self];
-}
-
-
-- (void)beep {
-	NSBeep();
-}
-
-- (void)playSoundNamed:(NSString *)s {
-	[[NSSound soundNamed:s] play];
-}
-
 
 #pragma mark -
 #pragma mark WebScripting
@@ -104,49 +76,18 @@
 }
 
 
-+ (NSString *)webScriptNameForSelector:(SEL)sel {
-	
-	// ?? do we want to expose all of these?
-	
-	if (sel == @selector(include:)) {
-		return @"include";
-	} else if (sel == @selector(createSystemMenu:f:)) {
++ (NSString *)webScriptNameForSelector:(SEL)sel 
+{
+	if (sel == @selector(createSystemMenu:f:)) {
 		return @"createSystemMenu";
 	} else if (sel == @selector(createWindow)) {
 		return @"createWindow";
-	} else if (sel == @selector(debug:)) {
-		return @"debug";
-	} else if (sel == @selector(terminate)) {
-		return @"terminate";
-	} else if (sel == @selector(activate)) {
-		return @"activate";
-	} else if (sel == @selector(hide)) {
-		return @"hide";
-	} else if (sel == @selector(minimize)) {
-		return @"minimize";
-	} else if (sel == @selector(beep)) {
-		return @"beep";
-	} else if (sel == @selector(playSoundNamed:)) {
-		return @"playSound";
-	} else if (sel == @selector(windowWidth)) {
-		return @"getWindowWidth";
-	} else if (sel == @selector(windowHeight)) {
-		return @"getWindowHeight";
-	} else if (sel == @selector(endpoint)) {
-		return @"getEndpoint";
-	} else if (sel == @selector(appName)) {
-		return @"getAppName";
-	} else if (sel == @selector(windowTitle)) {
-		return @"getWindowTitle";
-	} else if (sel == @selector(startPath)) {
-		return @"getStartPath";
-	} else if (sel == @selector(resourcePath)) {
-		return @"getResourcePath";
-	} else if (sel == @selector(loadPage)) {
-		return @"loadPage";
-	} else {
-		return nil;
+	} else if (sel == @selector(getApp)) {
+		return @"getApp";
+	} else if (sel == @selector(getDock)) {
+		return @"getDock";
 	}
+	return nil;
 }
 
 
@@ -159,41 +100,5 @@
 	return nil;
 }
 
-
-#pragma mark -
-#pragma mark Accessors
-
-- (CGFloat)windowWidth {
-	return [[TiAppDelegate instance] windowWidth];
-}
-
-
-- (CGFloat)windowHeight {
-	return [[TiAppDelegate instance] windowHeight];
-}
-
-
-- (NSString *)endpoint {
-	return [[TiAppDelegate instance] endpoint];
-}
-
-
-- (NSString *)appName {
-	return [[TiAppDelegate instance] appName];
-}
-
-
-- (NSString *)windowTitle {
-	return [[TiAppDelegate instance] windowTitle];
-}
-
-
-- (NSString *)startPath {
-	return [[TiAppDelegate instance] startPath];
-}
-
-- (NSString *)resourcePath {
-	return [[NSBundle mainBundle] resourcePath];
-}
 
 @end

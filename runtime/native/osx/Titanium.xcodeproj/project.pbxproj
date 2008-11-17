@@ -21,6 +21,9 @@
 		2433DDF30ED1002400813747 /* TiMenuAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 2433DDED0ED1002400813747 /* TiMenuAction.m */; };
 		2433DDF40ED1002400813747 /* TiProtocol.m in Sources */ = {isa = PBXBuildFile; fileRef = 2433DDEF0ED1002400813747 /* TiProtocol.m */; };
 		2433DDF70ED1003100813747 /* TiPreferencesWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2433DDF60ED1003100813747 /* TiPreferencesWindowController.m */; };
+		2433DE200ED102DB00813747 /* TiApp.m in Sources */ = {isa = PBXBuildFile; fileRef = 2433DE1B0ED102DB00813747 /* TiApp.m */; };
+		2433DE210ED102DB00813747 /* TiSystemDock.m in Sources */ = {isa = PBXBuildFile; fileRef = 2433DE1D0ED102DB00813747 /* TiSystemDock.m */; };
+		2433DE220ED102DB00813747 /* TiUserMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = 2433DE1F0ED102DB00813747 /* TiUserMenu.m */; };
 		8D15AC2C0486D014006FF6A4 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 2A37F4B9FDCFA73011CA2CEA /* Credits.rtf */; };
 		8D15AC2F0486D014006FF6A4 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165FFE840EACC02AAC07 /* InfoPlist.strings */; };
 		8D15AC320486D014006FF6A4 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A37F4B0FDCFA73011CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
@@ -68,6 +71,12 @@
 		2433DDEF0ED1002400813747 /* TiProtocol.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TiProtocol.m; path = src/TiProtocol.m; sourceTree = "<group>"; };
 		2433DDF50ED1003100813747 /* TiPreferencesWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TiPreferencesWindowController.h; path = src/TiPreferencesWindowController.h; sourceTree = "<group>"; };
 		2433DDF60ED1003100813747 /* TiPreferencesWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TiPreferencesWindowController.m; path = src/TiPreferencesWindowController.m; sourceTree = "<group>"; };
+		2433DE1A0ED102DB00813747 /* TiApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TiApp.h; path = src/TiApp.h; sourceTree = "<group>"; };
+		2433DE1B0ED102DB00813747 /* TiApp.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TiApp.m; path = src/TiApp.m; sourceTree = "<group>"; };
+		2433DE1C0ED102DB00813747 /* TiSystemDock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TiSystemDock.h; path = src/TiSystemDock.h; sourceTree = "<group>"; };
+		2433DE1D0ED102DB00813747 /* TiSystemDock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TiSystemDock.m; path = src/TiSystemDock.m; sourceTree = "<group>"; };
+		2433DE1E0ED102DB00813747 /* TiUserMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TiUserMenu.h; path = src/TiUserMenu.h; sourceTree = "<group>"; };
+		2433DE1F0ED102DB00813747 /* TiUserMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TiUserMenu.m; path = src/TiUserMenu.m; sourceTree = "<group>"; };
 		2A37F4B0FDCFA73011CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		2A37F4BAFDCFA73011CA2CEA /* English */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = English; path = English.lproj/Credits.rtf; sourceTree = "<group>"; };
 		2A37F4C4FDCFA73011CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
@@ -215,6 +224,12 @@
 		D31B393E0EBCFA53006F3012 /* Javascript */ = {
 			isa = PBXGroup;
 			children = (
+				2433DE1A0ED102DB00813747 /* TiApp.h */,
+				2433DE1B0ED102DB00813747 /* TiApp.m */,
+				2433DE1C0ED102DB00813747 /* TiSystemDock.h */,
+				2433DE1D0ED102DB00813747 /* TiSystemDock.m */,
+				2433DE1E0ED102DB00813747 /* TiUserMenu.h */,
+				2433DE1F0ED102DB00813747 /* TiUserMenu.m */,
 				2433DDDC0ED0FFE300813747 /* TiNative.h */,
 				2433DDDD0ED0FFE300813747 /* TiNative.m */,
 				2433DDDE0ED0FFE300813747 /* TiSystemMenu.h */,
@@ -333,6 +348,9 @@
 				2433DDF30ED1002400813747 /* TiMenuAction.m in Sources */,
 				2433DDF40ED1002400813747 /* TiProtocol.m in Sources */,
 				2433DDF70ED1003100813747 /* TiPreferencesWindowController.m in Sources */,
+				2433DE200ED102DB00813747 /* TiApp.m in Sources */,
+				2433DE210ED102DB00813747 /* TiSystemDock.m in Sources */,
+				2433DE220ED102DB00813747 /* TiUserMenu.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

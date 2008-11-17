@@ -20,31 +20,22 @@
 #import <Cocoa/Cocoa.h>
 #import "TiSystemMenu.h"
 #import "TiUserWindow.h"
+#import "TiApp.h"
+#import "TiSystemDock.h"
 
 @class WebView;
 
 @interface TiNative : NSObject {
 	WebView *webView;
+	TiApp *app;
+	TiSystemDock *dock;
 }
 - (id)initWithWebView:(WebView *)wv;
-
-- (void)include:(NSString *)s;
-- (void)debug:(NSString *)s;
-- (void)terminate;
-- (void)activate;
-- (void)hide;
-- (void)minimize;
-- (void)beep;
-- (void)playSoundNamed:(NSString *)s;
 
 - (TiSystemMenu *)createSystemMenu:(NSString*)url f:(WebScriptObject*)f;
 - (TiUserWindow *)createWindow;
 
-- (CGFloat)windowWidth;
-- (CGFloat)windowHeight;
-- (NSString *)endpoint;
-- (NSString *)appName;
-- (NSString *)windowTitle;
-- (NSString *)startPath;
-- (NSString *)resourcePath;
+- (TiApp*) getApp;
+- (TiSystemDock*) getDock;
+
 @end

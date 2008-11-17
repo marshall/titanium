@@ -64,6 +64,10 @@
 	[super dealloc];
 }
 
+- (NSString *)description {
+	return @"[TiUserWindow native]";
+}
+
 - (void)close {
 	[doc close];
 }
