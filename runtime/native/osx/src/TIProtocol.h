@@ -16,33 +16,15 @@
  * limitations under the License. 
  */
 
-
 #import <Cocoa/Cocoa.h>
-#import "TISystemMenu.h"
+#import <Foundation/Foundation.h>
+#import <Foundation/NSURLRequest.h>
+#import <Foundation/NSURLProtocol.h>
 
-@class WebView;
-
-@interface TIJavaScriptObject : NSObject {
-	WebView *webView;
+@interface TIProtocol : NSURLProtocol {
 }
-- (id)initWithWebView:(WebView *)wv;
 
-- (void)include:(NSString *)s;
-- (void)debug:(NSString *)s;
-- (void)terminate;
-- (void)activate;
-- (void)hide;
-- (void)minimize;
-- (void)beep;
-- (void)playSoundNamed:(NSString *)s;
++ (NSString*) specialProtocolScheme;
++ (void) registerSpecialProtocol;
 
-- (TISystemMenu *)createSystemMenu:(NSString*)url f:(WebScriptObject*)f;
-
-- (CGFloat)windowWidth;
-- (CGFloat)windowHeight;
-- (NSString *)endpoint;
-- (NSString *)appName;
-- (NSString *)windowTitle;
-- (NSString *)startPath;
-- (NSString *)resourcePath;
 @end

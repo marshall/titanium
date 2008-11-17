@@ -41,6 +41,12 @@
 	return @"[TiNative object]";
 }
 
+- (TISystemMenu *)createSystemMenu:(NSString*)url f:(WebScriptObject*)f
+{
+	TISystemMenu *menu = [TISystemMenu alloc];
+	[menu initWithURL:url f:f];
+	return menu;
+}
 
 - (void)include:(NSString *)s {
 	NSString *resPath = [[NSBundle mainBundle] resourcePath];
@@ -98,6 +104,8 @@
 	
 	if (sel == @selector(include:)) {
 		return @"include";
+	} else if (sel == @selector(createSystemMenu:f:)) {
+		return @"createSystemMenu";
 	} else if (sel == @selector(debug:)) {
 		return @"debug";
 	} else if (sel == @selector(terminate)) {

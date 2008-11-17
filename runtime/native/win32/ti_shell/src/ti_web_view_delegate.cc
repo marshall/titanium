@@ -309,3 +309,52 @@ bool TIWebViewDelegate::RunBeforeUnloadConfirm(WebView* webview,
                                   const std::wstring& message) {
 	return true;  // OK, continue to navigate away
 }
+
+// The output from these methods in non-interactive mode should match that
+// expected by the layout tests.  See EditingDelegate.m in DumpRenderTree.
+bool TIWebViewDelegate::ShouldBeginEditing(WebView* webview, 
+                                             std::wstring range) {
+	return true;
+}
+
+bool TIWebViewDelegate::ShouldEndEditing(WebView* webview, 
+                                           std::wstring range) {
+	return true;
+}
+
+bool TIWebViewDelegate::ShouldInsertNode(WebView* webview, 
+                                           std::wstring node, 
+                                           std::wstring range,
+                                           std::wstring action) {
+  return true;
+}
+
+bool TIWebViewDelegate::ShouldInsertText(WebView* webview, 
+                                           std::wstring text, 
+                                           std::wstring range,
+                                           std::wstring action) {
+  return true;
+}
+
+bool TIWebViewDelegate::ShouldChangeSelectedRange(WebView* webview, 
+                                                    std::wstring fromRange, 
+                                                    std::wstring toRange, 
+                                                    std::wstring affinity, 
+                                                    bool stillSelecting) {
+  return true;
+}
+
+bool TIWebViewDelegate::ShouldDeleteRange(WebView* webview, 
+                                            std::wstring range) {
+  return true;
+}
+
+bool TIWebViewDelegate::ShouldApplyStyle(WebView* webview, 
+                                           std::wstring style,
+                                           std::wstring range) {
+  return true;
+}
+
+bool TIWebViewDelegate::SmartInsertDeleteEnabled() {
+  return true;
+}

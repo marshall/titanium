@@ -315,9 +315,31 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 - (void)handleGetURLEvent:(NSAppleEventDescriptor *)event replyEvent:(NSAppleEventDescriptor *)replyEvent {
 	NSString *URLString = [[event paramDescriptorForKeyword:keyDirectObject] stringValue];
 
+	
+	NSRunInformationalAlertPanel(NSLocalizedString(@"JavaScript", @""),	// title
+								 URLString,								// message
+								 NSLocalizedString(@"OK", @""),			// default button
+								 nil,									// alt button
+								 nil);									// other button	
+	
 	NSString *tiScheme = @"ti://";
 	if ([URLString hasPrefix:tiScheme]) {
-		URLString = [NSString stringWithFormat:@"http://%@", [URLString substringFromIndex:[tiScheme length]]];
+		
+		//NSString *filePath = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:substringFromIndex:[tiScheme length]];
+
+		NSString *s = [URLString substringFromIndex:[tiScheme length]];
+		NSString *resPath = [[NSBundle mainBundle] resourcePath];
+//		NSString *scriptPath = [[resPath stringByAppendingPathComponent:@"public"] stringByAppendingPathComponent:s];
+		NSString *scriptPath = [resPath stringByAppendingPathComponent:s];
+		URLString = [NSString stringWithContentsOfFile:scriptPath];
+		//URLString = [NSString stringWithFormat:@"http://%@", [URLString substringFromIndex:[tiScheme length]]];
+
+		NSRunInformationalAlertPanel(NSLocalizedString(@"JavaScript", @""),	// title
+									 s,								// message
+									 NSLocalizedString(@"OK", @""),			// default button
+									 nil,									// alt button
+									 nil);									// other button	
+		
 	}
 
 	NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:URLString]];

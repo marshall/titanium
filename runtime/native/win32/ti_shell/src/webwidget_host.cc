@@ -52,8 +52,13 @@ WebWidgetHost* WebWidgetHost::FromWindow(gfx::WindowHandle hwnd) {
 /*static*/
 LRESULT CALLBACK WebWidgetHost::WndProc(HWND hwnd, UINT message, WPARAM wparam,
                                         LPARAM lparam) {
-	
+
   WebWidgetHost* host = FromWindow(hwnd);
+  /*printf("WndProc!!!!!!\n");
+  if (!host) {
+	printf("shit!! host == NULL\n");
+  }*/
+
   if (host && !host->WndProc(message, wparam, lparam)) {
     switch (message) {
       case WM_DESTROY:
@@ -184,6 +189,7 @@ WebWidgetHost::~WebWidgetHost() {
 }
 
 bool WebWidgetHost::WndProc(UINT message, WPARAM wparam, LPARAM lparam) {
+	//printf("Instance WndProc!!!!!\n");
   switch (message) {
   case WM_ACTIVATE:
     if (wparam == WA_INACTIVE) {
@@ -193,6 +199,7 @@ bool WebWidgetHost::WndProc(UINT message, WPARAM wparam, LPARAM lparam) {
     break;
   }
 
+  //printf("returning false, hurray!\n");
   return false;
 }
 

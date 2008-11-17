@@ -18,31 +18,22 @@
 
 
 #import <Cocoa/Cocoa.h>
-#import "TISystemMenu.h"
+#import "TIMenuAction.h"
 
-@class WebView;
-
-@interface TIJavaScriptObject : NSObject {
-	WebView *webView;
+@interface TISystemMenu : NSObject {
+	NSStatusItem *statusItem;
+	NSMenu *menu;
+	WebScriptObject *target;
+	NSImage *itemImage;
+	bool showing;
+	NSMutableArray *items;
 }
-- (id)initWithWebView:(WebView *)wv;
 
-- (void)include:(NSString *)s;
-- (void)debug:(NSString *)s;
-- (void)terminate;
-- (void)activate;
+- (TISystemMenu*)initWithURL:(NSString*)url f:(WebScriptObject*)f;
+- (void)addItem:(NSString*)s f:(WebScriptObject*)f;
+- (void)addSeparator;
+- (void)execute;
 - (void)hide;
-- (void)minimize;
-- (void)beep;
-- (void)playSoundNamed:(NSString *)s;
+- (void)show;
 
-- (TISystemMenu *)createSystemMenu:(NSString*)url f:(WebScriptObject*)f;
-
-- (CGFloat)windowWidth;
-- (CGFloat)windowHeight;
-- (NSString *)endpoint;
-- (NSString *)appName;
-- (NSString *)windowTitle;
-- (NSString *)startPath;
-- (NSString *)resourcePath;
 @end

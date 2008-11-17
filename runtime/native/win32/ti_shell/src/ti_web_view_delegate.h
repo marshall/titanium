@@ -25,6 +25,7 @@
 #include <wininet.h>
 #include <commctrl.h>
 
+#include "base/scoped_ptr.h"
 #include "webkit/glue/webpreferences.h"
 #include "webkit/glue/weburlrequest.h"
 #include "webkit/glue/webframe.h"
@@ -151,7 +152,6 @@ public:
 	virtual void DidFinishLoadForFrame(WebView* webview,
                                      WebFrame* frame);
 
-
 	virtual void RunJavaScriptAlert(WebView* webview, const std::wstring& message);
 
 	// Displays a JavaScript confirm panel associated with the given view.
@@ -174,4 +174,28 @@ public:
 
 	virtual bool RunBeforeUnloadConfirm(WebView* webview,
 									  const std::wstring& message);
+
+	virtual bool ShouldBeginEditing(WebView* webview, 
+                                             std::wstring range);
+	virtual bool ShouldEndEditing(WebView* webview, 
+                                           std::wstring range);
+	virtual bool ShouldInsertNode(WebView* webview, 
+                                           std::wstring node, 
+                                           std::wstring range,
+                                           std::wstring action);
+	virtual bool ShouldInsertText(WebView* webview, 
+                                           std::wstring text, 
+                                           std::wstring range,
+                                           std::wstring action);
+	virtual bool ShouldChangeSelectedRange(WebView* webview, 
+                                                    std::wstring fromRange, 
+                                                    std::wstring toRange, 
+                                                    std::wstring affinity, 
+                                                    bool stillSelecting);
+	virtual bool ShouldDeleteRange(WebView* webview, 
+                                            std::wstring range);
+	virtual bool ShouldApplyStyle(WebView* webview, 
+                                           std::wstring style,
+                                           std::wstring range);
+	virtual bool SmartInsertDeleteEnabled();
 };

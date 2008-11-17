@@ -23,6 +23,7 @@
 #include <wininet.h>
 #include <commctrl.h>
 #include "ti_utils.h"
+#include "base/scoped_ptr.h"
 #include "webkit/glue/webpreferences.h"
 #include "webkit/glue/weburlrequest.h"
 #include "webkit/glue/webframe.h"

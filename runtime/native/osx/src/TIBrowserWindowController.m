@@ -22,6 +22,7 @@
 #import "TIBrowserDocument.h"
 #import "TIJavaScriptObject.h"
 #import "TIJavaScriptPromptWindowController.h"
+#import "TIProtocol.h"
 #import "WebViewPrivate.h"
 #import <WebKit/WebKit.h>
 
@@ -47,7 +48,7 @@ typedef enum {
 - (id)initWithWindowNibName:(NSString *)nibName {
 	self = [super initWithWindowNibName:nibName];
 	if (self != nil) {
-		
+
 	}
 	return self;
 }
@@ -57,12 +58,30 @@ typedef enum {
 	[super dealloc];
 }
 
+- (void) registerProtocols
+{
+	[TIProtocol registerSpecialProtocol];
+	//	[WebView registerURLSchemeAsLocal:TIProtocol];
+}
+
+- (void) setupDock
+{
+	//http://th30z.netsons.org/2008/10/cocoa-notification-badge/
+	NSDockTile *dockicon = [NSApp dockTile];
+	[dockicon setShowsApplicationBadge:YES];
+	[dockicon setBadgeLabel:@"45"];
+}
 
 - (void)awakeFromNib {
 	[self updateWindowFrameIfFirst];
 	[self customizeUserAgent];
+	[self registerProtocols];
+	[self setupDock];
+	
 //	[self customizeWebView];
 }
+
+
 
 
 #pragma mark -
@@ -181,6 +200,7 @@ typedef enum {
 	[windowScriptObject setValue:javaScriptObject forKey:@"TiNative"];
 	[javaScriptObject include:@"titanium/titanium.js"];
 	[javaScriptObject include:@"titanium/plugins.js"];
+//	[windowScriptObject evaluateWebScript:@"alert(1);"];
 	[javaScriptObject release];
 }
 
@@ -420,6 +440,11 @@ typedef enum {
 													NSLocalizedString(@"Cancel", @""),		// alt button
 													nil);
 	return NSAlertDefaultReturn == result;	
+}
+
+-(NSURLRequest *)webView:(WebView *)sender resource:(id)identifier willSendRequest:(NSURLRequest *)request redirectResponse:(NSURLResponse *)redirectResponse fromDataSource:(WebDataSource *)dataSource
+{
+	return request;
 }
 
 

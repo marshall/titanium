@@ -9,6 +9,10 @@
 /* Begin PBXBuildFile section */
 		1DDD582C0DA1D0D100B32029 /* BrowserWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1DDD58280DA1D0D100B32029 /* BrowserWindow.xib */; };
 		1DDD582D0DA1D0D100B32029 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1DDD582A0DA1D0D100B32029 /* MainMenu.xib */; };
+		2433D4880ECFE45E00813747 /* TISystemMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = 2433D4870ECFE45E00813747 /* TISystemMenu.m */; };
+		2433D5900ECFF19500813747 /* TIMenuAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 2433D58F0ECFF19500813747 /* TIMenuAction.m */; };
+		2433D7370ED0089E00813747 /* TIProtocol.m in Sources */ = {isa = PBXBuildFile; fileRef = 2433D7360ED0089E00813747 /* TIProtocol.m */; };
+		2433D8FF0ED024E400813747 /* favicon.ico in Resources */ = {isa = PBXBuildFile; fileRef = 2433D8FE0ED024E400813747 /* favicon.ico */; };
 		8D15AC2C0486D014006FF6A4 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 2A37F4B9FDCFA73011CA2CEA /* Credits.rtf */; };
 		8D15AC2F0486D014006FF6A4 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165FFE840EACC02AAC07 /* InfoPlist.strings */; };
 		8D15AC320486D014006FF6A4 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A37F4B0FDCFA73011CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
@@ -37,6 +41,13 @@
 		13E42FBA07B3F13500E4EEF1 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
 		1DDD58290DA1D0D100B32029 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/BrowserWindow.xib; sourceTree = "<group>"; };
 		1DDD582B0DA1D0D100B32029 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		2433D4860ECFE45E00813747 /* TISystemMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TISystemMenu.h; path = src/TISystemMenu.h; sourceTree = "<group>"; };
+		2433D4870ECFE45E00813747 /* TISystemMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TISystemMenu.m; path = src/TISystemMenu.m; sourceTree = "<group>"; };
+		2433D58E0ECFF19500813747 /* TIMenuAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TIMenuAction.h; path = src/TIMenuAction.h; sourceTree = "<group>"; };
+		2433D58F0ECFF19500813747 /* TIMenuAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TIMenuAction.m; path = src/TIMenuAction.m; sourceTree = "<group>"; };
+		2433D7350ED0089E00813747 /* TIProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TIProtocol.h; path = src/TIProtocol.h; sourceTree = "<group>"; };
+		2433D7360ED0089E00813747 /* TIProtocol.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TIProtocol.m; path = src/TIProtocol.m; sourceTree = "<group>"; };
+		2433D8FE0ED024E400813747 /* favicon.ico */ = {isa = PBXFileReference; lastKnownFileType = image.ico; name = favicon.ico; path = res/favicon.ico; sourceTree = "<group>"; };
 		2A37F4B0FDCFA73011CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		2A37F4BAFDCFA73011CA2CEA /* English */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = English; path = English.lproj/Credits.rtf; sourceTree = "<group>"; };
 		2A37F4C4FDCFA73011CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
@@ -120,6 +131,7 @@
 		2A37F4AAFDCFA73011CA2CEA /* Titanium */ = {
 			isa = PBXGroup;
 			children = (
+				2433D8FE0ED024E400813747 /* favicon.ico */,
 				2A37F4ABFDCFA73011CA2CEA /* Classes */,
 				2A37F4AFFDCFA73011CA2CEA /* Other Sources */,
 				2A37F4B8FDCFA73011CA2CEA /* Resources */,
@@ -132,6 +144,12 @@
 		2A37F4ABFDCFA73011CA2CEA /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				2433D7350ED0089E00813747 /* TIProtocol.h */,
+				2433D7360ED0089E00813747 /* TIProtocol.m */,
+				2433D58E0ECFF19500813747 /* TIMenuAction.h */,
+				2433D58F0ECFF19500813747 /* TIMenuAction.m */,
+				2433D4860ECFE45E00813747 /* TISystemMenu.h */,
+				2433D4870ECFE45E00813747 /* TISystemMenu.m */,
 				D31B34F40EBBEB9E006F3012 /* TIAppDelegate.h */,
 				D31B34F50EBBEB9E006F3012 /* TIAppDelegate.m */,
 				D31B34DB0EBBE908006F3012 /* TIBrowserDocument.h */,
@@ -290,6 +308,7 @@
 				D31B38820EBCE51D006F3012 /* JavaScriptPromptWindow.xib in Resources */,
 				D31B3D230EBD7DF7006F3012 /* DefaultValues.plist in Resources */,
 				D31B3EF70EBE88B3006F3012 /* resizeIndicator.png in Resources */,
+				2433D8FF0ED024E400813747 /* favicon.ico in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -309,6 +328,9 @@
 				D31B38880EBCE61D006F3012 /* TIJavaScriptPromptWindowController.m in Sources */,
 				D31B3D3D0EBD8496006F3012 /* TIBrowserWindow.m in Sources */,
 				D31B3D830EBD8A1A006F3012 /* TIThemeFrame.m in Sources */,
+				2433D4880ECFE45E00813747 /* TISystemMenu.m in Sources */,
+				2433D5900ECFF19500813747 /* TIMenuAction.m in Sources */,
+				2433D7370ED0089E00813747 /* TIProtocol.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

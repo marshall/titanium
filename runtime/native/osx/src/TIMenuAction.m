@@ -16,33 +16,34 @@
  * limitations under the License. 
  */
 
+#import "TIMenuAction.h"
 
-#import <Cocoa/Cocoa.h>
-#import "TISystemMenu.h"
+@implementation TIMenuAction
 
-@class WebView;
-
-@interface TIJavaScriptObject : NSObject {
-	WebView *webView;
+- (void)dealloc {
+	[target dealloc];
+	[title dealloc];
+	[super dealloc];
 }
-- (id)initWithWebView:(WebView *)wv;
 
-- (void)include:(NSString *)s;
-- (void)debug:(NSString *)s;
-- (void)terminate;
-- (void)activate;
-- (void)hide;
-- (void)minimize;
-- (void)beep;
-- (void)playSoundNamed:(NSString *)s;
 
-- (TISystemMenu *)createSystemMenu:(NSString*)url f:(WebScriptObject*)f;
+- (TIMenuAction*)initWithFunc:(WebScriptObject*)f title:(NSString*)t
+{
+	self = [super init];
+	target = f;
+	title = t;
+	[target retain];
+	[title retain];
+	return self;
+}
 
-- (CGFloat)windowWidth;
-- (CGFloat)windowHeight;
-- (NSString *)endpoint;
-- (NSString *)appName;
-- (NSString *)windowTitle;
-- (NSString *)startPath;
-- (NSString *)resourcePath;
+- (void)execute
+{
+	NSMutableArray *result = [[NSMutableArray alloc] init];
+	[result addObject:target]; // scope
+	[result addObject:title]; // argument
+	[target callWebScriptMethod:@"call" withArguments:result];
+}
+
 @end
+
