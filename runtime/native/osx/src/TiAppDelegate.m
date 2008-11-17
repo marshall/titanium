@@ -16,22 +16,22 @@
  * limitations under the License. 
  */
 
-#import "TIAppDelegate.h"
-#import "TIBrowserDocument.h"
-#import "TIBrowserWindowController.h"
-#import "TIPreferencesWindowController.h"
+#import "TiAppDelegate.h"
+#import "TiBrowserDocument.h"
+#import "TiBrowserWindowController.h"
+#import "TiPreferencesWindowController.h"
 #import "WebViewPrivate.h"
 #import "WebInspector.h"
 #import <WebKit/WebKit.h>
 
-static TIBrowserDocument *firstDocument = nil;
+static TiBrowserDocument *firstDocument = nil;
 
-TIBrowserWindowController *TIFirstController() {
+TiBrowserWindowController *TIFirstController() {
 	return [firstDocument browserWindowController];
 }
 
-TIBrowserWindowController *TIFrontController() {
-	TIBrowserDocument *doc = [[TIAppDelegate instance] currentDocument];
+TiBrowserWindowController *TIFrontController() {
+	TiBrowserDocument *doc = [[TiAppDelegate instance] currentDocument];
 	if (doc) {
 		return [doc browserWindowController];
 	} else {
@@ -55,11 +55,11 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 	return [[el attributeForName:name] stringValue];
 }
 
-@interface TIBrowserDocument (Friend)
+@interface TiBrowserDocument (Friend)
 - (void)setIsFirst:(BOOL)yn;
 @end
 
-@interface TIAppDelegate (Private)
+@interface TiAppDelegate (Private)
 + (void)setupDefaults;
 
 - (void)registerForAppleEvents;
@@ -72,7 +72,7 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 - (WebInspector *)webInspectorForFrontWindowController;
 @end
 
-@implementation TIAppDelegate
+@implementation TiAppDelegate
 
 + (id)instance {
 	return [NSApp delegate];
@@ -131,7 +131,7 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 #pragma mark Actions
 
 - (IBAction)showPreferencesWindow:(id)sender {
-	[[TIPreferencesWindowController instance] showWindow:sender];
+	[[TiPreferencesWindowController instance] showWindow:sender];
 }
 
 
@@ -183,7 +183,7 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 	id webArchive = nil;
 	WebView *wv = nil;
 	
-	TIBrowserWindowController *winController = TIFrontController();
+	TiBrowserWindowController *winController = TIFrontController();
 
 	BOOL enteringFullScreen = ![self isFullScreen];
 	
@@ -207,7 +207,7 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 		screen = [NSScreen mainScreen];
 	}
 	
-	TIBrowserDocument *doc = [self openUntitledDocumentAndDisplay:YES error:nil];
+	TiBrowserDocument *doc = [self openUntitledDocumentAndDisplay:YES error:nil];
 	winController = [doc browserWindowController];
 	
 	if ([self isFullScreen]) {
@@ -226,9 +226,9 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 #pragma mark -
 #pragma mark Public
 
-- (TIBrowserDocument *)newDocumentWithRequest:(NSURLRequest *)request display:(BOOL)display {
+- (TiBrowserDocument *)newDocumentWithRequest:(NSURLRequest *)request display:(BOOL)display {
 	NSError *err = nil;
-	TIBrowserDocument *newDoc = [self openUntitledDocumentAndDisplay:display error:&err];
+	TiBrowserDocument *newDoc = [self openUntitledDocumentAndDisplay:display error:&err];
 	
 	if (err) {
 		return nil;
@@ -244,12 +244,28 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 	return newDoc;
 }
 
+- (TiBrowserDocument *)newDocumentWithDisplay:(BOOL)display {
+	NSError *err = nil;
+	TiBrowserDocument *newDoc = [self openUntitledDocumentAndDisplay:display error:&err];
+	
+	if (err) {
+		return nil;
+	}
+	
+	if (!display) {
+		[newDoc makeWindowControllers];
+		[[newDoc browserWindowController] window]; // force window loading from nib
+	}
+	
+	return newDoc;
+}
+
 
 - (WebFrame *)findFrameNamed:(NSString *)frameName {
 	// look for existing frame in any open browser document with this name.
 	WebFrame *existingFrame = nil;
 	
-	for (TIBrowserDocument *doc in [[TIAppDelegate instance] documents]) {
+	for (TiBrowserDocument *doc in [[TiAppDelegate instance] documents]) {
 		existingFrame = [[[doc webView] mainFrame] findFrameNamed:frameName];
 		if (existingFrame) {
 			break;
@@ -377,7 +393,7 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 	[self setStartPath:elementText(window, @"start")];
 }
 
-+ (void)setFirstDocument:(TIBrowserDocument *)document
++ (void)setFirstDocument:(TiBrowserDocument *)document
 {
 	firstDocument = document;
 	[firstDocument setIsFirst:YES];
@@ -457,7 +473,7 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 
 
 - (WebInspector *)webInspectorForFrontWindowController {
-	TIBrowserWindowController *winController = TIFrontController();
+	TiBrowserWindowController *winController = TIFrontController();
 	return [[winController webView] inspector];
 }
 

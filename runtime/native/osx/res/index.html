@@ -4,11 +4,36 @@ window.onload=function()
 {
 	try
 	{
+		var visible = true;
+
 		var menu = TiNative.createSystemMenu("ti://favicon.ico",function(sysmenu)
 		{
-			alert("system menu hit:" + sysmenu);
+			if (visible)
+			{
+				TiNative.hide();
+			}
+			else
+			{
+				TiNative.activate();
+			}
+			visible = !visible;
 		});
 
+		var win = TiNative.createWindow();
+		document.getElementById("b").onclick = function()
+		{
+			try
+			{
+				win.show();
+			}
+			catch(E)
+			{
+				alert(E);
+			}
+		}
+		//win.show();
+
+/*
 		menu.addItem("Hello 1",function(title)
 		{
 			alert("menu hit! "+title);
@@ -23,8 +48,9 @@ window.onload=function()
 
 		menu.addItem("Hello 2",function(title)
 		{
-			alert("menu hit! "+title);
+			TiNative.beep();
 		});
+*/
 	}
 	catch (e)
 	{
@@ -33,4 +59,7 @@ window.onload=function()
 };
 </script>
 <h1>Hello world</h1>
+<img src="http://developer.apple.com/images/developer_logo.gif"/>
+
+<button id="b">Click me</button>
 

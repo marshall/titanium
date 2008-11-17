@@ -16,11 +16,16 @@
  * limitations under the License. 
  */
 
+
 #import <Cocoa/Cocoa.h>
-#import "NSThemeFrame.h"
 
-@interface TIThemeFrame : NSThemeFrame {
+@class WebView;
 
+@interface TiBrowserWindowController : NSWindowController {
+	IBOutlet WebView *webView;
 }
 
+- (BOOL)isFirst;
+- (void)loadRequest:(NSURLRequest *)request;
+- (WebView *)webView;
 @end

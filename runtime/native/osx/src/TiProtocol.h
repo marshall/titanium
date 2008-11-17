@@ -16,26 +16,15 @@
  * limitations under the License. 
  */
 
+#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
+#import <Foundation/NSURLRequest.h>
+#import <Foundation/NSURLProtocol.h>
 
-#import "TIPreferencesWindowController.h"
-
-@implementation TIPreferencesWindowController
-
-+ (id)instance {
-	static TIPreferencesWindowController *instance = nil;
-
-	@synchronized (self) {
-		if (!instance) {
-			instance = [[TIPreferencesWindowController alloc] initWithWindowNibName:@"PreferencesWindow"];
-		}
-	}
-	
-	return instance;
+@interface TiProtocol : NSURLProtocol {
 }
 
-
-- (void)awakeFromNib {
-	[[self window] center];
-}
++ (NSString*) specialProtocolScheme;
++ (void) registerSpecialProtocol;
 
 @end

@@ -16,34 +16,11 @@
  * limitations under the License. 
  */
 
-#import "TIMenuAction.h"
 
-@implementation TIMenuAction
+#import <Cocoa/Cocoa.h>
 
-- (void)dealloc {
-	[target dealloc];
-	[title dealloc];
-	[super dealloc];
-}
-
-
-- (TIMenuAction*)initWithFunc:(WebScriptObject*)f title:(NSString*)t
-{
-	self = [super init];
-	target = f;
-	title = t;
-	[target retain];
-	[title retain];
-	return self;
-}
-
-- (void)execute
-{
-	NSMutableArray *result = [[NSMutableArray alloc] init];
-	[result addObject:target]; // scope
-	[result addObject:title]; // argument
-	[target callWebScriptMethod:@"call" withArguments:result];
+@interface TiBrowserWindow : NSWindow {
+	BOOL mouseInRegion;
 }
 
 @end
-

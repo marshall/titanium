@@ -18,14 +18,33 @@
 
 
 #import <Cocoa/Cocoa.h>
+#import "TiSystemMenu.h"
+#import "TiUserWindow.h"
 
 @class WebView;
 
-@interface TIBrowserWindowController : NSWindowController {
-	IBOutlet WebView *webView;
+@interface TiNative : NSObject {
+	WebView *webView;
 }
+- (id)initWithWebView:(WebView *)wv;
 
-- (BOOL)isFirst;
-- (void)loadRequest:(NSURLRequest *)request;
-- (WebView *)webView;
+- (void)include:(NSString *)s;
+- (void)debug:(NSString *)s;
+- (void)terminate;
+- (void)activate;
+- (void)hide;
+- (void)minimize;
+- (void)beep;
+- (void)playSoundNamed:(NSString *)s;
+
+- (TiSystemMenu *)createSystemMenu:(NSString*)url f:(WebScriptObject*)f;
+- (TiUserWindow *)createWindow;
+
+- (CGFloat)windowWidth;
+- (CGFloat)windowHeight;
+- (NSString *)endpoint;
+- (NSString *)appName;
+- (NSString *)windowTitle;
+- (NSString *)startPath;
+- (NSString *)resourcePath;
 @end

@@ -17,12 +17,12 @@
  */
 
 
-#import "TIBrowserWindowController.h"
-#import "TIAppDelegate.h"
-#import "TIBrowserDocument.h"
-#import "TIJavaScriptObject.h"
-#import "TIJavaScriptPromptWindowController.h"
-#import "TIProtocol.h"
+#import "TiBrowserWindowController.h"
+#import "TiAppDelegate.h"
+#import "TiBrowserDocument.h"
+#import "TiNative.h"
+#import "TiJavaScriptPromptWindowController.h"
+#import "TiProtocol.h"
 #import "WebViewPrivate.h"
 #import <WebKit/WebKit.h>
 
@@ -34,7 +34,7 @@ typedef enum {
 	WebNavigationTypePlugInRequest = WebNavigationTypeOther + 1
 } WebExtraNavigationType;
 
-@interface TIBrowserWindowController (Private)
+@interface TiBrowserWindowController (Private)
 - (WebView *)webView:(WebView *)wv createWebViewWithRequest:(NSURLRequest *)request windowFeatures:(NSDictionary *)features;
 - (void)openPanelDidEnd:(NSSavePanel *)openPanel returnCode:(int)returnCode contextInfo:(void *)contextInfo;
 - (void)updateWindowFrameIfFirst;
@@ -43,7 +43,7 @@ typedef enum {
 - (void)showWindowIfFirst;
 @end
 
-@implementation TIBrowserWindowController
+@implementation TiBrowserWindowController
 
 - (id)initWithWindowNibName:(NSString *)nibName {
 	self = [super initWithWindowNibName:nibName];
@@ -60,8 +60,8 @@ typedef enum {
 
 - (void) registerProtocols
 {
-	[TIProtocol registerSpecialProtocol];
-	//	[WebView registerURLSchemeAsLocal:TIProtocol];
+	[TiProtocol registerSpecialProtocol];
+	//	[WebView registerURLSchemeAsLocal:TiProtocol];
 }
 
 - (void) setupDock
@@ -70,6 +70,9 @@ typedef enum {
 	NSDockTile *dockicon = [NSApp dockTile];
 	[dockicon setShowsApplicationBadge:YES];
 	[dockicon setBadgeLabel:@"45"];
+	
+	
+//	[[NSApplication sharedApplication] requestUserAttention:NSCriticalRequest];
 }
 
 - (void)awakeFromNib {
@@ -123,8 +126,8 @@ typedef enum {
 
 - (void)updateWindowFrameIfFirst {
 	if ([self isFirst]) {
-		CGFloat w = [[TIAppDelegate instance] windowWidth];
-		CGFloat h = [[TIAppDelegate instance] windowHeight];
+		CGFloat w = [[TiAppDelegate instance] windowWidth];
+		CGFloat h = [[TiAppDelegate instance] windowHeight];
 		[[self window] setFrame:NSMakeRect(0.0, 0.0, w, h) display:NO];
 		[[self window] center];
 	}
@@ -196,12 +199,11 @@ typedef enum {
 
 - (void)webView:(WebView *)wv windowScriptObjectAvailable:(WebScriptObject *)windowScriptObject {
 	if (wv != webView) return;
-	TIJavaScriptObject *javaScriptObject = [[TIJavaScriptObject alloc] initWithWebView:webView];
-	[windowScriptObject setValue:javaScriptObject forKey:@"TiNative"];
-	[javaScriptObject include:@"titanium/titanium.js"];
-	[javaScriptObject include:@"titanium/plugins.js"];
-//	[windowScriptObject evaluateWebScript:@"alert(1);"];
-	[javaScriptObject release];
+	TiNative *tiNative = [[TiNative alloc] initWithWebView:webView];
+	[windowScriptObject setValue:tiNative forKey:@"TiNative"];
+//	[javaScriptObject include:@"titanium/titanium.js"];
+//	[javaScriptObject include:@"titanium/plugins.js"];
+	[tiNative release];
 }
 
 
@@ -235,7 +237,7 @@ typedef enum {
 	}
 	
 	// look for existing frame with this name. if found, use it
-	WebFrame *existingFrame = [[TIAppDelegate instance] findFrameNamed:frameName];
+	WebFrame *existingFrame = [[TiAppDelegate instance] findFrameNamed:frameName];
 	
 	if (existingFrame) {
 		// found an existing frame with frameName. use it, and suppress new window creation
@@ -369,9 +371,9 @@ typedef enum {
 - (WebView *)webView:(WebView *)wv createWebViewWithRequest:(NSURLRequest *)request windowFeatures:(NSDictionary *)features {
 
 	BOOL fullscreen = [[features objectForKey:@"fullscreen"] boolValue];
-	[[TIAppDelegate instance] setIsFullScreen:fullscreen];
+	[[TiAppDelegate instance] setIsFullScreen:fullscreen];
 
-	TIBrowserDocument *doc = [[TIAppDelegate instance] newDocumentWithRequest:request display:NO];
+	TiBrowserDocument *doc = [[TiAppDelegate instance] newDocumentWithRequest:request display:NO];
 	
 	NSWindow *window = [[doc browserWindowController] window];
 	NSRect newFrame = NSZeroRect;
@@ -449,7 +451,7 @@ typedef enum {
 
 
 - (NSString *)webView:(WebView *)wv runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText initiatedByFrame:(WebFrame *)frame {
-	TIJavaScriptPromptWindowController *promptController = [[[TIJavaScriptPromptWindowController alloc] initWithWindowNibName:@"JavaScriptPromptWindow"] autorelease];
+	TiJavaScriptPromptWindowController *promptController = [[[TiJavaScriptPromptWindowController alloc] initWithWindowNibName:@"JavaScriptPromptWindow"] autorelease];
 	[promptController setLabelText:prompt];
 	[promptController setUserText:defaultText];
 	
@@ -527,7 +529,7 @@ typedef enum {
 #pragma mark Accessors
 
 - (BOOL)isFirst {
-	TIBrowserDocument *doc = (TIBrowserDocument *)[self document];
+	TiBrowserDocument *doc = (TiBrowserDocument *)[self document];
 	return [doc isFirst];
 }
 

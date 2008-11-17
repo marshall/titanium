@@ -16,9 +16,9 @@
  * limitations under the License. 
  */
 
-#import "TIProtocol.h"
+#import "TiProtocol.h"
 
-@implementation TIProtocol
+@implementation TiProtocol
 
 + (NSString*) specialProtocolScheme {
 	return @"ti";
@@ -27,7 +27,7 @@
 + (void) registerSpecialProtocol {
 	static BOOL inited = NO;
 	if ( ! inited ) {
-		[NSURLProtocol registerClass:[TIProtocol class]];
+		[NSURLProtocol registerClass:[TiProtocol class]];
 		inited = YES;
 	}
 }
@@ -39,7 +39,7 @@
 	NSString *theScheme = [[theRequest URL] scheme];
 	
     /* return true if it matches the scheme we're using for our protocol. */
-	return ([theScheme caseInsensitiveCompare: [TIProtocol specialProtocolScheme]] == NSOrderedSame );
+	return ([theScheme caseInsensitiveCompare: [TiProtocol specialProtocolScheme]] == NSOrderedSame );
 }
 
 

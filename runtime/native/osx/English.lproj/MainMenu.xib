@@ -1162,7 +1162,7 @@
 				<string key="NSClassName">NSFontManager</string>
 			</object>
 			<object class="NSCustomObject" id="502175496">
-				<string key="NSClassName">TIAppDelegate</string>
+				<string key="NSClassName">TiAppDelegate</string>
 			</object>
 		</object>
 		<object class="IBObjectContainer" key="IBDocument.Objects">
@@ -3198,7 +3198,7 @@
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
-					<string key="className">TIAppDelegate</string>
+					<string key="className">TiAppDelegate</string>
 					<string key="superclassName">NSDocumentController</string>
 					<object class="NSMutableDictionary" key="actions">
 						<bool key="EncodedWithXMLCoder">YES</bool>
@@ -3223,7 +3223,7 @@
 					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">src/TIAppDelegate.h</string>
+						<string key="minorKey">src/TiAppDelegate.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">

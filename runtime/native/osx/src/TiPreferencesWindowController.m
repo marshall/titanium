@@ -17,15 +17,25 @@
  */
 
 
-#import <Cocoa/Cocoa.h>
-#import <WebKit/WebKit.h>
+#import "TiPreferencesWindowController.h"
 
-@interface TIMenuAction : NSMenuItem {
-	WebScriptObject *target;
-	NSString *title;
+@implementation TiPreferencesWindowController
+
++ (id)instance {
+	static TiPreferencesWindowController *instance = nil;
+
+	@synchronized (self) {
+		if (!instance) {
+			instance = [[TiPreferencesWindowController alloc] initWithWindowNibName:@"PreferencesWindow"];
+		}
+	}
+	
+	return instance;
 }
 
-- (TIMenuAction*)initWithFunc:(WebScriptObject*)f title:(NSString*)t;
-- (void)execute;
+
+- (void)awakeFromNib {
+	[[self window] center];
+}
 
 @end

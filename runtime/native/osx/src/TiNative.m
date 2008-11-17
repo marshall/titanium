@@ -16,11 +16,11 @@
  * limitations under the License. 
  */
 
-#import "TIJavaScriptObject.h"
-#import "TIAppDelegate.h"
+#import "TiNative.h"
+#import "TiAppDelegate.h"
 #import <WebKit/WebKit.h>
 
-@implementation TIJavaScriptObject
+@implementation TiNative
 
 - (id)initWithWebView:(WebView *)wv {
 	self = [super init];
@@ -41,11 +41,17 @@
 	return @"[TiNative object]";
 }
 
-- (TISystemMenu *)createSystemMenu:(NSString*)url f:(WebScriptObject*)f
+- (TiSystemMenu *)createSystemMenu:(NSString*)url f:(WebScriptObject*)f
 {
-	TISystemMenu *menu = [TISystemMenu alloc];
+	TiSystemMenu *menu = [TiSystemMenu alloc];
 	[menu initWithURL:url f:f];
 	return menu;
+}
+
+- (TiUserWindow *)createWindow
+{
+	TiUserWindow *win = [[TiUserWindow alloc] init];
+	return win;
 }
 
 - (void)include:(NSString *)s {
@@ -85,10 +91,10 @@
 	NSBeep();
 }
 
-
 - (void)playSoundNamed:(NSString *)s {
 	[[NSSound soundNamed:s] play];
 }
+
 
 #pragma mark -
 #pragma mark WebScripting
@@ -106,6 +112,8 @@
 		return @"include";
 	} else if (sel == @selector(createSystemMenu:f:)) {
 		return @"createSystemMenu";
+	} else if (sel == @selector(createWindow)) {
+		return @"createWindow";
 	} else if (sel == @selector(debug:)) {
 		return @"debug";
 	} else if (sel == @selector(terminate)) {
@@ -156,32 +164,32 @@
 #pragma mark Accessors
 
 - (CGFloat)windowWidth {
-	return [[TIAppDelegate instance] windowWidth];
+	return [[TiAppDelegate instance] windowWidth];
 }
 
 
 - (CGFloat)windowHeight {
-	return [[TIAppDelegate instance] windowHeight];
+	return [[TiAppDelegate instance] windowHeight];
 }
 
 
 - (NSString *)endpoint {
-	return [[TIAppDelegate instance] endpoint];
+	return [[TiAppDelegate instance] endpoint];
 }
 
 
 - (NSString *)appName {
-	return [[TIAppDelegate instance] appName];
+	return [[TiAppDelegate instance] appName];
 }
 
 
 - (NSString *)windowTitle {
-	return [[TIAppDelegate instance] windowTitle];
+	return [[TiAppDelegate instance] windowTitle];
 }
 
 
 - (NSString *)startPath {
-	return [[TIAppDelegate instance] startPath];
+	return [[TiAppDelegate instance] startPath];
 }
 
 - (NSString *)resourcePath {

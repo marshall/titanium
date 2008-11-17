@@ -16,16 +16,16 @@
  * limitations under the License. 
  */
 
-#import "TIBrowserDocument.h"
-#import "TIBrowserWindowController.h"
-#import "TIAppDelegate.h"
+#import "TiBrowserDocument.h"
+#import "TiBrowserWindowController.h"
+#import "TiAppDelegate.h"
 #import <WebKit/WebKit.h>
 
-@interface TIBrowserDocument (Friend)
+@interface TiBrowserDocument (Friend)
 - (void)setIsFirst:(BOOL)yn;
 @end
 
-@implementation TIBrowserDocument
+@implementation TiBrowserDocument
 
 - (id)init {
 	self = [super init];
@@ -45,7 +45,7 @@
 #pragma mark NSDocument
 
 - (void)makeWindowControllers {
-	browserWindowController = [[TIBrowserWindowController alloc] initWithWindowNibName:@"BrowserWindow"];
+	browserWindowController = [[TiBrowserWindowController alloc] initWithWindowNibName:@"BrowserWindow"];
 	[self addWindowController:browserWindowController];
 	[browserWindowController release];
 }
@@ -57,13 +57,13 @@
 
 
 - (NSString *)displayName {
-	return [[TIAppDelegate instance] windowTitle];
+	return [[TiAppDelegate instance] windowTitle];
 }
 
 
 - (void)close {
-	if ([[TIAppDelegate instance] isFullScreen]) {
-		[[TIAppDelegate instance] setIsFullScreen:NO];
+	if ([[TiAppDelegate instance] isFullScreen]) {
+		[[TiAppDelegate instance] setIsFullScreen:NO];
 	}
 	[super close];
 }
@@ -77,7 +77,7 @@
 }
 
 
-- (TIBrowserWindowController *)browserWindowController {
+- (TiBrowserWindowController *)browserWindowController {
 	return browserWindowController;
 }
 

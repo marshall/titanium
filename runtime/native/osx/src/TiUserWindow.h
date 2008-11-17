@@ -17,10 +17,10 @@
  */
 
 #import <Cocoa/Cocoa.h>
-#include "TIBrowserDocument.h"
+#include "TiBrowserDocument.h"
 
 @interface TiUserWindow : NSObject {
-	TIBrowserDocument *doc;
+	TiBrowserDocument *doc;
 }
 
 - (void)close;

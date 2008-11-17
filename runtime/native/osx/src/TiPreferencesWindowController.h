@@ -19,15 +19,8 @@
 
 #import <Cocoa/Cocoa.h>
 
-@interface TIJavaScriptPromptWindowController : NSWindowController {
-	IBOutlet NSTextView *textView;
-	NSString *labelText;
-	NSString *userText;
-}
-- (IBAction)close:(id)sender;
+@interface TiPreferencesWindowController : NSWindowController {
 
-- (NSString *)labelText;
-- (void)setLabelText:(NSString *)s;
-- (NSString *)userText;
-- (void)setUserText:(NSString *)s;
+}
++ (id)instance;
 @end

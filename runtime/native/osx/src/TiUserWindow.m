@@ -16,8 +16,8 @@
  * limitations under the License. 
  */
 #import "TiUserWindow.h"
-#import "TIBrowserDocument.h"
-#import "TIAppDelegate.h"
+#import "TiBrowserDocument.h"
+#import "TiAppDelegate.h"
 
 
 @implementation TiUserWindow
@@ -27,7 +27,7 @@
 	self = [super init];
 	NSURL *url = [[NSURL alloc] initWithString:@"about:blank"];
 	NSURLRequest *req = [[NSURLRequest alloc] initWithURL:url];
-	doc = [[TIAppDelegate instance] newDocumentWithRequest:req display:NO];
+	doc = [[TiAppDelegate instance] newDocumentWithRequest:req display:NO];
 	
 	NSWindow *window = [[doc browserWindowController] window];
 	NSRect newFrame = NSZeroRect;

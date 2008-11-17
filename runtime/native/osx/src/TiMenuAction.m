@@ -16,18 +16,34 @@
  * limitations under the License. 
  */
 
+#import "TiMenuAction.h"
 
-#import <Cocoa/Cocoa.h>
+@implementation TiMenuAction
 
-@class WebView;
-@class TIBrowserWindowController;
-
-@interface TIBrowserDocument : NSDocument {
-	TIBrowserWindowController *browserWindowController;
-	BOOL isFirst;
+- (void)dealloc {
+	[target dealloc];
+	[title dealloc];
+	[super dealloc];
 }
-- (BOOL)isFirst;
-- (void)loadRequest:(NSURLRequest *)request;
-- (TIBrowserWindowController *)browserWindowController;
-- (WebView *)webView;
+
+
+- (TiMenuAction*)initWithFunc:(WebScriptObject*)f title:(NSString*)t
+{
+	self = [super init];
+	target = f;
+	title = t;
+	[target retain];
+	[title retain];
+	return self;
+}
+
+- (void)execute
+{
+	NSMutableArray *result = [[NSMutableArray alloc] init];
+	[result addObject:target]; // scope
+	[result addObject:title]; // argument
+	[target callWebScriptMethod:@"call" withArguments:result];
+}
+
 @end
+

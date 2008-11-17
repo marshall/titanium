@@ -17,10 +17,10 @@
  */
 
 
-#import "TIBrowserWindow.h"
-#import "TIAppDelegate.h"
-#import "TIThemeFrame.h"
-#import "TIBrowserWindowController.h"
+#import "TiBrowserWindow.h"
+#import "TiAppDelegate.h"
+#import "TiThemeFrame.h"
+#import "TiBrowserWindowController.h"
 #import "WebViewPrivate.h"
 #import "WebDashboardRegion.h"
 #import <WebKit/WebKit.h>
@@ -29,12 +29,12 @@
 + (Class)frameViewClassForStyleMask:(NSUInteger)styleMask;
 @end
 
-@implementation TIBrowserWindow
+@implementation TiBrowserWindow
 
 // must override the ThemeFrame class to force no drawing of titlebar when window is resizable
 + (Class)frameViewClassForStyleMask:(NSUInteger)styleMask {
-	if ([[TIAppDelegate instance] isFullScreen]) {
-		return [TIThemeFrame class];
+	if ([[TiAppDelegate instance] isFullScreen]) {
+		return [TiThemeFrame class];
 	} else {
 		return [super frameViewClassForStyleMask:styleMask];
 	}
@@ -43,7 +43,7 @@
 
 // override designated initializer to cause window to be borderless.
 - (id)initWithContentRect:(NSRect)contentRect styleMask:(NSUInteger)mask backing:(NSBackingStoreType)bufferingType defer:(BOOL)flag {
-	if ([[TIAppDelegate instance] isFullScreen]) {
+	if ([[TiAppDelegate instance] isFullScreen]) {
 		mask = NSTitledWindowMask|NSClosableWindowMask|NSBorderlessWindowMask;
 	}
 	//mask = NSClosableWindowMask|NSMiniaturizableWindowMask|NSTitledWindowMask|NSResizableWindowMask; //|NSBorderlessWindowMask|NSTitledWindowMask|NSClosableWindowMask|NSMiniaturizableWindowMask|NSResizableWindowMask;
@@ -91,7 +91,10 @@
 //		return;
 //	}
 	
-	BOOL isDraggable = YES;
+
+///	BOOL isDraggable = [[TiAppDelegate instance] isFullScreen];
+	//JGH: we only want to do the moveWindow below if we have custom shape window, otherwise internal drag-n-drop doesn't work
+	BOOL isDraggable=NO; //FIXME: for now, turn it off
 	
 	if (isDraggable) {		
 
@@ -101,7 +104,7 @@
 				mouseInRegion = NO;
 			
 			if (([evt type] == NSLeftMouseDown || [evt type] == NSLeftMouseDragged) && !mouseInRegion) {
-				TIBrowserWindowController *winController = [self windowController];
+				TiBrowserWindowController *winController = [self windowController];
 				WebView *webView = [winController webView];
 				NSPoint pointInView = [[[[webView mainFrame] frameView] documentView] convertPoint:[evt locationInWindow] fromView:nil];
 				NSDictionary *regions = [webView _dashboardRegions];

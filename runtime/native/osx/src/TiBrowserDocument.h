@@ -16,15 +16,18 @@
  * limitations under the License. 
  */
 
+
 #import <Cocoa/Cocoa.h>
-#import <Foundation/Foundation.h>
-#import <Foundation/NSURLRequest.h>
-#import <Foundation/NSURLProtocol.h>
 
-@interface TIProtocol : NSURLProtocol {
+@class WebView;
+@class TiBrowserWindowController;
+
+@interface TiBrowserDocument : NSDocument {
+	TiBrowserWindowController *browserWindowController;
+	BOOL isFirst;
 }
-
-+ (NSString*) specialProtocolScheme;
-+ (void) registerSpecialProtocol;
-
+- (BOOL)isFirst;
+- (void)loadRequest:(NSURLRequest *)request;
+- (TiBrowserWindowController *)browserWindowController;
+- (WebView *)webView;
 @end

@@ -18,9 +18,9 @@
 
 
 #import <Cocoa/Cocoa.h>
-#import "TIMenuAction.h"
+#import "TiMenuAction.h"
 
-@interface TISystemMenu : NSObject {
+@interface TiSystemMenu : NSObject {
 	NSStatusItem *statusItem;
 	NSMenu *menu;
 	WebScriptObject *target;
@@ -29,7 +29,7 @@
 	NSMutableArray *items;
 }
 
-- (TISystemMenu*)initWithURL:(NSString*)url f:(WebScriptObject*)f;
+- (TiSystemMenu*)initWithURL:(NSString*)url f:(WebScriptObject*)f;
 - (void)addItem:(NSString*)s f:(WebScriptObject*)f;
 - (void)addSeparator;
 - (void)execute;
