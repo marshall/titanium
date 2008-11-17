@@ -18,6 +18,8 @@
 #include "ti_web_shell.h"
 #include "ti_utils.h"
 
+#include "Resource.h"
+
 TIWebViewDelegate::TIWebViewDelegate(TIWebShell *ti_web_shell) : bootstrapTitanium(false) {
 	this->ti_web_shell = ti_web_shell;
 }
@@ -217,6 +219,59 @@ bool TIWebViewDelegate::RunJavaScriptConfirm(WebView* webview, const std::wstrin
 	return (result == IDYES);
 }
 
+std::wstring jsPromptLabel;
+std::wstring jsPromptDefaultText;
+std::wstring jsPromptText;
+
+void SaveJSPromptText(HWND hWndDlg) {
+	int len = GetWindowTextLength(GetDlgItem(hWndDlg, JSPROMPTTEXT));
+
+	if(len > 0) {
+		wchar_t buffer[2049];
+		GetDlgItemText(hWndDlg, JSPROMPTTEXT, (LPWSTR) buffer, len + 1);
+		jsPromptText.assign(buffer);
+	}
+	else {
+		jsPromptText.clear();
+	}
+}
+
+
+LRESULT CALLBACK JsPromptDlgProc(HWND hWndDlg, UINT Msg, WPARAM wParam, LPARAM lParam)
+{
+	switch(Msg)
+	{
+	case WM_INITDIALOG:
+		{
+			SetDlgItemText(hWndDlg, JSPROMPTLABEL, (LPCWSTR)jsPromptLabel.c_str());
+			SetDlgItemText(hWndDlg, JSPROMPTTEXT, (LPCWSTR)jsPromptDefaultText.c_str());
+
+			return TRUE;
+		}
+
+	case WM_COMMAND:
+		switch(wParam)
+		{
+		case JSPROMPTIDOK:
+			SaveJSPromptText(hWndDlg);
+			EndDialog(hWndDlg, JSPROMPTIDOK);
+			return TRUE;
+		case JSPROMPTIDCANCEL:
+			EndDialog(hWndDlg, JSPROMPTIDCANCEL);
+			return TRUE;
+		case WM_DESTROY:
+			EndDialog(hWndDlg, JSPROMPTIDCANCEL);
+			return TRUE;
+		default:
+			printf("wParam = %d\n", wParam);
+		}
+		break;
+	}
+
+	return FALSE;
+}
+
+
 // Displays a JavaScript text input panel associated with the given view.
 // Clients should visually indicate that this panel comes from JavaScript.
 // The panel should have two buttons, e.g. "OK" and "Cancel", and an area to
@@ -229,11 +284,20 @@ bool TIWebViewDelegate::RunJavaScriptPrompt(WebView* webview,
                                const std::wstring& default_value,
                                std::wstring* result) {
 
-	ti_debug("::: RunJavaScriptPrompt");
+	jsPromptLabel = message;
+	jsPromptDefaultText = default_value;
 
-	printf("JS prompt: '%ls' (%ls)\n", message.c_str(), default_value.c_str());
+	INT_PTR r = DialogBox(::GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_JSPROMPT),
+		this->hWnd, reinterpret_cast<DLGPROC>(JsPromptDlgProc));
 
-	return false;
+	if(r == JSPROMPTIDOK) {
+		result->assign(jsPromptText);
+
+		return true;
+	}
+	else {
+		return false;
+	}
 }
 
 // Displays a "before unload" confirm panel associated with the given view.
