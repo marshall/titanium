@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ti:app xmlns:ti="http://ti.appcelerator.org" xmlns:appc="http://www.appcelerator.org">
 	<name>FoobarAppName</name>
-	<window width="800" height="600">
+	<window width="240" height="600">
 		<title>Titanium Test</title>
 		<start>index.html</start>
 		<maximizable>true</maximizable>

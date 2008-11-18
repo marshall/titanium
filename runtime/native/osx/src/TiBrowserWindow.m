@@ -59,21 +59,25 @@
 	options = [[TiAppDelegate instance] getWindowOptions];
 	[options retain];
 	mask = [options toWindowMask];
+	
 	self = [super initWithContentRect:contentRect styleMask:mask backing:bufferingType defer:flag];
 	if (self != nil) {
 		[self setOpaque:NO];
 		[self setHasShadow:YES];
 		[self setBackgroundColor:[NSColor clearColor]];
 		[self setAlphaValue:[options getTransparency]];
-		[self setAlphaValue:1.0];
 	}
+	
+	[self setFrame:NSMakeRect(0,0,[options getWidth],[options getHeight]) display:NO];
+	[self center];
+	
 	return self;
 }
 
- -(BOOL) canBecomeKeyWindow
-{
-	return YES;
-}
+// -(BOOL) canBecomeKeyWindow
+//{
+//	return YES;
+//}
 
 - (void)moveWindow:(NSEvent *)event {
 	NSPoint startLocation = [event locationInWindow];
@@ -124,15 +128,16 @@
 				WebView *webView = [winController webView];
 				NSPoint pointInView = [[[[webView mainFrame] frameView] documentView] convertPoint:[evt locationInWindow] fromView:nil];
 				NSDictionary *regions = [webView _dashboardRegions];
-				
+
+
 				WebDashboardRegion *region = [[regions objectForKey:@"resize"] lastObject];
-//				if (region) {
-//					if (NSPointInRect(pointInView, [region dashboardRegionClip])) {
-//						// we are in a resize control region, resize the window now and eat the event
-//						// [self resizeWindow:event];
-//						//return;
-//					}
-//				}
+				if (region) {
+					if (NSPointInRect(pointInView, [region dashboardRegionClip])) {
+						// we are in a resize control region, resize the window now and eat the event
+						//[self resizeWindow:evt];
+						//return;
+					}
+				}
 				
 				NSArray *controlRegions = [regions objectForKey:@"control"];
 				NSEnumerator *enumerator = [controlRegions objectEnumerator];

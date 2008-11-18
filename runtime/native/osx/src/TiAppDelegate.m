@@ -394,7 +394,7 @@ static NSString *attrText(NSXMLElement *el, NSString *name)
 
 
 #pragma mark -
-#pragma mark Private
+#pragma mark Private 
 
 - (void)registerForAppleEvents {
 	[[NSAppleEventManager sharedAppleEventManager] setEventHandler:self
@@ -469,9 +469,10 @@ static NSString *attrText(NSXMLElement *el, NSString *name)
 	return def;
 }
 
-- (void)parseTiAppXML {
+- (void)parseTiAppXML 
+{
 	NSString *appXMLPath = [[NSBundle mainBundle] pathForResource:@"tiapp" ofType:@"xml"];
-	
+
 	NSError *error = nil;
 	NSURL *furl = [NSURL fileURLWithPath:appXMLPath];
 	
@@ -494,6 +495,9 @@ static NSString *attrText(NSXMLElement *el, NSString *name)
 	NSXMLElement *window = getElement(root, @"window");
 	CGFloat width = [attrText(window, @"width") floatValue];
 	CGFloat height = [attrText(window, @"height") floatValue];
+	
+	NSLog(@"initial window: %f x %f\n",width,height);
+
 	
 	NSString *title = elementText(window, @"title");
 	NSString *start = elementText(window, @"start");		

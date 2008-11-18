@@ -28,7 +28,7 @@
 	x=0;
 	y=0;
 	width=400;
-	height=500;
+	height=1500;
 	title=@"Titanium Application";
 	url=@"index.html";
 	chrome=NO;

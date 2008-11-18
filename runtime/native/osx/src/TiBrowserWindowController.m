@@ -123,9 +123,6 @@ typedef enum {
 - (void)updateWindowFrameIfFirst 
 {
 	if ([self isFirst]) {
-		CGFloat w = [[TiAppDelegate instance] windowWidth];
-		CGFloat h = [[TiAppDelegate instance] windowHeight];
-		[[self window] setFrame:NSMakeRect(0.0, 0.0, w, h) display:NO];
 		[[self window] center];
 	}
 }
@@ -146,17 +143,23 @@ typedef enum {
 - (void)customizeWebView 
 {
 	// this stuff adjusts the webview/window for chromeless windows.
-	
-	//FIXME:
 	TiBrowserWindow *win = (TiBrowserWindow*)[self window];
-	if ([[win getOptions] isScrollbars])
+	TiWindowOptions *o = [win getOptions];
+
+	if ([o isScrollbars])
 	{
 		[[[webView mainFrame] frameView] setAllowsScrolling:YES];
-		[[self window] setShowsResizeIndicator:YES];
 	}
 	else
 	{
 		[[[webView mainFrame] frameView] setAllowsScrolling:NO];
+	}
+	if ([o isResizable])
+	{
+		[[self window] setShowsResizeIndicator:YES];
+	}
+	else
+	{
 		[[self window] setShowsResizeIndicator:NO];
 	}
 	
@@ -167,7 +170,12 @@ typedef enum {
 - (void)showWindowIfFirst 
 {
 	// we don't show the first window until the first page has loaded. avoids seeing ugly loading on launch
-	if ([self isFirst] && ![[self window] isVisible]) {
+//	if ([self isFirst] && ![[self window] isVisible]) {
+//		[[self window] makeKeyAndOrderFront:self];
+////		[[self window] makeKeyAndOrderFront:[self window]];
+//	}
+	if ([self isFirst]) 
+	{
 		[[self window] makeKeyAndOrderFront:self];
 	}
 }
