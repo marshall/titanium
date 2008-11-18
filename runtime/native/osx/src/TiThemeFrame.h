@@ -16,11 +16,11 @@
  * limitations under the License. 
  */
 
-
 #import <Cocoa/Cocoa.h>
+#import "NSThemeFrame.h"
 
-@interface TIBrowserWindow : NSWindow {
-	BOOL mouseInRegion;
+@interface TiThemeFrame : NSThemeFrame {
+
 }
 
 @end

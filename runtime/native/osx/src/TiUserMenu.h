@@ -15,17 +15,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-
-
 #import <Cocoa/Cocoa.h>
-#import <WebKit/WebKit.h>
 
-@interface TIMenuAction : NSMenuItem {
-	WebScriptObject *target;
-	NSString *title;
+@interface TiUserMenu : NSObject 
+{
 }
-
-- (TIMenuAction*)initWithFunc:(WebScriptObject*)f title:(NSString*)t;
-- (void)execute;
-
 @end

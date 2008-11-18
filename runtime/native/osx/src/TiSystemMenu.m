@@ -16,9 +16,9 @@
  * limitations under the License. 
  */
 
-#import "TISystemMenu.h"
+#import "TiSystemMenu.h"
 
-@implementation TISystemMenu
+@implementation TiSystemMenu
 
 - (void)dealloc {
 	[[NSStatusBar systemStatusBar] removeStatusItem:statusItem];
@@ -31,7 +31,7 @@
 	[super dealloc];
 }
 
-- (TISystemMenu*)initWithURL:(NSString*)u f:(WebScriptObject*)f
+- (TiSystemMenu*)initWithURL:(NSString*)u f:(WebScriptObject*)f
 {
 	self = [super init];
 	
@@ -65,7 +65,7 @@
 }
 
 - (NSString *)description {
-	return @"[TISystemMenu object]";
+	return @"[TiSystemMenu native]";
 }
 
 - (void)itemClicked:(id)sender{
@@ -81,7 +81,7 @@
 		[menu release];
 	}
 	
-	TIMenuAction *action = [[TIMenuAction alloc] initWithFunc:f title:name];
+	TiMenuAction *action = [[TiMenuAction alloc] initWithFunc:f title:name];
 	[items addObject:action];
 	
 	[action setAction:@selector(itemClicked:)];
@@ -141,7 +141,7 @@
 //		
 //		//TODO: you can't just re-attach the statusItem to the menu, doesn't work
 //		NSEnumerator *enumerator = [items objectEnumerator];
-//		TIMenuAction *action;
+//		TiMenuAction *action;
 //		while ((action = [enumerator nextObject]) != nil)
 //		{
 //			[menu addItem:action];

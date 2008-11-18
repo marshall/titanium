@@ -21,7 +21,7 @@
 
 @class WebView;
 
-@interface TIBrowserWindowController : NSWindowController {
+@interface TiBrowserWindowController : NSWindowController {
 	IBOutlet WebView *webView;
 }
 

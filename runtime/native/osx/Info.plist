@@ -22,13 +22,13 @@
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>NSDocumentClass</key>
-			<string>TIBrowserDocument</string>
+			<string>TiBrowserDocument</string>
 		</dict>
 	</array>
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
-   <key>CFBundleShortVersionString</key>
-   <string>0.1</string>
+	<key>CFBundleShortVersionString</key>
+	<string>0.1</string>
 	<key>CFBundleIconFile</key>
 	<string>appcelerator</string>
 	<key>CFBundleIdentifier</key>

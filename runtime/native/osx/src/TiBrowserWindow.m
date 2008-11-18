@@ -17,10 +17,10 @@
  */
 
 
-#import "TIBrowserWindow.h"
-#import "TIAppDelegate.h"
-#import "TIThemeFrame.h"
-#import "TIBrowserWindowController.h"
+#import "TiBrowserWindow.h"
+#import "TiAppDelegate.h"
+#import "TiThemeFrame.h"
+#import "TiBrowserWindowController.h"
 #import "WebViewPrivate.h"
 #import "WebDashboardRegion.h"
 #import <WebKit/WebKit.h>
@@ -29,32 +29,51 @@
 + (Class)frameViewClassForStyleMask:(NSUInteger)styleMask;
 @end
 
-@implementation TIBrowserWindow
+@implementation TiBrowserWindow
+
+- (void)dealloc
+{
+	[options release];
+	[super dealloc];
+}
+
+-(TiWindowOptions*)getOptions
+{
+	return options;
+}
 
 // must override the ThemeFrame class to force no drawing of titlebar when window is resizable
-+ (Class)frameViewClassForStyleMask:(NSUInteger)styleMask {
-	if ([[TIAppDelegate instance] isFullScreen]) {
-		return [TIThemeFrame class];
-	} else {
-		return [super frameViewClassForStyleMask:styleMask];
++ (Class)frameViewClassForStyleMask:(NSUInteger)styleMask 
+{
+	TiWindowOptions *options = [[TiAppDelegate instance] getWindowOptions];
+	if ([options isFullscreen] || [options isChrome])
+	{
+		return [TiThemeFrame class];
 	}
+	
+	return [super frameViewClassForStyleMask:styleMask];
 }
 
 
-// override designated initializer to cause window to be borderless.
 - (id)initWithContentRect:(NSRect)contentRect styleMask:(NSUInteger)mask backing:(NSBackingStoreType)bufferingType defer:(BOOL)flag {
-	if ([[TIAppDelegate instance] isFullScreen]) {
-		mask = NSTitledWindowMask|NSClosableWindowMask|NSBorderlessWindowMask;
-	}
-	//mask = NSClosableWindowMask|NSMiniaturizableWindowMask|NSTitledWindowMask|NSResizableWindowMask; //|NSBorderlessWindowMask|NSTitledWindowMask|NSClosableWindowMask|NSMiniaturizableWindowMask|NSResizableWindowMask;
+	options = [[TiAppDelegate instance] getWindowOptions];
+	[options retain];
+	mask = [options toWindowMask];
 	self = [super initWithContentRect:contentRect styleMask:mask backing:bufferingType defer:flag];
 	if (self != nil) {
 		[self setOpaque:NO];
-		
+		[self setHasShadow:YES];
+		[self setBackgroundColor:[NSColor clearColor]];
+		[self setAlphaValue:[options getTransparency]];
+		[self setAlphaValue:1.0];
 	}
 	return self;
 }
 
+ -(BOOL) canBecomeKeyWindow
+{
+	return YES;
+}
 
 - (void)moveWindow:(NSEvent *)event {
 	NSPoint startLocation = [event locationInWindow];
@@ -78,7 +97,6 @@
 		[self setFrameOrigin:newOrigin];
 		lastLocation = newLocation;
 	}
-	
 	[super sendEvent:event];
 }
 
@@ -91,7 +109,8 @@
 //		return;
 //	}
 	
-	BOOL isDraggable = YES;
+	//JGH: we only want to do the moveWindow below if we have custom shape window, otherwise internal drag-n-drop doesn't work
+	BOOL isDraggable = [options isChrome];
 	
 	if (isDraggable) {		
 
@@ -101,7 +120,7 @@
 				mouseInRegion = NO;
 			
 			if (([evt type] == NSLeftMouseDown || [evt type] == NSLeftMouseDragged) && !mouseInRegion) {
-				TIBrowserWindowController *winController = [self windowController];
+				TiBrowserWindowController *winController = [self windowController];
 				WebView *webView = [winController webView];
 				NSPoint pointInView = [[[[webView mainFrame] frameView] documentView] convertPoint:[evt locationInWindow] fromView:nil];
 				NSDictionary *regions = [webView _dashboardRegions];

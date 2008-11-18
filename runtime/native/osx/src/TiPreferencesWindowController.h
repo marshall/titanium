@@ -17,25 +17,10 @@
  */
 
 
-#import "TIPreferencesWindowController.h"
+#import <Cocoa/Cocoa.h>
 
-@implementation TIPreferencesWindowController
+@interface TiPreferencesWindowController : NSWindowController {
 
-+ (id)instance {
-	static TIPreferencesWindowController *instance = nil;
-
-	@synchronized (self) {
-		if (!instance) {
-			instance = [[TIPreferencesWindowController alloc] initWithWindowNibName:@"PreferencesWindow"];
-		}
-	}
-	
-	return instance;
 }
-
-
-- (void)awakeFromNib {
-	[[self window] center];
-}
-
++ (id)instance;
 @end

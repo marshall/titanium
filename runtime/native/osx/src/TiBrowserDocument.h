@@ -17,10 +17,21 @@
  */
 
 #import <Cocoa/Cocoa.h>
-#import "NSThemeFrame.h"
+#import "TiWindowOptions.h"
 
-@interface TIThemeFrame : NSThemeFrame {
+@class WebView;
+@class TiBrowserWindowController;
+@class TiWindowOptions;
 
+@interface TiBrowserDocument : NSDocument {
+	TiBrowserWindowController *browserWindowController;
+	TiWindowOptions *windowOptions;
+	BOOL isFirst;
 }
-
+- (BOOL)isFirst;
+- (void)loadRequest:(NSURLRequest *)request;
+- (TiBrowserWindowController *)browserWindowController;
+- (WebView *)webView;
+- (void)setOptions:(TiWindowOptions*)opts;
+- (TiWindowOptions*)getOptions;
 @end

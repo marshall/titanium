@@ -9,29 +9,34 @@
 /* Begin PBXBuildFile section */
 		1DDD582C0DA1D0D100B32029 /* BrowserWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1DDD58280DA1D0D100B32029 /* BrowserWindow.xib */; };
 		1DDD582D0DA1D0D100B32029 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1DDD582A0DA1D0D100B32029 /* MainMenu.xib */; };
-		2433D4880ECFE45E00813747 /* TISystemMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = 2433D4870ECFE45E00813747 /* TISystemMenu.m */; };
-		2433D5900ECFF19500813747 /* TIMenuAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 2433D58F0ECFF19500813747 /* TIMenuAction.m */; };
-		2433D7370ED0089E00813747 /* TIProtocol.m in Sources */ = {isa = PBXBuildFile; fileRef = 2433D7360ED0089E00813747 /* TIProtocol.m */; };
-		2433D8FF0ED024E400813747 /* favicon.ico in Resources */ = {isa = PBXBuildFile; fileRef = 2433D8FE0ED024E400813747 /* favicon.ico */; };
+		2433DDD50ED0FFA100813747 /* TiThemeFrame.m in Sources */ = {isa = PBXBuildFile; fileRef = 2433DDD40ED0FFA100813747 /* TiThemeFrame.m */; };
+		2433DDDA0ED0FFBE00813747 /* TiBrowserWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2433DDD70ED0FFBE00813747 /* TiBrowserWindowController.m */; };
+		2433DDDB0ED0FFBE00813747 /* TiJavaScriptPromptWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2433DDD90ED0FFBE00813747 /* TiJavaScriptPromptWindowController.m */; };
+		2433DDE20ED0FFE300813747 /* TiNative.m in Sources */ = {isa = PBXBuildFile; fileRef = 2433DDDD0ED0FFE300813747 /* TiNative.m */; };
+		2433DDE30ED0FFE300813747 /* TiSystemMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = 2433DDDF0ED0FFE300813747 /* TiSystemMenu.m */; };
+		2433DDE40ED0FFE300813747 /* TiUserWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 2433DDE10ED0FFE300813747 /* TiUserWindow.m */; };
+		2433DDF00ED1002400813747 /* TiAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 2433DDE70ED1002400813747 /* TiAppDelegate.m */; };
+		2433DDF10ED1002400813747 /* TiBrowserDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 2433DDE90ED1002400813747 /* TiBrowserDocument.m */; };
+		2433DDF20ED1002400813747 /* TiBrowserWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 2433DDEB0ED1002400813747 /* TiBrowserWindow.m */; };
+		2433DDF30ED1002400813747 /* TiMenuAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 2433DDED0ED1002400813747 /* TiMenuAction.m */; };
+		2433DDF40ED1002400813747 /* TiProtocol.m in Sources */ = {isa = PBXBuildFile; fileRef = 2433DDEF0ED1002400813747 /* TiProtocol.m */; };
+		2433DDF70ED1003100813747 /* TiPreferencesWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2433DDF60ED1003100813747 /* TiPreferencesWindowController.m */; };
+		2433DE200ED102DB00813747 /* TiApp.m in Sources */ = {isa = PBXBuildFile; fileRef = 2433DE1B0ED102DB00813747 /* TiApp.m */; };
+		2433DE210ED102DB00813747 /* TiSystemDock.m in Sources */ = {isa = PBXBuildFile; fileRef = 2433DE1D0ED102DB00813747 /* TiSystemDock.m */; };
+		2433DE220ED102DB00813747 /* TiUserMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = 2433DE1F0ED102DB00813747 /* TiUserMenu.m */; };
+		2433DF6D0ED1122000813747 /* TiWindowOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 2433DF6C0ED1122000813747 /* TiWindowOptions.m */; };
+		24DA9C0C0ED15E9000DECFFC /* favicon.ico in Resources */ = {isa = PBXBuildFile; fileRef = 24DA9C0B0ED15E9000DECFFC /* favicon.ico */; };
 		8D15AC2C0486D014006FF6A4 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 2A37F4B9FDCFA73011CA2CEA /* Credits.rtf */; };
 		8D15AC2F0486D014006FF6A4 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165FFE840EACC02AAC07 /* InfoPlist.strings */; };
 		8D15AC320486D014006FF6A4 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A37F4B0FDCFA73011CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D15AC340486D014006FF6A4 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A7FEA54F5311CA2CBB /* Cocoa.framework */; };
-		D31B34DA0EBBE8E7006F3012 /* TIBrowserWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = D31B34D90EBBE8E7006F3012 /* TIBrowserWindowController.m */; };
-		D31B34DD0EBBE908006F3012 /* TIBrowserDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = D31B34DC0EBBE908006F3012 /* TIBrowserDocument.m */; };
 		D31B34E20EBBE9CD006F3012 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D31B34E10EBBE9CD006F3012 /* WebKit.framework */; };
-		D31B34F60EBBEB9E006F3012 /* TIAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D31B34F50EBBEB9E006F3012 /* TIAppDelegate.m */; };
-		D31B34FA0EBBED00006F3012 /* TIPreferencesWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = D31B34F90EBBED00006F3012 /* TIPreferencesWindowController.m */; };
 		D31B35000EBBEE04006F3012 /* PreferencesWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = D31B34FE0EBBEE04006F3012 /* PreferencesWindow.xib */; };
-		D31B35480EBBF093006F3012 /* TIJavaScriptObject.m in Sources */ = {isa = PBXBuildFile; fileRef = D31B35470EBBF093006F3012 /* TIJavaScriptObject.m */; };
 		D31B36280EBC07C1006F3012 /* tiapp.xml in Resources */ = {isa = PBXBuildFile; fileRef = D31B36270EBC07C1006F3012 /* tiapp.xml */; };
 		D31B36390EBC0832006F3012 /* index.html in Resources */ = {isa = PBXBuildFile; fileRef = D31B36380EBC0832006F3012 /* index.html */; };
 		D31B36650EBC0946006F3012 /* appcelerator.icns in Resources */ = {isa = PBXBuildFile; fileRef = D31B36640EBC0946006F3012 /* appcelerator.icns */; };
 		D31B38820EBCE51D006F3012 /* JavaScriptPromptWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = D31B38800EBCE51D006F3012 /* JavaScriptPromptWindow.xib */; };
-		D31B38880EBCE61D006F3012 /* TIJavaScriptPromptWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = D31B38870EBCE61D006F3012 /* TIJavaScriptPromptWindowController.m */; };
 		D31B3D230EBD7DF7006F3012 /* DefaultValues.plist in Resources */ = {isa = PBXBuildFile; fileRef = D31B3D220EBD7DF7006F3012 /* DefaultValues.plist */; };
-		D31B3D3D0EBD8496006F3012 /* TIBrowserWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = D31B3D3C0EBD8496006F3012 /* TIBrowserWindow.m */; };
-		D31B3D830EBD8A1A006F3012 /* TIThemeFrame.m in Sources */ = {isa = PBXBuildFile; fileRef = D31B3D820EBD8A1A006F3012 /* TIThemeFrame.m */; };
 		D31B3EF70EBE88B3006F3012 /* resizeIndicator.png in Resources */ = {isa = PBXBuildFile; fileRef = D31B3EF60EBE88B3006F3012 /* resizeIndicator.png */; };
 /* End PBXBuildFile section */
 
@@ -41,13 +46,42 @@
 		13E42FBA07B3F13500E4EEF1 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
 		1DDD58290DA1D0D100B32029 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/BrowserWindow.xib; sourceTree = "<group>"; };
 		1DDD582B0DA1D0D100B32029 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
-		2433D4860ECFE45E00813747 /* TISystemMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TISystemMenu.h; path = src/TISystemMenu.h; sourceTree = "<group>"; };
-		2433D4870ECFE45E00813747 /* TISystemMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TISystemMenu.m; path = src/TISystemMenu.m; sourceTree = "<group>"; };
-		2433D58E0ECFF19500813747 /* TIMenuAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TIMenuAction.h; path = src/TIMenuAction.h; sourceTree = "<group>"; };
-		2433D58F0ECFF19500813747 /* TIMenuAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TIMenuAction.m; path = src/TIMenuAction.m; sourceTree = "<group>"; };
-		2433D7350ED0089E00813747 /* TIProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TIProtocol.h; path = src/TIProtocol.h; sourceTree = "<group>"; };
-		2433D7360ED0089E00813747 /* TIProtocol.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TIProtocol.m; path = src/TIProtocol.m; sourceTree = "<group>"; };
-		2433D8FE0ED024E400813747 /* favicon.ico */ = {isa = PBXFileReference; lastKnownFileType = image.ico; name = favicon.ico; path = res/favicon.ico; sourceTree = "<group>"; };
+		2433DDD10ED0FFA100813747 /* NSThemeFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSThemeFrame.h; path = src/NSThemeFrame.h; sourceTree = "<group>"; };
+		2433DDD20ED0FFA100813747 /* NSTitledFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSTitledFrame.h; path = src/NSTitledFrame.h; sourceTree = "<group>"; };
+		2433DDD30ED0FFA100813747 /* TiThemeFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TiThemeFrame.h; path = src/TiThemeFrame.h; sourceTree = "<group>"; };
+		2433DDD40ED0FFA100813747 /* TiThemeFrame.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TiThemeFrame.m; path = src/TiThemeFrame.m; sourceTree = "<group>"; };
+		2433DDD60ED0FFBE00813747 /* TiBrowserWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TiBrowserWindowController.h; path = src/TiBrowserWindowController.h; sourceTree = "<group>"; };
+		2433DDD70ED0FFBE00813747 /* TiBrowserWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TiBrowserWindowController.m; path = src/TiBrowserWindowController.m; sourceTree = "<group>"; };
+		2433DDD80ED0FFBE00813747 /* TiJavaScriptPromptWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TiJavaScriptPromptWindowController.h; path = src/TiJavaScriptPromptWindowController.h; sourceTree = "<group>"; };
+		2433DDD90ED0FFBE00813747 /* TiJavaScriptPromptWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TiJavaScriptPromptWindowController.m; path = src/TiJavaScriptPromptWindowController.m; sourceTree = "<group>"; };
+		2433DDDC0ED0FFE300813747 /* TiNative.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TiNative.h; path = src/TiNative.h; sourceTree = "<group>"; };
+		2433DDDD0ED0FFE300813747 /* TiNative.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TiNative.m; path = src/TiNative.m; sourceTree = "<group>"; };
+		2433DDDE0ED0FFE300813747 /* TiSystemMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TiSystemMenu.h; path = src/TiSystemMenu.h; sourceTree = "<group>"; };
+		2433DDDF0ED0FFE300813747 /* TiSystemMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TiSystemMenu.m; path = src/TiSystemMenu.m; sourceTree = "<group>"; };
+		2433DDE00ED0FFE300813747 /* TiUserWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TiUserWindow.h; path = src/TiUserWindow.h; sourceTree = "<group>"; };
+		2433DDE10ED0FFE300813747 /* TiUserWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TiUserWindow.m; path = src/TiUserWindow.m; sourceTree = "<group>"; };
+		2433DDE50ED1000A00813747 /* NSFrameView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSFrameView.h; path = src/NSFrameView.h; sourceTree = "<group>"; };
+		2433DDE60ED1002400813747 /* TiAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TiAppDelegate.h; path = src/TiAppDelegate.h; sourceTree = "<group>"; };
+		2433DDE70ED1002400813747 /* TiAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TiAppDelegate.m; path = src/TiAppDelegate.m; sourceTree = "<group>"; };
+		2433DDE80ED1002400813747 /* TiBrowserDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TiBrowserDocument.h; path = src/TiBrowserDocument.h; sourceTree = "<group>"; };
+		2433DDE90ED1002400813747 /* TiBrowserDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TiBrowserDocument.m; path = src/TiBrowserDocument.m; sourceTree = "<group>"; };
+		2433DDEA0ED1002400813747 /* TiBrowserWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TiBrowserWindow.h; path = src/TiBrowserWindow.h; sourceTree = "<group>"; };
+		2433DDEB0ED1002400813747 /* TiBrowserWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TiBrowserWindow.m; path = src/TiBrowserWindow.m; sourceTree = "<group>"; };
+		2433DDEC0ED1002400813747 /* TiMenuAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TiMenuAction.h; path = src/TiMenuAction.h; sourceTree = "<group>"; };
+		2433DDED0ED1002400813747 /* TiMenuAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TiMenuAction.m; path = src/TiMenuAction.m; sourceTree = "<group>"; };
+		2433DDEE0ED1002400813747 /* TiProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TiProtocol.h; path = src/TiProtocol.h; sourceTree = "<group>"; };
+		2433DDEF0ED1002400813747 /* TiProtocol.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TiProtocol.m; path = src/TiProtocol.m; sourceTree = "<group>"; };
+		2433DDF50ED1003100813747 /* TiPreferencesWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TiPreferencesWindowController.h; path = src/TiPreferencesWindowController.h; sourceTree = "<group>"; };
+		2433DDF60ED1003100813747 /* TiPreferencesWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TiPreferencesWindowController.m; path = src/TiPreferencesWindowController.m; sourceTree = "<group>"; };
+		2433DE1A0ED102DB00813747 /* TiApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TiApp.h; path = src/TiApp.h; sourceTree = "<group>"; };
+		2433DE1B0ED102DB00813747 /* TiApp.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TiApp.m; path = src/TiApp.m; sourceTree = "<group>"; };
+		2433DE1C0ED102DB00813747 /* TiSystemDock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TiSystemDock.h; path = src/TiSystemDock.h; sourceTree = "<group>"; };
+		2433DE1D0ED102DB00813747 /* TiSystemDock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TiSystemDock.m; path = src/TiSystemDock.m; sourceTree = "<group>"; };
+		2433DE1E0ED102DB00813747 /* TiUserMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TiUserMenu.h; path = src/TiUserMenu.h; sourceTree = "<group>"; };
+		2433DE1F0ED102DB00813747 /* TiUserMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TiUserMenu.m; path = src/TiUserMenu.m; sourceTree = "<group>"; };
+		2433DF6B0ED1122000813747 /* TiWindowOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TiWindowOptions.h; path = src/TiWindowOptions.h; sourceTree = "<group>"; };
+		2433DF6C0ED1122000813747 /* TiWindowOptions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TiWindowOptions.m; path = src/TiWindowOptions.m; sourceTree = "<group>"; };
+		24DA9C0B0ED15E9000DECFFC /* favicon.ico */ = {isa = PBXFileReference; lastKnownFileType = image.ico; name = favicon.ico; path = res/favicon.ico; sourceTree = "<group>"; };
 		2A37F4B0FDCFA73011CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		2A37F4BAFDCFA73011CA2CEA /* English */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = English; path = English.lproj/Credits.rtf; sourceTree = "<group>"; };
 		2A37F4C4FDCFA73011CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
@@ -55,35 +89,16 @@
 		32DBCF750370BD2300C91783 /* Titanium_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Titanium_Prefix.pch; sourceTree = "<group>"; };
 		8D15AC360486D014006FF6A4 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8D15AC370486D014006FF6A4 /* Titanium.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Titanium.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		D31B34D80EBBE8E7006F3012 /* TIBrowserWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TIBrowserWindowController.h; path = src/TIBrowserWindowController.h; sourceTree = "<group>"; };
-		D31B34D90EBBE8E7006F3012 /* TIBrowserWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TIBrowserWindowController.m; path = src/TIBrowserWindowController.m; sourceTree = "<group>"; };
-		D31B34DB0EBBE908006F3012 /* TIBrowserDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TIBrowserDocument.h; path = src/TIBrowserDocument.h; sourceTree = "<group>"; };
-		D31B34DC0EBBE908006F3012 /* TIBrowserDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TIBrowserDocument.m; path = src/TIBrowserDocument.m; sourceTree = "<group>"; };
 		D31B34E10EBBE9CD006F3012 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = /System/Library/Frameworks/WebKit.framework; sourceTree = "<absolute>"; };
-		D31B34F40EBBEB9E006F3012 /* TIAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TIAppDelegate.h; path = src/TIAppDelegate.h; sourceTree = "<group>"; };
-		D31B34F50EBBEB9E006F3012 /* TIAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TIAppDelegate.m; path = src/TIAppDelegate.m; sourceTree = "<group>"; };
-		D31B34F80EBBED00006F3012 /* TIPreferencesWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TIPreferencesWindowController.h; path = src/TIPreferencesWindowController.h; sourceTree = "<group>"; };
-		D31B34F90EBBED00006F3012 /* TIPreferencesWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TIPreferencesWindowController.m; path = src/TIPreferencesWindowController.m; sourceTree = "<group>"; };
 		D31B34FF0EBBEE04006F3012 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/PreferencesWindow.xib; sourceTree = "<group>"; };
-		D31B35460EBBF093006F3012 /* TIJavaScriptObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TIJavaScriptObject.h; path = src/TIJavaScriptObject.h; sourceTree = "<group>"; };
-		D31B35470EBBF093006F3012 /* TIJavaScriptObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TIJavaScriptObject.m; path = src/TIJavaScriptObject.m; sourceTree = "<group>"; };
 		D31B36270EBC07C1006F3012 /* tiapp.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = tiapp.xml; path = res/tiapp.xml; sourceTree = "<group>"; };
 		D31B36380EBC0832006F3012 /* index.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = index.html; path = res/index.html; sourceTree = "<group>"; };
 		D31B36640EBC0946006F3012 /* appcelerator.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = appcelerator.icns; path = res/appcelerator.icns; sourceTree = "<group>"; };
 		D31B38810EBCE51D006F3012 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/JavaScriptPromptWindow.xib; sourceTree = "<group>"; };
-		D31B38860EBCE61D006F3012 /* TIJavaScriptPromptWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TIJavaScriptPromptWindowController.h; path = src/TIJavaScriptPromptWindowController.h; sourceTree = "<group>"; };
-		D31B38870EBCE61D006F3012 /* TIJavaScriptPromptWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TIJavaScriptPromptWindowController.m; path = src/TIJavaScriptPromptWindowController.m; sourceTree = "<group>"; };
 		D31B3CDC0EBD71F5006F3012 /* WebInspector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebInspector.h; path = src/WebInspector.h; sourceTree = "<group>"; };
 		D31B3CFA0EBD7530006F3012 /* WebViewPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebViewPrivate.h; path = src/WebViewPrivate.h; sourceTree = "<group>"; };
 		D31B3D070EBD757E006F3012 /* WebFramePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebFramePrivate.h; path = src/WebFramePrivate.h; sourceTree = "<group>"; };
 		D31B3D220EBD7DF7006F3012 /* DefaultValues.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = DefaultValues.plist; path = res/DefaultValues.plist; sourceTree = "<group>"; };
-		D31B3D3B0EBD8496006F3012 /* TIBrowserWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TIBrowserWindow.h; path = src/TIBrowserWindow.h; sourceTree = "<group>"; };
-		D31B3D3C0EBD8496006F3012 /* TIBrowserWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TIBrowserWindow.m; path = src/TIBrowserWindow.m; sourceTree = "<group>"; };
-		D31B3D7D0EBD89F4006F3012 /* NSFrameView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSFrameView.h; path = src/NSFrameView.h; sourceTree = "<group>"; };
-		D31B3D7E0EBD89F4006F3012 /* NSThemeFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSThemeFrame.h; path = src/NSThemeFrame.h; sourceTree = "<group>"; };
-		D31B3D7F0EBD89F4006F3012 /* NSTitledFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSTitledFrame.h; path = src/NSTitledFrame.h; sourceTree = "<group>"; };
-		D31B3D810EBD8A1A006F3012 /* TIThemeFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TIThemeFrame.h; path = src/TIThemeFrame.h; sourceTree = "<group>"; };
-		D31B3D820EBD8A1A006F3012 /* TIThemeFrame.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TIThemeFrame.m; path = src/TIThemeFrame.m; sourceTree = "<group>"; };
 		D31B3DCB0EBD8E7D006F3012 /* WebDashboardRegion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebDashboardRegion.h; path = src/WebDashboardRegion.h; sourceTree = "<group>"; };
 		D31B3EF60EBE88B3006F3012 /* resizeIndicator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = resizeIndicator.png; path = res/resizeIndicator.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -131,7 +146,6 @@
 		2A37F4AAFDCFA73011CA2CEA /* Titanium */ = {
 			isa = PBXGroup;
 			children = (
-				2433D8FE0ED024E400813747 /* favicon.ico */,
 				2A37F4ABFDCFA73011CA2CEA /* Classes */,
 				2A37F4AFFDCFA73011CA2CEA /* Other Sources */,
 				2A37F4B8FDCFA73011CA2CEA /* Resources */,
@@ -144,22 +158,20 @@
 		2A37F4ABFDCFA73011CA2CEA /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				2433D7350ED0089E00813747 /* TIProtocol.h */,
-				2433D7360ED0089E00813747 /* TIProtocol.m */,
-				2433D58E0ECFF19500813747 /* TIMenuAction.h */,
-				2433D58F0ECFF19500813747 /* TIMenuAction.m */,
-				2433D4860ECFE45E00813747 /* TISystemMenu.h */,
-				2433D4870ECFE45E00813747 /* TISystemMenu.m */,
-				D31B34F40EBBEB9E006F3012 /* TIAppDelegate.h */,
-				D31B34F50EBBEB9E006F3012 /* TIAppDelegate.m */,
-				D31B34DB0EBBE908006F3012 /* TIBrowserDocument.h */,
-				D31B34DC0EBBE908006F3012 /* TIBrowserDocument.m */,
-				D31B34D80EBBE8E7006F3012 /* TIBrowserWindowController.h */,
-				D31B34D90EBBE8E7006F3012 /* TIBrowserWindowController.m */,
-				D31B3D3B0EBD8496006F3012 /* TIBrowserWindow.h */,
-				D31B3D3C0EBD8496006F3012 /* TIBrowserWindow.m */,
+				2433DDD60ED0FFBE00813747 /* TiBrowserWindowController.h */,
+				2433DDD70ED0FFBE00813747 /* TiBrowserWindowController.m */,
+				2433DDE60ED1002400813747 /* TiAppDelegate.h */,
+				2433DDE70ED1002400813747 /* TiAppDelegate.m */,
+				2433DDE80ED1002400813747 /* TiBrowserDocument.h */,
+				2433DDE90ED1002400813747 /* TiBrowserDocument.m */,
+				2433DDEA0ED1002400813747 /* TiBrowserWindow.h */,
+				2433DDEB0ED1002400813747 /* TiBrowserWindow.m */,
+				2433DDEC0ED1002400813747 /* TiMenuAction.h */,
+				2433DDED0ED1002400813747 /* TiMenuAction.m */,
+				2433DDEE0ED1002400813747 /* TiProtocol.h */,
+				2433DDEF0ED1002400813747 /* TiProtocol.m */,
 				D31B3D800EBD89FA006F3012 /* Themes */,
-				D31B393E0EBCFA53006F3012 /* JavaScript Bridge */,
+				D31B393E0EBCFA53006F3012 /* Javascript */,
 				D31B393D0EBCFA3A006F3012 /* Auxiliary Windows */,
 				D31B3CDD0EBD71FA006F3012 /* WebKitPrivate */,
 			);
@@ -206,21 +218,33 @@
 		D31B393D0EBCFA3A006F3012 /* Auxiliary Windows */ = {
 			isa = PBXGroup;
 			children = (
-				D31B34F80EBBED00006F3012 /* TIPreferencesWindowController.h */,
-				D31B34F90EBBED00006F3012 /* TIPreferencesWindowController.m */,
-				D31B38860EBCE61D006F3012 /* TIJavaScriptPromptWindowController.h */,
-				D31B38870EBCE61D006F3012 /* TIJavaScriptPromptWindowController.m */,
+				2433DDF50ED1003100813747 /* TiPreferencesWindowController.h */,
+				2433DDF60ED1003100813747 /* TiPreferencesWindowController.m */,
+				2433DDD80ED0FFBE00813747 /* TiJavaScriptPromptWindowController.h */,
+				2433DDD90ED0FFBE00813747 /* TiJavaScriptPromptWindowController.m */,
 			);
 			name = "Auxiliary Windows";
 			sourceTree = "<group>";
 		};
-		D31B393E0EBCFA53006F3012 /* JavaScript Bridge */ = {
+		D31B393E0EBCFA53006F3012 /* Javascript */ = {
 			isa = PBXGroup;
 			children = (
-				D31B35460EBBF093006F3012 /* TIJavaScriptObject.h */,
-				D31B35470EBBF093006F3012 /* TIJavaScriptObject.m */,
+				2433DF6B0ED1122000813747 /* TiWindowOptions.h */,
+				2433DF6C0ED1122000813747 /* TiWindowOptions.m */,
+				2433DE1A0ED102DB00813747 /* TiApp.h */,
+				2433DE1B0ED102DB00813747 /* TiApp.m */,
+				2433DE1C0ED102DB00813747 /* TiSystemDock.h */,
+				2433DE1D0ED102DB00813747 /* TiSystemDock.m */,
+				2433DE1E0ED102DB00813747 /* TiUserMenu.h */,
+				2433DE1F0ED102DB00813747 /* TiUserMenu.m */,
+				2433DDDC0ED0FFE300813747 /* TiNative.h */,
+				2433DDDD0ED0FFE300813747 /* TiNative.m */,
+				2433DDDE0ED0FFE300813747 /* TiSystemMenu.h */,
+				2433DDDF0ED0FFE300813747 /* TiSystemMenu.m */,
+				2433DDE00ED0FFE300813747 /* TiUserWindow.h */,
+				2433DDE10ED0FFE300813747 /* TiUserWindow.m */,
 			);
-			name = "JavaScript Bridge";
+			name = Javascript;
 			sourceTree = "<group>";
 		};
 		D31B3CDD0EBD71FA006F3012 /* WebKitPrivate */ = {
@@ -237,11 +261,11 @@
 		D31B3D800EBD89FA006F3012 /* Themes */ = {
 			isa = PBXGroup;
 			children = (
-				D31B3D810EBD8A1A006F3012 /* TIThemeFrame.h */,
-				D31B3D820EBD8A1A006F3012 /* TIThemeFrame.m */,
-				D31B3D7D0EBD89F4006F3012 /* NSFrameView.h */,
-				D31B3D7E0EBD89F4006F3012 /* NSThemeFrame.h */,
-				D31B3D7F0EBD89F4006F3012 /* NSTitledFrame.h */,
+				2433DDE50ED1000A00813747 /* NSFrameView.h */,
+				2433DDD10ED0FFA100813747 /* NSThemeFrame.h */,
+				2433DDD20ED0FFA100813747 /* NSTitledFrame.h */,
+				2433DDD30ED0FFA100813747 /* TiThemeFrame.h */,
+				2433DDD40ED0FFA100813747 /* TiThemeFrame.m */,
 			);
 			name = Themes;
 			sourceTree = "<group>";
@@ -249,6 +273,7 @@
 		D31B3EF80EBE88B5006F3012 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				24DA9C0B0ED15E9000DECFFC /* favicon.ico */,
 				D31B3EF60EBE88B3006F3012 /* resizeIndicator.png */,
 			);
 			name = Images;
@@ -308,7 +333,7 @@
 				D31B38820EBCE51D006F3012 /* JavaScriptPromptWindow.xib in Resources */,
 				D31B3D230EBD7DF7006F3012 /* DefaultValues.plist in Resources */,
 				D31B3EF70EBE88B3006F3012 /* resizeIndicator.png in Resources */,
-				2433D8FF0ED024E400813747 /* favicon.ico in Resources */,
+				24DA9C0C0ED15E9000DECFFC /* favicon.ico in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -320,17 +345,22 @@
 			buildActionMask = 2147483647;
 			files = (
 				8D15AC320486D014006FF6A4 /* main.m in Sources */,
-				D31B34DA0EBBE8E7006F3012 /* TIBrowserWindowController.m in Sources */,
-				D31B34DD0EBBE908006F3012 /* TIBrowserDocument.m in Sources */,
-				D31B34F60EBBEB9E006F3012 /* TIAppDelegate.m in Sources */,
-				D31B34FA0EBBED00006F3012 /* TIPreferencesWindowController.m in Sources */,
-				D31B35480EBBF093006F3012 /* TIJavaScriptObject.m in Sources */,
-				D31B38880EBCE61D006F3012 /* TIJavaScriptPromptWindowController.m in Sources */,
-				D31B3D3D0EBD8496006F3012 /* TIBrowserWindow.m in Sources */,
-				D31B3D830EBD8A1A006F3012 /* TIThemeFrame.m in Sources */,
-				2433D4880ECFE45E00813747 /* TISystemMenu.m in Sources */,
-				2433D5900ECFF19500813747 /* TIMenuAction.m in Sources */,
-				2433D7370ED0089E00813747 /* TIProtocol.m in Sources */,
+				2433DDD50ED0FFA100813747 /* TiThemeFrame.m in Sources */,
+				2433DDDA0ED0FFBE00813747 /* TiBrowserWindowController.m in Sources */,
+				2433DDDB0ED0FFBE00813747 /* TiJavaScriptPromptWindowController.m in Sources */,
+				2433DDE20ED0FFE300813747 /* TiNative.m in Sources */,
+				2433DDE30ED0FFE300813747 /* TiSystemMenu.m in Sources */,
+				2433DDE40ED0FFE300813747 /* TiUserWindow.m in Sources */,
+				2433DDF00ED1002400813747 /* TiAppDelegate.m in Sources */,
+				2433DDF10ED1002400813747 /* TiBrowserDocument.m in Sources */,
+				2433DDF20ED1002400813747 /* TiBrowserWindow.m in Sources */,
+				2433DDF30ED1002400813747 /* TiMenuAction.m in Sources */,
+				2433DDF40ED1002400813747 /* TiProtocol.m in Sources */,
+				2433DDF70ED1003100813747 /* TiPreferencesWindowController.m in Sources */,
+				2433DE200ED102DB00813747 /* TiApp.m in Sources */,
+				2433DE210ED102DB00813747 /* TiSystemDock.m in Sources */,
+				2433DE220ED102DB00813747 /* TiUserMenu.m in Sources */,
+				2433DF6D0ED1122000813747 /* TiWindowOptions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

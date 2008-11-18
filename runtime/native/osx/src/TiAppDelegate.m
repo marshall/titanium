@@ -16,50 +16,63 @@
  * limitations under the License. 
  */
 
-#import "TIAppDelegate.h"
-#import "TIBrowserDocument.h"
-#import "TIBrowserWindowController.h"
-#import "TIPreferencesWindowController.h"
+#import "TiAppDelegate.h"
+#import "TiBrowserDocument.h"
+#import "TiBrowserWindowController.h"
+#import "TiPreferencesWindowController.h"
 #import "WebViewPrivate.h"
 #import "WebInspector.h"
 #import <WebKit/WebKit.h>
 
-static TIBrowserDocument *firstDocument = nil;
+static TiBrowserDocument *firstDocument = nil;
 
-TIBrowserWindowController *TIFirstController() {
+TiBrowserWindowController *TIFirstController() 
+{
 	return [firstDocument browserWindowController];
 }
 
-TIBrowserWindowController *TIFrontController() {
-	TIBrowserDocument *doc = [[TIAppDelegate instance] currentDocument];
-	if (doc) {
+TiBrowserWindowController *TIFrontController() 
+{
+	TiBrowserDocument *doc = [[TiAppDelegate instance] currentDocument];
+	if (doc) 
+	{
 		return [doc browserWindowController];
-	} else {
-		return nil;
 	}
+	return nil;
 }
 
-static BOOL containsElement(NSXMLElement *el, NSString *name) {
-	return [[el elementsForName:name] count] > 0;
+static BOOL containsElement(NSXMLElement *el, NSString *name) 
+{
+	NSArray *array = [el elementsForName:name];
+	if (!array) return false;
+	return [array count] > 0;
 }
 
-static NSXMLElement *getElement(NSXMLElement *el, NSString *name) {
-	return [[el elementsForName:name] objectAtIndex:0];
+static NSXMLElement *getElement(NSXMLElement *el, NSString *name) 
+{
+	NSArray *array = [el elementsForName:name];
+	if (!array || [array count] == 0) return nil;
+	return [array objectAtIndex:0];
 }
 
-static NSString *elementText(NSXMLElement *el, NSString *name) {
-	return [getElement(el, name) stringValue];
+static NSString *elementText(NSXMLElement *el, NSString *name) 
+{
+	NSXMLElement *elem = getElement(el, name);
+	return elem ? [elem stringValue] : nil;
 }
 
-static NSString *attrText(NSXMLElement *el, NSString *name) {
-	return [[el attributeForName:name] stringValue];
+static NSString *attrText(NSXMLElement *el, NSString *name) 
+{
+	NSXMLNode *node = [el attributeForName:name];
+	if (!node) return nil;
+	return [node stringValue];
 }
 
-@interface TIBrowserDocument (Friend)
+@interface TiBrowserDocument (Friend)
 - (void)setIsFirst:(BOOL)yn;
 @end
 
-@interface TIAppDelegate (Private)
+@interface TiAppDelegate (Private)
 + (void)setupDefaults;
 
 - (void)registerForAppleEvents;
@@ -72,19 +85,22 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 - (WebInspector *)webInspectorForFrontWindowController;
 @end
 
-@implementation TIAppDelegate
+@implementation TiAppDelegate
 
-+ (id)instance {
++ (id)instance 
+{
 	return [NSApp delegate];
 }
 
 
-+ (void)initialize {
++ (void)initialize 
+{
 	[self setupDefaults];
 }
 
 
-+ (void)setupDefaults {
++ (void)setupDefaults 
+{
 	NSString *path = [[NSBundle mainBundle] pathForResource:@"DefaultValues" ofType:@"plist"];
 
 	NSMutableDictionary *defaultValues = [NSMutableDictionary dictionaryWithContentsOfFile:path];
@@ -96,33 +112,36 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 }
 
 
-- (id)init {
+- (id)init 
+{
 	self = [super init];
-	if (self != nil) {
+	if (self != nil) 
+	{
 		[self registerForAppleEvents];
 	}
 	return self;
 }
 
 
-- (void)dealloc {
+- (void)dealloc 
+{
 	[self unregisterForAppleEvents];
 	[self setEndpoint:nil];
 	[self setAppName:nil];
-	[self setWindowTitle:nil];
-	[self setStartPath:nil];
 	[super dealloc];
 }
 
 
-- (void)awakeFromNib {
+- (void)awakeFromNib 
+{
 	[self parseTiAppXML];
 	[self updateAppNameInMainMenu];
 	[self setupWebPreferences];
 }
 
 
-- (void)applicationDidFinishLaunching:(NSNotification *)n {
+- (void)applicationDidFinishLaunching:(NSNotification *)n 
+{
 	[self loadFirstPage];
 }
 
@@ -130,15 +149,17 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 #pragma mark -
 #pragma mark Actions
 
-- (IBAction)showPreferencesWindow:(id)sender {
-	[[TIPreferencesWindowController instance] showWindow:sender];
+- (IBAction)showPreferencesWindow:(id)sender 
+{
+	[[TiPreferencesWindowController instance] showWindow:sender];
 }
 
 
 // we can use this for total customization of the About window.
 // OR, just allow the developer to provide a 'Credits.rtf' file in the app bundle
 // and remove this. that will show those credits in the default About window template
-- (IBAction)showAboutWindow:(id)sender {
+- (IBAction)showAboutWindow:(id)sender 
+{
 	NSMutableDictionary *dict = [NSMutableDictionary dictionary];
 
 	NSAttributedString *as = [[NSAttributedString alloc] initWithString:@"These are Credits"];
@@ -163,29 +184,33 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 }
 
 
-- (IBAction)showWebInspector:(id)sender {
+- (IBAction)showWebInspector:(id)sender 
+{
 	[[self webInspectorForFrontWindowController] show:sender];
 }
 
 
-- (IBAction)showErrorConsole:(id)sender {
+- (IBAction)showErrorConsole:(id)sender 
+{
 	[[self webInspectorForFrontWindowController] showConsole:sender];
 }
 
 
-- (IBAction)showNetworkTimeline:(id)sender {
+- (IBAction)showNetworkTimeline:(id)sender 
+{
 	[[self webInspectorForFrontWindowController] showTimeline:sender];	
 }
 
 
-- (IBAction)toggleFullScreen:(id)sender {
+- (IBAction)toggleFullScreen:(id)sender 
+{
 	NSScreen *screen = nil;
 	id webArchive = nil;
 	WebView *wv = nil;
 	
-	TIBrowserWindowController *winController = TIFrontController();
+	TiBrowserWindowController *winController = TIFrontController();
 
-	BOOL enteringFullScreen = ![self isFullScreen];
+	BOOL enteringFullScreen = ![windowOptions isFullscreen];
 	
 	if (winController) {
 		screen = [[winController window] screen];
@@ -198,7 +223,9 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 	}	
 	
 	if (enteringFullScreen) {
-		[self setIsFullScreen:YES];
+	//	[self setIsFullScreen:YES];
+		//FIXME FIXME
+		
 	} 
 	// dont setIsFullScreen:NO, cuz that is handled automatically by -[TIBrowserDocument close]
 	// so that closing a fullscreen window returns the main menu bar
@@ -207,10 +234,11 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 		screen = [NSScreen mainScreen];
 	}
 	
-	TIBrowserDocument *doc = [self openUntitledDocumentAndDisplay:YES error:nil];
+	TiBrowserDocument *doc = [self openUntitledDocumentAndDisplay:YES error:nil];
 	winController = [doc browserWindowController];
+
 	
-	if ([self isFullScreen]) {
+	if ([windowOptions isFullscreen]) {
 		NSRect frame = [screen frame];
 		[[winController window] setFrame:frame display:YES];
 	}
@@ -226,9 +254,41 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 #pragma mark -
 #pragma mark Public
 
-- (TIBrowserDocument *)newDocumentWithRequest:(NSURLRequest *)request display:(BOOL)display {
+- (TiBrowserDocument *)newDocumentWithOptions:(NSURLRequest *)request options:(TiWindowOptions*)opts
+{
+	TiBrowserDocument *newDoc = [[TiBrowserDocument alloc] init];
+	[newDoc setOptions:opts];
+	[self addDocument:newDoc];
+	
+	bool show = YES;
+	
+	if (show) {
+		[newDoc makeWindowControllers];
+		[[newDoc browserWindowController] window]; // force window loading from nib
+	}
+	
+	[newDoc loadRequest:request];
+	
+	return newDoc;
+}
+
+- (void)setWindowOptions:(TiWindowOptions*)o
+{
+	windowOptions=o;
+}
+
+- (TiWindowOptions*)getWindowOptions
+{
+	return windowOptions;
+}
+
+- (TiBrowserDocument *)newDocumentWithRequest:(NSURLRequest *)request display:(BOOL)display {
 	NSError *err = nil;
-	TIBrowserDocument *newDoc = [self openUntitledDocumentAndDisplay:display error:&err];
+	
+//	TiBrowserDocument *newDoc = [self openUntitledDocumentAndDisplay:display error:&err];
+	TiBrowserDocument *newDoc = [[TiBrowserDocument alloc] init];
+	
+	[self addDocument:newDoc];
 	
 	if (err) {
 		return nil;
@@ -244,12 +304,28 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 	return newDoc;
 }
 
+- (TiBrowserDocument *)newDocumentWithDisplay:(BOOL)display {
+	NSError *err = nil;
+	TiBrowserDocument *newDoc = [self openUntitledDocumentAndDisplay:display error:&err];
+	
+	if (err) {
+		return nil;
+	}
+	
+	if (!display) {
+		[newDoc makeWindowControllers];
+		[[newDoc browserWindowController] window]; // force window loading from nib
+	}
+	
+	return newDoc;
+}
+
 
 - (WebFrame *)findFrameNamed:(NSString *)frameName {
 	// look for existing frame in any open browser document with this name.
 	WebFrame *existingFrame = nil;
 	
-	for (TIBrowserDocument *doc in [[TIAppDelegate instance] documents]) {
+	for (TiBrowserDocument *doc in [[TiAppDelegate instance] documents]) {
 		existingFrame = [[[doc webView] mainFrame] findFrameNamed:frameName];
 		if (existingFrame) {
 			break;
@@ -346,6 +422,31 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 	[self newDocumentWithRequest:request display:YES];
 }
 
++ (bool)toBoolean:(NSString*)value def:(bool)def
+{
+	if (value)
+	{
+		if ([value compare:@"true"] == NSOrderedSame)
+		{
+			return true;
+		}
+		return false;
+	}
+	return def;
+}
+
++ (CGFloat)toFloat:(NSString*)value def:(CGFloat)def
+{
+	if (value)
+	{
+		if ([value compare:@"1.0"] == NSOrderedSame)
+		{
+			return 1.0;
+		}
+		return [value floatValue];
+	}
+	return def;
+}
 
 - (void)parseTiAppXML {
 	NSString *appXMLPath = [[NSBundle mainBundle] pathForResource:@"tiapp" ofType:@"xml"];
@@ -364,20 +465,47 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 	
 	[self setAppName:elementText(root, @"name")];
 	
-	if (containsElement(root, @"appc:endpoint")) {
+	if (containsElement(root, @"appc:endpoint")) 
+	{
 		[self setEndpoint:elementText(root, @"appc:endpoint")];
 	}
-	
+
 	NSXMLElement *window = getElement(root, @"window");
 	CGFloat width = [attrText(window, @"width") floatValue];
 	CGFloat height = [attrText(window, @"height") floatValue];
-	[self setWindowWidth:width height:height];
 	
-	[self setWindowTitle:elementText(window, @"title")];
-	[self setStartPath:elementText(window, @"start")];
+	NSString *title = elementText(window, @"title");
+	NSString *start = elementText(window, @"start");		
+	bool chrome = [TiAppDelegate toBoolean:elementText(window, @"chrome") def:true];		
+	bool scrollbars = YES;
+	if (chrome)
+	{
+		NSXMLElement *c = getElement(window, @"chrome");
+		scrollbars = [attrText(c, @"scrollbars") boolValue];
+	}
+	bool maximizable = [TiAppDelegate toBoolean:elementText(window, @"maximizable") def:true];		
+	bool minimizable = [TiAppDelegate toBoolean:elementText(window, @"minimizable") def:true];		
+	bool resizable = [TiAppDelegate toBoolean:elementText(window, @"resizable") def:true];		
+	bool closeable = [TiAppDelegate toBoolean:elementText(window, @"closeable") def:true];		
+	CGFloat transparency = [TiAppDelegate toFloat:elementText(window, @"transparency") def:1.0];		
+	
+	TiWindowOptions *options = [TiWindowOptions new];
+	[options setWidth:width];
+	[options setHeight:height];
+	[options setTitle:title];
+	[options setURL:start];
+	[options setChrome:chrome];
+	[options setMaximizable:maximizable];
+	[options setMinimizable:minimizable];
+	[options setCloseable:closeable];
+	[options setResizable:resizable];
+	[options setTransparency:transparency];
+	[options setScrollbars:scrollbars];
+
+	[[TiAppDelegate instance] setWindowOptions:options];
 }
 
-+ (void)setFirstDocument:(TIBrowserDocument *)document
++ (void)setFirstDocument:(TiBrowserDocument *)document
 {
 	firstDocument = document;
 	[firstDocument setIsFirst:YES];
@@ -398,7 +526,15 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 			url = [NSURL URLWithString:arg2];
 		}
 	} else {
-		NSString *relativePath = [self startPath];
+		//NSString *relativePath = [self startPath];
+		TiWindowOptions *options = [[TiAppDelegate instance] getWindowOptions];
+		NSString *relativePath = [options getURL];
+		
+		if (!relativePath)
+		{
+			relativePath = @"index.html";
+		}
+		
 		NSLog(@"starting with path:%@\n", relativePath);
 		
 		if ([relativePath length]) {
@@ -456,8 +592,9 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 }
 
 
-- (WebInspector *)webInspectorForFrontWindowController {
-	TIBrowserWindowController *winController = TIFrontController();
+- (WebInspector *)webInspectorForFrontWindowController 
+{
+	TiBrowserWindowController *winController = TIFrontController();
 	return [[winController webView] inspector];
 }
 
@@ -465,82 +602,34 @@ static NSString *attrText(NSXMLElement *el, NSString *name) {
 #pragma mark -
 #pragma mark Accessors
 
-- (BOOL)isFullScreen {
-	return isFullScreen;
-}
-
-
-- (void)setIsFullScreen:(BOOL)yn {
-	isFullScreen = yn;
-	// hide the system main menu
-	[NSMenu setMenuBarVisible:!yn];
-}
-
-
-- (CGFloat)windowWidth {
-	return windowWidth;
-}
-
-
-- (CGFloat)windowHeight {
-	return windowHeight;
-}
-
-
-- (void)setWindowWidth:(CGFloat)w height:(CGFloat)h {
-	windowWidth = w;
-	windowHeight = h;
-}
-
-
-- (NSString *)endpoint {
+- (NSString *)endpoint 
+{
 	return [[endpoint copy] autorelease];
 }
 
 
-- (void)setEndpoint:(NSString*)s {
-	if (endpoint != s) {
+- (void)setEndpoint:(NSString*)s 
+{
+	if (endpoint != s) 
+	{
 		[endpoint autorelease];
 		endpoint = [s copy];
 	}
 }
 
 
-- (NSString *)appName {
+- (NSString *)appName 
+{
 	return [[appName copy] autorelease];
 }
 
 
-- (void)setAppName:(NSString*)s {
-	if (appName != s) {
+- (void)setAppName:(NSString*)s 
+{
+	if (appName != s) 
+	{
 		[appName autorelease];
 		appName = [s copy];
-	}
-}
-
-
-- (NSString *)windowTitle {
-	return [[windowTitle copy] autorelease];
-}
-
-
-- (void)setWindowTitle:(NSString *)s {
-	if (windowTitle != s) {
-		[windowTitle autorelease];
-		windowTitle = [s copy];
-	}
-}
-
-
-- (NSString *)startPath {
-	return [[startPath copy] autorelease];
-}
-
-
-- (void)setStartPath:(NSString*)s {
-	if (startPath != s) {
-		[startPath autorelease];
-		startPath = [s copy];
 	}
 }
 

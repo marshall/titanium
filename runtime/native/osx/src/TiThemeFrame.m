@@ -17,9 +17,9 @@
  */
 
 
-#import "TIThemeFrame.h"
+#import "TiThemeFrame.h"
 
-@implementation TIThemeFrame
+@implementation TiThemeFrame
 
 // supress titleBar
 + (CGFloat)_titlebarHeight:(unsigned int)fp8 {

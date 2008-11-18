@@ -18,16 +18,22 @@
 
 
 #import <Cocoa/Cocoa.h>
+#import "TiMenuAction.h"
 
-@class WebView;
-@class TIBrowserWindowController;
-
-@interface TIBrowserDocument : NSDocument {
-	TIBrowserWindowController *browserWindowController;
-	BOOL isFirst;
+@interface TiSystemMenu : NSObject {
+	NSStatusItem *statusItem;
+	NSMenu *menu;
+	WebScriptObject *target;
+	NSImage *itemImage;
+	bool showing;
+	NSMutableArray *items;
 }
-- (BOOL)isFirst;
-- (void)loadRequest:(NSURLRequest *)request;
-- (TIBrowserWindowController *)browserWindowController;
-- (WebView *)webView;
+
+- (TiSystemMenu*)initWithURL:(NSString*)url f:(WebScriptObject*)f;
+- (void)addItem:(NSString*)s f:(WebScriptObject*)f;
+- (void)addSeparator;
+- (void)execute;
+- (void)hide;
+- (void)show;
+
 @end

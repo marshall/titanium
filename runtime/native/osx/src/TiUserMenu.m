@@ -16,18 +16,27 @@
  * limitations under the License. 
  */
 
+#import "TiUserMenu.h"
 
-#import <Cocoa/Cocoa.h>
 
-@interface TIJavaScriptPromptWindowController : NSWindowController {
-	IBOutlet NSTextView *textView;
-	NSString *labelText;
-	NSString *userText;
+@implementation TiUserMenu
+
+- (id)init 
+{
+	self = [super init];
+	if (self) {
+	}
+	return self;
 }
-- (IBAction)close:(id)sender;
 
-- (NSString *)labelText;
-- (void)setLabelText:(NSString *)s;
-- (NSString *)userText;
-- (void)setUserText:(NSString *)s;
+- (void)dealloc
+{
+	[super dealloc];
+}
+
+- (NSString *)description {
+	return @"[TiUserMenu native]";
+}
+
+
 @end

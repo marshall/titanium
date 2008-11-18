@@ -18,7 +18,7 @@
 		<object class="NSMutableArray" key="IBDocument.RootObjects" id="580458321">
 			<bool key="EncodedWithXMLCoder">YES</bool>
 			<object class="NSCustomObject" id="512844837">
-				<string key="NSClassName">TIBrowserWindowController</string>
+				<string key="NSClassName">TiBrowserWindowController</string>
 			</object>
 			<object class="NSCustomObject" id="613418571">
 				<string key="NSClassName">FirstResponder</string>
@@ -29,7 +29,7 @@
 				<string key="NSWindowRect">{{186, 64}, {944, 644}}</string>
 				<int key="NSWTFlags">1886912512</int>
 				<string key="NSWindowTitle"/>
-				<string key="NSWindowClass">TIBrowserWindow</string>
+				<string key="NSWindowClass">TiBrowserWindow</string>
 				<string key="NSViewClass">View</string>
 				<string key="NSWindowContentMaxSize">{3.40282e+38, 3.40282e+38}</string>
 				<string key="NSWindowContentMinSize">{94, 86}</string>
@@ -289,15 +289,15 @@
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
-					<string key="className">TIBrowserWindow</string>
+					<string key="className">TiBrowserWindow</string>
 					<string key="superclassName">NSWindow</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">src/TIBrowserWindow.h</string>
+						<string key="minorKey">src/TiBrowserWindow.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
-					<string key="className">TIBrowserWindowController</string>
+					<string key="className">TiBrowserWindowController</string>
 					<string key="superclassName">NSWindowController</string>
 					<object class="NSMutableDictionary" key="outlets">
 						<string key="NS.key.0">webView</string>
@@ -305,7 +305,7 @@
 					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">src/TIBrowserWindowController.h</string>
+						<string key="minorKey">src/TiBrowserWindowController.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">

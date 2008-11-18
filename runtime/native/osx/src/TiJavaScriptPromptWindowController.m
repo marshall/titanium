@@ -17,9 +17,9 @@
  */
 
 
-#import "TIJavaScriptPromptWindowController.h"
+#import "TiJavaScriptPromptWindowController.h"
 
-@implementation TIJavaScriptPromptWindowController
+@implementation TiJavaScriptPromptWindowController
 
 - (id)initWithWindowNibName:(NSString *)nibName {
 	self = [super initWithWindowNibName:nibName];

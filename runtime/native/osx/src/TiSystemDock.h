@@ -15,35 +15,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
+#import <Cocoa/Cocoa.h>
+#import <WebKit/WebKit.h>
 
-#import "TIMenuAction.h"
+@class WebView;
 
-@implementation TIMenuAction
-
-- (void)dealloc {
-	[target dealloc];
-	[title dealloc];
-	[super dealloc];
-}
-
-
-- (TIMenuAction*)initWithFunc:(WebScriptObject*)f title:(NSString*)t
+@interface TiSystemDock : NSObject 
 {
-	self = [super init];
-	target = f;
-	title = t;
-	[target retain];
-	[title retain];
-	return self;
+	WebView *webView;
 }
+- (id)initWithWebView:(WebView *)wv;
+- (void)setupDock;
+- (void)setBadge:(NSString*)s;
 
-- (void)execute
-{
-	NSMutableArray *result = [[NSMutableArray alloc] init];
-	[result addObject:target]; // scope
-	[result addObject:title]; // argument
-	[target callWebScriptMethod:@"call" withArguments:result];
-}
 
 @end
-

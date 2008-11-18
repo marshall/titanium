@@ -16,13 +16,13 @@
  * limitations under the License. 
  */
 
-#import "TIJavaScriptObject.h"
-#import "TIAppDelegate.h"
-#import <WebKit/WebKit.h>
+#import "TiApp.h"
+#import "TiAppDelegate.h"
 
-@implementation TIJavaScriptObject
+@implementation TiApp
 
-- (id)initWithWebView:(WebView *)wv {
+- (id)initWithWebView:(WebView *)wv 
+{
 	self = [super init];
 	if (self != nil) {
 		webView = wv; // assign only. don't retain. prevents retain loop memory leak
@@ -30,22 +30,16 @@
 	return self;
 }
 
-
-- (void)dealloc {
+- (void)dealloc 
+{
 	webView = nil;
 	[super dealloc];
 }
 
 
-- (NSString *)description {
-	return @"[TiNative object]";
-}
-
-- (TISystemMenu *)createSystemMenu:(NSString*)url f:(WebScriptObject*)f
+- (NSString *)description 
 {
-	TISystemMenu *menu = [TISystemMenu alloc];
-	[menu initWithURL:url f:f];
-	return menu;
+	return @"[TiApp native]";
 }
 
 - (void)include:(NSString *)s {
@@ -61,7 +55,7 @@
 }
 
 
-- (void)terminate {
+- (void)quit {
 	[NSApp terminate:self];
 }
 
@@ -85,10 +79,10 @@
 	NSBeep();
 }
 
-
 - (void)playSoundNamed:(NSString *)s {
 	[[NSSound soundNamed:s] play];
 }
+
 
 #pragma mark -
 #pragma mark WebScripting
@@ -98,18 +92,14 @@
 }
 
 
-+ (NSString *)webScriptNameForSelector:(SEL)sel {
-	
-	// ?? do we want to expose all of these?
-	
++ (NSString *)webScriptNameForSelector:(SEL)sel 
+{
 	if (sel == @selector(include:)) {
 		return @"include";
-	} else if (sel == @selector(createSystemMenu:f:)) {
-		return @"createSystemMenu";
 	} else if (sel == @selector(debug:)) {
 		return @"debug";
-	} else if (sel == @selector(terminate)) {
-		return @"terminate";
+	} else if (sel == @selector(quit)) {
+		return @"quit";
 	} else if (sel == @selector(activate)) {
 		return @"activate";
 	} else if (sel == @selector(hide)) {
@@ -151,37 +141,36 @@
 	return nil;
 }
 
-
 #pragma mark -
 #pragma mark Accessors
 
 - (CGFloat)windowWidth {
-	return [[TIAppDelegate instance] windowWidth];
+	return [[TiAppDelegate instance] windowWidth];
 }
 
 
 - (CGFloat)windowHeight {
-	return [[TIAppDelegate instance] windowHeight];
+	return [[TiAppDelegate instance] windowHeight];
 }
 
 
 - (NSString *)endpoint {
-	return [[TIAppDelegate instance] endpoint];
+	return [[TiAppDelegate instance] endpoint];
 }
 
 
 - (NSString *)appName {
-	return [[TIAppDelegate instance] appName];
+	return [[TiAppDelegate instance] appName];
 }
 
 
 - (NSString *)windowTitle {
-	return [[TIAppDelegate instance] windowTitle];
+	return [[TiAppDelegate instance] windowTitle];
 }
 
 
 - (NSString *)startPath {
-	return [[TIAppDelegate instance] startPath];
+	return [[TiAppDelegate instance] startPath];
 }
 
 - (NSString *)resourcePath {
@@ -189,3 +178,4 @@
 }
 
 @end
+

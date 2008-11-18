@@ -1,14 +1,42 @@
-
+<div style="background:black; height:100%; -xwebkit-border-radius:20px; overflow:hidden; opacity:0.8">
 <script type="text/javascript">
 window.onload=function()
 {
 	try
 	{
+		var visible = true;
+
 		var menu = TiNative.createSystemMenu("ti://favicon.ico",function(sysmenu)
 		{
-			alert("system menu hit:" + sysmenu);
+			if (visible)
+			{
+				TiNative.hide();
+			}
+			else
+			{
+				TiNative.activate();
+			}
+			visible = !visible;
 		});
 
+		var win = TiNative.createWindow();
+		var opts = TiNative.createWindowOptions();
+		document.getElementById("b").onclick = function()
+		{
+			try
+			{
+				win.show();
+				TiNative.getDock().setBadge(null);
+			}
+			catch(E)
+			{
+				alert(E);
+			}
+		}
+		TiNative.getDock().setBadge("1");
+		//win.show();
+
+/*
 		menu.addItem("Hello 1",function(title)
 		{
 			alert("menu hit! "+title);
@@ -23,8 +51,9 @@ window.onload=function()
 
 		menu.addItem("Hello 2",function(title)
 		{
-			alert("menu hit! "+title);
+			TiNative.beep();
 		});
+*/
 	}
 	catch (e)
 	{
@@ -33,4 +62,9 @@ window.onload=function()
 };
 </script>
 <h1>Hello world</h1>
+<img src="http://developer.apple.com/images/developer_logo.gif"/>
 
+<button id="b">Click me</button>
+<button onclick="javascript:TiNative.getApp().quit();">Quit</button>
+
+</div>

@@ -16,24 +16,15 @@
  * limitations under the License. 
  */
 
-
 #import <Cocoa/Cocoa.h>
-#import "TIMenuAction.h"
+#import <Foundation/Foundation.h>
+#import <Foundation/NSURLRequest.h>
+#import <Foundation/NSURLProtocol.h>
 
-@interface TISystemMenu : NSObject {
-	NSStatusItem *statusItem;
-	NSMenu *menu;
-	WebScriptObject *target;
-	NSImage *itemImage;
-	bool showing;
-	NSMutableArray *items;
+@interface TiProtocol : NSURLProtocol {
 }
 
-- (TISystemMenu*)initWithURL:(NSString*)url f:(WebScriptObject*)f;
-- (void)addItem:(NSString*)s f:(WebScriptObject*)f;
-- (void)addSeparator;
-- (void)execute;
-- (void)hide;
-- (void)show;
++ (NSString*) specialProtocolScheme;
++ (void) registerSpecialProtocol;
 
 @end

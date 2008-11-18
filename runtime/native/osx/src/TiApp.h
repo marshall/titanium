@@ -15,12 +15,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-
-
 #import <Cocoa/Cocoa.h>
+#import <WebKit/WebKit.h>
 
-@interface TIPreferencesWindowController : NSWindowController {
+@class WebView;
 
+@interface TiApp : NSObject 
+{
+	WebView *webView;
 }
-+ (id)instance;
+
+- (id)initWithWebView:(WebView *)wv;
+
+
+- (void)include:(NSString *)s;
+- (void)debug:(NSString *)s;
+- (void)quit;
+- (void)activate;
+- (void)hide;
+- (void)minimize;
+- (void)beep;
+- (void)playSoundNamed:(NSString *)s;
+
+- (CGFloat)windowWidth;
+- (CGFloat)windowHeight;
+- (NSString *)endpoint;
+- (NSString *)appName;
+- (NSString *)windowTitle;
+- (NSString *)startPath;
+- (NSString *)resourcePath;
+
 @end
