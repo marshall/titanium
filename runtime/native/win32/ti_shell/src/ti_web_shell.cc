@@ -63,8 +63,9 @@ void TIWebShell::init(TiApp *ti_app) {
 	WebPreferences web_prefs_;
 	ti_initWebPrefs(&web_prefs_);
 
-	delegate.setHWND(this->hWnd);
 	this->host = WebViewHost::Create(this->hWnd, &delegate, web_prefs_);
+
+	delegate.setMainWnd(this->hWnd);
 	delegate.setHost(this->host);
 
 	if (ti_app) {
@@ -85,6 +86,8 @@ void TIWebShell::init(TiApp *ti_app) {
 		SetWindowText(hWnd, UTF8ToWide(ti_app->getTitle()).c_str());
 	}
 
+	ShowWindow(host->window_handle(), SW_SHOW);
+
 	ti_debug("done initializing TIWebShell");
 }
 
@@ -97,7 +100,7 @@ void TIWebShell::loadURL(const char* url) {
 
 	host->webview()->SetFocusedFrame(frame);
 
-	//SetFocus(host->window_handle());
+	SetFocus(host->window_handle());
 	ShowWindow(host->window_handle(), SW_SHOW);
 }
 
@@ -126,6 +129,9 @@ WebViewHost* TIWebShell::getHost() {
 HWND TIWebShell::getHWnd() {
 	return this->hWnd;
 }
+HWND TIWebShell::getPopupHWnd() {
+	return popupHost->window_handle();
+}
 
 void TIWebShell::include(std::string& relativePath)
 {
@@ -147,4 +153,16 @@ void TIWebShell::include(std::string& relativePath)
 
 	WebView *webview = getHost()->webview();
 	webview->GetMainFrame()->ExecuteJavaScript(s, absolutePath);
+}
+
+WebWidget* TIWebShell::CreatePopupWidget(WebView* webview) {
+  popupHost = WebWidgetHost::Create(NULL, &delegate);
+  ShowWindow(getPopupHWnd(), SW_SHOW);
+
+  return popupHost->webwidget();
+}
+
+void TIWebShell::ClosePopup() {
+  PostMessage(getPopupHWnd(), WM_CLOSE, 0, 0);
+  popupHost = NULL;
 }

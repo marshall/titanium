@@ -31,30 +31,24 @@ void TIWebViewDelegate::setHost(WebViewHost* host) {
 	this->host = host;
 }
 
-void TIWebViewDelegate::setHWND(HWND hWnd) {
-	this->hWnd = hWnd;
+void TIWebViewDelegate::setMainWnd(HWND hWnd) {
+	this->mainWnd = hWnd;
 }
 
 gfx::ViewHandle TIWebViewDelegate::GetContainingWindow(WebWidget* webwidget) {
-	ti_debug("::: GetContainingWindow");
 	if (host != NULL) return host->window_handle();
 	return NULL;
 }
 
 // Called when a region of the WebWidget needs to be re-painted.
 void TIWebViewDelegate::DidInvalidateRect(WebWidget* webwidget, const gfx::Rect& rect) {
-
-	ti_debug("::: Did Invalidate Rect");
 	if (host != NULL) host->DidInvalidateRect(rect);
-
 }
 
 // Called when a region of the WebWidget, given by clip_rect, should be
 // scrolled by the specified dx and dy amounts.
 void TIWebViewDelegate::DidScrollRect(WebWidget* webwidget, int dx, int dy,
 	const gfx::Rect& clip_rect) {
-
-		ti_debug(":::Did Scroll Rect");
 		host->DidScrollRect(dx, dy, clip_rect);
 }
 
@@ -63,9 +57,8 @@ void TIWebViewDelegate::DidScrollRect(WebWidget* webwidget, int dx, int dy,
 // successful call to CreateWebWidget.  |disposition| indicates how this new
 // window should be displayed, but generally only means something for WebViews.
 void TIWebViewDelegate::Show(WebWidget* webwidget, WindowOpenDisposition disposition) {
-	ShowWindow(hWnd, SW_SHOW);
-	UpdateWindow(hWnd);
-	ti_debug("::::::: SHOW WINDOW");
+	ShowWindow(mainWnd, SW_SHOW);
+	UpdateWindow(mainWnd);
 }
 
 // This method is called to instruct the window containing the WebWidget to
@@ -73,26 +66,41 @@ void TIWebViewDelegate::Show(WebWidget* webwidget, WindowOpenDisposition disposi
 // WebWidget to eventually close.  It should not actually be destroyed until
 // after this call returns.
 void TIWebViewDelegate::CloseWidgetSoon(WebWidget* webwidget) {
-	PostMessage(hWnd, WM_CLOSE, 0, 0);
+	PostMessage(mainWnd, WM_CLOSE, 0, 0);
 }
 
 // This method is called to focus the window containing the WebWidget so
 // that it receives keyboard events.
 void TIWebViewDelegate::Focus(WebWidget* webwidget) {
-	SetFocus(hWnd);
+	host->webwidget()->SetFocus(true);
+	//webwidget->SetFocus(true);
+	//SetFocus(hWnd);
 
-	ti_debug("::::::::::::FOCUS WINDOW");
+	//ti_debug("::::::::::::FOCUS WINDOW");
 }
 
 // This method is called to unfocus the window containing the WebWidget so that
 // it no longer receives keyboard events.
 void TIWebViewDelegate::Blur(WebWidget* webwidget) {
-	if (::GetFocus() == hWnd) { SetFocus(NULL); }
+	host->webwidget()->SetFocus(false);
+	//webwidget->SetFocus(false);
+	//if (::GetFocus() == hWnd) { SetFocus(NULL); }
 }
 
 void TIWebViewDelegate::SetCursor(WebWidget* webwidget, 
 	const WebCursor& cursor) {
 
+	if (customCursor) {
+	  DestroyIcon(customCursor);
+	  customCursor = NULL;
+	}
+	if (cursor.IsCustom()) {
+	  customCursor = cursor.GetCustomCursor();
+	  host->SetCursor(customCursor);
+	} else {
+	  HINSTANCE mod_handle = GetModuleHandle(NULL);
+	  host->SetCursor(cursor.GetCursor(mod_handle));
+	}
 }
 
 // Returns the rectangle of the WebWidget in screen coordinates.
@@ -100,8 +108,6 @@ void TIWebViewDelegate::GetWindowRect(WebWidget* webwidget, gfx::Rect* out_rect)
 	RECT rect;
 	::GetWindowRect(host->window_handle(), &rect);
 	*out_rect = gfx::Rect(rect);
-
-	ti_debug("::::::::: GET WINDOW RECT");
 }
 
 
@@ -206,7 +212,7 @@ void TIWebViewDelegate::DidFinishLoadForFrame(WebView* webview, WebFrame* frame)
 // should visually indicate that this panel comes from JavaScript. The panel
 // should have a single OK button.
 void TIWebViewDelegate::RunJavaScriptAlert(WebView* webview, const std::wstring& message) {
-	MessageBox(this->hWnd, (LPCTSTR) message.c_str(), L"Alert", MB_OK | MB_ICONQUESTION);
+	MessageBox(this->mainWnd, (LPCTSTR) message.c_str(), L"Alert", MB_OK | MB_ICONQUESTION);
 }
 
 // Displays a JavaScript confirm panel associated with the given view.
@@ -214,7 +220,7 @@ void TIWebViewDelegate::RunJavaScriptAlert(WebView* webview, const std::wstring&
 // from JavaScript. The panel should have two buttons, e.g. "OK" and
 // "Cancel". Returns true if the user hit OK, or false if the user hit Cancel.
 bool TIWebViewDelegate::RunJavaScriptConfirm(WebView* webview, const std::wstring& message) {
-	int result = MessageBox(this->hWnd, (LPCTSTR) message.c_str(), L"Confirm", MB_YESNO | MB_ICONEXCLAMATION);
+	int result = MessageBox(this->mainWnd, (LPCTSTR) message.c_str(), L"Confirm", MB_YESNO | MB_ICONEXCLAMATION);
 
 	return (result == IDYES);
 }
@@ -286,7 +292,7 @@ bool TIWebViewDelegate::RunJavaScriptPrompt(WebView* webview,
 	jsPromptDefaultText = default_value;
 
 	INT_PTR r = DialogBox(::GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_JSPROMPT),
-		this->hWnd, reinterpret_cast<DLGPROC>(JsPromptDlgProc));
+		this->mainWnd, reinterpret_cast<DLGPROC>(JsPromptDlgProc));
 
 	if(r == JSPROMPTIDOK) {
 		result->assign(jsPromptText);
@@ -355,4 +361,9 @@ bool TIWebViewDelegate::ShouldApplyStyle(WebView* webview,
 
 bool TIWebViewDelegate::SmartInsertDeleteEnabled() {
   return true;
+}
+
+WebWidget* TIWebViewDelegate::CreatePopupWidget(WebView* webview,
+                                                  bool focus_on_show) {
+	return ti_web_shell->CreatePopupWidget(webview);
 }

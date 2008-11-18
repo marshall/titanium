@@ -64,6 +64,7 @@ private:
 	HWND hWnd;
 	TIWebViewDelegate delegate;
 	WebViewHost *host;
+	WebWidgetHost *popupHost;
 	std::wstring resourcesPath;
 	TiApp *ti_app;
 
@@ -78,9 +79,12 @@ public:
 
 	WebViewHost* getHost();
 	HWND getHWnd();
+	HWND getPopupHWnd();
 
 	std::wstring& getResourcesPath() { return resourcesPath; }
 	void setResourcesPath(std::wstring& path) { resourcesPath = path; }
 
 	void include (std::string& relativePath);
+	WebWidget* CreatePopupWidget(WebView* webview);
+	void ClosePopup();
 };
