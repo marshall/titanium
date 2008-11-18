@@ -20,6 +20,8 @@
 #import "TiBrowserDocument.h"
 #import "TiBrowserWindowController.h"
 #import "TiPreferencesWindowController.h"
+#import "TiSplashScreen.h"
+#import "TiSplashScreenWindowController.h"
 #import "WebViewPrivate.h"
 #import "WebInspector.h"
 #import <WebKit/WebKit.h>
@@ -131,9 +133,27 @@ static NSString *attrText(NSXMLElement *el, NSString *name)
 	[super dealloc];
 }
 
+- (void)showSplash
+{
+	splashController = [[TiSplashScreenWindowController alloc] init];
+	NSWindow *win = [splashController initWithWindowNibName:@"SplashWindow"];
+	[splashController showWindow:win];
+}
+
+- (void)hideSplash
+{
+	if (splashController)
+	{
+		[splashController close];
+		[splashController release];
+		splashController = nil;
+	}
+}
+
 
 - (void)awakeFromNib 
 {
+	[self showSplash];
 	[self parseTiAppXML];
 	[self updateAppNameInMainMenu];
 	[self setupWebPreferences];
@@ -143,6 +163,7 @@ static NSString *attrText(NSXMLElement *el, NSString *name)
 - (void)applicationDidFinishLaunching:(NSNotification *)n 
 {
 	[self loadFirstPage];
+	[self hideSplash];
 }
 
 

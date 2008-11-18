@@ -26,6 +26,10 @@
 		2433DE220ED102DB00813747 /* TiUserMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = 2433DE1F0ED102DB00813747 /* TiUserMenu.m */; };
 		2433DF6D0ED1122000813747 /* TiWindowOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 2433DF6C0ED1122000813747 /* TiWindowOptions.m */; };
 		24DA9C0C0ED15E9000DECFFC /* favicon.ico in Resources */ = {isa = PBXBuildFile; fileRef = 24DA9C0B0ED15E9000DECFFC /* favicon.ico */; };
+		24F95FBF0ED2836D002065FC /* TiSplashScreen.m in Sources */ = {isa = PBXBuildFile; fileRef = 24F95FBE0ED2836D002065FC /* TiSplashScreen.m */; };
+		24F95FC10ED28556002065FC /* titanium_poweredby.png in Resources */ = {isa = PBXBuildFile; fileRef = 24F95FC00ED28556002065FC /* titanium_poweredby.png */; };
+		24F95FCB0ED28607002065FC /* SplashWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 24F95FC90ED28607002065FC /* SplashWindow.xib */; };
+		24F960030ED28EBD002065FC /* TiSplashScreenWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 24F960020ED28EBD002065FC /* TiSplashScreenWindowController.m */; };
 		8D15AC2C0486D014006FF6A4 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 2A37F4B9FDCFA73011CA2CEA /* Credits.rtf */; };
 		8D15AC2F0486D014006FF6A4 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165FFE840EACC02AAC07 /* InfoPlist.strings */; };
 		8D15AC320486D014006FF6A4 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A37F4B0FDCFA73011CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
@@ -82,6 +86,13 @@
 		2433DF6B0ED1122000813747 /* TiWindowOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TiWindowOptions.h; path = src/TiWindowOptions.h; sourceTree = "<group>"; };
 		2433DF6C0ED1122000813747 /* TiWindowOptions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TiWindowOptions.m; path = src/TiWindowOptions.m; sourceTree = "<group>"; };
 		24DA9C0B0ED15E9000DECFFC /* favicon.ico */ = {isa = PBXFileReference; lastKnownFileType = image.ico; name = favicon.ico; path = res/favicon.ico; sourceTree = "<group>"; };
+		24F95FBD0ED2836D002065FC /* TiSplashScreen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TiSplashScreen.h; path = src/TiSplashScreen.h; sourceTree = "<group>"; };
+		24F95FBE0ED2836D002065FC /* TiSplashScreen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TiSplashScreen.m; path = src/TiSplashScreen.m; sourceTree = "<group>"; };
+		24F95FC00ED28556002065FC /* titanium_poweredby.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = titanium_poweredby.png; path = res/titanium_poweredby.png; sourceTree = "<group>"; };
+		24F95FC70ED285CC002065FC /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/SplashWindow.xib; sourceTree = "<group>"; };
+		24F95FCA0ED28607002065FC /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/SplashWindow.xib; sourceTree = "<group>"; };
+		24F960010ED28EBD002065FC /* TiSplashScreenWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TiSplashScreenWindowController.h; path = src/TiSplashScreenWindowController.h; sourceTree = "<group>"; };
+		24F960020ED28EBD002065FC /* TiSplashScreenWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TiSplashScreenWindowController.m; path = src/TiSplashScreenWindowController.m; sourceTree = "<group>"; };
 		2A37F4B0FDCFA73011CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		2A37F4BAFDCFA73011CA2CEA /* English */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = English; path = English.lproj/Credits.rtf; sourceTree = "<group>"; };
 		2A37F4C4FDCFA73011CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
@@ -151,6 +162,7 @@
 				2A37F4B8FDCFA73011CA2CEA /* Resources */,
 				2A37F4C3FDCFA73011CA2CEA /* Frameworks */,
 				19C28FB0FE9D524F11CA2CBB /* Products */,
+				24F95FC90ED28607002065FC /* SplashWindow.xib */,
 			);
 			name = Titanium;
 			sourceTree = "<group>";
@@ -202,6 +214,7 @@
 				D31B36270EBC07C1006F3012 /* tiapp.xml */,
 				D31B36380EBC0832006F3012 /* index.html */,
 				D31B3D220EBD7DF7006F3012 /* DefaultValues.plist */,
+				24F95FC60ED285CC002065FC /* SplashWindow.xib */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -218,6 +231,10 @@
 		D31B393D0EBCFA3A006F3012 /* Auxiliary Windows */ = {
 			isa = PBXGroup;
 			children = (
+				24F960010ED28EBD002065FC /* TiSplashScreenWindowController.h */,
+				24F960020ED28EBD002065FC /* TiSplashScreenWindowController.m */,
+				24F95FBD0ED2836D002065FC /* TiSplashScreen.h */,
+				24F95FBE0ED2836D002065FC /* TiSplashScreen.m */,
 				2433DDF50ED1003100813747 /* TiPreferencesWindowController.h */,
 				2433DDF60ED1003100813747 /* TiPreferencesWindowController.m */,
 				2433DDD80ED0FFBE00813747 /* TiJavaScriptPromptWindowController.h */,
@@ -273,6 +290,7 @@
 		D31B3EF80EBE88B5006F3012 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				24F95FC00ED28556002065FC /* titanium_poweredby.png */,
 				24DA9C0B0ED15E9000DECFFC /* favicon.ico */,
 				D31B3EF60EBE88B3006F3012 /* resizeIndicator.png */,
 			);
@@ -334,6 +352,8 @@
 				D31B3D230EBD7DF7006F3012 /* DefaultValues.plist in Resources */,
 				D31B3EF70EBE88B3006F3012 /* resizeIndicator.png in Resources */,
 				24DA9C0C0ED15E9000DECFFC /* favicon.ico in Resources */,
+				24F95FC10ED28556002065FC /* titanium_poweredby.png in Resources */,
+				24F95FCB0ED28607002065FC /* SplashWindow.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -361,6 +381,8 @@
 				2433DE210ED102DB00813747 /* TiSystemDock.m in Sources */,
 				2433DE220ED102DB00813747 /* TiUserMenu.m in Sources */,
 				2433DF6D0ED1122000813747 /* TiWindowOptions.m in Sources */,
+				24F95FBF0ED2836D002065FC /* TiSplashScreen.m in Sources */,
+				24F960030ED28EBD002065FC /* TiSplashScreenWindowController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -389,6 +411,22 @@
 				1DDD582B0DA1D0D100B32029 /* English */,
 			);
 			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+		24F95FC60ED285CC002065FC /* SplashWindow.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				24F95FC70ED285CC002065FC /* English */,
+			);
+			name = SplashWindow.xib;
+			sourceTree = "<group>";
+		};
+		24F95FC90ED28607002065FC /* SplashWindow.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				24F95FCA0ED28607002065FC /* English */,
+			);
+			name = SplashWindow.xib;
 			sourceTree = "<group>";
 		};
 		2A37F4B9FDCFA73011CA2CEA /* Credits.rtf */ = {

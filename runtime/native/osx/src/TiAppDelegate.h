@@ -18,6 +18,7 @@
 
 #import <Cocoa/Cocoa.h>
 #import "TiWindowOptions.h"
+#import "TiSplashScreenWindowController.h"
 
 @class TiAppDelegate;
 @class TiBrowserDocument;
@@ -31,6 +32,7 @@ TiBrowserWindowController *TIFrontController();
 	NSString *endpoint;
 	NSString *appName;
 	TiWindowOptions *windowOptions;
+	TiSplashScreenWindowController *splashController;
 }
 + (id)instance;
 

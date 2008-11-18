@@ -1,4 +1,16 @@
-<div style="background:black; height:100%; -xwebkit-border-radius:20px; overflow:hidden; opacity:0.8">
+<html>
+<head>
+<style>
+body
+{
+	border:none;
+   padding:0;
+   margin:0;
+}
+</style>
+</head>
+<body>
+<div style="background:#fff; height:100%; -webkit-border-radius:2px; overflow:hidden; opacity:0.9;margin:0;padding:0">
 <script type="text/javascript">
 window.onload=function()
 {
@@ -36,7 +48,7 @@ window.onload=function()
 		TiNative.getDock().setBadge("1");
 		//win.show();
 
-/*
+
 		menu.addItem("Hello 1",function(title)
 		{
 			alert("menu hit! "+title);
@@ -53,7 +65,6 @@ window.onload=function()
 		{
 			TiNative.beep();
 		});
-*/
 	}
 	catch (e)
 	{
@@ -68,3 +79,5 @@ window.onload=function()
 <button onclick="javascript:TiNative.getApp().quit();">Quit</button>
 
 </div>
+</body>
+</html>
