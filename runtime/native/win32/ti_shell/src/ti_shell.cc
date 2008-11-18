@@ -76,19 +76,32 @@ void				ResizeSubViews();
 int main (int argc, char **argv) {
 	// win32 stuff
 	hInstance = ::GetModuleHandle(NULL);
+
+	base::AtExitManager at_exit_manager;
+	MessageLoopForUI message_loop;
+	base::EnableTerminationOnHeapCorruption();
 	
 	LoadString(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
 	LoadString(hInstance, IDC_CHROME_SHELL3, szWindowClass, MAX_LOADSTRING);
 	MyRegisterClass(hInstance);
 
-	HWND hWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,
-		CW_USEDEFAULT, CW_USEDEFAULT, 1024, 768, NULL, NULL, hInstance, NULL);
+	INITCOMMONCONTROLSEX InitCtrlEx;
+
+	InitCtrlEx.dwSize = sizeof(INITCOMMONCONTROLSEX);
+	InitCtrlEx.dwICC  = ICC_STANDARD_CLASSES;
+	InitCommonControlsEx(&InitCtrlEx);
+	HRESULT res = OleInitialize(NULL);
+
+	HWND hWnd = CreateWindow(szWindowClass, szTitle,
+                           WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,
+                           CW_USEDEFAULT, 0, CW_USEDEFAULT, 0,
+                           NULL, NULL, hInstance, NULL);
+
+	//HWND hWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,
+	//	CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, 1024, 768, NULL, NULL, hInstance, NULL);
 
 	// Chrome stuff
 	////////////////////////////////////////////////////
-	base::AtExitManager at_exit_manager;
-	MessageLoopForUI message_loop;
-	base::EnableTerminationOnHeapCorruption();
 
 	win_util::WinVersion win_version = win_util::GetWinVersion();
 	if (win_version == win_util::WINVERSION_XP ||
@@ -198,8 +211,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 		case IDM_EXIT:
 			DestroyWindow(hWnd);
 			break;
-		default:
-			return DefWindowProc(hWnd, message, wParam, lParam);
+		default: {
+				LRESULT result = DefWindowProc(hWnd, message, wParam, lParam);
+				return result;
+			}
 		}
 		break;
 	case WM_DESTROY:
@@ -208,10 +223,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 	case WM_SIZE:
 		ResizeSubViews();
 		break;
-	default:
-		return DefWindowProc(hWnd, message, wParam, lParam);
 	}
-	return 0;
+	return DefWindowProc(hWnd, message, wParam, lParam);
 }
 
 // Message handler for about box.

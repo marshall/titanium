@@ -61,9 +61,10 @@ class TIWebViewDelegate:
 {
 private:
 	WebViewHost *host;
-	HWND hWnd;
+	HWND mainWnd;
 	TIWebShell *ti_web_shell;
 	TiNative *ti_native;
+	HCURSOR customCursor;
 
 public:
 	bool bootstrapTitanium;
@@ -71,7 +72,7 @@ public:
 	~TIWebViewDelegate(void);
 
 	void setHost(WebViewHost* host);
-	void setHWND(HWND hWnd);
+	void setMainWnd(HWND hWnd);
 
 	// following are the functions defined in the super classes
 	virtual gfx::ViewHandle GetContainingWindow(WebWidget* webwidget);
@@ -174,4 +175,6 @@ public:
                                            std::wstring style,
                                            std::wstring range);
 	virtual bool SmartInsertDeleteEnabled();
+
+	WebWidget* CreatePopupWidget(WebView* webview, bool focus_on_show);
 };

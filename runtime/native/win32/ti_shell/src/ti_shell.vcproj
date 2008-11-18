@@ -28,7 +28,7 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
-				CommandLine="echo copy $(ChromeDir)/chrome/$(ConfigurationName)/icudt38.dll $(DefaultOutputDirectory)&#x0D;&#x0A;copy $(ChromeDir)/chrome/$(ConfigurationName)/icudt38.dll $(DefaultOutputDirectory)"
+				CommandLine="echo copy $(ChromeDir)/chrome/$(ConfigurationName)/icudt38.dll $(DefaultOutputDirectory)&#x0D;&#x0A;copy $(ChromeDir)/chrome/$(ConfigurationName)/icudt38.dll $(DefaultOutputDirectory)&#x0D;&#x0A;"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -59,7 +59,6 @@
 				Name="VCLinkerTool"
 				LinkLibraryDependencies="false"
 				AdditionalDependencies="activex_shim.lib base.lib base_gfx.lib breakpad_handler.lib bzip2.lib common.lib default_plugin.lib Glue.lib googleurl.lib icu.lib JavaScriptCore_pcre.lib libjpeg.lib libpng.lib libxml.lib libxslt.lib modp_b64.lib net.lib plugin.lib Port.lib sandbox.lib sdch.lib skia.lib v8.lib v8_snapshot.lib v8bindings.lib WebCore.lib WTF.lib zlib.lib comsuppwd.lib"
-				ShowProgress="1"
 				AdditionalLibraryDirectories="&quot;$(ChromeDir)\chrome\$(ConfigurationName)\lib&quot;"
 				IgnoreDefaultLibraryNames="libcmt.lib"
 				SubSystem="1"
@@ -136,8 +135,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				LinkLibraryDependencies="false"
-				AdditionalDependencies="activex_shim.lib base.lib base_gfx.lib bzip2.lib common.lib default_plugin.lib Glue.lib googleurl.lib icu.lib JavaScriptCore_pcre.lib libjpeg.lib libpng.lib libxml.lib libxslt.lib modp_b64.lib net.lib plugin.lib Port.lib sandbox.lib sdch.lib skia.lib sqlite.lib v8.lib v8_snapshot.lib v8bindings.lib WebCore.lib WTF.lib zlib.lib comsuppwd.lib"
-				ShowProgress="2"
+				AdditionalDependencies="activex_shim.lib base.lib base_gfx.lib bzip2.lib common.lib comctl32.lib default_plugin.lib Glue.lib googleurl.lib icu.lib JavaScriptCore_pcre.lib libjpeg.lib libpng.lib libxml.lib libxslt.lib modp_b64.lib net.lib plugin.lib Port.lib sandbox.lib sdch.lib skia.lib sqlite.lib v8.lib v8_snapshot.lib v8bindings.lib WebCore.lib WTF.lib zlib.lib comsuppwd.lib"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;$(ChromeDir)\chrome\$(ConfigurationName)\lib&quot;;&quot;$(ChromeDir)\sandbox\$(ConfigurationName)\lib&quot;"
 				IgnoreDefaultLibraryNames=""
@@ -170,7 +168,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="echo copy $(ChromeDir)\chrome\$(ConfigurationName)\icudt38.dll $(DefaultOutputDirectory)&#x0D;&#x0A;copy $(ChromeDir)\chrome\$(ConfigurationName)\icudt38.dll $(DefaultOutputDirectory)"
+				CommandLine="echo copy $(ChromeDir)\chrome\$(ConfigurationName)\icudt38.dll $(DefaultOutputDirectory)&#x0D;&#x0A;copy $(ChromeDir)\chrome\$(ConfigurationName)\icudt38.dll $(DefaultOutputDirectory)&#x0D;&#x0A;"
 			/>
 		</Configuration>
 	</Configurations>
@@ -184,10 +182,6 @@
 			>
 			<File
 				RelativePath=".\simple_resource_loader_bridge.cc"
-				>
-			</File>
-			<File
-				RelativePath=".\test.cc"
 				>
 			</File>
 			<File

@@ -58,7 +58,6 @@ class WebWidgetHost {
   void KeyEvent(UINT message, WPARAM wparam, LPARAM lparam);
   void CaptureLostEvent();
   void SetFocus(bool enable);
-
   static LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 #elif defined(OS_MACOSX)
   // These need to be called from a non-subclass, so they need to be public.

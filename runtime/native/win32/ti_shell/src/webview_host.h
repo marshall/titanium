@@ -27,7 +27,7 @@ class WebViewHost : public WebWidgetHost {
 
   WebView* webview() const;
 
- protected:
+ public:
 #if defined(OS_WIN)
   virtual bool WndProc(UINT message, WPARAM wparam, LPARAM lparam) {
     return false;
