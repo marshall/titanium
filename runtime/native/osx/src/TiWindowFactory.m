@@ -16,40 +16,17 @@
  * limitations under the License. 
  */
 
-#import "TiNative.h"
-#import "TiAppDelegate.h"
-#import <WebKit/WebKit.h>
+#import "TiWindowFactory.h"
 
-@implementation TiNative
+@implementation TiWindowFactory
 
-- (id)initWithWebView:(WebView *)wv {
+- (id)initWithWebView:(WebView *)wv 
+{
 	self = [super init];
 	if (self != nil) {
 		webView = wv; // assign only. don't retain. prevents retain loop memory leak
-		app = [[TiApp alloc] initWithWebView:webView];
-		dock = [[TiSystemDock alloc] initWithWebView:webView];
 	}
 	return self;
-}
-
-
-- (void)dealloc {
-	webView = nil;
-	[app dealloc];
-	[dock dealloc];
-	[super dealloc];
-}
-
-
-- (NSString *)description {
-	return @"[TiNative native]";
-}
-
-- (TiSystemMenu *)createSystemMenu:(NSString*)url f:(WebScriptObject*)f
-{
-	TiSystemMenu *menu = [TiSystemMenu alloc];
-	[menu initWithURL:url f:f];
-	return menu;
 }
 
 - (TiUserWindow *)createWindow
@@ -64,49 +41,30 @@
 	return opts;
 }
 
-- (TiApp*) getApp
-{
-	return app;
-}
-
-- (TiSystemDock*) getDock
-{
-	return dock;
-}
-
 #pragma mark -
 #pragma mark WebScripting
+
++ (NSString *)webScriptNameForSelector:(SEL)sel 
+{
+	if (sel == @selector(createWindow)) {
+		return @"createWindow";
+	}
+	else if (sel == @selector(createWindowOptions)) {
+		return @"createWindowOptions";
+	}
+	return nil;
+}
 
 + (BOOL)isSelectorExcludedFromWebScript:(SEL)sel {
 	return (nil == [self webScriptNameForSelector:sel]);
 }
 
-
-+ (NSString *)webScriptNameForSelector:(SEL)sel 
-{
-	if (sel == @selector(createSystemMenu:f:)) {
-		return @"createSystemMenu";
-	} else if (sel == @selector(createWindow)) {
-		return @"createWindow";
-	} else if (sel == @selector(createWindowOptions)) {
-		return @"createWindowOptions";
-	} else if (sel == @selector(getApp)) {
-		return @"getApp";
-	} else if (sel == @selector(getDock)) {
-		return @"getDock";
-	}
-	return nil;
-}
-
-
-+ (BOOL)isKeyExcludedFromWebScript:(const char*)key {
-	return YES;
-}
-
-
 + (NSString *)webScriptNameForKey:(const char *)name {
 	return nil;
 }
 
++ (BOOL)isKeyExcludedFromWebScript:(const char*)key {
+	return (nil == [self webScriptNameForKey:key]);
+}
 
 @end

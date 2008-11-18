@@ -22,21 +22,24 @@
 #import "TiUserWindow.h"
 #import "TiApp.h"
 #import "TiSystemDock.h"
+#import "TiMenuFactory.h"
+#import "TiWindowFactory.h"
 
 @class WebView;
 
-@interface TiNative : NSObject {
+@interface TiObject : NSObject {
 	WebView *webView;
-	TiApp *app;
-	TiSystemDock *dock;
+	TiApp *App;
+	TiSystemDock *Dock;
+	TiMenuFactory *Menu;
+	TiWindowFactory *Window;
 }
+
+@property (copy, readonly) TiApp *App;
+@property (copy, readonly) TiSystemDock *Dock;
+@property (copy, readonly) TiMenuFactory *Menu;
+@property (copy, readonly) TiWindowFactory *Window;
+
 - (id)initWithWebView:(WebView *)wv;
-
-- (TiSystemMenu *)createSystemMenu:(NSString*)url f:(WebScriptObject*)f;
-- (TiUserWindow *)createWindow;
-- (TiWindowOptions *)createWindowOptions;
-
-- (TiApp*) getApp;
-- (TiSystemDock*) getDock;
 
 @end

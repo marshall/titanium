@@ -20,7 +20,7 @@
 #import "TiBrowserWindowController.h"
 #import "TiAppDelegate.h"
 #import "TiBrowserDocument.h"
-#import "TiNative.h"
+#import "TiObject.h"
 #import "TiJavaScriptPromptWindowController.h"
 #import "TiProtocol.h"
 #import "TiBrowserWindow.h"
@@ -223,11 +223,11 @@ typedef enum {
 - (void)webView:(WebView *)wv windowScriptObjectAvailable:(WebScriptObject *)windowScriptObject 
 {
 	if (wv != webView) return;
-	TiNative *tiNative = [[TiNative alloc] initWithWebView:webView];
-	[windowScriptObject setValue:tiNative forKey:@"TiNative"];
+	TiObject *tiObject = [[TiObject alloc] initWithWebView:webView];
+	[windowScriptObject setValue:tiObject forKey:@"ti"];
 //	[javaScriptObject include:@"titanium/titanium.js"];
 //	[javaScriptObject include:@"titanium/plugins.js"];
-	[tiNative release];
+	[tiObject release];
 }
 
 

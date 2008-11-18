@@ -19,34 +19,34 @@ window.onload=function()
 	{
 		var visible = true;
 
-		var menu = TiNative.createSystemMenu("ti://favicon.ico",function(sysmenu)
+		var menu = ti.Menu.createSystemMenu("ti://favicon.ico",function(sysmenu)
 		{
 			if (visible)
 			{
-				TiNative.getApp().hide();
+				ti.App.hide();
 			}
 			else
 			{
-				TiNative.getApp().show();
+				ti.App.show();
 			}
 			visible = !visible;
 		});
 
-		var win = TiNative.createWindow();
-		var opts = TiNative.createWindowOptions();
+		var win = ti.Window.createWindow();
+		var opts = ti.Window.createWindowOptions();
 		document.getElementById("b").onclick = function()
 		{
 			try
 			{
 				win.show();
-				TiNative.getDock().setBadge(null);
+				ti.Dock.setBadge(null);
 			}
 			catch(E)
 			{
 				alert(E);
 			}
 		}
-		TiNative.getDock().setBadge("1");
+		ti.Dock.setBadge("1");
 		//win.show();
 
 
@@ -64,7 +64,7 @@ window.onload=function()
 
 		menu.addItem("Hello 2",function(title)
 		{
-			TiNative.beep();
+			ti.App.beep();
 		});
 	}
 	catch (e)
@@ -77,7 +77,7 @@ window.onload=function()
 <img src="http://developer.apple.com/images/developer_logo.gif"/>
 
 <button id="b">Click me</button>
-<button onclick="javascript:TiNative.getApp().quit();">Quit</button>
+<button onclick="javascript:ti.App.quit();">Quit</button>
 
 </div>
 </body>
