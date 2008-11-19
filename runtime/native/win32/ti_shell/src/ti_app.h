@@ -16,27 +16,60 @@
 * limitations under the License.
 */
 #include <string>
-#import <msxml4.dll>
+#include <algorithm>
+
+#import <msxml6.dll>
 
 using namespace MSXML2;
 
 class TiApp 
 {
 private:
-	std::string appName, startPath, title;
+	std::string appName, description, copyright, homepage, version;
+	
+	// window properties
+	std::string startPath, title;
 	int width, height;
+	float transparency;
+	bool maximizable, minimizable, closeable,
+		resizable, usingChrome, usingScrollbars;
+
+	// icon properties
+	std::string icon16, icon32, icon48;
 
 	void readElement(IXMLDOMElementPtr element);
+	void readWindowElement(IXMLDOMElementPtr element);
+	void readIconElement(IXMLDOMElementPtr element);
 
 public:
 	TiApp(std::wstring& xmlfile);
 	~TiApp();
 
-	std::string& getStartPath() { return startPath; }
 	std::string& getAppName() { return appName; }
+	std::string& getDescription() { return description; }
+	std::string& getCopyright() { return copyright; }
+	std::string& getHomepage() { return homepage; }
+	std::string& getVersion() { return version; }
+
+	// window accessors
+	std::string& getStartPath() { return startPath; }
 	std::string& getTitle() { return title; }
+	
 	int getWidth() { return width; }
 	int getHeight() { return height; }
+
+	float getTransparency() { return transparency; }
+	bool isMaximizable() { return maximizable; }
+	bool isMinimizable() { return minimizable; }
+	bool isCloseable() { return closeable; }
+	bool isResizable() { return resizable; }
+	bool isUsingChrome() { return usingChrome; }
+	bool isUsingScrollbars() { return usingScrollbars; }
+
+	//icon accessors
+	std::string& getIcon16() { return icon16; }
+	std::string& getIcon32() { return icon32; }
+	std::string& getIcon48() { return icon48; }
 };
 
 #endif

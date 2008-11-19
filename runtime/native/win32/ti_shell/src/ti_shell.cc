@@ -92,9 +92,9 @@ int main (int argc, char **argv) {
 	InitCommonControlsEx(&InitCtrlEx);
 	HRESULT res = OleInitialize(NULL);
 
-	HWND hWnd = CreateWindow(szWindowClass, szTitle,
+	HWND hWnd = CreateWindowEx(WS_EX_LAYERED, szWindowClass, szTitle,
                            WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,
-                           CW_USEDEFAULT, 0, CW_USEDEFAULT, 0,
+                           0, 0, 0, 0,
                            NULL, NULL, hInstance, NULL);
 
 	//HWND hWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,
@@ -222,6 +222,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 		break;
 	case WM_SIZE:
 		ResizeSubViews();
+		break;
+	case WM_TITRAYMESSAGE:
+		{
+			UINT uMouseMsg = (UINT) lParam;
+			if(uMouseMsg == WM_LBUTTONDBLCLK)
+			{
+				if(tiWebShell != NULL)
+				{
+					tiWebShell->removeTrayIcon();
+					tiWebShell->showWindow(SW_SHOW);
+				}
+			}
+		}
 		break;
 	}
 	return DefWindowProc(hWnd, message, wParam, lParam);

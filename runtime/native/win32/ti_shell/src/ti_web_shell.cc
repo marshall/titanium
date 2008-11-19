@@ -15,8 +15,10 @@
 
 #include "ti_web_shell.h"
 #include "ti_utils.h"
+#include "Resource.h"
 
 #include <fstream>
+#include <shellapi.h>
 
 std::string TIGetDataResource(HMODULE module, int resource_id) {
 	void *data_ptr;
@@ -40,11 +42,14 @@ TIWebShell::TIWebShell(HINSTANCE hInstance, HWND hWnd) : delegate(this) {
 
 TIWebShell::~TIWebShell(void) {
 	ti_debug("destroying TIWebSehll...");
+
+	// TODO  remove tray icon if one exists .. mmm.. 
+	//this->removeTrayIcon();
 }
 
-void TIWebShell::init(TiApp *ti_app) {
+void TIWebShell::init(TiApp *tiApp) {
 	ti_debug("initializing TIWebShell...");
-	this->ti_app = ti_app;
+	this->tiApp = tiApp;
 
 	std::wstring cache_path;
 	PathService::Get(base::DIR_EXE, &cache_path);
@@ -68,22 +73,8 @@ void TIWebShell::init(TiApp *ti_app) {
 	delegate.setMainWnd(this->hWnd);
 	delegate.setHost(this->host);
 
-	if (ti_app) {
-		sizeTo(ti_app->getWidth(), ti_app->getHeight());
-		std::string startPath = ti_app->getStartPath();
-		std::wstring fileURL = L"file://";
-		fileURL += resourcesPath;
-		fileURL += L"/";
-		fileURL += UTF8ToWide(ti_app->getStartPath());
-
-		size_t index;
-		while ((index = fileURL.find(file_util::kPathSeparator)) != std::string::npos) {
-			fileURL.replace(index, 1, L"/");
-		}
-		
-		delegate.bootstrapTitanium = true;
-		loadURL(WideToUTF8(fileURL).c_str());
-		SetWindowText(hWnd, UTF8ToWide(ti_app->getTitle()).c_str());
+	if (tiApp) {
+		loadTiApp();
 	}
 
 	ShowWindow(host->window_handle(), SW_SHOW);
@@ -91,6 +82,44 @@ void TIWebShell::init(TiApp *ti_app) {
 	ti_debug("done initializing TIWebShell");
 }
 
+
+#define SetFlag(x,flag,b) (b ? x |= flag : x &= ~flag)
+#define UnsetFlag(x,flag) (x &= ~flag)
+
+void TIWebShell::loadTiApp()
+{
+	std::string startPath = tiApp->getStartPath();
+	std::wstring fileURL = L"file://";
+	fileURL += resourcesPath;
+	fileURL += L"/";
+	fileURL += UTF8ToWide(tiApp->getStartPath());
+
+	size_t index;
+	while ((index = fileURL.find(file_util::kPathSeparator)) != std::string::npos) {
+		fileURL.replace(index, 1, L"/");
+	}
+	
+	delegate.bootstrapTitanium = true;
+	loadURL(WideToUTF8(fileURL).c_str());
+	SetWindowText(hWnd, UTF8ToWide(tiApp->getTitle()).c_str());
+
+	
+	long windowStyle = GetWindowLong(hWnd, GWL_STYLE);
+	
+	SetFlag(windowStyle, WS_MINIMIZEBOX, tiApp->isMinimizable());
+	SetFlag(windowStyle, WS_MAXIMIZEBOX, tiApp->isMaximizable());
+	SetFlag(windowStyle, WS_CAPTION, tiApp->isUsingChrome());
+	
+	SetWindowLong(hWnd, GWL_STYLE, windowStyle);
+
+	UINT flags = SWP_NOMOVE | SWP_NOZORDER | SWP_FRAMECHANGED;
+	if (!tiApp->isResizable()) {
+		flags |= SWP_NOREPOSITION;
+	}
+
+	sizeTo(tiApp->getWidth(), tiApp->getHeight(), flags);
+	SetLayeredWindowAttributes(hWnd, 0, (BYTE)floor(tiApp->getTransparency()*255), LWA_ALPHA);
+}
 
 void TIWebShell::loadURL(const char* url) {
 	WebRequest *request = WebRequest::Create(GURL(url));
@@ -105,7 +134,7 @@ void TIWebShell::loadURL(const char* url) {
 }
 
 
-void TIWebShell::sizeTo(int width, int height) {
+void TIWebShell::sizeTo(int width, int height, UINT flags) {
 	RECT rc, rw;
 	GetClientRect(hWnd, &rc);
 	GetWindowRect(hWnd, &rw);
@@ -118,8 +147,7 @@ void TIWebShell::sizeTo(int width, int height) {
 	int window_height = rw.bottom - rw.top;
 	window_height = (window_height - client_height) + height;
 
-	SetWindowPos(hWnd, NULL, 0, 0, window_width, window_height,
-		SWP_NOMOVE | SWP_NOZORDER);
+	SetWindowPos(hWnd, NULL, 0, 0, window_width, window_height, flags);
 }
 
 WebViewHost* TIWebShell::getHost() {
@@ -138,7 +166,7 @@ void TIWebShell::include(std::string& relativePath)
 	std::string absolutePath;
 
 	if (relativePath.find_first_of("://") != std::string::npos) {
-		absolutePath = TiURL::absolutePathForURL(ti_app, relativePath);
+		absolutePath = TiURL::absolutePathForURL(tiApp, relativePath);
 	}
 	else {
 		absolutePath = WideToUTF8(getResourcesPath());
@@ -165,4 +193,30 @@ WebWidget* TIWebShell::CreatePopupWidget(WebView* webview) {
 void TIWebShell::ClosePopup() {
   PostMessage(getPopupHWnd(), WM_CLOSE, 0, 0);
   popupHost = NULL;
+}
+
+void TIWebShell::createTrayIcon() {
+	NOTIFYICONDATA tnd;
+	tnd.cbSize = sizeof(NOTIFYICONDATA);
+	tnd.hWnd = this->hWnd;
+	tnd.uID = IDR_MAINFRAME;
+	tnd.uFlags = NIF_MESSAGE | NIF_ICON | NIF_TIP;
+	tnd.uCallbackMessage = WM_TITRAYMESSAGE;
+	tnd.hIcon = LoadIcon(::GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_CHROME_SHELL3));
+
+	lstrcpy(tnd.szTip, TEXT("Titanium Shell (this should prbly be dynamic)"));
+
+	Shell_NotifyIcon(NIM_ADD, &tnd);
+}
+
+void TIWebShell::removeTrayIcon() {
+	NOTIFYICONDATA tnid;
+	tnid.cbSize = sizeof(NOTIFYICONDATA);
+	tnid.hWnd = this->hWnd;
+	tnid.uID = IDR_MAINFRAME;		// ensure we remove our app tray icon
+	Shell_NotifyIcon(NIM_DELETE, &tnid);
+}
+
+void TIWebShell::showWindow(int nCmdShow) {
+	ShowWindow(hWnd, nCmdShow);
 }

@@ -11,10 +11,13 @@ class TiNative : public CppBoundClass
 	TIWebShell *ti_web_shell;
 public:
 	TiNative(TIWebShell *ti_web_shell);
+	~TiNative(void);
 
 	void debug (const CppArgumentList &args, CppVariant *result);
 	void getResourcePath(const CppArgumentList &args, CppVariant *result);
 	void include (const CppArgumentList &args, CppVariant *result);
+	void hide (const CppArgumentList &args, CppVariant *result);
+	void show (const CppArgumentList &args, CppVariant *result);
 };
 
 #endif
