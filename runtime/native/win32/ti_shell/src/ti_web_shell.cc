@@ -15,8 +15,10 @@
 
 #include "ti_web_shell.h"
 #include "ti_utils.h"
+#include "Resource.h"
 
 #include <fstream>
+#include <shellapi.h>
 
 std::string TIGetDataResource(HMODULE module, int resource_id) {
 	void *data_ptr;
@@ -40,6 +42,9 @@ TIWebShell::TIWebShell(HINSTANCE hInstance, HWND hWnd) : delegate(this) {
 
 TIWebShell::~TIWebShell(void) {
 	ti_debug("destroying TIWebSehll...");
+
+	// TODO  remove tray icon if one exists .. mmm.. 
+	//this->removeTrayIcon();
 }
 
 void TIWebShell::init(TiApp *ti_app) {
@@ -165,4 +170,30 @@ WebWidget* TIWebShell::CreatePopupWidget(WebView* webview) {
 void TIWebShell::ClosePopup() {
   PostMessage(getPopupHWnd(), WM_CLOSE, 0, 0);
   popupHost = NULL;
+}
+
+void TIWebShell::createTrayIcon() {
+	NOTIFYICONDATA tnd;
+	tnd.cbSize = sizeof(NOTIFYICONDATA);
+	tnd.hWnd = this->hWnd;
+	tnd.uID = IDR_MAINFRAME;
+	tnd.uFlags = NIF_MESSAGE | NIF_ICON | NIF_TIP;
+	tnd.uCallbackMessage = WM_TITRAYMESSAGE;
+	tnd.hIcon = LoadIcon(::GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_CHROME_SHELL3));
+
+	lstrcpy(tnd.szTip, TEXT("Titanium Shell (this should prbly be dynamic)"));
+
+	Shell_NotifyIcon(NIM_ADD, &tnd);
+}
+
+void TIWebShell::removeTrayIcon() {
+	NOTIFYICONDATA tnid;
+	tnid.cbSize = sizeof(NOTIFYICONDATA);
+	tnid.hWnd = this->hWnd;
+	tnid.uID = IDR_MAINFRAME;		// ensure we remove our app tray icon
+	Shell_NotifyIcon(NIM_DELETE, &tnid);
+}
+
+void TIWebShell::showWindow(int nCmdShow) {
+	ShowWindow(hWnd, nCmdShow);
 }

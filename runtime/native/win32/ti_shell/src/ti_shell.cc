@@ -223,6 +223,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 	case WM_SIZE:
 		ResizeSubViews();
 		break;
+	case WM_TITRAYMESSAGE:
+		{
+			UINT uMouseMsg = (UINT) lParam;
+			if(uMouseMsg == WM_LBUTTONDBLCLK)
+			{
+				if(tiWebShell != NULL)
+				{
+					tiWebShell->removeTrayIcon();
+					tiWebShell->showWindow(SW_SHOW);
+				}
+			}
+		}
+		break;
 	}
 	return DefWindowProc(hWnd, message, wParam, lParam);
 }
