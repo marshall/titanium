@@ -22,10 +22,77 @@
 
 #define nodeValue(n) (n->nodeType == MSXML2::NODE_ATTRIBUTE ? _bstr_t(n->nodeValue) : _bstr_t(n->firstChild->nodeValue))
 
+bool stringToBool (std::string str) {
+	std::transform(str.begin(), str.end(), str.begin(), tolower);
+	if (str == "yes" || str == "true" || str == "on") {
+		return true;
+	}
+	return false;
+}
+
+#define boolValue(n) (stringToBool(std::string(nodeValue(n))))
+
+void TiApp::readIconElement(IXMLDOMElementPtr element)
+{
+	if (strcmp(element->nodeName, "image16") == 0) {
+		icon16 = nodeValue(element);
+	}
+	else if (strcmp(element->nodeName, "image32") == 0) {
+		icon32 = nodeValue(element);
+	}
+	else if (strcmp(element->nodeName, "image48") == 0) {
+		icon48 = nodeValue(element);
+	}
+}
+
+void TiApp::readWindowElement(IXMLDOMElementPtr element)
+{
+	if (strcmp(element->nodeName, "title") == 0) {
+		title = nodeValue(element);
+	}
+	else if (strcmp(element->nodeName, "start") == 0) {
+		startPath = nodeValue(element);
+	}
+	else if (strcmp(element->nodeName, "maximizable") == 0) {
+		maximizable = boolValue(element);
+	}
+	else if (strcmp(element->nodeName, "minimizable") == 0) {
+		minimizable = boolValue(element);
+	}
+	else if (strcmp(element->nodeName, "closeable") == 0) {
+		closeable = boolValue(element);
+	}
+	else if (strcmp(element->nodeName, "resizable") == 0) {
+		resizable = boolValue(element);
+	}
+	else if (strcmp(element->nodeName, "chrome") == 0) {
+		usingChrome = boolValue(element);
+		IXMLDOMAttributePtr scrollbars = element->getAttributeNode("scrollbars");
+		if (scrollbars != NULL) {
+			usingScrollbars = boolValue(scrollbars);
+		}
+	}
+	else if (strcmp(element->nodeName, "transparency") == 0) {
+		transparency = (float)atof(nodeValue(element));
+	}
+}
+
 void TiApp::readElement(IXMLDOMElementPtr element)
 {
 	if (strcmp(element->nodeName, "name") == 0) {
 		appName = nodeValue(element);
+	}
+	else if (strcmp(element->nodeName, "description") == 0) {
+		description = nodeValue(element);
+	}
+	else if (strcmp(element->nodeName, "copyright") == 0) {
+		copyright = nodeValue(element);
+	}
+	else if (strcmp(element->nodeName, "homepage") == 0) {
+		homepage = nodeValue(element);
+	}
+	else if (strcmp(element->nodeName, "version") == 0) {
+		version = nodeValue(element);
 	}
 	else if (strcmp(element->nodeName, "window") == 0) {
 		IXMLDOMAttributePtr widthAttr = element->getAttributeNode("width");
@@ -38,13 +105,21 @@ void TiApp::readElement(IXMLDOMElementPtr element)
 		{
 			switch (child->nodeType) {
 				case MSXML2::NODE_ELEMENT: {
-					IXMLDOMElementPtr element = (IXMLDOMElementPtr) child;
-					if (strcmp(element->nodeName, "title") == 0) {
-						title = nodeValue(child);
-					}
-					else if (strcmp(element->nodeName, "start") == 0) {
-						startPath = nodeValue(child);
-					}
+					IXMLDOMElementPtr element2 = (IXMLDOMElementPtr) child;
+					this->readWindowElement(element2);
+				} break;
+			}
+			child = child->nextSibling;
+		}
+	}
+	else if (strcmp(element->nodeName, "icon") == 0) {
+		IXMLDOMNodePtr child = element->firstChild;
+		while (child != NULL) 
+		{
+			switch (child->nodeType) {
+				case MSXML2::NODE_ELEMENT: {
+					IXMLDOMElementPtr element2 = (IXMLDOMElementPtr) child;
+					this->readIconElement(element2);
 				} break;
 			}
 			child = child->nextSibling;
@@ -52,12 +127,16 @@ void TiApp::readElement(IXMLDOMElementPtr element)
 	}
 }
 
-TiApp::TiApp(std::wstring& xmlfile)
+TiApp::TiApp(std::wstring& xmlfile) :
+	maximizable(true), minimizable(true),
+	closeable(true), resizable(true),
+	usingChrome(false), usingScrollbars(true), transparency(1.0),
+	width(800), height(600)
 {
 	::CoInitialize(NULL);
 
 	IXMLDOMDocument2Ptr doc;
-	HRESULT result = doc.CreateInstance(__uuidof(DOMDocument40));
+	HRESULT result = doc.CreateInstance(__uuidof(DOMDocument60));
 
 	doc->async = VARIANT_FALSE;
 

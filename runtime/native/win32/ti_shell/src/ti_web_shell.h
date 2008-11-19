@@ -66,16 +66,17 @@ private:
 	WebViewHost *host;
 	WebWidgetHost *popupHost;
 	std::wstring resourcesPath;
-	TiApp *ti_app;
+	TiApp *tiApp;
 
 public:
 	TIWebShell(HINSTANCE hInstance, HWND hWnd);
 	~TIWebShell(void);
 
-	void init(TiApp *ti_app);
+	void init(TiApp *tiApp);
+	void loadTiApp();
 
 	void loadURL(const char* url);
-	void sizeTo(int width, int height);
+	void sizeTo(int width, int height, UINT flags);
 
 	WebViewHost* getHost();
 	HWND getHWnd();
