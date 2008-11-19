@@ -55,10 +55,15 @@
 }
 
 
-- (id)initWithContentRect:(NSRect)contentRect styleMask:(NSUInteger)mask backing:(NSBackingStoreType)bufferingType defer:(BOOL)flag {
+- (id)initWithContentRect:(NSRect)contentRect styleMask:(NSUInteger)mask backing:(NSBackingStoreType)bufferingType defer:(BOOL)flag 
+{
 	options = [[TiAppDelegate instance] getWindowOptions];
 	mask = [options toWindowMask];
-	self = [super initWithContentRect:contentRect styleMask:mask backing:bufferingType defer:flag];
+	
+	// our tiapp.xml decides the initial size of the window not the nib
+	NSRect r = NSMakeRect(contentRect.origin.x, contentRect.origin.y, [options getWidth], [options getHeight]);
+
+	self = [super initWithContentRect:r styleMask:mask backing:bufferingType defer:flag];
 	if (self != nil) {
 		[self setOpaque:NO];
 		[self setHasShadow:YES];

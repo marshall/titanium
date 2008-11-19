@@ -220,12 +220,9 @@ typedef enum {
 		NSString *s = [NSString stringWithFormat:@"(function(){\n" 
 		"document.write('<style>body { background-color:white;opacity:%f;%@ } body > DIV { height:100%% }</style>')\n"
 		"})();", [opts getTransparency], ms];
-		NSLog(@"JS=> %@\n",s);
 		[windowScriptObject evaluateWebScript:s];
 	}
 	
-//	[javaScriptObject include:@"titanium/titanium.js"];
-//	[javaScriptObject include:@"titanium/plugins.js"];
 	[tiObject release];
 }
 
