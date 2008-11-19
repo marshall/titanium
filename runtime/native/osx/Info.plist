@@ -30,7 +30,7 @@
 	<key>CFBundleShortVersionString</key>
 	<string>0.1</string>
 	<key>CFBundleIconFile</key>
-	<string>appcelerator</string>
+	<string>titanium</string>
 	<key>CFBundleIdentifier</key>
 	<string>org.appcelerator.${PRODUCT_NAME:identifier}</string>
 	<key>CFBundleInfoDictionaryVersion</key>

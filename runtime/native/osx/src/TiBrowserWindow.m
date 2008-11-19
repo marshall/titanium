@@ -57,27 +57,24 @@
 
 - (id)initWithContentRect:(NSRect)contentRect styleMask:(NSUInteger)mask backing:(NSBackingStoreType)bufferingType defer:(BOOL)flag {
 	options = [[TiAppDelegate instance] getWindowOptions];
-	[options retain];
 	mask = [options toWindowMask];
-	
 	self = [super initWithContentRect:contentRect styleMask:mask backing:bufferingType defer:flag];
 	if (self != nil) {
 		[self setOpaque:NO];
 		[self setHasShadow:YES];
 		[self setBackgroundColor:[NSColor clearColor]];
 		[self setAlphaValue:[options getTransparency]];
+		// turn on/off zoom button to control app maximize behavior
+		[[self standardWindowButton:NSWindowZoomButton] setHidden:![options isMaximizable]];
+		[self center];
 	}
-	
-	[self setFrame:NSMakeRect(0,0,[options getWidth],[options getHeight]) display:NO];
-	[self center];
-	
 	return self;
 }
 
-// -(BOOL) canBecomeKeyWindow
-//{
-//	return YES;
-//}
+ -(BOOL) canBecomeKeyWindow
+{
+	return YES;
+}
 
 - (void)moveWindow:(NSEvent *)event {
 	NSPoint startLocation = [event locationInWindow];

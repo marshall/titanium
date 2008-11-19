@@ -94,29 +94,6 @@ typedef enum {
 }
 
 
-//- (void)includeScript:(NSString*)path 
-//{
-//	//TODO: do we need this anymore?
-//	
-//	DOMDocument *doc = [webView mainFrameDocument];
-//	if (!doc) return;
-//
-//	DOMNodeList *headEls = [doc getElementsByTagName:@"head"];
-//	if (![headEls length]) return;
-//	
-//	DOMElement *headEl = (DOMElement *)[headEls item:0];
-//	if (!headEl) return;
-//	
-//	DOMElement *scriptEl = [doc createElement:@"script"];
-//	[scriptEl setAttribute:@"src" value:path];
-//	[scriptEl setAttribute:@"type" value:@"text/javascript"];
-//	//DOMText *text = [doc createTextNode:@""];
-//	//[script appendChild:text];
-//
-//	[headEl appendChild:scriptEl];
-//}
-
-
 #pragma mark -
 #pragma mark Private
 
@@ -163,20 +140,20 @@ typedef enum {
 		[[self window] setShowsResizeIndicator:NO];
 	}
 	
-	[webView setBackgroundColor:[NSColor clearColor]];
+	// set the background to clear so that transparency can work
+	if ([o getTransparency] <  1.0f)
+	{
+		[webView setBackgroundColor:[NSColor clearColor]];
+	}
 }
 
 
 - (void)showWindowIfFirst 
 {
-	// we don't show the first window until the first page has loaded. avoids seeing ugly loading on launch
-//	if ([self isFirst] && ![[self window] isVisible]) {
-//		[[self window] makeKeyAndOrderFront:self];
-////		[[self window] makeKeyAndOrderFront:[self window]];
-//	}
+	// don't show the window unless its the first
 	if ([self isFirst]) 
 	{
-		[[self window] makeKeyAndOrderFront:self];
+		[[self window]makeKeyAndOrderFront:nil];
 	}
 }
 
@@ -225,6 +202,28 @@ typedef enum {
 	if (wv != webView) return;
 	TiObject *tiObject = [[TiObject alloc] initWithWebView:webView];
 	[windowScriptObject setValue:tiObject forKey:@"ti"];
+	
+	TiWindowOptions *opts = [[TiAppDelegate instance] getWindowOptions];
+	
+	if ([opts getTransparency] < 1.0)
+	{
+		// in the case that you have transparency on the window, we have to hack the browser's window
+		// to cause the content view to take up 100% of the window (normally in HTML, it will only 
+		// take up the height of the contained element size)
+		//TODO: move this into titanium.js
+		NSString *ms = @"margin:auto;padding:auto;";
+		if ([opts isChrome])
+		{
+			// if we're using custom chrome, setup without borders, margin, etc.
+			ms = @"margin:0;padding:0;border:none;";
+		}
+		NSString *s = [NSString stringWithFormat:@"(function(){\n" 
+		"document.write('<style>body { background-color:white;opacity:%f;%@ } body > DIV { height:100%% }</style>')\n"
+		"})();", [opts getTransparency], ms];
+		NSLog(@"JS=> %@\n",s);
+		[windowScriptObject evaluateWebScript:s];
+	}
+	
 //	[javaScriptObject include:@"titanium/titanium.js"];
 //	[javaScriptObject include:@"titanium/plugins.js"];
 	[tiObject release];

@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		1DDD582C0DA1D0D100B32029 /* BrowserWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1DDD58280DA1D0D100B32029 /* BrowserWindow.xib */; };
 		1DDD582D0DA1D0D100B32029 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1DDD582A0DA1D0D100B32029 /* MainMenu.xib */; };
+		240718A50ED3FF7500D542F0 /* titanium.icns in Resources */ = {isa = PBXBuildFile; fileRef = 240718A40ED3FF7500D542F0 /* titanium.icns */; };
 		2433DDD50ED0FFA100813747 /* TiThemeFrame.m in Sources */ = {isa = PBXBuildFile; fileRef = 2433DDD40ED0FFA100813747 /* TiThemeFrame.m */; };
 		2433DDDA0ED0FFBE00813747 /* TiBrowserWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2433DDD70ED0FFBE00813747 /* TiBrowserWindowController.m */; };
 		2433DDDB0ED0FFBE00813747 /* TiJavaScriptPromptWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2433DDD90ED0FFBE00813747 /* TiJavaScriptPromptWindowController.m */; };
@@ -52,6 +53,7 @@
 		13E42FBA07B3F13500E4EEF1 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
 		1DDD58290DA1D0D100B32029 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/BrowserWindow.xib; sourceTree = "<group>"; };
 		1DDD582B0DA1D0D100B32029 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		240718A40ED3FF7500D542F0 /* titanium.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = titanium.icns; path = ../../support/osx/titanium.icns; sourceTree = SOURCE_ROOT; };
 		2433DDD10ED0FFA100813747 /* NSThemeFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSThemeFrame.h; path = src/NSThemeFrame.h; sourceTree = "<group>"; };
 		2433DDD20ED0FFA100813747 /* NSTitledFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSTitledFrame.h; path = src/NSTitledFrame.h; sourceTree = "<group>"; };
 		2433DDD30ED0FFA100813747 /* TiThemeFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TiThemeFrame.h; path = src/TiThemeFrame.h; sourceTree = "<group>"; };
@@ -168,7 +170,6 @@
 				2A37F4B8FDCFA73011CA2CEA /* Resources */,
 				2A37F4C3FDCFA73011CA2CEA /* Frameworks */,
 				19C28FB0FE9D524F11CA2CBB /* Products */,
-				24F95FC90ED28607002065FC /* SplashWindow.xib */,
 			);
 			name = Titanium;
 			sourceTree = "<group>";
@@ -208,6 +209,8 @@
 		2A37F4B8FDCFA73011CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				240718A40ED3FF7500D542F0 /* titanium.icns */,
+				24F95FC90ED28607002065FC /* SplashWindow.xib */,
 				D31B3EF80EBE88B5006F3012 /* Images */,
 				D31B36640EBC0946006F3012 /* appcelerator.icns */,
 				2A37F4B9FDCFA73011CA2CEA /* Credits.rtf */,
@@ -364,6 +367,7 @@
 				24DA9C0C0ED15E9000DECFFC /* favicon.ico in Resources */,
 				24F95FC10ED28556002065FC /* titanium_poweredby.png in Resources */,
 				24F95FCB0ED28607002065FC /* SplashWindow.xib in Resources */,
+				240718A50ED3FF7500D542F0 /* titanium.icns in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

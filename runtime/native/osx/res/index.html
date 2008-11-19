@@ -1,24 +1,12 @@
 <html>
-<head>
-<style>
-body
-{
-	border:none;
-   padding:0;
-   margin:0;
-width:100%;
-}
-</style>
-</head>
 <body>
-<div style="background:#fff; height:100%; -webkit-border-radius:2px; overflow:hidden; opacity:0.9;margin:0;padding:0;">
+<div style="background:#000; -webkit-border-radius:2px; ;margin:0;padding:0;">
 <script type="text/javascript">
 window.onload=function()
 {
 	try
 	{
 		var visible = true;
-
 		var menu = ti.Menu.createSystemMenu("ti://favicon.ico",function(sysmenu)
 		{
 			if (visible)
@@ -31,7 +19,7 @@ window.onload=function()
 			}
 			visible = !visible;
 		});
-
+/*
 		var win = ti.Window.createWindow();
 		var opts = ti.Window.createWindowOptions();
 		document.getElementById("b").onclick = function()
@@ -66,6 +54,7 @@ window.onload=function()
 		{
 			ti.App.beep();
 		});
+*/
 	}
 	catch (e)
 	{
@@ -78,6 +67,8 @@ window.onload=function()
 
 <button id="b">Click me</button>
 <button onclick="javascript:ti.App.quit();">Quit</button>
+
+<button onclick="window.moveTo(0,10);">Move</button>
 
 </div>
 </body>

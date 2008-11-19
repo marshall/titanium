@@ -68,7 +68,8 @@
 	}
 	if ([windowOptions isMaximizable])
 	{
-		//???
+		// this is handled special in the TiBrowserWindow by
+		// hiding the actual control on the title bar
 	}
 	if (![windowOptions isChrome])
 	{
@@ -79,8 +80,6 @@
 		mask |= NSTitledWindowMask;
 	}		
 	
-	//mask = NSClosableWindowMask|NSMiniaturizableWindowMask|NSTitledWindowMask|NSResizableWindowMask; //|NSBorderlessWindowMask|NSTitledWindowMask|NSClosableWindowMask|NSMiniaturizableWindowMask|NSResizableWindowMask;
-
 	//we set it on the delegate since he's a singleton and these options are "sticky"
 	[[TiAppDelegate instance] setWindowOptions:opts];
 }

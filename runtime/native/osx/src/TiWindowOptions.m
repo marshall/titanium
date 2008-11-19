@@ -27,8 +27,8 @@
 	// setup defaults
 	x=0;
 	y=0;
-	width=400;
-	height=1500;
+	width=100;
+	height=100;
 	title=@"Titanium Application";
 	url=@"index.html";
 	chrome=NO;
@@ -84,6 +84,7 @@
 
 - (void) setWidth:(int)w
 {
+	width = w;
 }
 
 - (int) getHeight
@@ -108,7 +109,7 @@
 
 - (CGFloat) getTransparency
 {
-	return transparent;
+	return transparency;
 }
 
 - (void) setTransparency:(CGFloat)f;
@@ -123,6 +124,7 @@
 
 - (void) setVisible:(bool)yn
 {
+	visible = yn;
 }
 
 - (bool) isMinimizable

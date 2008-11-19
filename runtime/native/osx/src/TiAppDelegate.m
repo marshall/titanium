@@ -150,7 +150,6 @@ static NSString *attrText(NSXMLElement *el, NSString *name)
 	}
 }
 
-
 - (void)awakeFromNib 
 {
 	[self showSplash];
