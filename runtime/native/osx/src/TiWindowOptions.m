@@ -29,6 +29,10 @@
 	y=0;
 	width=100;
 	height=100;
+	maxHeight=9000;
+	maxWidth=9000;
+	minHeight=0;
+	minWidth=0;
 	title=@"Titanium Application";
 	url=@"index.html";
 	chrome=NO;
@@ -77,24 +81,65 @@
 	y = newy;
 }
 
-- (int) getWidth
+- (CGFloat) getWidth
 {
 	return width;
 }
 
-- (void) setWidth:(int)w
+- (void) setWidth:(CGFloat)w
 {
 	width = w;
 }
 
-- (int) getHeight
+- (CGFloat) getHeight
 {
 	return height;
 }
 
-- (void) setHeight:(int)h
+- (void) setHeight:(CGFloat)h
 {
 	height = h;
+}
+
+- (CGFloat) getMinWidth
+{
+	return minWidth;
+}
+
+- (void) setMinWidth:(CGFloat)w
+{
+	minWidth = w;
+}
+
+- (CGFloat) getMinHeight
+{
+	return minHeight;
+}
+
+- (void) setMinHeight:(CGFloat)h
+{
+	minHeight = h;
+}
+
+
+- (CGFloat) getMaxWidth
+{
+	return maxWidth;
+}
+
+- (void) setMaxWidth:(CGFloat)w
+{
+	maxWidth = w;
+}
+
+- (CGFloat) getMaxHeight
+{
+	return maxHeight;
+}
+
+- (void) setMaxHeight:(CGFloat)h
+{
+	maxHeight = h;
 }
 
 - (bool) isChrome

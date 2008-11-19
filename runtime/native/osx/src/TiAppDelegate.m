@@ -495,9 +495,16 @@ static NSString *attrText(NSXMLElement *el, NSString *name)
 	CGFloat width = [attrText(window, @"width") floatValue];
 	CGFloat height = [attrText(window, @"height") floatValue];
 	
-	NSLog(@"initial window: %f x %f\n",width,height);
-
+	// default is no minimum
+	CGFloat minWidth = [TiAppDelegate toFloat:attrText(window, @"min-width") def:0];
+	CGFloat minHeight = [TiAppDelegate toFloat:attrText(window, @"min-height") def:0];
 	
+	// default is very large maximum
+	CGFloat maxWidth = [TiAppDelegate toFloat:attrText(window, @"max-width") def:9000];
+	CGFloat maxHeight = [TiAppDelegate toFloat:attrText(window, @"max-height") def:9000];
+	
+	NSLog(@"initial window: %fx%f, min: %fx%f, max: %fx%f\n",width,height,minWidth,minHeight,maxWidth,maxHeight);
+
 	NSString *title = elementText(window, @"title");
 	NSString *start = elementText(window, @"start");		
 	bool chrome = [TiAppDelegate toBoolean:elementText(window, @"chrome") def:true];		
@@ -516,6 +523,10 @@ static NSString *attrText(NSXMLElement *el, NSString *name)
 	TiWindowOptions *options = [TiWindowOptions new];
 	[options setWidth:width];
 	[options setHeight:height];
+	[options setMinWidth:minWidth];
+	[options setMinHeight:minHeight];
+	[options setMaxWidth:maxWidth];
+	[options setMaxHeight:maxHeight];
 	[options setTitle:title];
 	[options setURL:start];
 	[options setChrome:chrome];
