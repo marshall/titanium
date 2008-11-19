@@ -16,6 +16,3 @@
 #pragma once
 
 #include "resource.h"
-
-int initAppOld(void);
-int initAppNew(void);

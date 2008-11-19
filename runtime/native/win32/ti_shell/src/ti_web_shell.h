@@ -88,4 +88,9 @@ public:
 	void include (std::string& relativePath);
 	WebWidget* CreatePopupWidget(WebView* webview);
 	void ClosePopup();
+
+	void createTrayIcon();
+	void removeTrayIcon();
+
+	void showWindow(int nCmdShow);
 };
