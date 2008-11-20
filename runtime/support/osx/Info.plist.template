@@ -28,7 +28,7 @@
   <key>CFBundleIconFile</key>
   <string>appcelerator</string>
   <key>CFBundleIdentifier</key>
-  <string><%= @@project.config[:name] %></string>
+  <string><%= config[:name] %></string>
   <key>CFBundleInfoDictionaryVersion</key>
   <string>6.0</string>
   <key>CFBundlePackageType</key>
