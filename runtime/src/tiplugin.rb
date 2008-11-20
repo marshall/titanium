@@ -3,6 +3,8 @@ require 'yaml'
 module Titanium
   class Plugin
     attr_accessor :data
+    attr_accessor :name
+    attr_accessor :component
     
     def initialize(name)
       @name = name
@@ -11,22 +13,29 @@ module Titanium
       @data = YAML::load(File.open(File.join(@plugindir, 'build.yml')))
     end
     
-	def get_project_path(basedir, executable_name)
+    def has_native_plugin?
+      return get_native_plugin() != nil
+    end
+    
+    def get_native_plugin
+      return nil
+    end
+    
+    def get_project_path(basedir, executable_name)
       if is_mac?
-        return File.join(basedir, executable_name+".app",
-          'Contents', 'Resources')
-	  elsif is_win?
-	  	return File.join(basedir, executable_name, 'Resources')
+        return File.join(basedir, executable_name+".app", 'Contents', 'Resources')
+      elsif is_win?
+	  	  return File.join(basedir, executable_name, 'Resources')
       end
     end
     
     def get_plugins_path(basedir, executable_name)
     	if is_mac?
     		return File.join(basedir, executable_name+".app", 'Contents', 'Plug-ins')
-		elsif is_win?
-			return File.join(basedir, executable_name, 'plugins')
-		end
-	end
+		  elsif is_win?
+			  return File.join(basedir, executable_name, 'plugins')
+		  end
+	  end
     
     def install(project, basedir, executable_name)
       @project_path = get_project_path(basedir, executable_name)

@@ -20,9 +20,13 @@
 #import "TiBrowserWindowController.h"
 #import "TiAppDelegate.h"
 #import "TiBrowserDocument.h"
-#import "TiObject.h"
+#import "TiSystemDock.h"
+#import "TiApp.h"
+#import "TiMenuFactory.h"
+#import "TiWindowFactory.h"
 #import "TiJavaScriptPromptWindowController.h"
 #import "TiProtocol.h"
+#import "AppProtocol.h"
 #import "TiBrowserWindow.h"
 #import "WebViewPrivate.h"
 #import <WebKit/WebKit.h>
@@ -64,6 +68,7 @@ typedef enum {
 - (void) registerProtocols
 {
 	[TiProtocol registerSpecialProtocol];
+	[AppProtocol registerSpecialProtocol];
 	//	[WebView registerURLSchemeAsLocal:TiProtocol];
 }
 
@@ -200,8 +205,19 @@ typedef enum {
 - (void)webView:(WebView *)wv windowScriptObjectAvailable:(WebScriptObject *)windowScriptObject 
 {
 	if (wv != webView) return;
-	TiObject *tiObject = [[TiObject alloc] initWithWebView:webView];
-	[windowScriptObject setValue:tiObject forKey:@"ti"];
+	TiApp *tiApp = [[TiApp alloc] initWithWebView:webView];
+	TiSystemDock *tiDock = [[TiSystemDock alloc] initWithWebView:webView];
+	TiMenuFactory *tiMenu = [[TiMenuFactory alloc] initWithWebView:webView];
+	TiWindowFactory *tiWindow = [[TiWindowFactory alloc] initWithWebView:webView];
+	
+	[windowScriptObject setValue:tiApp forKey:@"TiApp"];
+	[windowScriptObject setValue:tiDock forKey:@"TiDock"];
+	[windowScriptObject setValue:tiMenu forKey:@"TiMenu"];
+	[windowScriptObject setValue:tiWindow forKey:@"TiWindow"];
+	
+	[tiApp include:@"ti://titanium.js"];
+//	[javaScriptObject include:@"titanium/plugins.js"];
+	
 	
 	TiWindowOptions *opts = [[TiAppDelegate instance] getWindowOptions];
 	
@@ -223,7 +239,10 @@ typedef enum {
 		[windowScriptObject evaluateWebScript:s];
 	}
 	
-	[tiObject release];
+	[tiApp release];
+	[tiDock release];
+	[tiMenu release];
+	[tiWindow release];
 }
 
 

@@ -7,15 +7,15 @@ window.onload=function()
 	try
 	{
 		var visible = true;
-		var menu = ti.Menu.createSystemMenu("ti://favicon.ico",function(sysmenu)
+		var menu = TiMenu.createSystemMenu("ti://favicon.ico",function(sysmenu)
 		{
 			if (visible)
 			{
-				ti.App.hide();
+				TiApp.hide();
 			}
 			else
 			{
-				ti.App.show();
+				TiApp.show();
 			}
 			visible = !visible;
 		});
@@ -66,7 +66,7 @@ window.onload=function()
 <img src="http://developer.apple.com/images/developer_logo.gif"/>
 
 <button id="b">Click me</button>
-<button onclick="javascript:ti.App.quit();">Quit</button>
+<button onclick="javascript:TiApp.quit();">Quit</button>
 
 <button onclick="window.moveTo(0,10);">Move</button>
 <button onclick="ti.App.setSize(500,600,true)">Resize</button>
