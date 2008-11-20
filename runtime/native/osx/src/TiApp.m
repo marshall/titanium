@@ -88,6 +88,57 @@
 	[[NSSound soundNamed:s] play];
 }
 
+- (void)setSize:(int)width height:(int)height animate:(int)animate
+{
+	NSWindow *win = [webView window];
+	NSRect r = [win frame];
+	bool a = animate == 1 ? YES : NO;
+	CGFloat w = width < 0 ? r.size.width : width;
+	CGFloat h = height < 0 ? r.size.height : height;
+	[win setFrame:NSMakeRect(r.origin.x,r.origin.y,w,h) display:YES animate:a];
+	[win center]; //FIXME: this is temporary
+}
+
+/*
+ NSColor: Instantiate from Web-like Hex RRGGBB string
+ Original Source: <http://cocoa.karelia.com/Foundation_Categories/NSColor__Instantiat.m>
+ (See copyright notice at <http://cocoa.karelia.com>)
+ */
+
++ (NSColor *) colorFromHexRGB:(NSString *) inColorString
+{
+	if ([inColorString compare:@"transparent"]==0)
+	{
+		return [NSColor clearColor];
+	}
+		
+	NSColor *result = nil;
+	unsigned int colorCode = 0;
+	unsigned char redByte, greenByte, blueByte;
+	
+	if (nil != inColorString)
+	{
+		NSScanner *scanner = [NSScanner scannerWithString:inColorString];
+		(void) [scanner scanHexInt:&colorCode];	// ignore error
+	}
+	redByte		= (unsigned char) (colorCode >> 16);
+	greenByte	= (unsigned char) (colorCode >> 8);
+	blueByte	= (unsigned char) (colorCode);	// masks off high bits
+	result = [NSColor
+			  colorWithCalibratedRed:		(float)redByte	/ 0xff
+			  green:	(float)greenByte/ 0xff
+			  blue:	(float)blueByte	/ 0xff
+			  alpha:1.0];
+	return result;
+}
+
+- (void)setBackgroundColor:(NSString*)color
+{
+	NSWindow *win = [webView window];
+	[win setBackgroundColor:[TiApp colorFromHexRGB:color]];
+}
+
+
 
 #pragma mark -
 #pragma mark WebScripting
@@ -133,6 +184,10 @@
 		return @"getResourcePath";
 	} else if (sel == @selector(loadPage)) {
 		return @"loadPage";
+	} else if (sel == @selector(setSize:height:animate:)) {
+		return @"setSize";
+	} else if (sel == @selector(setBackgroundColor:)) {
+		return @"setBackgroundColor";
 	} else {
 		return nil;
 	}

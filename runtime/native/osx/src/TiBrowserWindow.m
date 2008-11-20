@@ -83,6 +83,11 @@
 	return YES;
 }
 
+-(BOOL) canBecomeMainWindow
+{
+	return YES;
+}
+
 - (NSSize)windowWillResize:(NSWindow *) window toSize:(NSSize)newSize
 {
 	if ([options isResizable])

@@ -51,7 +51,7 @@
 
 
 - (NSString *)description {
-	return @"[TiObject object]";
+	return @"[TiObject native]";
 }
 
 #pragma mark -

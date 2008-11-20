@@ -153,7 +153,7 @@ typedef enum {
 	// don't show the window unless its the first
 	if ([self isFirst]) 
 	{
-		[[self window]makeKeyAndOrderFront:nil];
+		[[self window]makeKeyAndOrderFront:[self window]];
 	}
 }
 
@@ -218,7 +218,7 @@ typedef enum {
 			ms = @"margin:0;padding:0;border:none;";
 		}
 		NSString *s = [NSString stringWithFormat:@"(function(){\n" 
-		"document.write('<style>body { background-color:white;opacity:%f;%@ } body > DIV { height:100%% }</style>')\n"
+		"document.write('<style>body { opacity:%f;%@ } body > DIV { height:100%% }</style>')\n"
 		"})();", [opts getTransparency], ms];
 		[windowScriptObject evaluateWebScript:s];
 	}
