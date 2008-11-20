@@ -87,7 +87,7 @@ typedef struct {
 	// ti://plugin/plugin_id/path/to/resource
 	if ([s rangeOfString:@"plugin/"].location == 0) {
 		pluginInfo = [self getPluginResourceInfo:s];
-		resourcePath = [basePath stringByAppendingPathComponent:pluginInfo.pluginResource];
+		resourcePath = [[basePath stringByAppendingPathComponent:pluginInfo.pluginName] stringByAppendingPathComponent:pluginInfo.pluginResource];
 	}
 	
 	TiAppArguments *args = (TiAppArguments *)[[TiAppDelegate instance] arguments];
@@ -117,7 +117,7 @@ typedef struct {
 		} else {
 			resourcePath = [[args runtimePath] stringByAppendingPathComponent:s];
 		}
-	} else {
+	} else if (resourcePath == nil) {
 		resourcePath = [basePath stringByAppendingPathComponent:s];
 	}
 	
