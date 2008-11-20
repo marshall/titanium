@@ -49,7 +49,11 @@
 	NSString *script = nil;
 	if ([s rangeOfString:@"://"].location != NSNotFound) {
 		NSURL *url = [[NSURL alloc] initWithString:s];
-		script = [NSString stringWithContentsOfURL:url];
+		@try {
+			script = [NSString stringWithContentsOfURL:url];
+		} @catch (id exception) {
+			
+		}
 	}
 	else {
 		NSString *resPath = [[NSBundle mainBundle] resourcePath];

@@ -22,7 +22,5 @@
 @interface TiSplashScreen : NSWindow {
 	
 }
--(void) close;
--(void) fadeOutWithDuration: (NSTimeInterval)duration;
 
 @end

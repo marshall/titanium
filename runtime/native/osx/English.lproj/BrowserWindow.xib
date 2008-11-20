@@ -26,16 +26,15 @@
 			<object class="NSWindowTemplate" id="275939982">
 				<int key="NSWindowStyleMask">15</int>
 				<int key="NSWindowBacking">2</int>
-				<string key="NSWindowRect">{{186, 64}, {944, 644}}</string>
+				<string key="NSWindowRect">{{174, 64}, {944, 644}}</string>
 				<int key="NSWTFlags">1886912512</int>
 				<string key="NSWindowTitle"/>
 				<string key="NSWindowClass">TiBrowserWindow</string>
 				<string key="NSViewClass">View</string>
 				<string key="NSWindowContentMaxSize">{3.40282e+38, 3.40282e+38}</string>
-				<string key="NSWindowContentMinSize">{94, 86}</string>
 				<object class="NSView" key="NSWindowView" id="568628114">
 					<reference key="NSNextResponder"/>
-					<int key="NSvFlags">256</int>
+					<int key="NSvFlags">274</int>
 					<object class="NSMutableArray" key="NSSubviews">
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<object class="WebView" id="1030403570">
@@ -91,7 +90,6 @@
 					<reference key="NSSuperview"/>
 				</object>
 				<string key="NSScreenRect">{{0, 0}, {1280, 778}}</string>
-				<string key="NSMinSize">{94, 108}</string>
 				<string key="NSMaxSize">{3.40282e+38, 3.40282e+38}</string>
 			</object>
 			<object class="NSCustomObject" id="796877042">
@@ -244,13 +242,13 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.WebKitIBPlugin</string>
-					<string>{{93, 67}, {944, 644}}</string>
+					<string>{{43, -71}, {944, 644}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{93, 67}, {944, 644}}</string>
+					<string>{{43, -71}, {944, 644}}</string>
 					<reference ref="9"/>
 					<integer value="0"/>
 					<string>{{201, 387}, {507, 413}}</string>
-					<reference ref="9"/>
+					<integer value="0"/>
 					<string>{94, 86}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="9"/>

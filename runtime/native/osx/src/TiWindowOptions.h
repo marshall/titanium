@@ -21,8 +21,12 @@
 {
 	CGFloat y;
 	CGFloat x;
-	int width;
-	int height;
+	CGFloat width;
+	CGFloat height;
+	CGFloat minWidth;
+	CGFloat minHeight;
+	CGFloat maxWidth;
+	CGFloat maxHeight;
 	NSString *title;
 	NSString *url;
 	bool chrome;
@@ -44,11 +48,23 @@
 - (CGFloat) getY;
 - (void) setY:(CGFloat)y;
 
-- (int) getWidth;
-- (void) setWidth:(int)w;
+- (CGFloat) getWidth;
+- (void) setWidth:(CGFloat)w;
 
-- (int) getHeight;
-- (void) setHeight:(int)h;
+- (CGFloat) getHeight;
+- (void) setHeight:(CGFloat)h;
+
+- (CGFloat) getMinWidth;
+- (void) setMinWidth:(CGFloat)w;
+
+- (CGFloat) getMinHeight;
+- (void) setMinHeight:(CGFloat)h;
+
+- (CGFloat) getMaxWidth;
+- (void) setMaxWidth:(CGFloat)w;
+
+- (CGFloat) getMaxHeight;
+- (void) setMaxHeight:(CGFloat)h;
 
 - (NSString*) getTitle;
 - (void) setTitle:(NSString*)title;

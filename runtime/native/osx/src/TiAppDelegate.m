@@ -150,7 +150,6 @@ static NSString *attrText(NSXMLElement *el, NSString *name)
 	}
 }
 
-
 - (void)awakeFromNib 
 {
 	arguments = [[TiAppArguments alloc] init];
@@ -401,7 +400,7 @@ static NSString *attrText(NSXMLElement *el, NSString *name)
 
 
 #pragma mark -
-#pragma mark Private
+#pragma mark Private 
 
 - (void)registerForAppleEvents {
 	[[NSAppleEventManager sharedAppleEventManager] setEventHandler:self
@@ -476,7 +475,8 @@ static NSString *attrText(NSXMLElement *el, NSString *name)
 	return def;
 }
 
-- (void)parseTiAppXML {
+- (void)parseTiAppXML 
+{
 	NSString *appXMLPath = [[NSBundle mainBundle] pathForResource:@"tiapp" ofType:@"xml"];
 	if ([arguments tiAppXml] != nil) {
 		appXMLPath = [arguments tiAppXml];
@@ -505,6 +505,16 @@ static NSString *attrText(NSXMLElement *el, NSString *name)
 	CGFloat width = [attrText(window, @"width") floatValue];
 	CGFloat height = [attrText(window, @"height") floatValue];
 	
+	// default is no minimum
+	CGFloat minWidth = [TiAppDelegate toFloat:attrText(window, @"min-width") def:0];
+	CGFloat minHeight = [TiAppDelegate toFloat:attrText(window, @"min-height") def:0];
+	
+	// default is very large maximum
+	CGFloat maxWidth = [TiAppDelegate toFloat:attrText(window, @"max-width") def:9000];
+	CGFloat maxHeight = [TiAppDelegate toFloat:attrText(window, @"max-height") def:9000];
+	
+	NSLog(@"initial window: %fx%f, min: %fx%f, max: %fx%f\n",width,height,minWidth,minHeight,maxWidth,maxHeight);
+
 	NSString *title = elementText(window, @"title");
 	NSString *start = elementText(window, @"start");		
 	bool chrome = [TiAppDelegate toBoolean:elementText(window, @"chrome") def:true];		
@@ -523,6 +533,10 @@ static NSString *attrText(NSXMLElement *el, NSString *name)
 	TiWindowOptions *options = [TiWindowOptions new];
 	[options setWidth:width];
 	[options setHeight:height];
+	[options setMinWidth:minWidth];
+	[options setMinHeight:minHeight];
+	[options setMaxWidth:maxWidth];
+	[options setMaxHeight:maxHeight];
 	[options setTitle:title];
 	[options setURL:start];
 	[options setChrome:chrome];

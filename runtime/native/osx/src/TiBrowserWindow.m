@@ -55,17 +55,25 @@
 }
 
 
-- (id)initWithContentRect:(NSRect)contentRect styleMask:(NSUInteger)mask backing:(NSBackingStoreType)bufferingType defer:(BOOL)flag {
+- (id)initWithContentRect:(NSRect)contentRect styleMask:(NSUInteger)mask backing:(NSBackingStoreType)bufferingType defer:(BOOL)flag 
+{
 	options = [[TiAppDelegate instance] getWindowOptions];
-	[options retain];
 	mask = [options toWindowMask];
-	self = [super initWithContentRect:contentRect styleMask:mask backing:bufferingType defer:flag];
+	
+	// our tiapp.xml decides the initial size of the window not the nib
+	NSRect r = NSMakeRect(contentRect.origin.x, contentRect.origin.y, [options getWidth], [options getHeight]);
+	
+	self = [super initWithContentRect:r styleMask:mask backing:bufferingType defer:flag];
 	if (self != nil) {
 		[self setOpaque:NO];
 		[self setHasShadow:YES];
 		[self setBackgroundColor:[NSColor clearColor]];
 		[self setAlphaValue:[options getTransparency]];
-		[self setAlphaValue:1.0];
+
+		// turn on/off zoom button to control app maximize behavior
+		[[self standardWindowButton:NSWindowZoomButton] setHidden:![options isMaximizable]];
+		
+		[self center];
 	}
 	return self;
 }
@@ -73,6 +81,27 @@
  -(BOOL) canBecomeKeyWindow
 {
 	return YES;
+}
+
+- (NSSize)windowWillResize:(NSWindow *) window toSize:(NSSize)newSize
+{
+	if ([options isResizable])
+	{
+		// if we're resizable, we need to resize within the constraints of the 
+		// windows min/max width/height
+		
+		CGFloat minWidth = [options getMinWidth];
+		CGFloat maxWidth = [options getMaxWidth];
+		CGFloat minHeight = [options getMinHeight];
+		CGFloat maxHeight = [options getMaxHeight];
+		
+		if (newSize.width >= minWidth && newSize.width <= maxWidth && 
+			newSize.height >= minHeight && newSize.height <= maxHeight)
+		{
+			return newSize;
+		}
+	}
+	return [window frame].size;
 }
 
 - (void)moveWindow:(NSEvent *)event {
@@ -124,15 +153,16 @@
 				WebView *webView = [winController webView];
 				NSPoint pointInView = [[[[webView mainFrame] frameView] documentView] convertPoint:[evt locationInWindow] fromView:nil];
 				NSDictionary *regions = [webView _dashboardRegions];
-				
+
+
 				WebDashboardRegion *region = [[regions objectForKey:@"resize"] lastObject];
-//				if (region) {
-//					if (NSPointInRect(pointInView, [region dashboardRegionClip])) {
-//						// we are in a resize control region, resize the window now and eat the event
-//						// [self resizeWindow:event];
-//						//return;
-//					}
-//				}
+				if (region) {
+					if (NSPointInRect(pointInView, [region dashboardRegionClip])) {
+						// we are in a resize control region, resize the window now and eat the event
+						//[self resizeWindow:evt];
+						//return;
+					}
+				}
 				
 				NSArray *controlRegions = [regions objectForKey:@"control"];
 				NSEnumerator *enumerator = [controlRegions objectEnumerator];

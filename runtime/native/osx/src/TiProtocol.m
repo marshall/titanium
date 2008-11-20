@@ -117,6 +117,8 @@ typedef struct {
 		} else {
 			resourcePath = [[args runtimePath] stringByAppendingPathComponent:s];
 		}
+	} else {
+		resourcePath = [basePath stringByAppendingPathComponent:s];
 	}
 	
 	if (data == nil) {
@@ -128,9 +130,13 @@ typedef struct {
 		mime = [AppProtocol mimeTypeFromExtension:ext];
 	}
 	
-	NSURLResponse *response = [[NSURLResponse alloc] initWithURL:url MIMEType:mime expectedContentLength:-1 textEncodingName:@"utf-8"];
+	NSURLResponse *response = [[NSURLResponse alloc] initWithURL:url MIMEType:mime expectedContentLength:-1 textEncodingName:@"utf-8" ];
 	[client URLProtocol:self didReceiveResponse:response cacheStoragePolicy:NSURLCacheStorageAllowed];
-	[client URLProtocol:self didLoadData:data];
+	
+	if (data != nil && [data length] > 0) {
+		[client URLProtocol:self didLoadData:data];
+	}
+	
 	[client URLProtocolDidFinishLoading:self];
 	[response release];
 	
