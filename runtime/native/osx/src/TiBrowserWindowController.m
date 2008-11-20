@@ -365,8 +365,6 @@ typedef enum {
 
 - (void)webView:(WebView *)wv setResizable:(BOOL)resizable; 
 {
-	// FIXME: This doesn't actually change the resizability of the window,
-	// only visibility of the indicator.
 	[[wv window] setShowsResizeIndicator:resizable];
 }
 
