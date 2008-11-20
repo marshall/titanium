@@ -13,48 +13,41 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-titanium = {};
-var ti = titanium;
+ti = {};
 
-titanium.debug = function (msg) {
-	TiNative.debug(msg);
-}
-
-titanium.include = function(path) {
-	TiNative.include(path);
-}
-
-titanium.eachPlugin = function (f) {
+ti.eachPlugin = function (f) {
 	for (var i = 0; i < ti.plugins.length; i++) {
 		f(ti.plugins[i]);
 	}
 }
 
-titanium.pluginEvent = function(event) {
-	titanium.eachPlugin(function(plugin) {
+ti.pluginEvent = function(event) {
+	ti.eachPlugin(function(plugin) {
 		if (event in plugin) {
 			plugin[event]();
 		}
 	});
 }
 
-titanium.pluginsLoaded = function ()
+ti.pluginsLoaded = function ()
 {
 	$(document).ready(function() {
+		
 		ti.pluginEvent("documentReady");
 		
-		ti.include("ti:///titanium_file.js");	
-		ti.include("ti:///titanium_xml.js");
-		ti.include("ti:///titanium_app.js");
-		ti.include("ti:///titanium_chrome.js");
-		ti.App.parseXML();
-		ti.Chrome.run();
+		//ti.App.include("ti://titanium_dock.js");
+		//ti.App.include("ti://titanium_window.js");
+		//ti.App.include("ti://titanium_menu.js");
+		//ti.App.include("ti://titanium_file.js");	
+		//ti.App.include("ti://titanium_xml.js");
 	});
 }
 
-if (navigator.appVersion.indexOf("Win")!=-1) titanium.platform = "win32";
-if (navigator.appVersion.indexOf("Mac")!=-1) titanium.platform = "osx";
-if (navigator.appVersion.indexOf("Linux")!=-1) titanium.platform = "linux";
+if (navigator.appVersion.indexOf("Win")!=-1) ti.platform = "win32";
+if (navigator.appVersion.indexOf("Mac")!=-1) ti.platform = "osx";
+if (navigator.appVersion.indexOf("Linux")!=-1) ti.platform = "linux";
 
-ti.include("ti:///plugins.js");
+// include this first so definition for include is setup
+TiApp.include("ti://titanium_wrappers.js");
+ti.App.include("ti://plugins.js");
 ti.pluginsLoaded();

@@ -1,8 +1,8 @@
 
-ti.File = ti.gearsPlugin.create('ti.fileclass');
+ti.Filesystem = ti.gearsPlugin.create('ti.fileclass');
 ti.Path = {};
-ti.Path.Resources = TiNative.getResourcePath();
-ti.Path.Separator = ti.File.pathSeparator;
+ti.Path.Resources = ti.App.getResourcePath();
+ti.Path.Separator = ti.Filesystem.pathSeparator;
 
 ti.Path.resource = function(path)
 {

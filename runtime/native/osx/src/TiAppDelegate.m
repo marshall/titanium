@@ -153,8 +153,15 @@ static NSString *attrText(NSXMLElement *el, NSString *name)
 
 - (void)awakeFromNib 
 {
+	arguments = [[TiAppArguments alloc] init];
+	
 	[self showSplash];
 	[self parseTiAppXML];
+	
+	if ([arguments devLaunch]) {
+		[self initDevEnvironment];
+	}
+	
 	[self updateAppNameInMainMenu];
 	[self setupWebPreferences];
 }
@@ -471,6 +478,9 @@ static NSString *attrText(NSXMLElement *el, NSString *name)
 
 - (void)parseTiAppXML {
 	NSString *appXMLPath = [[NSBundle mainBundle] pathForResource:@"tiapp" ofType:@"xml"];
+	if ([arguments tiAppXml] != nil) {
+		appXMLPath = [arguments tiAppXml];
+	}
 	
 	NSError *error = nil;
 	NSURL *furl = [NSURL fileURLWithPath:appXMLPath];
@@ -526,6 +536,10 @@ static NSString *attrText(NSXMLElement *el, NSString *name)
 	[[TiAppDelegate instance] setWindowOptions:options];
 }
 
+- (void)initDevEnvironment {
+	
+}
+
 + (void)setFirstDocument:(TiBrowserDocument *)document
 {
 	firstDocument = document;
@@ -534,34 +548,25 @@ static NSString *attrText(NSXMLElement *el, NSString *name)
 
 
 - (void)loadFirstPage {
-	NSArray *args = [[NSProcessInfo processInfo] arguments];
 	NSURL *url = nil;
+	TiWindowOptions *options = [[TiAppDelegate instance] getWindowOptions];
+	NSString *relativePath = [options getURL];
 	
-	if ([args count] == 3) {
-		NSString *arg1 = [args objectAtIndex:1];
-		NSString *arg2 = [args objectAtIndex:2];
-		
-		if ([arg1 isEqualToString:@"-file"]) {
-			url = [NSURL fileURLWithPath:arg2];
-		} else if ([arg1 isEqualToString:@"-url"]) {
-			url = [NSURL URLWithString:arg2];
-		}
-	} else {
-		//NSString *relativePath = [self startPath];
-		TiWindowOptions *options = [[TiAppDelegate instance] getWindowOptions];
-		NSString *relativePath = [options getURL];
-		
-		if (!relativePath)
-		{
-			relativePath = @"index.html";
+	if (!relativePath)
+	{
+		relativePath = @"index.html";
+	}
+	
+	NSLog(@"starting with path:%@\n", relativePath);
+	
+	if ([relativePath length]) {
+		NSString *fullPath = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:relativePath];
+		if ([arguments devLaunch]) {
+			char *cwd = getcwd(NULL, 0);
+			fullPath = [[NSString stringWithCString:cwd length:strlen(cwd)] stringByAppendingPathComponent:relativePath];
 		}
 		
-		NSLog(@"starting with path:%@\n", relativePath);
-		
-		if ([relativePath length]) {
-			NSString *fullPath = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:relativePath];
-			url = [NSURL fileURLWithPath:fullPath];
-		}
+		url = [NSURL fileURLWithPath:fullPath];
 	}
 	
 	if (url) {
@@ -652,6 +657,10 @@ static NSString *attrText(NSXMLElement *el, NSString *name)
 		[appName autorelease];
 		appName = [s copy];
 	}
+}
+
+- (TiAppArguments *)arguments {
+	return arguments;
 }
 
 @end

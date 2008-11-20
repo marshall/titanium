@@ -17,9 +17,6 @@
  */
 
 #import <Cocoa/Cocoa.h>
-#import <Foundation/Foundation.h>
-#import <Foundation/NSURLRequest.h>
-#import <Foundation/NSURLProtocol.h>
 
 @interface TiProtocol : NSURLProtocol {
 }

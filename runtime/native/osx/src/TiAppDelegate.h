@@ -19,6 +19,7 @@
 #import <Cocoa/Cocoa.h>
 #import "TiWindowOptions.h"
 #import "TiSplashScreenWindowController.h"
+#import "TiAppArguments.h"
 
 @class TiAppDelegate;
 @class TiBrowserDocument;
@@ -33,6 +34,7 @@ TiBrowserWindowController *TIFrontController();
 	NSString *appName;
 	TiWindowOptions *windowOptions;
 	TiSplashScreenWindowController *splashController;
+	TiAppArguments *arguments;
 }
 + (id)instance;
 
@@ -51,6 +53,7 @@ TiBrowserWindowController *TIFrontController();
 - (WebFrame *)findFrameNamed:(NSString *)frameName;
 
 - (void)parseTiAppXML;
+- (void)initDevEnvironment;
 
 - (void)setWindowOptions:(TiWindowOptions*)o;
 - (TiWindowOptions*)getWindowOptions;
@@ -58,5 +61,6 @@ TiBrowserWindowController *TIFrontController();
 - (void)setEndpoint:(NSString *)s;
 - (NSString *)appName;
 - (void)setAppName:(NSString *)s;
+- (TiAppArguments *)arguments;
 
 @end

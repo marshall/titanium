@@ -3,14 +3,15 @@
  xmlns:ti="http://ti.appcelerator.org"
  xmlns:appc="http://www.appcelerator.org">
 	
-	<name><%= @@project.config[:name] %></name>
-	<% if not @@endpoint.nil? %>
-	<appc:endpoint><%= @@endpoint %></appc:endpoint>
+	<name><%= config[:appname] %></name>
+	
+	<% if config.has_key?(:endpoint) %>
+	<appc:endpoint><%= config[:endpoint] %></appc:endpoint>
     <% end %>
 	
-	<window width="800" height="600">
-		<title><%= @@project.config[:name] %></title>
-		<start>public/index.html</start>
+	<window width="<%= config.has_key?(:width) ? config[:width] : 800 %>" height="<%= config.has_key?(:height) ? config[:height] : 600 %>">
+		<title><%= config[:title] %></title>
+		<start><%= config[:start] %></start>
 	</window>
 
 </ti:app>

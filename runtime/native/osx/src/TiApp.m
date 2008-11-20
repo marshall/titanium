@@ -43,10 +43,23 @@
 }
 
 - (void)include:(NSString *)s {
-	NSString *resPath = [[NSBundle mainBundle] resourcePath];
-	NSString *scriptPath = [[resPath stringByAppendingPathComponent:@"public"] stringByAppendingPathComponent:s];
-	NSString *script = [NSString stringWithContentsOfFile:scriptPath];
-	[[webView windowScriptObject] evaluateWebScript:script];
+	
+	NSLog(@"attempting to include %@\n", s);
+	
+	NSString *script = nil;
+	if ([s rangeOfString:@"://"].location != NSNotFound) {
+		NSURL *url = [[NSURL alloc] initWithString:s];
+		script = [NSString stringWithContentsOfURL:url];
+	}
+	else {
+		NSString *resPath = [[NSBundle mainBundle] resourcePath];
+		NSString *scriptPath = [[resPath stringByAppendingPathComponent:@"public"] stringByAppendingPathComponent:s];
+		script = [NSString stringWithContentsOfFile:scriptPath];
+	}
+	
+	if (script != nil) {
+		[[webView windowScriptObject] evaluateWebScript:script];
+	}
 }
 
 

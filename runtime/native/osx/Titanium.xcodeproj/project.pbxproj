@@ -36,6 +36,8 @@
 		8D15AC340486D014006FF6A4 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A7FEA54F5311CA2CBB /* Cocoa.framework */; };
 		ABCF24040ED3601C00F0C4F3 /* TiMenuFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = ABCF24010ED3601C00F0C4F3 /* TiMenuFactory.m */; };
 		ABCF24050ED3601C00F0C4F3 /* TiWindowFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = ABCF24030ED3601C00F0C4F3 /* TiWindowFactory.m */; };
+		ABCF240D0ED3966D00F0C4F3 /* TiAppArguments.m in Sources */ = {isa = PBXBuildFile; fileRef = ABCF240C0ED3966D00F0C4F3 /* TiAppArguments.m */; };
+		ABCF24690ED3A95300F0C4F3 /* AppProtocol.m in Sources */ = {isa = PBXBuildFile; fileRef = ABCF24680ED3A95300F0C4F3 /* AppProtocol.m */; };
 		D31B34E20EBBE9CD006F3012 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D31B34E10EBBE9CD006F3012 /* WebKit.framework */; };
 		D31B35000EBBEE04006F3012 /* PreferencesWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = D31B34FE0EBBEE04006F3012 /* PreferencesWindow.xib */; };
 		D31B36280EBC07C1006F3012 /* tiapp.xml in Resources */ = {isa = PBXBuildFile; fileRef = D31B36270EBC07C1006F3012 /* tiapp.xml */; };
@@ -106,6 +108,10 @@
 		ABCF24010ED3601C00F0C4F3 /* TiMenuFactory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TiMenuFactory.m; path = src/TiMenuFactory.m; sourceTree = "<group>"; };
 		ABCF24020ED3601C00F0C4F3 /* TiWindowFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TiWindowFactory.h; path = src/TiWindowFactory.h; sourceTree = "<group>"; };
 		ABCF24030ED3601C00F0C4F3 /* TiWindowFactory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TiWindowFactory.m; path = src/TiWindowFactory.m; sourceTree = "<group>"; };
+		ABCF240B0ED3966D00F0C4F3 /* TiAppArguments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TiAppArguments.h; path = src/TiAppArguments.h; sourceTree = "<group>"; };
+		ABCF240C0ED3966D00F0C4F3 /* TiAppArguments.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TiAppArguments.m; path = src/TiAppArguments.m; sourceTree = "<group>"; };
+		ABCF24670ED3A95300F0C4F3 /* AppProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppProtocol.h; path = src/AppProtocol.h; sourceTree = "<group>"; };
+		ABCF24680ED3A95300F0C4F3 /* AppProtocol.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppProtocol.m; path = src/AppProtocol.m; sourceTree = "<group>"; };
 		D31B34E10EBBE9CD006F3012 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = /System/Library/Frameworks/WebKit.framework; sourceTree = "<absolute>"; };
 		D31B34FF0EBBEE04006F3012 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/PreferencesWindow.xib; sourceTree = "<group>"; };
 		D31B36270EBC07C1006F3012 /* tiapp.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = tiapp.xml; path = res/tiapp.xml; sourceTree = "<group>"; };
@@ -163,6 +169,7 @@
 		2A37F4AAFDCFA73011CA2CEA /* Titanium */ = {
 			isa = PBXGroup;
 			children = (
+				ABCF24750ED3AAAD00F0C4F3 /* URL */,
 				2A37F4ABFDCFA73011CA2CEA /* Classes */,
 				2A37F4AFFDCFA73011CA2CEA /* Other Sources */,
 				2A37F4B8FDCFA73011CA2CEA /* Resources */,
@@ -176,6 +183,8 @@
 		2A37F4ABFDCFA73011CA2CEA /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				ABCF240B0ED3966D00F0C4F3 /* TiAppArguments.h */,
+				ABCF240C0ED3966D00F0C4F3 /* TiAppArguments.m */,
 				2433DDD60ED0FFBE00813747 /* TiBrowserWindowController.h */,
 				2433DDD70ED0FFBE00813747 /* TiBrowserWindowController.m */,
 				2433DDE60ED1002400813747 /* TiAppDelegate.h */,
@@ -186,8 +195,6 @@
 				2433DDEB0ED1002400813747 /* TiBrowserWindow.m */,
 				2433DDEC0ED1002400813747 /* TiMenuAction.h */,
 				2433DDED0ED1002400813747 /* TiMenuAction.m */,
-				2433DDEE0ED1002400813747 /* TiProtocol.h */,
-				2433DDEF0ED1002400813747 /* TiProtocol.m */,
 				D31B3D800EBD89FA006F3012 /* Themes */,
 				D31B393E0EBCFA53006F3012 /* Javascript */,
 				D31B393D0EBCFA3A006F3012 /* Auxiliary Windows */,
@@ -232,6 +239,17 @@
 				1058C7A8FEA54F5311CA2CBB /* Other Frameworks */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		ABCF24750ED3AAAD00F0C4F3 /* URL */ = {
+			isa = PBXGroup;
+			children = (
+				ABCF24670ED3A95300F0C4F3 /* AppProtocol.h */,
+				ABCF24680ED3A95300F0C4F3 /* AppProtocol.m */,
+				2433DDEE0ED1002400813747 /* TiProtocol.h */,
+				2433DDEF0ED1002400813747 /* TiProtocol.m */,
+			);
+			name = URL;
 			sourceTree = "<group>";
 		};
 		D31B393D0EBCFA3A006F3012 /* Auxiliary Windows */ = {
@@ -395,6 +413,8 @@
 				24F960030ED28EBD002065FC /* TiSplashScreenWindowController.m in Sources */,
 				ABCF24040ED3601C00F0C4F3 /* TiMenuFactory.m in Sources */,
 				ABCF24050ED3601C00F0C4F3 /* TiWindowFactory.m in Sources */,
+				ABCF240D0ED3966D00F0C4F3 /* TiAppArguments.m in Sources */,
+				ABCF24690ED3A95300F0C4F3 /* AppProtocol.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
