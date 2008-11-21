@@ -88,11 +88,14 @@ void TIWebShell::init(TiApp *tiApp) {
 
 void TIWebShell::loadTiApp()
 {
-	std::string startPath = tiApp->getStartPath();
+	TiWindow *mainWindow = tiApp->getMainWindow();
+	if (mainWindow == NULL) return;
+
+	std::string startPath = mainWindow->getURL();
 	std::wstring fileURL = L"file://";
 	fileURL += resourcesPath;
 	fileURL += L"/";
-	fileURL += UTF8ToWide(tiApp->getStartPath());
+	fileURL += UTF8ToWide(startPath);
 
 	size_t index;
 	while ((index = fileURL.find(file_util::kPathSeparator)) != std::string::npos) {
@@ -101,24 +104,25 @@ void TIWebShell::loadTiApp()
 	
 	delegate.bootstrapTitanium = true;
 	loadURL(WideToUTF8(fileURL).c_str());
-	SetWindowText(hWnd, UTF8ToWide(tiApp->getTitle()).c_str());
+	SetWindowText(hWnd, UTF8ToWide(mainWindow->getTitle()).c_str());
 
 	
 	long windowStyle = GetWindowLong(hWnd, GWL_STYLE);
 	
-	SetFlag(windowStyle, WS_MINIMIZEBOX, tiApp->isMinimizable());
-	SetFlag(windowStyle, WS_MAXIMIZEBOX, tiApp->isMaximizable());
-	SetFlag(windowStyle, WS_CAPTION, tiApp->isUsingChrome());
+	SetFlag(windowStyle, WS_MINIMIZEBOX, mainWindow->isMinimizable());
+	SetFlag(windowStyle, WS_MAXIMIZEBOX, mainWindow->isMaximizable());
+	SetFlag(windowStyle, WS_BORDER, mainWindow->isUsingChrome());
+	SetFlag(windowStyle, WS_CAPTION, mainWindow->isUsingChrome());
 	
 	SetWindowLong(hWnd, GWL_STYLE, windowStyle);
 
 	UINT flags = SWP_NOMOVE | SWP_NOZORDER | SWP_FRAMECHANGED;
-	if (!tiApp->isResizable()) {
+	if (!mainWindow->isResizable()) {
 		flags |= SWP_NOREPOSITION;
 	}
 
-	sizeTo(tiApp->getWidth(), tiApp->getHeight(), flags);
-	SetLayeredWindowAttributes(hWnd, 0, (BYTE)floor(tiApp->getTransparency()*255), LWA_ALPHA);
+	sizeTo(mainWindow->getWidth(), mainWindow->getHeight(), flags);
+	SetLayeredWindowAttributes(hWnd, 0, (BYTE)floor(mainWindow->getTransparency()*255), LWA_ALPHA);
 }
 
 void TIWebShell::loadURL(const char* url) {

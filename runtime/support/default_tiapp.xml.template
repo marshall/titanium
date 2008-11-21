@@ -11,7 +11,7 @@
 	
 	<window width="<%= config.has_key?(:width) ? config[:width] : 800 %>" height="<%= config.has_key?(:height) ? config[:height] : 600 %>">
 		<title><%= config[:title] %></title>
-		<start><%= config[:start] %></start>
+		<url><%= config[:url] %></url>
 	</window>
 
 </ti:app>

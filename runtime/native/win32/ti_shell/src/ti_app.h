@@ -1,5 +1,3 @@
-#ifndef TI_APP_H_
-#define TI_APP_H_
 /*
 * Copyright 2006-2008 Appcelerator, Inc.
 *
@@ -15,35 +13,39 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
+#ifndef TI_APP_H_
+#define TI_APP_H_
+
 #include <string>
+#include <vector>
 #include <algorithm>
 
-#import <msxml6.dll>
+#include "libxml/parser.h"
+#include "libxml/tree.h"
+#include "libxml/xpath.h"
 
-using namespace MSXML2;
+#include "base/string_util.h"
+
+#include "ti_window.h"
+
+#define nodeNameEquals(n,s) (xmlStrcmp(n->name, (const xmlChar *)s) == 0)
+#define nodeValue(n) ((const char *)xmlNodeListGetString(n->doc, n->children, TRUE))
+#define boolValue(n) (TiApp::stringToBool(nodeValue(n)))
 
 class TiApp 
 {
 private:
 	std::string appName, description, copyright, homepage, version;
-	
-	// window properties
-	std::string startPath, title;
-	int width, height;
-	float transparency;
-	bool maximizable, minimizable, closeable,
-		resizable, usingChrome, usingScrollbars;
+	std::vector<TiWindow*> windows;
 
 	// icon properties
 	std::string icon16, icon32, icon48;
 
-	void readElement(IXMLDOMElementPtr element);
-	void readWindowElement(IXMLDOMElementPtr element);
-	void readIconElement(IXMLDOMElementPtr element);
-
 public:
 	TiApp(std::wstring& xmlfile);
 	~TiApp();
+
+	static bool stringToBool (const char * str);
 
 	std::string& getAppName() { return appName; }
 	std::string& getDescription() { return description; }
@@ -51,25 +53,14 @@ public:
 	std::string& getHomepage() { return homepage; }
 	std::string& getVersion() { return version; }
 
-	// window accessors
-	std::string& getStartPath() { return startPath; }
-	std::string& getTitle() { return title; }
+	TiWindow* getWindow(std::string &id);
+	TiWindow* getMainWindow();
 	
-	int getWidth() { return width; }
-	int getHeight() { return height; }
-
-	float getTransparency() { return transparency; }
-	bool isMaximizable() { return maximizable; }
-	bool isMinimizable() { return minimizable; }
-	bool isCloseable() { return closeable; }
-	bool isResizable() { return resizable; }
-	bool isUsingChrome() { return usingChrome; }
-	bool isUsingScrollbars() { return usingScrollbars; }
-
 	//icon accessors
 	std::string& getIcon16() { return icon16; }
 	std::string& getIcon32() { return icon32; }
 	std::string& getIcon48() { return icon48; }
+
 };
 
 #endif
