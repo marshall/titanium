@@ -37,13 +37,15 @@ task :gather do
 	template = nil
 	File.open('build.yml') { |f| template = ERB.new(f.read()) }
 
+  FileUtils.mkdir_p STAGE_DIR unless File.exists? STAGE_DIR
+	
 	build_yml = template.result(binding)
   build = YAML::load(build_yml)
   filename = File.join(STAGE_DIR, "titanium_runtime_" + build[:version].to_s + "_" + platform_string + ".zip")
   
   if File.exists?(filename)
     puts "rm #{filename}"
-    FileUtils.rm filename
+    FileUtils.rm_rf filename
   end
   
   Zip::ZipFile.open(filename, Zip::ZipFile::CREATE) {
@@ -101,6 +103,7 @@ END
     # compress our file
     system "java -jar lib/yuicompressor-2.3.6.jar --type js --charset utf8 #{tmpfile.path} -o #{tmpfile.path}t"
     
+    zipfile.get_output_stream('titanium-debug.js') { |f| f.puts(jf) }
     zipfile.add 'titanium.js',"#{tmpfile.path}t"
     zipfile.add 'tiplugin.rb',"src/tiplugin.rb"
 

@@ -1,8 +1,17 @@
-	}
-	catch(E)
-	{
-		alert("Caught Exception in Framework: "+E);
-	}
+
+			// notify our pending ready listeners
+			loaded = true;
+			$.each(readies,function()
+			{
+				this();
+			});
+			readies = null;
+		}
+	    catch(E)
+	    {
+			alert("Caught Exception in Framework: "+E+" at line: "+E.line);
+	 	}
+   });
 	
 // this ends the variable hiding and also 
 // ensures that jQuery only is available inside our

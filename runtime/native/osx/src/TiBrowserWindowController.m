@@ -221,9 +221,18 @@ typedef enum {
 	
 	// set our main ti object
 	[windowScriptObject setValue:ti forKey:@"tiRuntime"];
+	
+	TiAppDelegate *app = [TiAppDelegate instance];
 
 	// load our main titanium JS plug
-	[[ti App] include:@"ti://titanium.js"];
+	if ([[app arguments] debug])
+	{
+		[[ti App] include:@"ti://titanium-debug.js"];
+	}
+	else
+	{
+		[[ti App] include:@"ti://titanium.js"];
+	}
 }
 
 

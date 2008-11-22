@@ -46,6 +46,22 @@
 		document.write('<style>body { opacity:' + windowTransparency + '; ' + style + ' } body > DIV { height:100% }</style>');
 	}
 	
-	try
+	var readies = [], loaded = false;
+	
+	ti.ready = function(fn)
 	{
-		// we wrap in a try/catch
+		if (!loaded)
+		{
+			readies.push(fn);
+		}
+		else
+		{
+			fn();
+		}
+	};
+	
+	$(function()
+	{
+		try
+		{
+			// we wrap in a try/catch

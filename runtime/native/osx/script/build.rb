@@ -1,5 +1,6 @@
 require 'fileutils'
 
+TIVERSION = '0.1.1'
 
 def get_home
   if ENV['HOME']
@@ -21,12 +22,12 @@ def home_dir
   File.expand_path get_home + '/.appcelerator'
 end
 
-js = File.join(home_dir,"releases/titanium/titanium_osx/0.1.1/titanium.js")
+js = File.join(home_dir,"releases/titanium/titanium_osx/#{TIVERSION}/titanium.js")
 
-dir = File.join(ENV['TARGET_BUILD_DIR'],ENV['UNLOCALIZED_RESOURCES_FOLDER_PATH'],'titanium')
-
-FileUtils.mkdir_p dir unless File.exists? dir
-FileUtils.cp js,dir
-
+if File.exists? js
+  dir = File.join(ENV['TARGET_BUILD_DIR'],ENV['UNLOCALIZED_RESOURCES_FOLDER_PATH'],'titanium')
+  FileUtils.mkdir_p dir unless File.exists? dir
+  FileUtils.cp js,dir
+end
 
 exit 0
