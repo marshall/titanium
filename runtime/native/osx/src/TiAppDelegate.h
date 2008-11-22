@@ -32,7 +32,8 @@ TiBrowserWindowController *TIFrontController();
 @interface TiAppDelegate : NSDocumentController {
 	NSString *endpoint;
 	NSString *appName;
-	TiWindowOptions *windowOptions;
+	NSMutableArray *windowOptions;
+	TiWindowOptions *activeWindowOption;
 	TiSplashScreenWindowController *splashController;
 	TiAppArguments *arguments;
 }
@@ -55,8 +56,12 @@ TiBrowserWindowController *TIFrontController();
 - (void)parseTiAppXML;
 - (void)initDevEnvironment;
 
-- (void)setWindowOptions:(TiWindowOptions*)o;
-- (TiWindowOptions*)getWindowOptions;
+- (TiWindowOptions*) findInitialWindowOptions;
+- (TiWindowOptions*) findWindowOptionsForURLSpec:(NSString*)url;
+
+- (void)setActiveWindowOption:(TiWindowOptions*)o;
+- (TiWindowOptions*)getActiveWindowOption;
+
 - (NSString *)endpoint;
 - (void)setEndpoint:(NSString *)s;
 - (NSString *)appName;

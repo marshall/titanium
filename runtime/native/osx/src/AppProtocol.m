@@ -100,7 +100,7 @@
     NSURLRequest *request = [self request];
 	
 	NSURL *url = [request URL];
-	NSString *s = [[url absoluteString] substringFromIndex:[[AppProtocol specialProtocolScheme] length]+3];	// ti://
+	NSString *s = [[url absoluteString] substringFromIndex:[[AppProtocol specialProtocolScheme] length]+3];	
 	NSString *basePath = [[NSBundle mainBundle] resourcePath];
 	NSString *resourcePath = [basePath stringByAppendingPathComponent:s];
 	

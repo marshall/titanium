@@ -2,20 +2,20 @@
 <body>
 <div style="background:#000; -webkit-border-radius:2px;margin:10px;padding:0;">
 <script type="text/javascript">
-window.onload=function()
+window.xonload=function()
 {
 	try
 	{
 		var visible = true;
-		var menu = TiMenu.createSystemMenu("ti://favicon.ico",function(sysmenu)
+		var menu = ti.Menu.createSystemMenu("app://favicon.ico",function(sysmenu)
 		{
 			if (visible)
 			{
-				TiApp.hide();
+				ti.App.hide();
 			}
 			else
 			{
-				TiApp.show();
+				ti.App.show();
 			}
 			visible = !visible;
 		});
@@ -55,6 +55,8 @@ window.onload=function()
 			ti.App.beep();
 		});
 */
+
+
 	}
 	catch (e)
 	{
@@ -66,11 +68,14 @@ window.onload=function()
 <img src="http://developer.apple.com/images/developer_logo.gif"/>
 
 <button id="b">Click me</button>
-<button onclick="javascript:TiApp.quit();">Quit</button>
+<button onclick="javascript:ti.App.quit();">Quit</button>
 
 <button onclick="window.moveTo(0,10);">Move</button>
 <button onclick="ti.App.setSize(500,600,true)">Resize</button>
 <button onclick="ti.App.setBackgroundColor('#f00')">Colorize</button>
+
+<a href="secondary.html">Go to secondary</a>
+
 
 </div>
 </body>

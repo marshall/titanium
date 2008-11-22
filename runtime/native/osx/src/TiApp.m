@@ -21,11 +21,13 @@
 
 @implementation TiApp
 
-- (id)initWithWebView:(WebView *)wv 
+- (id)initWithWebView:(WebView *)wv opts:(TiWindowOptions*)opts
 {
 	self = [super init];
 	if (self != nil) {
 		webView = wv; // assign only. don't retain. prevents retain loop memory leak
+		windowOptions = opts;
+		[windowOptions retain];
 	}
 	return self;
 }
@@ -33,6 +35,7 @@
 - (void)dealloc 
 {
 	webView = nil;
+	[windowOptions release];
 	[super dealloc];
 }
 
@@ -52,13 +55,16 @@
 		@try {
 			script = [NSString stringWithContentsOfURL:url];
 		} @catch (id exception) {
-			
+			script = nil;
 		}
+		[url release];
 	}
 	else {
 		NSString *resPath = [[NSBundle mainBundle] resourcePath];
 		NSString *scriptPath = [[resPath stringByAppendingPathComponent:@"public"] stringByAppendingPathComponent:s];
 		script = [NSString stringWithContentsOfFile:scriptPath];
+		[resPath release];
+		[scriptPath release];
 	}
 	
 	if (script != nil) {
@@ -87,7 +93,6 @@
 }
 
 - (void)hide {
-//	[NSApp hide:self];
 	[[webView window] orderOut:nil];
 }
 
@@ -155,6 +160,11 @@
 	[win setBackgroundColor:[TiApp colorFromHexRGB:color]];
 }
 
+- (TiWindowOptions*) getWindowOptions
+{
+	return windowOptions;
+}
+
 
 
 #pragma mark -
@@ -171,6 +181,8 @@
 		return @"include";
 	} else if (sel == @selector(debug:)) {
 		return @"debug";
+	} else if (sel == @selector(getWindowOptions)) {
+		return @"getWindowOptions";
 	} else if (sel == @selector(quit)) {
 		return @"quit";
 	} else if (sel == @selector(activate)) {

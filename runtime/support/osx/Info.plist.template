@@ -20,13 +20,13 @@
       <key>CFBundleTypeRole</key>
       <string>Editor</string>
       <key>NSDocumentClass</key>
-      <string>TIBrowserDocument</string>
+      <string>TiBrowserDocument</string>
     </dict>
   </array>
   <key>CFBundleExecutable</key>
   <string><%= @@executable_name %></string>
   <key>CFBundleIconFile</key>
-  <string>appcelerator</string>
+  <string>titanium</string>
   <key>CFBundleIdentifier</key>
   <string><%= config[:name] %></string>
   <key>CFBundleInfoDictionaryVersion</key>

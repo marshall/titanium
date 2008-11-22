@@ -78,7 +78,7 @@ typedef struct {
     NSURLRequest *request = [self request];
 	
 	NSURL *url = [request URL];
-	NSString *s = [[url absoluteString] substringFromIndex:[[TiProtocol specialProtocolScheme] length]+3];	// ti://
+	NSString *s = [[url absoluteString] substringFromIndex:[[TiProtocol specialProtocolScheme] length]+3];
 	NSString *basePath = [[NSBundle mainBundle] resourcePath];
 	basePath = [basePath stringByAppendingPathComponent:@"titanium"];
 	NSString *resourcePath = nil;

@@ -3,6 +3,7 @@ require 'zip/zip'
 require 'yaml'
 require 'erb'
 require '../build.rb'
+require 'tempfile'
 
 NATIVE_DIR = File.join 'native', (is_mac? ? 'osx' : (is_win? ? 'win32' : 'linux'))
 
@@ -54,10 +55,57 @@ task :gather do
 			gather_win(zipfile)
     end
     
-    Dir["src/**/*"].each do |filepath|
-      filename = File.basename(filepath)
-      zipfile.add(filename, filepath)
+    titanium_js =<<END
+/*!
+ * Copyright 2008 Appcelerator, Inc.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+END
+    
+    # files in the order that we want them
+    files = %w(jquery-1.2.6
+               prolog
+               gears
+               dom
+               file
+               desktop
+               epilog)
+
+    # make one big ass file
+    files.each do |name|
+      name.strip!
+      js = File.read File.expand_path(File.join('src',"#{name}.js"))
+      titanium_js << js
     end
+
+    version = build[:version]
+
+  	template = ERB.new titanium_js
+  	jf = template.result(binding)
+    
+    tmpfile = Tempfile.new 'titanium'
+    tmpfile.puts jf
+    tmpfile.close
+    
+    # compress our file
+    system "java -jar lib/yuicompressor-2.3.6.jar --type js --charset utf8 #{tmpfile.path} -o #{tmpfile.path}t"
+    
+    zipfile.add 'titanium.js',"#{tmpfile.path}t"
+    zipfile.add 'tiplugin.rb',"src/tiplugin.rb"
+
+    tmpfile.delete
+    
  
     zipfile.mkdir("support")
 		Dir["support/*"].each do |filepath|

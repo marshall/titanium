@@ -19,6 +19,7 @@
 
 @interface TiWindowOptions : NSObject 
 {
+	NSString *windowID;
 	CGFloat y;
 	CGFloat x;
 	CGFloat width;
@@ -29,18 +30,21 @@
 	CGFloat maxHeight;
 	NSString *title;
 	NSString *url;
-	bool chrome;
+	BOOL chrome;
 	CGFloat transparency;
-	bool visible;
-	bool minimizable;
-	bool maximizable;
-	bool resizable;
-	bool fullscreen;
-	bool closeable;
-	bool scrollbars;
+	BOOL visible;
+	BOOL minimizable;
+	BOOL maximizable;
+	BOOL resizable;
+	BOOL fullscreen;
+	BOOL closeable;
+	BOOL scrollbars;
 }
 
 - (id) init;
+
+- (NSString*) getID;
+- (void) setID:(NSString*)i;
 
 - (CGFloat) getX;
 - (void) setX:(CGFloat)x;
@@ -69,36 +73,37 @@
 - (NSString*) getTitle;
 - (void) setTitle:(NSString*)title;
 
-- (bool) isChrome;
-- (void) setChrome:(bool)yn;
+- (BOOL) isChrome;
+- (void) setChrome:(BOOL)yn;
 
 - (CGFloat) getTransparency;
 - (void) setTransparency:(CGFloat)f;
 
-- (bool) isVisible;
-- (void) setVisible:(bool)yn;
+- (BOOL) isVisible;
+- (void) setVisible:(BOOL)yn;
 
-- (bool) isMinimizable;
-- (void) setMinimizable:(bool)yn;
+- (BOOL) isMinimizable;
+- (void) setMinimizable:(BOOL)yn;
 
-- (bool) isMaximizable;
-- (void) setMaximizable:(bool)yn;
+- (BOOL) isMaximizable;
+- (void) setMaximizable:(BOOL)yn;
 
-- (bool) isResizable;
-- (void) setResizable:(bool)yn;
+- (BOOL) isResizable;
+- (void) setResizable:(BOOL)yn;
 
-- (bool) isFullscreen;
-- (void) setFullscreen:(bool)yn;
+- (BOOL) isFullscreen;
+- (void) setFullscreen:(BOOL)yn;
 
-- (bool) isCloseable;
-- (void) setCloseable:(bool)yn;
+- (BOOL) isCloseable;
+- (void) setCloseable:(BOOL)yn;
 
-- (bool) isScrollbars;
-- (void) setScrollbars:(bool)yn;
+- (BOOL) isScrollbars;
+- (void) setScrollbars:(BOOL)yn;
 
 - (NSString*) getURL;
 - (void) setURL:(NSString*)url;
 
 - (NSUInteger) toWindowMask;
+- (BOOL)urlMatches:(NSString*)url;
 
 @end

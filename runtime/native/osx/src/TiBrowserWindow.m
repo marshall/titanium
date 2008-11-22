@@ -45,19 +45,19 @@
 // must override the ThemeFrame class to force no drawing of titlebar when window is resizable
 + (Class)frameViewClassForStyleMask:(NSUInteger)styleMask 
 {
-	TiWindowOptions *options = [[TiAppDelegate instance] getWindowOptions];
+	TiWindowOptions *options = [[[TiAppDelegate instance] getActiveWindowOption] autorelease];
 	if ([options isFullscreen] || [options isChrome])
 	{
 		return [TiThemeFrame class];
 	}
-	
+
 	return [super frameViewClassForStyleMask:styleMask];
 }
 
 
 - (id)initWithContentRect:(NSRect)contentRect styleMask:(NSUInteger)mask backing:(NSBackingStoreType)bufferingType defer:(BOOL)flag 
 {
-	options = [[TiAppDelegate instance] getWindowOptions];
+	options = [[TiAppDelegate instance] getActiveWindowOption];
 	mask = [options toWindowMask];
 	
 	// our tiapp.xml decides the initial size of the window not the nib

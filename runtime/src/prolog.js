@@ -1,53 +1,51 @@
-//
-// Copyright 2006-2008 Appcelerator, Inc.
-// 
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-// 
-//    http://www.apache.org/licenses/LICENSE-2.0
-// 
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-ti = {};
-
-ti.eachPlugin = function (f) {
-	for (var i = 0; i < ti.plugins.length; i++) {
-		f(ti.plugins[i]);
-	}
-}
-
-ti.pluginEvent = function(event) {
-	ti.eachPlugin(function(plugin) {
-		if (event in plugin) {
-			plugin[event]();
-		}
-	});
-}
-
-ti.pluginsLoaded = function ()
+// this begins the hiding process of things we want exposed to our 
+// internal code but not to the outside world (i.e. the application)
+(function($)
 {
-	$(document).ready(function() {
-		
-		ti.pluginEvent("documentReady");
-		
-		//ti.App.include("ti://titanium_dock.js");
-		//ti.App.include("ti://titanium_window.js");
-		//ti.App.include("ti://titanium_menu.js");
-		//ti.App.include("ti://titanium_file.js");	
-		//ti.App.include("ti://titanium_xml.js");
-	});
-}
+	// internally map the tiRuntime object into a local variable
+	// so we can continue to use it locally within our titanium.js
+	// however, we want to remove it from the global scope so that
+	// it's not accessible outside (i.e. the application)
+	var runtime = tiRuntime;
+	window.tiRuntime = null;
 
-if (navigator.appVersion.indexOf("Win")!=-1) ti.platform = "win32";
-if (navigator.appVersion.indexOf("Mac")!=-1) ti.platform = "osx";
-if (navigator.appVersion.indexOf("Linux")!=-1) ti.platform = "linux";
+	// map our main native objects into the ti namespace
+	// and hang ti off the global scope
+	window.ti =
+	{
+		version: "<%=version%>",	// replaced at build time
+		platform: "unknown",		// replaced below
+		App: runtime.App,
+		Dock: runtime.Dock,
+		Menu: runtime.Menu,
+		Window: runtime.Window
+	};
 
-// include this first so definition for include is setup
-TiApp.include("ti://titanium_wrappers.js");
-ti.App.include("ti://plugins.js");
-ti.pluginsLoaded();
+	if (navigator.appVersion.indexOf("Win")!=-1) ti.platform = "win32";
+	if (navigator.appVersion.indexOf("Mac")!=-1) ti.platform = "osx";
+	if (navigator.appVersion.indexOf("Linux")!=-1) ti.platform = "linux";
+
+	
+	// expose jQuery into the ti namespace in case anyone wants to use
+	// it outside of titanium.js
+	ti.jQuery = $;
+
+	// in the case that you have transparency on the window, we have to hack the browser's window
+	// to cause the content view to take up 100% of the window (normally in HTML, it will only 
+	// take up the height of the contained element size)
+	var windowOptions = ti.App.getWindowOptions();
+	var windowTransparency = windowOptions.getTransparency();
+	if (windowTransparency < 1.0)
+ 	{
+		var style = "margin:auto;padding:auto;";
+		if (windowOptions.isChrome())
+		{
+			// if we're using custom chrome, setup without borders, margin, etc.
+			style = "margin:0;padding:0;border:none;";
+		}
+		document.write('<style>body { opacity:' + windowTransparency + '; ' + style + ' } body > DIV { height:100% }</style>');
+	}
+	
+	try
+	{
+		// we wrap in a try/catch

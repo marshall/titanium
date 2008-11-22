@@ -18,11 +18,13 @@
 
 
 #import <Cocoa/Cocoa.h>
+#import "TiObject.h"
 
 @class WebView;
 
 @interface TiBrowserWindowController : NSWindowController {
 	IBOutlet WebView *webView;
+	TiObject *ti;
 }
 
 - (BOOL)isFirst;

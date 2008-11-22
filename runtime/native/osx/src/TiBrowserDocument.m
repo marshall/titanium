@@ -81,7 +81,7 @@
 	}		
 	
 	//we set it on the delegate since he's a singleton and these options are "sticky"
-	[[TiAppDelegate instance] setWindowOptions:opts];
+	[[TiAppDelegate instance] setActiveWindowOption:opts];
 }
 
 
@@ -104,7 +104,10 @@
 
 - (NSString *)displayName 
 {
-	return [[[TiAppDelegate instance] getWindowOptions] getTitle];
+	TiWindowOptions *opts = [[TiAppDelegate instance] getActiveWindowOption];
+	NSString *ns = [opts getTitle];
+	[opts release];
+	return [ns autorelease];
 }
 
 

@@ -12,7 +12,7 @@
 				<string>????</string>
 			</array>
 			<key>CFBundleTypeIconFile</key>
-			<string></string>
+			<string>titanium.icns</string>
 			<key>CFBundleTypeName</key>
 			<string>BrowserDocument</string>
 			<key>CFBundleTypeOSTypes</key>
@@ -27,38 +27,37 @@
 	</array>
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
-	<key>CFBundleShortVersionString</key>
-	<string>0.1</string>
 	<key>CFBundleIconFile</key>
-	<string>titanium</string>
+	<string>titanium.icns</string>
 	<key>CFBundleIdentifier</key>
-	<string>org.appcelerator.${PRODUCT_NAME:identifier}</string>
+	<string>org.appcelerator.titanium</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
 	<string>${PRODUCT_NAME}</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>0.1</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>org.appcelerator.titanium</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>http</string>
+				<string>https</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>1.0</string>
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
-	<key>CFBundleURLTypes</key>
-	<array>
-		<dict>
-			<key>CFBundleURLName</key>
-			<string>org.appcelerator.${PRODUCT_NAME:identifier}</string>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>http</string>
-				<string>https</string>
-				<string>ti</string>
-			</array>
-		</dict>
-	</array>
 </dict>
 </plist>

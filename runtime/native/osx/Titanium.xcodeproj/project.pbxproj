@@ -10,6 +10,7 @@
 		1DDD582C0DA1D0D100B32029 /* BrowserWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1DDD58280DA1D0D100B32029 /* BrowserWindow.xib */; };
 		1DDD582D0DA1D0D100B32029 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1DDD582A0DA1D0D100B32029 /* MainMenu.xib */; };
 		240718A50ED3FF7500D542F0 /* titanium.icns in Resources */ = {isa = PBXBuildFile; fileRef = 240718A40ED3FF7500D542F0 /* titanium.icns */; };
+		24071C160ED633DF00D542F0 /* secondary.html in Resources */ = {isa = PBXBuildFile; fileRef = 24071C150ED633DF00D542F0 /* secondary.html */; };
 		2433DDD50ED0FFA100813747 /* TiThemeFrame.m in Sources */ = {isa = PBXBuildFile; fileRef = 2433DDD40ED0FFA100813747 /* TiThemeFrame.m */; };
 		2433DDDA0ED0FFBE00813747 /* TiBrowserWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2433DDD70ED0FFBE00813747 /* TiBrowserWindowController.m */; };
 		2433DDDB0ED0FFBE00813747 /* TiJavaScriptPromptWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2433DDD90ED0FFBE00813747 /* TiJavaScriptPromptWindowController.m */; };
@@ -43,7 +44,6 @@
 		D31B35000EBBEE04006F3012 /* PreferencesWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = D31B34FE0EBBEE04006F3012 /* PreferencesWindow.xib */; };
 		D31B36280EBC07C1006F3012 /* tiapp.xml in Resources */ = {isa = PBXBuildFile; fileRef = D31B36270EBC07C1006F3012 /* tiapp.xml */; };
 		D31B36390EBC0832006F3012 /* index.html in Resources */ = {isa = PBXBuildFile; fileRef = D31B36380EBC0832006F3012 /* index.html */; };
-		D31B36650EBC0946006F3012 /* appcelerator.icns in Resources */ = {isa = PBXBuildFile; fileRef = D31B36640EBC0946006F3012 /* appcelerator.icns */; };
 		D31B38820EBCE51D006F3012 /* JavaScriptPromptWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = D31B38800EBCE51D006F3012 /* JavaScriptPromptWindow.xib */; };
 		D31B3D230EBD7DF7006F3012 /* DefaultValues.plist in Resources */ = {isa = PBXBuildFile; fileRef = D31B3D220EBD7DF7006F3012 /* DefaultValues.plist */; };
 		D31B3EF70EBE88B3006F3012 /* resizeIndicator.png in Resources */ = {isa = PBXBuildFile; fileRef = D31B3EF60EBE88B3006F3012 /* resizeIndicator.png */; };
@@ -56,6 +56,7 @@
 		1DDD58290DA1D0D100B32029 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/BrowserWindow.xib; sourceTree = "<group>"; };
 		1DDD582B0DA1D0D100B32029 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		240718A40ED3FF7500D542F0 /* titanium.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = titanium.icns; path = ../../support/osx/titanium.icns; sourceTree = SOURCE_ROOT; };
+		24071C150ED633DF00D542F0 /* secondary.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = secondary.html; path = res/secondary.html; sourceTree = "<group>"; };
 		2433DDD10ED0FFA100813747 /* NSThemeFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSThemeFrame.h; path = src/NSThemeFrame.h; sourceTree = "<group>"; };
 		2433DDD20ED0FFA100813747 /* NSTitledFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSTitledFrame.h; path = src/NSTitledFrame.h; sourceTree = "<group>"; };
 		2433DDD30ED0FFA100813747 /* TiThemeFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TiThemeFrame.h; path = src/TiThemeFrame.h; sourceTree = "<group>"; };
@@ -216,6 +217,7 @@
 		2A37F4B8FDCFA73011CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				24071C150ED633DF00D542F0 /* secondary.html */,
 				240718A40ED3FF7500D542F0 /* titanium.icns */,
 				24F95FC90ED28607002065FC /* SplashWindow.xib */,
 				D31B3EF80EBE88B5006F3012 /* Images */,
@@ -338,6 +340,7 @@
 				8D15AC2B0486D014006FF6A4 /* Resources */,
 				8D15AC300486D014006FF6A4 /* Sources */,
 				8D15AC330486D014006FF6A4 /* Frameworks */,
+				24071D3F0ED6A9CD00D542F0 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -378,7 +381,6 @@
 				D31B35000EBBEE04006F3012 /* PreferencesWindow.xib in Resources */,
 				D31B36280EBC07C1006F3012 /* tiapp.xml in Resources */,
 				D31B36390EBC0832006F3012 /* index.html in Resources */,
-				D31B36650EBC0946006F3012 /* appcelerator.icns in Resources */,
 				D31B38820EBCE51D006F3012 /* JavaScriptPromptWindow.xib in Resources */,
 				D31B3D230EBD7DF7006F3012 /* DefaultValues.plist in Resources */,
 				D31B3EF70EBE88B3006F3012 /* resizeIndicator.png in Resources */,
@@ -386,10 +388,27 @@
 				24F95FC10ED28556002065FC /* titanium_poweredby.png in Resources */,
 				24F95FCB0ED28607002065FC /* SplashWindow.xib in Resources */,
 				240718A50ED3FF7500D542F0 /* titanium.icns in Resources */,
+				24071C160ED633DF00D542F0 /* secondary.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		24071D3F0ED6A9CD00D542F0 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "ruby ./script/build.rb";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		8D15AC300486D014006FF6A4 /* Sources */ = {
