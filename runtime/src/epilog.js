@@ -6,5 +6,5 @@
 	
 // this ends the variable hiding and also 
 // ensures that jQuery only is available inside our
-// local scope
-})(window.jQuery.noConflict());
+// local scope (pass true to ensure jQuery is removed too)
+})(window.jQuery.noConflict(true));
