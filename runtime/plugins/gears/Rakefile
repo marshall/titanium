@@ -54,8 +54,27 @@ end
 
 def bundle_plugin_mac(zipfile)
   basedir = File.join('gears_titanium', 'gears', 'bin-opt', 'installers', 'Safari', 'Gears.plugin')
-
+  
+  # Fixup our files
+  %w(Contents/Info.plist Contents/Resources/Gears.bundle/Contents/Info.plist).each do |file|
+    infoplist = File.expand_path(File.join(basedir,file))
+    c = File.read(infoplist)
+    c.gsub! 'com.google.gears', 'org.appcelerator.titanium_gears'
+    c.gsub! 'libgears.dylib', 'libgears_titanium.dylib'
+    c.gsub! 'Gears','Titanium_Gears'
+    c.gsub! 'GGer', 'TGer'
+    f = File.open(infoplist,'w')
+    f.puts c
+    f.close
+    osdir = File.join(File.dirname(infoplist),'MacOS')
+    if File.exists? File.join(osdir,'libgears.dylib')
+      FileUtils.mv File.join(osdir,'libgears.dylib'), File.join(osdir,'libgears_titanium.dylib')
+    end
+  end
+  
 	dirname = File.basename(basedir)
+	dirname.gsub! 'Gears','GearsTitanium'
+	
 	zipfile.mkdir(dirname)
    
 	dofiles(basedir) do |f|
@@ -105,7 +124,5 @@ task :gather do
 	create_zip('gears', build[:version]) do |zipfile|
 		zipfile.get_output_stream('build.yml') { |f| f.write(build_yml) }
 		zipfile.add('plugin.rb', 'plugin.rb')
-		zipfile.add('plugin.js', 'plugin.js')
-		zipfile.add('gears_init.js', File.join('gears_titanium', 'gears', 'sdk', 'gears_init.js'))
 	end
 end

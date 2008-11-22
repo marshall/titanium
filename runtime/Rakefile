@@ -78,9 +78,9 @@ END
                prolog
                gears
                dom
+               file
+               desktop
                epilog)
-               # file
-               # desktop
 
     # make one big ass file
     files.each do |name|

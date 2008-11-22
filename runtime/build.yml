@@ -3,9 +3,7 @@
 :dependencies:
 - :type: tiplugin
   :name: gears_<%= platform_string %>
-  :version: ">=0.4"
-- :type: tiplugin
-  :name: jquery
-  :version: ">=1.2.6"
+  :version: ">=0.6"
 :name: titanium_<%= platform_string %>
-:version: 0.1.1
+:version: 0.1.2
+

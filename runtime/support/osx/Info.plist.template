@@ -26,7 +26,7 @@
   <key>CFBundleExecutable</key>
   <string><%= @@executable_name %></string>
   <key>CFBundleIconFile</key>
-  <string>titanium</string>
+  <string>titanium.icns</string>
   <key>CFBundleIdentifier</key>
   <string><%= config[:name] %></string>
   <key>CFBundleInfoDictionaryVersion</key>

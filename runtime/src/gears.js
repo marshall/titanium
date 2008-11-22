@@ -12,8 +12,6 @@ document.documentElement.appendChild(gearsFactory);
 if (!gearsFactory.create)
 {
 	//oops! Gears not loading
-	ti.App.debug("Gears plugin didn't load and is unavailable");
+	ti.App.debug("Gears plugin didn't load and is unavailable!");
 	gearsFactory  = null;
 }
-
-

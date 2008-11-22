@@ -1,7 +1,0 @@
-//
-// Prefix header for all source files of the 'webkit_shell' target in the 'webkit_shell' project
-//
-
-#ifdef __OBJC__
-    #import <Cocoa/Cocoa.h>
-#endif

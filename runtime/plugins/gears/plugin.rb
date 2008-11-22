@@ -9,7 +9,7 @@ class GearsPlugin < Titanium::Plugin
     super(project, basedir, executable_name)
       
     if is_mac?
-      FileUtils.cp_r File.join(@plugindir, 'Gears.plugin'), @plugins_path
+      FileUtils.cp_r File.join(@plugindir, 'GearsTitanium.plugin'), @plugins_path
     elsif is_win?
       FileUtils.cp File.join(@plugindir, 'gears_titanium.dll'), File.join(@plugins_path, 'npgears_titanium.dll')
 	    FileUtils.chmod 0755, File.join(@plugins_path, 'npgears_titanium.dll')
@@ -18,7 +18,7 @@ class GearsPlugin < Titanium::Plugin
   
   def get_native_plugin
     if is_mac?
-      return File.join(@plugindir, 'Gears.plugin')
+      return File.join(@plugindir, 'GearsTitanium.plugin')
     elsif is_win?
       return File.join(@plugindir, 'gears_titanium.dll')
     end
