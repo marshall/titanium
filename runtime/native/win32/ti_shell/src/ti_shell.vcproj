@@ -116,7 +116,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(ChromeDir)\third_party\npapi&quot;;&quot;$(ChromeDir)&quot;;&quot;$(ChromeDir)\skia\include\corecg&quot;;&quot;$(ChromeDir)\skia\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(ChromeDir)\third_party\icu38\public\common&quot;;&quot;$(ChromeDir)\third_party\libxml\include&quot;;&quot;$(ChromeDir)\third_party\npapi&quot;;&quot;$(ChromeDir)&quot;;&quot;$(ChromeDir)\skia\include\corecg&quot;;&quot;$(ChromeDir)\skia\include&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -134,11 +134,12 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				LinkLibraryDependencies="false"
+				LinkLibraryDependencies="true"
 				AdditionalDependencies="activex_shim.lib base.lib base_gfx.lib bzip2.lib common.lib comctl32.lib default_plugin.lib Glue.lib googleurl.lib icu.lib JavaScriptCore_pcre.lib libjpeg.lib libpng.lib libxml.lib libxslt.lib modp_b64.lib net.lib plugin.lib Port.lib sandbox.lib sdch.lib skia.lib sqlite.lib v8.lib v8_snapshot.lib v8bindings.lib WebCore.lib WTF.lib zlib.lib comsuppwd.lib"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;$(ChromeDir)\chrome\$(ConfigurationName)\lib&quot;;&quot;$(ChromeDir)\sandbox\$(ConfigurationName)\lib&quot;"
 				IgnoreDefaultLibraryNames=""
+				DelayLoadDLLs=""
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				OptimizeReferences="2"
@@ -217,6 +218,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ti_window.cc"
+				>
+			</File>
+			<File
 				RelativePath=".\webkit_glue.cc"
 				>
 			</File>
@@ -272,6 +277,10 @@
 			</File>
 			<File
 				RelativePath=".\ti_web_view_delegate.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ti_window.h"
 				>
 			</File>
 			<File
