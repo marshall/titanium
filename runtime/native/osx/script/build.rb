@@ -1,6 +1,6 @@
 require 'fileutils'
 
-TIVERSION = '0.1.1'
+TIVERSION = '0.1.2'
 
 def get_home
   if ENV['HOME']
