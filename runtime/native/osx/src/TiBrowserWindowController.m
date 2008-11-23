@@ -59,10 +59,12 @@ typedef enum {
 
 - (void)dealloc 
 {	
+	NSLog(@"TiBrowserWindowController dealloc\n");
 	if (ti != nil)
 	{
 		[ti release];
 	}
+	webView = nil;
 	[super dealloc];
 }
 
@@ -83,10 +85,10 @@ typedef enum {
 #pragma mark -
 #pragma mark Public
 
-- (void)loadRequest:(NSURLRequest *)request 
-{
-	[[webView mainFrame] loadRequest:request];
-}
+//- (void)loadRequest:(NSURLRequest *)request 
+//{
+//	//[[webView mainFrame] loadRequest:request];
+//}
 
 
 - (void)handleLoadError:(NSError *)err 
@@ -154,6 +156,8 @@ typedef enum {
 	{
 		[webView setBackgroundColor:[NSColor clearColor]];
 	}
+	
+	[o release];
 }
 
 
@@ -195,6 +199,10 @@ typedef enum {
 
 - (void)webView:(WebView *)wv didCommitLoadForFrame:(WebFrame *)frame 
 {	
+}
+
+- (void)webView:(WebView *)sender willCloseFrame:(WebFrame *)frame
+{
 }
 
 
@@ -280,11 +288,18 @@ typedef enum {
 		// let it fail through -- usually other is when internally loaded from objective-c
 	}
 	
-	if ([WebView _canHandleRequest:request]) {
+	if ([WebView _canHandleRequest:request]) 
+	{
 		[listener use];
-	} else if (navType == WebNavigationTypePlugInRequest) {
+	} 
+	else if (navType == WebNavigationTypePlugInRequest) 
+	{
+		// this happens for things like window.location.href or when you first open a browser window
+		[self scheduleClose];
 		[listener use];
-	} else {
+	} 
+	else
+	{
 		// A file URL shouldn't fall through to here, but if it did,
 		// it would be a security risk to open it.
 		NSLog(@"Opening URL if not file url..\n");
@@ -300,7 +315,6 @@ typedef enum {
 	// force new window
 	if ([@"_blank" isEqualToString:frameName] || [@"_new" isEqualToString:frameName]) 
 	{ 
-		[self scheduleClose];
 		[listener use];
 		return;
 	}
@@ -345,20 +359,30 @@ typedef enum {
 	}
 	
 	
-	if ([[request URL] isFileURL]) {
+	if ([[request URL] isFileURL]) 
+	{
 		BOOL isDirectory = NO;
 		[[NSFileManager defaultManager] fileExistsAtPath:[[request URL] path] isDirectory:&isDirectory];
 		
-		if (isDirectory) {
+		if (isDirectory) 
+		{
 			[listener ignore];
-		} else if ([WebView canShowMIMEType:type]) {
+		} 
+		else if ([WebView canShowMIMEType:type]) 
+		{
 			[listener use];
-		} else{
+		} 
+		else
+		{
 			[listener ignore];
 		}
-	} else if ([WebView canShowMIMEType:type]) {
+	} 
+	else if ([WebView canShowMIMEType:type]) 
+	{
 		[listener use];
-	} else {
+	} 
+	else 
+	{
 		//[listener download];
 		[listener ignore]; // ignoring for now. do we want a download manager?
 	}
@@ -382,7 +406,8 @@ typedef enum {
 
 - (void)webViewUnfocus:(WebView *)wv 
 {
-	if ([[wv window] isKeyWindow] || [[[wv window] attachedSheet] isKeyWindow]) {
+	if ([[wv window] isKeyWindow] || [[[wv window] attachedSheet] isKeyWindow]) 
+	{
 		[NSApp _cycleWindowsReversed:FALSE];
 	}
 }
@@ -451,6 +476,9 @@ typedef enum {
 
 - (WebView *)webView:(WebView *)wv createWebViewWithRequest:(NSURLRequest *)request windowFeatures:(NSDictionary *)features 
 {
+	[[TiAppDelegate instance] error:@"createWebViewWithRequest not implemented"];
+	return nil;
+	/*
 	BOOL fullscreen = [[features objectForKey:@"fullscreen"] boolValue];
 //FIXME:	[[TiAppDelegate instance] setIsFullScreen:fullscreen];
 	
@@ -501,6 +529,7 @@ typedef enum {
 	[[[[doc webView] mainFrame] frameView] setAllowsScrolling:scrollbarsVisible];
 
 	return [doc webView];
+	 */
 }
 
 

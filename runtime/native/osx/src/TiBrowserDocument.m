@@ -39,9 +39,13 @@
 
 - (void)dealloc 
 {
+	NSLog(@"TiBrowserDocument: dealloc\n");
 	browserWindowController = nil;
-	//TODO: need to release options?
-	windowOptions = nil;
+	NSLog(@"TiBrowserDocument: windowOptions: %d\n",[windowOptions retainCount]);
+	if (windowOptions != nil)
+	{
+		[windowOptions release];
+	}
 	[super dealloc];
 }
 
@@ -53,6 +57,7 @@
 - (void)setOptions:(TiWindowOptions*)opts
 {
 	windowOptions = opts;
+	[windowOptions retain];
 	NSUInteger mask = 0;
 	if ([windowOptions isResizable])
 	{
@@ -113,12 +118,23 @@
 
 - (void)close 
 {
-	if ([[self getOptions] isFullscreen])
+	TiWindowOptions *opts = [[TiAppDelegate instance] getActiveWindowOption];
+	if ([opts isFullscreen])
 	{
 		//FIXME: fullscreen
 		//[[TiAppDelegate instance] setIsFullScreen:NO];
 	}
+
+	[opts release];
 	[super close];
+
+	NSDocumentController *controller = [NSDocumentController sharedDocumentController];
+	NSArray *docs = [[controller documents] autorelease];
+	if ([docs count]==0)
+	{
+		// we automatically close the application if there are no more documents open
+		[NSApp terminate:self];
+	}
 }
 
 

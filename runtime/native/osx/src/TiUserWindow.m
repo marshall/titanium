@@ -32,6 +32,7 @@
 	[options setWidth:500];
 	[options setMaximizable:NO];
 	doc = [[TiAppDelegate instance] newDocumentWithOptions:req options:options];
+	[options release];
 	
 	NSWindow *window = [[doc browserWindowController] window];
 	NSRect newFrame = NSZeroRect;

@@ -33,6 +33,7 @@
 
 - (void)dealloc
 {
+	NSLog(@"TiBrowserWindow dealloc: %d\n",[options retainCount]);
 	[options release];
 	[super dealloc];
 }
@@ -58,13 +59,16 @@
 - (id)initWithContentRect:(NSRect)contentRect styleMask:(NSUInteger)mask backing:(NSBackingStoreType)bufferingType defer:(BOOL)flag 
 {
 	options = [[TiAppDelegate instance] getActiveWindowOption];
+	NSLog(@"TiBrowserWindow: options created: %d\n",[options retainCount]);
+	
 	mask = [options toWindowMask];
 	
 	// our tiapp.xml decides the initial size of the window not the nib
 	NSRect r = NSMakeRect(contentRect.origin.x, contentRect.origin.y, [options getWidth], [options getHeight]);
 	
 	self = [super initWithContentRect:r styleMask:mask backing:bufferingType defer:flag];
-	if (self != nil) {
+	if (self != nil) 
+	{
 		[self setOpaque:NO];
 		[self setHasShadow:YES];
 		[self setBackgroundColor:[NSColor clearColor]];
@@ -73,6 +77,7 @@
 		// turn on/off zoom button to control app maximize behavior
 		[[self standardWindowButton:NSWindowZoomButton] setHidden:![options isMaximizable]];
 		
+		[self setReleasedWhenClosed:YES];
 		[self center];
 	}
 	return self;
@@ -190,6 +195,11 @@
 	}
 	
 	[super sendEvent:evt];
+}
+
+- (void)windowWillClose:(NSNotification *)notification
+{
+	NSLog(@"window is closing");
 }
 
 @end

@@ -29,7 +29,7 @@
 }
 
 - (BOOL)isFirst;
-- (void)loadRequest:(NSURLRequest *)request;
+//- (void)loadRequest:(NSURLRequest *)request;
 - (WebView *)webView;
 - (BOOL)isClosing;
 @end

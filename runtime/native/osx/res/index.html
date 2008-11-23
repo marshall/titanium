@@ -1,35 +1,10 @@
 <html>
 <body>
-<div style="background:#000; -webkit-border-radius:2px;margin:10px;padding:0;">
-<script type="text/javascript">
-	ti.ready(function()
-	{
-		var db = new ti.Database;
-		db.open("jeff-test");
-		db.execute("create table if not exists Test (Phrase text, Timestamp int)");
-		db.execute("insert into Test values(?,?)", ['Jeff',new Date().getTime()]);
-		var rs = db.execute("select count(*) from Test");
-		while (rs.isValidRow())
-		{
-			alert("Found " + rs.field(0) + " database entries");
-			rs.next();
-		}
-		rs.close();
-	});
-</script>
-<h1>Hello world</h1>
-<img src="http://developer.apple.com/images/developer_logo.gif"/>
-
-<button id="b">Click me</button>
-<button onclick="javascript:ti.App.quit();">Quit</button>
-
-<button onclick="window.moveTo(0,10);">Move</button>
-<button onclick="ti.App.setSize(500,600,true)">Resize</button>
-<button onclick="ti.App.setBackgroundColor('#f00')">Colorize</button>
-
-<a href="secondary.html">Go to secondary</a>
-
-
-</div>
+	<h1>Unit Tests</h1>
+	<div>
+		<ul>
+			<li><a href="test_db.html">Database</a></li>
+			<li><a href="#" onclick="window.location.href='test_db.html'">Window.location</a></li>
+		</ul>
+	</div>
 </body>
-</html>

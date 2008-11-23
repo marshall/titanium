@@ -3,7 +3,7 @@
 			loaded = true;
 			$.each(readies,function()
 			{
-				this();
+				this.call(ti,$);
 			});
 			readies = null;
 		}

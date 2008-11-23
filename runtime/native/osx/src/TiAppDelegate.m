@@ -319,22 +319,35 @@ static CGFloat toFloat (NSString* value, CGFloat def)
 #pragma mark -
 #pragma mark Public
 
+- (void)error:(NSString *)error
+{
+	NSLog(@"Applicaiton Error: %@\n", error);
+	NSString *msg = [@"" stringByAppendingFormat:@"The application has encountered an error:\n\n%@", error];
+	NSAlert *alert = [[NSAlert alloc] init];
+	[alert setMessageText:msg];
+	[alert setAlertStyle:NSWarningAlertStyle];
+	[alert runModal];
+	[alert release];
+}
+
 - (TiBrowserDocument *)newDocumentWithOptions:(NSURLRequest *)request options:(TiWindowOptions*)opts
 {
-	TiBrowserDocument *newDoc = [[TiBrowserDocument alloc] init];
-	[newDoc setOptions:opts];
-	[self addDocument:newDoc];
-	
-	bool show = YES;
-	
-	if (show) {
-		[newDoc makeWindowControllers];
-		[[newDoc browserWindowController] window]; // force window loading from nib
-	}
-	
-	[newDoc loadRequest:request];
-	
-	return newDoc;
+	[self error:@"newDocumentWithOptions not implemented"];
+	return nil;
+//	TiBrowserDocument *newDoc = [[TiBrowserDocument alloc] init];
+//	[newDoc setOptions:opts];
+//	[self addDocument:newDoc];
+//	
+//	bool show = YES;
+//	
+//	if (show) {
+//		[newDoc makeWindowControllers];
+//		[[newDoc browserWindowController] window]; // force window loading from nib
+//	}
+//	
+//	[newDoc loadRequest:request];
+//	
+//	return newDoc;
 }
 
 - (void)setActiveWindowOption:(TiWindowOptions*)o
@@ -365,14 +378,23 @@ static CGFloat toFloat (NSString* value, CGFloat def)
 - (TiBrowserDocument *)newDocumentWithRequest:(NSURLRequest *)request display:(BOOL)display 
 {
 	NSError *err = nil;
+
 	TiBrowserDocument *newDoc = [[TiBrowserDocument alloc] init];
-	TiWindowOptions *opts = [[TiAppDelegate instance]  findWindowOptionsForURLSpec:request];
+	TiWindowOptions *opts = [self findWindowOptionsForURLSpec:request];
+	
+	if (opts==nil)
+	{
+		opts = [self findInitialWindowOptions];
+	}
+	
 	[newDoc setOptions:opts];
+	[opts release];
 	
 	[self addDocument:newDoc];
 	
-	if (err) {
-		NSLog(@"Error opening document");
+	if (err) 
+	{
+		[self error:@"Error opening document"];
 		return nil;
 	}
 	
@@ -383,41 +405,28 @@ static CGFloat toFloat (NSString* value, CGFloat def)
 		[doc close];
 	}
 	
-	if (!display) {
+	if (!display) 
+	{
 		[newDoc makeWindowControllers];
 		[[newDoc browserWindowController] window]; // force window loading from nib
 	}
 	
 	[newDoc loadRequest:request];
+	[newDoc release];
 	
 	return newDoc;
 }
 
-- (TiBrowserDocument *)newDocumentWithDisplay:(BOOL)display {
-	NSError *err = nil;
-	TiBrowserDocument *newDoc = [self openUntitledDocumentAndDisplay:display error:&err];
-	
-	if (err) {
-		NSLog(@"Error opening document");
-		return nil;
-	}
-	
-	if (!display) {
-		[newDoc makeWindowControllers];
-		[[newDoc browserWindowController] window]; // force window loading from nib
-	}
-	
-	return newDoc;
-}
-
-
-- (WebFrame *)findFrameNamed:(NSString *)frameName {
+- (WebFrame *)findFrameNamed:(NSString *)frameName 
+{
 	// look for existing frame in any open browser document with this name.
 	WebFrame *existingFrame = nil;
 	
-	for (TiBrowserDocument *doc in [[TiAppDelegate instance] documents]) {
+	for (TiBrowserDocument *doc in [[TiAppDelegate instance] documents]) 
+	{
 		existingFrame = [[[doc webView] mainFrame] findFrameNamed:frameName];
-		if (existingFrame) {
+		if (existingFrame) 
+		{
 			break;
 		}
 	}
@@ -429,7 +438,8 @@ static CGFloat toFloat (NSString* value, CGFloat def)
 #pragma mark -
 #pragma mark NSAppDelegate
 
-- (BOOL)applicationShouldOpenUntitledFile:(NSApplication *)sender {
+- (BOOL)applicationShouldOpenUntitledFile:(NSApplication *)sender 
+{
 	return NO; // this causes the app to *not* open an untitled browser window on launch
 }
 
@@ -442,23 +452,28 @@ static CGFloat toFloat (NSString* value, CGFloat def)
 #pragma mark -
 #pragma mark NSApplicationDelegate
 
-- (BOOL)application:(NSApplication *)app openFile:(NSString *)filename {
-	NSURL *URL = nil;
-	@try {
-		URL = [NSURL fileURLWithPath:filename];
-	} @catch (NSException *e) {
-		URL = [NSURL URLWithString:filename];
-	}
-	NSURLRequest *request = [NSURLRequest requestWithURL:URL];
-	[self newDocumentWithRequest:request display:YES];
+- (BOOL)application:(NSApplication *)app openFile:(NSString *)filename 
+{
+	[self error:@"openFile called but not implemented"];
+	
+//	NSURL *URL = nil;
+//	@try {
+//		URL = [NSURL fileURLWithPath:filename];
+//	} @catch (NSException *e) {
+//		URL = [NSURL URLWithString:filename];
+//	}
+//	NSURLRequest *request = [NSURLRequest requestWithURL:URL];
+//	[self newDocumentWithRequest:request display:YES];
 	return YES;
 }
 
 
-- (void)application:(NSApplication *)app openFiles:(NSArray *)filenames {
-	for (NSString *filename in filenames) {
-		[self application:app openFile:filename];
-	}
+- (void)application:(NSApplication *)app openFiles:(NSArray *)filenames 
+{
+	[self error:@"openFiles called but not implemented"];
+//	for (NSString *filename in filenames) {
+//		[self application:app openFile:filename];
+//	}
 }
 
 
@@ -511,7 +526,7 @@ static CGFloat toFloat (NSString* value, CGFloat def)
 - (TiWindowOptions*) findInitialWindowOptions
 {
 	TiWindowOptions* opt = [windowOptions objectAtIndex:0];
-	[opt retain];
+//	[opt retain];
 	return opt;
 }
 
@@ -536,7 +551,8 @@ static CGFloat toFloat (NSString* value, CGFloat def)
 - (void)parseTiAppXML 
 {
 	NSString *appXMLPath = [[NSBundle mainBundle] pathForResource:@"tiapp" ofType:@"xml"];
-	if ([arguments tiAppXml] != nil) {
+	if ([arguments tiAppXml] != nil) 
+	{
 		appXMLPath = [arguments tiAppXml];
 	}
 	
@@ -593,7 +609,7 @@ static CGFloat toFloat (NSString* value, CGFloat def)
 		bool closeable = toBoolean(elementText(window, @"closeable"),YES);		
 		CGFloat transparency = toFloat(elementText(window, @"transparency"),1.0);		
 		
-		TiWindowOptions *options = [TiWindowOptions new];
+		TiWindowOptions *options = [[TiWindowOptions alloc] init];
 		[options setID:windowID];
 		[options setWidth:width];
 		[options setHeight:height];
@@ -610,8 +626,9 @@ static CGFloat toFloat (NSString* value, CGFloat def)
 		[options setResizable:resizable];
 		[options setTransparency:transparency];
 		[options setScrollbars:scrollbars];
-		
+
 		[windowOptions addObject:options];
+		[options release]; // add retains
 	}
 	
 	TiWindowOptions *first = [self findInitialWindowOptions];
@@ -619,8 +636,8 @@ static CGFloat toFloat (NSString* value, CGFloat def)
 	[first release];
 }
 
-- (void)initDevEnvironment {
-	
+- (void)initDevEnvironment 
+{
 }
 
 + (void)setFirstDocument:(TiBrowserDocument *)document
@@ -630,7 +647,8 @@ static CGFloat toFloat (NSString* value, CGFloat def)
 }
 
 
-- (void)loadFirstPage {
+- (void)loadFirstPage 
+{
 	NSURL *url = nil;
 	TiWindowOptions *options = [[TiAppDelegate instance] findInitialWindowOptions];
 	NSString *relativePath = [options getURL];
@@ -642,9 +660,11 @@ static CGFloat toFloat (NSString* value, CGFloat def)
 	
 	NSLog(@"starting with path:%@\n", relativePath);
 	
-	if ([relativePath length]) {
+	if ([relativePath length]) 
+	{
 		NSString *fullPath = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:relativePath];
-		if ([arguments devLaunch]) {
+		if ([arguments devLaunch]) 
+		{
 			char *cwd = getcwd(NULL, 0);
 			fullPath = [[NSString stringWithCString:cwd length:strlen(cwd)] stringByAppendingPathComponent:relativePath];
 		}
@@ -652,22 +672,28 @@ static CGFloat toFloat (NSString* value, CGFloat def)
 		url = [NSURL fileURLWithPath:fullPath];
 	}
 	
-	if (url) {
+	if (url) 
+	{
 		NSURLRequest *request = [NSURLRequest requestWithURL:url];
 		
 		// set display:NO so we don't show the first window until the first page has loaded.
 		// this avoids seeing ugly loading on launch. show window in webView:didFinishLoadForFrame:
 		firstDocument = [self newDocumentWithRequest:request display:NO];
 		[firstDocument setIsFirst:YES];
-	} else {
-		NSLog(@"Error: could not load base url");
+	} 
+	else 
+	{
+		NSString *urlStr = [url absoluteString]; 
+		[self error:[@"Could not load appliction from: " stringByAppendingString:urlStr]];
+		[NSApp quit];
 	}
 	
 	[options release];
 }
 
 
-- (void)updateAppNameInMainMenu {
+- (void)updateAppNameInMainMenu 
+{
 	// fixup App Menu
 	NSMenu *appMenu = [[[NSApp mainMenu] itemAtIndex:0] submenu];
 
@@ -688,7 +714,8 @@ static CGFloat toFloat (NSString* value, CGFloat def)
 }
 
 
-- (void)setupWebPreferences {
+- (void)setupWebPreferences 
+{
 	WebPreferences *webPrefs = [WebPreferences standardPreferences];
 	// This indicates that WebViews in this app will not browse multiple pages, but rather show a small number.
 	// this reduces memory cache footprint significantly.

@@ -11,12 +11,12 @@
 		<max-height>700</max-height>
 		<title>Titanium Test</title>
 		<url>index.html</url>
-		<maximizable>false</maximizable>
+		<maximizable>true</maximizable>
 		<minimizable>true</minimizable>
 		<closeable>true</closeable>
 		<resizable>true</resizable>
 		<chrome scrollbars="false">false</chrome>
-		<transparency>0.9</transparency>
+		<transparency>1.0</transparency>
 	</window>
 	<window>
 		<id>secondary</id>

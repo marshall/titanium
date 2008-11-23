@@ -47,9 +47,9 @@ TiBrowserWindowController *TIFrontController();
 - (IBAction)toggleFullScreen:(id)sender;
 
 - (TiBrowserDocument *)newDocumentWithRequest:(NSURLRequest *)request display:(BOOL)display;
-- (TiBrowserDocument *)newDocumentWithDisplay:(BOOL)display;
 - (TiBrowserDocument *)newDocumentWithOptions:(NSURLRequest *)request options:(TiWindowOptions*)options;
 
+- (void)error:(NSString *)error;
 
 - (WebFrame *)findFrameNamed:(NSString *)frameName;
 
@@ -62,6 +62,8 @@ TiBrowserWindowController *TIFrontController();
 - (void)setActiveWindowOption:(TiWindowOptions*)o;
 - (TiWindowOptions*)getActiveWindowOption;
 
+
+//TODO: review these
 - (NSString *)endpoint;
 - (void)setEndpoint:(NSString *)s;
 - (NSString *)appName;

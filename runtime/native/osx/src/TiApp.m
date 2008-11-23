@@ -24,17 +24,19 @@
 - (id)initWithWebView:(WebView *)wv opts:(TiWindowOptions*)opts
 {
 	self = [super init];
-	if (self != nil) {
-		webView = wv; // assign only. don't retain. prevents retain loop memory leak
+	if (self != nil) 
+	{
 		windowOptions = opts;
 		[windowOptions retain];
+		webView = wv;
+		[webView retain];
 	}
 	return self;
 }
 
 - (void)dealloc 
 {
-	webView = nil;
+	[webView release];
 	[windowOptions release];
 	[super dealloc];
 }
@@ -45,7 +47,8 @@
 	return @"[TiApp native]";
 }
 
-- (void)include:(NSString *)s {
+- (void)include:(NSString *)s 
+{
 	
 	NSLog(@"attempting to include %@\n", s);
 	
@@ -73,40 +76,48 @@
 }
 
 
-- (void)debug:(NSString *)s {
+- (void)debug:(NSString *)s 
+{
 	NSLog(@"%@\n", s);
 }
 
 
-- (void)quit {
+- (void)quit 
+{
 	[NSApp terminate:self];
 }
 
 
-- (void)activate {
+- (void)activate 
+{
 	[NSApp activateIgnoringOtherApps:YES];
 }
 
 
-- (void)show {
+- (void)show 
+{
 	[[webView window] makeKeyAndOrderFront:nil];
 }
 
-- (void)hide {
+- (void)hide 
+{
 	[[webView window] orderOut:nil];
 }
 
 
-- (void)minimize {
+- (void)minimize 
+{
 	[[webView window] miniaturize:self];
 }
 
 
-- (void)beep {
+- (void)beep 
+{
 	NSBeep();
 }
 
-- (void)playSoundNamed:(NSString *)s {
+- (void)playSoundNamed:(NSString *)s 
+{
 	[[NSSound soundNamed:s] play];
 }
 

@@ -44,12 +44,15 @@
 	fullscreen=NO;
 	closeable=YES;
 	scrollbars=YES;
+	
+	NSLog(@"TiWindowOptions: alloc\n");
 
 	return self;
 }
 
 - (void)dealloc
 {
+	NSLog(@"TiWindowOptions: dealloc\n");
 	title = nil;
 	url = nil;
 	[super dealloc];
