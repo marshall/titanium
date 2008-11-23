@@ -20,8 +20,8 @@
 
 #include "Resource.h"
 
-TIWebViewDelegate::TIWebViewDelegate(TIWebShell *ti_web_shell) : bootstrapTitanium(false) {
-	this->ti_web_shell = ti_web_shell;
+TIWebViewDelegate::TIWebViewDelegate(TIWebShell *tiWebShell) : bootstrapTitanium(false) {
+	this->tiWebShell = tiWebShell;
 }
 
 TIWebViewDelegate::~TIWebViewDelegate() {
@@ -164,10 +164,10 @@ void TIWebViewDelegate::WindowObjectCleared(WebFrame *webFrame)
 	if (bootstrapTitanium) {
 		bootstrapTitanium = false;
 
-		tiRuntime = new TiRuntime(ti_web_shell);
+		tiRuntime = new TiRuntime(tiWebShell);
 		tiRuntime->BindToJavascript(webFrame, L"ti");
 		std::string titanium_js = "ti:///titanium.js";
-		ti_web_shell->include(titanium_js);
+		tiWebShell->include(titanium_js);
 	}
 }
 
@@ -365,5 +365,5 @@ bool TIWebViewDelegate::SmartInsertDeleteEnabled() {
 
 WebWidget* TIWebViewDelegate::CreatePopupWidget(WebView* webview,
                                                   bool focus_on_show) {
-	return ti_web_shell->CreatePopupWidget(webview);
+	return tiWebShell->CreatePopupWidget(webview);
 }

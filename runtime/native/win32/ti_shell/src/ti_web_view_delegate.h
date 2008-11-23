@@ -62,13 +62,13 @@ class TIWebViewDelegate:
 private:
 	WebViewHost *host;
 	HWND mainWnd;
-	TIWebShell *ti_web_shell;
+	TIWebShell *tiWebShell;
 	TiRuntime *tiRuntime;
 	HCURSOR customCursor;
 
 public:
 	bool bootstrapTitanium;
-	TIWebViewDelegate(TIWebShell *ti_web_shell);
+	TIWebViewDelegate(TIWebShell *tiWebShell);
 	~TIWebViewDelegate(void);
 
 	void setHost(WebViewHost* host);

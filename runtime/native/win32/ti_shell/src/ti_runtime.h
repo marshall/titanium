@@ -8,9 +8,9 @@ class TIWebShell;
 
 class TiRuntime : public CppBoundClass
 {
-	TIWebShell *ti_web_shell;
+	TIWebShell *tiWebShell;
 public:
-	TiRuntime(TIWebShell *ti_web_shell);
+	TiRuntime(TIWebShell *tiWebShell);
 	~TiRuntime(void);
 
 	void debug (const CppArgumentList &args, CppVariant *result);

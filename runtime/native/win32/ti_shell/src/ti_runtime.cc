@@ -5,9 +5,9 @@
 #include <string>
 #include <fstream>
 
-TiRuntime::TiRuntime (TIWebShell *ti_web_shell)
+TiRuntime::TiRuntime (TIWebShell *tiWebShell)
 {
-	this->ti_web_shell = ti_web_shell;
+	this->tiWebShell = tiWebShell;
 
 	BindMethod("debug", &TiRuntime::debug);
 	BindMethod("getResourcePath", &TiRuntime::getResourcePath);
@@ -28,7 +28,7 @@ void TiRuntime::debug (const CppArgumentList &args, CppVariant *result)
 
 void TiRuntime::getResourcePath(const CppArgumentList &args, CppVariant *result)
 {
-	std::wstring resourcePath = ti_web_shell->getResourcesPath();
+	std::wstring resourcePath = tiWebShell->getResourcesPath();
 
 	result->Set(WideToUTF8(resourcePath));
 }
@@ -37,18 +37,18 @@ void TiRuntime::include(const CppArgumentList &args, CppVariant *result)
 {
 	if (args.size() > 0) {
 		std::string relativeName = args[0].ToString();
-		ti_web_shell->include(relativeName);
+		tiWebShell->include(relativeName);
 	}
 }
 
 void TiRuntime::hide (const CppArgumentList &args, CppVariant *result)
 {
-	this->ti_web_shell->showWindow(SW_HIDE);
-	this->ti_web_shell->createTrayIcon();
+	this->tiWebShell->showWindow(SW_HIDE);
+	this->tiWebShell->createTrayIcon();
 }
 
 void TiRuntime::show (const CppArgumentList &args, CppVariant *result)
 {
-	this->ti_web_shell->showWindow(SW_SHOW);
-	this->ti_web_shell->removeTrayIcon();
+	this->tiWebShell->showWindow(SW_SHOW);
+	this->tiWebShell->removeTrayIcon();
 }
