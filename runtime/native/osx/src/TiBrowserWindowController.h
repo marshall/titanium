@@ -25,9 +25,11 @@
 @interface TiBrowserWindowController : NSWindowController {
 	IBOutlet WebView *webView;
 	TiObject *ti;
+	BOOL closing;
 }
 
 - (BOOL)isFirst;
 - (void)loadRequest:(NSURLRequest *)request;
 - (WebView *)webView;
+- (BOOL)isClosing;
 @end

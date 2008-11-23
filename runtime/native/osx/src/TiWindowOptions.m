@@ -298,10 +298,15 @@
 
 - (BOOL)urlMatches:(NSString*)testURL
 {
-	NSPredicate *r = [NSPredicate predicateWithFormat:url];
-	BOOL matched = [r evaluateWithObject:testURL];
-	[r release];
-	return matched;
+	NSLog(@"url=%@, test=%@\nurl=%@, test=%@\n",url,testURL,[url lastPathComponent],[testURL lastPathComponent]);
+	if ([url isEqualToString:testURL])
+	{
+		return YES;
+	}
+	NSString *urlFile = [url lastPathComponent];
+	NSString *testFile = [testURL lastPathComponent];
+	NSLog(@"equal=%d",[urlFile isEqualToString:testFile]);
+	return [urlFile isEqualToString:testFile];
 }
 
 #pragma mark -

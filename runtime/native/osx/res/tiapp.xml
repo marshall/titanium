@@ -31,8 +31,8 @@
 		<maximizable>false</maximizable>
 		<minimizable>false</minimizable>
 		<closeable>false</closeable>
-		<resizable>false</resizable>
-		<chrome scrollbars="false">false</chrome>
-		<transparency>0.9</transparency>
+		<resizable>true</resizable>
+		<chrome scrollbars="true">true</chrome>
+		<transparency>1.0</transparency>
 	</window>
 </ti:app>

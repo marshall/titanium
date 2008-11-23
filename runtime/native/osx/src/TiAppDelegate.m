@@ -362,16 +362,25 @@ static CGFloat toFloat (NSString* value, CGFloat def)
 }
 
 
-- (TiBrowserDocument *)newDocumentWithRequest:(NSURLRequest *)request display:(BOOL)display {
+- (TiBrowserDocument *)newDocumentWithRequest:(NSURLRequest *)request display:(BOOL)display 
+{
 	NSError *err = nil;
-	
-//	TiBrowserDocument *newDoc = [self openUntitledDocumentAndDisplay:display error:&err];
 	TiBrowserDocument *newDoc = [[TiBrowserDocument alloc] init];
+	TiWindowOptions *opts = [[TiAppDelegate instance]  findWindowOptionsForURLSpec:request];
+	[newDoc setOptions:opts];
 	
 	[self addDocument:newDoc];
 	
 	if (err) {
+		NSLog(@"Error opening document");
 		return nil;
+	}
+	
+	TiBrowserWindowController *winController = TIFrontController();
+	if ([winController isClosing])
+	{
+		NSDocument *doc = [winController document];
+		[doc close];
 	}
 	
 	if (!display) {
@@ -389,6 +398,7 @@ static CGFloat toFloat (NSString* value, CGFloat def)
 	TiBrowserDocument *newDoc = [self openUntitledDocumentAndDisplay:display error:&err];
 	
 	if (err) {
+		NSLog(@"Error opening document");
 		return nil;
 	}
 	
@@ -479,19 +489,15 @@ static CGFloat toFloat (NSString* value, CGFloat def)
 								 nil);									// other button	
 	
 	NSString *tiScheme = @"ti://";
-	if ([URLString hasPrefix:tiScheme]) {
-		
-		//NSString *filePath = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:substringFromIndex:[tiScheme length]];
-
+	if ([URLString hasPrefix:tiScheme]) 
+	{
 		NSString *s = [URLString substringFromIndex:[tiScheme length]];
 		NSString *resPath = [[NSBundle mainBundle] resourcePath];
-//		NSString *scriptPath = [[resPath stringByAppendingPathComponent:@"public"] stringByAppendingPathComponent:s];
 		NSString *scriptPath = [resPath stringByAppendingPathComponent:s];
 		URLString = [NSString stringWithContentsOfFile:scriptPath];
-		//URLString = [NSString stringWithFormat:@"http://%@", [URLString substringFromIndex:[tiScheme length]]];
 
 		NSRunInformationalAlertPanel(NSLocalizedString(@"JavaScript", @""),	// title
-									 s,								// message
+									 s,										// message
 									 NSLocalizedString(@"OK", @""),			// default button
 									 nil,									// alt button
 									 nil);									// other button	
@@ -509,18 +515,21 @@ static CGFloat toFloat (NSString* value, CGFloat def)
 	return opt;
 }
 
-- (TiWindowOptions*) findWindowOptionsForURLSpec:(NSString*)url
+- (TiWindowOptions*) findWindowOptionsForURLSpec:(NSURLRequest*)urlrequest
 {
+	NSURL *URL = [urlrequest URL];
+	NSString *url = [URL absoluteString]; 
+	TiWindowOptions *opt = nil;
 	for (int c=0;c<[windowOptions count];c++)
 	{
-		TiWindowOptions *opt = [windowOptions objectAtIndex:c];
+		opt = [windowOptions objectAtIndex:c];
 		if ([opt urlMatches:url])
 		{
 			[opt retain];
-			return opt;
+			break;
 		}
 	}
-	return nil;
+	return opt;
 }
 
 

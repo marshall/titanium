@@ -49,8 +49,9 @@ typedef enum {
 - (id)initWithWindowNibName:(NSString *)nibName 
 {
 	self = [super initWithWindowNibName:nibName];
-	if (self != nil) {
-
+	if (self != nil) 
+	{
+		closing = NO;
 	}
 	return self;
 }
@@ -69,7 +70,6 @@ typedef enum {
 {
 	[TiProtocol registerSpecialProtocol];
 	[AppProtocol registerSpecialProtocol];
-	//	[WebView registerURLSchemeAsLocal:TiProtocol];
 }
 
 - (void)awakeFromNib 
@@ -79,9 +79,6 @@ typedef enum {
 	[self registerProtocols];
 	[self customizeWebView];
 }
-
-
-
 
 #pragma mark -
 #pragma mark Public
@@ -101,6 +98,10 @@ typedef enum {
 	[alert release];
 }
 
+- (BOOL)isClosing
+{
+	return closing;
+}
 
 #pragma mark -
 #pragma mark Private
@@ -139,7 +140,7 @@ typedef enum {
 	{
 		[[[webView mainFrame] frameView] setAllowsScrolling:NO];
 	}
-	if ([o isResizable])
+	if ([o isResizable] && [o isChrome]==NO)
 	{
 		[[self window] setShowsResizeIndicator:YES];
 	}
@@ -164,6 +165,13 @@ typedef enum {
 		[[self window]makeKeyAndOrderFront:[self window]];
 	}
 }
+
+- (void)scheduleClose
+{
+	closing = YES;
+	[[self window] orderOut:nil];
+}
+
 
 
 #pragma mark -
@@ -247,6 +255,7 @@ typedef enum {
 	if (navType == WebNavigationTypeLinkClicked)
 	{
 		// anchor link clicked
+		[self scheduleClose];
 		[listener use];
 		return;
 	}
@@ -288,8 +297,10 @@ typedef enum {
 
 - (void)webView:(WebView *)wv decidePolicyForNewWindowAction:(NSDictionary *)actionInformation request:(NSURLRequest *)request newFrameName:(NSString *)frameName decisionListener:(id<WebPolicyDecisionListener>)listener 
 {
-	
-	if ([@"_blank" isEqualToString:frameName] || [@"_new" isEqualToString:frameName]) { // force new window
+	// force new window
+	if ([@"_blank" isEqualToString:frameName] || [@"_new" isEqualToString:frameName]) 
+	{ 
+		[self scheduleClose];
 		[listener use];
 		return;
 	}

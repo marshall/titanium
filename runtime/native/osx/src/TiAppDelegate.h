@@ -57,7 +57,7 @@ TiBrowserWindowController *TIFrontController();
 - (void)initDevEnvironment;
 
 - (TiWindowOptions*) findInitialWindowOptions;
-- (TiWindowOptions*) findWindowOptionsForURLSpec:(NSString*)url;
+- (TiWindowOptions*) findWindowOptionsForURLSpec:(NSURLRequest*)urlrequest;
 
 - (void)setActiveWindowOption:(TiWindowOptions*)o;
 - (TiWindowOptions*)getActiveWindowOption;
