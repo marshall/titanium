@@ -51,28 +51,28 @@
 #include "simple_resource_loader_bridge.h"
 #include "test_shell_request_context.h"
 
-class TIWebShell;
+class TiWebShell;
 
 #include "ti_native.h"
 
-class TIWebViewDelegate: 
-	public base::RefCounted<TIWebViewDelegate>,
+class TiWebViewDelegate: 
+	public base::RefCounted<TiWebViewDelegate>,
 	public WebViewDelegate
 {
 private:
+	TiWebShell *tiWebShell;
 	WebViewHost *host;
-	HWND mainWnd;
-	TIWebShell *ti_web_shell;
-	TiNative *ti_native;
+	TiNative *tiNative;
 	HCURSOR customCursor;
 
 public:
 	bool bootstrapTitanium;
-	TIWebViewDelegate(TIWebShell *ti_web_shell);
-	~TIWebViewDelegate(void);
+	TiWebViewDelegate(TiWebShell *tiWebShell_):
+		tiWebShell(tiWebShell_) {}
 
-	void setHost(WebViewHost* host);
-	void setMainWnd(HWND hWnd);
+	~TiWebViewDelegate(void);
+
+	void setWebViewHost(WebViewHost *host) { this->host = host; }
 
 	// following are the functions defined in the super classes
 	virtual gfx::ViewHandle GetContainingWindow(WebWidget* webwidget);
@@ -129,6 +129,15 @@ public:
 	// Suppress input events to other windows, and do not return until the widget
 	// is closed.  This is used to support |window.showModalDialog|.
 	virtual void RunModal(WebWidget* webwidget);
+	virtual WebView* CreateWebView(WebView* webview, bool user_gesture);
+	virtual void DidStopLoading(WebView* webview);
+
+/*	virtual void OpenURL(WebView* webview, const GURL& url, const GURL& referrer, WindowOpenDisposition disposition);
+	virtual WindowOpenDisposition DispositionForNavigationAction(WebView* webview, WebFrame* frame,
+		const WebRequest* request,
+		WebNavigationType type,
+		WindowOpenDisposition disposition,
+		bool is_redirect);*/
 
 	// Owners depend on the delegates living as long as they do, so we ref them.
 	virtual void AddRef();
@@ -199,6 +208,4 @@ public:
                                            std::wstring style,
                                            std::wstring range);
 	virtual bool SmartInsertDeleteEnabled();
-
-	WebWidget* CreatePopupWidget(WebView* webview, bool focus_on_show);
 };

@@ -15,10 +15,11 @@
 */
 
 #include "ti_app.h"
+#include "ti_window.h"
 
 /*static*/
 bool TiApp::stringToBool (const char * b) {
-	std::string str(b);
+	std::string str = b;
 	std::transform(str.begin(), str.end(), str.begin(), tolower);
 
 	if (str == "yes" || str == "true" || str == "on") {
@@ -67,7 +68,7 @@ TiApp::TiApp(std::wstring& xmlfile)
 				} else if (nodeNameEquals(node, "version")) {
 					version = nodeValue(node);
 				} else if (nodeNameEquals(node, "window")) {
-					this->windows.push_back(new TiWindow((xmlElementPtr)node));
+					this->windows.push_back(new TiWindow(this, (xmlElementPtr)node));
 				} else if (nodeNameEquals(node, "icon")) {
 					xmlNodePtr child = node->children;
 					while (child != NULL) {
@@ -95,4 +96,13 @@ TiApp::TiApp(std::wstring& xmlfile)
 
 TiApp::~TiApp()
 {
+}
+
+std::wstring TiApp::getResourcePath()
+{
+	std::wstring path;
+	PathService::Get(base::DIR_EXE, &path);
+	file_util::AppendToPath(&path, L"Resources");
+
+	return path;
 }

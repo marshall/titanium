@@ -1,17 +1,18 @@
-//
-// Copyright 2006-2008 Appcelerator, Inc.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+/*
+* Copyright 2006-2008 Appcelerator, Inc.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
 
 #pragma once
 
@@ -45,6 +46,7 @@
 #include "base/process_util.h"
 #include "base/message_loop.h"
 #include "base/icu_util.h"
+#include "base/win_util.h"
 #include "net/base/net_module.h"
 #include "webview_host.h"
 #include "webwidget_host.h"
@@ -55,42 +57,60 @@
 #include "ti_app.h"
 #include "ti_url.h"
 
-class TIWebViewDelegate;
+#include <vector>
 
-class TIWebShell
+class TiWebViewDelegate;
+
+class TiWebShell
 {
 private:
 	HINSTANCE hInstance;
 	HWND hWnd;
-	TIWebViewDelegate delegate;
-	WebViewHost *host;
-	WebWidgetHost *popupHost;
-	std::wstring resourcesPath;
-	TiApp *tiApp;
+	WebViewHost* host;
+	std::wstring resourcePath;
+	TiWindow *tiWindow;
+	std::string url;
+	TiWebViewDelegate* webViewDelegate;
+	bool created;
+
+	static TiApp *tiApp;
+	static std::vector<TiWebShell*> openShells;
+	static TCHAR defaultWindowTitle[128];
+	static TCHAR windowClassName[128];
+
+	static void initWindowClass();
+	static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+
+	void initWindow();
 
 public:
-	TIWebShell(HINSTANCE hInstance, HWND hWnd);
-	~TIWebShell(void);
+	TiWebShell(TiWindow *tiWindow);
+	TiWebShell(const char *url);
+	~TiWebShell(void);
 
-	void init(TiApp *tiApp);
-	void loadTiApp();
+	void setTiWindow(TiWindow *tiWindow);
+	void createWindow();
+	void open();
 
 	void loadURL(const char* url);
 	void sizeTo(int width, int height, UINT flags);
+	void resizeHost();
 
-	WebViewHost* getHost();
-	HWND getHWnd();
-	HWND getPopupHWnd();
-
-	std::wstring& getResourcesPath() { return resourcesPath; }
-	void setResourcesPath(std::wstring& path) { resourcesPath = path; }
+	WebViewHost* getHost() { return host; }
+	HWND getWindow() { return hWnd; }
+	TiWindow* getTiWindow() { return tiWindow; }
+	HINSTANCE getInstance() { return hInstance; }
 
 	void include (std::string& relativePath);
-	WebWidget* CreatePopupWidget(WebView* webview);
-	void ClosePopup();
 
 	void createTrayIcon();
 	void removeTrayIcon();
 
 	void showWindow(int nCmdShow);
+	void close();
+
+	static std::vector<TiWebShell *>& getOpenShells() { return openShells; }
+	static void setTiApp(TiApp* tiApp_) { tiApp = tiApp_; }
+	static TiApp* getTiApp() { return tiApp; }
+	static TiWebShell* TiWebShell::FromWindow(HWND hWnd);
 };

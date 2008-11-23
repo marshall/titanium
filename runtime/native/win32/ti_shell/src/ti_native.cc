@@ -5,7 +5,7 @@
 #include <string>
 #include <fstream>
 
-TiNative::TiNative (TIWebShell *ti_web_shell)
+TiNative::TiNative (TiWebShell *ti_web_shell)
 {
 	this->ti_web_shell = ti_web_shell;
 
@@ -28,7 +28,7 @@ void TiNative::debug (const CppArgumentList &args, CppVariant *result)
 
 void TiNative::getResourcePath(const CppArgumentList &args, CppVariant *result)
 {
-	std::wstring resourcePath = ti_web_shell->getResourcesPath();
+	std::wstring resourcePath = ti_web_shell->getTiWindow()->getApp()->getResourcePath();
 
 	result->Set(WideToUTF8(resourcePath));
 }

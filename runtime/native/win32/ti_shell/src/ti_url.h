@@ -22,11 +22,17 @@
 #include "base/file_util.h"
 #include "base/string_util.h"
 #include "googleurl/src/gurl.h"
+#include "googleurl/src/url_util.h"
+#include "net/url_request/url_request.h"
+#include "net/url_request/url_request_file_job.h"
 #include "ti_app.h"
 
 class TiURL
 {
 public:
-	static std::string absolutePathForURL(TiApp *app, std::string url);
+	static void init();
+	static std::wstring getPathForURL(GURL& url);
+	static URLRequestJob* createURLRequestJob(URLRequest* request, const std::string& scheme);
+	static bool urlMatchesPattern(GURL& url, std::string& pattern);
 };
 #endif

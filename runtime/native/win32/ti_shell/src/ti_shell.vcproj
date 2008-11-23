@@ -139,7 +139,7 @@
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;$(ChromeDir)\chrome\$(ConfigurationName)\lib&quot;;&quot;$(ChromeDir)\sandbox\$(ConfigurationName)\lib&quot;"
 				IgnoreDefaultLibraryNames=""
-				DelayLoadDLLs=""
+				DelayLoadDLLs="$(ChromeDir)/chrome/$(ConfigurationName)/chrome.dll"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				OptimizeReferences="2"
@@ -194,11 +194,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ti_native.cc"
-				>
-			</File>
-			<File
-				RelativePath=".\ti_shell.cc"
+				RelativePath=".\ti_shell_main.cc"
 				>
 			</File>
 			<File
@@ -256,10 +252,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ti_native.h"
-				>
-			</File>
-			<File
 				RelativePath=".\ti_shell.h"
 				>
 			</File>
@@ -307,6 +299,46 @@
 			</File>
 			<File
 				RelativePath=".\ti_shell.rc"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Javascript"
+			>
+			<File
+				RelativePath=".\ti_native.cc"
+				>
+			</File>
+			<File
+				RelativePath=".\ti_native.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ti_system_menu.cc"
+				>
+			</File>
+			<File
+				RelativePath=".\ti_system_menu.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ti_user_menu.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ti_user_window.cc"
+				>
+			</File>
+			<File
+				RelativePath=".\ti_user_window.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ti_window_js.cc"
+				>
+			</File>
+			<File
+				RelativePath=".\ti_window_js.h"
 				>
 			</File>
 		</Filter>
