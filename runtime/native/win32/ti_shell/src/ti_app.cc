@@ -22,13 +22,49 @@ TiApp::TiApp(TiWebShell *tiWebShell)
 {
 	this->tiWebShell = tiWebShell;
 
+	BindMethod("getTitle", &TiApp::getTitle);
+	BindMethod("setTitle", &TiApp::setTitle);
+	//BindMethod("getIcon(const CppArgumentList &args, CppVariant *result);
+	//BindMethod("setIcon(const CppArgumentList &args, CppVariant *result);
+
 	BindMethod("show", &TiApp::show);
 	BindMethod("hide", &TiApp::hide);
+
+	
+	BindMethod("activate", &TiApp::activate);
+	BindMethod("minimize", &TiApp::minimize);
+	BindMethod("maximize", &TiApp::maximize);
+
+	/*
+	void beep(const CppArgumentList &args, CppVariant *result);
+	void playSound(const CppArgumentList &args, CppVariant *result);
+	void playNamedSound(const CppArgumentList &args, CppVariant *result);
+
+	void quit(const CppArgumentList &args, CppVariant *result);
+	*/
 }
 
 TiApp::~TiApp()
 {
 }
+
+
+void TiApp::getTitle(const CppArgumentList &args, CppVariant *result)
+{
+}
+
+void TiApp::setTitle(const CppArgumentList &args, CppVariant *result)
+{
+}
+
+void TiApp::getIcon(const CppArgumentList &args, CppVariant *result)
+{
+}
+
+void TiApp::setIcon(const CppArgumentList &args, CppVariant *result)
+{
+}
+
 
 void TiApp::hide (const CppArgumentList &args, CppVariant *result)
 {
@@ -40,4 +76,35 @@ void TiApp::show (const CppArgumentList &args, CppVariant *result)
 {
 	this->tiWebShell->showWindow(SW_SHOW);
 	this->tiWebShell->removeTrayIcon();
+}
+
+void TiApp::activate(const CppArgumentList &args, CppVariant *result)
+{
+	this->tiWebShell->showWindow(SW_RESTORE);
+}
+
+void TiApp::minimize(const CppArgumentList &args, CppVariant *result)
+{
+	this->tiWebShell->showWindow(SW_MINIMIZE);
+}
+
+void TiApp::maximize(const CppArgumentList &args, CppVariant *result)
+{
+	this->tiWebShell->showWindow(SW_MAXIMIZE);
+}
+
+void TiApp::beep(const CppArgumentList &args, CppVariant *result)
+{
+}
+
+void TiApp::playSound(const CppArgumentList &args, CppVariant *result)
+{
+}
+
+void TiApp::playNamedSound(const CppArgumentList &args, CppVariant *result)
+{
+}
+
+void TiApp::quit(const CppArgumentList &args, CppVariant *result)
+{
 }
