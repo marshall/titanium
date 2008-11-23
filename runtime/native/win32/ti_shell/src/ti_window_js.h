@@ -13,26 +13,23 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-#ifndef TI_NATIVE_H_
-#define TI_NATIVE_H_
+#ifndef TI_WINDOW_JS_H_
+#define TI_WINDOW_JS_H_
 
 #include "js_class.h"
 #include "webkit/glue/webview.h"
 
-class TiWebShell;
+#include "ti_user_window.h"
 
-class TiNative : public JsClass
+/**
+* A simple factory for Window objects
+*/
+class TiWindowJS : public JsClass
 {
-	TiWebShell *ti_web_shell;
 public:
-	TiNative(TiWebShell *ti_web_shell);
-	~TiNative(void);
+	TiWindowJS();
 
-	void debug (const CppArgumentList &args, CppVariant *result);
-	void getResourcePath(const CppArgumentList &args, CppVariant *result);
-	void include (const CppArgumentList &args, CppVariant *result);
-	void hide (const CppArgumentList &args, CppVariant *result);
-	void show (const CppArgumentList &args, CppVariant *result);
+	void createWindow(const CppArgumentList& args, CppVariant* result);
 };
 
 #endif

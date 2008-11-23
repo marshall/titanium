@@ -13,26 +13,17 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-#ifndef TI_NATIVE_H_
-#define TI_NATIVE_H_
 
-#include "js_class.h"
-#include "webkit/glue/webview.h"
+#include "ti_window_js.h"
 
-class TiWebShell;
-
-class TiNative : public JsClass
+TiWindowJS::TiWindowJS()
 {
-	TiWebShell *ti_web_shell;
-public:
-	TiNative(TiWebShell *ti_web_shell);
-	~TiNative(void);
+	BindMethod("createWindow", &TiWindowJS::createWindow);
+}
 
-	void debug (const CppArgumentList &args, CppVariant *result);
-	void getResourcePath(const CppArgumentList &args, CppVariant *result);
-	void include (const CppArgumentList &args, CppVariant *result);
-	void hide (const CppArgumentList &args, CppVariant *result);
-	void show (const CppArgumentList &args, CppVariant *result);
-};
+void TiWindowJS::createWindow(const CppArgumentList &args, CppVariant *result)
+{
+	TiUserWindow *window = new TiUserWindow();
 
-#endif
+	result->Set(window->ToNPObject());
+}

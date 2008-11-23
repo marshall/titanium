@@ -112,5 +112,6 @@ public:
 	static std::vector<TiWebShell *>& getOpenShells() { return openShells; }
 	static void setTiApp(TiApp* tiApp_) { tiApp = tiApp_; }
 	static TiApp* getTiApp() { return tiApp; }
-	static TiWebShell* TiWebShell::FromWindow(HWND hWnd);
+	static TiWebShell* fromWindow(HWND hWnd);
+	static TiWebShell* getMainTiWebShell();
 };

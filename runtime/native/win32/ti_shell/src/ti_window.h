@@ -22,12 +22,9 @@
 #include "libxml/tree.h"
 #include "libxml/xpath.h"
 
-#include "webkit/glue/cpp_bound_class.h"
-#include "webkit/glue/webview.h"
-
 #include "ti_app.h"
 
-class TiWindow : public CppBoundClass
+class TiWindow
 {
 private:
 	std::string id, url, title;

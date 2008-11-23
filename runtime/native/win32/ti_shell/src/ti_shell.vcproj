@@ -116,7 +116,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(ChromeDir)\third_party\icu38\public\common&quot;;&quot;$(ChromeDir)\third_party\libxml\include&quot;;&quot;$(ChromeDir)\third_party\npapi&quot;;&quot;$(ChromeDir)&quot;;&quot;$(ChromeDir)\skia\include\corecg&quot;;&quot;$(ChromeDir)\skia\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(ChromeDir)\chrome\$(ConfigurationName)\obj\webcore\JavaScriptHeaders&quot;;&quot;$(ChromeDir)\third_party\WebKit\JavaScriptCore&quot;;&quot;$(ChromeDir)\chrome\$(ConfigurationName)\obj\WebCore&quot;;&quot;$(ChromeDir)\third_party\icu38\public\common&quot;;&quot;$(ChromeDir)\third_party\libxml\include&quot;;&quot;$(ChromeDir)\third_party\npapi&quot;;&quot;$(ChromeDir)&quot;;&quot;$(ChromeDir)\skia\include\corecg&quot;;&quot;$(ChromeDir)\skia\include&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -305,6 +305,14 @@
 		<Filter
 			Name="Javascript"
 			>
+			<File
+				RelativePath=".\js_class.cc"
+				>
+			</File>
+			<File
+				RelativePath=".\js_class.h"
+				>
+			</File>
 			<File
 				RelativePath=".\ti_native.cc"
 				>

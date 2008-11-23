@@ -27,8 +27,17 @@ TiApp* TiWebShell::tiApp = NULL;
 std::vector<TiWebShell*> TiWebShell::openShells = std::vector<TiWebShell*>();
 
 /*static*/
-TiWebShell* TiWebShell::FromWindow(HWND hWnd) {
+TiWebShell* TiWebShell::fromWindow(HWND hWnd) {
   return reinterpret_cast<TiWebShell*>(win_util::GetWindowUserData(hWnd));
+}
+
+/*static*/
+TiWebShell* TiWebShell::getMainTiWebShell() {
+	if (openShells.size() > 0) {
+		return openShells[0];
+	}
+
+	return NULL;
 }
 
 /*static*/
@@ -60,7 +69,7 @@ void TiWebShell::initWindowClass ()
 LRESULT CALLBACK TiWebShell::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
 	int wmId, wmEvent;
 
-	TiWebShell *tiWebShell = TiWebShell::FromWindow(hWnd);
+	TiWebShell *tiWebShell = TiWebShell::fromWindow(hWnd);
 
 	switch (message)
 	{

@@ -13,26 +13,35 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-#ifndef TI_NATIVE_H_
-#define TI_NATIVE_H_
+#ifndef TI_SYSTEM_MENU_H_
+#define TI_SYSTEM_MENU_H_
 
 #include "js_class.h"
 #include "webkit/glue/webview.h"
 
-class TiWebShell;
+#include <string>
 
-class TiNative : public JsClass
+#define TI_MENU_ID_BEGIN 1500
+#define TI_SYSTEM_MENU_CALLBACK 1600
+/**
+* Javascript wrapper for the tray menu in win32
+*/
+class TiSystemMenu : public JsClass
 {
-	TiWebShell *ti_web_shell;
-public:
-	TiNative(TiWebShell *ti_web_shell);
-	~TiNative(void);
+private:
+	CppVariant *callback;
+	HMENU menu;
+	int uID;
+	std::string iconURL;
+	std::string caption;
 
-	void debug (const CppArgumentList &args, CppVariant *result);
-	void getResourcePath(const CppArgumentList &args, CppVariant *result);
-	void include (const CppArgumentList &args, CppVariant *result);
-	void hide (const CppArgumentList &args, CppVariant *result);
-	void show (const CppArgumentList &args, CppVariant *result);
+public:
+	TiSystemMenu(std::string& iconURL, std::string& caption, CppVariant *callback);
+
+	void addItem(const CppArgumentList &args, CppVariant *result);
+	void addSeparator(const CppArgumentList &args, CppVariant *result);
+	void hide(const CppArgumentList &args, CppVariant *result);
+	void show(const CppArgumentList &args, CppVariant *result);
 };
 
 #endif
