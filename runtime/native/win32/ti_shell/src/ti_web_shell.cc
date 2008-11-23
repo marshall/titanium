@@ -33,7 +33,7 @@ std::string TINetResourceProvider(int key) {
 	return TIGetDataResource(::GetModuleHandle(NULL), key);
 }
 
-TIWebShell::TIWebShell(HINSTANCE hInstance, HWND hWnd) : delegate(this) {
+TIWebShell::TIWebShell(HINSTANCE hInstance, HWND hWnd) : viewDelegate(this) {
 	ti_debug("creating TIWebShell...");
 
 	this->hInstance = hInstance;
@@ -68,10 +68,10 @@ void TIWebShell::init(TiApp *tiApp) {
 	WebPreferences web_prefs_;
 	ti_initWebPrefs(&web_prefs_);
 
-	this->host = WebViewHost::Create(this->hWnd, &delegate, web_prefs_);
+	this->host = WebViewHost::Create(this->hWnd, &viewDelegate, web_prefs_);
 
-	delegate.setMainWnd(this->hWnd);
-	delegate.setHost(this->host);
+	viewDelegate.setMainWnd(this->hWnd);
+	viewDelegate.setHost(this->host);
 
 	if (tiApp) {
 		loadTiApp();
@@ -102,7 +102,7 @@ void TIWebShell::loadTiApp()
 		fileURL.replace(index, 1, L"/");
 	}
 	
-	delegate.bootstrapTitanium = true;
+	viewDelegate.bootstrapTitanium = true;
 	loadURL(WideToUTF8(fileURL).c_str());
 	SetWindowText(hWnd, UTF8ToWide(mainWindow->getTitle()).c_str());
 
@@ -188,7 +188,7 @@ void TIWebShell::include(std::string& relativePath)
 }
 
 WebWidget* TIWebShell::CreatePopupWidget(WebView* webview) {
-  popupHost = WebWidgetHost::Create(NULL, &delegate);
+  popupHost = WebWidgetHost::Create(NULL, &viewDelegate);
   ShowWindow(getPopupHWnd(), SW_SHOW);
 
   return popupHost->webwidget();

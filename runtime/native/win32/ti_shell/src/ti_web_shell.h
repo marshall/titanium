@@ -62,7 +62,7 @@ class TIWebShell
 private:
 	HINSTANCE hInstance;
 	HWND hWnd;
-	TIWebViewDelegate delegate;
+	TIWebViewDelegate viewDelegate;
 	WebViewHost *host;
 	WebWidgetHost *popupHost;
 	std::wstring resourcesPath;
