@@ -55,14 +55,14 @@
 #include "ti_app.h"
 #include "ti_url.h"
 
-class TIWebViewDelegate;
+class TiWebViewDelegate;
 
 class TiWebShell
 {
 private:
 	HINSTANCE hInstance;
 	HWND hWnd;
-	TIWebViewDelegate viewDelegate;
+	TiWebViewDelegate viewDelegate;
 	WebViewHost *host;
 	WebWidgetHost *popupHost;
 	std::wstring resourcesPath;

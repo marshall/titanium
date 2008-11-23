@@ -55,8 +55,8 @@ class TiWebShell;
 
 #include "ti_runtime.h"
 
-class TIWebViewDelegate: 
-	public base::RefCounted<TIWebViewDelegate>,
+class TiWebViewDelegate: 
+	public base::RefCounted<TiWebViewDelegate>,
 	public WebViewDelegate
 {
 private:
@@ -68,8 +68,8 @@ private:
 
 public:
 	bool bootstrapTitanium;
-	TIWebViewDelegate(TiWebShell *tiWebShell);
-	~TIWebViewDelegate(void);
+	TiWebViewDelegate(TiWebShell *tiWebShell);
+	~TiWebViewDelegate(void);
 
 	void setHost(WebViewHost* host);
 	void setMainWnd(HWND hWnd);
