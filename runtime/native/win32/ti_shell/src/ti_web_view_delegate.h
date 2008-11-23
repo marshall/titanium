@@ -51,9 +51,10 @@
 #include "simple_resource_loader_bridge.h"
 #include "test_shell_request_context.h"
 
-class TiWebShell;
-
 #include "ti_runtime.h"
+#include "ti_app.h"
+
+class TiWebShell;
 
 class TiWebViewDelegate: 
 	public base::RefCounted<TiWebViewDelegate>,
@@ -64,6 +65,7 @@ private:
 	HWND mainWnd;
 	TiWebShell *tiWebShell;
 	TiRuntime *tiRuntime;
+	TiApp *tiApp;
 	HCURSOR customCursor;
 
 public:

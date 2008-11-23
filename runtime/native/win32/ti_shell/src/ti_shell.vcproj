@@ -190,6 +190,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ti_app.cc"
+				>
+			</File>
+			<File
 				RelativePath=".\ti_app_config.cc"
 				>
 			</File>
@@ -249,6 +253,10 @@
 			</File>
 			<File
 				RelativePath=".\test_shell_request_context.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ti_app.h"
 				>
 			</File>
 			<File

@@ -5,15 +5,13 @@
 #include <string>
 #include <fstream>
 
-TiRuntime::TiRuntime (TiWebShell *tiWebShell)
+TiRuntime::TiRuntime(TiWebShell *tiWebShell)
 {
 	this->tiWebShell = tiWebShell;
 
 	BindMethod("debug", &TiRuntime::debug);
 	BindMethod("getResourcePath", &TiRuntime::getResourcePath);
 	BindMethod("include", &TiRuntime::include);
-	BindMethod("show", &TiRuntime::show);
-	BindMethod("hide", &TiRuntime::hide);
 }
 
 TiRuntime::~TiRuntime()
@@ -39,16 +37,4 @@ void TiRuntime::include(const CppArgumentList &args, CppVariant *result)
 		std::string relativeName = args[0].ToString();
 		tiWebShell->include(relativeName);
 	}
-}
-
-void TiRuntime::hide (const CppArgumentList &args, CppVariant *result)
-{
-	this->tiWebShell->showWindow(SW_HIDE);
-	this->tiWebShell->createTrayIcon();
-}
-
-void TiRuntime::show (const CppArgumentList &args, CppVariant *result)
-{
-	this->tiWebShell->showWindow(SW_SHOW);
-	this->tiWebShell->removeTrayIcon();
 }

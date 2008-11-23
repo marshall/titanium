@@ -166,6 +166,10 @@ void TiWebViewDelegate::WindowObjectCleared(WebFrame *webFrame)
 
 		tiRuntime = new TiRuntime(tiWebShell);
 		tiRuntime->BindToJavascript(webFrame, L"ti");
+
+		tiApp = new TiApp(tiWebShell);
+		tiApp->BindToJavascript(webFrame, L"tiApp");
+
 		std::string titanium_js = "ti:///titanium.js";
 		tiWebShell->include(titanium_js);
 	}
@@ -212,7 +216,8 @@ void TiWebViewDelegate::DidFinishLoadForFrame(WebView* webview, WebFrame* frame)
 // should visually indicate that this panel comes from JavaScript. The panel
 // should have a single OK button.
 void TiWebViewDelegate::RunJavaScriptAlert(WebView* webview, const std::wstring& message) {
-	MessageBox(this->mainWnd, (LPCTSTR) message.c_str(), L"Alert", MB_OK | MB_ICONQUESTION);
+	// TODO - center dialog box
+	MessageBox(this->mainWnd, (LPCTSTR) message.c_str(), L"Alert", MB_OK | MB_ICONEXCLAMATION);
 }
 
 // Displays a JavaScript confirm panel associated with the given view.
@@ -220,7 +225,8 @@ void TiWebViewDelegate::RunJavaScriptAlert(WebView* webview, const std::wstring&
 // from JavaScript. The panel should have two buttons, e.g. "OK" and
 // "Cancel". Returns true if the user hit OK, or false if the user hit Cancel.
 bool TiWebViewDelegate::RunJavaScriptConfirm(WebView* webview, const std::wstring& message) {
-	int result = MessageBox(this->mainWnd, (LPCTSTR) message.c_str(), L"Confirm", MB_YESNO | MB_ICONEXCLAMATION);
+	// TODO - center dialog box
+	int result = MessageBox(this->mainWnd, (LPCTSTR) message.c_str(), L"Confirm", MB_YESNO | MB_ICONQUESTION);
 
 	return (result == IDYES);
 }
@@ -291,6 +297,7 @@ bool TiWebViewDelegate::RunJavaScriptPrompt(WebView* webview,
 	jsPromptLabel = message;
 	jsPromptDefaultText = default_value;
 
+	// TODO - center dialog box
 	INT_PTR r = DialogBox(::GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_JSPROMPT),
 		this->mainWnd, reinterpret_cast<DLGPROC>(JsPromptDlgProc));
 
