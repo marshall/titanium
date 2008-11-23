@@ -96,3 +96,12 @@ TiAppConfig::TiAppConfig(std::wstring& xmlfile)
 TiAppConfig::~TiAppConfig()
 {
 }
+
+std::wstring TiAppConfig::getResourcePath()
+{
+	std::wstring path;
+	PathService::Get(base::DIR_EXE, &path);
+	
+	file_util::AppendToPath(&path, L"Resources");
+	return path;
+}

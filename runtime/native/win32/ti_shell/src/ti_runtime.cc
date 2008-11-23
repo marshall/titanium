@@ -26,7 +26,7 @@ void TiRuntime::debug (const CppArgumentList &args, CppVariant *result)
 
 void TiRuntime::getResourcePath(const CppArgumentList &args, CppVariant *result)
 {
-	std::wstring resourcePath = tiWebShell->getResourcesPath();
+	std::wstring resourcePath = TiWebShell::getTiAppConfig()->getResourcePath();
 
 	result->Set(WideToUTF8(resourcePath));
 }

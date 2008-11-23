@@ -25,6 +25,8 @@
 #include "libxml/xpath.h"
 
 #include "base/string_util.h"
+#include "base/file_util.h"
+#include "base/path_service.h"
 
 #include "ti_window.h"
 
@@ -32,11 +34,15 @@
 #define nodeValue(n) ((const char *)xmlNodeListGetString(n->doc, n->children, TRUE))
 #define boolValue(n) (TiAppConfig::stringToBool(nodeValue(n)))
 
+class TiWindow;
+
+typedef std::vector<TiWindow*> TiWindowList ;
+
 class TiAppConfig 
 {
 private:
 	std::string appName, description, copyright, homepage, version;
-	std::vector<TiWindow*> windows;
+	TiWindowList windows;
 
 	// icon properties
 	std::string icon16, icon32, icon48;
@@ -53,6 +59,7 @@ public:
 	std::string& getHomepage() { return homepage; }
 	std::string& getVersion() { return version; }
 
+	TiWindowList& getWindows() { return windows; }
 	TiWindow* getWindow(std::string &id);
 	TiWindow* getMainWindow();
 	
@@ -60,6 +67,8 @@ public:
 	std::string& getIcon16() { return icon16; }
 	std::string& getIcon32() { return icon32; }
 	std::string& getIcon48() { return icon48; }
+
+	std::wstring getResourcePath();
 
 };
 

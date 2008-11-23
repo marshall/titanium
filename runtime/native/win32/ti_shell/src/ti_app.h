@@ -16,12 +16,12 @@
 #ifndef TI_APP_H_
 #define TI_APP_H_
 
-#include "webkit/glue/cpp_bound_class.h"
+#include "js_class.h"
 #include "webkit/glue/webview.h"
 
 class TiWebShell;
 
-class TiApp : public CppBoundClass
+class TiApp : public JsClass
 {
 	TiWebShell *tiWebShell;
 
@@ -47,4 +47,4 @@ public:
 	void quit(const CppArgumentList &args, CppVariant *result);
 };
 
-#endif // TI_APP_H define
+#endif

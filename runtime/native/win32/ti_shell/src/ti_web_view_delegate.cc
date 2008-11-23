@@ -20,36 +20,23 @@
 
 #include "Resource.h"
 
-TiWebViewDelegate::TiWebViewDelegate(TiWebShell *tiWebShell) : bootstrapTitanium(false) {
-	this->tiWebShell = tiWebShell;
-}
-
 TiWebViewDelegate::~TiWebViewDelegate() {
 }
 
-void TiWebViewDelegate::setHost(WebViewHost* host) {
-	this->host = host;
-}
-
-void TiWebViewDelegate::setMainWnd(HWND hWnd) {
-	this->mainWnd = hWnd;
-}
-
 gfx::ViewHandle TiWebViewDelegate::GetContainingWindow(WebWidget* webwidget) {
-	if (host != NULL) return host->window_handle();
-	return NULL;
+	return tiWebShell->getWindow();
 }
 
 // Called when a region of the WebWidget needs to be re-painted.
 void TiWebViewDelegate::DidInvalidateRect(WebWidget* webwidget, const gfx::Rect& rect) {
-	if (host != NULL) host->DidInvalidateRect(rect);
+	host->DidInvalidateRect(rect);
 }
 
 // Called when a region of the WebWidget, given by clip_rect, should be
 // scrolled by the specified dx and dy amounts.
 void TiWebViewDelegate::DidScrollRect(WebWidget* webwidget, int dx, int dy,
 	const gfx::Rect& clip_rect) {
-		host->DidScrollRect(dx, dy, clip_rect);
+	host->DidScrollRect(dx, dy, clip_rect);
 }
 
 // This method is called to instruct the window containing the WebWidget to
@@ -57,8 +44,9 @@ void TiWebViewDelegate::DidScrollRect(WebWidget* webwidget, int dx, int dy,
 // successful call to CreateWebWidget.  |disposition| indicates how this new
 // window should be displayed, but generally only means something for WebViews.
 void TiWebViewDelegate::Show(WebWidget* webwidget, WindowOpenDisposition disposition) {
-	ShowWindow(mainWnd, SW_SHOW);
-	UpdateWindow(mainWnd);
+	tiWebShell->open();
+	//ShowWindow(tiWebShell->getWindow(), SW_SHOW);
+	//UpdateWindow(tiWebShell->getWindow());
 }
 
 // This method is called to instruct the window containing the WebWidget to
@@ -66,25 +54,19 @@ void TiWebViewDelegate::Show(WebWidget* webwidget, WindowOpenDisposition disposi
 // WebWidget to eventually close.  It should not actually be destroyed until
 // after this call returns.
 void TiWebViewDelegate::CloseWidgetSoon(WebWidget* webwidget) {
-	PostMessage(mainWnd, WM_CLOSE, 0, 0);
+	PostMessage(tiWebShell->getWindow(), WM_CLOSE, 0, 0);
 }
 
 // This method is called to focus the window containing the WebWidget so
 // that it receives keyboard events.
 void TiWebViewDelegate::Focus(WebWidget* webwidget) {
 	host->webwidget()->SetFocus(true);
-	//webwidget->SetFocus(true);
-	//SetFocus(hWnd);
-
-	//ti_debug("::::::::::::FOCUS WINDOW");
 }
 
 // This method is called to unfocus the window containing the WebWidget so that
 // it no longer receives keyboard events.
 void TiWebViewDelegate::Blur(WebWidget* webwidget) {
 	host->webwidget()->SetFocus(false);
-	//webwidget->SetFocus(false);
-	//if (::GetFocus() == hWnd) { SetFocus(NULL); }
 }
 
 void TiWebViewDelegate::SetCursor(WebWidget* webwidget, 
@@ -123,7 +105,6 @@ void TiWebViewDelegate::SetWindowRect(WebWidget* webwidget, const gfx::Rect& rec
 
 // Returns the rectangle of the window in which this WebWidget is embeded in.
 void TiWebViewDelegate::GetRootWindowRect(WebWidget* webwidget, gfx::Rect* out_rect) {
-	ti_debug("::: Get Root Window Rect");
 	RECT rect;
 	HWND root_window = ::GetAncestor(host->window_handle(), GA_ROOT);
 	::GetWindowRect(root_window, &rect);
@@ -145,6 +126,33 @@ void TiWebViewDelegate::RunModal(WebWidget* webwidget){
 
 }
 
+
+WebView* TiWebViewDelegate::CreateWebView(WebView* webview, bool user_gesture)
+{
+	TiWebShell *tiWebShell = new TiWebShell("");
+	tiWebShell->open();
+
+	return tiWebShell->getHost()->webview();
+}
+
+void TiWebViewDelegate::DidStopLoading(WebView* webview)
+{
+	TiWindow *matchedWindow = NULL;
+	TiWindowList::iterator iter = TiWebShell::getTiAppConfig()->getWindows().begin();
+	for (; iter != TiWebShell::getTiAppConfig()->getWindows().end() ; iter++)
+	{
+		TiWindow *window = (*iter);
+		if (TiURL::urlMatchesPattern(static_cast<GURL>(webview->GetMainFrame()->GetURL()), window->getURL())) {
+			matchedWindow = window;
+			break;
+		}
+	}
+
+	if (matchedWindow != NULL) {
+		tiWebShell->setTiWindow(matchedWindow);
+	}
+}
+
 // Owners depend on the delegates living as long as they do, so we ref them.
 void TiWebViewDelegate::AddRef() {
 	//base::RefCounted<TiWebViewDelegate>::AddRef();
@@ -161,18 +169,15 @@ bool TiWebViewDelegate::IsHidden() {
 
 void TiWebViewDelegate::WindowObjectCleared(WebFrame *webFrame)
 {
-	if (bootstrapTitanium) {
-		bootstrapTitanium = false;
 
-		tiRuntime = new TiRuntime(tiWebShell);
-		tiRuntime->BindToJavascript(webFrame, L"ti");
+	tiRuntime = new TiRuntime(tiWebShell);
+	tiRuntime->BindToJavascript(webFrame, L"TiRuntime");
 
-		tiApp = new TiApp(tiWebShell);
-		tiApp->BindToJavascript(webFrame, L"tiApp");
+	tiApp = new TiApp(tiWebShell);
+	tiApp->BindToJavascript(webFrame, L"TiApp");
 
-		std::string titanium_js = "ti:///titanium.js";
-		tiWebShell->include(titanium_js);
-	}
+	std::string titanium_js = "ti:///titanium.js";
+	tiWebShell->include(titanium_js);
 }
 
 WebPluginDelegate* TiWebViewDelegate::CreatePluginDelegate(
@@ -216,8 +221,7 @@ void TiWebViewDelegate::DidFinishLoadForFrame(WebView* webview, WebFrame* frame)
 // should visually indicate that this panel comes from JavaScript. The panel
 // should have a single OK button.
 void TiWebViewDelegate::RunJavaScriptAlert(WebView* webview, const std::wstring& message) {
-	// TODO - center dialog box
-	MessageBox(this->mainWnd, (LPCTSTR) message.c_str(), L"Alert", MB_OK | MB_ICONEXCLAMATION);
+	MessageBox(tiWebShell->getWindow(), (LPCTSTR) message.c_str(), L"Alert", MB_OK | MB_ICONQUESTION);
 }
 
 // Displays a JavaScript confirm panel associated with the given view.
@@ -225,8 +229,7 @@ void TiWebViewDelegate::RunJavaScriptAlert(WebView* webview, const std::wstring&
 // from JavaScript. The panel should have two buttons, e.g. "OK" and
 // "Cancel". Returns true if the user hit OK, or false if the user hit Cancel.
 bool TiWebViewDelegate::RunJavaScriptConfirm(WebView* webview, const std::wstring& message) {
-	// TODO - center dialog box
-	int result = MessageBox(this->mainWnd, (LPCTSTR) message.c_str(), L"Confirm", MB_YESNO | MB_ICONQUESTION);
+	int result = MessageBox(tiWebShell->getWindow(), (LPCTSTR) message.c_str(), L"Confirm", MB_YESNO | MB_ICONEXCLAMATION);
 
 	return (result == IDYES);
 }
@@ -299,7 +302,7 @@ bool TiWebViewDelegate::RunJavaScriptPrompt(WebView* webview,
 
 	// TODO - center dialog box
 	INT_PTR r = DialogBox(::GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_JSPROMPT),
-		this->mainWnd, reinterpret_cast<DLGPROC>(JsPromptDlgProc));
+		tiWebShell->getWindow(), reinterpret_cast<DLGPROC>(JsPromptDlgProc));
 
 	if(r == JSPROMPTIDOK) {
 		result->assign(jsPromptText);
@@ -319,58 +322,4 @@ bool TiWebViewDelegate::RunJavaScriptPrompt(WebView* webview,
 bool TiWebViewDelegate::RunBeforeUnloadConfirm(WebView* webview,
                                   const std::wstring& message) {
 	return true;  // OK, continue to navigate away
-}
-
-// The output from these methods in non-interactive mode should match that
-// expected by the layout tests.  See EditingDelegate.m in DumpRenderTree.
-bool TiWebViewDelegate::ShouldBeginEditing(WebView* webview, 
-                                             std::wstring range) {
-	return true;
-}
-
-bool TiWebViewDelegate::ShouldEndEditing(WebView* webview, 
-                                           std::wstring range) {
-	return true;
-}
-
-bool TiWebViewDelegate::ShouldInsertNode(WebView* webview, 
-                                           std::wstring node, 
-                                           std::wstring range,
-                                           std::wstring action) {
-  return true;
-}
-
-bool TiWebViewDelegate::ShouldInsertText(WebView* webview, 
-                                           std::wstring text, 
-                                           std::wstring range,
-                                           std::wstring action) {
-  return true;
-}
-
-bool TiWebViewDelegate::ShouldChangeSelectedRange(WebView* webview, 
-                                                    std::wstring fromRange, 
-                                                    std::wstring toRange, 
-                                                    std::wstring affinity, 
-                                                    bool stillSelecting) {
-  return true;
-}
-
-bool TiWebViewDelegate::ShouldDeleteRange(WebView* webview, 
-                                            std::wstring range) {
-  return true;
-}
-
-bool TiWebViewDelegate::ShouldApplyStyle(WebView* webview, 
-                                           std::wstring style,
-                                           std::wstring range) {
-  return true;
-}
-
-bool TiWebViewDelegate::SmartInsertDeleteEnabled() {
-  return true;
-}
-
-WebWidget* TiWebViewDelegate::CreatePopupWidget(WebView* webview,
-                                                  bool focus_on_show) {
-	return tiWebShell->CreatePopupWidget(webview);
 }

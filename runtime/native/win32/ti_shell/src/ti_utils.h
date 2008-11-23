@@ -26,5 +26,5 @@
 
 
 void ti_debug_internal(char *message, char *filename, int line);
-void ti_initWebPrefs(WebPreferences* web_prefs_);
+WebPreferences ti_initWebPrefs();
 

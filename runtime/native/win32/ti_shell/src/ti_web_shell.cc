@@ -1,17 +1,18 @@
-//
-// Copyright 2006-2008 Appcelerator, Inc.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+/*
+* Copyright 2006-2008 Appcelerator, Inc.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
 
 #include "ti_web_shell.h"
 #include "ti_utils.h"
@@ -20,113 +21,190 @@
 #include <fstream>
 #include <shellapi.h>
 
-std::string TIGetDataResource(HMODULE module, int resource_id) {
-	void *data_ptr;
-	size_t data_size;
-	return base::GetDataResourceFromModule(module, resource_id,
-		&data_ptr, &data_size) ?
-		std::string(static_cast<char*>(data_ptr), data_size) : std::string();
+TCHAR TiWebShell::defaultWindowTitle[128];
+TCHAR TiWebShell::windowClassName[128];
+TiAppConfig* TiWebShell::tiAppConfig = NULL;
+std::vector<TiWebShell*> TiWebShell::openShells = std::vector<TiWebShell*>();
 
+/*static*/
+TiWebShell* TiWebShell::fromWindow(HWND hWnd) {
+  return reinterpret_cast<TiWebShell*>(win_util::GetWindowUserData(hWnd));
 }
 
-std::string TINetResourceProvider(int key) {
-	return TIGetDataResource(::GetModuleHandle(NULL), key);
+/*static*/
+TiWebShell* TiWebShell::getMainTiWebShell() {
+	if (openShells.size() > 0) {
+		return openShells[0];
+	}
+
+	return NULL;
 }
 
-TiWebShell::TiWebShell(HINSTANCE hInstance, HWND hWnd) : viewDelegate(this) {
-	ti_debug("creating TiWebShell...");
+/*static*/
+void TiWebShell::initWindowClass ()
+{
+	HINSTANCE hInstance = ::GetModuleHandle(NULL);
+	LoadString(hInstance, IDS_APP_TITLE, defaultWindowTitle, 128);
+	LoadString(hInstance, IDC_CHROME_SHELL3, windowClassName, 128);
+	WNDCLASSEX wcex;
 
-	this->hInstance = hInstance;
-	this->hWnd = hWnd;
+	wcex.cbSize = sizeof(WNDCLASSEX);
+
+	wcex.style			= CS_HREDRAW | CS_VREDRAW;
+	wcex.lpfnWndProc	= TiWebShell::WndProc;
+	wcex.cbClsExtra		= 0;
+	wcex.cbWndExtra		= 0;
+	wcex.hInstance		= hInstance;
+	wcex.hIcon			= LoadIcon(hInstance, MAKEINTRESOURCE(IDI_CHROME_SHELL3));
+	wcex.hCursor		= LoadCursor(NULL, IDC_ARROW);
+	wcex.hbrBackground	= (HBRUSH)(COLOR_WINDOW+1);
+	wcex.lpszMenuName	= 0;
+	wcex.lpszClassName	= windowClassName;
+	wcex.hIconSm		= LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
+	
+	RegisterClassEx(&wcex);
+}
+
+/*static*/
+LRESULT CALLBACK TiWebShell::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
+	int wmId, wmEvent;
+
+	TiWebShell *tiWebShell = TiWebShell::fromWindow(hWnd);
+
+	switch (message)
+	{
+	case WM_COMMAND:
+		wmId    = LOWORD(wParam);
+		wmEvent = HIWORD(wParam);
+		// Parse the menu selections:
+		switch (wmId)
+		{
+		case IDM_ABOUT:
+			//DialogBox(tiWebShell->getInstance(), MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
+			break;
+		case IDM_EXIT:
+			DestroyWindow(hWnd);
+			break;
+		default: {
+				return DefWindowProc(hWnd, message, wParam, lParam);
+			}
+		}
+		break;
+	case WM_DESTROY:
+		PostQuitMessage(0);
+		break;
+	case WM_SIZE:
+		tiWebShell->resizeHost();
+		break;
+	case WM_TITRAYMESSAGE:
+		{
+			UINT uMouseMsg = (UINT) lParam;
+			if(uMouseMsg == WM_LBUTTONDBLCLK)
+			{
+				if(tiWebShell != NULL)
+				{
+					tiWebShell->removeTrayIcon();
+					tiWebShell->showWindow(SW_SHOW);
+				}
+			}
+		}
+		break;
+	}
+	return DefWindowProc(hWnd, message, wParam, lParam);
+}
+
+TiWebShell::TiWebShell(TiWindow *window) : hWnd(NULL), hInstance(NULL), host(NULL), created(false) {
+	this->tiWindow = window;
+	TiWebShell::openShells.push_back(this);
+
+	if (window != NULL) {
+		this->url = tiWindow->getURL();
+	}
+}
+
+TiWebShell::TiWebShell(const char *url) : hWnd(NULL), hInstance(NULL), host(NULL), created(false) {
+	TiWebShell::openShells.push_back(this);
+
+	this->url = url;
+	this->tiWindow = new TiWindow();
 }
 
 TiWebShell::~TiWebShell(void) {
-	ti_debug("destroying TiWebShell...");
-
 	// TODO  remove tray icon if one exists .. mmm.. 
 	//this->removeTrayIcon();
 }
 
-void TiWebShell::init(TiAppConfig *tiAppConfig) {
-	ti_debug("initializing TiWebShell...");
-	this->tiAppConfig = tiAppConfig;
+void TiWebShell::createWindow()
+{
+	hInstance = ::GetModuleHandle(NULL);
+	hWnd = CreateWindowEx(WS_EX_LAYERED, windowClassName, defaultWindowTitle,
+                           WS_CLIPCHILDREN,
+                           0, 0, 0, 0,
+                           NULL, NULL, hInstance, NULL);
 
-	std::wstring cache_path;
-	PathService::Get(base::DIR_EXE, &cache_path);
-    file_util::AppendToPath(&cache_path, L"cache");
-
-	// Initializing with a default context, which means no on-disk cookie DB,
-	// and no support for directory listings.
-	SimpleResourceLoaderBridge::Init(new TestShellRequestContext(cache_path, net::HttpCache::NORMAL));
-
-	// TODO this should only be done once in the program execution
-	icu_util::Initialize();
-
-	net::NetModule::SetResourceProvider(TINetResourceProvider);
-
-
-	WebPreferences web_prefs_;
-	ti_initWebPrefs(&web_prefs_);
-
-	this->host = WebViewHost::Create(this->hWnd, &viewDelegate, web_prefs_);
-
-	viewDelegate.setMainWnd(this->hWnd);
-	viewDelegate.setHost(this->host);
-
-	if (tiAppConfig) {
-		loadTiAppConfig();
-	}
-
-	ShowWindow(host->window_handle(), SW_SHOW);
-
-	ti_debug("done initializing TiWebShell");
+	win_util::SetWindowUserData(hWnd, this);
+	
+	static WebPreferences webPrefs = ti_initWebPrefs();
+	webViewDelegate = new TiWebViewDelegate(this);
+	host = WebViewHost::Create(hWnd, webViewDelegate, webPrefs);
+	webViewDelegate->setWebViewHost(host);
+	
+	initWindow();
 }
-
 
 #define SetFlag(x,flag,b) (b ? x |= flag : x &= ~flag)
 #define UnsetFlag(x,flag) (x &= ~flag)
 
-void TiWebShell::loadTiAppConfig()
+void TiWebShell::initWindow()
 {
-	TiWindow *mainWindow = tiAppConfig->getMainWindow();
-	if (mainWindow == NULL) return;
+	printf("url is = %s\n", url.c_str());
+	if (url.length() > 0)
+		loadURL(url.c_str());
 
-	std::string startPath = mainWindow->getURL();
-	std::wstring fileURL = L"file://";
-	fileURL += resourcesPath;
-	fileURL += L"/";
-	fileURL += UTF8ToWide(startPath);
+	// force window init
+	setTiWindow(this->tiWindow);
+}
 
-	size_t index;
-	while ((index = fileURL.find(file_util::kPathSeparator)) != std::string::npos) {
-		fileURL.replace(index, 1, L"/");
-	}
-	
-	viewDelegate.bootstrapTitanium = true;
-	loadURL(WideToUTF8(fileURL).c_str());
-	SetWindowText(hWnd, UTF8ToWide(mainWindow->getTitle()).c_str());
+void TiWebShell::setTiWindow(TiWindow *tiWindow)
+{
+	this->tiWindow = tiWindow;
 
-	
+	SetWindowText(hWnd, UTF8ToWide(tiWindow->getTitle()).c_str());
+
 	long windowStyle = GetWindowLong(hWnd, GWL_STYLE);
 	
-	SetFlag(windowStyle, WS_MINIMIZEBOX, mainWindow->isMinimizable());
-	SetFlag(windowStyle, WS_MAXIMIZEBOX, mainWindow->isMaximizable());
-	SetFlag(windowStyle, WS_BORDER, mainWindow->isUsingChrome());
-	SetFlag(windowStyle, WS_CAPTION, mainWindow->isUsingChrome());
+	SetFlag(windowStyle, WS_MINIMIZEBOX, tiWindow->isMinimizable());
+	SetFlag(windowStyle, WS_MAXIMIZEBOX, tiWindow->isMaximizable());
+
+	SetFlag(windowStyle, WS_OVERLAPPEDWINDOW, tiWindow->isResizable());
+	SetFlag(windowStyle, WS_CAPTION, tiWindow->isUsingChrome());
 	
 	SetWindowLong(hWnd, GWL_STYLE, windowStyle);
 
 	UINT flags = SWP_NOMOVE | SWP_NOZORDER | SWP_FRAMECHANGED;
-	if (!mainWindow->isResizable()) {
-		flags |= SWP_NOREPOSITION;
+
+	sizeTo(tiWindow->getWidth(), tiWindow->getHeight(), flags);
+	SetLayeredWindowAttributes(hWnd, 0, (BYTE)floor(tiWindow->getTransparency()*255), LWA_ALPHA);
+}
+
+
+void TiWebShell::open() {
+	static bool windowClassInitialized = false;
+	if (!windowClassInitialized) {
+		TiWebShell::initWindowClass();
+		windowClassInitialized = true;
 	}
 
-	sizeTo(mainWindow->getWidth(), mainWindow->getHeight(), flags);
-	SetLayeredWindowAttributes(hWnd, 0, (BYTE)floor(mainWindow->getTransparency()*255), LWA_ALPHA);
+	if (hWnd == NULL)
+		createWindow();
+
+	ShowWindow(hWnd, SW_SHOW);
+	ShowWindow(host->window_handle(), SW_SHOW);
 }
 
 void TiWebShell::loadURL(const char* url) {
 	WebRequest *request = WebRequest::Create(GURL(url));
+	
 	WebFrame *frame = host->webview()->GetMainFrame();
 
 	frame->LoadRequest(request);
@@ -154,15 +232,11 @@ void TiWebShell::sizeTo(int width, int height, UINT flags) {
 	SetWindowPos(hWnd, NULL, 0, 0, window_width, window_height, flags);
 }
 
-WebViewHost* TiWebShell::getHost() {
-	return this->host;
-}
+void TiWebShell::resizeHost() {
+	RECT rc;
+	GetClientRect(hWnd, &rc);
 
-HWND TiWebShell::getHWnd() {
-	return this->hWnd;
-}
-HWND TiWebShell::getPopupHWnd() {
-	return popupHost->window_handle();
+	MoveWindow(host->window_handle(), 0, 0, rc.right, rc.bottom, TRUE);
 }
 
 void TiWebShell::include(std::string& relativePath)
@@ -170,10 +244,10 @@ void TiWebShell::include(std::string& relativePath)
 	std::string absolutePath;
 
 	if (relativePath.find_first_of("://") != std::string::npos) {
-		absolutePath = TiURL::absolutePathForURL(tiAppConfig, relativePath);
+		absolutePath = WideToUTF8(TiURL::getPathForURL(GURL(relativePath)));
 	}
 	else {
-		absolutePath = WideToUTF8(getResourcesPath());
+		absolutePath = WideToUTF8(tiAppConfig->getResourcePath());
 		absolutePath += "\\";
 		absolutePath += relativePath;
 	}
@@ -185,18 +259,6 @@ void TiWebShell::include(std::string& relativePath)
 
 	WebView *webview = getHost()->webview();
 	webview->GetMainFrame()->ExecuteJavaScript(s, absolutePath);
-}
-
-WebWidget* TiWebShell::CreatePopupWidget(WebView* webview) {
-  popupHost = WebWidgetHost::Create(NULL, &viewDelegate);
-  ShowWindow(getPopupHWnd(), SW_SHOW);
-
-  return popupHost->webwidget();
-}
-
-void TiWebShell::ClosePopup() {
-  PostMessage(getPopupHWnd(), WM_CLOSE, 0, 0);
-  popupHost = NULL;
 }
 
 void TiWebShell::createTrayIcon() {
@@ -238,3 +300,8 @@ std::string TiWebShell::getTitle() {
 void TiWebShell::setTitle(std::string title) {
 	SetWindowText(this->hWnd, UTF8ToWide(title).c_str());
 }
+
+void TiWebShell::close() {
+	CloseWindow(hWnd);
+}
+
