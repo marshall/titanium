@@ -60,7 +60,7 @@
 
 #define MAX_LOADSTRING 100
 
-TIWebShell* tiWebShell = NULL;
+TiWebShell* tiWebShell = NULL;
 
 // Global Variables:
 HINSTANCE hInstance;								// current instance
@@ -119,7 +119,7 @@ int main (int argc, char **argv) {
 	std::wstring tiAppXmlPath = resourcesPath;
 	file_util::AppendToPath(&tiAppXmlPath, L"tiapp.xml");
 
-	tiWebShell = new TIWebShell(hInstance, hWnd);
+	tiWebShell = new TiWebShell(hInstance, hWnd);
 	tiWebShell->setResourcesPath(resourcesPath);
 
 	TiApp *ti_app = new TiApp(tiAppXmlPath);

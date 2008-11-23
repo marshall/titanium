@@ -20,7 +20,7 @@
 
 #include "Resource.h"
 
-TIWebViewDelegate::TIWebViewDelegate(TIWebShell *tiWebShell) : bootstrapTitanium(false) {
+TIWebViewDelegate::TIWebViewDelegate(TiWebShell *tiWebShell) : bootstrapTitanium(false) {
 	this->tiWebShell = tiWebShell;
 }
 

@@ -33,22 +33,22 @@ std::string TINetResourceProvider(int key) {
 	return TIGetDataResource(::GetModuleHandle(NULL), key);
 }
 
-TIWebShell::TIWebShell(HINSTANCE hInstance, HWND hWnd) : viewDelegate(this) {
-	ti_debug("creating TIWebShell...");
+TiWebShell::TiWebShell(HINSTANCE hInstance, HWND hWnd) : viewDelegate(this) {
+	ti_debug("creating TiWebShell...");
 
 	this->hInstance = hInstance;
 	this->hWnd = hWnd;
 }
 
-TIWebShell::~TIWebShell(void) {
-	ti_debug("destroying TIWebSehll...");
+TiWebShell::~TiWebShell(void) {
+	ti_debug("destroying TiWebShell...");
 
 	// TODO  remove tray icon if one exists .. mmm.. 
 	//this->removeTrayIcon();
 }
 
-void TIWebShell::init(TiApp *tiApp) {
-	ti_debug("initializing TIWebShell...");
+void TiWebShell::init(TiApp *tiApp) {
+	ti_debug("initializing TiWebShell...");
 	this->tiApp = tiApp;
 
 	std::wstring cache_path;
@@ -79,14 +79,14 @@ void TIWebShell::init(TiApp *tiApp) {
 
 	ShowWindow(host->window_handle(), SW_SHOW);
 
-	ti_debug("done initializing TIWebShell");
+	ti_debug("done initializing TiWebShell");
 }
 
 
 #define SetFlag(x,flag,b) (b ? x |= flag : x &= ~flag)
 #define UnsetFlag(x,flag) (x &= ~flag)
 
-void TIWebShell::loadTiApp()
+void TiWebShell::loadTiApp()
 {
 	TiWindow *mainWindow = tiApp->getMainWindow();
 	if (mainWindow == NULL) return;
@@ -125,7 +125,7 @@ void TIWebShell::loadTiApp()
 	SetLayeredWindowAttributes(hWnd, 0, (BYTE)floor(mainWindow->getTransparency()*255), LWA_ALPHA);
 }
 
-void TIWebShell::loadURL(const char* url) {
+void TiWebShell::loadURL(const char* url) {
 	WebRequest *request = WebRequest::Create(GURL(url));
 	WebFrame *frame = host->webview()->GetMainFrame();
 
@@ -138,7 +138,7 @@ void TIWebShell::loadURL(const char* url) {
 }
 
 
-void TIWebShell::sizeTo(int width, int height, UINT flags) {
+void TiWebShell::sizeTo(int width, int height, UINT flags) {
 	RECT rc, rw;
 	GetClientRect(hWnd, &rc);
 	GetWindowRect(hWnd, &rw);
@@ -154,18 +154,18 @@ void TIWebShell::sizeTo(int width, int height, UINT flags) {
 	SetWindowPos(hWnd, NULL, 0, 0, window_width, window_height, flags);
 }
 
-WebViewHost* TIWebShell::getHost() {
+WebViewHost* TiWebShell::getHost() {
 	return this->host;
 }
 
-HWND TIWebShell::getHWnd() {
+HWND TiWebShell::getHWnd() {
 	return this->hWnd;
 }
-HWND TIWebShell::getPopupHWnd() {
+HWND TiWebShell::getPopupHWnd() {
 	return popupHost->window_handle();
 }
 
-void TIWebShell::include(std::string& relativePath)
+void TiWebShell::include(std::string& relativePath)
 {
 	std::string absolutePath;
 
@@ -187,19 +187,19 @@ void TIWebShell::include(std::string& relativePath)
 	webview->GetMainFrame()->ExecuteJavaScript(s, absolutePath);
 }
 
-WebWidget* TIWebShell::CreatePopupWidget(WebView* webview) {
+WebWidget* TiWebShell::CreatePopupWidget(WebView* webview) {
   popupHost = WebWidgetHost::Create(NULL, &viewDelegate);
   ShowWindow(getPopupHWnd(), SW_SHOW);
 
   return popupHost->webwidget();
 }
 
-void TIWebShell::ClosePopup() {
+void TiWebShell::ClosePopup() {
   PostMessage(getPopupHWnd(), WM_CLOSE, 0, 0);
   popupHost = NULL;
 }
 
-void TIWebShell::createTrayIcon() {
+void TiWebShell::createTrayIcon() {
 	NOTIFYICONDATA tnd;
 	tnd.cbSize = sizeof(NOTIFYICONDATA);
 	tnd.hWnd = this->hWnd;
@@ -213,7 +213,7 @@ void TIWebShell::createTrayIcon() {
 	Shell_NotifyIcon(NIM_ADD, &tnd);
 }
 
-void TIWebShell::removeTrayIcon() {
+void TiWebShell::removeTrayIcon() {
 	NOTIFYICONDATA tnid;
 	tnid.cbSize = sizeof(NOTIFYICONDATA);
 	tnid.hWnd = this->hWnd;
@@ -221,6 +221,6 @@ void TIWebShell::removeTrayIcon() {
 	Shell_NotifyIcon(NIM_DELETE, &tnid);
 }
 
-void TIWebShell::showWindow(int nCmdShow) {
+void TiWebShell::showWindow(int nCmdShow) {
 	ShowWindow(hWnd, nCmdShow);
 }

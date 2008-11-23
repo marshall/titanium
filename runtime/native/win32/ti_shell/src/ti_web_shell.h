@@ -57,7 +57,7 @@
 
 class TIWebViewDelegate;
 
-class TIWebShell
+class TiWebShell
 {
 private:
 	HINSTANCE hInstance;
@@ -69,8 +69,8 @@ private:
 	TiApp *tiApp;
 
 public:
-	TIWebShell(HINSTANCE hInstance, HWND hWnd);
-	~TIWebShell(void);
+	TiWebShell(HINSTANCE hInstance, HWND hWnd);
+	~TiWebShell(void);
 
 	void init(TiApp *tiApp);
 	void loadTiApp();

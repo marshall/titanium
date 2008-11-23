@@ -4,13 +4,13 @@
 #include "webkit/glue/cpp_bound_class.h"
 #include "webkit/glue/webview.h"
 
-class TIWebShell;
+class TiWebShell;
 
 class TiRuntime : public CppBoundClass
 {
-	TIWebShell *tiWebShell;
+	TiWebShell *tiWebShell;
 public:
-	TiRuntime(TIWebShell *tiWebShell);
+	TiRuntime(TiWebShell *tiWebShell);
 	~TiRuntime(void);
 
 	void debug (const CppArgumentList &args, CppVariant *result);

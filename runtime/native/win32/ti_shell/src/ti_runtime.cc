@@ -5,7 +5,7 @@
 #include <string>
 #include <fstream>
 
-TiRuntime::TiRuntime (TIWebShell *tiWebShell)
+TiRuntime::TiRuntime (TiWebShell *tiWebShell)
 {
 	this->tiWebShell = tiWebShell;
 

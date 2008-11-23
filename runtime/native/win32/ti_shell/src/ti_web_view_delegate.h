@@ -51,7 +51,7 @@
 #include "simple_resource_loader_bridge.h"
 #include "test_shell_request_context.h"
 
-class TIWebShell;
+class TiWebShell;
 
 #include "ti_runtime.h"
 
@@ -62,13 +62,13 @@ class TIWebViewDelegate:
 private:
 	WebViewHost *host;
 	HWND mainWnd;
-	TIWebShell *tiWebShell;
+	TiWebShell *tiWebShell;
 	TiRuntime *tiRuntime;
 	HCURSOR customCursor;
 
 public:
 	bool bootstrapTitanium;
-	TIWebViewDelegate(TIWebShell *tiWebShell);
+	TIWebViewDelegate(TiWebShell *tiWebShell);
 	~TIWebViewDelegate(void);
 
 	void setHost(WebViewHost* host);
