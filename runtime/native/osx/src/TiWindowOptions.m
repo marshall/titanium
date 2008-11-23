@@ -298,15 +298,20 @@
 
 - (BOOL)urlMatches:(NSString*)testURL
 {
-	NSLog(@"url=%@, test=%@\nurl=%@, test=%@\n",url,testURL,[url lastPathComponent],[testURL lastPathComponent]);
+	// first see if we match the full URL
 	if ([url isEqualToString:testURL])
 	{
 		return YES;
 	}
-	NSString *urlFile = [url lastPathComponent];
-	NSString *testFile = [testURL lastPathComponent];
-	NSLog(@"equal=%d",[urlFile isEqualToString:testFile]);
-	return [urlFile isEqualToString:testFile];
+	// use the last component of the pattern against the real URL
+	NSString *a = [url lastPathComponent];
+	NSString *b = [testURL lastPathComponent];
+	if ([a isEqualToString:b])
+	{
+		return YES;
+	}
+	NSPredicate *regex = [NSPredicate predicateWithFormat:@"SELF MATCHES %@",a];
+	return [regex evaluateWithObject:b];
 }
 
 #pragma mark -

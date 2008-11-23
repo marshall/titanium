@@ -2,67 +2,20 @@
 <body>
 <div style="background:#000; -webkit-border-radius:2px;margin:10px;padding:0;">
 <script type="text/javascript">
-window.xonload=function()
-{
-	try
+	ti.ready(function()
 	{
-		var visible = true;
-		var menu = ti.Menu.createSystemMenu("app://favicon.ico",function(sysmenu)
+		var db = new ti.Database;
+		db.open("jeff-test");
+		db.execute("create table if not exists Test (Phrase text, Timestamp int)");
+		db.execute("insert into Test values(?,?)", ['Jeff',new Date().getTime()]);
+		var rs = db.execute("select count(*) from Test");
+		while (rs.isValidRow())
 		{
-			if (visible)
-			{
-				ti.App.hide();
-			}
-			else
-			{
-				ti.App.show();
-			}
-			visible = !visible;
-		});
-/*
-		var win = ti.Window.createWindow();
-		var opts = ti.Window.createWindowOptions();
-		document.getElementById("b").onclick = function()
-		{
-			try
-			{
-				win.show();
-				ti.Dock.setBadge(null);
-			}
-			catch(E)
-			{
-				alert(E);
-			}
+			alert("Found " + rs.field(0) + " database entries");
+			rs.next();
 		}
-		ti.Dock.setBadge("1");
-		//win.show();
-
-
-		menu.addItem("Hello 1",function(title)
-		{
-			alert("menu hit! "+title);
-			menu.hide();
-			setTimeout(function()
-			{
-				menu.show();
-			},4000);
-		});
-
-		menu.addSeparator();
-
-		menu.addItem("Hello 2",function(title)
-		{
-			ti.App.beep();
-		});
-*/
-
-
-	}
-	catch (e)
-	{
-		alert("exception: "+e);
-	}
-};
+		rs.close();
+	});
 </script>
 <h1>Hello world</h1>
 <img src="http://developer.apple.com/images/developer_logo.gif"/>

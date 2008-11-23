@@ -82,6 +82,13 @@ END
                dom
                file
                desktop
+               geolocation
+               database
+               http
+               localserver
+               timer
+               workerpool
+               tracker
                epilog)
 
     # make one big ass file
