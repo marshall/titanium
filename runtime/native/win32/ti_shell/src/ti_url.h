@@ -22,11 +22,11 @@
 #include "base/file_util.h"
 #include "base/string_util.h"
 #include "googleurl/src/gurl.h"
-#include "ti_app.h"
+#include "ti_app_config.h"
 
 class TiURL
 {
 public:
-	static std::string absolutePathForURL(TiApp *app, std::string url);
+	static std::string absolutePathForURL(TiAppConfig *appConfig, std::string url);
 };
 #endif

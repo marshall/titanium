@@ -15,7 +15,7 @@
 */
 
 #include "ti_window.h"
-#include "ti_app.h"
+#include "ti_app_config.h"
 
 TiWindow::TiWindow(xmlElementPtr element) :
 	maximizable(true), minimizable(true),
@@ -56,7 +56,7 @@ TiWindow::TiWindow(xmlElementPtr element) :
 			usingChrome = boolValue(child);
 			const char * scrollbars = (const char *)xmlGetProp(child, (const xmlChar *)"scrollbars");
 			if (scrollbars != NULL) {
-				usingScrollbars = TiApp::stringToBool(scrollbars);
+				usingScrollbars = TiAppConfig::stringToBool(scrollbars);
 			}
 		}
 		else if (nodeNameEquals(child, "transparency")) {

@@ -122,8 +122,8 @@ int main (int argc, char **argv) {
 	tiWebShell = new TiWebShell(hInstance, hWnd);
 	tiWebShell->setResourcesPath(resourcesPath);
 
-	TiApp *ti_app = new TiApp(tiAppXmlPath);
-	tiWebShell->init(ti_app);
+	TiAppConfig *tiAppConfig = new TiAppConfig(tiAppXmlPath);
+	tiWebShell->init(tiAppConfig);
 	
 	////////////////////////////////////////////////////
 

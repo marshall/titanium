@@ -190,7 +190,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ti_app.cc"
+				RelativePath=".\ti_app_config.cc"
 				>
 			</File>
 			<File
@@ -252,7 +252,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ti_app.h"
+				RelativePath=".\ti_app_config.h"
 				>
 			</File>
 			<File

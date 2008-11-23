@@ -52,7 +52,7 @@
 #include "test_shell_request_context.h"
 
 #include "ti_window.h"
-#include "ti_app.h"
+#include "ti_app_config.h"
 #include "ti_url.h"
 
 class TiWebViewDelegate;
@@ -66,14 +66,14 @@ private:
 	WebViewHost *host;
 	WebWidgetHost *popupHost;
 	std::wstring resourcesPath;
-	TiApp *tiApp;
+	TiAppConfig *tiAppConfig;
+	void loadTiAppConfig();
 
 public:
 	TiWebShell(HINSTANCE hInstance, HWND hWnd);
 	~TiWebShell(void);
 
-	void init(TiApp *tiApp);
-	void loadTiApp();
+	void init(TiAppConfig *tiAppConfig);
 
 	void loadURL(const char* url);
 	void sizeTo(int width, int height, UINT flags);

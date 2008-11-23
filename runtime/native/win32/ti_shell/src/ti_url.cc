@@ -27,7 +27,7 @@ void replaceSlashes (std::string* path)
 #define RESOURCE_SCHEME "resource:///"
 #define TI_SCHEME "ti:///"
 /*static*/
-std::string TiURL::absolutePathForURL(TiApp *app, std::string url)
+std::string TiURL::absolutePathForURL(TiAppConfig *appConfig, std::string url)
 {
 	std::wstring base_dir;
 	PathService::Get(base::DIR_EXE, &base_dir);

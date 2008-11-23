@@ -14,10 +14,10 @@
 * limitations under the License.
 */
 
-#include "ti_app.h"
+#include "ti_app_config.h"
 
 /*static*/
-bool TiApp::stringToBool (const char * b) {
+bool TiAppConfig::stringToBool (const char * b) {
 	std::string str(b);
 	std::transform(str.begin(), str.end(), str.begin(), tolower);
 
@@ -27,7 +27,7 @@ bool TiApp::stringToBool (const char * b) {
 	return false;
 }
 
-TiWindow* TiApp::getWindow(std::string& id)
+TiWindow* TiAppConfig::getWindow(std::string& id)
 {
 	for (size_t i = 0; i < windows.size(); i++)
 	{
@@ -38,7 +38,7 @@ TiWindow* TiApp::getWindow(std::string& id)
 	return NULL;
 }
 
-TiWindow* TiApp::getMainWindow()
+TiWindow* TiAppConfig::getMainWindow()
 {
 	if (windows.size() > 0) {
 		return windows[0];
@@ -46,7 +46,7 @@ TiWindow* TiApp::getMainWindow()
 	return NULL;
 }
 
-TiApp::TiApp(std::wstring& xmlfile)
+TiAppConfig::TiAppConfig(std::wstring& xmlfile)
 {
 	xmlDocPtr document = xmlReadFile(WideToUTF8(xmlfile).c_str(), NULL, 0);
 	
@@ -93,6 +93,6 @@ TiApp::TiApp(std::wstring& xmlfile)
 	xmlCleanupParser();
 }
 
-TiApp::~TiApp()
+TiAppConfig::~TiAppConfig()
 {
 }

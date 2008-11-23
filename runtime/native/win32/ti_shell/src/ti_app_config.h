@@ -13,8 +13,8 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-#ifndef TI_APP_H_
-#define TI_APP_H_
+#ifndef TI_APP_CONFIG_H_
+#define TI_APP_CONFIG_H_
 
 #include <string>
 #include <vector>
@@ -30,9 +30,9 @@
 
 #define nodeNameEquals(n,s) (xmlStrcmp(n->name, (const xmlChar *)s) == 0)
 #define nodeValue(n) ((const char *)xmlNodeListGetString(n->doc, n->children, TRUE))
-#define boolValue(n) (TiApp::stringToBool(nodeValue(n)))
+#define boolValue(n) (TiAppConfig::stringToBool(nodeValue(n)))
 
-class TiApp 
+class TiAppConfig 
 {
 private:
 	std::string appName, description, copyright, homepage, version;
@@ -42,8 +42,8 @@ private:
 	std::string icon16, icon32, icon48;
 
 public:
-	TiApp(std::wstring& xmlfile);
-	~TiApp();
+	TiAppConfig(std::wstring& xmlfile);
+	~TiAppConfig();
 
 	static bool stringToBool (const char * str);
 

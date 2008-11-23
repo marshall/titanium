@@ -47,9 +47,9 @@ TiWebShell::~TiWebShell(void) {
 	//this->removeTrayIcon();
 }
 
-void TiWebShell::init(TiApp *tiApp) {
+void TiWebShell::init(TiAppConfig *tiAppConfig) {
 	ti_debug("initializing TiWebShell...");
-	this->tiApp = tiApp;
+	this->tiAppConfig = tiAppConfig;
 
 	std::wstring cache_path;
 	PathService::Get(base::DIR_EXE, &cache_path);
@@ -73,8 +73,8 @@ void TiWebShell::init(TiApp *tiApp) {
 	viewDelegate.setMainWnd(this->hWnd);
 	viewDelegate.setHost(this->host);
 
-	if (tiApp) {
-		loadTiApp();
+	if (tiAppConfig) {
+		loadTiAppConfig();
 	}
 
 	ShowWindow(host->window_handle(), SW_SHOW);
@@ -86,9 +86,9 @@ void TiWebShell::init(TiApp *tiApp) {
 #define SetFlag(x,flag,b) (b ? x |= flag : x &= ~flag)
 #define UnsetFlag(x,flag) (x &= ~flag)
 
-void TiWebShell::loadTiApp()
+void TiWebShell::loadTiAppConfig()
 {
-	TiWindow *mainWindow = tiApp->getMainWindow();
+	TiWindow *mainWindow = tiAppConfig->getMainWindow();
 	if (mainWindow == NULL) return;
 
 	std::string startPath = mainWindow->getURL();
@@ -170,7 +170,7 @@ void TiWebShell::include(std::string& relativePath)
 	std::string absolutePath;
 
 	if (relativePath.find_first_of("://") != std::string::npos) {
-		absolutePath = TiURL::absolutePathForURL(tiApp, relativePath);
+		absolutePath = TiURL::absolutePathForURL(tiAppConfig, relativePath);
 	}
 	else {
 		absolutePath = WideToUTF8(getResourcesPath());
