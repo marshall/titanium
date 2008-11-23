@@ -53,7 +53,7 @@
 
 class TIWebShell;
 
-#include "ti_native.h"
+#include "ti_runtime.h"
 
 class TIWebViewDelegate: 
 	public base::RefCounted<TIWebViewDelegate>,
@@ -63,7 +63,7 @@ private:
 	WebViewHost *host;
 	HWND mainWnd;
 	TIWebShell *ti_web_shell;
-	TiNative *ti_native;
+	TiRuntime *tiRuntime;
 	HCURSOR customCursor;
 
 public:

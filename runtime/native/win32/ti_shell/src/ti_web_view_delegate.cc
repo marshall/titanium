@@ -164,8 +164,8 @@ void TIWebViewDelegate::WindowObjectCleared(WebFrame *webFrame)
 	if (bootstrapTitanium) {
 		bootstrapTitanium = false;
 
-		ti_native = new TiNative(ti_web_shell);
-		ti_native->BindToJavascript(webFrame, L"TiNative");
+		tiRuntime = new TiRuntime(ti_web_shell);
+		tiRuntime->BindToJavascript(webFrame, L"ti");
 		std::string titanium_js = "ti:///titanium.js";
 		ti_web_shell->include(titanium_js);
 	}

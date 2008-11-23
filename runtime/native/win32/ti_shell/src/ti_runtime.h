@@ -6,12 +6,12 @@
 
 class TIWebShell;
 
-class TiNative : public CppBoundClass
+class TiRuntime : public CppBoundClass
 {
 	TIWebShell *ti_web_shell;
 public:
-	TiNative(TIWebShell *ti_web_shell);
-	~TiNative(void);
+	TiRuntime(TIWebShell *ti_web_shell);
+	~TiRuntime(void);
 
 	void debug (const CppArgumentList &args, CppVariant *result);
 	void getResourcePath(const CppArgumentList &args, CppVariant *result);

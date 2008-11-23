@@ -194,7 +194,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ti_native.cc"
+				RelativePath=".\ti_runtime.cc"
 				>
 			</File>
 			<File
@@ -256,7 +256,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ti_native.h"
+				RelativePath=".\ti_runtime.h"
 				>
 			</File>
 			<File
