@@ -228,12 +228,13 @@ typedef enum {
 {
 	if (wv != webView) return;
 	
-	if (ti != nil)
+	// ti is null the first time through
+	// on a page reload or transition, we'll enter here again 
+	// and we need to just re-use the existing object
+	if (ti == nil)
 	{
-		[ti dealloc];
+		ti = [[TiObject alloc] initWithWebView:webView];
 	}
-	
-	ti = [[TiObject alloc] initWithWebView:webView];
 	
 	// set our main ti object
 	[windowScriptObject setValue:ti forKey:@"tiRuntime"];
@@ -263,7 +264,6 @@ typedef enum {
 	if (navType == WebNavigationTypeLinkClicked)
 	{
 		// anchor link clicked
-		[self scheduleClose];
 		[listener use];
 		return;
 	}
@@ -322,12 +322,15 @@ typedef enum {
 	// look for existing frame with this name. if found, use it
 	WebFrame *existingFrame = [[TiAppDelegate instance] findFrameNamed:frameName];
 	
-	if (existingFrame) {
+	if (existingFrame) 
+	{
 		// found an existing frame with frameName. use it, and suppress new window creation
 		[[[existingFrame webView] window] makeKeyAndOrderFront:self];
 		[existingFrame loadRequest:request];
 		[listener ignore];
-	} else {
+	} 
+	else 
+	{
 		// no existing frame for frameName. allow a new window to be created
 		[listener use];
 	}
@@ -342,8 +345,11 @@ typedef enum {
 		NSDictionary *headers = [response allHeaderFields];
 		
 		NSString *contentDisposition = [[headers objectForKey:@"Content-Disposition"] lowercaseString];
-		if (contentDisposition && NSNotFound != [contentDisposition rangeOfString:@"attachment"].location) {
-			if (![[[request URL] absoluteString] hasSuffix:@".user.js"]) { // don't download userscripts
+		if (contentDisposition && NSNotFound != [contentDisposition rangeOfString:@"attachment"].location) 
+		{
+			// don't download userscripts
+			if (![[[request URL] absoluteString] hasSuffix:@".user.js"]) 
+			{ 
 				//[listener download];
 				[listener ignore]; // ignoring for now. do we want a download manager?
 				return;
@@ -351,7 +357,8 @@ typedef enum {
 		}
 		
 		NSString *contentType = [[headers objectForKey:@"Content-Type"] lowercaseString];
-		if (contentType && NSNotFound != [contentType rangeOfString:@"application/octet-stream"].location) {
+		if (contentType && NSNotFound != [contentType rangeOfString:@"application/octet-stream"].location) 
+		{
 			//[listener download];
 			[listener ignore]; // ignoring for now. do we want a download manager?
 			return;

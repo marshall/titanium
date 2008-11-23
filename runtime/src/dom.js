@@ -18,8 +18,8 @@ if (windowTransparency < 1.0)
 //
 // we need to fix up anchors so that they will open correctly
 //
-$.each($('a[href]:not(a[target])'),function()
-{
-	$(this).attr('target','_new');
-});
+// $.each($('a[href]:not(a[target])'),function()
+// {
+// 	$(this).attr('target','_new');
+// });
 
