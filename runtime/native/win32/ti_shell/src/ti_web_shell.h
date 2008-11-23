@@ -93,4 +93,7 @@ public:
 	void removeTrayIcon();
 
 	void showWindow(int nCmdShow);
+
+	std::string getTitle();
+	void setTitle(std::string title);
 };

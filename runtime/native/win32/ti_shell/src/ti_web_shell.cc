@@ -224,3 +224,17 @@ void TiWebShell::removeTrayIcon() {
 void TiWebShell::showWindow(int nCmdShow) {
 	ShowWindow(hWnd, nCmdShow);
 }
+
+std::string TiWebShell::getTitle() {
+	wchar_t buffer[2049];
+	GetWindowText(this->hWnd, buffer, 2048);
+
+	std::string result;
+	result.assign(WideToUTF8(buffer));
+
+	return result;
+}
+
+void TiWebShell::setTitle(std::string title) {
+	SetWindowText(this->hWnd, UTF8ToWide(title).c_str());
+}
