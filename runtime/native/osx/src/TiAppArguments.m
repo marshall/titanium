@@ -25,6 +25,7 @@
 @synthesize devLaunch;
 @synthesize tiAppXml;
 @synthesize runtimePath;
+@synthesize debug;
 
 -(id) init {
 	self = [super init];
@@ -37,6 +38,9 @@
 			NSString *arg = [arguments objectAtIndex:i];
 			if ([arg isEqualToString:@"--devlaunch"]) {
 				devLaunch = YES;
+			}
+			else if ([arg isEqualToString:@"--debug"]) {
+				debug = YES;
 			}
 			else if ([arg isEqualToString:@"--xml"] && [arguments count] > i+1) {
 				tiAppXml = [NSString stringWithString:[arguments objectAtIndex:i+1]];

@@ -70,6 +70,33 @@ static NSString *attrText(NSXMLElement *el, NSString *name)
 	return [node stringValue];
 }
 
+static BOOL toBoolean (NSString* value, BOOL def)
+{
+	if (value)
+	{
+		if ([value compare:@"true"] == NSOrderedSame)
+		{
+			return true;
+		}
+		return false;
+	}
+	return def;
+}
+
+static CGFloat toFloat (NSString* value, CGFloat def)
+{
+	if (value)
+	{
+		if ([value compare:@"1.0"] == NSOrderedSame)
+		{
+			return 1.0;
+		}
+		return [value floatValue];
+	}
+	return def;
+}
+
+
 @interface TiBrowserDocument (Friend)
 - (void)setIsFirst:(BOOL)yn;
 @end
@@ -113,12 +140,21 @@ static NSString *attrText(NSXMLElement *el, NSString *name)
 	[[NSUserDefaults standardUserDefaults] synchronize];
 }
 
+- (void)showSplash
+{
+	splashController = [[TiSplashScreenWindowController alloc] init];
+	NSWindow *win = [splashController initWithWindowNibName:@"SplashWindow"];
+	[splashController showWindow:win];
+}
 
 - (id)init 
 {
 	self = [super init];
 	if (self != nil) 
 	{
+		[self showSplash];
+		arguments = [[TiAppArguments alloc] init];
+		windowOptions = [[NSMutableArray alloc] init];
 		[self registerForAppleEvents];
 	}
 	return self;
@@ -128,16 +164,19 @@ static NSString *attrText(NSXMLElement *el, NSString *name)
 - (void)dealloc 
 {
 	[self unregisterForAppleEvents];
+	if (activeWindowOption != nil)
+	{
+		[activeWindowOption release];
+	}
+	for (int c=0;c<[windowOptions count];c++)
+	{
+		TiWindowOptions *o = [windowOptions objectAtIndex:c];
+		[o release];
+	}
+	[windowOptions dealloc];
 	[self setEndpoint:nil];
 	[self setAppName:nil];
 	[super dealloc];
-}
-
-- (void)showSplash
-{
-	splashController = [[TiSplashScreenWindowController alloc] init];
-	NSWindow *win = [splashController initWithWindowNibName:@"SplashWindow"];
-	[splashController showWindow:win];
 }
 
 - (void)hideSplash
@@ -152,9 +191,6 @@ static NSString *attrText(NSXMLElement *el, NSString *name)
 
 - (void)awakeFromNib 
 {
-	arguments = [[TiAppArguments alloc] init];
-	
-	[self showSplash];
 	[self parseTiAppXML];
 	
 	if ([arguments devLaunch]) {
@@ -231,6 +267,7 @@ static NSString *attrText(NSXMLElement *el, NSString *name)
 
 - (IBAction)toggleFullScreen:(id)sender 
 {
+	/*
 	NSScreen *screen = nil;
 	id webArchive = nil;
 	WebView *wv = nil;
@@ -275,6 +312,7 @@ static NSString *attrText(NSXMLElement *el, NSString *name)
 	if (webArchive) {
 		[[wv mainFrame] loadArchive:webArchive];
 	}
+	 */
 }
 
 
@@ -299,26 +337,50 @@ static NSString *attrText(NSXMLElement *el, NSString *name)
 	return newDoc;
 }
 
-- (void)setWindowOptions:(TiWindowOptions*)o
+- (void)setActiveWindowOption:(TiWindowOptions*)o
 {
-	windowOptions=o;
-}
-
-- (TiWindowOptions*)getWindowOptions
-{
-	return windowOptions;
-}
-
-- (TiBrowserDocument *)newDocumentWithRequest:(NSURLRequest *)request display:(BOOL)display {
-	NSError *err = nil;
+	if (activeWindowOption != nil )
+	{
+		[activeWindowOption release];
+		activeWindowOption = nil;
+	}
 	
-//	TiBrowserDocument *newDoc = [self openUntitledDocumentAndDisplay:display error:&err];
+	if (o != nil)
+	{
+		activeWindowOption = o;
+		[activeWindowOption retain];
+	}
+}
+
+- (TiWindowOptions*)getActiveWindowOption
+{
+	if (activeWindowOption != nil)
+	{
+		[activeWindowOption retain];
+	}
+	return activeWindowOption;
+}
+
+
+- (TiBrowserDocument *)newDocumentWithRequest:(NSURLRequest *)request display:(BOOL)display 
+{
+	NSError *err = nil;
 	TiBrowserDocument *newDoc = [[TiBrowserDocument alloc] init];
+	TiWindowOptions *opts = [[TiAppDelegate instance]  findWindowOptionsForURLSpec:request];
+	[newDoc setOptions:opts];
 	
 	[self addDocument:newDoc];
 	
 	if (err) {
+		NSLog(@"Error opening document");
 		return nil;
+	}
+	
+	TiBrowserWindowController *winController = TIFrontController();
+	if ([winController isClosing])
+	{
+		NSDocument *doc = [winController document];
+		[doc close];
 	}
 	
 	if (!display) {
@@ -336,6 +398,7 @@ static NSString *attrText(NSXMLElement *el, NSString *name)
 	TiBrowserDocument *newDoc = [self openUntitledDocumentAndDisplay:display error:&err];
 	
 	if (err) {
+		NSLog(@"Error opening document");
 		return nil;
 	}
 	
@@ -426,19 +489,15 @@ static NSString *attrText(NSXMLElement *el, NSString *name)
 								 nil);									// other button	
 	
 	NSString *tiScheme = @"ti://";
-	if ([URLString hasPrefix:tiScheme]) {
-		
-		//NSString *filePath = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:substringFromIndex:[tiScheme length]];
-
+	if ([URLString hasPrefix:tiScheme]) 
+	{
 		NSString *s = [URLString substringFromIndex:[tiScheme length]];
 		NSString *resPath = [[NSBundle mainBundle] resourcePath];
-//		NSString *scriptPath = [[resPath stringByAppendingPathComponent:@"public"] stringByAppendingPathComponent:s];
 		NSString *scriptPath = [resPath stringByAppendingPathComponent:s];
 		URLString = [NSString stringWithContentsOfFile:scriptPath];
-		//URLString = [NSString stringWithFormat:@"http://%@", [URLString substringFromIndex:[tiScheme length]]];
 
 		NSRunInformationalAlertPanel(NSLocalizedString(@"JavaScript", @""),	// title
-									 s,								// message
+									 s,										// message
 									 NSLocalizedString(@"OK", @""),			// default button
 									 nil,									// alt button
 									 nil);									// other button	
@@ -449,31 +508,30 @@ static NSString *attrText(NSXMLElement *el, NSString *name)
 	[self newDocumentWithRequest:request display:YES];
 }
 
-+ (bool)toBoolean:(NSString*)value def:(bool)def
+- (TiWindowOptions*) findInitialWindowOptions
 {
-	if (value)
-	{
-		if ([value compare:@"true"] == NSOrderedSame)
-		{
-			return true;
-		}
-		return false;
-	}
-	return def;
+	TiWindowOptions* opt = [windowOptions objectAtIndex:0];
+	[opt retain];
+	return opt;
 }
 
-+ (CGFloat)toFloat:(NSString*)value def:(CGFloat)def
+- (TiWindowOptions*) findWindowOptionsForURLSpec:(NSURLRequest*)urlrequest
 {
-	if (value)
+	NSURL *URL = [urlrequest URL];
+	NSString *url = [URL absoluteString]; 
+	TiWindowOptions *opt = nil;
+	for (int c=0;c<[windowOptions count];c++)
 	{
-		if ([value compare:@"1.0"] == NSOrderedSame)
+		opt = [windowOptions objectAtIndex:c];
+		if ([opt urlMatches:url])
 		{
-			return 1.0;
+			[opt retain];
+			break;
 		}
-		return [value floatValue];
 	}
-	return def;
+	return opt;
 }
+
 
 - (void)parseTiAppXML 
 {
@@ -501,53 +559,64 @@ static NSString *attrText(NSXMLElement *el, NSString *name)
 		[self setEndpoint:elementText(root, @"appc:endpoint")];
 	}
 
-	NSXMLElement *window = getElement(root, @"window");
-	CGFloat width = [attrText(window, @"width") floatValue];
-	CGFloat height = [attrText(window, @"height") floatValue];
-	
-	// default is no minimum
-	CGFloat minWidth = [TiAppDelegate toFloat:attrText(window, @"min-width") def:0];
-	CGFloat minHeight = [TiAppDelegate toFloat:attrText(window, @"min-height") def:0];
-	
-	// default is very large maximum
-	CGFloat maxWidth = [TiAppDelegate toFloat:attrText(window, @"max-width") def:9000];
-	CGFloat maxHeight = [TiAppDelegate toFloat:attrText(window, @"max-height") def:9000];
-	
-	NSLog(@"initial window: %fx%f, min: %fx%f, max: %fx%f\n",width,height,minWidth,minHeight,maxWidth,maxHeight);
-
-	NSString *title = elementText(window, @"title");
-	NSString *start = elementText(window, @"start");		
-	bool chrome = [TiAppDelegate toBoolean:elementText(window, @"chrome") def:true];		
-	bool scrollbars = YES;
-	if (chrome)
+	NSArray *array = [root elementsForName:@"window"];
+	for (int c = 0; c < [array count]; c++) 
 	{
-		NSXMLElement *c = getElement(window, @"chrome");
-		scrollbars = [attrText(c, @"scrollbars") boolValue];
+		NSXMLElement *window = [array objectAtIndex:c];
+		NSString *windowID = elementText(window,@"id");
+		
+		CGFloat width = toFloat(elementText(window,@"width"),500);
+		CGFloat height = toFloat(elementText(window,@"height"),500);
+		
+		// default is no minimum
+		CGFloat minWidth = toFloat(elementText(window,@"min-width"),0);
+		CGFloat minHeight = toFloat(elementText(window,@"min-height"),0);
+		
+		// default is very large maximum
+		CGFloat maxWidth = toFloat(elementText(window,@"max-width"),9000);
+		CGFloat maxHeight = toFloat(elementText(window,@"max-height"),9000);
+		
+		NSLog(@"initial window: %fx%f, min: %fx%f, max: %fx%f\n",width,height,minWidth,minHeight,maxWidth,maxHeight);
+		
+		NSString *title = elementText(window, @"title");
+		NSString *url = elementText(window, @"url");		
+		bool chrome = toBoolean(elementText(window, @"chrome"),YES);		
+		bool scrollbars = YES;
+		if (chrome)
+		{
+			NSXMLElement *c = getElement(window, @"chrome");
+			scrollbars = [attrText(c, @"scrollbars") boolValue];
+		}
+		bool maximizable = toBoolean(elementText(window, @"maximizable"),YES);		
+		bool minimizable = toBoolean(elementText(window, @"minimizable"),YES);		
+		bool resizable = toBoolean(elementText(window, @"resizable"),YES);		
+		bool closeable = toBoolean(elementText(window, @"closeable"),YES);		
+		CGFloat transparency = toFloat(elementText(window, @"transparency"),1.0);		
+		
+		TiWindowOptions *options = [TiWindowOptions new];
+		[options setID:windowID];
+		[options setWidth:width];
+		[options setHeight:height];
+		[options setMinWidth:minWidth];
+		[options setMinHeight:minHeight];
+		[options setMaxWidth:maxWidth];
+		[options setMaxHeight:maxHeight];
+		[options setTitle:title];
+		[options setURL:url];
+		[options setChrome:chrome];
+		[options setMaximizable:maximizable];
+		[options setMinimizable:minimizable];
+		[options setCloseable:closeable];
+		[options setResizable:resizable];
+		[options setTransparency:transparency];
+		[options setScrollbars:scrollbars];
+		
+		[windowOptions addObject:options];
 	}
-	bool maximizable = [TiAppDelegate toBoolean:elementText(window, @"maximizable") def:true];		
-	bool minimizable = [TiAppDelegate toBoolean:elementText(window, @"minimizable") def:true];		
-	bool resizable = [TiAppDelegate toBoolean:elementText(window, @"resizable") def:true];		
-	bool closeable = [TiAppDelegate toBoolean:elementText(window, @"closeable") def:true];		
-	CGFloat transparency = [TiAppDelegate toFloat:elementText(window, @"transparency") def:1.0];		
 	
-	TiWindowOptions *options = [TiWindowOptions new];
-	[options setWidth:width];
-	[options setHeight:height];
-	[options setMinWidth:minWidth];
-	[options setMinHeight:minHeight];
-	[options setMaxWidth:maxWidth];
-	[options setMaxHeight:maxHeight];
-	[options setTitle:title];
-	[options setURL:start];
-	[options setChrome:chrome];
-	[options setMaximizable:maximizable];
-	[options setMinimizable:minimizable];
-	[options setCloseable:closeable];
-	[options setResizable:resizable];
-	[options setTransparency:transparency];
-	[options setScrollbars:scrollbars];
-
-	[[TiAppDelegate instance] setWindowOptions:options];
+	TiWindowOptions *first = [self findInitialWindowOptions];
+	[self setActiveWindowOption: first];
+	[first release];
 }
 
 - (void)initDevEnvironment {
@@ -563,7 +632,7 @@ static NSString *attrText(NSXMLElement *el, NSString *name)
 
 - (void)loadFirstPage {
 	NSURL *url = nil;
-	TiWindowOptions *options = [[TiAppDelegate instance] getWindowOptions];
+	TiWindowOptions *options = [[TiAppDelegate instance] findInitialWindowOptions];
 	NSString *relativePath = [options getURL];
 	
 	if (!relativePath)
@@ -593,6 +662,8 @@ static NSString *attrText(NSXMLElement *el, NSString *name)
 	} else {
 		NSLog(@"Error: could not load base url");
 	}
+	
+	[options release];
 }
 
 

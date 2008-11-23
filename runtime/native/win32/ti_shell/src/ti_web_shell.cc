@@ -23,7 +23,7 @@
 
 TCHAR TiWebShell::defaultWindowTitle[128];
 TCHAR TiWebShell::windowClassName[128];
-TiApp* TiWebShell::tiApp = NULL;
+TiAppConfig* TiWebShell::tiAppConfig = NULL;
 std::vector<TiWebShell*> TiWebShell::openShells = std::vector<TiWebShell*>();
 
 /*static*/
@@ -126,7 +126,7 @@ TiWebShell::TiWebShell(const char *url) : hWnd(NULL), hInstance(NULL), host(NULL
 	TiWebShell::openShells.push_back(this);
 
 	this->url = url;
-	this->tiWindow = new TiWindow(NULL);
+	this->tiWindow = new TiWindow();
 }
 
 TiWebShell::~TiWebShell(void) {
@@ -246,7 +246,7 @@ void TiWebShell::include(std::string& relativePath)
 		absolutePath = WideToUTF8(TiURL::getPathForURL(GURL(relativePath)));
 	}
 	else {
-		absolutePath = WideToUTF8(tiWindow->getApp()->getResourcePath());
+		absolutePath = WideToUTF8(tiAppConfig->getResourcePath());
 		absolutePath += "\\";
 		absolutePath += relativePath;
 	}

@@ -15,58 +15,21 @@
 */
 #ifndef TI_APP_H_
 #define TI_APP_H_
-
-#include <string>
-#include <vector>
-#include <algorithm>
-
-#include "libxml/parser.h"
-#include "libxml/tree.h"
-#include "libxml/xpath.h"
-
-#include "base/string_util.h"
-#include "base/file_util.h"
-#include "base/path_service.h"
-
-#define nodeNameEquals(n,s) (xmlStrcmp(n->name, (const xmlChar *)s) == 0)
-#define nodeValue(n) ((const char *)xmlNodeListGetString(n->doc, n->children, TRUE))
-#define boolValue(n) (TiApp::stringToBool(nodeValue(n)))
-
-class TiWindow;
-
-typedef std::vector<TiWindow*> TiWindowList ;
-
-class TiApp 
+ 
+#include "js_class.h"
+#include "webkit/glue/webview.h"
+ 
+class TiWebShell;
+ 
+class TiApp : public JsClass
 {
-private:
-	std::string appName, description, copyright, homepage, version;
-	TiWindowList windows;
-
-	// icon properties
-	std::string icon16, icon32, icon48;
-
+  TiWebShell *tiWebShell;
 public:
-	TiApp(std::wstring& xmlfile);
-	~TiApp();
-
-	static bool stringToBool (const char * str);
-
-	std::string& getAppName() { return appName; }
-	std::string& getDescription() { return description; }
-	std::string& getCopyright() { return copyright; }
-	std::string& getHomepage() { return homepage; }
-	std::string& getVersion() { return version; }
-
-	TiWindowList& getWindows() { return windows; }
-	TiWindow* getWindow(std::string &id);
-	TiWindow* getMainWindow();
-	
-	//icon accessors
-	std::string& getIcon16() { return icon16; }
-	std::string& getIcon32() { return icon32; }
-	std::string& getIcon48() { return icon48; }
-
-	std::wstring getResourcePath();
+  TiApp(TiWebShell *tiWebShell);
+  ~TiApp(void);
+ 
+  void hide (const CppArgumentList &args, CppVariant *result);
+  void show (const CppArgumentList &args, CppVariant *result);
 };
-
-#endif
+ 
+#endif // TI_APP_H define

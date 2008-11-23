@@ -18,3 +18,5 @@ ti.plugins = [];
 <% Titanium.each_plugin do |plugin| %>
 	ti.App.include("ti://plugin/<%= plugin.data[:name] %>/plugin.js");
 <% end %>
+
+ti.pluginsLoaded();

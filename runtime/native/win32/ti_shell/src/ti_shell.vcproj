@@ -314,11 +314,19 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ti_native.cc"
+				RelativePath=".\ti_app_config.cc"
 				>
 			</File>
 			<File
-				RelativePath=".\ti_native.h"
+				RelativePath=".\ti_app_config.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ti_runtime.cc"
+				>
+			</File>
+			<File
+				RelativePath=".\ti_runtime.h"
 				>
 			</File>
 			<File

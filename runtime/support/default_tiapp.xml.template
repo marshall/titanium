@@ -3,13 +3,16 @@
  xmlns:ti="http://ti.appcelerator.org"
  xmlns:appc="http://www.appcelerator.org">
 	
+   <id>com.titaniumapp.<%= config[:appname] %></id>
 	<name><%= config[:appname] %></name>
-	
 	<% if config.has_key?(:endpoint) %>
 	<appc:endpoint><%= config[:endpoint] %></appc:endpoint>
-    <% end %>
+   <% end %>
 	
-	<window width="<%= config.has_key?(:width) ? config[:width] : 800 %>" height="<%= config.has_key?(:height) ? config[:height] : 600 %>">
+	<window>
+		<id>initial</id>
+		<width><%= config.has_key?(:width) ? config[:width] : 800 %></width>
+	 	<height><%= config.has_key?(:height) ? config[:height] : 600 %></height>
 		<title><%= config[:title] %></title>
 		<url><%= config[:url] %></url>
 	</window>

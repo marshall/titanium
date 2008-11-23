@@ -21,10 +21,10 @@
 
 @interface TiAppArguments : NSObject {
 	NSArray *arguments;
-	
 	NSString *launchURL;
 	NSString *tiAppXml;
 	BOOL devLaunch;
+	BOOL debug;
 	NSString *runtimePath;
 	NSMutableDictionary *pluginPaths;
 }
@@ -32,6 +32,7 @@
 @property (copy,readwrite) NSString* launchURL;
 @property (copy,readwrite) NSString* tiAppXml;
 @property (readwrite) BOOL devLaunch;
+@property (readwrite) BOOL debug;
 @property (copy,readwrite) NSString* runtimePath;
 
 -(id)init;

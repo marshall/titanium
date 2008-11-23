@@ -22,7 +22,7 @@
 #include "libxml/tree.h"
 #include "libxml/xpath.h"
 
-#include "ti_app.h"
+#include "ti_app_config.h"
 
 class TiWindow
 {
@@ -34,15 +34,12 @@ private:
 	bool visible, maximizable, minimizable, closeable,
 		resizable, fullscreen, usingChrome, usingScrollbars;
 
-	TiApp *tiApp;
-
 	void setDefaults();
 public:
 	static int DEFAULT_POSITION;
 
 	TiWindow() { setDefaults(); }
-	TiWindow(TiApp *tiApp);
-	TiWindow(TiApp *tiApp, xmlElementPtr window);
+	TiWindow(xmlElementPtr window);
 	
 	// window accessors
 	std::string& getURL() { return url; }
@@ -86,8 +83,6 @@ public:
 	void setUsingChrome(bool usingChrome_) { usingChrome = usingChrome_; }
 	bool isUsingScrollbars() { return usingScrollbars; }
 	void setUsingScrollbars(bool usingScrollbars_) { usingScrollbars = usingScrollbars_; }
-
-	TiApp* getApp() { return tiApp; }
 };
 
 #endif

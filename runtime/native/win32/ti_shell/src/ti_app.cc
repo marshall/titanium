@@ -13,96 +13,31 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-
+ 
 #include "ti_app.h"
-#include "ti_window.h"
-
-/*static*/
-bool TiApp::stringToBool (const char * b) {
-	std::string str = b;
-	std::transform(str.begin(), str.end(), str.begin(), tolower);
-
-	if (str == "yes" || str == "true" || str == "on") {
-		return true;
-	}
-	return false;
-}
-
-TiWindow* TiApp::getWindow(std::string& id)
+ 
+#include "ti_web_shell.h"
+ 
+TiApp::TiApp(TiWebShell *tiWebShell)
 {
-	for (size_t i = 0; i < windows.size(); i++)
-	{
-		if (windows[i]->getId() == id) {
-			return windows[i];
-		}
-	}
-	return NULL;
+  this->tiWebShell = tiWebShell;
+ 
+  BindMethod("show", &TiApp::show);
+  BindMethod("hide", &TiApp::hide);
 }
-
-TiWindow* TiApp::getMainWindow()
-{
-	if (windows.size() > 0) {
-		return windows[0];
-	}
-	return NULL;
-}
-
-TiApp::TiApp(std::wstring& xmlfile)
-{
-	xmlDocPtr document = xmlReadFile(WideToUTF8(xmlfile).c_str(), NULL, 0);
-	
-	if (document != NULL) {
-		
-		xmlNodePtr root = xmlDocGetRootElement(document);
-		xmlNodePtr node = root->children;
-		while (node != NULL) {
-			if (node->type == XML_ELEMENT_NODE) {
-				if (nodeNameEquals(node, "name")) {
-					appName = nodeValue(node);
-				} else if (nodeNameEquals(node, "description")) {
-					description = nodeValue(node);
-				} else if (nodeNameEquals(node, "copyright")) {
-					copyright = nodeValue(node);
-				} else if (nodeNameEquals(node, "homepage")) {
-					homepage = nodeValue(node);
-				} else if (nodeNameEquals(node, "version")) {
-					version = nodeValue(node);
-				} else if (nodeNameEquals(node, "window")) {
-					this->windows.push_back(new TiWindow(this, (xmlElementPtr)node));
-				} else if (nodeNameEquals(node, "icon")) {
-					xmlNodePtr child = node->children;
-					while (child != NULL) {
-						if (child->type == XML_ELEMENT_NODE) {
-							if (nodeNameEquals(child, "image16")) {
-								icon16 = nodeValue(child);
-							} else if (nodeNameEquals(child, "image32")) {
-								icon32 = nodeValue(child);
-							} else if (nodeNameEquals(child, "image48")) {
-								icon48 = nodeValue(child);
-							}
-						}
-						child = child->next;
-					}
-				}
-			}
-			node = node->next;
-		}
-
-		xmlFreeDoc(document);
-	}
-
-	xmlCleanupParser();
-}
-
+ 
 TiApp::~TiApp()
 {
 }
-
-std::wstring TiApp::getResourcePath()
+ 
+void TiApp::hide (const CppArgumentList &args, CppVariant *result)
 {
-	std::wstring path;
-	PathService::Get(base::DIR_EXE, &path);
-	file_util::AppendToPath(&path, L"Resources");
-
-	return path;
+  this->tiWebShell->showWindow(SW_HIDE);
+  this->tiWebShell->createTrayIcon();
+}
+ 
+void TiApp::show (const CppArgumentList &args, CppVariant *result)
+{
+  this->tiWebShell->showWindow(SW_SHOW);
+  this->tiWebShell->removeTrayIcon();
 }

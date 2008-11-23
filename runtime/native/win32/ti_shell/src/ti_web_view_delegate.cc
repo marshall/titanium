@@ -126,45 +126,6 @@ void TiWebViewDelegate::RunModal(WebWidget* webwidget){
 
 }
 
-/*
-void TiWebViewDelegate::OpenURL(WebView* webview, const GURL& url, const GURL& referrer, WindowOpenDisposition disposition)
-{
-	if (disposition == SUPPRESS_OPEN)
-		return;
-
-	TiWindow *matchedWindow = NULL;
-	TiWindowList::iterator iter = TiWebShell::getTiApp()->getWindows().begin();
-	for (; iter != TiWebShell::getTiApp()->getWindows().end() ; iter++)
-	{
-		TiWindow *window = (*iter);
-		if (TiURL::urlMatchesPattern(static_cast<GURL>(url), window->getURL())) {
-			matchedWindow = window;
-			break;
-		}
-	}
-
-	TiWebShell *tiWebShell = NULL;
-	if (matchedWindow != NULL) {
-		tiWebShell = new TiWebShell(matchedWindow);
-	} else {
-		tiWebShell = new TiWebShell(url.spec().c_str());
-	}
-
-	tiWebShell->open();
-}
-
-WindowOpenDisposition TiWebViewDelegate::DispositionForNavigationAction(
-    WebView* webview,
-    WebFrame* frame,
-    const WebRequest* request,
-    WebNavigationType type,
-    WindowOpenDisposition disposition,
-    bool is_redirect) {
-
-    return WebViewDelegate::DispositionForNavigationAction(
-      webview, frame, request, type, disposition, is_redirect);
-}
-*/
 
 WebView* TiWebViewDelegate::CreateWebView(WebView* webview, bool user_gesture)
 {
@@ -177,8 +138,8 @@ WebView* TiWebViewDelegate::CreateWebView(WebView* webview, bool user_gesture)
 void TiWebViewDelegate::DidStopLoading(WebView* webview)
 {
 	TiWindow *matchedWindow = NULL;
-	TiWindowList::iterator iter = TiWebShell::getTiApp()->getWindows().begin();
-	for (; iter != TiWebShell::getTiApp()->getWindows().end() ; iter++)
+	TiWindowList::iterator iter = TiWebShell::getTiAppConfig()->getWindows().begin();
+	for (; iter != TiWebShell::getTiAppConfig()->getWindows().end() ; iter++)
 	{
 		TiWindow *window = (*iter);
 		if (TiURL::urlMatchesPattern(static_cast<GURL>(webview->GetMainFrame()->GetURL()), window->getURL())) {
@@ -208,9 +169,14 @@ bool TiWebViewDelegate::IsHidden() {
 
 void TiWebViewDelegate::WindowObjectCleared(WebFrame *webFrame)
 {
-	tiNative = new TiNative(tiWebShell);
-	tiNative->BindToJavascript(webFrame, L"TiNative");
-	std::string titanium_js = "ti://titanium.js";
+
+	tiRuntime = new TiRuntime(tiWebShell);
+	tiRuntime->BindToJavascript(webFrame, L"TiRuntime");
+
+	tiApp = new TiApp(tiWebShell);
+	tiApp->BindToJavascript(webFrame, L"TiApp");
+
+	std::string titanium_js = "ti:///titanium.js";
 	tiWebShell->include(titanium_js);
 }
 
@@ -334,6 +300,7 @@ bool TiWebViewDelegate::RunJavaScriptPrompt(WebView* webview,
 	jsPromptLabel = message;
 	jsPromptDefaultText = default_value;
 
+	// TODO - center dialog box
 	INT_PTR r = DialogBox(::GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_JSPROMPT),
 		tiWebShell->getWindow(), reinterpret_cast<DLGPROC>(JsPromptDlgProc));
 
@@ -355,53 +322,4 @@ bool TiWebViewDelegate::RunJavaScriptPrompt(WebView* webview,
 bool TiWebViewDelegate::RunBeforeUnloadConfirm(WebView* webview,
                                   const std::wstring& message) {
 	return true;  // OK, continue to navigate away
-}
-
-// The output from these methods in non-interactive mode should match that
-// expected by the layout tests.  See EditingDelegate.m in DumpRenderTree.
-bool TiWebViewDelegate::ShouldBeginEditing(WebView* webview, 
-                                             std::wstring range) {
-	return true;
-}
-
-bool TiWebViewDelegate::ShouldEndEditing(WebView* webview, 
-                                           std::wstring range) {
-	return true;
-}
-
-bool TiWebViewDelegate::ShouldInsertNode(WebView* webview, 
-                                           std::wstring node, 
-                                           std::wstring range,
-                                           std::wstring action) {
-  return true;
-}
-
-bool TiWebViewDelegate::ShouldInsertText(WebView* webview, 
-                                           std::wstring text, 
-                                           std::wstring range,
-                                           std::wstring action) {
-  return true;
-}
-
-bool TiWebViewDelegate::ShouldChangeSelectedRange(WebView* webview, 
-                                                    std::wstring fromRange, 
-                                                    std::wstring toRange, 
-                                                    std::wstring affinity, 
-                                                    bool stillSelecting) {
-  return true;
-}
-
-bool TiWebViewDelegate::ShouldDeleteRange(WebView* webview, 
-                                            std::wstring range) {
-  return true;
-}
-
-bool TiWebViewDelegate::ShouldApplyStyle(WebView* webview, 
-                                           std::wstring style,
-                                           std::wstring range) {
-  return true;
-}
-
-bool TiWebViewDelegate::SmartInsertDeleteEnabled() {
-  return true;
 }

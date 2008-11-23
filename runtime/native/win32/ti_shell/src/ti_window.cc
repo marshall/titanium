@@ -14,7 +14,7 @@
 * limitations under the License.
 */
 
-#include "ti_app.h"
+#include "ti_app_config.h"
 #include "ti_window.h"
 
 int TiWindow::DEFAULT_POSITION = -1;
@@ -34,12 +34,7 @@ void TiWindow::setDefaults ()
 	visible = true;
 }
 
-TiWindow::TiWindow(TiApp *tiApp_) : tiApp(tiApp_)
-{
-	setDefaults();
-}
-
-TiWindow::TiWindow(TiApp *tiApp_, xmlElementPtr element) : tiApp(tiApp_)
+TiWindow::TiWindow(xmlElementPtr element)
 {
 	setDefaults();
 
@@ -73,7 +68,7 @@ TiWindow::TiWindow(TiApp *tiApp_, xmlElementPtr element) : tiApp(tiApp_)
 			usingChrome = boolValue(child);
 			const char * scrollbars = (const char *)xmlGetProp(child, (const xmlChar *)"scrollbars");
 			if (scrollbars != NULL) {
-				usingScrollbars = TiApp::stringToBool(scrollbars);
+				usingScrollbars = TiAppConfig::stringToBool(scrollbars);
 			}
 		}
 		else if (nodeNameEquals(child, "transparency")) {

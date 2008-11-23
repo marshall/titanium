@@ -111,7 +111,7 @@ int main (int argc, char **argv) {
 	std::wstring tiAppXmlPath = resourcesPath;
 	file_util::AppendToPath(&tiAppXmlPath, L"tiapp.xml");
 
-	TiApp *tiApp = new TiApp(tiAppXmlPath);
+	TiAppConfig *tiAppConfig = new TiAppConfig(tiAppXmlPath);
 	
 	std::wstring cache_path;
 	PathService::Get(base::DIR_EXE, &cache_path);
@@ -125,8 +125,8 @@ int main (int argc, char **argv) {
 	HACCEL hAccelTable;
 	hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_CHROME_SHELL3));
 
-	TiWebShell::setTiApp(tiApp);
-	TiWebShell *tiWebShell = new TiWebShell(tiApp->getMainWindow());
+	TiWebShell::setTiAppConfig(tiAppConfig);
+	TiWebShell *tiWebShell = new TiWebShell(tiAppConfig->getMainWindow());
 	tiWebShell->open();
 
 	MessageLoop::current()->Run();

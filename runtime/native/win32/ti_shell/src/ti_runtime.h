@@ -13,26 +13,24 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
+#ifndef TI_NATIVE_H_
+#define TI_NATIVE_H_
 
-#ifndef TI_URL_H_
-#define TI_URL_H_
+#include "js_class.h"
+#include "webkit/glue/webview.h"
 
-#include <string>
-#include "base/path_service.h"
-#include "base/file_util.h"
-#include "base/string_util.h"
-#include "googleurl/src/gurl.h"
-#include "googleurl/src/url_util.h"
-#include "net/url_request/url_request.h"
-#include "net/url_request/url_request_file_job.h"
-#include "ti_app_config.h"
+class TiWebShell;
 
-class TiURL
+class TiRuntime : public JsClass
 {
+	TiWebShell *tiWebShell;
 public:
-	static void init();
-	static std::wstring getPathForURL(GURL& url);
-	static URLRequestJob* createURLRequestJob(URLRequest* request, const std::string& scheme);
-	static bool urlMatchesPattern(GURL& url, std::string& pattern);
+	TiRuntime(TiWebShell *tiWebShell);
+	~TiRuntime(void);
+
+	void debug (const CppArgumentList &args, CppVariant *result);
+	void getResourcePath(const CppArgumentList &args, CppVariant *result);
+	void include (const CppArgumentList &args, CppVariant *result);
 };
+
 #endif

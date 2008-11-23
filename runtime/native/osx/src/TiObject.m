@@ -31,10 +31,12 @@
 	self = [super init];
 	if (self != nil) {
 		webView = wv; // assign only. don't retain. prevents retain loop memory leak
-		App = [[TiApp alloc] initWithWebView:webView];
+		TiWindowOptions *opts = [[TiAppDelegate instance] findInitialWindowOptions];
+		App = [[TiApp alloc] initWithWebView:webView opts:opts];
 		Dock = [[TiSystemDock alloc] initWithWebView:webView];
 		Menu = [[TiMenuFactory alloc] initWithWebView:webView];
 		Window = [[TiWindowFactory alloc] initWithWebView:webView];
+		[opts release];
 	}
 	return self;
 }

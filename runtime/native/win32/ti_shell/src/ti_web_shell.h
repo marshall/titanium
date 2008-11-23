@@ -54,7 +54,7 @@
 #include "test_shell_request_context.h"
 
 #include "ti_window.h"
-#include "ti_app.h"
+#include "ti_app_config.h"
 #include "ti_url.h"
 
 #include <vector>
@@ -73,7 +73,7 @@ private:
 	TiWebViewDelegate* webViewDelegate;
 	bool created;
 
-	static TiApp *tiApp;
+	static TiAppConfig *tiAppConfig;
 	static std::vector<TiWebShell*> openShells;
 	static TCHAR defaultWindowTitle[128];
 	static TCHAR windowClassName[128];
@@ -110,8 +110,8 @@ public:
 	void close();
 
 	static std::vector<TiWebShell *>& getOpenShells() { return openShells; }
-	static void setTiApp(TiApp* tiApp_) { tiApp = tiApp_; }
-	static TiApp* getTiApp() { return tiApp; }
+	static void setTiAppConfig(TiAppConfig* tiAppConfig_) { tiAppConfig = tiAppConfig_; }
+	static TiAppConfig* getTiAppConfig() { return tiAppConfig; }
 	static TiWebShell* fromWindow(HWND hWnd);
 	static TiWebShell* getMainTiWebShell();
 };

@@ -17,15 +17,17 @@
  */
 #import <Cocoa/Cocoa.h>
 #import <WebKit/WebKit.h>
+#import "TiWindowOptions.h"
 
 @class WebView;
 
 @interface TiApp : NSObject 
 {
 	WebView *webView;
+	TiWindowOptions *windowOptions;
 }
 
-- (id)initWithWebView:(WebView *)wv;
+- (id)initWithWebView:(WebView *)wv opts:(TiWindowOptions*)opts;
 
 
 - (void)include:(NSString *)s;
@@ -39,6 +41,7 @@
 - (void)playSoundNamed:(NSString *)s;
 - (void)setSize:(int)width height:(int)height animate:(int)animate;
 - (void)setBackgroundColor:(NSString*)color;
+- (TiWindowOptions*) getWindowOptions;
 
 //TODO: review these
 - (CGFloat)windowWidth;

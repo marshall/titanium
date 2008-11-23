@@ -19,11 +19,7 @@
 
 #import "TiBrowserWindowController.h"
 #import "TiAppDelegate.h"
-#import "TiBrowserDocument.h"
-#import "TiSystemDock.h"
-#import "TiApp.h"
-#import "TiMenuFactory.h"
-#import "TiWindowFactory.h"
+#import "TiObject.h"
 #import "TiJavaScriptPromptWindowController.h"
 #import "TiProtocol.h"
 #import "AppProtocol.h"
@@ -53,8 +49,9 @@ typedef enum {
 - (id)initWithWindowNibName:(NSString *)nibName 
 {
 	self = [super initWithWindowNibName:nibName];
-	if (self != nil) {
-
+	if (self != nil) 
+	{
+		closing = NO;
 	}
 	return self;
 }
@@ -62,6 +59,10 @@ typedef enum {
 
 - (void)dealloc 
 {	
+	if (ti != nil)
+	{
+		[ti release];
+	}
 	[super dealloc];
 }
 
@@ -69,7 +70,6 @@ typedef enum {
 {
 	[TiProtocol registerSpecialProtocol];
 	[AppProtocol registerSpecialProtocol];
-	//	[WebView registerURLSchemeAsLocal:TiProtocol];
 }
 
 - (void)awakeFromNib 
@@ -79,9 +79,6 @@ typedef enum {
 	[self registerProtocols];
 	[self customizeWebView];
 }
-
-
-
 
 #pragma mark -
 #pragma mark Public
@@ -96,8 +93,15 @@ typedef enum {
 {
 	// TODO
 	NSLog(@"Load Error: %@", err);
+	NSAlert *alert = [NSAlert alertWithError:err];
+	[alert runModal];
+	[alert release];
 }
 
+- (BOOL)isClosing
+{
+	return closing;
+}
 
 #pragma mark -
 #pragma mark Private
@@ -136,7 +140,7 @@ typedef enum {
 	{
 		[[[webView mainFrame] frameView] setAllowsScrolling:NO];
 	}
-	if ([o isResizable])
+	if ([o isResizable] && [o isChrome]==NO)
 	{
 		[[self window] setShowsResizeIndicator:YES];
 	}
@@ -162,12 +166,23 @@ typedef enum {
 	}
 }
 
+- (void)scheduleClose
+{
+	closing = YES;
+	[[self window] orderOut:nil];
+}
+
+
 
 #pragma mark -
 #pragma mark WebFrameLoadDelegate
 
 - (void)webView:(WebView *)wv didStartProvisionalLoadForFrame:(WebFrame *)frame 
 {	
+	WebDataSource *ds = [frame provisionalDataSource];
+	NSURLRequest *r = [ds initialRequest];
+	NSString *url = [[r URL] absoluteString];
+	NSLog(@"provisional load %@", url);
 }
 
 
@@ -187,7 +202,6 @@ typedef enum {
 {	
 }
 
-
 - (void)webView:(WebView *)wv didFinishLoadForFrame:(WebFrame *)frame 
 {
 	if (frame != [webView mainFrame]) return;
@@ -198,51 +212,35 @@ typedef enum {
 - (void)webView:(WebView *)wv didFailLoadWithError:(NSError *)error forFrame:(WebFrame *)frame 
 {
 	if (frame != [webView mainFrame]) return;
-	[self handleLoadError:error];
+	[self handleLoadError:error]; 
 }
 
 
 - (void)webView:(WebView *)wv windowScriptObjectAvailable:(WebScriptObject *)windowScriptObject 
 {
 	if (wv != webView) return;
-	TiApp *tiApp = [[TiApp alloc] initWithWebView:webView];
-	TiSystemDock *tiDock = [[TiSystemDock alloc] initWithWebView:webView];
-	TiMenuFactory *tiMenu = [[TiMenuFactory alloc] initWithWebView:webView];
-	TiWindowFactory *tiWindow = [[TiWindowFactory alloc] initWithWebView:webView];
 	
-	[windowScriptObject setValue:tiApp forKey:@"TiApp"];
-	[windowScriptObject setValue:tiDock forKey:@"TiDock"];
-	[windowScriptObject setValue:tiMenu forKey:@"TiMenu"];
-	[windowScriptObject setValue:tiWindow forKey:@"TiWindow"];
-	
-	[tiApp include:@"ti://titanium.js"];
-//	[javaScriptObject include:@"titanium/plugins.js"];
-	
-	
-	TiWindowOptions *opts = [[TiAppDelegate instance] getWindowOptions];
-	
-	if ([opts getTransparency] < 1.0)
+	if (ti != nil)
 	{
-		// in the case that you have transparency on the window, we have to hack the browser's window
-		// to cause the content view to take up 100% of the window (normally in HTML, it will only 
-		// take up the height of the contained element size)
-		//TODO: move this into titanium.js
-		NSString *ms = @"margin:auto;padding:auto;";
-		if ([opts isChrome])
-		{
-			// if we're using custom chrome, setup without borders, margin, etc.
-			ms = @"margin:0;padding:0;border:none;";
-		}
-		NSString *s = [NSString stringWithFormat:@"(function(){\n" 
-		"document.write('<style>body { opacity:%f;%@ } body > DIV { height:100%% }</style>')\n"
-		"})();", [opts getTransparency], ms];
-		[windowScriptObject evaluateWebScript:s];
+		[ti dealloc];
 	}
 	
-	[tiApp release];
-	[tiDock release];
-	[tiMenu release];
-	[tiWindow release];
+	ti = [[TiObject alloc] initWithWebView:webView];
+	
+	// set our main ti object
+	[windowScriptObject setValue:ti forKey:@"tiRuntime"];
+	
+	TiAppDelegate *app = [TiAppDelegate instance];
+
+	// load our main titanium JS plug
+	if ([[app arguments] debug])
+	{
+		[[ti App] include:@"ti://titanium-debug.js"];
+	}
+	else
+	{
+		[[ti App] include:@"ti://titanium.js"];
+	}
 }
 
 
@@ -252,6 +250,35 @@ typedef enum {
 - (void)webView:(WebView *)wv decidePolicyForNavigationAction:(NSDictionary *)actionInformation request:(NSURLRequest *)request frame:(WebFrame *)frame decisionListener:(id<WebPolicyDecisionListener>)listener 
 {
 	WebNavigationType navType = [[actionInformation objectForKey:WebActionNavigationTypeKey] intValue];
+
+	//TODO: some of these below we just don't support (yet)
+	if (navType == WebNavigationTypeLinkClicked)
+	{
+		// anchor link clicked
+		[self scheduleClose];
+		[listener use];
+		return;
+	}
+	else if (navType == WebNavigationTypeFormSubmitted)
+	{
+		[listener ignore];
+	}
+	else if (navType == WebNavigationTypeBackForward)
+	{
+		[listener ignore];
+	}
+	else if (navType == WebNavigationTypeReload)
+	{
+		[listener ignore];
+	}
+	else if (navType == WebNavigationTypeFormResubmitted)
+	{
+		[listener ignore];
+	}
+	else if (navType == WebNavigationTypeOther)
+	{
+		// let it fail through -- usually other is when internally loaded from objective-c
+	}
 	
 	if ([WebView _canHandleRequest:request]) {
 		[listener use];
@@ -270,7 +297,10 @@ typedef enum {
 
 - (void)webView:(WebView *)wv decidePolicyForNewWindowAction:(NSDictionary *)actionInformation request:(NSURLRequest *)request newFrameName:(NSString *)frameName decisionListener:(id<WebPolicyDecisionListener>)listener 
 {
-	if ([@"_blank" isEqualToString:frameName] || [@"_new" isEqualToString:frameName]) { // force new window
+	// force new window
+	if ([@"_blank" isEqualToString:frameName] || [@"_new" isEqualToString:frameName]) 
+	{ 
+		[self scheduleClose];
 		[listener use];
 		return;
 	}

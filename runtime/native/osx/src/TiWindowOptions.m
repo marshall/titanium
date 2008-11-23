@@ -61,6 +61,18 @@
 }
 
 
+- (NSString*) getID
+{
+	return [[windowID copy] autorelease];
+}
+
+- (void) setID:(NSString*)i
+{
+	[windowID autorelease];
+	windowID = [i copy];
+}
+
+
 - (CGFloat) getX
 {
 	return x;
@@ -121,7 +133,6 @@
 	minHeight = h;
 }
 
-
 - (CGFloat) getMaxWidth
 {
 	return maxWidth;
@@ -142,12 +153,12 @@
 	maxHeight = h;
 }
 
-- (bool) isChrome
+- (BOOL) isChrome
 {
 	return chrome;
 }
 
-- (void) setChrome:(bool)yn
+- (void) setChrome:(BOOL)yn
 {
 	chrome = yn;
 }
@@ -162,72 +173,72 @@
 	transparency = f;
 }
 
-- (bool) isVisible
+- (BOOL) isVisible
 {
 	return visible;
 }
 
-- (void) setVisible:(bool)yn
+- (void) setVisible:(BOOL)yn
 {
 	visible = yn;
 }
 
-- (bool) isMinimizable
+- (BOOL) isMinimizable
 {
 	return minimizable;
 }
 
-- (void) setMinimizable:(bool)yn
+- (void) setMinimizable:(BOOL)yn
 {
 	minimizable = yn;
 }
 
-- (bool) isMaximizable
+- (BOOL) isMaximizable
 {
 	return maximizable;
 }
 
-- (void) setMaximizable:(bool)yn
+- (void) setMaximizable:(BOOL)yn
 {
 	maximizable = yn;
 }
 
-- (bool) isResizable
+- (BOOL) isResizable
 {
 	return resizable;
 }
 
-- (void) setResizable:(bool)yn
+- (void) setResizable:(BOOL)yn
 {
 	resizable = yn;
 }
 
-- (bool) isFullscreen
+- (BOOL) isFullscreen
 {
 	return fullscreen;
 }
 
-- (void) setFullscreen:(bool)yn
+- (void) setFullscreen:(BOOL)yn
 {
 	fullscreen = yn;
 }
 
-- (bool) isCloseable
+- (BOOL) isCloseable
 {
 	return closeable;
 }
 
-- (void) setCloseable:(bool)yn
+- (void) setCloseable:(BOOL)yn
 {
 	closeable = yn;
 }
 
-- (bool) isScrollbars
+- (BOOL) isScrollbars
 {
 	return scrollbars;
 }
 
-- (void) setScrollbars:(bool)yn
+- (void) setScrollbars:(BOOL)yn
 {
 	scrollbars = yn;
 }
@@ -285,6 +296,23 @@
 	return mask;
 }
 
+- (BOOL)urlMatches:(NSString*)testURL
+{
+	// first see if we match the full URL
+	if ([url isEqualToString:testURL])
+	{
+		return YES;
+	}
+	// use the last component of the pattern against the real URL
+	NSString *a = [url lastPathComponent];
+	NSString *b = [testURL lastPathComponent];
+	if ([a isEqualToString:b])
+	{
+		return YES;
+	}
+	NSPredicate *regex = [NSPredicate predicateWithFormat:@"SELF MATCHES %@",a];
+	return [regex evaluateWithObject:b];
+}
 
 #pragma mark -
 #pragma mark WebScripting
@@ -304,6 +332,8 @@
 		return @"getY";
 	} else if (sel == @selector(setY:)) {
 		return @"setY";
+	} else if (sel == @selector(getID)) {
+		return @"getID";
 	} else if (sel == @selector(getWidth)) {
 		return @"getWidth";
 	} else if (sel == @selector(setWidth:)) {
