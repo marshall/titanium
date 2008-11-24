@@ -64,6 +64,9 @@ VERBOSE = ENV['v'] || ENV['verbose'] || ENV['VERBOSE']
 COMPRESS = ENV['nomin'] ? false : true 
 CWD = File.expand_path "#{File.dirname(__FILE__)}"
 STAGE_DIR = File.expand_path File.join(RUNTIME_DIR, 'stage')
+STAGE_YML_DIR = File.join(STAGE_DIR, 'yml')
+
+FileUtils.mkdir_p [STAGE_DIR, STAGE_YML_DIR]
 
 def md5(file)
   Digest::MD5.hexdigest File.read(file)

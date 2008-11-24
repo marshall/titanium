@@ -139,6 +139,9 @@ END
     end
     
     zipfile.get_output_stream('build.yml') { |f| f.write(build_yml) }
+    # save the runtime build info standalone so we can query it in dev_install
+    File.open(File.join(STAGE_YML_DIR, 'runtime_build.yml'), 'w+') { |f| f.write(build_yml) }
+    
     zipfile.add('install.rb', 'install.rb')
   }
 end

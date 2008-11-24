@@ -6,8 +6,9 @@ module Titanium
     attr_accessor :name
     attr_accessor :component
     
-    def initialize(name)
+    def initialize(name, platform)
       @name = name
+      @platform = platform
       @component = Installer.get_current_installed_component({:name=>@name, :type=>'tiplugin'})
       @plugindir = Titanium.get_plugin_dir(@component)
       @data = YAML::load(File.open(File.join(@plugindir, 'build.yml')))

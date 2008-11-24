@@ -1,5 +1,6 @@
 require 'fileutils'
 require 'build.rb'
+require 'yaml'
 
 task :default => [:runtime,:plugins]
 task :dev_install => [:runtime,:runtime_install,:plugins,:plugins_install]
@@ -9,7 +10,11 @@ task :runtime do
 end
 
 task :runtime_install do
-  system "app install:titanium --force #{RUNTIME_DIR}/stage/titanium_runtime*.zip"
+  runtime_build = {}
+  File.open(File.join(STAGE_YML_DIR, 'runtime_build.yml')) { |f| runtime_build = YAML::load(f.read) }
+  
+  puts runtime_build.inspect
+  system "app install:titanium --force #{STAGE_DIR}/titanium_runtime_" + runtime_build[:version].to_s + "_" + runtime_build[:platform] + ".zip"
 end
 
 task :plugins do
@@ -21,6 +26,13 @@ end
 task :plugins_install do
   Dir[PLUGINS_DIR+"/*"].each do |path|
 		plugin_name = File.basename path
-		system "app install:tiplugin --force #{RUNTIME_DIR}/stage/tiplugin_#{plugin_name}*.zip"
+		
+		plugin_build = {}
+    File.open(File.join(STAGE_YML_DIR, "tiplugin_#{plugin_name}_#{platform_string}_build.yml")) { |f| plugin_build = YAML::load(f.read) }
+    if plugin_build.has_key?(:platform)
+		  system "app install:tiplugin --force #{STAGE_DIR}/tiplugin_#{plugin_build[:basename]}_#{plugin_build[:version]}_#{plugin_build[:platform]}.zip"
+	  else
+	    system "app install:tiplugin --force #{STAGE_DIR}/tiplugin_#{plugin_build[:basename]}_#{plugin_build[:version]}.zip"
+    end
 	end
 end

@@ -23,4 +23,10 @@ task :gather do
     zipfile.add(file, file)
    end
   }
+  
+  File.open(File.join(STAGE_YML_DIR, "tiplugin_jquery_#{platform_string}_build.yml"), 'w+') { |f| 
+    File.open('build.yml') { |f2| 
+      f.write(f2.read)  
+    }
+  }
 end
