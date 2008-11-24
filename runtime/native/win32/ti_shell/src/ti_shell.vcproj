@@ -222,6 +222,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ti_menu_factory.cc"
+				>
+			</File>
+			<File
+				RelativePath=".\ti_menu_factory.h"
+				>
+			</File>
+			<File
 				RelativePath=".\ti_runtime.cc"
 				>
 			</File>

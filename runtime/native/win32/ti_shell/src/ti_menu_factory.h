@@ -13,32 +13,19 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-#include "ti_runtime.h"
-#include "ti_web_shell.h"
-#include "ti_window_factory.h"
-#include "ti_menu_factory.h"
-#include "Resource.h"
+#ifndef TI_MENU_FACTORY_H_
+#define TI_MENU_FACTORY_H_
 
-#include <string>
-#include <fstream>
+#include "js_class.h"
+#include "webkit/glue/webview.h"
 
-TiRuntime::TiRuntime(TiWebShell *tiWebShell)
+class TiMenuFactory : public JsClass
 {
-	this->tiWebShell = tiWebShell;
-	
-	tiApp = new TiApp(tiWebShell);
-	tiWindowFactory = new TiWindowFactory();
-	tiMenuFactory = new TiMenuFactory();
+public:
+	TiMenuFactory();
 
-	App.Set(tiApp->ToNPObject());
-	Window.Set(tiWindowFactory->ToNPObject());
-	Menu.Set(tiMenuFactory->ToNPObject());
+	void createSystemMenu(const CppArgumentList& args, CppVariant* result);
+	void createUserMenu(const CppArgumentList& args, CppVariant* result);
+};
 
-	BindProperty("App", &App);
-	BindProperty("Window", &Window);
-	BindProperty("Menu", &Menu);
-}
-
-TiRuntime::~TiRuntime()
-{
-}
+#endif

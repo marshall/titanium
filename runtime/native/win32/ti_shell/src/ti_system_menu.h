@@ -29,14 +29,14 @@
 class TiSystemMenu : public JsClass
 {
 private:
-	CppVariant *callback;
+	NPObject *callback;
 	HMENU menu;
 	int uID;
 	std::string iconURL;
 	std::string caption;
 
 public:
-	TiSystemMenu(std::string& iconURL, std::string& caption, CppVariant *callback);
+	TiSystemMenu(std::string& iconURL, std::string& caption, NPObject *callback);
 
 	void addItem(const CppArgumentList &args, CppVariant *result);
 	void addSeparator(const CppArgumentList &args, CppVariant *result);

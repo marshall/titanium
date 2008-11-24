@@ -23,12 +23,14 @@
 
 class TiWebShell;
 class TiWindowFactory;
+class TiMenuFactory;
 
 class TiRuntime : public JsClass
 {
 	TiWebShell *tiWebShell;
 	TiApp *tiApp;
 	TiWindowFactory *tiWindowFactory;
+	TiMenuFactory *tiMenuFactory;
 
 public:
 	TiRuntime(TiWebShell *tiWebShell);
