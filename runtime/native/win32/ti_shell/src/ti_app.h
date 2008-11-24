@@ -23,13 +23,16 @@ class TiWebShell;
  
 class TiApp : public JsClass
 {
-  TiWebShell *tiWebShell;
+	TiWebShell *tiWebShell;
 public:
-  TiApp(TiWebShell *tiWebShell);
-  ~TiApp(void);
- 
-  void hide (const CppArgumentList &args, CppVariant *result);
-  void show (const CppArgumentList &args, CppVariant *result);
+	TiApp(TiWebShell *tiWebShell);
+	~TiApp(void);
+
+	void debug (const CppArgumentList &args, CppVariant *result);
+	void getResourcePath(const CppArgumentList &args, CppVariant *result);
+	void include (const CppArgumentList &args, CppVariant *result);
+	void hide (const CppArgumentList &args, CppVariant *result);
+	void show (const CppArgumentList &args, CppVariant *result);
 };
  
 #endif // TI_APP_H define

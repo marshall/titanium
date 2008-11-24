@@ -13,23 +13,17 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-#ifndef TI_WINDOW_JS_H_
-#define TI_WINDOW_JS_H_
 
-#include "js_class.h"
-#include "webkit/glue/webview.h"
+#include "ti_window_factory.h"
 
-#include "ti_user_window.h"
-
-/**
-* A simple factory for Window objects
-*/
-class TiWindowJS : public JsClass
+TiWindowFactory::TiWindowFactory()
 {
-public:
-	TiWindowJS();
+	BindMethod("createWindow", &TiWindowFactory::createWindow);
+}
 
-	void createWindow(const CppArgumentList& args, CppVariant* result);
-};
+void TiWindowFactory::createWindow(const CppArgumentList &args, CppVariant *result)
+{
+	TiUserWindow *window = new TiUserWindow();
 
-#endif
+	result->Set(window->ToNPObject());
+}

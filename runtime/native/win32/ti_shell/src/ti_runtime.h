@@ -19,18 +19,22 @@
 #include "js_class.h"
 #include "webkit/glue/webview.h"
 
+#include "ti_app.h"
+
 class TiWebShell;
+class TiWindowFactory;
 
 class TiRuntime : public JsClass
 {
 	TiWebShell *tiWebShell;
+	TiApp *tiApp;
+	TiWindowFactory *tiWindowFactory;
+
 public:
 	TiRuntime(TiWebShell *tiWebShell);
 	~TiRuntime(void);
 
-	void debug (const CppArgumentList &args, CppVariant *result);
-	void getResourcePath(const CppArgumentList &args, CppVariant *result);
-	void include (const CppArgumentList &args, CppVariant *result);
+	CppVariant App, Dock, Menu, Window;
 };
 
 #endif

@@ -190,7 +190,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ti_app.cc"
+				RelativePath=".\ti_app_config.cc"
 				>
 			</File>
 			<File
@@ -248,7 +248,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ti_app.h"
+				RelativePath=".\ti_app_config.h"
 				>
 			</File>
 			<File
@@ -314,11 +314,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ti_app_config.cc"
+				RelativePath=".\ti_app.cc"
 				>
 			</File>
 			<File
-				RelativePath=".\ti_app_config.h"
+				RelativePath=".\ti_app.h"
 				>
 			</File>
 			<File
@@ -350,11 +350,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ti_window_js.cc"
+				RelativePath=".\ti_window_factory.cc"
 				>
 			</File>
 			<File
-				RelativePath=".\ti_window_js.h"
+				RelativePath=".\ti_window_factory.h"
 				>
 			</File>
 		</Filter>

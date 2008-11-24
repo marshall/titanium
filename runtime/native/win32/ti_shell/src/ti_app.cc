@@ -15,15 +15,16 @@
 */
  
 #include "ti_app.h"
- 
 #include "ti_web_shell.h"
- 
-TiApp::TiApp(TiWebShell *tiWebShell)
+
+TiApp::TiApp(TiWebShell *tiWebShell_)
+	: tiWebShell(tiWebShell_)
 {
-  this->tiWebShell = tiWebShell;
- 
-  BindMethod("show", &TiApp::show);
-  BindMethod("hide", &TiApp::hide);
+	BindMethod("show", &TiApp::show);
+	BindMethod("hide", &TiApp::hide);
+	BindMethod("debug", &TiApp::debug);
+	BindMethod("getResourcePath", &TiApp::getResourcePath);
+	BindMethod("include", &TiApp::include);
 }
  
 TiApp::~TiApp()
@@ -32,12 +33,41 @@ TiApp::~TiApp()
  
 void TiApp::hide (const CppArgumentList &args, CppVariant *result)
 {
-  this->tiWebShell->showWindow(SW_HIDE);
-  this->tiWebShell->createTrayIcon();
+	std::vector<TiWebShell*>::iterator iter = TiWebShell::getOpenShells().begin();
+	for (; iter != TiWebShell::getOpenShells().end(); iter++) {
+		TiWebShell *openShell = (*iter);
+		
+		openShell->showWindow(SW_HIDE);
+	}
 }
  
 void TiApp::show (const CppArgumentList &args, CppVariant *result)
 {
-  this->tiWebShell->showWindow(SW_SHOW);
-  this->tiWebShell->removeTrayIcon();
+	std::vector<TiWebShell*>::iterator iter = TiWebShell::getOpenShells().begin();
+	for (; iter != TiWebShell::getOpenShells().end(); iter++) {
+		TiWebShell *openShell = (*iter);
+		
+		openShell->showWindow(SW_SHOW);
+	}
+}
+
+void TiApp::debug (const CppArgumentList &args, CppVariant *result)
+{
+	if (args.size() > 0)
+		printf("[titanium:debug]: %s\n", args[0].ToString().c_str());
+}
+
+void TiApp::getResourcePath(const CppArgumentList &args, CppVariant *result)
+{
+	std::wstring resourcePath = TiWebShell::getTiAppConfig()->getResourcePath();
+
+	result->Set(WideToUTF8(resourcePath));
+}
+
+void TiApp::include(const CppArgumentList &args, CppVariant *result)
+{
+	if (args.size() > 0) {
+		std::string relativeName = args[0].ToString();
+		tiWebShell->include(relativeName);
+	}
 }

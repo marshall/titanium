@@ -171,10 +171,7 @@ void TiWebViewDelegate::WindowObjectCleared(WebFrame *webFrame)
 {
 
 	tiRuntime = new TiRuntime(tiWebShell);
-	tiRuntime->BindToJavascript(webFrame, L"TiRuntime");
-
-	tiApp = new TiApp(tiWebShell);
-	tiApp->BindToJavascript(webFrame, L"TiApp");
+	tiRuntime->BindToJavascript(webFrame, L"tiRuntime");
 
 	std::string titanium_js = "ti:///titanium.js";
 	tiWebShell->include(titanium_js);

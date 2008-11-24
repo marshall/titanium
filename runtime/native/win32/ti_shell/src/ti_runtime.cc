@@ -1,5 +1,6 @@
 #include "ti_runtime.h"
 #include "ti_web_shell.h"
+#include "ti_window_factory.h"
 #include "Resource.h"
 
 #include <string>
@@ -8,33 +9,17 @@
 TiRuntime::TiRuntime(TiWebShell *tiWebShell)
 {
 	this->tiWebShell = tiWebShell;
+	
+	tiApp = new TiApp(tiWebShell);
+	tiWindowFactory = new TiWindowFactory();
 
-	BindMethod("debug", &TiRuntime::debug);
-	BindMethod("getResourcePath", &TiRuntime::getResourcePath);
-	BindMethod("include", &TiRuntime::include);
+	App.Set(tiApp->ToNPObject());
+	Window.Set(tiWindowFactory->ToNPObject());
+
+	BindProperty("App", &App);
+	BindProperty("Window", &Window);
 }
 
 TiRuntime::~TiRuntime()
 {
-}
-
-void TiRuntime::debug (const CppArgumentList &args, CppVariant *result)
-{
-	if (args.size() > 0)
-		printf("[titanium:debug]: %s\n", args[0].ToString().c_str());
-}
-
-void TiRuntime::getResourcePath(const CppArgumentList &args, CppVariant *result)
-{
-	std::wstring resourcePath = TiWebShell::getTiAppConfig()->getResourcePath();
-
-	result->Set(WideToUTF8(resourcePath));
-}
-
-void TiRuntime::include(const CppArgumentList &args, CppVariant *result)
-{
-	if (args.size() > 0) {
-		std::string relativeName = args[0].ToString();
-		tiWebShell->include(relativeName);
-	}
 }
