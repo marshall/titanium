@@ -314,10 +314,6 @@
 			Name="TI"
 			>
 			<File
-				RelativePath=".\ti_app.cc"
-				>
-			</File>
-			<File
 				RelativePath=".\ti_app_config.cc"
 				>
 			</File>
