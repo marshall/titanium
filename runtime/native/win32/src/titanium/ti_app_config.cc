@@ -48,8 +48,11 @@ TiWindow* TiAppConfig::getMainWindow()
 
 TiAppConfig::TiAppConfig(std::wstring& xmlfile)
 {
-	xmlDocPtr document = xmlReadFile(WideToUTF8(xmlfile).c_str(), NULL, 0);
-	
+	error = NULL;
+	xmlParserCtxtPtr context = xmlNewParserCtxt();
+
+	xmlDocPtr document = xmlCtxtReadFile(context, WideToUTF8(xmlfile).c_str(), NULL, 0);
+	bool errorParsing = false;
 	if (document != NULL) {
 		
 		xmlNodePtr root = xmlDocGetRootElement(document);
@@ -90,6 +93,23 @@ TiAppConfig::TiAppConfig(std::wstring& xmlfile)
 		xmlFreeDoc(document);
 	}
 
+	if (document == NULL) {
+		std::string _error;
+		_error += context->lastError.file;
+		_error += " [Line ";
+		
+		std::ostringstream o;
+		o << context->lastError.line;
+
+		_error += o.str();
+		_error += "]";
+		_error += " ";
+		_error += context->lastError.message;
+
+		error = _strdup(_error.c_str());
+	}
+
+	xmlFreeParserCtxt(context);
 	xmlCleanupParser();
 }
 

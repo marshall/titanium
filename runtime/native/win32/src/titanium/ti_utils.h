@@ -28,3 +28,5 @@
 void ti_debug_internal(char *message, char *filename, int line);
 WebPreferences ti_initWebPrefs();
 
+void systemError(const wchar_t *message);
+

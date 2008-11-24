@@ -41,6 +41,7 @@ typedef std::vector<TiWindow*> TiWindowList ;
 class TiAppConfig 
 {
 private:
+	const char* error;
 	std::string appName, description, copyright, homepage, version;
 	TiWindowList windows;
 
@@ -69,7 +70,7 @@ public:
 	std::string& getIcon48() { return icon48; }
 
 	std::wstring getResourcePath();
-
+	const char* getError() { return error; }
 };
 
 #endif

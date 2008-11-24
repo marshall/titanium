@@ -5,10 +5,11 @@
 	
 	<name>Test App</name>
 	
-	
-	<window width="800" height="600">
+	<window>
+    <width>500</width>
+    <height>300</height>
 		<title>This is a test app</title>
-		<start>index.html</start>
+		<url>app://index.html</start>
 	</window>
 
 </ti:app>

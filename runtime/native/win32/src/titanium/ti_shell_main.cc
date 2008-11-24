@@ -112,7 +112,11 @@ int main (int argc, char **argv) {
 	file_util::AppendToPath(&tiAppXmlPath, L"tiapp.xml");
 
 	TiAppConfig *tiAppConfig = new TiAppConfig(tiAppXmlPath);
-	
+	if (tiAppConfig->getError() != NULL) {
+		systemError(UTF8ToWide(std::string(tiAppConfig->getError())).c_str());
+		exit(-1);
+	}
+
 	std::wstring cache_path;
 	PathService::Get(base::DIR_EXE, &cache_path);
     file_util::AppendToPath(&cache_path, L"cache");

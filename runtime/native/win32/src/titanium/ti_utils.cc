@@ -95,3 +95,8 @@ WebPreferences ti_initWebPrefs() {
 
 	return webPrefs;
 }
+
+void systemError(const wchar_t *message)
+{
+	MessageBox(NULL, message, L"Titanium Error", MB_OK | MB_ICONERROR);
+}
