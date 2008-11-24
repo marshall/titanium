@@ -20,6 +20,16 @@
 #include <string>
 #include <cstdlib>
 
+struct MenuItemCallback
+{
+public:
+	int uID;
+	std::string label;
+	NPObject* callback;
+};
+
+static std::vector<MenuItemCallback *> callbacks;
+
 TiMenu::TiMenu(HMENU parentMenu, std::string& label_)
 	: label(label_)
 {
@@ -47,10 +57,17 @@ void TiMenu::addItem(const CppArgumentList &args, CppVariant *result)
 
 			NPObject* callback = NPVARIANT_TO_OBJECT(variant);
 
-			// TODO replace 789 with a good callback msg ID
-			// TODO need to add logic to handle menu item clicks
-			// NPN_Invoke(object, method, args)
-			AppendMenu(this->hMenu, MF_STRING, 789, (LPCTSTR) UTF8ToWide(label).c_str());
+			// TODO better way of getting the uID?  to guarantee no collisions
+			uID = TI_MENU_ITEM_ID_BEGIN + ((int)rand()&0xFFFF);
+
+			MenuItemCallback* itemCallBack = new MenuItemCallback();
+			itemCallBack->uID = uID;
+			itemCallBack->callback = callback;
+			itemCallBack->label = label;
+
+			callbacks.push_back(itemCallBack);
+
+			AppendMenu(this->hMenu, MF_STRING, uID, (LPCTSTR) UTF8ToWide(label).c_str());
 		}
 	}
 }
@@ -71,4 +88,29 @@ void TiMenu::addSubMenu(const CppArgumentList &args, CppVariant *result)
 void TiMenu::addSeparator(const CppArgumentList &args, CppVariant *result)
 {
 	AppendMenu(this->hMenu, MF_SEPARATOR, 1, L"Separator");
+}
+
+LRESULT CALLBACK TiMenu::handleMenuClick(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
+	TiWebShell *tiWebShell = TiWebShell::fromWindow(hWnd);
+
+	if(message == WM_COMMAND)
+	{
+		int wmId    = LOWORD(wParam);
+		//wmEvent = HIWORD(wParam);
+
+		for(size_t i = 0; i < callbacks.size(); i++)
+		{
+			MenuItemCallback* itemCallback = callbacks[i];
+
+			if(itemCallback->uID == wmId) {
+				printf("handle menu item %s (%d)\n", itemCallback->label.c_str(), itemCallback->uID);
+
+				// TODO - callback the JS function
+				// NPN_Invoke(object, method, args)
+				return TRUE;
+			}
+		}
+	}
+
+	return FALSE;
 }

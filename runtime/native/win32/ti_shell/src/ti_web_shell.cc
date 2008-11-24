@@ -16,6 +16,7 @@
 
 #include "ti_web_shell.h"
 #include "ti_utils.h"
+#include "ti_menu.h"
 #include "Resource.h"
 
 #include <fstream>
@@ -86,7 +87,12 @@ LRESULT CALLBACK TiWebShell::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 			DestroyWindow(hWnd);
 			break;
 		default: {
-				return DefWindowProc(hWnd, message, wParam, lParam);
+			LRESULT handled = TiMenu::handleMenuClick(hWnd, message, wParam, lParam);
+
+				if(! handled)
+				{
+					return DefWindowProc(hWnd, message, wParam, lParam);
+				}
 			}
 		}
 		break;
