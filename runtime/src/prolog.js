@@ -56,7 +56,16 @@
 		}
 		else
 		{
-			fn();
+			// make the scope the ti object and pass 
+			// a reference to our jQuery pointer
+			try
+			{
+				fn.call(ti,$);
+			}
+			catch (EE)
+			{
+				alert("Exception caught in ti.ready handler. Exception was: "+EE+" at line: "+EE.line);
+			}
 		}
 	};
 	

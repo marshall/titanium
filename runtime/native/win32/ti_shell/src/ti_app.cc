@@ -13,86 +13,90 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-
+ 
 #include "ti_app.h"
+#include "ti_web_shell.h"
 
-/*static*/
-bool TiApp::stringToBool (const char * b) {
-	std::string str(b);
-	std::transform(str.begin(), str.end(), str.begin(), tolower);
-
-	if (str == "yes" || str == "true" || str == "on") {
-		return true;
-	}
-	return false;
-}
-
-TiWindow* TiApp::getWindow(std::string& id)
+TiApp::TiApp(TiWebShell *tiWebShell_)
+	: tiWebShell(tiWebShell_)
 {
-	for (size_t i = 0; i < windows.size(); i++)
-	{
-		if (windows[i]->getId() == id) {
-			return windows[i];
-		}
-	}
-	return NULL;
+	BindMethod("show", &TiApp::show);
+	BindMethod("hide", &TiApp::hide);
+	BindMethod("debug", &TiApp::debug);
+	BindMethod("getResourcePath", &TiApp::getResourcePath);
+	BindMethod("include", &TiApp::include);
+
+	/*
+	void beep(const CppArgumentList &args, CppVariant *result);
+	void playSound(const CppArgumentList &args, CppVariant *result);
+	void playNamedSound(const CppArgumentList &args, CppVariant *result);
+
+	void quit(const CppArgumentList &args, CppVariant *result);
+	*/
+
 }
-
-TiWindow* TiApp::getMainWindow()
-{
-	if (windows.size() > 0) {
-		return windows[0];
-	}
-	return NULL;
-}
-
-TiApp::TiApp(std::wstring& xmlfile)
-{
-	xmlDocPtr document = xmlReadFile(WideToUTF8(xmlfile).c_str(), NULL, 0);
-	
-	if (document != NULL) {
-		
-		xmlNodePtr root = xmlDocGetRootElement(document);
-		xmlNodePtr node = root->children;
-		while (node != NULL) {
-			if (node->type == XML_ELEMENT_NODE) {
-				if (nodeNameEquals(node, "name")) {
-					appName = nodeValue(node);
-				} else if (nodeNameEquals(node, "description")) {
-					description = nodeValue(node);
-				} else if (nodeNameEquals(node, "copyright")) {
-					copyright = nodeValue(node);
-				} else if (nodeNameEquals(node, "homepage")) {
-					homepage = nodeValue(node);
-				} else if (nodeNameEquals(node, "version")) {
-					version = nodeValue(node);
-				} else if (nodeNameEquals(node, "window")) {
-					this->windows.push_back(new TiWindow((xmlElementPtr)node));
-				} else if (nodeNameEquals(node, "icon")) {
-					xmlNodePtr child = node->children;
-					while (child != NULL) {
-						if (child->type == XML_ELEMENT_NODE) {
-							if (nodeNameEquals(child, "image16")) {
-								icon16 = nodeValue(child);
-							} else if (nodeNameEquals(child, "image32")) {
-								icon32 = nodeValue(child);
-							} else if (nodeNameEquals(child, "image48")) {
-								icon48 = nodeValue(child);
-							}
-						}
-						child = child->next;
-					}
-				}
-			}
-			node = node->next;
-		}
-
-		xmlFreeDoc(document);
-	}
-
-	xmlCleanupParser();
-}
-
+ 
 TiApp::~TiApp()
 {
+}
+ 
+void TiApp::hide (const CppArgumentList &args, CppVariant *result)
+{
+	std::vector<TiWebShell*>::iterator iter = TiWebShell::getOpenShells().begin();
+	for (; iter != TiWebShell::getOpenShells().end(); iter++) {
+		TiWebShell *openShell = (*iter);
+		
+		openShell->showWindow(SW_HIDE);
+	}
+}
+ 
+void TiApp::show (const CppArgumentList &args, CppVariant *result)
+{
+	std::vector<TiWebShell*>::iterator iter = TiWebShell::getOpenShells().begin();
+	for (; iter != TiWebShell::getOpenShells().end(); iter++) {
+		TiWebShell *openShell = (*iter);
+		
+		openShell->showWindow(SW_SHOW);
+	}
+}
+
+void TiApp::debug (const CppArgumentList &args, CppVariant *result)
+{
+	if (args.size() > 0)
+		printf("[titanium:debug]: %s\n", args[0].ToString().c_str());
+}
+
+void TiApp::getResourcePath(const CppArgumentList &args, CppVariant *result)
+{
+	std::wstring resourcePath = TiWebShell::getTiAppConfig()->getResourcePath();
+
+	result->Set(WideToUTF8(resourcePath));
+}
+
+void TiApp::include(const CppArgumentList &args, CppVariant *result)
+{
+	if (args.size() > 0) {
+		std::string relativeName = args[0].ToString();
+		tiWebShell->include(relativeName);
+	}
+}
+
+void TiApp::beep(const CppArgumentList &args, CppVariant *result)
+{
+	// TODO
+}
+
+void TiApp::playSound(const CppArgumentList &args, CppVariant *result)
+{
+	// TODO
+}
+
+void TiApp::playNamedSound(const CppArgumentList &args, CppVariant *result)
+{
+	// TODO
+}
+
+void TiApp::quit(const CppArgumentList &args, CppVariant *result)
+{
+	// TODO
 }

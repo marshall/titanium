@@ -14,18 +14,30 @@
 * limitations under the License.
 */
 
+#include "ti_app_config.h"
 #include "ti_window.h"
-#include "ti_app.h"
 
-TiWindow::TiWindow(xmlElementPtr element) :
-	maximizable(true), minimizable(true),
-	closeable(true), resizable(true),
-	usingChrome(true), usingScrollbars(false),
-	fullscreen(false), transparency(1.0),
-	width(800), height(600),
-	minWidth(0), maxWidth(9000),
-	minHeight(0), maxHeight(9000)
+int TiWindow::DEFAULT_POSITION = -1;
+
+void TiWindow::setDefaults ()
 {
+	maximizable = minimizable = closeable = resizable = usingChrome = true;
+	usingScrollbars = fullscreen = false;
+	transparency = 1.0;
+	width = 800;
+	height = 600;
+	x = y = TiWindow::DEFAULT_POSITION;
+	minWidth = minHeight = 0;
+	maxWidth = maxHeight = 9000;
+	url = "index.html";
+	title = "Titanium Application";
+	visible = true;
+}
+
+TiWindow::TiWindow(xmlElementPtr element)
+{
+	setDefaults();
+
 	xmlNodePtr child = element->children;
 	while (child != NULL) {
 		if (nodeNameEquals(child, "id")) {
@@ -56,7 +68,7 @@ TiWindow::TiWindow(xmlElementPtr element) :
 			usingChrome = boolValue(child);
 			const char * scrollbars = (const char *)xmlGetProp(child, (const xmlChar *)"scrollbars");
 			if (scrollbars != NULL) {
-				usingScrollbars = TiApp::stringToBool(scrollbars);
+				usingScrollbars = TiAppConfig::stringToBool(scrollbars);
 			}
 		}
 		else if (nodeNameEquals(child, "transparency")) {

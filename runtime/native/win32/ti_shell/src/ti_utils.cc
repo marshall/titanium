@@ -60,11 +60,13 @@ void ti_debug_internal(char *message, char* filename, int line) {
 	}
 }
 
-void ti_initWebPrefs(WebPreferences* web_prefs_) {
-	web_prefs_->standard_font_family = L"Times";
-	web_prefs_->fixed_font_family = L"Courier";
-	web_prefs_->serif_font_family = L"Times";
-	web_prefs_->sans_serif_font_family = L"Helvetica";
+WebPreferences ti_initWebPrefs() {
+	WebPreferences webPrefs;
+
+	webPrefs.standard_font_family = L"Times";
+	webPrefs.fixed_font_family = L"Courier";
+	webPrefs.serif_font_family = L"Times";
+	webPrefs.sans_serif_font_family = L"Helvetica";
 	// These two fonts are picked from the intersection of
 	// Win XP font list and Vista font list :
 	//   http://www.microsoft.com/typography/fonts/winxp.htm 
@@ -75,19 +77,21 @@ void ti_initWebPrefs(WebPreferences* web_prefs_) {
 	// They (especially Impact for fantasy) are not typical cursive
 	// and fantasy fonts, but it should not matter for layout tests
 	// as long as they're available.
-	web_prefs_->cursive_font_family = L"Comic Sans MS";
-	web_prefs_->fantasy_font_family = L"Impact";
-	web_prefs_->default_encoding = L"ISO-8859-1";
-	web_prefs_->default_font_size = 16;
-	web_prefs_->default_fixed_font_size = 13;
-	web_prefs_->minimum_font_size = 1;
-	web_prefs_->minimum_logical_font_size = 9;
-	web_prefs_->javascript_can_open_windows_automatically = true;
-	web_prefs_->dom_paste_enabled = true;
-	web_prefs_->developer_extras_enabled = false;
-	web_prefs_->shrinks_standalone_images_to_fit = false;
-	web_prefs_->uses_universal_detector = false;
-	web_prefs_->text_areas_are_resizable = false;
-	web_prefs_->java_enabled = true;
-	web_prefs_->allow_scripts_to_close_windows = false;
+	webPrefs.cursive_font_family = L"Comic Sans MS";
+	webPrefs.fantasy_font_family = L"Impact";
+	webPrefs.default_encoding = L"ISO-8859-1";
+	webPrefs.default_font_size = 16;
+	webPrefs.default_fixed_font_size = 13;
+	webPrefs.minimum_font_size = 1;
+	webPrefs.minimum_logical_font_size = 9;
+	webPrefs.javascript_can_open_windows_automatically = true;
+	webPrefs.dom_paste_enabled = true;
+	webPrefs.developer_extras_enabled = false;
+	webPrefs.shrinks_standalone_images_to_fit = false;
+	webPrefs.uses_universal_detector = false;
+	webPrefs.text_areas_are_resizable = false;
+	webPrefs.java_enabled = true;
+	webPrefs.allow_scripts_to_close_windows = false;
+
+	return webPrefs;
 }

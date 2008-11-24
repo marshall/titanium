@@ -14,25 +14,16 @@
 * limitations under the License.
 */
 
-#ifndef TI_URL_H_
-#define TI_URL_H_
+#include "ti_window_factory.h"
 
-#include <string>
-#include "base/path_service.h"
-#include "base/file_util.h"
-#include "base/string_util.h"
-#include "googleurl/src/gurl.h"
-#include "googleurl/src/url_util.h"
-#include "net/url_request/url_request.h"
-#include "net/url_request/url_request_file_job.h"
-#include "ti_app_config.h"
-
-class TiURL
+TiWindowFactory::TiWindowFactory()
 {
-public:
-	static void init();
-	static std::wstring getPathForURL(GURL& url);
-	static URLRequestJob* createURLRequestJob(URLRequest* request, const std::string& scheme);
-	static bool urlMatchesPattern(GURL& url, std::string& pattern);
-};
-#endif
+	BindMethod("createWindow", &TiWindowFactory::createWindow);
+}
+
+void TiWindowFactory::createWindow(const CppArgumentList &args, CppVariant *result)
+{
+	TiUserWindow *window = new TiUserWindow();
+
+	result->Set(window->ToNPObject());
+}
