@@ -284,4 +284,3 @@ void JsClass::BindToJavascript(WebFrame* frame,
   // so we can release it when we're destroyed.
   frame->BindToWindowObject(classname, np_obj);
 }
-

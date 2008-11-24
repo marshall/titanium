@@ -25,6 +25,21 @@ TiApp::TiApp(TiWebShell *tiWebShell_)
 	BindMethod("debug", &TiApp::debug);
 	BindMethod("getResourcePath", &TiApp::getResourcePath);
 	BindMethod("include", &TiApp::include);
+	
+	BindMethod("getTitle", &TiApp::getTitle);
+	BindMethod("setTitle", &TiApp::setTitle);
+	BindMethod("activate", &TiApp::activate);
+	BindMethod("minimize", &TiApp::minimize);
+	BindMethod("maximize", &TiApp::maximize);
+
+	/*
+	void beep(const CppArgumentList &args, CppVariant *result);
+	void playSound(const CppArgumentList &args, CppVariant *result);
+	void playNamedSound(const CppArgumentList &args, CppVariant *result);
+
+	void quit(const CppArgumentList &args, CppVariant *result);
+	*/
+
 }
  
 TiApp::~TiApp()
@@ -70,4 +85,65 @@ void TiApp::include(const CppArgumentList &args, CppVariant *result)
 		std::string relativeName = args[0].ToString();
 		tiWebShell->include(relativeName);
 	}
+}
+
+
+void TiApp::getTitle(const CppArgumentList &args, CppVariant *result)
+{
+	std::string title = this->tiWebShell->getTitle();
+
+	result->Set(title);
+}
+
+void TiApp::setTitle(const CppArgumentList &args, CppVariant *result)
+{
+	if (args.size() > 0) {
+		std::string title = args[0].ToString();
+		this->tiWebShell->setTitle(title);
+	}
+}
+
+void TiApp::getIcon(const CppArgumentList &args, CppVariant *result)
+{
+	// TODO
+}
+
+void TiApp::setIcon(const CppArgumentList &args, CppVariant *result)
+{
+	// TODO
+}
+
+void TiApp::activate(const CppArgumentList &args, CppVariant *result)
+{
+	this->tiWebShell->showWindow(SW_RESTORE);
+}
+
+void TiApp::minimize(const CppArgumentList &args, CppVariant *result)
+{
+	this->tiWebShell->showWindow(SW_MINIMIZE);
+}
+
+void TiApp::maximize(const CppArgumentList &args, CppVariant *result)
+{
+	this->tiWebShell->showWindow(SW_MAXIMIZE);
+}
+
+void TiApp::beep(const CppArgumentList &args, CppVariant *result)
+{
+	// TODO
+}
+
+void TiApp::playSound(const CppArgumentList &args, CppVariant *result)
+{
+	// TODO
+}
+
+void TiApp::playNamedSound(const CppArgumentList &args, CppVariant *result)
+{
+	// TODO
+}
+
+void TiApp::quit(const CppArgumentList &args, CppVariant *result)
+{
+	// TODO
 }

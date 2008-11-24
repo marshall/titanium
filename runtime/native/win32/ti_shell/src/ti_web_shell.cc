@@ -157,6 +157,7 @@ void TiWebShell::createWindow()
 
 void TiWebShell::initWindow()
 {
+	printf("url is = %s\n", url.c_str());
 	if (url.length() > 0)
 		loadURL(url.c_str());
 
@@ -286,6 +287,21 @@ void TiWebShell::showWindow(int nCmdShow) {
 	ShowWindow(hWnd, nCmdShow);
 }
 
+std::string TiWebShell::getTitle() {
+	wchar_t buffer[2049];
+	GetWindowText(this->hWnd, buffer, 2048);
+
+	std::string result;
+	result.assign(WideToUTF8(buffer));
+
+	return result;
+}
+
+void TiWebShell::setTitle(std::string title) {
+	SetWindowText(this->hWnd, UTF8ToWide(title).c_str());
+}
+
 void TiWebShell::close() {
 	CloseWindow(hWnd);
 }
+

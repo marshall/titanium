@@ -107,6 +107,10 @@ public:
 	void removeTrayIcon();
 
 	void showWindow(int nCmdShow);
+
+	std::string getTitle();
+	void setTitle(std::string title);
+
 	void close();
 
 	static std::vector<TiWebShell *>& getOpenShells() { return openShells; }
