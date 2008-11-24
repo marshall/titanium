@@ -54,7 +54,7 @@ void TiMenuFactory::createSystemMenu(const CppArgumentList& args, CppVariant* re
  * if the menu item has already been created, then the existing menu is returned
  *
  * Sample JavaScript call:
- *   var myMenu = tiRuntime.Menu.createUserMenu("Orders");
+ *   var myMenu = ti.Menu.createUserMenu("Orders");
  *   myMenu.addItem("Search Orders", searchOrdersCallback);
  *   myMenu.addItem("Add Order", addOrderCallback);
  *   myMenu.addSeparator();

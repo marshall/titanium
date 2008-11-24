@@ -284,3 +284,16 @@ void JsClass::BindToJavascript(WebFrame* frame,
   // so we can release it when we're destroyed.
   frame->BindToWindowObject(classname, np_obj);
 }
+
+/*static*/
+NPVariant JsClass::StringToNPVariant(std::string &string)
+{
+	NPString npString;
+	npString.UTF8Characters = _strdup(string.c_str());
+	npString.UTF8Length = (uint32_t)string.length();
+	NPVariant variant;
+	variant.type = NPVariantType_String;
+	variant.value.stringValue = npString;
+
+	return variant;
+}

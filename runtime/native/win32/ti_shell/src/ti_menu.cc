@@ -104,6 +104,12 @@ LRESULT CALLBACK TiMenu::handleMenuClick(HWND hWnd, UINT message, WPARAM wParam,
 
 			if(itemCallback->uID == wmId) {
 				printf("handle menu item %s (%d)\n", itemCallback->label.c_str(), itemCallback->uID);
+				NPVariant args[] = { StringToNPVariant(itemCallback->label) };
+
+				NPVariant result;
+				if (NPN_InvokeDefault(0, itemCallback->callback, static_cast<const NPVariant*>(args), 1, &result)) {
+					return TRUE;
+				}
 
 				// TODO - callback the JS function
 				// NPN_Invoke(object, method, args)

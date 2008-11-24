@@ -128,6 +128,9 @@ class JsClass {
 
   JsClass* CppVariantToJsClass(const CppVariant &variant);
 
+  // some static helper functions
+  static NPVariant StringToNPVariant(std::string &string);
+
   // Some fields are protected because some tests depend on accessing them,
   // but otherwise they should be considered private.
  
