@@ -25,6 +25,9 @@ TiUserWindow::TiUserWindow ()
 	BindMethod("hide", &TiUserWindow::hide);
 	BindMethod("show", &TiUserWindow::show);
 	BindMethod("close", &TiUserWindow::close);
+	BindMethod("activate", &TiUserWindow::activate);
+	BindMethod("minimize", &TiUserWindow::minimize);
+	BindMethod("maximize", &TiUserWindow::maximize);
 
 	// snooore -- getters and setters
 	BindMethod("getX", &TiUserWindow::getX);
@@ -66,7 +69,7 @@ TiUserWindow::TiUserWindow ()
 void TiUserWindow::updateWindow ()
 {
 	if (tiWebShell != NULL)
-		tiWebShell->setTiWindow(tiWindow);
+		tiWebShell->reloadTiWindow();
 }
 
 void TiUserWindow::hide(const CppArgumentList &args, CppVariant *result)
@@ -338,4 +341,19 @@ void TiUserWindow::setTransparency(const CppArgumentList &args, CppVariant *resu
 		tiWindow->setTransparency((float)args[0].ToDouble());
 		updateWindow();
 	}
+}
+
+void TiUserWindow::activate(const CppArgumentList &args, CppVariant *result)
+{
+	this->tiWebShell->showWindow(SW_RESTORE);
+}
+
+void TiUserWindow::minimize(const CppArgumentList &args, CppVariant *result)
+{
+	this->tiWebShell->showWindow(SW_MINIMIZE);
+}
+
+void TiUserWindow::maximize(const CppArgumentList &args, CppVariant *result)
+{
+	this->tiWebShell->showWindow(SW_MAXIMIZE);
 }

@@ -87,6 +87,10 @@ public:
 
 	void getTransparency(const CppArgumentList &args, CppVariant *result);
 	void setTransparency(const CppArgumentList &args, CppVariant *result);
+
+	void activate(const CppArgumentList &args, CppVariant *result);	// same as restore
+	void minimize(const CppArgumentList &args, CppVariant *result);
+	void maximize(const CppArgumentList &args, CppVariant *result);
 };
 
 #endif

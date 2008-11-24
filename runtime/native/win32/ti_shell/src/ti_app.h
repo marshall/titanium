@@ -33,14 +33,6 @@ public:
 	void include (const CppArgumentList &args, CppVariant *result);
 	void hide (const CppArgumentList &args, CppVariant *result);
 	void show (const CppArgumentList &args, CppVariant *result);
-	void getTitle(const CppArgumentList &args, CppVariant *result);
-	void setTitle(const CppArgumentList &args, CppVariant *result);
-	void getIcon(const CppArgumentList &args, CppVariant *result);
-	void setIcon(const CppArgumentList &args, CppVariant *result);
-
-	void activate(const CppArgumentList &args, CppVariant *result);	// same as restore
-	void minimize(const CppArgumentList &args, CppVariant *result);
-	void maximize(const CppArgumentList &args, CppVariant *result);
 
 	void beep(const CppArgumentList &args, CppVariant *result);
 	void playSound(const CppArgumentList &args, CppVariant *result);
