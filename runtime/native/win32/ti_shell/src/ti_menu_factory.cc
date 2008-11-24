@@ -16,10 +16,15 @@
 
 #include "ti_menu_factory.h"
 #include "ti_system_menu.h"
+#include "ti_menu.h"
+#include "ti_web_shell.h"
+
+static HMENU hMenuBar = NULL;
 
 TiMenuFactory::TiMenuFactory()
 {
 	BindMethod("createSystemMenu", &TiMenuFactory::createSystemMenu);
+	BindMethod("createUserMenu", &TiMenuFactory::createUserMenu);
 }
 
 void TiMenuFactory::createSystemMenu(const CppArgumentList& args, CppVariant* result)
@@ -40,7 +45,45 @@ void TiMenuFactory::createSystemMenu(const CppArgumentList& args, CppVariant* re
 	}
 }
 
+/**
+ * creates a menu item in the menu bar for the main titanium window
+ *
+ * if the menu bar for the main window has not been created yet, a new menu bar
+ * is created
+ *
+ * if the menu item has already been created, then the existing menu is returned
+ *
+ * Sample JavaScript call:
+ *   var myMenu = tiRuntime.Menu.createUserMenu("Orders");
+ *   myMenu.addItem("Search Orders", searchOrdersCallback);
+ *   myMenu.addItem("Add Order", addOrderCallback);
+ *   myMenu.addSeparator();
+ *
+ *   var mySubMenu = myMenu.addSubMenu("Inventory");
+ *   mySubMenu.addItem("Last Numbers", lastNumbersCallback);
+ *   mySubMenu.addItem("Out Of Stock", outOfStockCallback);
+ */
 void TiMenuFactory::createUserMenu(const CppArgumentList& args, CppVariant* result)
 {
+	if (args.size() >= 1) {
+		if (args[0].isString()) {
+			std::string menuLabel = args[0].ToString();
 
+			if(hMenuBar == NULL)
+			{
+				createMenuBar();
+			}
+
+			TiMenu *menu = new TiMenu(hMenuBar, menuLabel);
+
+			result->Set(menu->ToNPObject());
+		}
+	}
+}
+
+void TiMenuFactory::createMenuBar()
+{
+	hMenuBar = CreateMenu();
+	HWND hWnd = TiWebShell::getMainTiWebShell()->getWindow();
+	SetMenu(hWnd, hMenuBar);
 }

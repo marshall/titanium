@@ -107,7 +107,7 @@ END
     tmpfile.puts jf
     tmpfile.close
     
-    jar_path = "lib/yuicompressor-2.3.6.jar"
+    jar_path = File.join(RUNTIME_DIR, 'lib', 'yuicompressor-2.3.6.jar')
     tmpfile_path = tmpfile.path
     
     # compress our file
@@ -116,7 +116,14 @@ END
       tmpfile_path = cygpath(tmpfile_path)
     end
     
-    system "java -jar #{jar_path} --type js --charset utf8 #{tmpfile_path} -o #{tmpfile_path}t"
+    command = "java -jar \"#{jar_path}\" --type js --charset utf8 \"#{tmpfile_path}\" -o \"#{tmpfile_path}t\""
+    
+    puts command
+    if is_cygwin?
+    	system "cmd /C #{command}"
+    else
+    	system command
+    end
     
     zipfile.get_output_stream('titanium-debug.js') { |f| f.puts(jf) }
     zipfile.add 'titanium.js',"#{tmpfile.path}t"

@@ -21,6 +21,9 @@
 
 class TiMenuFactory : public JsClass
 {
+private:
+	void TiMenuFactory::createMenuBar();
+
 public:
 	TiMenuFactory();
 
