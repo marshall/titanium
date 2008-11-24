@@ -21,7 +21,7 @@
 
 #include "js_class.h"
 
-#define TI_MENU_ITEM_ID_BEGIN 1500
+#define TI_MENU_ITEM_ID_BEGIN 7500
 
 /**
 * Javascript wrapper for the main window menu in win32
@@ -47,6 +47,8 @@ public:
 	void hide(const CppArgumentList &args, CppVariant *result);
 	void show(const CppArgumentList &args, CppVariant *result);
 	*/
+
+	static LRESULT CALLBACK handleMenuClick(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 };
 
 #endif
