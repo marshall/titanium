@@ -16,12 +16,26 @@
 
 #include "ti_user_window.h"
 
+TiUserWindow::TiUserWindow(TiWebShell *tiWebShell_)
+{
+	tiWebShell = tiWebShell_;
+	if (tiWebShell != NULL)
+		tiWindow = tiWebShell->getTiWindow();
+
+	bind();
+}
+
 TiUserWindow::TiUserWindow ()
 {
 	tiWindow = new TiWindow();
 	tiWebShell = new TiWebShell(tiWindow);
 	tiWebShell->open();
 
+	bind();
+}
+
+void TiUserWindow::bind()
+{
 	BindMethod("hide", &TiUserWindow::hide);
 	BindMethod("show", &TiUserWindow::show);
 	BindMethod("close", &TiUserWindow::close);

@@ -19,6 +19,13 @@
 TiWindowFactory::TiWindowFactory()
 {
 	BindMethod("createWindow", &TiWindowFactory::createWindow);
+	BindMethod("getMainWindow", &TiWindowFactory::getMainWindow);
+}
+
+void TiWindowFactory::getMainWindow(const CppArgumentList& args, CppVariant* result)
+{
+	TiUserWindow *window = new TiUserWindow(TiWebShell::getMainTiWebShell());
+	result->Set(window->ToNPObject());
 }
 
 void TiWindowFactory::createWindow(const CppArgumentList &args, CppVariant *result)

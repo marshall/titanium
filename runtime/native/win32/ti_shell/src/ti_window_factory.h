@@ -29,6 +29,7 @@ class TiWindowFactory : public JsClass
 public:
 	TiWindowFactory();
 
+	void getMainWindow(const CppArgumentList& args, CppVariant* result);
 	void createWindow(const CppArgumentList& args, CppVariant* result);
 };
 

@@ -30,9 +30,11 @@ private:
 	TiWindow *tiWindow;
 
 	void updateWindow();
+	void bind();
 
 public:
 	TiUserWindow();
+	TiUserWindow(TiWebShell *tiWebShell);
 
 	void hide(const CppArgumentList &args, CppVariant *result);
 	void show(const CppArgumentList &args, CppVariant *result);
