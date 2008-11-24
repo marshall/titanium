@@ -23,17 +23,17 @@ module Titanium
     end
     
     def get_project_path(basedir, executable_name)
-      if is_mac?
+      if @platform == "osx"
         return File.join(basedir, executable_name+".app", 'Contents', 'Resources')
-      elsif is_win?
+      elsif @platform == "win32"
 	  	  return File.join(basedir, executable_name, 'Resources')
       end
     end
     
     def get_plugins_path(basedir, executable_name)
-    	if is_mac?
+    	if @platform == "osx"
     		return File.join(basedir, executable_name+".app", 'Contents', 'Plug-ins')
-		  elsif is_win?
+		  elsif @platform == "win32"
 			  return File.join(basedir, executable_name, 'plugins')
 		  end
 	  end

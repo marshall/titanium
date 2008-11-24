@@ -13,7 +13,6 @@ task :runtime_install do
   runtime_build = {}
   File.open(File.join(STAGE_YML_DIR, 'runtime_build.yml')) { |f| runtime_build = YAML::load(f.read) }
   
-  puts runtime_build.inspect
   system "app install:titanium --force #{STAGE_DIR}/titanium_runtime_" + runtime_build[:version].to_s + "_" + runtime_build[:platform] + ".zip"
 end
 
