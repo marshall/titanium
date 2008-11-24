@@ -222,6 +222,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ti_menu.cc"
+				>
+			</File>
+			<File
+				RelativePath=".\ti_menu.h"
+				>
+			</File>
+			<File
 				RelativePath=".\ti_menu_factory.cc"
 				>
 			</File>
@@ -243,10 +251,6 @@
 			</File>
 			<File
 				RelativePath=".\ti_system_menu.h"
-				>
-			</File>
-			<File
-				RelativePath=".\ti_user_menu.h"
 				>
 			</File>
 			<File
