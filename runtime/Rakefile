@@ -14,7 +14,7 @@ task :build_shell do
   if is_mac?
     system 'xcodebuild'
 	elsif is_win?
-		rake('ti_shell')
+		call_rake
   end
 end
 
@@ -29,7 +29,7 @@ def gather_mac(zipfile)
 end
 
 def gather_win(zipfile)
-	zipfile.add('ti_shell.exe', File.join(NATIVE_DIR, 'ti_shell', 'src', 'build', 'Release', 'ti_shell.exe'))
+	zipfile.add('ti_shell.exe', File.join(NATIVE_DIR, 'build', 'Release', 'ti_shell.exe'))
 end
 
 task :gather do

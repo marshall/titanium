@@ -1,5 +1,5 @@
 require 'fileutils'
-require '../../../../build.rb'
+require '../../../build.rb'
 
 task :default =>[:check_chromedir,:check_devenv,:build]
 
