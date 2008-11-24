@@ -74,48 +74,50 @@ LRESULT CALLBACK TiWebShell::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 
 	switch (message)
 	{
-	case WM_COMMAND:
-		wmId    = LOWORD(wParam);
-		wmEvent = HIWORD(wParam);
-		// Parse the menu selections:
-		switch (wmId)
-		{
-		case IDM_ABOUT:
-			//DialogBox(tiWebShell->getInstance(), MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
-			break;
-		case IDM_EXIT:
-			DestroyWindow(hWnd);
-			break;
-		default: {
-			LRESULT handled = TiMenu::handleMenuClick(hWnd, message, wParam, lParam);
-
-				if(! handled)
-				{
-					return DefWindowProc(hWnd, message, wParam, lParam);
-				}
-			}
-		}
-		break;
-	case WM_DESTROY:
-		PostQuitMessage(0);
-		break;
-	case WM_SIZE:
-		tiWebShell->resizeHost();
-		break;
-	case WM_TITRAYMESSAGE:
-		{
-			UINT uMouseMsg = (UINT) lParam;
-			if(uMouseMsg == WM_LBUTTONDBLCLK)
+		case WM_COMMAND:
+			wmId    = LOWORD(wParam);
+			wmEvent = HIWORD(wParam);
+			// Parse the menu selections:
+			switch (wmId)
 			{
-				if(tiWebShell != NULL)
+				case IDM_ABOUT:
+					//DialogBox(tiWebShell->getInstance(), MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
+					break;
+				case IDM_EXIT:
+					DestroyWindow(hWnd);
+					break;
+				default:
 				{
-					tiWebShell->removeTrayIcon();
-					tiWebShell->showWindow(SW_SHOW);
+					LRESULT handled = TiMenu::handleMenuClick(hWnd, message, wParam, lParam);
+
+					if(! handled)
+					{
+						return DefWindowProc(hWnd, message, wParam, lParam);
+					}
 				}
 			}
-		}
-		break;
+			break;
+		case WM_DESTROY:
+			PostQuitMessage(0);
+			break;
+		case WM_SIZE:
+			tiWebShell->resizeHost();
+			break;
+		case WM_TITRAYMESSAGE:
+			{
+				UINT uMouseMsg = (UINT) lParam;
+				if(uMouseMsg == WM_LBUTTONDBLCLK)
+				{
+					if(tiWebShell != NULL)
+					{
+						tiWebShell->removeTrayIcon();
+						tiWebShell->showWindow(SW_SHOW);
+					}
+				}
+			}
+			break;
 	}
+
 	return DefWindowProc(hWnd, message, wParam, lParam);
 }
 
