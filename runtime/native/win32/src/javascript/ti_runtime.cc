@@ -27,7 +27,7 @@ TiRuntime::TiRuntime(TiWebShell *tiWebShell)
 	this->tiWebShell = tiWebShell;
 	
 	tiApp = new TiApp(tiWebShell);
-	tiWindowFactory = new TiWindowFactory();
+	tiWindowFactory = new TiWindowFactory(tiWebShell);
 	tiMenuFactory = new TiMenuFactory();
 
 	App.Set(tiApp->ToNPObject());

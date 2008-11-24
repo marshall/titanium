@@ -169,7 +169,6 @@ bool TiWebViewDelegate::IsHidden() {
 
 void TiWebViewDelegate::WindowObjectCleared(WebFrame *webFrame)
 {
-
 	tiRuntime = new TiRuntime(tiWebShell);
 	tiRuntime->BindToJavascript(webFrame, L"tiRuntime");
 

@@ -18,12 +18,15 @@
 
 #include "js_class.h"
 #include "webkit/glue/webview.h"
+#include <shellapi.h>
 
 class TiMenuFactory : public JsClass
 {
 private:
 	void TiMenuFactory::createMenuBar();
 
+	NOTIFYICONDATA createTrayIcon(std::wstring &iconPath, std::wstring &caption);
+	void removeTrayIcon();
 public:
 	TiMenuFactory();
 

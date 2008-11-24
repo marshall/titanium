@@ -19,7 +19,6 @@
 #include "ti_url.h"
 
 #include <cstdlib>
-#include <shellapi.h>
 
 TiSystemMenu::TiSystemMenu(std::string& iconURL_, std::string& caption_, NPObject *callback_)
 	: iconURL(iconURL_), caption(caption_), callback(callback_), menu(NULL)

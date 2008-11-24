@@ -27,10 +27,11 @@
 class TiWindowFactory : public JsClass
 {
 public:
-	TiWindowFactory();
+	TiWindowFactory(TiWebShell *tiWebShell);
 
-	void getMainWindow(const CppArgumentList& args, CppVariant* result);
 	void createWindow(const CppArgumentList& args, CppVariant* result);
+
+	CppVariant mainWindow, currentWindow;
 };
 
 #endif

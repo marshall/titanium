@@ -28,7 +28,17 @@ public:
 	NPObject* callback;
 };
 
-static std::vector<MenuItemCallback *> callbacks;
+std::vector<MenuItemCallback *> callbacks;
+
+int TiMenu::currentUID = TI_MENU_ITEM_ID_BEGIN + 1;
+TiMenu* TiMenu::systemMenu = NULL;
+
+TiMenu::TiMenu(NOTIFYICONDATA notifyIconData_) 
+	: notifyIconData(notifyIconData_)
+{
+	hMenu = CreatePopupMenu();
+	bind();
+}
 
 TiMenu::TiMenu(HMENU parentMenu, std::string& label_)
 	: label(label_)
@@ -39,12 +49,24 @@ TiMenu::TiMenu(HMENU parentMenu, std::string& label_)
 	// redraw the menu bar
 	HWND hWnd = TiWebShell::getMainTiWebShell()->getWindow();
 	DrawMenuBar(hWnd);
+	
+	bind();
+}
 
+void TiMenu::bind() {
 	BindMethod("addItem", &TiMenu::addItem);
 	BindMethod("addSubMenu", &TiMenu::addSubMenu);
 	BindMethod("addSeparator", &TiMenu::addSeparator);
+	BindMethod("remove", &TiMenu::remove);
 	//BindMethod("hide", &TiMenu::hide);
 	//BindMethod("show", &TiMenu::show);
+}
+
+void TiMenu::remove(const CppArgumentList &args, CppVariant *result)
+{
+	if (this == TiMenu::systemMenu) {
+		Shell_NotifyIcon(NIM_DELETE, &notifyIconData);
+	}
 }
 
 void TiMenu::addItem(const CppArgumentList &args, CppVariant *result)
@@ -56,9 +78,7 @@ void TiMenu::addItem(const CppArgumentList &args, CppVariant *result)
 			args[1].CopyToNPVariant(&variant);
 
 			NPObject* callback = NPVARIANT_TO_OBJECT(variant);
-
-			// TODO better way of getting the uID?  to guarantee no collisions
-			uID = TI_MENU_ITEM_ID_BEGIN + ((int)rand()&0xFFFF);
+			uID = nextMenuUID();
 
 			MenuItemCallback* itemCallBack = new MenuItemCallback();
 			itemCallBack->uID = uID;
@@ -90,6 +110,29 @@ void TiMenu::addSeparator(const CppArgumentList &args, CppVariant *result)
 	AppendMenu(this->hMenu, MF_SEPARATOR, 1, L"Separator");
 }
 
+/*static*/
+bool TiMenu::invokeCallback(int menuItemUID)
+{
+	for(size_t i = 0; i < callbacks.size(); i++)
+	{
+		MenuItemCallback* itemCallback = callbacks[i];
+
+		if(itemCallback->uID == menuItemUID) {
+			printf("handle menu item %s (%d)\n", itemCallback->label.c_str(), itemCallback->uID);
+			NPVariant args[] = { StringToNPVariant(itemCallback->label) };
+
+			NPVariant result;
+			if (NPN_InvokeDefault(0, itemCallback->callback, static_cast<const NPVariant*>(args), 1, &result)) {
+				return true;
+			}
+
+			return false;
+		}
+	}
+	return false;
+}
+
+/*static*/
 LRESULT CALLBACK TiMenu::handleMenuClick(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
 	TiWebShell *tiWebShell = TiWebShell::fromWindow(hWnd);
 
@@ -98,25 +141,22 @@ LRESULT CALLBACK TiMenu::handleMenuClick(HWND hWnd, UINT message, WPARAM wParam,
 		int wmId    = LOWORD(wParam);
 		//wmEvent = HIWORD(wParam);
 
-		for(size_t i = 0; i < callbacks.size(); i++)
-		{
-			MenuItemCallback* itemCallback = callbacks[i];
-
-			if(itemCallback->uID == wmId) {
-				printf("handle menu item %s (%d)\n", itemCallback->label.c_str(), itemCallback->uID);
-				NPVariant args[] = { StringToNPVariant(itemCallback->label) };
-
-				NPVariant result;
-				if (NPN_InvokeDefault(0, itemCallback->callback, static_cast<const NPVariant*>(args), 1, &result)) {
-					return TRUE;
-				}
-
-				// TODO - callback the JS function
-				// NPN_Invoke(object, method, args)
-				return TRUE;
-			}
-		}
+		return invokeCallback(wmId);
 	}
 
 	return FALSE;
+}
+
+/*static*/
+void TiMenu::showSystemMenu ()
+{
+	if (systemMenu != NULL) {
+		// handle the tray menu
+		POINT pt;
+		GetCursorPos(&pt);
+		TrackPopupMenu(systemMenu->getMenu(), 
+			TPM_BOTTOMALIGN,
+			pt.x, pt.y, 0,
+			TiWebShell::getMainTiWebShell()->getWindow(), NULL);
+	}
 }

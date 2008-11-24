@@ -15,7 +15,6 @@
 */
 
 #include "ti_menu_factory.h"
-#include "ti_system_menu.h"
 #include "ti_menu.h"
 #include "ti_web_shell.h"
 
@@ -25,6 +24,27 @@ TiMenuFactory::TiMenuFactory()
 {
 	BindMethod("createSystemMenu", &TiMenuFactory::createSystemMenu);
 	BindMethod("createUserMenu", &TiMenuFactory::createUserMenu);
+}
+
+
+NOTIFYICONDATA TiMenuFactory::createTrayIcon(std::wstring &iconPath, std::wstring &caption) {
+	NOTIFYICONDATA notifyIconData;
+	notifyIconData.cbSize = sizeof(NOTIFYICONDATA);
+	notifyIconData.hWnd = TiWebShell::getMainTiWebShell()->getWindow();
+	notifyIconData.uID = TiMenu::nextMenuUID();
+	notifyIconData.uFlags = NIF_MESSAGE | NIF_ICON | NIF_TIP;
+	notifyIconData.uCallbackMessage = TI_TRAY_CLICKED;
+	notifyIconData.hIcon = (HICON)LoadImage(::GetModuleHandle(NULL),
+		iconPath.c_str(),
+		IMAGE_ICON,
+		GetSystemMetrics(SM_CXSMICON),
+		GetSystemMetrics(SM_CYSMICON),
+		LR_DEFAULTCOLOR | LR_LOADFROMFILE);
+
+	lstrcpy(notifyIconData.szTip, caption.c_str());
+
+	Shell_NotifyIcon(NIM_ADD, &notifyIconData);
+	return notifyIconData;
 }
 
 void TiMenuFactory::createSystemMenu(const CppArgumentList& args, CppVariant* result)
@@ -38,9 +58,11 @@ void TiMenuFactory::createSystemMenu(const CppArgumentList& args, CppVariant* re
 
 			NPObject* callback = NPVARIANT_TO_OBJECT(variant);
 
-			TiSystemMenu *menu = new TiSystemMenu(iconURL, caption, callback);
-
-			result->Set(menu->ToNPObject());
+			if (TiMenu::systemMenu == NULL) {
+				TiMenu::systemMenu = new TiMenu(createTrayIcon(TiURL::getPathForURL(GURL(iconURL)), UTF8ToWide(caption)));
+			}
+			
+			result->Set(TiMenu::systemMenu->ToNPObject());
 		}
 	}
 }

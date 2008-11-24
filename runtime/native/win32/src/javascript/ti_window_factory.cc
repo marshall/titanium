@@ -16,16 +16,14 @@
 
 #include "ti_window_factory.h"
 
-TiWindowFactory::TiWindowFactory()
+TiWindowFactory::TiWindowFactory(TiWebShell *tiWebShell)
 {
 	BindMethod("createWindow", &TiWindowFactory::createWindow);
-	BindMethod("getMainWindow", &TiWindowFactory::getMainWindow);
-}
+	BindProperty("mainWindow", &mainWindow);
+	BindProperty("currentWindow", &currentWindow);
 
-void TiWindowFactory::getMainWindow(const CppArgumentList& args, CppVariant* result)
-{
-	TiUserWindow *window = new TiUserWindow(TiWebShell::getMainTiWebShell());
-	result->Set(window->ToNPObject());
+	mainWindow.Set(TiWebShell::getMainTiWebShell()->getTiUserWindow()->ToNPObject());
+	currentWindow.Set(tiWebShell->getTiUserWindow()->ToNPObject());
 }
 
 void TiWindowFactory::createWindow(const CppArgumentList &args, CppVariant *result)

@@ -15,6 +15,7 @@
 */
 
 #include "ti_web_shell.h"
+#include "ti_user_window.h"
 #include "ti_utils.h"
 #include "ti_menu.h"
 #include "Resource.h"
@@ -97,22 +98,25 @@ LRESULT CALLBACK TiWebShell::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 				}
 			}
 			break;
+		case WM_SETFOCUS:
+			tiWebShell->getHost()->webview()->SetFocus(true);
+			break;
 		case WM_DESTROY:
 			PostQuitMessage(0);
 			break;
 		case WM_SIZE:
 			tiWebShell->resizeHost();
 			break;
-		case WM_TITRAYMESSAGE:
+		case TI_TRAY_CLICKED:
 			{
 				UINT uMouseMsg = (UINT) lParam;
-				if(uMouseMsg == WM_LBUTTONDBLCLK)
+				if(uMouseMsg == WM_LBUTTONDOWN)
 				{
-					if(tiWebShell != NULL)
-					{
-						tiWebShell->removeTrayIcon();
-						tiWebShell->showWindow(SW_SHOW);
-					}
+					// handle the click callback for the tray
+				}
+				else if (uMouseMsg == WM_RBUTTONDOWN)
+				{
+					TiMenu::showSystemMenu();
 				}
 			}
 			break;
@@ -121,20 +125,25 @@ LRESULT CALLBACK TiWebShell::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 	return DefWindowProc(hWnd, message, wParam, lParam);
 }
 
-TiWebShell::TiWebShell(TiWindow *window) : hWnd(NULL), hInstance(NULL), host(NULL) {
+TiWebShell::TiWebShell(TiWindow *window) : hWnd(NULL), hInstance(NULL), host(NULL)
+{
+	TiWebShell::openShells.push_back(this);	
 	this->tiWindow = window;
-	TiWebShell::openShells.push_back(this);
 
 	if (window != NULL) {
 		this->url = tiWindow->getURL();
 	}
+
+	tiUserWindow = new TiUserWindow(this);
 }
 
-TiWebShell::TiWebShell(const char *url) : hWnd(NULL), hInstance(NULL), host(NULL) {
-	TiWebShell::openShells.push_back(this);
-
+TiWebShell::TiWebShell(const char *url) : hWnd(NULL), hInstance(NULL), host(NULL)
+{
+	TiWebShell::openShells.push_back(this);	
 	this->url = url;
 	this->tiWindow = new TiWindow();
+	
+	tiUserWindow = new TiUserWindow(this);
 }
 
 TiWebShell::~TiWebShell(void) {
@@ -188,7 +197,7 @@ void TiWebShell::reloadTiWindow()
 
 	UINT flags = SWP_NOMOVE | SWP_NOZORDER | SWP_FRAMECHANGED;
 
-	sizeTo(tiWindow->getWidth(), tiWindow->getHeight(), flags);
+	sizeTo(tiWindow->getX(), tiWindow->getY(), tiWindow->getWidth(), tiWindow->getHeight(), flags);
 	SetLayeredWindowAttributes(hWnd, 0, (BYTE)floor(tiWindow->getTransparency()*255), LWA_ALPHA);
 }
 
@@ -223,7 +232,7 @@ void TiWebShell::loadURL(const char* url) {
 }
 
 
-void TiWebShell::sizeTo(int width, int height, UINT flags) {
+void TiWebShell::sizeTo(int x, int y, int width, int height, UINT flags) {
 	RECT rc, rw;
 	GetClientRect(hWnd, &rc);
 	GetWindowRect(hWnd, &rw);
@@ -236,7 +245,7 @@ void TiWebShell::sizeTo(int width, int height, UINT flags) {
 	int window_height = rw.bottom - rw.top;
 	window_height = (window_height - client_height) + height;
 
-	SetWindowPos(hWnd, NULL, 0, 0, window_width, window_height, flags);
+	SetWindowPos(hWnd, NULL, x, y, window_width, window_height, flags);
 }
 
 void TiWebShell::resizeHost() {
@@ -266,28 +275,6 @@ void TiWebShell::include(std::string& relativePath)
 
 	WebView *webview = getHost()->webview();
 	webview->GetMainFrame()->ExecuteJavaScript(s, absolutePath);
-}
-
-void TiWebShell::createTrayIcon() {
-	NOTIFYICONDATA tnd;
-	tnd.cbSize = sizeof(NOTIFYICONDATA);
-	tnd.hWnd = this->hWnd;
-	tnd.uID = IDR_MAINFRAME;
-	tnd.uFlags = NIF_MESSAGE | NIF_ICON | NIF_TIP;
-	tnd.uCallbackMessage = WM_TITRAYMESSAGE;
-	tnd.hIcon = LoadIcon(::GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_CHROME_SHELL3));
-
-	lstrcpy(tnd.szTip, TEXT("Titanium Shell (this should prbly be dynamic)"));
-
-	Shell_NotifyIcon(NIM_ADD, &tnd);
-}
-
-void TiWebShell::removeTrayIcon() {
-	NOTIFYICONDATA tnid;
-	tnid.cbSize = sizeof(NOTIFYICONDATA);
-	tnid.hWnd = this->hWnd;
-	tnid.uID = IDR_MAINFRAME;		// ensure we remove our app tray icon
-	Shell_NotifyIcon(NIM_DELETE, &tnid);
 }
 
 void TiWebShell::showWindow(int nCmdShow) {

@@ -18,6 +18,7 @@
 
 #include "js_class.h"
 #include "webkit/glue/webview.h"
+#include "ti_menu.h"
 
 #include <string>
 
@@ -26,7 +27,7 @@
 /**
 * Javascript wrapper for the tray menu in win32
 */
-class TiSystemMenu : public JsClass
+class TiSystemMenu : public TiMenu
 {
 private:
 	NPObject *callback;

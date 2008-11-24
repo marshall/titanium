@@ -9,7 +9,7 @@
     <width>500</width>
     <height>300</height>
 		<title>This is a test app</title>
-		<url>app://index.html</start>
+		<url>app://index.html</url>
 	</window>
 
 </ti:app>

@@ -18,10 +18,12 @@
 
 #include <string>
 #include <windows.h>
+#include <shellapi.h>
 
 #include "js_class.h"
 
 #define TI_MENU_ITEM_ID_BEGIN 7500
+#define TI_TRAY_CLICKED 7501
 
 /**
 * Javascript wrapper for the main window menu in win32
@@ -32,15 +34,24 @@ private:
 	std::string label;
 	NPObject *callback;
 
+	NOTIFYICONDATA notifyIconData;
 	HMENU hMenu;
 	int uID;
+	static int currentUID;
 
+	void bind();
 public:
+	TiMenu(NOTIFYICONDATA notifyIconData);
 	TiMenu(HMENU parentMenu, std::string& label);
+
+	HMENU getMenu() { return hMenu; }
+	int getUID() { return uID; }
+	NOTIFYICONDATA getNotifyIconData() { return notifyIconData; }
 
 	void addItem(const CppArgumentList &args, CppVariant *result);
 	void addSubMenu(const CppArgumentList &args, CppVariant *result);
 	void addSeparator(const CppArgumentList &args, CppVariant *result);
+	void remove(const CppArgumentList &args, CppVariant *result);
 	/* hide and show don't make sense in the menu object
 	   from JS, a call like ti.Menu.hideUserMenu()
 	                        ti.Menu.showUserMenu() make more sense
@@ -48,6 +59,13 @@ public:
 	void show(const CppArgumentList &args, CppVariant *result);
 	*/
 
+	static int nextMenuUID() {
+		return currentUID++;
+	}
+
+	static TiMenu* systemMenu;
+	static void showSystemMenu();
+	static bool invokeCallback(int menuItemUID);
 	static LRESULT CALLBACK handleMenuClick(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 };
 

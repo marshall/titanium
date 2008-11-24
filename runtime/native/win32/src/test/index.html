@@ -1,24 +1,50 @@
 <html>
 	<head>
+	   <script>
+	    function init () {
+	        // simulate user API
+	        window.ti = tiRuntime;
+	        
+	        createMenu();
+	        createWindow();
+	    }
+	    function createMenu () {
+	        var menu = ti.Menu.createUserMenu("Testing..");
+	        menu.addItem("Item 1", function() { alert("Item 1 clicked!"); });
+	        menu.addItem("Item 2", function() { alert("Item 2 clicked!"); });
+	        var submenu = menu.addSubMenu("Submenu 1");
+	        submenu.addItem("Subitem 1", function() { alert("Subitem 1 clicked!"); } );
+	    }
+	    
+	    function createSystemMenu() {
+	        var sysmenu = ti.Menu.createSystemMenu("app://menu.ico", "Titanium", function (){});
+            sysmenu.addItem("Random! " + Math.random(), function(msg) { alert(msg + " done got clicked"); });
+            
+            sysmenu.addItem("Hide me plz", function() { ti.App.hide(); });
+            sysmenu.addItem("Show me , i'm lonely", function() { ti.App.show(); });
+            
+	    }
+	    
+	    function createWindow () {
+	        var window = ti.Window.createWindow();
+	        window.setURL("app://window_test.html");
+	        window.setTitle("lil' brudder");
+	        var bounds = window.getBounds();
+            bounds.x = 100; bounds.y = 100;
+            bounds.width = 200; bounds.height = 200;
+
+            window.setBounds(bounds);
+	    }
+	   </script>
 	</head>
 	<body>
-
-		here's some flash<br/>
-		<object classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,40,0" id="mymoviename" width="468" height="60" type="application/x-shockwave-flash">
-<param name="movie" value="http://www.tizag.com/pics/example.swf">
-<param name="quality" value="high">
-<param name="bgcolor" value="#ffffff">
-<embed src="http://www.tizag.com/pics/example.swf" quality="high" bgcolor="#ffffff" name="mymoviename" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer" width="468" align="" height="60"/>
-
-</object><br/><br/>
-
-		
-		Hello world
-		<script>
-		tiRuntime.App.debug("hello world");
-		</script><br/><br/>
-        <br/><br/>
-	
+	    here's a text input, test the stupid lose focus/key input error here:<br />
+        <input type="text" size="20" /><br /><br />
+        
+        oh, you might want to <a href="javascript: createSystemMenu();">try creating a system menu</a>.. let's hope!
+	    <script>
+	        window.onload = init;    
+	    </script>
 	</body>
 
 </html>

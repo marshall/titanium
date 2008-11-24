@@ -60,6 +60,7 @@
 #include <vector>
 
 class TiWebViewDelegate;
+class TiUserWindow;
 
 class TiWebShell
 {
@@ -69,6 +70,7 @@ private:
 	WebViewHost* host;
 	std::wstring resourcePath;
 	TiWindow *tiWindow;
+	TiUserWindow *tiUserWindow;
 	std::string url;
 	TiWebViewDelegate* webViewDelegate;
 	std::string currentURL;
@@ -80,7 +82,6 @@ private:
 
 	static void initWindowClass();
 	static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
-
 public:
 	TiWebShell(TiWindow *tiWindow);
 	TiWebShell(const char *url);
@@ -92,18 +93,17 @@ public:
 	void open();
 
 	void loadURL(const char* url);
-	void sizeTo(int width, int height, UINT flags);
+	void sizeTo(int x, int y, int width, int height, UINT flags);
 	void resizeHost();
 
 	WebViewHost* getHost() { return host; }
 	HWND getWindow() { return hWnd; }
 	TiWindow* getTiWindow() { return tiWindow; }
+	TiUserWindow* getTiUserWindow() { return tiUserWindow; }
+
 	HINSTANCE getInstance() { return hInstance; }
 
 	void include (std::string& relativePath);
-
-	void createTrayIcon();
-	void removeTrayIcon();
 
 	void showWindow(int nCmdShow);
 

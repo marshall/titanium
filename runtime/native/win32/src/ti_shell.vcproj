@@ -104,8 +104,8 @@
 			<Tool
 				Name="VCCustomBuildTool"
 				CommandLine="echo if not exist $(TargetDir)\Resources mkdir $(TargetDir)\Resources&#x0D;&#x0A;if not exist $(TargetDir)\Resources mkdir $(TargetDir)\Resources&#x0D;&#x0A;echo copy $(ProjectDir)\test\* $(TargetDir)\Resources&#x0D;&#x0A;copy $(ProjectDir)\test\* $(TargetDir)\Resources"
-				AdditionalDependencies="$(ProjectDir)\test\index.html;$(ProjectDir)\test\tiapp.xml"
-				Outputs="$(TargetDir)\Resources\index.html;$(TargetDir)\Resources\tiapp.xml"
+				AdditionalDependencies="$(ProjectDir)\test\index.html;$(ProjectDir)\test\tiapp.xml;$(ProjectDir)\test\window_test.html"
+				Outputs="$(TargetDir)\Resources\index.html;$(TargetDir)\Resources\tiapp.xml;$(TargetDir)\Resources\window_test.html"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -241,14 +241,6 @@
 			</File>
 			<File
 				RelativePath=".\javascript\ti_runtime.h"
-				>
-			</File>
-			<File
-				RelativePath=".\javascript\ti_system_menu.cc"
-				>
-			</File>
-			<File
-				RelativePath=".\javascript\ti_system_menu.h"
 				>
 			</File>
 			<File
@@ -475,6 +467,10 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\test\menu.png"
+				>
+			</File>
+			<File
 				RelativePath=".\test\tiapp.xml"
 				>
 				<FileConfiguration
@@ -486,6 +482,10 @@
 						Outputs=""
 					/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\test\window_test.html"
+				>
 			</File>
 		</Filter>
 	</Files>
