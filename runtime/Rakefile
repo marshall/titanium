@@ -100,8 +100,16 @@ END
     tmpfile.puts jf
     tmpfile.close
     
+    jar_path = "lib/yuicompressor-2.3.6.jar"
+    tmpfile_path = tmpfile.path
+    
     # compress our file
-    system "java -jar lib/yuicompressor-2.3.6.jar --type js --charset utf8 #{tmpfile.path} -o #{tmpfile.path}t"
+    if is_cygwin?
+      jar_path = cygpath(jar_path)
+      tmpfile_path = cygpath(tmpfile_path)
+    end
+    
+    system "java -jar #{jar_path} --type js --charset utf8 #{tmpfile_path} -o #{tmpfile_path}t"
     
     zipfile.get_output_stream('titanium-debug.js') { |f| f.puts(jf) }
     zipfile.add 'titanium.js',"#{tmpfile.path}t"

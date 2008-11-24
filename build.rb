@@ -50,6 +50,9 @@ def is_linux?
   RUBY_PLATFORM.downcase.include?("linux")
 end
 
+def cygpath(path)
+  return `cygpath --windows #{path}`.chomp
+end
 
 def platform_string
   return "osx" if is_mac?
