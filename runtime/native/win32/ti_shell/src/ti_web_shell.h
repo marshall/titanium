@@ -71,7 +71,7 @@ private:
 	TiWindow *tiWindow;
 	std::string url;
 	TiWebViewDelegate* webViewDelegate;
-	bool created;
+	std::string currentURL;
 
 	static TiAppConfig *tiAppConfig;
 	static std::vector<TiWebShell*> openShells;
@@ -81,13 +81,12 @@ private:
 	static void initWindowClass();
 	static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
-	void initWindow();
-
 public:
 	TiWebShell(TiWindow *tiWindow);
 	TiWebShell(const char *url);
 	~TiWebShell(void);
 
+	void reloadTiWindow();
 	void setTiWindow(TiWindow *tiWindow);
 	void createWindow();
 	void open();

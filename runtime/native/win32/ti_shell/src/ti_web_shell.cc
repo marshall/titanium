@@ -113,7 +113,7 @@ LRESULT CALLBACK TiWebShell::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 	return DefWindowProc(hWnd, message, wParam, lParam);
 }
 
-TiWebShell::TiWebShell(TiWindow *window) : hWnd(NULL), hInstance(NULL), host(NULL), created(false) {
+TiWebShell::TiWebShell(TiWindow *window) : hWnd(NULL), hInstance(NULL), host(NULL) {
 	this->tiWindow = window;
 	TiWebShell::openShells.push_back(this);
 
@@ -122,7 +122,7 @@ TiWebShell::TiWebShell(TiWindow *window) : hWnd(NULL), hInstance(NULL), host(NUL
 	}
 }
 
-TiWebShell::TiWebShell(const char *url) : hWnd(NULL), hInstance(NULL), host(NULL), created(false) {
+TiWebShell::TiWebShell(const char *url) : hWnd(NULL), hInstance(NULL), host(NULL) {
 	TiWebShell::openShells.push_back(this);
 
 	this->url = url;
@@ -149,25 +149,22 @@ void TiWebShell::createWindow()
 	host = WebViewHost::Create(hWnd, webViewDelegate, webPrefs);
 	webViewDelegate->setWebViewHost(host);
 	
-	initWindow();
+	reloadTiWindow();
 }
 
 #define SetFlag(x,flag,b) (b ? x |= flag : x &= ~flag)
-#define UnsetFlag(x,flag) (x &= ~flag)
-
-void TiWebShell::initWindow()
-{
-	printf("url is = %s\n", url.c_str());
-	if (url.length() > 0)
-		loadURL(url.c_str());
-
-	// force window init
-	setTiWindow(this->tiWindow);
-}
+#define UnsetFlag(x,flag) (x &= ~flag)=
 
 void TiWebShell::setTiWindow(TiWindow *tiWindow)
 {
 	this->tiWindow = tiWindow;
+	reloadTiWindow();
+}
+
+void TiWebShell::reloadTiWindow()
+{
+	if (tiWindow->getURL().length() > 0)
+		loadURL(tiWindow->getURL().c_str());
 
 	SetWindowText(hWnd, UTF8ToWide(tiWindow->getTitle()).c_str());
 
@@ -203,16 +200,18 @@ void TiWebShell::open() {
 }
 
 void TiWebShell::loadURL(const char* url) {
-	WebRequest *request = WebRequest::Create(GURL(url));
-	
-	WebFrame *frame = host->webview()->GetMainFrame();
+	if (currentURL != url) {
+		currentURL = url;
 
-	frame->LoadRequest(request);
+		WebRequest *request = WebRequest::Create(GURL(url));
+		WebFrame *frame = host->webview()->GetMainFrame();
+		frame->LoadRequest(request);
 
-	host->webview()->SetFocusedFrame(frame);
+		host->webview()->SetFocusedFrame(frame);
 
-	SetFocus(host->window_handle());
-	ShowWindow(host->window_handle(), SW_SHOW);
+		SetFocus(host->window_handle());
+		ShowWindow(host->window_handle(), SW_SHOW);
+	}
 }
 
 

@@ -218,14 +218,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ti_app_config.cc"
-				>
-			</File>
-			<File
-				RelativePath=".\ti_app_config.h"
-				>
-			</File>
-			<File
 				RelativePath=".\ti_app_config.h"
 				>
 			</File>
@@ -255,6 +247,14 @@
 			</File>
 			<File
 				RelativePath=".\ti_user_window.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ti_window_factory.cc"
+				>
+			</File>
+			<File
+				RelativePath=".\ti_window_factory.h"
 				>
 			</File>
 		</Filter>
@@ -306,6 +306,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ti_app_config.cc"
+				>
+			</File>
+			<File
+				RelativePath=".\ti_app_config.h"
+				>
+			</File>
+			<File
 				RelativePath=".\ti_shell.h"
 				>
 			</File>
@@ -351,14 +359,6 @@
 			</File>
 			<File
 				RelativePath=".\ti_window.h"
-				>
-			</File>
-			<File
-				RelativePath=".\ti_window_factory.cc"
-				>
-			</File>
-			<File
-				RelativePath=".\ti_window_factory.h"
 				>
 			</File>
 		</Filter>
