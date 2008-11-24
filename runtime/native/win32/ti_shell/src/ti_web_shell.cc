@@ -152,7 +152,7 @@ void TiWebShell::createWindow()
 	reloadTiWindow();
 }
 
-#define SetFlag(x,flag,b) (b ? x |= flag : x &= ~flag)
+#define SetFlag(x,flag,b) ((b) ? x |= flag : x &= ~flag)
 #define UnsetFlag(x,flag) (x &= ~flag)=
 
 void TiWebShell::setTiWindow(TiWindow *tiWindow)
@@ -173,7 +173,7 @@ void TiWebShell::reloadTiWindow()
 	SetFlag(windowStyle, WS_MINIMIZEBOX, tiWindow->isMinimizable());
 	SetFlag(windowStyle, WS_MAXIMIZEBOX, tiWindow->isMaximizable());
 
-	SetFlag(windowStyle, WS_OVERLAPPEDWINDOW, tiWindow->isResizable());
+	SetFlag(windowStyle, WS_OVERLAPPEDWINDOW, tiWindow->isUsingChrome() && tiWindow->isResizable());
 	SetFlag(windowStyle, WS_CAPTION, tiWindow->isUsingChrome());
 	
 	SetWindowLong(hWnd, GWL_STYLE, windowStyle);
