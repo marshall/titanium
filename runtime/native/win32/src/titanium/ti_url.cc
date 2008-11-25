@@ -14,6 +14,7 @@
 * limitations under the License.
 */
 #include "ti_url.h"
+#include "ti_web_shell.h"
 
 void replaceSlashes (std::string* path)
 {
@@ -60,7 +61,6 @@ int wildcmp(const char *wild, const char *string) {
   return !*wild;
 }
 /*static*/
-
 bool TiURL::urlMatchesPattern(GURL& url, std::string& pattern)
 {
 	//remove the trailing slash
@@ -73,6 +73,32 @@ bool TiURL::urlMatchesPattern(GURL& url, std::string& pattern)
 		return true;
 
 	return false;
+}
+
+
+void stringReplaceAll(std::string *string, std::string pattern, std::string replacement)
+{
+	size_t pos = 0;
+	while ((pos = string->find(pattern, pos)) != std::string::npos)
+	{
+		string->replace(pos, pattern.length(), replacement);
+	}
+}
+
+bool stringEndsWith(std::string &string, std::string substr)
+{
+	size_t pos = string.rfind(substr);
+	return (pos != std::string::npos) && (pos == (string.length() - substr.length()));
+}
+
+/*static*/
+bool TiURL::isHost(std::string &host)
+{
+	// GURL likes to append onto the top level resource as if it's a host.. we can "fix" that
+	// there might be a better way to do this?
+		
+	return (!stringEndsWith(host, ".html")
+			&& !stringEndsWith(host, ".xml"));
 }
 
 /*static*/
@@ -90,9 +116,16 @@ std::wstring TiURL::getPathForURL(GURL& url)
 			file_util::AppendToPath(&path, UTF8ToWide(url.path()));
 		}
 		else {
-			file_util::AppendToPath(&path, UTF8ToWide(url.host()));
-			if (url.path() != "/")
-				file_util::AppendToPath(&path, UTF8ToWide(url.path()));
+			if (TiURL::isHost(url.host()) || url.path() == "/") {
+				file_util::AppendToPath(&path, UTF8ToWide(url.host()));
+			}
+
+			if (url.path() != "/") {
+				std::string urlPath = url.path().substr(1);
+				stringReplaceAll(&urlPath, "/", "\\");
+
+				file_util::AppendToPath(&path, UTF8ToWide(urlPath));
+			}
 		}
 
 		printf("%s url (%s host, %s path) => %ls\n", url.spec().c_str(), url.host().c_str(), url.path().c_str(), path.c_str());
@@ -100,10 +133,17 @@ std::wstring TiURL::getPathForURL(GURL& url)
 	} else if (url.scheme() == APP_SCHEME) {
 		std::wstring path = base_dir;
 		file_util::AppendToPath(&path, L"Resources");
-		file_util::AppendToPath(&path, UTF8ToWide(url.host()));
 
-		if (url.path() != "/")
-			file_util::AppendToPath(&path, UTF8ToWide(url.path()));
+		if (TiURL::isHost(url.host()) || url.path() == "/") {
+			file_util::AppendToPath(&path, UTF8ToWide(url.host()));
+		}
+
+		if (url.path() != "/") {
+			std::string urlPath = url.path().substr(1);
+			stringReplaceAll(&urlPath, "/", "\\");
+
+			file_util::AppendToPath(&path, UTF8ToWide(urlPath));
+		}
 		
 		printf("%s url (%s host, %s path) => %ls\n", url.spec().c_str(), url.host().c_str(), url.path().c_str(), path.c_str());
 		return path;
@@ -118,6 +158,31 @@ public:
 	TiURLRequestFileJob(URLRequest *request, std::wstring path) : URLRequestFileJob(request) {
 		file_path_ = path;
 	}
+
+	std::string GetContentType(std::wstring& ext) {
+		if (ext == L"js") { return "text/javascript"; }
+		else if (ext == L"html" || ext == L"htm" ) { return "text/html"; }
+		else if (ext == L"xhtml") { return "text/xhtml"; }
+		else return "text/plain";
+	}
+
+	// simulate an HTTP response so we can return a response code
+	// -- this allows app:// etc resources to be requested/executed dynamically
+	// -- in frameworks like jQuery
+	virtual void GetResponseInfo(net::HttpResponseInfo *info)
+	{
+		std::wstring ext = file_util::GetFileExtensionFromPath(file_path_);
+		int64 filesize;
+		file_util::GetFileSize(file_path_, &filesize);
+		std::string raw_headers = "HTTP/1.1 200 OK\n";
+		raw_headers += "Content-Type: " + GetContentType(ext) + "\n";
+		raw_headers += "Content-Length: " + Int64ToString(filesize) + "\n";
+
+		// ParseRawHeaders expects \0 to end each header line.
+		ReplaceSubstringsAfterOffset(&raw_headers, 0, "\n", std::string("\0", 1));
+		info->headers = new net::HttpResponseHeaders(raw_headers);
+	}
+
 	~TiURLRequestFileJob(){}
 };
 

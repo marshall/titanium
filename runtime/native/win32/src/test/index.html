@@ -36,10 +36,27 @@
             window.setBounds(bounds);
 	    }
 	   </script>
+	   <style>
+	   body {
+		background-color: #eee;
+	   }
+	   
+	   #x {
+		position: absolute;
+		top: 20px; left: 20px;
+		  border:none;
+		  font-size:18px;
+		  height:40px;
+		  width:357px;
+		  padding-left:10px;
+		  padding-right:10px;
+		  color:#222;
+		}
+	   </style>
 	</head>
 	<body>
 	    here's a text input, test the stupid lose focus/key input error here:<br />
-        <input type="text" size="20" /><br /><br />
+        <input type="text" id="x"/><br /><br />
         
         oh, you might want to <a href="javascript: createSystemMenu();">try creating a system menu</a>.. let's hope!
 	    <script>

@@ -316,6 +316,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\chromium\url_request_file_job.cc"
+				>
+			</File>
+			<File
+				RelativePath=".\chromium\url_request_file_job.h"
+				>
+			</File>
+			<File
 				RelativePath=".\chromium\webkit_glue.cc"
 				>
 				<FileConfiguration

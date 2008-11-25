@@ -31,6 +31,7 @@ class TiURL
 {
 public:
 	static void init();
+	static bool isHost(std::string &host);
 	static std::wstring getPathForURL(GURL& url);
 	static URLRequestJob* createURLRequestJob(URLRequest* request, const std::string& scheme);
 	static bool urlMatchesPattern(GURL& url, std::string& pattern);
