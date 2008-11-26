@@ -63,8 +63,12 @@ typedef enum {
 	if (ti != nil)
 	{
 		[ti release];
+		ti=nil;
 	}
-	webView = nil;
+	NSLog(@"TiBrowserWindowController dealloc - webView count:%d\n",[webView retainCount]);
+	[webView setFrameLoadDelegate:nil];
+	[webView stopLoading:nil];
+	webView = nil;  // don't need to release
 	[super dealloc];
 }
 
@@ -84,12 +88,6 @@ typedef enum {
 
 #pragma mark -
 #pragma mark Public
-
-//- (void)loadRequest:(NSURLRequest *)request 
-//{
-//	//[[webView mainFrame] loadRequest:request];
-//}
-
 
 - (void)handleLoadError:(NSError *)err 
 {
@@ -172,8 +170,8 @@ typedef enum {
 
 - (void)scheduleClose
 {
-	closing = YES;
-	[[self window] orderOut:nil];
+	//closing = YES;
+	//[[self window] orderOut:nil];
 }
 
 
@@ -259,6 +257,7 @@ typedef enum {
 - (void)webView:(WebView *)wv decidePolicyForNavigationAction:(NSDictionary *)actionInformation request:(NSURLRequest *)request frame:(WebFrame *)frame decisionListener:(id<WebPolicyDecisionListener>)listener 
 {
 	WebNavigationType navType = [[actionInformation objectForKey:WebActionNavigationTypeKey] intValue];
+	[self scheduleClose];
 
 	//TODO: some of these below we just don't support (yet)
 	if (navType == WebNavigationTypeLinkClicked)
@@ -313,6 +312,7 @@ typedef enum {
 - (void)webView:(WebView *)wv decidePolicyForNewWindowAction:(NSDictionary *)actionInformation request:(NSURLRequest *)request newFrameName:(NSString *)frameName decisionListener:(id<WebPolicyDecisionListener>)listener 
 {
 	// force new window
+	[self scheduleClose];
 	if ([@"_blank" isEqualToString:frameName] || [@"_new" isEqualToString:frameName]) 
 	{ 
 		[listener use];
@@ -477,66 +477,51 @@ typedef enum {
 
 - (WebView *)webView:(WebView *)wv createWebViewWithRequest:(NSURLRequest *)request 
 {
-	return [self webView:wv createWebViewWithRequest:request windowFeatures:nil];
+	WebView *newWebView = [self webView:wv createWebViewWithRequest:request windowFeatures:nil];
+	[newWebView setUIDelegate:self]; 
+	return newWebView;
 }
 
 
 - (WebView *)webView:(WebView *)wv createWebViewWithRequest:(NSURLRequest *)request windowFeatures:(NSDictionary *)features 
 {
-	[[TiAppDelegate instance] error:@"createWebViewWithRequest not implemented"];
-	return nil;
-	/*
-	BOOL fullscreen = [[features objectForKey:@"fullscreen"] boolValue];
-//FIXME:	[[TiAppDelegate instance] setIsFullScreen:fullscreen];
-	
-	//FIXME: use the TiUserWindow to do this
-
 	TiBrowserDocument *doc = [[TiAppDelegate instance] newDocumentWithRequest:request display:NO];
-	
 	NSWindow *window = [[doc browserWindowController] window];
 	NSRect newFrame = NSZeroRect;
 	NSScreen *screen = [[self window] screen];
-	if (!screen) {
+	if (!screen) 
+	{
 		screen = [NSScreen mainScreen];
 	}
 	NSRect screenFrame = [screen frame];
 	
-	if (fullscreen) {
-		newFrame = screenFrame;
-	} else {
-		// handle frame features
-		id xObj = [features objectForKey:@"x"];
-		id yObj = [features objectForKey:@"y"];
-		id wObj = [features objectForKey:@"width"];
-		id hObj = [features objectForKey:@"height"];
-		
-		NSRect winFrame = [window frame];
-		
-		CGFloat y = yObj ? [yObj floatValue] : winFrame.origin.y;
-		CGFloat w = wObj ? [wObj floatValue] : winFrame.size.width;
-		CGFloat h = hObj ? [hObj floatValue] : winFrame.size.height;
-		
-		// Cocoa screen coords are from bottom left. but web coords are from top left. must convert origin.x
-		CGFloat x = winFrame.origin.x;
-		if (xObj) {
-			x = [xObj floatValue];
-			x = screenFrame.size.height - x - h;
-		}
-		newFrame = NSMakeRect(x, y, w, h);
+	// handle frame features
+	id xObj = [features objectForKey:@"x"];
+	id yObj = [features objectForKey:@"y"];
+	id wObj = [features objectForKey:@"width"];
+	id hObj = [features objectForKey:@"height"];
+	
+	NSRect winFrame = [window frame];
+	
+	CGFloat y = yObj ? [yObj floatValue] : winFrame.origin.y;
+	CGFloat w = wObj ? [wObj floatValue] : winFrame.size.width;
+	CGFloat h = hObj ? [hObj floatValue] : winFrame.size.height;
+	
+	// Cocoa screen coords are from bottom left. but web coords are from top left. must convert origin.x
+	CGFloat x = winFrame.origin.x;
+	if (xObj) 
+	{
+		x = [xObj floatValue];
+		x = screenFrame.size.height - x - h;
 	}
+	newFrame = NSMakeRect(x, y, w, h);
 	[window setFrame:newFrame display:NO];
 
-	// handle resizable feature
-	// for some reason, this is always reported as 1 by WebKit. dunno why
-//	BOOL resizable = [[features objectForKey:@"resizable"] boolValue];
-//	[window setShowsResizeIndicator:resizable];
-	
 	// handle scrollbars feature
 	BOOL scrollbarsVisible = [[features objectForKey:@"scrollbarsVisible"] boolValue];
 	[[[[doc webView] mainFrame] frameView] setAllowsScrolling:scrollbarsVisible];
 
 	return [doc webView];
-	 */
 }
 
 

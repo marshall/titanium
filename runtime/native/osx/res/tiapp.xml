@@ -30,9 +30,9 @@
 		<url>secondary.html</url>
 		<maximizable>false</maximizable>
 		<minimizable>false</minimizable>
-		<closeable>false</closeable>
+		<closeable>true</closeable>
 		<resizable>true</resizable>
-		<chrome scrollbars="true">true</chrome>
+		<chrome scrollbars="true">false</chrome>
 		<transparency>1.0</transparency>
 	</window>
 </ti:app>

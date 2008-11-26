@@ -33,9 +33,19 @@
 
 - (void)dealloc
 {
-	NSLog(@"TiBrowserWindow dealloc: %d\n",[options retainCount]);
+	NSLog(@"TiBrowserWindow dealloc = %d\n",[options retainCount]);
 	[options release];
+	options = nil;
 	[super dealloc];
+	NSDocumentController *controller = [NSDocumentController sharedDocumentController];
+	NSArray *docs = [controller documents];
+	if ([docs count]==0)
+	{
+		// we automatically close the application if there are no more documents open
+		[NSApp terminate:self];
+	}
+	[docs release];
+	docs=nil;
 }
 
 -(TiWindowOptions*)getOptions
@@ -46,7 +56,7 @@
 // must override the ThemeFrame class to force no drawing of titlebar when window is resizable
 + (Class)frameViewClassForStyleMask:(NSUInteger)styleMask 
 {
-	TiWindowOptions *options = [[[TiAppDelegate instance] getActiveWindowOption] autorelease];
+	TiWindowOptions *options = [[TiAppDelegate instance] getActiveWindowOption];
 	if ([options isFullscreen] || [options isChrome])
 	{
 		return [TiThemeFrame class];
@@ -59,7 +69,7 @@
 - (id)initWithContentRect:(NSRect)contentRect styleMask:(NSUInteger)mask backing:(NSBackingStoreType)bufferingType defer:(BOOL)flag 
 {
 	options = [[TiAppDelegate instance] getActiveWindowOption];
-	NSLog(@"TiBrowserWindow: options created: %d\n",[options retainCount]);
+	[options retain];
 	
 	mask = [options toWindowMask];
 	
@@ -77,7 +87,7 @@
 		// turn on/off zoom button to control app maximize behavior
 		[[self standardWindowButton:NSWindowZoomButton] setHidden:![options isMaximizable]];
 		
-		[self setReleasedWhenClosed:YES];
+		//[self setReleasedWhenClosed:YES];
 		[self center];
 	}
 	return self;
@@ -195,11 +205,6 @@
 	}
 	
 	[super sendEvent:evt];
-}
-
-- (void)windowWillClose:(NSNotification *)notification
-{
-	NSLog(@"window is closing");
 }
 
 @end

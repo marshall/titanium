@@ -33,8 +33,8 @@
 	// in the case that you have transparency on the window, we have to hack the browser's window
 	// to cause the content view to take up 100% of the window (normally in HTML, it will only 
 	// take up the height of the contained element size)
-	var windowOptions = ti.App.getWindowOptions();
-	var windowTransparency = windowOptions.getTransparency();
+	var windowOptions = null; //ti.App.getWindowOptions();
+	var windowTransparency = 1.0; //windowOptions.getTransparency();
 	if (windowTransparency < 1.0)
  	{
 		var style = "margin:auto;padding:auto;";

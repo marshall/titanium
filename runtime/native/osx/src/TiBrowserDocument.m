@@ -33,18 +33,21 @@
 {
 	self = [super init];
 	if (self) {
+		NSLog(@"TiBrowserDocument: init: %x\n",self);
 	}
 	return self;
 }
 
 - (void)dealloc 
 {
-	NSLog(@"TiBrowserDocument: dealloc\n");
+	NSLog(@"TiBrowserDocument: dealloc: %x\n",self);
+	[self removeWindowController:browserWindowController];
 	browserWindowController = nil;
 	NSLog(@"TiBrowserDocument: windowOptions: %d\n",[windowOptions retainCount]);
 	if (windowOptions != nil)
 	{
 		[windowOptions release];
+		windowOptions = nil;
 	}
 	[super dealloc];
 }
@@ -111,30 +114,13 @@
 {
 	TiWindowOptions *opts = [[TiAppDelegate instance] getActiveWindowOption];
 	NSString *ns = [opts getTitle];
-	[opts release];
 	return [ns autorelease];
 }
 
-
 - (void)close 
 {
-	TiWindowOptions *opts = [[TiAppDelegate instance] getActiveWindowOption];
-	if ([opts isFullscreen])
-	{
-		//FIXME: fullscreen
-		//[[TiAppDelegate instance] setIsFullScreen:NO];
-	}
-
-	[opts release];
+	NSLog(@"TiBrowserDocument closing: %x\n",self);
 	[super close];
-
-	NSDocumentController *controller = [NSDocumentController sharedDocumentController];
-	NSArray *docs = [[controller documents] autorelease];
-	if ([docs count]==0)
-	{
-		// we automatically close the application if there are no more documents open
-		[NSApp terminate:self];
-	}
 }
 
 

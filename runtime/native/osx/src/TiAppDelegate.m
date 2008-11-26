@@ -167,13 +167,15 @@ static CGFloat toFloat (NSString* value, CGFloat def)
 	if (activeWindowOption != nil)
 	{
 		[activeWindowOption release];
+		activeWindowOption=nil;
 	}
 	for (int c=0;c<[windowOptions count];c++)
 	{
 		TiWindowOptions *o = [windowOptions objectAtIndex:c];
 		[o release];
 	}
-	[windowOptions dealloc];
+	[windowOptions release];
+	windowOptions=nil;
 	[self setEndpoint:nil];
 	[self setAppName:nil];
 	[super dealloc];
@@ -367,10 +369,6 @@ static CGFloat toFloat (NSString* value, CGFloat def)
 
 - (TiWindowOptions*)getActiveWindowOption
 {
-	if (activeWindowOption != nil)
-	{
-		[activeWindowOption retain];
-	}
 	return activeWindowOption;
 }
 
@@ -388,21 +386,21 @@ static CGFloat toFloat (NSString* value, CGFloat def)
 	}
 	
 	[newDoc setOptions:opts];
-	[opts release];
 	
 	[self addDocument:newDoc];
 	
 	if (err) 
 	{
-		[self error:@"Error opening document"];
+		[self error:@"Error encountered opening document"];
 		return nil;
 	}
 	
-	TiBrowserWindowController *winController = TIFrontController();
+	TiBrowserWindowController *winController = TIFirstController();
 	if ([winController isClosing])
 	{
-		NSDocument *doc = [winController document];
-		[doc close];
+//		NSDocument *doc = [winController document];
+//		[doc close];
+//		[[NSDocumentController sharedDocumentController] removeDocument:doc];
 	}
 	
 	if (!display) 
@@ -526,7 +524,6 @@ static CGFloat toFloat (NSString* value, CGFloat def)
 - (TiWindowOptions*) findInitialWindowOptions
 {
 	TiWindowOptions* opt = [windowOptions objectAtIndex:0];
-//	[opt retain];
 	return opt;
 }
 
@@ -540,7 +537,6 @@ static CGFloat toFloat (NSString* value, CGFloat def)
 		opt = [windowOptions objectAtIndex:c];
 		if ([opt urlMatches:url])
 		{
-			[opt retain];
 			break;
 		}
 	}

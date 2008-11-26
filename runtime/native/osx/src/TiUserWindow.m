@@ -65,7 +65,7 @@
 }
 
 - (void)dealloc {
-	[doc dealloc];
+	[doc release];
 	[super dealloc];
 }
 

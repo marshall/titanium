@@ -37,6 +37,7 @@
 - (void)dealloc 
 {
 	[webView release];
+	webView = nil;
 	[windowOptions release];
 	[super dealloc];
 }
