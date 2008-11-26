@@ -294,7 +294,7 @@ static CGFloat toFloat (NSString* value, CGFloat def)
 
 + (void)error:(NSString *)error
 {
-	TRACE(@"Applicaiton Error: %@\n", error);
+	TRACE(@"Titanium Application Error: %@\n", error);
 	NSString *msg = [@"" stringByAppendingFormat:@"The application has encountered an error:\n\n%@", error];
 	NSAlert *alert = [[NSAlert alloc] init];
 	[alert setMessageText:msg];
@@ -327,9 +327,12 @@ static CGFloat toFloat (NSString* value, CGFloat def)
 		[NSApp terminate:nil];
 		return;
 	}
+	TRACE(@"Tiapp.xml found at %@",appXMLPath);
 	
 	NSError *error = nil;
 	NSURL *furl = [NSURL fileURLWithPath:appXMLPath];
+
+	TRACE(@"Tiapp.xml URL is %@",[furl absoluteString]);
 	
 	NSXMLDocument *doc = [[[NSXMLDocument alloc] initWithContentsOfURL:furl options:0 error:&error] autorelease];
 	
@@ -410,5 +413,9 @@ static CGFloat toFloat (NSString* value, CGFloat def)
 	}
 }
 
+-(BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication*)app
+{
+	return NO;
+}
 
 @end

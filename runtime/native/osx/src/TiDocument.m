@@ -44,17 +44,16 @@
 - (void)dealloc
 {
 	TRACE(@"TiDocument::dealloc =%x",self);
-	
     [webView close];
     [url release];
     [super dealloc];
-
-	NSDocumentController *c = [NSDocumentController sharedDocumentController];
-	NSArray *docs = [c documents];
-	if ([docs count] == 0)
+	
+	if ([[[NSDocumentController sharedDocumentController] documents] count]==0)
 	{
 		TRACE(@"Last application window has closed, exiting the application");
-		// once we have no more active windows, we're going to shutdown -- this probably should be configurable at some point
+		// once we have no more active documents, we're going to shutdown. we do this here instead of 
+		// capturing applicationShouldTerminateAfterLastWindowClosed because the later will actually
+		// do it when a window is hidden whereas this will ensure that the document is actually *closed*
 		[NSApp terminate:self];
 	}
 }
@@ -152,6 +151,8 @@
 	{
 		[webView setBackgroundColor:[NSColor clearColor]];
 	}
+
+	[webView setAutoresizingMask:NSViewHeightSizable | NSViewWidthSizable];
 	
 	[self setupWebPreferences];
 }
@@ -167,22 +168,6 @@
     [webView setUIDelegate:self];
     [webView setResourceLoadDelegate:self];
 	
-	WebBasePluginPackage* pluginPackage = [webView _pluginForMIMEType:@"application/x-gears-titanium"];
-	NSLog(@"path = %@", [pluginPackage path]);
-
-
-	
-//	WebBasePluginPackage* pluginPackage = [webView _pluginForMIMEType:@"application/x-gears-titanium"];
-//	NSLog(@"pluginDescription=%@",[pluginPackage pluginDescription]);
-//	NSArray * a = [[WebPluginDatabase sharedDatabase] plugins];
-//	for (int c=0;c<[a count];c++)
-//	{
-//		WebBasePluginPackage *p = [a objectAtIndex:c];
-//		NSLog(@"plugin=%@ %@",[p name], [p pluginDescription]);
-//	}
-	
-
-
 	// customize webview
 	[self customizeWebView];
 	[self customizeUserAgent];

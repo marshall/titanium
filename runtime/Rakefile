@@ -80,6 +80,7 @@ END
                prolog
                gears
                dom
+               window
                file
                desktop
                geolocation

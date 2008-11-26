@@ -18,7 +18,8 @@
 
 #import <Cocoa/Cocoa.h>
 #import <WebKit/WebKit.h>
-#include "TiWindow.h"
+#import "TiWindow.h"
+#import "TiBounds.h"
 
 @interface TiUserWindow : NSObject {
 	TiWindow *window;
@@ -26,15 +27,51 @@
 }
 
 - (void)close;
-- (void)show;
-- (void)hide;
+- (void)show:(BOOL)animate;
+- (void)hide:(BOOL)animate;
 
 - (NSString*)getTitle;
-- (CGFloat)getTransparency;
-
 - (void)setTitle:(NSString *)title;
+
+- (CGFloat)getTransparency;
 - (void)setTransparency:(CGFloat)alpha;
 
+// these are immutable properties
 - (BOOL)isUsingChrome;
+- (BOOL)isUsingScrollbars;
+- (BOOL)isFullscreen;
+
+- (NSString*)getID;
+
+- (CGFloat)getX;
+- (void)setX:(CGFloat)x;
+
+- (CGFloat)getY;
+- (void)setY:(CGFloat)y;
+
+- (CGFloat)getWidth;
+- (void)setWidth:(CGFloat)width;
+
+- (CGFloat)getHeight;
+- (void)setHeight:(CGFloat)height;
+
+- (TiBounds*)getBounds;
+- (void)setBounds:(TiBounds*)bounds;
+
+- (BOOL)isResizable;
+- (void)setResizable:(BOOL)yn;
+
+- (BOOL)isMaximizable;
+- (void)setMaximizable:(BOOL)yn;
+
+- (BOOL)isMinimizable;
+- (void)setMinimizable:(BOOL)yn;
+
+- (BOOL)isCloseable;
+- (void)setCloseable:(BOOL)yn;
+
+- (BOOL)isVisible;
+- (void)setVisible:(BOOL)yn;
+
 
 @end

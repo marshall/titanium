@@ -8,6 +8,14 @@
    ti.ready(function($)
    {
 			ti.Window.currentWindow.setTitle("Blah");
+			//ti.Window.currentWindow.setX(0);
+			ti.Window.currentWindow.setX(40);
+			ti.Window.currentWindow.setWidth(600);
+			ti.Window.currentWindow.setHeight(900);
+			//ti.Window.currentWindow.setTransparency(.80);
+			//ti.Extras.fadeOutWindow(ti.Window.currentWindow);
+			ti.Window.currentWindow.setTransparency(0.5);
+			ti.App.debug(ti.Window.currentWindow.getBounds());
          var db = new ti.Database;
          db.open("jeff-test");
          db.execute("create table if not exists Test (Phrase text, Timestamp int)");
@@ -21,6 +29,10 @@
          rs.close();
    });
 </script>
+
+
+<button onclick="ti.Window.currentWindow.show(1)">Show window</button>
+<button onclick="ti.Window.currentWindow.hide(1)">Hide window</button>
 
 </body>
 </html>
