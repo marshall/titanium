@@ -29,9 +29,7 @@
 	        var window = ti.Window.createWindow();
 	        window.setURL("app://window_test.html");
 	        window.setTitle("lil' brudder");
-	        var bounds = window.getBounds();
-            bounds.x = 100; bounds.y = 100;
-            bounds.width = 200; bounds.height = 200;
+	        var bounds = { x: 100, y: 100, width: 200, height: 200 };
 
             window.setBounds(bounds);
 	    }

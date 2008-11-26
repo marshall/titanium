@@ -130,6 +130,11 @@ class JsClass {
 
   // some static helper functions
   static NPVariant StringToNPVariant(std::string &string);
+  static bool GetObjectProperty(const CppVariant &variant, std::string prop, NPVariant *result);
+  static int GetIntProperty(const CppVariant &variant, std::string prop);
+  static double GetDoubleProperty(const CppVariant &variant, std::string prop);
+  static bool GetBoolProperty(const CppVariant &variant, std::string prop);
+  static const char* GetStringProperty(const CppVariant &variant, std::string prop);
 
   // Some fields are protected because some tests depend on accessing them,
   // but otherwise they should be considered private.

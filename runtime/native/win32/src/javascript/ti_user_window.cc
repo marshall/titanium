@@ -166,16 +166,24 @@ void TiUserWindow::getBounds(const CppArgumentList &args, CppVariant *result)
 void TiUserWindow::setBounds(const CppArgumentList &args, CppVariant *result)
 {
 	if (args.size() > 0 && args[0].isObject()) {
-		TiWindowBounds *bounds = reinterpret_cast<TiWindowBounds*>(CppVariantToJsClass(args[0]));
-		
-		if (bounds != NULL) {
-			tiWindow->setX(bounds->x.ToInt32());
-			tiWindow->setY(bounds->y.ToInt32());
-			tiWindow->setWidth(bounds->width.ToInt32());
-			tiWindow->setHeight(bounds->height.ToInt32());
+		int x = GetIntProperty(args[0], "x");
+		int y = GetIntProperty(args[0], "y");
+		int width = GetIntProperty(args[0], "width");
+		int height = GetIntProperty(args[0], "height");
 
-			updateWindow();
-		}
+		if (x >= 0)
+			tiWindow->setX(x);
+
+		if (y >= 0)
+			tiWindow->setY(y);
+
+		if (width >= 0)
+			tiWindow->setWidth(width);
+
+		if (height >= 0)
+			tiWindow->setHeight(height);
+
+		updateWindow();
 	}
 }
 
