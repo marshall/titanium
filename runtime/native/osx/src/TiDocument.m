@@ -48,15 +48,6 @@
     [webView close];
     [url release];
     [super dealloc];
-
-	NSDocumentController *c = [NSDocumentController sharedDocumentController];
-	NSArray *docs = [c documents];
-	if ([docs count] == 0)
-	{
-		TRACE(@"Last application window has closed, exiting the application");
-		// once we have no more active windows, we're going to shutdown -- this probably should be configurable at some point
-		[NSApp terminate:self];
-	}
 }
 
 - (id)webView

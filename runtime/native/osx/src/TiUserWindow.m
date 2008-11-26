@@ -148,7 +148,7 @@
 	//FIXME: translate these
 	NSPoint point = [window frame].origin;
 	point.y = newy;
-	return [window setFrameTopLeftPoint:point];
+	[window setFrameTopLeftPoint:point];
 }
 
 - (CGFloat)getWidth
