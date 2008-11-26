@@ -100,27 +100,27 @@ LRESULT CALLBACK TiWebShell::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 			break;
 
 		// forward some things onto the webview host
-		case WM_MOUSEMOVE:
-		case WM_MOUSELEAVE:
-		case WM_LBUTTONDOWN:
-		case WM_MBUTTONDOWN:
-		case WM_RBUTTONDOWN:
-		case WM_LBUTTONUP:
-		case WM_MBUTTONUP:
-		case WM_RBUTTONUP:
-		case WM_LBUTTONDBLCLK:
-		case WM_MBUTTONDBLCLK:
-		case WM_RBUTTONDBLCLK:
-		case WM_CAPTURECHANGED:
-		case WM_CANCELMODE:
+		//case WM_MOUSEMOVE:
+		//case WM_MOUSELEAVE:
+		//case WM_LBUTTONDOWN:
+		//case WM_MBUTTONDOWN:
+		//case WM_RBUTTONDOWN:
+		//case WM_LBUTTONUP:
+		//case WM_MBUTTONUP:
+		//case WM_RBUTTONUP:
+		//case WM_LBUTTONDBLCLK:
+		//case WM_MBUTTONDBLCLK:
+		//case WM_RBUTTONDBLCLK:
+		//case WM_CAPTURECHANGED:
+		//case WM_CANCELMODE:
 		case WM_KEYDOWN:
 		case WM_KEYUP:
 		case WM_SYSKEYDOWN:
 		case WM_SYSKEYUP:
 		case WM_IME_CHAR:
-		case WM_SETFOCUS:
-		case WM_KILLFOCUS:
-		case WM_MOUSEWHEEL:
+		//case WM_SETFOCUS:
+		//case WM_KILLFOCUS:
+		//case WM_MOUSEWHEEL:
 			if (!PostMessage(tiWebShell->getHost()->window_handle(), message, wParam, lParam)) {
 				return DefWindowProc(hWnd, message, wParam, lParam);
 			}
