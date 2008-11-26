@@ -28,12 +28,16 @@
 	{
 		window = win;
 		[window retain];
+		webView = [TiController getWebView:win];
+		[webView retain];
 	}
 	return self;
 }
 
 - (void)dealloc 
 {
+	[webView release];
+	webView = nil;
 	[window release];
 	window = nil;
 	[super dealloc];
@@ -44,7 +48,7 @@
 	return @"[TiUserWindow native]";
 }
 
-- (NSString*)getTitle
+- (NSString*)getTitle 
 {
 	return [window title];
 }
@@ -69,14 +73,33 @@
 	[[TiController getDocument:window] close];
 }
 
-- (void)hide 
+- (void)hide:(BOOL)animate
 {
-	[window orderOut:nil]; // to hide it
+	NSLog(@"hide called with: %d",animate);
+	if (animate)
+	{
+		// let the JS layer do the animation
+		WebScriptObject* scope = [[webView windowScriptObject] evaluateWebScript:@"ti.Extras"];
+		[scope callWebScriptMethod:@"fadeOutWindow" withArguments:[NSArray arrayWithObject:self]];
+	}
+	else
+	{
+		[window orderOut:nil]; // to hide it
+	}
 }
 
-- (void)show 
+- (void)show:(BOOL)animate 
 {
-	[window makeKeyAndOrderFront:nil]; // to show it
+	if (animate)
+	{
+		// let the JS layer do the animation
+		WebScriptObject* scope = [[webView windowScriptObject] evaluateWebScript:@"ti.Extras"];
+		[scope callWebScriptMethod:@"fadeInWindow" withArguments:[NSArray arrayWithObject:self]];
+	}
+	else
+	{
+		[window makeKeyAndOrderFront:nil]; // to show it
+	}
 }
 
 // these are immutable properties
@@ -107,7 +130,7 @@
 	bounds.y = [self getY];
 	bounds.width = [self getWidth];
 	bounds.height = [self getHeight];
-	return [bounds autorelease];
+	return bounds;
 }
 
 - (void)setBounds:(TiBounds*)bounds
@@ -116,61 +139,51 @@
 	[self setY:[bounds y]];
 	[self setWidth:[bounds width]];
 	[self setHeight:[bounds height]];
-	//TODO: do i need to release?
-	NSLog(@"bounds ref count= %d",[bounds retainCount]);
 }
 
 
 - (CGFloat)getX
 {
-	//FIXME: translate these since Cocoa is left-bottom origin
-	NSRect o = [window frame];
-	return o.origin.x;
+	NSString *v = [[webView windowScriptObject] evaluateWebScript:@"screenX"];
+	return v == nil ? 0 : [v floatValue];
 }
 
 - (void)setX:(CGFloat)newx
 {
-	//FIXME: translate these since Cocoa is left-bottom origin
-	NSRect frame = [window frame];
-	frame.origin.x = newx;
-	[window setFrame:frame display:[self isVisible] animate:YES];
+	[[webView windowScriptObject] evaluateWebScript:[NSString stringWithFormat:@"moveTo(%f,screenY)",newx]];
 }
 
 - (CGFloat)getY
 {
-	//FIXME: translate these since Cocoa is left-bottom origin
-	NSRect o = [window frame];
-	return o.origin.y;
+	NSString *v = [[webView windowScriptObject] evaluateWebScript:@"screenY"] ;
+	return v == nil ? 0 : [v floatValue];
 }
 
 - (void)setY:(CGFloat)newy
 {
-	//FIXME: translate these
-	NSPoint point = [window frame].origin;
-	point.y = newy;
-	[window setFrameTopLeftPoint:point];
+	[[webView windowScriptObject] evaluateWebScript:[NSString stringWithFormat:@"moveTo(screenX,%f)",newy]];
 }
 
 - (CGFloat)getWidth
 {
-	return [window frame].size.width;
+	NSString *v = [[webView windowScriptObject] evaluateWebScript:@"outerWidth"];
+	return v == nil ? 0 : [v floatValue];
 }
 
 - (void)setWidth:(CGFloat)width
 {
-	NSRect r = [window frame];
-	r.size.width = width;
+	[[webView windowScriptObject] evaluateWebScript:[NSString stringWithFormat:@"resizeTo(%f,outerHeight)",width]];
 }
 
 - (CGFloat)getHeight
 {
-	return [window frame].size.height;
+	NSString *v = [[webView windowScriptObject] evaluateWebScript:@"outerHeight"];
+	return v == nil ? 0 : [v floatValue];
 }
 
 - (void)setHeight:(CGFloat)height
 {
-	NSRect r = [window frame];
-	r.size.height = height;
+	[[webView windowScriptObject] evaluateWebScript:[NSString stringWithFormat:@"resizeTo(outerWidth,%f)",height]];
 }
 
 - (BOOL)isResizable
@@ -227,16 +240,16 @@
 	[[window config] setVisible:yn];
 	if (yn)
 	{
-		[self show];
+		[self show:false];
 	}
 	else
 	{
-		[self hide];
+		[self hide:false];
 	}
 }
 
 + (NSString *) webScriptNameForSelector:(SEL)sel{
-	if (sel == @selector(show))
+	if (sel == @selector(show:))
 	{
 		return @"show";
 	}
@@ -244,7 +257,7 @@
 	{
 		return @"close";
 	}
-	else if (sel == @selector(hide))
+	else if (sel == @selector(hide:))
 	{
 		return @"hide";
 	}

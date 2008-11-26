@@ -27,8 +27,8 @@
 }
 
 - (void)close;
-- (void)show;
-- (void)hide;
+- (void)show:(BOOL)animate;
+- (void)hide:(BOOL)animate;
 
 - (NSString*)getTitle;
 - (void)setTitle:(NSString *)title;

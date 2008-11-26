@@ -27,7 +27,7 @@
 
 - (NSString*)description
 {
-	return [NSString stringWithFormat:@"[Bounds {%d,%d,%d,%d}]",x,y,width,height];
+	return [NSString stringWithFormat:@"[Bounds {%f,%f,%f,%f}]",x,y,width,height];
 }
 
 #pragma mark -

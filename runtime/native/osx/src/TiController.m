@@ -415,7 +415,7 @@ static CGFloat toFloat (NSString* value, CGFloat def)
 
 -(BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication*)app
 {
-	return YES;
+	return NO;
 }
 
 @end
