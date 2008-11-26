@@ -297,3 +297,61 @@ NPVariant JsClass::StringToNPVariant(std::string &string)
  
   return variant;
 }
+
+/*static*/
+bool JsClass::GetObjectProperty(const CppVariant &variant, std::string prop, NPVariant *result)
+{
+	NPVariant npVariant;
+	variant.CopyToNPVariant(&npVariant);
+	NPObject *object = NPVARIANT_TO_OBJECT(variant);
+
+	return NPN_GetProperty(0, object, NPN_GetStringIdentifier(prop.c_str()), result);
+}
+
+/*static*/
+int JsClass::GetIntProperty(const CppVariant &variant, std::string prop)
+{
+	NPVariant result;
+	if (GetObjectProperty(variant, prop, &result)) {
+		// annoying type inconsistencies
+		if (NPVARIANT_IS_DOUBLE(result)) {
+			return (int)NPVARIANT_TO_DOUBLE(result);
+		}
+
+		return NPVARIANT_TO_INT32(result);
+	}
+	return -1;
+}
+
+/*static*/
+double JsClass::GetDoubleProperty(const CppVariant &variant, std::string prop)
+{
+	NPVariant result;
+	if (GetObjectProperty(variant, prop, &result)) {
+		return NPVARIANT_TO_DOUBLE(result);
+	}
+	return -1;
+}
+
+/*static*/
+bool JsClass::GetBoolProperty(const CppVariant &variant, std::string prop)
+{
+	NPVariant result;
+	if (GetObjectProperty(variant, prop, &result)) {
+		return NPVARIANT_TO_BOOLEAN(result);
+	}
+	return false;
+}
+
+/*static*/
+const char* JsClass::GetStringProperty(const CppVariant &variant, std::string prop)
+{
+	NPVariant result;
+	if (GetObjectProperty(variant, prop, &result)) {
+		NPString string = NPVARIANT_TO_STRING(result);
+		std::string str(string.UTF8Characters, string.UTF8Length);
+		return str.c_str();
+	}
+
+	return NULL;
+}
