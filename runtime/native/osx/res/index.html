@@ -8,6 +8,8 @@
    ti.ready(function($)
    {
 			ti.Window.currentWindow.setTitle("Blah");
+			ti.Window.currentWindow.setX(1);
+			ti.App.debug(ti.Window.currentWindow.getBounds());
          var db = new ti.Database;
          db.open("jeff-test");
          db.execute("create table if not exists Test (Phrase text, Timestamp int)");
