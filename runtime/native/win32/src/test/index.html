@@ -1,0 +1,67 @@
+<html>
+	<head>
+	   <script>
+	    function init () {
+	        // simulate user API
+	        window.ti = tiRuntime;
+	        
+	        createMenu();
+	        createWindow();
+	    }
+	    function createMenu () {
+	        var menu = ti.Menu.createUserMenu("Testing..");
+	        menu.addItem("Item 1", function() { alert("Item 1 clicked!"); });
+	        menu.addItem("Item 2", function() { alert("Item 2 clicked!"); });
+	        var submenu = menu.addSubMenu("Submenu 1");
+	        submenu.addItem("Subitem 1", function() { alert("Subitem 1 clicked!"); } );
+	    }
+	    
+	    function createSystemMenu() {
+	        var sysmenu = ti.Menu.createSystemMenu("app://menu.ico", "Titanium", function (){});
+            sysmenu.addItem("Random! " + Math.random(), function(msg) { alert(msg + " done got clicked"); });
+            
+            sysmenu.addItem("Hide me plz", function() { ti.App.hide(); });
+            sysmenu.addItem("Show me , i'm lonely", function() { ti.App.show(); });
+            
+	    }
+	    
+	    function createWindow () {
+	        var window = ti.Window.createWindow();
+	        window.setURL("app://window_test.html");
+	        window.setTitle("lil' brudder");
+	        var bounds = window.getBounds();
+            bounds.x = 100; bounds.y = 100;
+            bounds.width = 200; bounds.height = 200;
+
+            window.setBounds(bounds);
+	    }
+	   </script>
+	   <style>
+	   body {
+		background-color: #eee;
+	   }
+	   
+	   #x {
+		position: absolute;
+		top: 20px; left: 20px;
+		  border:none;
+		  font-size:18px;
+		  height:40px;
+		  width:357px;
+		  padding-left:10px;
+		  padding-right:10px;
+		  color:#222;
+		}
+	   </style>
+	</head>
+	<body>
+	    here's a text input, test the stupid lose focus/key input error here:<br />
+        <input type="text" id="x"/><br /><br />
+        
+        oh, you might want to <a href="javascript: createSystemMenu();">try creating a system menu</a>.. let's hope!
+	    <script>
+	        window.onload = init;    
+	    </script>
+	</body>
+
+</html>

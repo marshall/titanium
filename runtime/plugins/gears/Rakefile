@@ -125,4 +125,6 @@ task :gather do
 		zipfile.get_output_stream('build.yml') { |f| f.write(build_yml) }
 		zipfile.add('plugin.rb', 'plugin.rb')
 	end
+	
+	File.open(File.join(STAGE_YML_DIR, "tiplugin_gears_#{platform_string}_build.yml"), 'w+') { |f| f.write(build_yml) }
 end

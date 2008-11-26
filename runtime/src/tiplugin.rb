@@ -6,8 +6,9 @@ module Titanium
     attr_accessor :name
     attr_accessor :component
     
-    def initialize(name)
+    def initialize(name, platform)
       @name = name
+      @platform = platform
       @component = Installer.get_current_installed_component({:name=>@name, :type=>'tiplugin'})
       @plugindir = Titanium.get_plugin_dir(@component)
       @data = YAML::load(File.open(File.join(@plugindir, 'build.yml')))
@@ -22,17 +23,17 @@ module Titanium
     end
     
     def get_project_path(basedir, executable_name)
-      if is_mac?
+      if @platform == "osx"
         return File.join(basedir, executable_name+".app", 'Contents', 'Resources')
-      elsif is_win?
+      elsif @platform == "win32"
 	  	  return File.join(basedir, executable_name, 'Resources')
       end
     end
     
     def get_plugins_path(basedir, executable_name)
-    	if is_mac?
+    	if @platform == "osx"
     		return File.join(basedir, executable_name+".app", 'Contents', 'Plug-ins')
-		  elsif is_win?
+		  elsif @platform == "win32"
 			  return File.join(basedir, executable_name, 'plugins')
 		  end
 	  end

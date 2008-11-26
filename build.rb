@@ -50,6 +50,9 @@ def is_linux?
   RUBY_PLATFORM.downcase.include?("linux")
 end
 
+def cygpath(path)
+  return `cygpath --windows #{path}`.chomp
+end
 
 def platform_string
   return "osx" if is_mac?
@@ -61,6 +64,9 @@ VERBOSE = ENV['v'] || ENV['verbose'] || ENV['VERBOSE']
 COMPRESS = ENV['nomin'] ? false : true 
 CWD = File.expand_path "#{File.dirname(__FILE__)}"
 STAGE_DIR = File.expand_path File.join(RUNTIME_DIR, 'stage')
+STAGE_YML_DIR = File.join(STAGE_DIR, 'yml')
+
+FileUtils.mkdir_p [STAGE_DIR, STAGE_YML_DIR]
 
 def md5(file)
   Digest::MD5.hexdigest File.read(file)

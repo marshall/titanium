@@ -1,0 +1,40 @@
+<html>
+    <head>
+    <script>
+        function init ()
+        {
+            window.ti = tiRuntime;
+        }
+        
+        function peekABoo ()
+        {
+            ti.Window.currentWindow.hide();
+            setTimeout('ti.Window.currentWindow.show()', 1000);
+        }
+        function peekABooMain ()
+        {
+            ti.Window.mainWindow.hide();
+            setTimeout('ti.Window.mainWindow.show()', 1000);
+        }
+        function addMenu ()
+        {
+            var menu = ti.Menu.createUserMenu("MenuFromOtherWindow");
+            menu.addItem("Look MA!", function() { alert("No hands!"); });
+        }
+    </script>
+    <style>
+        a { color: yellow; }
+        body { background-color: blue; color: white; font-size: 12px; font-family: verdana;}
+    </style>
+    </head>
+    <body>
+        <script>window.onload = init;</script>
+        
+        Hello, I'm a test window... Let's try some links:<br /><br />
+        
+        <a href="javascript: ti.Window.currentWindow.close();">close me</a><br /><br />
+        <a href="javascript: peekABoo();">peek-a-boo</a><br /><br />
+        <a href="javascript: peekABooMain();">peek-a-boo main</a><br /><br />
+        <a href="javascript: addMenu();">add a menu to the parent</a><br /><br />
+    </body>
+</html>

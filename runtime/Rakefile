@@ -14,7 +14,7 @@ task :build_shell do
   if is_mac?
     system 'xcodebuild'
 	elsif is_win?
-		rake('ti_shell')
+		call_rake
   end
 end
 
@@ -29,7 +29,7 @@ def gather_mac(zipfile)
 end
 
 def gather_win(zipfile)
-	zipfile.add('ti_shell.exe', File.join(NATIVE_DIR, 'ti_shell', 'src', 'build', 'Release', 'ti_shell.exe'))
+	zipfile.add('ti_shell.exe', File.join(NATIVE_DIR, 'build', 'Release', 'ti_shell.exe'))
 end
 
 task :gather do
@@ -107,8 +107,23 @@ END
     tmpfile.puts jf
     tmpfile.close
     
+    jar_path = File.join(RUNTIME_DIR, 'lib', 'yuicompressor-2.3.6.jar')
+    tmpfile_path = tmpfile.path
+    
     # compress our file
-    system "java -jar lib/yuicompressor-2.3.6.jar --type js --charset utf8 #{tmpfile.path} -o #{tmpfile.path}t"
+    if is_cygwin?
+      jar_path = cygpath(jar_path)
+      tmpfile_path = cygpath(tmpfile_path)
+    end
+    
+    command = "java -jar \"#{jar_path}\" --type js --charset utf8 \"#{tmpfile_path}\" -o \"#{tmpfile_path}t\""
+    
+    puts command
+    if is_cygwin?
+    	system "cmd /C #{command}"
+    else
+    	system command
+    end
     
     zipfile.get_output_stream('titanium-debug.js') { |f| f.puts(jf) }
     zipfile.add 'titanium.js',"#{tmpfile.path}t"
@@ -131,6 +146,9 @@ END
     end
     
     zipfile.get_output_stream('build.yml') { |f| f.write(build_yml) }
+    # save the runtime build info standalone so we can query it in dev_install
+    File.open(File.join(STAGE_YML_DIR, 'runtime_build.yml'), 'w+') { |f| f.write(build_yml) }
+    
     zipfile.add('install.rb', 'install.rb')
   }
 end

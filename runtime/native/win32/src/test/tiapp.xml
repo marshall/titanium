@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ti:app
+ xmlns:ti="http://ti.appcelerator.org"
+ xmlns:appc="http://www.appcelerator.org">
+	
+	<name>Test App</name>
+	
+	<window>
+    <width>500</width>
+    <height>300</height>
+		<title>This is a test app</title>
+		<url>app://index.html</url>
+	</window>
+
+</ti:app>
