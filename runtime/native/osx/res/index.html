@@ -7,6 +7,8 @@
 <script>
    ti.ready(function($)
    {
+			ti.Window.yousuck = 1;
+			alert(ti.Window.yousuck);
 			ti.Window.currentWindow.setTitle("Blah");
 			//ti.Window.currentWindow.setX(0);
 			ti.Window.currentWindow.setX(40);
@@ -33,6 +35,7 @@
 
 <button onclick="ti.Window.currentWindow.show(1)">Show window</button>
 <button onclick="ti.Window.currentWindow.hide(1)">Hide window</button>
+<button onclick="ti.Window.currentWindow.setMaximizable(false)">Not maximimizable</button>
 
 </body>
 </html>

@@ -11,9 +11,6 @@ ti.Extras.fadeOutWindow = function(win,speed)
 	speed = speed || 100;
 	var original = win.getTransparency();
 	var timer = null;
-	
-	alert("fade out window = "+win+", speed="+speed+", alpha="+original);
-	
 	timer = setInterval(function()
 	{
 		var t = win.getTransparency() - .1;
