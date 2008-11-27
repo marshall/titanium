@@ -1,0 +1,8 @@
+require 'fileutils'
+
+task :default => [:open_tests]
+
+task :open_tests do
+	system "app bundle:app --xml=tiapp.xml --launch"
+	FileUtils.rm_rf ['apivalidator', 'apivalidator.app']
+end
