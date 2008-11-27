@@ -151,13 +151,13 @@ LRESULT CALLBACK TiWebShell::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 	return DefWindowProc(hWnd, message, wParam, lParam);
 }
 
-TiWebShell::TiWebShell(TiWindow *window) : hWnd(NULL), hInstance(NULL), host(NULL)
+TiWebShell::TiWebShell(TiWindowConfig *windowConfig) : hWnd(NULL), hInstance(NULL), host(NULL)
 {
 	TiWebShell::openShells.push_back(this);	
-	this->tiWindow = window;
+	this->tiWindowConfig = windowConfig;
 
-	if (window != NULL) {
-		this->url = tiWindow->getURL();
+	if (windowConfig != NULL) {
+		this->url = tiWindowConfig->getURL();
 	}
 
 	tiUserWindow = new TiUserWindow(this);
@@ -167,7 +167,7 @@ TiWebShell::TiWebShell(const char *url) : hWnd(NULL), hInstance(NULL), host(NULL
 {
 	TiWebShell::openShells.push_back(this);	
 	this->url = url;
-	this->tiWindow = new TiWindow();
+	this->tiWindowConfig = new TiWindowConfig();
 	
 	tiUserWindow = new TiUserWindow(this);
 }
@@ -192,39 +192,39 @@ void TiWebShell::createWindow()
 	host = WebViewHost::Create(hWnd, webViewDelegate, webPrefs);
 	webViewDelegate->setWebViewHost(host);
 	
-	reloadTiWindow();
+	reloadTiWindowConfig();
 }
 
 #define SetFlag(x,flag,b) ((b) ? x |= flag : x &= ~flag)
 #define UnsetFlag(x,flag) (x &= ~flag)=
 
-void TiWebShell::setTiWindow(TiWindow *tiWindow)
+void TiWebShell::setTiWindowConfig(TiWindowConfig *tiWindowConfig)
 {
-	this->tiWindow = tiWindow;
-	reloadTiWindow();
+	this->tiWindowConfig = tiWindowConfig;
+	reloadTiWindowConfig();
 }
 
-void TiWebShell::reloadTiWindow()
+void TiWebShell::reloadTiWindowConfig()
 {
-	if (tiWindow->getURL().length() > 0)
-		loadURL(tiWindow->getURL().c_str());
+	if (tiWindowConfig->getURL().length() > 0)
+		loadURL(tiWindowConfig->getURL().c_str());
 
-	SetWindowText(hWnd, UTF8ToWide(tiWindow->getTitle()).c_str());
+	SetWindowText(hWnd, UTF8ToWide(tiWindowConfig->getTitle()).c_str());
 
 	long windowStyle = GetWindowLong(hWnd, GWL_STYLE);
 	
-	SetFlag(windowStyle, WS_MINIMIZEBOX, tiWindow->isMinimizable());
-	SetFlag(windowStyle, WS_MAXIMIZEBOX, tiWindow->isMaximizable());
+	SetFlag(windowStyle, WS_MINIMIZEBOX, tiWindowConfig->isMinimizable());
+	SetFlag(windowStyle, WS_MAXIMIZEBOX, tiWindowConfig->isMaximizable());
 
-	SetFlag(windowStyle, WS_OVERLAPPEDWINDOW, tiWindow->isUsingChrome() && tiWindow->isResizable());
-	SetFlag(windowStyle, WS_CAPTION, tiWindow->isUsingChrome());
+	SetFlag(windowStyle, WS_OVERLAPPEDWINDOW, tiWindowConfig->isUsingChrome() && tiWindowConfig->isResizable());
+	SetFlag(windowStyle, WS_CAPTION, tiWindowConfig->isUsingChrome());
 	
 	SetWindowLong(hWnd, GWL_STYLE, windowStyle);
 
 	UINT flags = SWP_NOMOVE | SWP_NOZORDER | SWP_FRAMECHANGED;
 
-	sizeTo(tiWindow->getX(), tiWindow->getY(), tiWindow->getWidth(), tiWindow->getHeight(), flags);
-	SetLayeredWindowAttributes(hWnd, 0, (BYTE)floor(tiWindow->getTransparency()*255), LWA_ALPHA);
+	sizeTo(tiWindowConfig->getX(), tiWindowConfig->getY(), tiWindowConfig->getWidth(), tiWindowConfig->getHeight(), flags);
+	SetLayeredWindowAttributes(hWnd, 0, (BYTE)floor(tiWindowConfig->getTransparency()*255), LWA_ALPHA);
 }
 
 

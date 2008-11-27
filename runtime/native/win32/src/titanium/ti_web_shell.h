@@ -53,7 +53,7 @@
 #include "simple_resource_loader_bridge.h"
 #include "test_shell_request_context.h"
 
-#include "ti_window.h"
+#include "ti_window_config.h"
 #include "ti_app_config.h"
 #include "ti_url.h"
 
@@ -69,7 +69,7 @@ private:
 	HWND hWnd;
 	WebViewHost* host;
 	std::wstring resourcePath;
-	TiWindow *tiWindow;
+	TiWindowConfig *tiWindowConfig;
 	TiUserWindow *tiUserWindow;
 	std::string url;
 	TiWebViewDelegate* webViewDelegate;
@@ -83,12 +83,12 @@ private:
 	static void initWindowClass();
 	static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 public:
-	TiWebShell(TiWindow *tiWindow);
+	TiWebShell(TiWindowConfig *tiWindow);
 	TiWebShell(const char *url);
 	~TiWebShell(void);
 
-	void reloadTiWindow();
-	void setTiWindow(TiWindow *tiWindow);
+	void reloadTiWindowConfig();
+	void setTiWindowConfig(TiWindowConfig *tiWindowConfig);
 	void createWindow();
 	void open();
 
@@ -98,7 +98,7 @@ public:
 
 	WebViewHost* getHost() { return host; }
 	HWND getWindow() { return hWnd; }
-	TiWindow* getTiWindow() { return tiWindow; }
+	TiWindowConfig* getTiWindowConfig() { return tiWindowConfig; }
 	TiUserWindow* getTiUserWindow() { return tiUserWindow; }
 
 	HINSTANCE getInstance() { return hInstance; }

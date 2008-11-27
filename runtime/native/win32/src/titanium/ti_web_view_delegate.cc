@@ -137,11 +137,11 @@ WebView* TiWebViewDelegate::CreateWebView(WebView* webview, bool user_gesture)
 
 void TiWebViewDelegate::DidStopLoading(WebView* webview)
 {
-	TiWindow *matchedWindow = NULL;
-	TiWindowList::iterator iter = TiWebShell::getTiAppConfig()->getWindows().begin();
+	TiWindowConfig *matchedWindow = NULL;
+	TiWindowConfigList::iterator iter = TiWebShell::getTiAppConfig()->getWindows().begin();
 	for (; iter != TiWebShell::getTiAppConfig()->getWindows().end() ; iter++)
 	{
-		TiWindow *window = (*iter);
+		TiWindowConfig *window = (*iter);
 		if (TiURL::urlMatchesPattern(static_cast<GURL>(webview->GetMainFrame()->GetURL()), window->getURL())) {
 			matchedWindow = window;
 			break;
@@ -149,7 +149,7 @@ void TiWebViewDelegate::DidStopLoading(WebView* webview)
 	}
 
 	if (matchedWindow != NULL) {
-		tiWebShell->setTiWindow(matchedWindow);
+		tiWebShell->setTiWindowConfig(matchedWindow);
 	}
 }
 

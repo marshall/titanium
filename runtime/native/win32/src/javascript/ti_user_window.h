@@ -21,13 +21,13 @@
 #include "webkit/glue/webview.h"
 
 #include "ti_web_shell.h"
-#include "ti_window.h"
+#include "ti_window_config.h"
 
 class TiUserWindow : public JsClass
 {
 private:
 	TiWebShell *tiWebShell;
-	TiWindow *tiWindow;
+	TiWindowConfig *tiWindow;
 
 	void updateWindow();
 	void bind();

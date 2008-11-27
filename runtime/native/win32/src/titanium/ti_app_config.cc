@@ -27,7 +27,7 @@ bool TiAppConfig::stringToBool (const char * b) {
 	return false;
 }
 
-TiWindow* TiAppConfig::getWindow(std::string& id)
+TiWindowConfig* TiAppConfig::getWindow(std::string& id)
 {
 	for (size_t i = 0; i < windows.size(); i++)
 	{
@@ -38,7 +38,7 @@ TiWindow* TiAppConfig::getWindow(std::string& id)
 	return NULL;
 }
 
-TiWindow* TiAppConfig::getMainWindow()
+TiWindowConfig* TiAppConfig::getMainWindow()
 {
 	if (windows.size() > 0) {
 		return windows[0];
@@ -70,7 +70,7 @@ TiAppConfig::TiAppConfig(std::wstring& xmlfile)
 				} else if (nodeNameEquals(node, "version")) {
 					version = nodeValue(node);
 				} else if (nodeNameEquals(node, "window")) {
-					this->windows.push_back(new TiWindow((xmlElementPtr)node));
+					this->windows.push_back(new TiWindowConfig((xmlElementPtr)node));
 				} else if (nodeNameEquals(node, "icon")) {
 					xmlNodePtr child = node->children;
 					while (child != NULL) {

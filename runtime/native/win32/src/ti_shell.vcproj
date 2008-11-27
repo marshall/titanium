@@ -442,11 +442,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\titanium\ti_window.cc"
+				RelativePath=".\titanium\ti_window_config.cc"
 				>
 			</File>
 			<File
-				RelativePath=".\titanium\ti_window.h"
+				RelativePath=".\titanium\ti_window_config.h"
 				>
 			</File>
 		</Filter>

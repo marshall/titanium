@@ -20,14 +20,14 @@ TiUserWindow::TiUserWindow(TiWebShell *tiWebShell_)
 {
 	tiWebShell = tiWebShell_;
 	if (tiWebShell != NULL)
-		tiWindow = tiWebShell->getTiWindow();
+		tiWindow = tiWebShell->getTiWindowConfig();
 
 	bind();
 }
 
 TiUserWindow::TiUserWindow ()
 {
-	tiWindow = new TiWindow();
+	tiWindow = new TiWindowConfig();
 	tiWebShell = new TiWebShell(tiWindow);
 	tiWebShell->open();
 
@@ -83,7 +83,7 @@ void TiUserWindow::bind()
 void TiUserWindow::updateWindow ()
 {
 	if (tiWebShell != NULL)
-		tiWebShell->reloadTiWindow();
+		tiWebShell->reloadTiWindowConfig();
 }
 
 void TiUserWindow::hide(const CppArgumentList &args, CppVariant *result)
