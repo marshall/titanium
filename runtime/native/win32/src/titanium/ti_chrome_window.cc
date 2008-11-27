@@ -14,7 +14,7 @@
 * limitations under the License.
 */
 
-#include "ti_web_shell.h"
+#include "ti_chrome_window.h"
 #include "ti_user_window.h"
 #include "ti_utils.h"
 #include "ti_menu.h"
@@ -23,27 +23,41 @@
 #include <fstream>
 #include <shellapi.h>
 
-TCHAR TiWebShell::defaultWindowTitle[128];
-TCHAR TiWebShell::windowClassName[128];
-TiAppConfig* TiWebShell::tiAppConfig = NULL;
-std::vector<TiWebShell*> TiWebShell::openShells = std::vector<TiWebShell*>();
+TCHAR TiChromeWindow::defaultWindowTitle[128];
+TCHAR TiChromeWindow::windowClassName[128];
+TiAppConfig* TiChromeWindow::tiAppConfig = NULL;
+std::vector<TiChromeWindow*> TiChromeWindow::openWindows = std::vector<TiChromeWindow*>();
 
 /*static*/
-TiWebShell* TiWebShell::fromWindow(HWND hWnd) {
-  return reinterpret_cast<TiWebShell*>(win_util::GetWindowUserData(hWnd));
+TiChromeWindow* TiChromeWindow::fromWindow(HWND hWnd) {
+  return reinterpret_cast<TiChromeWindow*>(win_util::GetWindowUserData(hWnd));
 }
 
 /*static*/
-TiWebShell* TiWebShell::getMainTiWebShell() {
-	if (openShells.size() > 0) {
-		return openShells[0];
+TiChromeWindow* TiChromeWindow::getMainWindow() {
+	TiChromeWindow *main = getWindow("main");
+	if (main == NULL) {
+		if (openWindows.size() > 0) {
+			main = openWindows[0];
+		}
 	}
 
+	return main;
+}
+
+/*static*/
+TiChromeWindow* TiChromeWindow::getWindow(const char *id)
+{
+	for (size_t i = 0; i < openWindows.size(); i++) {
+		if (openWindows[i]->getTiWindowConfig()->getId() == id) {
+			return openWindows[i];
+		}
+	}
 	return NULL;
 }
 
 /*static*/
-void TiWebShell::initWindowClass ()
+void TiChromeWindow::initWindowClass ()
 {
 	HINSTANCE hInstance = ::GetModuleHandle(NULL);
 	LoadString(hInstance, IDS_APP_TITLE, defaultWindowTitle, 128);
@@ -53,7 +67,7 @@ void TiWebShell::initWindowClass ()
 	wcex.cbSize = sizeof(WNDCLASSEX);
 
 	wcex.style			= CS_HREDRAW | CS_VREDRAW;
-	wcex.lpfnWndProc	= TiWebShell::WndProc;
+	wcex.lpfnWndProc	= TiChromeWindow::WndProc;
 	wcex.cbClsExtra		= 0;
 	wcex.cbWndExtra		= 0;
 	wcex.hInstance		= hInstance;
@@ -68,10 +82,10 @@ void TiWebShell::initWindowClass ()
 }
 
 /*static*/
-LRESULT CALLBACK TiWebShell::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
+LRESULT CALLBACK TiChromeWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
 	int wmId, wmEvent;
 
-	TiWebShell *tiWebShell = TiWebShell::fromWindow(hWnd);
+	TiChromeWindow *window = TiChromeWindow::fromWindow(hWnd);
 
 	switch (message)
 	{
@@ -100,38 +114,38 @@ LRESULT CALLBACK TiWebShell::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 			break;
 
 		// forward some things onto the webview host
-		case WM_MOUSEMOVE:
-		case WM_MOUSELEAVE:
-		case WM_LBUTTONDOWN:
-		case WM_MBUTTONDOWN:
-		case WM_RBUTTONDOWN:
-		case WM_LBUTTONUP:
-		case WM_MBUTTONUP:
-		case WM_RBUTTONUP:
-		case WM_LBUTTONDBLCLK:
-		case WM_MBUTTONDBLCLK:
-		case WM_RBUTTONDBLCLK:
-		case WM_CAPTURECHANGED:
-		case WM_CANCELMODE:
+		//case WM_MOUSEMOVE:
+		//case WM_MOUSELEAVE:
+		//case WM_LBUTTONDOWN:
+		//case WM_MBUTTONDOWN:
+		//case WM_RBUTTONDOWN:
+		//case WM_LBUTTONUP:
+		//case WM_MBUTTONUP:
+		//case WM_RBUTTONUP:
+		//case WM_LBUTTONDBLCLK:
+		//case WM_MBUTTONDBLCLK:
+		//case WM_RBUTTONDBLCLK:
+		//case WM_CAPTURECHANGED:
+		//case WM_CANCELMODE:
 		case WM_KEYDOWN:
 		case WM_KEYUP:
 		case WM_SYSKEYDOWN:
 		case WM_SYSKEYUP:
 		case WM_IME_CHAR:
-		case WM_SETFOCUS:
-		case WM_KILLFOCUS:
-		case WM_MOUSEWHEEL:
-			if (!PostMessage(tiWebShell->getHost()->window_handle(), message, wParam, lParam)) {
+		//case WM_SETFOCUS:
+		//case WM_KILLFOCUS:
+		//case WM_MOUSEWHEEL:
+			if (!PostMessage(window->getHost()->window_handle(), message, wParam, lParam)) {
 				return DefWindowProc(hWnd, message, wParam, lParam);
 			}
 			break;
 		case WM_DESTROY:
-			if (tiWebShell == TiWebShell::getMainTiWebShell()) {
+			if (window == TiChromeWindow::getMainWindow()) {
 				PostQuitMessage(0);
 			}
 			break;
 		case WM_SIZE:
-			tiWebShell->resizeHost();
+			window->resizeHost();
 			break;
 		case TI_TRAY_CLICKED:
 			{
@@ -151,33 +165,33 @@ LRESULT CALLBACK TiWebShell::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 	return DefWindowProc(hWnd, message, wParam, lParam);
 }
 
-TiWebShell::TiWebShell(TiWindow *window) : hWnd(NULL), hInstance(NULL), host(NULL)
+TiChromeWindow::TiChromeWindow(TiWindowConfig *windowConfig) : hWnd(NULL), hInstance(NULL), host(NULL)
 {
-	TiWebShell::openShells.push_back(this);	
-	this->tiWindow = window;
+	TiChromeWindow::openWindows.push_back(this);	
+	this->tiWindowConfig = windowConfig;
 
-	if (window != NULL) {
-		this->url = tiWindow->getURL();
+	if (windowConfig != NULL) {
+		this->url = tiWindowConfig->getURL();
 	}
 
 	tiUserWindow = new TiUserWindow(this);
 }
 
-TiWebShell::TiWebShell(const char *url) : hWnd(NULL), hInstance(NULL), host(NULL)
+TiChromeWindow::TiChromeWindow(const char *url) : hWnd(NULL), hInstance(NULL), host(NULL)
 {
-	TiWebShell::openShells.push_back(this);	
+	TiChromeWindow::openWindows.push_back(this);	
 	this->url = url;
-	this->tiWindow = new TiWindow();
+	this->tiWindowConfig = new TiWindowConfig();
 	
 	tiUserWindow = new TiUserWindow(this);
 }
 
-TiWebShell::~TiWebShell(void) {
+TiChromeWindow::~TiChromeWindow(void) {
 	// TODO  remove tray icon if one exists .. mmm.. 
 	//this->removeTrayIcon();
 }
 
-void TiWebShell::createWindow()
+void TiChromeWindow::createWindow()
 {
 	hInstance = ::GetModuleHandle(NULL);
 	hWnd = CreateWindowEx(WS_EX_LAYERED, windowClassName, defaultWindowTitle,
@@ -192,46 +206,46 @@ void TiWebShell::createWindow()
 	host = WebViewHost::Create(hWnd, webViewDelegate, webPrefs);
 	webViewDelegate->setWebViewHost(host);
 	
-	reloadTiWindow();
+	reloadTiWindowConfig();
 }
 
 #define SetFlag(x,flag,b) ((b) ? x |= flag : x &= ~flag)
 #define UnsetFlag(x,flag) (x &= ~flag)=
 
-void TiWebShell::setTiWindow(TiWindow *tiWindow)
+void TiChromeWindow::setTiWindowConfig(TiWindowConfig *tiWindowConfig)
 {
-	this->tiWindow = tiWindow;
-	reloadTiWindow();
+	this->tiWindowConfig = tiWindowConfig;
+	reloadTiWindowConfig();
 }
 
-void TiWebShell::reloadTiWindow()
+void TiChromeWindow::reloadTiWindowConfig()
 {
-	if (tiWindow->getURL().length() > 0)
-		loadURL(tiWindow->getURL().c_str());
+	if (tiWindowConfig->getURL().length() > 0)
+		loadURL(tiWindowConfig->getURL().c_str());
 
-	SetWindowText(hWnd, UTF8ToWide(tiWindow->getTitle()).c_str());
+	SetWindowText(hWnd, UTF8ToWide(tiWindowConfig->getTitle()).c_str());
 
 	long windowStyle = GetWindowLong(hWnd, GWL_STYLE);
 	
-	SetFlag(windowStyle, WS_MINIMIZEBOX, tiWindow->isMinimizable());
-	SetFlag(windowStyle, WS_MAXIMIZEBOX, tiWindow->isMaximizable());
+	SetFlag(windowStyle, WS_MINIMIZEBOX, tiWindowConfig->isMinimizable());
+	SetFlag(windowStyle, WS_MAXIMIZEBOX, tiWindowConfig->isMaximizable());
 
-	SetFlag(windowStyle, WS_OVERLAPPEDWINDOW, tiWindow->isUsingChrome() && tiWindow->isResizable());
-	SetFlag(windowStyle, WS_CAPTION, tiWindow->isUsingChrome());
+	SetFlag(windowStyle, WS_OVERLAPPEDWINDOW, tiWindowConfig->isUsingChrome() && tiWindowConfig->isResizable());
+	SetFlag(windowStyle, WS_CAPTION, tiWindowConfig->isUsingChrome());
 	
 	SetWindowLong(hWnd, GWL_STYLE, windowStyle);
 
 	UINT flags = SWP_NOMOVE | SWP_NOZORDER | SWP_FRAMECHANGED;
 
-	sizeTo(tiWindow->getX(), tiWindow->getY(), tiWindow->getWidth(), tiWindow->getHeight(), flags);
-	SetLayeredWindowAttributes(hWnd, 0, (BYTE)floor(tiWindow->getTransparency()*255), LWA_ALPHA);
+	sizeTo(tiWindowConfig->getX(), tiWindowConfig->getY(), tiWindowConfig->getWidth(), tiWindowConfig->getHeight(), flags);
+	SetLayeredWindowAttributes(hWnd, 0, (BYTE)floor(tiWindowConfig->getTransparency()*255), LWA_ALPHA);
 }
 
 
-void TiWebShell::open() {
+void TiChromeWindow::open() {
 	static bool windowClassInitialized = false;
 	if (!windowClassInitialized) {
-		TiWebShell::initWindowClass();
+		TiChromeWindow::initWindowClass();
 		windowClassInitialized = true;
 	}
 
@@ -242,7 +256,7 @@ void TiWebShell::open() {
 	ShowWindow(host->window_handle(), SW_SHOW);
 }
 
-void TiWebShell::loadURL(const char* url) {
+void TiChromeWindow::loadURL(const char* url) {
 	if (currentURL != url) {
 		currentURL = url;
 
@@ -258,7 +272,7 @@ void TiWebShell::loadURL(const char* url) {
 }
 
 
-void TiWebShell::sizeTo(int x, int y, int width, int height, UINT flags) {
+void TiChromeWindow::sizeTo(int x, int y, int width, int height, UINT flags) {
 	RECT rc, rw;
 	GetClientRect(hWnd, &rc);
 	GetWindowRect(hWnd, &rw);
@@ -274,14 +288,14 @@ void TiWebShell::sizeTo(int x, int y, int width, int height, UINT flags) {
 	SetWindowPos(hWnd, NULL, x, y, window_width, window_height, flags);
 }
 
-void TiWebShell::resizeHost() {
+void TiChromeWindow::resizeHost() {
 	RECT rc;
 	GetClientRect(hWnd, &rc);
 
 	MoveWindow(host->window_handle(), 0, 0, rc.right, rc.bottom, TRUE);
 }
 
-void TiWebShell::include(std::string& relativePath)
+void TiChromeWindow::include(std::string& relativePath)
 {
 	std::string absolutePath;
 
@@ -303,11 +317,11 @@ void TiWebShell::include(std::string& relativePath)
 	webview->GetMainFrame()->ExecuteJavaScript(s, absolutePath);
 }
 
-void TiWebShell::showWindow(int nCmdShow) {
+void TiChromeWindow::showWindow(int nCmdShow) {
 	ShowWindow(hWnd, nCmdShow);
 }
 
-std::string TiWebShell::getTitle() {
+std::string TiChromeWindow::getTitle() {
 	wchar_t buffer[2049];
 	GetWindowText(this->hWnd, buffer, 2048);
 
@@ -317,11 +331,11 @@ std::string TiWebShell::getTitle() {
 	return result;
 }
 
-void TiWebShell::setTitle(std::string title) {
+void TiChromeWindow::setTitle(std::string title) {
 	SetWindowText(this->hWnd, UTF8ToWide(title).c_str());
 }
 
-void TiWebShell::close() {
+void TiChromeWindow::close() {
 	CloseWindow(hWnd);
 }
 

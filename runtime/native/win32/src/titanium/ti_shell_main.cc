@@ -52,7 +52,7 @@
 #include "simple_resource_loader_bridge.h"
 #include "test_shell_request_context.h"
 
-#include "ti_web_shell.h"
+#include "ti_chrome_window.h"
 #include "ti_web_view_delegate.h"
 #include "ti_url.h"
 #include "ti_utils.h"
@@ -129,9 +129,9 @@ int main (int argc, char **argv) {
 	HACCEL hAccelTable;
 	hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_CHROME_SHELL3));
 
-	TiWebShell::setTiAppConfig(tiAppConfig);
-	TiWebShell *tiWebShell = new TiWebShell(tiAppConfig->getMainWindow());
-	tiWebShell->open();
+	TiChromeWindow::setTiAppConfig(tiAppConfig);
+	TiChromeWindow *window = new TiChromeWindow(tiAppConfig->getMainWindow());
+	window->open();
 
 	MessageLoop::current()->Run();
 	MessageLoop::current()->RunAllPending();

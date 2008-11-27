@@ -16,14 +16,15 @@
 
 #include "ti_window_factory.h"
 
-TiWindowFactory::TiWindowFactory(TiWebShell *tiWebShell)
+TiWindowFactory::TiWindowFactory(TiChromeWindow *window)
 {
 	BindMethod("createWindow", &TiWindowFactory::createWindow);
+	BindMethod("getWindow", &TiWindowFactory::getWindow);
 	BindProperty("mainWindow", &mainWindow);
 	BindProperty("currentWindow", &currentWindow);
 
-	mainWindow.Set(TiWebShell::getMainTiWebShell()->getTiUserWindow()->ToNPObject());
-	currentWindow.Set(tiWebShell->getTiUserWindow()->ToNPObject());
+	mainWindow.Set(TiChromeWindow::getMainWindow()->getTiUserWindow()->ToNPObject());
+	currentWindow.Set(window->getTiUserWindow()->ToNPObject());
 }
 
 void TiWindowFactory::createWindow(const CppArgumentList &args, CppVariant *result)
@@ -31,4 +32,17 @@ void TiWindowFactory::createWindow(const CppArgumentList &args, CppVariant *resu
 	TiUserWindow *window = new TiUserWindow();
 
 	result->Set(window->ToNPObject());
+}
+
+void TiWindowFactory::getWindow(const CppArgumentList &args, CppVariant *result)
+{
+	if (args.size() > 0 && args[0].isString()) {
+		TiChromeWindow *window = TiChromeWindow::getWindow(args[0].ToString().c_str());
+
+		if (window != NULL) {
+			result->Set(window->getTiUserWindow()->ToNPObject());
+		} else {
+			result->SetNull();
+		}
+	}
 }

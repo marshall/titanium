@@ -1,0 +1,16 @@
+<ti:app xmlns:ti="http://titaniumapp.com">
+
+	<id>com.titaniumapp.tests.apivalidator</id>
+	<name>Titanium API Validator</name>
+	
+	<window>
+		<id>main</id>
+		<title>Titanium API Valdiator</title>
+		<url>app://index.html</url>
+		<width>800</width>
+		<height>800</height>
+		<x>100</x>
+		<y>100</y>
+	</window>
+
+</ti:app>

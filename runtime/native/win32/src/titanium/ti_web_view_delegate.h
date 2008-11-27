@@ -54,7 +54,7 @@
 #include "ti_runtime.h"
 #include "ti_app.h"
  
-class TiWebShell;
+class TiChromeWindow;
  
 class TiWebViewDelegate:
   public base::RefCounted<TiWebViewDelegate>,
@@ -62,14 +62,14 @@ class TiWebViewDelegate:
 {
 private:
   WebViewHost *host;
-  TiWebShell *tiWebShell;
+  TiChromeWindow *window;
   TiRuntime *tiRuntime;
   TiApp *tiApp;
   HCURSOR customCursor;
  
 public:
   bool bootstrapTitanium;
-  TiWebViewDelegate(TiWebShell *tiWebShell_) { tiWebShell = tiWebShell_; }
+  TiWebViewDelegate(TiChromeWindow *window_) { window = window_; }
   ~TiWebViewDelegate(void);
  
   void setWebViewHost(WebViewHost* host_) { host = host_; }

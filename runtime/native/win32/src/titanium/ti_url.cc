@@ -14,7 +14,7 @@
 * limitations under the License.
 */
 #include "ti_url.h"
-#include "ti_web_shell.h"
+#include "ti_chrome_window.h"
 
 void replaceSlashes (std::string* path)
 {

@@ -13,8 +13,8 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-#ifndef TI_WINDOW_H_
-#define TI_WINDOW_H_
+#ifndef TI_WINDOW_CONFIG_H_
+#define TI_WINDOW_CONFIG_H_
 
 #include <string>
 
@@ -24,7 +24,7 @@
 
 #include "ti_app_config.h"
 
-class TiWindow
+class TiWindowConfig
 {
 private:
 	std::string id, url, title;
@@ -38,8 +38,8 @@ private:
 public:
 	static int DEFAULT_POSITION;
 
-	TiWindow() { setDefaults(); }
-	TiWindow(xmlElementPtr window);
+	TiWindowConfig() { setDefaults(); }
+	TiWindowConfig(xmlElementPtr window);
 	
 	// window accessors
 	std::string& getURL() { return url; }

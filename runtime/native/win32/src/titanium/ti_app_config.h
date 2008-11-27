@@ -28,22 +28,22 @@
 #include "base/file_util.h"
 #include "base/path_service.h"
 
-#include "ti_window.h"
+#include "ti_window_config.h"
 
 #define nodeNameEquals(n,s) (xmlStrcmp(n->name, (const xmlChar *)s) == 0)
 #define nodeValue(n) ((const char *)xmlNodeListGetString(n->doc, n->children, TRUE))
 #define boolValue(n) (TiAppConfig::stringToBool(nodeValue(n)))
 
-class TiWindow;
+class TiWindowConfig;
 
-typedef std::vector<TiWindow*> TiWindowList ;
+typedef std::vector<TiWindowConfig*> TiWindowConfigList ;
 
 class TiAppConfig 
 {
 private:
 	const char* error;
 	std::string appName, description, copyright, homepage, version;
-	TiWindowList windows;
+	TiWindowConfigList windows;
 
 	// icon properties
 	std::string icon16, icon32, icon48;
@@ -60,9 +60,9 @@ public:
 	std::string& getHomepage() { return homepage; }
 	std::string& getVersion() { return version; }
 
-	TiWindowList& getWindows() { return windows; }
-	TiWindow* getWindow(std::string &id);
-	TiWindow* getMainWindow();
+	TiWindowConfigList& getWindows() { return windows; }
+	TiWindowConfig* getWindow(std::string &id);
+	TiWindowConfig* getMainWindow();
 	
 	//icon accessors
 	std::string& getIcon16() { return icon16; }

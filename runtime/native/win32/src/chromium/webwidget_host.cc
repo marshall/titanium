@@ -54,10 +54,6 @@ LRESULT CALLBACK WebWidgetHost::WndProc(HWND hwnd, UINT message, WPARAM wparam,
                                         LPARAM lparam) {
 
   WebWidgetHost* host = FromWindow(hwnd);
-  /*printf("WndProc!!!!!!\n");
-  if (!host) {
-	printf("shit!! host == NULL\n");
-  }*/
 
   if (host && !host->WndProc(message, wparam, lparam)) {
     switch (message) {
@@ -66,6 +62,10 @@ LRESULT CALLBACK WebWidgetHost::WndProc(HWND hwnd, UINT message, WPARAM wparam,
         break;
 
       case WM_PAINT:
+		RECT rect;
+        if (GetUpdateRect(hwnd, &rect, FALSE)) {
+          host->UpdatePaintRect(gfx::Rect(rect));
+        }
         host->Paint();
         return 0;
 
@@ -189,7 +189,6 @@ WebWidgetHost::~WebWidgetHost() {
 }
 
 bool WebWidgetHost::WndProc(UINT message, WPARAM wparam, LPARAM lparam) {
-	//printf("Instance WndProc!!!!!\n");
   switch (message) {
   case WM_ACTIVATE:
     if (wparam == WA_INACTIVE) {
@@ -202,7 +201,6 @@ bool WebWidgetHost::WndProc(UINT message, WPARAM wparam, LPARAM lparam) {
     break;
   }
 
-  //printf("returning false, hurray!\n");
   return false;
 }
 
@@ -339,4 +337,8 @@ void WebWidgetHost::PaintRect(const gfx::Rect& rect) {
   set_painting(true);
   webwidget_->Paint(canvas_.get(), rect);
   set_painting(false);
+}
+
+void WebWidgetHost::UpdatePaintRect(const gfx::Rect& rect) {
+  paint_rect_ = paint_rect_.Union(rect);
 }

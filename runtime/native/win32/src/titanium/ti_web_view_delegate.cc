@@ -15,7 +15,7 @@
 */
 
 #include "ti_web_view_delegate.h"
-#include "ti_web_shell.h"
+#include "ti_chrome_window.h"
 #include "ti_utils.h"
 
 #include "Resource.h"
@@ -24,7 +24,7 @@ TiWebViewDelegate::~TiWebViewDelegate() {
 }
 
 gfx::ViewHandle TiWebViewDelegate::GetContainingWindow(WebWidget* webwidget) {
-	return tiWebShell->getWindow();
+	return window->getWindow();
 }
 
 // Called when a region of the WebWidget needs to be re-painted.
@@ -44,7 +44,7 @@ void TiWebViewDelegate::DidScrollRect(WebWidget* webwidget, int dx, int dy,
 // successful call to CreateWebWidget.  |disposition| indicates how this new
 // window should be displayed, but generally only means something for WebViews.
 void TiWebViewDelegate::Show(WebWidget* webwidget, WindowOpenDisposition disposition) {
-	tiWebShell->open();
+	window->open();
 	//ShowWindow(tiWebShell->getWindow(), SW_SHOW);
 	//UpdateWindow(tiWebShell->getWindow());
 }
@@ -54,7 +54,7 @@ void TiWebViewDelegate::Show(WebWidget* webwidget, WindowOpenDisposition disposi
 // WebWidget to eventually close.  It should not actually be destroyed until
 // after this call returns.
 void TiWebViewDelegate::CloseWidgetSoon(WebWidget* webwidget) {
-	PostMessage(tiWebShell->getWindow(), WM_CLOSE, 0, 0);
+	PostMessage(window->getWindow(), WM_CLOSE, 0, 0);
 }
 
 // This method is called to focus the window containing the WebWidget so
@@ -129,19 +129,19 @@ void TiWebViewDelegate::RunModal(WebWidget* webwidget){
 
 WebView* TiWebViewDelegate::CreateWebView(WebView* webview, bool user_gesture)
 {
-	TiWebShell *tiWebShell = new TiWebShell("");
-	tiWebShell->open();
+	TiChromeWindow *window = new TiChromeWindow("");
+	window->open();
 
-	return tiWebShell->getHost()->webview();
+	return window->getHost()->webview();
 }
 
 void TiWebViewDelegate::DidStopLoading(WebView* webview)
 {
-	TiWindow *matchedWindow = NULL;
-	TiWindowList::iterator iter = TiWebShell::getTiAppConfig()->getWindows().begin();
-	for (; iter != TiWebShell::getTiAppConfig()->getWindows().end() ; iter++)
+	TiWindowConfig *matchedWindow = NULL;
+	TiWindowConfigList::iterator iter = TiChromeWindow::getTiAppConfig()->getWindows().begin();
+	for (; iter != TiChromeWindow::getTiAppConfig()->getWindows().end() ; iter++)
 	{
-		TiWindow *window = (*iter);
+		TiWindowConfig *window = (*iter);
 		if (TiURL::urlMatchesPattern(static_cast<GURL>(webview->GetMainFrame()->GetURL()), window->getURL())) {
 			matchedWindow = window;
 			break;
@@ -149,7 +149,7 @@ void TiWebViewDelegate::DidStopLoading(WebView* webview)
 	}
 
 	if (matchedWindow != NULL) {
-		tiWebShell->setTiWindow(matchedWindow);
+		window->setTiWindowConfig(matchedWindow);
 	}
 }
 
@@ -169,11 +169,11 @@ bool TiWebViewDelegate::IsHidden() {
 
 void TiWebViewDelegate::WindowObjectCleared(WebFrame *webFrame)
 {
-	tiRuntime = new TiRuntime(tiWebShell);
+	tiRuntime = new TiRuntime(window);
 	tiRuntime->BindToJavascript(webFrame, L"tiRuntime");
 
 	std::string titanium_js = "ti:///titanium.js";
-	tiWebShell->include(titanium_js);
+	window->include(titanium_js);
 }
 
 WebPluginDelegate* TiWebViewDelegate::CreatePluginDelegate(
@@ -217,7 +217,7 @@ void TiWebViewDelegate::DidFinishLoadForFrame(WebView* webview, WebFrame* frame)
 // should visually indicate that this panel comes from JavaScript. The panel
 // should have a single OK button.
 void TiWebViewDelegate::RunJavaScriptAlert(WebView* webview, const std::wstring& message) {
-	MessageBox(tiWebShell->getWindow(), (LPCTSTR) message.c_str(), L"Alert", MB_OK | MB_ICONQUESTION);
+	MessageBox(window->getWindow(), (LPCTSTR) message.c_str(), L"Alert", MB_OK | MB_ICONQUESTION);
 }
 
 // Displays a JavaScript confirm panel associated with the given view.
@@ -225,7 +225,7 @@ void TiWebViewDelegate::RunJavaScriptAlert(WebView* webview, const std::wstring&
 // from JavaScript. The panel should have two buttons, e.g. "OK" and
 // "Cancel". Returns true if the user hit OK, or false if the user hit Cancel.
 bool TiWebViewDelegate::RunJavaScriptConfirm(WebView* webview, const std::wstring& message) {
-	int result = MessageBox(tiWebShell->getWindow(), (LPCTSTR) message.c_str(), L"Confirm", MB_YESNO | MB_ICONEXCLAMATION);
+	int result = MessageBox(window->getWindow(), (LPCTSTR) message.c_str(), L"Confirm", MB_YESNO | MB_ICONEXCLAMATION);
 
 	return (result == IDYES);
 }
@@ -298,7 +298,7 @@ bool TiWebViewDelegate::RunJavaScriptPrompt(WebView* webview,
 
 	// TODO - center dialog box
 	INT_PTR r = DialogBox(::GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_JSPROMPT),
-		tiWebShell->getWindow(), reinterpret_cast<DLGPROC>(JsPromptDlgProc));
+		window->getWindow(), reinterpret_cast<DLGPROC>(JsPromptDlgProc));
 
 	if(r == JSPROMPTIDOK) {
 		result->assign(jsPromptText);

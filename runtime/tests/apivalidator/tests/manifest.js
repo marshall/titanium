@@ -1,0 +1,5 @@
+{
+	"suites": [
+		"window.js"
+	]
+}

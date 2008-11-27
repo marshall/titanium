@@ -15,18 +15,18 @@
 */
 
 #include "ti_app_config.h"
-#include "ti_window.h"
+#include "ti_window_config.h"
 
-int TiWindow::DEFAULT_POSITION = -1;
+int TiWindowConfig::DEFAULT_POSITION = -1;
 
-void TiWindow::setDefaults ()
+void TiWindowConfig::setDefaults ()
 {
 	maximizable = minimizable = closeable = resizable = usingChrome = true;
 	usingScrollbars = fullscreen = false;
 	transparency = 1.0;
 	width = 800;
 	height = 600;
-	x = y = TiWindow::DEFAULT_POSITION;
+	x = y = TiWindowConfig::DEFAULT_POSITION;
 	minWidth = minHeight = 0;
 	maxWidth = maxHeight = 9000;
 	url = "index.html";
@@ -34,7 +34,7 @@ void TiWindow::setDefaults ()
 	visible = true;
 }
 
-TiWindow::TiWindow(xmlElementPtr element)
+TiWindowConfig::TiWindowConfig(xmlElementPtr element)
 {
 	setDefaults();
 
