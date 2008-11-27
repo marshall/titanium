@@ -21,19 +21,19 @@
 
 #include "ti_app.h"
 
-class TiWebShell;
+class TiChromeWindow;
 class TiWindowFactory;
 class TiMenuFactory;
 
 class TiRuntime : public JsClass
 {
-	TiWebShell *tiWebShell;
+	TiChromeWindow *window;
 	TiApp *tiApp;
 	TiWindowFactory *tiWindowFactory;
 	TiMenuFactory *tiMenuFactory;
 
 public:
-	TiRuntime(TiWebShell *tiWebShell);
+	TiRuntime(TiChromeWindow *window);
 	~TiRuntime(void);
 
 	CppVariant App, Dock, Menu, Window;

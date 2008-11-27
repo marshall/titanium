@@ -16,7 +16,7 @@
 
 #include "ti_menu_factory.h"
 #include "ti_menu.h"
-#include "ti_web_shell.h"
+#include "ti_chrome_window.h"
 
 static HMENU hMenuBar = NULL;
 
@@ -30,7 +30,7 @@ TiMenuFactory::TiMenuFactory()
 NOTIFYICONDATA TiMenuFactory::createTrayIcon(std::wstring &iconPath, std::wstring &caption) {
 	NOTIFYICONDATA notifyIconData;
 	notifyIconData.cbSize = sizeof(NOTIFYICONDATA);
-	notifyIconData.hWnd = TiWebShell::getMainTiWebShell()->getWindow();
+	notifyIconData.hWnd = TiChromeWindow::getMainWindow()->getWindow();
 	notifyIconData.uID = TiMenu::nextMenuUID();
 	notifyIconData.uFlags = NIF_MESSAGE | NIF_ICON | NIF_TIP;
 	notifyIconData.uCallbackMessage = TI_TRAY_CLICKED;
@@ -106,6 +106,6 @@ void TiMenuFactory::createUserMenu(const CppArgumentList& args, CppVariant* resu
 void TiMenuFactory::createMenuBar()
 {
 	hMenuBar = CreateMenu();
-	HWND hWnd = TiWebShell::getMainTiWebShell()->getWindow();
+	HWND hWnd = TiChromeWindow::getMainWindow()->getWindow();
 	SetMenu(hWnd, hMenuBar);
 }

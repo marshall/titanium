@@ -16,20 +16,20 @@
 
 #include "ti_user_window.h"
 
-TiUserWindow::TiUserWindow(TiWebShell *tiWebShell_)
+TiUserWindow::TiUserWindow(TiChromeWindow *window_)
 {
-	tiWebShell = tiWebShell_;
-	if (tiWebShell != NULL)
-		tiWindow = tiWebShell->getTiWindowConfig();
+	window = window_;
+	if (window != NULL)
+		config = window->getTiWindowConfig();
 
 	bind();
 }
 
 TiUserWindow::TiUserWindow ()
 {
-	tiWindow = new TiWindowConfig();
-	tiWebShell = new TiWebShell(tiWindow);
-	tiWebShell->open();
+	config = new TiWindowConfig();
+	window = new TiChromeWindow(config);
+	window->open();
 
 	bind();
 }
@@ -82,47 +82,47 @@ void TiUserWindow::bind()
 
 void TiUserWindow::updateWindow ()
 {
-	if (tiWebShell != NULL)
-		tiWebShell->reloadTiWindowConfig();
+	if (window != NULL)
+		window->reloadTiWindowConfig();
 }
 
 void TiUserWindow::hide(const CppArgumentList &args, CppVariant *result)
 {
-	tiWebShell->showWindow(SW_HIDE);
+	window->showWindow(SW_HIDE);
 }
 
 void TiUserWindow::show(const CppArgumentList &args, CppVariant *result)
 {
-	tiWebShell->showWindow(SW_SHOW);
+	window->showWindow(SW_SHOW);
 }
 
 void TiUserWindow::close(const CppArgumentList &args, CppVariant *result)
 {
-	tiWebShell->close();
+	window->close();
 }
 
 void TiUserWindow::getURL(const CppArgumentList &args, CppVariant *result)
 {
-	result->Set(tiWindow->getURL());
+	result->Set(config->getURL());
 }
 
 void TiUserWindow::setURL(const CppArgumentList &args, CppVariant *result)
 {
 	if (args.size() > 0 && args[0].isString()) {
-		tiWindow->setURL(args[0].ToString());
+		config->setURL(args[0].ToString());
 		updateWindow();
 	}
 }
 
 void TiUserWindow::getTitle(const CppArgumentList &args, CppVariant *result)
 {
-	result->Set(tiWindow->getTitle());
+	result->Set(config->getTitle());
 }
 
 void TiUserWindow::setTitle(const CppArgumentList &args, CppVariant *result)
 {
 	if (args.size() > 0 && args[0].isString()) {
-		tiWindow->setTitle(args[0].ToString());
+		config->setTitle(args[0].ToString());
 		updateWindow();
 	}
 }
@@ -155,10 +155,10 @@ void TiUserWindow::getBounds(const CppArgumentList &args, CppVariant *result)
 {
 	TiWindowBounds *bounds = new TiWindowBounds();
 
-	bounds->x.Set(tiWindow->getX());
-	bounds->y.Set(tiWindow->getY());
-	bounds->width.Set(tiWindow->getWidth());
-	bounds->height.Set(tiWindow->getHeight());
+	bounds->x.Set(config->getX());
+	bounds->y.Set(config->getY());
+	bounds->width.Set(config->getWidth());
+	bounds->height.Set(config->getHeight());
 
 	result->Set(bounds->ToNPObject());
 }
@@ -172,16 +172,16 @@ void TiUserWindow::setBounds(const CppArgumentList &args, CppVariant *result)
 		int height = GetIntProperty(args[0], "height");
 
 		if (x >= 0)
-			tiWindow->setX(x);
+			config->setX(x);
 
 		if (y >= 0)
-			tiWindow->setY(y);
+			config->setY(y);
 
 		if (width >= 0)
-			tiWindow->setWidth(width);
+			config->setWidth(width);
 
 		if (height >= 0)
-			tiWindow->setHeight(height);
+			config->setHeight(height);
 
 		updateWindow();
 	}
@@ -189,193 +189,193 @@ void TiUserWindow::setBounds(const CppArgumentList &args, CppVariant *result)
 
 void TiUserWindow::getHeight(const CppArgumentList &args, CppVariant *result)
 {
-	result->Set(tiWindow->getHeight());
+	result->Set(config->getHeight());
 }
 
 void TiUserWindow::setHeight(const CppArgumentList &args, CppVariant *result)
 {
 	if (args.size() > 0 && args[0].isNumber()) {
-		tiWindow->setHeight((int)args[0].ToInt32());
+		config->setHeight((int)args[0].ToInt32());
 		updateWindow();
 	}
 }
 
 void TiUserWindow::getWidth(const CppArgumentList &args, CppVariant *result)
 {
-	result->Set(tiWindow->getWidth());
+	result->Set(config->getWidth());
 }
 
 void TiUserWindow::setWidth(const CppArgumentList &args, CppVariant *result)
 {
 	if (args.size() > 0 && args[0].isNumber()) {
-		tiWindow->setWidth((int)args[0].ToInt32());
+		config->setWidth((int)args[0].ToInt32());
 		updateWindow();
 	}
 }
 
 void TiUserWindow::getX(const CppArgumentList &args, CppVariant *result)
 {
-	result->Set(tiWindow->getX());
+	result->Set(config->getX());
 }
 
 void TiUserWindow::setX(const CppArgumentList &args, CppVariant *result)
 {
 	if (args.size() > 0 && args[0].isNumber()) {
-		tiWindow->setX((int)args[0].ToInt32());
+		config->setX((int)args[0].ToInt32());
 		updateWindow();
 	}
 }
 
 void TiUserWindow::getY(const CppArgumentList &args, CppVariant *result)
 {
-	result->Set(tiWindow->getY());
+	result->Set(config->getY());
 }
 
 void TiUserWindow::setY(const CppArgumentList &args, CppVariant *result)
 {
 	if (args.size() > 0 && args[0].isNumber()) {
-		tiWindow->setY((int)args[0].ToInt32());
+		config->setY((int)args[0].ToInt32());
 		updateWindow();
 	}
 }
 
 void TiUserWindow::isResizable(const CppArgumentList &args, CppVariant *result)
 {
-	result->Set(tiWindow->isResizable());
+	result->Set(config->isResizable());
 }
 
 void TiUserWindow::setResizable(const CppArgumentList &args, CppVariant *result)
 {
 	if (args.size() > 0 && args[0].isBool())
 	{
-		tiWindow->setResizable(args[0].ToBoolean());
+		config->setResizable(args[0].ToBoolean());
 		updateWindow();
 	}
 }
 
 void TiUserWindow::isMaximizable(const CppArgumentList &args, CppVariant *result)
 {
-	result->Set(tiWindow->isMaximizable());
+	result->Set(config->isMaximizable());
 }
 
 void TiUserWindow::setMaximizable(const CppArgumentList &args, CppVariant *result)
 {
 	if (args.size() > 0 && args[0].isBool())
 	{
-		tiWindow->setMaximizable(args[0].ToBoolean());
+		config->setMaximizable(args[0].ToBoolean());
 		updateWindow();
 	}
 }
 
 void TiUserWindow::isMinimizable(const CppArgumentList &args, CppVariant *result)
 {
-	result->Set(tiWindow->isMinimizable());
+	result->Set(config->isMinimizable());
 }
 
 void TiUserWindow::setMinimizable(const CppArgumentList &args, CppVariant *result)
 {
 	if (args.size() > 0 && args[0].isBool())
 	{
-		tiWindow->setMinimizable(args[0].ToBoolean());
+		config->setMinimizable(args[0].ToBoolean());
 		updateWindow();
 	}
 }
 
 void TiUserWindow::isCloseable(const CppArgumentList &args, CppVariant *result)
 {
-	result->Set(tiWindow->isCloseable());
+	result->Set(config->isCloseable());
 }
 
 void TiUserWindow::setCloseable(const CppArgumentList &args, CppVariant *result)
 {
 	if (args.size() > 0 && args[0].isBool())
 	{
-		tiWindow->setCloseable(args[0].ToBoolean());
+		config->setCloseable(args[0].ToBoolean());
 		updateWindow();
 	}
 }
 
 void TiUserWindow::isFullscreen(const CppArgumentList &args, CppVariant *result)
 {
-	result->Set(tiWindow->isFullscreen());
+	result->Set(config->isFullscreen());
 }
 
 void TiUserWindow::setFullscreen(const CppArgumentList &args, CppVariant *result)
 {
 	if (args.size() > 0 && args[0].isBool())
 	{
-		tiWindow->setFullscreen(args[0].ToBoolean());
+		config->setFullscreen(args[0].ToBoolean());
 		updateWindow();
 	}
 }
 
 void TiUserWindow::isVisible(const CppArgumentList &args, CppVariant *result)
 {
-	result->Set(tiWindow->isVisible());
+	result->Set(config->isVisible());
 }
 
 void TiUserWindow::setVisible(const CppArgumentList &args, CppVariant *result)
 {
 	if (args.size() > 0 && args[0].isBool())
 	{
-		tiWindow->setVisible(args[0].ToBoolean());
+		config->setVisible(args[0].ToBoolean());
 		updateWindow();
 	}
 }
 
 void TiUserWindow::isUsingChrome(const CppArgumentList &args, CppVariant *result)
 {
-	result->Set(tiWindow->isUsingChrome());
+	result->Set(config->isUsingChrome());
 }
 
 void TiUserWindow::setUsingChrome(const CppArgumentList &args, CppVariant *result)
 {
 	if (args.size() > 0 && args[0].isBool())
 	{
-		tiWindow->setUsingChrome(args[0].ToBoolean());
+		config->setUsingChrome(args[0].ToBoolean());
 		updateWindow();
 	}
 }
 
 void TiUserWindow::isUsingScrollbars(const CppArgumentList &args, CppVariant *result)
 {
-	result->Set(tiWindow->isUsingScrollbars());
+	result->Set(config->isUsingScrollbars());
 }
 
 void TiUserWindow::setUsingScrollbars(const CppArgumentList &args, CppVariant *result)
 {
 	if (args.size() > 0 && args[0].isBool())
 	{
-		tiWindow->setUsingScrollbars(args[0].ToBoolean());
+		config->setUsingScrollbars(args[0].ToBoolean());
 		updateWindow();
 	}
 }
 
 void TiUserWindow::getTransparency(const CppArgumentList &args, CppVariant *result)
 {
-	result->Set(tiWindow->getTransparency());
+	result->Set(config->getTransparency());
 }
 
 void TiUserWindow::setTransparency(const CppArgumentList &args, CppVariant *result)
 {
 	if (args.size() > 0 && args[0].isDouble())
 	{
-		tiWindow->setTransparency((float)args[0].ToDouble());
+		config->setTransparency((float)args[0].ToDouble());
 		updateWindow();
 	}
 }
 
 void TiUserWindow::activate(const CppArgumentList &args, CppVariant *result)
 {
-	this->tiWebShell->showWindow(SW_RESTORE);
+	this->window->showWindow(SW_RESTORE);
 }
 
 void TiUserWindow::minimize(const CppArgumentList &args, CppVariant *result)
 {
-	this->tiWebShell->showWindow(SW_MINIMIZE);
+	this->window->showWindow(SW_MINIMIZE);
 }
 
 void TiUserWindow::maximize(const CppArgumentList &args, CppVariant *result)
 {
-	this->tiWebShell->showWindow(SW_MAXIMIZE);
+	this->window->showWindow(SW_MAXIMIZE);
 }

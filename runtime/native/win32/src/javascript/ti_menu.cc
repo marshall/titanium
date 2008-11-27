@@ -15,7 +15,7 @@
 */
 
 #include "ti_menu.h"
-#include "ti_web_shell.h"
+#include "ti_chrome_window.h"
 
 #include <string>
 #include <cstdlib>
@@ -47,7 +47,7 @@ TiMenu::TiMenu(HMENU parentMenu, std::string& label_)
 	AppendMenu(parentMenu, MF_STRING | MF_POPUP, (UINT_PTR) hMenu, (LPCTSTR) UTF8ToWide(label).c_str());
 
 	// redraw the menu bar
-	HWND hWnd = TiWebShell::getMainTiWebShell()->getWindow();
+	HWND hWnd = TiChromeWindow::getMainWindow()->getWindow();
 	DrawMenuBar(hWnd);
 	
 	bind();
@@ -134,7 +134,7 @@ bool TiMenu::invokeCallback(int menuItemUID)
 
 /*static*/
 LRESULT CALLBACK TiMenu::handleMenuClick(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
-	TiWebShell *tiWebShell = TiWebShell::fromWindow(hWnd);
+	TiChromeWindow *window = TiChromeWindow::fromWindow(hWnd);
 
 	if(message == WM_COMMAND)
 	{
@@ -157,6 +157,6 @@ void TiMenu::showSystemMenu ()
 		TrackPopupMenu(systemMenu->getMenu(), 
 			TPM_BOTTOMALIGN,
 			pt.x, pt.y, 0,
-			TiWebShell::getMainTiWebShell()->getWindow(), NULL);
+			TiChromeWindow::getMainWindow()->getWindow(), NULL);
 	}
 }

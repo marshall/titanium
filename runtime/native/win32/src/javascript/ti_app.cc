@@ -15,10 +15,10 @@
 */
  
 #include "ti_app.h"
-#include "ti_web_shell.h"
+#include "ti_chrome_window.h"
 
-TiApp::TiApp(TiWebShell *tiWebShell_)
-	: tiWebShell(tiWebShell_)
+TiApp::TiApp(TiChromeWindow *window_)
+	: window(window_)
 {
 	BindMethod("show", &TiApp::show);
 	BindMethod("hide", &TiApp::hide);
@@ -42,21 +42,21 @@ TiApp::~TiApp()
  
 void TiApp::hide (const CppArgumentList &args, CppVariant *result)
 {
-	std::vector<TiWebShell*>::iterator iter = TiWebShell::getOpenShells().begin();
-	for (; iter != TiWebShell::getOpenShells().end(); iter++) {
-		TiWebShell *openShell = (*iter);
+	std::vector<TiChromeWindow*>::iterator iter = TiChromeWindow::getOpenWindows().begin();
+	for (; iter != TiChromeWindow::getOpenWindows().end(); iter++) {
+		TiChromeWindow *openWindow = (*iter);
 		
-		openShell->showWindow(SW_HIDE);
+		openWindow->showWindow(SW_HIDE);
 	}
 }
  
 void TiApp::show (const CppArgumentList &args, CppVariant *result)
 {
-	std::vector<TiWebShell*>::iterator iter = TiWebShell::getOpenShells().begin();
-	for (; iter != TiWebShell::getOpenShells().end(); iter++) {
-		TiWebShell *openShell = (*iter);
+	std::vector<TiChromeWindow*>::iterator iter = TiChromeWindow::getOpenWindows().begin();
+	for (; iter != TiChromeWindow::getOpenWindows().end(); iter++) {
+		TiChromeWindow *openWindow = (*iter);
 		
-		openShell->showWindow(SW_SHOW);
+		openWindow->showWindow(SW_SHOW);
 	}
 }
 
@@ -68,7 +68,7 @@ void TiApp::debug (const CppArgumentList &args, CppVariant *result)
 
 void TiApp::getResourcePath(const CppArgumentList &args, CppVariant *result)
 {
-	std::wstring resourcePath = TiWebShell::getTiAppConfig()->getResourcePath();
+	std::wstring resourcePath = TiChromeWindow::getTiAppConfig()->getResourcePath();
 
 	result->Set(WideToUTF8(resourcePath));
 }
@@ -77,7 +77,7 @@ void TiApp::include(const CppArgumentList &args, CppVariant *result)
 {
 	if (args.size() > 0) {
 		std::string relativeName = args[0].ToString();
-		tiWebShell->include(relativeName);
+		window->include(relativeName);
 	}
 }
 

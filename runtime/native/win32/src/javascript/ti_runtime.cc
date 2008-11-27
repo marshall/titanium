@@ -14,7 +14,7 @@
 * limitations under the License.
 */
 #include "ti_runtime.h"
-#include "ti_web_shell.h"
+#include "ti_chrome_window.h"
 #include "ti_window_factory.h"
 #include "ti_menu_factory.h"
 #include "Resource.h"
@@ -22,12 +22,12 @@
 #include <string>
 #include <fstream>
 
-TiRuntime::TiRuntime(TiWebShell *tiWebShell)
+TiRuntime::TiRuntime(TiChromeWindow *window)
 {
-	this->tiWebShell = tiWebShell;
+	this->window = window;
 	
-	tiApp = new TiApp(tiWebShell);
-	tiWindowFactory = new TiWindowFactory(tiWebShell);
+	tiApp = new TiApp(window);
+	tiWindowFactory = new TiWindowFactory(window);
 	tiMenuFactory = new TiMenuFactory();
 
 	App.Set(tiApp->ToNPObject());

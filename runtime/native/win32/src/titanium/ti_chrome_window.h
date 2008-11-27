@@ -62,7 +62,7 @@
 class TiWebViewDelegate;
 class TiUserWindow;
 
-class TiWebShell
+class TiChromeWindow
 {
 private:
 	HINSTANCE hInstance;
@@ -76,16 +76,16 @@ private:
 	std::string currentURL;
 
 	static TiAppConfig *tiAppConfig;
-	static std::vector<TiWebShell*> openShells;
+	static std::vector<TiChromeWindow*> openWindows;
 	static TCHAR defaultWindowTitle[128];
 	static TCHAR windowClassName[128];
 
 	static void initWindowClass();
 	static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 public:
-	TiWebShell(TiWindowConfig *tiWindow);
-	TiWebShell(const char *url);
-	~TiWebShell(void);
+	TiChromeWindow(TiWindowConfig *config);
+	TiChromeWindow(const char *url);
+	~TiChromeWindow(void);
 
 	void reloadTiWindowConfig();
 	void setTiWindowConfig(TiWindowConfig *tiWindowConfig);
@@ -112,9 +112,10 @@ public:
 
 	void close();
 
-	static std::vector<TiWebShell *>& getOpenShells() { return openShells; }
+	static std::vector<TiChromeWindow *>& getOpenWindows() { return openWindows; }
 	static void setTiAppConfig(TiAppConfig* tiAppConfig_) { tiAppConfig = tiAppConfig_; }
 	static TiAppConfig* getTiAppConfig() { return tiAppConfig; }
-	static TiWebShell* fromWindow(HWND hWnd);
-	static TiWebShell* getMainTiWebShell();
+	static TiChromeWindow* fromWindow(HWND hWnd);
+	static TiChromeWindow* getMainWindow();
+	static TiChromeWindow* getWindow(const char *id);
 };

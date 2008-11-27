@@ -19,13 +19,13 @@
 #include "js_class.h"
 #include "webkit/glue/webview.h"
  
-class TiWebShell;
+class TiChromeWindow;
  
 class TiApp : public JsClass
 {
-	TiWebShell *tiWebShell;
+	TiChromeWindow *window;
 public:
-	TiApp(TiWebShell *tiWebShell);
+	TiApp(TiChromeWindow *window);
 	~TiApp(void);
 
 	void debug (const CppArgumentList &args, CppVariant *result);

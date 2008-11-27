@@ -402,6 +402,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\titanium\ti_chrome_window.cc"
+				>
+			</File>
+			<File
+				RelativePath=".\titanium\ti_chrome_window.h"
+				>
+			</File>
+			<File
 				RelativePath=".\titanium\ti_shell.h"
 				>
 			</File>
@@ -423,14 +431,6 @@
 			</File>
 			<File
 				RelativePath=".\titanium\ti_utils.h"
-				>
-			</File>
-			<File
-				RelativePath=".\titanium\ti_web_shell.cc"
-				>
-			</File>
-			<File
-				RelativePath=".\titanium\ti_web_shell.h"
 				>
 			</File>
 			<File

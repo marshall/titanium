@@ -20,21 +20,21 @@
 #include "js_class.h"
 #include "webkit/glue/webview.h"
 
-#include "ti_web_shell.h"
+#include "ti_chrome_window.h"
 #include "ti_window_config.h"
 
 class TiUserWindow : public JsClass
 {
 private:
-	TiWebShell *tiWebShell;
-	TiWindowConfig *tiWindow;
+	TiChromeWindow *window;
+	TiWindowConfig *config;
 
 	void updateWindow();
 	void bind();
 
 public:
 	TiUserWindow();
-	TiUserWindow(TiWebShell *tiWebShell);
+	TiUserWindow(TiChromeWindow *window);
 
 	void hide(const CppArgumentList &args, CppVariant *result);
 	void show(const CppArgumentList &args, CppVariant *result);
