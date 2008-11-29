@@ -1,2 +1,0 @@
-http://glint-ui.googlecode.com/sv/trunk
-revision 53

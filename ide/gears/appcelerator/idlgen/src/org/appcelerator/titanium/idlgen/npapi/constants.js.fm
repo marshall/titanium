@@ -1,3 +1,0 @@
-<#list interface.constants as constant>
-var ${constant.name} = ${constant.value};
-</#list>

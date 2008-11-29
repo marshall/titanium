@@ -1,6 +1,0 @@
-Additions/changes:
-  The operator*() function for linked_ptr creates a warning in GCC in an opt
-  build. An assert is eliminated and therefore the a variable is not used
-  anymore. A conditional compilation was used get around this issue for opt
-  builds. See line 136 of linked_ptr.h.
-

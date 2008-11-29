@@ -1,4 +1,0 @@
-The static_files directory contains a simple autoupdater for Firefox written in
-JavaScript. The updater.js code is all mashed together without newlines because
-that was convenient and we didn't have a lot of time. But it should be rewritten
-to be legible and to not rely on bootstrap.js.

@@ -1,5 +1,0 @@
-<string id="IDS_VERSION_COLLISION_TITLE">Veuillez redémarrer votre navigateur</string>
-<string id="IDS_VERSION_COLLISION_TEXT">Une mise à jour de Appcelerator Titanium a été téléchargée.\n\nVeuillez fermer toutes les fenêtres de navigation pour terminer le processus de mise à niveau.\n</string>
-<string id="IDS_REGISTRY_MENU_TEXT">Paramètres de Google &Gears</string>
-<string id="IDS_REGISTRY_MENU_STATUS_BAR">"Gérer les sites pouvant accéder à Appcelerator Titanium."</string>
-

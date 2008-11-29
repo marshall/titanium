@@ -1,3 +1,0 @@
-﻿
-/* Tooltip for disabled Growl checkbox when Growl isn't installed */
-"GrowlNotInstalled" = "Growl is not installed, to install go to http://growl.info";

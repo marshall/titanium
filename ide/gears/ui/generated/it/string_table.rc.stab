@@ -1,5 +1,0 @@
-<string id="IDS_VERSION_COLLISION_TITLE">Riavvia il tuo browser</string>
-<string id="IDS_VERSION_COLLISION_TEXT">È stato scaricato un aggiornamento di Appcelerator Titanium.\n\nChiudi tutte le finestre del browser per completare il processo di aggiornamento.\n</string>
-<string id="IDS_REGISTRY_MENU_TEXT">&Impostazioni di Appcelerator Titanium</string>
-<string id="IDS_REGISTRY_MENU_STATUS_BAR">"Stabilisci i siti che possono accedere a Appcelerator Titanium".</string>
-
