@@ -2,9 +2,17 @@
 +                                Appcelerator Titanium                                  +
 +=======================================================================================+
 
+For details on Titanium, please see <http://titaniumapp.com>.
+
+
 ---------------------
  Build Prerequisites
 ---------------------
+
+To build Titanium from source, you will need the following prerequisites:
+
+  - Ruby 1.8.6 or greater <http://www.ruby-lang.org/en/downloads/>
+  - RubyGems with the following gems: rake, rubyzip
 
 To build Titanium, you will need to first checkout the Appcelerator SDK
 from <http://github.com/jhaynie/appcelerator_sdk/tree/master>.
@@ -15,6 +23,52 @@ To build Titanium, you will need to checkout a special fork of the Google Gears 
 from <http://github.com/marshall/gears-titanium/tree/master>. This should be checked 
 into the root of the titanium folder using the directory name 'gears-titanium' or into 
 another folder with a symlink with this name in the titanium folder.
+
+
+--------------------
+ General Build Info
+--------------------
+
+The Titanium build will create Appcelerator compatible distribution files which are
+released (or installed) by the Appcelerator CLI.  The distribution files will be built
+into the $APPC/stage directory.  Each file will start with titanium-.  For example, the
+0.1.0 version of Titanium is named titanium-osx-0.1.0.zip.  
+
+Once built, this file can be locally installed for testing by using the following 
+command to install in a command prompt:
+
+	> app install:titanium <file>
+
+For example:
+
+	> app install:titanium $APPC/stage/titanium-osx-0.1.0.zip
+
+* NOTE: You will need to have first installed either the Titanium SDK or the Appcelerator
+SDK before attempting to install.  Make sure that you have the appcelerator CLI binary
+on your path (should be automatically placed on your path during installation).
+
+You will need to install both a titanium-project and titanium-<os> distribution to 
+create and bundle titanium projects. (See below for Titanium project instructions).
+
+Once you have both installed, you can run the following command to create a titanium
+project:
+
+	> app create:project . test titanium
+
+The period (.) is the path to create the project.  The 3rd argument (test) is the name 
+of the project to create.  Set this to the name of your application.
+
+If everything worked, you should get a number of files in the directory named test.
+
+To test bundling, run the following command (replace with your OS) in your project
+directory:
+
+	> app package:project osx
+
+If everything worked, you should have a directory named stage in your project directory
+and inside that directory, you should have a folder with your distribution files.
+For OSX, the folder will be named test.app (or test will be replaced with whatever you
+named your project).
 
 
 -----------------
@@ -35,6 +89,11 @@ chromium by following instructions (to precise detail) at
 
 In the future, we will support building Titanium with a binary release of chromium.
 
+To build the Win32 distribution, type the following in a command prompt:
+
+	> rake titanium:runtime:win32
+
+
 OSX
 ----
 
@@ -43,10 +102,31 @@ You will need XCode 3.0+ to build Titanium and it must be built on Leopard.
 If you have xcode installed, you should be able to build Titanium with no additional
 dependencies.
 
+To build the OSX distribution, type the following in a command prompt:
+
+	> rake titanium:runtime:osx
+
 Linux
 ------
 
-Coming soon.
+More details coming soon....
+
+To build the Linux distribution, type the following in a command prompt:
+
+	> rake titanium:runtime:linux
+
+
+-----------------
+ Project Support
+-----------------
+
+Titanium has an additional distribution that is required to be built and distributed.
+This file is used by the Appcelerator CLI to create Titanium projects or to add
+Titanium support to existing Appcelerator projects.  To build this distribution file,
+type the following in a command prompt:
+
+	> rake titanium:project
+
 
 --------------------
  Getting Assistance
@@ -54,17 +134,33 @@ Coming soon.
 
 For more details on Titanium, please see the website at <http://titaniumapp.com>
 
+We invite you to visit us on IRC at #titanium_app on irc.freenode.net.
+
 If you need more assistance, please go to the Appcelerator Developer Community
 at <http://community.appcelerator.org>.
 
 To report a bug or make a feature request, please visit our Issue Tracking portal
 at <http://jira.appcelerator.org>.
 
-If you are interested in becoming a community developer and contributing to
-Appcelerator, please contact us at <info@appcelerator.org>.
-
-
 -- The Appcelerator Team
+
+--------- 
+ Credits
+---------
+
+Titanium was made possible by a number of awesome contributors:
+
+- Marshall Culpepper, Project Lead
+- Tyrus Smalley, Creative Genius 
+- Jorge Servin, Win32
+- Jeff Haynie, OSX
+- Todd Ditchendorf, OSX
+- Martin Robinson, Linux
+- Nolan Wright, Apps + Testing
+- Paolo Fragomeni, Apps + Testing
+
+If you are interested in becoming a community developer and contributing to
+Titanium, please contact us at <info@appcelerator.org>.
 
 
 -------------
