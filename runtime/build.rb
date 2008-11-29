@@ -108,8 +108,8 @@ END
     end
 
     command = "java -jar \"#{jar_path}\" --type js --charset utf8 \"#{tmpfile_path}\" -o \"#{tmpfile_path}t\""
-
     puts command
+
     if is_cygwin?
     	system "cmd /C #{command}"
     else
@@ -188,10 +188,13 @@ end
 desc 'build titanium win32 runtime'
 task :win32 do
   package_pieces :win32 do |zipfile,config|
-    #TODO: package the rest of the stuff that needs to go into the package
+    FileUtils.cd(File.join(TITANIUM_DIR,'runtime','native','win32')) do
+      system 'rake'
+      #TODO: add win32 files to zip here in pieces/win32 dir
+    end
     gears_dir = build_gears
     gears_plugin = File.join(gears_dir, 'bin-opt', 'win32-i386', 'npapi', 'gears_titanium.dll')
-  	zipfile.add('pieces/gears.dll', gears_plugin)
+  	zipfile.add('pieces/gears/gears_titanium.dll', gears_plugin)
   end
 end
 
