@@ -15,8 +15,11 @@
 
 # merge titanium config into the mainline config for SDK
 TITANIUM_CONFIG = YAML::load_file(File.join(TITANIUM_DIR,'config.yml'))
-TITANIUM_CONFIG[:releases] = build_config(TITANIUM_CONFIG)
+TITANIUM_TRANSPORT = S3Transport.new(DISTRO_BUCKET, TITANIUM_CONFIG)
+TITANIUM_MANIFEST = TITANIUM_TRANSPORT.manifest
+TITANIUM_CONFIG[:releases] = build_config(TITANIUM_CONFIG,TITANIUM_MANIFEST)
 merge_config(TITANIUM_CONFIG)
+
 
 namespace :titanium do
 

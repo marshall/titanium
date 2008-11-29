@@ -79,8 +79,8 @@
 
 - (void)loadURL:(NSURL *)URL
 {
-	url = [URL copy];
 	[url release];
+	url = [URL copy];
 	TRACE(@"TiDocument::loadURL=>%@, webview=%x",[URL absoluteString],webView);
     [[webView mainFrame] loadRequest:[NSURLRequest requestWithURL:URL]];
 }

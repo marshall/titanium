@@ -1,8 +1,8 @@
 module Titanium
-  class OSX
+  class LINUX
     class Launcher
       def Launcher.launch(project,dir)
-        #TODO
+        $stderr.puts "Linux launcher not yet available"
       end
     end
   end

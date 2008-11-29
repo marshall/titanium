@@ -1,5 +1,5 @@
 module Titanium
-  class OSX
+  class WIN32
     class Launcher
       def Launcher.launch(project,dir)
         #TODO
