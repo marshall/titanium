@@ -19,37 +19,45 @@ module Titanium
       def Packager.package(project,dest_dir,version)
         pieces_dir = File.join(File.expand_path(File.dirname(__FILE__)),'pieces')
         executable = project.name
-        copy_executable = File.join(pieces_dir,'titanium.exe')
-        
         app_folder = File.join(dest_dir,"#{project.name}.win32")
-        FileUtils.mkdir_p app_folder unless File.exists? app_folder
+        resources_folder = File.join(app_folder,'Resources')
+        titanium_folder = File.join(app_folder,'titanium')
+        
+        FileUtils.mkdir_p [app_folder, resources_folder, titanium_folder]
         
         # copy all the win32 support files
         Dir["#{pieces_dir}/win32/*"].each do |file|
           next unless File.file? file
           name = file.to_s.gsub "#{pieces_dir}/", ''
-          FileUtils.cp_r file, File.join(app_folder,name)
+          FileUtils.cp_r file, File.join(app_folder, name)
         end
         
         # copy the titanium js files
         Dir["#{pieces_dir}/titanium/*"].each do |file|
           next unless File.file? file
           name = file.to_s.gsub "#{pieces_dir}/titanium/", ''
-          FileUtils.cp_r file, File.join(app_folder,'titanum',name)
+          FileUtils.cp_r file, File.join(titanium_folder, name)
         end
 
         # copy the gears files
         Dir["#{pieces_dir}/gears/*"].each do |file|
           next unless File.file? file
           name = file.to_s.gsub "#{pieces_dir}/gears/", ''
-          FileUtils.cp_r file, File.join(app_folder,name)
+          FileUtils.cp_r file, File.join(app_folder, name)
         end
       
         # copy all the public files
         Dir["public/**/*"].each do |file|
           next unless File.file? file
           name = file.to_s.gsub 'public/',''
-          FileUtils.cp_r file, File.join(app_folder,name)
+          FileUtils.cp_r file, File.join(resources_folder, name)
+        end
+
+        # copy over tiapp.xml
+        FileUtils.cp File.join('config','tiapp.xml'), resources_folder
+        
+        if is_cygwin?
+          FileUtils.chmod 0755, File.join(app_folder, 'titanium.exe')
         end
         
       end

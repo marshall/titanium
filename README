@@ -1,12 +1,78 @@
-======================
-Appcelerator Titanium
-======================
++=======================================================================================+
++                                Appcelerator Titanium                                  +
++=======================================================================================+
+
+---------------------
+ Build Prerequisites
+---------------------
+
+To build Titanium, you will need to first checkout the Appcelerator SDK
+from <http://github.com/jhaynie/appcelerator_sdk/tree/master>.
+
+After checkout, set the environment variable 'APPC_SDK' to the root of the SDK directory.
+
+To build Titanium, you will need to checkout a special fork of the Google Gears branch 
+from <http://github.com/marshall/gears-titanium/tree/master>. This should be checked 
+into the root of the titanium folder using the directory name 'gears-titanium' or into 
+another folder with a symlink with this name in the titanium folder.
 
 
-More details coming soon.
+-----------------
+ Platform Builds
+-----------------
 
-http://titaniumapp.com
+Titanium requires platform-specific builds.  Currently, Titanium builds on Win32 and
+Mac OSX.  Linux build is in progress.
+
+Win32
+------
+
+You will need Microsoft Visual Studio 2005 + Service Packs to build Titanium.  This
+requirement is for building Chromium.  It *will not* work with any other compiler
+version, sorry.  Please first follow setting up your environment to build
+chromium by following instructions (to precise detail) at
+<http://dev.chromium.org/developers/how-tos/build-instructions-windows> 
+
+In the future, we will support building Titanium with a binary release of chromium.
+
+OSX
+----
+
+You will need XCode 3.0+ to build Titanium and it must be built on Leopard.
+
+If you have xcode installed, you should be able to build Titanium with no additional
+dependencies.
+
+Linux
+------
+
+Coming soon.
+
+--------------------
+ Getting Assistance
+--------------------
+
+For more details on Titanium, please see the website at <http://titaniumapp.com>
+
+If you need more assistance, please go to the Appcelerator Developer Community
+at <http://community.appcelerator.org>.
+
+To report a bug or make a feature request, please visit our Issue Tracking portal
+at <http://jira.appcelerator.org>.
+
+If you are interested in becoming a community developer and contributing to
+Appcelerator, please contact us at <info@appcelerator.org>.
 
 
+-- The Appcelerator Team
 
+
+-------------
+ Legal Stuff
+-------------
+
+Copyright (C) 2008 by Appcelerator, Inc. All Rights Reserved.
+For more information, please visit <http://license.appcelerator.org>.
+
+Please see the file named COPYING for the full license.
 
