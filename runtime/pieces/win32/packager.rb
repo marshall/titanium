@@ -36,21 +36,30 @@ module Titanium
         Dir["#{pieces_dir}/titanium/*"].each do |file|
           next unless File.file? file
           name = file.to_s.gsub "#{pieces_dir}/titanium/", ''
-          FileUtils.cp_r file, File.join(titanium_folder, name)
+          target = File.join(titanium_folder,name)
+          dir = File.dirname(target)
+          FileUtils.mkdir_p dir unless File.exists? dir
+          FileUtils.cp_r file, target
         end
 
         # copy the gears files
         Dir["#{pieces_dir}/gears/*"].each do |file|
           next unless File.file? file
           name = file.to_s.gsub "#{pieces_dir}/gears/", ''
-          FileUtils.cp_r file, File.join(app_folder, name)
+          target = File.join(app_folder,name)
+          dir = File.dirname(target)
+          FileUtils.mkdir_p dir unless File.exists? dir
+          FileUtils.cp_r file, target
         end
       
         # copy all the public files
         Dir["public/**/*"].each do |file|
           next unless File.file? file
           name = file.to_s.gsub 'public/',''
-          FileUtils.cp_r file, File.join(resources_folder, name)
+          target = File.join(resources_folder,name)
+          dir = File.dirname(target)
+          FileUtils.mkdir_p dir unless File.exists? dir
+          FileUtils.cp_r file, target
         end
 
         # copy over tiapp.xml

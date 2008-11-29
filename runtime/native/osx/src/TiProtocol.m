@@ -39,13 +39,10 @@
 	}
 }
 
-+ (BOOL)canInitWithRequest:(NSURLRequest *)theRequest {
-	
-    /* get the scheme from the URL */
++ (BOOL)canInitWithRequest:(NSURLRequest *)theRequest 
+{
 	NSString *theScheme = [[theRequest URL] scheme];
-	
-    /* return true if it matches the scheme we're using for our protocol. */
-	return ([theScheme caseInsensitiveCompare: [TiProtocol specialProtocolScheme]] == NSOrderedSame );
+	return [theScheme isEqual:@"ti"];
 }
 
 
@@ -78,7 +75,20 @@ typedef struct {
     NSURLRequest *request = [self request];
 	
 	NSURL *url = [request URL];
-	NSString *s = [[url absoluteString] substringFromIndex:[[TiProtocol specialProtocolScheme] length]+3];
+	NSString *ts = [url absoluteString];
+	NSString *s = nil;
+	if ([ts hasPrefix:@"ti://"])
+	{
+		s=[ts substringFromIndex:[[TiProtocol specialProtocolScheme] length]+3];	
+	}
+	else if ([ts hasPrefix:@"ti:/"])
+	{
+		s=[ts substringFromIndex:[[TiProtocol specialProtocolScheme] length]+2];	
+	}
+	else if ([ts hasPrefix:@"ti:"])
+	{
+		s=[ts substringFromIndex:[[TiProtocol specialProtocolScheme] length]+1];	
+	}
 	NSString *basePath = [[NSBundle mainBundle] resourcePath];
 	basePath = [basePath stringByAppendingPathComponent:@"titanium"];
 	NSString *resourcePath = nil;

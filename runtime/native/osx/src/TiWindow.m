@@ -42,7 +42,7 @@
 	// our tiapp.xml decides the initial size of the window not the nib
 	NSRect r = NSMakeRect(contentRect.origin.x, contentRect.origin.y, [config getWidth], [config getHeight]);
 	
-	self = [super initWithContentRect:r styleMask:mask backing:bufferingType defer:flag];
+	self = [super initWithContentRect:r styleMask:mask backing:bufferingType defer:NO];
 	if (self != nil) 
 	{
 		[config assign:self];
@@ -58,9 +58,6 @@
 		[self setMovableByWindowBackground:YES];
 		
 		[self center];
-		
-		// miniaturize during the load process, will automatically activate when ready
-		[self miniaturize:self];
 	}
 	return self;
 }

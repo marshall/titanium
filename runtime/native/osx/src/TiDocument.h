@@ -27,9 +27,11 @@
     IBOutlet WebView *webView;
     NSURL *url;
 	TiObject *ti;
+	TiDocument *closer;
 }
 - (id)webView;
 - (TiWindow*)window;
 - (void)loadURL:(NSURL *)URL;
+- (void)setPrecedent:(TiDocument*)doc;
 
 @end

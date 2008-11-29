@@ -60,7 +60,10 @@ module Titanium
         Dir["public/**/*"].each do |file|
           next unless File.file? file
           name = file.to_s.gsub 'public/',''
-          FileUtils.cp_r file, "#{resources_folder}/#{name}"
+          target = File.join(resources_folder,name)
+          dir = File.dirname(target)
+          FileUtils.mkdir_p dir unless File.exists? dir
+          FileUtils.cp_r file, target
         end
 
       end

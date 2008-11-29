@@ -21,8 +21,7 @@
 #import "TiController.h"
 #import "TiWindowConfig.h"
 #import "TiWindow.h"
-//#import "WebViewPrivate.h"
-//#import "WebViewInternal.h"
+#import "WebViewPrivate.h"
 
 @interface NSApplication (DeclarationStolenFromAppKit)
 - (void)_cycleWindowsReversed:(BOOL)reversed;
@@ -42,6 +41,7 @@
 - (void)dealloc
 {
 	TRACE(@"TiDocument::dealloc =%x",self);
+	[self closePrecedent];
     [webView close];
     [url release];
     [super dealloc];
@@ -111,6 +111,7 @@
 	[webView setPreferences:webPrefs];
 	
 	[webPrefs release];
+	TRACE(@"TiDocument::setupWebPreferences exit %x",self);
 }
 
 - (void)show
@@ -159,7 +160,6 @@
 {
 	TRACE(@"TiDocument::windowControllerDidLoadNib %x",self);
 	
-    [super windowControllerDidLoadNib:aController];
 
     // Set the WebView delegates
     [webView setFrameLoadDelegate:self];
@@ -170,6 +170,7 @@
 	// customize webview
 	[self customizeWebView];
 	[self customizeUserAgent];
+    [super windowControllerDidLoadNib:aController];
 }
 
 - (void)close
@@ -202,6 +203,24 @@
     return url;
 }
 
+- (void)setPrecedent:(TiDocument*)doc
+{
+	closer = doc;
+	[closer retain];
+	[[closer window] orderOut:nil];
+}
+
+- (void)closePrecedent
+{
+	if (closer)
+	{
+		TRACE(@"Closing precedent doc = %x", closer);
+		[closer close];
+		[closer release];
+		closer=nil;
+	}
+}
+
 #pragma mark -
 #pragma mark WebPolicyDelegate
 
@@ -220,6 +239,9 @@
 		case WebNavigationTypeLinkClicked:
 		case WebNavigationTypeFormSubmitted:
 		case WebNavigationTypeFormResubmitted:
+		{
+			break;
+		}
 		case WebNavigationTypeOther:
 		{
 			break;
@@ -232,14 +254,25 @@
 	}
 		
 	NSString *protocol = [[actionInformation objectForKey:WebActionOriginalURLKey] scheme]; 
+	NSURL *newURL = [request URL];
+	if ([newURL isEqual:url])
+	{
+		[listener use];
+		return ;
+	}
 	if ([protocol compare:@"app"]==0)
 	{
+//		TiDocument *doc = [[TiController instance] createDocument:newURL];
+//		[doc setPrecedent:self];
+//		[doc retain];
+//		[listener ignore];
 		[listener use];
 	}
 	else if ([protocol compare:@"http"]==0)
 	{
-		[listener ignore];
-		[[NSWorkspace sharedWorkspace] openURL:[request URL]];
+		[listener use];
+		//[listener ignore];
+		//[[NSWorkspace sharedWorkspace] openURL:newURL];
 	}
 	else
 	{
@@ -275,6 +308,7 @@
     if (frame == [sender mainFrame]) 
 	{
 		TRACE(@"TiDocument::didFinishLoadForFrame: %x",self);
+		[self closePrecedent];
     }
 }
 

@@ -36,13 +36,10 @@
 	}
 }
 
-+ (BOOL)canInitWithRequest:(NSURLRequest *)theRequest {
-	
-    /* get the scheme from the URL */
++ (BOOL)canInitWithRequest:(NSURLRequest *)theRequest 
+{
 	NSString *theScheme = [[theRequest URL] scheme];
-	
-    /* return true if it matches the scheme we're using for our protocol. */
-	return ([theScheme caseInsensitiveCompare: [AppProtocol specialProtocolScheme]] == NSOrderedSame );
+	return [theScheme isEqual:@"app"];
 }
 
 
@@ -99,9 +96,25 @@
     NSURLRequest *request = [self request];
 	
 	NSURL *url = [request URL];
-	NSString *s = [[url absoluteString] substringFromIndex:[[AppProtocol specialProtocolScheme] length]+3];	
+	TRACE(@"AppProtocol::startLoading: %@",url);
+	NSString *s = nil;
+	NSString *ts = [url absoluteString];
+	if ([ts hasPrefix:@"app://"])
+	{
+		s=[ts substringFromIndex:[[AppProtocol specialProtocolScheme] length]+3];	
+	}
+	else if ([ts hasPrefix:@"app:/"])
+	{
+		s=[ts substringFromIndex:[[AppProtocol specialProtocolScheme] length]+2];	
+	}
+	else if ([ts hasPrefix:@"app:"])
+	{
+		s=[ts substringFromIndex:[[AppProtocol specialProtocolScheme] length]+1];	
+	}
 	NSString *basePath = [[NSBundle mainBundle] resourcePath];
 	NSString *resourcePath = [basePath stringByAppendingPathComponent:s];
+	
+	NSLog(@"trying to load from: %@, base: %@",resourcePath,basePath);
 	
 	TiAppArguments *args = (TiAppArguments *)[[TiController instance] arguments];
 	
@@ -127,6 +140,8 @@
 	NSString *ext = [resourcePath pathExtension];
 	NSString *mime = [AppProtocol mimeTypeFromExtension:ext];
 	
+	NSLog(@"loaded mime=%@, ext=%@",mime,ext);
+	
 	NSURLResponse *response = [[NSURLResponse alloc] initWithURL:url MIMEType:mime expectedContentLength:-1 textEncodingName:@"utf-8"];
 	[client URLProtocol:self didReceiveResponse:response cacheStoragePolicy:NSURLCacheStorageAllowed];
 	[client URLProtocol:self didLoadData:data];
@@ -134,8 +149,9 @@
 	[response release];
 }
 
-- (void)stopLoading {
-	
+- (void)stopLoading 
+{
+	TRACE(@"AppProtocol::stopLoading");
 }
 
 @end

@@ -22,9 +22,11 @@
 @class TiWindowConfig;
 
 @interface TiWindow : NSWindow {
+    IBOutlet NSView *initialFirstResponder;
 	TiWindowConfig* config;
 }
 
 - (TiWindowConfig*) config;
+- (id)initWithContentRect:(NSRect)contentRect styleMask:(NSUInteger)inmask backing:(NSBackingStoreType)bufferingType defer:(BOOL)flag; 
 
 @end

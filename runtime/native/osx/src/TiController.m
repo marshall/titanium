@@ -199,15 +199,6 @@ static CGFloat toFloat (NSString* value, CGFloat def)
 	[pendingConfig retain];
 }
 
-//+ (TiWindowConfig*) pendingConfig
-//{
-//	TiController *i = [TiController instance];
-//	TiWindowConfig *config = [[i pendingConfig] autorelease];
-//	[config retain];
-//	[i resetPendingConfig];
-//	return config;
-//}
-
 - (void)setupDefaults 
 {
 	NSString *path = [[NSBundle mainBundle] pathForResource:@"DefaultValues" ofType:@"plist"];
