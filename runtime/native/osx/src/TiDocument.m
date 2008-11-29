@@ -24,8 +24,6 @@
 #import "WebViewPrivate.h"
 #import "WebViewInternal.h"
 
-@class WebPluginDatabase;
-
 @interface NSApplication (DeclarationStolenFromAppKit)
 - (void)_cycleWindowsReversed:(BOOL)reversed;
 @end
@@ -218,6 +216,7 @@
 {
     // Only report feedback for the main frame.
     if (frame == [sender mainFrame]) {
+		[[self window] setTitle:title];
     }
 }
 
