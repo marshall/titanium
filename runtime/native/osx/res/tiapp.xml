@@ -15,9 +15,10 @@
 		<minimizable>true</minimizable>
 		<closeable>true</closeable>
 		<resizable>true</resizable>
-		<chrome scrollbars="false">true</chrome>
+		<chrome scrollbars="false">false</chrome>
 		<transparency>1.0</transparency>
 	</window>
+<!--
 	<window>
 		<id>secondary</id>
 		<width>200</width>
@@ -35,4 +36,5 @@
 		<chrome scrollbars="true">false</chrome>
 		<transparency>1.0</transparency>
 	</window>
+-->
 </ti:app>

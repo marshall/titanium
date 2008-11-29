@@ -13,6 +13,7 @@
 		2427BA940EDA478E007098CC /* TiWindowConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 2427BA930EDA478E007098CC /* TiWindowConfig.m */; };
 		2427BAF70EDA4C96007098CC /* tiapp.xml in Resources */ = {isa = PBXBuildFile; fileRef = 2427BAF60EDA4C96007098CC /* tiapp.xml */; };
 		246748240EDD2D6A00CE52E9 /* TiBounds.m in Sources */ = {isa = PBXBuildFile; fileRef = 246748230EDD2D6A00CE52E9 /* TiBounds.m */; };
+		24674AE60EE1D6C400CE52E9 /* test.html in Resources */ = {isa = PBXBuildFile; fileRef = 24674AE50EE1D6C400CE52E9 /* test.html */; };
 		2491AC8B0EDA375100B1ECDB /* TiController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2491AC880EDA375100B1ECDB /* TiController.m */; };
 		2491AC8C0EDA375100B1ECDB /* TiDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 2491AC8A0EDA375100B1ECDB /* TiDocument.m */; };
 		2491AC8E0EDA375E00B1ECDB /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 2491AC8D0EDA375E00B1ECDB /* main.m */; };
@@ -68,6 +69,7 @@
 		2427BC720EDA6DCC007098CC /* Ti.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Ti.h; path = src/Ti.h; sourceTree = "<group>"; };
 		246748220EDD2D6A00CE52E9 /* TiBounds.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TiBounds.h; path = src/TiBounds.h; sourceTree = "<group>"; };
 		246748230EDD2D6A00CE52E9 /* TiBounds.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TiBounds.m; path = src/TiBounds.m; sourceTree = "<group>"; };
+		24674AE50EE1D6C400CE52E9 /* test.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = test.html; path = res/test.html; sourceTree = "<group>"; };
 		2491AC870EDA375100B1ECDB /* TiController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TiController.h; path = src/TiController.h; sourceTree = "<group>"; };
 		2491AC880EDA375100B1ECDB /* TiController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TiController.m; path = src/TiController.m; sourceTree = "<group>"; };
 		2491AC890EDA375100B1ECDB /* TiDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TiDocument.h; path = src/TiDocument.h; sourceTree = "<group>"; };
@@ -245,6 +247,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				24674AE50EE1D6C400CE52E9 /* test.html */,
 				249708AE0EDCD8BC0024252C /* DefaultValues.plist */,
 				2427BAF60EDA4C96007098CC /* tiapp.xml */,
 				2491AC930EDA377E00B1ECDB /* InfoPlist.strings */,
@@ -324,6 +327,7 @@
 				2427BAF70EDA4C96007098CC /* tiapp.xml in Resources */,
 				249704230EDAA2950024252C /* index.html in Resources */,
 				249708AF0EDCD8BC0024252C /* DefaultValues.plist in Resources */,
+				24674AE60EE1D6C400CE52E9 /* test.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

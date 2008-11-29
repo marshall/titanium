@@ -21,8 +21,8 @@
 #import "TiController.h"
 #import "TiWindowConfig.h"
 #import "TiWindow.h"
-#import "WebViewPrivate.h"
-#import "WebViewInternal.h"
+//#import "WebViewPrivate.h"
+//#import "WebViewInternal.h"
 
 @interface NSApplication (DeclarationStolenFromAppKit)
 - (void)_cycleWindowsReversed:(BOOL)reversed;
@@ -165,6 +165,7 @@
     [webView setFrameLoadDelegate:self];
     [webView setUIDelegate:self];
     [webView setResourceLoadDelegate:self];
+	[webView setPolicyDelegate:self];
 	
 	// customize webview
 	[self customizeWebView];
@@ -201,6 +202,52 @@
     return url;
 }
 
+#pragma mark -
+#pragma mark WebPolicyDelegate
+
+- (void)webView:(WebView *)sender decidePolicyForNavigationAction:(NSDictionary*) actionInformation request:(NSURLRequest*) request frame:(WebFrame*)frame decisionListener:(id <WebPolicyDecisionListener>)listener
+{
+	int type = [[actionInformation objectForKey:WebActionNavigationTypeKey] intValue];
+	
+	switch (type)
+	{
+		case WebNavigationTypeBackForward:
+		case WebNavigationTypeReload:
+		{
+			[listener ignore];
+			return;
+		}
+		case WebNavigationTypeLinkClicked:
+		case WebNavigationTypeFormSubmitted:
+		case WebNavigationTypeFormResubmitted:
+		case WebNavigationTypeOther:
+		{
+			break;
+		}
+		default:
+		{
+			[listener ignore];
+			return;
+		}
+	}
+		
+	NSString *protocol = [[actionInformation objectForKey:WebActionOriginalURLKey] scheme]; 
+	if ([protocol compare:@"app"]==0)
+	{
+		[listener use];
+	}
+	else if ([protocol compare:@"http"]==0)
+	{
+		[listener ignore];
+		[[NSWorkspace sharedWorkspace] openURL:[request URL]];
+	}
+	else
+	{
+		TRACE(@"Application attempted to navigate to illegal location: %@", [[actionInformation objectForKey:WebActionOriginalURLKey] URL]);
+		[listener ignore];
+	}
+}
+
 // WebFrameLoadDelegate Methods
 #pragma mark -
 #pragma mark WebFrameLoadDelegate
@@ -208,14 +255,16 @@
 - (void)webView:(WebView *)sender didStartProvisionalLoadForFrame:(WebFrame *)frame
 {
     // Only report feedback for the main frame.
-    if (frame == [sender mainFrame]) {
+    if (frame == [sender mainFrame]) 
+	{
     }
 }
 
 - (void)webView:(WebView *)sender didReceiveTitle:(NSString *)title forFrame:(WebFrame *)frame
 {
     // Only report feedback for the main frame.
-    if (frame == [sender mainFrame]) {
+    if (frame == [sender mainFrame]) 
+	{
 		[[self window] setTitle:title];
     }
 }

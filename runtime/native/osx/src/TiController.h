@@ -38,9 +38,10 @@
 - (NSString*)appName;
 - (TiAppArguments*)arguments;
 - (TiDocument*) createDocument:(NSURL*)url;
+- (TiWindowConfig*) pendingConfig;
+- (void) resetPendingConfig;
 
 + (void)error:(NSString*)message;
-+ (TiWindowConfig*) pendingConfig;
 + (TiController*) instance;
 + (TiDocument*) getDocument:(TiWindow*)window;
 + (WebView*) getWebView:(TiWindow*)window;

@@ -29,12 +29,15 @@
 	[super dealloc];
 }
 
-- (id)initWithContentRect:(NSRect)contentRect styleMask:(NSUInteger)mask backing:(NSBackingStoreType)bufferingType defer:(BOOL)flag 
+- (id)initWithContentRect:(NSRect)contentRect styleMask:(NSUInteger)inmask backing:(NSBackingStoreType)bufferingType defer:(BOOL)flag 
 {
 	TRACE(@"TiWindow::initWithContentRect=%x",self);
 
-	config = [TiController pendingConfig]; // don't retain, just assign
-	mask = [config toWindowMask];
+	config = [[TiController instance] pendingConfig]; 
+	[config retain];
+	[[TiController instance] resetPendingConfig];
+
+	NSUInteger mask = [config toWindowMask];
 
 	// our tiapp.xml decides the initial size of the window not the nib
 	NSRect r = NSMakeRect(contentRect.origin.x, contentRect.origin.y, [config getWidth], [config getHeight]);

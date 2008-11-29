@@ -282,30 +282,30 @@
 - (NSUInteger) toWindowMask
 {
 	NSUInteger mask = 0;
-	if ([self isResizable])
+	if (chrome)
 	{
-		mask |= NSResizableWindowMask;
-	}
-	if ([self isCloseable])
-	{
-		mask |= NSClosableWindowMask;
-	}
-	if ([self isMinimizable])
-	{
-		mask |= NSMiniaturizableWindowMask;
-	}
-	if ([self isMaximizable])
-	{
-		// handled in the window code
-	}
-	if (![self isChrome])
-	{
-		mask |= NSBorderlessWindowMask;
+		mask = NSBorderlessWindowMask;
 	}
 	else
 	{
 		mask |= NSTitledWindowMask;
-	}		
+		if (resizable)
+		{
+			mask |= NSResizableWindowMask;
+		}
+		if (closeable)
+		{
+			mask |= NSClosableWindowMask;
+		}
+		if (maximizable)
+		{
+			mask |= NSMiniaturizableWindowMask;
+		}
+		if (maximizable)
+		{
+			// handled in the window code
+		}
+	}
 	return mask;
 }
 
