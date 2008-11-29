@@ -54,7 +54,7 @@ module Titanium
         f.close
         
         # copy over tiapp.xml
-        FileUtils.cp File.join('config','tiapp.xml'), contents_folder
+        FileUtils.cp File.join('config','tiapp.xml'), resources_folder
         
         # copy all the public files
         Dir["public/**/*"].each do |file|
