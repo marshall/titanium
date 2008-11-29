@@ -1,37 +1,22 @@
-require 'fileutils'
-require 'build.rb'
-require 'yaml'
+# This file is part of Appcelerator.
+#
+# Copyright 2006-2008 Appcelerator, Inc.
+#
+#   Licensed under the Apache License, Version 2.0 (the "License");
+#   you may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+#
+TITANIUM_ROOT_DIR = File.expand_path(File.dirname(__FILE__))
+APPC_SDK_DIR = File.expand_path(ENV['APPC_SDK'] || File.join(TITANIUM_ROOT_DIR,'..','appcelerator_sdk'))
 
-task :default => [:runtime,:plugins]
-task :dev_install => [:runtime,:runtime_install,:plugins,:plugins_install]
+# use the build infrastructure from the SDK
+load "#{APPC_SDK_DIR}/Rakefile"
 
-task :runtime do
-	rake(RUNTIME_DIR)
-end
-
-task :runtime_install do
-  runtime_build = {}
-  File.open(File.join(STAGE_YML_DIR, 'runtime_build.yml')) { |f| runtime_build = YAML::load(f.read) }
-  
-  system "app install:titanium --force #{STAGE_DIR}/titanium_runtime_" + runtime_build[:version].to_s + "_" + runtime_build[:platform] + ".zip"
-end
-
-task :plugins do
-	Dir[PLUGINS_DIR+"/*"].each do |path|
-		rake(path)
-	end
-end
-
-task :plugins_install do
-  Dir[PLUGINS_DIR+"/*"].each do |path|
-		plugin_name = File.basename path
-		
-		plugin_build = {}
-    File.open(File.join(STAGE_YML_DIR, "tiplugin_#{plugin_name}_#{platform_string}_build.yml")) { |f| plugin_build = YAML::load(f.read) }
-    if plugin_build.has_key?(:platform)
-		  system "app install:tiplugin --force #{STAGE_DIR}/tiplugin_#{plugin_build[:basename]}_#{plugin_build[:version]}_#{plugin_build[:platform]}.zip"
-	  else
-	    system "app install:tiplugin --force #{STAGE_DIR}/tiplugin_#{plugin_build[:basename]}_#{plugin_build[:version]}.zip"
-    end
-	end
-end

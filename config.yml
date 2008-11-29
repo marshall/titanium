@@ -1,0 +1,10 @@
+---
+:version: "0.1"
+:name: titanium
+:licenses: [6]
+:releases:
+  :titanium:
+      :win32:
+      :osx:
+      :linux:
+      :project:
