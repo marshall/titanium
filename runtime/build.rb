@@ -85,7 +85,7 @@ END
     # make one big ass file
     files.each do |name|
       name.strip!
-      js = File.read File.expand_path(File.join(TITANIUM_DIR,'runtime','src',"#{name}.js"))
+      js = File.read File.expand_path(File.join(TITANIUM_DIR,'runtime','javascript',"#{name}.js"))
       titanium_js << js
     end
 
