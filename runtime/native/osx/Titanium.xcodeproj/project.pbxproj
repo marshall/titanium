@@ -13,7 +13,6 @@
 		2427BA940EDA478E007098CC /* TiWindowConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 2427BA930EDA478E007098CC /* TiWindowConfig.m */; };
 		2427BAF70EDA4C96007098CC /* tiapp.xml in Resources */ = {isa = PBXBuildFile; fileRef = 2427BAF60EDA4C96007098CC /* tiapp.xml */; };
 		246748240EDD2D6A00CE52E9 /* TiBounds.m in Sources */ = {isa = PBXBuildFile; fileRef = 246748230EDD2D6A00CE52E9 /* TiBounds.m */; };
-		246748990EDD3E9200CE52E9 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 246748980EDD3E9200CE52E9 /* Carbon.framework */; };
 		2491AC8B0EDA375100B1ECDB /* TiController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2491AC880EDA375100B1ECDB /* TiController.m */; };
 		2491AC8C0EDA375100B1ECDB /* TiDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 2491AC8A0EDA375100B1ECDB /* TiDocument.m */; };
 		2491AC8E0EDA375E00B1ECDB /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 2491AC8D0EDA375E00B1ECDB /* main.m */; };
@@ -69,7 +68,6 @@
 		2427BC720EDA6DCC007098CC /* Ti.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Ti.h; path = src/Ti.h; sourceTree = "<group>"; };
 		246748220EDD2D6A00CE52E9 /* TiBounds.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TiBounds.h; path = src/TiBounds.h; sourceTree = "<group>"; };
 		246748230EDD2D6A00CE52E9 /* TiBounds.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TiBounds.m; path = src/TiBounds.m; sourceTree = "<group>"; };
-		246748980EDD3E9200CE52E9 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
 		2491AC870EDA375100B1ECDB /* TiController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TiController.h; path = src/TiController.h; sourceTree = "<group>"; };
 		2491AC880EDA375100B1ECDB /* TiController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TiController.m; path = src/TiController.m; sourceTree = "<group>"; };
 		2491AC890EDA375100B1ECDB /* TiDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TiDocument.h; path = src/TiDocument.h; sourceTree = "<group>"; };
@@ -127,7 +125,6 @@
 				834B13820795DD1F00E4BF6C /* WebKit.framework in Frameworks */,
 				24D024530EDA9573005E15AE /* AppKit.framework in Frameworks */,
 				24D024570EDA9590005E15AE /* Foundation.framework in Frameworks */,
-				246748990EDD3E9200CE52E9 /* Carbon.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -264,7 +261,6 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				246748980EDD3E9200CE52E9 /* Carbon.framework */,
 				24D024560EDA9590005E15AE /* Foundation.framework */,
 				24D024520EDA9573005E15AE /* AppKit.framework */,
 				834B13810795DD1F00E4BF6C /* WebKit.framework */,
