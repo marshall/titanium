@@ -28,7 +28,7 @@ TiUserWindow::TiUserWindow(TiChromeWindow *window_)
 TiUserWindow::TiUserWindow ()
 {
 	config = new TiWindowConfig();
-	window = new TiChromeWindow(config);
+	window = new TiChromeWindow(TiChromeWindow::getMainWindow()->getInstanceHandle(), config);
 	window->open();
 
 	bind();

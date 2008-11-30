@@ -55,7 +55,7 @@ task :build do
 	puts "Build is running, you can monitor the output by executing tail -f build.log"	
 
 
-	command = '"' + $devenv_path + '" ti_shell.sln /build Release /log build.log'
+	command = '"' + $devenv_path + '" titanium.sln /build Release /log build.log'
 
 	if is_cygwin?
 		command = 'cmd /C ' + command

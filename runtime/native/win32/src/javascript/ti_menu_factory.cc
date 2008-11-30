@@ -30,11 +30,11 @@ TiMenuFactory::TiMenuFactory()
 NOTIFYICONDATA TiMenuFactory::createTrayIcon(std::wstring &iconPath, std::wstring &caption) {
 	NOTIFYICONDATA notifyIconData;
 	notifyIconData.cbSize = sizeof(NOTIFYICONDATA);
-	notifyIconData.hWnd = TiChromeWindow::getMainWindow()->getWindow();
+	notifyIconData.hWnd = TiChromeWindow::getMainWindow()->getWindowHandle();
 	notifyIconData.uID = TiMenu::nextMenuUID();
 	notifyIconData.uFlags = NIF_MESSAGE | NIF_ICON | NIF_TIP;
 	notifyIconData.uCallbackMessage = TI_TRAY_CLICKED;
-	notifyIconData.hIcon = (HICON)LoadImage(::GetModuleHandle(NULL),
+	notifyIconData.hIcon = (HICON)LoadImage(TiChromeWindow::getMainWindow()->getInstanceHandle(),
 		iconPath.c_str(),
 		IMAGE_ICON,
 		GetSystemMetrics(SM_CXSMICON),
@@ -106,6 +106,6 @@ void TiMenuFactory::createUserMenu(const CppArgumentList& args, CppVariant* resu
 void TiMenuFactory::createMenuBar()
 {
 	hMenuBar = CreateMenu();
-	HWND hWnd = TiChromeWindow::getMainWindow()->getWindow();
+	HWND hWnd = TiChromeWindow::getMainWindow()->getWindowHandle();
 	SetMenu(hWnd, hMenuBar);
 }

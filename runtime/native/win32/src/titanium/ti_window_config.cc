@@ -95,3 +95,16 @@ TiWindowConfig::TiWindowConfig(xmlElementPtr element)
 		child = child->next;
 	}
 }
+
+std::string TiWindowConfig::toString()
+{
+	std::ostringstream stream;
+
+	stream << "[TiWindowConfig id=" << id
+		<< ", x=" << x << ", y=" << y
+		<< ", width=" << width << ", height=" << height
+		<< ", url=" << url
+		<< "]";
+
+	return stream.str();
+}

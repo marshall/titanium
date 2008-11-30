@@ -95,15 +95,19 @@ TiAppConfig::TiAppConfig(std::wstring& xmlfile)
 
 	if (document == NULL) {
 		std::string _error;
-		_error += context->lastError.file;
-		_error += " [Line ";
 		
-		std::ostringstream o;
-		o << context->lastError.line;
+		if (context->lastError.code != XML_IO_LOAD_ERROR) {
 
-		_error += o.str();
-		_error += "]";
-		_error += " ";
+			_error += context->lastError.file;
+			_error += " [Line ";
+			
+			std::ostringstream o;
+			o << context->lastError.line;
+
+			_error += o.str();
+			_error += "]";
+			_error += " ";
+		}
 		_error += context->lastError.message;
 
 		error = _strdup(_error.c_str());
