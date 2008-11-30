@@ -102,6 +102,7 @@ static CGFloat toFloat (NSString* value, CGFloat def)
 		[self showSplash];
 		arguments = [[TiAppArguments alloc] init];
 		windowConfigs = [[NSMutableArray alloc] init];
+		[self loadApplicationID];
 		[self loadApplicationXML];
 	}
 	return self;
@@ -120,6 +121,7 @@ static CGFloat toFloat (NSString* value, CGFloat def)
 	[windowConfigs release];
 	windowConfigs=nil;
 	[appName release];
+	[appID release];
     [super dealloc];
 }
 
@@ -246,17 +248,36 @@ static CGFloat toFloat (NSString* value, CGFloat def)
 
 	TiWindowConfig *config = [self findInitialWindowConfig];
 	NSString *urlString = nil;
+	BOOL appurl = YES;
+	NSString *url = [config getURL];
 	
-	if ([[config getURL] hasPrefix:@"http://"] || [[config getURL] hasPrefix:@"https://"] || [[config getURL] hasPrefix:@"app://"])
+	if ([url hasPrefix:@"http://"] || [url hasPrefix:@"https://"])
 	{
 		// allow absolute external URLs
 		urlString = [config getURL];
+		appurl = NO;
 	}
-	else
+	
+	if (appurl)
 	{
-		// make it load from within our resource bundle
-		urlString = [NSString stringWithFormat:@"app://%@", [[config getURL] stringByStandardizingPath]];
+		if ([url hasPrefix:@"app:"])
+		{
+			NSURL *u = [NSURL URLWithString:url];
+			NSString *host = [u host];
+			urlString = [NSString stringWithFormat:@"app://%@/%@",appID,host];
+		}
+		else
+		{
+			urlString = [NSString stringWithFormat:@"app://%@/%@",appID,[appurl stringByStandardizingPath]];
+		}
 	}
+	NSLog(@"my new url: %@",urlString);
+	
+//	else
+//	{
+//		// make it load from within our resource bundle
+//		urlString = [NSString stringWithFormat:@"app://%@", [[config getURL] stringByStandardizingPath]];
+//	}
 	NSURL *URL = [NSURL URLWithString:urlString];
 	[[TiController instance] createDocument:URL]; //TODO: do we need to release somehow?
 
@@ -268,6 +289,12 @@ static CGFloat toFloat (NSString* value, CGFloat def)
 {
 	return appName;
 }
+
+- (NSString*)appID
+{
+	return appID;
+}
+
 
 - (void)setAppName:(NSString*)s 
 {
@@ -402,6 +429,13 @@ static CGFloat toFloat (NSString* value, CGFloat def)
 		[windowConfigs addObject:options];
 		[options release]; // add retains
 	}
+}
+
+- (void)loadApplicationID
+{
+	NSString *basePath = [[NSBundle mainBundle] resourcePath];
+	NSString *resourcePath = [basePath stringByAppendingPathComponent:@"aid"];
+	appID = [[[NSString stringWithContentsOfFile:resourcePath] stringByReplacingOccurrencesOfString:@"\n" withString:@""] copy];
 }
 
 -(BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication*)app

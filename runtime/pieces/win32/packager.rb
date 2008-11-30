@@ -63,7 +63,16 @@ module Titanium
         end
 
         # copy over tiapp.xml
-        FileUtils.cp File.join('config','tiapp.xml'), resources_folder
+        FileUtils.cp File.join('config','tiapp.xml'), File.join(resources_folder,'tiapp.xml')
+
+        # we use the AID to create a unique URL hostname in app://
+        aid = project.config[:aid] || Appcelerator::AID.generate_new(project)
+        project.config[:aid] ||= aid
+        
+        # write out the projects AID
+        aidf = File.open File.join(resources_folder,'aid'), 'w'
+        aidf.write aid
+        aidf.close
         
         if is_cygwin?
           FileUtils.chmod 0755, File.join(app_folder, 'titanium.exe')

@@ -38,6 +38,15 @@ module Titanium
         FileUtils.chmod 0755, File.join(macos_folder, executable)
 
         FileUtils.cp_r File.join(pieces_dir,'titanium'), resources_folder
+
+        # we use the AID to create a unique URL hostname in app://
+        aid = project.config[:aid] || Appcelerator::AID.generate_new(project)
+        project.config[:aid] ||= aid
+        
+        # write out the projects AID
+        aidf = File.open File.join(resources_folder,'aid'), 'w'
+        aidf.write aid
+        aidf.close
         
         ipl = File.join(contents_folder,'Info.plist')
         infoplist = File.read(ipl)

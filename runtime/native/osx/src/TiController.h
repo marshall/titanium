@@ -29,13 +29,16 @@
 	TiAppArguments *arguments;
 	NSMutableArray *windowConfigs;
 	NSString *appName;
+	NSString *appID;
 	TiWindowConfig *pendingConfig;
 }
 - (void)dealloc;
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification;
+- (void)loadApplicationID;
 - (void)loadApplicationXML;
 
 - (NSString*)appName;
+- (NSString*)appID;
 - (TiAppArguments*)arguments;
 - (TiDocument*) createDocument:(NSURL*)url;
 - (TiWindowConfig*) pendingConfig;

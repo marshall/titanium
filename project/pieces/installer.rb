@@ -30,6 +30,9 @@ class TitaniumProject
     mydir = File.expand_path(File.dirname(__FILE__))
     config_dir = "#{project.path}/config"
     FileUtils.mkdir_p(config_dir) unless File.exists?(config_dir) 
+
+    aid = Appcelerator::AID.generate_new(project)
+    project.config[:aid] = aid
     
     Dir["#{mydir}/config/*"].each do |file|
       next unless File.file? file

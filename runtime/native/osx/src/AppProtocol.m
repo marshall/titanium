@@ -39,6 +39,7 @@
 + (BOOL)canInitWithRequest:(NSURLRequest *)theRequest 
 {
 	NSString *theScheme = [[theRequest URL] scheme];
+	NSLog(@"canInit: %@", [theRequest URL]);
 	return [theScheme isEqual:@"app"];
 }
 
@@ -97,20 +98,17 @@
 	
 	NSURL *url = [request URL];
 	TRACE(@"AppProtocol::startLoading: %@",url);
-	NSString *s = nil;
-	NSString *ts = [url absoluteString];
-	if ([ts hasPrefix:@"app://"])
+	NSString *s = [url path];
+	
+	// this happens when the app uses a resource like app://foo.html
+	// in which we need to assume that the hostname is the actual 
+	// path we need to use
+	if (!s || [s isEqual:@""])
 	{
-		s=[ts substringFromIndex:[[AppProtocol specialProtocolScheme] length]+3];	
+		s = [url host];
 	}
-	else if ([ts hasPrefix:@"app:/"])
-	{
-		s=[ts substringFromIndex:[[AppProtocol specialProtocolScheme] length]+2];	
-	}
-	else if ([ts hasPrefix:@"app:"])
-	{
-		s=[ts substringFromIndex:[[AppProtocol specialProtocolScheme] length]+1];	
-	}
+	
+	
 	NSString *basePath = [[NSBundle mainBundle] resourcePath];
 	NSString *resourcePath = [basePath stringByAppendingPathComponent:s];
 	

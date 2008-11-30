@@ -10,7 +10,7 @@
 		<min-height>200</min-height>
 		<max-height>700</max-height>
 		<title>Titanium Test</title>
-		<url>http://localhost:3000/test</url>
+		<url>app://index.html</url>
 		<maximizable>true</maximizable>
 		<minimizable>true</minimizable>
 		<closeable>true</closeable>
