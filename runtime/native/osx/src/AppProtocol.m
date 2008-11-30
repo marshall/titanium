@@ -107,7 +107,15 @@
 	{
 		s = [url host];
 	}
-	
+	else
+	{
+		if (![[url host] isEqual:[[TiController instance] appID]])
+		{
+			// this means we have multiple paths and the first part of the path
+			// is sitting in the host field
+			s = [NSString stringWithFormat:@"%@/%@",[url host],[url path]];
+		}
+	}
 	
 	NSString *basePath = [[NSBundle mainBundle] resourcePath];
 	NSString *resourcePath = [basePath stringByAppendingPathComponent:s];

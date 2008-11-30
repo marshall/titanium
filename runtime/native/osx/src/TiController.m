@@ -436,6 +436,7 @@ static CGFloat toFloat (NSString* value, CGFloat def)
 	NSString *basePath = [[NSBundle mainBundle] resourcePath];
 	NSString *resourcePath = [basePath stringByAppendingPathComponent:@"aid"];
 	appID = [[[NSString stringWithContentsOfFile:resourcePath] stringByReplacingOccurrencesOfString:@"\n" withString:@""] copy];
+	NSLog(@"application ID: %@",appID);
 }
 
 -(BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication*)app
