@@ -30,4 +30,5 @@
 + (NSString *)mimeTypeFromExtension:(NSString *)ext;
 + (NSString*)specialProtocolScheme;
 + (void) registerSpecialProtocol;
++ (NSString*) getPath:(NSURL*)url;
 @end

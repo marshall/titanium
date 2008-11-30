@@ -177,10 +177,10 @@ static CGFloat toFloat (NSString* value, CGFloat def)
 		opt = [windowConfigs objectAtIndex:c];
 		if ([opt urlMatches:url])
 		{
-			break;
+			return opt;
 		}
 	}
-	return opt;
+	return nil;
 }
 
 - (TiWindowConfig*) pendingConfig
@@ -236,6 +236,7 @@ static CGFloat toFloat (NSString* value, CGFloat def)
 	{
 		config = [self findInitialWindowConfig];
 	}
+	TRACE(@"TiController::createDocument - using pending config named: %@",[config getID]);
 	[self setPendingConfig: config];
 	TiDocument *doc = [[NSDocumentController sharedDocumentController] openUntitledDocumentOfType:@"HTML Document" display:YES];
 	[doc loadURL:url];
@@ -268,7 +269,7 @@ static CGFloat toFloat (NSString* value, CGFloat def)
 		}
 		else
 		{
-			urlString = [NSString stringWithFormat:@"app://%@/%@",appID,[appurl stringByStandardizingPath]];
+			urlString = [NSString stringWithFormat:@"app://%@/%@",appID,[url stringByStandardizingPath]];
 		}
 	}
 	TRACE(@"my new url: %@",urlString);

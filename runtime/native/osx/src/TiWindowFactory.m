@@ -31,10 +31,10 @@
 	{
 		window = win;
 		[window retain];
-		webView = [TiController getWebView:win];
+		webView = [TiController getWebView:window];
 		[webView retain];
 		mainWindow = [[TiUserWindow alloc] initWithWindow:window];
-		currentWindow = [[TiUserWindow alloc] initWithWindow:win];
+		currentWindow = [[TiUserWindow alloc] initWithWindow:window];
 	}
 	return self;
 }

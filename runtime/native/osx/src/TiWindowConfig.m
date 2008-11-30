@@ -319,7 +319,8 @@
 	}
 	NSString *a = [AppProtocol getPath:[NSURL URLWithString:url]];
 	NSString *b = [AppProtocol getPath:[NSURL URLWithString:testURL]];
-	return [a isEqual:b];
+	TRACE(@"a=%@, b=%@, matches=%d",a,b,[a isEqualToString:b]);
+	return [a isEqualToString:b];
 }
 
 - (void)assign:(TiWindow*)w

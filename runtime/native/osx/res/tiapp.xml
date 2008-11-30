@@ -27,7 +27,7 @@
 		<min-height>200</min-height>
 		<max-height>200</max-height>
 		<title>Titanium Test</title>
-		<url>app://test.html</url>
+		<url>app://test2.html</url>
 		<maximizable>false</maximizable>
 		<minimizable>false</minimizable>
 		<closeable>true</closeable>

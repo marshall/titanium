@@ -42,6 +42,7 @@
 {
 	TRACE(@"TiDocument::dealloc =%x",self);
 	[self closePrecedent];
+	[userWindow release];
     if (webView)
 	{
 		webView=nil;
@@ -162,7 +163,12 @@
 - (void)windowControllerDidLoadNib:(NSWindowController *) aController
 {
 	TRACE(@"TiDocument::windowControllerDidLoadNib %x",self);
+
+	NSArray* windowControllers = [self windowControllers];
+	NSWindowController *c = [windowControllers objectAtIndex:0];
+	TiWindow *win =  (TiWindow*)[c window];
 	
+	userWindow = [[TiUserWindow alloc] initWithWindow:win];
 
     // Set the WebView delegates
     [webView setFrameLoadDelegate:self];
@@ -220,7 +226,13 @@
 {
 	closer = doc;
 	[closer retain];
+	// hide the window
 	[[closer window] orderOut:nil];
+	// unhook any listeners so we don't receive any more events
+    [[closer webView] setFrameLoadDelegate:nil];
+    [[closer webView] setUIDelegate:nil];
+    [[closer webView] setResourceLoadDelegate:nil];
+	[[closer webView] setPolicyDelegate:nil];
 }
 
 - (void)closePrecedent
@@ -228,9 +240,9 @@
 	if (closer)
 	{
 		TRACE(@"Closing precedent doc = %x", closer);
-		[closer close];
+		[[closer window] close];
 		[closer release];
-		closer=nil;
+		closer=nil; 
 	}
 }
 
@@ -286,8 +298,12 @@
 			// if we're trying to open an internal page, we essentially need to always open a 
 			// new document and later close the old document.  we have to do this because 
 			// each document could have a different window spec.
+			
 			TiDocument *doc = [[TiController instance] createDocument:newURL];
 			[doc setPrecedent:self];
+			
+			//TODO: window opens slightly offset from current doc, make sure we 
+			//get the bounds from self and set on doc
 			[listener ignore];
 		}
 		else

@@ -28,7 +28,7 @@
 	{
 		window = win;
 		[window retain];
-		webView = [TiController getWebView:win];
+		webView = [TiController getWebView:window];
 		[webView retain];
 	}
 	return self;
