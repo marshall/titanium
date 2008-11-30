@@ -14,9 +14,9 @@
 # limitations under the License. 
 
 require 'fileutils'
-require '../../../build.rb'
 
-task :default =>[:check_chromedir,:check_devenv,:build]
+desc 'build titanium win32 runtime'
+task :all =>[:check_chromedir,:check_devenv,:build]
 
 $devenv_path = nil
 
@@ -50,16 +50,14 @@ task :check_devenv do
 end
 
 task :build do
-	FileUtils.cd 'src'
+	FileUtils.cd 'src' do
+		puts "Build is running, you can monitor the output by executing tail -f build.log"	
+		command = '"' + $devenv_path + '" titanium.sln /build Release /log build.log'
 
-	puts "Build is running, you can monitor the output by executing tail -f build.log"	
+		if is_cygwin?
+			command = 'cmd /C ' + command
+		end
 
-
-	command = '"' + $devenv_path + '" titanium.sln /build Release /log build.log'
-
-	if is_cygwin?
-		command = 'cmd /C ' + command
+		system command	
 	end
-
-	system command	
 end

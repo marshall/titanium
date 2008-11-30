@@ -29,7 +29,11 @@ module Titanium
         Dir["#{pieces_dir}/win32/*"].each do |file|
           next unless File.file? file
           name = file.to_s.gsub "#{pieces_dir}/", ''
-          FileUtils.cp_r file, File.join(app_folder, name)
+          if name == "titanium.exe"
+          	FileUtils.cp file, File.join(app_folder, project.name + ".exe") 
+          else
+          	FileUtils.cp_r file, File.join(app_folder, name)
+        	end
         end
         
         # copy the titanium js files

@@ -188,14 +188,23 @@ end
 
 desc 'build titanium win32 runtime'
 task :win32 do
-  package_pieces :win32 do |zipfile,config|
-    FileUtils.cd(File.join(TITANIUM_DIR,'runtime','native','win32')) do
-      system 'rake'
-      #TODO: add win32 files to zip here in pieces/win32 dir
-    end
-    gears_dir = build_gears
-    gears_plugin = File.join(gears_dir, 'bin-opt', 'win32-i386', 'npapi', 'gears_titanium.dll')
-  	zipfile.add('pieces/gears/gears_titanium.dll', gears_plugin)
+	win32_dir = File.join(TITANIUM_DIR,'runtime','native','win32')
+	FileUtils.cd(win32_dir) do	
+  	package_pieces :win32 do |zipfile,config|
+  		namespace :win32 do
+      	require 'build.rb'
+    	end
+    	
+    	Rake::Task["win32:all"].invoke
+    	win32_build_dir = File.join(win32_dir, 'build', 'Release')
+      zipfile.add('pieces/win32/titanium.exe', File.join(win32_build_dir, 'titanium.exe'))
+      zipfile.add('pieces/win32/titanium.dll', File.join(win32_build_dir, 'titanium.dll'))
+      zipfile.add('pieces/win32/icudt38.dll', File.join(win32_dir, 'src', 'dependencies', 'icudt38.dll'))
+      
+    	gears_dir = build_gears
+    	gears_plugin = File.join(gears_dir, 'bin-opt', 'win32-i386', 'npapi', 'gears_titanium.dll')
+  		zipfile.add('pieces/gears/gears_titanium.dll', gears_plugin)
+  	end
   end
 end
 

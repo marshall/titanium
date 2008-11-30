@@ -30,7 +30,6 @@ namespace :titanium do
   require File.join(TITANIUM_DIR,'project','build.rb')
 
   task :dev do
-    
     Rake::Task["service:titanium"].invoke
     Rake::Task["titanium:runtime:#{platform_string}"].invoke
     Rake::Task["titanium:project"].invoke
