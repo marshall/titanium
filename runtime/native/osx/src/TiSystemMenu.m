@@ -17,42 +17,54 @@
  */
 
 #import "TiSystemMenu.h"
+#import "TiController.h"
 
 @implementation TiSystemMenu
 
-- (void)dealloc {
+- (void)dealloc 
+{
+	[target release];
+	target=nil;
 	[[NSStatusBar systemStatusBar] removeStatusItem:statusItem];
-	[statusItem dealloc];
-	if (menu)
-	{
-		[menu dealloc];
-	}
-	[itemImage dealloc];
+	[statusItem release];
+	statusItem = nil;
+	[menu release];
+	menu = nil;
+	[itemImage release];
+	itemImage = nil;
 	[super dealloc];
 }
 
-- (TiSystemMenu*)initWithURL:(NSString*)u f:(WebScriptObject*)f
+- (TiSystemMenu*)initWithURL:(NSString*)url caption:(NSString*)caption callback:(WebScriptObject*)callback;
 {
 	self = [super init];
+	if (self != nil)
+	{
+		target = callback;
+		[target retain];
+		
+		NSStatusBar *statusBar = [NSStatusBar systemStatusBar];
+		statusItem = [statusBar statusItemWithLength:NSVariableStatusItemLength];
+		if (caption!=nil)
+		{
+			[statusItem setTitle:caption];
+		}
+		if (url!=nil)
+		{
+			NSURL *aurl = [TiController formatURL:url];
+			itemImage = [[NSImage alloc]initWithContentsOfURL:aurl];
+			[itemImage retain];
+			[statusItem setImage: itemImage];
+		}
+		[statusItem setHighlightMode:YES];
+		[statusItem setEnabled:true];
+		[statusItem setAction:@selector(menuClicked:)];
+		[statusItem setTarget:self];
+		[statusItem retain];
+		
+		showing = YES;
+	}
 	
-	target = f;
-	[target retain];
-
-	NSStatusBar *statusBar = [NSStatusBar systemStatusBar];
-	statusItem = [statusBar statusItemWithLength:NSVariableStatusItemLength];
-
-	NSURL *url = [NSURL URLWithString:u];
-	itemImage = [[NSImage alloc]initWithContentsOfURL:url];
-	[itemImage retain];
-
-	[statusItem setImage: itemImage];
-	[statusItem setHighlightMode:YES];
-	[statusItem setEnabled:true];
-	[statusItem setAction:@selector(menuClicked:)];
-	[statusItem setTarget:self];
-	[statusItem retain];
-
-	showing = YES;
 	return self;
 }
 

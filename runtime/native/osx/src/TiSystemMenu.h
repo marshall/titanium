@@ -29,7 +29,7 @@
 	NSMutableArray *items;
 }
 
-- (TiSystemMenu*)initWithURL:(NSString*)url f:(WebScriptObject*)f;
+- (TiSystemMenu*)initWithURL:(NSString*)url caption:(NSString*)caption callback:(WebScriptObject*)callback;
 - (void)addItem:(NSString*)s f:(WebScriptObject*)f;
 - (void)addSeparator;
 - (void)execute;

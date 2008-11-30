@@ -18,6 +18,7 @@
 
 #import <Cocoa/Cocoa.h>
 #import "TiSystemMenu.h"
+#import "TiUserMenu.h"
 
 @interface TiMenuFactory : NSObject {
 	WebView *webView;
@@ -25,6 +26,6 @@
 
 - (id)initWithWebView:(WebView *)wv;
 
-- (TiSystemMenu *)createSystemMenu:(NSString*)url f:(WebScriptObject*)f;
-
+- (TiUserMenu *)createUserMenu:(NSString*)label;
+- (TiSystemMenu *)createSystemMenu:(NSString*)iconURL caption:(NSString*)caption callback:(WebScriptObject*)callback;
 @end

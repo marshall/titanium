@@ -448,4 +448,22 @@ static CGFloat toFloat (NSString* value, CGFloat def)
 	return NO;
 }
 
++ (NSString*) applicationID
+{
+	return [[TiController instance] appID];
+}
++ (NSURL*) formatURL: (NSString*)str 
+{
+	// if it looks like a URL, just use it
+	if ([str hasPrefix:@"app:"] || [str hasPrefix:@"http://"] || [str hasPrefix:@"https://"])
+	{
+		return [NSURL URLWithString:str];
+	}
+	if ([str hasPrefix:@"/"])
+	{
+		return [NSURL URLWithString:[NSString stringWithFormat:@"app://%@%@",[TiController applicationID],str]];
+	}
+	return [NSURL URLWithString:[NSString stringWithFormat:@"app://%@/%@",[TiController applicationID],str]];
+}
+
 @end

@@ -49,5 +49,8 @@
 + (TiController*) instance;
 + (TiDocument*) getDocument:(TiWindow*)window;
 + (WebView*) getWebView:(TiWindow*)window;
++ (NSString*) applicationID;
++ (NSURL*) formatURL: (NSString*)str;
+
 
 @end

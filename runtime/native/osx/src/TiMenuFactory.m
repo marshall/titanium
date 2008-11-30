@@ -23,17 +23,29 @@
 - (id)initWithWebView:(WebView *)wv 
 {
 	self = [super init];
-	if (self != nil) {
+	if (self != nil) 
+	{
 		webView = wv; // assign only. don't retain. prevents retain loop memory leak
 	}
 	return self;
 }
 
-- (TiSystemMenu *)createSystemMenu:(NSString*)url f:(WebScriptObject*)f
+- (void)dealloc
 {
-	TiSystemMenu *menu = [TiSystemMenu alloc];
-	[menu initWithURL:url f:f];
-	return menu;
+	webView = nil;
+	[super dealloc];
+}
+
+- (TiUserMenu *)createUserMenu:(NSString*)label
+{
+	[[webView windowScriptObject] setException:@"createUserMenu not implemented yet"];
+	return nil;
+}
+
+
+- (TiSystemMenu *)createSystemMenu:(NSString*)iconURL caption:(NSString*)caption callback:(WebScriptObject*)callback;
+{
+	return [[TiSystemMenu alloc] initWithURL:iconURL caption:caption callback:callback];
 }
 
 #pragma mark -
@@ -46,8 +58,11 @@
 
 + (NSString *)webScriptNameForSelector:(SEL)sel 
 {
-	if (sel == @selector(createSystemMenu:f:)) {
+	if (sel == @selector(createSystemMenu:caption:callback:)) {
 		return @"createSystemMenu";
+	}
+	else if (sel == @selector(createUserMenu:)) {
+		return @"createUserMenu";
 	}
 	return nil;
 }

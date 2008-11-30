@@ -3,7 +3,7 @@
 <title>My Title</title>
 <script src="test.js"></script>
 <script src="app:test.js"></script>
-<script src="app://1234/test.js"></script>
+<!--<script src="app://1234/test.js"></script> -->
 </head>
 <body>
 
@@ -54,7 +54,14 @@
 					window.w.hide(true);
 				},3000);
 			},5000);
+
+
+			ti.Menu.createSystemMenu('tray.png', null, function()
+			{
+				alert("w00t!");
+			});
    });
+/*
 	(function($)
 	 {
 			try
@@ -70,6 +77,7 @@
 			}
 	 }
 	)(ti.jQuery);
+*/
 </script>
 
 <!--
