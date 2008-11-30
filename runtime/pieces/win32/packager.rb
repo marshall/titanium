@@ -13,6 +13,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License. 
 
+def is_cygwin?
+	RUBY_PLATFORM.downcase.include?("cygwin")
+end
+
 module Titanium
   class WIN32
     class Packager
@@ -28,7 +32,7 @@ module Titanium
         # copy all the win32 support files
         Dir["#{pieces_dir}/win32/*"].each do |file|
           next unless File.file? file
-          name = file.to_s.gsub "#{pieces_dir}/", ''
+          name = file.to_s.gsub "#{pieces_dir}/win32", ''
           if name == "titanium.exe"
           	FileUtils.cp file, File.join(app_folder, project.name + ".exe") 
           else
