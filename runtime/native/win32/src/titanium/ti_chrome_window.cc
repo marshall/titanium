@@ -57,30 +57,38 @@ TiChromeWindow* TiChromeWindow::getWindow(const char *id)
 }
 
 /*static*/
-void TiChromeWindow::initWindowClass ()
+void TiChromeWindow::initWindowClass (HINSTANCE hInstance)
 {
-	HINSTANCE hInstance = ::GetModuleHandle(NULL);
-	LoadString(hInstance, IDS_APP_TITLE, defaultWindowTitle, 128);
-	LoadString(hInstance, IDC_CHROME_SHELL3, windowClassName, 128);
-	WNDCLASSEX wcex;
+	static bool initialized = false;
+	if (! initialized) {
+		LoadString(hInstance, IDS_APP_TITLE, defaultWindowTitle, 128);
+		LoadString(hInstance, IDC_CHROME_SHELL3, windowClassName, 128);
+		WNDCLASSEX wcex;
 
-	wcex.cbSize = sizeof(WNDCLASSEX);
+		wcex.cbSize = sizeof(WNDCLASSEX);
 
-	wcex.style			= CS_HREDRAW | CS_VREDRAW;
-	wcex.lpfnWndProc	= TiChromeWindow::WndProc;
-	wcex.cbClsExtra		= 0;
-	wcex.cbWndExtra		= 0;
-	wcex.hInstance		= hInstance;
-	wcex.hIcon			= LoadIcon(hInstance, MAKEINTRESOURCE(IDI_CHROME_SHELL3));
-	wcex.hCursor		= LoadCursor(NULL, IDC_ARROW);
-	wcex.hbrBackground	= (HBRUSH)(COLOR_WINDOW+1);
-	wcex.lpszMenuName	= 0;
-	wcex.lpszClassName	= windowClassName;
-	wcex.hIconSm		= LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
-	
-	RegisterClassEx(&wcex);
+		wcex.style			= CS_HREDRAW | CS_VREDRAW;
+		wcex.lpfnWndProc	= TiChromeWindow::WndProc;
+		wcex.cbClsExtra		= 0;
+		wcex.cbWndExtra		= 0;
+		wcex.hInstance		= hInstance;
+		wcex.hIcon			= LoadIcon(hInstance, MAKEINTRESOURCE(IDI_CHROME_SHELL3));
+		wcex.hCursor		= LoadCursor(NULL, IDC_ARROW);
+		wcex.hbrBackground	= (HBRUSH)(COLOR_WINDOW+1);
+		wcex.lpszMenuName	= 0;
+		wcex.lpszClassName	= windowClassName;
+		wcex.hIconSm		= LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
+		
+		RegisterClassEx(&wcex);
+		
+		initialized = true;
+	}
 }
 
+void TiChromeWindow::removeWindowClass (HINSTANCE hInstance)
+{
+	UnregisterClass(windowClassName, hInstance);
+}
 /*static*/
 LRESULT CALLBACK TiChromeWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
 	int wmId, wmEvent;
@@ -165,7 +173,7 @@ LRESULT CALLBACK TiChromeWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 	return DefWindowProc(hWnd, message, wParam, lParam);
 }
 
-TiChromeWindow::TiChromeWindow(TiWindowConfig *windowConfig) : hWnd(NULL), hInstance(NULL), host(NULL)
+TiChromeWindow::TiChromeWindow(HINSTANCE hInstance_, TiWindowConfig *windowConfig) : hWnd(NULL), hInstance(hInstance_), host(NULL)
 {
 	TiChromeWindow::openWindows.push_back(this);	
 	this->tiWindowConfig = windowConfig;
@@ -177,7 +185,7 @@ TiChromeWindow::TiChromeWindow(TiWindowConfig *windowConfig) : hWnd(NULL), hInst
 	tiUserWindow = new TiUserWindow(this);
 }
 
-TiChromeWindow::TiChromeWindow(const char *url) : hWnd(NULL), hInstance(NULL), host(NULL)
+TiChromeWindow::TiChromeWindow(HINSTANCE hInstance_, const char *url) : hWnd(NULL), hInstance(hInstance_), host(NULL)
 {
 	TiChromeWindow::openWindows.push_back(this);	
 	this->url = url;
@@ -193,7 +201,6 @@ TiChromeWindow::~TiChromeWindow(void) {
 
 void TiChromeWindow::createWindow()
 {
-	hInstance = ::GetModuleHandle(NULL);
 	hWnd = CreateWindowEx(WS_EX_LAYERED, windowClassName, defaultWindowTitle,
                            WS_CLIPCHILDREN,
                            0, 0, 0, 0,
@@ -226,13 +233,13 @@ void TiChromeWindow::reloadTiWindowConfig()
 	SetWindowText(hWnd, UTF8ToWide(tiWindowConfig->getTitle()).c_str());
 
 	long windowStyle = GetWindowLong(hWnd, GWL_STYLE);
-	
+
 	SetFlag(windowStyle, WS_MINIMIZEBOX, tiWindowConfig->isMinimizable());
 	SetFlag(windowStyle, WS_MAXIMIZEBOX, tiWindowConfig->isMaximizable());
 
 	SetFlag(windowStyle, WS_OVERLAPPEDWINDOW, tiWindowConfig->isUsingChrome() && tiWindowConfig->isResizable());
 	SetFlag(windowStyle, WS_CAPTION, tiWindowConfig->isUsingChrome());
-	
+
 	SetWindowLong(hWnd, GWL_STYLE, windowStyle);
 
 	UINT flags = SWP_NOMOVE | SWP_NOZORDER | SWP_FRAMECHANGED;
@@ -243,12 +250,6 @@ void TiChromeWindow::reloadTiWindowConfig()
 
 
 void TiChromeWindow::open() {
-	static bool windowClassInitialized = false;
-	if (!windowClassInitialized) {
-		TiChromeWindow::initWindowClass();
-		windowClassInitialized = true;
-	}
-
 	if (hWnd == NULL)
 		createWindow();
 
@@ -258,15 +259,22 @@ void TiChromeWindow::open() {
 
 void TiChromeWindow::loadURL(const char* url) {
 	if (currentURL != url) {
+		printf("load URL: %s\n", url);
 		currentURL = url;
 
+		printf("create webrequest\n");
 		WebRequest *request = WebRequest::Create(GURL(url));
+		printf("get main frame\n");
 		WebFrame *frame = host->webview()->GetMainFrame();
+		printf("load request? frame == null? %s\n", (frame == NULL ? "true":"false"));
 		frame->LoadRequest(request);
 
+		printf("set focused frame\n");
 		host->webview()->SetFocusedFrame(frame);
 
+		printf("set focus\n");
 		SetFocus(host->window_handle());
+		printf("show window\n");
 		ShowWindow(host->window_handle(), SW_SHOW);
 	}
 }

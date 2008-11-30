@@ -47,7 +47,7 @@ TiMenu::TiMenu(HMENU parentMenu, std::string& label_)
 	AppendMenu(parentMenu, MF_STRING | MF_POPUP, (UINT_PTR) hMenu, (LPCTSTR) UTF8ToWide(label).c_str());
 
 	// redraw the menu bar
-	HWND hWnd = TiChromeWindow::getMainWindow()->getWindow();
+	HWND hWnd = TiChromeWindow::getMainWindow()->getWindowHandle();
 	DrawMenuBar(hWnd);
 	
 	bind();
@@ -157,6 +157,6 @@ void TiMenu::showSystemMenu ()
 		TrackPopupMenu(systemMenu->getMenu(), 
 			TPM_BOTTOMALIGN,
 			pt.x, pt.y, 0,
-			TiChromeWindow::getMainWindow()->getWindow(), NULL);
+			TiChromeWindow::getMainWindow()->getWindowHandle(), NULL);
 	}
 }

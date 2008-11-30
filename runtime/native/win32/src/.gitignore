@@ -1,5 +1,4 @@
-ti_shell.vcproj.*.user
+*.vcproj.*.user
 *.ncb
-build
 *.aps
 *.suo

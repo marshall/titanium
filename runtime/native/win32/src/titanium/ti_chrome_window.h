@@ -16,10 +16,12 @@
 
 #pragma once
 
+#include <windows.h>
+#undef max
+
 #include "ti_web_view_delegate.h"
 
 #include <tchar.h>
-#include <windows.h>
 #include <atlbase.h>
 #include <commdlg.h>
 #include <objbase.h>
@@ -80,11 +82,10 @@ private:
 	static TCHAR defaultWindowTitle[128];
 	static TCHAR windowClassName[128];
 
-	static void initWindowClass();
 	static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 public:
-	TiChromeWindow(TiWindowConfig *config);
-	TiChromeWindow(const char *url);
+	TiChromeWindow(HINSTANCE hInstance, TiWindowConfig *config);
+	TiChromeWindow(HINSTANCE hInstance, const char *url);
 	~TiChromeWindow(void);
 
 	void reloadTiWindowConfig();
@@ -97,11 +98,12 @@ public:
 	void resizeHost();
 
 	WebViewHost* getHost() { return host; }
-	HWND getWindow() { return hWnd; }
+
+	HWND getWindowHandle() { return hWnd; }
+	HINSTANCE getInstanceHandle() { return hInstance; }
+
 	TiWindowConfig* getTiWindowConfig() { return tiWindowConfig; }
 	TiUserWindow* getTiUserWindow() { return tiUserWindow; }
-
-	HINSTANCE getInstance() { return hInstance; }
 
 	void include (std::string& relativePath);
 
@@ -118,4 +120,7 @@ public:
 	static TiChromeWindow* fromWindow(HWND hWnd);
 	static TiChromeWindow* getMainWindow();
 	static TiChromeWindow* getWindow(const char *id);
+
+	static void initWindowClass(HINSTANCE hInstance);
+	static void removeWindowClass (HINSTANCE hInstance);
 };

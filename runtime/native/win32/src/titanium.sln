@@ -1,0 +1,29 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "titanium_exe", "titanium_exe.vcproj", "{7BDCE76E-D7B9-4859-A114-A48E8995E2B0}"
+	ProjectSection(ProjectDependencies) = postProject
+		{4EE70728-CD02-484F-BA27-D81A90AB457B} = {4EE70728-CD02-484F-BA27-D81A90AB457B}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "titanium_dll", "titanium_dll.vcproj", "{4EE70728-CD02-484F-BA27-D81A90AB457B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7BDCE76E-D7B9-4859-A114-A48E8995E2B0}.Debug|Win32.ActiveCfg = Debug|Win32
+		{7BDCE76E-D7B9-4859-A114-A48E8995E2B0}.Debug|Win32.Build.0 = Debug|Win32
+		{7BDCE76E-D7B9-4859-A114-A48E8995E2B0}.Release|Win32.ActiveCfg = Release|Win32
+		{7BDCE76E-D7B9-4859-A114-A48E8995E2B0}.Release|Win32.Build.0 = Release|Win32
+		{4EE70728-CD02-484F-BA27-D81A90AB457B}.Debug|Win32.ActiveCfg = Debug|Win32
+		{4EE70728-CD02-484F-BA27-D81A90AB457B}.Debug|Win32.Build.0 = Debug|Win32
+		{4EE70728-CD02-484F-BA27-D81A90AB457B}.Release|Win32.ActiveCfg = Release|Win32
+		{4EE70728-CD02-484F-BA27-D81A90AB457B}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

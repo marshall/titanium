@@ -63,6 +63,10 @@ int wildcmp(const char *wild, const char *string) {
 /*static*/
 bool TiURL::urlMatchesPattern(GURL& url, std::string& pattern)
 {
+	if (url.spec().length() <= 0) {
+		return false;
+	}
+
 	//remove the trailing slash
 	std::string spec = url.spec();
 	if (spec.at(spec.length()-1) == '/') {

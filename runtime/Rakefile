@@ -29,7 +29,8 @@ def gather_mac(zipfile)
 end
 
 def gather_win(zipfile)
-	zipfile.add('ti_shell.exe', File.join(NATIVE_DIR, 'build', 'Release', 'ti_shell.exe'))
+	zipfile.add('titanium.dll', File.join(NATIVE_DIR, 'build', 'Release', 'titanium.dll'))
+	zipfile.add('titanium.exe', File.join(NATIVE_DIR, 'build', 'Release', 'titanium.exe'))
 end
 
 task :gather do

@@ -41,6 +41,8 @@ public:
 	TiWindowConfig() { setDefaults(); }
 	TiWindowConfig(xmlElementPtr window);
 	
+	std::string toString();
+
 	// window accessors
 	std::string& getURL() { return url; }
 	void setURL(std::string& url_) { url = url_; }
