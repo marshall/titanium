@@ -183,6 +183,7 @@ TiChromeWindow::TiChromeWindow(HINSTANCE hInstance_, TiWindowConfig *windowConfi
 	}
 
 	tiUserWindow = new TiUserWindow(this);
+	createWindow();
 }
 
 TiChromeWindow::TiChromeWindow(HINSTANCE hInstance_, const char *url) : hWnd(NULL), hInstance(hInstance_), host(NULL)
@@ -192,6 +193,7 @@ TiChromeWindow::TiChromeWindow(HINSTANCE hInstance_, const char *url) : hWnd(NUL
 	this->tiWindowConfig = new TiWindowConfig();
 	
 	tiUserWindow = new TiUserWindow(this);
+	createWindow();
 }
 
 TiChromeWindow::~TiChromeWindow(void) {
@@ -259,22 +261,15 @@ void TiChromeWindow::open() {
 
 void TiChromeWindow::loadURL(const char* url) {
 	if (currentURL != url) {
-		printf("load URL: %s\n", url);
 		currentURL = url;
 
-		printf("create webrequest\n");
 		WebRequest *request = WebRequest::Create(GURL(url));
-		printf("get main frame\n");
 		WebFrame *frame = host->webview()->GetMainFrame();
-		printf("load request? frame == null? %s\n", (frame == NULL ? "true":"false"));
 		frame->LoadRequest(request);
 
-		printf("set focused frame\n");
 		host->webview()->SetFocusedFrame(frame);
 
-		printf("set focus\n");
 		SetFocus(host->window_handle());
-		printf("show window\n");
 		ShowWindow(host->window_handle(), SW_SHOW);
 	}
 }

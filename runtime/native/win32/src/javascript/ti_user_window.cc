@@ -29,7 +29,6 @@ TiUserWindow::TiUserWindow ()
 {
 	config = new TiWindowConfig();
 	window = new TiChromeWindow(TiChromeWindow::getMainWindow()->getInstanceHandle(), config);
-	window->open();
 
 	bind();
 }
@@ -38,6 +37,7 @@ void TiUserWindow::bind()
 {
 	BindMethod("hide", &TiUserWindow::hide);
 	BindMethod("show", &TiUserWindow::show);
+	BindMethod("open", &TiUserWindow::open);
 	BindMethod("close", &TiUserWindow::close);
 	BindMethod("activate", &TiUserWindow::activate);
 	BindMethod("minimize", &TiUserWindow::minimize);
@@ -94,6 +94,11 @@ void TiUserWindow::hide(const CppArgumentList &args, CppVariant *result)
 void TiUserWindow::show(const CppArgumentList &args, CppVariant *result)
 {
 	window->showWindow(SW_SHOW);
+}
+
+void TiUserWindow::open(const CppArgumentList &args, CppVariant *result)
+{
+	window->open();
 }
 
 void TiUserWindow::close(const CppArgumentList &args, CppVariant *result)
