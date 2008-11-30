@@ -228,7 +228,7 @@ static CGFloat toFloat (NSString* value, CGFloat def)
 	return NO;
 }
 
-- (TiDocument*) createDocument:(NSURL*)url
+- (TiDocument*) createDocument:(NSURL*)url visible:(BOOL)visible
 {
 	TRACE(@"TiController::createDocument for url: %@",[url absoluteString]);
 	TiWindowConfig *config = [self findWindowConfigForURLSpec:url];
@@ -238,8 +238,11 @@ static CGFloat toFloat (NSString* value, CGFloat def)
 	}
 	TRACE(@"TiController::createDocument - using pending config named: %@",[config getID]);
 	[self setPendingConfig: config];
-	TiDocument *doc = [[NSDocumentController sharedDocumentController] openUntitledDocumentOfType:@"HTML Document" display:YES];
-	[doc loadURL:url];
+	TiDocument *doc = [[NSDocumentController sharedDocumentController] openUntitledDocumentOfType:@"HTML Document" display:visible];
+	if (visible)
+	{
+		[doc loadURL:url];
+	}
 	return doc;
 }
 
@@ -274,7 +277,7 @@ static CGFloat toFloat (NSString* value, CGFloat def)
 	}
 	TRACE(@"my new url: %@",urlString);
 	NSURL *URL = [NSURL URLWithString:urlString];
-	[[TiController instance] createDocument:URL]; //TODO: do we need to release somehow?
+	[[TiController instance] createDocument:URL visible:YES]; //TODO: do we need to release somehow?
 	[self hideSplash];
 }
 

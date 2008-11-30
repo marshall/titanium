@@ -20,15 +20,40 @@
 #import <WebKit/WebKit.h>
 #import "TiWindow.h"
 #import "TiBounds.h"
+#import "TiWindowConfig.h"
+
+@class TiDocument;
 
 @interface TiUserWindow : NSObject {
 	TiWindow *window;
 	WebView *webView;
+	TiWindowConfig *pending;
+	TiDocument *doc;
+	TiDocument *parent;
 }
 
+- (id)initWithWindow:(TiWindow*)win;
+- (id)initWithWebview:(WebView*)webView;
+- (void)setParent:(TiDocument*)parent;
+- (void)destroy; // only called internally
+
+- (NSString*)getID;
+
+- (void)open;
 - (void)close;
 - (void)show:(BOOL)animate;
 - (void)hide:(BOOL)animate;
+
+- (void)activate;
+- (void)minimize;
+- (void)maximize;
+
+- (NSString*)getURL;
+- (void)setURL:(NSString *)url;
+
+- (NSString*)getIcon;
+- (void)setIcon:(NSString *)icon;
+
 
 - (NSString*)getTitle;
 - (void)setTitle:(NSString *)title;
@@ -36,12 +61,14 @@
 - (CGFloat)getTransparency;
 - (void)setTransparency:(CGFloat)alpha;
 
-// these are immutable properties
 - (BOOL)isUsingChrome;
-- (BOOL)isUsingScrollbars;
-- (BOOL)isFullscreen;
+- (void)setUsingChrome:(BOOL)yn;
 
-- (NSString*)getID;
+- (BOOL)isUsingScrollbars;
+- (void)setUsingScrollbars:(BOOL)yn;
+
+- (BOOL)isFullscreen;
+- (void)setFullscreen:(BOOL)yn;
 
 - (CGFloat)getX;
 - (void)setX:(CGFloat)x;

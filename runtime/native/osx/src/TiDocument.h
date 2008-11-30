@@ -30,11 +30,15 @@
 	TiObject *ti;
 	TiDocument *closer;
 	TiUserWindow *userWindow;
+	NSMutableArray *childWindows;
 }
 
 // these are used internally only
 - (void)setPrecedent:(TiDocument*)doc;
 - (void)closePrecedent;
+
+- (void)addChildWindow:(TiUserWindow*)win;
+- (void)removeChildWindow:(TiUserWindow*)win;
 
 - (id)webView;
 - (TiWindow*)window;

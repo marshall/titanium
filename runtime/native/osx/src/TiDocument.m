@@ -35,6 +35,7 @@
 	if (self != nil)
 	{
 		TRACE(@"TiDocument::init =%x",self);
+		childWindows = [[NSMutableArray alloc] init];
 	}
 	return self;
 }
@@ -43,10 +44,15 @@
 	TRACE(@"TiDocument::dealloc =%x",self);
 	[self closePrecedent];
 	[userWindow release];
-    if (webView)
+	userWindow = nil;
+	for (int c=0;c<[childWindows count];c++)
 	{
-		webView=nil;
+		TiUserWindow *w = [childWindows objectAtIndex:c];
+		[w destroy]; // destroy will call back and remove below
 	}
+	[childWindows release];
+	childWindows=nil;
+	webView=nil;
     [url release];
     [super dealloc];
 	
@@ -58,6 +64,16 @@
 		// do it when a window is hidden whereas this will ensure that the document is actually *closed*
 		[NSApp terminate:self];
 	}
+}
+
+- (void)addChildWindow:(TiUserWindow*)win
+{
+	[childWindows addObject:win];
+}
+
+- (void)removeChildWindow:(TiUserWindow*)win
+{
+	[childWindows removeObject:win];
 }
 
 - (id)webView
@@ -72,10 +88,13 @@
 	return (TiWindow*)[c window];
 }
 
+- (TiUserWindow*)userWindow
+{
+	return userWindow;
+}
+
 - (NSString *)windowNibName
 {
-    // Override returning the nib file name of the document
-    // If you need to use a subclass of NSWindowController or if your document supports multiple NSWindowControllers, you should remove this method and override -makeWindowControllers instead.
     return @"TiDocument";
 }
 
@@ -164,11 +183,7 @@
 {
 	TRACE(@"TiDocument::windowControllerDidLoadNib %x",self);
 
-	NSArray* windowControllers = [self windowControllers];
-	NSWindowController *c = [windowControllers objectAtIndex:0];
-	TiWindow *win =  (TiWindow*)[c window];
-	
-	userWindow = [[TiUserWindow alloc] initWithWindow:win];
+	userWindow = [[TiUserWindow alloc] initWithWindow:[self window]];
 
     // Set the WebView delegates
     [webView setFrameLoadDelegate:self];
@@ -299,7 +314,7 @@
 			// new document and later close the old document.  we have to do this because 
 			// each document could have a different window spec.
 			
-			TiDocument *doc = [[TiController instance] createDocument:newURL];
+			TiDocument *doc = [[TiController instance] createDocument:newURL visible:YES];
 			[doc setPrecedent:self];
 			
 			//TODO: window opens slightly offset from current doc, make sure we 
@@ -420,7 +435,7 @@
 		// and return
 		newurl = [NSURL URLWithString:@"about:blank"];
 	}
-	TiDocument *newDoc = [[TiController instance] createDocument:newurl];
+	TiDocument *newDoc = [[TiController instance] createDocument:newurl visible:YES];
 	[newDoc setPrecedent:self];
 	return [newDoc webView];
 }

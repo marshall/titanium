@@ -28,6 +28,8 @@
 }
 
 - (id)initWithWindow:(TiWindow *)win; 
+- (TiUserWindow *)createWindow;
+- (TiUserWindow *)getWindow;
 
 @property (copy, readonly) TiUserWindow *mainWindow;
 @property (copy, readonly) TiUserWindow *currentWindow;

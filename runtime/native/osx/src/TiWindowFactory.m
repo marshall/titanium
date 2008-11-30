@@ -27,22 +27,28 @@
 - (id)initWithWindow:(TiWindow *)win 
 {
 	self = [super init];
+	TRACE(@"TiWindowFactory::initWithWindow: %x",self);
 	if (self != nil)  
 	{
 		window = win;
 		[window retain];
 		webView = [TiController getWebView:window];
 		[webView retain];
-		mainWindow = [[TiUserWindow alloc] initWithWindow:window];
-		currentWindow = [[TiUserWindow alloc] initWithWindow:window];
+		mainWindow = [[TiController getDocument:win] userWindow];
+		[mainWindow retain];
+		currentWindow = [[TiController getDocument:win] userWindow];
+		[currentWindow retain];
 	}
 	return self;
 }
 
 - (void)dealloc
 {
+	TRACE(@"TiWindowFactory::dealloc: %x",self);
 	[webView release];
 	webView = nil;
+	[currentWindow release];
+	currentWindow = nil;
 	[mainWindow release];
 	mainWindow = nil;
 	[window release];
@@ -50,12 +56,19 @@
 	[super dealloc];
 }
 
+- (TiUserWindow *)getWindow
+{
+	//TODO: search for windows
+	return nil;
+}
+
+
 - (TiUserWindow *)createWindow
 {
-	TiDocument *doc = [[TiController instance] createDocument:[NSURL URLWithString:@"about:blank"]];
-	TiWindow *w = [doc window];
-	TiUserWindow *win = [[[TiUserWindow alloc] initWithWindow:w] autorelease];
-	[doc release];
+	TiDocument *doc = [TiController getDocument:window];
+	TiUserWindow *win = [[TiUserWindow alloc] initWithWebview:webView];
+	[win setParent:doc];
+	[doc addChildWindow:win];
 	return win;
 }
 

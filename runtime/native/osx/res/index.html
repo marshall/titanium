@@ -37,7 +37,19 @@
          rs.close();
 			*/
 
-			//var w = ti.Window.createWindow();
+
+			var w = ti.Window.createWindow();
+			w.setTitle("i love john mccain");
+			w.setURL("http://www.google.com");
+			w.setVisible(false);
+			w.open();
+
+			setTimeout(function()
+			{
+				w.show();
+			},5000);
+			//w.show();
+
 			//w.open({"key":"value"});
    });
 </script>
