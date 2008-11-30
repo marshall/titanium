@@ -18,6 +18,7 @@
 #import <Cocoa/Cocoa.h>
 #import "Ti.h"
 #import "TiWindow.h"
+#import "TiUserWindow.h"
 
 @class WebView;
 @class TiObject;
@@ -28,6 +29,7 @@
     NSURL *url;
 	TiObject *ti;
 	TiDocument *closer;
+	TiUserWindow *userWindow;
 }
 
 // these are used internally only
@@ -36,6 +38,7 @@
 
 - (id)webView;
 - (TiWindow*)window;
+- (TiUserWindow*)userWindow;
 - (void)loadURL:(NSURL *)URL;
 
 @end
