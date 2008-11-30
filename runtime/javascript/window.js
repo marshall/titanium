@@ -36,6 +36,8 @@ ti.Extras.fadeInWindow = function(win,speed)
 {
 	speed = speed || 100;
 	var timer = null;
+	win.setTransparency(0.0);
+	win.show(false);
 	timer = setInterval(function()
 	{
 		var t = win.getTransparency() + .1;
@@ -43,8 +45,8 @@ ti.Extras.fadeInWindow = function(win,speed)
 		{
 			clearInterval(timer);
 			// set it back to the original and hide the window
-			win.show();
 			win.setTransparency(1.0);
+			win.show();
 			return;
 		}
 		win.setTransparency(t);

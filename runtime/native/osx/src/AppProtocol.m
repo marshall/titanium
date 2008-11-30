@@ -16,22 +16,29 @@
  * limitations under the License. 
  */
 
-#include <unistd.h>
+#import <WebKit/WebKit.h>
 #import "AppProtocol.h"
 #import "TiAppArguments.h"
 #import "TiController.h"
 
 @implementation AppProtocol
 
-+ (NSString*) specialProtocolScheme {
++ (NSString*) specialProtocolScheme 
+{
 	return @"app";
 }
 
 
-+ (void) registerSpecialProtocol {
++ (void) registerSpecialProtocol 
+{
 	static BOOL inited = NO;
-	if ( ! inited ) {
+	if ( ! inited ) 
+	{
 		[NSURLProtocol registerClass:[AppProtocol class]];
+		// SECURITY FLAG: this will allow apps to have the same security
+		// as local files (like cross-domain XHR requests).  we should 
+		// make sure this is part of the upcoming security work
+		[WebView registerURLSchemeAsLocal:[self specialProtocolScheme]];
 		inited = YES;
 	}
 }

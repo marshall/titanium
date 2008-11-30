@@ -1,10 +1,9 @@
 <html>
 <head>
 <title>My Title</title>
-<!--<script src="test.js"></script>
+<script src="test.js"></script>
 <script src="app:test.js"></script>
 <script src="app://1234/test.js"></script>
--->
 </head>
 <body>
 
@@ -38,20 +37,39 @@
 			*/
 
 
-			var w = ti.Window.createWindow();
-			w.setTitle("i love john mccain");
-			w.setURL("http://www.google.com");
-			w.setVisible(false);
-			w.open();
+			window.w = ti.Window.createWindow();
+			window.w.setTitle("i love john mccain");
+			window.w.setURL("http://www.google.com");
+			window.w.setVisible(false);
+			window.w.setWidth(350);
+			window.w.setHeight(200);
+			window.w.open();
 
 			setTimeout(function()
 			{
-				w.show();
+				window.w.setTransparency(0.0);
+				window.w.show(true);
+				setTimeout(function()
+				{
+					window.w.hide(true);
+				},3000);
 			},5000);
-			//w.show();
-
-			//w.open({"key":"value"});
    });
+	(function($)
+	 {
+			try
+			{
+				$.get("http://google.com",function(data)
+				{
+					alert(data);
+				},"text");
+			}
+			catch (e)
+			{
+				alert(e);
+			}
+	 }
+	)(ti.jQuery);
 </script>
 
 <!--
