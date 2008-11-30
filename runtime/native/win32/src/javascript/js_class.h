@@ -80,6 +80,9 @@ class JsClass {
   // Bind the Javascript method called |name| to the C++ callback |callback|.
   void BindCallback(std::string name, Callback* callback);
   
+  // Bind property getter/setter callbacks
+  void BindPropertyCallbacks(std::string name, Callback *getter, Callback *setter);
+
   // A wrapper for BindCallback, to simplify the common case of binding a
   // method on the current object.  Though not verified here, |method|
   // must be a method of this CppBoundClass subclass.
@@ -94,6 +97,24 @@ class JsClass {
 
   // Bind the Javascript property called |name| to a CppVariant |prop|.
   void BindProperty(std::string name, CppVariant* prop);
+
+  // Bind property getter/setter functions
+  template<typename T>
+  void BindProperty(std::string name,
+      void (T::*getter_method)(const CppArgumentList&, CppVariant*),
+	  void (T::*setter_method)(const CppArgumentList&, CppVariant*)) {
+
+    Callback* getter_callback =
+        NewCallback<T, const CppArgumentList&, CppVariant*>(
+            static_cast<T*>(this), getter_method);
+
+	Callback* setter_callback =
+        NewCallback<T, const CppArgumentList&, CppVariant*>(
+            static_cast<T*>(this), setter_method);
+
+	BindPropertyCallbacks(name, getter_callback, setter_callback);
+  }
+
 
   // Set the fallback callback, which is called when when a callback is
   // invoked that isn't bound.
@@ -144,6 +165,7 @@ class JsClass {
   // These maps associate names with property and method pointers to be
   // exposed to JavaScript.
   PropertyList properties_;
+  MethodList property_getters_, property_setters_;
   MethodList methods_;
 
   // The callback gets invoked when a call is made to an nonexistent method.

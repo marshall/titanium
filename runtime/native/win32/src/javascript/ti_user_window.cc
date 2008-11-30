@@ -29,7 +29,6 @@ TiUserWindow::TiUserWindow ()
 {
 	config = new TiWindowConfig();
 	window = new TiChromeWindow(TiChromeWindow::getMainWindow()->getInstanceHandle(), config);
-	window->open();
 
 	bind();
 }
@@ -38,12 +37,30 @@ void TiUserWindow::bind()
 {
 	BindMethod("hide", &TiUserWindow::hide);
 	BindMethod("show", &TiUserWindow::show);
+	BindMethod("open", &TiUserWindow::open);
 	BindMethod("close", &TiUserWindow::close);
 	BindMethod("activate", &TiUserWindow::activate);
 	BindMethod("minimize", &TiUserWindow::minimize);
 	BindMethod("maximize", &TiUserWindow::maximize);
 
 	// snooore -- getters and setters
+	BindProperty("x", &TiUserWindow::getX, &TiUserWindow::setX);
+	BindProperty("y", &TiUserWindow::getY, &TiUserWindow::setY);
+	BindProperty("width", &TiUserWindow::getWidth, &TiUserWindow::setHeight);
+	BindProperty("height", &TiUserWindow::getHeight, &TiUserWindow::setHeight);
+	BindProperty("url", &TiUserWindow::getURL, &TiUserWindow::setURL);
+	BindProperty("title", &TiUserWindow::getTitle, &TiUserWindow::setTitle);
+	BindProperty("bounds", &TiUserWindow::getBounds, &TiUserWindow::setBounds);
+	BindProperty("resizable", &TiUserWindow::isResizable, &TiUserWindow::setResizable);
+	BindProperty("maximizable", &TiUserWindow::isMaximizable, &TiUserWindow::setMaximizable);
+	BindProperty("minimizable", &TiUserWindow::isMinimizable, &TiUserWindow::setMinimizable);
+	BindProperty("closeable", &TiUserWindow::isCloseable, &TiUserWindow::setCloseable);
+	BindProperty("fullscreen", &TiUserWindow::isFullscreen, &TiUserWindow::setFullscreen);
+	BindProperty("visible", &TiUserWindow::isVisible, &TiUserWindow::setVisible);
+	BindProperty("usingChrome", &TiUserWindow::isUsingChrome, &TiUserWindow::setUsingChrome);
+	BindProperty("usingScrollbars", &TiUserWindow::isUsingScrollbars, &TiUserWindow::setUsingScrollbars);
+	BindProperty("transparency", &TiUserWindow::getTransparency, &TiUserWindow::setTransparency);
+
 	BindMethod("getX", &TiUserWindow::getX);
 	BindMethod("setX", &TiUserWindow::setX);
 	BindMethod("getY", &TiUserWindow::getY);
@@ -94,6 +111,11 @@ void TiUserWindow::hide(const CppArgumentList &args, CppVariant *result)
 void TiUserWindow::show(const CppArgumentList &args, CppVariant *result)
 {
 	window->showWindow(SW_SHOW);
+}
+
+void TiUserWindow::open(const CppArgumentList &args, CppVariant *result)
+{
+	window->open();
 }
 
 void TiUserWindow::close(const CppArgumentList &args, CppVariant *result)

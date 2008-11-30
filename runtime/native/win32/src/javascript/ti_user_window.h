@@ -38,6 +38,7 @@ public:
 
 	void hide(const CppArgumentList &args, CppVariant *result);
 	void show(const CppArgumentList &args, CppVariant *result);
+	void open(const CppArgumentList &args, CppVariant *result);
 	void close(const CppArgumentList &args, CppVariant *result);
 
 	void getURL(const CppArgumentList &args, CppVariant *result);
