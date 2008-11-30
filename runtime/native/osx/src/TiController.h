@@ -41,6 +41,7 @@
 - (NSString*)appID;
 - (TiAppArguments*)arguments;
 - (TiDocument*) createDocument:(NSURL*)url;
+- (BOOL)shouldOpenInNewWindow;
 - (TiWindowConfig*) pendingConfig;
 - (void) resetPendingConfig;
 

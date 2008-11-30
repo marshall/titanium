@@ -128,24 +128,6 @@
 	NSURL *url = [request URL];
 	TRACE(@"AppProtocol::startLoading: %@",url);
 	NSString *s = [AppProtocol getPath:url];
-//	
-//	// this happens when the app uses a resource like app://foo.html
-//	// in which we need to assume that the hostname is the actual 
-//	// path we need to use
-//	if (!s || [s isEqual:@""])
-//	{
-//		s = [url host];
-//	}
-//	else
-//	{
-//		if (![[url host] isEqual:[[TiController instance] appID]])
-//		{
-//			// this means we have multiple paths and the first part of the path
-//			// is sitting in the host field
-//			s = [NSString stringWithFormat:@"%@/%@",[url host],[url path]];
-//		}
-//	}
-//	
 	NSString *basePath = [[NSBundle mainBundle] resourcePath];
 	NSString *resourcePath = [basePath stringByAppendingPathComponent:s];
 	
@@ -175,7 +157,7 @@
 	NSString *ext = [resourcePath pathExtension];
 	NSString *mime = [AppProtocol mimeTypeFromExtension:ext];
 	
-	NSLog(@"loaded mime=%@, ext=%@",mime,ext);
+	NSLog(@"loaded mime=%@ from extension=%@",mime,ext);
 	
 	NSURLResponse *response = [[NSURLResponse alloc] initWithURL:url MIMEType:mime expectedContentLength:-1 textEncodingName:@"utf-8"];
 	[client URLProtocol:self didReceiveResponse:response cacheStoragePolicy:NSURLCacheStorageAllowed];

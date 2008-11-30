@@ -431,6 +431,13 @@ static CGFloat toFloat (NSString* value, CGFloat def)
 	}
 }
 
+- (BOOL)shouldOpenInNewWindow
+{
+	// if we only have one window spec, we don't need to open new urls in a 
+	// new document, we can just reuse the existing document on each load
+	return [windowConfigs count] > 1;
+}
+
 - (void)loadApplicationID
 {
 	NSString *basePath = [[NSBundle mainBundle] resourcePath];

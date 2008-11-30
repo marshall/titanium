@@ -209,6 +209,12 @@
     return url;
 }
 
+-(void)setURL:(NSURL*)newURL
+{
+	[url release];
+	url = [newURL copy];
+}
+
 - (void)setPrecedent:(TiDocument*)doc
 {
 	closer = doc;
@@ -268,9 +274,21 @@
 	}
 	if ([protocol compare:@"app"]==0)
 	{
-		TiDocument *doc = [[TiController instance] createDocument:newURL];
-		[doc setPrecedent:self];
-		[listener ignore];
+		if ([[TiController instance] shouldOpenInNewWindow])
+		{
+			// if we're trying to open an internal page, we essentially need to always open a 
+			// new document and later close the old document.  we have to do this because 
+			// each document could have a different window spec.
+			TiDocument *doc = [[TiController instance] createDocument:newURL];
+			[doc setPrecedent:self];
+			[listener ignore];
+		}
+		else
+		{
+			// tell him to open in the same document and set our new URL
+			[self setURL:newURL];
+			[listener use];
+		}
 	}
 	else if ([protocol compare:@"http"]==0)
 	{
