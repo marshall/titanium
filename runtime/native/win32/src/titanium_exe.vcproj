@@ -63,7 +63,7 @@
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;$(ChromeDir)\chrome\$(ConfigurationName)\lib&quot;"
 				IgnoreDefaultLibraryNames="libcmt.lib"
-				SubSystem="2"
+				SubSystem="1"
 				EntryPointSymbol=""
 				ResourceOnlyDLL="false"
 			/>
@@ -146,7 +146,7 @@
 				IgnoreDefaultLibraryNames=""
 				DelayLoadDLLs=""
 				GenerateDebugInformation="true"
-				SubSystem="1"
+				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
 				TargetMachine="1"
