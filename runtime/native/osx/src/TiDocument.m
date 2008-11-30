@@ -42,7 +42,10 @@
 {
 	TRACE(@"TiDocument::dealloc =%x",self);
 	[self closePrecedent];
-    [webView close];
+    if (webView)
+	{
+		webView=nil;
+	}
     [url release];
     [super dealloc];
 	
@@ -176,8 +179,11 @@
 - (void)close
 {
 	TRACE(@"TiDocument::close = %x",self);
-    [webView close];
-    [super close];
+	if (webView)
+	{
+		[webView stopLoading:nil];
+	}
+	[super close];
 }
 
 - (NSData *)dataRepresentationOfType:(NSString *)aType
@@ -262,11 +268,9 @@
 	}
 	if ([protocol compare:@"app"]==0)
 	{
-//		TiDocument *doc = [[TiController instance] createDocument:newURL];
-//		[doc setPrecedent:self];
-//		[doc retain];
-//		[listener ignore];
-		[listener use];
+		TiDocument *doc = [[TiController instance] createDocument:newURL];
+		[doc setPrecedent:self];
+		[listener ignore];
 	}
 	else if ([protocol compare:@"http"]==0)
 	{

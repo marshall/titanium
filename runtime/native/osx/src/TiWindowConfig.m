@@ -15,8 +15,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-#import "TiWindowConfig.h"
 #import <WebKit/WebKit.h>
+#import "TiWindowConfig.h"
+#import "AppProtocol.h"
 
 @implementation TiWindowConfig
 
@@ -316,6 +317,13 @@
 	{
 		return YES;
 	}
+	NSString *a = [AppProtocol getPath:[NSURL URLWithString:url]];
+	NSString *b = [AppProtocol getPath:[NSURL URLWithString:testURL]];
+	
+	NSLog(@"host a = %@, host b = %@", a,b);
+	
+	return [a isEqual:b];
+	/*
 	// use the last component of the pattern against the real URL
 	NSString *a = [url lastPathComponent];
 	NSString *b = [testURL lastPathComponent];
@@ -325,6 +333,7 @@
 	}
 	NSPredicate *regex = [NSPredicate predicateWithFormat:@"SELF MATCHES %@",a];
 	return [regex evaluateWithObject:b];
+	*/
 }
 
 - (void)assign:(TiWindow*)w

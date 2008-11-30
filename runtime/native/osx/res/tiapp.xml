@@ -18,7 +18,6 @@
 		<chrome scrollbars="false">false</chrome>
 		<transparency>1.0</transparency>
 	</window>
-<!--
 	<window>
 		<id>secondary</id>
 		<width>200</width>
@@ -28,13 +27,12 @@
 		<min-height>200</min-height>
 		<max-height>200</max-height>
 		<title>Titanium Test</title>
-		<url>secondary.html</url>
+		<url>app://test.html</url>
 		<maximizable>false</maximizable>
 		<minimizable>false</minimizable>
 		<closeable>true</closeable>
 		<resizable>true</resizable>
-		<chrome scrollbars="true">false</chrome>
+		<chrome scrollbars="true">true</chrome>
 		<transparency>1.0</transparency>
 	</window>
--->
 </ti:app>

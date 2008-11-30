@@ -29,9 +29,13 @@
 	TiObject *ti;
 	TiDocument *closer;
 }
+
+// these are used internally only
+- (void)setPrecedent:(TiDocument*)doc;
+- (void)closePrecedent;
+
 - (id)webView;
 - (TiWindow*)window;
 - (void)loadURL:(NSURL *)URL;
-- (void)setPrecedent:(TiDocument*)doc;
 
 @end

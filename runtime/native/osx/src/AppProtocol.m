@@ -43,6 +43,35 @@
 	return [theScheme isEqual:@"app"];
 }
 
++ (NSString*)getPath:(NSURL*)url
+{
+	NSString *s = [url path];
+	
+	// this happens when the app uses a resource like app://foo.html
+	// in which we need to assume that the hostname is the actual 
+	// path we need to use
+	if (!s || [s isEqual:@""])
+	{
+		s = [NSString stringWithFormat:@"/%@",[url host]];
+	}
+	else
+	{
+		if (![[url host] isEqual:[[TiController instance] appID]])
+		{
+			// this means we have multiple paths and the first part of the path
+			// is sitting in the host field
+			s = [NSString stringWithFormat:@"%@/%@",[url host],[url path]];
+		}
+		else
+		{
+			if (![s hasPrefix:@"/"])
+			{
+				s = [NSString stringWithFormat:@"/%@",s];
+			}
+		}
+	}
+	return s;
+}
 
 +(NSURLRequest *)canonicalRequestForRequest:(NSURLRequest *)request {
     return request;
@@ -98,25 +127,25 @@
 	
 	NSURL *url = [request URL];
 	TRACE(@"AppProtocol::startLoading: %@",url);
-	NSString *s = [url path];
-	
-	// this happens when the app uses a resource like app://foo.html
-	// in which we need to assume that the hostname is the actual 
-	// path we need to use
-	if (!s || [s isEqual:@""])
-	{
-		s = [url host];
-	}
-	else
-	{
-		if (![[url host] isEqual:[[TiController instance] appID]])
-		{
-			// this means we have multiple paths and the first part of the path
-			// is sitting in the host field
-			s = [NSString stringWithFormat:@"%@/%@",[url host],[url path]];
-		}
-	}
-	
+	NSString *s = [AppProtocol getPath:url];
+//	
+//	// this happens when the app uses a resource like app://foo.html
+//	// in which we need to assume that the hostname is the actual 
+//	// path we need to use
+//	if (!s || [s isEqual:@""])
+//	{
+//		s = [url host];
+//	}
+//	else
+//	{
+//		if (![[url host] isEqual:[[TiController instance] appID]])
+//		{
+//			// this means we have multiple paths and the first part of the path
+//			// is sitting in the host field
+//			s = [NSString stringWithFormat:@"%@/%@",[url host],[url path]];
+//		}
+//	}
+//	
 	NSString *basePath = [[NSBundle mainBundle] resourcePath];
 	NSString *resourcePath = [basePath stringByAppendingPathComponent:s];
 	
