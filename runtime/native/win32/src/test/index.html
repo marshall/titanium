@@ -28,11 +28,13 @@
 	    var windowTest;
 	    function createWindow () {
 	        windowTest = ti.Window.createWindow();
-	        windowTest.setURL("app://window_test.html");
-	        windowTest.setTitle("lil' brudder");
-	        var bounds = { x: 100, y: 100, width: 200, height: 200 };
+	        //windowTest.setURL("app://window_test.html");
+	        //windowTest.setTitle("lil' brudder");
+	        windowTest.url = "app://window_test.html";
+	        windowTest.title = "lil' brudder";
+	        windowTest.bounds = { x: 100, y: 100, width: 200, height: 200 };
 
-            windowTest.setBounds(bounds);
+            //windowTest.setBounds(bounds);
 	    }
 	   </script>
 	   <style>

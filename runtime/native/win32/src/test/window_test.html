@@ -4,6 +4,9 @@
         function init ()
         {
             window.ti = tiRuntime;
+            
+            document.getElementById("url").innerHTML = "<b>" + 
+				ti.Window.currentWindow.url + "</b>";
         }
         
         function peekABoo ()
@@ -29,7 +32,7 @@
     </head>
     <body>
         <script>window.onload = init;</script>
-        
+        My URL = <div id="url"></div>
         Hello, I'm a test window... Let's try some links:<br /><br />
         
         <a href="javascript: ti.Window.currentWindow.close();">close me</a><br /><br />

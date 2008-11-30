@@ -163,7 +163,9 @@ bool JsClass::HasMethod(NPIdentifier ident) {
 }
  
 bool JsClass::HasProperty(NPIdentifier ident) {
-  return (properties_.find(ident) != properties_.end());
+  return (properties_.find(ident) != properties_.end()
+	  || property_getters_.find(ident) != property_getters_.end()
+	  || property_setters_.find(ident) != property_setters_.end());
 }
  
 bool JsClass::Invoke(NPIdentifier ident,
@@ -198,22 +200,45 @@ bool JsClass::Invoke(NPIdentifier ident,
 bool JsClass::GetProperty(NPIdentifier ident, NPVariant* result) {
   PropertyList::const_iterator prop = properties_.find(ident);
   if (prop == properties_.end()) {
-    VOID_TO_NPVARIANT(*result);
-    return false;
+	MethodList::const_iterator prop_getter = property_getters_.find(ident);
+	if (prop_getter == property_getters_.end()) {
+		VOID_TO_NPVARIANT(*result);
+		return false;
+	}
+
+	Callback *callback = (*prop_getter).second;
+	CppArgumentList cpp_args(0);
+	CppVariant cpp_result;
+
+	callback->Run(cpp_args, &cpp_result);
+	cpp_result.CopyToNPVariant(result);
+	return true;
+  } else { 
+	const CppVariant* cpp_value = (*prop).second;
+	cpp_value->CopyToNPVariant(result);
+	return true;
   }
- 
-  const CppVariant* cpp_value = (*prop).second;
-  cpp_value->CopyToNPVariant(result);
-  return true;
 }
  
 bool JsClass::SetProperty(NPIdentifier ident,
                                    const NPVariant* value) {
   PropertyList::iterator prop = properties_.find(ident);
-  if (prop == properties_.end())
-    return false;
- 
-  (*prop).second->Set(*value);
+  if (prop == properties_.end()) {
+	MethodList::const_iterator prop_setter = property_setters_.find(ident);
+	if (prop_setter == property_setters_.end()) {
+		return false;
+	}
+	
+	Callback *callback = (*prop_setter).second;
+	CppArgumentList cpp_args(1);
+	cpp_args[0].Set(*value);
+
+	CppVariant cpp_result;
+	callback->Run(cpp_args, &cpp_result);
+
+  } else {
+	(*prop).second->Set(*value);
+  }
   return true;
 }
  
@@ -225,7 +250,22 @@ void JsClass::BindCallback(std::string name, Callback* callback) {
     delete old_callback->second;
   methods_[ident] = callback;
 }
- 
+
+void JsClass::BindPropertyCallbacks(std::string name, Callback* getter, Callback* setter) {
+  // NPUTF8 is a typedef for char, so this cast is safe.
+  NPIdentifier ident = NPN_GetStringIdentifier((const NPUTF8*)name.c_str());
+  
+  MethodList::iterator old_getter = property_getters_.find(ident);
+  MethodList::iterator old_setter = property_setters_.find(ident);
+  if (old_getter != property_getters_.end())
+    delete old_getter->second;
+  if (old_setter != property_setters_.end())
+	delete old_setter->second;
+
+  property_getters_[ident] = getter;
+  property_setters_[ident] = setter;
+}
+
 void JsClass::BindProperty(std::string name, CppVariant* prop) {
   // NPUTF8 is a typedef for char, so this cast is safe.
   NPIdentifier ident = NPN_GetStringIdentifier((const NPUTF8*)name.c_str());
