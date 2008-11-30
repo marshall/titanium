@@ -1,1 +1,1 @@
-alert("hello from within test.js");
+document.write("<div>hello from within test.js</div>");

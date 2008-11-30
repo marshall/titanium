@@ -1,9 +1,10 @@
 <html>
 <head>
 <title>My Title</title>
-<script src="test.js"></script>
+<!--<script src="test.js"></script>
 <script src="app:test.js"></script>
 <script src="app://1234/test.js"></script>
+-->
 </head>
 <body>
 
@@ -13,6 +14,7 @@
 <script>
    ti.ready(function($)
    {
+			/*
 			ti.Window.currentWindow.setTitle("Blah");
 			//ti.Window.currentWindow.setX(0);
 			ti.Window.currentWindow.setX(40);
@@ -20,8 +22,8 @@
 			ti.Window.currentWindow.setHeight(900);
 			//ti.Window.currentWindow.setTransparency(.80);
 			//ti.Extras.fadeOutWindow(ti.Window.currentWindow);
-			ti.Window.currentWindow.setTransparency(0.5);
-			ti.App.debug(ti.Window.currentWindow.getBounds());
+			//ti.Window.currentWindow.setTransparency(0.5);
+			//ti.App.debug(ti.Window.currentWindow.getBounds());
          var db = new ti.Database;
          db.open("jeff-test");
          db.execute("create table if not exists Test (Phrase text, Timestamp int)");
@@ -33,6 +35,10 @@
             rs.next();
          }
          rs.close();
+			*/
+
+			//var w = ti.Window.createWindow();
+			//w.open({"key":"value"});
    });
 </script>
 
@@ -42,8 +48,9 @@
 <button onclick="ti.Window.currentWindow.setMaximizable(false)">Not maximimizable</button>
 -->
 
+<!--
 <object width="425" height="344"><param name="movie" value="http://www.youtube.com/v/9-4IFUak_U0&hl=en&fs=1"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube.com/v/9-4IFUak_U0&hl=en&fs=1" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="425" height="344"></embed></object>
-
+-->
 
 <a href="http://google.com">Google.com</a>
 <a href="app://test.html">Test</a>

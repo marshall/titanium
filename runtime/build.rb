@@ -79,6 +79,7 @@ END
                localserver
                timer
                workerpool
+               notification
                tracker
                epilog)
 
