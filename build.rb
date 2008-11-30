@@ -28,6 +28,24 @@ namespace :titanium do
   end
   
   require File.join(TITANIUM_DIR,'project','build.rb')
+
+  task :dev do
+    
+    Rake::Task["service:titanium"].invoke
+    Rake::Task["titanium:runtime:#{platform_string}"].invoke
+    Rake::Task["titanium:project"].invoke
+
+    ts = get_config(:service,:titanium)
+    system "app install:service #{ts[:output_filename]} --force"
+    
+    tp = get_config(:titanium,:project)
+    system "app install:titanium #{tp[:output_filename]} --force"
+    
+    tr = get_config(:titanium,platform_string.to_sym)
+    system "app install:titanium #{tr[:output_filename]} --force"
+  end
+
+  
 end
 
 
