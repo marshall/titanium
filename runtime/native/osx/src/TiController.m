@@ -271,16 +271,9 @@ static CGFloat toFloat (NSString* value, CGFloat def)
 			urlString = [NSString stringWithFormat:@"app://%@/%@",appID,[appurl stringByStandardizingPath]];
 		}
 	}
-	NSLog(@"my new url: %@",urlString);
-	
-//	else
-//	{
-//		// make it load from within our resource bundle
-//		urlString = [NSString stringWithFormat:@"app://%@", [[config getURL] stringByStandardizingPath]];
-//	}
+	TRACE(@"my new url: %@",urlString);
 	NSURL *URL = [NSURL URLWithString:urlString];
 	[[TiController instance] createDocument:URL]; //TODO: do we need to release somehow?
-
 	[self hideSplash];
 }
 
@@ -443,7 +436,7 @@ static CGFloat toFloat (NSString* value, CGFloat def)
 	NSString *basePath = [[NSBundle mainBundle] resourcePath];
 	NSString *resourcePath = [basePath stringByAppendingPathComponent:@"aid"];
 	appID = [[[NSString stringWithContentsOfFile:resourcePath] stringByReplacingOccurrencesOfString:@"\n" withString:@""] copy];
-	NSLog(@"application ID: %@",appID);
+	TRACE(@"application ID: %@",appID);
 }
 
 -(BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication*)app

@@ -319,21 +319,7 @@
 	}
 	NSString *a = [AppProtocol getPath:[NSURL URLWithString:url]];
 	NSString *b = [AppProtocol getPath:[NSURL URLWithString:testURL]];
-	
-	NSLog(@"host a = %@, host b = %@", a,b);
-	
 	return [a isEqual:b];
-	/*
-	// use the last component of the pattern against the real URL
-	NSString *a = [url lastPathComponent];
-	NSString *b = [testURL lastPathComponent];
-	if ([a isEqualToString:b])
-	{
-		return YES;
-	}
-	NSPredicate *regex = [NSPredicate predicateWithFormat:@"SELF MATCHES %@",a];
-	return [regex evaluateWithObject:b];
-	*/
 }
 
 - (void)assign:(TiWindow*)w

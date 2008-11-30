@@ -39,7 +39,6 @@
 + (BOOL)canInitWithRequest:(NSURLRequest *)theRequest 
 {
 	NSString *theScheme = [[theRequest URL] scheme];
-	NSLog(@"canInit: %@", [theRequest URL]);
 	return [theScheme isEqual:@"app"];
 }
 
@@ -131,7 +130,7 @@
 	NSString *basePath = [[NSBundle mainBundle] resourcePath];
 	NSString *resourcePath = [basePath stringByAppendingPathComponent:s];
 	
-	NSLog(@"trying to load from: %@, base: %@",resourcePath,basePath);
+	TRACE(@"trying to load from: %@, base: %@",resourcePath,basePath);
 	
 	TiAppArguments *args = (TiAppArguments *)[[TiController instance] arguments];
 	
@@ -157,7 +156,7 @@
 	NSString *ext = [resourcePath pathExtension];
 	NSString *mime = [AppProtocol mimeTypeFromExtension:ext];
 	
-	NSLog(@"loaded mime=%@ from extension=%@",mime,ext);
+	TRACE(@"loaded mime=%@ from extension=%@",mime,ext);
 	
 	NSURLResponse *response = [[NSURLResponse alloc] initWithURL:url MIMEType:mime expectedContentLength:-1 textEncodingName:@"utf-8"];
 	[client URLProtocol:self didReceiveResponse:response cacheStoragePolicy:NSURLCacheStorageAllowed];

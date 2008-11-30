@@ -211,6 +211,7 @@
 
 -(void)setURL:(NSURL*)newURL
 {
+	TRACE(@"setURL: %@ called for %x",newURL,self);
 	[url release];
 	url = [newURL copy];
 }
@@ -236,6 +237,11 @@
 #pragma mark -
 #pragma mark WebPolicyDelegate
 
+- (void)webView:(WebView *)sender decidePolicyForNewWindowAction:(NSDictionary *)actionInformation request:(NSURLRequest *)request newFrameName:(NSString *)frameName decisionListener:(id < WebPolicyDecisionListener >)listener
+{
+	[listener ignore];
+}
+
 - (void)webView:(WebView *)sender decidePolicyForNavigationAction:(NSDictionary*) actionInformation request:(NSURLRequest*) request frame:(WebFrame*)frame decisionListener:(id <WebPolicyDecisionListener>)listener
 {
 	int type = [[actionInformation objectForKey:WebActionNavigationTypeKey] intValue];
@@ -245,7 +251,7 @@
 		case WebNavigationTypeBackForward:
 		case WebNavigationTypeReload:
 		{
-			[listener ignore];
+			[listener use];
 			return;
 		}
 		case WebNavigationTypeLinkClicked:
@@ -272,7 +278,8 @@
 		[listener use];
 		return ;
 	}
-	if ([protocol compare:@"app"]==0)
+	
+	if ([protocol isEqual:@"app"])
 	{
 		if ([[TiController instance] shouldOpenInNewWindow])
 		{
@@ -290,15 +297,17 @@
 			[listener use];
 		}
 	}
-	else if ([protocol compare:@"http"]==0)
+	else if ([protocol isEqual:@"http"] || [protocol isEqual:@"https"])
 	{
-		[listener use];
-		//[listener ignore];
+		// TODO: we need to probalby make this configurable to support
+		// opening the URL in the system browser (code below). for now 
+		// we just open inside the same frame
 		//[[NSWorkspace sharedWorkspace] openURL:newURL];
+		[listener use];
 	}
 	else
 	{
-		TRACE(@"Application attempted to navigate to illegal location: %@", [[actionInformation objectForKey:WebActionOriginalURLKey] URL]);
+		TRACE(@"Application attempted to navigate to illegal location: %@", newURL);
 		[listener ignore];
 	}
 }
@@ -329,7 +338,12 @@
     // Only report feedback for the main frame.
     if (frame == [sender mainFrame]) 
 	{
-		TRACE(@"TiDocument::didFinishLoadForFrame: %x",self);
+		NSURL *theurl =[[[frame dataSource] request] URL];
+		TRACE(@"TiDocument::didFinishLoadForFrame: %x for url: %@",self,theurl);
+		if (![theurl isEqual:url])
+		{
+			[self setURL:theurl];
+		}
 		[self closePrecedent];
     }
 }
@@ -380,8 +394,19 @@
 
 - (WebView *)webView:(WebView *)sender createWebViewWithRequest:(NSURLRequest *)request
 {
-	[TiController error:@"createWebViewWithRequest not currently implemented"];
-	return nil;
+	// this is called when you attempt to create a new child window from this document
+	// for example using window.open
+	NSURL *newurl = [request URL];
+	if (newurl==nil)
+	{
+		// this will be null in certain cases where the browser want's to call loadURL
+		// on the new webview and he will pass nil .... just open a blank document
+		// and return
+		newurl = [NSURL URLWithString:@"about:blank"];
+	}
+	TiDocument *newDoc = [[TiController instance] createDocument:newurl];
+	[newDoc setPrecedent:self];
+	return [newDoc webView];
 }
 
 - (void)webViewShow:(WebView *)sender
@@ -478,7 +503,7 @@
 - (id)webView:(WebView *)sender identifierForInitialRequest:(NSURLRequest *)request fromDataSource:(WebDataSource *)dataSource
 {
     // Return some object that can be used to identify this resource
-	TRACE(@"TiDocument::identifierForInitialRequest = %x",self);
+	// we just ignore this for now
 	return nil;
 }
 

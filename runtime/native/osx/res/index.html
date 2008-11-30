@@ -13,7 +13,6 @@
 <script>
    ti.ready(function($)
    {
-		/*
 			ti.Window.currentWindow.setTitle("Blah");
 			//ti.Window.currentWindow.setX(0);
 			ti.Window.currentWindow.setX(40);
@@ -34,7 +33,6 @@
             rs.next();
          }
          rs.close();
-		*/
    });
 </script>
 
@@ -50,6 +48,8 @@
 <a href="http://google.com">Google.com</a>
 <a href="app://test.html">Test</a>
 <a href="file:///test.html">File Test</a>
+
+<a onclick="window.open('test.html');return false;" href="#">New Window</a>
 
 </body>
 </html>

@@ -75,7 +75,7 @@
 
 - (void)hide:(BOOL)animate
 {
-	NSLog(@"hide called with: %d",animate);
+	TRACE(@"hide called with: %d",animate);
 	if (animate)
 	{
 		// let the JS layer do the animation
