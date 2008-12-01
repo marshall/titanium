@@ -3,7 +3,6 @@
 <title>My Title</title>
 <script src="test.js"></script>
 <script src="app:test.js"></script>
-<!--<script src="app://1234/test.js"></script> -->
 </head>
 <body>
 
@@ -13,16 +12,6 @@
 <script>
    ti.ready(function($)
    {
-			/*
-			ti.Window.currentWindow.setTitle("Blah");
-			//ti.Window.currentWindow.setX(0);
-			ti.Window.currentWindow.setX(40);
-			ti.Window.currentWindow.setWidth(600);
-			ti.Window.currentWindow.setHeight(900);
-			//ti.Window.currentWindow.setTransparency(.80);
-			//ti.Extras.fadeOutWindow(ti.Window.currentWindow);
-			//ti.Window.currentWindow.setTransparency(0.5);
-			//ti.App.debug(ti.Window.currentWindow.getBounds());
          var db = new ti.Database;
          db.open("jeff-test");
          db.execute("create table if not exists Test (Phrase text, Timestamp int)");
@@ -34,78 +23,12 @@
             rs.next();
          }
          rs.close();
-			*/
-
-
-
-/*
-			window.w = ti.Window.createWindow();
-			window.w.setTitle("i love john mccain");
-			window.w.setURL("app://test.html");
-			//window.w.setContent("<html><script><\/script><body>barack obama is king</body></html>");
-			window.w.setVisible(false);
-			window.w.setWidth(150);
-			window.w.setHeight(100);
-			window.w.setUsingChrome(true);
-			window.w.open();
-*/
-
-/*
-			setTimeout(function()
-			{
-				window.w.setTransparency(0.0);
-				window.w.show(true);
-				setTimeout(function()
-				{
-					window.w.hide(true);
-				},3000);
-			},5000);
-*/
 
 			ti.Menu.createSystemMenu('tray.png', null, function()
 			{
 				alert("w00t!");
 			});
    });
-
-function showLogin()
-{
-	var w = ti.Window.createWindow();
-	w.setTitle("Facebook Login");
-	//w.setURL("http://www.facebook.com/login.php?api_key=7ff07a66afbb0f266f2b804b29675832&v=1.0&popup=1&auth_token=" + "1");
-	w.setURL("app://test.html");
-	w.setWidth("500");
-	w.setHeight("100");
-	w.setResizable(false)
-	w.setTransparency(1.0)
-	w.open();
-	w.show();
-}
-
-showLogin();
-
-
-/*
-	(function($)
-	 {
-			try
-			{
-				$.get("app://test.js",function(data)
-				{
-					alert(data);
-				},"text");
-			}
-			catch (e)
-			{
-				alert(e);
-			}
-	 }
-	)(ti.jQuery);
-
-*/
-
-
-
 </script>
 
 <!--

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ti:app xmlns:ti="http://ti.appcelerator.org" xmlns:appc="http://www.appcelerator.org">
+    
+	<id>com.titaniumapp.apivalidator</id>
+	<name>apivalidator</name>
+	<description>Titanium API Validator unit tests</description>
+	<copyright>Copyright (c) 2008 Appcelerator, Inc</copyright>
+	<homepage>http://www.titaniumapp.com</homepage>
+	<updatesite>http://updatesite.titaniumapp.com</updatesite>
+	<version>0.1</version>
+
+	<window>
+		<id>initial</id>
+		<title>Titanium API validator</title>
+		<url>app://index.html</url>
+		<width>800</width>
+		<min-width>0</min-width>
+		<max-width>9000</max-width>
+		<height>600</height>
+		<min-height>0</min-height>
+		<max-height>9000</max-height>
+		<maximizable>true</maximizable>
+		<minimizable>true</minimizable>
+		<closeable>true</closeable>
+		<resizable>true</resizable>
+		<chrome scrollbars="true">false</chrome>
+		<transparency>1.0</transparency>
+	</window>
+
+	<icon>
+		<image16>apivalidator16.png</image16>
+		<image32>apivalidator32.png</image32>
+		<image48>apivalidator48.png</image48>
+	</icon>
+
+</ti:app>
