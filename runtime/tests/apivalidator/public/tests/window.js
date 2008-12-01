@@ -15,6 +15,7 @@ testSuite("ti.Window API tests",
 
 		test("toplevel window API", function()
 		{
+			assert(w != null);
 			assert(w.mainWindow != null);
 			assert(w.currentWindow != null);
 			assert(w.createWindow != null);
@@ -22,16 +23,10 @@ testSuite("ti.Window API tests",
 
 		test("window object API", function()
 		{
-			var m = w.mainWindow;
+			assert(w != null);
 
-			var assertGetterSetter = function (prop,b) {
-				var get = "get";
-				if (b) {
-					get = "is";
-				}
-				eval("assert(m."+get+prop+" != null);");
-				eval("assert(m.set"+prop+" != null);");
-			};
+			var m = w.mainWindow;
+			assert(m != null);
 
 			var props = ['ID', 'X', 'Y', 'Width', 'Height', 'Bounds',
 				'Title', 'URL', 'Transparency'];
@@ -40,14 +35,17 @@ testSuite("ti.Window API tests",
 				'Closeable', 'Fullscreen', 'Visible', 'UsingChrome', 'UsingScrollbars'];
 
 			$.each(props, function() {
-				assertGetterSetter(this, false);	
+				assert(m["get"+this] != null);
+				assert(m["set"+this] != null);
 			});
 
 			$.each(boolProps, function() {
-				assertGetterSetter(this, true);
+				assert(m["is"+this] != null);
+				assert(m["set"+this] != null);
 			});
 
 
+			assert(m.open != null);
 			assert(m.hide != null);
 			assert(m.show != null);
 			assert(m.close != null);
