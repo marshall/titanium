@@ -71,10 +71,12 @@ $(document).ready(function()
 	{
 		$.each(json.suites,function()
 		{
+			alert("loading test.js: "+AppC.docRoot+"tests/"+this);
 			$.getScript(AppC.docRoot+'tests/'+this);
 		});
 	});
-	
+
+	alert("#run="+$("#run"));	
 	$("#run").on("click",function()
 	{
 		resetStats();

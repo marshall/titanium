@@ -2877,10 +2877,16 @@ jQuery.extend({
 	// Determines if an XMLHttpRequest was successful or not
 	httpSuccess: function( xhr ) {
 		try {
-			ti.App.debug("xhr.status="+xhr.status);
+			// PATCH -- allow titanium URLs to return without a status code
+			//
+			if (!xhr.status) {
+				return (location.protocol == "file:" ||
+						location.protocol == "app:" ||
+						location.protocol == "ti:");
+			}
+
 			// IE error sometimes returns 1223 when it should be 204 so treat it as success, see #1450
-			return !xhr.status && location.protocol == "file:" ||
-				( xhr.status >= 200 && xhr.status < 300 ) || xhr.status == 304 || xhr.status == 1223 ||
+			return ( xhr.status >= 200 && xhr.status < 300 ) || xhr.status == 304 || xhr.status == 1223 ||
 				jQuery.browser.safari && xhr.status == undefined;
 		} catch(e){}
 		return false;
