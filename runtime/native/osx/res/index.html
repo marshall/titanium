@@ -4,10 +4,13 @@
 <script src="test.js"></script>
 <script src="app:test.js"></script>
 </head>
-<body>
+<body onunload="alert('unloaded')" xonload="alert('loaded')">
 
 <h1>Hello world</h1>
 <div id="status">Database results will go here</div>
+<form>
+	<input type="text" value="" id="name"/>
+</form>
 
 <script>
    ti.ready(function($)
@@ -28,6 +31,25 @@
 			{
 				alert("w00t!");
 			});
+
+			try
+			{
+				var w = ti.Window.createWindow();
+				w.setWidth(500);
+				w.setHeight(300);
+				w.setURL("http://www.google.com");
+				w.open();
+				w.setVisible(true);
+
+				setTimeout(function()
+				{
+					w.close();
+				},2000);
+			}
+			catch (E)
+			{
+				alert(E);
+			}
    });
 </script>
 

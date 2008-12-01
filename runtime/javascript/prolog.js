@@ -18,7 +18,11 @@
 		App: runtime.App,
 		Dock: runtime.Dock,
 		Menu: runtime.Menu,
-		Window: runtime.Window
+		Window: runtime.Window,
+     	toString: function()
+     	{
+        	return '[Titanium Runtime]';
+     	}
 	};
 
 	if (navigator.appVersion.indexOf("Win")!=-1) ti.platform = "win32";

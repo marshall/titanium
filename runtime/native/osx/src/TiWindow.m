@@ -62,6 +62,11 @@
 	return self;
 }
 
+- (BOOL)canBecomeKeyWindow
+{
+	return YES;
+}
+
 - (TiWindowConfig*) config
 {
 	return config;

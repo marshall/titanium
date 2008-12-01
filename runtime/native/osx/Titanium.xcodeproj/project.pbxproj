@@ -77,6 +77,7 @@
 		24674DCE0EE2012C00CE52E9 /* test.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = test.js; path = res/test.js; sourceTree = "<group>"; };
 		24674E5F0EE20E5800CE52E9 /* aid */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = aid; path = res/aid; sourceTree = "<group>"; };
 		246755400EE31EEC00CE52E9 /* tray.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = tray.png; path = res/tray.png; sourceTree = "<group>"; };
+		24675DD10EE3DE5900CE52E9 /* WebScriptDebugDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebScriptDebugDelegate.h; path = src/WebScriptDebugDelegate.h; sourceTree = "<group>"; };
 		2491AC870EDA375100B1ECDB /* TiController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TiController.h; path = src/TiController.h; sourceTree = "<group>"; };
 		2491AC880EDA375100B1ECDB /* TiController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TiController.m; path = src/TiController.m; sourceTree = "<group>"; };
 		2491AC890EDA375100B1ECDB /* TiDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TiDocument.h; path = src/TiDocument.h; sourceTree = "<group>"; };
@@ -168,6 +169,7 @@
 		2497036C0EDA9A380024252C /* WebKit */ = {
 			isa = PBXGroup;
 			children = (
+				24675DD10EE3DE5900CE52E9 /* WebScriptDebugDelegate.h */,
 				2497073B0EDBD07B0024252C /* WebViewInternal.h */,
 				2497036D0EDA9A4B0024252C /* WebDashboardRegion.h */,
 				2497036E0EDA9A4B0024252C /* WebFramePrivate.h */,
