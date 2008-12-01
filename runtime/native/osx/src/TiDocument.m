@@ -38,6 +38,7 @@
 	{
 		TRACE(@"TiDocument::init = %x",self);
 		childWindows = [[NSMutableArray alloc] init];
+		javascripts = [[NSMutableDictionary alloc] initWithCapacity:100];
 	}
 	return self;
 }
@@ -55,8 +56,17 @@
 		[w destroy]; // destroy will call back and remove below
 		w = nil;
 	}
+	[childWindows removeAllObjects];
 	[childWindows release];
 	childWindows=nil;
+//	for (id key in javascripts)
+//	{
+//		NSString *value = [javascripts objectForKey:key];
+//		[value release];
+//	}
+	[javascripts removeAllObjects];
+	[javascripts release];
+	javascripts = nil;
     [url release];
 	webView=nil;
     [super dealloc];
@@ -670,11 +680,15 @@
 // some source was parsed, establishing a "source ID" (>= 0) for future reference
 - (void)webView:(WebView *)webView       didParseSource:(NSString *)source
  baseLineNumber:(NSUInteger)lineNumber
-		fromURL:(NSURL *)url
+		fromURL:(NSURL *)aurl
 	   sourceId:(int)sid
 	forWebFrame:(WebFrame *)webFrame
 {
-	TRACE(@"loading javascript from %@",[url absoluteURL]);
+	TRACE(@"loading javascript from %@ with sid: %d",[aurl absoluteURL],sid);
+	NSString *key = [NSString stringWithFormat:@"%d",sid];
+	NSString *value = [NSString stringWithFormat:@"%@",(aurl==nil? @"<main doc>" : aurl)];
+	//TODO: trim off app://<aid>/
+	[javascripts setObject:value forKey:key];
 }
 
 // some source failed to parse
@@ -719,7 +733,16 @@
 		   line:(int)lineno
 	forWebFrame:(WebFrame *)webFrame
 {
-	TRACE(@"raising javascript exception at lineNumber: %d",lineno);
+	NSString *key = [NSString stringWithFormat:@"%d",sid];
+	for (id akey in javascripts)
+	{
+		if ([key isEqualToString:akey])
+		{
+			NSString *aurl = [javascripts objectForKey:akey];
+			TRACE(@"raising javascript exception at lineNumber: %d in %@ (%d)",lineno,aurl,sid);
+			break;
+		}
+	}
 }
 
 
