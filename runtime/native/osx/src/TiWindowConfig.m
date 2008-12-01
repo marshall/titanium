@@ -55,7 +55,6 @@
 - (void)dealloc
 {
 	TRACE(@"TiWindowConfig: dealloc\n");
-	[window release];
 	window = nil;
 	[title release];
 	title = nil;
@@ -326,7 +325,6 @@
 - (void)assign:(TiWindow*)w
 {
 	window = w;
-	[window retain];
 }
 
 #pragma mark -

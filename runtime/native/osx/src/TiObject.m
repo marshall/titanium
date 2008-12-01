@@ -33,8 +33,9 @@
 	if (self != nil) 
 	{
 		window = win;
-		[window retain];
 		webView = [TiController getWebView:window];
+		
+		[window retain];
 		[webView retain];
 
 		App = [[TiApp alloc] initWithWindow:window];
@@ -49,8 +50,9 @@
 - (void)dealloc 
 {
 	[window release];
-	window = nil;
 	[webView release];
+	
+	window = nil;
 	webView = nil;
 	[App release];
 	[Dock release];

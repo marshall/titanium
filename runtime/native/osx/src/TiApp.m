@@ -26,20 +26,16 @@
 	self = [super init];
 	if (self != nil) 
 	{
+		// don't retain
 		window = win;
-		[window retain];
-		
 		webView = [TiController getWebView:window];
-		[webView retain];
 	}
 	return self;
 }
 
 - (void)dealloc 
 {
-	[webView release];
 	webView = nil;
-	[window release];
 	window = nil;
 	[super dealloc];
 }

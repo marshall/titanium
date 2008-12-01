@@ -176,11 +176,31 @@ task :osx do
       puts "building Gears ..."
       gears_dir = build_gears
       gears_plugin = File.join(gears_dir, 'bin-opt', 'installers', 'Safari', 'Gears.plugin')
-      dofiles(gears_plugin) do |f|
+      
+      stage_gears = File.join(STAGE_DIR,'Gears_Titanium.plugin')
+      
+      FileUtils.rm_rf stage_gears if File.exists? stage_gears
+      FileUtils.cp_r gears_plugin, stage_gears
+      gears_contents = File.join(stage_gears,'Contents')
+      FileUtils.mv File.join(gears_contents,'MacOS','libgears.dylib'), File.join(gears_contents,'MacOS','libgears_titanium.dylib')
+      
+      ipl1 = File.read(File.join(gears_contents,'Info.plist'))
+      iplf1 = File.open(File.join(gears_contents,'Info.plist'),'w')
+      ipl1.gsub! 'libgears.dylib', 'libgears_titanium.dylib'
+      iplf1.puts ipl1
+      iplf1.close
+
+      ipl2 = File.read(File.join(gears_contents,'Resources','Gears.bundle','Contents','Info.plist'))
+      iplf2 = File.open(File.join(gears_contents,'Resources','Gears.bundle','Contents','Info.plist'),'w')
+      ipl2.gsub! 'libgears.dylib', 'libgears_titanium.dylib'
+      iplf2.puts ipl1
+      iplf2.close
+      
+      dofiles(stage_gears) do |f|
         filename = File.basename(f)
         next if File.basename(filename[0,1]) == '.'
         name = f.to_s.gsub(gears_plugin+'/','')
-        zipfile.add("pieces/Titanium.app/Contents/Plug-ins/Gears.plugin/#{name}",File.join(gears_plugin,f))
+        zipfile.add("pieces/Titanium.app/Contents/Plug-ins/Gears_Titanium.plugin/#{name}",File.join(stage_gears,f))
       end
     end
   end

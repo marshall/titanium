@@ -37,14 +37,20 @@
 			*/
 
 
+
+/*
 			window.w = ti.Window.createWindow();
 			window.w.setTitle("i love john mccain");
-			window.w.setURL("http://www.google.com");
+			window.w.setURL("app://test.html");
+			//window.w.setContent("<html><script><\/script><body>barack obama is king</body></html>");
 			window.w.setVisible(false);
-			window.w.setWidth(350);
-			window.w.setHeight(200);
+			window.w.setWidth(150);
+			window.w.setHeight(100);
+			window.w.setUsingChrome(true);
 			window.w.open();
+*/
 
+/*
 			setTimeout(function()
 			{
 				window.w.setTransparency(0.0);
@@ -54,19 +60,37 @@
 					window.w.hide(true);
 				},3000);
 			},5000);
-
+*/
 
 			ti.Menu.createSystemMenu('tray.png', null, function()
 			{
 				alert("w00t!");
 			});
    });
+
+function showLogin()
+{
+	var w = ti.Window.createWindow();
+	w.setTitle("Facebook Login");
+	//w.setURL("http://www.facebook.com/login.php?api_key=7ff07a66afbb0f266f2b804b29675832&v=1.0&popup=1&auth_token=" + "1");
+	w.setURL("app://test.html");
+	w.setWidth("500");
+	w.setHeight("100");
+	w.setResizable(false)
+	w.setTransparency(1.0)
+	w.open();
+	w.show();
+}
+
+showLogin();
+
+
 /*
 	(function($)
 	 {
 			try
 			{
-				$.get("http://google.com",function(data)
+				$.get("app://test.js",function(data)
 				{
 					alert(data);
 				},"text");
@@ -77,7 +101,11 @@
 			}
 	 }
 	)(ti.jQuery);
+
 */
+
+
+
 </script>
 
 <!--
@@ -95,6 +123,7 @@
 <a href="file:///test.html">File Test</a>
 
 <a onclick="window.open('test.html');return false;" href="#">New Window</a>
+<a onclick="window.w.show(true);return false;" href="#">Show Window</a>
 
 </body>
 </html>

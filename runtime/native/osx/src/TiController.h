@@ -40,7 +40,7 @@
 - (NSString*)appName;
 - (NSString*)appID;
 - (TiAppArguments*)arguments;
-- (TiDocument*) createDocument:(NSURL*)url visible:(BOOL)visible;
+- (TiDocument*) createDocument:(NSURL*)url visible:(BOOL)visible config:(TiWindowConfig*)config;
 - (BOOL)shouldOpenInNewWindow;
 - (TiWindowConfig*) pendingConfig;
 - (void) resetPendingConfig;

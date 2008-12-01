@@ -30,6 +30,7 @@
 	TiWindowConfig *pending;
 	TiDocument *doc;
 	TiDocument *parent;
+	NSString *pendingHTML;
 }
 
 - (id)initWithWindow:(TiWindow*)win;
@@ -47,6 +48,9 @@
 - (void)activate;
 - (void)minimize;
 - (void)maximize;
+
+- (void)setContent:(NSString*)content;
+- (NSString*)getContent;
 
 - (NSString*)getURL;
 - (void)setURL:(NSString *)url;

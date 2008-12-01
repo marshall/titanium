@@ -31,6 +31,7 @@
 	TiDocument *closer;
 	TiUserWindow *userWindow;
 	NSMutableArray *childWindows;
+	BOOL scriptCleared;
 }
 
 // these are used internally only

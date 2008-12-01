@@ -27,9 +27,8 @@
 	TRACE(@"TiUserWindow::initWithWebview = %x",self);
 	if (self != nil)
 	{
-		window = nil;
-		webView = wv;
-		[webView retain];
+		window = nil; // don't retain
+		webView = wv;  // don't retain
 		pending = [[TiWindowConfig alloc] init];
 	}
 	return self;
@@ -41,17 +40,16 @@
 	TRACE(@"TiUserWindow::initWithWindow = %x",self);
 	if (self != nil)
 	{
-		window = win;
-		[window retain];
+		// don't retain these
+		window = win; 
 		webView = [TiController getWebView:window];
-		[webView retain];
 	}
 	return self;
 }
 
 - (void)dealloc 
 {
-	TRACE(@"TiUserWindow::dealloc = %x",self);
+	TRACE(@"TiUserWindow::dealloc = %x, parent = %x",self,parent);
 	[pending release];
 	pending = nil;
 	[doc release];
@@ -61,9 +59,9 @@
 		[parent removeChildWindow:self];
 		parent = nil;
 	}
-	[webView release];
+	[pendingHTML release];
+	pendingHTML = nil;
 	webView = nil;
-	[window release];
 	window = nil;
 	[super dealloc];
 }
@@ -76,6 +74,42 @@
 - (BOOL) hasWindow
 {
 	return (window != nil);
+}
+
+- (void)setContent:(NSString*)content
+{
+	if ([self hasWindow])
+	{
+		[[webView mainFrame] loadHTMLString:content baseURL:nil];
+	}
+	else
+	{
+		[pendingHTML release];
+		pendingHTML = [content copy];
+	}
+}
+
+- (NSString*)getContent
+{
+	if ([self hasWindow])
+	{
+		NSData *data = [[[webView mainFrame] dataSource] data];
+		if (data==nil)
+		{
+			return nil;
+		}
+		int length = [data length];
+		char *b = malloc(sizeof(char)*length);
+		[data getBytes:b length:length];
+		NSString *copy = [NSString stringWithCString:b length:length];
+		free(b);
+		b=nil;
+		return copy;
+	}
+	else
+	{
+		return pendingHTML;
+	}
 }
 
 - (NSString*)getTitle 
@@ -127,29 +161,42 @@
 		[[webView windowScriptObject] setException:@"window has already been opened"];
 		return;
 	}
-	[webView release];
+	TRACE(@"TiUserWindow::open called %x, retain count=%d",self,[self retainCount]);
 	
-	NSString *url = [pending getURL];
+	TRACE(@"Open URL: %@",[pending getURL]);
+	NSString *url = [[pending getURL] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+	//NOTE: do we need to do this for others???
+	TRACE(@"URL scrubbed: %@",url);
+	url = [url stringByReplacingOccurrencesOfString:@"%" withString:@"%22"];
 	NSURL *theurl = [NSURL URLWithString:url];
-	doc = [[TiController instance] createDocument:theurl visible:NO];
+	
+	if (theurl==nil)
+	{
+		// invalid URL!
+		TRACE(@"Invalid URL used for user window: %@",url);
+		[[webView windowScriptObject] setException:@"Invalid URL passed to Window. Makes sure the URL conforms to RFC 2396"];
+		return;
+	}
+	
+	doc = [[TiController instance] createDocument:theurl visible:NO config:pending];
 	window = [doc window];
 	if (![pending isVisible])
 	{
 		[self hide:NO];
 	}
-	[window retain];
 	webView = [doc webView];
-	[webView retain];
 	[doc loadURL:theurl];
 }
 
 - (void)setParent:(TiDocument*)p
 {
-	parent = p;
+	TRACE(@"TiUserWindow::setParent for %x called with %x", self, p);
+	parent = p; // don't retain
 }
 
 - (void)destroy
 {
+	TRACE(@"TiUserWindow::destroy %x", self);
 	if ([self hasWindow])
 	{
 		[self close];
@@ -158,13 +205,14 @@
 
 - (void)close 
 {
+	TRACE(@"TiUserWindow::close %x", self);
+	if (parent)
+	{
+		[parent removeChildWindow:self];
+		parent = nil;
+	}
 	if ([self hasWindow])
 	{
-		if (parent)
-		{
-			[parent removeChildWindow:self];
-			parent = nil;
-		}
 		[[TiController getDocument:window] close];
 	}
 	else
@@ -182,6 +230,10 @@
 		{
 			// let the JS layer do the animation
 			WebScriptObject* scope = [[webView windowScriptObject] evaluateWebScript:@"ti.Extras"];
+			if (scope == nil)
+			{
+				scope = [[[parent webView] windowScriptObject] evaluateWebScript:@"ti.Extras"];
+			}
 			[scope callWebScriptMethod:@"fadeOutWindow" withArguments:[NSArray arrayWithObject:self]];
 		}
 		else
@@ -795,6 +847,14 @@
 	else if (sel == @selector(setBounds:))
 	{
 		return @"setBounds";
+	}
+	else if (sel == @selector(setContent:))
+	{
+		return @"setContent";
+	}
+	else if (sel == @selector(getContent))
+	{
+		return @"getContent";
 	}
  	return nil;
 }

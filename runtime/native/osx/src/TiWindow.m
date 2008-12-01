@@ -67,7 +67,6 @@
 	return config;
 }
 
-
 - (NSSize)windowWillResize:(NSWindow *) window toSize:(NSSize)newSize
 {
 	if ([config isResizable])

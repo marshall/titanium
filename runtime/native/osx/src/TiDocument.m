@@ -43,12 +43,15 @@
 {
 	TRACE(@"TiDocument::dealloc =%x",self);
 	[self closePrecedent];
+	[userWindow destroy];
 	[userWindow release];
 	userWindow = nil;
+	TRACE(@"TiDocument::dealloc = %x, child windows = %d",self,[childWindows count]);
 	for (int c=0;c<[childWindows count];c++)
 	{
 		TiUserWindow *w = [childWindows objectAtIndex:c];
 		[w destroy]; // destroy will call back and remove below
+		w = nil;
 	}
 	[childWindows release];
 	childWindows=nil;
@@ -69,11 +72,13 @@
 - (void)addChildWindow:(TiUserWindow*)win
 {
 	[childWindows addObject:win];
+	TRACE(@"addedChildWindow: %x (retain=%d) for %x",win,[win retainCount],self);
 }
 
 - (void)removeChildWindow:(TiUserWindow*)win
 {
 	[childWindows removeObject:win];
+	TRACE(@"removeChildWindow: %x (retain=%d) for %x",win,[win retainCount],self);
 }
 
 - (id)webView
@@ -102,8 +107,8 @@
 {
 	[url release];
 	url = [URL copy];
-	TRACE(@"TiDocument::loadURL=>%@, webview=%x",[URL absoluteString],webView);
-    [[webView mainFrame] loadRequest:[NSURLRequest requestWithURL:URL]];
+	TRACE(@"TiDocument::loadURL=>%@, webview=%x",[url absoluteString],webView);
+    [[webView mainFrame] loadRequest:[NSURLRequest requestWithURL:url]];
 }
 
 - (void)customizeUserAgent 
@@ -200,6 +205,7 @@
 - (void)close
 {
 	TRACE(@"TiDocument::close = %x",self);
+
 	if (webView)
 	{
 		[webView stopLoading:nil];
@@ -314,7 +320,7 @@
 			// new document and later close the old document.  we have to do this because 
 			// each document could have a different window spec.
 			
-			TiDocument *doc = [[TiController instance] createDocument:newURL visible:YES];
+			TiDocument *doc = [[TiController instance] createDocument:newURL visible:YES config:nil];
 			[doc setPrecedent:self];
 			
 			//TODO: window opens slightly offset from current doc, make sure we 
@@ -364,35 +370,9 @@
     }
 }
 
-- (void)webView:(WebView *)sender didFinishLoadForFrame:(WebFrame *)frame
+- (void)inject:(WebScriptObject *)windowScriptObject
 {
-    // Only report feedback for the main frame.
-    if (frame == [sender mainFrame]) 
-	{
-		NSURL *theurl =[[[frame dataSource] request] URL];
-		TRACE(@"TiDocument::didFinishLoadForFrame: %x for url: %@",self,theurl);
-		if (![theurl isEqual:url])
-		{
-			[self setURL:theurl];
-		}
-		[self closePrecedent];
-    }
-}
-
-- (void)webView:(WebView *)sender didFailProvisionalLoadWithError:(NSError *)error forFrame:(WebFrame *)frame
-{
-    // Only report feedback for the main frame.
-    if (frame == [sender mainFrame]) 
-	{
-		NSString *err = [NSString stringWithFormat:@"Error loading URL: %@. %@", url,[error localizedDescription]];
-		[TiController error:err];
-    }
-}
-
-- (void)webView:(WebView *)sender didClearWindowObject:(WebScriptObject *)windowScriptObject forFrame:(WebFrame*)frame 
-{
-	TRACE(@"TiDocument::didClearWindowObject = %x",self);
-
+	
 	// ti is null the first time through
 	// on a page reload or transition, we'll enter here again 
 	// and we need to just re-use the existing object
@@ -417,6 +397,46 @@
 		[[ti App] include:@"ti://titanium.js"];
 #endif
 	}
+	
+	scriptCleared = YES;
+}
+
+- (void)webView:(WebView *)sender didFinishLoadForFrame:(WebFrame *)frame
+{
+    // Only report feedback for the main frame.
+    if (frame == [sender mainFrame]) 
+	{
+		NSURL *theurl =[[[frame dataSource] request] URL];
+		TRACE(@"TiDocument::didFinishLoadForFrame: %x for url: %@",self,theurl);
+
+		if (!scriptCleared)
+		{
+			TRACE(@"page loaded with no <script> tags, manually injecting Titanium runtime", scriptCleared);
+			[self inject:[frame windowObject]];
+		}
+		
+		if (![theurl isEqual:url])
+		{
+			[self setURL:theurl];
+		}
+		[self closePrecedent];
+    }
+}
+
+- (void)webView:(WebView *)sender didFailProvisionalLoadWithError:(NSError *)error forFrame:(WebFrame *)frame
+{
+    // Only report feedback for the main frame.
+    if (frame == [sender mainFrame]) 
+	{
+		NSString *err = [NSString stringWithFormat:@"Error loading URL: %@. %@", url,[error localizedDescription]];
+		[TiController error:err];
+    }
+}
+
+- (void)webView:(WebView *)sender didClearWindowObject:(WebScriptObject *)windowScriptObject forFrame:(WebFrame*)frame 
+{
+	TRACE(@"TiDocument::didClearWindowObject = %x",self);
+	[self inject:windowScriptObject];
 }
 
 // WebUIDelegate Methods
@@ -435,7 +455,7 @@
 		// and return
 		newurl = [NSURL URLWithString:@"about:blank"];
 	}
-	TiDocument *newDoc = [[TiController instance] createDocument:newurl visible:YES];
+	TiDocument *newDoc = [[TiController instance] createDocument:newurl visible:YES config:nil];
 	[newDoc setPrecedent:self];
 	return [newDoc webView];
 }

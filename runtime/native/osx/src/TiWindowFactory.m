@@ -30,14 +30,11 @@
 	TRACE(@"TiWindowFactory::initWithWindow: %x",self);
 	if (self != nil)  
 	{
+		// don't retain any of these
 		window = win;
-		[window retain];
 		webView = [TiController getWebView:window];
-		[webView retain];
 		mainWindow = [[TiController getDocument:win] userWindow];
-		[mainWindow retain];
 		currentWindow = [[TiController getDocument:win] userWindow];
-		[currentWindow retain];
 	}
 	return self;
 }
@@ -45,13 +42,9 @@
 - (void)dealloc
 {
 	TRACE(@"TiWindowFactory::dealloc: %x",self);
-	[webView release];
 	webView = nil;
-	[currentWindow release];
 	currentWindow = nil;
-	[mainWindow release];
 	mainWindow = nil;
-	[window release];
 	window = nil;
 	[super dealloc];
 }
@@ -69,6 +62,7 @@
 	TiUserWindow *win = [[TiUserWindow alloc] initWithWebview:webView];
 	[win setParent:doc];
 	[doc addChildWindow:win];
+	TRACE(@"TiWindowFactory::createWindow - created: %x, parent: %x",win,doc);
 	return win;
 }
 

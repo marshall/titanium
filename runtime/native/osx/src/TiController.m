@@ -218,6 +218,7 @@ static CGFloat toFloat (NSString* value, CGFloat def)
 	TRACE(@"TiController::awakeFromNib = %x",self);
 	TRACE(@"gears titanium plugin has been loaded? %@", ([[WebPluginDatabase sharedDatabase] isMIMETypeRegistered:@"application/x-gears-titanium"])?@"true":@"false");
 
+	
 	[self setupDefaults];
 	[self updateAppNameInMainMenu];
 	[self registerProtocols];
@@ -228,13 +229,17 @@ static CGFloat toFloat (NSString* value, CGFloat def)
 	return NO;
 }
 
-- (TiDocument*) createDocument:(NSURL*)url visible:(BOOL)visible
+- (TiDocument*) createDocument:(NSURL*)url visible:(BOOL)visible config:(TiWindowConfig*)cfg;
 {
 	TRACE(@"TiController::createDocument for url: %@",[url absoluteString]);
-	TiWindowConfig *config = [self findWindowConfigForURLSpec:url];
-	if (config==nil)
+	TiWindowConfig *config = cfg;
+	if (config == nil)
 	{
-		config = [self findInitialWindowConfig];
+		config = [self findWindowConfigForURLSpec:url];
+		if (config==nil)
+		{
+			config = [self findInitialWindowConfig];
+		}
 	}
 	TRACE(@"TiController::createDocument - using pending config named: %@",[config getID]);
 	[self setPendingConfig: config];
@@ -277,7 +282,7 @@ static CGFloat toFloat (NSString* value, CGFloat def)
 	}
 	TRACE(@"my new url: %@",urlString);
 	NSURL *URL = [NSURL URLWithString:urlString];
-	[[TiController instance] createDocument:URL visible:YES]; //TODO: do we need to release somehow?
+	[[TiController instance] createDocument:URL visible:YES config:nil];
 	[self hideSplash];
 }
 

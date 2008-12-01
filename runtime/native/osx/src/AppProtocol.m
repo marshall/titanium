@@ -93,7 +93,7 @@
 	}
 	else if ([ext isEqualToString:@"gif"])
 	{
-		mime = @"image/gif";
+		mime = @"image/gif"; 
 	}
 	else if ([ext isEqualToString:@"jpg"])
 	{
@@ -122,6 +122,14 @@
 	else if ([ext isEqualToString:@"js"])
 	{
 		mime = @"text/javascript";
+	}
+	else if ([ext isEqualToString:@"css"])
+	{
+		mime = @"text/css";
+	}
+	else if ([ext isEqualToString:@"xml"])
+	{
+		mime = @"text/xml";
 	}
 	return mime;
 }
@@ -165,10 +173,12 @@
 	
 	TRACE(@"loaded mime=%@ from extension=%@",mime,ext);
 	
-	NSURLResponse *response = [[NSURLResponse alloc] initWithURL:url MIMEType:mime expectedContentLength:-1 textEncodingName:@"utf-8"];
+	NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:url MIMEType:mime expectedContentLength:[data length] textEncodingName:@"utf-8"];
+	
 	[client URLProtocol:self didReceiveResponse:response cacheStoragePolicy:NSURLCacheStorageAllowed];
 	[client URLProtocol:self didLoadData:data];
 	[client URLProtocolDidFinishLoading:self];
+	
 	[response release];
 }
 
