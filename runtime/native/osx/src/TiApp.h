@@ -31,6 +31,7 @@
 - (id)initWithWindow:(TiWindow*)window;
 
 - (void)include:(NSString *)s;
+- (void)includeFromObject:(NSString *)s webScriptObject:(WebScriptObject*)object;
 - (void)debug:(NSString *)s;
 - (void)quit;
 - (void)hide;

@@ -420,14 +420,14 @@
 	// load our main titanium JS plug
 	if ([[[TiController instance] arguments] debug])
 	{
-		[[ti App] include:@"ti://titanium-debug.js"];
+		[[ti App] includeFromObject:@"ti://titanium-debug.js" webScriptObject:windowScriptObject];
 	}
 	else
 	{
 #ifdef DEBUG
-		[[ti App] include:@"ti://titanium-debug.js"];
+		[[ti App] includeFromObject:@"ti://titanium-debug.js" webScriptObject:windowScriptObject];
 #else
-		[[ti App] include:@"ti://titanium.js"];
+		[[ti App] includeFromObject:@"ti://titanium.js" webScriptObject:windowScriptObject];
 #endif
 	}
 	

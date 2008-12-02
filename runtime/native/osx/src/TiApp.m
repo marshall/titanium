@@ -48,7 +48,11 @@
 
 - (void)include:(NSString *)s 
 {
-	
+	[self includeFromObject:s webScriptObject:[webView windowScriptObject]];
+}
+
+- (void)includeFromObject:(NSString *)s webScriptObject:(WebScriptObject*)object
+{
 	TRACE(@"attempting to include %@\n", s);
 	
 	NSString *script = nil;
@@ -70,7 +74,7 @@
 	}
 	
 	if (script != nil) {
-		[[webView windowScriptObject] evaluateWebScript:script];
+		[object evaluateWebScript:script];
 	}
 }
 
