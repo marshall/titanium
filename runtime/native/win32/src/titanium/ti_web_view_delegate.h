@@ -53,6 +53,8 @@
  
 #include "ti_runtime.h"
 #include "ti_app.h"
+
+#include <vector>
  
 class TiChromeWindow;
  
@@ -66,10 +68,13 @@ private:
   TiRuntime *tiRuntime;
   TiApp *tiApp;
   HCURSOR customCursor;
- 
+  static std::vector<WebFrame*> initializedFrames;
+
+  void initRuntime(WebFrame *webFrame);
+
 public:
   bool bootstrapTitanium;
-  TiWebViewDelegate(TiChromeWindow *window_) { window = window_; }
+  TiWebViewDelegate(TiChromeWindow *window_) : tiRuntime(NULL) { window = window_; }
   ~TiWebViewDelegate(void);
  
   void setWebViewHost(WebViewHost* host_) { host = host_; }

@@ -20,6 +20,8 @@
 
 #include "Resource.h"
 
+std::vector<WebFrame*> TiWebViewDelegate::initializedFrames = std::vector<WebFrame*>();
+
 TiWebViewDelegate::~TiWebViewDelegate() {
 }
 
@@ -167,13 +169,27 @@ bool TiWebViewDelegate::IsHidden() {
 	return false;
 }
 
+void TiWebViewDelegate::initRuntime(WebFrame *frame)
+{
+	if (std::find(initializedFrames.begin(), initializedFrames.end(), frame) == initializedFrames.end())
+	{
+		if (tiRuntime == NULL)
+			tiRuntime = new TiRuntime(window);
+
+		tiRuntime->BindToJavascript(frame, L"tiRuntime");
+
+		std::string titanium_js = "ti://titanium.js";
+		window->include(frame, titanium_js);
+		initializedFrames.push_back(frame);
+	}
+}
+
+// The "first call" is when the document stream is actually loaded, the second
+// is when the v8 context is ready.. so we make a little counter as a hack to make
+// sure our context is right?
 void TiWebViewDelegate::WindowObjectCleared(WebFrame *webFrame)
 {
-	tiRuntime = new TiRuntime(window);
-	tiRuntime->BindToJavascript(webFrame, L"tiRuntime");
-
-	std::string titanium_js = "ti:///titanium.js";
-	window->include(titanium_js);
+	initRuntime(webFrame);
 }
 
 WebPluginDelegate* TiWebViewDelegate::CreatePluginDelegate(
@@ -210,7 +226,7 @@ void TiWebViewDelegate::AddMessageToConsole(WebView* webview,
 }
 
 void TiWebViewDelegate::DidFinishLoadForFrame(WebView* webview, WebFrame* frame) {
-
+	initRuntime(frame);
 }
 
 // Displays a JavaScript alert panel associated with the given view. Clients

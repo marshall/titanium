@@ -27,6 +27,7 @@
 
 #undef max
 
+#include "base/command_line.h"
 #include "base/scoped_ptr.h"
 #include "webkit/glue/webpreferences.h"
 #include "webkit/glue/weburlrequest.h"
@@ -61,6 +62,8 @@
 #include "ti_url.h"
 #include "ti_utils.h"
 #include "ti_dev_mode.h"
+#include "ti_app_arguments.h"
+#include "ti_version.h"
 
 using namespace std;
 
@@ -126,10 +129,6 @@ void chromiumInit()
 		sandbox::SetCurrentProcessDEP(sandbox::DEP_ENABLED);
 	}
 	
-	wstring resourcesPath;
-	PathService::Get(base::DIR_EXE, &resourcesPath);
-	file_util::AppendToPath(&resourcesPath, L"Resources");
-	
 	wstring cache_path;
 	PathService::Get(base::DIR_EXE, &cache_path);
     file_util::AppendToPath(&cache_path, L"cache");
@@ -140,16 +139,17 @@ void chromiumInit()
 }
 
 TiChromeWindow *mainWindow = NULL;
-int titaniumInit (wstring appXmlPath)
+int titaniumInit ()
 {
-	TiAppConfig *appConfig = new TiAppConfig(appXmlPath);
+	TiAppConfig *appConfig = new TiAppConfig(TiAppArguments::xmlPath);
 
 	if (appConfig->getError() != NULL) {
 		systemError(UTF8ToWide(std::string(appConfig->getError())).c_str());
 		return -1;
 	}
 
-	TiURL::init();	
+	TiVersion::init();
+	TiURL::init();
 	TiChromeWindow::setTiAppConfig(appConfig);
 	mainWindow = new TiChromeWindow(hModule, appConfig->getMainWindow());
 
@@ -158,13 +158,30 @@ int titaniumInit (wstring appXmlPath)
 
 void runTitanium ()
 {
-
 	mainWindow->open();
 	
+	if (TiAppArguments::isDevMode) {
+		mainWindow->openInspectorWindow();
+	}
+
 	MessageLoop::current()->Run();
 }
 
+int runTitaniumApp_internal()
+{
+	chromiumInit();
+	int result = titaniumInit();
 
+	if (result != 0) {
+		return result;
+	}
+
+	runTitanium();
+
+	return 0;
+}
+
+/*
 TITANIUM_DLL_API int __cdecl runTitaniumAppDev(wstring &appXmlPath, wstring &projectPath, wstring &runtimePath, map<wstring,wstring> &pluginPaths)
 {
 	base::AtExitManager exit_manager;
@@ -186,22 +203,24 @@ TITANIUM_DLL_API int __cdecl runTitaniumAppDev(wstring &appXmlPath, wstring &pro
 
 	return 0;
 }
+*/
 
-
-TITANIUM_DLL_API int __cdecl runTitaniumApp(wstring &appXmlPath) {
+TITANIUM_DLL_API int __cdecl runTitaniumApp(wchar_t *command_line)
+{
 	base::AtExitManager exit_manager;
 	MessageLoopForUI message_loop;
 
-	chromiumInit();
-	int result = titaniumInit(appXmlPath);
+	TiAppArguments::init(command_line);
+	return runTitaniumApp_internal();
+}
 
-	if (result != 0) {
-		return result;
-	}
+TITANIUM_DLL_API int __cdecl runTitaniumAppWithPath(wstring &appXmlPath) {
+	
+	base::AtExitManager exit_manager;
+	MessageLoopForUI message_loop;
 
-	runTitanium();
-
-	return 0;
+	TiAppArguments::xmlPath = appXmlPath;
+	return runTitaniumApp_internal();
 }
 
 #ifdef _MANAGED

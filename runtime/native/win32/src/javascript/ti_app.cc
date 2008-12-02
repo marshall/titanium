@@ -77,7 +77,7 @@ void TiApp::include(const CppArgumentList &args, CppVariant *result)
 {
 	if (args.size() > 0) {
 		std::string relativeName = args[0].ToString();
-		window->include(relativeName);
+		window->include(window->getHost()->webview()->GetMainFrame(), relativeName);
 	}
 }
 

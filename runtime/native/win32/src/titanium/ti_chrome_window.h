@@ -92,8 +92,9 @@ public:
 	void setTiWindowConfig(TiWindowConfig *tiWindowConfig);
 	void createWindow();
 	void open();
+	void openInspectorWindow();
 
-	void loadURL(const char* url);
+	void maybeLoadURL(const char* url);
 	void sizeTo(int x, int y, int width, int height, UINT flags);
 	void resizeHost();
 
@@ -105,7 +106,7 @@ public:
 	TiWindowConfig* getTiWindowConfig() { return tiWindowConfig; }
 	TiUserWindow* getTiUserWindow() { return tiUserWindow; }
 
-	void include (std::string& relativePath);
+	void include (WebFrame *frame, std::string& relativePath);
 
 	void showWindow(int nCmdShow);
 
@@ -123,4 +124,5 @@ public:
 
 	static void initWindowClass(HINSTANCE hInstance);
 	static void removeWindowClass (HINSTANCE hInstance);
+	static void createDebugConsole();
 };

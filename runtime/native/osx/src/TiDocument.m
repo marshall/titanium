@@ -22,6 +22,8 @@
 #import "TiWindowConfig.h"
 #import "TiWindow.h"
 #import "WebViewPrivate.h"
+#import "WebScriptDebugDelegate.h"
+
 
 @interface NSApplication (DeclarationStolenFromAppKit)
 - (void)_cycleWindowsReversed:(BOOL)reversed;
@@ -34,8 +36,9 @@
 	self = [super init];
 	if (self != nil)
 	{
-		TRACE(@"TiDocument::init =%x",self);
+		TRACE(@"TiDocument::init = %x",self);
 		childWindows = [[NSMutableArray alloc] init];
+		javascripts = [[NSMutableDictionary alloc] initWithCapacity:100];
 	}
 	return self;
 }
@@ -53,10 +56,19 @@
 		[w destroy]; // destroy will call back and remove below
 		w = nil;
 	}
+	[childWindows removeAllObjects];
 	[childWindows release];
 	childWindows=nil;
-	webView=nil;
+//	for (id key in javascripts)
+//	{
+//		NSString *value = [javascripts objectForKey:key];
+//		[value release];
+//	}
+	[javascripts removeAllObjects];
+	[javascripts release];
+	javascripts = nil;
     [url release];
+	webView=nil;
     [super dealloc];
 	
 	if ([[[NSDocumentController sharedDocumentController] documents] count]==0)
@@ -180,6 +192,7 @@
 	}
 
 	[webView setAutoresizingMask:NSViewHeightSizable | NSViewWidthSizable];
+	[webView setShouldCloseWithWindow:NO];
 	
 	[self setupWebPreferences];
 }
@@ -195,6 +208,7 @@
     [webView setUIDelegate:self];
     [webView setResourceLoadDelegate:self];
 	[webView setPolicyDelegate:self];
+	[webView setScriptDebugDelegate:self];
 	
 	// customize webview
 	[self customizeWebView];
@@ -208,7 +222,14 @@
 
 	if (webView)
 	{
+		[webView setScriptDebugDelegate:nil];
+		[webView setFrameLoadDelegate:nil];
+		[webView setUIDelegate:nil];
+		[webView setResourceLoadDelegate:nil];
+		[webView setPolicyDelegate:nil];
 		[webView stopLoading:nil];
+		//[webView close]; // causes correct unload event handlers to run but crashes afterwards
+		webView = nil;
 	}
 	[super close];
 }
@@ -228,8 +249,12 @@
 {
 	[TiController error:@"readFromFile not implemented"];
 	return NO;
-}
+} 
 
+- (BOOL)isDocumentEdited
+{
+	return NO;
+}
 
 - (NSURL *)url
 {
@@ -358,6 +383,7 @@
     // Only report feedback for the main frame.
     if (frame == [sender mainFrame]) 
 	{
+		scriptCleared = NO;
     }
 }
 
@@ -647,5 +673,77 @@
 {
 	return WebDragSourceActionAny;
 }
+
+#pragma mark -
+#pragma mark WebScriptDebugDelegate
+
+// some source was parsed, establishing a "source ID" (>= 0) for future reference
+- (void)webView:(WebView *)webView       didParseSource:(NSString *)source
+ baseLineNumber:(NSUInteger)lineNumber
+		fromURL:(NSURL *)aurl
+	   sourceId:(int)sid
+	forWebFrame:(WebFrame *)webFrame
+{
+	TRACE(@"loading javascript from %@ with sid: %d",[aurl absoluteURL],sid);
+	NSString *key = [NSString stringWithFormat:@"%d",sid];
+	NSString *value = [NSString stringWithFormat:@"%@",(aurl==nil? @"<main doc>" : aurl)];
+	//TODO: trim off app://<aid>/
+	[javascripts setObject:value forKey:key];
+}
+
+// some source failed to parse
+- (void)webView:(WebView *)webView  failedToParseSource:(NSString *)source
+ baseLineNumber:(NSUInteger)lineNumber
+		fromURL:(NSURL *)theurl
+	  withError:(NSError *)error
+	forWebFrame:(WebFrame *)webFrame
+{
+	TRACE(@"failed to parse javascript from %@ at lineNumber: %d, error: %@",[theurl absoluteURL],lineNumber,[error localizedDescription]);
+}
+
+// just entered a stack frame (i.e. called a function, or started global scope)
+- (void)webView:(WebView *)webView    didEnterCallFrame:(WebScriptCallFrame *)frame
+	   sourceId:(int)sid
+		   line:(int)lineno
+	forWebFrame:(WebFrame *)webFrame
+{
+}
+
+// about to execute some code
+- (void)webView:(WebView *)webView willExecuteStatement:(WebScriptCallFrame *)frame
+	   sourceId:(int)sid
+		   line:(int)lineno
+	forWebFrame:(WebFrame *)webFrame
+{
+	// NOTE: this is very chatty and prints out each line as it's being executed
+	//	TRACE(@"executing javascript lineNumber: %d",lineno);
+}
+
+// about to leave a stack frame (i.e. return from a function)
+- (void)webView:(WebView *)webView   willLeaveCallFrame:(WebScriptCallFrame *)frame
+	   sourceId:(int)sid
+		   line:(int)lineno
+	forWebFrame:(WebFrame *)webFrame
+{
+}
+
+// exception is being thrown
+- (void)webView:(WebView *)webView   exceptionWasRaised:(WebScriptCallFrame *)frame
+	   sourceId:(int)sid
+		   line:(int)lineno
+	forWebFrame:(WebFrame *)webFrame
+{
+	NSString *key = [NSString stringWithFormat:@"%d",sid];
+	for (id akey in javascripts)
+	{
+		if ([key isEqualToString:akey])
+		{
+			NSString *aurl = [javascripts objectForKey:akey];
+			TRACE(@"raising javascript exception at lineNumber: %d in %@ (%d)",lineno,aurl,sid);
+			break;
+		}
+	}
+}
+
 
 @end

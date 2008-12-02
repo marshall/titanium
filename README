@@ -15,14 +15,38 @@ To build Titanium from source, you will need the following prerequisites:
   - RubyGems with the following gems: rake, rubyzip
 
 To build Titanium, you will need to first checkout the Appcelerator SDK
-from <http://github.com/jhaynie/appcelerator_sdk/tree/master>.
+from <http://github.com/jhaynie/appcelerator_sdk/tree/master>. The Titanium build
+uses the build and release tools from the SDK to build Titanium.
 
 After checkout, set the environment variable 'APPC_SDK' to the root of the SDK directory.
+You can also check out the SDK into the directory just above the parent of the Titanium
+directory (such that Titanium and the Appcelerator SDK) are at the same level.
 
 To build Titanium, you will need to checkout a special fork of the Google Gears branch 
 from <http://github.com/marshall/gears-titanium/tree/master>. This should be checked 
 into the root of the titanium folder using the directory name 'gears-titanium' or into 
 another folder with a symlink with this name in the titanium folder.
+
+Once you have setup your build environment, test it with the following command:
+
+	> rake -T
+
+This should give you a list of all the available build targets that are available. 
+If you see a number of titanium: tasks such as titanium:runtime:osx, your environment
+if setup.
+
+Now, you can build the Titanium SDK.  The Titanium SDK and the Appcelerator SDK are 
+the same.  The only major diference is that the Titanium SDK has Titanium-specific
+branding.  Additionally, Titanium provides some additional distribution files for
+packaging a Titanium application.  These are split into 2 main categories:
+
+	- Titanium project packaging component: titanium-project-X.X.X.zip
+	- Titanium runtime components: titanium-<OS>-X.X.X.zip
+
+The project packaging component is used for constructing and applying Titanium 
+specific files that are generic for all Titanium projects.  The Titanium runtime
+components are the OS-specific bundles and scripts that will turn your project
+into a Titanium executable package.  For more information, see below.
 
 
 --------------------
@@ -71,6 +95,22 @@ For OSX, the folder will be named test.app (or test will be replaced with whatev
 named your project).
 
 
+------------------------
+ Quick Developer Builds
+------------------------
+
+You can do a developer build + install by running the following developer build 
+task:
+
+	> rake titanium:dev
+
+This will build the Gears-Titanium bundle, the Titanium Project bundle and the 
+Titanium OS distribution bundle and install them locally using the app command.
+
+Once you have run this command successfully, you can quickly re-package your 
+project to pick up the new changes.
+
+
 -----------------
  Platform Builds
 -----------------
@@ -97,7 +137,8 @@ To build the Win32 distribution, type the following in a command prompt:
 OSX
 ----
 
-You will need XCode 3.0+ to build Titanium and it must be built on Leopard.
+You will need XCode 3.0+ to build Titanium and it must be built on Leopard. Titanium
+is only supported on Leopard (or later).
 
 If you have xcode installed, you should be able to build Titanium with no additional
 dependencies.
@@ -109,7 +150,8 @@ To build the OSX distribution, type the following in a command prompt:
 Linux
 ------
 
-More details coming soon....
+More details coming soon.... Linux is currently in progress and we're working to finish
+porting our Google Gears branch to Linux + NPAPI.
 
 To build the Linux distribution, type the following in a command prompt:
 

@@ -1,13 +1,12 @@
 <html>
 	<head>
 	   <script>
-	    function init () {
-	        // simulate user API
-	        window.ti = tiRuntime;
-	        
+	
+	    ti.ready(function($) {
 	        createMenu();
 	        createWindow();
-	    }
+	    });
+	    
 	    function createMenu () {
 	        var menu = ti.Menu.createUserMenu("Testing..");
 	        menu.addItem("Item 1", function() { alert("Item 1 clicked!"); });
@@ -28,13 +27,10 @@
 	    var windowTest;
 	    function createWindow () {
 	        windowTest = ti.Window.createWindow();
-	        //windowTest.setURL("app://window_test.html");
-	        //windowTest.setTitle("lil' brudder");
-	        windowTest.url = "app://window_test.html";
-	        windowTest.title = "lil' brudder";
-	        windowTest.bounds = { x: 100, y: 100, width: 200, height: 200 };
-
-            //windowTest.setBounds(bounds);
+	        windowTest.setURL("app://window_test.html");
+	        windowTest.setTitle("lil' brudder");
+	        var bounds = {x:100, y:100, width:200, height:200};
+            windowTest.setBounds(bounds);
 	    }
 	   </script>
 	   <style>
@@ -50,9 +46,6 @@
         window should be created, let's try <a href="javascript: windowTest.open();">opening it!</a><br />
         
         oh, you might want to <a href="javascript: createSystemMenu();">try creating a system menu</a>.. let's hope!
-	    <script>
-	        window.onload = init;    
-	    </script>
 	    
 	    here's an iframe... test the mouse wheel
 	    <iframe src="window_test.html" scrolling="auto">

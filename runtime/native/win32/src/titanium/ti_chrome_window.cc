@@ -18,10 +18,14 @@
 #include "ti_user_window.h"
 #include "ti_utils.h"
 #include "ti_menu.h"
+#include "ti_app_arguments.h"
 #include "Resource.h"
 
 #include <fstream>
 #include <shellapi.h>
+#include <stdio.h>
+#include <io.h>
+#include <fcntl.h>
 
 TCHAR TiChromeWindow::defaultWindowTitle[128];
 TCHAR TiChromeWindow::windowClassName[128];
@@ -83,12 +87,45 @@ void TiChromeWindow::initWindowClass (HINSTANCE hInstance)
 		
 		initialized = true;
 	}
+
+#ifdef TITANIUM_DEBUGGING
+	createDebugConsole();
+#else
+	if (TiAppArguments::isDevMode) {
+		createDebugConsole();
+	}
+#endif
 }
 
+/*static*/
 void TiChromeWindow::removeWindowClass (HINSTANCE hInstance)
 {
 	UnregisterClass(windowClassName, hInstance);
 }
+
+/*static*/
+void TiChromeWindow::createDebugConsole ()
+{
+	AllocConsole();
+
+    HANDLE handle_out = GetStdHandle(STD_OUTPUT_HANDLE);
+    int hCrt = _open_osfhandle((long)handle_out, _O_TEXT);
+    FILE* hf_out = _fdopen(hCrt, "w");
+    setvbuf(hf_out, NULL, _IONBF, 1);
+    *stdout = *hf_out;
+
+    HANDLE handle_in = GetStdHandle(STD_INPUT_HANDLE);
+    hCrt = _open_osfhandle((long)handle_in, _O_TEXT);
+    FILE* hf_in = _fdopen(hCrt, "r");
+    setvbuf(hf_in, NULL, _IONBF, 128);
+    *stdin = *hf_in;
+}
+
+void TiChromeWindow::openInspectorWindow()
+{
+	host->webview()->ShowJavaScriptConsole();
+}
+
 /*static*/
 LRESULT CALLBACK TiChromeWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
 	int wmId, wmEvent;
@@ -229,8 +266,6 @@ void TiChromeWindow::setTiWindowConfig(TiWindowConfig *tiWindowConfig)
 
 void TiChromeWindow::reloadTiWindowConfig()
 {
-	if (tiWindowConfig->getURL().length() > 0)
-		loadURL(tiWindowConfig->getURL().c_str());
 
 	SetWindowText(hWnd, UTF8ToWide(tiWindowConfig->getTitle()).c_str());
 
@@ -252,14 +287,19 @@ void TiChromeWindow::reloadTiWindowConfig()
 
 
 void TiChromeWindow::open() {
-	if (hWnd == NULL)
+	if (hWnd == NULL) {
 		createWindow();
+	}
+	
+	if (tiWindowConfig->getURL().length() > 0) {
+		maybeLoadURL(tiWindowConfig->getURL().c_str());
+	}
 
 	ShowWindow(hWnd, SW_SHOW);
 	ShowWindow(host->window_handle(), SW_SHOW);
 }
 
-void TiChromeWindow::loadURL(const char* url) {
+void TiChromeWindow::maybeLoadURL(const char* url) {
 	if (currentURL != url) {
 		currentURL = url;
 
@@ -298,7 +338,7 @@ void TiChromeWindow::resizeHost() {
 	MoveWindow(host->window_handle(), 0, 0, rc.right, rc.bottom, TRUE);
 }
 
-void TiChromeWindow::include(std::string& relativePath)
+void TiChromeWindow::include(WebFrame *frame, std::string& relativePath)
 {
 	std::string absolutePath;
 
@@ -316,8 +356,7 @@ void TiChromeWindow::include(std::string& relativePath)
 		s += line + "\n";
 	}
 
-	WebView *webview = getHost()->webview();
-	webview->GetMainFrame()->ExecuteJavaScript(s, absolutePath);
+	frame->ExecuteJavaScript(s, absolutePath);
 }
 
 void TiChromeWindow::showWindow(int nCmdShow) {

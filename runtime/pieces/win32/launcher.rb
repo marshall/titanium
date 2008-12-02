@@ -17,7 +17,7 @@ module Titanium
   class WIN32
     class Launcher
       def Launcher.launch(project,dir)
-        #TODO
+        puts "launch in #{dir}"
       end
     end
   end

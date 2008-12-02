@@ -32,6 +32,7 @@
 	TiUserWindow *userWindow;
 	NSMutableArray *childWindows;
 	BOOL scriptCleared;
+	NSMutableDictionary *javascripts; //TODO: probably should only be loaded if in devlaunch mode
 }
 
 // these are used internally only

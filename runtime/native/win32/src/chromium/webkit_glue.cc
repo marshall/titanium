@@ -98,11 +98,11 @@ bool GetApplicationDirectory(std::wstring *path) {
 }
 
 GURL GetInspectorURL() {
-  return GURL("test-shell-resource://inspector/inspector.html");
+  return GURL("ti-resource://inspector/inspector.html");
 }
 
 std::string GetUIResourceProtocol() {
-  return "test-shell-resource";
+  return "ti-resource";
 }
 
 bool GetExeDirectory(std::wstring *path) {
