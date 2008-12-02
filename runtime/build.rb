@@ -182,7 +182,7 @@ task :osx do
       FileUtils.rm_rf stage_gears if File.exists? stage_gears
       FileUtils.cp_r gears_plugin, stage_gears
       gears_contents = File.join(stage_gears,'Contents')
-      FileUtils.mv File.join(gears_contents,'MacOS','libgears.dylib'), File.join(gears_contents,'MacOS','libgears_titanium.dylib')
+      #FileUtils.mv File.join(gears_contents,'MacOS','libgears.dylib'), File.join(gears_contents,'MacOS','libgears_titanium.dylib')
       
       ipl1 = File.read(File.join(gears_contents,'Info.plist'))
       iplf1 = File.open(File.join(gears_contents,'Info.plist'),'w')

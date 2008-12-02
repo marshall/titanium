@@ -45,6 +45,7 @@
 		24D024570EDA9590005E15AE /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 24D024560EDA9590005E15AE /* Foundation.framework */; };
 		834B13820795DD1F00E4BF6C /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 834B13810795DD1F00E4BF6C /* WebKit.framework */; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
+		AB3B20190EE5B3CC0002995B /* frame.html in Resources */ = {isa = PBXBuildFile; fileRef = AB3B20180EE5B3CC0002995B /* frame.html */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -124,6 +125,7 @@
 		32CA4F630368D1EE00C91783 /* Titanium_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Titanium_Prefix.pch; sourceTree = "<group>"; };
 		834B13810795DD1F00E4BF6C /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = /System/Library/Frameworks/WebKit.framework; sourceTree = "<absolute>"; };
 		8D1107320486CEB800E47090 /* Titanium.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Titanium.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		AB3B20180EE5B3CC0002995B /* frame.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = frame.html; path = res/frame.html; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -239,6 +241,7 @@
 				29B97317FDCFA39411CA2CEA /* Resources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
+				AB3B20180EE5B3CC0002995B /* frame.html */,
 			);
 			name = Titanium;
 			sourceTree = "<group>";
@@ -343,6 +346,7 @@
 				249704230EDAA2950024252C /* index.html in Resources */,
 				249708AF0EDCD8BC0024252C /* DefaultValues.plist in Resources */,
 				24674AE60EE1D6C400CE52E9 /* test.html in Resources */,
+				AB3B20190EE5B3CC0002995B /* frame.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -339,6 +339,13 @@
 	
 	if ([protocol isEqual:@"app"])
 	{
+		// we only care about loading new TiDocuments if this is the main frame,
+		// otherwise we're an internal frame of some kind
+		if (frame != [[frame webView] mainFrame]) {
+			[listener use];
+			return;
+		}
+		
 		if ([[TiController instance] shouldOpenInNewWindow])
 		{
 			// if we're trying to open an internal page, we essentially need to always open a 
