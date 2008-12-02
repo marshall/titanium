@@ -84,6 +84,9 @@ static CGFloat toFloat (NSString* value, CGFloat def)
 	splashController = [[NSWindowController alloc] init];
 	NSWindow *win = [splashController initWithWindowNibName:@"SplashWindow"];
 	[splashController showWindow:win];
+	// cause the splash screen to first come on top of other window
+	[NSApp arrangeInFront:win];
+	[NSApp activateIgnoringOtherApps:YES];
 }
 
 - (void)hideSplash
