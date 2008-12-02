@@ -49,6 +49,16 @@
 		document.write('<style>body { opacity:' + windowTransparency + '; ' + style + ' } body > DIV { height:100% }</style>');
 	}
 	
+	// fine tune existing appcelerator 2.x settings since we know our world
+	window.AppceleratorConfig = 
+	{
+		cookie_check:false,
+		usegears:false,
+		report_stats:false,
+		browser_check:false,
+		track_stats:true //TODO: turn off once we add our own
+	};
+	
 	var readies = [], loaded = false;
 	
 	ti.ready = function(fn)
