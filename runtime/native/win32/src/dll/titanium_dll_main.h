@@ -17,6 +17,7 @@
 using namespace std;
 
 extern "C" {
-TITANIUM_DLL_API int __cdecl runTitaniumApp(wstring &appXmlPath);
-TITANIUM_DLL_API int __cdecl runTitaniumAppDev(wstring &appXmlPath, wstring &projectPath, wstring &runtimePath, map<wstring,wstring> &pluginPaths);
+TITANIUM_DLL_API int __cdecl runTitaniumApp(wchar_t *command_line);
+TITANIUM_DLL_API int __cdecl runTitaniumAppWithPath(wstring &appXmlPath);
+//TITANIUM_DLL_API int __cdecl runTitaniumAppDev(wstring &appXmlPath, wstring &projectPath, wstring &runtimePath, map<wstring,wstring> &pluginPaths);
 }

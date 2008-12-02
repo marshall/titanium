@@ -14,9 +14,11 @@
 # limitations under the License. 
 
 require 'fileutils'
+require 'yaml'
+require 'erb'
 
 desc 'build titanium win32 runtime'
-task :all =>[:check_chromedir,:check_devenv,:build]
+task :all =>[:check_chromedir,:check_devenv,:set_version,:build]
 
 $devenv_path = nil
 
@@ -47,6 +49,17 @@ task :check_devenv do
 			exit -1
 		end
 	end
+end
+
+task :set_version do
+	build_config = get_config(:titanium, :win32)
+	
+	content = ''
+	File.open(File.join('src', 'titanium', 'ti_version.h.in'), 'r') { |f| content = f.read() }
+	template = ERB.new content
+	new_content = template.result(binding)	
+	File.open(File.join('src', 'titanium', 'ti_version.h'), 'w+') { |f| f.write(new_content) }
+	
 end
 
 task :build do

@@ -1,13 +1,10 @@
 <html>
     <head>
     <script>
-        function init ()
-        {
-            window.ti = tiRuntime;
-            
+        ti.ready(function($) {  
             document.getElementById("url").innerHTML = "<b>" + 
 				ti.Window.currentWindow.url + "</b>";
-        }
+        });
         
         function peekABoo ()
         {
@@ -31,7 +28,6 @@
     </style>
     </head>
     <body>
-        <script>window.onload = init;</script>
         My URL = <div id="url"></div>
         Hello, I'm a test window... Let's try some links:<br /><br />
         

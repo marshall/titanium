@@ -42,13 +42,14 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="&quot;$(ProjectDir)\dll&quot;;&quot;$(ProjectDir)\titanium&quot;;&quot;$(ProjectDir)\resources&quot;;&quot;$(ProjectDir)\javascript&quot;;&quot;$(ProjectDir)\chromium&quot;;&quot;$(ChromeDir)\chrome\$(ConfigurationName)\obj\webcore\JavaScriptHeaders&quot;;&quot;$(ChromeDir)\third_party\WebKit\JavaScriptCore&quot;;&quot;$(ChromeDir)\chrome\$(ConfigurationName)\obj\WebCore&quot;;&quot;$(ChromeDir)\third_party\icu38\public\common&quot;;&quot;$(ChromeDir)\third_party\libxml\include&quot;;&quot;$(ChromeDir)\third_party\npapi&quot;;&quot;$(ChromeDir)&quot;;&quot;$(ChromeDir)\skia\include\corecg&quot;;&quot;$(ChromeDir)\skia\include&quot;"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;TITANIUM_DLL_EXPORTS"
+				PreprocessorDefinitions="TITANIUM_DEBUGGING;WIN32;_DEBUG;_WINDOWS;_USRDLL;TITANIUM_DLL_EXPORTS"
 				MinimalRebuild="true"
 				ExceptionHandling="0"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
+				WarnAsError="false"
 				Detect64BitPortabilityProblems="true"
 			/>
 			<Tool
@@ -126,7 +127,8 @@
 				AdditionalIncludeDirectories="&quot;$(ProjectDir)\dll&quot;;&quot;$(ProjectDir)\titanium&quot;;&quot;$(ProjectDir)\resources&quot;;&quot;$(ProjectDir)\javascript&quot;;&quot;$(ProjectDir)\chromium&quot;;&quot;$(ChromeDir)\chrome\$(ConfigurationName)\obj\webcore\JavaScriptHeaders&quot;;&quot;$(ChromeDir)\third_party\WebKit\JavaScriptCore&quot;;&quot;$(ChromeDir)\chrome\$(ConfigurationName)\obj\WebCore&quot;;&quot;$(ChromeDir)\third_party\icu38\public\common&quot;;&quot;$(ChromeDir)\third_party\libxml\include&quot;;&quot;$(ChromeDir)\third_party\npapi&quot;;&quot;$(ChromeDir)&quot;;&quot;$(ChromeDir)\skia\include\corecg&quot;;&quot;$(ChromeDir)\skia\include&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;TITANIUM_DLL_EXPORTS"
 				UsePrecompiledHeader="0"
-				WarningLevel="3"
+				WarningLevel="2"
+				WarnAsError="false"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
 			/>
@@ -238,6 +240,14 @@
 			Name="TI"
 			>
 			<File
+				RelativePath=".\titanium\ti_app_arguments.cc"
+				>
+			</File>
+			<File
+				RelativePath=".\titanium\ti_app_arguments.h"
+				>
+			</File>
+			<File
 				RelativePath=".\titanium\ti_app_config.cc"
 				>
 			</File>
@@ -275,6 +285,18 @@
 			</File>
 			<File
 				RelativePath=".\titanium\ti_utils.h"
+				>
+			</File>
+			<File
+				RelativePath=".\titanium\ti_version.cc"
+				>
+			</File>
+			<File
+				RelativePath=".\titanium\ti_version.h"
+				>
+			</File>
+			<File
+				RelativePath=".\titanium\ti_version.h.in"
 				>
 			</File>
 			<File

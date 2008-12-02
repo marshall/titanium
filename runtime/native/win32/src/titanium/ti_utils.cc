@@ -91,7 +91,10 @@ WebPreferences ti_initWebPrefs() {
 	webPrefs.uses_universal_detector = false;
 	webPrefs.text_areas_are_resizable = false;
 	webPrefs.java_enabled = true;
-	webPrefs.allow_scripts_to_close_windows = false;
+	webPrefs.allow_scripts_to_close_windows = true;
+	webPrefs.plugins_enabled = true;
+	webPrefs.javascript_enabled = true;
+	webPrefs.developer_extras_enabled = true;
 
 	return webPrefs;
 }

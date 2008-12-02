@@ -15,6 +15,12 @@
 */
 #include "ti_url.h"
 #include "ti_chrome_window.h"
+#include "ti_version.h"
+
+#define TI_SCHEME "ti"
+#define APP_SCHEME "app"
+// an internal only scheme for the inspector
+#define TI_RESOURCE_SCHEME "ti-resource"
 
 void replaceSlashes (std::string* path)
 {
@@ -24,9 +30,6 @@ void replaceSlashes (std::string* path)
 		path->replace(pos, 1, "\\");
 	}
 }
-
-#define TI_SCHEME "ti"
-#define APP_SCHEME "app"
 
 int wildcmp(const char *wild, const char *string) {
   const char *cp = NULL, *mp = NULL;
@@ -105,6 +108,21 @@ bool TiURL::isHost(std::string &host)
 			&& !stringEndsWith(host, ".xml"));
 }
 
+void appendURLPath(std::wstring *path, GURL& url)
+{
+	if (TiURL::isHost(url.host()) || url.path() == "/") {
+		file_util::AppendToPath(path, UTF8ToWide(url.host()));
+	}
+
+	if (url.path() != "/") {
+		std::string urlPath = url.path().substr(1);
+		stringReplaceAll(&urlPath, "/", "\\");
+
+		file_util::AppendToPath(path, UTF8ToWide(urlPath));
+	}
+}
+
+
 /*static*/
 std::wstring TiURL::getPathForURL(GURL& url)
 {
@@ -120,36 +138,25 @@ std::wstring TiURL::getPathForURL(GURL& url)
 			file_util::AppendToPath(&path, UTF8ToWide(url.path()));
 		}
 		else {
-			if (TiURL::isHost(url.host()) || url.path() == "/") {
-				file_util::AppendToPath(&path, UTF8ToWide(url.host()));
-			}
-
-			if (url.path() != "/") {
-				std::string urlPath = url.path().substr(1);
-				stringReplaceAll(&urlPath, "/", "\\");
-
-				file_util::AppendToPath(&path, UTF8ToWide(urlPath));
-			}
+			appendURLPath(&path, url);
 		}
 
-		printf("%s url (%s host, %s path) => %ls\n", url.spec().c_str(), url.host().c_str(), url.path().c_str(), path.c_str());
+		//printf("%s url (%s host, %s path) => %ls\n", url.spec().c_str(), url.host().c_str(), url.path().c_str(), path.c_str());
 		return path;
 	} else if (url.scheme() == APP_SCHEME) {
 		std::wstring path = base_dir;
 		file_util::AppendToPath(&path, L"Resources");
 
-		if (TiURL::isHost(url.host()) || url.path() == "/") {
-			file_util::AppendToPath(&path, UTF8ToWide(url.host()));
-		}
-
-		if (url.path() != "/") {
-			std::string urlPath = url.path().substr(1);
-			stringReplaceAll(&urlPath, "/", "\\");
-
-			file_util::AppendToPath(&path, UTF8ToWide(urlPath));
-		}
+		appendURLPath(&path, url);
 		
-		printf("%s url (%s host, %s path) => %ls\n", url.spec().c_str(), url.host().c_str(), url.path().c_str(), path.c_str());
+		//printf("%s url (%s host, %s path) => %ls\n", url.spec().c_str(), url.host().c_str(), url.path().c_str(), path.c_str());
+		return path;
+	} else if (url.scheme() == TI_RESOURCE_SCHEME) {
+		std::wstring path;
+		
+		PathService::Get(TiVersion::kRuntimeResources, &path);
+		appendURLPath(&path, url);
+
 		return path;
 	}
 
@@ -195,7 +202,8 @@ URLRequestJob* TiURL::createURLRequestJob(URLRequest* request, const std::string
 {
 	std::wstring path = getPathForURL(static_cast<GURL>(request->url()));
 	if (path.size() > 0) {
-		return new TiURLRequestFileJob(request, path);
+		TiURLRequestFileJob *job = new TiURLRequestFileJob(request, path);
+		return job;
 	}
 
 	// we shouldn't get here?
@@ -207,7 +215,9 @@ void TiURL::init ()
 {
 	url_util::AddStandardScheme(TI_SCHEME);
 	url_util::AddStandardScheme(APP_SCHEME);
+	url_util::AddStandardScheme(TI_RESOURCE_SCHEME);
 
 	URLRequest::RegisterProtocolFactory(TI_SCHEME, &TiURL::createURLRequestJob);
 	URLRequest::RegisterProtocolFactory(APP_SCHEME, &TiURL::createURLRequestJob);
+	URLRequest::RegisterProtocolFactory(TI_RESOURCE_SCHEME, &TiURL::createURLRequestJob);
 }

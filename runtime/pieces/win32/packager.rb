@@ -32,11 +32,14 @@ module Titanium
         # copy all the win32 support files
         Dir["#{pieces_dir}/win32/*"].each do |file|
           next unless File.file? file
-          name = file.to_s.gsub "#{pieces_dir}/win32", ''
+          name = File.basename(file.to_s)
           if name == "titanium.exe"
           	FileUtils.cp file, File.join(app_folder, project.name + ".exe") 
           else
           	FileUtils.cp_r file, File.join(app_folder, name)
+          	if name.include?(".dll")
+          		FileUtils.chmod 0755, File.join(app_folder, name)
+          	end
         	end
         end
         
@@ -54,10 +57,18 @@ module Titanium
         Dir["#{pieces_dir}/gears/*"].each do |file|
           next unless File.file? file
           name = file.to_s.gsub "#{pieces_dir}/gears/", ''
-          target = File.join(app_folder,name)
+          if name == "gears_titanium.dll"
+          	# chrome needs dll plugins to have an "np" prefix to notice them
+        		name = "npgears_titanium.dll"
+        	end
+        	
+          target = File.join(app_folder,'plugins',name)
           dir = File.dirname(target)
           FileUtils.mkdir_p dir unless File.exists? dir
           FileUtils.cp_r file, target
+          if name == "gears_titanium.dll"
+          	FileUtils.chmod 0755, target
+        	end
         end
       
         # copy all the public files
@@ -83,7 +94,7 @@ module Titanium
         aidf.close
         
         if is_cygwin?
-          FileUtils.chmod 0755, File.join(app_folder, 'titanium.exe')
+          FileUtils.chmod 0755, File.join(app_folder, project.name+'.exe')
         end
         
       end

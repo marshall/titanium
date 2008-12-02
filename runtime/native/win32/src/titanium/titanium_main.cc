@@ -25,7 +25,7 @@
 #include "titanium_dll_main.h"
 
 int APIENTRY wWinMain (HINSTANCE instance, HINSTANCE prev_instance,
-					   wchar_t* command_line, int n_command_line)
+					   wchar_t* command_line, int)
 
 //int main (int argc, char *argv[])
 {
@@ -42,21 +42,6 @@ int APIENTRY wWinMain (HINSTANCE instance, HINSTANCE prev_instance,
 			// Enforces strong DEP support.
 			sandbox::SetCurrentProcessDEP(sandbox::DEP_ENABLED);
 	}
-
-	//if (dll_handle != NULL) {
-		// default behavior
-		std::wstring path;
-
-		PathService::Get(base::DIR_EXE, &path);
-		file_util::AppendToPath(&path, L"Resources");
-		file_util::AppendToPath(&path, L"tiapp.xml");
-
-		//RunFunc run = reinterpret_cast<RunFunc>(
-		//	::GetProcAddress(dll_handle, "runTitaniumApp"));
-		//if (NULL != run) {
-		return runTitaniumApp(path);
-		//}
-	//}
-
-	return -1;
+	
+	return runTitaniumApp(command_line);
 }

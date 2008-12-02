@@ -124,6 +124,7 @@
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
+				WarnAsError="false"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
 			/>
@@ -192,7 +193,7 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="if not exist $(TargetDir)\Resources mkdir $(TargetDir)\Resources&#x0D;&#x0A;copy $(ProjectDir)\test\* $(TargetDir)\Resources"
+						CommandLine="if not exist $(TargetDir)\Resources mkdir $(TargetDir)\Resources&#x0D;&#x0A;copy $(ProjectDir)\test\* $(TargetDir)\Resources&#x0D;&#x0A;python $(ProjectDir)\dependencies\build.py $(TargetDir)&#x0D;&#x0A;"
 						AdditionalDependencies="$(ProjectDir)\test\index.html;$(ProjectDir)\test\tiapp.xml;$(ProjectDir)\test\window_test.html"
 						Outputs="$(TargetDir)\Resources\index.html;$(TargetDir)\Resources\tiapp.xml;$(TargetDir)\Resources\window_test.html"
 					/>
@@ -218,9 +219,9 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="copy $(ProjectDir)\dependencies\icudt38.dll $(TargetDir)"
-						AdditionalDependencies="$(ProjectDir)\dependencies\icudt38.dll"
-						Outputs="$(TargetDir)\icudt38.dll"
+						CommandLine="copy $(ProjectDir)\dependencies\icudt38.dll $(TargetDir)&#x0D;&#x0A;&#x0D;&#x0A;if not exist $(TargetDir)\Resources\inspector mkdir $(TargetDir)\Resources\inspector&#x0D;&#x0A;if not exist $(TargetDir)\Resources\inspector\images mkdir $(TargetDir)\Resources\inspector\images&#x0D;&#x0A;&#x0D;&#x0A;copy $(ProjectDir)\dependencies\inspector $(TargetDir)\Resources\inspector&#x0D;&#x0A;copy $(ProjectDir)\dependencies\inspector\images $(TargetDir)\Resources\inspector\images&#x0D;&#x0A;"
+						AdditionalDependencies="$(ProjectDir)\dependencies\icudt38.dll;$(ProjectDir)\dependencies\inspector"
+						Outputs="$(TargetDir)\icudt38.dll;$(TargetDir)\Resources\inspector"
 					/>
 				</FileConfiguration>
 			</File>
