@@ -18,7 +18,7 @@ ti.Extras.fadeOutWindow = function(win,speed)
 		{
 			clearInterval(timer);
 			// set it back to the original and hide the window
-			win.hide();
+			win.hide(); // call this to cause the os to physically hide it
 			win.setTransparency(original);
 			return;
 		}
@@ -46,7 +46,6 @@ ti.Extras.fadeInWindow = function(win,speed)
 			clearInterval(timer);
 			// set it back to the original and hide the window
 			win.setTransparency(1.0);
-			win.show();
 			return;
 		}
 		win.setTransparency(t);

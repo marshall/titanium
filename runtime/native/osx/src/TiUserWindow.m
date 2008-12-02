@@ -257,10 +257,9 @@
 			WebScriptObject* scope = [[webView windowScriptObject] evaluateWebScript:@"ti.Extras"];
 			[scope callWebScriptMethod:@"fadeInWindow" withArguments:[NSArray arrayWithObject:self]];
 		}
-		else
-		{
-			[window makeKeyAndOrderFront:nil]; // to show it
-		}
+		[NSApp arrangeInFront:window];
+		[window makeKeyAndOrderFront:window]; 
+		[NSApp activateIgnoringOtherApps:YES];
 	}
 	else
 	{
