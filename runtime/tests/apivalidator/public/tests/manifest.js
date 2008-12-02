@@ -1,5 +1,6 @@
 {
 	"suites": [
-		"window.js"
+		"window.js",
+		"app.js"
 	]
 }
