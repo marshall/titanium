@@ -40,7 +40,7 @@ the same.  The only major diference is that the Titanium SDK has Titanium-specif
 branding.  Additionally, Titanium provides some additional distribution files for
 packaging a Titanium application.  These are split into 2 main categories:
 
-	- Titanium project packaging componet: titanium-project-X.X.X.zip
+	- Titanium project packaging component: titanium-project-X.X.X.zip
 	- Titanium runtime components: titanium-<OS>-X.X.X.zip
 
 The project packaging component is used for constructing and applying Titanium 
