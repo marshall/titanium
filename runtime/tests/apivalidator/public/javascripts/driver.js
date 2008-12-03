@@ -67,18 +67,21 @@ $(document).ready(function()
 		}
 	});
 	
+	var lastSuite = null;
 	$.getJSON(AppC.docRoot+'tests/manifest.js',function(json)
 	{
-		$.each(json.suites,function()
-		{
-			$.getScript(AppC.docRoot+'tests/'+this);
+		$.each(json.suites,function(i)
+		{	
+			$.getScript(AppC.docRoot+'tests/'+this, function() {
+					if (i == json.suites.length - 1) {
+						TestMonkey.fireEventAsync('manifestLoaded');
+					}
+			});
 		});
 	});
-
+	
 	$("#run").on("click",function()
 	{
-		resetStats();
-		$('#test_summary_title').show();
 		var test = $("#selector select").val();
 		$.cookie('testmonkey.test',test); // remember the last test we ran
 		testRunner(test);
@@ -86,8 +89,6 @@ $(document).ready(function()
 
 	$("#runall").on("click",function()
 	{
-		resetStats();
-		$('#test_summary_title').show();
 		var select = $("#selector select").get(0);
 		var tests = [];
 		for (var c=0;c<select.length;c++)
@@ -125,7 +126,9 @@ $(document).ready(function()
 					var lastTest = $.cookie('testmonkey.test');
 					var sel = '';
 					if (lastTest == result) sel = 'selected';
+					
 					$("#selector select").append("<option "+sel+">"+result+"</option>");
+					
 					break;
 				}
 				case 'beforeTestSuite':
@@ -167,6 +170,9 @@ $(document).ready(function()
 				}
 				case 'beforeTestRunner':
 				{
+					resetStats();
+					$('#test_summary_title').show();
+						
 					suiteCount = result.length;					
 					$('#suite_count').html(suiteCount);
 					for (var i=0;i<suiteCount;i++)
