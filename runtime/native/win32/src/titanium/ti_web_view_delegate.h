@@ -76,7 +76,9 @@ public:
   bool bootstrapTitanium;
   TiWebViewDelegate(TiChromeWindow *window_) : tiRuntime(NULL) { window = window_; }
   ~TiWebViewDelegate(void);
- 
+
+  WebWidgetHost* GetHostForWidget(WebWidget* webwidget);
+
   void setWebViewHost(WebViewHost* host_) { host = host_; }
  
   // following are the functions defined in the super classes
@@ -184,4 +186,5 @@ public:
   virtual bool RunBeforeUnloadConfirm(WebView* webview,
                    const std::wstring& message);
  
+  virtual WebWidget* CreatePopupWidget(WebView* webview, bool focus_on_show);
 }; 

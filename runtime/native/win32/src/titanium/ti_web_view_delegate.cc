@@ -25,20 +25,33 @@ std::vector<WebFrame*> TiWebViewDelegate::initializedFrames = std::vector<WebFra
 TiWebViewDelegate::~TiWebViewDelegate() {
 }
 
+WebWidgetHost* TiWebViewDelegate::GetHostForWidget(WebWidget* webwidget) {
+  if (webwidget == window->getHost()->webwidget())
+    return window->getHost();
+  if (webwidget == window->getPopupHost()->webwidget())
+    return window->getPopupHost();
+  return NULL;
+}
+
 gfx::ViewHandle TiWebViewDelegate::GetContainingWindow(WebWidget* webwidget) {
-	return window->getWindowHandle();
+	if (WebWidgetHost* host = GetHostForWidget(webwidget))
+		return host->window_handle();
+
+	return NULL;
 }
 
 // Called when a region of the WebWidget needs to be re-painted.
 void TiWebViewDelegate::DidInvalidateRect(WebWidget* webwidget, const gfx::Rect& rect) {
-	host->DidInvalidateRect(rect);
+	if (WebWidgetHost* host = GetHostForWidget(webwidget))
+		host->DidInvalidateRect(rect);
 }
 
 // Called when a region of the WebWidget, given by clip_rect, should be
 // scrolled by the specified dx and dy amounts.
 void TiWebViewDelegate::DidScrollRect(WebWidget* webwidget, int dx, int dy,
 	const gfx::Rect& clip_rect) {
-	host->DidScrollRect(dx, dy, clip_rect);
+	if (WebWidgetHost* host = GetHostForWidget(webwidget))
+		return host->DidScrollRect(dx, dy, clip_rect);
 }
 
 // This method is called to instruct the window containing the WebWidget to
@@ -46,9 +59,13 @@ void TiWebViewDelegate::DidScrollRect(WebWidget* webwidget, int dx, int dy,
 // successful call to CreateWebWidget.  |disposition| indicates how this new
 // window should be displayed, but generally only means something for WebViews.
 void TiWebViewDelegate::Show(WebWidget* webwidget, WindowOpenDisposition disposition) {
-	window->open();
-	//ShowWindow(tiWebShell->getWindow(), SW_SHOW);
-	//UpdateWindow(tiWebShell->getWindow());
+	if (webwidget == window->getHost()->webwidget()) {
+		ShowWindow(window->getWindowHandle(), SW_SHOW);
+		UpdateWindow(window->getWindowHandle());
+	} else if (webwidget == window->getPopupHost()->webwidget()) {
+		ShowWindow(window->getPopupWindowHandle(), SW_SHOW);
+		UpdateWindow(window->getPopupWindowHandle());
+	}
 }
 
 // This method is called to instruct the window containing the WebWidget to
@@ -56,42 +73,52 @@ void TiWebViewDelegate::Show(WebWidget* webwidget, WindowOpenDisposition disposi
 // WebWidget to eventually close.  It should not actually be destroyed until
 // after this call returns.
 void TiWebViewDelegate::CloseWidgetSoon(WebWidget* webwidget) {
-	PostMessage(window->getWindowHandle(), WM_CLOSE, 0, 0);
+	if (webwidget == window->getHost()->webwidget()) {
+		PostMessage(window->getWindowHandle(), WM_CLOSE, 0, 0);
+	} else if (webwidget == window->getPopupHost()->webwidget()) {
+		window->closePopup();
+	}
+	
 }
 
 // This method is called to focus the window containing the WebWidget so
 // that it receives keyboard events.
 void TiWebViewDelegate::Focus(WebWidget* webwidget) {
-	host->webwidget()->SetFocus(true);
+	if (WebWidgetHost *host = GetHostForWidget(webwidget))
+		host->webwidget()->SetFocus(true);
 }
 
 // This method is called to unfocus the window containing the WebWidget so that
 // it no longer receives keyboard events.
 void TiWebViewDelegate::Blur(WebWidget* webwidget) {
-	host->webwidget()->SetFocus(false);
+	if (WebWidgetHost *host = GetHostForWidget(webwidget))
+		host->webwidget()->SetFocus(false);
 }
 
 void TiWebViewDelegate::SetCursor(WebWidget* webwidget, 
 	const WebCursor& cursor) {
-
-	if (customCursor) {
-	  DestroyIcon(customCursor);
-	  customCursor = NULL;
-	}
-	if (cursor.IsCustom()) {
-	  customCursor = cursor.GetCustomCursor();
-	  host->SetCursor(customCursor);
-	} else {
-	  HINSTANCE mod_handle = GetModuleHandle(NULL);
-	  host->SetCursor(cursor.GetCursor(mod_handle));
+	if (WebWidgetHost* host = GetHostForWidget(webwidget)) {
+		if (customCursor) {
+			DestroyIcon(customCursor);
+			customCursor = NULL;
+		}
+		if (cursor.IsCustom()) {
+			customCursor = cursor.GetCustomCursor();
+			host->SetCursor(customCursor);
+		} else {
+			HINSTANCE mod_handle = GetModuleHandle(NULL);
+			host->SetCursor(cursor.GetCursor(mod_handle));
+		}
 	}
 }
 
 // Returns the rectangle of the WebWidget in screen coordinates.
 void TiWebViewDelegate::GetWindowRect(WebWidget* webwidget, gfx::Rect* out_rect) {
-	RECT rect;
-	::GetWindowRect(host->window_handle(), &rect);
-	*out_rect = gfx::Rect(rect);
+	if (WebWidgetHost* host = GetHostForWidget(webwidget)) {
+		RECT rect;
+		::GetWindowRect(host->window_handle(), &rect);
+		*out_rect = gfx::Rect(rect);
+	}
 }
 
 
@@ -102,15 +129,22 @@ void TiWebViewDelegate::GetWindowRect(WebWidget* webwidget, gfx::Rect* out_rect)
 // TODO(darin): this is more of a request; does this need to take effect
 // synchronously?
 void TiWebViewDelegate::SetWindowRect(WebWidget* webwidget, const gfx::Rect& rect) {
-
+	if (webwidget == window->getHost()->webwidget()) {
+		// ignored
+	} else if (webwidget == window->getPopupHost()->webwidget()) {
+		MoveWindow(window->getPopupWindowHandle(),
+			rect.x(), rect.y(), rect.width(), rect.height(), FALSE);
+	}
 }
 
 // Returns the rectangle of the window in which this WebWidget is embeded in.
 void TiWebViewDelegate::GetRootWindowRect(WebWidget* webwidget, gfx::Rect* out_rect) {
-	RECT rect;
-	HWND root_window = ::GetAncestor(host->window_handle(), GA_ROOT);
-	::GetWindowRect(root_window, &rect);
-	*out_rect = gfx::Rect(rect);
+	if (WebWidgetHost* host = GetHostForWidget(webwidget)) {
+		RECT rect;
+		HWND root_window = ::GetAncestor(host->window_handle(), GA_ROOT);
+		::GetWindowRect(root_window, &rect);
+		*out_rect = gfx::Rect(rect);
+	}
 }
 
 // Keeps track of the necessary window move for a plugin window that resulted
@@ -176,11 +210,12 @@ void TiWebViewDelegate::initRuntime(WebFrame *frame)
 		if (tiRuntime == NULL)
 			tiRuntime = new TiRuntime(window);
 
+		// do this first, BindToJavascript causes a 2nd callback to windowObjectCleared... strange.
+		initializedFrames.push_back(frame);
+		
 		tiRuntime->BindToJavascript(frame, L"tiRuntime");
-
 		std::string titanium_js = "ti://titanium.js";
 		window->include(frame, titanium_js);
-		initializedFrames.push_back(frame);
 	}
 }
 
@@ -335,3 +370,10 @@ bool TiWebViewDelegate::RunBeforeUnloadConfirm(WebView* webview,
                                   const std::wstring& message) {
 	return true;  // OK, continue to navigate away
 }
+
+WebWidget* TiWebViewDelegate::CreatePopupWidget(WebView* webview, bool focus_on_show) {
+  
+	return window->createPopupWidget();
+}
+
+

@@ -255,6 +255,20 @@ void TiChromeWindow::createWindow()
 	reloadTiWindowConfig();
 }
 
+WebWidget* TiChromeWindow::createPopupWidget()
+{
+	popupHost = WebWidgetHost::Create(NULL, webViewDelegate);
+	ShowWindow(getPopupWindowHandle(), SW_SHOW);
+
+	return popupHost->webwidget();
+}
+
+void TiChromeWindow::closePopup()
+{
+	PostMessage(getPopupWindowHandle(), WM_CLOSE, 0, 0);
+	popupHost = NULL;
+}
+
 #define SetFlag(x,flag,b) ((b) ? x |= flag : x &= ~flag)
 #define UnsetFlag(x,flag) (x &= ~flag)=
 

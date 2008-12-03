@@ -69,7 +69,8 @@ class TiChromeWindow
 private:
 	HINSTANCE hInstance;
 	HWND hWnd;
-	WebViewHost* host;
+	WebViewHost *host;
+	WebWidgetHost *popupHost;
 	std::wstring resourcePath;
 	TiWindowConfig *tiWindowConfig;
 	TiUserWindow *tiUserWindow;
@@ -99,13 +100,17 @@ public:
 	void resizeHost();
 
 	WebViewHost* getHost() { return host; }
+	WebWidgetHost* getPopupHost() { return popupHost; }
 
 	HWND getWindowHandle() { return hWnd; }
+	HWND getPopupWindowHandle() { return popupHost->window_handle(); }
 	HINSTANCE getInstanceHandle() { return hInstance; }
 
 	TiWindowConfig* getTiWindowConfig() { return tiWindowConfig; }
 	TiUserWindow* getTiUserWindow() { return tiUserWindow; }
 
+	WebWidget* createPopupWidget();
+	void closePopup();
 	void include (WebFrame *frame, std::string& relativePath);
 
 	void showWindow(int nCmdShow);

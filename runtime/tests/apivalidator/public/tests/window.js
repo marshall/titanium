@@ -1,10 +1,11 @@
-testSuite("ti.Window API tests",
+testSuite("ti.Window API tests", "dummy.html",
 {
 
 	run: function()
 	{
 		test("runtime accessor", function()
 		{
+			assert(tiRuntime == null);
 			assert(ti != null);
 			assert(ti.Window != null);
 		});

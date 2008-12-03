@@ -141,7 +141,7 @@ std::wstring TiURL::getPathForURL(GURL& url)
 			appendURLPath(&path, url);
 		}
 
-		//printf("%s url (%s host, %s path) => %ls\n", url.spec().c_str(), url.host().c_str(), url.path().c_str(), path.c_str());
+		printf("%s => %ls\n", url.spec().c_str(), path.c_str());
 		return path;
 	} else if (url.scheme() == APP_SCHEME) {
 		std::wstring path = base_dir;
@@ -149,7 +149,7 @@ std::wstring TiURL::getPathForURL(GURL& url)
 
 		appendURLPath(&path, url);
 		
-		//printf("%s url (%s host, %s path) => %ls\n", url.spec().c_str(), url.host().c_str(), url.path().c_str(), path.c_str());
+		printf("%s => %ls\n", url.spec().c_str(), path.c_str());
 		return path;
 	} else if (url.scheme() == TI_RESOURCE_SCHEME) {
 		std::wstring path;
@@ -157,6 +157,7 @@ std::wstring TiURL::getPathForURL(GURL& url)
 		PathService::Get(TiVersion::kRuntimeResources, &path);
 		appendURLPath(&path, url);
 
+		printf("%s => %ls\n", url.spec().c_str(), path.c_str());
 		return path;
 	}
 
