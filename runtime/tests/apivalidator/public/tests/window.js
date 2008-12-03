@@ -72,7 +72,7 @@ testSuite("ti.Window API tests",
 			assert(m.isMinimizable());
 			assert(m.isCloseable());
 			assert(m.isResizable());
-			assert(m.isUsingChrome());
+			assert(!m.isUsingChrome());
 			assert(m.isUsingScrollbars());
 			assert(m.getTransparency() == 1.0);
 			

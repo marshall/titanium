@@ -49,6 +49,23 @@ components are the OS-specific bundles and scripts that will turn your project
 into a Titanium executable package.  For more information, see below.
 
 
+------------------------
+ Quick Developer Builds
+------------------------
+
+You can do a developer build + install by running the following developer build 
+task:
+
+	> rake titanium:dev
+
+This will build the Gears-Titanium bundle, the Titanium Project bundle and the 
+Titanium OS distribution bundle and install them locally using the app command.
+
+Once you have run this command successfully, you can quickly re-package your 
+project to pick up the new changes.
+
+
+
 --------------------
  General Build Info
 --------------------
@@ -93,23 +110,6 @@ If everything worked, you should have a directory named stage in your project di
 and inside that directory, you should have a folder with your distribution files.
 For OSX, the folder will be named test.app (or test will be replaced with whatever you
 named your project).
-
-
-------------------------
- Quick Developer Builds
-------------------------
-
-You can do a developer build + install by running the following developer build 
-task:
-
-	> rake titanium:dev
-
-This will build the Gears-Titanium bundle, the Titanium Project bundle and the 
-Titanium OS distribution bundle and install them locally using the app command.
-
-Once you have run this command successfully, you can quickly re-package your 
-project to pick up the new changes.
-
 
 -----------------
  Platform Builds
@@ -168,6 +168,30 @@ Titanium support to existing Appcelerator projects.  To build this distribution 
 type the following in a command prompt:
 
 	> rake titanium:project
+
+
+-------------------
+ Automated Testing
+-------------------
+
+We're using TestMonkey for automated testing of the Titanium API.  The apivalidator
+is located under runtime/tests/apivalidator and is a normal titanium app with 
+Test Monkey tests.  You can run the test by going into this directory and
+packaging the test suite:
+
+	> app package:project <os>
+
+Then, you can run them like a normal application.  For debug output on OSX, you can
+run with command console:
+	
+	> ./stage/apivalidator.app/Contents/MacOS/apivalidator
+
+This will run the application and print out debugging messages to the console.
+
+
+You can find out more information or obtain Test Monkey by visiting:
+
+<http://github.com/jhaynie/testmonkey/tree/master>
 
 
 --------------------
