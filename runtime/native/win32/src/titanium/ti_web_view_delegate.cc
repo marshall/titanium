@@ -224,9 +224,8 @@ void TiWebViewDelegate::initRuntime(WebFrame *frame)
 	}
 }
 
-// The "first call" is when the document stream is actually loaded, the second
-// is when the v8 context is ready.. so we make a little counter as a hack to make
-// sure our context is right?
+// Basically the "firstDataReady" event initially calls us, but when we go to BindToJavascript,
+// v8 recalls windowObject cleared, which is really weird.
 void TiWebViewDelegate::WindowObjectCleared(WebFrame *webFrame)
 {
 	initRuntime(webFrame);

@@ -30,8 +30,8 @@ private:
 public:
 	TiMenuFactory();
 
-	void createSystemMenu(const CppArgumentList& args, CppVariant* result);
-	void createUserMenu(const CppArgumentList& args, CppVariant* result);
+	void createTrayMenu(const CppArgumentList& args, CppVariant* result);
+	void createAppMenu(const CppArgumentList& args, CppVariant* result);
 };
 
 #endif

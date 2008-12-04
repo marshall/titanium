@@ -31,7 +31,7 @@ public:
 std::vector<MenuItemCallback *> callbacks;
 
 int TiMenu::currentUID = TI_MENU_ITEM_ID_BEGIN + 1;
-TiMenu* TiMenu::systemMenu = NULL;
+TiMenu* TiMenu::trayMenu = NULL;
 
 TiMenu::TiMenu(NOTIFYICONDATA notifyIconData_) 
 	: notifyIconData(notifyIconData_)
@@ -64,7 +64,7 @@ void TiMenu::bind() {
 
 void TiMenu::remove(const CppArgumentList &args, CppVariant *result)
 {
-	if (this == TiMenu::systemMenu) {
+	if (this == TiMenu::trayMenu) {
 		Shell_NotifyIcon(NIM_DELETE, &notifyIconData);
 	}
 }
@@ -118,7 +118,6 @@ bool TiMenu::invokeCallback(int menuItemUID)
 		MenuItemCallback* itemCallback = callbacks[i];
 
 		if(itemCallback->uID == menuItemUID) {
-			printf("handle menu item %s (%d)\n", itemCallback->label.c_str(), itemCallback->uID);
 			NPVariant args[] = { StringToNPVariant(itemCallback->label) };
 
 			NPVariant result;
@@ -148,13 +147,13 @@ LRESULT CALLBACK TiMenu::handleMenuClick(HWND hWnd, UINT message, WPARAM wParam,
 }
 
 /*static*/
-void TiMenu::showSystemMenu ()
+void TiMenu::showTrayMenu ()
 {
-	if (systemMenu != NULL) {
+	if (trayMenu != NULL) {
 		// handle the tray menu
 		POINT pt;
 		GetCursorPos(&pt);
-		TrackPopupMenu(systemMenu->getMenu(), 
+		TrackPopupMenu(trayMenu->getMenu(), 
 			TPM_BOTTOMALIGN,
 			pt.x, pt.y, 0,
 			TiChromeWindow::getMainWindow()->getWindowHandle(), NULL);

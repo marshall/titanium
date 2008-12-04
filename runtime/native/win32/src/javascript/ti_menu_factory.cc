@@ -22,8 +22,8 @@ static HMENU hMenuBar = NULL;
 
 TiMenuFactory::TiMenuFactory()
 {
-	BindMethod("createSystemMenu", &TiMenuFactory::createSystemMenu);
-	BindMethod("createUserMenu", &TiMenuFactory::createUserMenu);
+	BindMethod("createTrayMenu", &TiMenuFactory::createTrayMenu);
+	BindMethod("createAppMenu", &TiMenuFactory::createAppMenu);
 }
 
 
@@ -47,7 +47,17 @@ NOTIFYICONDATA TiMenuFactory::createTrayIcon(std::wstring &iconPath, std::wstrin
 	return notifyIconData;
 }
 
-void TiMenuFactory::createSystemMenu(const CppArgumentList& args, CppVariant* result)
+/**
+ * Create a menu with a system tray icon. 
+ * Usage:
+ *   var leftClickCallback = function () {
+ *      // this is executed when user left-clicks the tray icon
+ *      // the menu itself is created on right-click
+ *   }
+ *   var menu = ti.Menu.createTrayMenu("app://path/to/ico", "caption text", leftClickCallback);
+ *
+ */
+void TiMenuFactory::createTrayMenu(const CppArgumentList& args, CppVariant* result)
 {
 	if (args.size() >= 3) {
 		if (args[0].isString() && args[1].isString() && args[2].isObject()) {
@@ -58,11 +68,11 @@ void TiMenuFactory::createSystemMenu(const CppArgumentList& args, CppVariant* re
 
 			NPObject* callback = NPVARIANT_TO_OBJECT(variant);
 
-			if (TiMenu::systemMenu == NULL) {
-				TiMenu::systemMenu = new TiMenu(createTrayIcon(TiURL::getPathForURL(GURL(iconURL)), UTF8ToWide(caption)));
+			if (TiMenu::trayMenu == NULL) {
+				TiMenu::trayMenu = new TiMenu(createTrayIcon(TiURL::getPathForURL(GURL(iconURL)), UTF8ToWide(caption)));
 			}
 			
-			result->Set(TiMenu::systemMenu->ToNPObject());
+			result->Set(TiMenu::trayMenu->ToNPObject());
 		}
 	}
 }
@@ -76,7 +86,7 @@ void TiMenuFactory::createSystemMenu(const CppArgumentList& args, CppVariant* re
  * if the menu item has already been created, then the existing menu is returned
  *
  * Sample JavaScript call:
- *   var myMenu = ti.Menu.createUserMenu("Orders");
+ *   var myMenu = ti.Menu.createAppMenu("Orders");
  *   myMenu.addItem("Search Orders", searchOrdersCallback);
  *   myMenu.addItem("Add Order", addOrderCallback);
  *   myMenu.addSeparator();
@@ -85,7 +95,7 @@ void TiMenuFactory::createSystemMenu(const CppArgumentList& args, CppVariant* re
  *   mySubMenu.addItem("Last Numbers", lastNumbersCallback);
  *   mySubMenu.addItem("Out Of Stock", outOfStockCallback);
  */
-void TiMenuFactory::createUserMenu(const CppArgumentList& args, CppVariant* result)
+void TiMenuFactory::createAppMenu(const CppArgumentList& args, CppVariant* result)
 {
 	if (args.size() >= 1) {
 		if (args[0].isString()) {

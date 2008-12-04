@@ -8,7 +8,7 @@
 	    });
 	    
 	    function createMenu () {
-	        var menu = ti.Menu.createUserMenu("Testing..");
+	        var menu = ti.Menu.createAppMenu("Testing..");
 	        menu.addItem("Item 1", function() { alert("Item 1 clicked!"); });
 	        menu.addItem("Item 2", function() { alert("Item 2 clicked!"); });
 	        var submenu = menu.addSubMenu("Submenu 1");
@@ -16,7 +16,7 @@
 	    }
 	    
 	    function createSystemMenu() {
-	        var sysmenu = ti.Menu.createSystemMenu("app://menu.ico", "Titanium", function (){});
+	        var sysmenu = ti.Menu.createTrayMenu("app://menu.ico", "Titanium", function (){});
             sysmenu.addItem("Random! " + Math.random(), function(msg) { alert(msg + " done got clicked"); });
             
             sysmenu.addItem("Hide me plz", function() { ti.App.hide(); });

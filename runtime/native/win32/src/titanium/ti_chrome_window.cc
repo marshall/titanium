@@ -152,7 +152,7 @@ LRESULT CALLBACK TiChromeWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 		case WM_IME_CHAR:
 		//case WM_SETFOCUS:
 		//case WM_KILLFOCUS:
-		//case WM_MOUSEWHEEL:
+		case WM_MOUSEWHEEL:
 			if (!PostMessage(window->getHost()->window_handle(), message, wParam, lParam)) {
 				return DefWindowProc(hWnd, message, wParam, lParam);
 			}
@@ -174,7 +174,7 @@ LRESULT CALLBACK TiChromeWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 				}
 				else if (uMouseMsg == WM_RBUTTONDOWN)
 				{
-					TiMenu::showSystemMenu();
+					TiMenu::showTrayMenu();
 				}
 			}
 			break;

@@ -63,8 +63,8 @@ public:
 		return currentUID++;
 	}
 
-	static TiMenu* systemMenu;
-	static void showSystemMenu();
+	static TiMenu* trayMenu;
+	static void showTrayMenu();
 	static bool invokeCallback(int menuItemUID);
 	static LRESULT CALLBACK handleMenuClick(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 };
