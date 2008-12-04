@@ -58,6 +58,24 @@
 			{
 				alert(E);
 			}
+
+			try
+			{
+				var menu = ti.Menu.createUserMenu("Window");
+				menu.setTitle("foo");
+				var item = menu.addItem("Jeff");
+				var sep = menu.addSeparator();
+				menu.removeSeparator(sep);
+				item.setTitle("Jeff Haynie");	
+				item.setAction(function()
+				{
+					alert("W000T!");
+				});
+			}
+			catch(E)
+			{
+				alert(E);
+			}
    });
 </script>
 
