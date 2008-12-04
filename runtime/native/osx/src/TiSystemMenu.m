@@ -32,6 +32,9 @@
 	menu = nil;
 	[itemImage release];
 	itemImage = nil;
+	[items removeAllObjects];
+	[items release];
+	items = nil;
 	[super dealloc];
 }
 
@@ -88,12 +91,12 @@
 	
 	if (!menu)
 	{
-		menu = [NSMenu new];
+		menu = [[NSMenu alloc] init];
 		[statusItem setMenu:menu];
 		[menu release];
 	}
 	
-	TiMenuAction *action = [[TiMenuAction alloc] initWithFunc:f title:name];
+	TiMenuAction *action = [[TiMenuAction alloc] initWithFunc:f title:name menu:menu];
 	[items addObject:action];
 	
 	[action setAction:@selector(itemClicked:)];

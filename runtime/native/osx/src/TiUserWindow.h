@@ -23,9 +23,11 @@
 #import "TiWindowConfig.h"
 
 @class TiDocument;
+@class TiWindowFactory;
 
 @interface TiUserWindow : NSObject {
 	TiWindow *window;
+	TiWindowFactory *factory;
 	WebView *webView;
 	TiWindowConfig *pending;
 	TiDocument *doc;
@@ -35,10 +37,12 @@
 
 - (id)initWithWindow:(TiWindow*)win;
 - (id)initWithWebview:(WebView*)webView;
+- (void)setFactory:(TiWindowFactory*)factory;
 - (void)setParent:(TiDocument*)parent;
 - (void)destroy; // only called internally
 
 - (NSString*)getID;
+- (void)setID:(NSString*)windowid; // internal use only, don't expose to JS
 
 - (void)open;
 - (void)close;
@@ -57,7 +61,6 @@
 
 - (NSString*)getIcon;
 - (void)setIcon:(NSString *)icon;
-
 
 - (NSString*)getTitle;
 - (void)setTitle:(NSString *)title;

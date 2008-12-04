@@ -20,16 +20,23 @@
 #import "TiWindowConfig.h"
 #import "TiWindow.h"
 
+@class TiUserWindow;
+
 @interface TiWindowFactory : NSObject {
 	WebView *webView;
 	TiWindow *window;
 	TiUserWindow *mainWindow;
 	TiUserWindow *currentWindow;
+	NSMutableArray *windows;
 }
+// private, internal only
+- (void)setProperty:(NSString *)name sel:(SEL)sel script:(WebScriptObject*)script win:(TiUserWindow*)win;
+- (void)addWindow:(TiUserWindow*)window;
+- (void)removeWindow:(TiUserWindow*)window;
 
 - (id)initWithWindow:(TiWindow *)win; 
-- (TiUserWindow *)createWindow;
-- (TiUserWindow *)getWindow;
+- (TiUserWindow *)createWindow:(id)arg1 chrome:(BOOL)chrome;
+- (TiUserWindow *)getWindow:(NSString*)windowid;
 
 @property (copy, readonly) TiUserWindow *mainWindow;
 @property (copy, readonly) TiUserWindow *currentWindow;

@@ -3,6 +3,7 @@
 <title>My Title</title>
 <script src="test.js"></script>
 <script src="app:test.js"></script>
+<script src="gears_init.js"></script>
 </head>
 <body onunload="alert('unloaded')" xonload="alert('loaded')">
 
@@ -34,19 +35,44 @@
 
 			try
 			{
-				var w = ti.Window.createWindow();
+				var w = ti.Window.createWindow({
+					id: 'a',
+					x: '100',
+					bounds: {
+						x:0,
+						y:'0',
+						width:600,
+						height:100
+					}
+				});
 				w.setWidth(500);
 				w.setHeight(300);
 				w.setURL("http://www.google.com");
 				w.open();
 				w.setVisible(true);
-
-				setTimeout(function()
-				{
-					w.close();
-				},2000);
+				w.maximize();
+				w.activate();
+				w.minimize();
 			}
 			catch (E)
+			{
+				alert(E);
+			}
+
+			try
+			{
+				var menu = ti.Menu.createUserMenu("Window");
+				menu.setTitle("foo");
+				var item = menu.addItem("Jeff");
+				var sep = menu.addSeparator();
+				menu.removeSeparator(sep);
+				item.setTitle("Jeff Haynie");	
+				item.setAction(function()
+				{
+					alert("W000T!");
+				});
+			}
+			catch(E)
 			{
 				alert(E);
 			}

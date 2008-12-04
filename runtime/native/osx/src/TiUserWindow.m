@@ -66,6 +66,11 @@
 	[super dealloc];
 }
 
+- (void)setFactory:(TiWindowFactory*)afactory
+{
+	factory = afactory;
+}
+
 - (NSString *)description 
 {
 	return @"[TiUserWindow native]";
@@ -185,6 +190,10 @@
 		[self hide:NO];
 	}
 	webView = [doc webView];
+	if ([pending getX]>=0 || [pending getY]>=0)
+	{
+		[[webView windowScriptObject] evaluateWebScript:[NSString stringWithFormat:@"moveTo(%f,%f)",[pending getX],[pending getY]]];
+	}
 	[doc loadURL:theurl];
 }
 
@@ -206,6 +215,7 @@
 - (void)close 
 {
 	TRACE(@"TiUserWindow::close %x", self);
+	[factory removeWindow:self];
 	if (parent)
 	{
 		[parent removeChildWindow:self];
@@ -271,6 +281,10 @@
 {
 	if ([self hasWindow])
 	{		
+		// for now, same as show ... not sure the difference on mac vs. windows
+		[NSApp arrangeInFront:window];
+		[window makeKeyAndOrderFront:window]; 
+		[NSApp activateIgnoringOtherApps:YES];
 	}
 	else
 	{
@@ -282,6 +296,7 @@
 {
 	if ([self hasWindow])
 	{		
+		[window miniaturize:window];
 	}
 	else
 	{
@@ -292,7 +307,8 @@
 - (void)maximize
 {
 	if ([self hasWindow])
-	{		
+	{
+		[window zoom:window];
 	}
 	else
 	{
@@ -315,7 +331,8 @@
 - (void)setUsingChrome:(BOOL)yn
 {
 	if ([self hasWindow])
-	{
+	{ 
+		[[webView windowScriptObject] setException:@"cannot set chrome after a window has been created"];
 	}
 	else
 	{
@@ -406,6 +423,11 @@
 	{
 		return [pending getID];
 	}
+}
+
+- (void)setID:(NSString*)anid
+{
+	[pending setID:anid]; // can only be called by the factory, not by app
 }
 
 - (TiBounds*)getBounds

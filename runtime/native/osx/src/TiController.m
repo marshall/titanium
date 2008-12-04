@@ -139,10 +139,28 @@ static CGFloat toFloat (NSString* value, CGFloat def)
 	[AppProtocol registerSpecialProtocol];
 }
 
+- (void)activate:(TiDocument*)doc
+{
+	activeDocument = doc;
+}
+
+- (void)deactivate:(TiDocument*)doc
+{
+	activeDocument = nil;
+}
+
+- (void)showInspector
+{
+	if (activeDocument)
+	{
+		[activeDocument showInspector];
+	}
+}
+
 - (void)updateAppNameInMainMenu 
 {
 	// fixup App Menu
-	NSMenu *appMenu = [[[NSApp mainMenu] itemAtIndex:0] submenu];
+	NSMenu *appMenu = [[[NSApp mainMenu] itemWithTitle:@"Titanium"] submenu];
 	
 	//TODO: not refershing the title of the application for some reason
 	[[appMenu supermenu] setTitle:appName];
@@ -163,6 +181,27 @@ static CGFloat toFloat (NSString* value, CGFloat def)
 	
 	NSMenu *menu = [[[NSApp mainMenu] itemWithTitle:@"Titanium"] submenu];
 	[menu setTitle:appName];
+	
+	//set up debugger window menu item
+	BOOL showDebugInspector = [arguments debug];
+
+#ifdef DEBUG
+	showDebugInspector = YES;
+#endif
+	
+	NSMenu *windowMenu = [[[NSApp mainMenu] itemWithTitle:NSLocalizedString(@"Window",@"")] submenu];
+	NSMenuItem *showInspector = [windowMenu itemWithTitle:NSLocalizedString(@"Show Inspector", @"")];
+	if (showDebugInspector)
+	{
+		[showInspector setEnabled:YES];
+		[showInspector setAction:@selector(showInspector)];
+	}	
+	else
+	{
+		[showInspector setHidden:YES];
+		NSMenuItem *showInspectorSep = [windowMenu itemWithTitle:@"Show Inspector Separator"];
+		[showInspectorSep setHidden:YES];
+	}
 }
 
 - (TiWindowConfig*) findInitialWindowConfig

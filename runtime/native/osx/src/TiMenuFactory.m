@@ -38,7 +38,16 @@
 
 - (TiUserMenu *)createUserMenu:(NSString*)label
 {
-	[[webView windowScriptObject] setException:@"createUserMenu not implemented yet"];
+	//TODO: review with marshall - probably need a getUserMenu
+	NSMenu *appMenu = [[[NSApp mainMenu] itemWithTitle:label] submenu];
+	if (appMenu == nil)
+	{
+		//FIXME
+	}
+	else
+	{
+		return [[TiUserMenu alloc]initWithMenu:appMenu];
+	}
 	return nil;
 }
 

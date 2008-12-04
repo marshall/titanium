@@ -23,9 +23,10 @@
 @interface TiMenuAction : NSMenuItem {
 	WebScriptObject *target;
 	NSString *title;
+	NSMenu* menu;
 }
 
-- (TiMenuAction*)initWithFunc:(WebScriptObject*)f title:(NSString*)t;
+- (TiMenuAction*)initWithFunc:(WebScriptObject*)f title:(NSString*)t menu:(NSMenu*)menu;
 - (void)execute;
 
 @end

@@ -16,8 +16,22 @@
  * limitations under the License. 
  */
 #import <Cocoa/Cocoa.h>
+#import "TiMenuAction.h"
 
 @interface TiUserMenu : NSObject 
 {
+	NSMenu *menu;
+	NSMutableArray *items;
 }
+
+-(id)initWithMenu:(NSMenu*)menu;
+- (void)execute;
+
+
+- (void)setTitle:(NSString*)title;
+- (NSString*)getTitle;
+- (TiMenuAction*)addItem:(NSString*)name f:(WebScriptObject*)f;
+- (NSMenuItem*)addSeparator;
+- (void)removeSeparator:(NSMenuItem*)item;
+
 @end

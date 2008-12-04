@@ -147,6 +147,14 @@
 	
 	TRACE(@"trying to load from: %@, base: %@",resourcePath,basePath);
 	
+	if ([[resourcePath lastPathComponent] isEqualToString:@"gears_init.js"])
+	{
+		NSError *error = [NSError errorWithDomain:@"titanium" code:-1 userInfo:nil];
+		[client URLProtocol:self didFailWithError:error];
+		[client URLProtocolDidFinishLoading:self];
+		return;
+	}
+	
 	TiAppArguments *args = (TiAppArguments *)[[TiController instance] arguments];
 	
 	if ([args devLaunch]) 

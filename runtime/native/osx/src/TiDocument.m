@@ -59,15 +59,12 @@
 	[childWindows removeAllObjects];
 	[childWindows release];
 	childWindows=nil;
-//	for (id key in javascripts)
-//	{
-//		NSString *value = [javascripts objectForKey:key];
-//		[value release];
-//	}
 	[javascripts removeAllObjects];
 	[javascripts release];
 	javascripts = nil;
     [url release];
+	[inspector release];
+	inspector = nil;
 	webView=nil;
     [super dealloc];
 	
@@ -113,6 +110,15 @@
 - (NSString *)windowNibName
 {
     return @"TiDocument";
+}
+
+- (void)showInspector
+{
+	if (inspector==nil)
+	{
+		inspector = [[WebInspector alloc] initWithWebView:webView];
+	}
+	[inspector show:[self window]];
 }
 
 - (void)loadURL:(NSURL *)URL
@@ -509,12 +515,17 @@
 {
 	TRACE(@"TiDocument::webViewClose = %x",self);
 	[[wv window] close];
+	if (inspector)
+	{
+		[inspector webViewClosed];
+	}
 }
 
 
 - (void)webViewFocus:(WebView *)wv 
 {
 	TRACE(@"TiDocument::webViewFocus = %x",self);
+	[[TiController instance] activate:self];
 	[[wv window] makeKeyAndOrderFront:wv];
 }
 
@@ -526,6 +537,7 @@
 	{
 		[NSApp _cycleWindowsReversed:FALSE];
 	}
+	[[TiController instance] deactivate:self];
 }
 
 
