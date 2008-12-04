@@ -38,8 +38,6 @@
 - (void)show;
 - (void)activate;
 - (void)minimize;
-- (void)beep;
-- (void)playSoundNamed:(NSString *)s;
 - (void)setSize:(int)width height:(int)height animate:(int)animate;
 - (void)setBackgroundColor:(NSString*)color;
 - (NSString*)resourcePath;

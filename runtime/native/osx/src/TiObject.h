@@ -23,6 +23,7 @@
 #import "TiMenuFactory.h"
 #import "TiWindowFactory.h"
 #import "TiWindow.h"
+#import "TiMedia.h"
 
 @class WebView;
 
@@ -34,12 +35,14 @@
 	TiSystemDock *Dock;
 	TiMenuFactory *Menu;
 	TiWindowFactory *Window;
+	TiMedia *Media;
 }
 
 @property (copy, readonly) TiApp *App;
 @property (copy, readonly) TiSystemDock *Dock;
 @property (copy, readonly) TiMenuFactory *Menu;
 @property (copy, readonly) TiWindowFactory *Window;
+@property (copy, readonly) TiMedia *Media;
 
 - (id)initWithWindow:(TiWindow*)win;
 

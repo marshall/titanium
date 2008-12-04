@@ -36,7 +36,7 @@
 	[super dealloc];
 }
 
-- (TiUserMenu *)createUserMenu:(NSString*)label
+- (TiAppMenu *)createAppMenu:(NSString*)label
 {
 	//TODO: review with marshall - probably need a getUserMenu
 	NSMenu *appMenu = [[[NSApp mainMenu] itemWithTitle:label] submenu];
@@ -46,13 +46,13 @@
 	}
 	else
 	{
-		return [[TiUserMenu alloc]initWithMenu:appMenu];
+		return [[TiAppMenu alloc]initWithMenu:appMenu];
 	}
 	return nil;
 }
 
 
-- (TiSystemMenu *)createSystemMenu:(NSString*)iconURL caption:(NSString*)caption callback:(WebScriptObject*)callback;
+- (TiSystemMenu *)createTrayMenu:(NSString*)iconURL caption:(NSString*)caption callback:(WebScriptObject*)callback;
 {
 	return [[TiSystemMenu alloc] initWithURL:iconURL caption:caption callback:callback];
 }
@@ -67,11 +67,11 @@
 
 + (NSString *)webScriptNameForSelector:(SEL)sel 
 {
-	if (sel == @selector(createSystemMenu:caption:callback:)) {
-		return @"createSystemMenu";
+	if (sel == @selector(createTrayMenu:caption:callback:)) {
+		return @"createTrayMenu";
 	}
-	else if (sel == @selector(createUserMenu:)) {
-		return @"createUserMenu";
+	else if (sel == @selector(createAppMenu:)) {
+		return @"createAppMenu";
 	}
 	return nil;
 }

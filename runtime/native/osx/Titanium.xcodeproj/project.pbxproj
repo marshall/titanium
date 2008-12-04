@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		240A3DC60EE85CED00AFDE3E /* TiAppMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = 240A3DC50EE85CED00AFDE3E /* TiAppMenu.m */; };
+		240A3DDC0EE85DF600AFDE3E /* TiMedia.m in Sources */ = {isa = PBXBuildFile; fileRef = 240A3DDB0EE85DF600AFDE3E /* TiMedia.m */; };
+		240A3DE50EE8625300AFDE3E /* TiSound.m in Sources */ = {isa = PBXBuildFile; fileRef = 240A3DE40EE8625300AFDE3E /* TiSound.m */; };
+		240A3DFC0EE870A700AFDE3E /* test.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 240A3DFB0EE870A700AFDE3E /* test.mp3 */; };
 		2427B9FD0EDA42BF007098CC /* TiWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 2427B9FC0EDA42BF007098CC /* TiWindow.m */; };
 		2427BA3A0EDA4578007098CC /* TiSplashScreen.m in Sources */ = {isa = PBXBuildFile; fileRef = 2427BA390EDA4578007098CC /* TiSplashScreen.m */; };
 		2427BA740EDA4654007098CC /* TiAppArguments.m in Sources */ = {isa = PBXBuildFile; fileRef = 2427BA730EDA4654007098CC /* TiAppArguments.m */; };
@@ -35,7 +39,6 @@
 		24D022170EDA75EF005E15AE /* TiObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 24D0220A0EDA75EF005E15AE /* TiObject.m */; };
 		24D022180EDA75EF005E15AE /* TiSystemDock.m in Sources */ = {isa = PBXBuildFile; fileRef = 24D0220C0EDA75EF005E15AE /* TiSystemDock.m */; };
 		24D022190EDA75EF005E15AE /* TiSystemMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = 24D0220E0EDA75EF005E15AE /* TiSystemMenu.m */; };
-		24D0221A0EDA75EF005E15AE /* TiUserMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = 24D022100EDA75EF005E15AE /* TiUserMenu.m */; };
 		24D0222D0EDA76D7005E15AE /* TiMenuAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 24D0222C0EDA76D7005E15AE /* TiMenuAction.m */; };
 		24D022520EDA794C005E15AE /* TiWindowFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = 24D022510EDA794C005E15AE /* TiWindowFactory.m */; };
 		24D022580EDA7989005E15AE /* TiUserWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 24D022570EDA7989005E15AE /* TiUserWindow.m */; };
@@ -62,6 +65,13 @@
 
 /* Begin PBXFileReference section */
 		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
+		240A3DC40EE85CED00AFDE3E /* TiAppMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TiAppMenu.h; path = src/TiAppMenu.h; sourceTree = "<group>"; };
+		240A3DC50EE85CED00AFDE3E /* TiAppMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TiAppMenu.m; path = src/TiAppMenu.m; sourceTree = "<group>"; };
+		240A3DDA0EE85DF600AFDE3E /* TiMedia.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TiMedia.h; path = src/TiMedia.h; sourceTree = "<group>"; };
+		240A3DDB0EE85DF600AFDE3E /* TiMedia.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TiMedia.m; path = src/TiMedia.m; sourceTree = "<group>"; };
+		240A3DE30EE8625300AFDE3E /* TiSound.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TiSound.h; path = src/TiSound.h; sourceTree = "<group>"; };
+		240A3DE40EE8625300AFDE3E /* TiSound.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TiSound.m; path = src/TiSound.m; sourceTree = "<group>"; };
+		240A3DFB0EE870A700AFDE3E /* test.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = test.mp3; path = res/test.mp3; sourceTree = "<group>"; };
 		2427B9FB0EDA42BF007098CC /* TiWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TiWindow.h; path = src/TiWindow.h; sourceTree = "<group>"; };
 		2427B9FC0EDA42BF007098CC /* TiWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TiWindow.m; path = src/TiWindow.m; sourceTree = "<group>"; };
 		2427BA380EDA4578007098CC /* TiSplashScreen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TiSplashScreen.h; path = src/TiSplashScreen.h; sourceTree = "<group>"; };
@@ -108,8 +118,6 @@
 		24D0220C0EDA75EF005E15AE /* TiSystemDock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TiSystemDock.m; path = src/TiSystemDock.m; sourceTree = "<group>"; };
 		24D0220D0EDA75EF005E15AE /* TiSystemMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TiSystemMenu.h; path = src/TiSystemMenu.h; sourceTree = "<group>"; };
 		24D0220E0EDA75EF005E15AE /* TiSystemMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TiSystemMenu.m; path = src/TiSystemMenu.m; sourceTree = "<group>"; };
-		24D0220F0EDA75EF005E15AE /* TiUserMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TiUserMenu.h; path = src/TiUserMenu.h; sourceTree = "<group>"; };
-		24D022100EDA75EF005E15AE /* TiUserMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TiUserMenu.m; path = src/TiUserMenu.m; sourceTree = "<group>"; };
 		24D0222B0EDA76D7005E15AE /* TiMenuAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TiMenuAction.h; path = src/TiMenuAction.h; sourceTree = "<group>"; };
 		24D0222C0EDA76D7005E15AE /* TiMenuAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TiMenuAction.m; path = src/TiMenuAction.m; sourceTree = "<group>"; };
 		24D022500EDA794C005E15AE /* TiWindowFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TiWindowFactory.h; path = src/TiWindowFactory.h; sourceTree = "<group>"; };
@@ -195,6 +203,12 @@
 		249703BE0EDA9CCD0024252C /* Javascript */ = {
 			isa = PBXGroup;
 			children = (
+				240A3DE30EE8625300AFDE3E /* TiSound.h */,
+				240A3DE40EE8625300AFDE3E /* TiSound.m */,
+				240A3DDA0EE85DF600AFDE3E /* TiMedia.h */,
+				240A3DDB0EE85DF600AFDE3E /* TiMedia.m */,
+				240A3DC40EE85CED00AFDE3E /* TiAppMenu.h */,
+				240A3DC50EE85CED00AFDE3E /* TiAppMenu.m */,
 				246748220EDD2D6A00CE52E9 /* TiBounds.h */,
 				246748230EDD2D6A00CE52E9 /* TiBounds.m */,
 				2427BA920EDA478E007098CC /* TiWindowConfig.h */,
@@ -215,8 +229,6 @@
 				24D0220C0EDA75EF005E15AE /* TiSystemDock.m */,
 				24D0220D0EDA75EF005E15AE /* TiSystemMenu.h */,
 				24D0220E0EDA75EF005E15AE /* TiSystemMenu.m */,
-				24D0220F0EDA75EF005E15AE /* TiUserMenu.h */,
-				24D022100EDA75EF005E15AE /* TiUserMenu.m */,
 			);
 			name = Javascript;
 			sourceTree = "<group>";
@@ -259,6 +271,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				240A3DFB0EE870A700AFDE3E /* test.mp3 */,
 				246755400EE31EEC00CE52E9 /* tray.png */,
 				24674E5F0EE20E5800CE52E9 /* aid */,
 				24674DCE0EE2012C00CE52E9 /* test.js */,
@@ -332,6 +345,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				240A3DFC0EE870A700AFDE3E /* test.mp3 in Resources */,
 				246755410EE31EEC00CE52E9 /* tray.png in Resources */,
 				24674E600EE20E5800CE52E9 /* aid in Resources */,
 				24674DDD0EE2028300CE52E9 /* test.js in Resources */,
@@ -385,7 +399,6 @@
 				24D022170EDA75EF005E15AE /* TiObject.m in Sources */,
 				24D022180EDA75EF005E15AE /* TiSystemDock.m in Sources */,
 				24D022190EDA75EF005E15AE /* TiSystemMenu.m in Sources */,
-				24D0221A0EDA75EF005E15AE /* TiUserMenu.m in Sources */,
 				24D0222D0EDA76D7005E15AE /* TiMenuAction.m in Sources */,
 				24D022520EDA794C005E15AE /* TiWindowFactory.m in Sources */,
 				24D022580EDA7989005E15AE /* TiUserWindow.m in Sources */,
@@ -393,6 +406,9 @@
 				24D022E20EDA7DD0005E15AE /* TiProtocol.m in Sources */,
 				246748240EDD2D6A00CE52E9 /* TiBounds.m in Sources */,
 				24674DCF0EE2012C00CE52E9 /* test.js in Sources */,
+				240A3DC60EE85CED00AFDE3E /* TiAppMenu.m in Sources */,
+				240A3DDC0EE85DF600AFDE3E /* TiMedia.m in Sources */,
+				240A3DE50EE8625300AFDE3E /* TiSound.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

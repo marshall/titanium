@@ -19,6 +19,7 @@
 		Dock: runtime.Dock,
 		Menu: runtime.Menu,
 		Window: runtime.Window,
+		Media: runtime.Media,
      	toString: function()
      	{
         	return '[Titanium Runtime]';

@@ -15,17 +15,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-
 #import <Cocoa/Cocoa.h>
-#import "TiSystemMenu.h"
-#import "TiAppMenu.h"
+#import <WebKit/WebKit.h>
+#import "TiSound.h"
 
-@interface TiMenuFactory : NSObject {
+@interface TiMedia : NSObject 
+{
 	WebView *webView;
 }
 
 - (id)initWithWebView:(WebView *)wv;
+- (TiSound*)createSound:(NSString*)url;
+- (void)beep;
 
-- (TiAppMenu *)createAppMenu:(NSString*)label;
-- (TiSystemMenu *)createTrayMenu:(NSString*)iconURL caption:(NSString*)caption callback:(WebScriptObject*)callback;
+
 @end

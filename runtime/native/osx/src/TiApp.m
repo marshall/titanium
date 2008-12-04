@@ -114,16 +114,6 @@
 }
 
 
-- (void)beep 
-{
-	NSBeep();
-}
-
-- (void)playSoundNamed:(NSString *)s 
-{
-	[[NSSound soundNamed:s] play];
-}
-
 - (void)setSize:(int)width height:(int)height animate:(int)animate
 {
 	NSWindow *win = [webView window];
@@ -205,10 +195,6 @@
 		return @"show";
 	} else if (sel == @selector(minimize)) {
 		return @"minimize";
-	} else if (sel == @selector(beep)) {
-		return @"beep";
-	} else if (sel == @selector(playSoundNamed:)) {
-		return @"playSound";
 	} else if (sel == @selector(windowWidth)) {
 		return @"getWindowWidth";
 	} else if (sel == @selector(windowHeight)) {
@@ -230,7 +216,7 @@
 	} else if (sel == @selector(setBackgroundColor:)) {
 		return @"setBackgroundColor";
 	} else if (sel == @selector(getResourcePath)) {
-		return @"setBackgroundColor";
+		return @"getResourcePath";
 	} else {
 		return nil;
 	}

@@ -28,7 +28,7 @@
          }
          rs.close();
 
-			ti.Menu.createSystemMenu('tray.png', null, function()
+			ti.Menu.createTrayMenu('tray.png', null, function()
 			{
 				alert("w00t!");
 			});
@@ -61,7 +61,7 @@
 
 			try
 			{
-				var menu = ti.Menu.createUserMenu("Window");
+				var menu = ti.Menu.createAppMenu("Window");
 				menu.setTitle("foo");
 				var item = menu.addItem("Jeff");
 				var sep = menu.addSeparator();
@@ -71,6 +71,14 @@
 				{
 					alert("W000T!");
 				});
+
+
+				var sound = ti.Media.createSound("app://test.mp3");
+				sound.onComplete(function(yn)
+				{
+					ti.Media.beep();
+				});
+				sound.play();
 			}
 			catch(E)
 			{
@@ -98,6 +106,7 @@
 <a onclick="window.w.show(true);return false;" href="#">Show Window</a>
 
 <iframe src="frame.html" width="200" height="200"></iframe>
+
 
 </body>
 </html>

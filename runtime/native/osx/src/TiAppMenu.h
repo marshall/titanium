@@ -15,17 +15,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-
 #import <Cocoa/Cocoa.h>
-#import "TiSystemMenu.h"
-#import "TiAppMenu.h"
+#import "TiMenuAction.h"
 
-@interface TiMenuFactory : NSObject {
-	WebView *webView;
+@interface TiAppMenu : NSObject 
+{
+	NSMenu *menu;
+	NSMutableArray *items;
 }
 
-- (id)initWithWebView:(WebView *)wv;
+-(id)initWithMenu:(NSMenu*)menu;
+- (void)execute;
 
-- (TiAppMenu *)createAppMenu:(NSString*)label;
-- (TiSystemMenu *)createTrayMenu:(NSString*)iconURL caption:(NSString*)caption callback:(WebScriptObject*)callback;
+
+- (void)setTitle:(NSString*)title;
+- (NSString*)getTitle;
+- (TiMenuAction*)addItem:(NSString*)name f:(WebScriptObject*)f;
+- (NSMenuItem*)addSeparator;
+- (void)removeSeparator:(NSMenuItem*)item;
+
 @end

@@ -16,58 +16,36 @@
  * limitations under the License. 
  */
 #import <WebKit/WebKit.h>
-#import "Ti.h"
+#import "TiMedia.h"
 #import "TiController.h"
-#import "TiObject.h"
 
-@implementation TiObject
+@implementation TiMedia
 
-@synthesize App;
-@synthesize Dock;
-@synthesize Menu;
-@synthesize Window;
-@synthesize Media;
-
-- (id)initWithWindow:(TiWindow*)win 
+- (id)initWithWebView:(WebView *)wv
 {
 	self = [super init];
-	if (self != nil) 
+	if (self!=nil)
 	{
-		window = win;
-		webView = [TiController getWebView:window];
-		
-		[window retain];
-		[webView retain];
-
-		App = [[TiApp alloc] initWithWindow:window];
-		Dock = [[TiSystemDock alloc] initWithWebView:webView];
-		Menu = [[TiMenuFactory alloc] initWithWebView:webView];
-		Window = [[TiWindowFactory alloc] initWithWindow:window];
-		Media = [[TiMedia alloc] initWithWebView:webView];
+		webView = wv;
 	}
 	return self;
 }
 
-
-- (void)dealloc 
+- (void)dealloc
 {
-	[window release];
-	[webView release];
-	
-	window = nil;
 	webView = nil;
-	[App release];
-	[Dock release];
-	[Menu release];
-	[Window release];
-	[Media release];
 	[super dealloc];
 }
 
-
-- (NSString *)description 
+- (void)beep
 {
-	return @"[TiObject native]";
+	NSBeep();
+}
+
+- (TiSound*)createSound:(NSString*)url
+{
+	NSURL *theurl = [TiController formatURL:url];
+	return [[TiSound alloc] initWithScope:[webView windowScriptObject] url:theurl];
 }
 
 #pragma mark -
@@ -77,36 +55,26 @@
 	return (nil == [self webScriptNameForSelector:sel]);
 }
 
-
 + (NSString *)webScriptNameForSelector:(SEL)sel 
 {
+	if (sel == @selector(createSound:)) {
+		return @"createSound";
+	}
+	else if (sel == @selector(beep)) {
+		return @"beep";
+	}
 	return nil;
 }
 
 
 + (BOOL)isKeyExcludedFromWebScript:(const char*)key {
-	return (nil == [self webScriptNameForKey:key]);
+	return YES;
 }
 
 
 + (NSString *)webScriptNameForKey:(const char *)name {
-	if (strcmp(name, "App") == 0) {
-		return @"App";
-	}
-	else if (strcmp(name, "Dock") == 0) {
-		return @"Dock";
-	}
-	else if (strcmp(name, "Menu") == 0) {
-		return @"Menu";
-	}
-	else if (strcmp(name, "Window") == 0) {
-		return @"Window";
-	}
-	else if (strcmp(name, "Media") == 0) {
-		return @"Media";
-	}
 	return nil;
 }
 
-
 @end
+
