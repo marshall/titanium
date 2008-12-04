@@ -65,7 +65,6 @@ class TiWebViewDelegate:
 private:
   WebViewHost *host;
   TiChromeWindow *window;
-  TiRuntime *tiRuntime;
   TiApp *tiApp;
   HCURSOR customCursor;
   static std::vector<WebFrame*> initializedFrames;
@@ -74,7 +73,7 @@ private:
 
 public:
   bool bootstrapTitanium;
-  TiWebViewDelegate(TiChromeWindow *window_) : tiRuntime(NULL) { window = window_; }
+  TiWebViewDelegate(TiChromeWindow *window_) { window = window_; }
   ~TiWebViewDelegate(void);
 
   WebWidgetHost* GetHostForWidget(WebWidget* webwidget);

@@ -15,8 +15,9 @@
 */
 
 #include "ti_window_factory.h"
+#include "ti_runtime.h"
 
-TiWindowFactory::TiWindowFactory(TiChromeWindow *window)
+TiWindowFactory::TiWindowFactory(TiRuntime *ti)
 {
 	BindMethod("createWindow", &TiWindowFactory::createWindow);
 	BindMethod("getWindow", &TiWindowFactory::getWindow);
@@ -24,7 +25,7 @@ TiWindowFactory::TiWindowFactory(TiChromeWindow *window)
 	BindProperty("currentWindow", &currentWindow);
 
 	mainWindow.Set(TiChromeWindow::getMainWindow()->getTiUserWindow()->ToNPObject());
-	currentWindow.Set(window->getTiUserWindow()->ToNPObject());
+	currentWindow.Set(ti->getWindow()->getTiUserWindow()->ToNPObject());
 }
 
 void TiWindowFactory::createWindow(const CppArgumentList &args, CppVariant *result)

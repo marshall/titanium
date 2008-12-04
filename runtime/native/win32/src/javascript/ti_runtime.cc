@@ -22,12 +22,13 @@
 #include <string>
 #include <fstream>
 
-TiRuntime::TiRuntime(TiChromeWindow *window)
+TiRuntime::TiRuntime(TiChromeWindow *window, WebFrame *webFrame)
 {
 	this->window = window;
+	this->webFrame = webFrame;
 	
-	tiApp = new TiApp(window);
-	tiWindowFactory = new TiWindowFactory(window);
+	tiApp = new TiApp(this);
+	tiWindowFactory = new TiWindowFactory(this);
 	tiMenuFactory = new TiMenuFactory();
 
 	App.Set(tiApp->ToNPObject());

@@ -20,12 +20,14 @@
 #include "webkit/glue/webview.h"
  
 class TiChromeWindow;
- 
+class TiRuntime;
+
 class TiApp : public JsClass
 {
-	TiChromeWindow *window;
+	TiRuntime *ti;
+
 public:
-	TiApp(TiChromeWindow *window);
+	TiApp(TiRuntime *ti);
 	~TiApp(void);
 
 	void debug (const CppArgumentList &args, CppVariant *result);
@@ -37,6 +39,7 @@ public:
 	void beep(const CppArgumentList &args, CppVariant *result);
 	void playSound(const CppArgumentList &args, CppVariant *result);
 	void playNamedSound(const CppArgumentList &args, CppVariant *result);
+	void toString(const CppArgumentList &args, CppVariant *result);
 
 	void quit(const CppArgumentList &args, CppVariant *result);
 };

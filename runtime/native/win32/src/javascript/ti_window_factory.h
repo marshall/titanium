@@ -21,13 +21,15 @@
 
 #include "ti_user_window.h"
 
+class TiRuntime;
+
 /**
 * A simple factory for Window objects
 */
 class TiWindowFactory : public JsClass
 {
 public:
-	TiWindowFactory(TiChromeWindow *window);
+	TiWindowFactory(TiRuntime *ti);
 
 	void createWindow(const CppArgumentList& args, CppVariant* result);
 	void getWindow(const CppArgumentList& args, CppVariant* result);

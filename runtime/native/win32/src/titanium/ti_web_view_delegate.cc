@@ -17,6 +17,7 @@
 #include "ti_web_view_delegate.h"
 #include "ti_chrome_window.h"
 #include "ti_utils.h"
+#include "ti_app_arguments.h"
 
 #include "Resource.h"
 
@@ -207,15 +208,19 @@ void TiWebViewDelegate::initRuntime(WebFrame *frame)
 {
 	if (std::find(initializedFrames.begin(), initializedFrames.end(), frame) == initializedFrames.end())
 	{
-		if (tiRuntime == NULL)
-			tiRuntime = new TiRuntime(window);
+		TiRuntime *tiRuntime = new TiRuntime(window, frame);
 
 		// do this first, BindToJavascript causes a 2nd callback to windowObjectCleared... strange.
 		initializedFrames.push_back(frame);
 		
 		tiRuntime->BindToJavascript(frame, L"tiRuntime");
 		std::string titanium_js = "ti://titanium.js";
+
 		window->include(frame, titanium_js);
+		
+		if (TiAppArguments::isDevMode && !TiChromeWindow::isInspectorOpen) {
+			window->openInspectorWindow();
+		}
 	}
 }
 

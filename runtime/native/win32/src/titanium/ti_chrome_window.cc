@@ -23,14 +23,12 @@
 
 #include <fstream>
 #include <shellapi.h>
-#include <stdio.h>
-#include <io.h>
-#include <fcntl.h>
 
 TCHAR TiChromeWindow::defaultWindowTitle[128];
 TCHAR TiChromeWindow::windowClassName[128];
 TiAppConfig* TiChromeWindow::tiAppConfig = NULL;
 std::vector<TiChromeWindow*> TiChromeWindow::openWindows = std::vector<TiChromeWindow*>();
+bool TiChromeWindow::isInspectorOpen = false;
 
 /*static*/
 TiChromeWindow* TiChromeWindow::fromWindow(HWND hWnd) {
@@ -87,14 +85,6 @@ void TiChromeWindow::initWindowClass (HINSTANCE hInstance)
 		
 		initialized = true;
 	}
-
-#ifdef TITANIUM_DEBUGGING
-	createDebugConsole();
-#else
-	if (TiAppArguments::isDevMode) {
-		createDebugConsole();
-	}
-#endif
 }
 
 /*static*/
@@ -103,26 +93,9 @@ void TiChromeWindow::removeWindowClass (HINSTANCE hInstance)
 	UnregisterClass(windowClassName, hInstance);
 }
 
-/*static*/
-void TiChromeWindow::createDebugConsole ()
-{
-	AllocConsole();
-
-    HANDLE handle_out = GetStdHandle(STD_OUTPUT_HANDLE);
-    int hCrt = _open_osfhandle((long)handle_out, _O_TEXT);
-    FILE* hf_out = _fdopen(hCrt, "w");
-    setvbuf(hf_out, NULL, _IONBF, 1);
-    *stdout = *hf_out;
-
-    HANDLE handle_in = GetStdHandle(STD_INPUT_HANDLE);
-    hCrt = _open_osfhandle((long)handle_in, _O_TEXT);
-    FILE* hf_in = _fdopen(hCrt, "r");
-    setvbuf(hf_in, NULL, _IONBF, 128);
-    *stdin = *hf_in;
-}
-
 void TiChromeWindow::openInspectorWindow()
 {
+	isInspectorOpen = true;
 	host->webview()->ShowJavaScriptConsole();
 }
 

@@ -73,7 +73,13 @@ namespace TiVersion {
 		else if (pathId == kRuntimeResources) {
 			std::wstring runtime;
 			if (PathService::Get(kRuntime, &runtime)) {
+#ifndef TITANIUM_DEBUGGING
+				file_util::AppendToPath(&runtime, L"pieces");
+				file_util::AppendToPath(&runtime, L"win32");
 				file_util::AppendToPath(&runtime, L"Resources");
+#else
+				file_util::AppendToPath(&runtime, L"Resources");
+#endif
 				(*result) = runtime;
 				return true;
 			}

@@ -24,6 +24,10 @@
 #include <shlwapi.h>
 #include <wininet.h>
 #include <commctrl.h>
+#include <stdio.h>
+#include <io.h>
+#include <fcntl.h>
+
 
 #undef max
 
@@ -95,6 +99,23 @@ BOOL APIENTRY DllMain( HMODULE hModule_,
     return TRUE;
 }
 
+void createDebugConsole ()
+{
+	AllocConsole();
+
+    HANDLE handle_out = GetStdHandle(STD_OUTPUT_HANDLE);
+    int hCrt = _open_osfhandle((long)handle_out, _O_TEXT);
+    FILE* hf_out = _fdopen(hCrt, "w");
+    setvbuf(hf_out, NULL, _IONBF, 1);
+    *stdout = *hf_out;
+
+    HANDLE handle_in = GetStdHandle(STD_INPUT_HANDLE);
+    hCrt = _open_osfhandle((long)handle_in, _O_TEXT);
+    FILE* hf_in = _fdopen(hCrt, "r");
+    setvbuf(hf_in, NULL, _IONBF, 128);
+    *stdin = *hf_in;
+}
+
 std::string TiGetDataResource(HMODULE module, int resource_id) {
 	void *data_ptr;
 	size_t data_size;
@@ -110,6 +131,15 @@ std::string TiNetResourceProvider(int key) {
 
 void chromiumInit()
 {
+	
+#ifdef TITANIUM_DEBUGGING
+	createDebugConsole();
+#else
+	if (TiAppArguments::isDevMode) {
+		createDebugConsole();
+	}
+#endif
+
 
 	base::EnableTerminationOnHeapCorruption();
 	
@@ -159,10 +189,6 @@ int titaniumInit ()
 void runTitanium ()
 {
 	mainWindow->open();
-	
-	if (TiAppArguments::isDevMode) {
-		mainWindow->openInspectorWindow();
-	}
 
 	MessageLoop::current()->Run();
 }

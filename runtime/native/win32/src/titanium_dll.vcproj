@@ -150,6 +150,7 @@
 				IgnoreDefaultLibraryNames=""
 				GenerateDebugInformation="true"
 				AssemblyDebug="0"
+				ProgramDatabaseFile="$(TargetDir)$(TargetName)_dll.pdb"
 				SubSystem="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"

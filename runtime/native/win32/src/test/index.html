@@ -31,7 +31,15 @@
 	        windowTest.setTitle("lil' brudder");
 	        var bounds = {x:100, y:100, width:200, height:200};
             windowTest.setBounds(bounds);
+            windowTest.setTransparency(0.1);
 	    }
+	    
+	    function openWindow () {
+			windowTest.open();
+			
+			ti.Extras.fadeInWindow(windowTest);
+	    }
+	    
 	   </script>
 	   <style>
 	   body {
@@ -43,7 +51,7 @@
 	    here's a text input, test the stupid lose focus/key input error here:<br />
         <input type="text" id="x"/><br /><br />
         
-        window should be created, let's try <a href="javascript: windowTest.open();">opening it!</a><br />
+        window should be created, let's try <a href="javascript: openWindow();">opening it!</a><br />
         
         oh, you might want to <a href="javascript: createSystemMenu();">try creating a system menu</a>.. let's hope!
 	    

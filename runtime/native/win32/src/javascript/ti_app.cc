@@ -16,15 +16,17 @@
  
 #include "ti_app.h"
 #include "ti_chrome_window.h"
+#include "ti_runtime.h"
 
-TiApp::TiApp(TiChromeWindow *window_)
-	: window(window_)
+TiApp::TiApp(TiRuntime *ti_)
+	: ti(ti_)
 {
 	BindMethod("show", &TiApp::show);
 	BindMethod("hide", &TiApp::hide);
 	BindMethod("debug", &TiApp::debug);
 	BindMethod("getResourcePath", &TiApp::getResourcePath);
 	BindMethod("include", &TiApp::include);
+	BindMethod("toString", &TiApp::toString);
 
 	/*
 	void beep(const CppArgumentList &args, CppVariant *result);
@@ -77,7 +79,7 @@ void TiApp::include(const CppArgumentList &args, CppVariant *result)
 {
 	if (args.size() > 0) {
 		std::string relativeName = args[0].ToString();
-		window->include(window->getHost()->webview()->GetMainFrame(), relativeName);
+		ti->getWindow()->include(ti->getWebFrame(), relativeName);
 	}
 }
 
@@ -99,4 +101,11 @@ void TiApp::playNamedSound(const CppArgumentList &args, CppVariant *result)
 void TiApp::quit(const CppArgumentList &args, CppVariant *result)
 {
 	// TODO
+}
+
+void TiApp::toString(const CppArgumentList &args, CppVariant *result)
+{
+	std::string str = "[TiApp native]";
+
+	result->Set(str);
 }

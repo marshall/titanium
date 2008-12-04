@@ -18,6 +18,7 @@
 
 #include "js_class.h"
 #include "webkit/glue/webview.h"
+#include "webkit/glue/webframe.h"
 
 #include "ti_app.h"
 
@@ -31,10 +32,14 @@ class TiRuntime : public JsClass
 	TiApp *tiApp;
 	TiWindowFactory *tiWindowFactory;
 	TiMenuFactory *tiMenuFactory;
+	WebFrame *webFrame;
 
 public:
-	TiRuntime(TiChromeWindow *window);
+	TiRuntime(TiChromeWindow *window, WebFrame *webFrame);
 	~TiRuntime(void);
+
+	TiChromeWindow* getWindow() { return window; }
+	WebFrame* getWebFrame() { return webFrame; }
 
 	CppVariant App, Dock, Menu, Window;
 };

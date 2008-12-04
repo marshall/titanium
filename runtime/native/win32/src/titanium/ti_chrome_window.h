@@ -129,5 +129,5 @@ public:
 
 	static void initWindowClass(HINSTANCE hInstance);
 	static void removeWindowClass (HINSTANCE hInstance);
-	static void createDebugConsole();
+	static bool isInspectorOpen;
 };

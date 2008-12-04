@@ -1,9 +1,8 @@
 <html>
     <head>
     <script>
-        ti.ready(function($) {  
-            document.getElementById("url").innerHTML = "<b>" + 
-				ti.Window.currentWindow.url + "</b>";
+        ti.ready(function($) {
+			$("#url").html("<b>" + ti.Window.currentWindow.url + "</b>");
         });
         
         function peekABoo ()
