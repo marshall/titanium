@@ -19,9 +19,9 @@
 #import <WebKit/WebKit.h>
 #import "Ti.h"
 #import "TiDocument.h"
-#import "TiDocument.h"
 #import "TiAppArguments.h"
 #import "TiWindowConfig.h"
+#import "WebInspector.h"
 
 @interface TiController : NSObject
 {
@@ -31,6 +31,7 @@
 	NSString *appName;
 	NSString *appID;
 	TiWindowConfig *pendingConfig;
+	TiDocument *activeDocument;
 }
 - (void)dealloc;
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification;
@@ -44,6 +45,8 @@
 - (BOOL)shouldOpenInNewWindow;
 - (TiWindowConfig*) pendingConfig;
 - (void) resetPendingConfig;
+- (void)activate:(TiDocument*)doc;
+- (void)deactivate:(TiDocument*)doc;
 
 + (void)error:(NSString*)message;
 + (TiController*) instance;

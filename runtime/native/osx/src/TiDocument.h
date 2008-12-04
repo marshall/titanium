@@ -19,6 +19,7 @@
 #import "Ti.h"
 #import "TiWindow.h"
 #import "TiUserWindow.h"
+#import "WebInspector.h"
 
 @class WebView;
 @class TiObject;
@@ -32,12 +33,15 @@
 	TiUserWindow *userWindow;
 	NSMutableArray *childWindows;
 	BOOL scriptCleared;
+	WebInspector *inspector;
 	NSMutableDictionary *javascripts; //TODO: probably should only be loaded if in devlaunch mode
 }
 
 // these are used internally only
 - (void)setPrecedent:(TiDocument*)doc;
 - (void)closePrecedent;
+- (void)showInspector;
+
 
 - (void)addChildWindow:(TiUserWindow*)win;
 - (void)removeChildWindow:(TiUserWindow*)win;
