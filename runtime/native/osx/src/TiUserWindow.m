@@ -190,6 +190,10 @@
 		[self hide:NO];
 	}
 	webView = [doc webView];
+	if ([pending getX]>=0 || [pending getY]>=0)
+	{
+		[[webView windowScriptObject] evaluateWebScript:[NSString stringWithFormat:@"moveTo(%f,%f)",[pending getX],[pending getY]]];
+	}
 	[doc loadURL:theurl];
 }
 

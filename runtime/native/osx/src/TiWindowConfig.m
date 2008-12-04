@@ -27,8 +27,8 @@
 	self = [super init];
 
 	// setup defaults
-	x=0;
-	y=0;
+	x=-1; // indicate not set
+	y=-1; // indicate not set
 	width=100;
 	height=100;
 	maxHeight=9000;

@@ -57,7 +57,11 @@
 		// this is suppose to enable move by grabbing a window background area
 		[self setMovableByWindowBackground:YES];
 		
-		[self center];
+		// only center if we haven't provided coordinates in setup
+		if ([config getX] < 0 || [config getY] < 0)
+		{
+			[self center];
+		}
 	}
 	return self;
 }
