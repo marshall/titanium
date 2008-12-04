@@ -117,15 +117,34 @@
 			[self setProperty:@"title" sel:@selector(setTitle:) script:ws win:win];
 			[self setProperty:@"transparency" sel:@selector(setTransparency:) script:ws win:win];
 			[self setProperty:@"chrome" sel:@selector(setUsingChrome:) script:ws win:win];
+			[self setProperty:@"usingChrome" sel:@selector(setUsingChrome:) script:ws win:win];
 			[self setProperty:@"width" sel:@selector(setWidth:) script:ws win:win];
 			[self setProperty:@"height" sel:@selector(setHeight:) script:ws win:win];
 			[self setProperty:@"resizable" sel:@selector(setResizable:) script:ws win:win];
 			[self setProperty:@"fullscreen" sel:@selector(setFullscreen:) script:ws win:win];
 			[self setProperty:@"scrollbars" sel:@selector(setUsingScrollbars:) script:ws win:win];
+			[self setProperty:@"usingScrollbars" sel:@selector(setUsingScrollbars:) script:ws win:win];
 			[self setProperty:@"maximizable" sel:@selector(setMaximizable:) script:ws win:win];
 			[self setProperty:@"minimizable" sel:@selector(setMinimizable:) script:ws win:win];
 			[self setProperty:@"closeable" sel:@selector(setCloseable:) script:ws win:win];
 			[self setProperty:@"visible" sel:@selector(setVisible:) script:ws win:win];
+			
+			// bounds is a property coming in as an object with additional properties
+			// handle it special here
+			@try
+			{
+				WebScriptObject* value = [ws valueForKey:@"bounds"];
+				TiBounds *bounds = [[[TiBounds alloc] init] autorelease];
+				[bounds setX:[[value valueForKey:@"x"] floatValue]];
+				[bounds setY:[[value valueForKey:@"y"] floatValue]];
+				[bounds setWidth:[[value valueForKey:@"width"] floatValue]];
+				[bounds setHeight:[[value valueForKey:@"height"] floatValue]];
+				[win performSelector:@selector(setBounds:) withObject:bounds];
+			}
+			@catch(NSException *exception)
+			{
+				//ignore in the case they didn't pass bounds
+			}
 		}
 	}	
 	[win setParent:doc];
