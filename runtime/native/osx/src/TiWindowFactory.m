@@ -32,6 +32,7 @@
 	{
 		// don't retain any of these
 		window = win;
+		windows = [[NSMutableArray alloc] init];
 		webView = [TiController getWebView:window];
 		mainWindow = [[TiController getDocument:win] userWindow];
 		currentWindow = [[TiController getDocument:win] userWindow];
@@ -46,22 +47,90 @@
 	currentWindow = nil;
 	mainWindow = nil;
 	window = nil;
+	[windows removeAllObjects];
+	[windows release];
+	windows = nil;
 	[super dealloc];
 }
 
-- (TiUserWindow *)getWindow
+- (void)addWindow:(TiUserWindow*)awindow
 {
-	//TODO: search for windows
+	[windows addObject:awindow];
+}
+
+- (void)removeWindow:(TiUserWindow*)awindow
+{
+	[windows removeObject:awindow];
+}
+
+- (TiUserWindow *)getWindow:(NSString*)windowid
+{
+	NSEnumerator *enumerator = [windows objectEnumerator];
+	TiUserWindow* anObject = nil;
+	
+	while (anObject = [enumerator nextObject]) 
+	{
+		if ([[anObject getID] isEqualToString:windowid])
+		{
+			return anObject;
+		}
+	}
 	return nil;
 }
 
+- (void)setProperty:(NSString *)name sel:(SEL)sel script:(WebScriptObject*)script win:(TiUserWindow*)win
+{
+	@try
+	{
+		id value = [script valueForKey:name];
+		[win performSelector:sel withObject:value];
+	}
+	@catch(NSException *exception)
+	{
+		// weird thing is that valueForKey throws exception if the property doesn't exist
+		// in the object - seems like it should return webundefined or nil
+	}
+}
 
-- (TiUserWindow *)createWindow
+- (TiUserWindow *)createWindow:(id)arg1 chrome:(BOOL)chrome
 {
 	TiDocument *doc = [TiController getDocument:window];
 	TiUserWindow *win = [[TiUserWindow alloc] initWithWebview:webView];
+
+	if (arg1 != nil)
+	{
+		if ([arg1 isKindOfClass:[NSString class]])
+		{
+			// first arg is a string, it's an id
+			[win setID:arg1];
+			[win setUsingChrome:chrome];
+		}
+		else if ([arg1 isKindOfClass:[WebScriptObject class]])
+		{
+			WebScriptObject *ws = (WebScriptObject*)arg1;
+			[self setProperty:@"id" sel:@selector(setID:) script:ws win:win];
+			[self setProperty:@"content" sel:@selector(setContent:) script:ws win:win];
+			[self setProperty:@"url" sel:@selector(setURL:) script:ws win:win];
+			[self setProperty:@"x" sel:@selector(setX:) script:ws win:win];
+			[self setProperty:@"y" sel:@selector(setY:) script:ws win:win];
+			[self setProperty:@"icon" sel:@selector(setIcon:) script:ws win:win];
+			[self setProperty:@"title" sel:@selector(setTitle:) script:ws win:win];
+			[self setProperty:@"transparency" sel:@selector(setTransparency:) script:ws win:win];
+			[self setProperty:@"chrome" sel:@selector(setUsingChrome:) script:ws win:win];
+			[self setProperty:@"width" sel:@selector(setWidth:) script:ws win:win];
+			[self setProperty:@"height" sel:@selector(setHeight:) script:ws win:win];
+			[self setProperty:@"resizable" sel:@selector(setResizable:) script:ws win:win];
+			[self setProperty:@"fullscreen" sel:@selector(setFullscreen:) script:ws win:win];
+			[self setProperty:@"scrollbars" sel:@selector(setUsingScrollbars:) script:ws win:win];
+			[self setProperty:@"maximizable" sel:@selector(setMaximizable:) script:ws win:win];
+			[self setProperty:@"minimizable" sel:@selector(setMinimizable:) script:ws win:win];
+			[self setProperty:@"closeable" sel:@selector(setCloseable:) script:ws win:win];
+			[self setProperty:@"visible" sel:@selector(setVisible:) script:ws win:win];
+		}
+	}	
 	[win setParent:doc];
 	[doc addChildWindow:win];
+	[self addWindow:win];
 	TRACE(@"TiWindowFactory::createWindow - created: %x, parent: %x",win,doc);
 	return win;
 }
@@ -71,8 +140,11 @@
 
 + (NSString *)webScriptNameForSelector:(SEL)sel 
 {
-	if (sel == @selector(createWindow)) {
+	if (sel == @selector(createWindow:chrome:)) {
 		return @"createWindow";
+	}
+	else if (sel == @selector(getWindow:)) {
+		return @"getWindow";
 	}
 	return nil;
 }

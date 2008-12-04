@@ -66,6 +66,11 @@
 	[super dealloc];
 }
 
+- (void)setFactory:(TiWindowFactory*)afactory
+{
+	factory = afactory;
+}
+
 - (NSString *)description 
 {
 	return @"[TiUserWindow native]";
@@ -206,6 +211,7 @@
 - (void)close 
 {
 	TRACE(@"TiUserWindow::close %x", self);
+	[factory removeWindow:self];
 	if (parent)
 	{
 		[parent removeChildWindow:self];
@@ -406,6 +412,11 @@
 	{
 		return [pending getID];
 	}
+}
+
+- (void)setID:(NSString*)anid
+{
+	[pending setID:anid]; // can only be called by the factory, not by app
 }
 
 - (TiBounds*)getBounds

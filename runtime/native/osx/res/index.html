@@ -3,6 +3,7 @@
 <title>My Title</title>
 <script src="test.js"></script>
 <script src="app:test.js"></script>
+<script src="gears_init.js"></script>
 </head>
 <body onunload="alert('unloaded')" xonload="alert('loaded')">
 
@@ -34,17 +35,15 @@
 
 			try
 			{
-				var w = ti.Window.createWindow();
+				var w = ti.Window.createWindow({
+					id: 'a',
+					x: '100'
+				});
 				w.setWidth(500);
 				w.setHeight(300);
 				w.setURL("http://www.google.com");
 				w.open();
 				w.setVisible(true);
-
-				setTimeout(function()
-				{
-					w.close();
-				},2000);
 			}
 			catch (E)
 			{
