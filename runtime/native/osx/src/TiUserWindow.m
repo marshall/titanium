@@ -281,6 +281,10 @@
 {
 	if ([self hasWindow])
 	{		
+		// for now, same as show ... not sure the difference on mac vs. windows
+		[NSApp arrangeInFront:window];
+		[window makeKeyAndOrderFront:window]; 
+		[NSApp activateIgnoringOtherApps:YES];
 	}
 	else
 	{
@@ -292,6 +296,7 @@
 {
 	if ([self hasWindow])
 	{		
+		[window miniaturize:window];
 	}
 	else
 	{
@@ -302,7 +307,8 @@
 - (void)maximize
 {
 	if ([self hasWindow])
-	{		
+	{
+		[window zoom:window];
 	}
 	else
 	{
@@ -325,7 +331,8 @@
 - (void)setUsingChrome:(BOOL)yn
 {
 	if ([self hasWindow])
-	{
+	{ 
+		[[webView windowScriptObject] setException:@"cannot set chrome after a window has been created"];
 	}
 	else
 	{
