@@ -21,8 +21,8 @@ int TiWindowConfig::DEFAULT_POSITION = -1;
 
 void TiWindowConfig::setDefaults ()
 {
-	maximizable = minimizable = closeable = resizable = usingChrome = true;
-	usingScrollbars = fullscreen = false;
+	maximizable = minimizable = closeable = resizable = true;
+	usingChrome = usingScrollbars = fullscreen = false;
 	transparency = 1.0;
 	width = 800;
 	height = 600;

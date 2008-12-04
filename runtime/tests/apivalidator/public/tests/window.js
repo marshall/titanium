@@ -34,8 +34,10 @@ testSuite("ti.Window API tests", "dummy.html",
 			var immutableProps = ['ID'];
 
 			var boolProps = ['Resizable', 'Maximizable', 'Minimizable',
-				'Closeable', 'Fullscreen', 'Visible', 'UsingChrome', 'UsingScrollbars'];
+				'Closeable', 'Fullscreen', 'Visible', 'UsingScrollbars'];
 
+			var immutableBoolProps = ['UsingChrome'];
+			
 			$.each(props, function() {
 				assert(m["get"+this] != null);
 				assert(m["set"+this] != null);
@@ -49,6 +51,11 @@ testSuite("ti.Window API tests", "dummy.html",
 			$.each(boolProps, function() {
 				assert(m["is"+this] != null);
 				assert(m["set"+this] != null);
+			});
+			
+			$.each(immutableProps, function() {
+				assert(m["get"+this] != null);
+				assert(m["set"+this] == null);
 			});
 
 
@@ -79,10 +86,10 @@ testSuite("ti.Window API tests", "dummy.html",
 			
 			var b = m.getBounds();
 			assert(b != null);
-			assert(b.getX() == m.getX());
-			assert(b.getY() == m.getY());
-			assert(b.getWidth() == m.getWidth());
-			assert(b.getHeight() == m.getHeight());
+			assert(b.x == m.getX());
+			assert(b.y == m.getY());
+			assert(b.width == m.getWidth());
+			assert(b.height == m.getHeight());
 
 		});
 	}

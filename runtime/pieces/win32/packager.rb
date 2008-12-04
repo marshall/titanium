@@ -66,7 +66,7 @@ module Titanium
           dir = File.dirname(target)
           FileUtils.mkdir_p dir unless File.exists? dir
           FileUtils.cp_r file, target
-          if name == "gears_titanium.dll"
+          if name == "npgears_titanium.dll"
           	FileUtils.chmod 0755, target
         	end
         end

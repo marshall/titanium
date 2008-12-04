@@ -30,7 +30,26 @@ TiWindowFactory::TiWindowFactory(TiRuntime *ti)
 
 void TiWindowFactory::createWindow(const CppArgumentList &args, CppVariant *result)
 {
-	TiUserWindow *window = new TiUserWindow();
+	TiUserWindow *window;
+
+	if (args.size() > 0) {
+		if (args[0].isString()) {
+			std::string id = args[0].ToString();
+			if (args.size() > 1) {
+				window = new TiUserWindow(id.c_str(), args[1].ToBoolean());
+			}
+			else {
+				window = new TiUserWindow(id.c_str());
+			}
+		} else if (args[0].isObject()) {
+			std::string id = GetStringProperty(args[0], "id");
+			bool usingChrome = GetBoolProperty(args[0], "usingChrome");
+
+			window = new TiUserWindow(id.c_str(), usingChrome);
+		}
+	} else {
+		window = new TiUserWindow();
+	}
 
 	result->Set(window->ToNPObject());
 }

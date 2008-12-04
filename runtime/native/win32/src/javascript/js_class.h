@@ -98,9 +98,21 @@ class JsClass {
   // Bind the Javascript property called |name| to a CppVariant |prop|.
   void BindProperty(std::string name, CppVariant* prop);
 
+  // Bind a property getter (no setter)
+  template<typename T>
+  void BindPropertyFunctions(std::string name,
+	  void (T::*getter_method)(const CppArgumentList&, CppVariant*)) {
+	
+	Callback* getter_callback =
+        NewCallback<T, const CppArgumentList&, CppVariant*>(
+            static_cast<T*>(this), getter_method);
+
+	BindPropertyCallbacks(name, getter_callback, NULL);
+  }
+
   // Bind property getter/setter functions
   template<typename T>
-  void BindProperty(std::string name,
+  void BindPropertyFunctions(std::string name,
       void (T::*getter_method)(const CppArgumentList&, CppVariant*),
 	  void (T::*setter_method)(const CppArgumentList&, CppVariant*)) {
 
@@ -108,9 +120,13 @@ class JsClass {
         NewCallback<T, const CppArgumentList&, CppVariant*>(
             static_cast<T*>(this), getter_method);
 
-	Callback* setter_callback =
+	Callback* setter_callback = NULL;
+	
+	if (setter_method != NULL) {
+	setter_callback =
         NewCallback<T, const CppArgumentList&, CppVariant*>(
             static_cast<T*>(this), setter_method);
+	}
 
 	BindPropertyCallbacks(name, getter_callback, setter_callback);
   }

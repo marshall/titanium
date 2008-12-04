@@ -49,6 +49,7 @@ public:
 	std::string& getTitle() { return title; }
 	void setTitle(std::string& title_) { title = title_; }
 	std::string& getId() { return id; }
+	void setId(std::string id_) { id = id_; }
 
 	int getX() { return x; }
 	void setX(int x_) { x = x_; }

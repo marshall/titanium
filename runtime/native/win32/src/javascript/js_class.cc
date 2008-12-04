@@ -263,7 +263,8 @@ void JsClass::BindPropertyCallbacks(std::string name, Callback* getter, Callback
 	delete old_setter->second;
 
   property_getters_[ident] = getter;
-  property_setters_[ident] = setter;
+  if (setter != NULL)
+	property_setters_[ident] = setter;
 }
 
 void JsClass::BindProperty(std::string name, CppVariant* prop) {
