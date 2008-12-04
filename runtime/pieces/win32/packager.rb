@@ -25,7 +25,7 @@ module Titanium
         executable = project.name
         app_folder = File.join(dest_dir,"#{project.name}.win32")
         resources_folder = File.join(app_folder,'Resources')
-        titanium_folder = File.join(app_folder,'titanium')
+        titanium_folder = File.join(resources_folder,'titanium')
         
         FileUtils.mkdir_p [app_folder, resources_folder, titanium_folder]
         

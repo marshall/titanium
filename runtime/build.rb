@@ -220,13 +220,13 @@ task :win32 do
       zipfile.add('pieces/win32/titanium.exe', File.join(win32_build_dir, 'titanium.exe'))
       zipfile.add('pieces/win32/titanium.dll', File.join(win32_build_dir, 'titanium.dll'))
       zipfile.add('pieces/win32/icudt38.dll', File.join(win32_dir, 'src', 'dependencies', 'icudt38.dll'))
-      inspector_dir = File.join(win32_build_dir, 'src', 'dependencies', 'inspector')
+      inspector_dir = File.join(win32_dir, 'src', 'dependencies', 'inspector')
       
       dofiles(inspector_dir) do |f|  	
       	filename = File.basename(f)
       	next if File.basename(filename[0,1]) == '.'
       	
-      	zipfile.add("pieces/win32/Resources/inspector/#{filename}", File.join(inspector_dir, filename))
+      	zipfile.add("pieces/win32/Resources/inspector/#{f}", File.join(inspector_dir, f))
       end
       
     	gears_dir = build_gears
