@@ -261,8 +261,8 @@ void TiChromeWindow::reloadTiWindowConfig()
 	SetFlag(windowStyle, WS_MINIMIZEBOX, tiWindowConfig->isMinimizable());
 	SetFlag(windowStyle, WS_MAXIMIZEBOX, tiWindowConfig->isMaximizable());
 
-	SetFlag(windowStyle, WS_OVERLAPPEDWINDOW, tiWindowConfig->isUsingChrome() && tiWindowConfig->isResizable());
-	SetFlag(windowStyle, WS_CAPTION, tiWindowConfig->isUsingChrome());
+	SetFlag(windowStyle, WS_OVERLAPPEDWINDOW, !tiWindowConfig->isUsingChrome() && tiWindowConfig->isResizable());
+	SetFlag(windowStyle, WS_CAPTION, !tiWindowConfig->isUsingChrome());
 
 	SetWindowLong(hWnd, GWL_STYLE, windowStyle);
 

@@ -1,4 +1,4 @@
-testSuite("ti.App API tests",
+testSuite("ti.App API tests", "dummy.html",
 {
 	run: function()
 	{

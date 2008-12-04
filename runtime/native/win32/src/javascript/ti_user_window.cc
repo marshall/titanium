@@ -25,11 +25,16 @@ TiUserWindow::TiUserWindow(TiChromeWindow *window_)
 	bind();
 }
 
-TiUserWindow::TiUserWindow ()
+TiUserWindow::TiUserWindow (const char *id, bool usingChrome)
 {
 	config = new TiWindowConfig();
+	if (id != NULL)
+		config->setId(id);
+	
+	config->setUsingChrome(usingChrome);
+	
 	window = new TiChromeWindow(TiChromeWindow::getMainWindow()->getInstanceHandle(), config);
-
+	
 	bind();
 }
 
@@ -44,23 +49,25 @@ void TiUserWindow::bind()
 	BindMethod("maximize", &TiUserWindow::maximize);
 
 	// snooore -- getters and setters
-	BindProperty("x", &TiUserWindow::getX, &TiUserWindow::setX);
-	BindProperty("y", &TiUserWindow::getY, &TiUserWindow::setY);
-	BindProperty("width", &TiUserWindow::getWidth, &TiUserWindow::setHeight);
-	BindProperty("height", &TiUserWindow::getHeight, &TiUserWindow::setHeight);
-	BindProperty("url", &TiUserWindow::getURL, &TiUserWindow::setURL);
-	BindProperty("title", &TiUserWindow::getTitle, &TiUserWindow::setTitle);
-	BindProperty("bounds", &TiUserWindow::getBounds, &TiUserWindow::setBounds);
-	BindProperty("resizable", &TiUserWindow::isResizable, &TiUserWindow::setResizable);
-	BindProperty("maximizable", &TiUserWindow::isMaximizable, &TiUserWindow::setMaximizable);
-	BindProperty("minimizable", &TiUserWindow::isMinimizable, &TiUserWindow::setMinimizable);
-	BindProperty("closeable", &TiUserWindow::isCloseable, &TiUserWindow::setCloseable);
-	BindProperty("fullscreen", &TiUserWindow::isFullscreen, &TiUserWindow::setFullscreen);
-	BindProperty("visible", &TiUserWindow::isVisible, &TiUserWindow::setVisible);
-	BindProperty("usingChrome", &TiUserWindow::isUsingChrome, &TiUserWindow::setUsingChrome);
-	BindProperty("usingScrollbars", &TiUserWindow::isUsingScrollbars, &TiUserWindow::setUsingScrollbars);
-	BindProperty("transparency", &TiUserWindow::getTransparency, &TiUserWindow::setTransparency);
+	BindPropertyFunctions("id", &TiUserWindow::getID);
+	BindPropertyFunctions("x", &TiUserWindow::getX, &TiUserWindow::setX);
+	BindPropertyFunctions("y", &TiUserWindow::getY, &TiUserWindow::setY);
+	BindPropertyFunctions("width", &TiUserWindow::getWidth, &TiUserWindow::setHeight);
+	BindPropertyFunctions("height", &TiUserWindow::getHeight, &TiUserWindow::setHeight);
+	BindPropertyFunctions("url", &TiUserWindow::getURL, &TiUserWindow::setURL);
+	BindPropertyFunctions("title", &TiUserWindow::getTitle, &TiUserWindow::setTitle);
+	BindPropertyFunctions("bounds", &TiUserWindow::getBounds, &TiUserWindow::setBounds);
+	BindPropertyFunctions("resizable", &TiUserWindow::isResizable, &TiUserWindow::setResizable);
+	BindPropertyFunctions("maximizable", &TiUserWindow::isMaximizable, &TiUserWindow::setMaximizable);
+	BindPropertyFunctions("minimizable", &TiUserWindow::isMinimizable, &TiUserWindow::setMinimizable);
+	BindPropertyFunctions("closeable", &TiUserWindow::isCloseable, &TiUserWindow::setCloseable);
+	BindPropertyFunctions("fullscreen", &TiUserWindow::isFullscreen, &TiUserWindow::setFullscreen);
+	BindPropertyFunctions("visible", &TiUserWindow::isVisible, &TiUserWindow::setVisible);
+	BindPropertyFunctions("usingChrome", &TiUserWindow::isUsingChrome);
+	BindPropertyFunctions("usingScrollbars", &TiUserWindow::isUsingScrollbars, &TiUserWindow::setUsingScrollbars);
+	BindPropertyFunctions("transparency", &TiUserWindow::getTransparency, &TiUserWindow::setTransparency);
 
+	BindMethod("getID", &TiUserWindow::getID);
 	BindMethod("getX", &TiUserWindow::getX);
 	BindMethod("setX", &TiUserWindow::setX);
 	BindMethod("getY", &TiUserWindow::getY);
@@ -90,7 +97,6 @@ void TiUserWindow::bind()
 	BindMethod("isVisible", &TiUserWindow::isVisible);
 	BindMethod("setVisible", &TiUserWindow::setVisible);
 	BindMethod("isUsingChrome", &TiUserWindow::isUsingChrome);
-	BindMethod("setUsingChrome", &TiUserWindow::setUsingChrome);
 	BindMethod("isUsingScrollbars", &TiUserWindow::isUsingScrollbars);
 	BindMethod("setUsingScrollbars", &TiUserWindow::setUsingScrollbars);
 	BindMethod("getTransparency", &TiUserWindow::getTransparency);
@@ -121,6 +127,11 @@ void TiUserWindow::open(const CppArgumentList &args, CppVariant *result)
 void TiUserWindow::close(const CppArgumentList &args, CppVariant *result)
 {
 	window->close();
+}
+
+void TiUserWindow::getID(const CppArgumentList &args, CppVariant *result)
+{
+	result->Set(config->getId());
 }
 
 void TiUserWindow::getURL(const CppArgumentList &args, CppVariant *result)
@@ -349,15 +360,6 @@ void TiUserWindow::setVisible(const CppArgumentList &args, CppVariant *result)
 void TiUserWindow::isUsingChrome(const CppArgumentList &args, CppVariant *result)
 {
 	result->Set(config->isUsingChrome());
-}
-
-void TiUserWindow::setUsingChrome(const CppArgumentList &args, CppVariant *result)
-{
-	if (args.size() > 0 && args[0].isBool())
-	{
-		config->setUsingChrome(args[0].ToBoolean());
-		updateWindow();
-	}
 }
 
 void TiUserWindow::isUsingScrollbars(const CppArgumentList &args, CppVariant *result)

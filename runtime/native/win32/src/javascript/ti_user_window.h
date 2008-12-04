@@ -33,13 +33,15 @@ private:
 	void bind();
 
 public:
-	TiUserWindow();
+	TiUserWindow(const char *id = NULL, bool usingChrome = false);
 	TiUserWindow(TiChromeWindow *window);
 
 	void hide(const CppArgumentList &args, CppVariant *result);
 	void show(const CppArgumentList &args, CppVariant *result);
 	void open(const CppArgumentList &args, CppVariant *result);
 	void close(const CppArgumentList &args, CppVariant *result);
+
+	void getID(const CppArgumentList &args, CppVariant *result);
 
 	void getURL(const CppArgumentList &args, CppVariant *result);
 	void setURL(const CppArgumentList &args, CppVariant *result);
@@ -83,7 +85,6 @@ public:
 	void setVisible(const CppArgumentList &args, CppVariant *result);
 
 	void isUsingChrome(const CppArgumentList &args, CppVariant *result);
-	void setUsingChrome(const CppArgumentList &args, CppVariant *result);
 
 	void isUsingScrollbars(const CppArgumentList &args, CppVariant *result);
 	void setUsingScrollbars(const CppArgumentList &args, CppVariant *result);
