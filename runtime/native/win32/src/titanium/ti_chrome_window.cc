@@ -162,7 +162,7 @@ LRESULT CALLBACK TiChromeWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 			} else return 0;
 		case WM_DESTROY:
 			if (window == TiChromeWindow::getMainWindow()) {
-				
+				PostQuitMessage(0);
 			}
 			return 0;
 		case WM_SIZE:
