@@ -186,4 +186,5 @@ public:
                    const std::wstring& message);
  
   virtual WebWidget* CreatePopupWidget(WebView* webview, bool focus_on_show);
+  virtual void StartDragging(WebView *webView, const WebDropData &drop_data);
 }; 
