@@ -8,8 +8,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "titanium_exe", "titanium_ex
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "titanium_dll", "titanium_dll.vcproj", "{4EE70728-CD02-484F-BA27-D81A90AB457B}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "wavetest", "..\wavetest\wavetest.vcproj", "{39139798-6538-40ED-B7F9-05511AE3E670}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -24,10 +22,6 @@ Global
 		{4EE70728-CD02-484F-BA27-D81A90AB457B}.Debug|Win32.Build.0 = Debug|Win32
 		{4EE70728-CD02-484F-BA27-D81A90AB457B}.Release|Win32.ActiveCfg = Release|Win32
 		{4EE70728-CD02-484F-BA27-D81A90AB457B}.Release|Win32.Build.0 = Release|Win32
-		{39139798-6538-40ED-B7F9-05511AE3E670}.Debug|Win32.ActiveCfg = Debug|Win32
-		{39139798-6538-40ED-B7F9-05511AE3E670}.Debug|Win32.Build.0 = Debug|Win32
-		{39139798-6538-40ED-B7F9-05511AE3E670}.Release|Win32.ActiveCfg = Release|Win32
-		{39139798-6538-40ED-B7F9-05511AE3E670}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
