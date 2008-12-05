@@ -171,9 +171,9 @@
 	TRACE(@"Open URL: %@",[pending getURL]);
 	NSString *url = [[pending getURL] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 	//NOTE: do we need to do this for others???
-	TRACE(@"URL scrubbed: %@",url);
 	url = [url stringByReplacingOccurrencesOfString:@"%" withString:@"%22"];
-	NSURL *theurl = [NSURL URLWithString:url];
+	NSURL *theurl = [TiController formatURL:url];
+	TRACE(@"URL scrubbed: %@",[theurl absoluteURL]);
 	
 	if (theurl==nil)
 	{
@@ -193,6 +193,14 @@
 	if ([pending getX]>=0 || [pending getY]>=0)
 	{
 		[[webView windowScriptObject] evaluateWebScript:[NSString stringWithFormat:@"moveTo(%f,%f)",[pending getX],[pending getY]]];
+	}
+	if ([pending getWidth]>0)
+	{
+		[self setWidth:[pending getWidth]];
+	}
+	if ([pending getHeight]>0)
+	{
+		[self setHeight:[pending getHeight]];
 	}
 	[doc loadURL:theurl];
 }

@@ -38,21 +38,25 @@
 				var w = ti.Window.createWindow({
 					id: 'a',
 					x: '100',
-					bounds: {
+					ounds: {
 						x:0,
 						y:'0',
 						width:600,
 						height:100
-					}
+					},
+					width:'300',
+					height:100
 				});
-				w.setWidth(500);
-				w.setHeight(300);
+				//w.setWidth(500);
+				//w.setHeight(300);
 				w.setURL("http://www.google.com");
 				w.open();
 				w.setVisible(true);
+/*
 				w.maximize();
 				w.activate();
 				w.minimize();
+*/
 			}
 			catch (E)
 			{

@@ -78,12 +78,24 @@
 	return nil;
 }
 
-- (void)setProperty:(NSString *)name sel:(SEL)sel script:(WebScriptObject*)script win:(TiUserWindow*)win
+- (NSInvocation*)makeInvocation:(NSString *)name sel:(SEL)sel script:(WebScriptObject*)script win:(TiUserWindow*)win
+{
+	NSMethodSignature *signature = [TiUserWindow instanceMethodSignatureForSelector:sel];
+	NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
+	[invocation setSelector:sel];
+	[invocation setTarget:win];
+	return invocation;
+}
+
+- (void)invokeFloat:(NSString *)name sel:(SEL)sel script:(WebScriptObject*)script win:(TiUserWindow*)win
 {
 	@try
 	{
 		id value = [script valueForKey:name];
-		[win performSelector:sel withObject:value];
+		CGFloat v = [value floatValue];
+		NSInvocation* invocation = [self makeInvocation:name sel:sel script:script win:win];
+		[invocation setArgument:&v atIndex:2];
+		[invocation invoke];
 	}
 	@catch(NSException *exception)
 	{
@@ -91,6 +103,41 @@
 		// in the object - seems like it should return webundefined or nil
 	}
 }
+
+- (void)invokeString:(NSString *)name sel:(SEL)sel script:(WebScriptObject*)script win:(TiUserWindow*)win
+{
+	@try
+	{
+		id value = [script valueForKey:name];
+		NSString* v = [value stringValue];
+		NSInvocation* invocation = [self makeInvocation:name sel:sel script:script win:win];
+		[invocation setArgument:v atIndex:2];
+		[invocation invoke];
+	}
+	@catch(NSException *exception)
+	{
+		// weird thing is that valueForKey throws exception if the property doesn't exist
+		// in the object - seems like it should return webundefined or nil
+	}
+}
+
+- (void)invokeBool:(NSString *)name sel:(SEL)sel script:(WebScriptObject*)script win:(TiUserWindow*)win
+{
+	@try
+	{
+		id value = [script valueForKey:name];
+		BOOL v = [value boolValue];
+		NSInvocation* invocation = [self makeInvocation:name sel:sel script:script win:win];
+		[invocation setArgument:&v atIndex:2];
+		[invocation invoke];
+	}
+	@catch(NSException *exception)
+	{
+		// weird thing is that valueForKey throws exception if the property doesn't exist
+		// in the object - seems like it should return webundefined or nil
+	}
+}
+
 
 - (TiUserWindow *)createWindow:(id)arg1 chrome:(BOOL)chrome
 {
@@ -108,26 +155,26 @@
 		else if ([arg1 isKindOfClass:[WebScriptObject class]])
 		{
 			WebScriptObject *ws = (WebScriptObject*)arg1;
-			[self setProperty:@"id" sel:@selector(setID:) script:ws win:win];
-			[self setProperty:@"content" sel:@selector(setContent:) script:ws win:win];
-			[self setProperty:@"url" sel:@selector(setURL:) script:ws win:win];
-			[self setProperty:@"x" sel:@selector(setX:) script:ws win:win];
-			[self setProperty:@"y" sel:@selector(setY:) script:ws win:win];
-			[self setProperty:@"icon" sel:@selector(setIcon:) script:ws win:win];
-			[self setProperty:@"title" sel:@selector(setTitle:) script:ws win:win];
-			[self setProperty:@"transparency" sel:@selector(setTransparency:) script:ws win:win];
-			[self setProperty:@"chrome" sel:@selector(setUsingChrome:) script:ws win:win];
-			[self setProperty:@"usingChrome" sel:@selector(setUsingChrome:) script:ws win:win];
-			[self setProperty:@"width" sel:@selector(setWidth:) script:ws win:win];
-			[self setProperty:@"height" sel:@selector(setHeight:) script:ws win:win];
-			[self setProperty:@"resizable" sel:@selector(setResizable:) script:ws win:win];
-			[self setProperty:@"fullscreen" sel:@selector(setFullscreen:) script:ws win:win];
-			[self setProperty:@"scrollbars" sel:@selector(setUsingScrollbars:) script:ws win:win];
-			[self setProperty:@"usingScrollbars" sel:@selector(setUsingScrollbars:) script:ws win:win];
-			[self setProperty:@"maximizable" sel:@selector(setMaximizable:) script:ws win:win];
-			[self setProperty:@"minimizable" sel:@selector(setMinimizable:) script:ws win:win];
-			[self setProperty:@"closeable" sel:@selector(setCloseable:) script:ws win:win];
-			[self setProperty:@"visible" sel:@selector(setVisible:) script:ws win:win];
+			[self invokeString:@"id" sel:@selector(setID:) script:ws win:win];
+			[self invokeString:@"content" sel:@selector(setContent:) script:ws win:win];
+			[self invokeString:@"url" sel:@selector(setURL:) script:ws win:win];
+			[self invokeFloat:@"x" sel:@selector(setX:) script:ws win:win];
+			[self invokeFloat:@"y" sel:@selector(setY:) script:ws win:win];
+			[self invokeString:@"icon" sel:@selector(setIcon:) script:ws win:win];
+			[self invokeString:@"title" sel:@selector(setTitle:) script:ws win:win];
+			[self invokeFloat:@"transparency" sel:@selector(setTransparency:) script:ws win:win];
+			[self invokeBool:@"chrome" sel:@selector(setUsingChrome:) script:ws win:win];
+			[self invokeBool:@"usingChrome" sel:@selector(setUsingChrome:) script:ws win:win];
+			[self invokeFloat:@"width" sel:@selector(setWidth:) script:ws win:win];
+			[self invokeFloat:@"height" sel:@selector(setHeight:) script:ws win:win];
+			[self invokeBool:@"resizable" sel:@selector(setResizable:) script:ws win:win];
+			[self invokeBool:@"fullscreen" sel:@selector(setFullscreen:) script:ws win:win];
+			[self invokeBool:@"scrollbars" sel:@selector(setUsingScrollbars:) script:ws win:win];
+			[self invokeBool:@"usingScrollbars" sel:@selector(setUsingScrollbars:) script:ws win:win];
+			[self invokeBool:@"maximizable" sel:@selector(setMaximizable:) script:ws win:win];
+			[self invokeBool:@"minimizable" sel:@selector(setMinimizable:) script:ws win:win];
+			[self invokeBool:@"closeable" sel:@selector(setCloseable:) script:ws win:win];
+			[self invokeBool:@"visible" sel:@selector(setVisible:) script:ws win:win];
 			
 			// bounds is a property coming in as an object with additional properties
 			// handle it special here
