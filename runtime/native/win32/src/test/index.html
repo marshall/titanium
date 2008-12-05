@@ -40,6 +40,8 @@
 			ti.Extras.fadeInWindow(windowTest);
 	    }
 	    
+	    var sound = ti.Media.createSound("app://Exclamation.wav");
+	    
 	   </script>
 	   <style>
 	   body {
@@ -57,14 +59,20 @@
 	    
 	    here's an iframe... test the mouse wheel
 	    <iframe src="window_test.html" scrolling="auto">
-	    </iframe>
+	    </iframe><br />
 	    
 	    and here's a select, test the menu:
 	    <select>
 			<option>option 1</option>
 			<option>option 2</option>
 			<option>option 3</option>
-	    </select>
+	    </select><br />
+	    
+	    <button onclick="sound.play();">play</button>
+	    <button onclick="sound.pause();">pause</button>
+	    <button onclick="sound.resume();">resume</button>
+	    <button onclick="sound.stop();">stop</button>
+	    <button onclick="sound.setLooping(true); sound.play();">loop</button>
 	</body>
 
 </html>

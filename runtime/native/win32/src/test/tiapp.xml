@@ -7,7 +7,7 @@
 	
 	<window>
     <width>500</width>
-    <height>300</height>
+    <height>500</height>
 		<title>This is a test app</title>
 		<url>app://index.html</url>
 	</window>

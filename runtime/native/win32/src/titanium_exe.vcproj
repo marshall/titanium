@@ -198,6 +198,16 @@
 						Outputs="$(TargetDir)\Resources\index.html;$(TargetDir)\Resources\tiapp.xml;$(TargetDir)\Resources\window_test.html"
 					/>
 				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="if not exist $(TargetDir)\Resources mkdir $(TargetDir)\Resources&#x0D;&#x0A;copy $(ProjectDir)\test\* $(TargetDir)\Resources&#x0D;&#x0A;python $(ProjectDir)\dependencies\build.py $(TargetDir)&#x0D;&#x0A;"
+						AdditionalDependencies="$(ProjectDir)\test\index.html;$(ProjectDir)\test\tiapp.xml;$(ProjectDir)\test\window_test.html"
+						Outputs="$(TargetDir)\Resources\index.html;$(TargetDir)\Resources\tiapp.xml;$(TargetDir)\Resources\window_test.html"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\test\tiapp.xml"

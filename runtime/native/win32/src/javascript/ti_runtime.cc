@@ -17,6 +17,9 @@
 #include "ti_chrome_window.h"
 #include "ti_window_factory.h"
 #include "ti_menu_factory.h"
+#include "ti_media.h"
+#include "ti_dock.h"
+
 #include "Resource.h"
 
 #include <string>
@@ -30,16 +33,33 @@ TiRuntime::TiRuntime(TiChromeWindow *window, WebFrame *webFrame)
 	tiApp = new TiApp(this);
 	tiWindowFactory = new TiWindowFactory(this);
 	tiMenuFactory = new TiMenuFactory();
+	tiMedia = new TiMedia();
+	tiDock = new TiDock();
 
 	App.Set(tiApp->ToNPObject());
 	Window.Set(tiWindowFactory->ToNPObject());
 	Menu.Set(tiMenuFactory->ToNPObject());
+	Media.Set(tiMedia->ToNPObject());
+	Dock.Set(tiMedia->ToNPObject());
 
 	BindProperty("App", &App);
 	BindProperty("Window", &Window);
 	BindProperty("Menu", &Menu);
+	BindProperty("Media", &Media);
+	BindProperty("Dock", &Dock);
 }
 
 TiRuntime::~TiRuntime()
 {
+	App.FreeData();
+	Window.FreeData();
+	Menu.FreeData();
+	Media.FreeData();
+	Dock.FreeData();
+
+	delete tiMedia;
+	delete tiMenuFactory;
+	delete tiWindowFactory;
+	delete tiApp;
+	delete tiDock;
 }
