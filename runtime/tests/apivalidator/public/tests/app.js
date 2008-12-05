@@ -16,9 +16,6 @@ testSuite("ti.App API tests", "dummy.html",
 			assert(ti.App.hide != null);
 			assert(ti.App.show != null);
 			assert(ti.App.activate != null);
-			assert(ti.App.beep != null);
-			assert(ti.App.playSound != null);
-			assert(ti.App.playSoundNamed != null);
 			assert(ti.App.quit != null);	
 		});
 
