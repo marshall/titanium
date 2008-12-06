@@ -159,7 +159,8 @@ LRESULT CALLBACK TiChromeWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 		//case WM_MOUSEWHEEL:
 			if (!PostMessage(window->getHost()->window_handle(), message, wParam, lParam)) {
 				return DefWindowProc(hWnd, message, wParam, lParam);
-			} else return 0;
+			}
+			break;
 		case WM_DESTROY:
 			if (window == TiChromeWindow::getMainWindow()) {
 				PostQuitMessage(0);

@@ -18,9 +18,13 @@
 #include "ti_chrome_window.h"
 #include "ti_utils.h"
 #include "ti_app_arguments.h"
-
+//#include "third_party/WebKit/WebCore/platform/graphics/IntSize.h"
+//#include "third_party/WebKit/WebCore/platform/DragImage.h"
+//#include "Frame.h"
+//#include "FrameLoader.h"
 #include "Resource.h"
-
+#include <shellapi.h>
+	
 std::vector<WebFrame*> TiWebViewDelegate::initializedFrames = std::vector<WebFrame*>();
 
 TiWebViewDelegate::~TiWebViewDelegate() {
@@ -163,6 +167,57 @@ void TiWebViewDelegate::RunModal(WebWidget* webwidget){
 
 }
 
+const std::string kCustomTargetParam = "ti_Target_Win32";
+
+bool TiWebViewDelegate::ExecuteCustomTarget(std::string &customTarget, std::string newURL)
+{
+	if (customTarget == "systemBrowser")
+	{
+		ShellExecute(NULL, L"open", UTF8ToWide(newURL).c_str(), NULL, NULL, SW_SHOWNORMAL);
+
+		return true;
+	}
+	return false;
+}
+
+WindowOpenDisposition TiWebViewDelegate::DispositionForNavigationAction(WebView *webView,
+											WebFrame *frame,
+											const WebRequest *request,
+											WebNavigationType type,
+											WindowOpenDisposition disposition,
+											bool is_redirect)
+{
+	
+	GURL url = request->GetURL();
+	if (url.has_query()) {
+		std::string queryString = url.query();
+		size_t pos;
+		if ((pos = queryString.find(kCustomTargetParam+"=")) != std::string::npos) {
+			
+			size_t nextAmperstand = queryString.find("&", pos);
+			std::string newQueryString = queryString;
+			std::string customTarget = "";
+
+			customTarget = queryString.substr(pos+kCustomTargetParam.length()+1, nextAmperstand);
+			newQueryString = newQueryString.replace(pos, pos+kCustomTargetParam.length()+1, "");
+
+			if (customTarget.length() > 0) {
+				newQueryString = newQueryString.replace(0, newQueryString.find("&"), "");
+				std::string newURL = url.host() + url.path();
+				if (newQueryString.length() > 0) {
+					newURL += "?";
+					newURL += newQueryString;
+				}
+
+				if (ExecuteCustomTarget(customTarget, newURL)) {
+					return IGNORE_ACTION;
+				}
+			}
+		}
+	}
+
+	return WebViewDelegate::DispositionForNavigationAction(webView, frame, request, type, disposition, is_redirect);
+}
 
 WebView* TiWebViewDelegate::CreateWebView(WebView* webview, bool user_gesture)
 {

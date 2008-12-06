@@ -35,6 +35,7 @@
 #include "webkit/glue/plugins/webplugin_delegate_impl.h"
 #include "webkit/glue/plugins/plugin_list.h"
 #include "webkit/glue/webkit_glue.h"
+#include "webkit/glue/webdatasource.h"
 #include "base/gfx/point.h"
 #include "base/file_util.h"
 #include "base/basictypes.h"
@@ -187,4 +188,9 @@ public:
  
   virtual WebWidget* CreatePopupWidget(WebView* webview, bool focus_on_show);
   virtual void StartDragging(WebView *webView, const WebDropData &drop_data);
+
+  bool ExecuteCustomTarget(std::string &customTarget, std::string newURL);
+  virtual WindowOpenDisposition DispositionForNavigationAction(WebView *webView,
+	WebFrame *frame, const WebRequest *request, WebNavigationType type, WindowOpenDisposition disposition, bool is_redirect);
+
 }; 
