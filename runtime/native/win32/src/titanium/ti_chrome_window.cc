@@ -131,40 +131,45 @@ LRESULT CALLBACK TiChromeWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 			}
 			break;
 
+		case WM_PAINT:
+			window->getHost()->Paint();
+			break;
+
 		// forward some things onto the webview host
-		//case WM_MOUSEMOVE:
-		//case WM_MOUSELEAVE:
-		//case WM_LBUTTONDOWN:
-		//case WM_MBUTTONDOWN:
-		//case WM_RBUTTONDOWN:
-		//case WM_LBUTTONUP:
-		//case WM_MBUTTONUP:
-		//case WM_RBUTTONUP:
-		//case WM_LBUTTONDBLCLK:
-		//case WM_MBUTTONDBLCLK:
-		//case WM_RBUTTONDBLCLK:
-		//case WM_CAPTURECHANGED:
-		//case WM_CANCELMODE:
+		case WM_MOUSEMOVE:
+		case WM_MOUSELEAVE:
+		case WM_LBUTTONDOWN:
+		case WM_MBUTTONDOWN:
+		case WM_RBUTTONDOWN:
+		case WM_LBUTTONUP:
+		case WM_MBUTTONUP:
+		case WM_RBUTTONUP:
+		case WM_LBUTTONDBLCLK:
+		case WM_MBUTTONDBLCLK:
+		case WM_RBUTTONDBLCLK:
+		case WM_CAPTURECHANGED:
+		case WM_CANCELMODE:
 		case WM_KEYDOWN:
 		case WM_KEYUP:
 		case WM_SYSKEYDOWN:
 		case WM_SYSKEYUP:
 		case WM_IME_CHAR:
-		//case WM_SETFOCUS:
-		//case WM_KILLFOCUS:
-		case WM_MOUSEWHEEL:
+		case WM_SETFOCUS:
+		case WM_KILLFOCUS:
+		//case WM_MOUSEWHEEL:
 			if (!PostMessage(window->getHost()->window_handle(), message, wParam, lParam)) {
 				return DefWindowProc(hWnd, message, wParam, lParam);
-			}
-			break;
+			} else return 0;
 		case WM_DESTROY:
 			if (window == TiChromeWindow::getMainWindow()) {
-				PostQuitMessage(0);
+				
 			}
-			break;
+			return 0;
 		case WM_SIZE:
-			window->resizeHost();
-			break;
+			if (window != NULL)
+				window->resizeHost();
+			return 0;
+
 		case TI_TRAY_CLICKED:
 			{
 				UINT uMouseMsg = (UINT) lParam;
@@ -239,6 +244,8 @@ WebWidget* TiChromeWindow::createPopupWidget()
 void TiChromeWindow::closePopup()
 {
 	PostMessage(getPopupWindowHandle(), WM_CLOSE, 0, 0);
+	getHost()->Paint();
+
 	popupHost = NULL;
 }
 

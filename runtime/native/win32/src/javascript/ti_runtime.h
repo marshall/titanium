@@ -13,8 +13,8 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-#ifndef TI_NATIVE_H_
-#define TI_NATIVE_H_
+#ifndef TI_RUNTIME_H_
+#define TI_RUNTIME_H_
 
 #include "js_class.h"
 #include "webkit/glue/webview.h"
@@ -25,6 +25,8 @@
 class TiChromeWindow;
 class TiWindowFactory;
 class TiMenuFactory;
+class TiMedia;
+class TiDock;
 
 class TiRuntime : public JsClass
 {
@@ -32,6 +34,9 @@ class TiRuntime : public JsClass
 	TiApp *tiApp;
 	TiWindowFactory *tiWindowFactory;
 	TiMenuFactory *tiMenuFactory;
+	TiMedia *tiMedia;
+	TiDock *tiDock;
+
 	WebFrame *webFrame;
 
 public:
@@ -41,7 +46,7 @@ public:
 	TiChromeWindow* getWindow() { return window; }
 	WebFrame* getWebFrame() { return webFrame; }
 
-	CppVariant App, Dock, Menu, Window;
+	CppVariant App, Dock, Menu, Window, Media;
 };
 
 #endif

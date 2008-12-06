@@ -3,6 +3,7 @@ testSuite("Gears binding tests", "dummy.html", {
 	run: function ()
 	{
 		test("top level Gears modules", function() {
+			var ti = parent.ti;
 			assert(ti != null);
 			assert(ti.Desktop != null);
 			assert(ti.Database != null);
@@ -10,11 +11,13 @@ testSuite("Gears binding tests", "dummy.html", {
 		});
 
 		test("Desktop API", function() {
+			var ti = parent.ti;
 			assert(ti.Desktop.openFiles != null);
 			assert(ti.Desktop.createShortcut != null);
 		});
 
 		test("Database API", function() {
+			var ti = parent.ti;
 			var db = new ti.Database();
 			assert(db.open != null);
 			assert(db.execute != null);

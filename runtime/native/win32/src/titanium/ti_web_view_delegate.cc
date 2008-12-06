@@ -380,4 +380,7 @@ WebWidget* TiWebViewDelegate::CreatePopupWidget(WebView* webview, bool focus_on_
 	return window->createPopupWidget();
 }
 
-
+void TiWebViewDelegate::StartDragging(WebView *webView, const WebDropData &drop_data)
+{
+	webView->DragSourceSystemDragEnded();
+}

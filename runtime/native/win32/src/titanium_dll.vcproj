@@ -316,6 +316,14 @@
 				RelativePath=".\titanium\ti_window_config.h"
 				>
 			</File>
+			<File
+				RelativePath=".\titanium\wavelib.c"
+				>
+			</File>
+			<File
+				RelativePath=".\titanium\wavelib.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Javascript"
@@ -334,6 +342,18 @@
 			</File>
 			<File
 				RelativePath=".\javascript\ti_app.h"
+				>
+			</File>
+			<File
+				RelativePath=".\javascript\ti_dock.h"
+				>
+			</File>
+			<File
+				RelativePath=".\javascript\ti_media.cc"
+				>
+			</File>
+			<File
+				RelativePath=".\javascript\ti_media.h"
 				>
 			</File>
 			<File
@@ -358,6 +378,14 @@
 			</File>
 			<File
 				RelativePath=".\javascript\ti_runtime.h"
+				>
+			</File>
+			<File
+				RelativePath=".\javascript\ti_sound.cc"
+				>
+			</File>
+			<File
+				RelativePath=".\javascript\ti_sound.h"
 				>
 			</File>
 			<File

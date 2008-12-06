@@ -195,9 +195,6 @@ bool WebWidgetHost::WndProc(UINT message, WPARAM wparam, LPARAM lparam) {
       PostMessage(view_, WM_CLOSE, 0, 0);
       return true;
     }
-	else {
-		PostMessage(view_, WM_SETFOCUS, 0, 0);
-	}
     break;
   }
 
