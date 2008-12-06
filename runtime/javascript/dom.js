@@ -1,3 +1,24 @@
+// fix a limitation in using custom targets for chromium/win32
+// just append the custom target to the query string of the URL
+if (ti.platform == "win32") {
+	$.each($('a[target^=ti:]'), function()
+	{
+		var href = $(this).attr('href');
+		var target = $(this).attr('target');
+		target = target.replace("ti:", "");
+		
+		if (href.indexOf('?') == -1) {
+			href += '?ti_Target_Win32=' + target;	
+		} else {
+			href += '&ti_Target_Win32=' + target;
+		}
+		
+		$(this).attr('href', href);
+		$(this).attr('target', null);
+	});
+}
+
+
 // 
 // if we have transparency and we don't have a background
 // color at the body or parent element level, we set the 
