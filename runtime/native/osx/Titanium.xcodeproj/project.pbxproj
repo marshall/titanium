@@ -22,6 +22,10 @@
 		24674DDD0EE2028300CE52E9 /* test.js in Resources */ = {isa = PBXBuildFile; fileRef = 24674DCE0EE2012C00CE52E9 /* test.js */; };
 		24674E600EE20E5800CE52E9 /* aid in Resources */ = {isa = PBXBuildFile; fileRef = 24674E5F0EE20E5800CE52E9 /* aid */; };
 		246755410EE31EEC00CE52E9 /* tray.png in Resources */ = {isa = PBXBuildFile; fileRef = 246755400EE31EEC00CE52E9 /* tray.png */; };
+		24779F9C0EE90F8300F4FF2E /* notification.html in Resources */ = {isa = PBXBuildFile; fileRef = 24779F9B0EE90F8300F4FF2E /* notification.html */; };
+		2477A0430EE9185F00F4FF2E /* notification.png in Resources */ = {isa = PBXBuildFile; fileRef = 2477A0420EE9185F00F4FF2E /* notification.png */; };
+		2477A1360EE9B93D00F4FF2E /* notification.js in Sources */ = {isa = PBXBuildFile; fileRef = 2477A1350EE9B93D00F4FF2E /* notification.js */; };
+		2477A1370EE9B94000F4FF2E /* notification.js in Resources */ = {isa = PBXBuildFile; fileRef = 2477A1350EE9B93D00F4FF2E /* notification.js */; };
 		2491AC8B0EDA375100B1ECDB /* TiController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2491AC880EDA375100B1ECDB /* TiController.m */; };
 		2491AC8C0EDA375100B1ECDB /* TiDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 2491AC8A0EDA375100B1ECDB /* TiDocument.m */; };
 		2491AC8E0EDA375E00B1ECDB /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 2491AC8D0EDA375E00B1ECDB /* main.m */; };
@@ -89,6 +93,9 @@
 		24674E5F0EE20E5800CE52E9 /* aid */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = aid; path = res/aid; sourceTree = "<group>"; };
 		246755400EE31EEC00CE52E9 /* tray.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = tray.png; path = res/tray.png; sourceTree = "<group>"; };
 		24675DD10EE3DE5900CE52E9 /* WebScriptDebugDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebScriptDebugDelegate.h; path = src/WebScriptDebugDelegate.h; sourceTree = "<group>"; };
+		24779F9B0EE90F8300F4FF2E /* notification.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = notification.html; path = res/notification.html; sourceTree = "<group>"; };
+		2477A0420EE9185F00F4FF2E /* notification.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = notification.png; path = res/notification.png; sourceTree = "<group>"; };
+		2477A1350EE9B93D00F4FF2E /* notification.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = notification.js; path = res/notification.js; sourceTree = "<group>"; };
 		2491AC870EDA375100B1ECDB /* TiController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TiController.h; path = src/TiController.h; sourceTree = "<group>"; };
 		2491AC880EDA375100B1ECDB /* TiController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TiController.m; path = src/TiController.m; sourceTree = "<group>"; };
 		2491AC890EDA375100B1ECDB /* TiDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TiDocument.h; path = src/TiDocument.h; sourceTree = "<group>"; };
@@ -247,13 +254,11 @@
 		29B97314FDCFA39411CA2CEA /* Titanium */ = {
 			isa = PBXGroup;
 			children = (
-				249704220EDAA2950024252C /* index.html */,
 				080E96DDFE201D6D7F000001 /* Classes */,
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
-				AB3B20180EE5B3CC0002995B /* frame.html */,
 			);
 			name = Titanium;
 			sourceTree = "<group>";
@@ -271,6 +276,11 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				AB3B20180EE5B3CC0002995B /* frame.html */,
+				249704220EDAA2950024252C /* index.html */,
+				2477A1350EE9B93D00F4FF2E /* notification.js */,
+				2477A0420EE9185F00F4FF2E /* notification.png */,
+				24779F9B0EE90F8300F4FF2E /* notification.html */,
 				240A3DFB0EE870A700AFDE3E /* test.mp3 */,
 				246755400EE31EEC00CE52E9 /* tray.png */,
 				24674E5F0EE20E5800CE52E9 /* aid */,
@@ -345,6 +355,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2477A1370EE9B94000F4FF2E /* notification.js in Resources */,
+				2477A0430EE9185F00F4FF2E /* notification.png in Resources */,
+				24779F9C0EE90F8300F4FF2E /* notification.html in Resources */,
 				240A3DFC0EE870A700AFDE3E /* test.mp3 in Resources */,
 				246755410EE31EEC00CE52E9 /* tray.png in Resources */,
 				24674E600EE20E5800CE52E9 /* aid in Resources */,
@@ -409,6 +422,7 @@
 				240A3DC60EE85CED00AFDE3E /* TiAppMenu.m in Sources */,
 				240A3DDC0EE85DF600AFDE3E /* TiMedia.m in Sources */,
 				240A3DE50EE8625300AFDE3E /* TiSound.m in Sources */,
+				2477A1360EE9B93D00F4FF2E /* notification.js in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

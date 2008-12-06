@@ -4,6 +4,7 @@
 <script src="test.js"></script>
 <script src="app:test.js"></script>
 <script src="gears_init.js"></script>
+<script src="notification.js"></script>
 </head>
 <body onunload="alert('unloaded')" xonload="alert('loaded')">
 
@@ -30,29 +31,26 @@
 
 			ti.Menu.createTrayMenu('tray.png', null, function()
 			{
-				alert("w00t!");
+				//alert("w00t!");
+				if (ti.Window.currentWindow.isVisible())
+				{
+					ti.Window.currentWindow.hide();
+				}
+				else
+				{
+					ti.Window.currentWindow.show();
+				}
 			});
 
 			try
 			{
-				var w = ti.Window.createWindow({
-					id: 'a',
-					x: '100',
-					bounds: {
-						x:0,
-						y:'0',
-						width:600,
-						height:100
-					}
-				});
-				w.setWidth(500);
-				w.setHeight(300);
-				w.setURL("http://www.google.com");
-				w.open();
-				w.setVisible(true);
-				w.maximize();
-				w.activate();
-				w.minimize();
+					var count = 4;
+					var notification = new window.foo.Notification;
+					var ps = count > 1 ? 's':'';
+					notification.setTitle('New Tweet'+ps+' received');
+					notification.setMessage(count+' new tweet'+ps+' received');
+					notification.setIcon('app://notification.png');
+					notification.show();
 			}
 			catch (E)
 			{
@@ -98,7 +96,7 @@
 -->
 
 
-<a href="http://google.com">Google.com</a>
+<a target="ti:systembrowser" href="http://google.com">Google.com</a>
 <a href="app://test.html">Test</a>
 <a href="file:///test.html">File Test</a>
 

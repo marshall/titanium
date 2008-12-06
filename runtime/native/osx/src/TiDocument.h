@@ -50,5 +50,6 @@
 - (TiWindow*)window;
 - (TiUserWindow*)userWindow;
 - (void)loadURL:(NSURL *)URL;
+- (NSURL*)getURL;
 
 @end

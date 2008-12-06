@@ -49,13 +49,13 @@
 		[self setOpaque:NO];
 		[self setHasShadow:YES];
 		[self setBackgroundColor:[NSColor clearColor]];
-		[self setAlphaValue:[config getTransparency]];
+		[self setAlphaValue:1.0];
 		
 		// turn on/off zoom button to control app maximize behavior
 		[[self standardWindowButton:NSWindowZoomButton] setHidden:![config isMaximizable]];
 		
 		// this is suppose to enable move by grabbing a window background area
-		[self setMovableByWindowBackground:YES];
+		//[self setMovableByWindowBackground:YES];
 		
 		// only center if we haven't provided coordinates in setup
 		if ([config getX] < 0 || [config getY] < 0)

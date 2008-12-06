@@ -32,20 +32,20 @@ ti.Extras.fadeOutWindow = function(win,speed)
 // slower the fade. the smaller the number, the faster
 // the fade
 //
-ti.Extras.fadeInWindow = function(win,speed)
+ti.Extras.fadeInWindow = function(win,stopAt,speed)
 {
 	speed = speed || 100;
+	stopAt = stopAt || 1.0;
 	var timer = null;
-	win.setTransparency(0.0);
-	win.show(false);
+	win.setTransparency(0.1);
 	timer = setInterval(function()
 	{
 		var t = win.getTransparency() + .1;
-		if (t >= 1.0)
+		if (t >= stopAt)
 		{
 			clearInterval(timer);
 			// set it back to the original and hide the window
-			win.setTransparency(1.0);
+			win.setTransparency(stopAt);
 			return;
 		}
 		win.setTransparency(t);

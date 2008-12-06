@@ -18,6 +18,7 @@
 #import "TiUserWindow.h"
 #import "TiDocument.h"
 #import "TiController.h"
+#import "WebViewPrivate.h"
  
 @implementation TiUserWindow
 
@@ -152,8 +153,16 @@
 	if ([self hasWindow])
 	{
 		[window setAlphaValue:alphaValue];
+		if (alphaValue < 1.0)
+		{
+			[webView setBackgroundColor:[NSColor clearColor]];
+		}
+		else
+		{
+			[webView setBackgroundColor:[NSColor whiteColor]];
+		}
 	}
-	else
+	else 
 	{
 		[pending setTransparency:alphaValue];
 	}
@@ -171,9 +180,9 @@
 	TRACE(@"Open URL: %@",[pending getURL]);
 	NSString *url = [[pending getURL] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 	//NOTE: do we need to do this for others???
-	TRACE(@"URL scrubbed: %@",url);
 	url = [url stringByReplacingOccurrencesOfString:@"%" withString:@"%22"];
-	NSURL *theurl = [NSURL URLWithString:url];
+	NSURL *theurl = [TiController formatURL:url];
+	TRACE(@"URL scrubbed: %@",[theurl absoluteURL]);
 	
 	if (theurl==nil)
 	{
@@ -194,7 +203,17 @@
 	{
 		[[webView windowScriptObject] evaluateWebScript:[NSString stringWithFormat:@"moveTo(%f,%f)",[pending getX],[pending getY]]];
 	}
-	[doc loadURL:theurl];
+	if ([pending getWidth]>0)
+	{
+		[self setWidth:[pending getWidth]];
+	}
+	if ([pending getHeight]>0)
+	{
+		[self setHeight:[pending getHeight]];
+	}
+	[self setTransparency:[pending getTransparency]];
+	//[doc loadURL:theurl];
+	[self setURL:[theurl absoluteString]];
 }
 
 - (void)setParent:(TiDocument*)p
@@ -223,6 +242,7 @@
 	}
 	if ([self hasWindow])
 	{
+		[[window config] setVisible:NO];
 		[[TiController getDocument:window] close];
 	}
 	else
@@ -233,8 +253,10 @@
 
 - (void)hide:(BOOL)animate
 {
+	TRACE(@"hide has been called for %x with animate=%d, webView=",self,animate,webView);
 	if ([self hasWindow])
 	{
+		[[window config] setVisible:NO];
 		TRACE(@"hide called with: %d",animate);
 		if (animate)
 		{
@@ -259,28 +281,36 @@
 
 - (void)show:(BOOL)animate 
 {
+	TRACE(@"show has been called for %x with animate=%d, webView=%x",self,animate,webView);
 	if ([self hasWindow])
 	{
-		if (animate)
-		{
-			// let the JS layer do the animation
-			WebScriptObject* scope = [[webView windowScriptObject] evaluateWebScript:@"ti.Extras"];
-			[scope callWebScriptMethod:@"fadeInWindow" withArguments:[NSArray arrayWithObject:self]];
-		}
+		[[window config] setVisible:YES];
+//		if (animate && [webView isLoading]==NO)
+//		{
+//			// let the JS layer do the animation
+//			WebScriptObject* scope = [[webView windowScriptObject] evaluateWebScript:@"ti.Extras"];
+//			NSMutableArray *args = [[[NSMutableArray alloc] init] autorelease];
+//			[args addObject:self];
+//			[args addObject:[NSNumber numberWithFloat:[self getTransparency]]];
+//			[scope callWebScriptMethod:@"fadeInWindow" withArguments:args];
+//		}
 		[NSApp arrangeInFront:window];
 		[window makeKeyAndOrderFront:window]; 
 		[NSApp activateIgnoringOtherApps:YES];
 	}
 	else
 	{
+		TRACE(@"show on window: %x called but we're not yet opened",self);
 		[[webView windowScriptObject] setException:@"cannot show a window that hasn't been opened"];
 	}
+	TRACE(@"show(exit) has been called for %x with animate=%d, webView=%x",self,animate,webView);
 }
 
 - (void)activate
 {
 	if ([self hasWindow])
 	{		
+		[[window config] setVisible:NO];
 		// for now, same as show ... not sure the difference on mac vs. windows
 		[NSApp arrangeInFront:window];
 		[window makeKeyAndOrderFront:window]; 
@@ -401,11 +431,12 @@
 
 - (void)setURL:(NSString *)url
 {
+	TRACE(@"setURL called for %x with %@",self,url);
 	if ([self hasWindow])
 	{
-		TiDocument *adoc = [TiController getDocument:window];
+		NSURL *aurl = [TiController formatURL:url];
 		[[window config] setURL:url];
-		[adoc loadURL:[NSURL URLWithString:url]];
+		[doc loadURL:aurl];
 	}
 	else
 	{
