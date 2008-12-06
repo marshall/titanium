@@ -274,7 +274,7 @@ void TiChromeWindow::reloadTiWindowConfig()
 
 	SetWindowLong(hWnd, GWL_STYLE, windowStyle);
 
-	UINT flags = SWP_NOMOVE | SWP_NOZORDER | SWP_FRAMECHANGED;
+	UINT flags = SWP_NOZORDER | SWP_FRAMECHANGED;
 
 	sizeTo(tiWindowConfig->getX(), tiWindowConfig->getY(), tiWindowConfig->getWidth(), tiWindowConfig->getHeight(), flags);
 	SetLayeredWindowAttributes(hWnd, 0, (BYTE)floor(tiWindowConfig->getTransparency()*255), LWA_ALPHA);
@@ -322,6 +322,17 @@ void TiChromeWindow::sizeTo(int x, int y, int width, int height, UINT flags) {
 	int client_height = rc.bottom - rc.top;
 	int window_height = rw.bottom - rw.top;
 	window_height = (window_height - client_height) + height;
+
+	HWND desktop = GetDesktopWindow();
+	RECT desktopRect;
+	GetWindowRect(desktop, &desktopRect);
+
+	if (x < 0) {
+		x = (desktopRect.right - window_width) / 2;
+	}
+	if (y < 0) {
+		y = (desktopRect.bottom - window_height) / 2;
+	}
 
 	SetWindowPos(hWnd, NULL, x, y, window_width, window_height, flags);
 }
