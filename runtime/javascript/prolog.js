@@ -40,7 +40,7 @@
 	// take up the height of the contained element size)
 	var windowTransparency = ti.Window.currentWindow.getTransparency();
 	if (windowTransparency < 1.0)
- 	{
+	{
 		var style = "margin:auto;padding:auto;";
 		if (ti.Window.currentWindow.isUsingChrome())
 		{

@@ -1,0 +1,103 @@
+<html>
+<head>
+	<style type="text/css" media="screen">
+		body
+		{
+			margin:0;
+			padding:0;
+			overflow:hidden;
+			color:white;
+			background-color:transparent;
+			border:none;
+			font-family:arial,sans-serif;
+		}
+		#body
+		{
+			opacity:.75;
+			padding:10px;
+			height:60px;
+			background-color:black;
+			-webkit-border-radius:6px;
+			position:relative;
+		}
+		#content
+		{
+			position:absolute;
+			top:8px;
+			left:70px;
+			right:10px;
+			opacity:.80;
+		}
+		#message
+		{
+			font-size:13px;
+		}
+		#title
+		{
+			font-weight:bold;
+			font-size:14px;
+			margin-bottom:7px;
+		}
+		#image
+		{
+			position:absolute;
+			top:15px;
+			left:12px;
+		}
+	</style>
+</head>
+<body>
+	<div id="body">
+		<div id="image"><img src=""/></div>
+		<div id="content">
+			<div id="title"></div>
+			<div id="message"></div>
+		</div>
+	</div>
+	<script>
+		(function($)
+		{
+			function queryString(uri,params)
+			{
+				idx = uri.indexOf('?');
+				params = params || {};
+				if (idx > 0)
+				{
+					var qs = uri.substring(idx+1);
+					$.each(qs.split('&'),function()
+					{
+						var e = this.split('=');
+						var v = decodeURIComponent(e[1]||'');
+						var k = decodeURIComponent(e[0]);
+						params[k]=v;
+					});
+				}
+				return params;
+			}
+			// get config parameters for app from the URI of the page
+			var qs = queryString(window.document.location.href);
+			try
+			{
+				$("#title").html(qs.title||'');
+				$("#message").html(qs.message||'');
+				if (qs.icon)
+				{
+					var img = $('#image > img');
+					img.get(0).src = qs.icon;
+					img.css('visibility','visible');
+				}
+				else
+				{
+					$("#image > img").css('visibility','hidden');
+				}
+			}
+			catch(E)
+			{
+				//FIXME:
+				alert('Error displaying notification window: '+E+", line: "+E.line);
+			}
+			
+		})(ti.jQuery);
+	</script>
+</body>
+</html>

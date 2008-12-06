@@ -109,9 +109,9 @@
 	@try
 	{
 		id value = [script valueForKey:name];
-		NSString* v = [value stringValue];
+		NSString *v = [NSString stringWithString:value];
 		NSInvocation* invocation = [self makeInvocation:name sel:sel script:script win:win];
-		[invocation setArgument:v atIndex:2];
+		[invocation setArgument:&v atIndex:2];
 		[invocation invoke];
 	}
 	@catch(NSException *exception)

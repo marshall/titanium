@@ -140,15 +140,29 @@
     NSURLRequest *request = [self request];
 	
 	NSURL *url = [request URL];
-	TRACE(@"AppProtocol::startLoading: %@",url);
 	NSString *s = [AppProtocol getPath:url];
 	NSString *basePath = [[NSBundle mainBundle] resourcePath];
 	NSString *resourcePath = [basePath stringByAppendingPathComponent:s];
+	TRACE(@"AppProtocol::startLoading: %@, s:%@",url,s);
+	
+	// support loading app://blank as a special url to an empty page
+	if ([s isEqualToString:@"/blank"])
+	{
+		NSData *data = [[NSString stringWithString:@"<html></html>"] dataUsingEncoding:NSUTF8StringEncoding];
+		NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:url MIMEType:@"text/html" expectedContentLength:-1 textEncodingName:@"utf-8"];
+		[client URLProtocol:self didReceiveResponse:response cacheStoragePolicy:NSURLCacheStorageNotAllowed];
+		[client URLProtocol:self didLoadData:data];
+		[client URLProtocolDidFinishLoading:self];
+		[response release];
+		return;
+	}
 	
 	TRACE(@"trying to load from: %@, base: %@",resourcePath,basePath);
 	
+	// we're going to ignore any load for app://gears_init.js in case the developer left it in
 	if ([[resourcePath lastPathComponent] isEqualToString:@"gears_init.js"])
 	{
+		TRACE(@"Refusing to load gears_init.js");
 		NSError *error = [NSError errorWithDomain:@"titanium" code:-1 userInfo:nil];
 		[client URLProtocol:self didFailWithError:error];
 		[client URLProtocolDidFinishLoading:self];

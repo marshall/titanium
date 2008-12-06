@@ -502,7 +502,7 @@ static CGFloat toFloat (NSString* value, CGFloat def)
 + (NSURL*) formatURL: (NSString*)str 
 {
 	// if it looks like a URL, just use it
-	if ([str hasPrefix:@"app:"] || [str hasPrefix:@"http://"] || [str hasPrefix:@"https://"])
+	if ([str hasPrefix:@"app:"] || [str hasPrefix:@"http://"] || [str hasPrefix:@"https://"] || [str hasPrefix:@"ti://"])
 	{
 		return [NSURL URLWithString:str];
 	}

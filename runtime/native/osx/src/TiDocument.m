@@ -22,6 +22,7 @@
 #import "TiWindowConfig.h"
 #import "TiWindow.h"
 #import "WebViewPrivate.h"
+#import "WebFramePrivate.h"
 #import "WebScriptDebugDelegate.h"
 
 
@@ -126,6 +127,7 @@
 	[url release];
 	url = [URL copy];
 	TRACE(@"TiDocument::loadURL=>%@, webview=%x",[url absoluteString],webView);
+//	[[webView mainFrame] stopLoading];
     [[webView mainFrame] loadRequest:[NSURLRequest requestWithURL:url]];
 }
 
@@ -191,12 +193,16 @@
 		[[self window] setShowsResizeIndicator:NO];
 	}
 	
-	// set the background to clear so that transparency can work
-	if ([o getTransparency] <  1.0f)
+	if ([o getTransparency] < 1.0)
 	{
 		[webView setBackgroundColor:[NSColor clearColor]];
 	}
+	else
+	{
+		[webView setBackgroundColor:[NSColor whiteColor]];
+	}
 
+	
 	[webView setAutoresizingMask:NSViewHeightSizable | NSViewWidthSizable];
 	[webView setShouldCloseWithWindow:NO];
 	
@@ -298,11 +304,84 @@
 	}
 }
 
+-(BOOL)newWindowAction:(NSDictionary*)actionInformation request:(NSURLRequest*)request listener:(id < WebPolicyDecisionListener >)listener
+{
+	NSDictionary* elementDick = [actionInformation objectForKey:WebActionElementKey];
+#ifdef DEBUG	
+	for (id key in elementDick)
+	{
+		NSLog(@"key = %@",key);
+	}
+#endif 
+	DOMNode *target = [elementDick objectForKey:WebElementDOMNodeKey];
+	if ([target nodeType] == 3)
+	{
+		DOMText *text = (DOMText*)target;
+		DOMElement *node = (DOMElement*)[text parentNode];
+		NSString *target = [node getAttribute:@"target"];
+		if (target)
+		{
+			if ([target isEqualToString:@"ti:systembrowser"])
+			{
+				NSURL *newURL = [request URL];
+				[[NSWorkspace sharedWorkspace] openURL:newURL];
+				[listener ignore];
+				return NO;
+			}
+		}
+	}
+	NSString *protocol = [[actionInformation objectForKey:WebActionOriginalURLKey] scheme]; 
+	NSURL *newURL = [request URL];
+	if ([newURL isEqual:url])
+	{
+		[listener use];
+		return NO;
+	}
+	
+	if ([protocol isEqual:@"app"])
+	{
+		
+		if ([[TiController instance] shouldOpenInNewWindow])
+		{
+			// if we're trying to open an internal page, we essentially need to always open a 
+			// new document and later close the old document.  we have to do this because 
+			// each document could have a different window spec.
+			
+			TiDocument *doc = [[TiController instance] createDocument:newURL visible:YES config:nil];
+			[doc setPrecedent:self];
+			
+			//TODO: window opens slightly offset from current doc, make sure we 
+			//get the bounds from self and set on doc
+			[listener ignore];
+		}
+		else
+		{
+			// tell him to open in the same document and set our new URL
+			[self setURL:newURL];
+			[listener use];
+		}
+	}
+	else if ([protocol isEqual:@"http"] || [protocol isEqual:@"https"])
+	{
+		// TODO: we need to probalby make this configurable to support
+		// opening the URL in the system browser (code below). for now 
+		// we just open inside the same frame
+		//[[NSWorkspace sharedWorkspace] openURL:newURL];
+		[listener use];
+	}
+	return YES;
+}
+
+
 #pragma mark -
 #pragma mark WebPolicyDelegate
 
 - (void)webView:(WebView *)sender decidePolicyForNewWindowAction:(NSDictionary *)actionInformation request:(NSURLRequest *)request newFrameName:(NSString *)frameName decisionListener:(id < WebPolicyDecisionListener >)listener
 {
+	if (NO == [self newWindowAction:actionInformation request:request listener:listener])
+	{
+		return;
+	}
 	[listener ignore];
 }
 
@@ -374,6 +453,10 @@
 	}
 	else if ([protocol isEqual:@"http"] || [protocol isEqual:@"https"])
 	{
+		if (NO == [self newWindowAction:actionInformation request:request listener:listener])
+		{
+			return;
+		}
 		// TODO: we need to probalby make this configurable to support
 		// opening the URL in the system browser (code below). for now 
 		// we just open inside the same frame
@@ -467,6 +550,11 @@
     // Only report feedback for the main frame.
     if (frame == [sender mainFrame]) 
 	{
+		if ([error code]==-999 && [[error domain] isEqual:NSURLErrorDomain])
+		{
+			//this is OK, this is a cancel to a pending web load request and can be ignored...
+			return;
+		}
 		NSString *err = [NSString stringWithFormat:@"Error loading URL: %@. %@", url,[error localizedDescription]];
 		[TiController error:err];
     }

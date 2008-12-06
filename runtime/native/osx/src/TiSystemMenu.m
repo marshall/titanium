@@ -72,7 +72,8 @@
 }
 
 
-- (void)menuClicked:(id)sender{
+- (void)menuClicked:(id)sender
+{
 	if (target)
 	{
 		[self execute];

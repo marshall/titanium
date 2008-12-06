@@ -26,7 +26,7 @@
 				<string key="NSClassName">NSApplication</string>
 			</object>
 			<object class="NSWindowTemplate" id="797364007">
-				<int key="NSWindowStyleMask">15</int>
+				<int key="NSWindowStyleMask">271</int>
 				<int key="NSWindowBacking">2</int>
 				<string key="NSWindowRect">{{36, 311}, {798, 599}}</string>
 				<int key="NSWTFlags">1886912512</int>
@@ -54,6 +54,7 @@
 					</object>
 					<string key="NSFrameSize">{798, 599}</string>
 					<reference key="NSSuperview"/>
+					<double key="NSViewAlphaValue">0.000000e+00</double>
 				</object>
 				<string key="NSScreenRect">{{0, 0}, {1920, 1178}}</string>
 				<string key="NSMaxSize">{3.40282e+38, 3.40282e+38}</string>
@@ -157,9 +158,9 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<integer value="1" id="5"/>
-					<string>{{389, 204}, {798, 599}}</string>
+					<string>{{178, 204}, {798, 599}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{389, 204}, {798, 599}}</string>
+					<string>{{178, 204}, {798, 599}}</string>
 					<reference ref="5"/>
 					<integer value="0"/>
 					<string>{213, 107}</string>
@@ -202,6 +203,13 @@
 				</object>
 				<object class="IBPartialClassDescription">
 					<string key="className">NSObject</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">src/WebScriptDebugDelegate.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">NSObject</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier" id="579917971">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">src/WebViewPrivate.h</string>
@@ -223,17 +231,8 @@
 					<string key="className">TiWindow</string>
 					<string key="superclassName">NSWindow</string>
 					<object class="NSMutableDictionary" key="outlets">
-						<bool key="EncodedWithXMLCoder">YES</bool>
-						<object class="NSMutableArray" key="dict.sortedKeys">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>delegate</string>
-							<string>initialFirstResponder</string>
-						</object>
-						<object class="NSMutableArray" key="dict.values">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>id</string>
-							<string>NSView</string>
-						</object>
+						<string key="NS.key.0">initialFirstResponder</string>
+						<string key="NS.object.0">NSView</string>
 					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>

@@ -35,6 +35,10 @@
 	static BOOL inited = NO;
 	if ( ! inited ) {
 		[NSURLProtocol registerClass:[TiProtocol class]];
+		// SECURITY FLAG: this will allow apps to have the same security
+		// as local files (like cross-domain XHR requests).  we should 
+		// make sure this is part of the upcoming security work
+		[WebView registerURLSchemeAsLocal:[self specialProtocolScheme]];
 		inited = YES;
 	}
 }
@@ -94,42 +98,52 @@ typedef struct {
 	NSString *resourcePath = nil;
 	PluginResourceInfo pluginInfo;
 	
-	// ti://plugin/plugin_id/path/to/resource
-	if ([s rangeOfString:@"plugin/"].location == 0) {
-		pluginInfo = [self getPluginResourceInfo:s];
-		resourcePath = [[basePath stringByAppendingPathComponent:pluginInfo.pluginName] stringByAppendingPathComponent:pluginInfo.pluginResource];
-	}
-	
-	TiAppArguments *args = (TiAppArguments *)[[TiController instance] arguments];
-	
 	NSData *data = nil;
 	NSString *mime = nil;
 	BOOL needToReleaseData = NO;
 	
-	if ([args devLaunch]) {
-		if ([s rangeOfString:@"plugin/"].location == 0) {
-			resourcePath = [[args pluginPath:pluginInfo.pluginName] stringByAppendingPathComponent:pluginInfo.pluginResource];
-		}
-		else if([s rangeOfString:@"plugins.js"].location == 0) {
-			// plugins.js is a virtual resource in dev launch mode , so we simulate it
-			NSString *content = @"ti.plugins=[];\n";
-			
-			NSEnumerator *pluginEnum = [args plugins];
-			id object;
-			while ((object = [pluginEnum nextObject])) {
-				content = [content stringByAppendingString:@"ti.App.include(\"ti://plugin/"];
-				content = [content stringByAppendingString:(NSString *)object];
-				content = [content stringByAppendingString:@"/plugin.js\");\n"];
-			}
-	
-			data = [content dataUsingEncoding:NSUTF8StringEncoding];
-			mime = @"text/javascript";
-		} else {
-			resourcePath = [[args runtimePath] stringByAppendingPathComponent:s];
-		}
-	} else if (resourcePath == nil) {
-		resourcePath = [basePath stringByAppendingPathComponent:s];
+	// support for loading app://notification which is the notification template
+	if ([ts hasPrefix:@"ti://notification/"])
+	{
+		resourcePath = [basePath stringByAppendingPathComponent:@"notification.html"];
+		mime = @"text/html";
 	}
+	else
+	{
+		// ti://plugin/plugin_id/path/to/resource
+		if ([s rangeOfString:@"plugin/"].location == 0) {
+			pluginInfo = [self getPluginResourceInfo:s];
+			resourcePath = [[basePath stringByAppendingPathComponent:pluginInfo.pluginName] stringByAppendingPathComponent:pluginInfo.pluginResource];
+		}
+		
+		TiAppArguments *args = (TiAppArguments *)[[TiController instance] arguments];
+		
+		if ([args devLaunch]) {
+			if ([s rangeOfString:@"plugin/"].location == 0) {
+				resourcePath = [[args pluginPath:pluginInfo.pluginName] stringByAppendingPathComponent:pluginInfo.pluginResource];
+			}
+			else if([s rangeOfString:@"plugins.js"].location == 0) {
+				// plugins.js is a virtual resource in dev launch mode , so we simulate it
+				NSString *content = @"ti.plugins=[];\n";
+				
+				NSEnumerator *pluginEnum = [args plugins];
+				id object;
+				while ((object = [pluginEnum nextObject])) {
+					content = [content stringByAppendingString:@"ti.App.include(\"ti://plugin/"];
+					content = [content stringByAppendingString:(NSString *)object];
+					content = [content stringByAppendingString:@"/plugin.js\");\n"];
+				}
+				
+				data = [content dataUsingEncoding:NSUTF8StringEncoding];
+				mime = @"text/javascript";
+			} else {
+				resourcePath = [[args runtimePath] stringByAppendingPathComponent:s];
+			}
+		} else if (resourcePath == nil) {
+			resourcePath = [basePath stringByAppendingPathComponent:s];
+		}
+	}
+	
 	
 	if (data == nil) {
 		TRACE(@"resolving url %@ to path: %@\n", [url absoluteString], resourcePath);
