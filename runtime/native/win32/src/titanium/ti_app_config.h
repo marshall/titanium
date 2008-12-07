@@ -42,7 +42,7 @@ class TiAppConfig
 {
 private:
 	const char* error;
-	std::string appName, appID, description, copyright, homepage, version;
+	std::string appName, appID, description, copyright, homepage, version, updateSite;
 	TiWindowConfigList windows;
 
 	// icon properties
@@ -62,6 +62,7 @@ public:
 	std::string& getCopyright() { return copyright; }
 	std::string& getHomepage() { return homepage; }
 	std::string& getVersion() { return version; }
+	std::string& getUpdateSite() { return updateSite; }
 
 	TiWindowConfigList& getWindows() { return windows; }
 	TiWindowConfig* getWindow(std::string &id);

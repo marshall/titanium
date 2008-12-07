@@ -240,7 +240,7 @@ TiChromeWindow::~TiChromeWindow(void) {
 
 void TiChromeWindow::createWindow()
 {
-	hWnd = CreateWindowEx(WS_EX_COMPOSITED | WS_EX_LAYERED, windowClassName, defaultWindowTitle,
+	hWnd = CreateWindowEx(WS_EX_LAYERED, windowClassName, defaultWindowTitle,
                            WS_CLIPCHILDREN,
                            0, 0, 0, 0,
                            NULL, NULL, hInstance, NULL);
@@ -287,7 +287,7 @@ void TiChromeWindow::setTiWindowConfig(TiWindowConfig *tiWindowConfig)
 
 void TiChromeWindow::reloadTiWindowConfig()
 {
-
+	host->webview()->GetMainFrame()->SetAllowsScrolling(tiWindowConfig->isUsingScrollbars());
 	SetWindowText(hWnd, UTF8ToWide(tiWindowConfig->getTitle()).c_str());
 
 	long windowStyle = GetWindowLong(hWnd, GWL_STYLE);

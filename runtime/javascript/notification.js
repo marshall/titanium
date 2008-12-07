@@ -2,6 +2,10 @@ var notification_windows = 0;
 ti.Notification = function()
 {
 	var width = 300, height = 60, notificationDelay = 3000;
+	if (ti.platform == "win32") {
+		height = 80;	
+	}
+	
 	var showing = false;
 	var myid = 'notification_'+(notification_windows++);
 	var mywindow = ti.Window.createWindow({

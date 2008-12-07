@@ -36,12 +36,15 @@ public:
 	void hide (const CppArgumentList &args, CppVariant *result);
 	void show (const CppArgumentList &args, CppVariant *result);
 
-	void beep(const CppArgumentList &args, CppVariant *result);
-	void playSound(const CppArgumentList &args, CppVariant *result);
-	void playNamedSound(const CppArgumentList &args, CppVariant *result);
-	void toString(const CppArgumentList &args, CppVariant *result);
+	void getID(const CppArgumentList &args, CppVariant *result);
+	void getGUID(const CppArgumentList &args, CppVariant *result);
+	void getUpdateURL(const CppArgumentList &args, CppVariant *result);
+	void getVersion(const CppArgumentList &args, CppVariant *result);
+	void getName(const CppArgumentList &args, CppVariant *result);
 
 	void quit(const CppArgumentList &args, CppVariant *result);
+	
+	void toString(const CppArgumentList &args, CppVariant *result);
 };
  
 #endif // TI_APP_H define
