@@ -81,7 +81,10 @@
 
 - (void)debug:(NSString *)s 
 {
-	NSLog(@"%@\n", s);
+	if (s)
+	{
+		TRACE(@"%@\n", s);
+	}
 }
 
 

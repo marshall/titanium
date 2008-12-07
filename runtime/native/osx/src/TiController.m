@@ -91,8 +91,11 @@ static CGFloat toFloat (NSString* value, CGFloat def)
 
 - (void)hideSplash
 {
-	[splashController release];
-	splashController=nil;
+	if (splashController)
+	{
+		[splashController release];
+		splashController=nil;
+	}
 }
 
 - (id)init
@@ -268,7 +271,14 @@ static CGFloat toFloat (NSString* value, CGFloat def)
 
 - (BOOL)applicationShouldOpenUntitledFile:(NSApplication *)sender
 {
+	// prevent document controller from opening a new untitled document when we startup
 	return NO;
+}
+
++ (void)documentOpened:(TiDocument*)doc
+{
+	// called by TiDocument when it's first opened and shown, we will just hide the splash if not already hidden
+	[[TiController instance] hideSplash];
 }
 
 - (TiDocument*) createDocument:(NSURL*)url visible:(BOOL)visible config:(TiWindowConfig*)cfg;
@@ -285,7 +295,9 @@ static CGFloat toFloat (NSString* value, CGFloat def)
 	}
 	TRACE(@"TiController::createDocument - using pending config named: %@",[config getID]);
 	[self setPendingConfig: config];
-	TiDocument *doc = [[NSDocumentController sharedDocumentController] openUntitledDocumentOfType:@"HTML Document" display:visible];
+	TiDocument *doc = [[NSDocumentController sharedDocumentController] openUntitledDocumentOfType:@"HTML Document" display:NO];
+	[doc setInitialShow:visible];
+	[doc window]; // cause the window to be loaded from NIB
 	if (visible)
 	{
 		[doc loadURL:url];
@@ -325,7 +337,6 @@ static CGFloat toFloat (NSString* value, CGFloat def)
 	TRACE(@"my new url: %@",urlString);
 	NSURL *URL = [NSURL URLWithString:urlString];
 	[[TiController instance] createDocument:URL visible:YES config:nil];
-	[self hideSplash];
 }
 
 

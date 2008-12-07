@@ -18,7 +18,62 @@
 
 #import <Cocoa/Cocoa.h>
 
+
+NSFileHandle *tiLogger;
+
+//
+// this method is called by the TRACE macro and shouldn't be (generally)
+// called directly
+//
+void TiLog(NSString *message)
+{
+	if (tiLogger)
+	{
+		NSData *data = [message dataUsingEncoding: NSUTF8StringEncoding];
+		[tiLogger writeData:data];
+	}
+}
+
+//
+// setup the log stream
+//
+void TiSetupLog(int argc, const char *argv[], NSString *path)
+{
+	for (int c=1;c<argc;c++)
+	{
+		const char *e = argv[c];
+		if (strstr(e,"--console"))
+		{
+			// we want to log to stdout in the case of console
+			tiLogger = [NSFileHandle fileHandleWithStandardOutput];
+			return;
+		}
+	}
+	// ensure that the file is available 
+	[[NSFileManager defaultManager] createFileAtPath:path contents:@"" attributes:nil];
+	// open it
+	tiLogger = [NSFileHandle fileHandleForWritingAtPath:path];
+}
+
+//
+// close the log stream
+// 
+void TiCloseLog()
+{
+	[tiLogger synchronizeFile];
+	[tiLogger closeFile];
+	[tiLogger release];
+}
+
+
 int main(int argc, const char *argv[])
 {
-    return NSApplicationMain(argc, argv);
+	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+	NSString *path = [NSString stringWithFormat:@"%@/Contents/Log",[[NSBundle mainBundle] bundlePath]];
+	[[NSFileManager defaultManager] createDirectoryAtPath:path attributes:nil];
+	TiSetupLog(argc, argv, [NSString stringWithFormat:@"%@/ti.log",path]);
+    int rc = NSApplicationMain(argc, argv);
+	TiCloseLog();
+	[pool release];
+	return rc;
 }

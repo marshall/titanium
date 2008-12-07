@@ -10,34 +10,66 @@
 		240A3DC60EE85CED00AFDE3E /* TiAppMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = 240A3DC50EE85CED00AFDE3E /* TiAppMenu.m */; };
 		240A3DDC0EE85DF600AFDE3E /* TiMedia.m in Sources */ = {isa = PBXBuildFile; fileRef = 240A3DDB0EE85DF600AFDE3E /* TiMedia.m */; };
 		240A3DE50EE8625300AFDE3E /* TiSound.m in Sources */ = {isa = PBXBuildFile; fileRef = 240A3DE40EE8625300AFDE3E /* TiSound.m */; };
-		240A3DFC0EE870A700AFDE3E /* test.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 240A3DFB0EE870A700AFDE3E /* test.mp3 */; };
 		2427B9FD0EDA42BF007098CC /* TiWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 2427B9FC0EDA42BF007098CC /* TiWindow.m */; };
 		2427BA3A0EDA4578007098CC /* TiSplashScreen.m in Sources */ = {isa = PBXBuildFile; fileRef = 2427BA390EDA4578007098CC /* TiSplashScreen.m */; };
 		2427BA740EDA4654007098CC /* TiAppArguments.m in Sources */ = {isa = PBXBuildFile; fileRef = 2427BA730EDA4654007098CC /* TiAppArguments.m */; };
 		2427BA940EDA478E007098CC /* TiWindowConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 2427BA930EDA478E007098CC /* TiWindowConfig.m */; };
-		2427BAF70EDA4C96007098CC /* tiapp.xml in Resources */ = {isa = PBXBuildFile; fileRef = 2427BAF60EDA4C96007098CC /* tiapp.xml */; };
 		246748240EDD2D6A00CE52E9 /* TiBounds.m in Sources */ = {isa = PBXBuildFile; fileRef = 246748230EDD2D6A00CE52E9 /* TiBounds.m */; };
-		24674AE60EE1D6C400CE52E9 /* test.html in Resources */ = {isa = PBXBuildFile; fileRef = 24674AE50EE1D6C400CE52E9 /* test.html */; };
-		24674DCF0EE2012C00CE52E9 /* test.js in Sources */ = {isa = PBXBuildFile; fileRef = 24674DCE0EE2012C00CE52E9 /* test.js */; };
-		24674DDD0EE2028300CE52E9 /* test.js in Resources */ = {isa = PBXBuildFile; fileRef = 24674DCE0EE2012C00CE52E9 /* test.js */; };
-		24674E600EE20E5800CE52E9 /* aid in Resources */ = {isa = PBXBuildFile; fileRef = 24674E5F0EE20E5800CE52E9 /* aid */; };
-		246755410EE31EEC00CE52E9 /* tray.png in Resources */ = {isa = PBXBuildFile; fileRef = 246755400EE31EEC00CE52E9 /* tray.png */; };
-		24779F9C0EE90F8300F4FF2E /* notification.html in Resources */ = {isa = PBXBuildFile; fileRef = 24779F9B0EE90F8300F4FF2E /* notification.html */; };
-		2477A0430EE9185F00F4FF2E /* notification.png in Resources */ = {isa = PBXBuildFile; fileRef = 2477A0420EE9185F00F4FF2E /* notification.png */; };
-		2477A1360EE9B93D00F4FF2E /* notification.js in Sources */ = {isa = PBXBuildFile; fileRef = 2477A1350EE9B93D00F4FF2E /* notification.js */; };
-		2477A1370EE9B94000F4FF2E /* notification.js in Resources */ = {isa = PBXBuildFile; fileRef = 2477A1350EE9B93D00F4FF2E /* notification.js */; };
 		2491AC8B0EDA375100B1ECDB /* TiController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2491AC880EDA375100B1ECDB /* TiController.m */; };
 		2491AC8C0EDA375100B1ECDB /* TiDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 2491AC8A0EDA375100B1ECDB /* TiDocument.m */; };
 		2491AC8E0EDA375E00B1ECDB /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 2491AC8D0EDA375E00B1ECDB /* main.m */; };
 		2491AC910EDA377400B1ECDB /* titanium.icns in Resources */ = {isa = PBXBuildFile; fileRef = 2491AC8F0EDA377400B1ECDB /* titanium.icns */; };
-		2491AC920EDA377400B1ECDB /* titanium_poweredby.png in Resources */ = {isa = PBXBuildFile; fileRef = 2491AC900EDA377400B1ECDB /* titanium_poweredby.png */; };
 		2491AC9D0EDA377E00B1ECDB /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2491AC930EDA377E00B1ECDB /* InfoPlist.strings */; };
 		2491AC9E0EDA377E00B1ECDB /* JavaScriptPromptWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2491AC950EDA377E00B1ECDB /* JavaScriptPromptWindow.xib */; };
 		2491AC9F0EDA377E00B1ECDB /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2491AC970EDA377E00B1ECDB /* MainMenu.xib */; };
 		2491ACA00EDA377E00B1ECDB /* SplashWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2491AC990EDA377E00B1ECDB /* SplashWindow.xib */; };
 		2491ACA10EDA377E00B1ECDB /* TiDocument.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2491AC9B0EDA377E00B1ECDB /* TiDocument.xib */; };
-		249704230EDAA2950024252C /* index.html in Resources */ = {isa = PBXBuildFile; fileRef = 249704220EDAA2950024252C /* index.html */; };
 		249708AF0EDCD8BC0024252C /* DefaultValues.plist in Resources */ = {isa = PBXBuildFile; fileRef = 249708AE0EDCD8BC0024252C /* DefaultValues.plist */; };
+		24B5E4410EEB97DD00CF1EBE /* titanium_poweredby.png in Resources */ = {isa = PBXBuildFile; fileRef = 2491AC900EDA377400B1ECDB /* titanium_poweredby.png */; };
+		24B5E4540EEB98F000CF1EBE /* DefaultValues.plist in Resources */ = {isa = PBXBuildFile; fileRef = 249708AE0EDCD8BC0024252C /* DefaultValues.plist */; };
+		24B5E4550EEB98F000CF1EBE /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2491AC930EDA377E00B1ECDB /* InfoPlist.strings */; };
+		24B5E4560EEB98F000CF1EBE /* JavaScriptPromptWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2491AC950EDA377E00B1ECDB /* JavaScriptPromptWindow.xib */; };
+		24B5E4570EEB98F000CF1EBE /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2491AC970EDA377E00B1ECDB /* MainMenu.xib */; };
+		24B5E4580EEB98F000CF1EBE /* SplashWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2491AC990EDA377E00B1ECDB /* SplashWindow.xib */; };
+		24B5E4590EEB98F000CF1EBE /* TiDocument.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2491AC9B0EDA377E00B1ECDB /* TiDocument.xib */; };
+		24B5E45A0EEB98F000CF1EBE /* titanium.icns in Resources */ = {isa = PBXBuildFile; fileRef = 2491AC8F0EDA377400B1ECDB /* titanium.icns */; };
+		24B5E45B0EEB98F000CF1EBE /* titanium_poweredby.png in Resources */ = {isa = PBXBuildFile; fileRef = 2491AC900EDA377400B1ECDB /* titanium_poweredby.png */; };
+		24B5E45C0EEB990600CF1EBE /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 2491AC8D0EDA375E00B1ECDB /* main.m */; };
+		24B5E45E0EEB991D00CF1EBE /* TiAppArguments.m in Sources */ = {isa = PBXBuildFile; fileRef = 2427BA730EDA4654007098CC /* TiAppArguments.m */; };
+		24B5E45F0EEB991D00CF1EBE /* TiController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2491AC880EDA375100B1ECDB /* TiController.m */; };
+		24B5E4600EEB991D00CF1EBE /* TiDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 2491AC8A0EDA375100B1ECDB /* TiDocument.m */; };
+		24B5E4610EEB992300CF1EBE /* AppProtocol.m in Sources */ = {isa = PBXBuildFile; fileRef = 24D022DE0EDA7DD0005E15AE /* AppProtocol.m */; };
+		24B5E4620EEB992300CF1EBE /* TiProtocol.m in Sources */ = {isa = PBXBuildFile; fileRef = 24D022E00EDA7DD0005E15AE /* TiProtocol.m */; };
+		24B5E4640EEB993300CF1EBE /* TiSound.m in Sources */ = {isa = PBXBuildFile; fileRef = 240A3DE40EE8625300AFDE3E /* TiSound.m */; };
+		24B5E4660EEB993300CF1EBE /* TiMedia.m in Sources */ = {isa = PBXBuildFile; fileRef = 240A3DDB0EE85DF600AFDE3E /* TiMedia.m */; };
+		24B5E4680EEB993300CF1EBE /* TiAppMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = 240A3DC50EE85CED00AFDE3E /* TiAppMenu.m */; };
+		24B5E46A0EEB993300CF1EBE /* TiBounds.m in Sources */ = {isa = PBXBuildFile; fileRef = 246748230EDD2D6A00CE52E9 /* TiBounds.m */; };
+		24B5E46C0EEB993300CF1EBE /* TiWindowConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 2427BA930EDA478E007098CC /* TiWindowConfig.m */; };
+		24B5E46E0EEB993300CF1EBE /* TiUserWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 24D022570EDA7989005E15AE /* TiUserWindow.m */; };
+		24B5E4700EEB993300CF1EBE /* TiWindowFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = 24D022510EDA794C005E15AE /* TiWindowFactory.m */; };
+		24B5E4720EEB993300CF1EBE /* TiMenuAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 24D0222C0EDA76D7005E15AE /* TiMenuAction.m */; };
+		24B5E4740EEB993300CF1EBE /* TiApp.m in Sources */ = {isa = PBXBuildFile; fileRef = 24D022060EDA75EF005E15AE /* TiApp.m */; };
+		24B5E4760EEB993300CF1EBE /* TiMenuFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = 24D022080EDA75EF005E15AE /* TiMenuFactory.m */; };
+		24B5E4780EEB993300CF1EBE /* TiObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 24D0220A0EDA75EF005E15AE /* TiObject.m */; };
+		24B5E47A0EEB993300CF1EBE /* TiSystemDock.m in Sources */ = {isa = PBXBuildFile; fileRef = 24D0220C0EDA75EF005E15AE /* TiSystemDock.m */; };
+		24B5E47C0EEB993300CF1EBE /* TiSystemMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = 24D0220E0EDA75EF005E15AE /* TiSystemMenu.m */; };
+		24B5E4860EEB995B00CF1EBE /* TiSplashScreen.m in Sources */ = {isa = PBXBuildFile; fileRef = 2427BA390EDA4578007098CC /* TiSplashScreen.m */; };
+		24B5E4880EEB995B00CF1EBE /* TiWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 2427B9FC0EDA42BF007098CC /* TiWindow.m */; };
+		24B5E65D0EEB997700CF1EBE /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 24D024560EDA9590005E15AE /* Foundation.framework */; };
+		24B5E65E0EEB997700CF1EBE /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 24D024520EDA9573005E15AE /* AppKit.framework */; };
+		24B5E65F0EEB997700CF1EBE /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 834B13810795DD1F00E4BF6C /* WebKit.framework */; };
+		24B5E6600EEB997700CF1EBE /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
+		24B5E66E0EEB99F100CF1EBE /* frame.html in Resources */ = {isa = PBXBuildFile; fileRef = AB3B20180EE5B3CC0002995B /* frame.html */; };
+		24B5E66F0EEB99F100CF1EBE /* index.html in Resources */ = {isa = PBXBuildFile; fileRef = 249704220EDAA2950024252C /* index.html */; };
+		24B5E6700EEB99F100CF1EBE /* notification.js in Resources */ = {isa = PBXBuildFile; fileRef = 2477A1350EE9B93D00F4FF2E /* notification.js */; };
+		24B5E6710EEB99F100CF1EBE /* notification.png in Resources */ = {isa = PBXBuildFile; fileRef = 2477A0420EE9185F00F4FF2E /* notification.png */; };
+		24B5E6720EEB99F100CF1EBE /* notification.html in Resources */ = {isa = PBXBuildFile; fileRef = 24779F9B0EE90F8300F4FF2E /* notification.html */; };
+		24B5E6730EEB99F100CF1EBE /* test.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 240A3DFB0EE870A700AFDE3E /* test.mp3 */; };
+		24B5E6740EEB99F100CF1EBE /* tray.png in Resources */ = {isa = PBXBuildFile; fileRef = 246755400EE31EEC00CE52E9 /* tray.png */; };
+		24B5E6750EEB99F100CF1EBE /* aid in Resources */ = {isa = PBXBuildFile; fileRef = 24674E5F0EE20E5800CE52E9 /* aid */; };
+		24B5E6760EEB99F100CF1EBE /* test.js in Resources */ = {isa = PBXBuildFile; fileRef = 24674DCE0EE2012C00CE52E9 /* test.js */; };
+		24B5E6770EEB99F100CF1EBE /* test.html in Resources */ = {isa = PBXBuildFile; fileRef = 24674AE50EE1D6C400CE52E9 /* test.html */; };
+		24B5E6780EEB99F100CF1EBE /* tiapp.xml in Resources */ = {isa = PBXBuildFile; fileRef = 2427BAF60EDA4C96007098CC /* tiapp.xml */; };
 		24D022150EDA75EF005E15AE /* TiApp.m in Sources */ = {isa = PBXBuildFile; fileRef = 24D022060EDA75EF005E15AE /* TiApp.m */; };
 		24D022160EDA75EF005E15AE /* TiMenuFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = 24D022080EDA75EF005E15AE /* TiMenuFactory.m */; };
 		24D022170EDA75EF005E15AE /* TiObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 24D0220A0EDA75EF005E15AE /* TiObject.m */; };
@@ -52,20 +84,7 @@
 		24D024570EDA9590005E15AE /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 24D024560EDA9590005E15AE /* Foundation.framework */; };
 		834B13820795DD1F00E4BF6C /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 834B13810795DD1F00E4BF6C /* WebKit.framework */; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
-		AB3B20190EE5B3CC0002995B /* frame.html in Resources */ = {isa = PBXBuildFile; fileRef = AB3B20180EE5B3CC0002995B /* frame.html */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		2491ACCD0EDA388100B1ECDB /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 16;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
@@ -115,6 +134,8 @@
 		249704220EDAA2950024252C /* index.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = index.html; path = res/index.html; sourceTree = "<group>"; };
 		2497073B0EDBD07B0024252C /* WebViewInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebViewInternal.h; path = src/WebViewInternal.h; sourceTree = "<group>"; };
 		249708AE0EDCD8BC0024252C /* DefaultValues.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = DefaultValues.plist; path = res/DefaultValues.plist; sourceTree = "<group>"; };
+		24B5E44D0EEB98A700CF1EBE /* Titanium.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Titanium.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		24B5E44F0EEB98A700CF1EBE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		24D022050EDA75EF005E15AE /* TiApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TiApp.h; path = src/TiApp.h; sourceTree = "<group>"; };
 		24D022060EDA75EF005E15AE /* TiApp.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TiApp.m; path = src/TiApp.m; sourceTree = "<group>"; };
 		24D022070EDA75EF005E15AE /* TiMenuFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TiMenuFactory.h; path = src/TiMenuFactory.h; sourceTree = "<group>"; };
@@ -144,6 +165,17 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		24B5E44B0EEB98A700CF1EBE /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				24B5E65D0EEB997700CF1EBE /* Foundation.framework in Frameworks */,
+				24B5E65E0EEB997700CF1EBE /* AppKit.framework in Frameworks */,
+				24B5E65F0EEB997700CF1EBE /* WebKit.framework in Frameworks */,
+				24B5E6600EEB997700CF1EBE /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8D11072E0486CEB800E47090 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -179,6 +211,7 @@
 			isa = PBXGroup;
 			children = (
 				8D1107320486CEB800E47090 /* Titanium.app */,
+				24B5E44D0EEB98A700CF1EBE /* Titanium.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -259,6 +292,7 @@
 				29B97317FDCFA39411CA2CEA /* Resources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
+				24B5E44F0EEB98A700CF1EBE /* Info.plist */,
 			);
 			name = Titanium;
 			sourceTree = "<group>";
@@ -313,21 +347,37 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		8D1107260486CEB800E47090 /* Titanium */ = {
+		24B5E44C0EEB98A700CF1EBE /* Titanium */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 149C297908902C52008A9EFC /* Build configuration list for PBXNativeTarget "Titanium" */;
+			buildConfigurationList = 24B5E4530EEB98A900CF1EBE /* Build configuration list for PBXNativeTarget "Titanium" */;
 			buildPhases = (
-				8D1107290486CEB800E47090 /* Resources */,
-				8D11072C0486CEB800E47090 /* Sources */,
-				8D11072E0486CEB800E47090 /* Frameworks */,
-				2491ACCD0EDA388100B1ECDB /* CopyFiles */,
-				249704150EDAA2210024252C /* ShellScript */,
+				24B5E4490EEB98A700CF1EBE /* Resources */,
+				24B5E44A0EEB98A700CF1EBE /* Sources */,
+				24B5E44B0EEB98A700CF1EBE /* Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			name = Titanium;
+			productName = Titanium;
+			productReference = 24B5E44D0EEB98A700CF1EBE /* Titanium.app */;
+			productType = "com.apple.product-type.application";
+		};
+		8D1107260486CEB800E47090 /* Titanium_Testing */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 149C297908902C52008A9EFC /* Build configuration list for PBXNativeTarget "Titanium_Testing" */;
+			buildPhases = (
+				8D1107290486CEB800E47090 /* Resources */,
+				8D11072C0486CEB800E47090 /* Sources */,
+				8D11072E0486CEB800E47090 /* Frameworks */,
+				249704150EDAA2210024252C /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Titanium_Testing;
 			productInstallPath = "$(HOME)/Applications";
 			productName = Titanium;
 			productReference = 8D1107320486CEB800E47090 /* Titanium.app */;
@@ -345,35 +395,51 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				8D1107260486CEB800E47090 /* Titanium */,
+				8D1107260486CEB800E47090 /* Titanium_Testing */,
+				24B5E44C0EEB98A700CF1EBE /* Titanium */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		24B5E4490EEB98A700CF1EBE /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				24B5E4540EEB98F000CF1EBE /* DefaultValues.plist in Resources */,
+				24B5E4550EEB98F000CF1EBE /* InfoPlist.strings in Resources */,
+				24B5E4560EEB98F000CF1EBE /* JavaScriptPromptWindow.xib in Resources */,
+				24B5E4570EEB98F000CF1EBE /* MainMenu.xib in Resources */,
+				24B5E4580EEB98F000CF1EBE /* SplashWindow.xib in Resources */,
+				24B5E4590EEB98F000CF1EBE /* TiDocument.xib in Resources */,
+				24B5E45A0EEB98F000CF1EBE /* titanium.icns in Resources */,
+				24B5E45B0EEB98F000CF1EBE /* titanium_poweredby.png in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8D1107290486CEB800E47090 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2477A1370EE9B94000F4FF2E /* notification.js in Resources */,
-				2477A0430EE9185F00F4FF2E /* notification.png in Resources */,
-				24779F9C0EE90F8300F4FF2E /* notification.html in Resources */,
-				240A3DFC0EE870A700AFDE3E /* test.mp3 in Resources */,
-				246755410EE31EEC00CE52E9 /* tray.png in Resources */,
-				24674E600EE20E5800CE52E9 /* aid in Resources */,
-				24674DDD0EE2028300CE52E9 /* test.js in Resources */,
-				2491AC910EDA377400B1ECDB /* titanium.icns in Resources */,
-				2491AC920EDA377400B1ECDB /* titanium_poweredby.png in Resources */,
+				24B5E66E0EEB99F100CF1EBE /* frame.html in Resources */,
+				24B5E66F0EEB99F100CF1EBE /* index.html in Resources */,
+				24B5E6700EEB99F100CF1EBE /* notification.js in Resources */,
+				24B5E6710EEB99F100CF1EBE /* notification.png in Resources */,
+				24B5E6720EEB99F100CF1EBE /* notification.html in Resources */,
+				24B5E6730EEB99F100CF1EBE /* test.mp3 in Resources */,
+				24B5E6740EEB99F100CF1EBE /* tray.png in Resources */,
+				24B5E6750EEB99F100CF1EBE /* aid in Resources */,
+				24B5E6760EEB99F100CF1EBE /* test.js in Resources */,
+				24B5E6770EEB99F100CF1EBE /* test.html in Resources */,
+				249708AF0EDCD8BC0024252C /* DefaultValues.plist in Resources */,
+				24B5E6780EEB99F100CF1EBE /* tiapp.xml in Resources */,
 				2491AC9D0EDA377E00B1ECDB /* InfoPlist.strings in Resources */,
 				2491AC9E0EDA377E00B1ECDB /* JavaScriptPromptWindow.xib in Resources */,
 				2491AC9F0EDA377E00B1ECDB /* MainMenu.xib in Resources */,
 				2491ACA00EDA377E00B1ECDB /* SplashWindow.xib in Resources */,
 				2491ACA10EDA377E00B1ECDB /* TiDocument.xib in Resources */,
-				2427BAF70EDA4C96007098CC /* tiapp.xml in Resources */,
-				249704230EDAA2950024252C /* index.html in Resources */,
-				249708AF0EDCD8BC0024252C /* DefaultValues.plist in Resources */,
-				24674AE60EE1D6C400CE52E9 /* test.html in Resources */,
-				AB3B20190EE5B3CC0002995B /* frame.html in Resources */,
+				2491AC910EDA377400B1ECDB /* titanium.icns in Resources */,
+				24B5E4410EEB97DD00CF1EBE /* titanium_poweredby.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -396,6 +462,34 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		24B5E44A0EEB98A700CF1EBE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				24B5E4860EEB995B00CF1EBE /* TiSplashScreen.m in Sources */,
+				24B5E4880EEB995B00CF1EBE /* TiWindow.m in Sources */,
+				24B5E4610EEB992300CF1EBE /* AppProtocol.m in Sources */,
+				24B5E4620EEB992300CF1EBE /* TiProtocol.m in Sources */,
+				24B5E4640EEB993300CF1EBE /* TiSound.m in Sources */,
+				24B5E4660EEB993300CF1EBE /* TiMedia.m in Sources */,
+				24B5E4680EEB993300CF1EBE /* TiAppMenu.m in Sources */,
+				24B5E46A0EEB993300CF1EBE /* TiBounds.m in Sources */,
+				24B5E46C0EEB993300CF1EBE /* TiWindowConfig.m in Sources */,
+				24B5E46E0EEB993300CF1EBE /* TiUserWindow.m in Sources */,
+				24B5E4700EEB993300CF1EBE /* TiWindowFactory.m in Sources */,
+				24B5E4720EEB993300CF1EBE /* TiMenuAction.m in Sources */,
+				24B5E4740EEB993300CF1EBE /* TiApp.m in Sources */,
+				24B5E4760EEB993300CF1EBE /* TiMenuFactory.m in Sources */,
+				24B5E4780EEB993300CF1EBE /* TiObject.m in Sources */,
+				24B5E47A0EEB993300CF1EBE /* TiSystemDock.m in Sources */,
+				24B5E47C0EEB993300CF1EBE /* TiSystemMenu.m in Sources */,
+				24B5E45E0EEB991D00CF1EBE /* TiAppArguments.m in Sources */,
+				24B5E45F0EEB991D00CF1EBE /* TiController.m in Sources */,
+				24B5E4600EEB991D00CF1EBE /* TiDocument.m in Sources */,
+				24B5E45C0EEB990600CF1EBE /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8D11072C0486CEB800E47090 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -418,11 +512,9 @@
 				24D022E10EDA7DD0005E15AE /* AppProtocol.m in Sources */,
 				24D022E20EDA7DD0005E15AE /* TiProtocol.m in Sources */,
 				246748240EDD2D6A00CE52E9 /* TiBounds.m in Sources */,
-				24674DCF0EE2012C00CE52E9 /* test.js in Sources */,
 				240A3DC60EE85CED00AFDE3E /* TiAppMenu.m in Sources */,
 				240A3DDC0EE85DF600AFDE3E /* TiMedia.m in Sources */,
 				240A3DE50EE8625300AFDE3E /* TiSound.m in Sources */,
-				2477A1360EE9B93D00F4FF2E /* notification.js in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -508,6 +600,7 @@
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				PRODUCT_NAME = Titanium;
+				SYMROOT = build_test;
 			};
 			name = Release;
 		};
@@ -531,23 +624,134 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEPLOYMENT_POSTPROCESSING = YES;
 				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_DEBUGGING_SYMBOLS = full;
 				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				PREBINDING = NO;
 				SDKROOT = macosx10.5;
+				SEPARATE_STRIP = NO;
 			};
 			name = Release;
+		};
+		24B5E4440EEB982B00CF1EBE /* Release_for_Testing */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEPLOYMENT_POSTPROCESSING = YES;
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_DEBUGGING_SYMBOLS = full;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				PREBINDING = NO;
+				SDKROOT = macosx10.5;
+				SEPARATE_STRIP = NO;
+			};
+			name = Release_for_Testing;
+		};
+		24B5E4450EEB982B00CF1EBE /* Release_for_Testing */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = Titanium_Prefix.pch;
+				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = NO;
+				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
+				GCC_WARN_UNUSED_PARAMETER = NO;
+				GCC_WARN_UNUSED_VALUE = YES;
+				INFOPLIST_FILE = Info.plist;
+				INSTALL_PATH = "$(HOME)/Applications";
+				PRODUCT_NAME = Titanium;
+			};
+			name = Release_for_Testing;
+		};
+		24B5E4500EEB98A900CF1EBE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INFOPLIST_FILE = Info.plist;
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = Titanium;
+			};
+			name = Debug;
+		};
+		24B5E4510EEB98A900CF1EBE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INFOPLIST_FILE = Info.plist;
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = Titanium;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+		24B5E4520EEB98A900CF1EBE /* Release_for_Testing */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INFOPLIST_FILE = Info.plist;
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = Titanium;
+			};
+			name = Release_for_Testing;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		149C297908902C52008A9EFC /* Build configuration list for PBXNativeTarget "Titanium" */ = {
+		149C297908902C52008A9EFC /* Build configuration list for PBXNativeTarget "Titanium_Testing" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				149C297A08902C52008A9EFC /* Debug */,
 				149C297B08902C52008A9EFC /* Release */,
+				24B5E4450EEB982B00CF1EBE /* Release_for_Testing */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -557,6 +761,17 @@
 			buildConfigurations = (
 				149C297E08902C52008A9EFC /* Debug */,
 				149C297F08902C52008A9EFC /* Release */,
+				24B5E4440EEB982B00CF1EBE /* Release_for_Testing */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		24B5E4530EEB98A900CF1EBE /* Build configuration list for PBXNativeTarget "Titanium" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				24B5E4500EEB98A900CF1EBE /* Debug */,
+				24B5E4510EEB98A900CF1EBE /* Release */,
+				24B5E4520EEB98A900CF1EBE /* Release_for_Testing */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

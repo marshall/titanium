@@ -162,6 +162,11 @@
 	TRACE(@"TiDocument::setupWebPreferences exit %x",self);
 }
 
+- (void)setInitialShow:(BOOL)yn
+{
+	initialDisplay = !yn;
+}
+
 - (void)show
 {
 	TRACE(@"TiDocument::show = %x",self);
@@ -265,6 +270,7 @@
 
 - (BOOL)isDocumentEdited
 {
+	// returning NO here prevents the save dialog when a window is closed
 	return NO;
 }
 
@@ -279,6 +285,7 @@
 	[url release];
 	url = [newURL copy];
 }
+
 
 - (void)setPrecedent:(TiDocument*)doc
 {
@@ -310,7 +317,7 @@
 #ifdef DEBUG	
 	for (id key in elementDick)
 	{
-		NSLog(@"key = %@",key);
+		NSLog(@"window action - key = %@",key);
 	}
 #endif 
 	DOMNode *target = [elementDick objectForKey:WebElementDOMNodeKey];
@@ -542,6 +549,17 @@
 			[self setURL:theurl];
 		}
 		[self closePrecedent];
+		
+		// let the controller know we're open and ready
+		[TiController documentOpened:self];
+
+		if (initialDisplay==NO)
+		{
+			initialDisplay=YES;
+			// cause the initial window to show since it was initially opened hidden
+			// so you don't get the nasty wide screen while content is loading
+			[self performSelector:@selector(show) withObject:nil afterDelay:.005];
+		}
     }
 }
 
@@ -557,6 +575,13 @@
 		}
 		NSString *err = [NSString stringWithFormat:@"Error loading URL: %@. %@", url,[error localizedDescription]];
 		[TiController error:err];
+		
+		// in this case we need to ensure that the window is showing if not initially shown
+		if (initialDisplay==NO)
+		{
+			initialDisplay=YES;
+			[self performSelector:@selector(show) withObject:nil afterDelay:.500];
+		}
     }
 }
 
