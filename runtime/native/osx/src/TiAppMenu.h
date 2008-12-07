@@ -25,7 +25,6 @@
 }
 
 -(id)initWithMenu:(NSMenu*)menu;
-- (void)execute;
 
 
 - (void)setTitle:(NSString*)title;

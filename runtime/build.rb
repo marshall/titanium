@@ -164,8 +164,8 @@ task :osx do
     package_pieces :osx do |zipfile,config|
       out = File.join(STAGE_DIR,'osxbuild.log')
       puts "building the Mac OSX titanium runtime ..."
-      puts "xcodebuild VERSION=#{config[:version]} >#{out}"
-      system "xcodebuild VERSION=#{config[:version]} >#{out}"
+      puts "xcodebuild -target Titanium clean build VERSION=#{config[:version]} >#{out}"
+      system "xcodebuild -target Titanium clean build VERSION=#{config[:version]} >#{out}"
       release = File.join(osx_dir,'build','Release','Titanium.app')
       dofiles(release) do |f|
         filename = File.basename(f)

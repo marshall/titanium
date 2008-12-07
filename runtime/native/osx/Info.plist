@@ -23,12 +23,11 @@
 			<string>titanium.icns</string>
 			<key>CFBundleTypeExtensions</key>
 			<array>
-				<string>html</string>
-				<string>htm</string>
+				<string>tia</string>
 			</array>
 			<key>CFBundleTypeMIMETypes</key>
 			<array>
-				<string>text/html</string>
+				<string>application/vnd.appcelerator-titanium-app-package+zip</string>
 			</array>
 			<key>CFBundleTypeName</key>
 			<string>HTML Document</string>
