@@ -43,7 +43,12 @@ ti.Notification = function()
 		animate = (animate==null) ? true : animate;
 		autohide = (autohide==null) ? true : autohide;
 		mywindow.setX(screen.availWidth-width-20);
-		mywindow.setY(10);
+		if (ti.platform == "osx") {
+			mywindow.setY(10);
+		} else if (ti.platform == "win32") {
+			mywindow.setY(screen.availHeight-height-10);	
+		}
+		
 		mywindow.setTransparency(.99);
 		mywindow.setURL('ti://notification/?title='+encodeURIComponent(title)+'&message='+encodeURIComponent(message)+'&icon='+encodeURIComponent(icon));
 		mywindow.show(animate);

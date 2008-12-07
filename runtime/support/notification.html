@@ -28,6 +28,7 @@
 			right:10px;
 			opacity:.80;
 		}
+		
 		#message
 		{
 			font-size:13px;
@@ -57,6 +58,12 @@
 	<script>
 		(function($)
 		{
+			// fix opacity rendering issue in chrome (for now)
+			if (ti.platform == "win32") {
+				$("#content").css("opacity", "1");
+				$("body").css("opacity", "1");
+			}
+			
 			function queryString(uri,params)
 			{
 				idx = uri.indexOf('?');
