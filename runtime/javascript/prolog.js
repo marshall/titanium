@@ -20,6 +20,7 @@
 		Menu: runtime.Menu,
 		Window: runtime.Window,
 		Media: runtime.Media,
+		Network: runtime.Network,
      	toString: function()
      	{
         	return '[Titanium Runtime]';

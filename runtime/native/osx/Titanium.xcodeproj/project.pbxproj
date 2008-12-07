@@ -15,6 +15,9 @@
 		2427BA740EDA4654007098CC /* TiAppArguments.m in Sources */ = {isa = PBXBuildFile; fileRef = 2427BA730EDA4654007098CC /* TiAppArguments.m */; };
 		2427BA940EDA478E007098CC /* TiWindowConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 2427BA930EDA478E007098CC /* TiWindowConfig.m */; };
 		246748240EDD2D6A00CE52E9 /* TiBounds.m in Sources */ = {isa = PBXBuildFile; fileRef = 246748230EDD2D6A00CE52E9 /* TiBounds.m */; };
+		248654420EEBD8F20029AA78 /* TiNetwork.m in Sources */ = {isa = PBXBuildFile; fileRef = 248654410EEBD8F20029AA78 /* TiNetwork.m */; };
+		248654810EEBDC910029AA78 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 248654800EEBDC910029AA78 /* SystemConfiguration.framework */; };
+		248654820EEBDC910029AA78 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 248654800EEBDC910029AA78 /* SystemConfiguration.framework */; };
 		2491AC8B0EDA375100B1ECDB /* TiController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2491AC880EDA375100B1ECDB /* TiController.m */; };
 		2491AC8C0EDA375100B1ECDB /* TiDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 2491AC8A0EDA375100B1ECDB /* TiDocument.m */; };
 		2491AC8E0EDA375E00B1ECDB /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 2491AC8D0EDA375E00B1ECDB /* main.m */; };
@@ -115,6 +118,9 @@
 		24779F9B0EE90F8300F4FF2E /* notification.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = notification.html; path = res/notification.html; sourceTree = "<group>"; };
 		2477A0420EE9185F00F4FF2E /* notification.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = notification.png; path = res/notification.png; sourceTree = "<group>"; };
 		2477A1350EE9B93D00F4FF2E /* notification.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = notification.js; path = res/notification.js; sourceTree = "<group>"; };
+		248654400EEBD8F20029AA78 /* TiNetwork.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TiNetwork.h; path = src/TiNetwork.h; sourceTree = "<group>"; };
+		248654410EEBD8F20029AA78 /* TiNetwork.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TiNetwork.m; path = src/TiNetwork.m; sourceTree = "<group>"; };
+		248654800EEBDC910029AA78 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = /System/Library/Frameworks/SystemConfiguration.framework; sourceTree = "<absolute>"; };
 		2491AC870EDA375100B1ECDB /* TiController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TiController.h; path = src/TiController.h; sourceTree = "<group>"; };
 		2491AC880EDA375100B1ECDB /* TiController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TiController.m; path = src/TiController.m; sourceTree = "<group>"; };
 		2491AC890EDA375100B1ECDB /* TiDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TiDocument.h; path = src/TiDocument.h; sourceTree = "<group>"; };
@@ -173,6 +179,7 @@
 				24B5E65E0EEB997700CF1EBE /* AppKit.framework in Frameworks */,
 				24B5E65F0EEB997700CF1EBE /* WebKit.framework in Frameworks */,
 				24B5E6600EEB997700CF1EBE /* Cocoa.framework in Frameworks */,
+				248654820EEBDC910029AA78 /* SystemConfiguration.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -184,6 +191,7 @@
 				834B13820795DD1F00E4BF6C /* WebKit.framework in Frameworks */,
 				24D024530EDA9573005E15AE /* AppKit.framework in Frameworks */,
 				24D024570EDA9590005E15AE /* Foundation.framework in Frameworks */,
+				248654810EEBDC910029AA78 /* SystemConfiguration.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -243,6 +251,8 @@
 		249703BE0EDA9CCD0024252C /* Javascript */ = {
 			isa = PBXGroup;
 			children = (
+				248654400EEBD8F20029AA78 /* TiNetwork.h */,
+				248654410EEBD8F20029AA78 /* TiNetwork.m */,
 				240A3DE30EE8625300AFDE3E /* TiSound.h */,
 				240A3DE40EE8625300AFDE3E /* TiSound.m */,
 				240A3DDA0EE85DF600AFDE3E /* TiMedia.h */,
@@ -336,6 +346,7 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				248654800EEBDC910029AA78 /* SystemConfiguration.framework */,
 				24D024560EDA9590005E15AE /* Foundation.framework */,
 				24D024520EDA9573005E15AE /* AppKit.framework */,
 				834B13810795DD1F00E4BF6C /* WebKit.framework */,
@@ -515,6 +526,7 @@
 				240A3DC60EE85CED00AFDE3E /* TiAppMenu.m in Sources */,
 				240A3DDC0EE85DF600AFDE3E /* TiMedia.m in Sources */,
 				240A3DE50EE8625300AFDE3E /* TiSound.m in Sources */,
+				248654420EEBD8F20029AA78 /* TiNetwork.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -582,6 +594,7 @@
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				PRODUCT_NAME = Titanium;
+				SYMROOT = build_test;
 			};
 			name = Debug;
 		};

@@ -24,6 +24,7 @@
 #import "TiWindowFactory.h"
 #import "TiWindow.h"
 #import "TiMedia.h"
+#import "TiNetwork.h"
 
 @class WebView;
 
@@ -36,6 +37,7 @@
 	TiMenuFactory *Menu;
 	TiWindowFactory *Window;
 	TiMedia *Media;
+	TiNetwork *Network;
 }
 
 @property (copy, readonly) TiApp *App;
@@ -43,6 +45,7 @@
 @property (copy, readonly) TiMenuFactory *Menu;
 @property (copy, readonly) TiWindowFactory *Window;
 @property (copy, readonly) TiMedia *Media;
+@property (copy, readonly) TiNetwork *Network;
 
 - (id)initWithWindow:(TiWindow*)win;
 
