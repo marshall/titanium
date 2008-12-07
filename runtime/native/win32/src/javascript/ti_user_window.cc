@@ -121,11 +121,13 @@ void TiUserWindow::updateWindow ()
 
 void TiUserWindow::hide(const CppArgumentList &args, CppVariant *result)
 {
+	config->setVisible(false);
 	window->showWindow(SW_HIDE);
 }
 
 void TiUserWindow::show(const CppArgumentList &args, CppVariant *result)
 {
+	config->setVisible(true);
 	window->showWindow(SW_SHOW);
 }
 

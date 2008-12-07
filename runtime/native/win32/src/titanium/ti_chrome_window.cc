@@ -108,6 +108,10 @@ void TiChromeWindow::DestroyWindow (TiChromeWindow *window)
 	}
 
 	if (isMain) {
+
+		if (TiMenu::trayMenu != NULL) {
+			TiMenu::removeTrayMenu();
+		}
 		PostQuitMessage(0);
 	}
 }
@@ -193,7 +197,7 @@ LRESULT CALLBACK TiChromeWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 				UINT uMouseMsg = (UINT) lParam;
 				if(uMouseMsg == WM_LBUTTONDOWN)
 				{
-					// handle the click callback for the tray
+					TiMenu::invokeLeftClickCallback();
 				}
 				else if (uMouseMsg == WM_RBUTTONDOWN)
 				{
@@ -236,7 +240,7 @@ TiChromeWindow::~TiChromeWindow(void) {
 
 void TiChromeWindow::createWindow()
 {
-	hWnd = CreateWindowEx(WS_EX_LAYERED, windowClassName, defaultWindowTitle,
+	hWnd = CreateWindowEx(WS_EX_COMPOSITED | WS_EX_LAYERED, windowClassName, defaultWindowTitle,
                            WS_CLIPCHILDREN,
                            0, 0, 0, 0,
                            NULL, NULL, hInstance, NULL);

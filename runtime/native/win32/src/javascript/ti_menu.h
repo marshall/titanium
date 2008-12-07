@@ -63,8 +63,11 @@ public:
 		return currentUID++;
 	}
 
+	static NPObject *leftClickCallback;
 	static TiMenu* trayMenu;
 	static void showTrayMenu();
+	static void removeTrayMenu();
+	static void invokeLeftClickCallback();
 	static bool invokeCallback(int menuItemUID);
 	static LRESULT CALLBACK handleMenuClick(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 };

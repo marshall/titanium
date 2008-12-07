@@ -97,6 +97,10 @@ bool TiURL::urlMatchesPattern(GURL& url, std::string& pattern)
 		spec = spec.substr(0, spec.length() - 1);
 	}
 
+	if (spec.find("?") != std::string::npos) {
+		spec = spec.substr(0, spec.find("?"));
+	}
+
 	
 	/*if (LowerCaseEqualsASCII(TiAppConfig::instance()->getAppID(), url.host().c_str())) {
 		std::string newURL = spec;

@@ -59,14 +59,20 @@ NOTIFYICONDATA TiMenuFactory::createTrayIcon(std::wstring &iconPath, std::wstrin
  */
 void TiMenuFactory::createTrayMenu(const CppArgumentList& args, CppVariant* result)
 {
-	if (args.size() >= 3) {
-		if (args[0].isString() && args[1].isString() && args[2].isObject()) {
+	if (args.size() >= 1) {
+		if (args[0].isString()) {
 			std::string iconURL = args[0].ToString();
-			std::string caption = args[1].ToString();
-			NPVariant variant;
-			args[2].CopyToNPVariant(&variant);
+			std::string caption = "";
 
-			NPObject* callback = NPVARIANT_TO_OBJECT(variant);
+			if (args.size() > 1 && !args[1].isNull())
+				caption = args[1].ToString();
+
+			if (args.size() > 2 && !args[2].isNull()) {
+				NPVariant variant;
+				args[2].CopyToNPVariant(&variant);
+
+				TiMenu::leftClickCallback = NPVARIANT_TO_OBJECT(variant);
+			}
 
 			if (TiMenu::trayMenu == NULL) {
 				TiMenu::trayMenu = new TiMenu(createTrayIcon(TiURL::getPathForURL(GURL(iconURL)), UTF8ToWide(caption)));
