@@ -232,7 +232,7 @@ task :win32 do
       	zipfile.add("pieces/win32/Resources/inspector/#{f}", File.join(inspector_dir, f))
       end
       
-      zipfile.add("pieces/win32/Resources/titanium/ti_notification.html",File.join(TITANIUM_DIR,'runtime','support','notification.html'))
+      zipfile.add("pieces/titanium/notification.html",File.join(TITANIUM_DIR,'runtime','support','notification.html'))
       
     	gears_dir = build_gears
     	gears_plugin = File.join(gears_dir, 'bin-opt', 'win32-i386', 'npapi', 'gears_titanium.dll')
