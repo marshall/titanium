@@ -127,7 +127,15 @@ static CGFloat toFloat (NSString* value, CGFloat def)
 	[windowConfigs release];
 	windowConfigs=nil;
 	[appName release];
+	appName = nil;
 	[appID release];
+	appID = nil;
+	[appGUID release];
+	appGUID = nil;
+	[appVersion release];
+	appVersion = nil;
+	[appUpdateURL release];
+	appUpdateURL = nil;
     [super dealloc];
 }
 
@@ -246,7 +254,7 @@ static CGFloat toFloat (NSString* value, CGFloat def)
 	[pendingConfig retain];
 }
 
-- (void)setupDefaults 
+- (void)setupDefaults
 {
 	NSString *path = [[NSBundle mainBundle] pathForResource:@"DefaultValues" ofType:@"plist"];
 	
@@ -263,7 +271,6 @@ static CGFloat toFloat (NSString* value, CGFloat def)
 	TRACE(@"TiController::awakeFromNib = %x",self);
 	TRACE(@"gears titanium plugin has been loaded? %@", ([[WebPluginDatabase sharedDatabase] isMIMETypeRegistered:@"application/x-gears-titanium"])?@"true":@"false");
 
-	
 	[self setupDefaults];
 	[self updateAppNameInMainMenu];
 	[self registerProtocols];
@@ -350,14 +357,19 @@ static CGFloat toFloat (NSString* value, CGFloat def)
 	return appID;
 }
 
-
-- (void)setAppName:(NSString*)s 
+- (NSString*)appGUID
 {
-	if (appName != s) 
-	{
-		[appName release];
-		appName = [s copy];
-	}
+	return appGUID;
+}
+
+- (NSString*)appVersion
+{
+	return appVersion;
+}
+
+- (NSString*)appUpdateURL
+{
+	return appUpdateURL;
 }
 
 - (TiAppArguments*)arguments
@@ -420,7 +432,10 @@ static CGFloat toFloat (NSString* value, CGFloat def)
 	
 	NSXMLElement *root = [doc rootElement];
 	
-	[self setAppName:elementText(root, @"name")];
+	appName = [elementText(root, @"name") copy];
+	appID = [elementText(root,@"id") copy];
+	appVersion = [elementText(root,@"version") copy];
+	appUpdateURL = [elementText(root,@"updatesite") copy];
 	
 	TRACE(@"Loading tiapp.xml - found appname = %@",[self appName]);
 	
@@ -495,10 +510,12 @@ static CGFloat toFloat (NSString* value, CGFloat def)
 
 - (void)loadApplicationID
 {
+	// we load this generated file which was packaged with the application when it was created
+	// this GUID is guaranteed to be unique for this app (and all apps)
 	NSString *basePath = [[NSBundle mainBundle] resourcePath];
 	NSString *resourcePath = [basePath stringByAppendingPathComponent:@"aid"];
-	appID = [[[NSString stringWithContentsOfFile:resourcePath] stringByReplacingOccurrencesOfString:@"\n" withString:@""] copy];
-	TRACE(@"application ID: %@",appID);
+	appGUID = [[[NSString stringWithContentsOfFile:resourcePath] stringByReplacingOccurrencesOfString:@"\n" withString:@""] copy];
+	TRACE(@"application ID: %@",appGUID);
 }
 
 -(BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication*)app
@@ -510,6 +527,23 @@ static CGFloat toFloat (NSString* value, CGFloat def)
 {
 	return [[TiController instance] appID];
 }
+
++ (NSString*) applicationGUID
+{
+	return [[TiController instance] appGUID];
+}
+
++ (NSString*) applicationVersion
+{
+	return [[TiController instance] appVersion];
+}
+
+
++ (NSString*) applicationUpdateURL
+{
+	return [[TiController instance] appUpdateURL];
+}
+
 + (NSURL*) formatURL: (NSString*)str 
 {
 	// if it looks like a URL, just use it

@@ -30,6 +30,9 @@
 	NSMutableArray *windowConfigs;
 	NSString *appName;
 	NSString *appID;
+	NSString *appGUID;
+	NSString *appUpdateURL;
+	NSString *appVersion; 
 	TiWindowConfig *pendingConfig;
 	TiDocument *activeDocument;
 }
@@ -40,6 +43,9 @@
 
 - (NSString*)appName;
 - (NSString*)appID;
+- (NSString*)appGUID;
+- (NSString*)appVersion;
+- (NSString*)appUpdateURL;
 - (TiAppArguments*)arguments;
 - (TiDocument*) createDocument:(NSURL*)url visible:(BOOL)visible config:(TiWindowConfig*)config;
 - (BOOL)shouldOpenInNewWindow;
@@ -53,8 +59,11 @@
 + (TiDocument*) getDocument:(TiWindow*)window;
 + (WebView*) getWebView:(TiWindow*)window;
 + (NSString*) applicationID;
++ (NSString*) applicationGUID;
++ (NSString*) applicationVersion;
++ (NSString*) applicationUpdateURL;
+
 + (NSURL*) formatURL: (NSString*)str;
 + (void)documentOpened:(TiDocument*)doc;
-
 
 @end

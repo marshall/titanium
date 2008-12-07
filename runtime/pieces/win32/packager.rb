@@ -12,6 +12,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License. 
+require "rexml/document"
+include REXML
 
 def is_cygwin?
 	RUBY_PLATFORM.downcase.include?("cygwin")
@@ -20,7 +22,39 @@ end
 module Titanium
   class WIN32
     class Packager
+      def Packager.die(msg)
+        $stderr.puts msg
+        puts
+        exit 1
+      end
+      def Packager.must_have_element(doc,name)
+        el = XPath.first(doc,"//#{name}")
+        self.die "<#{name}> must be present in tiapp.xml" unless (el and el.text)
+        yield el if block_given?
+      end
+      def Packager.validate
+        # VALIDATE XML
+        puts "Validating tiapp.xml ... "
+        file = File.new( File.join('config','tiapp.xml') )
+        doc = Document.new file
+        %w(id name updatesite description copyright homepage version window).each do |name|
+          self.must_have_element doc,name do |el|
+            if name == 'id'
+              re = /([\w\._]+)/.match(el.text)
+              die "<id> format is invalid. Must be in the format: [a-zA-Z0-9_.]" unless (re and re[0]==el.text) #exact match
+            end
+          end
+        end
+        XPath.each(doc,'window') do |el|
+          %w(id title url width height).each do |name|
+            self.must_have_element el,name
+          end
+        end
+        puts "Looks good ... Let's packager up!"
+      end
       def Packager.package(project,dest_dir,version)
+        self.validate
+
         pieces_dir = File.join(File.expand_path(File.dirname(__FILE__)),'pieces')
         executable = project.name
         app_folder = File.join(dest_dir,"#{project.name}.win32")
