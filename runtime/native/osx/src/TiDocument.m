@@ -265,6 +265,7 @@
 
 - (BOOL)isDocumentEdited
 {
+	// returning NO here prevents the save dialog when a window is closed
 	return NO;
 }
 
@@ -279,6 +280,7 @@
 	[url release];
 	url = [newURL copy];
 }
+
 
 - (void)setPrecedent:(TiDocument*)doc
 {
@@ -310,7 +312,7 @@
 #ifdef DEBUG	
 	for (id key in elementDick)
 	{
-		NSLog(@"key = %@",key);
+		NSLog(@"window action - key = %@",key);
 	}
 #endif 
 	DOMNode *target = [elementDick objectForKey:WebElementDOMNodeKey];

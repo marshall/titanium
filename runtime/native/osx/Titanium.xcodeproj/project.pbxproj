@@ -531,12 +531,17 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEPLOYMENT_POSTPROCESSING = YES;
 				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_DEBUGGING_SYMBOLS = full;
 				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				PREBINDING = NO;
 				SDKROOT = macosx10.5;
+				SEPARATE_STRIP = NO;
 			};
 			name = Release;
 		};

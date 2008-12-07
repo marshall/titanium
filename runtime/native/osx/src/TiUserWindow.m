@@ -19,6 +19,7 @@
 #import "TiDocument.h"
 #import "TiController.h"
 #import "WebViewPrivate.h"
+#import "TiWindowFactory.h"
  
 @implementation TiUserWindow
 
