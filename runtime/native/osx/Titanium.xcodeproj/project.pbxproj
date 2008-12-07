@@ -18,6 +18,7 @@
 		248654420EEBD8F20029AA78 /* TiNetwork.m in Sources */ = {isa = PBXBuildFile; fileRef = 248654410EEBD8F20029AA78 /* TiNetwork.m */; };
 		248654810EEBDC910029AA78 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 248654800EEBDC910029AA78 /* SystemConfiguration.framework */; };
 		248654820EEBDC910029AA78 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 248654800EEBDC910029AA78 /* SystemConfiguration.framework */; };
+		248655860EEC7C990029AA78 /* TiNetwork.m in Sources */ = {isa = PBXBuildFile; fileRef = 248654410EEBD8F20029AA78 /* TiNetwork.m */; };
 		2491AC8B0EDA375100B1ECDB /* TiController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2491AC880EDA375100B1ECDB /* TiController.m */; };
 		2491AC8C0EDA375100B1ECDB /* TiDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 2491AC8A0EDA375100B1ECDB /* TiDocument.m */; };
 		2491AC8E0EDA375E00B1ECDB /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 2491AC8D0EDA375E00B1ECDB /* main.m */; };
@@ -252,8 +253,8 @@
 			isa = PBXGroup;
 			children = (
 				248654400EEBD8F20029AA78 /* TiNetwork.h */,
-				248654410EEBD8F20029AA78 /* TiNetwork.m */,
 				240A3DE30EE8625300AFDE3E /* TiSound.h */,
+				248654410EEBD8F20029AA78 /* TiNetwork.m */,
 				240A3DE40EE8625300AFDE3E /* TiSound.m */,
 				240A3DDA0EE85DF600AFDE3E /* TiMedia.h */,
 				240A3DDB0EE85DF600AFDE3E /* TiMedia.m */,
@@ -478,6 +479,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				24B5E4860EEB995B00CF1EBE /* TiSplashScreen.m in Sources */,
+				248655860EEC7C990029AA78 /* TiNetwork.m in Sources */,
 				24B5E4880EEB995B00CF1EBE /* TiWindow.m in Sources */,
 				24B5E4610EEB992300CF1EBE /* AppProtocol.m in Sources */,
 				24B5E4620EEB992300CF1EBE /* TiProtocol.m in Sources */,

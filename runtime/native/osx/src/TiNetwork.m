@@ -17,8 +17,8 @@
  */
 #import "TiNetwork.h"
 #import <WebKit/WebKit.h>
-#import <SystemConfiguration/SCDynamicStore.h>
 #import <Foundation/Foundation.h>
+#import <SystemConfiguration/SCNetworkReachability.h>
 
 
 static void TiReachabilityCallback(SCNetworkReachabilityRef  target,

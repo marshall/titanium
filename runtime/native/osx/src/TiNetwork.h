@@ -17,7 +17,6 @@
  */
 #import <Cocoa/Cocoa.h>
 #import <WebKit/WebKit.h>
-#import "SCDynamicStore.h"
 
 @interface TiNetwork : NSObject 
 {
@@ -25,7 +24,6 @@
 	NSMutableArray* callbacks;
 	BOOL online;
 	NSTimer *timer;
-	SCDynamicStore *dynStore;
 }
 // internal
 - (id)initWithWebView:(WebView*)wv;
