@@ -17,6 +17,9 @@
 #include "ti_app.h"
 #include "ti_chrome_window.h"
 #include "ti_runtime.h"
+#include "ti_app_config.h"
+#include "base/file_util.h"
+#include "base/path_service.h"
 
 TiApp::TiApp(TiRuntime *ti_)
 	: ti(ti_)
@@ -27,14 +30,13 @@ TiApp::TiApp(TiRuntime *ti_)
 	BindMethod("getResourcePath", &TiApp::getResourcePath);
 	BindMethod("include", &TiApp::include);
 	BindMethod("toString", &TiApp::toString);
+	BindMethod("quit", &TiApp::quit);
 
-	/*
-	void beep(const CppArgumentList &args, CppVariant *result);
-	void playSound(const CppArgumentList &args, CppVariant *result);
-	void playNamedSound(const CppArgumentList &args, CppVariant *result);
-
-	void quit(const CppArgumentList &args, CppVariant *result);
-	*/
+	BindMethod("getID", &TiApp::getID);
+	BindMethod("getGUID", &TiApp::getGUID);
+	BindMethod("getUpdateURL", &TiApp::getUpdateURL);
+	BindMethod("getVersion", &TiApp::getVersion);
+	BindMethod("getName", &TiApp::getName);
 
 }
  
@@ -83,25 +85,43 @@ void TiApp::include(const CppArgumentList &args, CppVariant *result)
 	}
 }
 
-void TiApp::beep(const CppArgumentList &args, CppVariant *result)
-{
-	// TODO
-}
-
-void TiApp::playSound(const CppArgumentList &args, CppVariant *result)
-{
-	// TODO
-}
-
-void TiApp::playNamedSound(const CppArgumentList &args, CppVariant *result)
-{
-	// TODO
-}
-
 void TiApp::quit(const CppArgumentList &args, CppVariant *result)
 {
-	// TODO
+	TiChromeWindow::DestroyWindow(TiChromeWindow::getMainWindow());
 }
+
+void TiApp::getID(const CppArgumentList &args, CppVariant *result)
+{
+	result->Set(TiAppConfig::instance()->getAppID());
+}
+
+void TiApp::getGUID(const CppArgumentList &args, CppVariant *result)
+{
+	std::string guid;
+	std::wstring path;
+	PathService::Get(base::DIR_EXE, &path);
+	file_util::AppendToPath(&path, L"Resources");
+	file_util::AppendToPath(&path, L"aid");
+
+	file_util::ReadFileToString(path, &guid);
+	result->Set(guid);
+}
+
+void TiApp::getUpdateURL(const CppArgumentList &args, CppVariant *result)
+{
+	result->Set(TiAppConfig::instance()->getUpdateSite());
+}
+
+void TiApp::getVersion(const CppArgumentList &args, CppVariant *result)
+{
+	result->Set(TiAppConfig::instance()->getVersion());
+}
+
+void TiApp::getName(const CppArgumentList &args, CppVariant *result)
+{
+	result->Set(TiAppConfig::instance()->getAppName());
+}
+
 
 void TiApp::toString(const CppArgumentList &args, CppVariant *result)
 {

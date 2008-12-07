@@ -165,7 +165,7 @@ void TiMenu::showTrayMenu ()
 void TiMenu::removeTrayMenu()
 {
 	if (trayMenu != NULL) {
-		Shell_NotifyIcon(NIM_DELETE, &notifyIconData);
+		Shell_NotifyIcon(NIM_DELETE, &(trayMenu->notifyIconData));
 	}
 }
 

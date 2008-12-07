@@ -74,6 +74,8 @@ TiAppConfig::TiAppConfig(std::wstring& xmlfile)
 					homepage = nodeValue(node);
 				} else if (nodeNameEquals(node, "version")) {
 					version = nodeValue(node);
+				} else if (nodeNameEquals(node, "updatesite")) {
+					updateSite = nodeValue(node);
 				} else if (nodeNameEquals(node, "window")) {
 					this->windows.push_back(new TiWindowConfig((xmlElementPtr)node));
 				} else if (nodeNameEquals(node, "icon")) {

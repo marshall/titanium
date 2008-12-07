@@ -287,7 +287,7 @@ void TiChromeWindow::setTiWindowConfig(TiWindowConfig *tiWindowConfig)
 
 void TiChromeWindow::reloadTiWindowConfig()
 {
-
+	host->webview()->GetMainFrame()->SetAllowsScrolling(tiWindowConfig->isUsingScrollbars());
 	SetWindowText(hWnd, UTF8ToWide(tiWindowConfig->getTitle()).c_str());
 
 	long windowStyle = GetWindowLong(hWnd, GWL_STYLE);
