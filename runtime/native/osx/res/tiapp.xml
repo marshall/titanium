@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ti:app xmlns:ti="http://ti.appcelerator.org" xmlns:appc="http://www.appcelerator.org">
 	<name>Titanium Test</name>
+	<id>com.tweetanium</id>
+   <name>Tweetanium</name>
+   <description>Titanium-based twitter client application</description>
+   <copyright>Copyright (c) 2008 Appcelerator, Inc.</copyright>
+   <homepage>http://tweetanium.com</homepage>
+   <updatesite>http://updatesite.titaniumapp.com</updatesite>
+   <version>0.1</version>
 	<window>
 		<id>main</id>
 		<width>400</width>
