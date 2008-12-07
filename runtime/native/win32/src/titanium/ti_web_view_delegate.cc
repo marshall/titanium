@@ -172,7 +172,7 @@ const std::string kCustomTargetParam = "ti_Target_Win32";
 
 bool TiWebViewDelegate::ExecuteCustomTarget(std::string &customTarget, std::string newURL)
 {
-	if (customTarget == "systemBrowser")
+	if (LowerCaseEqualsASCII(customTarget, "systembrowser"))
 	{
 		ShellExecute(NULL, L"open", UTF8ToWide(newURL).c_str(), NULL, NULL, SW_SHOWNORMAL);
 
@@ -188,7 +188,6 @@ WindowOpenDisposition TiWebViewDelegate::DispositionForNavigationAction(WebView 
 											WindowOpenDisposition disposition,
 											bool is_redirect)
 {
-	
 	GURL url = request->GetURL();
 	if (url.has_query()) {
 		std::string queryString = url.query();
@@ -223,7 +222,6 @@ WindowOpenDisposition TiWebViewDelegate::DispositionForNavigationAction(WebView 
 WebView* TiWebViewDelegate::CreateWebView(WebView* webview, bool user_gesture)
 {
 	TiChromeWindow *window = new TiChromeWindow(TiChromeWindow::getMainWindow()->getInstanceHandle(), "");
-	window->open();
 
 	return window->getHost()->webview();
 }
@@ -236,10 +234,7 @@ void TiWebViewDelegate::DidCommitLoadForFrame(WebView* webview, WebFrame* frame,
 		initializedFrames.erase(iter);
 	}
 
-	if (frame == webview->GetMainFrame()) {
-		// change the corresponding URL in TiWindowConfig
-		//window->getw
-	}
+	window->showWindow(SW_HIDE);
 }
 
 void TiWebViewDelegate::DidFinishLoadForFrame(WebView* webview, WebFrame* frame) {

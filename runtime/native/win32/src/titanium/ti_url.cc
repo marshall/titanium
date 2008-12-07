@@ -92,6 +92,7 @@ bool TiURL::urlMatchesPattern(GURL& url, std::string& pattern)
 	}
 
 	//remove the trailing slash
+	std::string urlPattern = pattern;
 	std::string spec = url.spec();
 	if (spec.at(spec.length()-1) == '/') {
 		spec = spec.substr(0, spec.length() - 1);
@@ -101,20 +102,14 @@ bool TiURL::urlMatchesPattern(GURL& url, std::string& pattern)
 		spec = spec.substr(0, spec.find("?"));
 	}
 
-	
-	/*if (LowerCaseEqualsASCII(TiAppConfig::instance()->getAppID(), url.host().c_str())) {
-		std::string newURL = spec;
-		std::string appId = TiAppConfig::instance()->getAppID();
-		std::transform(appId.begin(), appId.end(), appId.begin(), (int(*)(int)) tolower);
+	if (!LowerCaseEqualsASCII(TiAppConfig::instance()->getAppID(), url.host().c_str())) {
+		std::string appID = TiAppConfig::instance()->getAppID();
+		std::transform(appID.begin(), appID.end(), appID.begin(), (int(*)(int)) tolower);
 
-		stringReplaceAll(&newURL, appId+"/", "");
+		stringReplaceAll(&urlPattern, appID+"/", "");
+	}
 
-		if (wildcmp(pattern.c_str(), newURL.c_str()))
-			return true;
-		return false;
-	}*/
-
-	if (wildcmp(pattern.c_str(), spec.c_str()))
+	if (wildcmp(urlPattern.c_str(), spec.c_str()))
 		return true;
 
 	return false;
