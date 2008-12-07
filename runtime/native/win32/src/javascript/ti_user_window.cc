@@ -133,7 +133,8 @@ void TiUserWindow::show(const CppArgumentList &args, CppVariant *result)
 
 void TiUserWindow::open(const CppArgumentList &args, CppVariant *result)
 {
-	window->open();
+	window->showWindow(config->isVisible() ? SW_SHOW : SW_HIDE);
+	ShowWindow(window->getHost()->window_handle(), config->isVisible() ? SW_SHOW : SW_HIDE);
 }
 
 void TiUserWindow::close(const CppArgumentList &args, CppVariant *result)
@@ -238,10 +239,22 @@ void TiUserWindow::getHeight(const CppArgumentList &args, CppVariant *result)
 	result->Set(config->getHeight());
 }
 
+int NumberToInt(const CppVariant &variant)
+{
+	if (variant.isDouble()) {
+		return (int)variant.ToDouble();
+	}
+
+	return variant.ToInt32();
+}
+
 void TiUserWindow::setHeight(const CppArgumentList &args, CppVariant *result)
 {
 	if (args.size() > 0 && args[0].isNumber()) {
-		config->setHeight((int)args[0].ToInt32());
+		int height = (int)args[0].ToInt32();
+
+		config->setHeight(height);
+
 		updateWindow();
 	}
 }
@@ -254,7 +267,7 @@ void TiUserWindow::getWidth(const CppArgumentList &args, CppVariant *result)
 void TiUserWindow::setWidth(const CppArgumentList &args, CppVariant *result)
 {
 	if (args.size() > 0 && args[0].isNumber()) {
-		config->setWidth((int)args[0].ToInt32());
+		config->setWidth(NumberToInt(args[0]));
 		updateWindow();
 	}
 }
@@ -267,7 +280,7 @@ void TiUserWindow::getX(const CppArgumentList &args, CppVariant *result)
 void TiUserWindow::setX(const CppArgumentList &args, CppVariant *result)
 {
 	if (args.size() > 0 && args[0].isNumber()) {
-		config->setX((int)args[0].ToInt32());
+		config->setX(NumberToInt(args[0]));
 		updateWindow();
 	}
 }
@@ -280,7 +293,7 @@ void TiUserWindow::getY(const CppArgumentList &args, CppVariant *result)
 void TiUserWindow::setY(const CppArgumentList &args, CppVariant *result)
 {
 	if (args.size() > 0 && args[0].isNumber()) {
-		config->setY((int)args[0].ToInt32());
+		config->setY(NumberToInt(args[0]));
 		updateWindow();
 	}
 }
@@ -365,6 +378,8 @@ void TiUserWindow::setVisible(const CppArgumentList &args, CppVariant *result)
 	if (args.size() > 0 && args[0].isBool())
 	{
 		config->setVisible(args[0].ToBoolean());
+		window->showWindow(args[0].ToBoolean() ? SW_SHOW : SW_HIDE);
+
 		updateWindow();
 	}
 }
