@@ -30,8 +30,7 @@
 	NSMutableArray *windows;
 }
 // private, internal only
-- (void)setProperty:(NSString *)name sel:(SEL)sel script:(WebScriptObject*)script win:(TiUserWindow*)win;
-- (void)addWindow:(TiUserWindow*)window;
+	- (void)addWindow:(TiUserWindow*)window;
 - (void)removeWindow:(TiUserWindow*)window;
 
 - (id)initWithWindow:(TiWindow *)win; 

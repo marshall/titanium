@@ -18,13 +18,11 @@
 		2427BAF70EDA4C96007098CC /* tiapp.xml in Resources */ = {isa = PBXBuildFile; fileRef = 2427BAF60EDA4C96007098CC /* tiapp.xml */; };
 		246748240EDD2D6A00CE52E9 /* TiBounds.m in Sources */ = {isa = PBXBuildFile; fileRef = 246748230EDD2D6A00CE52E9 /* TiBounds.m */; };
 		24674AE60EE1D6C400CE52E9 /* test.html in Resources */ = {isa = PBXBuildFile; fileRef = 24674AE50EE1D6C400CE52E9 /* test.html */; };
-		24674DCF0EE2012C00CE52E9 /* test.js in Sources */ = {isa = PBXBuildFile; fileRef = 24674DCE0EE2012C00CE52E9 /* test.js */; };
 		24674DDD0EE2028300CE52E9 /* test.js in Resources */ = {isa = PBXBuildFile; fileRef = 24674DCE0EE2012C00CE52E9 /* test.js */; };
 		24674E600EE20E5800CE52E9 /* aid in Resources */ = {isa = PBXBuildFile; fileRef = 24674E5F0EE20E5800CE52E9 /* aid */; };
 		246755410EE31EEC00CE52E9 /* tray.png in Resources */ = {isa = PBXBuildFile; fileRef = 246755400EE31EEC00CE52E9 /* tray.png */; };
 		24779F9C0EE90F8300F4FF2E /* notification.html in Resources */ = {isa = PBXBuildFile; fileRef = 24779F9B0EE90F8300F4FF2E /* notification.html */; };
 		2477A0430EE9185F00F4FF2E /* notification.png in Resources */ = {isa = PBXBuildFile; fileRef = 2477A0420EE9185F00F4FF2E /* notification.png */; };
-		2477A1360EE9B93D00F4FF2E /* notification.js in Sources */ = {isa = PBXBuildFile; fileRef = 2477A1350EE9B93D00F4FF2E /* notification.js */; };
 		2477A1370EE9B94000F4FF2E /* notification.js in Resources */ = {isa = PBXBuildFile; fileRef = 2477A1350EE9B93D00F4FF2E /* notification.js */; };
 		2491AC8B0EDA375100B1ECDB /* TiController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2491AC880EDA375100B1ECDB /* TiController.m */; };
 		2491AC8C0EDA375100B1ECDB /* TiDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 2491AC8A0EDA375100B1ECDB /* TiDocument.m */; };
@@ -418,11 +416,9 @@
 				24D022E10EDA7DD0005E15AE /* AppProtocol.m in Sources */,
 				24D022E20EDA7DD0005E15AE /* TiProtocol.m in Sources */,
 				246748240EDD2D6A00CE52E9 /* TiBounds.m in Sources */,
-				24674DCF0EE2012C00CE52E9 /* test.js in Sources */,
 				240A3DC60EE85CED00AFDE3E /* TiAppMenu.m in Sources */,
 				240A3DDC0EE85DF600AFDE3E /* TiMedia.m in Sources */,
 				240A3DE50EE8625300AFDE3E /* TiSound.m in Sources */,
-				2477A1360EE9B93D00F4FF2E /* notification.js in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

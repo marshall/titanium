@@ -16,11 +16,11 @@
  * limitations under the License. 
  */
 
-extern void TiLog(const char *log);
+extern void TiLog(NSString *);
 
 #ifdef DEBUG
 	#define TRACE  NSLog
 #else
-	#define TRACE(s, ...)  TiLog([[NSString stringWithFormat:@"[%@] <%p %@:(%d)> %@\n", [NSDate date], self, [[NSString stringWithUTF8String:__FILE__] lastPathComponent], __LINE__, [NSString stringWithFormat:(s), ##__VA_ARGS__]] UTF8String])
+	#define TRACE(s, ...)  if(s)TiLog([NSString stringWithFormat:@"[%@] <%p %@:(%d)> %@\n", [NSDate date], self, [[NSString stringWithUTF8String:__FILE__] lastPathComponent], __LINE__, [NSString stringWithFormat:(s), ##__VA_ARGS__]])
 #endif
 

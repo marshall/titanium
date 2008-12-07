@@ -432,10 +432,14 @@
 
 - (void)setURL:(NSString *)url
 {
-	TRACE(@"setURL called for %x with %@",self,url);
+	TRACE(@"setURL called for %x with %@",self,(url ? url : @"<nil>"));
 	if ([self hasWindow])
 	{
 		NSURL *aurl = [TiController formatURL:url];
+		if ([aurl isEqual:[[window config] getURL]])
+		{
+			return; // already set
+		}
 		[[window config] setURL:url];
 		[doc loadURL:aurl];
 	}

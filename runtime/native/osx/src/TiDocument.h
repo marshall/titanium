@@ -33,11 +33,13 @@
 	TiUserWindow *userWindow;
 	NSMutableArray *childWindows;
 	BOOL scriptCleared;
+	BOOL initialDisplay;
 	WebInspector *inspector;
 	NSMutableDictionary *javascripts; //TODO: probably should only be loaded if in devlaunch mode
 }
 
 // these are used internally only
+- (void)setInitialShow:(BOOL)yn;
 - (void)setPrecedent:(TiDocument*)doc;
 - (void)closePrecedent;
 - (void)showInspector;

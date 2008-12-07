@@ -54,6 +54,7 @@
 + (WebView*) getWebView:(TiWindow*)window;
 + (NSString*) applicationID;
 + (NSURL*) formatURL: (NSString*)str;
++ (void)documentOpened:(TiDocument*)doc;
 
 
 @end
