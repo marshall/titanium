@@ -27,6 +27,7 @@
 @synthesize Menu;
 @synthesize Window;
 @synthesize Media;
+@synthesize Network;
 
 - (id)initWithWindow:(TiWindow*)win 
 {
@@ -44,6 +45,7 @@
 		Menu = [[TiMenuFactory alloc] initWithWebView:webView];
 		Window = [[TiWindowFactory alloc] initWithWindow:window];
 		Media = [[TiMedia alloc] initWithWebView:webView];
+		Network = [[TiNetwork alloc] initWithWebView:webView];
 	}
 	return self;
 }
@@ -61,6 +63,7 @@
 	[Menu release];
 	[Window release];
 	[Media release];
+	[Network release];
 	[super dealloc];
 }
 
@@ -104,6 +107,9 @@
 	}
 	else if (strcmp(name, "Media") == 0) {
 		return @"Media";
+	}
+	else if (strcmp(name, "Network") == 0) {
+		return @"Network";
 	}
 	return nil;
 }
