@@ -59,6 +59,7 @@ void TiWindowFactory::createWindow(const CppArgumentList &args, CppVariant *resu
 			BindIntAttribute(args[0], "height", config, setHeight);
 			BindDoubleAttribute(args[0], "transparency", config, setTransparency);
 			BindStringAttribute(args[0], "url", config, setURL);
+			BindBoolAttribute(args[0], "visible", config, setVisible);
 
 			window = new TiUserWindow(config);
 		}

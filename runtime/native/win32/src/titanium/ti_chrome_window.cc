@@ -282,6 +282,8 @@ void TiChromeWindow::closePopup()
 void TiChromeWindow::setTiWindowConfig(TiWindowConfig *tiWindowConfig)
 {
 	this->tiWindowConfig = tiWindowConfig;
+	this->tiUserWindow->setTiWindowConfig(tiWindowConfig);
+
 	reloadTiWindowConfig();
 }
 

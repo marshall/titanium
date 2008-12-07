@@ -36,6 +36,8 @@ public:
 	TiUserWindow(TiChromeWindow *window);
 	TiUserWindow(TiWindowConfig *config);
 
+	void setTiWindowConfig(TiWindowConfig *config) { this->config = config; }
+
 	void hide(const CppArgumentList &args, CppVariant *result);
 	void show(const CppArgumentList &args, CppVariant *result);
 	void open(const CppArgumentList &args, CppVariant *result);

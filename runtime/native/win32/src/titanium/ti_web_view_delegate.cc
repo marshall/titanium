@@ -135,8 +135,13 @@ void TiWebViewDelegate::GetWindowRect(WebWidget* webwidget, gfx::Rect* out_rect)
 // synchronously?
 void TiWebViewDelegate::SetWindowRect(WebWidget* webwidget, const gfx::Rect& rect) {
 	if (webwidget == window->getHost()->webwidget()) {
-		MoveWindow(window->getWindowHandle(), rect.x(), rect.y(), rect.width(), rect.height(), FALSE);
+		// Update our window model, then actually do the move
+		window->getTiWindowConfig()->setX(rect.x());
+		window->getTiWindowConfig()->setY(rect.y());
+		window->getTiWindowConfig()->setWidth(rect.width());
+		window->getTiWindowConfig()->setHeight(rect.height());
 
+		MoveWindow(window->getWindowHandle(), rect.x(), rect.y(), rect.width(), rect.height(), FALSE);
 	} else if (webwidget == window->getPopupHost()->webwidget()) {
 		MoveWindow(window->getPopupWindowHandle(),
 			rect.x(), rect.y(), rect.width(), rect.height(), FALSE);
@@ -172,7 +177,7 @@ const std::string kCustomTargetParam = "ti_Target_Win32";
 
 bool TiWebViewDelegate::ExecuteCustomTarget(std::string &customTarget, std::string newURL)
 {
-	if (customTarget == "systemBrowser")
+	if (LowerCaseEqualsASCII(customTarget, "systembrowser"))
 	{
 		ShellExecute(NULL, L"open", UTF8ToWide(newURL).c_str(), NULL, NULL, SW_SHOWNORMAL);
 
@@ -188,7 +193,6 @@ WindowOpenDisposition TiWebViewDelegate::DispositionForNavigationAction(WebView 
 											WindowOpenDisposition disposition,
 											bool is_redirect)
 {
-	
 	GURL url = request->GetURL();
 	if (url.has_query()) {
 		std::string queryString = url.query();
@@ -223,7 +227,6 @@ WindowOpenDisposition TiWebViewDelegate::DispositionForNavigationAction(WebView 
 WebView* TiWebViewDelegate::CreateWebView(WebView* webview, bool user_gesture)
 {
 	TiChromeWindow *window = new TiChromeWindow(TiChromeWindow::getMainWindow()->getInstanceHandle(), "");
-	window->open();
 
 	return window->getHost()->webview();
 }
@@ -236,9 +239,21 @@ void TiWebViewDelegate::DidCommitLoadForFrame(WebView* webview, WebFrame* frame,
 		initializedFrames.erase(iter);
 	}
 
-	if (frame == webview->GetMainFrame()) {
-		// change the corresponding URL in TiWindowConfig
-		//window->getw
+	TiWindowConfig *matchedWindow = NULL;
+	TiWindowConfigList::iterator cIter = TiAppConfig::instance()->getWindows().begin();
+	for (; cIter != TiAppConfig::instance()->getWindows().end() ; cIter++)
+	{
+		TiWindowConfig *window = (*cIter);
+		if (TiURL::urlMatchesPattern(static_cast<GURL>(webview->GetMainFrame()->GetURL()), window->getURL())) {
+			matchedWindow = window;
+			break;
+		}
+	}
+
+	window->showWindow(SW_HIDE);
+
+	if (matchedWindow != NULL) {
+		window->setTiWindowConfig(matchedWindow);
 	}
 }
 
@@ -252,20 +267,7 @@ void TiWebViewDelegate::DidFinishLoadForFrame(WebView* webview, WebFrame* frame)
 
 void TiWebViewDelegate::DidStopLoading(WebView* webview)
 {
-	TiWindowConfig *matchedWindow = NULL;
-	TiWindowConfigList::iterator iter = TiAppConfig::instance()->getWindows().begin();
-	for (; iter != TiAppConfig::instance()->getWindows().end() ; iter++)
-	{
-		TiWindowConfig *window = (*iter);
-		if (TiURL::urlMatchesPattern(static_cast<GURL>(webview->GetMainFrame()->GetURL()), window->getURL())) {
-			matchedWindow = window;
-			break;
-		}
-	}
-
-	if (matchedWindow != NULL) {
-		window->setTiWindowConfig(matchedWindow);
-	}
+	
 }
 
 // Owners depend on the delegates living as long as they do, so we ref them.
