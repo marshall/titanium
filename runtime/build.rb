@@ -80,6 +80,7 @@ END
                timer
                workerpool
                notification
+               update
                tracker
                epilog)
 

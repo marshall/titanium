@@ -437,7 +437,7 @@ static CGFloat toFloat (NSString* value, CGFloat def)
 	appVersion = [elementText(root,@"version") copy];
 	appUpdateURL = [elementText(root,@"updatesite") copy];
 	
-	TRACE(@"Loading tiapp.xml - found appname = %@",[self appName]);
+	TRACE(@"Loading tiapp.xml - found appname = %@, version = %@, id = %@, updateurl = %@",appName,appVersion,appID,appUpdateURL);
 	
 	//	if (containsElement(root, @"appc:endpoint")) 
 	//	{
@@ -521,6 +521,11 @@ static CGFloat toFloat (NSString* value, CGFloat def)
 -(BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication*)app
 {
 	return NO;
+}
+
++ (NSString*) applicationName
+{
+	return [[TiController instance] appName];
 }
 
 + (NSString*) applicationID

@@ -58,6 +58,7 @@
 + (TiController*) instance;
 + (TiDocument*) getDocument:(TiWindow*)window;
 + (WebView*) getWebView:(TiWindow*)window;
++ (NSString*) applicationName;
 + (NSString*) applicationID;
 + (NSString*) applicationGUID;
 + (NSString*) applicationVersion;

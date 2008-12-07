@@ -3,13 +3,24 @@
 			loaded = true;
 			$.each(readies,function()
 			{
-				this.call(ti,$);
+				var fn = this;
+				try
+				{
+					fn.call(window,$);
+				}
+				catch (ReadyException)
+				{
+					ti.App.debug("Ready function failed: "+ReadyException+", line: "+ReadyException.line);
+					ti.App.debug("Ready script was: "+String(fn));
+					ti.App.debug("===============================================================");
+				}
 			});
 			readies = null;
 		}
-	    catch(E)
+	    catch(TiException)
 	    {
-			alert("Caught Exception in Framework: "+E+" at line: "+E.line);
+			ti.App.debug("Caught Exception in Framework: "+TiException+" at line: "+TiException.line);
+			alert("Caught Exception in Framework: "+TiException+" at line: "+TiException.line);
 	 	}
    });
 	

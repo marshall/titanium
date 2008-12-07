@@ -34,6 +34,16 @@
 - (void)includeFromObject:(NSString *)s webScriptObject:(WebScriptObject*)object;
 - (void)debug:(NSString *)s;
 - (void)quit;
+
+// used by the update service
+- (NSString*)getGUID;
+- (NSString*)getID;
+- (NSString*)getVersion;
+- (NSString*)getUpdateURL;
+- (NSString*)getName;
+
+
+//TODO: these need to go away
 - (void)hide;
 - (void)show;
 - (void)activate;
@@ -41,7 +51,5 @@
 - (void)setSize:(int)width height:(int)height animate:(int)animate;
 - (void)setBackgroundColor:(NSString*)color;
 - (NSString*)resourcePath;
-
-
 
 @end

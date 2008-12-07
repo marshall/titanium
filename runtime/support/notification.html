@@ -11,6 +11,10 @@
 			border:none;
 			font-family:arial,sans-serif;
 		}
+		img 
+		{ 
+			border:none; 
+		}
 		#body
 		{
 			opacity:.75;
@@ -28,7 +32,10 @@
 			right:10px;
 			opacity:.80;
 		}
-		
+		#content a
+		{
+			color:#fff;
+		}
 		#message
 		{
 			font-size:13px;
@@ -59,6 +66,7 @@
 		(function($)
 		{
 			// fix opacity rendering issue in chrome (for now)
+			// 
 			if (ti.platform == "win32") {
 				$("#content").css("opacity", "1");
 				$("body").css("opacity", "1");
@@ -89,13 +97,15 @@
 				$("#message").html(qs.message||'');
 				if (qs.icon)
 				{
+					$("#content").css('left','');
 					var img = $('#image > img');
 					img.get(0).src = qs.icon;
-					img.css('visibility','visible');
+					img.css('visibility','visible').css('display','');
 				}
 				else
 				{
-					$("#image > img").css('visibility','hidden');
+					$("#image > img").css('display','none');
+					$("#content").css('left','10px');
 				}
 			}
 			catch(E)

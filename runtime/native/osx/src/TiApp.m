@@ -46,6 +46,37 @@
 	return @"[TiApp native]";
 }
 
+#pragma mark -
+#pragma mark Update Service 
+
+// these used by the update service
+- (NSString*)getGUID
+{
+	return [TiController applicationGUID];
+}
+
+- (NSString*)getID
+{
+	return [TiController applicationID];
+}
+
+- (NSString*)getName
+{
+	return [TiController applicationName];
+}
+
+- (NSString*)getVersion
+{
+	return [TiController applicationVersion];
+}
+
+- (NSString*)getUpdateURL
+{
+	return [TiController applicationUpdateURL];
+}
+
+#pragma mark -
+
 - (void)include:(NSString *)s 
 {
 	[self includeFromObject:s webScriptObject:[webView windowScriptObject]];
@@ -87,12 +118,14 @@
 	}
 }
 
-
 - (void)quit 
 {
 	[NSApp terminate:self];
 }
 
+
+#pragma mark -
+#pragma mark REMOVE THESE
 
 - (void)activate 
 {
@@ -220,6 +253,16 @@
 		return @"setBackgroundColor";
 	} else if (sel == @selector(getResourcePath)) {
 		return @"getResourcePath";
+	} else if (sel == @selector(getID)) {
+		return @"getID";
+	} else if (sel == @selector(getGUID)) {
+		return @"getGUID";
+	} else if (sel == @selector(getUpdateURL)) {
+		return @"getUpdateURL";
+	} else if (sel == @selector(getVersion)) {
+		return @"getVersion";
+	} else if (sel == @selector(getName)) {
+		return @"getName";
 	} else {
 		return nil;
 	}

@@ -17,71 +17,78 @@
 <script>
    ti.ready(function($)
    {
-         var db = new ti.Database;
-         db.open("jeff-test");
-         db.execute("create table if not exists Test (Phrase text, Timestamp int)");
-         db.execute("insert into Test values(?,?)", ['Jeff',new Date().getTime()]);
-         var rs = db.execute("select count(*) from Test");
-         while (rs.isValidRow())
-         {
-            $("#status").html("Found " + rs.field(0) + " database entries");
-            rs.next();
-         }
-         rs.close();
+		try
+		{
+			 var db = new ti.Database;
+			 db.open("jeff-test");
+			 db.execute("create table if not exists Test (Phrase text, Timestamp int)");
+			 db.execute("insert into Test values(?,?)", ['Jeff',new Date().getTime()]);
+			 var rs = db.execute("select count(*) from Test");
+			 while (rs.isValidRow())
+			 {
+				$("#status").html("Found " + rs.field(0) + " database entries");
+				rs.next();
+			 }
+			 rs.close();
+		}
+		catch (E)
+		{
+		  alert("Gears database error: "+E);
+		}
 
-			ti.Menu.createTrayMenu('tray.png', null, function()
+		ti.Menu.createTrayMenu('tray.png', null, function()
+		{
+			//alert("w00t!");
+			if (ti.Window.currentWindow.isVisible())
 			{
-				//alert("w00t!");
-				if (ti.Window.currentWindow.isVisible())
-				{
-					ti.Window.currentWindow.hide();
-				}
-				else
-				{
-					ti.Window.currentWindow.show();
-				}
+				ti.Window.currentWindow.hide();
+			}
+			else
+			{
+				ti.Window.currentWindow.show();
+			}
+		});
+
+		try
+		{
+				var count = 4;
+				var notification = new window.foo.Notification;
+				var ps = count > 1 ? 's':'';
+				notification.setTitle('New Tweet'+ps+' received');
+				notification.setMessage("<a href='http://google.com' target='ti:systembrowser'>Click me</a>");
+				notification.setIcon('app://notification.png');
+				notification.show();
+		}
+		catch (E)
+		{
+			alert(E);
+		}
+
+		try
+		{
+			var menu = ti.Menu.createAppMenu("Window");
+			menu.setTitle("foo");
+			var item = menu.addItem("Jeff");
+			var sep = menu.addSeparator();
+			menu.removeSeparator(sep);
+			item.setTitle("Jeff Haynie");	
+			item.setAction(function()
+			{
+				alert("W000T!");
 			});
 
-			try
-			{
-					var count = 4;
-					var notification = new window.foo.Notification;
-					var ps = count > 1 ? 's':'';
-					notification.setTitle('New Tweet'+ps+' received');
-					notification.setMessage(count+' new tweet'+ps+' received');
-					notification.setIcon('app://notification.png');
-					notification.show();
-			}
-			catch (E)
-			{
-				alert(E);
-			}
 
-			try
+			var sound = ti.Media.createSound("app://test.mp3");
+			sound.onComplete(function(yn)
 			{
-				var menu = ti.Menu.createAppMenu("Window");
-				menu.setTitle("foo");
-				var item = menu.addItem("Jeff");
-				var sep = menu.addSeparator();
-				menu.removeSeparator(sep);
-				item.setTitle("Jeff Haynie");	
-				item.setAction(function()
-				{
-					alert("W000T!");
-				});
-
-
-				var sound = ti.Media.createSound("app://test.mp3");
-				sound.onComplete(function(yn)
-				{
-					ti.Media.beep();
-				});
-				sound.play();
-			}
-			catch(E)
-			{
-				alert(E);
-			}
+				ti.Media.beep();
+			});
+			sound.play();
+		}
+		catch(E)
+		{
+			alert(E);
+		}
    });
 </script>
 

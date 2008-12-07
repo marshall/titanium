@@ -15,3 +15,7 @@ if (!gearsFactory.create)
 	ti.App.debug("Gears plugin didn't load and is unavailable!");
 	gearsFactory  = null;
 }
+else
+{
+	ti.App.debug("Gears plugin loaded. Awesome!");
+}
