@@ -131,6 +131,11 @@ END
     [js.path,debug_js.path]
 end
 
+task :js do
+	build_js
+	puts "titanium.js and titanium-debug.js were assembled in #{STAGE_DIR}"
+end
+
 def package_pieces(os)
   build_dir = "#{File.dirname(__FILE__)}/pieces/#{os.to_s}" 
   build_config = get_config(:titanium, os)
