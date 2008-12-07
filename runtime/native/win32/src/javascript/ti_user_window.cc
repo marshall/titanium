@@ -38,6 +38,14 @@ TiUserWindow::TiUserWindow (const char *id, bool usingChrome)
 	bind();
 }
 
+TiUserWindow::TiUserWindow(TiWindowConfig *config_)
+	: config(config_)
+{
+	window = new TiChromeWindow(TiChromeWindow::getMainWindow()->getInstanceHandle(), config);
+	
+	bind();
+}
+
 void TiUserWindow::bind()
 {
 	BindMethod("hide", &TiUserWindow::hide);

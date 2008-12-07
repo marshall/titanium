@@ -29,12 +29,12 @@ private:
 	TiChromeWindow *window;
 	TiWindowConfig *config;
 
-	void updateWindow();
 	void bind();
 
 public:
 	TiUserWindow(const char *id = NULL, bool usingChrome = false);
 	TiUserWindow(TiChromeWindow *window);
+	TiUserWindow(TiWindowConfig *config);
 
 	void hide(const CppArgumentList &args, CppVariant *result);
 	void show(const CppArgumentList &args, CppVariant *result);
@@ -95,6 +95,8 @@ public:
 	void activate(const CppArgumentList &args, CppVariant *result);	// same as restore
 	void minimize(const CppArgumentList &args, CppVariant *result);
 	void maximize(const CppArgumentList &args, CppVariant *result);
+	
+	void updateWindow();
 };
 
 #endif

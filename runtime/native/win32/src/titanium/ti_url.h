@@ -18,6 +18,7 @@
 #define TI_URL_H_
 
 #include <string>
+#include <vector>
 #include "base/path_service.h"
 #include "base/file_util.h"
 #include "base/string_util.h"
@@ -29,6 +30,17 @@
 
 class TiURL
 {
+	static std::vector<std::string> tiResourceTypes;
+	static std::vector<std::string> setupTiResourceTypes() {
+		std::vector<std::string> types;
+		types.push_back("notification");
+		types.push_back("plugin");
+
+		return types;
+	}
+
+	static URLRequestJob* createTiResourceRequestJob(URLRequest *urlRequest, std::string& resourceType, GURL& url);
+
 public:
 	static void init();
 	static bool isHost(std::string &host);

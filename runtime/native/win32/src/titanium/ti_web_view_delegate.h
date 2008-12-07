@@ -137,8 +137,8 @@ public:
   // is closed. This is used to support |window.showModalDialog|.
   virtual void RunModal(WebWidget* webwidget);
 
-	virtual WebView* CreateWebView(WebView *webView, bool user_gesture);
-	virtual void DidStopLoading(WebView *webView);
+  virtual WebView* CreateWebView(WebView *webView, bool user_gesture);
+  virtual void DidStopLoading(WebView *webView);
 
   // Owners depend on the delegates living as long as they do, so we ref them.
   virtual void AddRef();
@@ -162,6 +162,8 @@ public:
  
   virtual void DidFinishLoadForFrame(WebView* webview,
                                      WebFrame* frame);
+  virtual void DidCommitLoadForFrame(WebView* webview, WebFrame* frame,
+                                     bool is_new_navigation);
  
   virtual void RunJavaScriptAlert(WebView* webview, const std::wstring& message);
  

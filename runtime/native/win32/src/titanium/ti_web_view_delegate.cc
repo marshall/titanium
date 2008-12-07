@@ -135,7 +135,8 @@ void TiWebViewDelegate::GetWindowRect(WebWidget* webwidget, gfx::Rect* out_rect)
 // synchronously?
 void TiWebViewDelegate::SetWindowRect(WebWidget* webwidget, const gfx::Rect& rect) {
 	if (webwidget == window->getHost()->webwidget()) {
-		// ignored
+		MoveWindow(window->getWindowHandle(), rect.x(), rect.y(), rect.width(), rect.height(), FALSE);
+
 	} else if (webwidget == window->getPopupHost()->webwidget()) {
 		MoveWindow(window->getPopupWindowHandle(),
 			rect.x(), rect.y(), rect.width(), rect.height(), FALSE);
@@ -225,6 +226,24 @@ WebView* TiWebViewDelegate::CreateWebView(WebView* webview, bool user_gesture)
 	window->open();
 
 	return window->getHost()->webview();
+}
+
+void TiWebViewDelegate::DidCommitLoadForFrame(WebView* webview, WebFrame* frame, bool is_new_navigation) {
+	std::vector<WebFrame*>::iterator iter;
+
+	iter = std::find(initializedFrames.begin(), initializedFrames.end(), frame);
+	if (iter != initializedFrames.end()) {
+		initializedFrames.erase(iter);
+	}
+
+	if (frame == webview->GetMainFrame()) {
+		// change the corresponding URL in TiWindowConfig
+		//window->getw
+	}
+}
+
+void TiWebViewDelegate::DidFinishLoadForFrame(WebView* webview, WebFrame* frame) {
+	initRuntime(frame);
 }
 
 void TiWebViewDelegate::DidStopLoading(WebView* webview)
@@ -317,10 +336,6 @@ void TiWebViewDelegate::AddMessageToConsole(WebView* webview,
 		printf("[ti:error] %ls:%d Line %ls\n", source_id.c_str(), line_no, message.c_str());
 	}
 	
-}
-
-void TiWebViewDelegate::DidFinishLoadForFrame(WebView* webview, WebFrame* frame) {
-	initRuntime(frame);
 }
 
 // Displays a JavaScript alert panel associated with the given view. Clients

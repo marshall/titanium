@@ -346,7 +346,21 @@ bool JsClass::GetObjectProperty(const CppVariant &variant, std::string prop, NPV
 	variant.CopyToNPVariant(&npVariant);
 	NPObject *object = NPVARIANT_TO_OBJECT(variant);
 
-	return NPN_GetProperty(0, object, NPN_GetStringIdentifier(prop.c_str()), result);
+	bool response = NPN_GetProperty(0, object, NPN_GetStringIdentifier(prop.c_str()), result);
+	NPN_ReleaseObject(object);
+	return response;
+}
+
+/*static*/
+bool JsClass::ObjectHasProperty(const CppVariant &variant, std::string prop)
+{
+	NPVariant npVariant;
+	variant.CopyToNPVariant(&npVariant);
+	NPObject *object = NPVARIANT_TO_OBJECT(variant);
+
+	bool response = NPN_HasProperty(0, object, NPN_GetStringIdentifier(prop.c_str()));
+	NPN_ReleaseObject(object);
+	return response;
 }
 
 /*static*/

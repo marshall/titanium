@@ -14,4 +14,10 @@
 		<!--url>file://C:/Users/Marshall/Code/titanium/runtime/native/win32/build/Release/Resources/index.html</url-->
 	</window>
 
+	<window>
+		<url>app://window_test.html</url>
+		<width>300</width>
+		<height>300</height>
+	</window>
+
 </ti:app>

@@ -96,11 +96,18 @@ void TiChromeWindow::removeWindowClass (HINSTANCE hInstance)
 void TiChromeWindow::DestroyWindow (TiChromeWindow *window)
 {
 	std::vector<TiChromeWindow*>::iterator iter;
-	if ((iter = std::find(openWindows.begin(), openWindows.end(), window)) != openWindows.end()) {
+	for (iter = openWindows.begin(); iter != openWindows.end(); iter++) {
+		if ((*iter) == window) {
+			break;
+		}
+	}
+	bool isMain = (window == TiChromeWindow::getMainWindow());
+
+	if (iter != openWindows.end()) {
 		openWindows.erase(iter);
 	}
 
-	if (openWindows.size() == 0) {
+	if (isMain) {
 		PostQuitMessage(0);
 	}
 }

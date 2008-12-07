@@ -51,6 +51,17 @@
 			});
 	    }
 	    
+	    function showNotification ()
+	    {
+			var n = new ti.Notification();
+			
+			n.setTitle("Hello World");
+			n.setMessage("Chromium is bad at opacity, :(");
+			n.setIcon("app://menu.ico");
+			
+			n.show();
+	    }
+	    
 	    var sound = ti.Media.createSound("app://Exclamation.wav");
 	    
 	   </script>
@@ -63,7 +74,7 @@
 	<body>
 	    here's a text input, test the stupid lose focus/key input error here:<br />
         <input type="text" id="x"/><br />
-        <a href="javascript: ajaxRequest();">google.com</a><br /><br />
+        <a href="javascript: showNotification();">showNotification</a><br /><br />
         
         window should be created, let's try <a href="javascript: openWindow();">opening it!</a><br />
         

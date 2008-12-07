@@ -47,7 +47,7 @@ public:
 
 	// window accessors
 	std::string& getURL() { return url; }
-	void setURL(std::string& url_) { url = url_; }
+	void setURL(std::string url_) { url = url_; }
 	std::string& getTitle() { return title; }
 	void setTitle(std::string& title_) { title = title_; }
 	std::string& getId() { return id; }

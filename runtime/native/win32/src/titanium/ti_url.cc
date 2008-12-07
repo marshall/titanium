@@ -25,6 +25,8 @@
 // an internal only scheme for the inspector
 #define TI_RESOURCE_SCHEME "ti-resource"
 
+std::vector<std::string> TiURL::tiResourceTypes = TiURL::setupTiResourceTypes();
+
 void replaceSlashes (std::string* path)
 {
 	size_t pos = 0;
@@ -66,25 +68,6 @@ int wildcmp(const char *wild, const char *string) {
   }
   return !*wild;
 }
-/*static*/
-bool TiURL::urlMatchesPattern(GURL& url, std::string& pattern)
-{
-	if (url.spec().length() <= 0) {
-		return false;
-	}
-
-	//remove the trailing slash
-	std::string spec = url.spec();
-	if (spec.at(spec.length()-1) == '/') {
-		spec = spec.substr(0, spec.length() - 1);
-	}
-
-	if (wildcmp(pattern.c_str(), spec.c_str()))
-		return true;
-
-	return false;
-}
-
 
 void stringReplaceAll(std::string *string, std::string pattern, std::string replacement)
 {
@@ -99,6 +82,38 @@ bool stringEndsWith(std::string &string, std::string substr)
 {
 	size_t pos = string.rfind(substr);
 	return (pos != std::string::npos) && (pos == (string.length() - substr.length()));
+}
+
+/*static*/
+bool TiURL::urlMatchesPattern(GURL& url, std::string& pattern)
+{
+	if (url.spec().length() <= 0) {
+		return false;
+	}
+
+	//remove the trailing slash
+	std::string spec = url.spec();
+	if (spec.at(spec.length()-1) == '/') {
+		spec = spec.substr(0, spec.length() - 1);
+	}
+
+	
+	/*if (LowerCaseEqualsASCII(TiAppConfig::instance()->getAppID(), url.host().c_str())) {
+		std::string newURL = spec;
+		std::string appId = TiAppConfig::instance()->getAppID();
+		std::transform(appId.begin(), appId.end(), appId.begin(), (int(*)(int)) tolower);
+
+		stringReplaceAll(&newURL, appId+"/", "");
+
+		if (wildcmp(pattern.c_str(), newURL.c_str()))
+			return true;
+		return false;
+	}*/
+
+	if (wildcmp(pattern.c_str(), spec.c_str()))
+		return true;
+
+	return false;
 }
 
 void appendURLPath(std::wstring *path, GURL& url)
@@ -188,8 +203,34 @@ public:
 };
 
 /*static*/
+URLRequestJob* TiURL::createTiResourceRequestJob(URLRequest *urlRequest, std::string& resourceType, GURL& url)
+{
+	if (resourceType == "notification") {
+		std::wstring path;
+		PathService::Get(base::DIR_EXE, &path);
+		file_util::AppendToPath(&path, L"Resources");
+		file_util::AppendToPath(&path, L"titanium");
+		file_util::AppendToPath(&path, L"notification.html");
+
+		return new TiURLRequestFileJob(urlRequest, path);
+	}
+
+	return NULL;
+}
+
+/*static*/
 URLRequestJob* TiURL::createURLRequestJob(URLRequest* request, const std::string& scheme)
 {
+	GURL url = static_cast<GURL>(request->url());
+	if (url.SchemeIs(TI_SCHEME)) {
+		if (std::find(tiResourceTypes.begin(), tiResourceTypes.end(), url.host()) != tiResourceTypes.end()) {
+			URLRequestJob *job = createTiResourceRequestJob(request, url.host(), url);
+			if (job != NULL) {
+				return job;
+			}
+		}
+	}
+
 	std::wstring path = getPathForURL(static_cast<GURL>(request->url()));
 	if (path.size() > 0) {
 		TiURLRequestFileJob *job = new TiURLRequestFileJob(request, path);

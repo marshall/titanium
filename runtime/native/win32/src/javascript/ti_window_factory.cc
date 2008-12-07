@@ -42,10 +42,25 @@ void TiWindowFactory::createWindow(const CppArgumentList &args, CppVariant *resu
 				window = new TiUserWindow(id.c_str());
 			}
 		} else if (args[0].isObject()) {
-			std::string id = GetStringProperty(args[0], "id");
-			bool usingChrome = GetBoolProperty(args[0], "usingChrome");
+			TiWindowConfig *config = new TiWindowConfig();
 
-			window = new TiUserWindow(id.c_str(), usingChrome);
+#define BindObjectAttribute(obj, attr, bindObj, setter, type) if (ObjectHasProperty(obj, attr)) { bindObj->setter(type(obj, attr)); }
+#define BindStringAttribute(obj, attr, bindObj, setter) BindObjectAttribute(obj,attr,bindObj,setter,GetStringProperty)
+#define BindBoolAttribute(obj, attr, bindObj, setter) BindObjectAttribute(obj,attr,bindObj,setter,GetBoolProperty)
+#define BindDoubleAttribute(obj, attr, bindObj, setter) BindObjectAttribute(obj,attr,bindObj,setter,GetDoubleProperty)
+#define BindIntAttribute(obj, attr, bindObj, setter) BindObjectAttribute(obj,attr,bindObj,setter,GetIntProperty)
+
+			BindStringAttribute(args[0], "id", config, setId);
+			BindBoolAttribute(args[0], "usingChrome", config, setUsingChrome);
+			BindBoolAttribute(args[0], "usingScrollbars", config, setUsingScrollbars);
+			BindIntAttribute(args[0], "x", config, setX);
+			BindIntAttribute(args[0], "y", config, setY);
+			BindIntAttribute(args[0], "width", config, setWidth);
+			BindIntAttribute(args[0], "height", config, setHeight);
+			BindDoubleAttribute(args[0], "transparency", config, setTransparency);
+			BindStringAttribute(args[0], "url", config, setURL);
+
+			window = new TiUserWindow(config);
 		}
 	} else {
 		window = new TiUserWindow();
