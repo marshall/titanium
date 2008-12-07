@@ -187,8 +187,6 @@ int titaniumInit ()
 
 void runTitanium ()
 {
-	mainWindow->open();
-
 	MessageLoop::current()->Run();
 }
 

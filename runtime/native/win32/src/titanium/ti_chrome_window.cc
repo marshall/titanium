@@ -206,7 +206,7 @@ LRESULT CALLBACK TiChromeWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 	return DefWindowProc(hWnd, message, wParam, lParam);
 }
 
-TiChromeWindow::TiChromeWindow(HINSTANCE hInstance_, TiWindowConfig *windowConfig) : hWnd(NULL), hInstance(hInstance_), host(NULL)
+TiChromeWindow::TiChromeWindow(HINSTANCE hInstance_, TiWindowConfig *windowConfig) : hWnd(NULL), hInstance(hInstance_), host(NULL), openOnLoad(true)
 {
 	TiChromeWindow::openWindows.push_back(this);	
 	this->tiWindowConfig = windowConfig;
@@ -219,7 +219,7 @@ TiChromeWindow::TiChromeWindow(HINSTANCE hInstance_, TiWindowConfig *windowConfi
 	createWindow();
 }
 
-TiChromeWindow::TiChromeWindow(HINSTANCE hInstance_, const char *url) : hWnd(NULL), hInstance(hInstance_), host(NULL)
+TiChromeWindow::TiChromeWindow(HINSTANCE hInstance_, const char *url) : hWnd(NULL), hInstance(hInstance_), host(NULL), openOnLoad(true)
 {
 	TiChromeWindow::openWindows.push_back(this);	
 	this->url = url;
@@ -249,6 +249,11 @@ void TiChromeWindow::createWindow()
 	webViewDelegate->setWebViewHost(host);
 	
 	reloadTiWindowConfig();
+		
+	if (tiWindowConfig->getURL().length() > 0) {
+		maybeLoadURL(tiWindowConfig->getURL().c_str());
+	}
+
 }
 
 WebWidget* TiChromeWindow::createPopupWidget()
@@ -299,14 +304,6 @@ void TiChromeWindow::reloadTiWindowConfig()
 
 
 void TiChromeWindow::open() {
-	if (hWnd == NULL) {
-		createWindow();
-	}
-	
-	if (tiWindowConfig->getURL().length() > 0) {
-		maybeLoadURL(tiWindowConfig->getURL().c_str());
-	}
-
 	ShowWindow(hWnd, SW_SHOW);
 	ShowWindow(host->window_handle(), SW_SHOW);
 }

@@ -244,6 +244,10 @@ void TiWebViewDelegate::DidCommitLoadForFrame(WebView* webview, WebFrame* frame,
 
 void TiWebViewDelegate::DidFinishLoadForFrame(WebView* webview, WebFrame* frame) {
 	initRuntime(frame);
+
+	if (frame == webview->GetMainFrame() && window->isOpenOnLoad()) {
+		window->open();
+	}
 }
 
 void TiWebViewDelegate::DidStopLoading(WebView* webview)

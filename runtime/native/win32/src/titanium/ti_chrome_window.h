@@ -77,6 +77,7 @@ private:
 	std::string url;
 	TiWebViewDelegate* webViewDelegate;
 	std::string currentURL;
+	bool openOnLoad;
 
 	static std::vector<TiChromeWindow*> openWindows;
 	static TCHAR defaultWindowTitle[128];
@@ -118,6 +119,8 @@ public:
 	void setTitle(std::string title);
 
 	void close();
+	bool isOpenOnLoad() { return openOnLoad; }
+	void setOpenOnLoad(bool open) { openOnLoad = open; }
 
 	static std::vector<TiChromeWindow *>& getOpenWindows() { return openWindows; }
 	static TiChromeWindow* fromWindow(HWND hWnd);

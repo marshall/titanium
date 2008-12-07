@@ -34,6 +34,7 @@ TiUserWindow::TiUserWindow (const char *id, bool usingChrome)
 	config->setUsingChrome(usingChrome);
 	
 	window = new TiChromeWindow(TiChromeWindow::getMainWindow()->getInstanceHandle(), config);
+	window->setOpenOnLoad(false);
 	
 	bind();
 }
@@ -42,6 +43,7 @@ TiUserWindow::TiUserWindow(TiWindowConfig *config_)
 	: config(config_)
 {
 	window = new TiChromeWindow(TiChromeWindow::getMainWindow()->getInstanceHandle(), config);
+	window->setOpenOnLoad(false);
 	
 	bind();
 }
