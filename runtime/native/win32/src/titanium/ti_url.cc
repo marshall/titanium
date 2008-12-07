@@ -17,6 +17,9 @@
 #include "ti_chrome_window.h"
 #include "ti_version.h"
 
+#include "webkit/glue/webframeloader.h"
+#include "base/string_util.h"
+
 #define TI_SCHEME "ti"
 #define APP_SCHEME "app"
 // an internal only scheme for the inspector
@@ -98,19 +101,9 @@ bool stringEndsWith(std::string &string, std::string substr)
 	return (pos != std::string::npos) && (pos == (string.length() - substr.length()));
 }
 
-/*static*/
-bool TiURL::isHost(std::string &host)
-{
-	// GURL likes to append onto the top level resource as if it's a host.. we can "fix" that
-	// there might be a better way to do this?
-		
-	return (!stringEndsWith(host, ".html")
-			&& !stringEndsWith(host, ".xml"));
-}
-
 void appendURLPath(std::wstring *path, GURL& url)
 {
-	if (TiURL::isHost(url.host()) || url.path() == "/") {
+	if (!LowerCaseEqualsASCII(TiAppConfig::instance()->getAppID(), url.host().c_str())) {
 		file_util::AppendToPath(path, UTF8ToWide(url.host()));
 	}
 
@@ -171,13 +164,6 @@ public:
 		file_path_ = path;
 	}
 
-	std::string GetContentType(std::wstring& ext) {
-		if (ext == L"js") { return "text/javascript"; }
-		else if (ext == L"html" || ext == L"htm" ) { return "text/html"; }
-		else if (ext == L"xhtml") { return "text/xhtml"; }
-		else return "text/plain";
-	}
-
 	// simulate an HTTP response so we can return a response code
 	// -- this allows app:// etc resources to be requested/executed dynamically
 	// -- in frameworks like jQuery
@@ -186,8 +172,11 @@ public:
 		std::wstring ext = file_util::GetFileExtensionFromPath(file_path_);
 		int64 filesize;
 		file_util::GetFileSize(file_path_, &filesize);
+		std::string mimeType;
+		GetMimeType(&mimeType);
+
 		std::string raw_headers = "HTTP/1.1 200 OK\n";
-		raw_headers += "Content-Type: " + GetContentType(ext) + "\n";
+		raw_headers += "Content-Type: " + mimeType + "\n";
 		raw_headers += "Content-Length: " + Int64ToString(filesize) + "\n";
 
 		// ParseRawHeaders expects \0 to end each header line.
@@ -221,4 +210,7 @@ void TiURL::init ()
 	URLRequest::RegisterProtocolFactory(TI_SCHEME, &TiURL::createURLRequestJob);
 	URLRequest::RegisterProtocolFactory(APP_SCHEME, &TiURL::createURLRequestJob);
 	URLRequest::RegisterProtocolFactory(TI_RESOURCE_SCHEME, &TiURL::createURLRequestJob);
+
+	WebFrameLoader::RegisterURLSchemeAsLocal(TI_SCHEME);
+	WebFrameLoader::RegisterURLSchemeAsLocal(APP_SCHEME);
 }

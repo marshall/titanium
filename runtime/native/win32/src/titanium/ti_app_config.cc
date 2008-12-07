@@ -16,6 +16,8 @@
 
 #include "ti_app_config.h"
 
+TiAppConfig *TiAppConfig::instance_ = NULL;
+
 /*static*/
 bool TiAppConfig::stringToBool (const char * b) {
 	std::string str(b);
@@ -48,6 +50,7 @@ TiWindowConfig* TiAppConfig::getMainWindow()
 
 TiAppConfig::TiAppConfig(std::wstring& xmlfile)
 {
+	instance_ = this;
 	error = NULL;
 	xmlParserCtxtPtr context = xmlNewParserCtxt();
 
@@ -61,6 +64,8 @@ TiAppConfig::TiAppConfig(std::wstring& xmlfile)
 			if (node->type == XML_ELEMENT_NODE) {
 				if (nodeNameEquals(node, "name")) {
 					appName = nodeValue(node);
+				} else if (nodeNameEquals(node, "id")) {
+					appID = nodeValue(node);
 				} else if (nodeNameEquals(node, "description")) {
 					description = nodeValue(node);
 				} else if (nodeNameEquals(node, "copyright")) {

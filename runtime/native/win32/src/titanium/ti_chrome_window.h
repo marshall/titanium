@@ -78,7 +78,6 @@ private:
 	TiWebViewDelegate* webViewDelegate;
 	std::string currentURL;
 
-	static TiAppConfig *tiAppConfig;
 	static std::vector<TiChromeWindow*> openWindows;
 	static TCHAR defaultWindowTitle[128];
 	static TCHAR windowClassName[128];
@@ -121,11 +120,10 @@ public:
 	void close();
 
 	static std::vector<TiChromeWindow *>& getOpenWindows() { return openWindows; }
-	static void setTiAppConfig(TiAppConfig* tiAppConfig_) { tiAppConfig = tiAppConfig_; }
-	static TiAppConfig* getTiAppConfig() { return tiAppConfig; }
 	static TiChromeWindow* fromWindow(HWND hWnd);
 	static TiChromeWindow* getMainWindow();
 	static TiChromeWindow* getWindow(const char *id);
+	static void DestroyWindow (TiChromeWindow *window);
 
 	static void initWindowClass(HINSTANCE hInstance);
 	static void removeWindowClass (HINSTANCE hInstance);

@@ -171,7 +171,7 @@ void chromiumInit()
 TiChromeWindow *mainWindow = NULL;
 int titaniumInit ()
 {
-	TiAppConfig *appConfig = new TiAppConfig(TiAppArguments::xmlPath);
+	TiAppConfig *appConfig = TiAppConfig::init(TiAppArguments::xmlPath);
 
 	if (appConfig->getError() != NULL) {
 		systemError(UTF8ToWide(std::string(appConfig->getError())).c_str());
@@ -180,7 +180,6 @@ int titaniumInit ()
 
 	TiVersion::init();
 	TiURL::init();
-	TiChromeWindow::setTiAppConfig(appConfig);
 	mainWindow = new TiChromeWindow(hModule, appConfig->getMainWindow());
 
 	return 0;

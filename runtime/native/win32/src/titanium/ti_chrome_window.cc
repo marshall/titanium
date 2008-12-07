@@ -26,7 +26,6 @@
 
 TCHAR TiChromeWindow::defaultWindowTitle[128];
 TCHAR TiChromeWindow::windowClassName[128];
-TiAppConfig* TiChromeWindow::tiAppConfig = NULL;
 std::vector<TiChromeWindow*> TiChromeWindow::openWindows = std::vector<TiChromeWindow*>();
 bool TiChromeWindow::isInspectorOpen = false;
 
@@ -93,6 +92,19 @@ void TiChromeWindow::removeWindowClass (HINSTANCE hInstance)
 	UnregisterClass(windowClassName, hInstance);
 }
 
+/*static*/
+void TiChromeWindow::DestroyWindow (TiChromeWindow *window)
+{
+	std::vector<TiChromeWindow*>::iterator iter;
+	if ((iter = std::find(openWindows.begin(), openWindows.end(), window)) != openWindows.end()) {
+		openWindows.erase(iter);
+	}
+
+	if (openWindows.size() == 0) {
+		PostQuitMessage(0);
+	}
+}
+
 void TiChromeWindow::openInspectorWindow()
 {
 	isInspectorOpen = true;
@@ -117,7 +129,7 @@ LRESULT CALLBACK TiChromeWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 					//DialogBox(tiWebShell->getInstance(), MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
 					break;
 				case IDM_EXIT:
-					DestroyWindow(hWnd);
+					::DestroyWindow(hWnd);
 					break;
 				default:
 				{
@@ -162,10 +174,8 @@ LRESULT CALLBACK TiChromeWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 			}
 			break;
 		case WM_DESTROY:
-			if (window == TiChromeWindow::getMainWindow()) {
-				PostQuitMessage(0);
-			}
-			return 0;
+			DestroyWindow(window);
+			break;
 		case WM_SIZE:
 			if (window != NULL)
 				window->resizeHost();
@@ -352,7 +362,7 @@ void TiChromeWindow::include(WebFrame *frame, std::string& relativePath)
 		absolutePath = WideToUTF8(TiURL::getPathForURL(GURL(relativePath)));
 	}
 	else {
-		absolutePath = WideToUTF8(tiAppConfig->getResourcePath());
+		absolutePath = WideToUTF8(TiAppConfig::instance()->getResourcePath());
 		absolutePath += "\\";
 		absolutePath += relativePath;
 	}
@@ -384,6 +394,6 @@ void TiChromeWindow::setTitle(std::string title) {
 }
 
 void TiChromeWindow::close() {
-	CloseWindow(hWnd);
+	::DestroyWindow(hWnd);
 }
 

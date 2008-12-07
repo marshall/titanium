@@ -16,6 +16,7 @@
 
 #include "ti_app_config.h"
 #include "ti_window_config.h"
+#include "googleurl/src/gurl.h"
 
 int TiWindowConfig::DEFAULT_POSITION = -1;
 
@@ -29,9 +30,29 @@ void TiWindowConfig::setDefaults ()
 	x = y = TiWindowConfig::DEFAULT_POSITION;
 	minWidth = minHeight = 0;
 	maxWidth = maxHeight = 9000;
-	url = "index.html";
+	url = "app://" + TiAppConfig::instance()->getAppID() + "/index.html";
 	title = "Titanium Application";
 	visible = true;
+}
+
+std::string TiWindowConfig::insertAppID(std::string url)
+{
+	GURL gurl(url);
+	GURL::Replacements replacements;
+
+	if (gurl.SchemeIs("app")) {
+		replacements.SetHostStr(TiAppConfig::instance()->getAppID());
+		std::string path = "/" + gurl.host();
+		if (gurl.has_path() && gurl.path() != "/") {
+			path += gurl.path();
+		}
+
+		replacements.SetPathStr(path);
+
+		gurl = gurl.ReplaceComponents(replacements);
+	}
+
+	return gurl.spec();
 }
 
 TiWindowConfig::TiWindowConfig(xmlElementPtr element)
@@ -47,13 +68,13 @@ TiWindowConfig::TiWindowConfig(xmlElementPtr element)
 			title = nodeValue(child);
 		}
 		else if (nodeNameEquals(child, "url")) {
-			url = nodeValue(child);
+			url = insertAppID(nodeValue(child));
 		}
 		else if (nodeNameEquals(child, "maximizable")) {
 			maximizable = boolValue(child);
 		}
 		else if (nodeNameEquals(child, "minimizable")) {
-			minimizable = boolValue(child);
+			minimizable =	 boolValue(child);
 		}
 		else if (nodeNameEquals(child, "closeable")) {
 			closeable = boolValue(child);

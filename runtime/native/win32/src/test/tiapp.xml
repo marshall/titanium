@@ -4,12 +4,14 @@
  xmlns:appc="http://www.appcelerator.org">
 	
 	<name>Test App</name>
+	<id>com.titaniumapp.TestApp</id>
 	
 	<window>
     <width>500</width>
     <height>500</height>
 		<title>This is a test app</title>
 		<url>app://index.html</url>
+		<!--url>file://C:/Users/Marshall/Code/titanium/runtime/native/win32/build/Release/Resources/index.html</url-->
 	</window>
 
 </ti:app>

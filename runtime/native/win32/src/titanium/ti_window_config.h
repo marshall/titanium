@@ -35,6 +35,8 @@ private:
 		resizable, fullscreen, usingChrome, usingScrollbars;
 
 	void setDefaults();
+	std::string insertAppID(std::string url);
+
 public:
 	static int DEFAULT_POSITION;
 

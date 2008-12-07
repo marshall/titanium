@@ -42,19 +42,22 @@ class TiAppConfig
 {
 private:
 	const char* error;
-	std::string appName, description, copyright, homepage, version;
+	std::string appName, appID, description, copyright, homepage, version;
 	TiWindowConfigList windows;
 
 	// icon properties
-	std::string icon16, icon32, icon48;
+	std::string icon16, icon32, icon48;		
+	static TiAppConfig *instance_;
+
+	TiAppConfig(std::wstring& xmlfile);
 
 public:
-	TiAppConfig(std::wstring& xmlfile);
 	~TiAppConfig();
 
 	static bool stringToBool (const char * str);
 
 	std::string& getAppName() { return appName; }
+	std::string& getAppID() { return appID; }
 	std::string& getDescription() { return description; }
 	std::string& getCopyright() { return copyright; }
 	std::string& getHomepage() { return homepage; }
@@ -71,6 +74,17 @@ public:
 
 	std::wstring getResourcePath();
 	const char* getError() { return error; }
+
+	static TiAppConfig* instance() {
+		return instance_;
+	}
+
+	static TiAppConfig* init(std::wstring& xmlFile) {
+		if (instance_ == NULL) {
+			instance_ = new TiAppConfig(xmlFile);
+		}
+		return instance_;
+	}
 };
 
 #endif

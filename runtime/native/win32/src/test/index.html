@@ -40,6 +40,17 @@
 			ti.Extras.fadeInWindow(windowTest);
 	    }
 	    
+	    function ajaxRequest() {
+			ti.jQuery.ajax({url: "http://www.google.com",
+				success: function(data) {
+					ti.App.debug("success");
+				},
+				error: function(xhr, textStatus, errorThrown) {
+					ti.App.debug("error: " + errorThrown);
+				}
+			});
+	    }
+	    
 	    var sound = ti.Media.createSound("app://Exclamation.wav");
 	    
 	   </script>
@@ -52,7 +63,7 @@
 	<body>
 	    here's a text input, test the stupid lose focus/key input error here:<br />
         <input type="text" id="x"/><br />
-        <a href="http://www.google.com" target="ti:systemBrowser">google.com</a><br /><br />
+        <a href="javascript: ajaxRequest();">google.com</a><br /><br />
         
         window should be created, let's try <a href="javascript: openWindow();">opening it!</a><br />
         

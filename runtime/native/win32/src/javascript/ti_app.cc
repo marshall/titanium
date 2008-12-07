@@ -70,7 +70,7 @@ void TiApp::debug (const CppArgumentList &args, CppVariant *result)
 
 void TiApp::getResourcePath(const CppArgumentList &args, CppVariant *result)
 {
-	std::wstring resourcePath = TiChromeWindow::getTiAppConfig()->getResourcePath();
+	std::wstring resourcePath = TiAppConfig::instance()->getResourcePath();
 
 	result->Set(WideToUTF8(resourcePath));
 }

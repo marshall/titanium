@@ -230,8 +230,8 @@ WebView* TiWebViewDelegate::CreateWebView(WebView* webview, bool user_gesture)
 void TiWebViewDelegate::DidStopLoading(WebView* webview)
 {
 	TiWindowConfig *matchedWindow = NULL;
-	TiWindowConfigList::iterator iter = TiChromeWindow::getTiAppConfig()->getWindows().begin();
-	for (; iter != TiChromeWindow::getTiAppConfig()->getWindows().end() ; iter++)
+	TiWindowConfigList::iterator iter = TiAppConfig::instance()->getWindows().begin();
+	for (; iter != TiAppConfig::instance()->getWindows().end() ; iter++)
 	{
 		TiWindowConfig *window = (*iter);
 		if (TiURL::urlMatchesPattern(static_cast<GURL>(webview->GetMainFrame()->GetURL()), window->getURL())) {
