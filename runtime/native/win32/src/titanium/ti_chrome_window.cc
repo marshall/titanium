@@ -240,7 +240,7 @@ TiChromeWindow::~TiChromeWindow(void) {
 
 void TiChromeWindow::createWindow()
 {
-	hWnd = CreateWindowEx(WS_EX_COMPOSITED | WS_EX_LAYERED, windowClassName, defaultWindowTitle,
+	hWnd = CreateWindowEx(WS_EX_LAYERED, windowClassName, defaultWindowTitle,
                            WS_CLIPCHILDREN,
                            0, 0, 0, 0,
                            NULL, NULL, hInstance, NULL);
