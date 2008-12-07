@@ -167,6 +167,7 @@ class JsClass {
 
   // some static helper functions
   static NPVariant StringToNPVariant(std::string &string);
+  static NPVariant ObjectToNPVariant(NPObject *object);
   static bool GetObjectProperty(const CppVariant &variant, std::string prop, NPVariant *result);
   static bool ObjectHasProperty(const CppVariant &variant, std::string prop);
   static int GetIntProperty(const CppVariant &variant, std::string prop);

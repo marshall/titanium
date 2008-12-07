@@ -340,6 +340,16 @@ NPVariant JsClass::StringToNPVariant(std::string &string)
 }
 
 /*static*/
+NPVariant JsClass::ObjectToNPVariant(NPObject *object)
+{
+	NPVariant variant;
+	variant.type = NPVariantType_Object;
+	variant.value.objectValue = object;
+
+	return variant;
+}
+
+/*static*/
 bool JsClass::GetObjectProperty(const CppVariant &variant, std::string prop, NPVariant *result)
 {
 	NPVariant npVariant;

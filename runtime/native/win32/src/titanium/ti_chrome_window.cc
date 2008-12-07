@@ -108,6 +108,10 @@ void TiChromeWindow::DestroyWindow (TiChromeWindow *window)
 	}
 
 	if (isMain) {
+
+		if (TiMenu::trayMenu != NULL) {
+			TiMenu::removeTrayMenu();
+		}
 		PostQuitMessage(0);
 	}
 }
@@ -193,7 +197,7 @@ LRESULT CALLBACK TiChromeWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 				UINT uMouseMsg = (UINT) lParam;
 				if(uMouseMsg == WM_LBUTTONDOWN)
 				{
-					// handle the click callback for the tray
+					TiMenu::invokeLeftClickCallback();
 				}
 				else if (uMouseMsg == WM_RBUTTONDOWN)
 				{
@@ -206,7 +210,7 @@ LRESULT CALLBACK TiChromeWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 	return DefWindowProc(hWnd, message, wParam, lParam);
 }
 
-TiChromeWindow::TiChromeWindow(HINSTANCE hInstance_, TiWindowConfig *windowConfig) : hWnd(NULL), hInstance(hInstance_), host(NULL)
+TiChromeWindow::TiChromeWindow(HINSTANCE hInstance_, TiWindowConfig *windowConfig) : hWnd(NULL), hInstance(hInstance_), host(NULL), openOnLoad(true)
 {
 	TiChromeWindow::openWindows.push_back(this);	
 	this->tiWindowConfig = windowConfig;
@@ -219,7 +223,7 @@ TiChromeWindow::TiChromeWindow(HINSTANCE hInstance_, TiWindowConfig *windowConfi
 	createWindow();
 }
 
-TiChromeWindow::TiChromeWindow(HINSTANCE hInstance_, const char *url) : hWnd(NULL), hInstance(hInstance_), host(NULL)
+TiChromeWindow::TiChromeWindow(HINSTANCE hInstance_, const char *url) : hWnd(NULL), hInstance(hInstance_), host(NULL), openOnLoad(true)
 {
 	TiChromeWindow::openWindows.push_back(this);	
 	this->url = url;
@@ -236,7 +240,7 @@ TiChromeWindow::~TiChromeWindow(void) {
 
 void TiChromeWindow::createWindow()
 {
-	hWnd = CreateWindowEx(WS_EX_LAYERED, windowClassName, defaultWindowTitle,
+	hWnd = CreateWindowEx(WS_EX_COMPOSITED | WS_EX_LAYERED, windowClassName, defaultWindowTitle,
                            WS_CLIPCHILDREN,
                            0, 0, 0, 0,
                            NULL, NULL, hInstance, NULL);
@@ -249,6 +253,11 @@ void TiChromeWindow::createWindow()
 	webViewDelegate->setWebViewHost(host);
 	
 	reloadTiWindowConfig();
+		
+	if (tiWindowConfig->getURL().length() > 0) {
+		maybeLoadURL(tiWindowConfig->getURL().c_str());
+	}
+
 }
 
 WebWidget* TiChromeWindow::createPopupWidget()
@@ -299,14 +308,6 @@ void TiChromeWindow::reloadTiWindowConfig()
 
 
 void TiChromeWindow::open() {
-	if (hWnd == NULL) {
-		createWindow();
-	}
-	
-	if (tiWindowConfig->getURL().length() > 0) {
-		maybeLoadURL(tiWindowConfig->getURL().c_str());
-	}
-
 	ShowWindow(hWnd, SW_SHOW);
 	ShowWindow(host->window_handle(), SW_SHOW);
 }

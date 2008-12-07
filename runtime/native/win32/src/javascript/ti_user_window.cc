@@ -34,6 +34,7 @@ TiUserWindow::TiUserWindow (const char *id, bool usingChrome)
 	config->setUsingChrome(usingChrome);
 	
 	window = new TiChromeWindow(TiChromeWindow::getMainWindow()->getInstanceHandle(), config);
+	window->setOpenOnLoad(false);
 	
 	bind();
 }
@@ -42,6 +43,7 @@ TiUserWindow::TiUserWindow(TiWindowConfig *config_)
 	: config(config_)
 {
 	window = new TiChromeWindow(TiChromeWindow::getMainWindow()->getInstanceHandle(), config);
+	window->setOpenOnLoad(false);
 	
 	bind();
 }
@@ -119,11 +121,13 @@ void TiUserWindow::updateWindow ()
 
 void TiUserWindow::hide(const CppArgumentList &args, CppVariant *result)
 {
+	config->setVisible(false);
 	window->showWindow(SW_HIDE);
 }
 
 void TiUserWindow::show(const CppArgumentList &args, CppVariant *result)
 {
+	config->setVisible(true);
 	window->showWindow(SW_SHOW);
 }
 

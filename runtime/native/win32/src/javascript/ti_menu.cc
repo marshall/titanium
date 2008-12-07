@@ -32,6 +32,7 @@ std::vector<MenuItemCallback *> callbacks;
 
 int TiMenu::currentUID = TI_MENU_ITEM_ID_BEGIN + 1;
 TiMenu* TiMenu::trayMenu = NULL;
+NPObject *TiMenu::leftClickCallback = NULL;
 
 TiMenu::TiMenu(NOTIFYICONDATA notifyIconData_) 
 	: notifyIconData(notifyIconData_)
@@ -157,5 +158,24 @@ void TiMenu::showTrayMenu ()
 			TPM_BOTTOMALIGN,
 			pt.x, pt.y, 0,
 			TiChromeWindow::getMainWindow()->getWindowHandle(), NULL);
+	}
+}
+
+/*static*/
+void TiMenu::removeTrayMenu()
+{
+	if (trayMenu != NULL) {
+		Shell_NotifyIcon(NIM_DELETE, &notifyIconData);
+	}
+}
+
+/*static*/
+void TiMenu::invokeLeftClickCallback()
+{
+	if (leftClickCallback != NULL) {
+		const NPVariant args[] = { ObjectToNPVariant(TiMenu::trayMenu->ToNPObject()) };
+
+		NPVariant result;
+		NPN_InvokeDefault(0, leftClickCallback, args, 1, &result);
 	}
 }

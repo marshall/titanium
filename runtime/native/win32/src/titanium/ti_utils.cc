@@ -86,7 +86,6 @@ WebPreferences ti_initWebPrefs() {
 	webPrefs.minimum_logical_font_size = 9;
 	webPrefs.javascript_can_open_windows_automatically = true;
 	webPrefs.dom_paste_enabled = true;
-	webPrefs.developer_extras_enabled = false;
 	webPrefs.shrinks_standalone_images_to_fit = false;
 	webPrefs.uses_universal_detector = false;
 	webPrefs.text_areas_are_resizable = false;
