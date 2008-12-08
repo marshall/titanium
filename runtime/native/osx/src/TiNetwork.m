@@ -16,6 +16,7 @@
  * limitations under the License. 
  */
 #import "TiNetwork.h"
+#import "Ti.h"
 #import <WebKit/WebKit.h>
 #import <Foundation/Foundation.h>
 #import <SystemConfiguration/SCNetworkReachability.h>
@@ -52,8 +53,10 @@ static void TiReachabilityCallback(SCNetworkReachabilityRef  target,
 	{
 		webView = wv;
 		callbacks = [[NSMutableArray alloc] init];
-
 		
+		// always assume not connected
+		online = NO;
+
 		SCNetworkReachabilityRef thisTarget;
 		SCNetworkReachabilityContext thisContext;
 		
@@ -101,20 +104,25 @@ static void TiReachabilityCallback(SCNetworkReachabilityRef  target,
 
 - (void)triggerChange:(BOOL)yn
 {
-	online = yn;
-	for (int c=0;c<[callbacks count];c++)
+	TRACE(@"Network connectivity change detected - online: %d",yn);
+	if (yn!=online)
 	{
-		WebScriptObject* callback = [callbacks objectAtIndex:c];
-		NSMutableArray *args = [[NSMutableArray alloc] init];
-		[args addObject:[webView windowScriptObject]];
-		[args addObject:[NSNumber numberWithBool:online]];
-		[callback callWebScriptMethod:@"call" withArguments:args];
-		[args release];
+		online = yn;
+		for (int c=0;c<[callbacks count];c++)
+		{
+			WebScriptObject* callback = [callbacks objectAtIndex:c];
+			NSMutableArray *args = [[NSMutableArray alloc] init];
+			[args addObject:[webView windowScriptObject]];
+			[args addObject:[NSNumber numberWithBool:online]];
+			[callback callWebScriptMethod:@"call" withArguments:args];
+			[args release];
+		}
 	}
 }
 
 - (void)onConnectivityChange:(WebScriptObject*)callback
 {
+	TRACE(@"registering onConnectivityChange listener = %@",callback);
 	[callbacks addObject:callback];
 }
 

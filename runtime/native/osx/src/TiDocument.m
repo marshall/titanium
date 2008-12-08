@@ -321,11 +321,35 @@
 	}
 #endif 
 	DOMNode *target = [elementDick objectForKey:WebElementDOMNodeKey];
+	DOMElement *anchor = nil;
+	
+	TRACE(@"newWindowAction target=%@",target);
+	
+	// often times the target is the text of the anchor
 	if ([target nodeType] == 3)
 	{
 		DOMText *text = (DOMText*)target;
-		DOMElement *node = (DOMElement*)[text parentNode];
-		NSString *target = [node getAttribute:@"target"];
+		anchor = (DOMElement*)[text parentNode];
+	}
+	// other times it seems to be the actual anchor itself
+	else if ([target nodeType] == 1)
+	{
+		anchor = (DOMElement*)target;
+	}
+	else
+	{
+		TRACE(@"received new action event from unknown target, here are the action attributes:");
+		for (id key in elementDick)
+		{
+			TRACE(@"window action - key = %@",key);
+		}
+	}
+	
+	TRACE(@"newWindowAction anchor=%@",anchor);
+	
+	if (anchor)
+	{
+		NSString *target = [anchor getAttribute:@"target"];
 		if (target)
 		{
 			if ([target isEqualToString:@"ti:systembrowser"])
@@ -337,6 +361,7 @@
 			}
 		}
 	}
+
 	NSString *protocol = [[actionInformation objectForKey:WebActionOriginalURLKey] scheme]; 
 	NSURL *newURL = [request URL];
 	if ([newURL isEqual:url])
@@ -420,11 +445,11 @@
 			return;
 		}
 	}
-		
 	NSString *protocol = [[actionInformation objectForKey:WebActionOriginalURLKey] scheme]; 
 	NSURL *newURL = [request URL];
 	if ([newURL isEqual:url])
 	{
+		TRACE(@"Attempting to navigate to the same URL: %@",newURL);
 		[listener use];
 		return ;
 	}
@@ -464,10 +489,7 @@
 		{
 			return;
 		}
-		// TODO: we need to probalby make this configurable to support
-		// opening the URL in the system browser (code below). for now 
-		// we just open inside the same frame
-		//[[NSWorkspace sharedWorkspace] openURL:newURL];
+		
 		[listener use];
 	}
 	else

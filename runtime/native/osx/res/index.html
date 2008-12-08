@@ -49,7 +49,7 @@
 		  alert("Gears database error: "+E);
 		}
 
-		ti.Menu.createTrayMenu('tray.png', null, function()
+		var tray = ti.Menu.createTrayMenu('tray.png', null, function()
 		{
 			//alert("w00t!");
 			if (ti.Window.currentWindow.isVisible())
@@ -61,6 +61,7 @@
 				ti.Window.currentWindow.show();
 			}
 		});
+		tray.setImage("app://notification.png");
 
 		try
 		{

@@ -30,6 +30,7 @@
 }
 
 - (TiSystemMenu*)initWithURL:(NSString*)url caption:(NSString*)caption callback:(WebScriptObject*)callback;
+- (void)setImage:(NSString*)url;
 - (void)addItem:(NSString*)s f:(WebScriptObject*)f;
 - (void)addSeparator;
 - (void)execute;

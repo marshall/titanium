@@ -88,6 +88,16 @@
 	[sender execute];
 }
 
+- (void)setImage:(NSString*)url
+{
+	[itemImage release];
+	NSURL *aurl = [TiController formatURL:url];
+	itemImage = [[NSImage alloc]initWithContentsOfURL:aurl];
+	[itemImage retain];
+	[statusItem setImage: itemImage];
+}
+
+
 - (void)addItem:(NSString*)name f:(WebScriptObject*)f{
 	
 	if (!menu)
@@ -176,6 +186,10 @@
 	else if (sel == @selector(addSeparator))
 	{
 		return @"addSeparator";
+	}
+	else if (sel == @selector(setImage:))
+	{
+		return @"setImage";
 	}
 	else if (sel == @selector(hide))
 	{
