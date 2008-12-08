@@ -23,7 +23,9 @@
 namespace TiSwitches
 {
 	extern const wchar_t xml[];
-	extern const wchar_t devMode[];
+	extern const wchar_t debug[];
+	extern const wchar_t console[];
+	extern const wchar_t inspector[];
 }
 
 class TiAppArguments 
@@ -32,7 +34,7 @@ class TiAppArguments
 public:
 	static void init(wchar_t *command_line);
 	
-	static bool isDevMode;
+	static bool isDebugMode, openConsole, openInspector;
 	static std::wstring xmlPath;
 
 };

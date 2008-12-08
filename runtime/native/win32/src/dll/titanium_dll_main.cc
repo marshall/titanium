@@ -135,7 +135,7 @@ void chromiumInit()
 #ifdef TITANIUM_DEBUGGING
 	createDebugConsole();
 #else
-	if (TiAppArguments::isDevMode) {
+	if (TiAppArguments::openConsole) {
 		createDebugConsole();
 	}
 #endif
@@ -203,30 +203,6 @@ int runTitaniumApp_internal()
 
 	return 0;
 }
-
-/*
-TITANIUM_DLL_API int __cdecl runTitaniumAppDev(wstring &appXmlPath, wstring &projectPath, wstring &runtimePath, map<wstring,wstring> &pluginPaths)
-{
-	base::AtExitManager exit_manager;
-	MessageLoopForUI message_loop;
-
-	chromiumInit();
-	int result = titaniumInit(appXmlPath);
-
-	if (result != 0) {
-		return result;
-	}
-
-	TiDevMode::isDevMode = true;
-	TiDevMode::instance()->projectPath = projectPath;
-	TiDevMode::instance()->runtimePath = runtimePath;
-	TiDevMode::instance()->pluginPaths = pluginPaths;
-
-	runTitanium();
-
-	return 0;
-}
-*/
 
 TITANIUM_DLL_API int __cdecl runTitaniumApp(wchar_t *command_line)
 {

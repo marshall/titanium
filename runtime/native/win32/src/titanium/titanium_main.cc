@@ -24,10 +24,10 @@
 
 #include "titanium_dll_main.h"
 
-//int APIENTRY wWinMain (HINSTANCE instance, HINSTANCE prev_instance,
-//					   wchar_t* command_line, int)
+int APIENTRY wWinMain (HINSTANCE instance, HINSTANCE prev_instance,
+					   wchar_t* command_line, int)
 
-int main (int argc, char *argv[])
+//int main (int argc, char *argv[])
 {
 	base::EnableTerminationOnHeapCorruption();
 
@@ -43,5 +43,5 @@ int main (int argc, char *argv[])
 			sandbox::SetCurrentProcessDEP(sandbox::DEP_ENABLED);
 	}
 	
-	return runTitaniumApp(L"");
+	return runTitaniumApp(command_line);
 }

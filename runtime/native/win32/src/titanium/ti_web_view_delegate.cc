@@ -298,11 +298,17 @@ void TiWebViewDelegate::initRuntime(WebFrame *frame)
 		
 		tiRuntime->BindToJavascript(frame, L"tiRuntime");
 		std::string titanium_js = "ti://titanium.js";
+		if (TiAppArguments::isDebugMode)
+		{
+			titanium_js = "ti://titanium-debug.js";
+		}
 
 		window->include(frame, titanium_js);
 		
-		if (TiAppArguments::isDevMode && !TiChromeWindow::isInspectorOpen) {
-			window->openInspectorWindow();
+		if (TiAppArguments::openInspector && !TiChromeWindow::isInspectorOpen) {
+			// disable the inspector for now, we need to figure out the best
+			// way to distribute it.. probably as part of the DLL
+			//window->openInspectorWindow();
 		}
 	}
 }
