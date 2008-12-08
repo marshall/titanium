@@ -311,6 +311,19 @@
 	}
 }
 
+-(DOMElement*)findAnchor:(DOMNode*)node
+{
+	while (node)
+	{
+		if ([node nodeType] == 1 && [[node nodeName] isEqualToString:@"A"])
+		{
+			return (DOMElement*)node;
+		}
+		node = [node parentNode];
+	}
+	return nil;
+}
+
 -(BOOL)newWindowAction:(NSDictionary*)actionInformation request:(NSURLRequest*)request listener:(id < WebPolicyDecisionListener >)listener
 {
 	NSDictionary* elementDick = [actionInformation objectForKey:WebActionElementKey];
@@ -321,31 +334,9 @@
 	}
 #endif 
 	DOMNode *target = [elementDick objectForKey:WebElementDOMNodeKey];
-	DOMElement *anchor = nil;
+	DOMElement *anchor = [self findAnchor:target];
 	
-	TRACE(@"newWindowAction target=%@",target);
-	
-	// often times the target is the text of the anchor
-	if ([target nodeType] == 3)
-	{
-		DOMText *text = (DOMText*)target;
-		anchor = (DOMElement*)[text parentNode];
-	}
-	// other times it seems to be the actual anchor itself
-	else if ([target nodeType] == 1)
-	{
-		anchor = (DOMElement*)target;
-	}
-	else
-	{
-		TRACE(@"received new action event from unknown target, here are the action attributes:");
-		for (id key in elementDick)
-		{
-			TRACE(@"window action - key = %@",key);
-		}
-	}
-	
-	TRACE(@"newWindowAction anchor=%@",anchor);
+	TRACE(@"newWindowAction target=%@, anchor=%@",target,anchor);
 	
 	if (anchor)
 	{
