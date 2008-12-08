@@ -65,8 +65,11 @@ void TiWebViewDelegate::DidScrollRect(WebWidget* webwidget, int dx, int dy,
 // window should be displayed, but generally only means something for WebViews.
 void TiWebViewDelegate::Show(WebWidget* webwidget, WindowOpenDisposition disposition) {
 	if (webwidget == window->getHost()->webwidget()) {
-		ShowWindow(window->getWindowHandle(), SW_SHOW);
+		//ShowWindow(window->getWindowHandle(), SW_SHOW);
+		// don't show here, wait until we're finished loading?
+
 		UpdateWindow(window->getWindowHandle());
+		
 	} else if (webwidget == window->getPopupHost()->webwidget()) {
 		ShowWindow(window->getPopupWindowHandle(), SW_SHOW);
 		UpdateWindow(window->getPopupWindowHandle());

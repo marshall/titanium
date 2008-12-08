@@ -160,8 +160,8 @@ LRESULT CALLBACK TiChromeWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 			break;
 
 		case WM_PAINT: {
-			if (window->getTiWindowConfig()->getTransparency() < 1.0) {
-				PAINTSTRUCT ps; 
+			//if (window->getTiWindowConfig()->getTransparency() == 1.0) {
+			/*	PAINTSTRUCT ps; 
 				HBRUSH brush;
 				RECT rect;
 				GetWindowRect(hWnd, &rect);
@@ -170,8 +170,8 @@ LRESULT CALLBACK TiChromeWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 				SelectObject(hdc, brush);
 				Rectangle(hdc, 0, 0, rect.right - rect.top, rect.bottom - rect.top);
 				DeleteObject(brush);
-				EndPaint(hWnd, &ps);
-			}
+				EndPaint(hWnd, &ps);*/
+			//}
 			window->getHost()->Paint();
 		} break;
 
@@ -304,58 +304,6 @@ void TiChromeWindow::setTiWindowConfig(TiWindowConfig *tiWindowConfig)
 	reloadTiWindowConfig();
 }
 
-void TiChromeWindow::applyTransparentRegion()
-{
-	/*RECT rect;
-	GetWindowRect(hWnd, &rect);
-
-	HDC hdc = CreateCompatibleDC(0);
-	int width = rect.right - rect.left;
-	int height = rect.bottom - rect.top;
-	
-	BITMAP bitmap = CreateCompatibleBitmap(hdc, width, height);
-	SelectObject(hdc, &bitmap);
-	BitBlt(hdc, 0, 0, width, height, GetWindowDC(hWnd), 0, 0, SRCCOPY);
-
-	//create an empty region
-	HRGN hRgn = CreateRectRgn(0,0,0,0);
-	//Create a region from a bitmap with transparency colour of white
-	//change the pixel values for a different transparency color
-	//ex - RGB(0,0,0) will mean a transparency color of black.. so the
-	//areas of the bitmap not used to create the window will be black
-	COLORREF crTransparent = RGB(255, 255, 255);
-
-	int iX = 0;
-	int iRet = 0;
-	for (int iY = 0; iY < bmpInfo.bmHeight; iY++)
-	{
-		do
-		{
-			//skip over transparent pixels at start of lines.
-			while (iX < bmpInfo.bmWidth && GetPixel(hdcMem, iX, iY)
-				== crTransparent) iX++;
-			//remember this pixel
-			int iLeftX = iX;
-			//now find first non-transparent pixel
-			while (iX < bmpInfo.bmWidth && GetPixel(hdcMem, iX, iY) !
-				= crTransparent) ++iX;
-			//create a temp region on this info
-			HRGN hRgnTemp = CreateRectRgn(iLeftX, iY, iX, iY+1);
-			//combine into main region
-			iRet = CombineRgn(hRgn, hRgn, hRgnTemp, RGN_OR);
-			if(iRet == ERROR)
-			{
-				return;
-			}
-			//delete the temp region for next pass
-			DeleteObject(hRgnTemp);
-		} while(iX < bmpInfo.bmWidth);
-	}
-	iX = 0;
-	
-	SetWindowRgn(hWnd, hRgn, TRUE);*/
-}
-
 void TiChromeWindow::reloadTiWindowConfig()
 {
 	host->webview()->GetMainFrame()->SetAllowsScrolling(tiWindowConfig->isUsingScrollbars());
@@ -375,10 +323,11 @@ void TiChromeWindow::reloadTiWindowConfig()
 
 	sizeTo(tiWindowConfig->getX(), tiWindowConfig->getY(), tiWindowConfig->getWidth(), tiWindowConfig->getHeight(), flags);
 	
-	SetLayeredWindowAttributes(hWnd, transparencyColor, 0, LWA_COLORKEY);
 	//SetLayeredWindowAttributes(hWnd, 0, (BYTE)0, LWA_ALPHA);
-	//SetLayeredWindowAttributes(host->window_handle(), 0, (BYTE)floor(tiWindowConfig->getTransparency()*255), LWA_ALPHA);
-	applyTransparentRegion();
+	if (tiWindowConfig->getTransparency() < 1.0) {
+		SetLayeredWindowAttributes(hWnd, 0, (BYTE)floor(tiWindowConfig->getTransparency()*255), LWA_ALPHA);
+	}
+	SetLayeredWindowAttributes(hWnd, transparencyColor, 0, LWA_COLORKEY);
 }
 
 

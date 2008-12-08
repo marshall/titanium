@@ -23,7 +23,10 @@ if (ti.platform == "win32") {
 	// assign the default body background color to our off-white
 	// that we assigned as transparent -- this allows us to have a mostly
 	// transparent window (no alpha blending though)
-	$('body').css('background-color', '#f9f9f9');
+	if (!$('body').css('background-color')) {
+		$('body').css('background-color', '#f9f9f9');	
+	}
+	
 	$('body').attr('class', 'win32');
 }
 
