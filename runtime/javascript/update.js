@@ -47,7 +47,7 @@ try
 				try
 				{
 					// we're going to do the update check in a gears HTTP thread instead of the main one
-					var url = 'http://updatesite.titaniumapp.com/check';
+					var url = 'http://updatesite.titaniumapp.com/distribution/titanium';
 					var payload = {
 						aguid:ti.App.getGUID(),
 						aid:ti.App.getID(),
