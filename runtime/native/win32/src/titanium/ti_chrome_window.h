@@ -79,6 +79,7 @@ private:
 	std::string currentURL;
 	bool openOnLoad;
 
+	void applyTransparentRegion();
 	static std::vector<TiChromeWindow*> openWindows;
 	static TCHAR defaultWindowTitle[128];
 	static TCHAR windowClassName[128];

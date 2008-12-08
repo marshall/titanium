@@ -29,6 +29,10 @@ TCHAR TiChromeWindow::windowClassName[128];
 std::vector<TiChromeWindow*> TiChromeWindow::openWindows = std::vector<TiChromeWindow*>();
 bool TiChromeWindow::isInspectorOpen = false;
 
+// slightly off white, there's probably a better way to do this
+COLORREF transparencyColor = RGB(0xF9, 0xF9, 0xF9);
+
+
 /*static*/
 TiChromeWindow* TiChromeWindow::fromWindow(HWND hWnd) {
   return reinterpret_cast<TiChromeWindow*>(win_util::GetWindowUserData(hWnd));
@@ -75,7 +79,8 @@ void TiChromeWindow::initWindowClass (HINSTANCE hInstance)
 		wcex.hInstance		= hInstance;
 		wcex.hIcon			= LoadIcon(hInstance, MAKEINTRESOURCE(IDI_CHROME_SHELL3));
 		wcex.hCursor		= LoadCursor(NULL, IDC_ARROW);
-		wcex.hbrBackground	= (HBRUSH)(COLOR_WINDOW+1);
+		//wcex.hbrBackground	= (HBRUSH)(COLOR_WINDOW+1);
+		wcex.hbrBackground	= CreateSolidBrush(transparencyColor);
 		wcex.lpszMenuName	= 0;
 		wcex.lpszClassName	= windowClassName;
 		wcex.hIconSm		= LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
@@ -154,9 +159,21 @@ LRESULT CALLBACK TiChromeWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 			}
 			break;
 
-		case WM_PAINT:
+		case WM_PAINT: {
+			if (window->getTiWindowConfig()->getTransparency() < 1.0) {
+				PAINTSTRUCT ps; 
+				HBRUSH brush;
+				RECT rect;
+				GetWindowRect(hWnd, &rect);
+				HDC hdc = BeginPaint(hWnd, &ps);
+				brush = CreateSolidBrush(transparencyColor);
+				SelectObject(hdc, brush);
+				Rectangle(hdc, 0, 0, rect.right - rect.top, rect.bottom - rect.top);
+				DeleteObject(brush);
+				EndPaint(hWnd, &ps);
+			}
 			window->getHost()->Paint();
-			break;
+		} break;
 
 		// forward some things onto the webview host
 		case WM_MOUSEMOVE:
@@ -287,6 +304,58 @@ void TiChromeWindow::setTiWindowConfig(TiWindowConfig *tiWindowConfig)
 	reloadTiWindowConfig();
 }
 
+void TiChromeWindow::applyTransparentRegion()
+{
+	/*RECT rect;
+	GetWindowRect(hWnd, &rect);
+
+	HDC hdc = CreateCompatibleDC(0);
+	int width = rect.right - rect.left;
+	int height = rect.bottom - rect.top;
+	
+	BITMAP bitmap = CreateCompatibleBitmap(hdc, width, height);
+	SelectObject(hdc, &bitmap);
+	BitBlt(hdc, 0, 0, width, height, GetWindowDC(hWnd), 0, 0, SRCCOPY);
+
+	//create an empty region
+	HRGN hRgn = CreateRectRgn(0,0,0,0);
+	//Create a region from a bitmap with transparency colour of white
+	//change the pixel values for a different transparency color
+	//ex - RGB(0,0,0) will mean a transparency color of black.. so the
+	//areas of the bitmap not used to create the window will be black
+	COLORREF crTransparent = RGB(255, 255, 255);
+
+	int iX = 0;
+	int iRet = 0;
+	for (int iY = 0; iY < bmpInfo.bmHeight; iY++)
+	{
+		do
+		{
+			//skip over transparent pixels at start of lines.
+			while (iX < bmpInfo.bmWidth && GetPixel(hdcMem, iX, iY)
+				== crTransparent) iX++;
+			//remember this pixel
+			int iLeftX = iX;
+			//now find first non-transparent pixel
+			while (iX < bmpInfo.bmWidth && GetPixel(hdcMem, iX, iY) !
+				= crTransparent) ++iX;
+			//create a temp region on this info
+			HRGN hRgnTemp = CreateRectRgn(iLeftX, iY, iX, iY+1);
+			//combine into main region
+			iRet = CombineRgn(hRgn, hRgn, hRgnTemp, RGN_OR);
+			if(iRet == ERROR)
+			{
+				return;
+			}
+			//delete the temp region for next pass
+			DeleteObject(hRgnTemp);
+		} while(iX < bmpInfo.bmWidth);
+	}
+	iX = 0;
+	
+	SetWindowRgn(hWnd, hRgn, TRUE);*/
+}
+
 void TiChromeWindow::reloadTiWindowConfig()
 {
 	host->webview()->GetMainFrame()->SetAllowsScrolling(tiWindowConfig->isUsingScrollbars());
@@ -305,7 +374,11 @@ void TiChromeWindow::reloadTiWindowConfig()
 	UINT flags = SWP_NOZORDER | SWP_FRAMECHANGED;
 
 	sizeTo(tiWindowConfig->getX(), tiWindowConfig->getY(), tiWindowConfig->getWidth(), tiWindowConfig->getHeight(), flags);
-	SetLayeredWindowAttributes(hWnd, 0, (BYTE)floor(tiWindowConfig->getTransparency()*255), LWA_ALPHA);
+	
+	SetLayeredWindowAttributes(hWnd, transparencyColor, 0, LWA_COLORKEY);
+	//SetLayeredWindowAttributes(hWnd, 0, (BYTE)0, LWA_ALPHA);
+	//SetLayeredWindowAttributes(host->window_handle(), 0, (BYTE)floor(tiWindowConfig->getTransparency()*255), LWA_ALPHA);
+	applyTransparentRegion();
 }
 
 

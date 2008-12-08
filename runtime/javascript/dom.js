@@ -1,6 +1,9 @@
-// fix a limitation in using custom targets for chromium/win32
-// just append the custom target to the query string of the URL
+
+// -- Win32 workarounds --
 if (ti.platform == "win32") {
+	
+	// fix a limitation in using custom targets for chromium/win32
+	// just append the custom target to the query string of the URL
 	$.each($('a[target^=ti:]'), function()
 	{
 		var href = $(this).attr('href');
@@ -16,7 +19,15 @@ if (ti.platform == "win32") {
 		$(this).attr('href', href);
 		$(this).attr('target', null);
 	});
+
+	// assign the default body background color to our off-white
+	// that we assigned as transparent -- this allows us to have a mostly
+	// transparent window (no alpha blending though)
+	$('body').css('background-color', '#f9f9f9');
+	$('body').attr('class', 'win32');
 }
+
+
 
 
 // 

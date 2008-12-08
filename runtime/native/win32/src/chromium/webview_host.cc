@@ -40,7 +40,6 @@ WebViewHost* WebViewHost::Create(gfx::WindowHandle parent_window,
 
   host->webwidget_ = WebView::Create(delegate, prefs);
 
-  printf("::: created webview host\n");
   return host;
 }
 

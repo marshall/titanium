@@ -8,10 +8,15 @@ ti.Notification = function()
 	
 	var showing = false;
 	var myid = 'notification_'+(notification_windows++);
+	var transparency = .99;
+	if (ti.platform == "win32") {
+		transparency = 1.0;	
+	}
+	
 	var mywindow = ti.Window.createWindow({
 			width:width,
 			height:height,
-			transparency:.99,
+			transparency:transparency,
 			usingChrome:true,
 			id:myid,
 			visible:false,
