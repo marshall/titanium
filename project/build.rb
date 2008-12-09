@@ -31,9 +31,10 @@ task :project do
   Zip::ZipFile.open(zipfile, Zip::ZipFile::CREATE) do |zipfile|
     dirs.each do |dir|
       dofiles(File.join(build_dir,dir)) do |f|
+				puts "getting files in #{build_dir}/#{dir}"
         filename = File.basename(f)
         next if File.basename(filename[0,1]) == '.'
-        zipfile.add("#{dir}/#{filename}",File.join(build_dir,dir,filename))
+        zipfile.add("#{dir}/#{f}",File.join(build_dir,dir,f))
       end
     end
     zipfile.add('installer.rb',File.join(build_dir,'installer.rb'));
