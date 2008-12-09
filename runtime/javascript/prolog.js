@@ -1,3 +1,9 @@
+/**
+ * The main Titanium JS module
+ *
+ * @module Titanium
+ */
+
 // this begins the hiding process of things we want exposed to our 
 // internal code but not to the outside world (i.e. the application)
 (function($)
@@ -9,8 +15,11 @@
 	var runtime = tiRuntime;
 	window.tiRuntime = null;
 
-	// map our main native objects into the ti namespace
-	// and hang ti off the global scope
+	/** map our main native objects into the ti namespace
+	 * and hang ti off the global scope
+	 *
+	 * @class ti
+	 */
 	window.ti =
 	{
 		version: "<%=version%>",	// replaced at build time
@@ -32,8 +41,12 @@
 	if (navigator.appVersion.indexOf("Linux")!=-1) ti.platform = "linux";
 
 	
-	// expose jQuery into the ti namespace in case anyone wants to use
-	// it outside of titanium.js
+	/**
+	 * expose jQuery into the ti namespace in case anyone wants to use
+	 * it outside of titanium.js
+	 *
+	 * @property jQuery
+	 */
 	ti.jQuery = $;
 
 	// in the case that you have transparency on the window, we have to hack the browser's window
@@ -62,7 +75,14 @@
 	};
 	
 	var readies = [], loaded = false;
-	
+
+	/**
+	 * function that can be called to add a listener (as a function)
+	 * to be notified when Titanium is loaded and ready and the app
+	 * is safe to proceed with invoking functions against ti
+	 *
+	 * @method ready
+	 */
 	ti.ready = function(fn)
 	{
 		if (!loaded)

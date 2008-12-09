@@ -91,6 +91,14 @@ BEGIN
     DEFPUSHBUTTON   "Cancel",JSPROMPTIDCANCEL,175,77,46,13
 END
 
+IDD_TITANIUM_SPLASH DIALOGEX 0, 0, 133, 43
+STYLE DS_SETFONT | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_BORDER
+EXSTYLE WS_EX_TRANSPARENT
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         110,-1,"Static",SS_BITMAP,0,0,133,43
+END
+
 
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
@@ -119,6 +127,13 @@ END
 
 #endif    // APSTUDIO_INVOKED
 
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_TITANIUM_SPLASH     BITMAP                  "titanium_poweredby.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //
