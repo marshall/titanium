@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <appcelerator version="1.0" xmlns="http://www.appcelerator.org/config">
-	<servicebroker poll="false" marshaller="application/json">@{rootPath}servicebroker</servicebroker>
+	<servicebroker disabled="true" poll="false" marshaller="application/json">@{rootPath}servicebroker</servicebroker>
 	<upload>@{rootPath}upload</upload>
 	<download>@{rootPath}download</download>
    <proxy>@{rootPath}proxy</proxy>
