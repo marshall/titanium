@@ -19,13 +19,18 @@
 #include "base/path_service.h"
 #include "base/file_util.h"
 
-bool TiAppArguments::isDevMode = false;
+bool TiAppArguments::isDebugMode = false;
+bool TiAppArguments::openConsole = false;
+bool TiAppArguments::openInspector = false;
+
 std::wstring TiAppArguments::xmlPath = L"";
 
 namespace TiSwitches
 {
 	const wchar_t xml[] = L"xml";
-	const wchar_t devMode[] = L"dev-mode";
+	const wchar_t debug[] = L"debug";
+	const wchar_t console[] = L"console";
+	const wchar_t inspector[] = L"inspector";
 }
 
 /*static*/
@@ -52,9 +57,19 @@ void TiAppArguments::init(wchar_t *command_line)
 
 	CommandLine parsed_command_line(c);
 
-	if (parsed_command_line.HasSwitch(TiSwitches::devMode))
+	if (parsed_command_line.HasSwitch(TiSwitches::debug))
 	{
-		TiAppArguments::isDevMode = true;
+		TiAppArguments::isDebugMode = true;
+	}
+
+	if (parsed_command_line.HasSwitch(TiSwitches::console))
+	{
+		TiAppArguments::openConsole = true;
+	}
+
+	if (parsed_command_line.HasSwitch(TiSwitches::inspector))
+	{
+		TiAppArguments::openInspector = true;
 	}
 
 	if (parsed_command_line.HasSwitch(TiSwitches::xml))

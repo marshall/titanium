@@ -19,6 +19,7 @@
 #include "ti_utils.h"
 #include "ti_menu.h"
 #include "ti_app_arguments.h"
+#include "ti_splash.h"
 #include "Resource.h"
 
 #include <fstream>
@@ -332,6 +333,11 @@ void TiChromeWindow::reloadTiWindowConfig()
 
 
 void TiChromeWindow::open() {
+	if (TiSplash::isShown()) {
+		TiSplash::instance()->hide();
+		delete TiSplash::instance();
+	}
+
 	ShowWindow(hWnd, SW_SHOW);
 	ShowWindow(host->window_handle(), SW_SHOW);
 }

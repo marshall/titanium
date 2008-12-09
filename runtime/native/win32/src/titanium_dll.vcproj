@@ -273,6 +273,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\titanium\ti_splash.cc"
+				>
+			</File>
+			<File
+				RelativePath=".\titanium\ti_splash.h"
+				>
+			</File>
+			<File
 				RelativePath=".\titanium\ti_url.cc"
 				>
 			</File>
@@ -422,6 +430,10 @@
 			</File>
 			<File
 				RelativePath=".\resources\ti_shell.rc"
+				>
+			</File>
+			<File
+				RelativePath=".\resources\titanium_poweredby.bmp"
 				>
 			</File>
 		</Filter>

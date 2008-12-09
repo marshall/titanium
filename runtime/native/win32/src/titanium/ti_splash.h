@@ -13,30 +13,42 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-#ifndef TI_APP_ARGUMENTS_H_
-#define TI_APP_ARGUMENTS_H_
-
-#include <string>
-#include <vector>
 
 
-namespace TiSwitches
+#ifndef TI_SPLASH_H_
+#define TI_SPLASH_H_
+
+#include <windows.h>
+
+class TiSplash
 {
-	extern const wchar_t xml[];
-	extern const wchar_t debug[];
-	extern const wchar_t console[];
-	extern const wchar_t inspector[];
-}
+private:
+	static TiSplash *instance_;
+	static bool shown;
+	static INT_PTR CALLBACK DlgProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
-class TiAppArguments 
-{
-	static std::wstring defaultXmlPath();
+	HINSTANCE hInstance;
+	HWND hWnd;
+	void createSplash();
+
+	TiSplash(HINSTANCE hInstance);
+
 public:
-	static void init(wchar_t *command_line);
-	
-	static bool isDebugMode, openConsole, openInspector;
-	static std::wstring xmlPath;
+	void show();
+	void hide();
 
+	static TiSplash* instance() {
+		return instance_;
+	}
+
+	static TiSplash* init(HINSTANCE hInstance) {
+		if (instance_ == NULL) {
+			instance_ = new TiSplash(hInstance);
+		}
+		return instance_;
+	}
+	
+	static bool isShown() { return shown; }
 };
 
 #endif
