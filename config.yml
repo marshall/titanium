@@ -5,6 +5,10 @@
 :releases:
   :titanium:
       :win32:
+        :version: "0.1"
       :osx:
+        :version: "0.1"
       :linux:
+        :version: "0.1"
       :project:
+        :version: "0.1"
