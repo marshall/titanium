@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<appcelerator version="1.0" xmlns="http://www.appcelerator.org/config">
+	<servicebroker poll="false" marshaller="application/json">@{rootPath}servicebroker</servicebroker>
+	<upload>@{rootPath}upload</upload>
+	<download>@{rootPath}download</download>
+   <proxy>@{rootPath}proxy</proxy>
+	<sessionid>JSESSIONID</sessionid>
+   <language>java</language>
+   <service>java</service>
+    <aid>2f93f0f0-a303-012b-bfb3-00224139a1e1</aid>
+    <sid></sid>
+</appcelerator>
