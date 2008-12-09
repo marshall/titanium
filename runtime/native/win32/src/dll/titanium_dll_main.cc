@@ -68,6 +68,7 @@
 #include "ti_dev_mode.h"
 #include "ti_app_arguments.h"
 #include "ti_version.h"
+#include "ti_splash.h"
 
 using namespace std;
 
@@ -187,11 +188,16 @@ int titaniumInit ()
 
 void runTitanium ()
 {
+	
+
 	MessageLoop::current()->Run();
 }
 
 int runTitaniumApp_internal()
 {
+	TiSplash *splash = TiSplash::init(hModule);
+	splash->show();
+
 	chromiumInit();
 	int result = titaniumInit();
 
