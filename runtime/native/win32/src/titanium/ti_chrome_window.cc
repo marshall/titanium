@@ -202,6 +202,9 @@ LRESULT CALLBACK TiChromeWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 				return DefWindowProc(hWnd, message, wParam, lParam);
 			}
 			break;
+		case WM_CLOSE:
+			::DestroyWindow(hWnd);
+			break;
 		case WM_DESTROY:
 			DestroyWindow(window);
 			break;

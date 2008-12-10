@@ -23,8 +23,8 @@
 		<minimizable>true</minimizable>
 		<closeable>true</closeable>
 		<resizable>false</resizable>
-		<chrome scrollbars="true">true</chrome>
-		<transparency>0.90</transparency>
+		<chrome scrollbars="false">true</chrome>
+		<transparency>1.0</transparency>
 	</window>
 
 	<icon>
