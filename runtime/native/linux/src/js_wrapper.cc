@@ -1,11 +1,8 @@
 #include <stdlib.h>
 #include <assert.h>
-#include <webkit/webkit.h>
-#include <JavaScriptCore/JSObjectRef.h>
-#include <JavaScriptCore/JSStringRef.h>
-#include "js_wrapper.h"
+#include "ti_types.h"
 
-std::vector<MethodMapping*> TiObject::method_mapping;
+std::vector<AbstractCallback*> TiObject::callbacks;
 
 TiValue::TiValue(JSContextRef context, JSValueRef value) {
     this->context = context;
@@ -54,14 +51,21 @@ char* TiValue::get_chars() {
 }
 
 TiObject TiValue::new_object() {
-    JSObjectRef object = JSObjectMake(this->context, NULL, NULL);
-    return TiObject(this->context, object);
+    return TiObject(this->context);
 }
 
 
-TiObject::TiObject(JSContextRef context, JSObjectRef object)
-        : TiValue(context, object) {
+TiObject::TiObject(JSContextRef context) {
+    JSObjectRef object = JSObjectMake(this->context, NULL, NULL);
+    this->context = context;
     this->object = object;
+    this->value = object;
+}
+
+TiObject::TiObject(JSContextRef context, JSObjectRef object) {
+    this->context = context;
+    this->object = object;
+    this->value = object;
 }
 
 JSObjectRef TiObject::get_object() {
@@ -97,39 +101,15 @@ TiValue TiObject::get_property(const char *name) {
     }
 }
 
-void TiObject::bind_method(const char *name, TiMethod method) {
+AbstractCallback* TiObject::get_callback(JSObjectRef ref) {
 
-    JSStringRef name_str = JSStringCreateWithUTF8CString(name);
-
-    JSObjectRef function =
-         JSObjectMakeFunctionWithCallback(this->get_context(),
-                                          name_str,
-                                          TiObject::cb);
-
-    /* map the method to the function object so that
- *     we can retrieve it later */
-    MethodMapping* mapping = new MethodMapping;
-    mapping->function = function;
-    mapping->ti_method = method;
-    mapping->ti_object = this;
-    TiObject::method_mapping.push_back(mapping);
-
-    JSObjectSetProperty(this->get_context(),
-                        this->get_object(),
-                        name_str,
-                        function,
-                        kJSPropertyAttributeNone,
-                        NULL);
-    JSStringRelease(name_str);
-}
-
-MethodMapping* TiObject::get_method_mapping(JSObjectRef ref) {
-    for (int i=0; i < TiObject::method_mapping.size(); i++) {
-        MethodMapping* mapping = TiObject::method_mapping.at(i);
-        if (mapping->function == ref) {
-            return mapping;
+    for (int i=0; i < TiObject::callbacks.size(); i++) {
+        AbstractCallback* c = TiObject::callbacks.at(i);
+        if (c->function == ref) {
+            return c;
         }
     }
+
     return NULL;
 }
 
@@ -140,36 +120,16 @@ JSValueRef TiObject::cb(JSContextRef context,
                         const JSValueRef arguments[],
                         JSValueRef* exception) {
 
-
-    /* fetch the "this" jsc object and the method pointer */
-    MethodMapping* mapping = TiObject::get_method_mapping(function_object);
-    TiObject* this_tiobject = mapping->ti_object;
-    TiMethod method = mapping->ti_method;
-
     /* convert all arguments to jsc values */
     TiValue *val_args = new TiValue[arg_count];
     for (int i = 0; i < arg_count; i++) {
         val_args[i] = TiValue(context, arguments[i]);
     }
 
-    TiValue val = (this_tiobject->*method)(arg_count, val_args);
+    /* fetch the callback object for this function */
+    AbstractCallback* c = TiObject::get_callback(function_object);
+    TiValue val = c->execute(arg_count, val_args);
 
     return val.get_value();
-}
-
-/* example of a callback method */
-TiValue TiObject::printer(size_t num_args, TiValue args[]) {
-
-    if (num_args > 0) {
-        TiValue arg = args[0];
-
-        char* string = arg.get_chars();
-        if (string != NULL) {
-            printf("%s\n", string);
-            free(string);
-        }
-    }
-
-    return this->undefined();
 }
 
