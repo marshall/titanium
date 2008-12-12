@@ -1,5 +1,7 @@
 #include "ti_gtk_types.h"
 
+#define STUB printf("__FILE__:__LINE__: called a stub method!\n")
+
 static void destroy_cb (GtkWidget* widget, gpointer data);
 static void window_object_cleared_cb (WebKitWebView* web_view,
                                       WebKitWebFrame* web_frame,
@@ -56,13 +58,6 @@ void TiGtkUserWindow::change_title(const gchar* title) {
     gtk_window_set_title (this->gtk_window, this->window_title);
 }
 
-void TiGtkUserWindow::hide(bool animate) {
-    gtk_widget_hide_all(GTK_WIDGET(this->gtk_window));
-}
-
-void TiGtkUserWindow::show(bool animate) {
-    gtk_widget_show_all(GTK_WIDGET(this->gtk_window));
-}
 static void destroy_cb (GtkWidget* widget, gpointer data) {
     gtk_main_quit ();
 }
@@ -78,7 +73,7 @@ static void window_object_cleared_cb (WebKitWebView* web_view,
 
     JSStringRef script;
     char code[1024];
-    sprintf(code, "tiRuntime.Window.currentWindow.hide();");
+    sprintf(code, "tiRuntime.Window.currentWindow.setX(100);");
     script = JSStringCreateWithUTF8CString(code);
     if(JSCheckScriptSyntax(context, script, NULL, 0, NULL))
         JSEvaluateScript(context, script, window_object, NULL, 1, NULL);
@@ -95,4 +90,104 @@ static void title_change_cb (WebKitWebView* web_view,
     //ti_gtk_window->change_title(title);
 
 }
+
+void TiGtkUserWindow::hide(bool animate) {
+    gtk_widget_hide_all(GTK_WIDGET(this->gtk_window));
+}
+
+void TiGtkUserWindow::show(bool animate) {
+    gtk_widget_show_all(GTK_WIDGET(this->gtk_window));
+}
+
+bool TiGtkUserWindow::is_using_chrome() {
+    return gtk_window_get_decorated(this->gtk_window);
+}
+
+bool TiGtkUserWindow::is_using_scrollbars() { 
+    return this->using_scrollbars;
+}
+
+bool TiGtkUserWindow::is_full_screen() { 
+    return this->full_screen;
+}
+
+char* TiGtkUserWindow::get_id() { 
+    return this->id;
+}
+
+void TiGtkUserWindow::open() { STUB; }
+void TiGtkUserWindow::close() { STUB; }
+
+double TiGtkUserWindow::get_x() {
+    int x, y;
+    gtk_window_get_position(this->gtk_window, &x, &y);
+    return x;
+}
+
+void TiGtkUserWindow::set_x(double x) { 
+    int y = get_y();
+    gtk_window_move(this->gtk_window, int(x), y);
+}
+
+double TiGtkUserWindow::get_y() {
+    int x, y;
+    gtk_window_get_position (this->gtk_window, &x, &y);
+    return y;
+}
+
+void TiGtkUserWindow::set_y(double y) { 
+    int x = get_x();
+    gtk_window_move(this->gtk_window, x, int(y));
+}
+
+double TiGtkUserWindow::get_width() {
+    int width, height;
+    gtk_window_get_size (this->gtk_window, &width, &height);
+    return width;
+}
+void TiGtkUserWindow::set_width(double width) {
+    int height = get_height();
+    gtk_window_resize(this->gtk_window, int(width), height);
+}
+double TiGtkUserWindow::get_height() {
+    int width, height;
+    gtk_window_get_size (this->gtk_window, &width, &height);
+    return width;
+}
+void TiGtkUserWindow::set_height(double height) {
+    int width = get_width();
+    gtk_window_resize(this->gtk_window, width, int(height));
+}
+TiBounds TiGtkUserWindow::get_bounds() {
+    int width, height;
+    int x, y;
+    gtk_window_get_size(this->gtk_window, &width, &height);
+    gtk_window_get_position(this->gtk_window, &x, &y);
+    TiBounds b;
+    b.x = x;
+    b.y = y;
+    b.width = width;
+    b.height = height;
+    return b;
+}
+void TiGtkUserWindow::set_bounds(TiBounds b) {
+    gtk_window_resize(this->gtk_window, int(b.width), int(b.height));
+    gtk_window_move(this->gtk_window, int(b.x), int(b.y));
+}
+char* TiGtkUserWindow::get_title() { STUB; }
+void TiGtkUserWindow::set_title(char* title) { STUB; }
+char* TiGtkUserWindow::get_url() { STUB; }
+void TiGtkUserWindow::set_url(char* url) { STUB; }
+bool TiGtkUserWindow::is_resizable() { STUB; }
+void TiGtkUserWindow::set_resizable(bool resizable) { STUB; }
+bool TiGtkUserWindow::is_maximizable() { STUB; }
+void TiGtkUserWindow::set_maximizable(bool maximizable) { STUB; }
+bool TiGtkUserWindow::is_minimizable() { STUB; }
+void TiGtkUserWindow::set_minimizable(bool minimizable) { STUB; }
+bool TiGtkUserWindow::is_closeable() { STUB; }
+void TiGtkUserWindow::set_closeable(bool closeable) { STUB; }
+bool TiGtkUserWindow::is_visible() { STUB; }
+void TiGtkUserWindow::set_visible(bool visible) { STUB; }
+bool TiGtkUserWindow::get_transparency() { STUB; }
+void TiGtkUserWindow::set_transparency(bool transparency) { STUB; }
 

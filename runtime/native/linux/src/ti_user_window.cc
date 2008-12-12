@@ -18,6 +18,37 @@ void TiUserWindow::window_object_cleared(JSContextRef context, JSObjectRef windo
     /* this object is accessed by tiRuntime.Window.currentWindow */
     this->bind_method("hide", &TiUserWindow::hide_cb);
     this->bind_method("show", &TiUserWindow::show_cb);
+    this->bind_method("isUsingChrome", &TiUserWindow::is_using_chrome_cb);
+    this->bind_method("isFullScreen", &TiUserWindow::is_full_screen_cb);
+    this->bind_method("getId", &TiUserWindow::get_id_cb);
+    this->bind_method("open", &TiUserWindow::open_cb);
+    this->bind_method("close", &TiUserWindow::close_cb);
+    this->bind_method("getX", &TiUserWindow::get_x_cb);
+    this->bind_method("setX", &TiUserWindow::set_x_cb);
+    this->bind_method("getY", &TiUserWindow::get_y_cb);
+    this->bind_method("setY", &TiUserWindow::set_y_cb);
+    this->bind_method("getWidth", &TiUserWindow::get_width_cb);
+    this->bind_method("setWidth", &TiUserWindow::set_width_cb);
+    this->bind_method("getHeight", &TiUserWindow::get_height_cb);
+    this->bind_method("setHeight", &TiUserWindow::set_height_cb);
+    this->bind_method("getBounds", &TiUserWindow::get_bounds_cb);
+    this->bind_method("setBounds", &TiUserWindow::set_bounds_cb);
+    this->bind_method("getTitle", &TiUserWindow::get_title_cb);
+    this->bind_method("setTitle", &TiUserWindow::set_title_cb);
+    this->bind_method("getUrl", &TiUserWindow::get_url_cb);
+    this->bind_method("setUrl", &TiUserWindow::set_url_cb);
+    this->bind_method("isResizable", &TiUserWindow::is_resizable_cb);
+    this->bind_method("setResizable", &TiUserWindow::set_resizable_cb);
+    this->bind_method("isMaximizable", &TiUserWindow::is_maximizable_cb);
+    this->bind_method("setMaimizable", &TiUserWindow::set_maximizable_cb);
+    this->bind_method("isMinimizable", &TiUserWindow::is_minimizable_cb);
+    this->bind_method("setMinizable", &TiUserWindow::set_minimizable_cb);
+    this->bind_method("isCloseable", &TiUserWindow::is_closeable_cb);
+    this->bind_method("setCloseable", &TiUserWindow::set_closeable_cb);
+    this->bind_method("isVisible", &TiUserWindow::is_visible_cb);
+    this->bind_method("setVisible", &TiUserWindow::set_visible_cb);
+    this->bind_method("getTransparency", &TiUserWindow::get_transparency_cb);
+    this->bind_method("setTransparency", &TiUserWindow::set_transparency_cb);
 }
 
 TiValue TiUserWindow::hide_cb(size_t num_args, TiValue args[]) {

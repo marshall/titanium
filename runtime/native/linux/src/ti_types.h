@@ -7,6 +7,7 @@
 #include <JavaScriptCore/JSContextRef.h>
 #include "js_wrapper.h"
 
+
 typedef struct {
     double x;
     double y;
