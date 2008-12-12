@@ -17,10 +17,15 @@ class TiValue {
 
         TiValue new_value(JSValueRef value);
         TiValue new_value(char *);
+        TiValue new_value(bool);
+        TiValue new_value(double);
         TiObject new_object();
         TiValue undefined();
 
+        TiObject get_object();
         char* get_chars();
+        bool get_bool();
+        double get_number();
 
      protected:
         JSContextRef context;

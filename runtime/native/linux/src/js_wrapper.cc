@@ -28,9 +28,31 @@ TiValue TiValue::new_value(char* chars) {
     return TiValue(this->context, value);
 }
 
+TiValue TiValue::new_value(bool boolean) {
+    JSValueRef value =  JSValueMakeBoolean(this->context, boolean);
+    return TiValue(this->context, value);
+}
+
+TiValue TiValue::new_value(double number) {
+    JSValueRef value =  JSValueMakeNumber(this->context, number);
+    return TiValue(this->context, value);
+}
+
 TiValue TiValue::undefined() {
     return this->new_value(JSValueMakeUndefined(this->get_context()));
 }
+
+TiObject TiValue::get_object() {
+    JSContextRef ctx = this->get_context();
+    JSValueRef val = this->get_value();
+
+    if (JSValueIsObject(ctx, val)) {
+        TiObject(this->context, JSValueToObject(ctx, val, NULL));
+    } else {
+        return this->new_object();
+    }
+}
+
 
 char* TiValue::get_chars() {
 
@@ -47,6 +69,30 @@ char* TiValue::get_chars() {
         return chars;
     } else {
         return NULL;
+    }
+}
+
+bool TiValue::get_bool() {
+
+    JSContextRef ctx = this->get_context();
+    JSValueRef val = this->get_value();
+
+    if (JSValueIsBoolean(ctx, val)) {
+        return JSValueToBoolean(ctx, val);
+    } else {
+        return false;
+    }
+}
+
+double TiValue::get_number() {
+
+    JSContextRef ctx = this->get_context();
+    JSValueRef val = this->get_value();
+
+    if (JSValueIsNumber(ctx, val)) {
+        return JSValueToNumber(ctx, val, NULL);
+    } else {
+        return 0;
     }
 }
 
