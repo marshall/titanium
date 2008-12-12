@@ -3,8 +3,8 @@
 
 #include "ti_types.h"
 
-TiApp::TiApp(TiWindow* window) : TiApiPoint(window) {
-  this->bind_method("debug", &TiApp::debug);
+TiApp::TiApp(TiUserWindow* window) : TiApiPoint(window) {
+    this->bind_method("debug", &TiApp::debug);
 }
 
 TiValue TiApp::debug(size_t num_args, TiValue args[]) {
