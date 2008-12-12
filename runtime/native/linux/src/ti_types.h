@@ -1,7 +1,6 @@
 #ifndef __TI_TYPES_H
 #define __TI_TYPES_H
 
-#include <webkit/webkit.h>
 #include <JavaScriptCore/JSObjectRef.h>
 #include <JavaScriptCore/JSStringRef.h>
 #include <JavaScriptCore/JSContextRef.h>
@@ -22,10 +21,10 @@ class TiUserWindow : public TiObject {
 
         void window_object_cleared(JSContextRef, JSObjectRef);
 
-        virtual void hide(bool animate);
+        virtual void hide();
         TiValue hide_cb(size_t num_args, TiValue args[]);
 
-        virtual void show(bool animate);
+        virtual void show();
         TiValue show_cb(size_t num_args, TiValue args[]);
 
         virtual bool is_using_chrome();
@@ -105,9 +104,9 @@ class TiUserWindow : public TiObject {
         virtual void set_visible(bool visible);
         TiValue set_visible_cb(size_t num_args, TiValue args[]);
 
-        virtual bool get_transparency();
+        virtual double get_transparency();
         TiValue get_transparency_cb(size_t num_args, TiValue args[]);
-        virtual void set_transparency(bool transparency);
+        virtual void set_transparency(double transparency);
         TiValue set_transparency_cb(size_t num_args, TiValue args[]);
 
     protected:

@@ -52,22 +52,12 @@ void TiUserWindow::window_object_cleared(JSContextRef context, JSObjectRef windo
 }
 
 TiValue TiUserWindow::hide_cb(size_t num_args, TiValue args[]) {
-    bool animate = false;
-    if (num_args > 0) {
-        animate = args[0].get_bool();
-    }
-
-    this->hide(animate);
+    this->hide();
     return this->undefined();
 }
 
 TiValue TiUserWindow::show_cb(size_t num_args, TiValue args[]) {
-    bool animate = false;
-    if (num_args > 0) {
-        animate = args[0].get_bool();
-    }
-
-    this->show(animate);
+    this->show();
     return this->undefined();
 }
 
@@ -134,8 +124,8 @@ TiValue TiUserWindow::get_width_cb(size_t num_args, TiValue args[]) {
 
 TiValue TiUserWindow::set_width_cb(size_t num_args, TiValue args[]) {
     if (num_args > 0) {
-        double y = args[0].get_number();
-        this->set_y(y);
+        double w = args[0].get_number();
+        this->set_width(w);
     }
     return this->undefined();
 }
@@ -147,8 +137,8 @@ TiValue TiUserWindow::get_height_cb(size_t num_args, TiValue args[]) {
 
 TiValue TiUserWindow::set_height_cb(size_t num_args, TiValue args[]) {
     if (num_args > 0) {
-        double y = args[0].get_number();
-        this->set_y(y);
+        double h = args[0].get_number();
+        this->set_height(h);
     }
     return this->undefined();
 }
@@ -283,8 +273,8 @@ TiValue TiUserWindow::set_transparency_cb(size_t num_args, TiValue args[]) {
 }
 
 
-void TiUserWindow::show(bool animate) { STUB; }
-void TiUserWindow::hide(bool animate) { STUB; }
+void TiUserWindow::show() { STUB; }
+void TiUserWindow::hide() { STUB; }
 bool TiUserWindow::is_using_chrome() { STUB; }
 bool TiUserWindow::is_using_scrollbars() { STUB; }
 bool TiUserWindow::is_full_screen() { STUB; }
@@ -315,5 +305,5 @@ bool TiUserWindow::is_closeable() { STUB; }
 void TiUserWindow::set_closeable(bool closeable) { STUB; }
 bool TiUserWindow::is_visible() { STUB; }
 void TiUserWindow::set_visible(bool visible) { STUB; }
-bool TiUserWindow::get_transparency() { STUB; }
-void TiUserWindow::set_transparency(bool transparency) { STUB; }
+double TiUserWindow::get_transparency() { STUB; }
+void TiUserWindow::set_transparency(double transparency) { STUB; }

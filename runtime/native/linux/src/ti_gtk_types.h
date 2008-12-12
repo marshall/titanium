@@ -3,14 +3,20 @@
 #define __TI_GTK_TYPES_H
 #include "ti_types.h"
 
+#include <X11/Xlib.h>
+#include <X11/Xatom.h>
+#include <gdk/gdk.h>
+#include <gdk/gdkx.h>
+#include <webkit/webkit.h>
+
 class TiGtkUserWindow : public TiUserWindow {
 
     public:
         TiGtkUserWindow();
-        void change_title(const gchar*);
+        void setup_decorations();
 
-        void hide(bool animate);
-        void show(bool animate);
+        void hide();
+        void show();
         bool is_using_chrome();
         bool is_using_scrollbars();
         bool is_full_screen();
@@ -41,15 +47,27 @@ class TiGtkUserWindow : public TiUserWindow {
         void set_closeable(bool closeable);
         bool is_visible();
         void set_visible(bool visible);
-        bool get_transparency();
-        void set_transparency(bool transparency);
+        double get_transparency();
+        void set_transparency(double transparency);
 
     protected:
         GtkWindow* gtk_window;
+        WebKitWebView* web_view;
+
         gchar* window_title;
+        gchar* uri;
+
+        bool showing;
         bool full_screen;
         bool using_scrollbars;
         char* id;
+        double transparency;
+
+        bool resizable;
+        bool chrome;
+        bool minimizable;
+        bool maximizable;
+        bool closeable;
 };
 
 #endif
