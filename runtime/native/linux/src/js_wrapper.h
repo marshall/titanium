@@ -12,20 +12,20 @@ class TiValue {
     public:
         TiValue() {}
         TiValue(JSContextRef, JSValueRef);
-        JSValueRef get_value();
-        JSContextRef get_context();
+        JSValueRef GetValue();
+        JSContextRef GetContext();
 
-        TiValue new_value(JSValueRef value);
-        TiValue new_value(std::string);
-        TiValue new_value(bool);
-        TiValue new_value(double);
-        TiObject new_object();
-        TiValue undefined();
+        TiValue NewValue(JSValueRef value);
+        TiValue NewValue(std::string);
+        TiValue NewValue(bool);
+        TiValue NewValue(double);
+        TiObject NewObject();
+        TiValue Undefined();
 
-        TiObject get_object();
-        std::string get_string();
-        bool get_bool();
-        double get_number();
+        TiObject GetObject();
+        std::string GetString();
+        bool GetBool();
+        double GetNumber();
 
      protected:
         JSContextRef context;
@@ -39,16 +39,16 @@ class TiObject : public TiValue {
         TiObject() {}
         TiObject(JSContextRef);
         TiObject(JSContextRef, JSObjectRef);
-        JSObjectRef get_object();
+        JSObjectRef GetObject();
 
-        void set_property(std::string, TiValue);
-        TiValue get_property(std::string);
+        void SetProperty(std::string, TiValue);
+        TiValue GetProperty(std::string);
 
-        template <class T> void bind_method(
+        template <class T> void BindMethod(
                 const std::string,
                 TiValue (T::*method)(size_t, TiValue[]));
 
-        static JSValueRef cb(JSContextRef context,
+        static JSValueRef CB(JSContextRef context,
                               JSObjectRef function_object,
                               JSObjectRef this_object,
                               size_t arg_count,
@@ -56,7 +56,7 @@ class TiObject : public TiValue {
                               JSValueRef* exception);
 
         static std::vector<AbstractCallback*> callbacks;
-        static AbstractCallback* get_callback(JSObjectRef ref);
+        static AbstractCallback* GetCallback(JSObjectRef ref);
 
     protected:
         JSObjectRef object;
@@ -64,7 +64,7 @@ class TiObject : public TiValue {
 
 class AbstractCallback : public TiObject {
     public:
-        virtual TiValue execute(size_t arg_count, TiValue args[]) = 0;
+        virtual TiValue Execute(size_t arg_count, TiValue args[]) = 0;
 
         JSObjectRef function;
 };
@@ -81,7 +81,7 @@ class Callback : public AbstractCallback {
         }
 
 
-        TiValue execute(size_t arg_count, TiValue args[]) {
+        TiValue Execute(size_t arg_count, TiValue args[]) {
             return (this->owner->*this->method)(arg_count, args);
         }
 
@@ -90,14 +90,14 @@ class Callback : public AbstractCallback {
 };
 
 template <class T>
-void TiObject::bind_method(std::string name,
+void TiObject::BindMethod(std::string name,
                  TiValue (T::*method)(size_t, TiValue[])) {
     JSStringRef name_str = JSStringCreateWithUTF8CString(name.c_str());
 
     JSObjectRef function =
-         JSObjectMakeFunctionWithCallback(this->get_context(),
+         JSObjectMakeFunctionWithCallback(this->GetContext(),
                                           name_str,
-                                          TiObject::cb);
+                                          TiObject::CB);
 
     /* map the method to the function object so that
        we can retrieve it later */
@@ -106,8 +106,8 @@ void TiObject::bind_method(std::string name,
     TiObject::callbacks.push_back(c);
 
 
-    JSObjectSetProperty(this->get_context(),
-                        this->get_object(),
+    JSObjectSetProperty(this->GetContext(),
+                        this->GetObject(),
                         name_str,
                         function,
                         kJSPropertyAttributeNone,

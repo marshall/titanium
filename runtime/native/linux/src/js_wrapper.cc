@@ -9,18 +9,18 @@ TiValue::TiValue(JSContextRef context, JSValueRef value) {
     this->value = value;
 }
 
-JSValueRef TiValue::get_value() {
+JSValueRef TiValue::GetValue() {
     return this->value;
 }
-JSContextRef TiValue::get_context() {
+JSContextRef TiValue::GetContext() {
     return this->context;
 }
 
-TiValue TiValue::new_value(JSValueRef value) {
+TiValue TiValue::NewValue(JSValueRef value) {
     return TiValue(this->context, value);
 }
 
-TiValue TiValue::new_value(std::string str) {
+TiValue TiValue::NewValue(std::string str) {
     JSStringRef str_ref = JSStringCreateWithUTF8CString(str.c_str());
     JSValueRef value = JSValueMakeString(this->context, str_ref);
     JSStringRelease(str_ref);
@@ -28,35 +28,35 @@ TiValue TiValue::new_value(std::string str) {
     return TiValue(this->context, value);
 }
 
-TiValue TiValue::new_value(bool boolean) {
+TiValue TiValue::NewValue(bool boolean) {
     JSValueRef value =  JSValueMakeBoolean(this->context, boolean);
     return TiValue(this->context, value);
 }
 
-TiValue TiValue::new_value(double number) {
+TiValue TiValue::NewValue(double number) {
     JSValueRef value =  JSValueMakeNumber(this->context, number);
     return TiValue(this->context, value);
 }
 
-TiValue TiValue::undefined() {
-    return this->new_value(JSValueMakeUndefined(this->get_context()));
+TiValue TiValue::Undefined() {
+    return this->NewValue(JSValueMakeUndefined(this->GetContext()));
 }
 
-TiObject TiValue::get_object() {
-    JSContextRef ctx = this->get_context();
-    JSValueRef val = this->get_value();
+TiObject TiValue::GetObject() {
+    JSContextRef ctx = this->GetContext();
+    JSValueRef val = this->GetValue();
 
     if (JSValueIsObject(ctx, val)) {
         TiObject(this->context, JSValueToObject(ctx, val, NULL));
     } else {
-        return this->new_object();
+        return this->NewObject();
     }
 }
 
-std::string TiValue::get_string() {
+std::string TiValue::GetString() {
     std::string to_ret = "";
-    JSContextRef ctx = this->get_context();
-    JSValueRef val = this->get_value();
+    JSContextRef ctx = this->GetContext();
+    JSValueRef val = this->GetValue();
 
     if (JSValueIsString(ctx, val)) {
         JSStringRef string_ref = JSValueToStringCopy(ctx, val, NULL);
@@ -72,10 +72,10 @@ std::string TiValue::get_string() {
     return to_ret;
 }
 
-bool TiValue::get_bool() {
+bool TiValue::GetBool() {
 
-    JSContextRef ctx = this->get_context();
-    JSValueRef val = this->get_value();
+    JSContextRef ctx = this->GetContext();
+    JSValueRef val = this->GetValue();
 
     if (JSValueIsBoolean(ctx, val)) {
         return JSValueToBoolean(ctx, val);
@@ -84,10 +84,10 @@ bool TiValue::get_bool() {
     }
 }
 
-double TiValue::get_number() {
+double TiValue::GetNumber() {
 
-    JSContextRef ctx = this->get_context();
-    JSValueRef val = this->get_value();
+    JSContextRef ctx = this->GetContext();
+    JSValueRef val = this->GetValue();
 
     if (JSValueIsNumber(ctx, val)) {
         return JSValueToNumber(ctx, val, NULL);
@@ -96,7 +96,7 @@ double TiValue::get_number() {
     }
 }
 
-TiObject TiValue::new_object() {
+TiObject TiValue::NewObject() {
     return TiObject(this->context);
 }
 
@@ -114,40 +114,40 @@ TiObject::TiObject(JSContextRef context, JSObjectRef object) {
     this->value = object;
 }
 
-JSObjectRef TiObject::get_object() {
+JSObjectRef TiObject::GetObject() {
     return this->object;
 }
 
-void TiObject::set_property(std::string name, TiValue value) {
+void TiObject::SetProperty(std::string name, TiValue value) {
     JSStringRef name_str = JSStringCreateWithUTF8CString(name.c_str());
-    JSObjectSetProperty(this->get_context(),
-                        this->get_object(),
+    JSObjectSetProperty(this->GetContext(),
+                        this->GetObject(),
                         name_str,
-                        value.get_value(),
+                        value.GetValue(),
                         kJSPropertyAttributeNone,
                         NULL);
     JSStringRelease(name_str);
 }
 
-TiValue TiObject::get_property(std::string name) {
+TiValue TiObject::GetProperty(std::string name) {
     JSStringRef name_str = JSStringCreateWithUTF8CString(name.c_str());
-    JSValueRef value = JSObjectGetProperty(this->get_context(),
-                                           this->get_object(),
+    JSValueRef value = JSObjectGetProperty(this->GetContext(),
+                                           this->GetObject(),
                                            name_str,
                                            NULL);
     JSStringRelease(name_str);
 
-    if (JSValueIsObject(this->get_context(), value)) {
-        JSObjectRef object_ref = JSValueToObject(this->get_context(),
+    if (JSValueIsObject(this->GetContext(), value)) {
+        JSObjectRef object_ref = JSValueToObject(this->GetContext(),
                                                  value,
                                                  NULL);
-        return TiObject(this->get_context(), object_ref);
+        return TiObject(this->GetContext(), object_ref);
     } else {
-        return TiValue(this->get_context(), value);
+        return TiValue(this->GetContext(), value);
     }
 }
 
-AbstractCallback* TiObject::get_callback(JSObjectRef ref) {
+AbstractCallback* TiObject::GetCallback(JSObjectRef ref) {
 
     for (int i=0; i < TiObject::callbacks.size(); i++) {
         AbstractCallback* c = TiObject::callbacks.at(i);
@@ -159,7 +159,7 @@ AbstractCallback* TiObject::get_callback(JSObjectRef ref) {
     return NULL;
 }
 
-JSValueRef TiObject::cb(JSContextRef context,
+JSValueRef TiObject::CB(JSContextRef context,
                         JSObjectRef function_object,
                         JSObjectRef this_object,
                         size_t arg_count,
@@ -173,9 +173,9 @@ JSValueRef TiObject::cb(JSContextRef context,
     }
 
     /* fetch the callback object for this function */
-    AbstractCallback* c = TiObject::get_callback(function_object);
-    TiValue val = c->execute(arg_count, val_args);
+    AbstractCallback* c = TiObject::GetCallback(function_object);
+    TiValue val = c->Execute(arg_count, val_args);
 
-    return val.get_value();
+    return val.GetValue();
 }
 

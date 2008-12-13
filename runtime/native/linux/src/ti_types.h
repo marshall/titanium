@@ -20,94 +20,94 @@ class TiUserWindow : public TiObject {
         TiUserWindow() {}
         TiUserWindow(JSContextRef, JSObjectRef);
 
-        void window_object_cleared(JSContextRef, JSObjectRef);
+        void WindowObjectCleared(JSContextRef, JSObjectRef);
 
-        virtual void hide();
+        virtual void Hide();
         TiValue hide_cb(size_t num_args, TiValue args[]);
 
-        virtual void show();
+        virtual void Show();
         TiValue show_cb(size_t num_args, TiValue args[]);
 
-        virtual bool is_using_chrome();
+        virtual bool IsUsingChrome();
         TiValue is_using_chrome_cb(size_t num_args, TiValue args[]);
 
-        virtual bool is_using_scrollbars();
+        virtual bool IsUsingScrollbars();
         TiValue is_using_scrollbars_cb(size_t num_args, TiValue args[]);
 
-        virtual bool is_full_screen();
+        virtual bool IsFullScreen();
         TiValue is_full_screen_cb(size_t num_args, TiValue args[]);
 
-        virtual std::string get_id();
+        virtual std::string GetId();
         TiValue get_id_cb(size_t num_args, TiValue args[]);
 
-        virtual void open();
+        virtual void Open();
         TiValue open_cb(size_t num_args, TiValue args[]);
-        virtual void close();
+        virtual void Close();
         TiValue close_cb(size_t num_args, TiValue args[]);
 
-        virtual double get_x();
+        virtual double GetX();
         TiValue get_x_cb(size_t num_args, TiValue args[]);
-        virtual void set_x(double x);
+        virtual void SetX(double x);
         TiValue set_x_cb(size_t num_args, TiValue args[]);
 
-        virtual double get_y();
+        virtual double GetY();
         TiValue get_y_cb(size_t num_args, TiValue args[]);
-        virtual void set_y(double y);
+        virtual void SetY(double y);
         TiValue set_y_cb(size_t num_args, TiValue args[]);
 
-        virtual double get_width();
+        virtual double GetWidth();
         TiValue get_width_cb(size_t num_args, TiValue args[]);
-        virtual void set_width(double width);
+        virtual void SetWidth(double width);
         TiValue set_width_cb(size_t num_args, TiValue args[]);
 
-        virtual double get_height();
+        virtual double GetHeight();
         TiValue get_height_cb(size_t num_args, TiValue args[]);
-        virtual void set_height(double height);
+        virtual void SetHeight(double height);
         TiValue set_height_cb(size_t num_args, TiValue args[]);
 
-        virtual TiBounds get_bounds();
+        virtual TiBounds GetBounds();
         TiValue get_bounds_cb(size_t num_args, TiValue args[]);
-        virtual void set_bounds(TiBounds bounds);
+        virtual void SetBounds(TiBounds bounds);
         TiValue set_bounds_cb(size_t num_args, TiValue args[]);
 
-        virtual std::string get_title();
+        virtual std::string GetTitle();
         TiValue get_title_cb(size_t num_args, TiValue args[]);
-        virtual void set_title(std::string title);
+        virtual void SetTitle(std::string title);
         TiValue set_title_cb(size_t num_args, TiValue args[]);
 
-        virtual std::string get_url();
+        virtual std::string GetUrl();
         TiValue get_url_cb(size_t num_args, TiValue args[]);
-        virtual void set_url(std::string url);
+        virtual void SetUrl(std::string url);
         TiValue set_url_cb(size_t num_args, TiValue args[]);
 
-        virtual bool is_resizable();
+        virtual bool IsResizable();
         TiValue is_resizable_cb(size_t num_args, TiValue args[]);
-        virtual void set_resizable(bool resizable);
+        virtual void SetResizable(bool resizable);
         TiValue set_resizable_cb(size_t num_args, TiValue args[]);
 
-        virtual bool is_maximizable();
+        virtual bool IsMaximizable();
         TiValue is_maximizable_cb(size_t num_args, TiValue args[]);
-        virtual void set_maximizable(bool maximizable);
+        virtual void SetMaximizable(bool maximizable);
         TiValue set_maximizable_cb(size_t num_args, TiValue args[]);
 
-        virtual bool is_minimizable();
+        virtual bool IsMinimizable();
         TiValue is_minimizable_cb(size_t num_args, TiValue args[]);
-        virtual void set_minimizable(bool minimizable);
+        virtual void SetMinimizable(bool minimizable);
         TiValue set_minimizable_cb(size_t num_args, TiValue args[]);
 
-        virtual bool is_closeable();
+        virtual bool IsCloseable();
         TiValue is_closeable_cb(size_t num_args, TiValue args[]);
-        virtual void set_closeable(bool closeable);
+        virtual void SetCloseable(bool closeable);
         TiValue set_closeable_cb(size_t num_args, TiValue args[]);
 
-        virtual bool is_visible();
+        virtual bool IsVisible();
         TiValue is_visible_cb(size_t num_args, TiValue args[]);
-        virtual void set_visible(bool visible);
+        virtual void SetVisible(bool visible);
         TiValue set_visible_cb(size_t num_args, TiValue args[]);
 
-        virtual double get_transparency();
+        virtual double GetTransparency();
         TiValue get_transparency_cb(size_t num_args, TiValue args[]);
-        virtual void set_transparency(double transparency);
+        virtual void SetTransparency(double transparency);
         TiValue set_transparency_cb(size_t num_args, TiValue args[]);
 
     protected:
@@ -117,7 +117,7 @@ class TiUserWindow : public TiObject {
 class TiApiPoint : public TiObject {
     public:
         TiApiPoint(TiUserWindow* window);
-        TiUserWindow* get_window();
+        TiUserWindow* GetWindow();
 
     protected:
         TiUserWindow* window;
@@ -134,7 +134,7 @@ class TiRuntime : public TiApiPoint {
 class TiApp : public TiApiPoint {
     public:
         TiApp(TiUserWindow* window);
-        TiValue debug(size_t num_args, TiValue args[]);
+        TiValue Debug(size_t num_args, TiValue args[]);
 };
 
 class TiFilesystem : public TiApiPoint {

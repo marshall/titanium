@@ -4,16 +4,16 @@
 #include "ti_types.h"
 
 TiApp::TiApp(TiUserWindow* window) : TiApiPoint(window) {
-    this->bind_method("debug", &TiApp::debug);
+    this->BindMethod("debug", &TiApp::Debug);
 }
 
-TiValue TiApp::debug(size_t num_args, TiValue args[]) {
+TiValue TiApp::Debug(size_t num_args, TiValue args[]) {
 
     if (num_args <= 0) {
-        return this->undefined();
+        return this->Undefined();
     }
-    std::string message = args[0].get_string();
+    std::string message = args[0].GetString();
     printf("%s\n", message.c_str());
 
-    return this->undefined();
+    return this->Undefined();
 }
