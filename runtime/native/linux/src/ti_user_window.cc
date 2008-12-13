@@ -77,7 +77,7 @@ TiValue TiUserWindow::is_full_screen_cb(size_t num_args, TiValue args[]) {
 }
 
 TiValue TiUserWindow::get_id_cb(size_t num_args, TiValue args[]) {
-    char* ret = this->get_id();
+    std::string ret = this->get_id();
     return this->new_value(ret);
 }
 
@@ -169,26 +169,26 @@ TiValue TiUserWindow::set_bounds_cb(size_t num_args, TiValue args[]) {
 }
 
 TiValue TiUserWindow::get_title_cb(size_t num_args, TiValue args[]) {
-    char* ret = this->get_title();
+    std::string ret = this->get_title();
     return this->new_value(ret);
 }
 
 TiValue TiUserWindow::set_title_cb(size_t num_args, TiValue args[]) {
     if (num_args > 0) {
-        char* title = args[0].get_chars();
+        std::string title = args[0].get_string();
         this->set_title(title);
     }
     return this->undefined();
 }
 
 TiValue TiUserWindow::get_url_cb(size_t num_args, TiValue args[]) {
-    char* ret = this->get_url();
+    std::string ret = this->get_url();
     return this->new_value(ret);
 }
 
 TiValue TiUserWindow::set_url_cb(size_t num_args, TiValue args[]) {
     if (num_args > 0) {
-        char* url = args[0].get_chars();
+        std::string url = args[0].get_string();
         this->set_url(url);
     }
     return this->undefined();
@@ -278,7 +278,7 @@ void TiUserWindow::hide() { STUB; }
 bool TiUserWindow::is_using_chrome() { STUB; }
 bool TiUserWindow::is_using_scrollbars() { STUB; }
 bool TiUserWindow::is_full_screen() { STUB; }
-char* TiUserWindow::get_id() { STUB; }
+std::string TiUserWindow::get_id() { STUB; }
 void TiUserWindow::open() { STUB; }
 void TiUserWindow::close() { STUB; }
 double TiUserWindow::get_x() { STUB; }
@@ -291,10 +291,10 @@ double TiUserWindow::get_height() { STUB; }
 void TiUserWindow::set_height(double height) { STUB; }
 TiBounds TiUserWindow::get_bounds() { STUB; }
 void TiUserWindow::set_bounds(TiBounds bounds) { STUB; }
-char* TiUserWindow::get_title() { STUB; }
-void TiUserWindow::set_title(char* title) { STUB; }
-char* TiUserWindow::get_url() { STUB; }
-void TiUserWindow::set_url(char* url) { STUB; }
+std::string TiUserWindow::get_title() { STUB; }
+void TiUserWindow::set_title(std::string title) { STUB; }
+std::string TiUserWindow::get_url() { STUB; }
+void TiUserWindow::set_url(std::string url) { STUB; }
 bool TiUserWindow::is_resizable() { STUB; }
 void TiUserWindow::set_resizable(bool resizable) { STUB; }
 bool TiUserWindow::is_maximizable() { STUB; }

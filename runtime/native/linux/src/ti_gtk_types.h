@@ -20,7 +20,7 @@ class TiGtkUserWindow : public TiUserWindow {
         bool is_using_chrome();
         bool is_using_scrollbars();
         bool is_full_screen();
-        char* get_id();
+        std::string get_id();
         void open();
         void close();
         double get_x();
@@ -33,10 +33,10 @@ class TiGtkUserWindow : public TiUserWindow {
         void set_height(double height);
         TiBounds get_bounds();
         void set_bounds(TiBounds bounds);
-        char* get_title();
-        void set_title(char* title);
-        char* get_url();
-        void set_url(char* url);
+        std::string get_title();
+        void set_title(std::string title);
+        std::string get_url();
+        void set_url(std::string url);
         bool is_resizable();
         void set_resizable(bool resizable);
         bool is_maximizable();
@@ -54,13 +54,13 @@ class TiGtkUserWindow : public TiUserWindow {
         GtkWindow* gtk_window;
         WebKitWebView* web_view;
 
-        gchar* window_title;
-        gchar* uri;
+        std::string window_title;
+        std::string uri;
 
         bool showing;
         bool full_screen;
         bool using_scrollbars;
-        char* id;
+        std::string id;
         double transparency;
 
         bool resizable;

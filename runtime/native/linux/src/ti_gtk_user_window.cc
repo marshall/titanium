@@ -91,7 +91,7 @@ static void window_object_cleared_cb (WebKitWebView* web_view,
 
     JSStringRef script;
     char code[1024];
-    sprintf(code, "//tiRuntime.Window.currentWindow.setCloseable(false);");
+    sprintf(code, "tiRuntime.Window.currentWindow.setTitle('yes');tiRuntime.Window.currentWindow.setTitle('no');");
     script = JSStringCreateWithUTF8CString(code);
     if(JSCheckScriptSyntax(context, script, NULL, 0, NULL))
         JSEvaluateScript(context, script, window_object, NULL, 1, NULL);
@@ -131,7 +131,7 @@ bool TiGtkUserWindow::is_full_screen() {
     return this->full_screen;
 }
 
-char* TiGtkUserWindow::get_id() { 
+std::string TiGtkUserWindow::get_id() { 
     return this->id;
 }
 
@@ -196,26 +196,22 @@ void TiGtkUserWindow::set_bounds(TiBounds b) {
     gtk_window_move(this->gtk_window, int(b.x), int(b.y));
 }
 
-char* TiGtkUserWindow::get_title() {
-    return g_strdup (gtk_window_get_title(this->gtk_window));
+std::string TiGtkUserWindow::get_title() {
+    return std::string(gtk_window_get_title(this->gtk_window));
 }
 
-void TiGtkUserWindow::set_title(char* title) {
-    char* new_title = g_strdup(title);
-    gtk_window_set_title (this->gtk_window, new_title);
-
-    if (this->window_title)
-        g_free(this->window_title);
-
-    this->window_title = new_title;
+void TiGtkUserWindow::set_title(std::string title) {
+    this->window_title = title;
+    gtk_window_set_title (this->gtk_window, this->window_title.c_str());
 }
 
-char* TiGtkUserWindow::get_url() {
+std::string TiGtkUserWindow::get_url() {
     return uri;
 }
 
-void TiGtkUserWindow::set_url(char* uri) {
-    webkit_web_view_open (this->web_view, uri);
+void TiGtkUserWindow::set_url(std::string uri) {
+    this->uri = uri;
+    webkit_web_view_open (this->web_view, uri.c_str());
 }
 
 void TiGtkUserWindow::setup_decorations() {

@@ -1,6 +1,7 @@
 #ifndef __TI_TYPES_H
 #define __TI_TYPES_H
 
+#include <string>
 #include <JavaScriptCore/JSObjectRef.h>
 #include <JavaScriptCore/JSStringRef.h>
 #include <JavaScriptCore/JSContextRef.h>
@@ -36,7 +37,7 @@ class TiUserWindow : public TiObject {
         virtual bool is_full_screen();
         TiValue is_full_screen_cb(size_t num_args, TiValue args[]);
 
-        virtual char* get_id();
+        virtual std::string get_id();
         TiValue get_id_cb(size_t num_args, TiValue args[]);
 
         virtual void open();
@@ -69,14 +70,14 @@ class TiUserWindow : public TiObject {
         virtual void set_bounds(TiBounds bounds);
         TiValue set_bounds_cb(size_t num_args, TiValue args[]);
 
-        virtual char* get_title();
+        virtual std::string get_title();
         TiValue get_title_cb(size_t num_args, TiValue args[]);
-        virtual void set_title(char* title);
+        virtual void set_title(std::string title);
         TiValue set_title_cb(size_t num_args, TiValue args[]);
 
-        virtual char* get_url();
+        virtual std::string get_url();
         TiValue get_url_cb(size_t num_args, TiValue args[]);
-        virtual void set_url(char* url);
+        virtual void set_url(std::string url);
         TiValue set_url_cb(size_t num_args, TiValue args[]);
 
         virtual bool is_resizable();

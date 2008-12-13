@@ -16,14 +16,14 @@ class TiValue {
         JSContextRef get_context();
 
         TiValue new_value(JSValueRef value);
-        TiValue new_value(char *);
+        TiValue new_value(std::string);
         TiValue new_value(bool);
         TiValue new_value(double);
         TiObject new_object();
         TiValue undefined();
 
         TiObject get_object();
-        char* get_chars();
+        std::string get_string();
         bool get_bool();
         double get_number();
 
@@ -41,11 +41,11 @@ class TiObject : public TiValue {
         TiObject(JSContextRef, JSObjectRef);
         JSObjectRef get_object();
 
-        void set_property(const char*, TiValue);
-        TiValue get_property(const char*);
+        void set_property(std::string, TiValue);
+        TiValue get_property(std::string);
 
         template <class T> void bind_method(
-                const char* name,
+                const std::string,
                 TiValue (T::*method)(size_t, TiValue[]));
 
         static JSValueRef cb(JSContextRef context,
@@ -90,9 +90,9 @@ class Callback : public AbstractCallback {
 };
 
 template <class T>
-void TiObject::bind_method(const char* name,
+void TiObject::bind_method(std::string name,
                  TiValue (T::*method)(size_t, TiValue[])) {
-    JSStringRef name_str = JSStringCreateWithUTF8CString(name);
+    JSStringRef name_str = JSStringCreateWithUTF8CString(name.c_str());
 
     JSObjectRef function =
          JSObjectMakeFunctionWithCallback(this->get_context(),

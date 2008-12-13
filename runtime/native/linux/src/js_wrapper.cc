@@ -20,8 +20,8 @@ TiValue TiValue::new_value(JSValueRef value) {
     return TiValue(this->context, value);
 }
 
-TiValue TiValue::new_value(char* chars) {
-    JSStringRef str_ref = JSStringCreateWithUTF8CString(chars);
+TiValue TiValue::new_value(std::string str) {
+    JSStringRef str_ref = JSStringCreateWithUTF8CString(str.c_str());
     JSValueRef value = JSValueMakeString(this->context, str_ref);
     JSStringRelease(str_ref);
 
@@ -53,9 +53,8 @@ TiObject TiValue::get_object() {
     }
 }
 
-
-char* TiValue::get_chars() {
-
+std::string TiValue::get_string() {
+    std::string to_ret = "";
     JSContextRef ctx = this->get_context();
     JSValueRef val = this->get_value();
 
@@ -66,10 +65,11 @@ char* TiValue::get_chars() {
         JSStringGetUTF8CString(string_ref, chars, length);
         JSStringRelease(string_ref);
 
-        return chars;
-    } else {
-        return NULL;
+        to_ret = std::string(chars);
+        free(chars);
     }
+
+    return to_ret;
 }
 
 bool TiValue::get_bool() {
@@ -118,8 +118,8 @@ JSObjectRef TiObject::get_object() {
     return this->object;
 }
 
-void TiObject::set_property(const char *name, TiValue value) {
-    JSStringRef name_str = JSStringCreateWithUTF8CString(name);
+void TiObject::set_property(std::string name, TiValue value) {
+    JSStringRef name_str = JSStringCreateWithUTF8CString(name.c_str());
     JSObjectSetProperty(this->get_context(),
                         this->get_object(),
                         name_str,
@@ -129,8 +129,8 @@ void TiObject::set_property(const char *name, TiValue value) {
     JSStringRelease(name_str);
 }
 
-TiValue TiObject::get_property(const char *name) {
-    JSStringRef name_str = JSStringCreateWithUTF8CString(name);
+TiValue TiObject::get_property(std::string name) {
+    JSStringRef name_str = JSStringCreateWithUTF8CString(name.c_str());
     JSValueRef value = JSObjectGetProperty(this->get_context(),
                                            this->get_object(),
                                            name_str,
