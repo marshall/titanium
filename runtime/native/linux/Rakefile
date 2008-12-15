@@ -1,0 +1,37 @@
+#
+# Copyright 2008 Appcelerator, Inc.
+# 
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# 
+#    http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License. 
+
+require 'fileutils'
+require 'yaml'
+require 'erb'
+
+desc 'build titanium Linux runtime'
+task :default =>[:build]
+
+LINUX_DIR = File.expand_path(File.dirname(__FILE__))
+SRC_DIR = File.join(LINUX_DIR, 'src')
+
+task :build do
+    FileUtils.cd(SRC_DIR)  do
+        puts "I'm about to build the Linux version -- Are you sure you're thinking straight?"
+
+        gtk_cflags = `pkg-config --libs --cflags gtk+-2.0`.strip
+        webkit_cflags=" -I/usr/local/include/webkit-1.0 -lwebkit-1.0"
+
+        compile = "g++ *.cc -g -o tester #{gtk_cflags} #{webkit_cflags}"
+        system compile
+
+    end
+end
