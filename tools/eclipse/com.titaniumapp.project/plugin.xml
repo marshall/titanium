@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         id="tiProjectNature"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+               class="com.titaniumapp.project.TitaniumProjectNature">
+         </run>
+      </runtime>
+   </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <wizard
+            class="com.titaniumapp.project.wizard.NewTitaniumProjectWizard"
+            icon="titanium.png"
+            id="com.titaniumapp.project.NewProjectWizard"
+            name="Titanium Project"
+            project="true">
+         <description>
+            Create a new Titanium project
+         </description>
+      </wizard>
+   </extension>
+   <extension
+         point="org.eclipse.debug.core.launchConfigurationTypes">
+      <launchConfigurationType
+            delegate="com.titaniumapp.project.launch.TitaniumLaunchDelegate"
+            delegateName="Titanium App Launcher"
+            id="com.titaniumapp.project.tiLaunch"
+            modes="run,debug"
+            name="Titanium App">
+      </launchConfigurationType>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTypeImages">
+      <launchConfigurationTypeImage
+            configTypeID="com.titaniumapp.project.tiLaunch"
+            icon="titanium_16.png"
+            id="com.titaniumapp.project.tiLaunchImage">
+      </launchConfigurationTypeImage>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTabGroups">
+      <launchConfigurationTabGroup
+            class="com.titaniumapp.project.launch.TitaniumLaunchTabGroup"
+            id="com.titaniumapp.project.launchTabGroup"
+            type="com.titaniumapp.project.tiLaunch">
+      </launchConfigurationTabGroup>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchShortcuts">
+      <shortcut
+            class="com.titaniumapp.project.launch.TiAppLaunchShortcut"
+            icon="titanium_16.png"
+            id="com.titaniumapp.project.tiAppLaunchShortcut"
+            label="Titanium App"
+            modes="run,debug"
+            path="a">
+         <contextualLaunch>
+            <enablement>
+               <count
+                     value="1">
+               </count>
+            </enablement></contextualLaunch>
+         <configurationType
+               id="com.titaniumapp.project.tiLaunch">
+         </configurationType>
+      </shortcut>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            categoryId="org.eclipse.debug.ui.category.run"
+            id="com.titaniumapp.project.tiAppLaunchShortcut.run"
+            name="Run selection as Titanium App">
+      </command>
+      <command
+            categoryId="org.eclipse.debug.ui.category.debug"
+            id="com.titaniumapp.project.tiAppLaunchShortcut.debug"
+            name="Debug selection as Titanium App">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.bindings">
+      <key
+            commandId="com.titaniumapp.project.tiAppLaunchShortcut.run"
+            contextId="org.eclipse.ui.globalScope"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M3+M2+T R">
+      </key>
+      <key
+            commandId="com.titaniumapp.project.tiAppLaunchShortcut.debug"
+            contextId="org.eclipse.ui.globalScope"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M3+M2+T D">
+      </key>
+   </extension>
+   <extension
+         point="org.eclipse.ui.startup">
+      <startup
+            class="com.titaniumapp.project.TiPluginStartup">
+      </startup>
+   </extension>
+
+</plugin>
