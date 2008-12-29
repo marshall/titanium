@@ -253,7 +253,18 @@ void TiWebViewDelegate::DidCommitLoadForFrame(WebView* webview, WebFrame* frame,
 		}
 	}
 
-	window->showWindow(SW_HIDE);
+	WINDOWPLACEMENT placement;
+	placement.length = sizeof(WINDOWPLACEMENT);
+	if (frame == webview->GetMainFrame() && window->isOpenOnLoad()) {
+		if (!GetWindowPlacement(window->getWindowHandle(), &placement)) {
+			window->showWindow(SW_HIDE);
+		}
+		else {
+			if (placement.showCmd != SW_SHOW) {
+				window->showWindow(SW_HIDE);
+			}
+		}
+	}
 
 	if (matchedWindow != NULL) {
 		window->setTiWindowConfig(matchedWindow);
