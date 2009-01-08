@@ -16,7 +16,7 @@
 #include <iostream>
 
 #ifdef OS_LINUX
-#include "linux/windowing_plugin_linux.h"
+#include "linux/window_plugin_linux.h"
 #endif
 
 #ifdef OS_OSX
@@ -47,7 +47,7 @@ void WindowPlugin::Initialize()
 	std::cout << "Have config and main_window_config " << std::endl;
 
 #if defined(OS_LINUX)
-	TiGtkUserWindow* window = new TiGtkUserWindow(this->host, main_window_config);
+	GtkUserWindow* window = new GtkUserWindow(this->host, main_window_config);
 #elif defined(OS_OSX)
 	TiOSXUserWindow* window = new TiOSXUserWindow(this->host, main_window_config);
 #elif defined(OS_WIN32)

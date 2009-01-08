@@ -8,16 +8,17 @@
 #ifndef __TI_GTK_USER_WINDOW_H__
 #define __TI_GTK_USER_WINDOW_H__
 
-#include "../windowing_plugin.h"
+#include "../window_plugin.h"
 #include <gdk/gdk.h>
 #include <gdk/gdkx.h>
 #include <webkit/webkit.h>
 
-class TiGtkUserWindow : public TiUserWindow {
-
+namespace ti
+{
+	class GtkUserWindow : public UserWindow {
 	public:
-		TiGtkUserWindow(TiHost *host, TiWindowConfig *config);
-		~TiGtkUserWindow();
+		GtkUserWindow(Host *host, ti::WindowConfig *config);
+		~GtkUserWindow();
 		void SetupDecorations();
 
 		void Hide();
@@ -36,8 +37,8 @@ class TiGtkUserWindow : public TiUserWindow {
 		void SetWidth(double width);
 		double GetHeight();
 		void SetHeight(double height);
-		TiBounds GetBounds();
-		void SetBounds(TiBounds bounds);
+		Bounds GetBounds();
+		void SetBounds(Bounds bounds);
 		std::string GetTitle();
 		void SetTitle(std::string title);
 		std::string GetUrl();
@@ -54,11 +55,11 @@ class TiGtkUserWindow : public TiUserWindow {
 		void SetVisible(bool visible);
 		double GetTransparency();
 		void SetTransparency(double transparency);
-
 	protected:
 		GtkWindow* gtk_window;
 		WebKitWebView* web_view;
+	};
+}
 
-};
 
 #endif

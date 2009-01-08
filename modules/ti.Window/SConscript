@@ -6,12 +6,10 @@ Import('build')
 env = build.env.Clone()
 env.Append(LIBPATH=[path.join(build.absdir, 'modules', 'ti.App')])
 env.Append(LIBS=['kroll', 'tiappmodule'])
-env.Append(CPPPATH = ['#kroll'])
+env.Append(CPPPATH = ['#kroll/build/include'])
 
-INCLUDES = [ '#build/include' ]
 
 sources = Glob('*.cpp')
-
 webkit_tp = path.join(build.third_party, 'webkit')
 webkit_lib = path.join(webkit_tp, 'lib')
 webkit_inc = path.join(webkit_tp, 'include')
@@ -23,6 +21,8 @@ if build.is_linux():
 	env.Append(LIBPATH=[webkit_lib])
 	env.Append(CPPPATH=[webkit_inc])
 	env.ParseConfig('pkg-config --cflags --libs gtk+-2.0 gdk-2.0')
+
+	env.Append(LINKFLAGS=['-static'])
 
 elif build.is_win32():
 	sources = sources + Glob('win32/*.cpp') + Glob('win32/*.cc')
@@ -41,13 +41,8 @@ elif build.is_osx():
 	env.Append(CCFLAGS=['-x', 'objective-c++'])
 	
 
-env.Append(CPPPATH=INCLUDES)
-
-if build.is_linux():
-	env.Append(LINKFLAGS=['-static'])
-
 s = env.SharedLibrary(target = build.dir + '/tiwindowmodule',
-                        source = sources)
+                      source = sources)
 
 if build.is_osx():
 	for i in Glob('osx/*.xib'):

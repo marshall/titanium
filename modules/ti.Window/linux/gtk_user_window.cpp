@@ -4,19 +4,21 @@
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
 
-#include "windowing_plugin_linux.h"
+#include "window_plugin_linux.h"
 #include <iostream>
+
+using namespace ti;
 
 static void destroy_cb (GtkWidget* widget, gpointer data);
 static void window_object_cleared_cb (WebKitWebView*, WebKitWebFrame*, JSGlobalContextRef, JSObjectRef, gpointer);
 
-TiGtkUserWindow::TiGtkUserWindow(TiHost *host, TiWindowConfig* config) : TiUserWindow(host, config)
+GtkUserWindow::GtkUserWindow(Host *host, WindowConfig* config) : UserWindow(host, config)
 {
 	this->gtk_window = NULL;
 	this->web_view = NULL;
 }
 
-TiGtkUserWindow::~TiGtkUserWindow()
+GtkUserWindow::~GtkUserWindow()
 {
 	if (this->gtk_window != NULL)
 	{
@@ -26,7 +28,7 @@ TiGtkUserWindow::~TiGtkUserWindow()
 	}
 }
 
-void TiGtkUserWindow::Open() {
+void GtkUserWindow::Open() {
 
 	if (this->gtk_window == NULL)
 	{
@@ -65,7 +67,7 @@ void TiGtkUserWindow::Open() {
 		{
 			gtk_widget_show_all(window);
 		}
-		TiUserWindow::Open(this);
+		UserWindow::Open(this);
 	}
 	else
 	{
@@ -73,9 +75,9 @@ void TiGtkUserWindow::Open() {
 	}
 }
 
-void TiGtkUserWindow::Close()
+void GtkUserWindow::Close()
 {
-	TiUserWindow::Close(this);
+	UserWindow::Close(this);
 }
 
 static void destroy_cb (GtkWidget* widget, gpointer data) {
@@ -89,27 +91,27 @@ static void window_object_cleared_cb (WebKitWebView* web_view,
 
 	JSObjectRef global_object = JSContextGetGlobalObject(context);
 
-	TiGtkUserWindow* user_window = (TiGtkUserWindow*) data;
+	GtkUserWindow* user_window = (GtkUserWindow*) data;
 
-	TiHost* tihost = user_window->GetHost();
-	TiBoundObject* global_tibo = (TiStaticBoundObject*) tihost->GetGlobalObject();
+	Host* tihost = user_window->GetHost();
+	BoundObject* global_tibo = (StaticBoundObject*) tihost->GetGlobalObject();
 
 	// place window into the context local for currentWindow
-	TiStaticBoundObject *context_local = GetContextLocal(context);
+	StaticBoundObject *context_local = GetContextLocal(context);
 
 	// set user window into the context
-	TiValue *user_window_val = new TiValue(user_window);
+	Value *user_window_val = new Value(user_window);
 	context_local->Set("currentWindow", user_window_val);
-	TI_DECREF(user_window_val);
+	KR_DECREF(user_window_val);
 
 	// Bind all child objects to global context
 	std::vector<std::string> prop_names = global_tibo->GetPropertyNames();
 	for (size_t i = 0; i < prop_names.size(); i++)
 	{
 		const char *name = prop_names.at(i).c_str();
-		TiValue* value = global_tibo->Get(name, context_local);
+		Value* value = global_tibo->Get(name, context_local);
 
-		JSValueRef js_value = TiValueToJSValue(context, value);
+		JSValueRef js_value = KrollValueToJSValue(context, value);
 		BindPropertyToJSObject(context, global_object, name, js_value);
 	}
 
@@ -124,91 +126,91 @@ static void window_object_cleared_cb (WebKitWebView* web_view,
 
 }
 
-void TiGtkUserWindow::Hide() {
+void GtkUserWindow::Hide() {
 	gtk_widget_hide_all(GTK_WIDGET(this->gtk_window));
 	this->config->SetVisible(false);
 }
 
-void TiGtkUserWindow::Show() {
+void GtkUserWindow::Show() {
 	gtk_widget_show_all(GTK_WIDGET(this->gtk_window));
 	this->config->SetVisible(true);
 }
 
-bool TiGtkUserWindow::IsUsingChrome() {
+bool GtkUserWindow::IsUsingChrome() {
 	return gtk_window_get_decorated(this->gtk_window);
 }
 
-bool TiGtkUserWindow::IsUsingScrollbars() {
+bool GtkUserWindow::IsUsingScrollbars() {
 	return this->config->IsUsingScrollbars();
 }
 
-bool TiGtkUserWindow::IsFullScreen() {
+bool GtkUserWindow::IsFullScreen() {
 	return this->config->IsFullscreen();
 }
 
-std::string TiGtkUserWindow::GetId() {
+std::string GtkUserWindow::GetId() {
 	return this->config->GetID();
 }
 
 
-double TiGtkUserWindow::GetX() {
+double GtkUserWindow::GetX() {
 	int x, y;
 	gtk_window_get_position(this->gtk_window, &x, &y);
 	return x;
 }
 
-void TiGtkUserWindow::SetX(double x) {
+void GtkUserWindow::SetX(double x) {
 	int y = GetY();
 	gtk_window_move(this->gtk_window, int(x), y);
 	this->config->SetX(x);
 }
 
-double TiGtkUserWindow::GetY() {
+double GtkUserWindow::GetY() {
 	int x, y;
 	gtk_window_get_position (this->gtk_window, &x, &y);
 	return y;
 }
 
-void TiGtkUserWindow::SetY(double y) {
+void GtkUserWindow::SetY(double y) {
 	int x = GetX();
 	gtk_window_move(this->gtk_window, x, int(y));
 	this->config->SetY(y);
 }
 
-double TiGtkUserWindow::GetWidth() {
+double GtkUserWindow::GetWidth() {
 	int width, height;
 	gtk_window_get_size (this->gtk_window, &width, &height);
 	return width;
 }
 
-void TiGtkUserWindow::SetWidth(double width) {
+void GtkUserWindow::SetWidth(double width) {
 	int height = GetHeight();
 	gtk_window_resize(this->gtk_window, int(width), height);
 	this->config->SetWidth(width);
 }
 
-double TiGtkUserWindow::GetHeight() {
+double GtkUserWindow::GetHeight() {
 	int width, height;
 	gtk_window_get_size (this->gtk_window, &width, &height);
 	return width;
 }
 
-void TiGtkUserWindow::SetHeight(double height) {
+void GtkUserWindow::SetHeight(double height) {
 	int width = GetWidth();
 	gtk_window_resize(this->gtk_window, width, int(height));
 	this->config->SetHeight(height);
 }
 
-TiBounds TiGtkUserWindow::GetBounds() {
+Bounds GtkUserWindow::GetBounds() {
 	int width, height;
 	int x, y;
 	gtk_window_get_size(this->gtk_window, &width, &height);
 	gtk_window_get_position(this->gtk_window, &x, &y);
-	TiBounds b = { x, y, width, height };
+	Bounds b = { x, y, width, height };
 	return b;
 }
 
-void TiGtkUserWindow::SetBounds(TiBounds b) {
+void GtkUserWindow::SetBounds(Bounds b) {
 	gtk_window_resize(this->gtk_window, int(b.width), int(b.height));
 	gtk_window_move(this->gtk_window, int(b.x), int(b.y));
 
@@ -218,25 +220,25 @@ void TiGtkUserWindow::SetBounds(TiBounds b) {
 	this->config->SetHeight(b.height);
 }
 
-std::string TiGtkUserWindow::GetTitle() {
+std::string GtkUserWindow::GetTitle() {
 	return std::string(gtk_window_get_title(this->gtk_window));
 }
 
-void TiGtkUserWindow::SetTitle(std::string title) {
+void GtkUserWindow::SetTitle(std::string title) {
 	gtk_window_set_title (this->gtk_window, title.c_str());
 	this->config->SetTitle(title);
 }
 
-std::string TiGtkUserWindow::GetUrl() {
+std::string GtkUserWindow::GetUrl() {
 	return this->config->GetURL();
 }
 
-void TiGtkUserWindow::SetUrl(std::string uri) {
+void GtkUserWindow::SetUrl(std::string uri) {
 	webkit_web_view_open (this->web_view, uri.c_str());
 	this->config->SetURL(uri);
 }
 
-void TiGtkUserWindow::SetupDecorations() {
+void GtkUserWindow::SetupDecorations() {
 	GdkWindow *gdk_window = gtk_widget_get_window(GTK_WIDGET(this->gtk_window));
 	int d = 0;
 
@@ -255,46 +257,46 @@ void TiGtkUserWindow::SetupDecorations() {
 	gdk_window_set_decorations(gdk_window, (GdkWMDecoration) d);
 }
 
-bool TiGtkUserWindow::IsResizable() {
+bool GtkUserWindow::IsResizable() {
 	return gtk_window_get_resizable(this->gtk_window);
 }
 
-void TiGtkUserWindow::SetResizable(bool resizable) {
+void GtkUserWindow::SetResizable(bool resizable) {
 	gtk_window_set_resizable(this->gtk_window, resizable);
 	this->config->SetResizable(resizable);
 }
 
-bool TiGtkUserWindow::IsMaximizable() {
+bool GtkUserWindow::IsMaximizable() {
 	return this->config->IsMaximizable();
 }
 
-void TiGtkUserWindow::SetMaximizable(bool maximizable) {
+void GtkUserWindow::SetMaximizable(bool maximizable) {
 	this->config->SetMaximizable(maximizable);
 	this->SetupDecorations();
 }
 
-bool TiGtkUserWindow::IsMinimizable() {
+bool GtkUserWindow::IsMinimizable() {
 	return this->config->IsMinimizable();
 }
 
-void TiGtkUserWindow::SetMinimizable(bool minimizable) {
+void GtkUserWindow::SetMinimizable(bool minimizable) {
 	this->config->SetMinimizable(minimizable);
 	this->SetupDecorations();
 }
 
-bool TiGtkUserWindow::IsCloseable() {
+bool GtkUserWindow::IsCloseable() {
 	return gtk_window_get_deletable(this->gtk_window);
 }
-void TiGtkUserWindow::SetCloseable(bool closeable) {
+void GtkUserWindow::SetCloseable(bool closeable) {
 	this->config->SetCloseable(closeable);
 	gtk_window_set_deletable(this->gtk_window, closeable);
 }
 
-bool TiGtkUserWindow::IsVisible() {
+bool GtkUserWindow::IsVisible() {
 	return this->config->IsVisible();
 }
 
-void TiGtkUserWindow::SetVisible(bool visible) {
+void GtkUserWindow::SetVisible(bool visible) {
 	if (visible) {
 		this->Show();
 	} else {
@@ -302,11 +304,11 @@ void TiGtkUserWindow::SetVisible(bool visible) {
 	}
 }
 
-double TiGtkUserWindow::GetTransparency() {
+double GtkUserWindow::GetTransparency() {
 	return gtk_window_get_opacity(this->gtk_window);
 }
 
-void TiGtkUserWindow::SetTransparency(double alpha) {
+void GtkUserWindow::SetTransparency(double alpha) {
 	return gtk_window_set_opacity(this->gtk_window, alpha);
 	this->config->SetTransparency(alpha);
 }
