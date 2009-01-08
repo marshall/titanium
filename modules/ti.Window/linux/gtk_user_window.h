@@ -5,10 +5,10 @@
  */
 
 
-#ifndef __TI_GTK_USER_WINDOW_H__
-#define __TI_GTK_USER_WINDOW_H__
+#ifndef _GTK_USER_WINDOW_H_
+#define _GTK_USER_WINDOW_H_
 
-#include "../window_plugin.h"
+#include "../window_module.h"
 #include <gdk/gdk.h>
 #include <gdk/gdkx.h>
 #include <webkit/webkit.h>

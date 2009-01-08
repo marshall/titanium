@@ -12,25 +12,25 @@
 
 #endif
 
-#include "window_plugin.h"
+#include "window_module.h"
 #include <iostream>
 
 #ifdef OS_LINUX
-#include "linux/window_plugin_linux.h"
+#include "linux/window_module_linux.h"
 #endif
 
 #ifdef OS_OSX
 #include "osx/preinclude.h"
 #include <WebKit/WebKit.h>
-#include "osx/windowing_plugin_osx.h"
+#include "osx/window_module_osx.h"
 #include "osx/ti_app.h"
 #endif
 
 using namespace ti;
 
-KROLL_MODULE(WindowPlugin)
+KROLL_MODULE(WindowModule)
 
-void WindowPlugin::Initialize()
+void WindowModule::Initialize()
 {
 	std::cout << "Initializing ti.Window..." << std::endl;
 
@@ -57,7 +57,7 @@ void WindowPlugin::Initialize()
 	window->Open();
 }
 
-void WindowPlugin::Destroy()
+void WindowModule::Destroy()
 {
 	KR_DECREF(this->runtime);
 }

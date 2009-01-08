@@ -4,7 +4,7 @@
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
 #import "preinclude.h"
-#import "../windowing_plugin.h"
+#import "../window_module.h"
 #import <WebKit/WebKit.h>
 #import "native_ti_window.h"
 

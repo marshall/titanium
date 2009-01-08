@@ -4,8 +4,8 @@
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
 
-#ifndef __WINDOWING_PLUGIN_LINUX_H__
-#define __WINDOWING_PLUGIN_LINUX_H__
+#ifndef _WINDOW_MODULE_LINUX_H_
+#define _WINDOW_MODULE_LINUX_H_
 
 #include <kroll/kroll.h>
 using kroll::Value;

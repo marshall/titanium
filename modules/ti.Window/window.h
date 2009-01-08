@@ -4,8 +4,8 @@
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
 
-#ifndef __TI_WINDOW_H__
-#define __TI_WINDOW_H__
+#ifndef _WINDOW_H_
+#define _WINDOW_H_
 
 #include <kroll/kroll.h>
 
