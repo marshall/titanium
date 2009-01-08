@@ -1,0 +1,62 @@
+#!/usr/bin/env python
+import os, os.path as path
+
+Import('build')
+
+env = build.env.Clone()
+env.Append(LIBS=['ticore'])
+
+INCLUDES = [ '#build/include' ]
+
+sources = Glob('*.cpp')
+
+webkit_tp = path.join(build.third_party, 'webkit')
+webkit_lib = path.join(webkit_tp, 'lib')
+webkit_inc = path.join(webkit_tp, 'include')
+
+if build.is_linux():
+	sources = sources + Glob('linux/*.cpp')
+	sources += Glob('binding/kjs*.cpp')
+	env.Append(LIBS=['webkit-1.0'])
+	env.Append(LIBPATH=[webkit_lib])
+	env.Append(CPPPATH=[webkit_inc])
+	env.ParseConfig('pkg-config --cflags --libs gtk+-2.0 gdk-2.0')
+
+elif build.is_win32():
+	sources = sources + Glob('win32/*.cpp') + Glob('win32/*.cc')
+	sources += Glob('binding/kjs*.cpp')
+	env.Append(LIBPATH=[webkit_lib])
+	env.Append(CPPPATH=[path.join(webkit_inc, 'webkit'), path.join(webkit_inc, 'JavaScriptCore'), path.join(build.third_party, 'icu', 'include')])
+	env.Append(LIBS=['WebKitGUID','WebKit','kernel32','shell32','user32','ole32','comctl32','shlwapi', 'oleaut32', 'icuuc','pthreadVC2','tihost'])
+	#env.Append(CCFLAGS=['/MD'])
+	env.Append(LINKFLAGS=['/NODEFAULTLIB:LIBCMT.lib', '/LTCG', '/INCREMENTAL:NO'])
+
+elif build.is_osx():
+	env.Append(FRAMEWORKPATH=['%s/webkit' % build.third_party])
+	env.Append(FRAMEWORKS=['Cocoa','WebKit','JavaScriptCore'])
+	sources = sources + Glob('osx/*.mm') + Glob('osx/*.cpp')
+	sources += Glob('binding/kjs*.cpp')
+	env.Append(CCFLAGS=['-x', 'objective-c++'])
+	
+
+env.Append(CPPPATH=INCLUDES)
+
+if build.is_linux():
+	env.Append(LINKFLAGS=['-static'])
+
+s = env.SharedLibrary(target = build.dir + '/windowingplugin',
+                        source = sources)
+
+if build.is_osx():
+	for i in Glob('osx/*.xib'):
+		base = path.splitext(path.basename(str(i)))[0]
+		env.AddPostAction(s, 'ibtool --errors --warnings --notices --output-format human-readable-text --compile '+build.absdir + '/'+ base+'.nib '+str(i))
+
+if build.is_win32():
+	manifest1 = os.path.join(build.absdir, 'windowingplugin.embed.manifest')
+	manifest2 = os.path.join(build.absdir, 'windowingplugin.dll.manifest')
+	win32_webkit = path.join(build.abstopdir, 'thirdparty', 'win32', 'webkit')
+	env.AddPostAction(s, 'mt.exe /nologo /manifest ' + manifest2 + ' /tlb:' + path.join(win32_webkit, 'lib', 'WebKit.tlb') + ' /dll:bin/WebKit /out:'+manifest1)
+	#env.AddPostAction(s, 'mt.exe /nologo /tlb:' + path.join(win32_webkit, 'lib', 'WebKit.tlb') + ' /dll:WebKit /outputresource:'+build.absdir+'/tikernel.exe;1')
+	env.AddPostAction(s, 'mt.exe -nologo -manifest "'+manifest1+'" -outputresource:'+build.absdir+'/tikernel.exe;1')
+	#env.AddPostAction(s, 'mt.exe -nologo -manifest "'+manifest1+'" -outputresource:'+build.absdir+'/windowingplugin.dll;2')
