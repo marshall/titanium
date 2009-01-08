@@ -1,0 +1,8 @@
+#!/usr/bin/env python
+
+Import("build")
+
+env = build.env.Clone();
+
+env.SharedLibrary('tiwindow', sources = Glob('*.cpp'))
+
