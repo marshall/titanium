@@ -5,7 +5,7 @@ Import('build')
 
 env = build.env.Clone()
 env.Append(LIBPATH=[path.join(build.absdir, 'modules', 'ti.App')])
-env.Append(LIBS=['kroll', 'tiapp'])
+env.Append(LIBS=['kroll', 'tiappmodule'])
 env.Append(CPPPATH = ['#kroll'])
 
 INCLUDES = [ '#build/include' ]
@@ -46,7 +46,7 @@ env.Append(CPPPATH=INCLUDES)
 if build.is_linux():
 	env.Append(LINKFLAGS=['-static'])
 
-s = env.SharedLibrary(target = build.dir + '/windowingplugin',
+s = env.SharedLibrary(target = build.dir + '/tiwindowmodule',
                         source = sources)
 
 if build.is_osx():

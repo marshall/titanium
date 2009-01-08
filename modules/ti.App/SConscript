@@ -16,5 +16,5 @@ else:
 	env.ParseConfig('pkg-config --cflags --libs libxml-2.0')
 
 
-env.SharedLibrary('tiapp', source = Glob('*.cpp'))
+env.SharedLibrary('tiappmodule', source = Glob('*.cpp'))
 
