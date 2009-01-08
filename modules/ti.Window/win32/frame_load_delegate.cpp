@@ -4,39 +4,41 @@
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
 
-#include "ti_win32_frame_load_delegate.h"
-#include "ti_win32_user_window.h"
+#include "frame_load_delegate.h"
+#include "win32_user_window.h"
 #include "../binding/kjs.h"
 
-TiWin32FrameLoadDelegate::TiWin32FrameLoadDelegate(TiWin32UserWindow *window_) : window(window_), ref_count(1) {
+using namespace ti;
+
+Win32FrameLoadDelegate::Win32FrameLoadDelegate(Win32UserWindow *window_) : window(window_), ref_count(1) {
 	// TODO Auto-generated constructor stub
 
 }
 
 HRESULT STDMETHODCALLTYPE
-TiWin32FrameLoadDelegate::windowScriptObjectAvailable (
+Win32FrameLoadDelegate::windowScriptObjectAvailable (
 		IWebView *webView, JSContextRef context, JSObjectRef windowScriptObject)
 {
 	JSObjectRef global_object = JSContextGetGlobalObject(context);
-	TiHost* tihost = window->GetHost();
-	TiBoundObject* global_tibo = (TiStaticBoundObject*) tihost->GetGlobalObject();
+	kroll::Host* tihost = window->GetHost();
+	kroll::BoundObject* global_tibo = (kroll::StaticBoundObject*) tihost->GetGlobalObject();
 
 	// place window into the context local for currentWindow
-	TiStaticBoundObject *context_local = GetContextLocal(context);
+	kroll::StaticBoundObject *context_local = GetContextLocal(context);
 
 	// set user window into the context
-	TiValue *user_window_val = new TiValue(window);
+	kroll::Value *user_window_val = new kroll::Value(window);
 	context_local->Set("currentWindow", user_window_val);
-	TI_DECREF(user_window_val);
+	KR_DECREF(user_window_val);
 
 	// Bind all child objects to global context
 	std::vector<std::string> prop_names = global_tibo->GetPropertyNames();
 	for (size_t i = 0; i < prop_names.size(); i++)
 	{
 		const char *name = prop_names.at(i).c_str();
-		TiValue* value = global_tibo->Get(name, context_local);
+		kroll::Value* value = global_tibo->Get(name, context_local);
 
-		JSValueRef js_value = TiValueToJSValue(context, value);
+		JSValueRef js_value = KrollValueToJSValue(context, value);
 		BindPropertyToJSObject(context, global_object, name, js_value);
 	}
 
@@ -54,7 +56,7 @@ TiWin32FrameLoadDelegate::windowScriptObjectAvailable (
 }
 
 HRESULT STDMETHODCALLTYPE
-TiWin32FrameLoadDelegate::QueryInterface(REFIID riid, void **ppvObject)
+Win32FrameLoadDelegate::QueryInterface(REFIID riid, void **ppvObject)
 {
 	*ppvObject = 0;
 	if (IsEqualGUID(riid, IID_IUnknown)) {
@@ -70,13 +72,13 @@ TiWin32FrameLoadDelegate::QueryInterface(REFIID riid, void **ppvObject)
 }
 
 ULONG STDMETHODCALLTYPE
-TiWin32FrameLoadDelegate::AddRef()
+Win32FrameLoadDelegate::AddRef()
 {
 	return ++ref_count;
 }
 
 ULONG STDMETHODCALLTYPE
-TiWin32FrameLoadDelegate::Release()
+Win32FrameLoadDelegate::Release()
 {
 	ULONG new_count = --ref_count;
 	if (!new_count) delete(this);

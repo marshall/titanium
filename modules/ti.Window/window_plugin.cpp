@@ -8,11 +8,11 @@
 #ifdef OS_WIN32
 // A little disorganization; header include order is very sensitive in win32,
 // and the build breaks if this below the other OS_ defines
-#include "win32/ti_win32_user_window.h"
+#include "win32/win32_user_window.h"
 
 #endif
 
-#include "windowing_plugin.h"
+#include "window_plugin.h"
 #include <iostream>
 
 #ifdef OS_LINUX
@@ -26,9 +26,11 @@
 #include "osx/ti_app.h"
 #endif
 
-TIPLUGIN(WindowingPlugin)
+using namespace ti;
 
-void WindowingPlugin::Initialize()
+KROLL_MODULE(WindowPlugin)
+
+void WindowPlugin::Initialize()
 {
 	std::cout << "Initializing ti.Window..." << std::endl;
 
@@ -36,11 +38,11 @@ void WindowingPlugin::Initialize()
 	OSXInitialize();
 #endif
 
-	this->runtime = new TiStaticBoundObject();
+	this->runtime = new kroll::StaticBoundObject();
 	this->host->GetGlobalObject()->SetObject("tiRuntime", this->runtime);
 
-	TiAppConfig *config = TiAppConfig::Instance();
-	TiWindowConfig *main_window_config = config->GetMainWindow();
+	AppConfig *config = AppConfig::Instance();
+	WindowConfig *main_window_config = config->GetMainWindow();
 
 	std::cout << "Have config and main_window_config " << std::endl;
 
@@ -49,13 +51,13 @@ void WindowingPlugin::Initialize()
 #elif defined(OS_OSX)
 	TiOSXUserWindow* window = new TiOSXUserWindow(this->host, main_window_config);
 #elif defined(OS_WIN32)
-	TiWin32UserWindow* window = new TiWin32UserWindow(this->host, main_window_config);
+	Win32UserWindow* window = new Win32UserWindow(this->host, main_window_config);
 #endif
 
 	window->Open();
 }
 
-void WindowingPlugin::Destroy()
+void WindowPlugin::Destroy()
 {
-	TI_DECREF(this->runtime);
+	KR_DECREF(this->runtime);
 }

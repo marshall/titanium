@@ -14,7 +14,7 @@
 #include <map>
 #include <cmath>
 
-class KJSBoundList : public TiBoundList
+class KJSBoundList : public kroll::BoundList
 {
 
 public:
@@ -23,13 +23,13 @@ public:
 	~KJSBoundList();
 
 
-	void Set(const char *name, TiValue* value, TiBoundObject *context);
-	TiValue* Get(const char *name, TiBoundObject *context);
+	void Set(const char *name, kroll::Value* value, kroll::BoundObject *context);
+	kroll::Value* Get(const char *name, kroll::BoundObject *context);
 	std::vector<std::string> GetPropertyNames();
 
-	void Append(TiValue* value);
+	void Append(kroll::Value* value);
 	int Size();
-	TiValue* At(int index);
+	kroll::Value* At(int index);
 
 	JSObjectRef GetJSObject();
 

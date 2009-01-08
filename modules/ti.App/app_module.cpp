@@ -1,31 +1,44 @@
-#include "ti_app_module.h"
+#include "app_module.h"
 
+using namespace kroll;
 using namespace ti;
 
-KROLL_MODULE(AppConfig);
+KROLL_MODULE(AppModule);
 
-void AppConfig::Initialize()
+void AppModule::Initialize()
 {
-	kroll::StaticBoundObject *ti = 
-		(kroll::StaticBoundObject *) host->GetGlobalObject()->GetProperty("ti");
-	ti->BindProperty("App", this);
+	/*kroll::StaticBoundObject *ti = 
+		(kroll::StaticBoundObject *) host->GetGlobalObject()->Get("ti");
+
+	ti->Set("App", reinterpret_cast<kroll::Value*>(this));*/
 }
 
-kroll::Value* AppModule::Get(std::string &name, kroll::BoundObject *context_local)
+void AppModule::Destroy()
+{
+
+}
+
+/*
+kroll::Value* AppModule::Get(const char *name, kroll::BoundObject *context)
 {
 	return kroll::Value::Null();	
 }
 
-void AppModule::Set(std::string &name, kroll::Value *value, kroll::BoundObject *context_local)
+void AppModule::Set(const char *name, kroll::Value *value, kroll::BoundObject *context)
 {
 
 }
+*/
 
-kroll::Value* AppModule::Call(std::string &name, const kroll::ArgList &args, kroll::BoundObject *context_local)
+/*
+kroll::Value* AppModule::Call(const char *name, const kroll::ValueList &args, kroll::BoundObject *context)
 {
 	return kroll::Value::Null();
 }
-std::vector<std::string> AppModule::GetPropertyNames () {
+*/
+
+/*
+std::vector<std::string>
+AppModule::GetPropertyNames () {
 		return std::vector<std::string>();
-	}
-}
+}*/

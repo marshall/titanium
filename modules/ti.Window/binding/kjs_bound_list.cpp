@@ -16,15 +16,15 @@ KJSBoundList::KJSBoundList(JSContextRef context, JSObjectRef js_object)
 KJSBoundList::~KJSBoundList()
 {
 	JSValueUnprotect(this->context, this->object);
-	TI_DECREF(kjs_bound_object);
+	KR_DECREF(kjs_bound_object);
 }
 
-TiValue* KJSBoundList::Get(const char *name, TiBoundObject *context)
+kroll::Value* KJSBoundList::Get(const char *name, kroll::BoundObject *context)
 {
 	return kjs_bound_object->Get(name, context);
 }
 
-void KJSBoundList::Set(const char *name, TiValue* value, TiBoundObject *context)
+void KJSBoundList::Set(const char *name, kroll::Value* value, kroll::BoundObject *context)
 {
 	return kjs_bound_object->Set(name, value, context);
 }
@@ -39,10 +39,10 @@ std::vector<std::string> KJSBoundList::GetPropertyNames()
 	return kjs_bound_object->GetPropertyNames();
 }
 
-void KJSBoundList::Append(TiValue* value)
+void KJSBoundList::Append(kroll::Value* value)
 {
-	TiValue *push_method = this->kjs_bound_object->Get("push", NULL);
-	TiScopedDereferencer s(push_method);
+	kroll::Value *push_method = this->kjs_bound_object->Get("push", NULL);
+	kroll::ScopedDereferencer s(push_method);
 
 	if (push_method->IsMethod())
 	{
@@ -50,14 +50,14 @@ void KJSBoundList::Append(TiValue* value)
 	}
 	else
 	{
-		throw (new TiValue("Could not find push method on KJS array."));
+		throw (new kroll::Value("Could not find push method on KJS array."));
 	}
 }
 
 int KJSBoundList::Size()
 {
-	TiValue *length_val = this->kjs_bound_object->Get("length", NULL);
-	TiScopedDereferencer s(length_val);
+	kroll::Value *length_val = this->kjs_bound_object->Get("length", NULL);
+	kroll::ScopedDereferencer s(length_val);
 
 	if (length_val->IsInt())
 	{
@@ -69,17 +69,17 @@ int KJSBoundList::Size()
 	}
 }
 
-TiValue* KJSBoundList::At(int index)
+kroll::Value* KJSBoundList::At(int index)
 {
 	char* name = KJSBoundList::IntToChars(index);
-	TiValue *value = this->kjs_bound_object->Get(name, NULL);
+	kroll::Value *value = this->kjs_bound_object->Get(name, NULL);
 	delete [] name;
 	return value;
 }
 
 char* KJSBoundList::IntToChars(int value)
 {
-	int digits = (int) floor(log(value)) + 1;
+	int digits = (int) floor(log((double)value)) + 1;
 	char* str = new char[digits + 1];
 #if defined(OS_WIN32)
 	_snprintf(str, digits + 1, "%d", value);

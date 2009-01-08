@@ -22,14 +22,14 @@
 #include <algorithm>
 #include <sstream>
 
-#include "../base.h"
-#include "ti_window_config.h"
+#include "app_api.h"
+#include "window_config.h"
 
 #define TITRUE 1
 #define TIFALSE 0
 #define nodeNameEquals(n,s) (xmlStrcmp(n->name, (const xmlChar *)s) == 0)
 #define nodeValue(n) ((const char *)xmlNodeListGetString(n->doc, n->children, TITRUE))
-#define boolValue(n) (TiAppConfig::StringToBool(nodeValue(n)))
+#define boolValue(n) (AppConfig::StringToBool(nodeValue(n)))
 
 namespace ti {
 
@@ -37,7 +37,7 @@ class WindowConfig;
 
 typedef std::vector<WindowConfig*> WindowConfigList ;
 
-class TITANIUM_API AppConfig
+class TITANIUM_APP_API AppConfig
 {
 private:
 	const char* error;

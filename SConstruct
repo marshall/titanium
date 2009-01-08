@@ -20,7 +20,9 @@ class BuildConfig(object):
 			self.os = 'linux'
 		self.abstopdir = path.abspath('.')
 		self.dir = '#build/%s' % self.os 
-		self.absdir = path.abspath('build/%s' % self.os) 
+		self.krolldir = '#kroll/build/%s' % self.os
+		self.absdir = path.abspath('build/%s' % self.os)
+		self.krollabsdir = path.abspath('kroll/build/%s' % self.os)
 		self.third_party = path.abspath('thirdparty/%s' % self.os)
 	def matches(self, n): return bool(re.match(os.uname()[0], n))
 	def is_linux(self): return self.os == 'linux'
@@ -28,15 +30,17 @@ class BuildConfig(object):
 	def is_win32(self): return self.os == 'win32'
 build = BuildConfig()
 
-build.include_dir = path.abspath(path.join('build', 'include', 'kroll'))
+build.include_dir = path.abspath(path.join('kroll', 'build', 'include'))
 build.env = Environment(
     CPPDEFINES = {
                   'OS_' + build.os.upper(): 1,
                   '_INSTALL_PREFIX': install_prefix,
                   '_PRODUCT_NAME': product_name
                  },
-    CPPPATH=['#.'],
-    LIBPATH=[build.dir])
+    CPPPATH=['#.', build.include_dir],
+    LIBPATH=[build.dir, build.krolldir],
+		LIBS=['kroll']
+)
 
 # debug build flags
 if ARGUMENTS.get('debug', 0) == 1:

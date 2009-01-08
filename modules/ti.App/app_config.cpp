@@ -18,7 +18,7 @@
 #include <libxml/tree.h>
 #include <libxml/xpath.h>
 
-#include "ti_app_config.h"
+#include "app_config.h"
 
 using namespace ti;
 

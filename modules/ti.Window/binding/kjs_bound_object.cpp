@@ -21,7 +21,7 @@ JSObjectRef KJSBoundObject::GetJSObject()
 	return this->object;
 }
 
-TiValue* KJSBoundObject::Get(const char *name, TiBoundObject *context)
+kroll::Value* KJSBoundObject::Get(const char *name, kroll::BoundObject *context)
 {
 	JSStringRef s = JSStringCreateWithUTF8CString(name);
 	JSValueRef exception = NULL;
@@ -34,16 +34,16 @@ TiValue* KJSBoundObject::Get(const char *name, TiBoundObject *context)
 
 	if (exception != NULL) //exception thrown
 	{
-		TiValue* tv_exp = JSValueToTiValue(this->context, exception, NULL);
+		kroll::Value* tv_exp = JSValueToKrollValue(this->context, exception, NULL);
 		throw tv_exp;
 	}
 
-	return JSValueToTiValue(this->context, js_value, this->object);
+	return JSValueToKrollValue(this->context, js_value, this->object);
 }
 
-void KJSBoundObject::Set(const char *name, TiValue* value, TiBoundObject *context)
+void KJSBoundObject::Set(const char *name, kroll::Value* value, kroll::BoundObject *context)
 {
-	JSValueRef js_value = TiValueToJSValue(this->context, value);
+	JSValueRef js_value = KrollValueToJSValue(this->context, value);
 	JSStringRef s = JSStringCreateWithUTF8CString(name);
 
 	JSValueRef exception = NULL;
@@ -57,7 +57,7 @@ void KJSBoundObject::Set(const char *name, TiValue* value, TiBoundObject *contex
 
 	if (exception != NULL) //exception thrown
 	{
-		TiValue* tv_exp = JSValueToTiValue(this->context, exception, NULL);
+		kroll::Value* tv_exp = JSValueToKrollValue(this->context, exception, NULL);
 		throw tv_exp;
 	}
 }

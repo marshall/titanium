@@ -9,15 +9,17 @@
 
 #include "WebKit.h"
 
-class TiWin32UserWindow;
+namespace ti {
 
-class TiWin32FrameLoadDelegate : public IWebFrameLoadDelegate {
+class Win32UserWindow;
+
+class Win32FrameLoadDelegate : public IWebFrameLoadDelegate {
 protected:
 	int ref_count;
-	TiWin32UserWindow *window;
+	Win32UserWindow *window;
 
 public:
-	TiWin32FrameLoadDelegate(TiWin32UserWindow *window);
+	Win32FrameLoadDelegate(Win32UserWindow *window);
 
 	// IUnknown
 	virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
@@ -85,5 +87,7 @@ public:
 		/* [in] */ JSContextRef context,
 		/* [in] */ JSObjectRef windowScriptObject);
 };
+
+}
 
 #endif /* TI_WIN32_FRAME_LOAD_DELEGATE_H_ */

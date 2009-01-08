@@ -7,7 +7,7 @@
 #ifndef _KJS_H_
 #define _KJS_H_
 
-#include <titanium/titanium.h>
+#include <kroll/kroll.h>
 #include <JavaScriptCore/JSObjectRef.h>
 #include <JavaScriptCore/JSStringRef.h>
 #include <JavaScriptCore/JSContextRef.h>
@@ -22,12 +22,12 @@ void BindPropertyToJSObject(JSContextRef ctx,
                             JSObjectRef o,
                             std::string name,
                             JSValueRef property);
-TiStaticBoundObject* GetContextLocal(JSContextRef ref);
-JSObjectRef TiBoundObjectToJSValue(JSContextRef, TiBoundObject*);
-JSObjectRef TiBoundMethodToJSValue(JSContextRef, TiBoundMethod*);
-JSObjectRef TiBoundListToJSValue(JSContextRef, TiBoundMethod*);
-JSValueRef TiValueToJSValue(JSContextRef, TiValue*);
-TiValue* JSValueToTiValue(JSContextRef, JSValueRef, JSObjectRef);
+kroll::StaticBoundObject* GetContextLocal(JSContextRef ref);
+JSObjectRef KrollBoundObjectToJSValue(JSContextRef, kroll::BoundObject*);
+JSObjectRef KrollBoundMethodToJSValue(JSContextRef, kroll::BoundMethod*);
+JSObjectRef KrollBoundListToJSValue(JSContextRef, kroll::BoundList*);
+JSValueRef KrollValueToJSValue(JSContextRef, kroll::Value*);
+kroll::Value* JSValueToKrollValue(JSContextRef, JSValueRef, JSObjectRef);
 char* JSStringToChars(JSStringRef);
 
 // callbacks

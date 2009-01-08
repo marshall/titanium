@@ -18,12 +18,12 @@
 
 #include <string>
 
-#include "../base.h"
-#include "ti_app_config.h"
+#include "app_api.h"
+#include "app_config.h"
 
 namespace ti {
 
-class TITANIUM_API WindowConfig
+class TITANIUM_APP_API WindowConfig
 {
 private:
 	std::string winid, url, title;

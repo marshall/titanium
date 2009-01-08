@@ -13,7 +13,7 @@
 #include <string>
 #include <map>
 
-class KJSBoundMethod : public TiBoundMethod
+class KJSBoundMethod : public kroll::BoundMethod
 {
 
 public:
@@ -21,9 +21,9 @@ public:
 	KJSBoundMethod(JSContextRef context, JSObjectRef js_object, JSObjectRef this_obj);
 	~KJSBoundMethod();
 
-	void Set(const char *name, TiValue* value, TiBoundObject *context);
-	TiValue* Get(const char *name, TiBoundObject *context);
-	TiValue* Call(const TiValueList& args, TiBoundObject* context);
+	void Set(const char *name, kroll::Value* value, kroll::BoundObject *context);
+	kroll::Value* Get(const char *name, kroll::BoundObject *context);
+	kroll::Value* Call(const kroll::ValueList& args, kroll::BoundObject* context);
 	std::vector<std::string> GetPropertyNames();
 	JSObjectRef GetJSObject();
 

@@ -4,9 +4,18 @@
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
 
-#include "windowing_plugin.h"
+#ifndef __TI_WINDOW_H__
+#define __TI_WINDOW_H__
 
-TiWindow::TiWindow(TiUserWindow* window) : TiStaticBoundObject() {
-    this->SetObject("currentWindow", window);
+#include <kroll/kroll.h>
+
+namespace ti {
+
+class Window : public kroll::StaticBoundObject {
+	public:
+		Window(UserWindow* window);
+};
+
 }
+#endif
 

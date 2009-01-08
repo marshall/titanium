@@ -83,7 +83,7 @@ const DomainId kIllegalDomainId = static_cast<DomainId>(0);
   void operator=(const TypeName&)
 
 // An older, deprecated, politically incorrect name for the above.
-#define DISALLOW_EVIL_CONSTRUCTORS(TypeName) DISALLOW_COPY_AND_ASSIGN(TypeName)
+#define DISALLOW_EVIL_CONSTRUCTORS2(TypeName) DISALLOW_COPY_AND_ASSIGN(TypeName)
 
 // A macro to disallow all the implicit constructors, namely the
 // default constructor, copy constructor and operator= functions.

@@ -4,12 +4,14 @@
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
 
-#include "ti_win32_user_window.h"
-#include "ti_win32_frame_load_delegate.h"
+#include "win32_user_window.h"
+#include "frame_load_delegate.h"
 #include "string_util.h"
 #include <math.h>
 
-bool TiWin32UserWindow::ole_initialized = false;
+using namespace ti;
+
+bool Win32UserWindow::ole_initialized = false;
 
 static void* SetWindowUserData(HWND hwnd, void* user_data) {
   return
@@ -22,16 +24,16 @@ static void* GetWindowUserData(HWND hwnd) {
 }
 
 /*static*/
-TiWin32UserWindow* TiWin32UserWindow::FromWindow(HWND hWnd)
+Win32UserWindow* Win32UserWindow::FromWindow(HWND hWnd)
 {
-	return reinterpret_cast<TiWin32UserWindow*>(GetWindowUserData(hWnd));
+	return reinterpret_cast<Win32UserWindow*>(GetWindowUserData(hWnd));
 }
 
 
-const TCHAR *windowClassName = "TiWin32UserWindow";
+const TCHAR *windowClassName = "Win32UserWindow";
 
 /*static*/
-void TiWin32UserWindow::RegisterWindowClass (HINSTANCE hInstance)
+void Win32UserWindow::RegisterWindowClass (HINSTANCE hInstance)
 {
 	static bool class_initialized = false;
 	if (!class_initialized) {
@@ -41,7 +43,7 @@ void TiWin32UserWindow::RegisterWindowClass (HINSTANCE hInstance)
 		wcex.cbSize = sizeof(WNDCLASSEX);
 
 		wcex.style			= CS_HREDRAW | CS_VREDRAW;
-		wcex.lpfnWndProc	= TiWin32UserWindow::WndProc;
+		wcex.lpfnWndProc	= Win32UserWindow::WndProc;
 		wcex.cbClsExtra		= 0;
 		wcex.cbWndExtra		= 0;
 		wcex.hInstance		= hInstance;
@@ -63,9 +65,9 @@ void TiWin32UserWindow::RegisterWindowClass (HINSTANCE hInstance)
 
 /*static*/
 LRESULT CALLBACK
-TiWin32UserWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+Win32UserWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	TiWin32UserWindow *window = TiWin32UserWindow::FromWindow(hWnd);
+	Win32UserWindow *window = Win32UserWindow::FromWindow(hWnd);
 
 	switch (message)
 	{
@@ -83,11 +85,11 @@ TiWin32UserWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
 	return 0;
 }
 
-TiWin32UserWindow::TiWin32UserWindow(TiHost *host, TiWindowConfig *config)
-	: TiUserWindow(host, config)
+Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config)
+	: UserWindow(host, config)
 {
 	static bool initialized = false;
-	win32_host = static_cast<Win32Host*>(host);
+	win32_host = static_cast<kroll::Win32Host*>(host);
 	if (!initialized) {
 		INITCOMMONCONTROLSEX InitCtrlEx;
 
@@ -98,7 +100,7 @@ TiWin32UserWindow::TiWin32UserWindow(TiHost *host, TiWindowConfig *config)
 
 	std::cout << "HINSTANCE = " << (int)win32_host->GetInstanceHandle() << std::endl;
 
-	TiWin32UserWindow::RegisterWindowClass(win32_host->GetInstanceHandle());
+	Win32UserWindow::RegisterWindowClass(win32_host->GetInstanceHandle());
 	window_handle = CreateWindow(windowClassName, "Titanium Application",
             WS_OVERLAPPEDWINDOW,
             CW_USEDEFAULT, 0, CW_USEDEFAULT, 0,
@@ -132,9 +134,9 @@ TiWin32UserWindow::TiWin32UserWindow(TiHost *host, TiWindowConfig *config)
 	}
 
 	std::cout << "create delegate " << std::endl;
-	delegate = new TiWin32FrameLoadDelegate(this);
+	delegate = new Win32FrameLoadDelegate(this);
 
-	TiBounds b;
+	Bounds b;
 	b.x = config->GetX();
 	b.y = config->GetY();
 	b.width = config->GetWidth();
@@ -161,7 +163,7 @@ TiWin32UserWindow::TiWin32UserWindow(TiHost *host, TiWindowConfig *config)
 	ResizeSubViews();
 }
 
-TiWin32UserWindow::~TiWin32UserWindow()
+Win32UserWindow::~Win32UserWindow()
 {
 	if (web_view)
 		web_view->Release();
@@ -170,22 +172,22 @@ TiWin32UserWindow::~TiWin32UserWindow()
 		main_frame->Release();
 }
 
-void TiWin32UserWindow::ResizeSubViews()
+void Win32UserWindow::ResizeSubViews()
 {
     RECT rcClient;
     GetClientRect(window_handle, &rcClient);
     MoveWindow(view_window_handle, 0, 0, rcClient.right, rcClient.bottom, TRUE);
 }
 
-void TiWin32UserWindow::Hide() {
+void Win32UserWindow::Hide() {
 	ShowWindow(window_handle, SW_HIDE);
 }
 
-void TiWin32UserWindow::Show() {
+void Win32UserWindow::Show() {
 	ShowWindow(window_handle, SW_SHOW);
 }
 
-void TiWin32UserWindow::Open() {
+void Win32UserWindow::Open() {
 	std::cout << "Opening window_handle=" << (int)window_handle << ", view_window_handle="<<(int)view_window_handle<<std::endl;
 	ShowWindow(window_handle, SW_SHOW);
 	ShowWindow(view_window_handle, SW_SHOW);
@@ -194,59 +196,59 @@ void TiWin32UserWindow::Open() {
 
 	ResizeSubViews();
 
-	TiUserWindow::Open(this);
+	UserWindow::Open(this);
 	SetUrl(this->config->GetURL());
 
 }
 
-void TiWin32UserWindow::Close() {
+void Win32UserWindow::Close() {
 	CloseWindow(window_handle);
 
-	TiUserWindow::Close(this);
+	UserWindow::Close(this);
 }
 
-double TiWin32UserWindow::GetX() {
+double Win32UserWindow::GetX() {
 	return GetBounds().x;
 }
 
-void TiWin32UserWindow::SetX(double x) {
-	TiBounds b = GetBounds();
+void Win32UserWindow::SetX(double x) {
+	Bounds b = GetBounds();
 	b.x = x;
 	SetBounds(b);
 }
 
-double TiWin32UserWindow::GetY() {
+double Win32UserWindow::GetY() {
 	return GetBounds().y;
 }
 
-void TiWin32UserWindow::SetY(double y) {
-	TiBounds b = GetBounds();
+void Win32UserWindow::SetY(double y) {
+	Bounds b = GetBounds();
 	b.y = y;
 	SetBounds(b);
 }
 
-double TiWin32UserWindow::GetWidth() {
+double Win32UserWindow::GetWidth() {
 	return GetBounds().width;
 }
 
-void TiWin32UserWindow::SetWidth(double width) {
-	TiBounds b = GetBounds();
+void Win32UserWindow::SetWidth(double width) {
+	Bounds b = GetBounds();
 	b.width = width;
 	SetBounds(b);
 }
 
-double TiWin32UserWindow::GetHeight() {
+double Win32UserWindow::GetHeight() {
 	return GetBounds().height;
 }
 
-void TiWin32UserWindow::SetHeight(double height) {
-	TiBounds b = GetBounds();
+void Win32UserWindow::SetHeight(double height) {
+	Bounds b = GetBounds();
 	b.height = height;
 	SetBounds(b);
 }
 
-TiBounds TiWin32UserWindow::GetBounds() {
-	TiBounds bounds;
+Bounds Win32UserWindow::GetBounds() {
+	Bounds bounds;
 
 	RECT rect;
 	GetWindowRect(window_handle, &rect);
@@ -259,16 +261,16 @@ TiBounds TiWin32UserWindow::GetBounds() {
 	return bounds;
 }
 
-void TiWin32UserWindow::SetBounds(TiBounds bounds) {
+void Win32UserWindow::SetBounds(Bounds bounds) {
 	SetWindowPos(window_handle, NULL, bounds.x, bounds.y, bounds.width, bounds.height, SWP_SHOWWINDOW | SWP_NOZORDER);
 }
 
-void TiWin32UserWindow::SetTitle(std::string title) {
+void Win32UserWindow::SetTitle(std::string title) {
 	this->title = title;
 	SetWindowText(window_handle, title.c_str());
 }
 
-void TiWin32UserWindow::SetUrl(std::string url) {
+void Win32UserWindow::SetUrl(std::string url) {
 	this->config->SetURL(url);
 
 	std::cout << "SetUrl: " << url << std::endl;
@@ -315,26 +317,26 @@ exit:
 SetFlag(window_style, flag, b);\
 SetWindowLong(wnd, GWL_STYLE, window_style);
 
-void TiWin32UserWindow::SetResizable(bool resizable) {
+void Win32UserWindow::SetResizable(bool resizable) {
 	this->resizable = resizable;
 	SetGWLFlag(window_handle, WS_OVERLAPPEDWINDOW, using_chrome && !resizable);
 }
 
-void TiWin32UserWindow::SetMaximizable(bool maximizable) {
+void Win32UserWindow::SetMaximizable(bool maximizable) {
 	this->maximizable = maximizable;
 	SetGWLFlag(window_handle, WS_MAXIMIZEBOX, maximizable);
 }
 
-void TiWin32UserWindow::SetMinimizable(bool minimizable) {
+void Win32UserWindow::SetMinimizable(bool minimizable) {
 	this->minimizable = minimizable;
 	SetGWLFlag(window_handle, WS_MINIMIZEBOX, minimizable);
 }
 
-void TiWin32UserWindow::SetCloseable(bool closeable) {
+void Win32UserWindow::SetCloseable(bool closeable) {
 	this->closeable = closeable;
 }
 
-bool TiWin32UserWindow::IsVisible() {
+bool Win32UserWindow::IsVisible() {
 	WINDOWPLACEMENT placement;
 	placement.length = sizeof(WINDOWPLACEMENT);
 	GetWindowPlacement(window_handle, &placement);
@@ -342,12 +344,12 @@ bool TiWin32UserWindow::IsVisible() {
 	return placement.showCmd == SW_SHOW;
 }
 
-void TiWin32UserWindow::SetVisible(bool visible) {
+void Win32UserWindow::SetVisible(bool visible) {
 	this->showing = visible;
 	ShowWindow(window_handle, visible ? SW_SHOW : SW_HIDE);
 }
 
-void TiWin32UserWindow::SetTransparency(double transparency) {
+void Win32UserWindow::SetTransparency(double transparency) {
 	this->transparency = transparency;
 	SetLayeredWindowAttributes(window_handle, 0, (BYTE)floor(transparency*255), LWA_ALPHA);
 }

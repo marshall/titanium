@@ -22,13 +22,13 @@ void BindPropertyToJSObject(JSContextRef ctx,
 	JSStringRelease(name_str);
 }
 
-std::map <JSContextRef, TiStaticBoundObject*> context_locals;
-TiStaticBoundObject* GetContextLocal(JSContextRef ref)
+std::map <JSContextRef, kroll::StaticBoundObject*> context_locals;
+kroll::StaticBoundObject* GetContextLocal(JSContextRef ref)
 {
-	std::map<JSContextRef, TiStaticBoundObject*>::iterator i;
+	std::map<JSContextRef, kroll::StaticBoundObject*>::iterator i;
 	i = context_locals.find(ref);
 
-	TiStaticBoundObject *context_local;
+	kroll::StaticBoundObject *context_local;
 	if (i == context_locals.end())
 	{
 		/*
@@ -37,7 +37,7 @@ TiStaticBoundObject* GetContextLocal(JSContextRef ref)
 		 * be retained. If it will be, the caller can ADDREF, signalling
 		 * to the pointer counter that they are forking the reference.
 		*/
-		context_local = new TiStaticBoundObject();
+		context_local = new kroll::StaticBoundObject();
 	}
 	else
 	{
@@ -46,9 +46,9 @@ TiStaticBoundObject* GetContextLocal(JSContextRef ref)
 	return context_local;
 }
 
-JSObjectRef TiBoundObjectToJSValue(
+JSObjectRef KrollBoundObjectToJSValue(
             JSContextRef js_context,
-            TiBoundObject* instance)
+            kroll::BoundObject* instance)
 {
 	if (tibo_class == NULL)
 	{
@@ -62,13 +62,13 @@ JSObjectRef TiBoundObjectToJSValue(
 		tibo_class = JSClassCreate (&js_class_def);
 	}
 
-	TI_ADDREF(instance);
+	KR_ADDREF(instance);
 	return JSObjectMake (js_context, tibo_class, instance);
 }
 
-JSObjectRef TiBoundMethodToJSValue(
+JSObjectRef KrollBoundMethodToJSValue(
             JSContextRef js_context,
-            TiBoundMethod *method)
+            kroll::BoundMethod *method)
 {
 
 	if (tibm_class == NULL)
@@ -84,13 +84,13 @@ JSObjectRef TiBoundMethodToJSValue(
 		tibm_class = JSClassCreate (&js_class_def);
 	}
 
-	TI_ADDREF(method);
+	KR_ADDREF(method);
 	return JSObjectMake (js_context, tibm_class, method);
 }
 
-JSObjectRef TiBoundListToJSValue(
+JSObjectRef KrollBoundListToJSValue(
             JSContextRef js_context,
-            TiBoundList *list)
+            kroll::BoundList *list)
 {
 
 	if (tibl_class == NULL)
@@ -107,9 +107,9 @@ JSObjectRef TiBoundListToJSValue(
 	}
 
 
-	TI_ADDREF(list);
+	KR_ADDREF(list);
 
-	JSValueRef args[0];
+	JSValueRef *args = new JSValueRef[0];
 	JSObjectRef array = JSObjectMakeArray(js_context, 0, args, NULL);
 
 	JSObjectRef object = JSObjectMake (js_context, tibl_class, list);
@@ -121,15 +121,15 @@ JSObjectRef TiBoundListToJSValue(
 
 void finalize_cb(JSObjectRef js_object)
 {
-	TiBoundObject* object = (TiBoundObject*) JSObjectGetPrivate (js_object);
-	TI_DECREF(object);
+	kroll::BoundObject* object = (kroll::BoundObject*) JSObjectGetPrivate (js_object);
+	KR_DECREF(object);
 }
 
 void get_property_names_cb (JSContextRef js_context,
                             JSObjectRef js_object,
                             JSPropertyNameAccumulatorRef js_properties)
 {
-	TiBoundObject* object = (TiBoundObject*) JSObjectGetPrivate (js_object);
+	kroll::BoundObject* object = (kroll::BoundObject*) JSObjectGetPrivate (js_object);
 
 	if (object == NULL)
 		return;
@@ -147,7 +147,7 @@ bool has_property_cb (JSContextRef js_context,
                       JSObjectRef  js_object,
                       JSStringRef  js_property)
 {
-	TiBoundObject* object = (TiBoundObject*) JSObjectGetPrivate (js_object);
+	kroll::BoundObject* object = (kroll::BoundObject*) JSObjectGetPrivate (js_object);
 	if (object == NULL)
 		return false;
 
@@ -172,8 +172,8 @@ JSValueRef get_property_cb (JSContextRef js_context,
                             JSStringRef  js_property,
                             JSValueRef*  js_exception)
 {
-	TiBoundObject* context_local = GetContextLocal(js_context);
-	TiBoundObject* object = (TiBoundObject*) JSObjectGetPrivate (js_object);
+	kroll::BoundObject* context_local = GetContextLocal(js_context);
+	kroll::BoundObject* object = (kroll::BoundObject*) JSObjectGetPrivate (js_object);
 	if (object == NULL)
 		return JSValueMakeUndefined(js_context);
 
@@ -181,14 +181,14 @@ JSValueRef get_property_cb (JSContextRef js_context,
 	char* name = JSStringToChars(js_property);
 	try
 	{
-		TiValue* ti_val = object->Get(name, context_local);
-		TiScopedDereferencer s(ti_val);
-		js_val = TiValueToJSValue(js_context, ti_val);
+		kroll::Value* ti_val = object->Get(name, context_local);
+		kroll::ScopedDereferencer s(ti_val);
+		js_val = KrollValueToJSValue(js_context, ti_val);
 	}
-	catch (TiValue* exception)
+	catch (kroll::Value* exception)
 	{
-		TiScopedDereferencer s(exception);
-		*js_exception = TiValueToJSValue(js_context, exception);
+		kroll::ScopedDereferencer s(exception);
+		*js_exception = KrollValueToJSValue(js_context, exception);
 	}
 
 	free(name);
@@ -201,23 +201,23 @@ bool set_property_cb (JSContextRef js_context,
                       JSValueRef   js_value,
                       JSValueRef*  js_exception)
 {
-	TiBoundObject* context_local = GetContextLocal(js_context);
-	TiBoundObject* object = (TiBoundObject*) JSObjectGetPrivate (js_object);
+	kroll::BoundObject* context_local = GetContextLocal(js_context);
+	kroll::BoundObject* object = (kroll::BoundObject*) JSObjectGetPrivate (js_object);
 	if (object == NULL)
 		return false;
 
 	char* prop_name = JSStringToChars(js_property);
 	try
 	{
-		// we now own the reference returned from  JSValueToTiValue
-		TiValue* ti_val = JSValueToTiValue(js_context, js_value, js_object);
-		TiScopedDereferencer s(ti_val);
+		// we now own the reference returned from  JSValueTokroll::Value
+		kroll::Value* ti_val = JSValueToKrollValue(js_context, js_value, js_object);
+		kroll::ScopedDereferencer s(ti_val);
 		object->Set(prop_name, ti_val, context_local);
 	}
-	catch (TiValue* exception)
+	catch (kroll::Value* exception)
 	{
-		TiScopedDereferencer s(exception);
-		*js_exception = TiValueToJSValue(js_context, exception);
+		kroll::ScopedDereferencer s(exception);
+		*js_exception = KrollValueToJSValue(js_context, exception);
 	}
 
 	free(prop_name);
@@ -231,40 +231,40 @@ JSValueRef call_as_function_cb (JSContextRef     js_context,
                                 const JSValueRef js_args[],
                                 JSValueRef*      js_exception)
 {
-	TiBoundMethod* method = (TiBoundMethod*) JSObjectGetPrivate(js_function);
-	TiBoundObject* context_local = GetContextLocal(js_context);
+	kroll::BoundMethod* method = (kroll::BoundMethod*) JSObjectGetPrivate(js_function);
+	kroll::BoundObject* context_local = GetContextLocal(js_context);
 	if (method == NULL)
 		return JSValueMakeUndefined(js_context);
 
-	TiValueList args;
+	kroll::ValueList args;
 	for (size_t i = 0; i < num_args; i++) {
-		TiValue* arg_val = JSValueToTiValue(js_context, js_args[i], js_this);
+		kroll::Value* arg_val = JSValueToKrollValue(js_context, js_args[i], js_this);
 		args.push_back(arg_val);
 	}
 
 	JSValueRef js_val = NULL;
 	try
 	{
-		TiValue *ti_val = method->Call(args, context_local);
-		TiScopedDereferencer s(ti_val);
-		js_val = TiValueToJSValue(js_context, ti_val);
+		kroll::Value *ti_val = method->Call(args, context_local);
+		kroll::ScopedDereferencer s(ti_val);
+		js_val = KrollValueToJSValue(js_context, ti_val);
 	}
-	catch (TiValue* exception)
+	catch (kroll::Value* exception)
 	{
-		TiScopedDereferencer s(exception);
-		*js_exception = TiValueToJSValue(js_context, exception);
+		kroll::ScopedDereferencer s(exception);
+		*js_exception = KrollValueToJSValue(js_context, exception);
 		js_val = NULL;
 	}
 
 	for (size_t i = 0; i < num_args; i++) {
-		TI_DECREF(args[i]);
+		KR_DECREF(args[i]);
 	}
 
 	return js_val;
 
 }
 
-JSValueRef TiValueToJSValue(JSContextRef ctx, TiValue* value)
+JSValueRef KrollValueToJSValue(JSContextRef ctx, kroll::Value* value)
 {
 	JSValueRef js_val;
 
@@ -288,7 +288,7 @@ JSValueRef TiValueToJSValue(JSContextRef ctx, TiValue* value)
 	}
 	else if (value->IsObject())
 	{
-		TiBoundObject* obj = value->ToObject();
+		kroll::BoundObject* obj = value->ToObject();
 		KJSBoundObject* kobj = dynamic_cast<KJSBoundObject*>(obj);
 		if (kobj != NULL)
 		{
@@ -297,13 +297,13 @@ JSValueRef TiValueToJSValue(JSContextRef ctx, TiValue* value)
 		}
 		else
 		{
-			// this is a TiBoundObject that needs to be proxied
-			js_val = TiBoundObjectToJSValue(ctx, obj);
+			// this is a kroll::BoundObject that needs to be proxied
+			js_val = KrollBoundObjectToJSValue(ctx, obj);
 		}
 	}
 	else if (value->IsMethod())
 	{
-		TiBoundMethod* meth = value->ToMethod();
+		kroll::BoundMethod* meth = value->ToMethod();
 		KJSBoundMethod* kmeth = dynamic_cast<KJSBoundMethod*>(meth);
 		if (kmeth != NULL)
 		{
@@ -313,12 +313,12 @@ JSValueRef TiValueToJSValue(JSContextRef ctx, TiValue* value)
 		else
 		{
 			// this is a TiBoundMethod that needs to be proxied
-			js_val = TiBoundMethodToJSValue(ctx, meth);
+			js_val = KrollBoundMethodToJSValue(ctx, meth);
 		}
 	}
 	else if (value->IsList())
 	{
-		TiBoundList* list = value->ToList();
+		kroll::BoundList* list = value->ToList();
 		KJSBoundList* klist = dynamic_cast<KJSBoundList*>(list);
 		if (klist != NULL)
 		{
@@ -328,7 +328,7 @@ JSValueRef TiValueToJSValue(JSContextRef ctx, TiValue* value)
 		else
 		{
 			// this is a TiBoundMethod that needs to be proxied
-			js_val = TiBoundListToJSValue(ctx, list);
+			js_val = KrollBoundListToJSValue(ctx, list);
 		}
 	}
 	else if (value->IsNull())
@@ -347,24 +347,24 @@ JSValueRef TiValueToJSValue(JSContextRef ctx, TiValue* value)
 	return js_val;
 }
 
-TiValue* JSValueToTiValue(JSContextRef ctx, JSValueRef value, JSObjectRef this_obj)
+kroll::Value* JSValueToKrollValue(JSContextRef ctx, JSValueRef value, JSObjectRef this_obj)
 {
-	TiValue *ti_val = NULL;
+	kroll::Value *ti_val = NULL;
 	JSValueRef exception = NULL;
 
 	if (value == NULL)
 	{
 		fprintf(stderr, "Trying to convert NULL JSValueRef!\n");
-		return TiValue::Undefined();
+		return kroll::Value::Undefined();
 	}
 
 	if (JSValueIsNumber(ctx, value))
 	{
-		ti_val = new TiValue(JSValueToNumber(ctx, value, &exception));
+		ti_val = new kroll::Value(JSValueToNumber(ctx, value, &exception));
 	}
 	else if (JSValueIsBoolean(ctx, value))
 	{
-		ti_val = new TiValue(JSValueToBoolean(ctx, value));
+		ti_val = new kroll::Value(JSValueToBoolean(ctx, value));
 	}
 	else if (JSValueIsString(ctx, value))
 	{
@@ -376,7 +376,7 @@ TiValue* JSValueToTiValue(JSContextRef ctx, JSValueRef value, JSObjectRef this_o
 			std::string to_ret = std::string(chars);
 			JSStringRelease(string_ref);
 			free(chars);
-			ti_val = new TiValue(to_ret);
+			ti_val = new kroll::Value(to_ret);
 		}
 
 	}
@@ -390,52 +390,52 @@ TiValue* JSValueToTiValue(JSContextRef ctx, JSValueRef value, JSObjectRef this_o
 			if (JSObjectIsFunction(ctx, o) && data == NULL)
 			{
 				// this is a pure JS method: proxy it
-				TiBoundMethod* tibm = new KJSBoundMethod(ctx, o, this_obj);
-				ti_val = new TiValue(tibm);
-				TI_DECREF(tibm);
+				kroll::BoundMethod* tibm = new KJSBoundMethod(ctx, o, this_obj);
+				ti_val = new kroll::Value(tibm);
+				KR_DECREF(tibm);
 			}
 			else if (JSObjectIsFunction(ctx, o))
 			{
 				// this is a TiBoundMethod: unwrap it
-				TiBoundMethod* tibm = (TiBoundMethod*) data;
-				ti_val = new TiValue(tibm);
+				kroll::BoundMethod* tibm = (kroll::BoundMethod*) data;
+				ti_val = new kroll::Value(tibm);
 			}
 			//else if (JSObjectIsArrayLike(ctx, o) && data == NULL)
 			//{
 			//	// this is a pure JS array: proxy it
 			//	TiBoundList* tibl = new KJSBoundList(ctx, o);
-			//	ti_val = new TiValue(tibl)
-			//	TI_DECREF(tibl);
+			//	ti_val = new kroll::Value(tibl)
+			//	KR_DECREF(tibl);
 			//}
 			//else if (JSObjectIsArrayLike(ctx, o))
 			//{
 			//	// this is a TiBoundList: unwrap it
 			//	TiBoundList* tibl = (TiBoundList*) data;
-			//	ti_val = new TiValue(tibl);
+			//	ti_val = new kroll::Value(tibl);
 			//}
 			else if (data == NULL)
 			{
 				// this is a pure JS object: proxy it
-				TiBoundObject* tibo = new KJSBoundObject(ctx, o);
-				ti_val = new TiValue(tibo);
-				TI_DECREF(tibo);
+				kroll::BoundObject* tibo = new KJSBoundObject(ctx, o);
+				ti_val = new kroll::Value(tibo);
+				KR_DECREF(tibo);
 			}
 			else
 			{
-				// this is a TiBoundObject: unwrap it
-				TiBoundObject* tibo = (TiBoundObject*) data;
-				ti_val = new TiValue(tibo);
+				// this is a kroll::BoundObject: unwrap it
+				kroll::BoundObject* tibo = (kroll::BoundObject*) data;
+				ti_val = new kroll::Value(tibo);
 			}
 		}
 
 	}
 	else if (JSValueIsNull(ctx, value))
 	{
-		ti_val = TiValue::Null();
+		ti_val = kroll::Value::Null();
 	}
 	else
 	{
-		ti_val = TiValue::Undefined();
+		ti_val = kroll::Value::Undefined();
 	}
 
 	if (ti_val != NULL && exception == NULL)
@@ -444,7 +444,7 @@ TiValue* JSValueToTiValue(JSContextRef ctx, JSValueRef value, JSObjectRef this_o
 	}
 	else
 	{
-		throw JSValueToTiValue(ctx, exception, NULL);
+		throw JSValueToKrollValue(ctx, exception, NULL);
 	}
 }
 

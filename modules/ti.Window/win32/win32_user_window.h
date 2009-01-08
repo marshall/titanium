@@ -31,18 +31,21 @@
 #include <wininet.h>
 #include "WebKit.h"
 
-#include "../windowing_plugin.h"
-#include "host/win32/host.h"
+#include "../window_plugin.h"
+#include <kroll/kroll.h>
+#include "../../kroll/host/win32/host.h"
 
-class TiWin32FrameLoadDelegate;
+namespace ti {
 
-class TiWin32UserWindow : public TiUserWindow {
+class Win32FrameLoadDelegate;
+
+class Win32UserWindow : public UserWindow {
 
 protected:
 	static bool ole_initialized;
 
-	Win32Host *win32_host;
-	TiWin32FrameLoadDelegate *delegate;
+	kroll::Win32Host *win32_host;
+	Win32FrameLoadDelegate *delegate;
 
 	HWND window_handle, view_window_handle;
 	IWebView* web_view;
@@ -55,10 +58,10 @@ protected:
 public:
 	static void RegisterWindowClass(HINSTANCE hInstance);
 	static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
-	static TiWin32UserWindow* FromWindow(HWND hWnd);
+	static Win32UserWindow* FromWindow(HWND hWnd);
 
-	TiWin32UserWindow(TiHost *host, TiWindowConfig *config);
-	virtual ~TiWin32UserWindow();
+	Win32UserWindow(kroll::Host *host, WindowConfig *config);
+	virtual ~Win32UserWindow();
 	void ResizeSubViews();
 
 	void Hide();
@@ -77,8 +80,8 @@ public:
 	void SetWidth(double width);
 	double GetHeight();
 	void SetHeight(double height);
-	TiBounds GetBounds();
-	void SetBounds(TiBounds bounds);
+	Bounds GetBounds();
+	void SetBounds(Bounds bounds);
 	std::string GetTitle() { return config->GetTitle(); }
 	void SetTitle(std::string title);
 	std::string GetUrl() { return config->GetURL(); }
@@ -97,5 +100,7 @@ public:
 	void SetTransparency(double transparency);
 
 };
+
+}
 
 #endif

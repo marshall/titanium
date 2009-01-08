@@ -13,14 +13,14 @@
 #include <string>
 #include <map>
 
-class KJSBoundObject : public TiBoundObject
+class KJSBoundObject : public kroll::BoundObject
 {
 public:
 	KJSBoundObject(JSContextRef context, JSObjectRef js_object);
 	~KJSBoundObject();
 
-	void Set(const char *name, TiValue* value, TiBoundObject *context);
-	TiValue* Get(const char *name, TiBoundObject *context);
+	void Set(const char *name, kroll::Value* value, kroll::BoundObject *context);
+	kroll::Value* Get(const char *name, kroll::BoundObject *context);
 	std::vector<std::string> GetPropertyNames();
 
 	JSObjectRef GetJSObject();

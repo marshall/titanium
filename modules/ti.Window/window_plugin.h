@@ -6,20 +6,27 @@
 #ifndef __WINDOWING_PLUGIN_H__
 #define __WINDOWING_PLUGIN_H__
 
-#include <titanium/titanium.h>
+#include <kroll/kroll.h>
 
+
+namespace ti {
 class WindowPlugin;
-class TiWindow;
-class TiUserWindow;
-#include "ti_window.h"
-#include "ti_user_window.h"
+class Window;
+class UserWindow;
+}
 
-class WindowingPlugin : public TiPlugin
+#include "window.h"
+#include "user_window.h"
+
+namespace ti {
+
+class WindowPlugin : public kroll::Module
 {
-	TIPLUGIN_CLASS(WindowingPlugin)
+	KROLL_MODULE_CLASS(WindowPlugin)
 
 protected:
-	TiBoundObject *runtime;
+	kroll::BoundObject *runtime;
 };
 
+}
 #endif

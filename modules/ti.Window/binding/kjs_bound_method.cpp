@@ -27,15 +27,15 @@ KJSBoundMethod::~KJSBoundMethod()
 	if (this->this_obj != NULL)
 		JSValueUnprotect(this->context, this->this_obj);
 
-	TI_DECREF(kjs_bound_object);
+	KR_DECREF(kjs_bound_object);
 }
 
-TiValue* KJSBoundMethod::Get(const char *name, TiBoundObject *context)
+kroll::Value* KJSBoundMethod::Get(const char *name, kroll::BoundObject *context)
 {
 	return kjs_bound_object->Get(name, context);
 }
 
-void KJSBoundMethod::Set(const char *name, TiValue* value, TiBoundObject *context)
+void KJSBoundMethod::Set(const char *name, kroll::Value* value, kroll::BoundObject *context)
 {
 	return kjs_bound_object->Set(name, value, context);
 }
@@ -50,15 +50,15 @@ std::vector<std::string> KJSBoundMethod::GetPropertyNames()
 	return kjs_bound_object->GetPropertyNames();
 }
 
-TiValue* KJSBoundMethod::Call(const TiValueList& args, TiBoundObject* context)
+kroll::Value* KJSBoundMethod::Call(const kroll::ValueList& args, kroll::BoundObject* context)
 {
 
 	JSValueRef* js_args = new JSValueRef[args.size()];
 
 	for (int i = 0; i < (int) args.size(); i++)
 	{
-		TiValue* arg = args.at(i);
-		js_args[i] = TiValueToJSValue(this->context, arg);
+		kroll::Value* arg = args.at(i);
+		js_args[i] = KrollValueToJSValue(this->context, arg);
 	}
 
 	JSValueRef exception = NULL;
@@ -72,11 +72,11 @@ TiValue* KJSBoundMethod::Call(const TiValueList& args, TiBoundObject* context)
 
 	if (js_value == NULL && exception != NULL) //exception thrown
 	{
-		TiValue* tv_exp = JSValueToTiValue(this->context, exception, NULL);
+		kroll::Value* tv_exp = JSValueToKrollValue(this->context, exception, NULL);
 		throw tv_exp;
 	}
 
-	return JSValueToTiValue(this->context, js_value, NULL);
+	return JSValueToKrollValue(this->context, js_value, NULL);
 }
 
 
