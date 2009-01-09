@@ -47,8 +47,8 @@ if tiBuild.is_osx():
 		env.AddPostAction(s, 'ibtool --errors --warnings --notices --output-format human-readable-text --compile '+tiBuild.absdir + '/'+ base+'.nib '+str(i))
 
 if tiBuild.is_win32():
-	manifest1 = os.path.join(tiBuild.absdir, 'windowingplugin.embed.manifest')
-	manifest2 = os.path.join(tiBuild.absdir, 'windowingplugin.dll.manifest')
+	manifest1 = os.path.join(tiBuild.absdir, 'tiwindowmodule.embed.manifest')
+	manifest2 = os.path.join(tiBuild.absdir, 'tiwindowmodule.dll.manifest')
 	win32_webkit = path.join(tiBuild.abstopdir, 'thirdparty', 'win32', 'webkit')
 	env.AddPostAction(s, 'mt.exe /nologo /manifest ' + manifest2 + ' /tlb:' + path.join(win32_webkit, 'lib', 'WebKit.tlb') + ' /dll:bin/WebKit /out:'+manifest1)
 	#env.AddPostAction(s, 'mt.exe /nologo /tlb:' + path.join(win32_webkit, 'lib', 'WebKit.tlb') + ' /dll:WebKit /outputresource:'+tiBuild.absdir+'/tikernel.exe;1')
