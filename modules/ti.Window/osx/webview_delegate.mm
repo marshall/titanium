@@ -3,10 +3,10 @@
  * see LICENSE in the root folder for details on the license.
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
-#import <api/config/ti_app_config.h>
+#import "../../ti.App/app_config.h"
 #import "webview_delegate.h"
-#import "native_ti_window.h"
-#import "ti_osx_user_window.h"
+#import "native_window.h"
+#import "osx_user_window.h"
 
 #define TRACE  NSLog
 
@@ -18,7 +18,7 @@
 
 - (void)setup 
 {
-	TiAppConfig *appConfig = TiAppConfig::Instance();
+	AppConfig *appConfig = AppConfig::Instance();
 	NSString *appID = [NSString stringWithCString:appConfig->GetAppID().c_str()];
 	
 	[webView setPreferencesIdentifier:appID];
@@ -37,7 +37,7 @@
 	[webPrefs release];
 
 	// this stuff adjusts the webview/window for chromeless windows.
-	TiWindowConfig *o = [window config];
+	WindowConfig *o = [window config];
 	
 	if (o->IsUsingScrollbars())
 	{
@@ -60,14 +60,14 @@
 	[webView setShouldCloseWithWindow:NO];
 }
 
--(id)initWithWindow:(NativeTiWindow*)win host:(TiHost*)h
+-(id)initWithWindow:(NativeWindow*)win host:(Host*)h
 {
 	self = [super init];
 	if (self!=nil)
 	{
 		window = win;
 		host = h;
-		TI_ADDREF(host);
+		KR_ADDREF(host);
 		webView = [window webView];
 		[self setup];
 		[webView setFrameLoadDelegate:self];
@@ -83,13 +83,13 @@
 
 -(void)dealloc
 {
-	TI_DECREF(host);
+	KR_DECREF(host);
 	[super dealloc];
 }
 
 -(void)show
 {
-	TiWindowConfig *config = [window config];
+	WindowConfig *config = [window config];
 	config->SetVisible(true);
     [window makeKeyAndOrderFront:nil];	
 }
@@ -318,8 +318,8 @@
 
 - (void)inject:(WebScriptObject *)windowScriptObject context:(JSContextRef)context
 {
-	TiStaticBoundObject* ti = host->GetGlobalObject();
-	JSObjectRef jsTi = TiBoundObjectToJSValue(context,ti);
+	kroll::StaticBoundObject* ti = host->GetGlobalObject();
+	JSObjectRef jsTi = KrollBoundObjectToJSValue(context,ti);
 	id tiJS = [WebScriptObject scriptObjectForJSObject:jsTi originRootObject:[windowScriptObject _rootObject] rootObject:[windowScriptObject _rootObject]];
 	[windowScriptObject setValue:tiJS forKey:@"ti"];
 	[tiJS release];

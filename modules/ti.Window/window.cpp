@@ -4,7 +4,7 @@
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
 
-#include "window_plugin.h"
+#include "window_module.h"
 
 using namespace ti;
 

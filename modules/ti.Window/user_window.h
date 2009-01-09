@@ -4,8 +4,8 @@
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
 
-#ifndef __TI_USER_WINDOW_H__
-#define __TI_USER_WINDOW_H__
+#ifndef _USER_WINDOW_H_
+#define _USER_WINDOW_H_
 
 #include <string>
 #include <vector>
@@ -25,6 +25,9 @@ typedef struct {
 class UserWindow : public kroll::StaticBoundObject {
 	public:
 		UserWindow(kroll::Host *host, WindowConfig *config);
+	protected:
+		~UserWindow(){};
+	public:
 		kroll::Host* GetHost() { return this->host; }
 
 		void hide_cb(const kroll::ValueList&, kroll::Value *, kroll::BoundObject*);
@@ -104,6 +107,9 @@ class UserWindow : public kroll::StaticBoundObject {
 		static std::vector<UserWindow*> windows;
 		static void Open(UserWindow *);
 		static void Close(UserWindow *);
+		
+	private:
+		DISALLOW_EVIL_CONSTRUCTORS(UserWindow);
 };
 
 }

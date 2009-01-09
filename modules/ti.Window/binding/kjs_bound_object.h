@@ -4,8 +4,8 @@
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
 
-#ifndef __KJS_BOUND_OBJECT_H__
-#define __KJS_BOUND_OBJECT_H__
+#ifndef _KJS_BOUND_OBJECT_H_
+#define _KJS_BOUND_OBJECT_H_
 
 #include "kjs.h"
 

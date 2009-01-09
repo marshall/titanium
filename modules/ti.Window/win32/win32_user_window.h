@@ -31,9 +31,9 @@
 #include <wininet.h>
 #include "WebKit.h"
 
-#include "../window_plugin.h"
+#include "../window_module.h"
 #include <kroll/kroll.h>
-#include "../../kroll/host/win32/host.h"
+#include "../../../kroll/host/win32/host.h"
 
 namespace ti {
 

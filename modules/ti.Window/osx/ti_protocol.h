@@ -4,7 +4,6 @@
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
 #import "preinclude.h"
-#import <titanium/titanium.h>
 #import <WebKit/WebKit.h>
 #import <Cocoa/Cocoa.h>
 

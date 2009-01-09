@@ -3,14 +3,14 @@
  * see LICENSE in the root folder for details on the license.
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
-#ifndef __WINDOWING_PLUGIN_H__
-#define __WINDOWING_PLUGIN_H__
+#ifndef _WINDOW_MODULE_H_
+#define _WINDOW_MODULE_H_
 
 #include <kroll/kroll.h>
 
 
 namespace ti {
-class WindowPlugin;
+class WindowModule;
 class Window;
 class UserWindow;
 }
@@ -20,12 +20,14 @@ class UserWindow;
 
 namespace ti {
 
-class WindowPlugin : public kroll::Module
+class WindowModule : public kroll::Module
 {
-	KROLL_MODULE_CLASS(WindowPlugin)
+	KROLL_MODULE_CLASS(WindowModule)
 
 protected:
 	kroll::BoundObject *runtime;
+	
+	DISALLOW_EVIL_CONSTRUCTORS(WindowModule);
 };
 
 }

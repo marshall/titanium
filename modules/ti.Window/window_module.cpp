@@ -12,25 +12,25 @@
 
 #endif
 
-#include "window_plugin.h"
+#include "window_module.h"
 #include <iostream>
 
 #ifdef OS_LINUX
-#include "linux/windowing_plugin_linux.h"
+#include "linux/window_module_linux.h"
 #endif
 
 #ifdef OS_OSX
 #include "osx/preinclude.h"
 #include <WebKit/WebKit.h>
-#include "osx/windowing_plugin_osx.h"
+#include "osx/window_module_osx.h"
 #include "osx/ti_app.h"
 #endif
 
 using namespace ti;
 
-KROLL_MODULE(WindowPlugin)
+KROLL_MODULE(WindowModule)
 
-void WindowPlugin::Initialize()
+void WindowModule::Initialize()
 {
 	std::cout << "Initializing ti.Window..." << std::endl;
 
@@ -47,9 +47,9 @@ void WindowPlugin::Initialize()
 	std::cout << "Have config and main_window_config " << std::endl;
 
 #if defined(OS_LINUX)
-	TiGtkUserWindow* window = new TiGtkUserWindow(this->host, main_window_config);
+	GtkUserWindow* window = new GtkUserWindow(this->host, main_window_config);
 #elif defined(OS_OSX)
-	TiOSXUserWindow* window = new TiOSXUserWindow(this->host, main_window_config);
+	OSXUserWindow* window = new OSXUserWindow(this->host, main_window_config);
 #elif defined(OS_WIN32)
 	Win32UserWindow* window = new Win32UserWindow(this->host, main_window_config);
 #endif
@@ -57,7 +57,7 @@ void WindowPlugin::Initialize()
 	window->Open();
 }
 
-void WindowPlugin::Destroy()
+void WindowModule::Destroy()
 {
 	KR_DECREF(this->runtime);
 }
