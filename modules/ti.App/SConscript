@@ -2,6 +2,7 @@
 import os
 
 Import("tiBuild")
+Import('build')
 
 env = tiBuild.env.Clone();
 env.Append(CPPDEFINES = {'TITANIUM_APP_API_EXPORT' : 1})
@@ -17,5 +18,5 @@ else:
 	env.ParseConfig('pkg-config --cflags --libs libxml-2.0')
 
 
-env.SharedLibrary('tiappmodule', source = Glob('*.cpp'))
+s = env.SharedLibrary(target = tiBuild.dir + '/tiappmodule', source = Glob('*.cpp'))
 
