@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 import os, os.path as path
 
-Import('build')
+Import('tiBuild')
 
-env = build.env.Clone()
-env.Append(LIBPATH=[path.join(build.absdir, 'modules', 'ti.App')])
+env = tiBuild.env.Clone()
+env.Append(LIBPATH=[path.join(tiBuild.absdir, 'modules', 'ti.App')])
 env.Append(LIBS=['kroll', 'tiappmodule'])
 env.Append(CPPPATH = ['#kroll'])
 
@@ -12,11 +12,11 @@ INCLUDES = [ '#build/include' ]
 
 sources = Glob('*.cpp')
 
-webkit_tp = path.join(build.third_party, 'webkit')
+webkit_tp = path.join(tiBuild.third_party, 'webkit')
 webkit_lib = path.join(webkit_tp, 'lib')
 webkit_inc = path.join(webkit_tp, 'include')
 
-if build.is_linux():
+if tiBuild.is_linux():
 	sources = sources + Glob('linux/*.cpp')
 	sources += Glob('binding/kjs*.cpp')
 	env.Append(LIBS=['webkit-1.0'])
@@ -24,17 +24,17 @@ if build.is_linux():
 	env.Append(CPPPATH=[webkit_inc])
 	env.ParseConfig('pkg-config --cflags --libs gtk+-2.0 gdk-2.0')
 
-elif build.is_win32():
+elif tiBuild.is_win32():
 	sources = sources + Glob('win32/*.cpp') + Glob('win32/*.cc')
 	sources += Glob('binding/kjs*.cpp')
 	env.Append(LIBPATH=[webkit_lib])
-	env.Append(CPPPATH=[path.join(webkit_inc, 'webkit'), path.join(webkit_inc, 'JavaScriptCore'), path.join(build.third_party, 'icu', 'include')])
+	env.Append(CPPPATH=[path.join(webkit_inc, 'webkit'), path.join(webkit_inc, 'JavaScriptCore'), path.join(tiBuild.third_party, 'icu', 'include')])
 	env.Append(LIBS=['WebKitGUID','WebKit','kernel32','shell32','user32','ole32','comctl32','shlwapi', 'oleaut32', 'icuuc','pthreadVC2','khost'])
 	#env.Append(CCFLAGS=['/MD'])
 	env.Append(LINKFLAGS=['/NODEFAULTLIB:LIBCMT.lib', '/LTCG', '/INCREMENTAL:NO'])
 
-elif build.is_osx():
-	env.Append(FRAMEWORKPATH=['%s/webkit' % build.third_party])
+elif tiBuild.is_osx():
+	env.Append(FRAMEWORKPATH=['%s/webkit' % tiBuild.third_party])
 	env.Append(FRAMEWORKS=['Cocoa','WebKit','JavaScriptCore'])
 	sources = sources + Glob('osx/*.mm') + Glob('osx/*.cpp')
 	sources += Glob('binding/kjs*.cpp')
@@ -43,22 +43,22 @@ elif build.is_osx():
 
 env.Append(CPPPATH=INCLUDES)
 
-if build.is_linux():
+if tiBuild.is_linux():
 	env.Append(LINKFLAGS=['-static'])
 
-s = env.SharedLibrary(target = build.dir + '/tiwindowmodule',
+s = env.SharedLibrary(target = tiBuild.dir + '/tiwindowmodule',
                         source = sources)
 
-if build.is_osx():
+if tiBuild.is_osx():
 	for i in Glob('osx/*.xib'):
 		base = path.splitext(path.basename(str(i)))[0]
-		env.AddPostAction(s, 'ibtool --errors --warnings --notices --output-format human-readable-text --compile '+build.absdir + '/'+ base+'.nib '+str(i))
+		env.AddPostAction(s, 'ibtool --errors --warnings --notices --output-format human-readable-text --compile '+tiBuild.absdir + '/'+ base+'.nib '+str(i))
 
-if build.is_win32():
-	manifest1 = os.path.join(build.absdir, 'windowingplugin.embed.manifest')
-	manifest2 = os.path.join(build.absdir, 'windowingplugin.dll.manifest')
-	win32_webkit = path.join(build.abstopdir, 'thirdparty', 'win32', 'webkit')
+if tiBuild.is_win32():
+	manifest1 = os.path.join(tiBuild.absdir, 'windowingplugin.embed.manifest')
+	manifest2 = os.path.join(tiBuild.absdir, 'windowingplugin.dll.manifest')
+	win32_webkit = path.join(tiBuild.abstopdir, 'thirdparty', 'win32', 'webkit')
 	env.AddPostAction(s, 'mt.exe /nologo /manifest ' + manifest2 + ' /tlb:' + path.join(win32_webkit, 'lib', 'WebKit.tlb') + ' /dll:bin/WebKit /out:'+manifest1)
-	#env.AddPostAction(s, 'mt.exe /nologo /tlb:' + path.join(win32_webkit, 'lib', 'WebKit.tlb') + ' /dll:WebKit /outputresource:'+build.absdir+'/tikernel.exe;1')
-	env.AddPostAction(s, 'mt.exe -nologo -manifest "'+manifest1+'" -outputresource:'+build.krollabsdir+'/kkernel.exe;1')
-	#env.AddPostAction(s, 'mt.exe -nologo -manifest "'+manifest1+'" -outputresource:'+build.absdir+'/windowingplugin.dll;2')
+	#env.AddPostAction(s, 'mt.exe /nologo /tlb:' + path.join(win32_webkit, 'lib', 'WebKit.tlb') + ' /dll:WebKit /outputresource:'+tiBuild.absdir+'/tikernel.exe;1')
+	env.AddPostAction(s, 'mt.exe -nologo -manifest "'+manifest1+'" -outputresource:'+tiBuild.absdir+'/kkernel.exe;1')
+	#env.AddPostAction(s, 'mt.exe -nologo -manifest "'+manifest1+'" -outputresource:'+tiBuild.absdir+'/windowingplugin.dll;2')

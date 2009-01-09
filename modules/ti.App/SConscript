@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 
-Import("build")
+Import("tiBuild")
 
-env = build.env.Clone();
+env = tiBuild.env.Clone();
 env.Append(CPPDEFINES = {'TITANIUM_APP_API_EXPORT' : 1})
 env.Append(CPPPATH = ['#kroll'])
 
-if build.is_win32():
+if tiBuild.is_win32():
 	env.Append(CPPPATH = ['#kroll/thirdparty/win32/libxml/include', '#kroll/thirdparty/win32/icu/include'])
 	env.Append(LIBPATH = ['#kroll/thirdparty/win32/webkit/lib'])
 	env.Append(LIBS=['libxml2', 'pthreadVC2'])

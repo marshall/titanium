@@ -1,7 +1,7 @@
 #!/usr/bin/env python
-Import('build')
+Import('tiBuild')
 
 modules = ['ti.App', 'ti.Window']
 #
 for module in modules:
-	SConscript(module+'/SConscript', build_dir=build.dir + '/modules/' + module, duplicate=0)
+	SConscript(module+'/SConscript', build_dir=tiBuild.dir + '/modules/' + module, duplicate=0)
