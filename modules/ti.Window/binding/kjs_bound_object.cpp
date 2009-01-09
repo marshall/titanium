@@ -21,7 +21,7 @@ JSObjectRef KJSBoundObject::GetJSObject()
 	return this->object;
 }
 
-kroll::Value* KJSBoundObject::Get(const char *name, kroll::BoundObject *context)
+kroll::Value* KJSBoundObject::Get(const char *name)
 {
 	JSStringRef s = JSStringCreateWithUTF8CString(name);
 	JSValueRef exception = NULL;
@@ -41,7 +41,7 @@ kroll::Value* KJSBoundObject::Get(const char *name, kroll::BoundObject *context)
 	return JSValueToKrollValue(this->context, js_value, this->object);
 }
 
-void KJSBoundObject::Set(const char *name, kroll::Value* value, kroll::BoundObject *context)
+void KJSBoundObject::Set(const char *name, kroll::Value* value)
 {
 	JSValueRef js_value = KrollValueToJSValue(this->context, value);
 	JSStringRef s = JSStringCreateWithUTF8CString(name);

@@ -19,14 +19,14 @@ KJSBoundList::~KJSBoundList()
 	KR_DECREF(kjs_bound_object);
 }
 
-kroll::Value* KJSBoundList::Get(const char *name, kroll::BoundObject *context)
+kroll::Value* KJSBoundList::Get(const char *name)
 {
-	return kjs_bound_object->Get(name, context);
+	return kjs_bound_object->Get(name);
 }
 
-void KJSBoundList::Set(const char *name, kroll::Value* value, kroll::BoundObject *context)
+void KJSBoundList::Set(const char *name, kroll::Value* value)
 {
-	return kjs_bound_object->Set(name, value, context);
+	return kjs_bound_object->Set(name, value);
 }
 
 JSObjectRef KJSBoundList::GetJSObject()
@@ -41,7 +41,7 @@ std::vector<std::string> KJSBoundList::GetPropertyNames()
 
 void KJSBoundList::Append(kroll::Value* value)
 {
-	kroll::Value *push_method = this->kjs_bound_object->Get("push", NULL);
+	kroll::Value *push_method = this->kjs_bound_object->Get("push");
 	kroll::ScopedDereferencer s(push_method);
 
 	if (push_method->IsMethod())
@@ -56,7 +56,7 @@ void KJSBoundList::Append(kroll::Value* value)
 
 int KJSBoundList::Size()
 {
-	kroll::Value *length_val = this->kjs_bound_object->Get("length", NULL);
+	kroll::Value *length_val = this->kjs_bound_object->Get("length");
 	kroll::ScopedDereferencer s(length_val);
 
 	if (length_val->IsInt())
@@ -72,7 +72,7 @@ int KJSBoundList::Size()
 kroll::Value* KJSBoundList::At(int index)
 {
 	char* name = KJSBoundList::IntToChars(index);
-	kroll::Value *value = this->kjs_bound_object->Get(name, NULL);
+	kroll::Value *value = this->kjs_bound_object->Get(name);
 	delete [] name;
 	return value;
 }

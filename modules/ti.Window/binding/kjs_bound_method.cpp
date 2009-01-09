@@ -30,14 +30,14 @@ KJSBoundMethod::~KJSBoundMethod()
 	KR_DECREF(kjs_bound_object);
 }
 
-kroll::Value* KJSBoundMethod::Get(const char *name, kroll::BoundObject *context)
+kroll::Value* KJSBoundMethod::Get(const char *name)
 {
-	return kjs_bound_object->Get(name, context);
+	return kjs_bound_object->Get(name);
 }
 
-void KJSBoundMethod::Set(const char *name, kroll::Value* value, kroll::BoundObject *context)
+void KJSBoundMethod::Set(const char *name, kroll::Value* value)
 {
-	return kjs_bound_object->Set(name, value, context);
+	return kjs_bound_object->Set(name, value);
 }
 
 JSObjectRef KJSBoundMethod::GetJSObject()
@@ -50,7 +50,7 @@ std::vector<std::string> KJSBoundMethod::GetPropertyNames()
 	return kjs_bound_object->GetPropertyNames();
 }
 
-kroll::Value* KJSBoundMethod::Call(const kroll::ValueList& args, kroll::BoundObject* context)
+kroll::Value* KJSBoundMethod::Call(const kroll::ValueList& args)
 {
 
 	JSValueRef* js_args = new JSValueRef[args.size()];
