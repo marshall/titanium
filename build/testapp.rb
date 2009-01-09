@@ -19,7 +19,6 @@ else
   OS='win32'
 end
 
-krolloutdir = File.join(File.expand_path(File.dirname(__FILE__)), '..', 'kroll', 'build', OS)
 outdir = File.join(File.expand_path(File.dirname(__FILE__)), OS)
 rootdir = File.join(outdir, NAME + (OS=='osx' ? '.app':'' ))
 appdir = OS=='osx' ? File.join(rootdir,'Contents') : rootdir
@@ -62,11 +61,11 @@ runtime_zip = File.join(installdir,"runtime-#{OS}-#{VER}.zip")
 FileUtils.rm_rf runtime_zip
 
 Zip::ZipFile.open(runtime_zip, Zip::ZipFile::CREATE) do |zipfile|
-  Dir["#{krolloutdir}/**"].each do |f|
+  Dir["#{outdir}/**"].each do |f|
     name = f.gsub(outdir+'/','')
     zipfile.add name,f if installer?(name)
   end
-  Dir["#{krolloutdir}/*.nib"].each do |f|
+  Dir["#{outdir}/*.nib"].each do |f|
     name = f.gsub(outdir+'/','')
     zipfile.add "Resources/English.lproj/#{name}",f
   end
@@ -76,14 +75,14 @@ Zip::ZipFile.open(runtime_zip, Zip::ZipFile::CREATE) do |zipfile|
     zipfile.add name,f unless (name=~/\.h$/ or name=~/\.defs$/)
   end
 end
-FileUtils.cp File.join(krolloutdir,'kinstall'+ext), File.join(installdir,'kinstall'+ext)
+FileUtils.cp File.join(outdir,'install'+ext), File.join(installdir,'install'+ext)
 
 PLUGINS.each do |plugin|
   plugin_zip = File.join(installdir,"module-#{plugin}-0.1.zip")
   FileUtils.rm_rf plugin_zip
 
   Zip::ZipFile.open(plugin_zip, Zip::ZipFile::CREATE) do |zipfile|
-    Dir["#{krolloutdir}/**"].each do |f|
+    Dir["#{outdir}/**"].each do |f|
       name = f.gsub(outdir+'/','')
 		  next if File.extname(name)=='.o'
 		  next if File.extname(name)=='.rb' and plugin == 'ruby'
@@ -101,7 +100,7 @@ else
 end
 
 FileUtils.mkdir_p bindir
-FileUtils.cp File.join(outdir,'tiboot'+ext), File.join(bindir,NAME+ext)
+FileUtils.cp File.join(outdir,'boot'+ext), File.join(bindir,NAME+ext)
 FileUtils.chmod 0555,File.join(bindir,NAME+ext)
 
 manifest = File.open File.join(rootdir,'manifest'),'w'
