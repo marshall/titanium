@@ -75,7 +75,7 @@ Zip::ZipFile.open(runtime_zip, Zip::ZipFile::CREATE) do |zipfile|
     zipfile.add name,f unless (name=~/\.h$/ or name=~/\.defs$/)
   end
 end
-FileUtils.cp File.join(outdir,'install'+ext), File.join(installdir,'install'+ext)
+FileUtils.cp File.join(outdir,'kinstall'+ext), File.join(installdir,'kinstall'+ext)
 
 PLUGINS.each do |plugin|
   plugin_zip = File.join(installdir,"module-#{plugin}-0.1.zip")
@@ -87,7 +87,7 @@ PLUGINS.each do |plugin|
 		  next if File.extname(name)=='.o'
 		  next if File.extname(name)=='.rb' and plugin == 'ruby'
 		  next if File.extname(name)=='.py' and plugin == 'python'
-      zipfile.add name,f if name.index(plugin+'plugin')
+      zipfile.add name,f if name.index(plugin+'module')
     end
   end
 end
@@ -100,7 +100,7 @@ else
 end
 
 FileUtils.mkdir_p bindir
-FileUtils.cp File.join(outdir,'boot'+ext), File.join(bindir,NAME+ext)
+FileUtils.cp File.join(outdir,'kboot'+ext), File.join(bindir,NAME+ext)
 FileUtils.chmod 0555,File.join(bindir,NAME+ext)
 
 manifest = File.open File.join(rootdir,'manifest'),'w'
