@@ -7,9 +7,9 @@
 #ifndef _WINDOW_MODULE_OSX_H_
 #define _WINDOW_MODULE_OSX_H_
 
-class TiOSXUserWindow;
+class OSXUserWindow;
 
 #import "preinclude.h"
 #include "../binding/kjs.h"
-#include "ti_osx_user_window.h"
+#include "osx_user_window.h"
 #endif

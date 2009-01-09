@@ -23,6 +23,6 @@ typedef NSInteger WebNSInteger;
 typedef NSUInteger WebNSUInteger;
 #endif
 
-#include <titanium/titanium.h>
+#include <kroll/kroll.h>
 
 #endif

@@ -49,7 +49,7 @@ void WindowModule::Initialize()
 #if defined(OS_LINUX)
 	GtkUserWindow* window = new GtkUserWindow(this->host, main_window_config);
 #elif defined(OS_OSX)
-	TiOSXUserWindow* window = new TiOSXUserWindow(this->host, main_window_config);
+	OSXUserWindow* window = new OSXUserWindow(this->host, main_window_config);
 #elif defined(OS_WIN32)
 	Win32UserWindow* window = new Win32UserWindow(this->host, main_window_config);
 #endif

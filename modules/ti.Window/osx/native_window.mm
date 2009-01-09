@@ -3,15 +3,15 @@
  * see LICENSE in the root folder for details on the license.
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
-#import "native_ti_window.h"
+#import "native_window.h"
 #import "WebViewPrivate.h" 
 
-@implementation NativeTiWindow
+@implementation NativeWindow
 - (BOOL)canBecomeKeyWindow
 {
 	return YES;
 }
-- (void)setupDecorations:(TiWindowConfig*)cfg host:(TiHost*)h
+- (void)setupDecorations:(WindowConfig*)cfg host:(Host*)h
 {
 	config = cfg;
 
@@ -85,7 +85,7 @@
 {
 	return webView;
 }
-- (TiWindowConfig*)config
+- (WindowConfig*)config
 {
 	return config;
 }

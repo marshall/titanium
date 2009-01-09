@@ -26,6 +26,8 @@ class WindowModule : public kroll::Module
 
 protected:
 	kroll::BoundObject *runtime;
+	
+	DISALLOW_EVIL_CONSTRUCTORS(WindowModule);
 };
 
 }

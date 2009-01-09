@@ -10,21 +10,20 @@
 #import "WebInspector.h"
 #import "WebScriptDebugDelegate.h"
 #import "WebScriptObject.h"
-#import <api/ti_host.h>
 #import "../binding/kjs.h"
 
-@class NativeTiWindow;
+@class NativeWindow;
 
 @interface WebViewDelegate : NSObject {
-	NativeTiWindow *window;
+	NativeWindow *window;
 	WebView *webView;
-	TiHost *host;
+	Host *host;
 	NSURL *url;
 	WebInspector *inspector;
 	BOOL scriptCleared;
 	BOOL initialDisplay;
 }
--(id)initWithWindow:(NativeTiWindow*)window host:(TiHost*)h;
+-(id)initWithWindow:(NativeWindow*)window host:(Host*)h;
 -(void)setURL:(NSURL*)url;
 -(void)closePrecedent;
 -(NSURL*)url;

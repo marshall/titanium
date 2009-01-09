@@ -14,6 +14,10 @@ namespace ti {
 class Window : public kroll::StaticBoundObject {
 	public:
 		Window(UserWindow* window);
+	protected:
+		~Window() {}
+	private:
+		DISALLOW_EVIL_CONSTRUCTORS(Window);
 };
 
 }
