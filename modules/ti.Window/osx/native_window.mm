@@ -34,7 +34,13 @@
     [self setContentView:webView];
     [self setDelegate:self];
 	[self setTransparency:config->GetTransparency()];
-    [[webView mainFrame] loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://localhost/~jhaynie/index.html"]]];
+	
+	NSTimeInterval now = [[[NSDate alloc] init] timeIntervalSince1970];
+	NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://localhost/~jhaynie/index.html?ts=%d",now]];
+	NSLog(@"fetching: %@",url);
+	
+    [[webView mainFrame] loadRequest:[NSURLRequest requestWithURL:url]];
+
     [self makeKeyAndOrderFront:nil];	
 	[NSApp arrangeInFront:self];
 }
