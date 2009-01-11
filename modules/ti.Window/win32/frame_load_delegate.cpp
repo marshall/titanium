@@ -19,6 +19,7 @@ HRESULT STDMETHODCALLTYPE
 Win32FrameLoadDelegate::windowScriptObjectAvailable (
 		IWebView *webView, JSContextRef context, JSObjectRef windowScriptObject)
 {
+	/*
 	JSObjectRef global_object = JSContextGetGlobalObject(context);
 	kroll::Host* tihost = window->GetHost();
 	kroll::BoundObject* global_tibo = (kroll::StaticBoundObject*) tihost->GetGlobalObject();
@@ -40,7 +41,7 @@ Win32FrameLoadDelegate::windowScriptObjectAvailable (
 
 		JSValueRef js_value = KrollValueToJSValue(context, value);
 		BindPropertyToJSObject(context, global_object, name, js_value);
-	}
+	}*/
 
 	/*
 	JSStringRef script;

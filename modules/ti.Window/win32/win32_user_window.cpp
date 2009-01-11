@@ -7,6 +7,7 @@
 #include "win32_user_window.h"
 #include "frame_load_delegate.h"
 #include "string_util.h"
+#include "../url/app_url.h"
 #include <math.h>
 
 using namespace ti;
@@ -96,6 +97,8 @@ Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config)
 		InitCtrlEx.dwSize = sizeof(INITCOMMONCONTROLSEX);
 		InitCtrlEx.dwICC  = 0x00004000; //ICC_STANDARD_CLASSES;
 		InitCommonControlsEx(&InitCtrlEx);
+
+		curl_register_local_handler(&Titanium_app_url_handler);
 	}
 
 	std::cout << "HINSTANCE = " << (int)win32_host->GetInstanceHandle() << std::endl;
@@ -270,7 +273,9 @@ void Win32UserWindow::SetTitle(std::string title) {
 	SetWindowText(window_handle, title.c_str());
 }
 
-void Win32UserWindow::SetUrl(std::string url) {
+void Win32UserWindow::SetUrl(std::string& url_) {
+	std::string url = url_;
+
 	this->config->SetURL(url);
 
 	std::cout << "SetUrl: " << url << std::endl;
@@ -286,22 +291,27 @@ void Win32UserWindow::SetUrl(std::string url) {
 	}
 	std::wstring wurl = UTF8ToWide(url);
 
+	std::cout << "CoCreateInstance " << std::endl;
 	HRESULT hr = CoCreateInstance(CLSID_WebMutableURLRequest, 0, CLSCTX_ALL, IID_IWebMutableURLRequest, (void**)&request);
 	if (FAILED(hr))
 		goto exit;
 
+	std::cout << "initWithURL: " << url << std::endl;
 	hr = request->initWithURL(SysAllocString(wurl.c_str()), WebURLRequestUseProtocolCachePolicy, 60);
 	if (FAILED(hr))
 		goto exit;
 
+	std::cout << "set HTTP method" << std::endl;
 	hr = request->setHTTPMethod(SysAllocString(method.c_str()));
 	if (FAILED(hr))
 		goto exit;
 
+	std::cout << "load request" << std::endl;
 	hr = main_frame->loadRequest(request);
 	if (FAILED(hr))
 		goto exit;
 
+	std::cout << "set focus" << std::endl;
 	SetFocus(view_window_handle);
 
 exit:

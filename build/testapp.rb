@@ -25,9 +25,10 @@ appdir = OS=='osx' ? File.join(rootdir,'Contents') : rootdir
 installdir = File.join(rootdir,'installer');
 ext = OS=='win32' ? '.exe' : ''
 thirdparty = File.join(File.expand_path(File.dirname(__FILE__)+'/../kroll/thirdparty'), OS)
+publicdir = File.join(rootdir, 'Resources', 'public')
 
 FileUtils.rm_rf [installdir,appdir,rootdir]
-FileUtils.mkdir_p [outdir,appdir,installdir]
+FileUtils.mkdir_p [outdir,appdir,installdir, publicdir]
 
 
 if OS=='osx'
@@ -128,6 +129,20 @@ tiappxml.puts <<-END
 END
 tiappxml.close
 
+
+indexhtml = File.open(File.join(publicdir, 'index.html'), 'w')
+indexhtml.puts <<-END
+<html>
+	<head>
+		<style>
+			body { font-family: sans, sans-serif; }
+		</style>
+	</head>
+	<body>
+		<h2>Titanium test app</h2>
+	</body>
+</html>
+END
 
 if OS=='osx'
   plist = File.open File.join(appdir,'Info.plist'),'w'

@@ -1,6 +1,6 @@
 /**
  * Appcelerator Titanium - licensed under the Apache Public License 2
- * see LICENSE in the root folder for details on the license. 
+ * see LICENSE in the root folder for details on the license.
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
 
@@ -86,7 +86,7 @@ class UserWindow : public kroll::StaticBoundObject {
 		virtual std::string GetTitle() = 0;
 		virtual void SetTitle(std::string title) = 0;
 		virtual std::string GetUrl() = 0;
-		virtual void SetUrl(std::string url) = 0;
+		virtual void SetUrl(std::string &url) = 0;
 		virtual bool IsResizable() = 0;
 		virtual void SetResizable(bool resizable) = 0;
 		virtual bool IsMaximizable() = 0;
@@ -107,7 +107,7 @@ class UserWindow : public kroll::StaticBoundObject {
 		static std::vector<UserWindow*> windows;
 		static void Open(UserWindow *);
 		static void Close(UserWindow *);
-		
+
 	private:
 		DISALLOW_EVIL_CONSTRUCTORS(UserWindow);
 };
