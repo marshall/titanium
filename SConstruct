@@ -9,10 +9,14 @@ filename = inspect.currentframe().f_code.co_filename
 
 OS = ''
 os_define = ''
+
 install_prefix = '/usr/local'
 product_name = 'Titanium'
+global_variable_name = 'ti'
+
 Export('install_prefix')
 Export('product_name')
+Export('global_variable_name')
 
 class BuildConfig(object): 
 	def __init__(self):
@@ -40,7 +44,8 @@ tiBuild.env = Environment(
     CPPDEFINES = {
                   'OS_' + tiBuild.os.upper(): 1,
                   '_INSTALL_PREFIX': install_prefix,
-                  '_PRODUCT_NAME': product_name
+                  '_PRODUCT_NAME': product_name,
+				  '_GLOBAL_NS_VARNAME' : global_variable_name
                  },
     CPPPATH=['#.', tiBuild.include_dir],
     LIBPATH=[tiBuild.dir, tiBuild.krolldir],
