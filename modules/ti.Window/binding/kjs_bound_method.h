@@ -21,9 +21,9 @@ public:
 	KJSBoundMethod(JSContextRef context, JSObjectRef js_object, JSObjectRef this_obj);
 	~KJSBoundMethod();
 
-	void Set(const char *name, kroll::Value* value, kroll::BoundObject *context);
-	kroll::Value* Get(const char *name, kroll::BoundObject *context);
-	kroll::Value* Call(const kroll::ValueList& args, kroll::BoundObject* context);
+	void Set(const char *name, Value* value);
+	kroll::Value* Get(const char *name);
+	kroll::Value* Call(const kroll::ValueList& args);
 	std::vector<std::string> GetPropertyNames();
 	JSObjectRef GetJSObject();
 

@@ -22,7 +22,6 @@ void BindPropertyToJSObject(JSContextRef ctx,
                             JSObjectRef o,
                             std::string name,
                             JSValueRef property);
-kroll::StaticBoundObject* GetContextLocal(JSContextRef ref);
 JSObjectRef KrollBoundObjectToJSValue(JSContextRef, kroll::BoundObject*);
 JSObjectRef KrollBoundMethodToJSValue(JSContextRef, kroll::BoundMethod*);
 JSObjectRef KrollBoundListToJSValue(JSContextRef, kroll::BoundList*);

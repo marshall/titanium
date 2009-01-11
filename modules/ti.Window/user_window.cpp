@@ -76,129 +76,95 @@ UserWindow::UserWindow(kroll::Host *host, WindowConfig *config) : kroll::StaticB
 	this->SetMethod("setTransparency", &UserWindow::set_transparency_cb);
 }
 
-void UserWindow::hide_cb(const kroll::ValueList& args,
-                           kroll::Value *result,
-                           kroll::BoundObject* context)
+void UserWindow::hide_cb(const kroll::ValueList& args, kroll::Value *result)
 {
 	this->Hide();
 }
 
-void UserWindow::show_cb(const kroll::ValueList& args,
-                           kroll::Value *result,
-                           kroll::BoundObject* context)
+void UserWindow::show_cb(const kroll::ValueList& args, kroll::Value *result)
 {
 	this->Show();
 }
 
-void UserWindow::is_using_chrome_cb(const kroll::ValueList& args,
-                                      kroll::Value *result,
-                                      kroll::BoundObject* context)
+void UserWindow::is_using_chrome_cb(const kroll::ValueList& args, kroll::Value *result)
 {
 	result->Set(this->IsUsingChrome());
 }
 
-void UserWindow::is_using_scrollbars_cb(const kroll::ValueList& args,
-                                          kroll::Value *result,
-                                          kroll::BoundObject* context)
+void UserWindow::is_using_scrollbars_cb(const kroll::ValueList& args, kroll::Value *result)
 {
 	result->Set(this->IsUsingScrollbars());
 }
 
-void UserWindow::is_full_screen_cb(const kroll::ValueList& args,
-                                     kroll::Value *result,
-                                     kroll::BoundObject* context)
+void UserWindow::is_full_screen_cb(const kroll::ValueList& args, kroll::Value *result)
 {
 	result->Set(this->IsFullScreen());
 }
 
-void UserWindow::get_id_cb(const kroll::ValueList& args,
-                             kroll::Value *result,
-                             kroll::BoundObject* context)
+void UserWindow::get_id_cb(const kroll::ValueList& args, kroll::Value *result)
 {
 	result->Set(this->GetId());
 }
 
-void UserWindow::open_cb(const kroll::ValueList& args,
-                           kroll::Value *result,
-                           kroll::BoundObject* context)
+void UserWindow::open_cb(const kroll::ValueList& args, kroll::Value *result)
 {
 	this->Open();
 }
 
-void UserWindow::close_cb(const kroll::ValueList& args,
-                            kroll::Value *result,
-                            kroll::BoundObject* context)
+void UserWindow::close_cb(const kroll::ValueList& args, kroll::Value *result)
 {
 	this->Close();
 }
 
-void UserWindow::get_x_cb(const kroll::ValueList& args,
-                            kroll::Value *result,
-                            kroll::BoundObject* context)
+void UserWindow::get_x_cb(const kroll::ValueList& args, kroll::Value *result)
 {
 	result->Set(this->GetX());
 }
 
-void UserWindow::set_x_cb(const kroll::ValueList& args,
-                            kroll::Value *result,
-                            kroll::BoundObject* context)
+void UserWindow::set_x_cb(const kroll::ValueList& args, kroll::Value *result)
 {
 	if (args.size() > 0) {
 		this->SetX(args.at(0)->ToDouble());
 	}
 }
 
-void UserWindow::get_y_cb(const kroll::ValueList& args,
-                            kroll::Value *result,
-                            kroll::BoundObject* context)
+void UserWindow::get_y_cb(const kroll::ValueList& args, kroll::Value *result)
 {
 	result->Set(this->GetY());
 }
 
-void UserWindow::set_y_cb(const kroll::ValueList& args,
-                            kroll::Value *result,
-                            kroll::BoundObject* context)
+void UserWindow::set_y_cb(const kroll::ValueList& args, kroll::Value *result)
 {
 	if (args.size() > 0) {
 		this->SetY(args.at(0)->ToDouble());
 	}
 }
 
-void UserWindow::get_width_cb(const kroll::ValueList& args,
-                                kroll::Value *result,
-                                kroll::BoundObject* context)
+void UserWindow::get_width_cb(const kroll::ValueList& args, kroll::Value *result)
 {
 	result->Set(this->GetWidth());
 }
 
-void UserWindow::set_width_cb(const kroll::ValueList& args,
-                                kroll::Value *result,
-                                kroll::BoundObject* context)
+void UserWindow::set_width_cb(const kroll::ValueList& args, kroll::Value *result)
 {
 	if (args.size() > 0) {
 		this->SetWidth(args.at(0)->ToDouble());
 	}
 }
 
-void UserWindow::get_height_cb(const kroll::ValueList& args, 
-                                 kroll::Value *result,
-                                 kroll::BoundObject* context)
+void UserWindow::get_height_cb(const kroll::ValueList& args, kroll::Value *result)
 {
 	result->Set(this->GetHeight());
 }
 
-void UserWindow::set_height_cb(const kroll::ValueList& args, 
-                                 kroll::Value *result,
-                                 kroll::BoundObject* context)
+void UserWindow::set_height_cb(const kroll::ValueList& args, kroll::Value *result)
 {
 	if (args.size() > 0) {
 		this->SetHeight(args.at(0)->ToDouble());
 	}
 }
 
-void UserWindow::get_bounds_cb(const kroll::ValueList& args, 
-                                 kroll::Value *result,
-                                 kroll::BoundObject* context)
+void UserWindow::get_bounds_cb(const kroll::ValueList& args, kroll::Value *result)
 {
 	Bounds bounds = this->GetBounds();
 	kroll::StaticBoundObject *b = new kroll::StaticBoundObject();
@@ -211,19 +177,17 @@ void UserWindow::get_bounds_cb(const kroll::ValueList& args,
 	KR_DECREF(b);
 }
 
-void UserWindow::set_bounds_cb(const kroll::ValueList& args, 
-                                 kroll::Value *result,
-                                 kroll::BoundObject* context)
+void UserWindow::set_bounds_cb(const kroll::ValueList& args, kroll::Value *result)
 {
 	if (args.size() > 0 && args.at(0)->IsObject())
 	{
 		Bounds bounds;
 		kroll::BoundObject* o = args[0]->ToObject();
 
-		kroll::Value* x = o->Get("x", context);
-		kroll::Value* y = o->Get("y", context);
-		kroll::Value* width = o->Get("width", context);
-		kroll::Value* height = o->Get("height", context);
+		kroll::Value* x = o->Get("x");
+		kroll::Value* y = o->Get("y");
+		kroll::Value* width = o->Get("width");
+		kroll::Value* height = o->Get("height");
 
 		bounds.x = x->ToInt();
 		bounds.y = y->ToInt();
@@ -239,128 +203,96 @@ void UserWindow::set_bounds_cb(const kroll::ValueList& args,
 	}
 }
 
-void UserWindow::get_title_cb(const kroll::ValueList& args, 
-                                kroll::Value *result,
-                                kroll::BoundObject* context)
+void UserWindow::get_title_cb(const kroll::ValueList& args, kroll::Value *result)
 {
 	result->Set(this->GetTitle());
 }
 
-void UserWindow::set_title_cb(const kroll::ValueList& args, 
-                                kroll::Value *result,
-                                kroll::BoundObject* context)
+void UserWindow::set_title_cb(const kroll::ValueList& args, kroll::Value *result)
 {
 	if (args.size() > 0) {
 		this->SetTitle(args.at(0)->ToString());
 	}
 }
 
-void UserWindow::get_url_cb(const kroll::ValueList& args, 
-                              kroll::Value *result,
-                              kroll::BoundObject* context)
+void UserWindow::get_url_cb(const kroll::ValueList& args, kroll::Value *result)
 {
 	result->Set(this->GetUrl());
 }
 
-void UserWindow::set_url_cb(const kroll::ValueList& args, 
-                              kroll::Value *result,
-                              kroll::BoundObject* context)
+void UserWindow::set_url_cb(const kroll::ValueList& args, kroll::Value *result)
 {
 	if (args.size() > 0) {
 		this->SetUrl(args.at(0)->ToString());
 	}
 }
 
-void UserWindow::is_resizable_cb(const kroll::ValueList& args, 
-                                   kroll::Value *result,
-                                   kroll::BoundObject* context)
+void UserWindow::is_resizable_cb(const kroll::ValueList& args, kroll::Value *result)
 {
 	result->Set(this->IsResizable());
 }
 
-void UserWindow::set_resizable_cb(const kroll::ValueList& args, 
-                                    kroll::Value *result,
-                                    kroll::BoundObject* context)
+void UserWindow::set_resizable_cb(const kroll::ValueList& args, kroll::Value *result)
 {
 	if (args.size() > 0) {
 		this->SetResizable(args.at(0)->ToBool());
 	}
 }
 
-void UserWindow::is_maximizable_cb(const kroll::ValueList& args, 
-                                     kroll::Value *result,
-                                     kroll::BoundObject* context)
+void UserWindow::is_maximizable_cb(const kroll::ValueList& args, kroll::Value *result)
 {
 	result->Set(this->IsMaximizable());
 }
 
-void UserWindow::set_maximizable_cb(const kroll::ValueList& args, 
-                                      kroll::Value *result,
-                                      kroll::BoundObject* context)
+void UserWindow::set_maximizable_cb(const kroll::ValueList& args, kroll::Value *result)
 {
 	if (args.size() > 0) {
 		this->SetMaximizable(args.at(0)->ToBool());
 	}
 }
 
-void UserWindow::is_minimizable_cb(const kroll::ValueList& args, 
-                                     kroll::Value *result,
-                                     kroll::BoundObject* context)
+void UserWindow::is_minimizable_cb(const kroll::ValueList& args, kroll::Value *result)
 {
 	result->Set(this->IsMinimizable());
 }
 
-void UserWindow::set_minimizable_cb(const kroll::ValueList& args,
-                                      kroll::Value *result,
-                                      kroll::BoundObject* context)
+void UserWindow::set_minimizable_cb(const kroll::ValueList& args, kroll::Value *result)
 {
 	if (args.size() > 0) {
 		this->SetMinimizable(args.at(0)->ToBool());
 	}
 }
 
-void UserWindow::is_closeable_cb(const kroll::ValueList& args,
-                                   kroll::Value *result,
-                                   kroll::BoundObject* context)
+void UserWindow::is_closeable_cb(const kroll::ValueList& args, kroll::Value *result)
 {
 	result->Set(this->IsCloseable());
 }
 
-void UserWindow::set_closeable_cb(const kroll::ValueList& args, 
-                                    kroll::Value *result,
-                                    kroll::BoundObject* context)
+void UserWindow::set_closeable_cb(const kroll::ValueList& args, kroll::Value *result)
 {
 	if (args.size() > 0) {
 		this->SetCloseable(args.at(0)->ToBool());
 	}
 }
 
-void UserWindow::is_visible_cb(const kroll::ValueList& args, 
-                                 kroll::Value *result,
-                                 kroll::BoundObject* context)
+void UserWindow::is_visible_cb(const kroll::ValueList& args, kroll::Value *result)
 {
 	result->Set(this->IsVisible());
 }
 
-void UserWindow::set_visible_cb(const kroll::ValueList& args, 
-                                  kroll::Value *result,
-                                  kroll::BoundObject* context)
+void UserWindow::set_visible_cb(const kroll::ValueList& args, kroll::Value *result)
 {
 	if (args.size() > 0) {
 		this->SetVisible(args.at(0)->ToBool());
 	}
 }
 
-void UserWindow::get_transparency_cb(const kroll::ValueList& args, 
-                                       kroll::Value *result,
-                                       kroll::BoundObject* context)
+void UserWindow::get_transparency_cb(const kroll::ValueList& args, kroll::Value *result)
 {
 	result->Set(this->GetTransparency());
 }
 
-void UserWindow::set_transparency_cb(const kroll::ValueList& args, 
-                                       kroll::Value *result,
-                                       kroll::BoundObject* context)
+void UserWindow::set_transparency_cb(const kroll::ValueList& args, kroll::Value *result)
 {
 	if (args.size() > 0) {
 		this->SetTransparency(args.at(0)->ToDouble());

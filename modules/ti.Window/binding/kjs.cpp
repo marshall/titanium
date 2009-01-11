@@ -22,30 +22,6 @@ void BindPropertyToJSObject(JSContextRef ctx,
 	JSStringRelease(name_str);
 }
 
-std::map <JSContextRef, kroll::StaticBoundObject*> context_locals;
-kroll::StaticBoundObject* GetContextLocal(JSContextRef ref)
-{
-	std::map<JSContextRef, kroll::StaticBoundObject*>::iterator i;
-	i = context_locals.find(ref);
-
-	kroll::StaticBoundObject *context_local;
-	if (i == context_locals.end())
-	{
-		/*
-		 * By default we don't ADDREF the context object here,
-		 * because only the caller knows if the reference will
-		 * be retained. If it will be, the caller can ADDREF, signalling
-		 * to the pointer counter that they are forking the reference.
-		*/
-		context_local = new kroll::StaticBoundObject();
-	}
-	else
-	{
-		context_local = i->second;
-	}
-	return context_local;
-}
-
 JSObjectRef KrollBoundObjectToJSValue(
             JSContextRef js_context,
             kroll::BoundObject* instance)
@@ -88,6 +64,17 @@ JSObjectRef KrollBoundMethodToJSValue(
 	return JSObjectMake (js_context, tibm_class, method);
 }
 
+void inline CopyJSProperty(JSContextRef ctx, JSObjectRef js_object,
+                           BoundObject *ti_object, JSObjectRef ti_js_object,  const char *prop_name)
+{
+	JSValueRef prop = JSObjectGetProperty(ctx, js_object,
+	                     JSStringCreateWithUTF8CString(prop_name), NULL);
+	kroll::Value *prop_val = JSValueToKrollValue(ctx, prop, ti_js_object);
+	ScopedDereferencer s(prop_val);
+	ti_object->Set(prop_name, prop_val);
+}
+
+
 JSObjectRef KrollBoundListToJSValue(
             JSContextRef js_context,
             kroll::BoundList *list)
@@ -97,7 +84,7 @@ JSObjectRef KrollBoundListToJSValue(
 	{
 		JSClassDefinition js_class_def = kJSClassDefinitionEmpty;
 		js_class_def.className = strdup("TitaniumJSList");
-		js_class_def.attributes = kJSClassAttributeNoAutomaticPrototype;
+		//js_class_def.attributes = kJSClassAttributeNoAutomaticPrototype;
 		js_class_def.getPropertyNames = get_property_names_cb;
 		js_class_def.finalize = finalize_cb;
 		js_class_def.hasProperty = has_property_cb;
@@ -106,15 +93,27 @@ JSObjectRef KrollBoundListToJSValue(
 		tibl_class = JSClassCreate (&js_class_def);
 	}
 
-
 	KR_ADDREF(list);
-
-	JSValueRef *args = new JSValueRef[0];
-	JSObjectRef array = JSObjectMakeArray(js_context, 0, args, NULL);
-
 	JSObjectRef object = JSObjectMake (js_context, tibl_class, list);
-	JSValueRef array_prototype = JSObjectGetPrototype(js_context, array);
-	JSObjectSetPrototype(js_context, object, array_prototype);
+
+	JSValueRef args[1] = { JSValueMakeNumber(js_context, 3) };
+	JSObjectRef array = JSObjectMakeArray(js_context, 1, args, NULL);
+
+	// move some array methods
+	CopyJSProperty(js_context, array, list, object, "push");
+	CopyJSProperty(js_context, array, list, object, "pop");
+	CopyJSProperty(js_context, array, list, object, "shift");
+	CopyJSProperty(js_context, array, list, object, "unshift");
+	CopyJSProperty(js_context, array, list, object, "reverse");
+	CopyJSProperty(js_context, array, list, object, "splice");
+	CopyJSProperty(js_context, array, list, object, "join");
+	CopyJSProperty(js_context, array, list, object, "slice");
+
+	// for some reason setting the prototype in the following way is
+	// not working, so we must implement lots of Javascript array methods
+	// Hopefully we'll be able to do it this way in the future:
+	//JSValueRef array_prototype = JSObjectGetPrototype(js_context, array);
+	//JSObjectSetPrototype(js_context, object, array_prototype);
 
 	return object;
 }
@@ -151,8 +150,6 @@ bool has_property_cb (JSContextRef js_context,
 	if (object == NULL)
 		return false;
 
-	bool has_value = false;
-
 	char *name = JSStringToChars(js_property);
 	std::string str_name(name);
 	free(name);
@@ -161,10 +158,10 @@ bool has_property_cb (JSContextRef js_context,
 	for (size_t i = 0; i < names.size(); i++)
 	{
 		if (names.at(i) == str_name)
-			has_value = true;
+			return true;
 	}
 
-	return has_value;
+	return false;
 }
 
 JSValueRef get_property_cb (JSContextRef js_context,
@@ -172,7 +169,6 @@ JSValueRef get_property_cb (JSContextRef js_context,
                             JSStringRef  js_property,
                             JSValueRef*  js_exception)
 {
-	kroll::BoundObject* context_local = GetContextLocal(js_context);
 	kroll::BoundObject* object = (kroll::BoundObject*) JSObjectGetPrivate (js_object);
 	if (object == NULL)
 		return JSValueMakeUndefined(js_context);
@@ -181,7 +177,7 @@ JSValueRef get_property_cb (JSContextRef js_context,
 	char* name = JSStringToChars(js_property);
 	try
 	{
-		kroll::Value* ti_val = object->Get(name, context_local);
+		kroll::Value* ti_val = object->Get(name);
 		kroll::ScopedDereferencer s(ti_val);
 		js_val = KrollValueToJSValue(js_context, ti_val);
 	}
@@ -201,7 +197,6 @@ bool set_property_cb (JSContextRef js_context,
                       JSValueRef   js_value,
                       JSValueRef*  js_exception)
 {
-	kroll::BoundObject* context_local = GetContextLocal(js_context);
 	kroll::BoundObject* object = (kroll::BoundObject*) JSObjectGetPrivate (js_object);
 	if (object == NULL)
 		return false;
@@ -212,7 +207,7 @@ bool set_property_cb (JSContextRef js_context,
 		// we now own the reference returned from  JSValueTokroll::Value
 		kroll::Value* ti_val = JSValueToKrollValue(js_context, js_value, js_object);
 		kroll::ScopedDereferencer s(ti_val);
-		object->Set(prop_name, ti_val, context_local);
+		object->Set(prop_name, ti_val);
 	}
 	catch (kroll::Value* exception)
 	{
@@ -232,7 +227,6 @@ JSValueRef call_as_function_cb (JSContextRef     js_context,
                                 JSValueRef*      js_exception)
 {
 	kroll::BoundMethod* method = (kroll::BoundMethod*) JSObjectGetPrivate(js_function);
-	kroll::BoundObject* context_local = GetContextLocal(js_context);
 	if (method == NULL)
 		return JSValueMakeUndefined(js_context);
 
@@ -245,7 +239,7 @@ JSValueRef call_as_function_cb (JSContextRef     js_context,
 	JSValueRef js_val = NULL;
 	try
 	{
-		kroll::Value *ti_val = method->Call(args, context_local);
+		kroll::Value *ti_val = method->Call(args);
 		kroll::ScopedDereferencer s(ti_val);
 		js_val = KrollValueToJSValue(js_context, ti_val);
 	}
@@ -318,6 +312,7 @@ JSValueRef KrollValueToJSValue(JSContextRef ctx, kroll::Value* value)
 	}
 	else if (value->IsList())
 	{
+		printf("it's a list\n");
 		kroll::BoundList* list = value->ToList();
 		KJSBoundList* klist = dynamic_cast<KJSBoundList*>(list);
 		if (klist != NULL)
@@ -328,6 +323,7 @@ JSValueRef KrollValueToJSValue(JSContextRef ctx, kroll::Value* value)
 		else
 		{
 			// this is a TiBoundMethod that needs to be proxied
+			printf("proxying\n");
 			js_val = KrollBoundListToJSValue(ctx, list);
 		}
 	}

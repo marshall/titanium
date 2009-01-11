@@ -42,19 +42,19 @@ namespace ti
 	}
 
 	/*
-	kroll::Value* AppModule::Get(const char *name, kroll::BoundObject *context)
+	kroll::Value* AppModule::Get(const char *name)
 	{
 		return kroll::Value::Null();	
 	}
 
-	void AppModule::Set(const char *name, kroll::Value *value, kroll::BoundObject *context)
+	void AppModule::Set(const char *name, kroll::Value *value)
 	{
 
 	}
 	*/
 
 	/*
-	kroll::Value* AppModule::Call(const char *name, const kroll::ValueList &args, kroll::BoundObject *context)
+	kroll::Value* AppModule::Call(const char *name, const kroll::ValueList &args)
 	{
 		return kroll::Value::Null();
 	}

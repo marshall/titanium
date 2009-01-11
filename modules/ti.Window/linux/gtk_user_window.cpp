@@ -96,20 +96,17 @@ static void window_object_cleared_cb (WebKitWebView* web_view,
 	Host* tihost = user_window->GetHost();
 	BoundObject* global_tibo = (StaticBoundObject*) tihost->GetGlobalObject();
 
-	// place window into the context local for currentWindow
-	StaticBoundObject *context_local = GetContextLocal(context);
-
 	// set user window into the context
-	Value *user_window_val = new Value(user_window);
-	context_local->Set("currentWindow", user_window_val);
-	KR_DECREF(user_window_val);
+	//Value *user_window_val = new Value(user_window);
+	//context_local->Set("currentWindow", user_window_val);
+	//KR_DECREF(user_window_val);
 
 	// Bind all child objects to global context
 	std::vector<std::string> prop_names = global_tibo->GetPropertyNames();
 	for (size_t i = 0; i < prop_names.size(); i++)
 	{
 		const char *name = prop_names.at(i).c_str();
-		Value* value = global_tibo->Get(name, context_local);
+		Value* value = global_tibo->Get(name);
 
 		JSValueRef js_value = KrollValueToJSValue(context, value);
 		BindPropertyToJSObject(context, global_object, name, js_value);
