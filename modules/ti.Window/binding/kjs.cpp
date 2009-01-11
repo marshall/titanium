@@ -157,7 +157,6 @@ bool has_property_cb (JSContextRef js_context,
 	std::vector<std::string> names = object->GetPropertyNames();
 	for (size_t i = 0; i < names.size(); i++)
 	{
-		std::cout << "has property: " << str_name << "==" << names.at(i) << std::endl;
 		if (names.at(i) == str_name)
 			return true;
 	}
@@ -176,7 +175,6 @@ JSValueRef get_property_cb (JSContextRef js_context,
 
 	JSValueRef js_val = NULL;
 	char* name = JSStringToChars(js_property);
-	printf("getting property: %s\n", name);
 	try
 	{
 		kroll::Value* ti_val = object->Get(name);
