@@ -102,7 +102,8 @@ static void window_object_cleared_cb (WebKitWebView* web_view,
 	//KR_DECREF(user_window_val);
 
 	// Bind all child objects to global context
-	std::vector<std::string> prop_names = global_tibo->GetPropertyNames();
+	std::vector<std::string> prop_names;
+	global_tibo->GetPropertyNames(&prop_names);
 	for (size_t i = 0; i < prop_names.size(); i++)
 	{
 		const char *name = prop_names.at(i).c_str();
