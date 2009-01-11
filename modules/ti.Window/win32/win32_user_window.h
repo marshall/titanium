@@ -83,7 +83,7 @@ public:
 	Bounds GetBounds();
 	void SetBounds(Bounds bounds);
 	std::string GetTitle() { return config->GetTitle(); }
-	void SetTitle(std::string title);
+	void SetTitle(std::string& title);
 	std::string GetUrl() { return config->GetURL(); }
 	void SetUrl(std::string& url);
 	bool IsResizable() { return config->IsResizable(); }

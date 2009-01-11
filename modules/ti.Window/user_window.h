@@ -84,7 +84,7 @@ class UserWindow : public kroll::StaticBoundObject {
 		virtual Bounds GetBounds() = 0;
 		virtual void SetBounds(Bounds bounds) = 0;
 		virtual std::string GetTitle() = 0;
-		virtual void SetTitle(std::string title) = 0;
+		virtual void SetTitle(std::string& title) = 0;
 		virtual std::string GetUrl() = 0;
 		virtual void SetUrl(std::string &url) = 0;
 		virtual bool IsResizable() = 0;

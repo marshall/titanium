@@ -36,9 +36,9 @@ namespace ti
 			Bounds GetBounds();
 			void SetBounds(Bounds bounds);
 			std::string GetTitle();
-			void SetTitle(std::string title);
+			void SetTitle(std::string& title);
 			std::string GetUrl();
-			void SetUrl(std::string url);
+			void SetUrl(std::string& url);
 			bool IsResizable();
 			void SetResizable(bool resizable);
 			bool IsMaximizable();

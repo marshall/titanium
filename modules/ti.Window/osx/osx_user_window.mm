@@ -129,7 +129,7 @@ namespace ti
 	{
 		return this->config->GetTitle();
 	}
-	void OSXUserWindow::SetTitle(std::string title)
+	void OSXUserWindow::SetTitle(std::string& title)
 	{
 		this->config->SetTitle(title);
 		[window setTitle:[NSString stringWithCString:this->config->GetTitle().c_str()]];
@@ -138,7 +138,7 @@ namespace ti
 	{
 		return this->config->GetURL();
 	}
-	void OSXUserWindow::SetUrl(std::string url)
+	void OSXUserWindow::SetUrl(std::string& url)
 	{
 		this->config->SetURL(url);
 		//TODO

@@ -268,8 +268,8 @@ void Win32UserWindow::SetBounds(Bounds bounds) {
 	SetWindowPos(window_handle, NULL, bounds.x, bounds.y, bounds.width, bounds.height, SWP_SHOWWINDOW | SWP_NOZORDER);
 }
 
-void Win32UserWindow::SetTitle(std::string title) {
-	this->title = title;
+void Win32UserWindow::SetTitle(std::string& title) {
+	this->title = std::string(title);
 	SetWindowText(window_handle, title.c_str());
 }
 

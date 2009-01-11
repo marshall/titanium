@@ -211,7 +211,8 @@ void UserWindow::get_title_cb(const kroll::ValueList& args, kroll::Value *result
 void UserWindow::set_title_cb(const kroll::ValueList& args, kroll::Value *result)
 {
 	if (args.size() > 0) {
-		this->SetTitle(args.at(0)->ToString());
+		std::string title = args.at(0)->ToString();
+		this->SetTitle(title);
 	}
 }
 
@@ -223,7 +224,8 @@ void UserWindow::get_url_cb(const kroll::ValueList& args, kroll::Value *result)
 void UserWindow::set_url_cb(const kroll::ValueList& args, kroll::Value *result)
 {
 	if (args.size() > 0) {
-		this->SetUrl(args.at(0)->ToString());
+		std::string url = args.at(0)->ToString();
+		this->SetUrl(url);
 	}
 }
 
