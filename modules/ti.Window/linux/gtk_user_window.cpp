@@ -102,11 +102,11 @@ static void window_object_cleared_cb (WebKitWebView* web_view,
 	//KR_DECREF(user_window_val);
 
 	// Bind all child objects to global context
-	std::vector<std::string> prop_names;
+	std::vector<const char *> prop_names;
 	global_tibo->GetPropertyNames(&prop_names);
 	for (size_t i = 0; i < prop_names.size(); i++)
 	{
-		const char *name = prop_names.at(i).c_str();
+		const char *name = prop_names.at(i);
 		Value* value = global_tibo->Get(name);
 
 		JSValueRef js_value = KrollValueToJSValue(context, value);

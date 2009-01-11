@@ -53,6 +53,12 @@ Win32FrameLoadDelegate::windowScriptObjectAvailable (
 		JSEvaluateScript(context, script, window_object, NULL, 1, NULL);
 	JSStringRelease(script);*/
 
+	kroll::StaticBoundObject* ti = window->GetHost()->GetGlobalObject();
+	JSObjectRef jsTi = kroll::KrollBoundObjectToJSValue(context, ti);
+	JSObjectRef global_object = JSContextGetGlobalObject(context);
+
+	kroll::BindPropertyToJSObject(context, global_object, "ti", jsTi);
+
 	return S_OK;
 }
 
