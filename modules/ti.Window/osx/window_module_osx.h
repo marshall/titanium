@@ -10,6 +10,6 @@
 class OSXUserWindow;
 
 #import "preinclude.h"
-#include "../binding/kjs.h"
+#include "kjs.h"
 #include "osx_user_window.h"
 #endif

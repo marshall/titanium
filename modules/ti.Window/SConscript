@@ -6,8 +6,8 @@ Import('build')
 
 env = tiBuild.env.Clone()
 env.Append(LIBPATH=[path.join(tiBuild.absdir, 'modules', 'ti.App')])
-env.Append(LIBS=['kroll', 'tiappmodule'])
-env.Append(CPPPATH = ['#kroll/build/include'])
+env.Append(LIBS=['kroll', 'tiappmodule','javascriptmodule'])
+env.Append(CPPPATH = ['#kroll/build/include','#kroll/modules/javascript'])
 
 sources = Glob('*.cpp')
 webkit_tp = path.join(tiBuild.third_party, 'webkit')
@@ -16,7 +16,6 @@ webkit_inc = path.join(webkit_tp, 'include')
 
 if tiBuild.is_linux():
 	sources = sources + Glob('linux/*.cpp')
-	sources += Glob('binding/kjs*.cpp')
 	env.Append(LIBS=['webkit-1.0'])
 	env.Append(LIBPATH=[webkit_lib])
 	env.Append(CPPPATH=[webkit_inc])
@@ -24,7 +23,6 @@ if tiBuild.is_linux():
 
 elif tiBuild.is_win32():
 	sources = sources + Glob('win32/*.cpp') + Glob('win32/*.cc')
-	sources += Glob('binding/kjs*.cpp')
 	env.Append(LIBPATH=[webkit_lib])
 	env.Append(CPPPATH=[path.join(webkit_inc, 'webkit'), path.join(webkit_inc, 'JavaScriptCore'), path.join(tiBuild.third_party, 'icu', 'include'), '#kroll'])
 	env.Append(LIBS=['WebKitGUID','WebKit','kernel32','shell32','user32','ole32','comctl32','shlwapi', 'oleaut32', 'icuuc','pthreadVC2','khost'])
@@ -35,7 +33,6 @@ elif tiBuild.is_osx():
 	env.Append(FRAMEWORKPATH=['%s/webkit' % tiBuild.third_party])
 	env.Append(FRAMEWORKS=['Cocoa','WebKit','JavaScriptCore'])
 	sources = sources + Glob('osx/*.mm') + Glob('osx/*.cpp')
-	sources += Glob('binding/kjs*.cpp')
 	env.Append(CCFLAGS=['-x', 'objective-c++'])
 	
 s = env.SharedLibrary(target = tiBuild.dir + '/tiwindowmodule',

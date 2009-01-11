@@ -6,7 +6,7 @@
 
 #include "frame_load_delegate.h"
 #include "win32_user_window.h"
-#include "../binding/kjs.h"
+#include "kjs.h"
 
 using namespace ti;
 

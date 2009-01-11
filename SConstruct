@@ -31,7 +31,7 @@ class BuildConfig(object):
 		self.krolldir = '#kroll/build/%s' % self.os
 		self.absdir = path.abspath('build/%s' % self.os)
 		self.krollabsdir = path.abspath('kroll/build/%s' % self.os)
-		self.third_party = path.abspath('thirdparty/%s' % self.os)
+		self.third_party = path.abspath('kroll/thirdparty/%s' % self.os)
 	def matches(self, n): return bool(re.match(os.uname()[0], n))
 	def is_linux(self): return self.os == 'linux'
 	def is_osx(self): return self.os == 'osx'
@@ -47,9 +47,9 @@ tiBuild.env = Environment(
                   '_PRODUCT_NAME': product_name,
 				  '_GLOBAL_NS_VARNAME' : global_variable_name
                  },
-    CPPPATH=['#.', tiBuild.include_dir],
+    CPPPATH=['#.', tiBuild.include_dir, '%s/kroll' % tiBuild.include_dir],
     LIBPATH=[tiBuild.dir, tiBuild.krolldir],
-		LIBS=['kroll']
+    LIBS=['kroll']
 )
 
 #
@@ -75,6 +75,7 @@ else:
 # turn on special debug printouts for reference counting
 if ARGUMENTS.get('debug_refcount', 0) == 1:
 	tiBuild.env.Append(CPPDEFINES = {'DEBUG_REFCOUNT': 1})
+
 
 if tiBuild.is_win32():
 	tiBuild.env.Append(CCFLAGS=['/EHsc'])
