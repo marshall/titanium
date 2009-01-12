@@ -15,7 +15,7 @@ namespace ti
 	{
 		KROLL_MODULE_CLASS(AppModule)
 
-	public:
+	private:
 		kroll::StaticBoundObject *variables;
 	};
 
