@@ -38,6 +38,9 @@ end
 if OS=='linux'
 	FileUtils.rm_rf "~/Titanium"
 end
+if OS=='win32'
+  FileUtils.rm_rf "c:/ProgramData/Titanium"  
+end
 
 def installer?(name)
   if name=~/(kkernel|kroll|khost)/
