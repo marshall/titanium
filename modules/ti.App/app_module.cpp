@@ -5,6 +5,7 @@
  */
 #include "app_module.h"
 #include "app_config.h"
+#include "app_binding.h"
 
 using namespace kroll;
 using namespace ti;
@@ -28,14 +29,17 @@ namespace ti
 			return;
 		}
 		
+		// initialize our application config
 		AppConfig::Init(config);
 		
 		// load our variables
-		this->variables = new StaticBoundObject();
+		this->variables = new AppBinding(host->GetGlobalObject());
 		
 		// add our command line array
 		StaticBoundList *args = new StaticBoundList();
-		for (int c=0;c<host->GetCommandLineArgCount();c++)
+		// skip the first argument which is the filepath to the
+		// executable
+		for (int c=1;c<host->GetCommandLineArgCount();c++)
 		{
 			const char *v = host->GetCommandLineArg(c);
 			Value *value = new Value(v);
