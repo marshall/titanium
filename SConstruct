@@ -13,10 +13,12 @@ os_define = ''
 install_prefix = '/usr/local'
 product_name = 'Titanium'
 global_variable_name = 'ti'
+config_filename = 'tiapp.xml'
 
 Export('install_prefix')
 Export('product_name')
 Export('global_variable_name')
+Export('config_filename')
 
 class BuildConfig(object): 
 	def __init__(self):
@@ -45,7 +47,8 @@ tiBuild.env = Environment(
                   'OS_' + tiBuild.os.upper(): 1,
                   '_INSTALL_PREFIX': install_prefix,
                   '_PRODUCT_NAME': product_name,
-				  '_GLOBAL_NS_VARNAME' : global_variable_name
+				  '_GLOBAL_NS_VARNAME' : global_variable_name,
+				  '_CONFIG_FILENAME' : config_filename
                  },
     CPPPATH=['#.', tiBuild.include_dir, '%s/kroll' % tiBuild.include_dir],
     LIBPATH=[tiBuild.dir, tiBuild.krolldir],
@@ -83,7 +86,7 @@ if tiBuild.is_win32():
 	tiBuild.env.Append(LINKFLAGS=['/DEBUG', '/PDB:${TARGET}.pdb'])
 
 if tiBuild.is_linux() or tiBuild.is_osx():
-    tiBuild.env.Append(CPPFLAGS=['-Wall', '-Werror','-fno-common'])
+    tiBuild.env.Append(CPPFLAGS=['-Wall', '-Werror','-fno-common','-fvisibility=hidden'])
 
 if tiBuild.is_osx():
 	OSX_SDK = '/Developer/SDKs/MacOSX10.4u.sdk'
