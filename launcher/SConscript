@@ -1,0 +1,4 @@
+#!/usr/bin/env python
+Import('tiBuild')
+
+SConscript(tiBuild.os + '/SConscript', build_dir=tiBuild.dir, duplicate=0)

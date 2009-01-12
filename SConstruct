@@ -100,3 +100,4 @@ Export ('tiBuild')
 
 SConscript('kroll/SConscript')
 SConscript('modules/SConscript')
+SConscript('launcher/SConscript')
