@@ -25,7 +25,7 @@ appdir = OS=='osx' ? File.join(rootdir,'Contents') : rootdir
 installdir = File.join(rootdir,'installer');
 ext = OS=='win32' ? '.exe' : ''
 thirdparty = File.join(File.expand_path(File.dirname(__FILE__)+'/../kroll/thirdparty'), OS)
-publicdir = File.join(rootdir, 'Resources', 'public')
+publicdir = File.join(appdir, 'Resources', 'public')
 
 FileUtils.rm_rf [installdir,appdir,rootdir]
 FileUtils.mkdir_p [outdir,appdir,installdir, publicdir]

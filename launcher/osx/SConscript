@@ -14,7 +14,7 @@ Env.Append(LDFLAGS=OSX_UNIV_LINKER)
 
 s = Env.Program(tiBuild.dir + '/klaunch', Glob('*.m') + Glob('*.cpp'))
 
-Execute(Mkdir(tiBuild.dir+'/launcher'))
+Execute(Mkdir(tiBuild.absdir+'/launcher'))
 
 for i in Glob('*.xib'):
 	base = path.splitext(path.basename(str(i)))[0]
