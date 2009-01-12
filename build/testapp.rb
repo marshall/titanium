@@ -8,7 +8,7 @@ require 'zip/zip'
 require 'fileutils'
 
 VER = 0.1
-PLUGINS = %w(api javascript foo ruby python fooruby foopy tiapp tiwindow tinetwork tifile timedia)
+PLUGINS = %w(api javascript foo ruby python fooruby foopy tiapp tiwindow tinetwork tifile timedia tidesktop)
 NAME = 'test'
 
 if RUBY_PLATFORM=~/darwin/
