@@ -86,9 +86,10 @@ PLUGINS.each do |plugin|
     Dir["#{outdir}/**"].each do |f|
       name = f.gsub(outdir+'/','')
 		  next if File.extname(name)=='.o'
-		  next if File.extname(name)=='.rb' and plugin == 'ruby'
-		  next if File.extname(name)=='.py' and plugin == 'python'
-      zipfile.add name,f if name.index(plugin+'module')
+		  next if File.extname(name)=='.rb' and plugin == 'ruby' and (name=~/^ruby/).nil?
+		  next if File.extname(name)=='.py' and plugin == 'python' and (name=~/^python/).nil?
+	    next unless name.index(plugin) and name.index('module')
+      zipfile.add name,f
     end
   end
 end
