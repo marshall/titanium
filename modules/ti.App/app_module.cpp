@@ -20,49 +20,41 @@ namespace ti
 #ifdef OS_OSX
 		config+="/Contents";
 #endif		
-		config+="/tiapp.xml";
+		config+="/"CONFIG_FILENAME;
 		
 		if (!FileUtils::IsFile(config))
 		{
-			std::cerr << "can't load tiapp.xml from: " << config << std::endl;
+			std::cerr << "can't load " CONFIG_FILENAME " from: " << config << std::endl;
 			return;
 		}
 		
 		AppConfig::Init(config);
 		
-		/*kroll::StaticBoundObject *ti = 
-			(kroll::StaticBoundObject *) host->GetGlobalObject()->Get("ti");
-
-		ti->Set("App", reinterpret_cast<kroll::Value*>(this));*/
+		// load our variables
+		this->variables = new StaticBoundObject();
+		
+		// add our command line array
+		StaticBoundList *args = new StaticBoundList();
+		for (int c=0;c<host->GetCommandLineArgCount();c++)
+		{
+			const char *v = host->GetCommandLineArg(c);
+			Value *value = new Value(v);
+			args->Append(value);
+			KR_DECREF(value);
+		}
+		Value *argsvalue = new Value(args);
+		this->variables->Set("commandline",argsvalue);
+		KR_DECREF(args);
+		KR_DECREF(argsvalue);
+		
+		// set our ti.App
+		Value *value = new Value(this->variables);
+		host->GetGlobalObject()->Set("App",value);
+		KR_DECREF(value);
 	}
 
 	void AppModule::Destroy()
 	{
-
+		KR_DECREF(this->variables);
 	}
-
-	/*
-	kroll::Value* AppModule::Get(const char *name)
-	{
-		return kroll::Value::Null();	
-	}
-
-	void AppModule::Set(const char *name, kroll::Value *value)
-	{
-
-	}
-	*/
-
-	/*
-	kroll::Value* AppModule::Call(const char *name, const kroll::ValueList &args)
-	{
-		return kroll::Value::Null();
-	}
-	*/
-
-	/*
-	std::vector<std::string>
-	AppModule::GetPropertyNames () {
-			return std::vector<std::string>();
-	}*/
 }
