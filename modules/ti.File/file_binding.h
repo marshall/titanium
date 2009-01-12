@@ -25,6 +25,7 @@ namespace ti
 		BoundObject *global;
 		void IsFile(const ValueList& args, Value *result);
 		void IsDirectory(const ValueList& args, Value *result);
+		void IsHidden(const ValueList& args, Value *result);
 	};
 }
 
