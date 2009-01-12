@@ -9,5 +9,4 @@ env.Append(CPPDEFINES = {'TITANIUM_API_EXPORT' : 1})
 env.Append(CPPPATH = ['#kroll'])
 
 
-s = env.SharedLibrary(target = tiBuild.dir + '/timediamodule', source = Glob('*.cpp'))
-
+s = env.SharedLibrary(target = tiBuild.dir + '/timenumodule', source = Glob('*.cpp'))
