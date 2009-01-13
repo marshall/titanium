@@ -2,3 +2,4 @@ build/osx
 build/linux
 build/win32
 .sconsign.dblite
+Debug
