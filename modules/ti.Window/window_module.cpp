@@ -38,6 +38,7 @@ namespace ti
 		OSXInitialize();
 	#endif
 	
+		//FIXME: remove this in favor of just placing into global directly
 		this->runtime = new kroll::StaticBoundObject();
 		this->host->GetGlobalObject()->SetObject("tiRuntime", this->runtime);
 	

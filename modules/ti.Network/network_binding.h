@@ -9,9 +9,6 @@
 
 #include <api/module.h>
 #include <api/binding/binding.h>
-#include <map>
-#include <vector>
-#include <string>
 
 namespace ti
 {
@@ -23,6 +20,7 @@ namespace ti
 		virtual ~NetworkBinding();
 	private:
 		BoundObject *global;
+		void Create(const ValueList& args, Value *result);
 	};
 }
 

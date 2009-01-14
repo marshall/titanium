@@ -78,7 +78,12 @@ Zip::ZipFile.open(runtime_zip, Zip::ZipFile::CREATE) do |zipfile|
     name = f.gsub(path+'/','')
     zipfile.add name,f unless (name=~/\.h$/ or name=~/\.defs$/)
   end
-end
+  path = "#{thirdparty}/poco/lib"
+    Dir["#{path}/**/**"].each do |f|
+      name = f.gsub(path+'/','')
+      zipfile.add name,f
+    end
+  end
 FileUtils.cp File.join(outdir,'kinstall'+ext), File.join(installdir,'kinstall'+ext)
 
 PLUGINS.each do |plugin|
@@ -144,7 +149,7 @@ indexhtml.puts <<-END
 	</head>
 	<body>
 		<h2>Titanium test app</h2>
-		ti = <script>document.write(ti);</script>
+		ti = <script>document.write(ti.Network.createTCPSocket);</script>
 	</body>
 </html>
 END

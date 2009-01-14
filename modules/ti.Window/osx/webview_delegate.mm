@@ -7,6 +7,7 @@
 #import "webview_delegate.h"
 #import "native_window.h"
 #import "osx_user_window.h"
+#import "objc_bound_object.h"
 
 #define TRACE  NSLog
 
@@ -319,11 +320,32 @@
 - (void)inject:(WebScriptObject *)windowScriptObject context:(JSContextRef)context
 {
 	kroll::StaticBoundObject* ti = host->GetGlobalObject();
-	JSValueRef jsValueTi = kroll::KJSUtil::ToJSValue(ti,context);
-	JSObjectRef jsTi = JSValueToObject(context, jsValueTi, 0);
-	id tiJS = [WebScriptObject scriptObjectForJSObject:jsTi originRootObject:[windowScriptObject _rootObject] rootObject:[windowScriptObject _rootObject]];
-	[windowScriptObject setValue:tiJS forKey:@"ti"];
-	[tiJS release];
+	id newti = [windowScriptObject evaluateWebScript:@"ti = new Object;"];
+	KR_UNUSED(newti); //FIXME: release?
+	WebScriptObject* tiJS = [windowScriptObject valueForKey:@"ti"];
+	std::vector<const char*> properties;
+	ti->GetPropertyNames(&properties);
+	std::vector<const char*>::iterator iter = properties.begin();
+	while(iter!=properties.end())
+	{
+		const char* key = (*iter++);
+		// skip these...
+		if (strcmp(key,"ti")==0 || strcmp(key,"tiRuntime")==0) continue;
+		Value *value = ti->Get(key);
+		@try
+		{
+			NSString *k = [NSString stringWithCString:key];
+			id wrapped = [ObjcBoundObject ValueToID:value key:k context:context];
+			[tiJS setValue:wrapped forKey:k];
+//			[wrapped release];
+		}
+		@catch(id ex)
+		{
+			NSLog(@"exception caught binding ti.%s => %@",key,ex);
+		}
+	}
+//	[tiJS release];
+//	[newti release];
 	scriptCleared = YES;
 }
 

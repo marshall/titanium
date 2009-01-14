@@ -21,7 +21,7 @@ namespace ti
 
 		// set our ti.Menu
 		Value *value = new Value(this->variables);
-		host->GetGlobalObject()->Set("File",value);
+		host->GetGlobalObject()->Set("Menu",value);
 		KR_DECREF(value);
 	}
 

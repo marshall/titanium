@@ -1,13 +1,16 @@
 #!/usr/bin/env python
-import os
+import os, os.path as path
 
 Import("tiBuild")
 Import('build')
 
+poco = path.join(tiBuild.third_party,'poco')
+
 env = tiBuild.env.Clone();
 env.Append(CPPDEFINES = {'TITANIUM_API_EXPORT' : 1})
-env.Append(CPPPATH = ['#kroll'])
-
+env.Append(CPPPATH = ['#kroll',path.join(poco,'headers')])
+env.Append(LIBPATH=[path.join(poco,'lib')])
+env.Append(LIBS=['PocoFoundation','PocoNet','PocoNetSSL'])
 
 s = env.SharedLibrary(target = tiBuild.dir + '/tinetworkmodule', source = Glob('*.cpp'))
 
