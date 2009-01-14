@@ -25,10 +25,10 @@ appdir = OS=='osx' ? File.join(rootdir,'Contents') : rootdir
 installdir = File.join(rootdir,'installer');
 ext = OS=='win32' ? '.exe' : ''
 thirdparty = File.join(File.expand_path(File.dirname(__FILE__)+'/../kroll/thirdparty'), OS)
-publicdir = File.join(appdir, 'Resources', 'public')
+resourcesdir = File.join(appdir, 'Resources')
 
 FileUtils.rm_rf [installdir,appdir,rootdir]
-FileUtils.mkdir_p [outdir,appdir,installdir, publicdir]
+FileUtils.mkdir_p [outdir,appdir,installdir, resourcesdir]
 
 
 if OS=='osx'
@@ -37,6 +37,9 @@ if OS=='osx'
 end
 if OS=='linux'
 	FileUtils.rm_rf "~/Titanium"
+end
+if OS=='win32'
+  FileUtils.rm_rf "c:/ProgramData/Titanium"  
 end
 
 def installer?(name)
@@ -131,7 +134,7 @@ END
 tiappxml.close
 
 
-indexhtml = File.open(File.join(publicdir, 'index.html'), 'w')
+indexhtml = File.open(File.join(resourcesdir, 'index.html'), 'w')
 indexhtml.puts <<-END
 <html>
 	<head>
