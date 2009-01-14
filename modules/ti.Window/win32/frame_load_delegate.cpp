@@ -6,7 +6,7 @@
 
 #include "frame_load_delegate.h"
 #include "win32_user_window.h"
-#include "kjs.h"
+#include "window_module.h"
 
 using namespace ti;
 
@@ -39,8 +39,8 @@ Win32FrameLoadDelegate::windowScriptObjectAvailable (
 		const char *name = prop_names.at(i).c_str();
 		kroll::Value* value = global_tibo->Get(name, context_local);
 
-		JSValueRef js_value = KrollValueToJSValue(context, value);
-		BindPropertyToJSObject(context, global_object, name, js_value);
+		JSValueRef js_value = KJSUtil::ToJSValue(value, context);
+		KJSUtil::BindPropertyToJSObject(context, global_object, name, js_value);
 	}*/
 
 	/*
@@ -57,7 +57,7 @@ Win32FrameLoadDelegate::windowScriptObjectAvailable (
 	JSObjectRef jsTi = kroll::KrollBoundObjectToJSValue(context, ti);
 	JSObjectRef global_object = JSContextGetGlobalObject(context);
 
-	kroll::BindPropertyToJSObject(context, global_object, "ti", jsTi);
+	kroll::KJSUtil::BindPropertyToJSObject(context, global_object, "ti", jsTi);
 
 	return S_OK;
 }

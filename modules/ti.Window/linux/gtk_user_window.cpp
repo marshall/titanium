@@ -53,6 +53,10 @@ void GtkUserWindow::Open() {
 		g_signal_connect (G_OBJECT (window), "destroy", G_CALLBACK (destroy_cb), NULL);
 		gtk_container_add (GTK_CONTAINER (window), vbox);
 
+		GdkColor colorRed;
+		gdk_color_parse ("red", &colorRed);
+		gtk_widget_modify_bg(window, GTK_STATE_NORMAL, &colorRed);
+
 		this->gtk_window = GTK_WINDOW(window);
 		this->web_view = web_view;
 
@@ -109,8 +113,8 @@ static void window_object_cleared_cb (WebKitWebView* web_view,
 		const char *name = prop_names.at(i);
 		Value* value = global_tibo->Get(name);
 
-		JSValueRef js_value = KrollValueToJSValue(context, value);
-		BindPropertyToJSObject(context, global_object, name, js_value);
+		JSValueRef js_value = KJSUtil::ToJSValue(value, context);
+		KJSUtil::BindPropertyToJSObject(context, global_object, name, js_value);
 	}
 
 	JSStringRef script;
@@ -119,7 +123,7 @@ static void window_object_cleared_cb (WebKitWebView* web_view,
 	//sprintf(code, "var o = Object(); o.prop = 'one'; foo.prop = 'two'; var f = function() {alert(this.prop);}; o.f = f; o.f(); foo.f = o.f; foo.f();");
 	script = JSStringCreateWithUTF8CString(code);
 	if(JSCheckScriptSyntax(context, script, NULL, 0, NULL))
-		JSEvaluateScript(context, script, window_object, NULL, 1, NULL);
+		JSEvaluateScript(context, script, NULL, NULL, 1, NULL);
 	JSStringRelease(script);
 
 }

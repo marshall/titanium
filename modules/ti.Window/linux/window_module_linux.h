@@ -16,6 +16,6 @@ using kroll::StaticBoundMethod;
 using kroll::BoundList;
 using kroll::StaticBoundList;
 
-#include "kjs.h"
+#include "javascript_module.h"
 #include "gtk_user_window.h"
 #endif
