@@ -31,7 +31,7 @@ elif tiBuild.is_win32():
 	env.Append(LINKFLAGS=['/NODEFAULTLIB:LIBCMT.lib', '/LTCG', '/INCREMENTAL:NO'])
 
 elif tiBuild.is_osx():
-	env.Append(FRAMEWORKPATH=['%s/webkit' % tiBuild.third_party])
+	env.Append(FRAMEWORKPATH=[webkit_tp])
 	env.Append(FRAMEWORKS=['Cocoa','WebKit','JavaScriptCore'])
 	sources = sources + Glob('osx/*.mm') + Glob('osx/*.cpp')
 	env.Append(CCFLAGS=['-x', 'objective-c++'])

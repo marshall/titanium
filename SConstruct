@@ -33,12 +33,13 @@ class BuildConfig(object):
 		self.krolldir = '#kroll/build/%s' % self.os
 		self.absdir = path.abspath('build/%s' % self.os)
 		self.krollabsdir = path.abspath('kroll/build/%s' % self.os)
-		self.third_party = path.abspath('kroll/thirdparty/%s' % self.os)
+		self.kroll_third_party = path.abspath('kroll/thirdparty/%s' % self.os)
+		self.third_party = path.abspath('thirdparty/%s' % self.os)
 	def matches(self, n): return bool(re.match(os.uname()[0], n))
 	def is_linux(self): return self.os == 'linux'
 	def is_osx(self): return self.os == 'osx'
 	def is_win32(self): return self.os == 'win32'
-	
+
 tiBuild = BuildConfig()
 
 tiBuild.include_dir = path.abspath(path.join('kroll', 'build', 'include'))
