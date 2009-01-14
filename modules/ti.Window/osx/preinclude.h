@@ -23,6 +23,8 @@ typedef NSInteger WebNSInteger;
 typedef NSUInteger WebNSUInteger;
 #endif
 
-#include <kroll/kroll.h>
+#import <kroll/kroll.h>
+#import "../window_module.h"
+#import "javascript_module.h"
 
 #endif

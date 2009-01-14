@@ -10,6 +10,6 @@
 class OSXUserWindow;
 
 #import "preinclude.h"
-#include "window_module.h"
-#include "osx_user_window.h"
+#import "osx_user_window.h"
+
 #endif

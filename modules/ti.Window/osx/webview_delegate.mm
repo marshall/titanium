@@ -319,7 +319,8 @@
 - (void)inject:(WebScriptObject *)windowScriptObject context:(JSContextRef)context
 {
 	kroll::StaticBoundObject* ti = host->GetGlobalObject();
-	JSObjectRef jsTi = KrollBoundObjectToJSValue(context,ti);
+	JSValueRef jsValueTi = kroll::KJSUtil::ToJSValue(ti,context);
+	JSObjectRef jsTi = JSValueToObject(context, jsValueTi, 0);
 	id tiJS = [WebScriptObject scriptObjectForJSObject:jsTi originRootObject:[windowScriptObject _rootObject] rootObject:[windowScriptObject _rootObject]];
 	[windowScriptObject setValue:tiJS forKey:@"ti"];
 	[tiJS release];

@@ -10,7 +10,6 @@
 #import "WebInspector.h"
 #import "WebScriptDebugDelegate.h"
 #import "WebScriptObject.h"
-#import "window_module.h"
 
 @class NativeWindow;
 
