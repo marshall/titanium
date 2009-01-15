@@ -100,19 +100,19 @@ mh.puts <<-END
 
 #if defined(OS_OSX) || defined(OS_LINUX)
 #define EXPORT __attribute__((visibility("default")))
-#define TITANIUM_API EXPORT
+#define TITANIUM_#{header_define}_API EXPORT
 #elif defined(OS_WIN32)
-# ifdef TITANIUM_API_EXPORT
-#  define TITANIUM_API __declspec(dllexport)
+# ifdef TITANIUM_#{header_define}_API_EXPORT
+#  define TITANIUM_#{header_define}_API __declspec(dllexport)
 # else
-#  define TITANIUM_API __declspec(dllimport)
+#  define TITANIUM_#{header_define}_API __declspec(dllimport)
 # endif
 # define EXPORT __declspec(dllexport)
 #endif
 
 namespace ti 
 {
-	class TITANIUM_API #{module_name}Module : public kroll::Module
+	class TITANIUM_#{header_define}_API #{module_name}Module : public kroll::Module
 	{
 		KROLL_MODULE_CLASS(#{module_name}Module)
 		
@@ -227,7 +227,7 @@ Import("tiBuild")
 Import('build')
 
 env = tiBuild.env.Clone();
-env.Append(CPPDEFINES = {'TITANIUM_API_EXPORT' : 1})
+env.Append(CPPDEFINES = {'TITANIUM_#{header_define}_API_EXPORT' : 1})
 env.Append(CPPPATH = ['#kroll'])
 
 

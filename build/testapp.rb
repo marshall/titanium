@@ -8,7 +8,11 @@ require 'zip/zip'
 require 'fileutils'
 
 VER = 0.1
-PLUGINS = %w(api javascript foo ruby python fooruby foopy tiapp tiwindow tinetwork tifile timedia tidesktop timenu)
+PLUGINS =
+  %w(api javascript foo ruby
+  python fooruby foopy tiapp
+  tiwindow tinetwork tifile timedia
+  tidesktop timenu tigrowl)
 NAME = 'test'
 
 if RUBY_PLATFORM=~/darwin/
@@ -99,6 +103,7 @@ PLUGINS.each do |plugin|
 	    next unless name.index(plugin) and name.index('module')
       zipfile.add name,f
     end
+    
   end
 end
 
