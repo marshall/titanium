@@ -2,6 +2,9 @@
 Import('tiBuild')
 
 modules = ['ti.App', 'ti.Window','ti.Network','ti.File','ti.Media','ti.Desktop','ti.Menu']
+
+if tiBuild.is_osx():
+	modules.append('ti.Growl')
 #
 for module in modules:
 	SConscript(module+'/SConscript', build_dir=tiBuild.dir + '/modules/' + module, duplicate=0)
