@@ -6,7 +6,6 @@
 #include <kroll/kroll.h>
 #include "growl_module.h"
 #include "growl_test.h"
-#include <Poco/Path.h>
 
 #if defined(OS_OSX)
 #import <Foundation/Foundation.h>
@@ -24,6 +23,8 @@ namespace ti
 
 	void GrowlModule::Initialize()
 	{
+		CopyToApp();
+
 		// load our variables
 		this->variables = new GrowlBinding(host->GetGlobalObject());
 
@@ -35,28 +36,23 @@ namespace ti
 
 	void GrowlModule::CopyToApp()
 	{
-		/*std::string dir = host->GetApplicationHome();
-
 #if defined(OS_OSX)
-		dir += PATH_SEP;
-		dir += "Contents";
-		dir += PATH_SEP;
-		dir += "Frameworks";
+		std::string dir = host->GetApplicationHome() + KR_PATH_SEP + "Contents" +
+			KR_PATH_SEP + "Frameworks" + KR_PATH_SEP + "Growl.framework";
 
-		NSFileManager *fm = [NSFileManager defaultManager];
 		if (!FileUtils::IsDirectory(dir))
 		{
-			mkdir(dir.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+
+			NSFileManager *fm = [NSFileManager defaultManager];
+			NSString *src = [NSString stringWithFormat:@"%@/Resources/Growl.framework", GetPath()];
+			NSString *dest = [NSString stringWithFormat:@"%@/Contents/Frameworks", host->GetApplicationHome().c_str()];
+			[fm copyPath:src toPath:dest handler:nil];
+
+			src = [NSString stringWithFormat:@"%@/Resources/Growl Registration Ticket.growlRegDict", GetPath()];
+			dest = [NSString stringWithFormat:@"%@/Contents/Resources", host->GetApplicationHome().c_str()];
+			[fm copyPath:src toPath:dest handler:nil];
 		}
-
-		NSString *src = [NSString stringWithFormat:@"%@/Resources/Growl.framework", host->GetModuleHome(this).c_str()];
-		NSString *dest = [NSString stringWithFormat:@"%@/Contents/Frameworks", host->GetApplicationHome().c_str()];
-		[fm copyPath:src toPath:dest handler:nil];
-
-		src = [NSString stringWithFormat:@"%@/Resources/Growl Registration Ticket.growlRegDict", host->GetModuleHome(this).c_str()];
-		dest = [NSString stringWithFormat:@"%@/Contents/Resources", host->GetApplicationHome().c_str()];
-		[fm copyPath:src toPath:dest handler:nil];
-#endif*/
+#endif
 	}
 
 	void GrowlModule::Destroy()

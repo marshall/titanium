@@ -30,10 +30,13 @@ installdir = File.join(rootdir,'installer');
 ext = OS=='win32' ? '.exe' : ''
 thirdparty = File.join(File.expand_path(File.dirname(__FILE__)+'/../kroll/thirdparty'), OS)
 resourcesdir = File.join(appdir, 'Resources')
+frameworksdir = File.join(appdir, 'Frameworks')
 
 FileUtils.rm_rf [installdir,appdir,rootdir]
 FileUtils.mkdir_p [outdir,appdir,installdir, resourcesdir]
-
+if OS=='osx'
+	FileUtils.mkdir_p frameworksdir
+end
 
 if OS=='osx'
 	FileUtils.rm_rf "~/Library/Application Support/Titanium"
@@ -103,7 +106,15 @@ PLUGINS.each do |plugin|
 	    next unless name.index(plugin) and name.index('module')
       zipfile.add name,f
     end
-    
+		Dir["#{outdir}/modules/*"].each do |f|
+			modname = f.gsub(outdir+'/modules/', '')
+			modname_nodot = modname.gsub(/\./, '')
+			next unless modname_nodot.downcase.index(plugin)
+			Dir["#{outdir}/modules/#{modname}/Resources/**/*"].each do |r|
+				name = r.gsub(outdir+'/modules/'+modname+'/', '')
+				zipfile.add name, r
+			end
+		end
   end
 end
 
