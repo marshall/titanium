@@ -258,6 +258,8 @@ void GtkUserWindow::SetupDecorations() {
 	if (this->config->IsMaximizable())
 		d = d | GDK_DECOR_MAXIMIZE;
 
+	this->SetTransparency(config->GetTransparency());
+
 	gdk_window_set_decorations(gdk_window, (GdkWMDecoration) d);
 }
 
