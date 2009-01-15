@@ -170,7 +170,7 @@ indexhtml.puts <<-END
 	</head>
 	<body>
 		<h2>Titanium test app</h2>
-		ti = <script>document.write(ti.Network.createTCPSocket);</script>
+		Titanium = <script>document.write(Titanium.Network.createTCPSocket);</script>
 	</body>
 </html>
 END
