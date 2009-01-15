@@ -7,10 +7,11 @@
 #include <Poco/NObserver.h>
 #include <kroll/kroll.h>
 
+#define BUFFER_SIZE 1024   // choose a reasonable size to send back to JS
 
 namespace ti
 {
-	TCPSocketBinding::TCPSocketBinding(std::string host, int port) : 
+	TCPSocketBinding::TCPSocketBinding(std::string host, int port) :
 		host(host), port(port), opened(false), callback(0)
 	{
 		this->SetMethod("connect",&TCPSocketBinding::Connect);
@@ -62,11 +63,10 @@ namespace ti
 	}
 	void TCPSocketBinding::OnRead(const Poco::AutoPtr<ReadableNotification>& n)
 	{
-		static int bufsize = 1024;  // choose a reasonable size to send back to JS
-		char data[bufsize];
+		char data[BUFFER_SIZE];
 		try
 		{
-			int size = socket.receiveBytes(&data,bufsize);
+			int size = socket.receiveBytes(&data,BUFFER_SIZE);
 			if (size <= 0) return;
 			data[size]='\0';
 			std::string s(data);

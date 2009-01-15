@@ -1,11 +1,12 @@
 /**
  * Appcelerator Kroll - licensed under the Apache Public License 2
- * see LICENSE in the root folder for details on the license. 
+ * see LICENSE in the root folder for details on the license.
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
- */	
-#include <kroll/kroll.h>
+ */
+
 #include "network_binding.h"
 #include "tcp_socket_binding.h"
+#include <kroll/kroll.h>
 
 namespace ti
 {
@@ -23,7 +24,7 @@ namespace ti
 		BoundObject *tcp = new TCPSocketBinding(args.at(0)->ToString(), args.at(1)->ToInt());
 		result->Set(tcp);
 		KR_DECREF(tcp);
-		
+
 		// SocketAddress addr("localhost",80);
 		// StreamSocket *sock = new StreamSocket();
 		// sock->connect(addr);

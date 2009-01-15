@@ -7,6 +7,22 @@
 #ifndef _TCP_SOCKET_BINDING_H_
 #define _TCP_SOCKET_BINDING_H_
 
+#ifndef WINVER
+#define WINVER 0x0501
+#endif
+
+#ifndef _WIN32_WINNT
+#define _WIN32_WINNT 0x0501
+#endif
+
+#ifndef _WIN32_WINDOWS
+#define _WIN32_WINDOWS 0x0410
+#endif
+
+#ifndef _WIN32_IE
+#define _WIN32_IE 0x600
+#endif
+
 #include <kroll/kroll.h>
 #include <Poco/Thread.h>
 #include <Poco/Net/StreamSocket.h>
@@ -32,7 +48,7 @@ namespace ti
 		Thread thread;
 		bool opened;
 		BoundMethod *callback;
-		
+
 		void Connect(const ValueList& args, Value *result);
 		void Write(const ValueList& args, Value *result);
 		void Close(const ValueList& args, Value *result);
