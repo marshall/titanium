@@ -42,6 +42,10 @@ class BuildConfig(object):
 
 tiBuild = BuildConfig()
 
+
+build_dir = tiBuild.absdir
+Export('build_dir')
+
 tiBuild.include_dir = path.abspath(path.join('kroll', 'build', 'include'))
 tiBuild.env = Environment(
     CPPDEFINES = {

@@ -318,3 +318,7 @@ void GtkUserWindow::SetTransparency(double alpha) {
 	return gtk_window_set_opacity(this->gtk_window, alpha);
 	this->config->SetTransparency(alpha);
 }
+
+void GtkUserWindow::SetFullScreen(bool fullscreen) {
+	//TODO
+}

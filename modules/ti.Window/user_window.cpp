@@ -45,6 +45,7 @@ UserWindow::UserWindow(kroll::Host *host, WindowConfig *config) : kroll::StaticB
 	this->SetMethod("show", &UserWindow::show_cb);
 	this->SetMethod("isUsingChrome", &UserWindow::is_using_chrome_cb);
 	this->SetMethod("isFullScreen", &UserWindow::is_full_screen_cb);
+	this->SetMethod("setFullScreen", &UserWindow::set_full_screen_cb);
 	this->SetMethod("getId", &UserWindow::get_id_cb);
 	this->SetMethod("open", &UserWindow::open_cb);
 	this->SetMethod("close", &UserWindow::close_cb);
@@ -99,6 +100,11 @@ void UserWindow::is_using_scrollbars_cb(const kroll::ValueList& args, kroll::Val
 void UserWindow::is_full_screen_cb(const kroll::ValueList& args, kroll::Value *result)
 {
 	result->Set(this->IsFullScreen());
+}
+
+void UserWindow::set_full_screen_cb(const kroll::ValueList& args, kroll::Value *result)
+{
+	this->SetFullScreen(args.at(0)->ToBool());
 }
 
 void UserWindow::get_id_cb(const kroll::ValueList& args, kroll::Value *result)

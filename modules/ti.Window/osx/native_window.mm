@@ -5,6 +5,7 @@
  */
 #import "native_window.h"
 #import "WebViewPrivate.h" 
+#import <Carbon/Carbon.h>
 
 @implementation NativeWindow
 - (BOOL)canBecomeKeyWindow
@@ -14,6 +15,11 @@
 - (void)setupDecorations:(WindowConfig*)cfg host:(Host*)h
 {
 	config = cfg;
+
+	if (config->IsFullscreen())
+	{
+		SetSystemUIMode(kUIModeAllHidden, kUIModeContentSuppressed);
+	}
 
 	[self setTitle:[NSString stringWithCString:config->GetTitle().c_str()]];
 	[self setOpaque:false];
@@ -87,6 +93,17 @@
 	else
 	{
 		[webView setBackgroundColor:[NSColor whiteColor]];
+	}
+}
+- (void)setFullScreen:(BOOL)yn
+{
+	if (yn)
+	{
+		SetSystemUIMode(kUIModeAllHidden, kUIModeContentSuppressed);
+	}
+	else
+	{
+		SetSystemUIMode(kUIModeNormal, 0); 
 	}
 }
 - (WebView*)webView

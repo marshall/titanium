@@ -364,3 +364,7 @@ void Win32UserWindow::SetTransparency(double transparency) {
 	SetLayeredWindowAttributes(window_handle, 0, (BYTE)floor(transparency*255), LWA_ALPHA);
 }
 
+void Win32UserWindow::SetFullScreen(bool fullscreen) {
+	//TODO: implement
+}
+

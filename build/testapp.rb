@@ -154,6 +154,7 @@ tiappxml.puts <<-END
       <url>app://index.html</url>
       <width>700</width>
       <height>620</height>
+		  <fullscreen>true</fullscreen>
    </window>
 </ti:app>
 END

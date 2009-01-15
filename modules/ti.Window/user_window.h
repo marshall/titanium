@@ -35,6 +35,7 @@ class UserWindow : public kroll::StaticBoundObject {
 		void is_using_chrome_cb(const kroll::ValueList&, kroll::Value *);
 		void is_using_scrollbars_cb(const kroll::ValueList&, kroll::Value *);
 		void is_full_screen_cb(const kroll::ValueList&, kroll::Value *);
+		void set_full_screen_cb(const kroll::ValueList&, kroll::Value *);
 		void get_id_cb(const kroll::ValueList&, kroll::Value *);
 		void open_cb(const kroll::ValueList&, kroll::Value *);
 		void close_cb(const kroll::ValueList&, kroll::Value *);
@@ -99,6 +100,7 @@ class UserWindow : public kroll::StaticBoundObject {
 		virtual void SetVisible(bool visible) = 0;
 		virtual double GetTransparency() = 0;
 		virtual void SetTransparency(double transparency) = 0;
+		virtual void SetFullScreen(bool fullscreen) = 0;
 
 	protected:
 		kroll::Host *host;
