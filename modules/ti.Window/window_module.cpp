@@ -33,15 +33,11 @@ namespace ti
 	void WindowModule::Initialize()
 	{
 		std::cout << "Initializing ti.Window..." << std::endl;
-	
-	#ifdef OS_OSX
+
+		#ifdef OS_OSX
 		OSXInitialize();
-	#endif
-	
-		//FIXME: remove this in favor of just placing into global directly
-		this->runtime = new kroll::StaticBoundObject();
-		this->host->GetGlobalObject()->SetObject("tiRuntime", this->runtime);
-	
+		#endif
+
 		AppConfig *config = AppConfig::Instance();
 		if (config == NULL)
 		{
@@ -54,15 +50,15 @@ namespace ti
 			std::cerr << "Error loading tiapp.xml. Your application window is not properly configured or packaged." << std::endl;
 			return;
 		}
-	
-	#if defined(OS_LINUX)
+
+		#if defined(OS_LINUX)
 		GtkUserWindow* window = new GtkUserWindow(this->host, main_window_config);
-	#elif defined(OS_OSX)
+		#elif defined(OS_OSX)
 		OSXUserWindow* window = new OSXUserWindow(this->host, main_window_config);
-	#elif defined(OS_WIN32)
+		#elif defined(OS_WIN32)
 		Win32UserWindow* window = new Win32UserWindow(this->host, main_window_config);
-	#endif
-	
+		#endif
+
 		window->Open();
 	}
 

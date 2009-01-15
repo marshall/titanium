@@ -320,9 +320,9 @@
 - (void)inject:(WebScriptObject *)windowScriptObject context:(JSContextRef)context
 {
 	kroll::StaticBoundObject* ti = host->GetGlobalObject();
-	id newti = [windowScriptObject evaluateWebScript:@"ti = new Object;"];
+	id newti = [windowScriptObject evaluateWebScript:@"Titanium = new Object;"];
 	KR_UNUSED(newti); //FIXME: release?
-	WebScriptObject* tiJS = [windowScriptObject valueForKey:@"ti"];
+	WebScriptObject* tiJS = [windowScriptObject valueForKey:@"Titanium"];
 	std::vector<const char*> properties;
 	ti->GetPropertyNames(&properties);
 	std::vector<const char*>::iterator iter = properties.begin();
@@ -330,7 +330,7 @@
 	{
 		const char* key = (*iter++);
 		// skip these...
-		if (strcmp(key,"ti")==0 || strcmp(key,"tiRuntime")==0) continue;
+		if (strcmp(key,"ti")==0) continue;
 		Value *value = ti->Get(key);
 		@try
 		{

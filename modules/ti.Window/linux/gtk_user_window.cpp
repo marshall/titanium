@@ -53,10 +53,6 @@ void GtkUserWindow::Open() {
 		g_signal_connect (G_OBJECT (window), "destroy", G_CALLBACK (destroy_cb), NULL);
 		gtk_container_add (GTK_CONTAINER (window), vbox);
 
-		GdkColor colorRed;
-		gdk_color_parse ("red", &colorRed);
-		gtk_widget_modify_bg(window, GTK_STATE_NORMAL, &colorRed);
-
 		this->gtk_window = GTK_WINDOW(window);
 		this->web_view = web_view;
 
@@ -94,32 +90,38 @@ static void window_object_cleared_cb (WebKitWebView* web_view,
                                       gpointer data) {
 
 	JSObjectRef global_object = JSContextGetGlobalObject(context);
-
 	GtkUserWindow* user_window = (GtkUserWindow*) data;
-
 	Host* tihost = user_window->GetHost();
-	BoundObject* global_tibo = (StaticBoundObject*) tihost->GetGlobalObject();
-
-	// set user window into the context
-	//Value *user_window_val = new Value(user_window);
-	//context_local->Set("currentWindow", user_window_val);
-	//KR_DECREF(user_window_val);
 
 	// Bind all child objects to global context
+	BoundObject* global_tibo = (StaticBoundObject*) tihost->GetGlobalObject();
+	BoundObject* tiObject = new StaticBoundObject();
+
 	std::vector<const char *> prop_names;
 	global_tibo->GetPropertyNames(&prop_names);
 	for (size_t i = 0; i < prop_names.size(); i++)
 	{
 		const char *name = prop_names.at(i);
 		Value* value = global_tibo->Get(name);
-
-		JSValueRef js_value = KJSUtil::ToJSValue(value, context);
-		KJSUtil::BindPropertyToJSObject(context, global_object, name, js_value);
+		ScopedDereferencer s0(value);
+		tiObject->Set(name, value);
 	}
+
+	// set user window into the Titanium object
+	Value *user_window_val = new Value(user_window);
+	ScopedDereferencer s1(user_window_val);
+	tiObject->Set("currentWindow", user_window_val);
+	KR_DECREF(user_window_val);
+
+	// place Titanium object into the window's global object
+	BoundObject *global_bound_object = new KJSBoundObject(context, global_object);
+	Value *tiObjectValue = new Value(tiObject);
+	ScopedDereferencer s2(tiObjectValue);
+	global_bound_object->Set(PRODUCT_NAME, tiObjectValue);
 
 	JSStringRef script;
 	char code[1024];
-	sprintf(code, "alert(typeof(foo.list.push));");
+	sprintf(code, "alert(Titanium.currentWindow); alert(Titanium.foo.number);");
 	//sprintf(code, "var o = Object(); o.prop = 'one'; foo.prop = 'two'; var f = function() {alert(this.prop);}; o.f = f; o.f(); foo.f = o.f; foo.f();");
 	script = JSStringCreateWithUTF8CString(code);
 	if(JSCheckScriptSyntax(context, script, NULL, 0, NULL))
