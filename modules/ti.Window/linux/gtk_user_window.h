@@ -55,6 +55,7 @@ namespace ti
 		void SetVisible(bool visible);
 		double GetTransparency();
 		void SetTransparency(double transparency);
+		void SetFullScreen(bool fullscreen);
 	protected:
 		GtkWindow* gtk_window;
 		WebKitWebView* web_view;

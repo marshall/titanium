@@ -10,7 +10,7 @@ namespace ti
 	static NSUInteger toWindowMask(WindowConfig *config)
 	{
 		NSUInteger mask = 0;
-		if (config->IsUsingChrome())
+		if (config->IsUsingChrome() || config->IsFullscreen())
 		{
 			mask = NSBorderlessWindowMask;
 		}
@@ -44,6 +44,11 @@ namespace ti
 		NSRect frame = NSMakeRect(config->GetX(), config->GetY(), config->GetWidth(), config->GetHeight());
 
 		NSUInteger mask = toWindowMask(config);
+
+		if (config->IsFullscreen())
+		{
+			frame = [[NSScreen mainScreen] frame];
+		}
 
 		window = [[NativeWindow alloc]
 		        initWithContentRect:frame
@@ -206,5 +211,9 @@ namespace ti
 		}
 		this->config->SetTransparency(transparency);
 		[window setTransparency:transparency];
+	}
+	void OSXUserWindow::SetFullScreen(bool fullscreen)
+	{
+		[window setFullScreen:fullscreen];
 	}
 }

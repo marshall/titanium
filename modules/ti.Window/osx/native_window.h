@@ -23,6 +23,7 @@ using namespace ti;
 }
 - (void)setupDecorations:(WindowConfig*)config host:(Host*)h;
 - (void)setTransparency:(double)transparency;
+- (void)setFullScreen:(BOOL)yn;
 - (WebView*)webView;
 - (WindowConfig*)config;
 @end

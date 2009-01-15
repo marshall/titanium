@@ -51,6 +51,7 @@ namespace ti
 			void SetVisible(bool visible);
 			double GetTransparency();
 			void SetTransparency(double transparency);
+			void SetFullScreen(bool fullscreen);
 
 			const NativeWindow* GetNative() const { return window; }
 

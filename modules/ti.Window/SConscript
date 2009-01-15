@@ -32,7 +32,7 @@ elif tiBuild.is_win32():
 
 elif tiBuild.is_osx():
 	env.Append(FRAMEWORKPATH=[webkit_tp])
-	env.Append(FRAMEWORKS=['Cocoa','WebKit','JavaScriptCore'])
+	env.Append(FRAMEWORKS=['Cocoa','Carbon','WebKit','JavaScriptCore'])
 	sources = sources + Glob('osx/*.mm') + Glob('osx/*.cpp')
 	env.Append(CCFLAGS=['-x', 'objective-c++'])
 	

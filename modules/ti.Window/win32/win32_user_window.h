@@ -98,6 +98,7 @@ public:
 	void SetVisible(bool visible);
 	double GetTransparency() { return config->GetTransparency(); }
 	void SetTransparency(double transparency);
+	void SetFullScreen(bool fullscreen);
 
 };
 

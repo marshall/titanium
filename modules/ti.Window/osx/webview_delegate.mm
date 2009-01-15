@@ -344,8 +344,7 @@
 			NSLog(@"exception caught binding ti.%s => %@",key,ex);
 		}
 	}
-//	[tiJS release];
-//	[newti release];
+	//NOTE: don't release tiJS or newti
 	scriptCleared = YES;
 }
 
@@ -379,6 +378,7 @@
 			// cause the initial window to show since it was initially opened hidden
 			// so you don't get the nasty wide screen while content is loading
 			[self performSelector:@selector(show) withObject:nil afterDelay:.005];
+			
 		}
     }
 }
