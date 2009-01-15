@@ -6,7 +6,8 @@
 
 #include "frame_load_delegate.h"
 #include "win32_user_window.h"
-#include "window_module.h"
+#include "../window_module.h"
+#include "../../../kroll/modules/javascript/javascript_module.h"
 
 using namespace ti;
 
@@ -19,6 +20,8 @@ HRESULT STDMETHODCALLTYPE
 Win32FrameLoadDelegate::windowScriptObjectAvailable (
 		IWebView *webView, JSContextRef context, JSObjectRef windowScriptObject)
 {
+	JSObjectRef global_object = JSContextGetGlobalObject(context);
+	kroll::Host* tihost = window->GetHost();
 
 	// Bind all child objects to global context
 	BoundObject* global_tibo = (StaticBoundObject*) tihost->GetGlobalObject();
