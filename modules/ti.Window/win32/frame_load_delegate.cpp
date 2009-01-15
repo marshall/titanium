@@ -19,45 +19,32 @@ HRESULT STDMETHODCALLTYPE
 Win32FrameLoadDelegate::windowScriptObjectAvailable (
 		IWebView *webView, JSContextRef context, JSObjectRef windowScriptObject)
 {
-	/*
-	JSObjectRef global_object = JSContextGetGlobalObject(context);
-	kroll::Host* tihost = window->GetHost();
-	kroll::BoundObject* global_tibo = (kroll::StaticBoundObject*) tihost->GetGlobalObject();
-
-	// place window into the context local for currentWindow
-	kroll::StaticBoundObject *context_local = GetContextLocal(context);
-
-	// set user window into the context
-	kroll::Value *user_window_val = new kroll::Value(window);
-	context_local->Set("currentWindow", user_window_val);
-	KR_DECREF(user_window_val);
 
 	// Bind all child objects to global context
-	std::vector<std::string> prop_names = global_tibo->GetPropertyNames();
+	BoundObject* global_tibo = (StaticBoundObject*) tihost->GetGlobalObject();
+	BoundObject* tiObject = new StaticBoundObject();
+
+	std::vector<const char *> prop_names;
+	global_tibo->GetPropertyNames(&prop_names);
 	for (size_t i = 0; i < prop_names.size(); i++)
 	{
-		const char *name = prop_names.at(i).c_str();
-		kroll::Value* value = global_tibo->Get(name, context_local);
+		const char *name = prop_names.at(i);
+		Value* value = global_tibo->Get(name);
+		ScopedDereferencer s0(value);
+		tiObject->Set(name, value);
+	}
 
-		JSValueRef js_value = KJSUtil::ToJSValue(value, context);
-		KJSUtil::BindPropertyToJSObject(context, global_object, name, js_value);
-	}*/
+	// set user window into the Titanium object
+	Value *user_window_val = new Value(this->window);
+	ScopedDereferencer s1(user_window_val);
+	tiObject->Set("currentWindow", user_window_val);
+	KR_DECREF(user_window_val);
 
-	/*
-	JSStringRef script;
-	char code[1024];
-	sprintf(code, "var o = Object(); foo.o = o; alert(foo.o); foo.b = foo.o; alert(foo.b);");
-	//sprintf(code, "var o = Object(); o.prop = 'one'; foo.prop = 'two'; var f = function() {alert(this.prop);}; o.f = f; o.f(); foo.f = o.f; foo.f();");
-	script = JSStringCreateWithUTF8CString(code);
-	if(JSCheckScriptSyntax(context, script, NULL, 0, NULL))
-		JSEvaluateScript(context, script, window_object, NULL, 1, NULL);
-	JSStringRelease(script);*/
-
-	kroll::StaticBoundObject* ti = window->GetHost()->GetGlobalObject();
-	JSObjectRef jsTi = kroll::KrollBoundObjectToJSValue(context, ti);
-	JSObjectRef global_object = JSContextGetGlobalObject(context);
-
-	kroll::KJSUtil::BindPropertyToJSObject(context, global_object, "ti", jsTi);
+	// place Titanium object into the window's global object
+	BoundObject *global_bound_object = new KJSBoundObject(context, global_object);
+	Value *tiObjectValue = new Value(tiObject);
+	ScopedDereferencer s2(tiObjectValue);
+	global_bound_object->Set(PRODUCT_NAME, tiObjectValue);
 
 	return S_OK;
 }
