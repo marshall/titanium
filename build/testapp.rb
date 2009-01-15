@@ -78,6 +78,11 @@ Zip::ZipFile.open(runtime_zip, Zip::ZipFile::CREATE) do |zipfile|
     name = f.gsub(path+'/','')
     zipfile.add name,f unless (name=~/\.h$/ or name=~/\.defs$/)
   end
+  path = "#{thirdparty}/poco" 
+  Dir["#{path}/**/**"].each do |f|
+    name = f.gsub(path+'/','')
+    zipfile.add name,f unless (name=~/\.h$/ or name=~/\.defs$/)
+  end
   path = "#{thirdparty}/poco/lib"
     Dir["#{path}/**/**"].each do |f|
       name = f.gsub(path+'/','')
