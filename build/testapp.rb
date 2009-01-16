@@ -11,7 +11,7 @@ VER = 0.1
 PLUGINS =
   %w(api javascript foo ruby
   python fooruby foopy tiapp
-  tiwindow tinetwork tifile tifilesystem timedia
+  tiwindow tinetwork tifilesystem timedia
   tidesktop timenu tigrowl)
 NAME = 'test'
 
