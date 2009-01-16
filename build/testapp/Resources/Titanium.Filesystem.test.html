@@ -1,0 +1,70 @@
+<html>
+	<head>
+		<style>
+			body { font-family: sans, sans-serif; background-color: white; }
+		</style>
+		<script>
+			function testFile(f) {
+				var s = '';
+
+				s += 'toString(): ' + f.toString() + '<br>';
+				s += 'file: ' + f.isFile() + '<br>';
+				s += 'directory: ' + f.isDirectory() + '<br>';
+				s += 'hidden: ' + f.isHidden() + '<br>';
+
+				return s;
+			}
+
+			function testFS(name) {
+				var f = Titanium.Filesystem.getFile(name);
+
+				var s = 'file: ' + name + '<br>';
+				s += testFile(f);
+
+				return s;
+			}
+
+
+			function testCreateTempFile() {
+				var s = 'test createTempFile<br>';
+
+				var f = Titanium.Filesystem.createTempFile();
+
+				s += testFile(f);
+
+				return s;
+			}
+
+			function testCreateTempDir() {
+				var s = 'test createTempDir<br>';
+
+				var f = Titanium.Filesystem.createTempDirectory();
+
+				s += testFile(f);
+
+				return s;
+			}
+		</script>
+	</head>
+	<body>
+		<h2>Titanium test app</h2>
+		Titanium = <script>document.write(Titanium);</script><br>
+		Titanium.Filesystem = <script>document.write(Titanium.Filesystem);</script><br>
+		Titanium.Filesystem.createTempFile = <script>document.write(Titanium.Filesystem.createTempFile);</script><br>
+		Titanium.Filesystem.createTempDirectory = <script>document.write(Titanium.Filesystem.createTempDirectory);</script><br>
+
+		<br><br>
+		<script>document.write(testFS('c:\\dev\\test.txt'))</script>
+		<br><br>
+		<script>document.write(testFS('c:\\dev\\hidden-file.txt'))</script>
+		<br><br>
+		<script>document.write(testFS('c:\\dev\\'))</script>
+		<br><br>
+		<script>document.write(testFS('c:\\dev\\bad\\doesntexist.txt'))</script>
+		<br><br>
+		<script>document.write(testCreateTempFile())</script>
+		<br><br>
+		<script>document.write(testCreateTempDir())</script>
+		<br><br>
+	</body>
+</html>
