@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 Import('tiBuild')
+import os
 
 modules = ['ti.App', 'ti.Window','ti.Network','ti.Filesystem','ti.Media','ti.Desktop','ti.Menu']
 
@@ -9,6 +10,7 @@ if tiBuild.is_osx():
 for module in modules:
 	module_dir = tiBuild.dir + '/modules/' + module
 	SConscript(module+'/SConscript', build_dir=module_dir, duplicate=0)
-	out_dir = os.path.join(build.abstopdir,'modules',module)
-	script = os.path.join(build.krollabsdir,'build','module.py')
-	os.system(script+' '+build.dir+' '+out_dir+' '+build.os)
+	out_dir = os.path.join(tiBuild.abstopdir,'modules',module)
+	script = os.path.join(os.path.join(tiBuild.krollabsdir,'..'),'module.py')
+	os.system(script+' '+tiBuild.absdir+' '+out_dir+' '+tiBuild.os)
+
