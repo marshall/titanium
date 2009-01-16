@@ -23,7 +23,8 @@ else
   OS='win32'
 end
 
-outdir = File.join(File.expand_path(File.dirname(__FILE__)), OS)
+thisdir = File.expand_path(File.dirname(__FILE__))
+outdir = File.join(thisdir, OS)
 rootdir = File.join(outdir, NAME + (OS=='osx' ? '.app':'' ))
 appdir = OS=='osx' ? File.join(rootdir,'Contents') : rootdir
 installdir = File.join(rootdir,'installer');
@@ -142,4 +143,4 @@ end
 manifest.close
 
 #copy test app files
-FileUtils.cp_r('testapp/.', appdir)
+FileUtils.cp_r(thisdir+'/testapp/.', appdir)
