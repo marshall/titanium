@@ -2,7 +2,6 @@
 import os
 
 Import("tiBuild")
-Import('build')
 
 env = tiBuild.env.Clone();
 env.Append(CPPDEFINES = {'TITANIUM_API_EXPORT' : 1})

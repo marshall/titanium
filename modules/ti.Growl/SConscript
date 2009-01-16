@@ -24,10 +24,10 @@ if build.is_osx():
 s = env.SharedLibrary(target = tiBuild.dir + '/tigrowlmodule', source = Glob('*.cpp'))
 
 
-dirutil.mkpath(tiBuild.absdir+'/modules/ti.Growl/Resources')
+dirutil.mkpath(tiBuild.dir+'/modules/ti.Growl/Resources')
 cwd = path.dirname(inspect.currentframe().f_code.co_filename)
 
 if build.is_osx():
-	dirutil.mkpath(tiBuild.absdir+'/modules.ti.Growl/Growl.framework')
-	shutil.copy(cwd+'/Resources/osx/Growl Registration Ticket.growlRegDict', tiBuild.absdir+'/modules/ti.Growl/Resources')
-	dirutil.copy_tree(build.third_party+'/growl/Growl.framework', tiBuild.absdir+'/modules/ti.Growl/Resources/Growl.framework', update=1)
+	dirutil.mkpath(tiBuild.dir+'/modules.ti.Growl/Growl.framework')
+	shutil.copy(cwd+'/Resources/osx/Growl Registration Ticket.growlRegDict', tiBuild.dir+'/modules/ti.Growl/Resources')
+	dirutil.copy_tree(build.third_party+'/growl/Growl.framework', tiBuild.dir+'/modules/ti.Growl/Resources/Growl.framework', update=1)
