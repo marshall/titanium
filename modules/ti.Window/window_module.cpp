@@ -50,14 +50,29 @@ namespace ti
 			std::cerr << "Error loading tiapp.xml. Your application window is not properly configured or packaged." << std::endl;
 			return;
 		}
-
-		#if defined(OS_LINUX)
+		
+		// add some titanium specific global info here
+		BoundObject* global = this->host->GetGlobalObject();
+		
+		// version
+		Value *version = new Value(0.2); // FIXME: for now this is hardcoded
+		global->Set("version",version);
+		KR_DECREF(version);
+		
+		// platform
+		Value *platform = NULL;
+#if defined(OS_LINUX)
 		GtkUserWindow* window = new GtkUserWindow(this->host, main_window_config);
-		#elif defined(OS_OSX)
+		platform = new Value("linux");
+#elif defined(OS_OSX)
 		OSXUserWindow* window = new OSXUserWindow(this->host, main_window_config);
-		#elif defined(OS_WIN32)
+		platform = new Value("osx");
+#elif defined(OS_WIN32)
 		Win32UserWindow* window = new Win32UserWindow(this->host, main_window_config);
-		#endif
+		platform = new Value("win32");
+#endif
+		global->Set("platform",platform);
+		KR_DECREF(global);
 
 		window->Open();
 	}
