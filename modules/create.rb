@@ -25,7 +25,7 @@ end
 module_name = name.capitalize
 module_dir_name = "ti.#{module_name}"
 header_define = name.upcase
-
+module_lib_name = module_dir_name.gsub '.','_'
 
 FileUtils.mkdir_p module_dir_name unless File.exists?(module_dir_name)
 
@@ -152,7 +152,7 @@ namespace ti
 
 		// set our #{module_dir_name}
 		Value *value = new Value(this->variables);
-		host->GetGlobalObject()->Set("File",value);
+		host->GetGlobalObject()->Set("#{module_name}",value);
 		KR_DECREF(value);
 	}
 
@@ -231,10 +231,19 @@ env.Append(CPPDEFINES = {'TITANIUM_#{header_define}_API_EXPORT' : 1})
 env.Append(CPPPATH = ['#kroll'])
 
 
-s = env.SharedLibrary(target = tiBuild.dir + '/ti#{name}module', source = Glob('*.cpp'))
+s = env.SharedLibrary(target = tiBuild.dir + '/ti#{module_lib_name}module', source = Glob('*.cpp'))
 END
 sc.close
 
+mf = File.open(File.join(module_dir_name,"manifest"),'w')
+mf.puts <<-END
+name: #{module_dir_name}
+version: 0.1
+description: #{module_dir_name} description
+os: win32, linux, osx
+depends:
+END
+mf.close
 
 
 puts "Created: #{module_dir_name}"
