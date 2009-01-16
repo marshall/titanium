@@ -3,7 +3,7 @@
  * see LICENSE in the root folder for details on the license.
  * Copyright (c) 2009 Appcelerator, Inc. All Rights Reserved.
  */
-#include "File.h"
+#include "file.h"
 
 #include "Poco/File.h"
 #include <Poco/Exception.h>

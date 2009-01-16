@@ -10,7 +10,7 @@ if tiBuild.is_osx():
 for module in modules:
 	module_dir = tiBuild.dir + '/modules/' + module
 	SConscript(module+'/SConscript', build_dir=module_dir, duplicate=0)
-	out_dir = os.path.join(tiBuild.abstopdir,'modules',module)
-	script = os.path.join(os.path.join(tiBuild.krollabsdir,'..'),'module.py')
-	os.system(script+' '+tiBuild.absdir+' '+out_dir+' '+tiBuild.os)
+	out_dir = os.path.join(tiBuild.dir, 'modules', module)
+	script = os.path.join(tiBuild.kroll_build_dir, 'module.py')
+	os.system('%s %s %s %s' % (script, tiBuild.dir, out_dir, tiBuild.os))
 

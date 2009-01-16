@@ -5,9 +5,9 @@ Import('tiBuild')
 Import('build')
 
 env = tiBuild.env.Clone()
-env.Append(LIBPATH=[path.join(tiBuild.absdir, 'modules', 'ti.App')])
+env.Append(LIBPATH=[path.join(tiBuild.dir, 'modules', 'ti.App')])
 env.Append(LIBS=['kroll', 'tiappmodule','javascriptmodule'])
-env.Append(CPPPATH = ['#kroll/build/include','#kroll/modules/javascript'])
+env.Append(CPPPATH = [build.kroll_include_dir, '%s/modules/javascript' % build.kroll_source_dir])
 
 sources = Glob('*.cpp')
 webkit_tp = path.join(build.third_party, 'webkit')
@@ -42,12 +42,12 @@ s = env.SharedLibrary(target = tiBuild.dir + '/tiwindowmodule',
 if tiBuild.is_osx():
 	for i in Glob('osx/*.xib'):
 		base = path.splitext(path.basename(str(i)))[0]
-		env.AddPostAction(s, 'ibtool --errors --warnings --notices --output-format human-readable-text --compile '+tiBuild.absdir + '/'+ base+'.nib '+str(i))
+		env.AddPostAction(s, 'ibtool --errors --warnings --notices --output-format human-readable-text --compile '+tiBuild.dir + '/'+ base+'.nib '+str(i))
 
 if tiBuild.is_win32():
-	manifest1 = os.path.join(tiBuild.absdir, 'tiwindowmodule.embed.manifest')
-	manifest2 = os.path.join(tiBuild.absdir, 'tiwindowmodule.dll.manifest')
+	manifest1 = os.path.join(tiBuild.dir, 'tiwindowmodule.embed.manifest')
+	manifest2 = os.path.join(tiBuild.dir, 'tiwindowmodule.dll.manifest')
 	env.AddPostAction(s, 'mt.exe /nologo /manifest ' + manifest2 + ' /tlb:' + path.join(webkit_lib, 'WebKit.tlb') + ' /dll:bin/WebKit /out:'+manifest1)
-	#env.AddPostAction(s, 'mt.exe /nologo /tlb:' + path.join(win32_webkit, 'lib', 'WebKit.tlb') + ' /dll:WebKit /outputresource:'+tiBuild.absdir+'/tikernel.exe;1')
-	env.AddPostAction(s, 'mt.exe -nologo -manifest "'+manifest1+'" -outputresource:'+tiBuild.absdir+'/kkernel.exe;1')
-	#env.AddPostAction(s, 'mt.exe -nologo -manifest "'+manifest1+'" -outputresource:'+tiBuild.absdir+'/windowingplugin.dll;2')
+	#env.AddPostAction(s, 'mt.exe /nologo /tlb:' + path.join(win32_webkit, 'lib', 'WebKit.tlb') + ' /dll:WebKit /outputresource:'+tiBuild.dir+'/tikernel.exe;1')
+	env.AddPostAction(s, 'mt.exe -nologo -manifest "'+manifest1+'" -outputresource:'+tiBuild.dir+'/kkernel.exe;1')
+	#env.AddPostAction(s, 'mt.exe -nologo -manifest "'+manifest1+'" -outputresource:'+tiBuild.dir+'/windowingplugin.dll;2')
