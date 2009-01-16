@@ -152,7 +152,7 @@ namespace ti
 
 		// set our #{module_dir_name}
 		Value *value = new Value(this->variables);
-		host->GetGlobalObject()->Set("File",value);
+		host->GetGlobalObject()->Set("#{module_name}",value);
 		KR_DECREF(value);
 	}
 
