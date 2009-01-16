@@ -23,6 +23,8 @@ namespace ti
 		virtual ~MediaBinding();
 	private:
 		BoundObject *global;
+		void CreateSound(const ValueList& args, Value *result);
+		void Beep(const ValueList& args, Value *result);
 	};
 }
 
