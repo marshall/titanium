@@ -17,3 +17,8 @@ namespace ti
 		KR_DECREF(global);
 	}
 }
+
+
+//NOTES:
+//Dynamic Setting Dock Menu / Image on OSX
+//http://developer.apple.com/samplecode/DeskPictAppDockMenu/index.html
