@@ -121,6 +121,13 @@ Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config)
 
 	SetWindowUserData(window_handle, this);
 
+	Bounds b;
+	b.x = config->GetX();
+	b.y = config->GetY();
+	b.width = config->GetWidth();
+	b.height = config->GetHeight();
+	SetBounds(b);
+
 	ShowWindow(window_handle, SW_SHOW);
 
 	//web_view = WebView::createInstance();
@@ -138,13 +145,6 @@ Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config)
 
 	std::cout << "create delegate " << std::endl;
 	delegate = new Win32FrameLoadDelegate(this);
-
-	Bounds b;
-	b.x = config->GetX();
-	b.y = config->GetY();
-	b.width = config->GetWidth();
-	b.height = config->GetHeight();
-	SetBounds(b);
 
 	std::cout << "set frame load delegate, set host window, webview=" << (int)web_view  << std::endl;
 	hr = web_view->setFrameLoadDelegate(delegate);
