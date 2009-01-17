@@ -19,8 +19,8 @@ namespace ti
 		virtual ~NetworkBinding();
 	private:
 		BoundObject *global;
-		void Create(const ValueList& args, Value *result);
-		void OnConnectivityChange(const ValueList& args, Value *result);
+		void Create(const ValueList& args, SharedValue result);
+		void OnConnectivityChange(const ValueList& args, SharedValue result);
 	};
 }
 

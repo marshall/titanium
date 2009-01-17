@@ -17,13 +17,13 @@ namespace ti
 	MenuBinding::~MenuBinding()
 	{
 	}
-	void MenuBinding::CreateAppMenu(const ValueList& args, SharedPtr<Value> result)
+	void MenuBinding::CreateAppMenu(const ValueList& args, SharedValue result)
 	{
 	}
-	void MenuBinding::CreateTrayMenu(const ValueList& args, SharedPtr<Value> result)
+	void MenuBinding::CreateTrayMenu(const ValueList& args, SharedValue result)
 	{
 	}
-	void MenuBinding::CreateDockMenu(const ValueList& args, SharedPtr<Value> result)
+	void MenuBinding::CreateDockMenu(const ValueList& args, SharedValue result)
 	{
 	}
 }

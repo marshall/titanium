@@ -22,7 +22,6 @@ namespace ti
 		// set our ti.Media
 		Value *value = new Value(this->variables);
 		host->GetGlobalObject()->Set("Media",value);
-		KR_DECREF(value);
 	}
 
 	void MediaModule::Destroy()

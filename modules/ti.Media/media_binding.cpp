@@ -23,11 +23,11 @@ namespace ti
 	{
 		KR_DECREF(global);
 	}
-	void MediaBinding::CreateSound(const ValueList& args, Value *result)
+	void MediaBinding::CreateSound(const ValueList& args, SharedValue result)
 	{
 		//TODO
 	}
-	void MediaBinding::Beep(const ValueList& args, Value *result)
+	void MediaBinding::Beep(const ValueList& args, SharedValue result)
 	{
 #ifdef OS_OSX
 		NSBeep();

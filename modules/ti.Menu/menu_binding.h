@@ -20,10 +20,10 @@ namespace ti
 	protected:
 		virtual ~MenuBinding();
 	private:
-		SharedPtr<BoundObject> global;
-		void CreateAppMenu(const ValueList& args, SharedPtr<Value> result);
-		void CreateTrayMenu(const ValueList& args, SharedPtr<Value> result);
-		void CreateDockMenu(const ValueList& args, SharedPtr<Value> result);
+		BoundObject *global;
+		void CreateAppMenu(const ValueList& args, SharedValue result);
+		void CreateTrayMenu(const ValueList& args, SharedValue result);
+		void CreateDockMenu(const ValueList& args, SharedValue result);
 	};
 }
 
