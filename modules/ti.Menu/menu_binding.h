@@ -14,15 +14,16 @@ namespace ti
 {
 	class MenuBinding : public StaticBoundObject
 	{
+		friend class SharedPtr<BoundObject>;
 	public:
-		MenuBinding(BoundObject*);
+		MenuBinding(SharedPtr<BoundObject>);
 	protected:
 		virtual ~MenuBinding();
 	private:
-		BoundObject *global;
-		void CreateAppMenu(const ValueList& args, Value *result);
-		void CreateTrayMenu(const ValueList& args, Value *result);
-		void CreateDockMenu(const ValueList& args, Value *result);
+		SharedPtr<BoundObject> global;
+		void CreateAppMenu(const ValueList& args, SharedPtr<Value> result);
+		void CreateTrayMenu(const ValueList& args, SharedPtr<Value> result);
+		void CreateDockMenu(const ValueList& args, SharedPtr<Value> result);
 	};
 }
 

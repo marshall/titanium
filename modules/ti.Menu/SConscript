@@ -4,8 +4,9 @@ import os
 Import("tiBuild")
 
 env = tiBuild.env.Clone();
-env.Append(CPPDEFINES = {'TITANIUM_API_EXPORT' : 1})
+env.Append(CPPDEFINES = {'TITANIUM_MENU_API_EXPORT' : 1})
 env.Append(CPPPATH = ['#kroll'])
+tiBuild.add_thirdparty(env, 'poco')
 
 if tiBuild.is_osx():
 	OSX_SDK = '/Developer/SDKs/MacOSX10.4u.sdk'
