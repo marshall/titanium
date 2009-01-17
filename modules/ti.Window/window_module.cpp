@@ -57,7 +57,6 @@ namespace ti
 		// version
 		Value *version = new Value(0.2); // FIXME: for now this is hardcoded
 		global->Set("version",version);
-		KR_DECREF(version);
 		
 		// platform
 		Value *platform = NULL;
@@ -79,6 +78,6 @@ namespace ti
 
 	void WindowModule::Destroy()
 	{
-		KR_DECREF(this->runtime);
+Z		KR_DECREF(this->runtime);
 	}
 }
