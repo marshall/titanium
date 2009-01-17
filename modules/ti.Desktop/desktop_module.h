@@ -1,6 +1,6 @@
 /**
  * Appcelerator Titanium - licensed under the Apache Public License 2
- * see LICENSE in the root folder for details on the license. 
+ * see LICENSE in the root folder for details on the license.
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
 
@@ -11,24 +11,24 @@
 
 #if defined(OS_OSX) || defined(OS_LINUX)
 #define EXPORT __attribute__((visibility("default")))
-#define TITANIUM_API EXPORT
+#define TITANIUM_DESKTOP_API EXPORT
 #elif defined(OS_WIN32)
-# ifdef TITANIUM_API_EXPORT
-#  define TITANIUM_API __declspec(dllexport)
+# ifdef TITANIUM_DESKTOP_API_EXPORT
+#  define TITANIUM_DESKTOP_API __declspec(dllexport)
 # else
-#  define TITANIUM_API __declspec(dllimport)
+#  define TITANIUM_DESKTOP_API __declspec(dllimport)
 # endif
 # define EXPORT __declspec(dllexport)
 #endif
 
-namespace ti 
+namespace ti
 {
-	class TITANIUM_API DesktopModule : public kroll::Module
+	class TITANIUM_DESKTOP_API DesktopModule : public kroll::Module
 	{
 		KROLL_MODULE_CLASS(DesktopModule)
 
 	private:
-		kroll::BoundObject *variables;
+		SharedPtr<kroll::BoundObject> variables;
 	};
 
 }

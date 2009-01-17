@@ -47,12 +47,14 @@ namespace ti
 {
 	class #{module_name}Binding : public StaticBoundObject
 	{
+	  friend class SharedPtr<BoundObject>;
+	  
 	public:
-		#{module_name}Binding(BoundObject*);
+		#{module_name}Binding(SharedPtr<BoundObject>);
 	protected:
 		virtual ~#{module_name}Binding();
 	private:
-		BoundObject *global;
+		SharedPtr<BoundObject> global;
 	};
 }
 
@@ -73,13 +75,11 @@ bc.puts <<-END
 
 namespace ti
 {
-	#{module_name}Binding::#{module_name}Binding(BoundObject *global) : global(global)
+	#{module_name}Binding::#{module_name}Binding(SharedPtr<BoundObject> global) : global(global)
 	{
-		KR_ADDREF(global);
 	}
 	#{module_name}Binding::~#{module_name}Binding()
 	{
-		KR_DECREF(global);
 	}
 }
 END
@@ -119,7 +119,7 @@ namespace ti
 		void Test();
 
 	private:
-		kroll::BoundObject *variables;
+		SharedPtr<kroll::BoundObject> variables;
 	};
 
 }
@@ -151,14 +151,12 @@ namespace ti
 		this->variables = new #{module_name}Binding(host->GetGlobalObject());
 
 		// set our #{module_dir_name}
-		Value *value = new Value(this->variables);
+		SharedPtr<Value> value = new Value(this->variables);
 		host->GetGlobalObject()->Set("#{module_name}",value);
-		KR_DECREF(value);
 	}
 
 	void #{module_name}Module::Destroy()
 	{
-		KR_DECREF(this->variables);
 	}
 	
 	void #{module_name}Module::Test()

@@ -13,21 +13,23 @@
 #include <vector>
 #include <string>
 
+using namespace kroll;
+
 namespace ti
 {
 	class DesktopBinding : public StaticBoundObject
 	{
 	public:
-		DesktopBinding(BoundObject*);
+		DesktopBinding(SharedPtr<BoundObject>);
 	protected:
 		virtual ~DesktopBinding();
 	private:
-		BoundObject *global;
-		void CreateShortcut(const ValueList& args, Value *result);
-		void OpenFiles(const ValueList& args, Value *result);
-		void OpenApplication(const ValueList& args, Value *result);
-		void OpenURL(const ValueList& args, Value *result);
-		void GetSystemIdleTime(const ValueList& args, Value *result);
+		SharedPtr<BoundObject> global;
+		void CreateShortcut(const ValueList& args, SharedPtr<Value> result);
+		void OpenFiles(const ValueList& args, SharedPtr<Value> result);
+		void OpenApplication(const ValueList& args, SharedPtr<Value> result);
+		void OpenURL(const ValueList& args, SharedPtr<Value> result);
+		void GetSystemIdleTime(const ValueList& args, SharedPtr<Value> result);
 	};
 }
 
