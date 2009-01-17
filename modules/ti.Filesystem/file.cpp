@@ -3,7 +3,7 @@
  * see LICENSE in the root folder for details on the license.
  * Copyright (c) 2009 Appcelerator, Inc. All Rights Reserved.
  */
-#include "File.h"
+#include "file.h"
 
 #include <Poco/File.h>
 #include <Poco/FileStream.h>
@@ -36,11 +36,11 @@ namespace ti
 		KR_DECREF(global);
 	}
 
-	void File::ToString(const ValueList& args, Value *result)
+	void File::ToString(const ValueList& args, SharedValue result)
 	{
-		result->Set(this->filename);
+		result->SetString(this->filename.c_str());
 	}
-	void File::IsFile(const ValueList& args, Value *result)
+	void File::IsFile(const ValueList& args, SharedValue result)
 	{
 		bool isFile = false;
 
@@ -54,9 +54,9 @@ namespace ti
 			std::cerr << "Problem getting file info:::: " << exc.displayText() << std::endl;
 		}
 
-		result->Set(isFile);
+		result->SetBool(isFile);
 	}
-	void File::IsDirectory(const ValueList& args, Value *result)
+	void File::IsDirectory(const ValueList& args, SharedValue result)
 	{
 		bool isDir = false;
 
@@ -70,9 +70,9 @@ namespace ti
 			std::cerr << "Problem getting file info:::: " << exc.displayText() << std::endl;
 		}
 
-		result->Set(isDir);
+		result->SetBool(isDir);
 	}
-	void File::IsHidden(const ValueList& args, Value *result)
+	void File::IsHidden(const ValueList& args, SharedValue result)
 	{
 		bool isHidden = false;
 
@@ -86,9 +86,9 @@ namespace ti
 			std::cerr << "Problem getting file info:::: " << exc.displayText() << std::endl;
 		}
 
-		result->Set(isHidden);
+		result->SetBool(isHidden);
 	}
-	void File::IsSymbolicLink(const ValueList& args, Value *result)
+	void File::IsSymbolicLink(const ValueList& args, SharedValue result)
 	{
 		bool isLink = false;
 
@@ -102,9 +102,9 @@ namespace ti
 			std::cerr << "Problem getting file info:::: " << exc.displayText() << std::endl;
 		}
 
-		result->Set(isLink);
+		result->SetBool(isLink);
 	}
-	void File::Exists(const ValueList& args, Value *result)
+	void File::Exists(const ValueList& args, SharedValue result)
 	{
 		bool exists = false;
 
@@ -118,9 +118,9 @@ namespace ti
 			std::cerr << "Problem getting file info:::: " << exc.displayText() << std::endl;
 		}
 
-		result->Set(exists);
+		result->SetBool(exists);
 	}
-	void File::Read(const ValueList& args, Value *result)
+	void File::Read(const ValueList& args, SharedValue result)
 	{
 		try
 		{
@@ -139,7 +139,7 @@ namespace ti
 					contents.append(s);
 				}
 
-				result->Set(contents);
+				result->SetString(contents.c_str());
 			}
 			else
 			{
@@ -153,7 +153,7 @@ namespace ti
 			result->SetNull();
 		}
 	}
-	void File::Copy(const ValueList& args, Value *result)
+	void File::Copy(const ValueList& args, SharedValue result)
 	{
 		bool success = false;
 
@@ -173,9 +173,9 @@ namespace ti
 			std::cerr << "Problem copying file:::: " << exc.displayText() << std::endl;
 		}
 
-		result->Set(success);
+		result->SetBool(success);
 	}
-	void File::Move(const ValueList& args, Value *result)
+	void File::Move(const ValueList& args, SharedValue result)
 	{
 		bool success = false;
 
@@ -195,9 +195,9 @@ namespace ti
 			std::cerr << "Problem moving file:::: " << exc.displayText() << std::endl;
 		}
 
-		result->Set(success);
+		result->SetBool(success);
 	}
-	void File::CreateDirectoryX(const ValueList& args, Value *result)
+	void File::CreateDirectoryX(const ValueList& args, SharedValue result)
 	{
 		bool created = false;
 
@@ -228,9 +228,9 @@ namespace ti
 			std::cerr << "Problem creating directory:::: " << exc.displayText() << std::endl;
 		}
 
-		result->Set(created);
+		result->SetBool(created);
 	}
-	void File::DeleteDirectory(const ValueList& args, Value *result)
+	void File::DeleteDirectory(const ValueList& args, SharedValue result)
 	{
 		bool deleted = false;
 
@@ -256,9 +256,9 @@ namespace ti
 			std::cerr << "Problem deleting directory:::: " << exc.displayText() << std::endl;
 		}
 
-		result->Set(deleted);
+		result->SetBool(deleted);
 	}
-	void File::DeleteFileX(const ValueList& args, Value *result)
+	void File::DeleteFileX(const ValueList& args, SharedValue result)
 	{
 		bool deleted = false;
 
@@ -278,9 +278,9 @@ namespace ti
 			std::cerr << "Problem deleting file:::: " << exc.displayText() << std::endl;
 		}
 
-		result->Set(deleted);
+		result->SetBool(deleted);
 	}
-	void File::GetDirectoryListing(const ValueList& args, Value *result)
+	void File::GetDirectoryListing(const ValueList& args, SharedValue result)
 	{
 		try
 		{
@@ -291,15 +291,16 @@ namespace ti
 				std::vector<std::string> files;
 				dir.list(files);
 
-				StaticBoundList *fileList = new StaticBoundList();
+				SharedPtr<StaticBoundList> fileList = new StaticBoundList();
 
 				for(int i = 0; i < files.size(); i++)
 				{
-					Value *value = new Value(files.at(i));
+					SharedValue value = new Value(files.at(i));
 					fileList->Append(value);
 				}
 
-				result->Set(fileList);
+				SharedPtr<BoundList> list = fileList;
+				result->SetList(list);
 			}
 			else
 			{

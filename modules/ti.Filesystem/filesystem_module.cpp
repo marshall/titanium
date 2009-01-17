@@ -22,7 +22,6 @@ namespace ti
 		// set our ti.Filesystem
 		Value *value = new Value(this->variables);
 		host->GetGlobalObject()->Set("Filesystem",value);
-		KR_DECREF(value);
 	}
 
 	void FilesystemModule::Destroy()

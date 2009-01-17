@@ -59,7 +59,7 @@
 #include "strtoofft.h"
 #include "urldata.h"
 #include <curl/curl.h>
-#include <curl/local_handler.h>
+#include "local_handler.h"
 #include "progress.h"
 #include "sendf.h"
 #include "escape.h"
@@ -95,7 +95,11 @@ struct Curl_local_handler * get_local_handler(const char *proto)
 	int i = 0;
 	for (; i < local_handlers_size; i++) {
 		struct Curl_local_handler *handler = local_handlers[i];
+#if defined(WIN32)
 		if (handler && handler->protocol && _stricmp(handler->protocol, proto) == 0) {
+#else
+		if (handler && handler->protocol && strcasecmp(handler->protocol, proto) == 0) {
+#endif
 			return handler;
 		}
 	}

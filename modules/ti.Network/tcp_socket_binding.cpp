@@ -27,7 +27,7 @@ namespace ti
 		}
 		KR_DECREF(this->callback);
 	}
-	void TCPSocketBinding::Connect(const ValueList& args, Value *result)
+	void TCPSocketBinding::Connect(const ValueList& args, SharedValue result)
 	{
 		if (this->opened)
 		{
@@ -73,29 +73,30 @@ namespace ti
 			Value* value = new Value(s);
 			ValueList* args = new ValueList;
 			args->push_back(value);
-			kroll::InvokeMethodOnMainThread(this->callback,args);
+//FIXME:!
+//			SharedBoundMethod p = this->callback;
+//			kroll::InvokeMethodOnMainThread(p,args);
 			delete args;
-			KR_DECREF(value);
 		}
 		catch(...)
 		{
 			std::cerr << "Network error TCPSocketBinding::OnRead" << std::endl;
 		}
 	}
-	void TCPSocketBinding::Write(const ValueList& args, Value *result)
+	void TCPSocketBinding::Write(const ValueList& args, SharedValue result)
 	{
 		if (!this->opened)
 		{
-			Value *exception = new Value("socket is closed");
+			SharedValue exception = new Value("socket is closed");
 			throw exception;
 			return;
 		}
 		std::string buf = args.at(0)->ToString();
 		int count = this->socket.sendBytes(buf.c_str(),buf.length());
 		std::cout << "count = " << count << std::endl;
-		result->Set(count);
+		result->SetInt(count);
 	}
-	void TCPSocketBinding::Close(const ValueList& args, Value *result)
+	void TCPSocketBinding::Close(const ValueList& args, SharedValue result)
 	{
 		if (this->opened)
 		{

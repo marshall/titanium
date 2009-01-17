@@ -10,18 +10,22 @@
 #include <api/module.h>
 #include <api/binding/binding.h>
 
+using namespace kroll;
+
 namespace ti
 {
 	class GrowlBinding : public StaticBoundObject
 	{
+		friend class SharedPtr;
+
 	public:
-		GrowlBinding(BoundObject*);
+		GrowlBinding(SharedBoundObject);
 	protected:
 		virtual ~GrowlBinding();
 	private:
-		BoundObject *global;
+		kroll::SharedBoundObject global;
 
-		void ShowNotification(const ValueList& args, Value *result);
+		void ShowNotification(const ValueList& args, SharedValue result);
 	};
 }
 

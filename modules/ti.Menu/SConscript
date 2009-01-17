@@ -2,11 +2,14 @@
 import os
 
 Import("tiBuild")
-Import('build')
 
 env = tiBuild.env.Clone();
-env.Append(CPPDEFINES = {'TITANIUM_API_EXPORT' : 1})
+env.Append(CPPDEFINES = {'TITANIUM_MENU_API_EXPORT' : 1})
 env.Append(CPPPATH = ['#kroll'])
+tiBuild.add_thirdparty(env, 'poco')
+
+if tiBuild.is_osx():
+	env.Append(FRAMEWORKS = ['Cocoa'])
 
 
 s = env.SharedLibrary(target = tiBuild.dir + '/timenumodule', source = Glob('*.cpp'))

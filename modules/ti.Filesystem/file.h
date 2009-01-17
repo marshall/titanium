@@ -31,7 +31,7 @@ namespace ti
 			 * Returns:
 			 *   the file name
 			 */
-			void ToString(const ValueList& args, Value *result);
+			void ToString(const ValueList& args, SharedValue result);
 			/**
 			 * Function: IsFile
 			 *   Determines if this File represents a file
@@ -41,7 +41,7 @@ namespace ti
 			 * Returns:
 			 *   true if this File repesents a file; false otherwise
 			 */
-			void IsFile(const ValueList& args, Value *result);
+			void IsFile(const ValueList& args, SharedValue result);
 			/**
 			 * Function: IsDirectory
 			 *   Determines if this File represents a directory
@@ -51,7 +51,7 @@ namespace ti
 			 * Returns:
 			 *   true if this File represents a directory; false otherwise
 			 */
-			void IsDirectory(const ValueList& args, Value *result);
+			void IsDirectory(const ValueList& args, SharedValue result);
 			/**
 			 * Function: IsHidden
 			 *   Determines if this File represents a hidden file or directory
@@ -61,7 +61,7 @@ namespace ti
 			 * Returns:
 			 *   true if this File is hidden; false otherwise
 			 */
-			void IsHidden(const ValueList& args, Value *result);
+			void IsHidden(const ValueList& args, SharedValue result);
 			/**
 			 * Function: IsSymbolicLink
 			 *   Determines if this File represents a symbolic link
@@ -71,7 +71,7 @@ namespace ti
 			 * Returns:
 			 *   true if this File is a symbolic link; false otherwise
 			 */
-			void IsSymbolicLink(const ValueList& args, Value *result);
+			void IsSymbolicLink(const ValueList& args, SharedValue result);
 			/**
 			 * Function: Exists
 			 *   Determines if this File represents an existing file or directory
@@ -81,7 +81,7 @@ namespace ti
 			 * Returns:
 			 *   true if this File exists; false otherwise
 			 */
-			void Exists(const ValueList& args, Value *result);
+			void Exists(const ValueList& args, SharedValue result);
 			/**
 			 * Function: Read
 			 *   Reads the contents of this File
@@ -91,7 +91,7 @@ namespace ti
 			 * Returns:
 			 *   the text file contents as a string
 			 */
-			void Read(const ValueList& args, Value *result);
+			void Read(const ValueList& args, SharedValue result);
 			/**
 			 * Function: Copy
 			 *   Copies this file or directory to a given destination
@@ -105,7 +105,7 @@ namespace ti
 			 * Returns:
 			 *   true if the copy operation is successful; false otherwise
 			 */
-			void Copy(const ValueList& args, Value *result);
+			void Copy(const ValueList& args, SharedValue result);
 			/**
 			 * Function: Move
 			 *   Moves this file or directory to the given destination
@@ -116,7 +116,7 @@ namespace ti
 			 * Returns:
 			 *   true if the move operation is successful; false otherwise
 			 */
-			void Move(const ValueList& args, Value *result);
+			void Move(const ValueList& args, SharedValue result);
 			/**
 			 * Function: CreateDirectory
 			 *   Creates this directory
@@ -127,7 +127,7 @@ namespace ti
 			 * Returns:
 			 *   true if the directory is created; false otherwise
 			 */
-			void CreateDirectoryX(const ValueList& args, Value *result);
+			void CreateDirectoryX(const ValueList& args, SharedValue result);
 			/**
 			 * Function: DeleteDirectory
 			 *   Deletes this directory
@@ -138,7 +138,7 @@ namespace ti
 			 * Returns:
 			 *   true if the directory is deleted; false otherwise
 			 */
-			void DeleteDirectory(const ValueList& args, Value *result);
+			void DeleteDirectory(const ValueList& args, SharedValue result);
 			/**
 			 * Function: DeleteFile
 			 *   Deletes this file
@@ -148,7 +148,7 @@ namespace ti
 			 * Returns:
 			 *   true if the file is deleted; false otherwise
 			 */
-			void DeleteFileX(const ValueList& args, Value *result);
+			void DeleteFileX(const ValueList& args, SharedValue result);
 			/**
 			 * Function: GetDirectoryListing
 			 *   Gets a list of files/directories under this directory
@@ -158,7 +158,7 @@ namespace ti
 			 * Returns:
 			 *   An array of file/directory names under this directory.
 			 */
-			void GetDirectoryListing(const ValueList& args, Value *result);
+			void GetDirectoryListing(const ValueList& args, SharedValue result);
 			/**
 			 * Function: Trash
 			 *
@@ -167,6 +167,9 @@ namespace ti
 			 * Returns:
 			 *   true if the file or directory is moved to the trash; false otherwise
 			 */
+
+
+			//void IsDirectory(const ValueList& args, SharedValue result);
 	};
 }
 

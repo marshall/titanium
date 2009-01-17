@@ -13,29 +13,26 @@ namespace ti
 	NetworkBinding::NetworkBinding(BoundObject *global) : global(global)
 	{
 		KR_ADDREF(global);
+		
+		// TODO: this state change needs to be implemented
+		SharedValue online = new Value(true);
+		this->Set("online",online);
+		
+		this->SetMethod("onConnectivityChange",&NetworkBinding::OnConnectivityChange);
 		this->SetMethod("createTCPSocket",&NetworkBinding::Create);
 	}
 	NetworkBinding::~NetworkBinding()
 	{
 		KR_DECREF(global);
 	}
-	void NetworkBinding::Create(const ValueList& args, Value *result)
+	void NetworkBinding::Create(const ValueList& args, SharedValue result)
 	{
 		BoundObject *tcp = new TCPSocketBinding(args.at(0)->ToString(), args.at(1)->ToInt());
-		result->Set(tcp);
+		result->SetObject(tcp);
 		KR_DECREF(tcp);
-
-		// SocketAddress addr("localhost",80);
-		// StreamSocket *sock = new StreamSocket();
-		// sock->connect(addr);
-		// std::string buf("GET / HTTP/1.0\r\n\r\n");
-		// int count = sock->sendBytes(buf.c_str(),buf.length());
-		// std::cout << "count = " << count << std::endl;
-		// char rbuf[4000];
-		// int rcount = sock->receiveBytes(&rbuf,4000);
-		// rbuf[rcount]='\0';
-		// std::cout << "received = " << rbuf << std::endl;
-		// sock->close();
-		// delete sock;
+	}
+	void NetworkBinding::OnConnectivityChange(const ValueList& args, SharedValue result)
+	{
+		//TODO: implement
 	}
 }

@@ -20,9 +20,9 @@ namespace ti
 		virtual ~FilesystemBinding();
 	private:
 		BoundObject *global;
-		void CreateTempFile(const ValueList& args, Value *result);
-		void CreateTempDirectory(const ValueList& args, Value *result);
-		void GetFile(const ValueList& args, Value *result);
+		void CreateTempFile(const ValueList& args, SharedValue result);
+		void CreateTempDirectory(const ValueList& args, SharedValue result);
+		void GetFile(const ValueList& args, SharedValue result);
 	};
 }
 

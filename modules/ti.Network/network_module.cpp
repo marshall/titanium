@@ -22,7 +22,6 @@ namespace ti
 		// set our ti.Network
 		Value *value = new Value(this->variables);
 		host->GetGlobalObject()->Set("Network",value);
-		KR_DECREF(value);
 	}
 
 	void NetworkModule::Destroy()

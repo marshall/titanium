@@ -21,11 +21,11 @@ namespace ti
 		virtual ~AppBinding();
 	private:
 		BoundObject *global;
-		void GetID(const ValueList& args, Value *result);
-		void GetName(const ValueList& args, Value *result);
-		void GetVersion(const ValueList& args, Value *result);
-		void GetUpdateURL(const ValueList& args, Value *result);
-		void GetGUID(const ValueList& args, Value *result);
+		void GetID(const ValueList& args, SharedValue result);
+		void GetName(const ValueList& args, SharedValue result);
+		void GetVersion(const ValueList& args, SharedValue result);
+		void GetUpdateURL(const ValueList& args, SharedValue result);
+		void GetGUID(const ValueList& args, SharedValue result);
 	};
 }
 
