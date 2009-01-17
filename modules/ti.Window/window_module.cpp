@@ -50,14 +50,14 @@ namespace ti
 			std::cerr << "Error loading tiapp.xml. Your application window is not properly configured or packaged." << std::endl;
 			return;
 		}
-		
+
 		// add some titanium specific global info here
 		BoundObject* global = this->host->GetGlobalObject();
-		
+
 		// version
 		Value *version = new Value(0.2); // FIXME: for now this is hardcoded
 		global->Set("version",version);
-		
+
 		// platform
 		Value *platform = NULL;
 #if defined(OS_LINUX)
@@ -78,6 +78,6 @@ namespace ti
 
 	void WindowModule::Destroy()
 	{
-Z		KR_DECREF(this->runtime);
+		KR_DECREF(this->runtime);
 	}
 }
