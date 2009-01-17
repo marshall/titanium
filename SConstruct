@@ -4,36 +4,20 @@
 import os, re, sys, inspect, os.path as path
 import subprocess
 
-install_prefix = '/usr/local'
-product_name = 'Titanium'
-global_variable_name = 'ti'
-config_filename = 'tiapp.xml'
+sys.path.append(path.abspath('.')+'/kroll')
+from build.common import BuildConfig
 
-vars = Variables()
-vars.Add('PRODUCT_NAME', 'The underlying product name that Kroll will display (default: "Kroll")', product_name)
-vars.Add('INSTALL_PREFIX', 'The install prefix of binaries in the system (default: /usr/local)', install_prefix)
-vars.Add('GLOBAL_NS_VARNAME','The name of the Kroll global variable', global_variable_name)
-vars.Add('CONFIG_FILENAME','The name of the Kroll config file', config_filename)
+build = BuildConfig(
+	INSTALL_PREFIX = '/usr/local',
+	PRODUCT_NAME = 'Titanium',
+	GLOBAL_NS_VARNAME = 'ti',
+	CONFIG_FILENAME = 'tiapp.xml',
+	BUILD_DIR = path.abspath('build'),
+	THIRD_PARTY_DIR = path.join(path.abspath('kroll'), 'thirdparty')
+)
 
-class BuildConfig(object): 
-	def __init__(self):
-		if not hasattr(os, 'uname') or self.matches('CYGWIN'):
-			self.os = 'win32'
-		elif self.matches('Darwin'):
-			self.os = 'osx'
-		elif self.matches('Linux'):
-			self.os = 'linux'
-
-	def matches(self, n): return bool(re.match(os.uname()[0], n))
-	def is_linux(self): return self.os == 'linux'
-	def is_osx(self): return self.os == 'osx'
-	def is_win32(self): return self.os == 'win32'
-
-build = BuildConfig()
-build.dir = path.abspath('build/' + build.os)
 build.titanium_source_dir = path.abspath('.')
 build.kroll_source_dir = path.abspath('kroll')
-build.third_party = path.join(build.kroll_source_dir, 'thirdparty', build.os)
 build.kroll_third_party = build.third_party
 build.kroll_include_dir = path.join(build.dir, 'include')
 
@@ -42,20 +26,12 @@ build.kroll_include_dir = path.join(build.dir, 'include')
 # should instead be built to build.dir
 build.kroll_build_dir = path.join(build.kroll_source_dir, 'build')
 
-build.env = Environment(variables=vars)
-build.env.Append(CPPDEFINES = {
-	'OS_' + build.os.upper(): 1,
-	'_INSTALL_PREFIX': '${INSTALL_PREFIX}',
-	'_PRODUCT_NAME': '${PRODUCT_NAME}',
-	'_GLOBAL_NS_VARNAME': '${GLOBAL_NS_VARNAME}',
-	'_CONFIG_FILENAME' : '${CONFIG_FILENAME}'
-	})
-
 build.env.Append(CPPPATH=[
 	build.titanium_source_dir,
 	build.kroll_source_dir,
 	build.kroll_include_dir
 ])
+
 build.env.Append(LIBPATH=[build.dir])
 
 #
