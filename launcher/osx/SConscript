@@ -1,16 +1,10 @@
 #!/usr/bin/env python
 import os.path as path
 Import('tiBuild')
-
-
-OSX_SDK = '/Developer/SDKs/MacOSX10.4u.sdk'
-OSX_UNIV_COMPILER = '-isysroot '+OSX_SDK+' -arch i386'
-OSX_UNIV_LINKER = '-isysroot '+OSX_SDK+' -syslibroot,'+OSX_SDK
+Import('build')
 
 Env = tiBuild.env.Clone()
-Env.Append(FRAMEWORKS=['Foundation','Cocoa'])
-Env.Append(CCFLAGS=OSX_UNIV_COMPILER)
-Env.Append(LDFLAGS=OSX_UNIV_LINKER)
+Env.Append(FRAMEWORKS=['Cocoa'])
 
 s = Env.Program(tiBuild.dir + '/klaunch', Glob('*.m') + Glob('*.cpp'))
 

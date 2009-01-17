@@ -11,7 +11,6 @@ namespace ti
 {
 	AppBinding::AppBinding(BoundObject *global) : global(global)
 	{
-		KR_ADDREF(global);
 		this->SetMethod("getID",&AppBinding::GetID);
 		this->SetMethod("getName",&AppBinding::GetName);
 		this->SetMethod("getVersion",&AppBinding::GetVersion);
@@ -20,25 +19,24 @@ namespace ti
 	}
 	AppBinding::~AppBinding()
 	{
-		KR_DECREF(global);
 	}
-	void AppBinding::GetID(const ValueList& args, Value *result)
+	void AppBinding::GetID(const ValueList& args, SharedValue result)
 	{
-		result->Set(AppConfig::Instance()->GetAppID());
+		result->SetString(AppConfig::Instance()->GetAppID().c_str());
 	}
-	void AppBinding::GetName(const ValueList& args, Value *result)
+	void AppBinding::GetName(const ValueList& args, SharedValue result)
 	{
-		result->Set(AppConfig::Instance()->GetAppName());
+		result->SetString(AppConfig::Instance()->GetAppName().c_str());
 	}
-	void AppBinding::GetVersion(const ValueList& args, Value *result)
+	void AppBinding::GetVersion(const ValueList& args, SharedValue result)
 	{
-		result->Set(AppConfig::Instance()->GetVersion());
+		result->SetString(AppConfig::Instance()->GetVersion().c_str());
 	}
-	void AppBinding::GetUpdateURL(const ValueList& args, Value *result)
+	void AppBinding::GetUpdateURL(const ValueList& args, SharedValue result)
 	{
-		result->Set(AppConfig::Instance()->GetUpdateSite());
+		result->SetString(AppConfig::Instance()->GetUpdateSite().c_str());
 	}
-	void AppBinding::GetGUID(const ValueList& args, Value *result)
+	void AppBinding::GetGUID(const ValueList& args, SharedValue result)
 	{
 		//FIXME: implement this
 	}
