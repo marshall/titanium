@@ -78,6 +78,6 @@ namespace ti
 
 	void WindowModule::Destroy()
 	{
-Z		KR_DECREF(this->runtime);
+		KR_DECREF(this->runtime);
 	}
 }

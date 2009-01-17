@@ -323,25 +323,23 @@
 	id newti = [windowScriptObject evaluateWebScript:@"Titanium = new Object;"];
 	KR_UNUSED(newti); //FIXME: release?
 	WebScriptObject* tiJS = [windowScriptObject valueForKey:@"Titanium"];
-	std::vector<const char*> properties;
-	ti->GetPropertyNames(&properties);
-	std::vector<const char*>::iterator iter = properties.begin();
-	while(iter!=properties.end())
+	SharedStringList properties = ti->GetPropertyNames();
+	for (size_t i = 0; i < properties->size(); i++)
 	{
-		const char* key = (*iter++);
-		// skip these...
-		if (strcmp(key,"ti")==0) continue;
-		Value *value = ti->Get(key);
+		SharedString skey = properties->at(i);
+		std::string key = *skey;
+		if (key == "ti") continue;
+		SharedValue value = ti->Get(key.c_str());
 		@try
 		{
-			NSString *k = [NSString stringWithCString:key];
+			NSString *k = [NSString stringWithCString:key.c_str()];
 			id wrapped = [ObjcBoundObject ValueToID:value key:k context:context];
 			[tiJS setValue:wrapped forKey:k];
 //			[wrapped release];
 		}
 		@catch(id ex)
 		{
-			NSLog(@"exception caught binding ti.%s => %@",key,ex);
+			NSLog(@"exception caught binding ti.%s => %@",key.c_str(),ex);
 		}
 	}
 	//NOTE: don't release tiJS or newti

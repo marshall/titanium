@@ -7,6 +7,7 @@
 #ifndef TI_OSX_PREINCLUDE
 #define TI_OSX_PREINCLUDE
 
+/*
 #if __LP64__
 	#define NSInteger long
 	#define NSUInteger unsigned long
@@ -22,6 +23,7 @@ typedef unsigned int WebNSUInteger;
 typedef NSInteger WebNSInteger;
 typedef NSUInteger WebNSUInteger;
 #endif
+*/
 
 #import <kroll/kroll.h>
 #import "../window_module.h"
