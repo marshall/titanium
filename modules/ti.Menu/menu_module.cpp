@@ -22,7 +22,6 @@ namespace ti
 		// set our ti.Menu
 		Value *value = new Value(this->variables);
 		host->GetGlobalObject()->Set("Menu",value);
-		KR_DECREF(value);
 	}
 
 	void MenuModule::Destroy()

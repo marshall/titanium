@@ -20,9 +20,9 @@ namespace ti
 		virtual ~MenuBinding();
 	private:
 		BoundObject *global;
-		void CreateAppMenu(const ValueList& args, Value *result);
-		void CreateTrayMenu(const ValueList& args, Value *result);
-		void CreateDockMenu(const ValueList& args, Value *result);
+		void CreateAppMenu(const ValueList& args, SharedValue result);
+		void CreateTrayMenu(const ValueList& args, SharedValue result);
+		void CreateDockMenu(const ValueList& args, SharedValue result);
 	};
 }
 

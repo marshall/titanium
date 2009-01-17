@@ -15,9 +15,8 @@ namespace ti
 		KR_ADDREF(global);
 		
 		// TODO: this state change needs to be implemented
-		Value *online = new Value(true);
+		SharedValue online = new Value(true);
 		this->Set("online",online);
-		KR_DECREF(online);
 		
 		this->SetMethod("onConnectivityChange",&NetworkBinding::OnConnectivityChange);
 		this->SetMethod("createTCPSocket",&NetworkBinding::Create);
@@ -26,13 +25,13 @@ namespace ti
 	{
 		KR_DECREF(global);
 	}
-	void NetworkBinding::Create(const ValueList& args, Value *result)
+	void NetworkBinding::Create(const ValueList& args, SharedValue result)
 	{
 		BoundObject *tcp = new TCPSocketBinding(args.at(0)->ToString(), args.at(1)->ToInt());
-		result->Set(tcp);
+		result->SetObject(tcp);
 		KR_DECREF(tcp);
 	}
-	void NetworkBinding::OnConnectivityChange(const ValueList& args, Value *result)
+	void NetworkBinding::OnConnectivityChange(const ValueList& args, SharedValue result)
 	{
 		//TODO: implement
 	}

@@ -49,9 +49,9 @@ namespace ti
 		bool opened;
 		BoundMethod *callback;
 
-		void Connect(const ValueList& args, Value *result);
-		void Write(const ValueList& args, Value *result);
-		void Close(const ValueList& args, Value *result);
+		void Connect(const ValueList& args, SharedValue result);
+		void Write(const ValueList& args, SharedValue result);
+		void Close(const ValueList& args, SharedValue result);
 
 		void OnRead(const Poco::AutoPtr<ReadableNotification>& n);
 	};
