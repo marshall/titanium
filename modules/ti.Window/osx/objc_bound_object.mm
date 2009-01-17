@@ -27,7 +27,7 @@
 	}
 	if (value->IsString())
 	{
-		return [NSString stringWithCString:value->ToString().c_str()];
+		return [NSString stringWithCString:value->ToString()];
 	}
 	if (value->IsInt())
 	{
@@ -73,11 +73,11 @@
 	 */
 	if (arg == nil)
 	{
-	  return Value::Null();
+	  return Value::Null;
 	}
 	if (arg == [WebUndefined undefined])
 	{
-	  return Value::Undefined();
+	  return Value::Undefined;
 	}
 	if ([arg isKindOfClass:[NSNumber class]])
 	{
@@ -109,10 +109,8 @@
 			id value = [args objectAtIndex:c];
 			Value *v = [ObjcBoundObject IDToValue:value context:context];
 			list->Append(v);
-			KR_DECREF(v);
 		}
 		Value *result = new Value(list);
-		KR_DECREF(list);
 		return result;
 	}
 	if ([arg isKindOfClass:[ObjcBoundObject class]])
@@ -167,7 +165,7 @@
 	  	ScopedDereferencer r(object);
 	  	return new Value(object);
 	}  
-	return Value::Undefined();
+	return Value::Undefined;
 }
 -(id)initWithObject:(BoundObject*)obj key:(NSString*)k context:(JSContextRef)ctx
 {
@@ -203,9 +201,8 @@
 	if (toString && toString->IsMethod())
 	{
 		ValueList args;
-		Value *result = toString->ToMethod()->Call(args);
-		ScopedDereferencer r(result);
-		return [NSString stringWithCString:result->ToString().c_str()];
+		SharedValue result = toString->ToMethod()->Call(args);
+		return [NSString stringWithCString:result->ToString()];
 	}
 	return [NSString stringWithFormat:@"[ObjcBoundObject:%@ native]",key];
 }
@@ -233,12 +230,10 @@
 {
 	Value* v = [ObjcBoundObject IDToValue:value context:context];
 	object->Set([k UTF8String],v);
-	KR_DECREF(v);
 }
 - (id)valueForUndefinedKey:(NSString *)k
 {
 	Value *result = object->Get([k UTF8String]);
-	ScopedDereferencer r(result);
 	return [ObjcBoundObject ValueToID:result key:k context:context];
 }
 -(id)invokeDefaultMethodWithArguments:(NSArray*)args
@@ -254,14 +249,13 @@
 			a.push_back(arg);
 		}
 		Value *result = method->Call(a);
-		ScopedDereferencer r(result);
 		return [ObjcBoundObject ValueToID:result key:@"" context:context];
 	}
 	return [WebUndefined undefined];
 }
 -(id)invokeUndefinedMethodFromWebScript:(NSString *)name withArguments:(NSArray*)args
 {
-	Value *value = object->Get([name UTF8String]);
+	SharedValue value = object->Get([name UTF8String]);
 	if (value->IsMethod())
 	{
 		ValueList a;
@@ -273,7 +267,6 @@
 		}
 		BoundMethod *method = value->ToMethod();
 		Value *result = method->Call(a);
-		ScopedDereferencer r(result);
 		return [ObjcBoundObject ValueToID:result key:name context:context];
 	}
 	return [WebUndefined undefined];
