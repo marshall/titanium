@@ -44,17 +44,14 @@ namespace ti
 			const char *v = host->GetCommandLineArg(c);
 			Value *value = new Value(v);
 			args->Append(value);
-			KR_DECREF(value);
 		}
 		Value *argsvalue = new Value(args);
 		this->variables->Set("commandline",argsvalue);
 		KR_DECREF(args);
-		KR_DECREF(argsvalue);
 		
 		// set our ti.App
 		Value *value = new Value(this->variables);
 		host->GetGlobalObject()->Set("App",value);
-		KR_DECREF(value);
 	}
 
 	void AppModule::Destroy()

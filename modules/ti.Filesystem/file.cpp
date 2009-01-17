@@ -25,11 +25,11 @@ namespace ti
 		KR_DECREF(global);
 	}
 
-	void File::ToString(const ValueList& args, Value *result)
+	void File::ToString(const ValueList& args, SharedValue result)
 	{
-		result->Set(this->filename);
+		result->SetString(this->filename.c_str());
 	}
-	void File::IsFile(const ValueList& args, Value *result)
+	void File::IsFile(const ValueList& args, SharedValue result)
 	{
 		bool isFile = false;
 
@@ -43,9 +43,9 @@ namespace ti
 			std::cerr << "Problem getting file info:::: " << exc.displayText() << std::endl;
 		}
 
-		result->Set(isFile);
+		result->SetBool(isFile);
 	}
-	void File::IsDirectory(const ValueList& args, Value *result)
+	void File::IsDirectory(const ValueList& args, SharedValue result)
 	{
 		bool isDir = false;
 
@@ -59,9 +59,9 @@ namespace ti
 			std::cerr << "Problem getting file info:::: " << exc.displayText() << std::endl;
 		}
 
-		result->Set(isDir);
+		result->SetBool(isDir);
 	}
-	void File::IsHidden(const ValueList& args, Value *result)
+	void File::IsHidden(const ValueList& args, SharedValue result)
 	{
 		bool isHidden = false;
 
@@ -75,6 +75,6 @@ namespace ti
 			std::cerr << "Problem getting file info:::: " << exc.displayText() << std::endl;
 		}
 
-		result->Set(isHidden);
+		result->SetBool(isHidden);
 	}
 }

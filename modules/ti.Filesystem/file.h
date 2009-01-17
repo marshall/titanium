@@ -21,10 +21,10 @@ namespace ti
 			BoundObject *global;
 			std::string filename;
 
-			void IsFile(const ValueList& args, Value *result);
-			void IsDirectory(const ValueList& args, Value *result);
-			void IsHidden(const ValueList& args, Value *result);
-			void ToString(const ValueList& args, Value *result);
+			void IsFile(const ValueList& args, SharedValue result);
+			void IsDirectory(const ValueList& args, SharedValue result);
+			void IsHidden(const ValueList& args, SharedValue result);
+			void ToString(const ValueList& args, SharedValue result);
 	};
 }
 
