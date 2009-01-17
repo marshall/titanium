@@ -47,14 +47,14 @@ namespace ti
 {
 	class #{module_name}Binding : public StaticBoundObject
 	{
-	  friend class SharedPtr<BoundObject>;
+	  friend class SharedPtr;
 	  
 	public:
-		#{module_name}Binding(SharedPtr<BoundObject>);
+		#{module_name}Binding(SharedBoundObject);
 	protected:
 		virtual ~#{module_name}Binding();
 	private:
-		SharedPtr<BoundObject> global;
+		SharedBoundObject global;
 	};
 }
 
@@ -75,7 +75,7 @@ bc.puts <<-END
 
 namespace ti
 {
-	#{module_name}Binding::#{module_name}Binding(SharedPtr<BoundObject> global) : global(global)
+	#{module_name}Binding::#{module_name}Binding(SharedBoundObject global) : global(global)
 	{
 	}
 	#{module_name}Binding::~#{module_name}Binding()
@@ -119,7 +119,7 @@ namespace ti
 		void Test();
 
 	private:
-		SharedPtr<kroll::BoundObject> variables;
+		kroll::SharedBoundObject variables;
 	};
 
 }
@@ -151,7 +151,7 @@ namespace ti
 		this->variables = new #{module_name}Binding(host->GetGlobalObject());
 
 		// set our #{module_dir_name}
-		SharedPtr<Value> value = new Value(this->variables);
+		SharedValue value = new Value(this->variables);
 		host->GetGlobalObject()->Set("#{module_name}",value);
 	}
 

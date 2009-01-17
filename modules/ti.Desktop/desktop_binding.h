@@ -20,16 +20,16 @@ namespace ti
 	class DesktopBinding : public StaticBoundObject
 	{
 	public:
-		DesktopBinding(SharedPtr<BoundObject>);
+		DesktopBinding(SharedBoundObject);
 	protected:
 		virtual ~DesktopBinding();
 	private:
 		SharedPtr<BoundObject> global;
-		void CreateShortcut(const ValueList& args, SharedPtr<Value> result);
-		void OpenFiles(const ValueList& args, SharedPtr<Value> result);
-		void OpenApplication(const ValueList& args, SharedPtr<Value> result);
-		void OpenURL(const ValueList& args, SharedPtr<Value> result);
-		void GetSystemIdleTime(const ValueList& args, SharedPtr<Value> result);
+		void CreateShortcut(const ValueList& args, SharedValue result);
+		void OpenFiles(const ValueList& args, SharedValue result);
+		void OpenApplication(const ValueList& args, SharedValue result);
+		void OpenURL(const ValueList& args, SharedValue result);
+		void GetSystemIdleTime(const ValueList& args, SharedValue result);
 	};
 }
 

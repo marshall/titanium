@@ -12,12 +12,12 @@
 
 namespace ti
 {
-	GrowlBinding::GrowlBinding(SharedPtr<BoundObject> global) : global(global)
+	GrowlBinding::GrowlBinding(SharedBoundObject global) : global(global)
 	{
 		SetMethod("showNotification", &GrowlBinding::ShowNotification);
 	}
 
-	void GrowlBinding::ShowNotification(const ValueList& args, SharedPtr<Value> result)
+	void GrowlBinding::ShowNotification(const ValueList& args, SharedValue result)
 	{
 		std::string title = args.at(0)->ToString();
 		std::string description = args.at(1)->ToString();
