@@ -12,7 +12,7 @@ env = tiBuild.env.Clone();
 env.Append(LIBPATH=[poco_lib])
 env.Append(CPPPATH=[poco_inc])
 env.Append(LIBS=['PocoFoundation','PocoNet','PocoNetSSL'])
-env.Append(CPPDEFINES = {'TITANIUM_MEDIA_API_EXPORT' : 1})
+env.Append(CPPDEFINES = {'TITANIUM_NETWORK_API_EXPORT' : 1})
 
 if build.is_osx():
 	poco_inc = path.join(poco, 'headers')
