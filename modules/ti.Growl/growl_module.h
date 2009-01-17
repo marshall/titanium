@@ -31,7 +31,7 @@ namespace ti
 		void Test();
 
 	private:
-		kroll::BoundObject *variables;
+		SharedPtr<kroll::BoundObject> variables;
 	};
 
 }

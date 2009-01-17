@@ -15,13 +15,13 @@ namespace ti
 	class GrowlBinding : public StaticBoundObject
 	{
 	public:
-		GrowlBinding(BoundObject*);
+		GrowlBinding(SharedPtr<BoundObject>);
 	protected:
 		virtual ~GrowlBinding();
 	private:
-		BoundObject *global;
+		SharedPtr<BoundObject> global;
 
-		void ShowNotification(const ValueList& args, Value *result);
+		void ShowNotification(const ValueList& args, SharedPtr<Value> result);
 	};
 }
 

@@ -12,14 +12,12 @@
 
 namespace ti
 {
-	GrowlBinding::GrowlBinding(BoundObject *global) : global(global)
+	GrowlBinding::GrowlBinding(SharedPtr<BoundObject> global) : global(global)
 	{
-		KR_ADDREF(global);
-
 		SetMethod("showNotification", &GrowlBinding::ShowNotification);
 	}
 
-	void GrowlBinding::ShowNotification(const ValueList& args, Value *result)
+	void GrowlBinding::ShowNotification(const ValueList& args, SharedPtr<Value> result)
 	{
 		std::string title = args.at(0)->ToString();
 		std::string description = args.at(1)->ToString();
@@ -39,6 +37,5 @@ namespace ti
 
 	GrowlBinding::~GrowlBinding()
 	{
-		KR_DECREF(global);
 	}
 }
