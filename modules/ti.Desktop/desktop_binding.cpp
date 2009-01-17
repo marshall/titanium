@@ -12,7 +12,7 @@
 
 namespace ti
 {
-	DesktopBinding::DesktopBinding(SharedPtr<BoundObject> global) : global(global)
+	DesktopBinding::DesktopBinding(SharedBoundObject global) : global(global)
 	{
 		this->SetMethod("openApplication",&DesktopBinding::OpenApplication);
 		this->SetMethod("openURL",&DesktopBinding::OpenURL);
@@ -21,18 +21,18 @@ namespace ti
 	DesktopBinding::~DesktopBinding()
 	{
 	}
-	void DesktopBinding::CreateShortcut(const ValueList& args, SharedPtr<Value> result)
+	void DesktopBinding::CreateShortcut(const ValueList& args, SharedValue result)
 	{
 #ifdef OS_OSX
 		// http://www.mail-archive.com/cocoa-dev@lists.apple.com/msg18273.html
 #endif
 	}
-	void DesktopBinding::OpenFiles(const ValueList& args, SharedPtr<Value> result)
+	void DesktopBinding::OpenFiles(const ValueList& args, SharedValue result)
 	{
 #ifdef OS_OSX
 #endif
 	}
-	void DesktopBinding::OpenApplication(const ValueList& args, SharedPtr<Value> result)
+	void DesktopBinding::OpenApplication(const ValueList& args, SharedValue result)
 	{
 #ifdef OS_OSX
 		NSWorkspace * ws = [NSWorkspace sharedWorkspace];
@@ -40,7 +40,7 @@ namespace ti
 		result->SetBool(wasLaunched);
 #endif
 	}
-	void DesktopBinding::OpenURL(const ValueList& args, SharedPtr<Value> result)
+	void DesktopBinding::OpenURL(const ValueList& args, SharedValue result)
 	{
 #ifdef OS_OSX
 		NSWorkspace * ws = [NSWorkspace sharedWorkspace];
@@ -48,7 +48,7 @@ namespace ti
 		result->SetBool(wasOpened);
 #endif
 	}
-	void DesktopBinding::GetSystemIdleTime(const ValueList& args, SharedPtr<Value> result)
+	void DesktopBinding::GetSystemIdleTime(const ValueList& args, SharedValue result)
 	{
 #ifdef OS_OSX
 		// some of the code for this was from:

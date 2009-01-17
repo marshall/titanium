@@ -28,7 +28,7 @@ namespace ti
 		KROLL_MODULE_CLASS(DesktopModule)
 
 	private:
-		SharedPtr<kroll::BoundObject> variables;
+		SharedBoundObject variables;
 	};
 
 }

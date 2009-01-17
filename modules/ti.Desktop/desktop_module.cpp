@@ -20,7 +20,7 @@ namespace ti
 		this->variables = new DesktopBinding(host->GetGlobalObject());
 
 		// set our ti.Desktop
-		SharedPtr<Value> value = new Value(this->variables);
+		SharedValue value = new Value(this->variables);
 		host->GetGlobalObject()->Set("Desktop",value);
 	}
 
