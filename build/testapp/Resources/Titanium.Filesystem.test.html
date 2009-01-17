@@ -8,9 +8,11 @@
 				var s = '';
 
 				s += 'toString(): ' + f.toString() + '<br>';
+				s += 'exists: ' + f.exists() + '<br>';
 				s += 'file: ' + f.isFile() + '<br>';
 				s += 'directory: ' + f.isDirectory() + '<br>';
 				s += 'hidden: ' + f.isHidden() + '<br>';
+				s += 'link: ' + f.isSymbolicLink() + '<br>';
 
 				return s;
 			}
@@ -44,6 +46,102 @@
 
 				return s;
 			}
+			
+			function testCopy(from, to) {
+				var src = Titanium.Filesystem.getFile(from);
+				
+				var success = src.copy(to);
+				
+				var s = 'copy "' + from + '" to "' + to + '" [' + success + ']';
+				
+				return s;
+			}
+			
+			function testMove(from, to) {
+				var src = Titanium.Filesystem.getFile(from);
+				
+				var success = src.move(to);
+				
+				var s = 'move "' + from + '" to "' + to + '" [' + success + ']';
+				
+				return s;
+			}
+			
+			function testCreateDirectory(dirName, createParents) {
+				var dir = Titanium.Filesystem.getFile(dirName);
+				
+				var success;
+				
+				if(-1 == createParents) {
+					success= dir.createDirectory();
+				}
+				else {
+					success = dir.createDirectory(createParents);
+				}
+				
+				var s = 'create dir "' + dir + '" [' + success + ']';
+				
+				return s;
+			}
+			
+			function testDeleteDirectory(dirName, deleteContents) {
+				var dir = Titanium.Filesystem.getFile(dirName);
+				
+				var success;
+				
+				if(-1 == deleteContents) {
+					success = dir.deleteDirectory();
+				}
+				else {
+					success = dir.deleteDirectory(deleteContents);
+				}
+				
+				var s = 'delete dir "' + dir + '" [' + success + ']';
+				
+				return s;
+			}
+			
+			function testDeleteFile(filename) {
+				var f = Titanium.Filesystem.getFile(filename);
+				
+				var success = f.deleteFile();
+				
+				var s = 'delete file "' + filename + '" [' + success + ']';
+				
+				return s;
+			}
+			
+			function testDirectoryListing(dirname) {
+				var dir = Titanium.Filesystem.getFile(dirname);
+				
+				var s = 'Directory Listing "' + dirname + '":\n';
+				
+				var files = dir.getDirectoryListing();
+				
+				if(files == null) {
+					s += 'invalid location';
+				}
+				else {
+					s += files.length + ' files\n';
+					
+					for(i = 0; i < files.length; i++) {
+						s += '' + i + ': ' + files[i] + '\n';
+					}
+				}
+				s += '\n\n';
+				
+				var ta = document.getElementById('dirListing');
+				ta.value += s;
+			}
+			
+			function testRead(file) {
+				var f = Titanium.Filesystem.getFile(file);
+				
+				var contents = f.read();
+				
+				var ta = document.getElementById('fileContents');
+				ta.value += file + ':::\n' + contents + '\n\n';
+			}
 		</script>
 	</head>
 	<body>
@@ -52,19 +150,79 @@
 		Titanium.Filesystem = <script>document.write(Titanium.Filesystem);</script><br>
 		Titanium.Filesystem.createTempFile = <script>document.write(Titanium.Filesystem.createTempFile);</script><br>
 		Titanium.Filesystem.createTempDirectory = <script>document.write(Titanium.Filesystem.createTempDirectory);</script><br>
+		Titanium.Filesystem.getFile = <script>document.write(Titanium.Filesystem.getFile);</script><br>
+		
+		<script>var file = Titanium.Filesystem.getFile('c:\\dev\\TI.FS.Test\\');</script>
+		<br><br>
+		File.isFile = <script>document.write(file.isFile);</script><br>
+		File.isDirectory = <script>document.write(file.isDirectory);</script><br>
+		File.isHidden = <script>document.write(file.isHidden);</script><br>
+		File.isSymbolicLink = <script>document.write(file.isSymbolicLink);</script><br>
+		File.exists = <script>document.write(file.exists);</script><br>
+		File.read = <script>document.write(file.read);</script><br>
+		File.copy = <script>document.write(file.copy);</script><br>
+		File.move = <script>document.write(file.move);</script><br>
+		File.createDirectory = <script>document.write(file.createDirectory);</script><br>
+		File.deleteDirectory = <script>document.write(file.deleteDirectory);</script><br>
+		File.deleteFile = <script>document.write(file.deleteFile);</script><br>
+		File.getDirectoryListing = <script>document.write(file.getDirectoryListing);</script><br>
 
 		<br><br>
-		<script>document.write(testFS('c:\\dev\\test.txt'))</script>
+		<script>document.write(testFS('c:\\dev\\TI.FS.Test\\test.txt'))</script>
 		<br><br>
-		<script>document.write(testFS('c:\\dev\\hidden-file.txt'))</script>
+		<script>document.write(testFS('c:\\dev\\TI.FS.Test\\hidden-file.txt'))</script>
 		<br><br>
-		<script>document.write(testFS('c:\\dev\\'))</script>
+		<script>document.write(testFS('c:\\dev\\TI.FS.Test\\'))</script>
 		<br><br>
-		<script>document.write(testFS('c:\\dev\\bad\\doesntexist.txt'))</script>
+		<script>document.write(testFS('c:\\dev\\TI.FS.Test\\bad\\doesntexist.txt'))</script>
+		<br><br>
+		<script>document.write(testFS('completely bad file ..&& name'))</script>
 		<br><br>
 		<script>document.write(testCreateTempFile())</script>
 		<br><br>
 		<script>document.write(testCreateTempDir())</script>
+		<br><br>
+		<script>document.write(testCopy('c:\\dev\\TI.FS.Test\\test.txt', 'c:\\dev\\TI.FS.Test\\test-tiCopy.txt'))</script>
+		<br><br>
+		<script>document.write(testCopy('c:\\dev\\TI.FS.Test\\test.txt', 'c:\\dev\\TI.FS.Test\\testCopyFolder'))</script>
+		<br><br>
+		<script>document.write(testCopy('c:\\dev\\TI.FS.Test\\testCopyFolder', 'c:\\dev\\TI.FS.Test\\testCopyFolderDup'))</script>
+		<br><br>
+		<script>document.write(testCopy('c:\\dev\\TI.FS.Test\\test.txt', 'c:\\dev\\TI.FS.Test\\nonexistend\\folder'))</script>
+		<br><br>
+		<textArea id='fileContents' cols='60' rows='3'></textArea>
+		<script>testRead('c:\\dev\\TI.FS.Test\\test.txt')</script>
+		<script>testRead('c:\\dev\\TI.FS.Test\\test-nonononon.txt')</script>
+		<script>testRead('c:\\dev\\TI.FS.Test\\')</script>
+		<br><br>
+		<script>document.write(testMove('c:\\dev\\TI.FS.Test\\test-file-to-move.txt', 'c:\\dev\\TI.FS.Test\\test-file-to-move-Y.txt'))</script>
+		<br><br>
+		<script>document.write(testCreateDirectory('c:\\dev\\TI.FS.Test\\dirCreated', -1))</script>
+		<br><br>
+		<script>document.write(testCreateDirectory('c:\\dev\\TI.FS.Test\\test.txt', -1))</script>
+		<br><br>
+		<script>document.write(testCreateDirectory('c:\\dev\\TI.FS.Test\\dirCreatedNested\\Level0\\Level1', false))</script>
+		<br><br>
+		<script>document.write(testCreateDirectory('c:\\dev\\TI.FS.Test\\dirCreatedNested\\Level0\\Level1', true))</script>
+		<br><br>
+		<script>document.write(testDeleteDirectory('c:\\dev\\TI.FS.Test\\test.txt', -1))</script>
+		<br><br>
+		<script>document.write(testDeleteDirectory('c:\\dev\\TI.FS.Test\\dirToDelete', -1))</script>
+		<br><br>
+		<script>document.write(testDeleteDirectory('c:\\dev\\TI.FS.Test\\dirToDelete2', false))</script>
+		<br><br>
+		<script>document.write(testDeleteDirectory('c:\\dev\\TI.FS.Test\\dirToDelete2', true))</script>
+		<br><br>
+		<script>document.write(testDeleteDirectory('c:\\dev\\TI.FS.Test\\dirToDeleteDoesntExist', true))</script>
+		<br><br>
+		<script>document.write(testDeleteFile('c:\\dev\\TI.FS.Test\\fileToDelete.txt', true))</script>
+		<br><br>
+		<script>document.write(testDeleteFile('c:\\dev\\TI.FS.Test\\fileToDelete-nonexisting file.txt', true))</script>
+		<br><br>
+		<textArea id='dirListing' cols='60' rows='8'></textArea>
+		<script>testDirectoryListing('c:\\dev\\TI.FS.Test')</script>
+		<script>testDirectoryListing('c:\\dev\\TI.FS.Test\\test.txt')</script>
+		<script>testDirectoryListing('c:\\dev\\TI.FS.TestNOTVALID')</script>
 		<br><br>
 	</body>
 </html>
