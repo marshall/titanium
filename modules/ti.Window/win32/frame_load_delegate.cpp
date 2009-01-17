@@ -10,6 +10,7 @@
 #include "../../../kroll/modules/javascript/javascript_module.h"
 
 using namespace ti;
+using namespace kroll;
 
 Win32FrameLoadDelegate::Win32FrameLoadDelegate(Win32UserWindow *window_) : window(window_), ref_count(1) {
 	// TODO Auto-generated constructor stub
@@ -24,29 +25,24 @@ Win32FrameLoadDelegate::windowScriptObjectAvailable (
 	kroll::Host* tihost = window->GetHost();
 
 	// Bind all child objects to global context
-	BoundObject* global_tibo = (StaticBoundObject*) tihost->GetGlobalObject();
-	BoundObject* tiObject = new StaticBoundObject();
+	SharedPtr<StaticBoundObject> global_tibo = tihost->GetGlobalObject();
+	SharedPtr<StaticBoundObject> tiObject = new StaticBoundObject();
 
-	std::vector<const char *> prop_names;
-	global_tibo->GetPropertyNames(&prop_names);
-	for (size_t i = 0; i < prop_names.size(); i++)
+	SharedStringList prop_names = global_tibo->GetPropertyNames();
+	for (size_t i = 0; i < prop_names->size(); i++)
 	{
-		const char *name = prop_names.at(i);
-		Value* value = global_tibo->Get(name);
-		ScopedDereferencer s0(value);
-		tiObject->Set(name, value);
+		SharedString name = prop_names->at(i);
+		SharedPtr<Value> value = global_tibo->Get(name->c_str());
+		tiObject->Set(name->c_str(), value);
 	}
 
 	// set user window into the Titanium object
-	Value *user_window_val = new Value(this->window);
-	ScopedDereferencer s1(user_window_val);
+	SharedValue user_window_val = new Value(this->window);
 	tiObject->Set("currentWindow", user_window_val);
-	KR_DECREF(user_window_val);
 
 	// place Titanium object into the window's global object
-	BoundObject *global_bound_object = new KJSBoundObject(context, global_object);
-	Value *tiObjectValue = new Value(tiObject);
-	ScopedDereferencer s2(tiObjectValue);
+	SharedBoundObject global_bound_object = new KJSBoundObject(context, global_object);
+	SharedValue tiObjectValue = new Value(tiObject);
 	global_bound_object->Set(PRODUCT_NAME, tiObjectValue);
 
 	return S_OK;

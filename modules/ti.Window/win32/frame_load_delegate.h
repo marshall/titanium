@@ -6,6 +6,8 @@
 
 #ifndef TI_WIN32_FRAME_LOAD_DELEGATE_H_
 #define TI_WIN32_FRAME_LOAD_DELEGATE_H_
+#include <api/base.h>
+#include <windows.h>
 
 #include "WebKit.h"
 

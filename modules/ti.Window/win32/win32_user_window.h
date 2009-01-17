@@ -6,6 +6,7 @@
 #ifndef __TI_WIN32_TYPES_H
 #define __TI_WIN32_TYPES_H
 
+#include <kroll/base.h>
 #include <windows.h>
 #include <stdlib.h>
 #include <malloc.h>
