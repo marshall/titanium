@@ -73,16 +73,6 @@ namespace ti
 			 */
 			void IsSymbolicLink(const ValueList& args, SharedValue result);
 			/**
-			 * Function: Exists
-			 *   Determines if this File represents an existing file or directory
-			 *
-			 * Parameters:
-			 *
-			 * Returns:
-			 *   true if this File exists; false otherwise
-			 */
-			void Exists(const ValueList& args, SharedValue result);
-			/**
 			 * Function: Read
 			 *   Reads the contents of this File
 			 *
@@ -160,16 +150,85 @@ namespace ti
 			 */
 			void GetDirectoryListing(const ValueList& args, SharedValue result);
 			/**
-			 * Function: Trash
+			 * Function: GetParent
+			 *   returns the parent for this file or directory
 			 *
 			 * Parameters:
 			 *
 			 * Returns:
-			 *   true if the file or directory is moved to the trash; false otherwise
+			 *   the parent for this file
 			 */
-
-
-			//void IsDirectory(const ValueList& args, SharedValue result);
+			void GetParent(const ValueList& args, SharedValue result);
+			/**
+			 * Function: GetExists
+			 *   Determines if this File represents an existing file or directory
+			 *
+			 * Parameters:
+			 *
+			 * Returns:
+			 *   true if this File exists; false otherwise
+			 */
+			void GetExists(const ValueList& args, SharedValue result);
+			/**
+			 * Function: GetCreateDate
+			 *   Returns the date this file or directory was created
+			 *
+			 * Parameters:
+			 *
+			 * Returns:
+			 *   timestamp when the file/directory was created; null is returned if the timestamp can't be determined
+			 */
+			void GetCreateTimestamp(const ValueList& args, SharedValue result);
+			/**
+			 * Function: GetModificationDate
+			 *   Returns the date this file or directory was modified
+			 *
+			 * Parameters:
+			 *
+			 * Returns:
+			 *   timestamp when the file/directory was modified; null is returned if the timestamp can't be determined
+			 */
+			void GetModificationTimestamp(const ValueList& args, SharedValue result);
+			/**
+			 * Function: GetName
+			 *   Returns the file name
+			 *
+			 * Parameters:
+			 *
+			 * Returns:
+			 *   the file name
+			 */
+			void GetName(const ValueList& args, SharedValue result);
+			/**
+			 * Function: GetExctension
+			 *   returns the file extension
+			 *
+			 * Parameters:
+			 *
+			 * Returns:
+			 *   the file extension; null if this is an invalid file
+			 */
+			void GetExtension(const ValueList& args, SharedValue result);
+			/**
+			 * Function: GetNativePath
+			 *   returns the native path for this file or directory
+			 *
+			 * Parameters:
+			 *
+			 * Returns:
+			 *   the native path
+			 */
+			void GetNativePath(const ValueList& args, SharedValue result);
+			/**
+			 * Function: GetSize
+			 *   return the size of this file in bytes
+			 *
+			 * Parameters:
+			 *
+			 * Returns:
+			 *   the file size in bytes
+			 */
+			void GetSize(const ValueList& args, SharedValue result);
 	};
 }
 

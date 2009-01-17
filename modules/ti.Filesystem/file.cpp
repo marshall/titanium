@@ -6,6 +6,7 @@
 #include "file.h"
 
 #include <Poco/File.h>
+#include <Poco/Path.h>
 #include <Poco/FileStream.h>
 #include <Poco/Exception.h>
 
@@ -19,9 +20,8 @@ namespace ti
 		this->SetMethod("isFile",&File::IsFile);
 		this->SetMethod("isDirectory",&File::IsDirectory);
 		this->SetMethod("isHidden",&File::IsHidden);
-
 		this->SetMethod("isSymbolicLink",&File::IsSymbolicLink);
-		this->SetMethod("exists",&File::Exists);
+
 		this->SetMethod("read",&File::Read);
 		this->SetMethod("copy",&File::Copy);
 		this->SetMethod("move",&File::Move);
@@ -29,6 +29,15 @@ namespace ti
 		this->SetMethod("deleteDirectory",&File::DeleteDirectory);
 		this->SetMethod("deleteFile",&File::DeleteFileX);
 		this->SetMethod("getDirectoryListing",&File::GetDirectoryListing);
+		this->SetMethod("getParent",&File::GetParent);
+
+		this->SetMethod("exists",&File::GetExists);
+		this->SetMethod("createTimestamp",&File::GetCreateTimestamp);
+		this->SetMethod("modificationTimestamp",&File::GetModificationTimestamp);
+		this->SetMethod("name",&File::GetName);
+		this->SetMethod("extension",&File::GetExtension);
+		this->SetMethod("nativePath",&File::GetNativePath);
+		this->SetMethod("size",&File::GetSize);
 	}
 
 	File::~File()
@@ -103,22 +112,6 @@ namespace ti
 		}
 
 		result->SetBool(isLink);
-	}
-	void File::Exists(const ValueList& args, SharedValue result)
-	{
-		bool exists = false;
-
-		try
-		{
-			Poco::File file(this->filename);
-			exists = file.exists();
-		}
-		catch (Poco::Exception& exc)
-		{
-			std::cerr << "Problem getting file info:::: " << exc.displayText() << std::endl;
-		}
-
-		result->SetBool(exists);
 	}
 	void File::Read(const ValueList& args, SharedValue result)
 	{
@@ -311,6 +304,133 @@ namespace ti
 		{
 			std::cerr << "Problem deleting file:::: " << exc.displayText() << std::endl;
 
+			result->SetNull();
+		}
+	}
+	void File::GetParent(const ValueList& args, SharedValue result)
+	{
+		std::cout << "GetParent() called" << std::endl;
+
+		try
+		{
+			Poco::Path path(this->filename);
+
+			result->SetString(path.parent().getFileName().c_str());
+		}
+		catch (Poco::Exception& exc)
+		{
+			std::cerr << "Problem getting file parent:::: " << exc.displayText() << std::endl;
+			result->SetNull();
+		}
+	}
+	void File::GetExists(const ValueList& args, SharedValue result)
+	{
+		bool exists = false;
+
+		try
+		{
+			Poco::File file(this->filename);
+			exists = file.exists();
+		}
+		catch (Poco::Exception& exc)
+		{
+			std::cerr << "Problem getting file info:::: " << exc.displayText() << std::endl;
+		}
+
+		result->SetBool(exists);
+	}
+	void File::GetCreateTimestamp(const ValueList& args, SharedValue result)
+	{
+		std::cout << "GetCreateTimestamp() called" << std::endl;
+
+		try
+		{
+			Poco::File file(this->filename);
+			Poco::Timestamp ts = file.created();
+
+			result->SetDouble(ts.epochTime());
+		}
+		catch (Poco::Exception& exc)
+		{
+			std::cerr << "Problem getting file create date:::: " << exc.displayText() << std::endl;
+			result->SetNull();
+		}
+	}
+	void File::GetModificationTimestamp(const ValueList& args, SharedValue result)
+	{
+		std::cout << "GetModificationDate() called" << std::endl;
+
+		try
+		{
+			Poco::File file(this->filename);
+			Poco::Timestamp ts = file.getLastModified();
+
+			result->SetDouble(ts.epochTime());
+		}
+		catch (Poco::Exception& exc)
+		{
+			std::cerr << "Problem getting file modify date:::: " << exc.displayText() << std::endl;
+			result->SetNull();
+		}
+	}
+	void File::GetName(const ValueList& args, SharedValue result)
+	{
+		std::cout << "GetName() called" << std::endl;
+
+		result->SetString(this->filename.c_str());
+	}
+	void File::GetExtension(const ValueList& args, SharedValue result)
+	{
+		std::cout << "GetExtension() called" << std::endl;
+
+		try
+		{
+			Poco::Path path(this->filename);
+
+			if(path.isDirectory())
+			{
+				result->SetNull();
+			}
+			else
+			{
+				result->SetString(path.getExtension().c_str());
+			}
+		}
+		catch (Poco::Exception& exc)
+		{
+			std::cerr << "Problem getting file extension:::: " << exc.displayText() << std::endl;
+			result->SetNull();
+		}
+	}
+	void File::GetNativePath(const ValueList& args, SharedValue result)
+	{
+		std::cout << "GetNativePath() called" << std::endl;
+
+		try
+		{
+			Poco::Path path(this->filename);
+
+			result->SetString(path.absolute().getFileName().c_str());
+		}
+		catch (Poco::Exception& exc)
+		{
+			std::cerr << "Problem getting file native path:::: " << exc.displayText() << std::endl;
+			result->SetNull();
+		}
+	}
+	void File::GetSize(const ValueList& args, SharedValue result)
+	{
+		std::cout << "GetSize() called" << std::endl;
+
+		try
+		{
+			Poco::File file(this->filename);
+
+			result->SetDouble(file.getSize());
+		}
+		catch (Poco::Exception& exc)
+		{
+			std::cerr << "Problem getting file modify date:::: " << exc.displayText() << std::endl;
 			result->SetNull();
 		}
 	}
