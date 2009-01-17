@@ -293,7 +293,7 @@ namespace ti
 
 				SharedPtr<StaticBoundList> fileList = new StaticBoundList();
 
-				for(int i = 0; i < files.size(); i++)
+				for(size_t i = 0; i < files.size(); i++)
 				{
 					SharedValue value = new Value(files.at(i));
 					fileList->Append(value);
