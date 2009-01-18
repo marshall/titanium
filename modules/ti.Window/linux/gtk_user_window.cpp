@@ -94,29 +94,24 @@ static void window_object_cleared_cb (WebKitWebView* web_view,
 	Host* tihost = user_window->GetHost();
 
 	// Bind all child objects to global context
-	BoundObject* global_tibo = (StaticBoundObject*) tihost->GetGlobalObject();
+	SharedBoundObject global_tibo = tihost->GetGlobalObject();
 	BoundObject* tiObject = new StaticBoundObject();
 
-	std::vector<const char *> prop_names;
-	global_tibo->GetPropertyNames(&prop_names);
-	for (size_t i = 0; i < prop_names.size(); i++)
+	SharedStringList prop_names = global_tibo->GetPropertyNames();
+	for (size_t i = 0; i < prop_names->size(); i++)
 	{
-		const char *name = prop_names.at(i);
+		SharedString name = prop_names->at(i);
 		Value* value = global_tibo->Get(name);
-		ScopedDereferencer s0(value);
 		tiObject->Set(name, value);
 	}
 
-	// set user window into the Titanium object
+	// Set user window into the Titanium object
 	Value *user_window_val = new Value(user_window);
-	ScopedDereferencer s1(user_window_val);
 	tiObject->Set("currentWindow", user_window_val);
-	KR_DECREF(user_window_val);
 
-	// place Titanium object into the window's global object
+	// Place the Titanium object into the window's global object
 	BoundObject *global_bound_object = new KJSBoundObject(context, global_object);
 	Value *tiObjectValue = new Value(tiObject);
-	ScopedDereferencer s2(tiObjectValue);
 	global_bound_object->Set(PRODUCT_NAME, tiObjectValue);
 
 	JSStringRef script;

@@ -34,16 +34,6 @@ build.env.Append(CPPPATH=[
 
 build.env.Append(LIBPATH=[build.dir])
 
-#
-#if build.env.GetOption('clean'):
-#	os.chdir(path.abspath('kroll'))
-#	os.system('scons.bat -c PRODUCT_NAME=Titanium')
-#	os.chdir(build.abstopdir)
-#else:
-#	os.chdir(path.abspath('kroll'))
-#	os.system('scons.bat PRODUCT_NAME=Titanium')
-#	os.chdir(build.abstopdir)
-
 # debug build flags
 if ARGUMENTS.get('debug', 0):
 	build.env.Append(CPPDEFINES = {'DEBUG' : 1})
