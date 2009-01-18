@@ -12,10 +12,8 @@
 
 namespace ti
 {
-	File::File(BoundObject *global, std::string filename) : global(global), filename(filename)
+	File::File(std::string filename) : filename(filename)
 	{
-		KR_ADDREF(global);
-
 		this->SetMethod("toString",&File::ToString);
 		this->SetMethod("isFile",&File::IsFile);
 		this->SetMethod("isDirectory",&File::IsDirectory);
@@ -42,7 +40,6 @@ namespace ti
 
 	File::~File()
 	{
-		KR_DECREF(global);
 	}
 
 	void File::ToString(const ValueList& args, SharedValue result)

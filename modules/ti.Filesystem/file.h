@@ -15,11 +15,10 @@ namespace ti
 	class File : public StaticBoundObject
 	{
 		public:
-			File(BoundObject *global, std::string filename);
+			File(std::string filename);
 		protected:
 			virtual ~File();
 		private:
-			BoundObject *global;
 			std::string filename;
 
 			/**

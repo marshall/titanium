@@ -14,15 +14,13 @@ namespace ti
 {
 	FilesystemBinding::FilesystemBinding(BoundObject *global) : global(global)
 	{
-		KR_ADDREF(global);
-
 		this->SetMethod("createTempFile",&FilesystemBinding::CreateTempFile);
 		this->SetMethod("createTempDirectory",&FilesystemBinding::CreateTempDirectory);
 		this->SetMethod("getFile",&FilesystemBinding::GetFile);
 	}
 	FilesystemBinding::~FilesystemBinding()
 	{
-		KR_DECREF(global);
+
 	}
 	void FilesystemBinding::CreateTempFile(const ValueList& args, SharedValue result)
 	{
@@ -32,7 +30,7 @@ namespace ti
 			tempFile.keepUntilExit();
 			tempFile.createFile();
 
-			ti::File* jsFile = new ti::File(this->global, tempFile.path());
+			ti::File* jsFile = new ti::File(tempFile.path());
 			result->SetObject(jsFile);
 
 			return;
@@ -53,7 +51,7 @@ namespace ti
 			tempDir.keepUntilExit();
 			tempDir.createDirectory();
 
-			ti::File* jsFile = new ti::File(this->global, tempDir.path());
+			ti::File* jsFile = new ti::File(tempDir.path());
 			result->SetObject(jsFile);
 
 			return;
@@ -70,7 +68,7 @@ namespace ti
 	{
 		std::string filename = args.at(0)->ToString();
 
-		ti::File* file = new ti::File(this->global, filename);
+		ti::File* file = new ti::File(filename);
 
 		result->SetObject(file);
 	}
