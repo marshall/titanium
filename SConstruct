@@ -45,14 +45,18 @@ build.env.Append(LIBPATH=[build.dir])
 #	os.chdir(build.abstopdir)
 
 # debug build flags
-if ARGUMENTS.get('debug', 0) == 1:
+if ARGUMENTS.get('debug', 0):
 	build.env.Append(CPPDEFINES = {'DEBUG' : 1})
 	if not build.is_win32():
-		build.env.Append(CCFLAGS = ['-g'])
+		build.env.Append(CCFLAGS = ['-g'])  # debug
+	else:
+		build.env.Append(CCFLAGS = ['/Z7','/GR'])  # max debug, C++ RTTI
 else:
 	build.env.Append(CPPDEFINES = {'NDEBUG' : 1 })
 	if not build.is_win32():
-		build.env.Append(CCFLAGS = ['-O9'])
+		build.env.Append(CCFLAGS = ['-O9']) # max optimizations
+	else:
+		build.env.Append(CCFLAGS = ['/GR']) # C++ RTTI
 
 # turn on special debug printouts for reference counting
 if ARGUMENTS.get('debug_refcount', 0) == 1:
@@ -60,6 +64,7 @@ if ARGUMENTS.get('debug_refcount', 0) == 1:
 
 
 if build.is_win32():
+	execfile('kroll/build/win32.py')
 	build.env.Append(CCFLAGS=['/EHsc'])
 	build.env.Append(CPPDEFINES={'WIN32_CONSOLE': 1})
 	build.env.Append(LINKFLAGS=['/DEBUG', '/PDB:${TARGET}.pdb'])
