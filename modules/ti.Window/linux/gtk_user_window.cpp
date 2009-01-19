@@ -93,17 +93,11 @@ static void window_object_cleared_cb (WebKitWebView* web_view,
 	GtkUserWindow* user_window = (GtkUserWindow*) data;
 	Host* tihost = user_window->GetHost();
 
-	// Bind all child objects to global context
+	// Produce a delegating object to represent the top-level
+	// Titanium object. When a property isn't found in this object
+	// it will look for it in global_tibo.
 	SharedBoundObject global_tibo = tihost->GetGlobalObject();
-	BoundObject* tiObject = new StaticBoundObject();
-
-	SharedStringList prop_names = global_tibo->GetPropertyNames();
-	for (size_t i = 0; i < prop_names->size(); i++)
-	{
-		SharedString name = prop_names->at(i);
-		Value* value = global_tibo->Get(name);
-		tiObject->Set(name, value);
-	}
+	BoundObject* tiObject = new DelegateStaticBoundObject(global_tibo);
 
 	// Set user window into the Titanium object
 	Value *user_window_val = new Value(user_window);
