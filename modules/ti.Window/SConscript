@@ -4,6 +4,8 @@ import os, os.path as path
 Import('tiBuild')
 Import('build')
 
+tiBuild.add_thirdparty(build.env, 'poco')
+
 env = tiBuild.env.Clone()
 env.Append(LIBPATH=[path.join(tiBuild.dir, 'modules', 'ti.App')])
 env.Append(LIBS=['kroll', 'tiappmodule','javascriptmodule'])
@@ -13,6 +15,7 @@ sources = Glob('*.cpp')
 webkit_tp = path.join(build.third_party, 'webkit')
 webkit_lib = path.join(webkit_tp, 'lib')
 webkit_inc = path.join(webkit_tp, 'include')
+
 
 if tiBuild.is_linux():
 	sources = sources + Glob('linux/*.cpp') + Glob('url/*.cpp')

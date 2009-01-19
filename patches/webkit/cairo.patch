@@ -1,0 +1,1318 @@
+Index: JavaScriptCore/ChangeLog
+===================================================================
+--- JavaScriptCore/ChangeLog	(revision 39213)
++++ JavaScriptCore/ChangeLog	(working copy)
+@@ -1,3 +1,17 @@
++2008-12-11  Brent Fulgham  <bfulgham@gmail.com>
++
++        Reviewed by NOBODY (OOPS!).
++
++        * wtf/Platform.h:
++        * wtf/Threading.h:
++
++2008-12-11  Brent Fulgham  <bfulgham@gmail.com>
++
++        Reviewed by NOBODY (OOPS!).
++
++        * wtf/Platform.h:
++        * wtf/Threading.h:
++
+ 2008-12-11  Holger Freyther  <zecke@selfish.org>
+ 
+         Reviewed by Simon Hausmann.
+Index: JavaScriptCore/wtf/Platform.h
+===================================================================
+--- JavaScriptCore/wtf/Platform.h	(revision 39213)
++++ JavaScriptCore/wtf/Platform.h	(working copy)
+@@ -134,6 +134,7 @@
+ #if PLATFORM(MAC)
+ #define WTF_PLATFORM_CG 1
+ #define WTF_PLATFORM_CI 1
++#define ENABLE_SAFARI_INTERFACE 1
+ #endif
+ 
+ /* PLATFORM(SKIA) for Win/Linux, CG/CI for Mac */
+@@ -151,6 +152,7 @@
+ /* FIXME: This should be changed from a blacklist to a whitelist */
+ #if !PLATFORM(MAC) && !PLATFORM(QT) && !PLATFORM(WX) && !PLATFORM(CHROMIUM)
+ #define WTF_PLATFORM_CAIRO 1
++#undef ENABLE_VIDEO
+ #endif
+ 
+ /* CPU */
+@@ -303,6 +305,7 @@
+ 
+ #if PLATFORM(WIN)
+ #define WTF_USE_WININET 1
++/* #define WTF_USE_CURL 1 */
+ #endif
+ 
+ #if PLATFORM(WX)
+Index: JavaScriptCore/wtf/Threading.h
+===================================================================
+--- JavaScriptCore/wtf/Threading.h	(revision 39213)
++++ JavaScriptCore/wtf/Threading.h	(working copy)
+@@ -119,6 +119,7 @@ void detachThread(ThreadIdentifier);
+ #if USE(PTHREADS)
+ typedef pthread_mutex_t PlatformMutex;
+ typedef pthread_cond_t PlatformCondition;
++typedef pthread_key_t PlatformThreadStorageKey;
+ #elif PLATFORM(GTK)
+ typedef GOwnPtr<GMutex> PlatformMutex;
+ typedef GOwnPtr<GCond> PlatformCondition;
+@@ -138,6 +139,7 @@ struct PlatformCondition {
+     HANDLE m_queue;
+     HANDLE m_mutex;
+ };
++typedef DWORD PlatformThreadStorageKey;
+ #else
+ typedef void* PlatformMutex;
+ typedef void* PlatformCondition;
+Index: WebCore/config.h
+===================================================================
+--- WebCore/config.h	(revision 39213)
++++ WebCore/config.h	(working copy)
+@@ -91,9 +91,17 @@
+ #endif
+ 
+ #if PLATFORM(WIN)
++#if 0
+ #define WTF_PLATFORM_CG 1
+ #undef WTF_PLATFORM_CAIRO
+ #define WTF_USE_CFNETWORK 1
++#undef WTF_USE_CURL
++#else
++#undef WTF_PLATFORM_CG
++#define WTF_PLATFORM_CAIRO 1
++#undef WTF_USE_CFNETWORK
++#define WTF_USE_CURL 1
++#endif
+ #undef WTF_USE_WININET
+ #define WTF_PLATFORM_CF 1
+ #define WTF_USE_PTHREADS 0
+Index: WebCore/WebCore.vcproj/build-generated-files.sh
+===================================================================
+--- WebCore/WebCore.vcproj/build-generated-files.sh	(revision 39213)
++++ WebCore/WebCore.vcproj/build-generated-files.sh	(working copy)
+@@ -65,5 +65,6 @@ mkdir -p "${BUILT_PRODUCTS_DIR}/DerivedS
+ cd "${BUILT_PRODUCTS_DIR}/DerivedSources"
+ 
+ export WebCore="${XSRCROOT}"
+-export FEATURE_DEFINES="ENABLE_DATABASE ENABLE_DOM_STORAGE ENABLE_ICONDATABASE ENABLE_OFFLINE_WEB_APPLICATIONS ENABLE_XPATH ENABLE_SVG ENABLE_SVG_ANIMATION ENABLE_SVG_FONTS ENABLE_SVG_FOREIGN_OBJECT ENABLE_SVG_AS_IMAGE ENABLE_SVG_USE ENABLE_WORKERS ENABLE_VIDEO"
++#export FEATURE_DEFINES="ENABLE_DATABASE ENABLE_DOM_STORAGE ENABLE_ICONDATABASE ENABLE_OFFLINE_WEB_APPLICATIONS ENABLE_XPATH ENABLE_SVG ENABLE_SVG_ANIMATION ENABLE_SVG_FONTS ENABLE_SVG_FOREIGN_OBJECT ENABLE_SVG_AS_IMAGE ENABLE_SVG_USE ENABLE_WML ENABLE_WORKERS ENABLE_VIDEO"
++export FEATURE_DEFINES="ENABLE_DATABASE ENABLE_DOM_STORAGE ENABLE_ICONDATABASE ENABLE_OFFLINE_WEB_APPLICATIONS ENABLE_XPATH ENABLE_SVG ENABLE_SVG_ANIMATION ENABLE_SVG_FONTS ENABLE_SVG_FOREIGN_OBJECT ENABLE_SVG_AS_IMAGE ENABLE_SVG_USE ENABLE_WORKERS"
+ make -f "$WebCore/DerivedSources.make" -j ${NUMCPUS} || exit 1
+Index: WebCore/platform/graphics/cairo/ImageSourceCairo.cpp
+===================================================================
+--- WebCore/platform/graphics/cairo/ImageSourceCairo.cpp	(revision 39213)
++++ WebCore/platform/graphics/cairo/ImageSourceCairo.cpp	(working copy)
+@@ -102,8 +102,10 @@ ImageSource::~ImageSource()
+ 
+ void ImageSource::clear()
+ {
+-    delete m_decoder;
+-    m_decoder = 0;
++    if (m_decoder) {
++        delete m_decoder;
++        m_decoder = 0;
++    }
+ }
+ 
+ bool ImageSource::initialized() const
+Index: WebCore/platform/win/DragImageCairoWin.cpp
+===================================================================
+--- WebCore/platform/win/DragImageCairoWin.cpp	(revision 39213)
++++ WebCore/platform/win/DragImageCairoWin.cpp	(working copy)
+@@ -29,25 +29,165 @@
+ #include "CachedImage.h"
+ #include "GraphicsContext.h"
+ #include "Image.h"
+-#include "NotImplemented.h"
+ #include "RetainPtr.h"
+ 
++#include <cairo-win32.h>
++#include "GraphicsContextPlatformPrivateCairo.h"
++
+ #include <windows.h>
+ 
++extern "C" {
++typedef struct _cairo* CairoContextRef;
++}
++
+ namespace WebCore {
+ 
++HBITMAP allocImage(HDC dc, IntSize size, CairoContextRef* targetRef)
++{
++    BITMAPINFO bmpInfo = {0};
++    bmpInfo.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
++    bmpInfo.bmiHeader.biWidth = size.width();
++    bmpInfo.bmiHeader.biHeight = size.height(); // Must be positive!
++    bmpInfo.bmiHeader.biPlanes = 1;
++    bmpInfo.bmiHeader.biBitCount = 32;
++    bmpInfo.bmiHeader.biCompression = BI_RGB;
++    bmpInfo.bmiHeader.biClrUsed = 0;	// unused
++    bmpInfo.bmiHeader.biClrImportant = 0;
++
++    LPVOID bits;
++    HBITMAP hbmp = CreateDIBSection(dc, &bmpInfo, DIB_RGB_COLORS, &bits, 0, 0);
++
++    // At this point, we have a Cairo surface that points to a Windows DIB.  The DIB interprets
++    // with the opposite meaning of positive Y axis, so everything we draw into this cairo
++    // context is going to be upside down.
++    if (!targetRef)
++        return hbmp;
++
++    cairo_surface_t* bitmapContext = cairo_image_surface_create_for_data((unsigned char*)bits,
++                                               CAIRO_FORMAT_ARGB32,
++                                               bmpInfo.bmiHeader.biWidth,
++                                               bmpInfo.bmiHeader.biHeight,
++                                               bmpInfo.bmiHeader.biWidth * 4);
++
++    if (!bitmapContext) {
++        DeleteObject(hbmp);
++        return 0;
++    }
++
++    *targetRef = cairo_create (bitmapContext);
++    cairo_surface_destroy (bitmapContext);
++
++    // At this point, we have a Cairo surface that points to a Windows DIB.  The DIB interprets
++    // with the opposite meaning of positive Y axis, so everything we draw into this cairo
++    // context is going to be upside down.
++    //
++    // So, we must invert the CTM for the context so that drawing commands will be flipped
++    // before they get written to the internal buffer.
++    cairo_matrix_t matrix;
++    cairo_matrix_init(&matrix, 1.0, 0.0, 0.0, -1.0, 0.0, size.height());
++    cairo_set_matrix(*targetRef, &matrix);
++
++    return hbmp;
++}
++
++static cairo_surface_t* createCairoContextFromBitmap(HBITMAP bitmap)
++{
++    BITMAP info;
++    GetObject(bitmap, sizeof(info), &info);
++    ASSERT(info.bmBitsPixel == 32);
++
++    // At this point, we have a Cairo surface that points to a Windows BITMAP.  The BITMAP
++    // has the opposite meaning of positive Y axis, so everything we draw into this cairo
++    // context is going to be upside down.
++    return cairo_image_surface_create_for_data((unsigned char*)info.bmBits,
++                                               CAIRO_FORMAT_ARGB32,
++                                               info.bmWidth,
++                                               info.bmHeight,
++                                               info.bmWidthBytes);
++}
++
+ DragImageRef scaleDragImage(DragImageRef image, FloatSize scale)
+ {
+-    notImplemented();
++    // FIXME: due to the way drag images are done on windows we need 
++    // to preprocess the alpha channel <rdar://problem/5015946>
++    if (!image)
++        return 0;
++
++    IntSize srcSize = dragImageSize(image);
++    IntSize dstSize(static_cast<int>(srcSize.width() * scale.width()), static_cast<int>(srcSize.height() * scale.height()));
++
++    HBITMAP hbmp = 0;
++    HDC dc = GetDC(0);
++    HDC dstDC = CreateCompatibleDC(dc);
++
++    if (!dstDC)
++        goto exit;
++
++    CairoContextRef targetContext;
++    hbmp = allocImage(dstDC, dstSize, &targetContext);
++    if (!hbmp)
++        goto exit;
++
++    cairo_surface_t* srcImage = createCairoContextFromBitmap(image);
++
++    // Scale the target surface to the new image size, and flip it
++    // so that when we set the srcImage as the surface it will draw
++    // right-side-up.
++    cairo_translate(targetContext, 0, dstSize.height());
++    cairo_scale(targetContext, scale.width(), -scale.height());
++    cairo_set_source_surface (targetContext, srcImage, 0.0, 0.0);
++
++    // Now we can paint and get the correct result
++    cairo_paint(targetContext);
+ 
+-    return image;
++    cairo_surface_destroy (srcImage);
++    cairo_destroy(targetContext);
++    ::DeleteObject(image);
++    image = 0;
++
++exit:
++    if (!hbmp)
++        hbmp = image;
++    if (dstDC)
++        DeleteDC(dstDC);
++    ReleaseDC(0, dc);
++    return hbmp;
+ }
+     
+ DragImageRef createDragImageFromImage(Image* img)
+ {
+-    notImplemented();
++    HBITMAP hbmp = 0;
++    HDC dc = GetDC(0);
++    HDC workingDC = CreateCompatibleDC(dc);
++    if (!workingDC)
++        goto exit;
++
++    CairoContextRef drawContext = 0;
++    hbmp = allocImage(workingDC, img->size(), &drawContext);
++    if (!hbmp)
++        goto exit;
++
++    if (!drawContext) {
++        ::DeleteObject(hbmp);
++        hbmp = 0;
++    }
++
++    cairo_set_source_rgb (drawContext, 1.0, 0.0, 1.0);
++    cairo_fill_preserve (drawContext);
++
++    cairo_surface_t* srcImage = img->nativeImageForCurrentFrame();
++
++    // Draw the image.
++    cairo_set_source_surface(drawContext, srcImage, 0.0, 0.0);
++    cairo_paint(drawContext);
++
++    cairo_destroy (drawContext);
+ 
+-    return 0;
++exit:
++    if (workingDC)
++        DeleteDC(workingDC);
++    ReleaseDC(0, dc);
++    return hbmp;
+ }
+     
+ }
+Index: WebKit/win/WebArchive.cpp
+===================================================================
+--- WebKit/win/WebArchive.cpp	(revision 39213)
++++ WebKit/win/WebArchive.cpp	(working copy)
+@@ -29,7 +29,10 @@
+ 
+ #include "DOMCoreClasses.h"
+ #include "MemoryStream.h"
++
++#if USE(CFNETWORK)
+ #include <WebCore/LegacyWebArchive.h>
++#endif
+ 
+ using namespace WebCore;
+ 
+@@ -42,6 +45,7 @@ WebArchive* WebArchive::createInstance()
+     return instance;
+ }
+ 
++#if USE(CFNETWORK)
+ WebArchive* WebArchive::createInstance(PassRefPtr<LegacyWebArchive> coreArchive)
+ {
+     WebArchive* instance = new WebArchive(coreArchive);
+@@ -57,6 +61,13 @@ WebArchive::WebArchive(PassRefPtr<Legacy
+     gClassCount++;
+     gClassNameCount.add("WebArchive");
+ }
++#else
++WebArchive::WebArchive(int ignore)
++    : m_refCount(0)
++{
++    gClassCount++;
++}
++#endif
+ 
+ WebArchive::~WebArchive()
+ {
+@@ -118,7 +129,9 @@ HRESULT STDMETHODCALLTYPE WebArchive::in
+     if (!domNode)
+         return E_NOINTERFACE;
+ 
++#if USE(CFNETWORK)
+     m_archive = LegacyWebArchive::create(domNode->node());
++#endif
+     
+     return S_OK;
+ }
+@@ -144,6 +157,7 @@ HRESULT STDMETHODCALLTYPE WebArchive::su
+ HRESULT STDMETHODCALLTYPE WebArchive::data(
+         /* [out, retval] */ IStream** stream)
+ {
++#if USE(CFNETWORK)
+     RetainPtr<CFDataRef> cfData = m_archive->rawDataRepresentation();
+     if (!cfData)
+         return E_FAIL;
+@@ -153,4 +167,7 @@ HRESULT STDMETHODCALLTYPE WebArchive::da
+     *stream = MemoryStream::createInstance(buffer);
+ 
+     return S_OK;
++#else
++    return E_NOTIMPL;
++#endif
+ }
+Index: WebKit/win/WebArchive.h
+===================================================================
+--- WebKit/win/WebArchive.h	(revision 39213)
++++ WebKit/win/WebArchive.h	(working copy)
+@@ -28,21 +28,29 @@
+ 
+ #include "WebKit.h"
+ 
++#if USE(CFNETWORK)
+ #include <wtf/PassRefPtr.h>
+ #include <wtf/RefPtr.h>
+ 
+ namespace WebCore {
+     class LegacyWebArchive;
+ }
++#endif
+ 
+ class WebArchive : public IWebArchive
+ {
+ public:
+     static WebArchive* createInstance();
++#if USE(CFNETWORK)
+     static WebArchive* createInstance(PassRefPtr<WebCore::LegacyWebArchive>);
+ protected:
+     WebArchive(PassRefPtr<WebCore::LegacyWebArchive>);
+     ~WebArchive();
++#else
++    WebArchive(int);
++protected:
++    ~WebArchive();
++#endif
+ 
+ public:
+     // IUnknown
+@@ -78,7 +86,9 @@ public:
+ 
+ protected:
+     ULONG m_refCount;
++#if USE(CFNETWORK)
+     RefPtr<WebCore::LegacyWebArchive> m_archive;
++#endif
+ };
+ 
+ #endif // WebArchive_h
+Index: WebKit/win/WebCookieManager.cpp
+===================================================================
+--- WebKit/win/WebCookieManager.cpp	(revision 39213)
++++ WebKit/win/WebCookieManager.cpp	(working copy)
+@@ -27,8 +27,12 @@
+ #include "WebKitDLL.h"
+ #include "WebCookieManager.h"
+ 
++#if USE(CFNETWORK)
+ #include <CFNetwork/CFHTTPCookiesPriv.h>
+ #include <WebCore/CookieStorageWin.h>
++#elif USE(CURL)
++#include "NotImplemented.h"
++#endif
+ 
+ using namespace WebCore;
+ 
+@@ -36,9 +40,13 @@ using namespace WebCore;
+ 
+ WebCookieManager* WebCookieManager::createInstance()
+ {
++#if USE(CFNETWORK)
+     WebCookieManager* manager = new WebCookieManager;
+     manager->AddRef();
+     return manager;    
++#else
++   return 0;
++#endif
+ }
+ 
+ WebCookieManager::WebCookieManager()
+@@ -58,6 +66,7 @@ WebCookieManager::~WebCookieManager()
+ 
+ HRESULT STDMETHODCALLTYPE WebCookieManager::QueryInterface(REFIID riid, void** ppvObject)
+ {
++#if USE(CFNETWORK)
+     *ppvObject = 0;
+     if (IsEqualGUID(riid, IID_IUnknown))
+         *ppvObject = static_cast<WebCookieManager*>(this);
+@@ -68,6 +77,10 @@ HRESULT STDMETHODCALLTYPE WebCookieManag
+ 
+     AddRef();
+     return S_OK;
++#else
++   notImplemented();
++   return E_FAIL;
++#endif
+ }
+ 
+ ULONG STDMETHODCALLTYPE WebCookieManager::AddRef()
+@@ -89,16 +102,26 @@ ULONG STDMETHODCALLTYPE WebCookieManager
+ HRESULT STDMETHODCALLTYPE WebCookieManager::cookieStorage( 
+     /* [retval][out] */ CFHTTPCookieStorageRef* storage)
+ {
+-    if (!storage)
++#if USE(CFNETWORK)
++   if (!storage)
+         return E_POINTER;
+ 
+     *storage = currentCookieStorage();
+     return S_OK;
++#else
++   notImplemented();
++   return E_FAIL;
++#endif
+ }
+ 
+ HRESULT STDMETHODCALLTYPE WebCookieManager::setCookieStorage( 
+     /* [in] */ CFHTTPCookieStorageRef storage)
+ {
++#if USE(CFNETWORK)
+     setCurrentCookieStorage(storage);
+     return S_OK;
++#else
++   notImplemented();
++   return E_FAIL;
++#endif
+ }
+Index: WebKit/win/WebDownload.cpp
+===================================================================
+--- WebKit/win/WebDownload.cpp	(revision 39213)
++++ WebKit/win/WebDownload.cpp	(working copy)
+@@ -38,12 +38,16 @@
+ #include "WebURLCredential.h"
+ #include "WebURLResponse.h"
+ 
++#include <wtf/platform.h>
++
+ #include <io.h>
+ #include <sys/stat.h>
+ #include <sys/types.h>
+ 
+ #pragma warning(push, 0)
++#if USE(CFNETWORK)
+ #include <WebCore/AuthenticationCF.h>
++#endif
+ #include <WebCore/BString.h>
+ #include <WebCore/NotImplemented.h>
+ #include <WebCore/ResourceError.h>
+@@ -55,6 +59,7 @@
+ 
+ using namespace WebCore;
+ 
++#if USE(CFNETWORK)
+ // CFURLDownload Callbacks ----------------------------------------------------------------
+ static void didStartCallback(CFURLDownloadRef download, const void *clientInfo);
+ static CFURLRequestRef willSendRequestCallback(CFURLDownloadRef download, CFURLRequestRef request, CFURLResponseRef redirectionResponse, const void *clientInfo);
+@@ -74,6 +79,7 @@ static UInt32 BundleMagicNumber = 0xDECA
+ 
+ static CFDataRef extractResumeDataFromBundle(const String& bundlePath);
+ static HRESULT appendResumeDataToBundle(CFDataRef resumeData, const String& bundlePath);
++#endif
+ 
+ // WebDownload ----------------------------------------------------------------
+ 
+@@ -86,6 +92,7 @@ WebDownload::WebDownload()
+ 
+ void WebDownload::init(ResourceHandle* handle, const ResourceRequest& request, const ResourceResponse& response, IWebDownloadDelegate* delegate)
+ {
++#if USE(CFNETWORK)
+     m_delegate = delegate ? delegate : DefaultDownloadDelegate::sharedInstance();
+     CFURLConnectionRef connection = handle->connection();
+     if (!connection) {
+@@ -113,10 +120,12 @@ void WebDownload::init(ResourceHandle* h
+     // Either way, we need to release the connection to balance out ref counts
+     handle->releaseConnectionForDownload();
+     CFRelease(connection);
++#endif
+ }
+ 
+ void WebDownload::init(const KURL& url, IWebDownloadDelegate* delegate)
+ {
++#if USE(CFNETWORK)
+     m_delegate = delegate ? delegate : DefaultDownloadDelegate::sharedInstance();
+     LOG_ERROR("Delegate is %p", m_delegate.get());
+ 
+@@ -133,6 +142,7 @@ void WebDownload::init(const KURL& url, 
+     CFURLDownloadScheduleDownloadWithRunLoop(m_download.get(), ResourceHandle::loaderRunLoop(), kCFRunLoopDefaultMode);
+ 
+     LOG(Download, "WebDownload - Initialized download of url %s in WebDownload %p", url.string().utf8().data(), this);
++#endif
+ }
+ 
+ WebDownload::~WebDownload()
+@@ -206,6 +216,7 @@ HRESULT STDMETHODCALLTYPE WebDownload::i
+         /* [in] */ IWebURLRequest* request, 
+         /* [in] */ IWebDownloadDelegate* delegate)
+ {
++#if USE(CFNETWORK)
+     COMPtr<WebMutableURLRequest> webRequest;
+     if (!request || FAILED(request->QueryInterface(&webRequest))) {
+         LOG(Download, "WebDownload - initWithRequest failed - not a WebMutableURLRequest");    
+@@ -237,12 +248,17 @@ HRESULT STDMETHODCALLTYPE WebDownload::i
+ 
+     LOG(Download, "WebDownload - initWithRequest complete, started download of url %s", webRequest->resourceRequest().url().string().utf8().data());
+     return S_OK;
++#else
++   notImplemented();
++   return E_FAIL;
++#endif
+ }
+ 
+ HRESULT STDMETHODCALLTYPE WebDownload::initToResumeWithBundle(
+         /* [in] */ BSTR bundlePath, 
+         /* [in] */ IWebDownloadDelegate* delegate)
+ {
++#if USE(CFNETWORK)
+     LOG(Download, "Attempting resume of download bundle %s", String(bundlePath, SysStringLen(bundlePath)).ascii().data());
+ 
+     RetainPtr<CFDataRef> resumeData(AdoptCF, extractResumeDataFromBundle(String(bundlePath, SysStringLen(bundlePath))));
+@@ -283,6 +299,10 @@ HRESULT STDMETHODCALLTYPE WebDownload::i
+ 
+     LOG(Download, "WebDownload - initWithRequest complete, resumed download of bundle %s", String(bundlePath, SysStringLen(bundlePath)).ascii().data());
+     return S_OK;
++#else
++   notImplemented();
++   return E_FAIL;
++#endif
+ }
+ 
+ HRESULT STDMETHODCALLTYPE WebDownload::canResumeDownloadDecodedWithEncodingMIMEType(
+@@ -295,6 +315,7 @@ HRESULT STDMETHODCALLTYPE WebDownload::c
+ 
+ HRESULT STDMETHODCALLTYPE WebDownload::start()
+ {
++#if USE(CFNETWORK)
+     LOG(Download, "WebDownload - Starting download (%p)", this);
+     if (!m_download)
+         return E_FAIL;
+@@ -305,10 +326,15 @@ HRESULT STDMETHODCALLTYPE WebDownload::s
+     didStart();
+ 
+     return S_OK;
++#else
++   notImplemented();
++   return E_FAIL;
++#endif
+ }
+ 
+ HRESULT STDMETHODCALLTYPE WebDownload::cancel()
+ {
++#if USE(CFNETWORK)
+     LOG(Download, "WebDownload - Cancelling download (%p)", this);
+     if (!m_download)
+         return E_FAIL;
+@@ -316,10 +342,15 @@ HRESULT STDMETHODCALLTYPE WebDownload::c
+     CFURLDownloadCancel(m_download.get());
+     m_download = 0;
+     return S_OK;
++#else
++   notImplemented();
++   return E_FAIL;
++#endif
+ }
+ 
+ HRESULT STDMETHODCALLTYPE WebDownload::cancelForResume()
+ {
++#if USE(CFNETWORK)
+     LOG(Download, "WebDownload - Cancelling download (%p), writing resume information to file if possible", this);
+     ASSERT(m_download);
+     if (!m_download)
+@@ -346,21 +377,31 @@ HRESULT STDMETHODCALLTYPE WebDownload::c
+ exit:
+     m_download = 0;
+     return hr;
++#else
++   notImplemented();
++   return E_FAIL;
++#endif
+ }
+ 
+ HRESULT STDMETHODCALLTYPE WebDownload::deletesFileUponFailure(
+         /* [out, retval] */ BOOL* result)
+ {
++#if USE(CFNETWORK)
+     if (!m_download)
+         return E_FAIL;
+     *result = CFURLDownloadDeletesUponFailure(m_download.get());
+     return S_OK;
++#else
++   notImplemented();
++   return E_FAIL;
++#endif
+ }
+ 
+ HRESULT STDMETHODCALLTYPE WebDownload::bundlePathForTargetPath(
+         /* [in] */ BSTR targetPath, 
+         /* [out, retval] */ BSTR* bundlePath)
+ {
++#if USE(CFNETWORK)
+     if (!targetPath)
+         return E_INVALIDARG;
+ 
+@@ -376,6 +417,10 @@ HRESULT STDMETHODCALLTYPE WebDownload::b
+     if (!*bundlePath)
+         return E_FAIL;
+     return S_OK;
++#else
++   notImplemented();
++   return E_FAIL;
++#endif
+ }
+ 
+ HRESULT STDMETHODCALLTYPE WebDownload::request(
+@@ -392,16 +437,22 @@ HRESULT STDMETHODCALLTYPE WebDownload::r
+ HRESULT STDMETHODCALLTYPE WebDownload::setDeletesFileUponFailure(
+         /* [in] */ BOOL deletesFileUponFailure)
+ {
++#if USE(CFNETWORK)
+     if (!m_download)
+         return E_FAIL;
+     CFURLDownloadSetDeletesUponFailure(m_download.get(), !!deletesFileUponFailure);
+     return S_OK;
++#else
++   notImplemented();
++   return E_FAIL;
++#endif
+ }
+ 
+ HRESULT STDMETHODCALLTYPE WebDownload::setDestination(
+         /* [in] */ BSTR path, 
+         /* [in] */ BOOL allowOverwrite)
+ {
++#if USE(CFNETWORK)
+     if (!m_download)
+         return E_FAIL;
+ 
+@@ -415,6 +466,10 @@ HRESULT STDMETHODCALLTYPE WebDownload::s
+     LOG(Download, "WebDownload - Set destination to %s", m_bundlePath.ascii().data());
+ 
+     return S_OK;
++#else
++   notImplemented();
++   return E_FAIL;
++#endif
+ }
+ 
+ // IWebURLAuthenticationChallengeSender -------------------------------------------------------------------
+@@ -422,6 +477,7 @@ HRESULT STDMETHODCALLTYPE WebDownload::s
+ HRESULT STDMETHODCALLTYPE WebDownload::cancelAuthenticationChallenge(
+         /* [in] */ IWebURLAuthenticationChallenge*)
+ {
++#if USE(CFNETWORK)
+     if (m_download) {
+         CFURLDownloadCancel(m_download.get());
+         m_download = 0;
+@@ -433,11 +489,16 @@ HRESULT STDMETHODCALLTYPE WebDownload::c
+     m_delegate->didFailWithError(this, webError.get());
+ 
+     return S_OK;
++#else
++   notImplemented();
++   return E_FAIL;
++#endif
+ }
+ 
+ HRESULT STDMETHODCALLTYPE WebDownload::continueWithoutCredentialForAuthenticationChallenge(
+         /* [in] */ IWebURLAuthenticationChallenge* challenge)
+ {
++#if USE(CFNETWORK)
+     COMPtr<WebURLAuthenticationChallenge> webChallenge(Query, challenge);
+     if (!webChallenge)
+         return E_NOINTERFACE;
+@@ -445,12 +506,17 @@ HRESULT STDMETHODCALLTYPE WebDownload::c
+     if (m_download)
+         CFURLDownloadUseCredential(m_download.get(), 0, webChallenge->authenticationChallenge().cfURLAuthChallengeRef());
+     return S_OK;
++#else
++   notImplemented();
++   return E_FAIL;
++#endif
+ }
+ 
+ HRESULT STDMETHODCALLTYPE WebDownload::useCredential(
+         /* [in] */ IWebURLCredential* credential, 
+         /* [in] */ IWebURLAuthenticationChallenge* challenge)
+ {
++#if USE(CFNETWORK)
+     COMPtr<WebURLAuthenticationChallenge> webChallenge(Query, challenge);
+     if (!webChallenge)
+         return E_NOINTERFACE;
+@@ -464,8 +530,13 @@ HRESULT STDMETHODCALLTYPE WebDownload::u
+     if (m_download)
+         CFURLDownloadUseCredential(m_download.get(), cfCredential.get(), webChallenge->authenticationChallenge().cfURLAuthChallengeRef());
+     return S_OK;
++#else
++   notImplemented();
++   return E_FAIL;
++#endif
+ }
+ 
++#if USE(CFNETWORK)
+ // CFURLDownload Callbacks -------------------------------------------------------------------
+ void WebDownload::didStart()
+ {
+@@ -798,3 +869,4 @@ exit:
+     fclose(bundle);
+     return hr;
+ }
++#endif
+Index: WebKit/win/WebDownload.h
+===================================================================
+--- WebKit/win/WebDownload.h	(revision 39213)
++++ WebKit/win/WebDownload.h	(working copy)
+@@ -104,6 +104,7 @@ public:
+         /* [in] */ IWebURLCredential* credential, 
+         /* [in] */ IWebURLAuthenticationChallenge* challenge);
+ 
++#if USE(CFNETWORK)
+     // CFURLDownload Callbacks
+     void didStart();
+     CFURLRequestRef willSendRequest(CFURLRequestRef, CFURLResponseRef);
+@@ -116,13 +117,16 @@ public:
+     void didCreateDestination(CFURLRef);
+     void didFinish();
+     void didFail(CFErrorRef);
++#endif
+ 
+ protected:
+     ULONG m_refCount;
+ 
+     WebCore::String m_destination;
+     WebCore::String m_bundlePath;
++#if USE(CFNETWORK)
+     RetainPtr<CFURLDownloadRef> m_download;
++#endif
+     COMPtr<IWebMutableURLRequest> m_request;
+     COMPtr<IWebDownloadDelegate> m_delegate;
+ 
+Index: WebKit/win/WebError.cpp
+===================================================================
+--- WebKit/win/WebError.cpp	(revision 39213)
++++ WebKit/win/WebError.cpp	(working copy)
+@@ -32,7 +32,7 @@
+ #include <WebCore/BString.h>
+ #pragma warning(pop)
+ 
+-#if USE(CFNETWORK)
++#if ENABLE(SAFARI_INTERFACE)
+ #include <WebKitSystemInterface/WebKitSystemInterface.h>
+ #endif
+ 
+Index: WebKit/win/WebFrame.cpp
+===================================================================
+--- WebKit/win/WebFrame.cpp	(revision 39213)
++++ WebKit/win/WebFrame.cpp	(working copy)
+@@ -98,11 +98,13 @@
+ 
+ #include <CoreGraphics/CoreGraphics.h>
+ 
++#if PLATFORM(CG)
+ // CG SPI used for printing
+ extern "C" {
+     CGAffineTransform CGContextGetBaseCTM(CGContextRef c); 
+     void CGContextSetBaseCTM(CGContextRef c, CGAffineTransform m); 
+ }
++#endif
+ 
+ using namespace WebCore;
+ using namespace HTMLNames;
+@@ -1813,6 +1815,7 @@ HRESULT STDMETHODCALLTYPE WebFrame::spoo
+     headerAndFooterHeights(&headerHeight, &footerHeight);
+     GraphicsContext spoolCtx(pctx);
+ 
++#if PLATFORM(CG)
+     for (UINT ii = startPage; ii < endPage; ii++) {
+         IntRect pageRect = m_pageRects[ii];
+ 
+@@ -1856,6 +1859,7 @@ HRESULT STDMETHODCALLTYPE WebFrame::spoo
+         CGContextEndPage(pctx);
+         CGContextRestoreGState(pctx);
+     }
++#endif
+  
+     return S_OK;
+ }
+Index: WebKit/win/WebKitGraphics.cpp
+===================================================================
+--- WebKit/win/WebKitGraphics.cpp	(revision 39213)
++++ WebKit/win/WebKitGraphics.cpp	(working copy)
+@@ -42,10 +42,14 @@
+ #include <WebCore/StringTruncator.h>
+ #include <WebCore/WebCoreTextRenderer.h>
+ 
++#if PLATFORM(CG)
+ #include <CoreGraphics/CoreGraphics.h>
++#endif
+ #pragma warning(pop)
+ 
++#if ENABLE(SAFARI_INTERFACE)
+ #include <WebKitSystemInterface/WebKitSystemInterface.h>
++#endif
+ 
+ using namespace WebCore;
+ 
+@@ -81,12 +85,20 @@ static Font makeFont(const WebFontDescri
+ struct WebTextRenderInfoWithoutShadow
+ {
+     DWORD structSize;
++#if PLATFORM(CG)
+     CGContextRef cgContext;
++#elif PLATFORM(CAIRO)
++    CairoContextRef cgContext;
++#endif
+     LPCTSTR text;
+     int length;
+     POINT pt;
+     const WebFontDescription* description;
++#if PLATFORM(CG)
+     CGColorRef color;
++#elif PLATFORM(CAIRO)
++    unsigned color;        // RGBA quadruplet
++#endif
+     int underlinedIndex;
+     bool drawAsPassword;
+     int overrideSmoothingLevel; // pass in -1 if caller does not want to override smoothing level
+@@ -99,8 +111,10 @@ void WebDrawText(WebTextRenderInfo* info
+ 
+     int oldFontSmoothingLevel = -1;
+     if (info->overrideSmoothingLevel >= 0) {
++#if ENABLE(SAFARI_INTERFACE)
+         oldFontSmoothingLevel = wkGetFontSmoothingLevel();
+         wkSetFontSmoothingLevel(info->overrideSmoothingLevel);
++#endif
+     }
+ 
+     {
+@@ -113,15 +127,21 @@ void WebDrawText(WebTextRenderInfo* info
+ 
+         // Set shadow setting
+         if (info->structSize == sizeof(WebTextRenderInfo) &&
++#if PLATFORM(CG)
+             (info->shadowOffset.cx || info->shadowOffset.cy || info->shadowBlur || info->shadowColor))
++#elif PLATFORM(CAIRO)
++            (info->shadowOffset.cx || info->shadowOffset.cy || info->shadowBlur))
++#endif
+             context.setShadow(info->shadowOffset, info->shadowBlur, info->shadowColor);
+ 
+         WebCoreDrawTextAtPoint(context, drawString, info->pt, makeFont(*(info->description)), info->color, info->underlinedIndex);
+         context.restore();
+     }
+ 
++#if ENABLE(SAFARI_INTERFACE)
+     if (info->overrideSmoothingLevel >= 0)
+         wkSetFontSmoothingLevel(oldFontSmoothingLevel);
++#endif
+ }
+ 
+ float TextFloatWidth(LPCTSTR text, int length, const WebFontDescription& description)
+Index: WebKit/win/WebKitGraphics.h
+===================================================================
+--- WebKit/win/WebKitGraphics.h	(revision 39213)
++++ WebKit/win/WebKitGraphics.h	(working copy)
+@@ -30,8 +30,13 @@
+ 
+ extern "C" {
+ 
++#if PLATFORM(CG)
+ typedef struct CGColor* CGColorRef;
+ typedef struct CGContext* CGContextRef;
++#elif PLATFORM(CAIRO)
++typedef unsigned ColorRef;        // RGBA quadruplet
++typedef struct _cairo* CairoContextRef;
++#endif
+ 
+ typedef wchar_t WCHAR;
+ typedef __nullterminated const WCHAR* LPCWSTR;
+@@ -49,18 +54,30 @@ struct WebFontDescription {
+ struct WebTextRenderInfo
+ {
+     DWORD structSize;
++#if PLATFORM(CG)
+     CGContextRef cgContext;
++#elif PLATFORM(CAIRO)
++    CairoContextRef cgContext;
++#endif
+     LPCTSTR text;
+     int length;
+     POINT pt;
+     const WebFontDescription* description;
++#if PLATFORM(CG)
+     CGColorRef color;
++#elif PLATFORM(CAIRO)
++    ColorRef color;
++#endif
+     int underlinedIndex;
+     bool drawAsPassword;
+     int overrideSmoothingLevel; // pass in -1 if caller does not want to override smoothing level
+     SIZE shadowOffset;
+     int shadowBlur;
++#if PLATFORM(CG)
+     CGColorRef shadowColor;
++#elif PLATFORM(CAIRO)
++    ColorRef shadowColor;
++#endif
+ };
+ 
+ void WebDrawText(WebTextRenderInfo*);
+Index: WebKit/win/WebMutableURLRequest.cpp
+===================================================================
+--- WebKit/win/WebMutableURLRequest.cpp	(revision 39213)
++++ WebKit/win/WebMutableURLRequest.cpp	(working copy)
+@@ -38,6 +38,8 @@
+ #include <WebCore/ResourceHandle.h>
+ #pragma warning(pop)
+ 
++#include <wtf/RetainPtr.h>
++
+ using namespace WebCore;
+ 
+ // IWebURLRequest ----------------------------------------------------------------
+@@ -367,9 +369,13 @@ HRESULT STDMETHODCALLTYPE WebMutableURLR
+ {
+     if (!result)
+         return E_POINTER;
++#if USE(CFNETWORK)
+     RetainPtr<CFMutableURLRequestRef> mutableRequest(AdoptCF, CFURLRequestCreateMutableCopy(kCFAllocatorDefault, m_request.cfURLRequest()));
+     *result = createInstance(ResourceRequest(mutableRequest.get()));
+     return S_OK;
++#else
++    return E_NOTIMPL;
++#endif
+ }
+ 
+ // IWebMutableURLRequest ----------------------------------------------------
+Index: WebKit/win/WebPreferences.cpp
+===================================================================
+--- WebKit/win/WebPreferences.cpp	(revision 39213)
++++ WebKit/win/WebPreferences.cpp	(working copy)
+@@ -46,7 +46,9 @@
+ #include <shlobj.h>
+ #include <shfolder.h>
+ #include <tchar.h>
++#if ENABLE(SAFARI_INTERFACE)
+ #include <WebKitSystemInterface/WebKitSystemInterface.h>
++#endif
+ #include <wtf/HashMap.h>
+ #include <wtf/OwnArrayPtr.h>
+ 
+@@ -966,7 +968,9 @@ HRESULT STDMETHODCALLTYPE WebPreferences
+     setIntegerValue(CFSTR(WebKitFontSmoothingTypePreferenceKey), smoothingType);
+     if (smoothingType == FontSmoothingTypeWindows)
+         smoothingType = FontSmoothingTypeStandard;
++#if ENABLE(SAFARI_INTERFACE)
+     wkSetFontSmoothingLevel((int)smoothingType);
++#endif
+     return S_OK;
+ }
+ 
+Index: WebKit/win/WebTextRenderer.cpp
+===================================================================
+--- WebKit/win/WebTextRenderer.cpp	(revision 39213)
++++ WebKit/win/WebTextRenderer.cpp	(working copy)
+@@ -32,7 +32,9 @@
+ #include "WebKitDLL.h"
+ 
+ #include <CoreFoundation/CFString.h>
++#if ENABLE(SAFARI_INTERFACE)
+ #include <WebKitSystemInterface/WebKitSystemInterface.h>
++#endif
+ #include <wtf/RetainPtr.h>
+ 
+ WebTextRenderer* WebTextRenderer::createInstance()
+@@ -90,6 +92,8 @@ HRESULT STDMETHODCALLTYPE WebTextRendere
+         return E_FAIL;
+ 
+     RetainPtr<CFStringRef> string(AdoptCF, CFStringCreateWithCharacters(0, reinterpret_cast<const UniChar*>(fontFilePath), static_cast<CFIndex>(wcslen(fontFilePath))));
++#if ENABLE(SAFARI_INTERFACE)
+     wkAddFontsAtPath(string.get());
++#endif
+     return S_OK;
+ }
+Index: WebKit/win/WebURLAuthenticationChallenge.cpp
+===================================================================
+--- WebKit/win/WebURLAuthenticationChallenge.cpp	(revision 39213)
++++ WebKit/win/WebURLAuthenticationChallenge.cpp	(working copy)
+@@ -149,9 +149,10 @@ HRESULT STDMETHODCALLTYPE WebURLAuthenti
+ 
+     // FIXME: After we change AuthenticationChallenge to use "ResourceHandle" as the abstract "Sender" or "Source of this Auth Challenge", then we'll
+     // construct the AuthenticationChallenge with that as obtained from the webSender
+-
++#if USE(CFNETWORK)
+     m_authenticationChallenge = AuthenticationChallenge(webSpace->protectionSpace(), webCredential->credential(),
+                                     previousFailureCount, webResponse->resourceResponse(), webError->resourceError());
++#endif
+     return S_OK;
+ }
+ 
+Index: WebKit/win/WebURLAuthenticationChallengeSender.cpp
+===================================================================
+--- WebKit/win/WebURLAuthenticationChallengeSender.cpp	(revision 39213)
++++ WebKit/win/WebURLAuthenticationChallengeSender.cpp	(working copy)
+@@ -29,6 +29,7 @@
+ #include "WebURLAuthenticationChallengeSender.h"
+ 
+ #include "COMPtr.h"
++#include "NotImplemented.h"
+ #include "WebKit.h"
+ #include "WebURLAuthenticationChallenge.h"
+ #include "WebURLCredential.h"
+@@ -100,29 +101,40 @@ ULONG STDMETHODCALLTYPE WebURLAuthentica
+ HRESULT STDMETHODCALLTYPE WebURLAuthenticationChallengeSender::cancelAuthenticationChallenge(
+         /* [in] */ IWebURLAuthenticationChallenge* challenge)
+ {
++#if USE(CFNETWORK)
+     COMPtr<WebURLAuthenticationChallenge> webChallenge(Query, challenge);
+     if (!webChallenge)
+         return E_FAIL;
+ 
+     m_handle->receivedCancellation(webChallenge->authenticationChallenge());
+     return S_OK;
++#else
++    notImplemented();
++    return E_FAIL;
++#endif
+ }
+ 
+ HRESULT STDMETHODCALLTYPE WebURLAuthenticationChallengeSender::continueWithoutCredentialForAuthenticationChallenge(
+         /* [in] */ IWebURLAuthenticationChallenge* challenge)
+ {
++#if USE(CFNETWORK)
+     COMPtr<WebURLAuthenticationChallenge> webChallenge(Query, challenge);
+     if (!webChallenge)
+         return E_FAIL;
+ 
+     m_handle->receivedRequestToContinueWithoutCredential(webChallenge->authenticationChallenge());
+     return S_OK;
++#else
++    notImplemented();
++    return E_FAIL;
++#endif
+ }
+ 
+ HRESULT STDMETHODCALLTYPE WebURLAuthenticationChallengeSender::useCredential(
+         /* [in] */ IWebURLCredential* credential, 
+         /* [in] */ IWebURLAuthenticationChallenge* challenge)
+ {
++#if USE(CFNETWORK)
+     COMPtr<WebURLAuthenticationChallenge> webChallenge(Query, challenge);
+     if (!webChallenge)
+         return E_FAIL;
+@@ -133,6 +145,10 @@ HRESULT STDMETHODCALLTYPE WebURLAuthenti
+ 
+     m_handle->receivedCredential(webChallenge->authenticationChallenge(), webCredential->credential());
+     return S_OK;
++#else
++    notImplemented();
++    return E_FAIL;
++#endif
+ }
+ 
+ // WebURLAuthenticationChallengeSender ----------------------------------------------------------------
+Index: WebKit/win/WebURLResponse.cpp
+===================================================================
+--- WebKit/win/WebURLResponse.cpp	(revision 39213)
++++ WebKit/win/WebURLResponse.cpp	(working copy)
+@@ -33,7 +33,10 @@
+ #include "MarshallingHelpers.h"
+ #include "WebLocalizableStrings.h"
+ 
++#if ENABLE(SAFARI_INTERFACE)
+ #include <WebKitSystemInterface/WebKitSystemInterface.h>
++#endif
++
+ #include <wtf/platform.h>
+ #pragma warning( push, 0 )
+ #include <WebCore/BString.h>
+Index: WebKit/win/WebView.cpp
+===================================================================
+--- WebKit/win/WebView.cpp	(revision 39213)
++++ WebKit/win/WebView.cpp	(working copy)
+@@ -103,10 +103,18 @@
+ #include <JavaScriptCore/InitializeThreading.h>
+ #include <JavaScriptCore/JSLock.h>
+ #include <JavaScriptCore/JSValue.h>
++
++#if USE(CFNETWORK)
+ #include <CFNetwork/CFURLCachePriv.h>
+ #include <CFNetwork/CFURLProtocolPriv.h>
++#endif
++
+ #include <CoreFoundation/CoreFoundation.h>
++
++#if ENABLE(SAFARI_INTERFACE)
+ #include <WebKitSystemInterface/WebKitSystemInterface.h> 
++#endif
++
+ #include <wtf/HashSet.h>
+ #include <dimm.h>
+ #include <oleacc.h>
+@@ -125,6 +133,7 @@ static HashSet<WebView*> pendingDeleteBa
+ static String osVersion();
+ static String webKitVersion();
+ 
++#if USE(CFNETWORK)
+ typedef CFURLCacheRef (*CopySharedURLCacheFunction)();
+ 
+ static HMODULE findCFNetworkModule()
+@@ -138,6 +147,7 @@ static CopySharedURLCacheFunction findCo
+ {
+     return reinterpret_cast<CopySharedURLCacheFunction>(GetProcAddress(findCFNetworkModule(), "CFURLCacheCopySharedURLCache"));
+ }
++#endif
+ 
+ WebView* kit(Page* page)
+ {
+@@ -381,6 +391,7 @@ void WebView::setCacheModel(WebCacheMode
+     if (s_didSetCacheModel && cacheModel == s_cacheModel)
+         return;
+ 
++#if USE(CFNETWORK)
+     // Once we require a newer version of CFNetwork with the CFURLCacheCopySharedURLCache function,
+     // we can call CFURLCacheCopySharedURLCache directly and eliminate copySharedURLCache.
+     static CopySharedURLCacheFunction copySharedURLCache = findCopySharedURLCacheFunction();
+@@ -567,6 +578,7 @@ void WebView::setCacheModel(WebCacheMode
+     s_didSetCacheModel = true;
+     s_cacheModel = cacheModel;
+     return;
++#endif
+ }
+ 
+ WebCacheModel WebView::cacheModel()
+@@ -4238,9 +4250,11 @@ HRESULT updateSharedSettingsFromPreferen
+     if (FAILED(hr))
+         return hr;
+ 
++#if USE(CFNETWORK)
+     // Set cookie storage accept policy
+     if (CFHTTPCookieStorageRef cookieStorage = currentCookieStorage())
+         CFHTTPCookieStorageSetCookieAcceptPolicy(cookieStorage, acceptPolicy);
++#endif
+ 
+     return S_OK;
+ }
+Index: WebKit/win/WebCoreSupport/WebDragClient.cpp
+===================================================================
+--- WebKit/win/WebCoreSupport/WebDragClient.cpp	(revision 39213)
++++ WebKit/win/WebCoreSupport/WebDragClient.cpp	(working copy)
+@@ -30,7 +30,9 @@
+ #include "WebView.h"
+ 
+ #include <shlobj.h>
++#if PLATFORM(CG)
+ #include <CoreGraphics/CoreGraphics.h>
++#endif
+ 
+ #pragma warning(push, 0) 
+ #include <WebCore/ClipboardWin.h>
+@@ -46,7 +48,11 @@
+ #pragma warning(pop) 
+ 
+ namespace WebCore {
++#if PLATFORM(CG)
+     HBITMAP allocImage(HDC dc, IntSize size, CGContextRef *targetRef);
++#elif PLATFORM(CAIRO)
++    HBITMAP allocImage(HDC dc, IntSize size, struct _cairo** targetRef);
++#endif
+ }
+ 
+ 
+@@ -223,7 +229,11 @@ DragImageRef WebDragClient::createDragIm
+         return 0;
+     }
+ 
++#if PLATFORM(CG)
+     CGContextRef contextRef;
++#elif PLATFORM(CAIRO)
++    struct _cairo* contextRef;
++#endif
+     image = allocImage(workingDC, imageSize, &contextRef);
+     if (!image) {
+         DeleteDC(workingDC);
+@@ -257,7 +267,12 @@ DragImageRef WebDragClient::createDragIm
+     IntPoint textPos(DRAG_LABEL_BORDER_X, DRAG_LABEL_BORDER_Y + labelFont.pixelSize());
+     WebCoreDrawDoubledTextAtPoint(context, label, textPos, labelFont, topColor, bottomColor);
+ 
++#if PLATFORM(CG)
+     CGContextRelease(contextRef);
++#elif PLATFORM(CAIRO)
++    cairo_destroy(contextRef);
++#endif
++
+     DeleteDC(workingDC);
+     ReleaseDC(0, dc);
+     return image;
+Index: WebKit/win/WebCoreSupport/WebFrameLoaderClient.cpp
+===================================================================
+--- WebKit/win/WebCoreSupport/WebFrameLoaderClient.cpp	(revision 39213)
++++ WebKit/win/WebCoreSupport/WebFrameLoaderClient.cpp	(working copy)
+@@ -33,6 +33,7 @@
+ #include "COMPropertyBag.h"
+ #include "EmbeddedWidget.h"
+ #include "MarshallingHelpers.h"
++#include "NotImplemented.h"
+ #include "WebCachedPagePlatformData.h"
+ #include "WebChromeClient.h"
+ #include "WebDocumentLoader.h"
+@@ -105,6 +106,7 @@ void WebFrameLoaderClient::assignIdentif
+ 
+ void WebFrameLoaderClient::dispatchDidReceiveAuthenticationChallenge(DocumentLoader* loader, unsigned long identifier, const AuthenticationChallenge& challenge)
+ {
++#if USE(CFNETWORK)
+     ASSERT(challenge.sourceHandle());
+ 
+     WebView* webView = m_webFrame->webView();
+@@ -118,6 +120,9 @@ void WebFrameLoaderClient::dispatchDidRe
+     // If the ResourceLoadDelegate doesn't exist or fails to handle the call, we tell the ResourceHandle
+     // to continue without credential - this is the best approximation of Mac behavior
+     challenge.sourceHandle()->receivedRequestToContinueWithoutCredential(challenge);
++#else
++   notImplemented();
++#endif
+ }
+ 
+ void WebFrameLoaderClient::dispatchDidCancelAuthenticationChallenge(DocumentLoader* loader, unsigned long identifier, const AuthenticationChallenge& challenge)
+@@ -472,10 +477,12 @@ void WebFrameLoaderClient::savePlatformD
+     if (!coreFrame)
+         return;
+ 
++#if ENABLE(SAFARI_INTERFACE)
+     ASSERT(coreFrame->loader()->documentLoader() == cachedPage->documentLoader());
+ 
+     WebCachedPagePlatformData* webPlatformData = new WebCachedPagePlatformData(static_cast<IWebDataSource*>(getWebDataSource(coreFrame->loader()->documentLoader())));
+     cachedPage->setCachedPagePlatformData(webPlatformData);
++#endif
+ }
+ 
+ void WebFrameLoaderClient::transitionToCommittedForNewPage()
+Index: WebKit/win/WebKit.vcproj/WebKit.rc
+===================================================================
+--- WebKit/win/WebKit.vcproj/WebKit.rc	(revision 39213)
++++ WebKit/win/WebKit.vcproj/WebKit.rc	(working copy)
+@@ -1,7 +1,9 @@
+ // Microsoft Visual C++ generated resource script.
+ //
+ #include "resource.h"
++#ifndef APSTUDIO_INVOKED
+ #include "autoversion.h"
++#endif
+ #include "winres.h"
+ 
+ #ifdef _WIN32
+Index: WebKitTools/WinLauncher/WinLauncher.cpp
+===================================================================
+--- WebKitTools/WinLauncher/WinLauncher.cpp	(revision 39213)
++++ WebKitTools/WinLauncher/WinLauncher.cpp	(working copy)
+@@ -387,7 +387,7 @@ static void loadURL(BSTR urlBStr)
+     if (FAILED(hr))
+         goto exit;
+ 
+-    hr = request->initWithURL(urlBStr, WebURLRequestUseProtocolCachePolicy, 0);
++    hr = request->initWithURL(urlBStr, WebURLRequestUseProtocolCachePolicy, 60);
+     if (FAILED(hr))
+         goto exit;
+ 

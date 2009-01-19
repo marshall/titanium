@@ -2,75 +2,91 @@
 	<head>
 		<style>
 			body { font-family: sans, sans-serif; background-color: white; }
+			div.test { border: 1px solid #c3c3c3; padding: 5px; margin: 8px 0 8px 0; display: none; }
+			div.test div { padding: 6px; }
+			div.output { border: 1px solid #c3c3c3; padding: 5px; margin: 8px 0 px 0; background-color: black; color: white; height: 350px; overflow: scroll; }
+			div.debug { color: #696969; height: 200px; }
 		</style>
 		<script>
-			function testFile(f) {
-				var s = '';
+			var File = new Object();
+			File.isFile = function() { return "ss"; }
 
-				s += 'toString(): ' + f.toString() + '<br>';
-				s += 'exists: ' + f.exists() + '<br>';
-				s += 'file: ' + f.isFile() + '<br>';
-				s += 'directory: ' + f.isDirectory() + '<br>';
-				s += 'hidden: ' + f.isHidden() + '<br>';
-				s += 'link: ' + f.isSymbolicLink() + '<br>';
+			var Titanium = new Object();
+			Titanium.Filesystem = new Object();
+			Titanium.Filesystem.getFile = function(s) { return new File(); };
 
-				return s;
+			var tests = new Object();
+
+			tests.isFile = function(params) {
+				var f = Titanium.Filesystem.getFile(params[0]);
+
+				return f.isFile();
 			}
 
-			function testFS(name) {
-				var f = Titanium.Filesystem.getFile(name);
+			tests.isDirectory = function(params) {
+				var f = Titanium.Filesystem.getFile(params[0]);
 
-				var s = 'file: ' + name + '<br>';
-				s += testFile(f);
-
-				return s;
+				return f.isDirectory();
 			}
 
+			tests.isHidden = function(params) {
+				var f = Titanium.Filesystem.getFile(params[0]);
 
-			function testCreateTempFile() {
-				var s = 'test createTempFile<br>';
+				return f.isHidden();
+			}
 
+			tests.isSymbolicLink = function(params) {
+				var f = Titanium.Filesystem.getFile(params[0]);
+
+				return f.isSymbolicLink();
+			}
+
+			tests.exists = function(params) {
+				var f = Titanium.Filesystem.getFile(params[0]);
+
+				return f.exists();
+			}
+
+			tests.toString = function(params) {
+				var f = Titanium.Filesystem.getFile(params[0]);
+
+				return f.toString();
+			}
+
+			tests.createTempFile = function(params) {
 				var f = Titanium.Filesystem.createTempFile();
 
-				s += testFile(f);
-
-				return s;
+				return f;
 			}
 
-			function testCreateTempDir() {
-				var s = 'test createTempDir<br>';
-
+			tests.createTempDirectory = function(params) {
 				var f = Titanium.Filesystem.createTempDirectory();
 
-				s += testFile(f);
+				return f;
+			}
 
-				return s;
+			
+			tests.copy = function(params) {
+				var src = Titanium.Filesystem.getFile(params[0]);
+				
+				var success = src.copy(params[1]);
+				
+				return success;
 			}
 			
-			function testCopy(from, to) {
-				var src = Titanium.Filesystem.getFile(from);
+			tests.move = function(params) {
+				var src = Titanium.Filesystem.getFile(params[0]);
 				
-				var success = src.copy(to);
+				var success = src.move(params[1]);
 				
-				var s = 'copy "' + from + '" to "' + to + '" [' + success + ']';
-				
-				return s;
+				return success;
 			}
-			
-			function testMove(from, to) {
-				var src = Titanium.Filesystem.getFile(from);
-				
-				var success = src.move(to);
-				
-				var s = 'move "' + from + '" to "' + to + '" [' + success + ']';
-				
-				return s;
-			}
-			
-			function testCreateDirectory(dirName, createParents) {
-				var dir = Titanium.Filesystem.getFile(dirName);
+
+			tests.createDirectory = function(params) {
+				var dir = Titanium.Filesystem.getFile(params[0]);
 				
 				var success;
+				var createParents = params[1]
 				
 				if(-1 == createParents) {
 					success= dir.createDirectory();
@@ -79,15 +95,14 @@
 					success = dir.createDirectory(createParents);
 				}
 				
-				var s = 'create dir "' + dir + '" [' + success + ']';
-				
-				return s;
+				return success;
 			}
 			
-			function testDeleteDirectory(dirName, deleteContents) {
-				var dir = Titanium.Filesystem.getFile(dirName);
+			tests.deleteDirectory = function(params) {
+				var dir = Titanium.Filesystem.getFile(params[0]);
 				
 				var success;
+				var deleteContents = params[1];
 				
 				if(-1 == deleteContents) {
 					success = dir.deleteDirectory();
@@ -95,26 +110,22 @@
 				else {
 					success = dir.deleteDirectory(deleteContents);
 				}
-				
-				var s = 'delete dir "' + dir + '" [' + success + ']';
-				
-				return s;
+
+				return success;
 			}
 			
-			function testDeleteFile(filename) {
-				var f = Titanium.Filesystem.getFile(filename);
+			tests.deleteFile = function(params) {
+				var f = Titanium.Filesystem.getFile(params[0]);
 				
 				var success = f.deleteFile();
-				
-				var s = 'delete file "' + filename + '" [' + success + ']';
-				
-				return s;
+
+				return success;
 			}
 			
-			function testDirectoryListing(dirname) {
-				var dir = Titanium.Filesystem.getFile(dirname);
+			tests.directoryListing = function(params) {
+				var dir = Titanium.Filesystem.getFile(params[0]);
 				
-				var s = 'Directory Listing "' + dirname + '":\n';
+				var s = 'Directory Listing:\n';
 				
 				var files = dir.getDirectoryListing();
 				
@@ -130,99 +141,299 @@
 				}
 				s += '\n\n';
 				
-				var ta = document.getElementById('dirListing');
-				ta.value += s;
+				return s;
 			}
-			
-			function testRead(file) {
-				var f = Titanium.Filesystem.getFile(file);
+
+			tests.read = function(params) {
+				var f = Titanium.Filesystem.getFile(params[0]);
 				
 				var contents = f.read();
 				
-				var ta = document.getElementById('fileContents');
-				ta.value += file + ':::\n' + contents + '\n\n';
+				return contents;
+			}
+
+			function executeTest() {
+				var testName = $('testsSelect').value;
+
+				var params = new Array();
+				var index = 1;
+				while(true) {
+					var p = $(testName + "_param" + index);
+					if(!p) { break; }
+
+					params.push(p.value);
+
+					index++;
+				}
+
+				var s = 'executing: ' + testName + '(';
+				for(i = 0; i < params.length; i++) {
+					if(i != 0) { s += ','; }
+					s += '"' + params[i] + '"';
+				}
+				s += ')';
+				log(s);
+
+				try {
+					var r = tests[testName](params);
+
+					log('>>>>>>>> ' + r);
+				}
+				catch (e) {
+					log('error: ' + e);
+				}
+
+				log('finished test ' + testName);
+			}
+			
+
+
+			function $(id) { return document.getElementById(id); }
+
+			function show(id) { $(id).style.display = 'block'; }
+			function hide(id) { $(id).style.display = 'none'; }
+
+			function getTestDivs() {
+				var testDivs = new Array();
+
+				var divs = document.getElementsByTagName('div');
+				for(i = 0; i < divs.length; i++) {
+					var d = divs[i];
+
+					if(d.className.indexOf('test') != -1) {
+						testDivs.push(d);
+					}
+				}
+
+				return testDivs;
+			}
+
+			function updateObjectInfo(testName) {
+				var s = "Titanium.Filesystem." + testName + " = ";
+				try	{
+					s += Titanium.Filesystem[testName];
+				}
+				catch (e) {
+					s += '??? (' + e + ')';
+				}
+				$('objectInfo').innerHTML = s;
+			}
+
+			function testChanged() {
+				var testName = $('testsSelect').value;
+
+				updateObjectInfo(testName);
+
+				var divID = 'test_' + testName;
+				var tests = getTestDivs();
+
+				for(i = 0;i < tests.length; i++) {
+					var test = tests[i];
+					
+					if(divID == test.id) {
+						show(test.id);
+					}
+					else {
+						hide(test.id);
+					}
+				}
+			}
+
+			function debug(s) { appendToLog($('debug'), s); }
+			function log(s) { appendToLog($('log'), s); }
+
+			function appendToLog(d, s) {
+				s = timestamp() + " : " + s;
+				d.innerHTML = d.innerHTML + s + '<br>';
+			}
+
+			function timestamp() { 
+				var d = new Date(); 
+				var s = (d.getHours()<10?'0'+d.getHours():d.getHours()) + ":" + (d.getMinutes()<10?'0'+d.getMinutes():d.getMinutes()) + ":" + (d.getSeconds()<10?'0'+d.getSeconds():d.getSeconds());
+				return s;
+			}
+
+			function initPage() {
+				debug('initializing..');
+				testChanged();
+
+				debug('done initializing.');
 			}
 		</script>
 	</head>
-	<body>
-		<h2>Titanium test app</h2>
-		Titanium = <script>document.write(Titanium);</script><br>
-		Titanium.Filesystem = <script>document.write(Titanium.Filesystem);</script><br>
-		Titanium.Filesystem.createTempFile = <script>document.write(Titanium.Filesystem.createTempFile);</script><br>
-		Titanium.Filesystem.createTempDirectory = <script>document.write(Titanium.Filesystem.createTempDirectory);</script><br>
-		Titanium.Filesystem.getFile = <script>document.write(Titanium.Filesystem.getFile);</script><br>
-		
-		<script>var file = Titanium.Filesystem.getFile('c:\\dev\\TI.FS.Test\\');</script>
-		<br><br>
-		File.isFile = <script>document.write(file.isFile);</script><br>
-		File.isDirectory = <script>document.write(file.isDirectory);</script><br>
-		File.isHidden = <script>document.write(file.isHidden);</script><br>
-		File.isSymbolicLink = <script>document.write(file.isSymbolicLink);</script><br>
-		File.exists = <script>document.write(file.exists);</script><br>
-		File.read = <script>document.write(file.read);</script><br>
-		File.copy = <script>document.write(file.copy);</script><br>
-		File.move = <script>document.write(file.move);</script><br>
-		File.createDirectory = <script>document.write(file.createDirectory);</script><br>
-		File.deleteDirectory = <script>document.write(file.deleteDirectory);</script><br>
-		File.deleteFile = <script>document.write(file.deleteFile);</script><br>
-		File.getDirectoryListing = <script>document.write(file.getDirectoryListing);</script><br>
-
-		<br><br>
-		<script>document.write(testFS('c:\\dev\\TI.FS.Test\\test.txt'))</script>
-		<br><br>
-		<script>document.write(testFS('c:\\dev\\TI.FS.Test\\hidden-file.txt'))</script>
-		<br><br>
-		<script>document.write(testFS('c:\\dev\\TI.FS.Test\\'))</script>
-		<br><br>
-		<script>document.write(testFS('c:\\dev\\TI.FS.Test\\bad\\doesntexist.txt'))</script>
-		<br><br>
-		<script>document.write(testFS('completely bad file ..&& name'))</script>
-		<br><br>
-		<script>document.write(testCreateTempFile())</script>
-		<br><br>
-		<script>document.write(testCreateTempDir())</script>
-		<br><br>
-		<script>document.write(testCopy('c:\\dev\\TI.FS.Test\\test.txt', 'c:\\dev\\TI.FS.Test\\test-tiCopy.txt'))</script>
-		<br><br>
-		<script>document.write(testCopy('c:\\dev\\TI.FS.Test\\test.txt', 'c:\\dev\\TI.FS.Test\\testCopyFolder'))</script>
-		<br><br>
-		<script>document.write(testCopy('c:\\dev\\TI.FS.Test\\testCopyFolder', 'c:\\dev\\TI.FS.Test\\testCopyFolderDup'))</script>
-		<br><br>
-		<script>document.write(testCopy('c:\\dev\\TI.FS.Test\\test.txt', 'c:\\dev\\TI.FS.Test\\nonexistend\\folder'))</script>
-		<br><br>
-		<textArea id='fileContents' cols='60' rows='3'></textArea>
-		<script>testRead('c:\\dev\\TI.FS.Test\\test.txt')</script>
-		<script>testRead('c:\\dev\\TI.FS.Test\\test-nonononon.txt')</script>
-		<script>testRead('c:\\dev\\TI.FS.Test\\')</script>
-		<br><br>
-		<script>document.write(testMove('c:\\dev\\TI.FS.Test\\test-file-to-move.txt', 'c:\\dev\\TI.FS.Test\\test-file-to-move-Y.txt'))</script>
-		<br><br>
-		<script>document.write(testCreateDirectory('c:\\dev\\TI.FS.Test\\dirCreated', -1))</script>
-		<br><br>
-		<script>document.write(testCreateDirectory('c:\\dev\\TI.FS.Test\\test.txt', -1))</script>
-		<br><br>
-		<script>document.write(testCreateDirectory('c:\\dev\\TI.FS.Test\\dirCreatedNested\\Level0\\Level1', false))</script>
-		<br><br>
-		<script>document.write(testCreateDirectory('c:\\dev\\TI.FS.Test\\dirCreatedNested\\Level0\\Level1', true))</script>
-		<br><br>
-		<script>document.write(testDeleteDirectory('c:\\dev\\TI.FS.Test\\test.txt', -1))</script>
-		<br><br>
-		<script>document.write(testDeleteDirectory('c:\\dev\\TI.FS.Test\\dirToDelete', -1))</script>
-		<br><br>
-		<script>document.write(testDeleteDirectory('c:\\dev\\TI.FS.Test\\dirToDelete2', false))</script>
-		<br><br>
-		<script>document.write(testDeleteDirectory('c:\\dev\\TI.FS.Test\\dirToDelete2', true))</script>
-		<br><br>
-		<script>document.write(testDeleteDirectory('c:\\dev\\TI.FS.Test\\dirToDeleteDoesntExist', true))</script>
-		<br><br>
-		<script>document.write(testDeleteFile('c:\\dev\\TI.FS.Test\\fileToDelete.txt', true))</script>
-		<br><br>
-		<script>document.write(testDeleteFile('c:\\dev\\TI.FS.Test\\fileToDelete-nonexisting file.txt', true))</script>
-		<br><br>
-		<textArea id='dirListing' cols='60' rows='8'></textArea>
-		<script>testDirectoryListing('c:\\dev\\TI.FS.Test')</script>
-		<script>testDirectoryListing('c:\\dev\\TI.FS.Test\\test.txt')</script>
-		<script>testDirectoryListing('c:\\dev\\TI.FS.TestNOTVALID')</script>
-		<br><br>
+	<body onload="initPage();">
+		<h2>Titanium Filesystem test app</h2>
+		<br>
+		<div>Titanium.Filesystem = <script>$w(Titanium.Filesystem)</script></div>
+		<div id="objectInfo"></div>
+		<br>
+		<div>
+			<span><input type="button" value="execute test" onclick="javascript:executeTest();" /></span>
+			<select id="testsSelect" onchange="testChanged()">
+				<option value="isFile">isFile</option>
+				<option value="isDirectory">isDirectory</option>
+				<option value="isSymbolicLink">isSymbolicLink</option>
+				<option value="isHidden">isHidden</option>
+				<option value="exists">exists</option>
+				<option value="toString">toString</option>
+				<option value="createTempFile">createTempFile</option>
+				<option value="createTempDirectory">createTempDirectory</option>
+				<option value="copy">copy</option>
+				<option value="move">move</option>
+				<option value="createDirectory">createDirectory</option>
+				<option value="deleteDirectory">deleteDirectory</option>
+				<option value="deleteFile">deleteFile</option>
+				<option value="directoryListing">directoryListing</option>
+				<option value="read">read</option>
+			</select>
+		</div>
+		<div id="test_isFile" class="test">
+			<div class="memberInfo">
+				bool File.isFile(name)
+			</div>
+			<div class="params">
+				<table>
+					<tr><td>name</td><td><input id="isFile_param1" class="param" size="50" value="c:\dev\TI.FS.Test\test.txt" /></td></tr>
+				</table>
+			</div>
+		</div>
+		<div id="test_isDirectory" class="test">
+			<div class="memberInfo">
+				bool File.isDirectory(name)
+			</div>
+			<div class="params">
+				<table>
+					<tr><td>name</td><td><input id="isDirectory_param1" class="param" size="50" value="c:\dev\TI.FS.Test\test.txt" /></td></tr>
+				</table>
+			</div>
+		</div>
+		<div id="test_isHidden" class="test">
+			<div class="memberInfo">
+				bool File.isHidden(name)
+			</div>
+			<div class="params">
+				<table>
+					<tr><td>name</td><td><input id="isHidden_param1" class="param" size="50" value="c:\dev\TI.FS.Test\test.txt" /></td></tr>
+				</table>
+			</div>
+		</div>
+		<div id="test_isSymbolicLink" class="test">
+			<div class="memberInfo">
+				bool File.isSymbolicLink(name)
+			</div>
+			<div class="params">
+				<table>
+					<tr><td>name</td><td><input id="isSymbolicLink_param1" class="param" size="50" value="c:\dev\TI.FS.Test\test.txt" /></td></tr>
+				</table>
+			</div>
+		</div>
+		<div id="test_exists" class="test">
+			<div class="memberInfo">
+				bool File.exists(name)
+			</div>
+			<div class="params">
+				<table>
+					<tr><td>name</td><td><input id="exists_param1" class="param" size="50" value="c:\dev\TI.FS.Test\test.txt" /></td></tr>
+				</table>
+			</div>
+		</div>
+		<div id="test_toString" class="test">
+			<div class="memberInfo">
+				bool File.toString(name)
+			</div>
+			<div class="params">
+				<table>
+					<tr><td>name</td><td><input id="toString_param1" class="param" size="50" value="c:\dev\TI.FS.Test\test.txt" /></td></tr>
+				</table>
+			</div>
+		</div>
+		<div id="test_createTempFile" class="test">
+			<div class="memberInfo">
+				string Filesystem.createTempFile()
+			</div>
+			<div class="params">
+			</div>
+		</div>
+		<div id="test_createTempDirectory" class="test">
+			<div class="memberInfo">
+				string Filesystem.createTempDirectory()
+			</div>
+		</div>
+		<div id="test_copy" class="test">
+			<div class="memberInfo">
+				bool File.copy(from, to)
+			</div>
+			<div class="params">
+				<table>
+					<tr><td>from</td><td><input id="copy_param1" class="param" size="50" value="c:\dev\TI.FS.Test\test.txt" /></td></tr>
+					<tr><td>to</td><td><input id="copy_param2" class="param" size="50" value="c:\temp" /></td></tr>
+				</table>
+			</div>
+		</div>
+		<div id="test_move" class="test">
+			<div class="memberInfo">
+				bool File.move(from,to)
+			</div>
+			<div class="params">
+				<table>
+					<tr><td>from</td><td><input id="move_param1" class="param" size="50" value="c:\dev\TI.FS.Test\test.txt" /></td></tr>
+					<tr><td>to</td><td><input id="move_param2" class="param" size="50" value="c:\temp" /></td></tr>
+				</table>
+			</div>
+		</div>
+		<div id="test_createDirectory" class="test">
+			<div class="memberInfo">
+				bool File.createDirectory(createParents)
+			</div>
+			<div class="params">
+				<table>
+					<tr><td>name</td><td><input id="createDirectory_param1" class="param" size="50" value="c:\dev\TI.FS.Test\test.txt" /></td></tr>
+					<tr><td>createParents</td><td><input id="createDirectory_param2" class="param" size="50" value="false" /></td></tr>
+				</table>
+			</div>
+		</div>
+		<div id="test_deleteDirectory" class="test">
+			<div class="memberInfo">
+				bool File.deleteDirectory(deleteContents)
+			</div>
+			<div class="params">
+				<table>
+					<tr><td>name</td><td><input id="deleteDirectory_param1" class="param" size="50" value="c:\dev\TI.FS.Test\test.txt" /></td></tr>
+					<tr><td>deleteContents</td><td><input id="deleteDirectory_param2" class="param" size="50" value="false" /></td></tr>
+				</table>
+			</div>
+		</div>
+		<div id="test_deleteFile" class="test">
+			<div class="memberInfo">
+				bool File.deleteFile()
+			</div>
+			<div class="params">
+				<table>
+					<tr><td>name</td><td><input id="deleteFile_param1" class="param" size="50" value="c:\dev\TI.FS.Test\test.txt" /></td></tr>
+				</table>
+			</div>
+		</div>
+		<div id="test_directoryListing" class="test">
+			<div class="memberInfo">
+				bool File.directoryListing()
+			</div>
+			<div class="params">
+				<table>
+					<tr><td>name</td><td><input id="directoryListing_param1" class="param" size="50" value="c:\dev\TI.FS.Test\test.txt" /></td></tr>
+				</table>
+			</div>
+		</div>
+		<div id="test_read" class="test">
+			<div class="memberInfo">
+				bool File.read()
+			</div>
+			<div class="params">
+				<table>
+					<tr><td>name</td><td><input id="read_param1" class="param" size="50" value="c:\dev\TI.FS.Test\test.txt" /></td></tr>
+				</table>
+			</div>
+		</div>
+		<div class='output log'><code id="log"></code></div>
+		<div class='output debug'><code id="debug"></code><div>
 	</body>
 </html>
