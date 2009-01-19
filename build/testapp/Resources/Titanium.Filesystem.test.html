@@ -216,7 +216,7 @@
 				catch (e) {
 					s += '??? (' + e + ')';
 				}
-				$('objectInfo2').innerHTML = s;
+				$('objectInfo').innerHTML = s;
 			}
 
 			function testChanged() {
@@ -265,7 +265,7 @@
 		<h2>Titanium Filesystem test app</h2>
 		<br>
 		<div>Titanium.Filesystem = <script>$w(Titanium.Filesystem)</script></div>
-		<div id="objectInfo2"></div>
+		<div id="objectInfo"></div>
 		<br>
 		<div>
 			<span><input type="button" value="execute test" onclick="javascript:executeTest();" /></span>
