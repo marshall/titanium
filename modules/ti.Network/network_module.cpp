@@ -26,6 +26,6 @@ namespace ti
 
 	void NetworkModule::Destroy()
 	{
-		KR_DECREF(this->variables);
+		//KR_DECREF(this->variables);
 	}
 }

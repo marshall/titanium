@@ -26,6 +26,6 @@ namespace ti
 
 	void MediaModule::Destroy()
 	{
-		KR_DECREF(this->variables);
+		//KR_DECREF(this->variables);
 	}
 }

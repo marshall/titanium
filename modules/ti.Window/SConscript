@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+# :q/usr/bin/env python
 import os, os.path as path
 
 Import('tiBuild')
@@ -15,10 +15,15 @@ webkit_lib = path.join(webkit_tp, 'lib')
 webkit_inc = path.join(webkit_tp, 'include')
 
 if tiBuild.is_linux():
-	sources = sources + Glob('linux/*.cpp')
-	env.Append(LIBS=['webkit-1.0'])
-	env.Append(LIBPATH=[webkit_lib])
-	env.Append(CPPPATH=[webkit_inc])
+	sources = sources + Glob('linux/*.cpp') + Glob('url/*.cpp')
+
+	curl_tp = path.join(build.third_party, 'libcurl')
+	curl_lib = path.join(curl_tp, 'lib')
+	curl_inc = path.join(curl_tp, 'include')
+
+	env.Append(LIBS=['webkit-1.0', 'curl'])
+	env.Append(LIBPATH=[webkit_lib, curl_lib])
+	env.Append(CPPPATH=[webkit_inc, curl_inc])
 	env.ParseConfig('pkg-config --cflags --libs gtk+-2.0 gdk-2.0')
 
 elif tiBuild.is_win32():

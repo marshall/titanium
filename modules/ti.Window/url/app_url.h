@@ -11,8 +11,6 @@
 
 namespace ti {
 	const char * AppURLGetAbsolutePath(const char *full_path);
-
-	static const char *kAppURLPrefix = "/Resources";
 }
 
 extern struct Curl_local_handler Titanium_app_url_handler;

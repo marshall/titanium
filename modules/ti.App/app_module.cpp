@@ -47,7 +47,7 @@ namespace ti
 		}
 		Value *argsvalue = new Value(args);
 		this->variables->Set("commandline",argsvalue);
-		KR_DECREF(args);
+		//KR_DECREF(args);
 		
 		// set our ti.App
 		Value *value = new Value(this->variables);
@@ -56,6 +56,6 @@ namespace ti
 
 	void AppModule::Destroy()
 	{
-		KR_DECREF(this->variables);
+		//KR_DECREF(this->variables);
 	}
 }

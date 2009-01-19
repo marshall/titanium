@@ -17,6 +17,7 @@
 
 #ifdef OS_LINUX
 #include "linux/window_module_linux.h"
+#include "url/app_url.h"
 #endif
 
 #ifdef OS_OSX
@@ -61,6 +62,7 @@ namespace ti
 		// platform
 		Value *platform = NULL;
 #if defined(OS_LINUX)
+		curl_register_local_handler(&Titanium_app_url_handler);
 		GtkUserWindow* window = new GtkUserWindow(this->host, main_window_config);
 		platform = new Value("linux");
 #elif defined(OS_OSX)
@@ -71,13 +73,13 @@ namespace ti
 		platform = new Value("win32");
 #endif
 		global->Set("platform",platform);
-		KR_DECREF(global);
+		//KR_DECREF(global);
 
 		window->Open();
 	}
 
 	void WindowModule::Destroy()
 	{
-		KR_DECREF(this->runtime);
+		//KR_DECREF(this->runtime);
 	}
 }

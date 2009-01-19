@@ -73,6 +73,7 @@ runtime_zip = File.join(installdir,"runtime-#{OS}-#{VER}.zip")
 FileUtils.rm_rf runtime_zip
 
 Zip::ZipFile.open(runtime_zip, Zip::ZipFile::CREATE) do |zipfile|
+
   Dir["#{outdir}/**"].each do |f|
     name = f.gsub(outdir+'/','')
     zipfile.add name,f if installer?(name)
@@ -81,22 +82,18 @@ Zip::ZipFile.open(runtime_zip, Zip::ZipFile::CREATE) do |zipfile|
     name = f.gsub(outdir+'/','')
     zipfile.add "Resources/English.lproj/#{name}",f
   end
-  path = "#{thirdparty}/webkit" 
-  Dir["#{path}/**/**"].each do |f|
-    name = f.gsub(path+'/','')
-    zipfile.add name,f unless (name=~/\.h$/ or name=~/\.defs$/)
-  end
-  path = "#{thirdparty}/poco" 
-  Dir["#{path}/**/**"].each do |f|
-    name = f.gsub(path+'/','')
-    zipfile.add name,f unless (name=~/\.h$/ or name=~/\.defs$/)
-  end
-  path = "#{thirdparty}/poco/lib"
+
+  paths = ['webkit', 'poco', 'poco/lib', 'libcurl']
+  paths.each do |path|
+    path = "#{thirdparty}/#{path}"
     Dir["#{path}/**/**"].each do |f|
       name = f.gsub(path+'/','')
-      zipfile.add name,f
+      zipfile.add name,f unless (name=~/\.h$/ or name=~/\.defs$/)
     end
   end
+
+end
+
 FileUtils.cp File.join(outdir,'kinstall'+ext), File.join(installdir,'kinstall'+ext)
 
 PLUGINS.each do |plugin|

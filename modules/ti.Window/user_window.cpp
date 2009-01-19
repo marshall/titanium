@@ -31,7 +31,7 @@ void UserWindow::Close(UserWindow *window)
 		windows.erase(iter);
 	}
 
-	KR_DECREF(window);
+	//KR_DECREF(window);
 
 }
 
@@ -180,7 +180,7 @@ void UserWindow::get_bounds_cb(const kroll::ValueList& args, kroll::SharedValue 
 	b->Set("height", new kroll::Value(bounds.height));
 	result->SetObject(b);
 
-	KR_DECREF(b);
+	//KR_DECREF(b);
 }
 
 void UserWindow::set_bounds_cb(const kroll::ValueList& args, kroll::SharedValue result)

@@ -14,14 +14,14 @@ namespace ti
 {
 	MediaBinding::MediaBinding(BoundObject *global) : global(global)
 	{
-		KR_ADDREF(global);
+		//KR_ADDREF(global);
 		
 		this->SetMethod("createSound",&MediaBinding::CreateSound);
 		this->SetMethod("beep",&MediaBinding::Beep);
 	}
 	MediaBinding::~MediaBinding()
 	{
-		KR_DECREF(global);
+		//KR_DECREF(global);
 	}
 	void MediaBinding::CreateSound(const ValueList& args, SharedValue result)
 	{

@@ -25,7 +25,7 @@ namespace ti
 			this->reactor.stop();
 			this->socket.close();
 		}
-		KR_DECREF(this->callback);
+		//KR_DECREF(this->callback);
 	}
 	void TCPSocketBinding::Connect(const ValueList& args, SharedValue result)
 	{
@@ -35,7 +35,7 @@ namespace ti
 			return;
 		}
 		this->callback = args.at(0)->ToMethod();
-		KR_ADDREF(this->callback);
+		//KR_ADDREF(this->callback);
 		try
 		{
 			SocketAddress a(this->host.c_str(),this->port);
