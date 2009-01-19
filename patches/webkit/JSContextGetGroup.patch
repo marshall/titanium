@@ -1,0 +1,25 @@
+Index: JavaScriptCore/API/JSContextRef.h
+===================================================================
+--- JavaScriptCore/API/JSContextRef.h	(revision 39247)
++++ JavaScriptCore/API/JSContextRef.h	(working copy)
+@@ -123,7 +123,7 @@
+ @param ctx The JSContext whose group you want to get.
+ @result ctx's group.
+ */
+-JS_EXPORT JSContextGroupRef JSContextGetGroup(JSContextRef ctx) AVAILABLE_AFTER_WEBKIT_VERSION_3_1;
++JS_EXPORT JSContextGroupRef JSContextGetGroup(JSContextRef ctx);
+ 
+ #ifdef __cplusplus
+ }
+Index: WebKit/win/WebKit.vcproj/WebKit.def
+===================================================================
+--- WebKit/win/WebKit.vcproj/WebKit.def	(revision 39247)
++++ WebKit/win/WebKit.vcproj/WebKit.def	(working copy)
+@@ -12,6 +12,7 @@
+ 	    JSClassRelease
+ 	    JSClassRetain
+ 	    JSContextGetGlobalObject
++	    JSContextGetGroup
+ 	    JSEvaluateScript
+ 	    JSGarbageCollect
+ 	    JSGlobalContextCreate
