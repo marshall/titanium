@@ -53,24 +53,23 @@ namespace ti
 		}
 
 		// add some titanium specific global info here
-		BoundObject* global = this->host->GetGlobalObject();
+		SharedBoundObject global = this->host->GetGlobalObject();
 
 		// version
-		Value *version = new Value(0.2); // FIXME: for now this is hardcoded
+		SharedValue version = new Value(0.2); // FIXME: for now this is hardcoded
 		global->Set("version",version);
 
 		// platform
-		Value *platform = NULL;
 #if defined(OS_LINUX)
 		curl_register_local_handler(&Titanium_app_url_handler);
 		GtkUserWindow* window = new GtkUserWindow(this->host, main_window_config);
-		platform = new Value("linux");
+		SharedValue platform = new Value("linux");
 #elif defined(OS_OSX)
 		OSXUserWindow* window = new OSXUserWindow(this->host, main_window_config);
-		platform = new Value("osx");
+		SharedValue platform = new Value("osx");
 #elif defined(OS_WIN32)
 		Win32UserWindow* window = new Win32UserWindow(this->host, main_window_config);
-		platform = new Value("win32");
+		SharedValue platform = new Value("win32");
 #endif
 		global->Set("platform",platform);
 		//KR_DECREF(global);
