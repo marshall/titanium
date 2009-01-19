@@ -4,6 +4,8 @@ import os, os.path as path
 Import("tiBuild")
 Import('build')
 
+tiBuild.add_thirdparty(build.env, 'poco')
+
 env = tiBuild.env.Clone();
 env.Append(CPPDEFINES = {'TITANIUM_FILESYSTEM_API_EXPORT' : 1})
 env.Append(CPPPATH = ['#kroll'])
@@ -11,15 +13,5 @@ env.Append(CPPPATH = ['#kroll'])
 if tiBuild.is_win32():
     env.Append(CCFLAGS=['/MD'])
 
-poco = path.join(build.third_party, 'poco')
-poco_lib = path.join(poco, 'lib')
-if build.is_osx():
-    poco_inc = path.join(poco, 'headers')
-else:
-    poco_inc = path.join(poco, 'include')
-
-env.Append(LIBPATH=[poco_lib])
-env.Append(CPPPATH=[poco_inc])
-env.Append(LIBS=['PocoFoundation','PocoNet','PocoNetSSL'])
 
 s = env.SharedLibrary(target = tiBuild.dir + '/tifilesystemmodule', source = Glob('*.cpp'))

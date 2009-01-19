@@ -75,9 +75,6 @@ tiBuild = build
 Export ('tiBuild')
 Export ('build')
 
-# titanium depends on poco
-build.add_thirdparty(build.env, 'poco')
-
 SConscript('kroll/SConscript')
 
 # Kroll library is now built (hopefully)
