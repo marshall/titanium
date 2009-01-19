@@ -57,7 +57,7 @@
 	return nil;
 }
 
-+(Value*)IDToValue:(id)arg context:(JSContextRef)context
++(SharedValue)IDToValue:(id)arg context:(JSContextRef)context
 {
 	/**
 	 *  Conversion from WebScriptObject
@@ -110,8 +110,7 @@
 			Value *v = [ObjcBoundObject IDToValue:value context:context];
 			list->Append(v);
 		}
-		Value *result = new Value(list);
-		return result;
+		return new Value(list);
 	}
 	if ([arg isKindOfClass:[ObjcBoundObject class]])
 	{
@@ -158,32 +157,29 @@
 		if (JSObjectIsFunction(context,js))
 		{
 			KJSBoundMethod *method = KJSUtil::ToBoundMethod(context,js);
-		  	ScopedDereferencer r(method);
 		  	return new Value(method);
 		}
 		KJSBoundObject *object = KJSUtil::ToBoundObject(context,js);
-	  	ScopedDereferencer r(object);
 	  	return new Value(object);
 	}  
 	return Value::Undefined;
 }
--(id)initWithObject:(BoundObject*)obj key:(NSString*)k context:(JSContextRef)ctx
+-(id)initWithObject:(SharedPtr<BoundObject>)obj key:(NSString*)k context:(JSContextRef)ctx
 {
 	self = [super init];
 	if (self!=nil)
 	{
-		object = obj;
+		object = new SharedPtr<BoundObject>(obj);
 		key = k;
 		context = ctx;
 		[key retain];
-		KR_ADDREF(object);
 	}
 	return self;
 }
 -(void)dealloc
 {
-	KR_DECREF(object);
 	[key release];
+	delete object;
 	context = nil;
 	[super dealloc];
 }
@@ -191,13 +187,14 @@
 {
 	return YES;
 }
--(BoundObject*)boundObject
+-(SharedPtr<BoundObject>)boundObject
 {
-	return object;
+	SharedPtr<BoundObject> o = object->get();
+	return o;
 }
 -(NSString*)description
 {
-	Value *toString = object->Get("toString");
+	SharedValue toString = object->get()->Get("toString");
 	if (toString && toString->IsMethod())
 	{
 		ValueList args;
@@ -224,49 +221,48 @@
 }
 -(void)finalizeForWebScript
 {
-	KR_DECREF(object);
 }
 - (void)setValue:(id)value forUndefinedKey:(NSString *)k
 {
-	Value* v = [ObjcBoundObject IDToValue:value context:context];
-	object->Set([k UTF8String],v);
+	SharedValue v = [ObjcBoundObject IDToValue:value context:context];
+	object->get()->Set([k UTF8String],v);
 }
 - (id)valueForUndefinedKey:(NSString *)k
 {
-	Value *result = object->Get([k UTF8String]);
+	SharedValue result = object->get()->Get([k UTF8String]);
 	return [ObjcBoundObject ValueToID:result key:k context:context];
 }
 -(id)invokeDefaultMethodWithArguments:(NSArray*)args
 {
-	BoundMethod *method = dynamic_cast<BoundMethod*>(object);
+	BoundMethod *method = dynamic_cast<BoundMethod*>(object->get());
 	if (method)
 	{
 		ValueList a;
 		for (int c=0;c<(int)[args count];c++)
 		{
 			id value = [args objectAtIndex:c];
-			Value *arg = [ObjcBoundObject IDToValue:value context:context];
+			SharedValue arg = [ObjcBoundObject IDToValue:value context:context];
 			a.push_back(arg);
 		}
-		Value *result = method->Call(a);
+		SharedValue result = method->Call(a);
 		return [ObjcBoundObject ValueToID:result key:@"" context:context];
 	}
 	return [WebUndefined undefined];
 }
 -(id)invokeUndefinedMethodFromWebScript:(NSString *)name withArguments:(NSArray*)args
 {
-	SharedValue value = object->Get([name UTF8String]);
+	SharedValue value = object->get()->Get([name UTF8String]);
 	if (value->IsMethod())
 	{
 		ValueList a;
 		for (int c=0;c<(int)[args count];c++)
 		{
 			id value = [args objectAtIndex:c];
-			Value *arg = [ObjcBoundObject IDToValue:value context:context];
+			SharedValue arg = [ObjcBoundObject IDToValue:value context:context];
 			a.push_back(arg);
 		}
 		BoundMethod *method = value->ToMethod();
-		Value *result = method->Call(a);
+		SharedValue result = method->Call(a);
 		return [ObjcBoundObject ValueToID:result key:name context:context];
 	}
 	return [WebUndefined undefined];

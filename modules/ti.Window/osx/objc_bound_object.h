@@ -12,13 +12,13 @@
 #import "WebScriptObject.h"
 
 @interface ObjcBoundObject : NSObject {
-	BoundObject *object;
+	SharedPtr<BoundObject>* object;
 	JSContextRef context;
 	NSString *key; //TODO: debug only
 }
--(id)initWithObject:(BoundObject*)object key:(NSString*)key context:(JSContextRef)ctx;
+-(id)initWithObject:(SharedPtr<BoundObject>)object key:(NSString*)key context:(JSContextRef)ctx;
 -(BOOL)isWrappedBoundObject;
--(BoundObject*)boundObject;
+-(SharedPtr<BoundObject>)boundObject;
 +(id)ValueToID:(Value*)value key:(NSString*)key context:(JSContextRef)ctx;
-+(Value*)IDToValue:(id)value context:(JSContextRef)ctx;
++(SharedValue)IDToValue:(id)value context:(JSContextRef)ctx;
 @end
