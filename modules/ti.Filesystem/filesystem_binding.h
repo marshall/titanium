@@ -79,7 +79,7 @@ namespace ti
 		 * Params:
 		 *
 		 * Returns:
-		 *   path to the user's Desktop folder
+		 *   path to the user's Desktop folder; null if the desktop directory cannot be determined
 		 */
 		void GetDesktopDirectory(const ValueList& args, SharedValue result);
 		/**
@@ -89,7 +89,7 @@ namespace ti
 		 * Params:
 		 *
 		 * Returns:
-		 *   path to the user's document's folder
+		 *   path to the user's document's folder; null if the documents directory cannot be determined
 		 */
 		void GetDocumentsDirectory(const ValueList& args, SharedValue result);
 		/**
@@ -99,7 +99,7 @@ namespace ti
 		 * Params:
 		 *
 		 * Returns:
-		 *   path to the user's home directory
+		 *   path to the user's home directory; null if the user directory cannot be determined
 		 */
 		void GetUserDirectory(const ValueList& args, SharedValue result);
 		/**
