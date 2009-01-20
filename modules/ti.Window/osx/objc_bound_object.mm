@@ -50,7 +50,7 @@
 			SharedValue v = list->At(c);
 			id arg = [ObjcBoundObject ValueToID:v key:[NSString stringWithFormat:@"%@[%d]",key,c] context:context];
 			[result addObject:arg];
-			[arg release];
+			// don't release!
 		}
 		return result;
 	}
@@ -217,7 +217,6 @@
 }
 - (id)valueForUndefinedKey:(NSString *)k
 {
-//	NSLog(@"valueForUndefinedKey=%@",k);
 	SharedValue result = object->get()->Get([k UTF8String]);
 	return [ObjcBoundObject ValueToID:result key:k context:context];
 }

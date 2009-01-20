@@ -15,8 +15,8 @@
 				html+="<ul>";
 				for (var c=0;c<result.length;c++)
 				{
-					//var result = result[c];
-					html+="<li>"+"</li>";
+					var row = result[c];
+					html+="<li>"+row+"</li>";
 				}
 				html+="</ul>";
 				el.innerHTML = html;
@@ -68,6 +68,25 @@
 				debug(result);
 				alert('You chose: '+result.length+' files');
 			}
+			function openApp()
+			{
+				var name = prompt("which app?");
+				if (name)
+				{
+					Titanium.Desktop.openApplication(name);
+				}
+			}
+			function openURL()
+			{
+				Titanium.Desktop.openURL("http://titaniumapp.com");
+			}
+			function createShortcut()
+			{
+				var from = prompt("where from?");
+				var to = prompt("where to?");
+				var worked =Titanium.Desktop.createShortcut(from,to);
+				alert("Worked? " + (worked?"you bet ya!":"nope..."));
+			}
 		</script>
 	</head>
 	<body>
@@ -86,6 +105,15 @@
 		</div>
 		<div>
 			<button onclick="chooseFileTypes()">Open File Dialog (JS or HTML files only)</button>
+		</div>
+		<div>
+			<button onclick="openApp()">Open Application</button>
+		</div>
+		<div>
+			<button onclick="openURL()">Open URL</button>
+		</div>
+		<div>
+			<button onclick="createShortcut()">Create Shortcut</button>
 		</div>
 		<div id="debug">
 		</div>
