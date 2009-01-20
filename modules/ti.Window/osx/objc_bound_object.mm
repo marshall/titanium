@@ -85,20 +85,20 @@
 	  NSString *type = [NSString stringWithFormat:@"%s",[num objCType]];
 	  if ([type isEqualToString:@"c"])
 	  {
-	    return new Value((bool)[num boolValue]);
+	    return Value::NewBool((bool)[num boolValue]);
 	  }
 	  else if ([type isEqualToString:@"d"] || [type isEqualToString:@"f"])
 	  {
-	    return new Value((double)[num doubleValue]);
+	    return Value::NewDouble((double)[num doubleValue]);
 	  }
 	  else
 	  {
-	    return new Value((int)[num intValue]);
+	    return Value::NewInt((int)[num intValue]);
 	  }
 	}  
 	if ([arg isKindOfClass:[NSString class]])
 	{
-	  return new Value([(NSString*)arg UTF8String]);
+	  return Value::NewString([(NSString*)arg UTF8String]);
 	}
 	if ([arg isKindOfClass:[NSArray class]])
 	{
@@ -107,29 +107,29 @@
 		for (int c=0;c<(int)[args count];c++)
 		{
 			id value = [args objectAtIndex:c];
-			Value *v = [ObjcBoundObject IDToValue:value context:context];
+			SharedValue v = [ObjcBoundObject IDToValue:value context:context];
 			list->Append(v);
 		}
-		return new Value(list);
+		return Value::NewList(list);
 	}
 	if ([arg isKindOfClass:[ObjcBoundObject class]])
 	{
 		ObjcBoundObject *b = (ObjcBoundObject*)arg;
 		SharedBoundObject bound_object = [b boundObject];
 		// attempt to up cast to these other types first
-		BoundObject *bound_method = dynamic_cast<BoundMethod*>(bound_object.get());
+		BoundMethod *bound_method = dynamic_cast<BoundMethod*>(bound_object.get());
 		if (bound_method!=NULL)
 		{
-			SharedBoundObject bo = bound_method;
-			return new Value(bo);
+			SharedBoundMethod sbm = bound_method;
+			return Value::NewMethod(sbm);
 		}
 		BoundList *bound_list = dynamic_cast<BoundList*>(bound_object.get());
 		if (bound_list!=NULL)
 		{
-			SharedBoundList bl = bound_list;
-			return new Value(bl);
+			SharedBoundList sbl = bound_list;
+			return Value::NewList(sbl);
 		}
-		return new Value(bound_object);
+		return Value::NewObject(bound_object);
 	}
 	if ([arg isKindOfClass:[WebScriptObject class]])
 	{
@@ -159,10 +159,10 @@
 		if (JSObjectIsFunction(context,js))
 		{
 			SharedBoundMethod method = KJSUtil::ToBoundMethod(context,js);
-		  	return new Value(method);
+		  	return Value::NewMethod(method);
 		}
 		SharedBoundObject object = KJSUtil::ToBoundObject(context,js);
-	  	return new Value(object);
+	  	return Value::NewObject(object);
 	}  
 	return Value::Undefined;
 }
