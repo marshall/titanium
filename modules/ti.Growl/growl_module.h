@@ -27,7 +27,6 @@ namespace ti
 	{
 		KROLL_MODULE_CLASS(GrowlModule)
 
-		void CopyToApp();
 		void Test();
 
 	private:

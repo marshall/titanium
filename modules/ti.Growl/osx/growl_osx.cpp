@@ -45,12 +45,12 @@ namespace ti {
 		if (!FileUtils::IsDirectory(dir))
 		{
 			NSFileManager *fm = [NSFileManager defaultManager];
-			NSString *src = [NSString stringWithFormat:@"%@/Resources/Growl.framework", GetPath()];
-			NSString *dest = [NSString stringWithFormat:@"%@/Contents/Frameworks", host->GetApplicationHome().c_str()];
+			NSString *src = [NSString stringWithFormat:@"%s/Resources/Growl.framework", module->GetPath()];
+			NSString *dest = [NSString stringWithFormat:@"%s/Contents/Frameworks", host->GetApplicationHome().c_str()];
 			[fm copyPath:src toPath:dest handler:nil];
 
-			src = [NSString stringWithFormat:@"%@/Resources/Growl Registration Ticket.growlRegDict", GetPath()];
-			dest = [NSString stringWithFormat:@"%@/Contents/Resources", host->GetApplicationHome().c_str()];
+			src = [NSString stringWithFormat:@"%s/Resources/Growl Registration Ticket.growlRegDict", module->GetPath()];
+			dest = [NSString stringWithFormat:@"%s/Contents/Resources", host->GetApplicationHome().c_str()];
 			[fm copyPath:src toPath:dest handler:nil];
 		}
 	}

@@ -25,8 +25,9 @@ namespace ti
 
 #if defined(OS_OSX)
 		// load our variables
-		binding = new GrowlOSX(host->GetGlobalObject());
-		binding->CopyToApp(host, this);
+		GrowlOSX *g = new GrowlOSX(host->GetGlobalObject());
+		binding = g;
+		g->CopyToApp(host,this);
 #elif defined(OS_WIN32)
 		binding = new SnarlWin32(host->GetGlobalObject());
 #endif
