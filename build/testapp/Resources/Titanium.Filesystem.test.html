@@ -151,6 +151,11 @@
 				return dir;
 			}
 
+			tests.getResourcesDirectory = function(params) {
+				var dir = Titanium.Filesystem.getResourcesDirectory();
+				return dir;
+			}
+
 			tests.getDesktopDirectory = function(params) {
 				var dir = Titanium.Filesystem.getDesktopDirectory();
 				return dir;
@@ -330,6 +335,7 @@
 				<option value="directoryListing">directoryListing</option>
 				<option value="read">read</option>
 				<option value="getApplicationDirectory">getApplicationDirectory</option>
+				<option value="getResourcesDirectory">getResourcesDirectory</option>
 				<option value="getDesktopDirectory">getDesktopDirectory</option>
 				<option value="getDocumentsDirectory">getDocumentsDirectory</option>
 				<option value="getUserDirectory">getUserDirectory</option>
@@ -487,6 +493,11 @@
 		<div id="test_getApplicationDirectory" class="test">
 			<div class="memberInfo">
 				string Filesystem.getApplicationDirectory()
+			</div>
+		</div>
+		<div id="test_getResourcesDirectory" class="test">
+			<div class="memberInfo">
+				string Filesystem.getResourcesDirectory()
 			</div>
 		</div>
 		<div id="test_getDesktopDirectory" class="test">

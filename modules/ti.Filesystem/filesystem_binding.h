@@ -54,14 +54,24 @@ namespace ti
 		void GetFile(const ValueList& args, SharedValue result);
 		/**
 		 * Function: GetApplicationDirectory
-		 *   returns a path to the application directory (path to Resources folder)
+		 *   returns a path to the application directory
+		 *
+		 * Params:
+		 *
+		 * Returns:
+		 *   path to the Titanium Application folder
+		 */
+		void GetApplicationDirectory(const ValueList& args, SharedValue result);
+		/**
+		 * Function: GetResourcesDirectory
+		 *   returns a path to the application's Resource directory
 		 *
 		 * Params:
 		 *
 		 * Returns:
 		 *   path to the Resources folder
 		 */
-		void GetApplicationDirectory(const ValueList& args, SharedValue result);
+		void GetResourcesDirectory(const ValueList& args, SharedValue result);
 		/**
 		 * Function: GetDesktopDirectory
 		 *   return the path to the user's desktop directory
