@@ -21,8 +21,11 @@ if build.is_osx():
 	env.Append(CCFLAGS=OSX_UNIV_COMPILER)
 	env.Append(LDFLAGS=OSX_UNIV_LINKER)
 	env.Append(LIBS = ['dl'])
+	
+elif build.is_win32():
+	env.Append(LIBS = ['user32', 'shell32', 'advapi32'])
 
-s = env.SharedLibrary(target = tiBuild.dir + '/tigrowlmodule', source = Glob('*.cpp'))
+s = env.SharedLibrary(target = tiBuild.dir + '/tigrowlmodule', source = Glob('*.cpp') + Glob(build.os + '/*.cpp'))
 
 
 dirutil.mkpath(tiBuild.dir+'/modules/ti.Growl/Resources')

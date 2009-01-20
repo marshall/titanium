@@ -16,8 +16,6 @@ namespace ti
 {
 	class GrowlBinding : public StaticBoundObject
 	{
-		friend class SharedPtr;
-
 	public:
 		GrowlBinding(SharedBoundObject);
 	protected:
@@ -26,6 +24,7 @@ namespace ti
 		kroll::SharedBoundObject global;
 
 		void ShowNotification(const ValueList& args, SharedValue result);
+		virtual void ShowNotification(std::string& title, std::string& description) = 0;
 	};
 }
 
