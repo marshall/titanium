@@ -114,7 +114,7 @@ namespace ti
 		        NSString* fileName = [selected objectAtIndex:i];
 				std::string fn = [fileName UTF8String];
 				SharedValue f = Value::NewString(fn.c_str());
-				//FIXME: files->Append(f);
+				files->Append(f);
 		    }
 		}
 		[filetypes release];

@@ -7,9 +7,24 @@
 			}
 		</style>
 		<script>
+			function debug(result)
+			{
+				var el = document.getElementById("debug");
+				
+				var html = "<div>You selected the following:</div>";
+				html+="<ul>";
+				for (var c=0;c<result.length;c++)
+				{
+					//var result = result[c];
+					html+="<li>"+"</li>";
+				}
+				html+="</ul>";
+				el.innerHTML = html;
+			}
 			function chooseFiles()
 			{
 				var result = Titanium.Desktop.openFiles();
+				debug(result);
 				alert('You chose: '+result.length+' files');
 			}
 			function chooseDirs()
@@ -18,6 +33,7 @@
 					directories:true,
 					files:false
 				});
+				debug(result);
 				alert('You chose: '+result.length+' files');
 			}
 			function chooseDirsAndFiles()
@@ -26,6 +42,7 @@
 					directories:true,
 					files:true
 				});
+				debug(result);
 				alert('You chose: '+result.length+' files');
 			}
 			function chooseMultiple()
@@ -35,6 +52,7 @@
 					files:true,
 					multiple:true
 				});
+				debug(result);
 				alert('You chose: '+result.length+' files');
 			}
 			function chooseFileTypes()
@@ -47,6 +65,7 @@
 						'js','html'
 					]
 				});
+				debug(result);
 				alert('You chose: '+result.length+' files');
 			}
 		</script>
@@ -67,6 +86,8 @@
 		</div>
 		<div>
 			<button onclick="chooseFileTypes()">Open File Dialog (JS or HTML files only)</button>
+		</div>
+		<div id="debug">
 		</div>
 	</body>
 </html>

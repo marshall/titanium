@@ -134,32 +134,16 @@
 	if ([arg isKindOfClass:[WebScriptObject class]])
 	{
 		WebScriptObject *script = (WebScriptObject*)arg;
-		if ([script respondsToSelector:@selector(isWrappedBoundObject)])
-		{
-			NSLog(@"===> Wrapped object = %@",script);
-			// // script can be a wrapped JS object or one of our 
-			// // bound objects
-			// BoundObject *bound_object = reinterpret_cast<BoundObject*>(script);
-			// // attempt to up cast to these other types first
-			// BoundObject *bound_method = dynamic_cast<BoundMethod*>(bound_object);
-			// if (bound_method!=NULL)
-			// {
-			// 	return new Value(bound_method);
-			// }
-			// BoundList *bound_list = dynamic_cast<BoundList*>(bound_object);
-			// if (bound_list!=NULL)
-			// {
-			// 	return new Value(bound_list);
-			// }
-			// return new Value(bound_object);
-		}
-		//FIXME - BoundList
-		
 		JSObjectRef js = [script JSObject];
 		if (JSObjectIsFunction(context,js))
 		{
 			SharedBoundMethod method = KJSUtil::ToBoundMethod(context,js);
 		  	return Value::NewMethod(method);
+		}
+		else if (KJSUtil::IsArrayLike(js,context))
+		{
+			SharedBoundList list = KJSUtil::ToBoundList(context,js);
+		  	return Value::NewList(list);
 		}
 		SharedBoundObject object = KJSUtil::ToBoundObject(context,js);
 	  	return Value::NewObject(object);
@@ -233,6 +217,7 @@
 }
 - (id)valueForUndefinedKey:(NSString *)k
 {
+//	NSLog(@"valueForUndefinedKey=%@",k);
 	SharedValue result = object->get()->Get([k UTF8String]);
 	return [ObjcBoundObject ValueToID:result key:k context:context];
 }
