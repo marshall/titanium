@@ -10,7 +10,10 @@
 using namespace ti;
 
 static void destroy_cb (GtkWidget* widget, gpointer data);
-static void window_object_cleared_cb (WebKitWebView*, WebKitWebFrame*, JSGlobalContextRef, JSObjectRef, gpointer);
+static void window_object_cleared_cb (WebKitWebView*,
+                                      WebKitWebFrame*,
+                                      JSGlobalContextRef,
+                                      JSObjectRef, gpointer);
 
 GtkUserWindow::GtkUserWindow(Host *host, WindowConfig* config) : UserWindow(host, config)
 {
@@ -34,32 +37,43 @@ void GtkUserWindow::Open() {
 	{
 		/* web view */
 		WebKitWebView* web_view = WEBKIT_WEB_VIEW (webkit_web_view_new ());
-		g_signal_connect (G_OBJECT (web_view), "window-object-cleared", G_CALLBACK (window_object_cleared_cb), this);
+		g_signal_connect (G_OBJECT (web_view), "window-object-cleared",
+		                  G_CALLBACK (window_object_cleared_cb),
+		                  this);
 
 		/* web view scroller */
 		GtkWidget* scrolled_window = gtk_scrolled_window_new (NULL, NULL);
-		gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_window), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-		gtk_container_add (GTK_CONTAINER (scrolled_window), GTK_WIDGET (web_view));
+		gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_window),
+		                                GTK_POLICY_AUTOMATIC,
+		                                GTK_POLICY_AUTOMATIC);
+		gtk_container_add (GTK_CONTAINER (scrolled_window),
+		                   GTK_WIDGET (web_view));
 
 		/* main window vbox */
 		GtkWidget* vbox = gtk_vbox_new (FALSE, 0);
-		gtk_box_pack_start (GTK_BOX (vbox), GTK_WIDGET(scrolled_window), TRUE, TRUE, 0);
+		gtk_box_pack_start (GTK_BOX (vbox),
+		                    GTK_WIDGET(scrolled_window),
+		                    TRUE, TRUE, 0);
 
 		/* main window */
 		GtkWidget* window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-		gtk_window_set_default_size (GTK_WINDOW (window), this->config->GetWidth(), this->config->GetHeight());
+		gtk_window_set_default_size(GTK_WINDOW (window),
+		                            this->config->GetWidth(),
+		                            this->config->GetHeight());
 		gtk_widget_set_name (window, this->config->GetTitle().c_str());
 
-		g_signal_connect (G_OBJECT (window), "destroy", G_CALLBACK (destroy_cb), NULL);
+		g_signal_connect (G_OBJECT (window), "destroy",
+		                  G_CALLBACK (destroy_cb), NULL);
 		gtk_container_add (GTK_CONTAINER (window), vbox);
 
 		this->gtk_window = GTK_WINDOW(window);
 		this->web_view = web_view;
+		this->SetupTransparency();
 
 		gtk_widget_realize(window);
 		this->SetupDecorations();
 
-		webkit_web_view_open (web_view, this->config->GetURL().c_str());
+		webkit_web_view_open(web_view, this->config->GetURL().c_str());
 
 		gtk_widget_grab_focus(GTK_WIDGET (web_view));
 
@@ -79,6 +93,23 @@ void GtkUserWindow::Open() {
 	{
 		this->Show();
 	}
+}
+
+void GtkUserWindow::SetupTransparency()
+{
+	GValue val = {0,};
+	g_value_init(&val, G_TYPE_BOOLEAN);
+	g_value_set_boolean(&val, 1);
+	g_object_set_property(G_OBJECT (this->web_view), "transparent", &val); 
+
+	GdkScreen* screen = gtk_widget_get_screen(GTK_WIDGET(this->gtk_window));
+	GdkColormap* colormap = gdk_screen_get_rgba_colormap(screen);
+	if (!colormap) {
+		std::cerr << "Could not use ARGB colormap. "
+		          << "True transparency not available." << std::endl;
+		colormap = gdk_screen_get_rgb_colormap(screen);
+	}
+	gtk_widget_set_colormap(GTK_WIDGET(this->gtk_window), colormap);
 }
 
 void GtkUserWindow::Close()
@@ -103,16 +134,18 @@ static void window_object_cleared_cb (WebKitWebView* web_view,
 	// Titanium object. When a property isn't found in this object
 	// it will look for it in global_tibo.
 	SharedBoundObject global_tibo = tihost->GetGlobalObject();
-	BoundObject* tiObject = new DelegateStaticBoundObject(global_tibo);
+	BoundObject* ti_object = new DelegateStaticBoundObject(global_tibo);
+	SharedBoundObject shared_ti_obj = SharedBoundObject(ti_object);
 
 	// Set user window into the Titanium object
-	Value *user_window_val = Value::NewObject(user_window);
-	tiObject->Set("currentWindow", user_window_val);
+	SharedBoundObject* shared_user_window = new SharedBoundObject(user_window);
+	SharedValue user_window_val = Value::NewObject(*shared_user_window);
+	ti_object->Set("currentWindow", user_window_val);
 
 	// Place the Titanium object into the window's global object
 	BoundObject *global_bound_object = new KJSBoundObject(context, global_object);
-	Value *tiObjectValue = Value::NewObject(tiObject);
-	global_bound_object->Set(PRODUCT_NAME, tiObjectValue);
+	SharedValue ti_object_value = Value::NewObject(shared_ti_obj);
+	global_bound_object->Set(PRODUCT_NAME, ti_object_value);
 
 	JSStringRef script;
 	char code[1024];
