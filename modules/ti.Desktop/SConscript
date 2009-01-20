@@ -16,7 +16,8 @@ if tiBuild.is_osx():
 	env.Append(CCFLAGS = ['-x', 'objective-c++'])
 	env.Append(CCFLAGS=OSX_UNIV_COMPILER)
 	env.Append(LDFLAGS=OSX_UNIV_LINKER)
-
-
+elif tiBuild.is_win32():
+	env.Append(LIBS=['shell32', 'user32'])
+	
 s = env.SharedLibrary(target = tiBuild.dir + '/tidesktopmodule', source = Glob('*.cpp'))
 
