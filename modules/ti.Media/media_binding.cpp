@@ -7,34 +7,38 @@
 #include <kroll/kroll.h>
 
 #ifdef OS_OSX
-#include <Cocoa/Cocoa.h>
+#include "osx/osx_media.h"
 #elif defined(OS_WIN32)
-#include <windows.h>
+#include "win32/win32_media.h"
+#elif defined(OS_LINUX)
+#include "linux/linux_media.h"
 #endif
+
+#if defined(OS_OSX)
+	#define TI_MEDIA OSXMedia
+#elif defined(OS_WIN32)
+	#define TI_MEDIA Win32Media
+#elif defined(OS_LINUX)
+	#define TI_MEDIA LinuxMedia
+#endif
+
 
 namespace ti
 {
-	MediaBinding::MediaBinding(BoundObject *global) : global(global)
+	MediaBinding::MediaBinding(SharedBoundObject global) : global(global)
 	{
-		//KR_ADDREF(global);
-
 		this->SetMethod("createSound",&MediaBinding::CreateSound);
 		this->SetMethod("beep",&MediaBinding::Beep);
 	}
 	MediaBinding::~MediaBinding()
 	{
-		//KR_DECREF(global);
 	}
 	void MediaBinding::CreateSound(const ValueList& args, SharedValue result)
 	{
-		//TODO
+		TI_MEDIA::CreateSound(args,result);
 	}
 	void MediaBinding::Beep(const ValueList& args, SharedValue result)
 	{
-#ifdef OS_OSX
-		NSBeep();
-#elif defined(OS_WIN32)
-		MessageBeep(MB_OK);
-#endif
+		TI_MEDIA::Beep(args,result);
 	}
 }

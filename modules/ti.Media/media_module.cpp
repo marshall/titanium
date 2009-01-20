@@ -20,12 +20,11 @@ namespace ti
 		this->variables = new MediaBinding(host->GetGlobalObject());
 
 		// set our ti.Media
-		Value *value = Value::NewObject(this->variables);
+		SharedValue value = Value::NewObject(this->variables);
 		host->GetGlobalObject()->Set("Media",value);
 	}
 
 	void MediaModule::Destroy()
 	{
-		//KR_DECREF(this->variables);
 	}
 }
