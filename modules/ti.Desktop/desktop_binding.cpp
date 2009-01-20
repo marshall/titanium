@@ -110,7 +110,7 @@ namespace ti
 
 			CFRelease(obj);
 
-			tHandle >>= 30; // essentially divides by 10^9 (nanoseconds)
+			tHandle /= 1000000; // return as milliseconds
 		}
 		else
 		{

@@ -115,7 +115,8 @@ namespace ti
 			dir.append(path);
 		}
 #elif OS_OSX
-		// TODO
+		NSString *fullPath = [@"~/Desktop" stringByExpandingTildeInPath];
+		dir = [fullPath UTF8String];
 #elif OS_LINUX
 		// TODO
 #endif
@@ -140,7 +141,8 @@ namespace ti
 			dir.append(path);
 		}
 #elif OS_OSX
-		// TODO
+		NSString *fullPath = [@"~/Documents" stringByExpandingTildeInPath];
+		dir = [fullPath UTF8String];
 #elif OS_LINUX
 		// TODO
 #endif
