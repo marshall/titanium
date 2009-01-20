@@ -8,6 +8,9 @@
 
 #ifdef OS_OSX
 #import <Cocoa/Cocoa.h>
+#elif defined(OS_WIN32)
+#include <windows.h>
+#include <shellapi.h>
 #endif
 
 namespace ti
@@ -46,6 +49,9 @@ namespace ti
 		NSWorkspace * ws = [NSWorkspace sharedWorkspace];
 		BOOL wasOpened = [ws openURL:[NSURL URLWithString:[NSString stringWithCString:args.at(0)->ToString()]]];
 		result->SetBool(wasOpened);
+#elif defined(OS_WIN32)
+		long response = (long)ShellExecuteA(NULL, "open", args.at(0)->ToString(), NULL, NULL, SW_SHOWNORMAL);
+		result->SetBool(response > 0);
 #endif
 	}
 	void DesktopBinding::GetSystemIdleTime(const ValueList& args, SharedValue result)
@@ -115,6 +121,17 @@ namespace ti
 		IOObjectRelease(curObj);
 		IOObjectRelease(iter);
 		result->SetInt((int)tHandle);
+#elif defined(OS_WIN32)
+		LASTINPUTINFO lii;
+		memset(&lii, 0, sizeof(lii));
+
+		lii.cbSize = sizeof(lii);
+		::GetLastInputInfo(&lii);
+
+		DWORD currentTickCount = GetTickCount();
+		long idleTicks = currentTickCount - lii.dwTime;
+
+		result->SetInt((int)idleTicks);
 #endif
 	}
 }
