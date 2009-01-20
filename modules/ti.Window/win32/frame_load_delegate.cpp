@@ -32,17 +32,21 @@ Win32FrameLoadDelegate::windowScriptObjectAvailable (
 	for (size_t i = 0; i < prop_names->size(); i++)
 	{
 		SharedString name = prop_names->at(i);
-		SharedPtr<Value> value = global_tibo->Get(name->c_str());
+		SharedValue value = global_tibo->Get(name->c_str());
 		tiObject->Set(name->c_str(), value);
 	}
 
 	// set user window into the Titanium object
-	SharedValue user_window_val = new Value(this->window);
-	tiObject->Set("currentWindow", user_window_val);
+	SharedBoundObject w = this->window;
+	SharedValue user_window_val = Value::NewObject(w);
+	SharedValue tiWindow = tiObject->Get("Window");
+
+	if (!tiWindow.isNull() && tiWindow->IsObject())
+		tiWindow->ToObject()->Set("currentWindow", user_window_val);
 
 	// place Titanium object into the window's global object
 	SharedBoundObject global_bound_object = new KJSBoundObject(context, global_object);
-	SharedValue tiObjectValue = new Value(tiObject);
+	SharedValue tiObjectValue = Value::NewObject(tiObject);
 	global_bound_object->Set(PRODUCT_NAME, tiObjectValue);
 
 	return S_OK;

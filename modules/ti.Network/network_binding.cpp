@@ -13,11 +13,11 @@ namespace ti
 	NetworkBinding::NetworkBinding(BoundObject *global) : global(global)
 	{
 		//KR_ADDREF(global);
-		
+
 		// TODO: this state change needs to be implemented
-		SharedValue online = new Value(true);
+		SharedValue online = Value::NewBool(true);
 		this->Set("online",online);
-		
+
 		this->SetMethod("onConnectivityChange",&NetworkBinding::OnConnectivityChange);
 		this->SetMethod("createTCPSocket",&NetworkBinding::Create);
 	}

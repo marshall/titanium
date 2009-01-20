@@ -174,10 +174,10 @@ void UserWindow::get_bounds_cb(const kroll::ValueList& args, kroll::SharedValue 
 {
 	Bounds bounds = this->GetBounds();
 	kroll::StaticBoundObject *b = new kroll::StaticBoundObject();
-	b->Set("x", new kroll::Value(bounds.x));
-	b->Set("y", new kroll::Value(bounds.y));
-	b->Set("width", new kroll::Value(bounds.width));
-	b->Set("height", new kroll::Value(bounds.height));
+	b->Set("x", kroll::Value::NewInt(bounds.x));
+	b->Set("y", kroll::Value::NewInt(bounds.y));
+	b->Set("width", kroll::Value::NewInt(bounds.width));
+	b->Set("height", kroll::Value::NewInt(bounds.height));
 	result->SetObject(b);
 
 	//KR_DECREF(b);

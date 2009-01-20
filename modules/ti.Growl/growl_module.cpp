@@ -29,7 +29,7 @@ namespace ti
 		this->variables = new GrowlBinding(host->GetGlobalObject());
 
 		// set our ti.Growl
-		SharedValue value = new Value(this->variables);
+		SharedValue value = Value::NewObject(this->variables);
 		host->GetGlobalObject()->Set("Growl",value);
 	}
 

@@ -1,6 +1,6 @@
 /**
  * Appcelerator Titanium - licensed under the Apache Public License 2
- * see LICENSE in the root folder for details on the license. 
+ * see LICENSE in the root folder for details on the license.
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
 #include "app_module.h"
@@ -20,21 +20,21 @@ namespace ti
 		std::string config(home);
 #ifdef OS_OSX
 		config+="/Contents";
-#endif		
+#endif
 		config+="/"CONFIG_FILENAME;
-		
+
 		if (!FileUtils::IsFile(config))
 		{
 			std::cerr << "can't load " CONFIG_FILENAME " from: " << config << std::endl;
 			return;
 		}
-		
+
 		// initialize our application config
 		AppConfig::Init(config);
-		
+
 		// load our variables
 		this->variables = new AppBinding(host->GetGlobalObject());
-		
+
 		// add our command line array
 		StaticBoundList *args = new StaticBoundList();
 		// skip the first argument which is the filepath to the
@@ -42,15 +42,15 @@ namespace ti
 		for (int c=1;c<host->GetCommandLineArgCount();c++)
 		{
 			const char *v = host->GetCommandLineArg(c);
-			Value *value = new Value(v);
+			Value *value = Value::NewString(v);
 			args->Append(value);
 		}
-		Value *argsvalue = new Value(args);
+		SharedValue argsvalue = Value::NewList(args);
 		this->variables->Set("commandline",argsvalue);
 		//KR_DECREF(args);
-		
+
 		// set our ti.App
-		Value *value = new Value(this->variables);
+		SharedValue value = Value::NewObject(this->variables);
 		host->GetGlobalObject()->Set("App",value);
 	}
 

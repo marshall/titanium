@@ -285,7 +285,7 @@ namespace ti
 
 				for(size_t i = 0; i < files.size(); i++)
 				{
-					SharedValue value = new Value(files.at(i));
+					SharedValue value = Value::NewString(files.at(i));
 					fileList->Append(value);
 				}
 
