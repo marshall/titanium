@@ -9,10 +9,10 @@ require 'fileutils'
 
 VER = 0.1
 PLUGINS =
-  %w(api javascript foo ruby
-  python fooruby foopy tiapp
-  tiwindow tinetwork tifilesystem timedia
-  tidesktop timenu tigrowl)
+  %w(api javascript ruby python
+    foo foojs foorb foopy
+    tiapp tiwindow tinetwork tifilesystem 
+    timedia tidesktop timenu tigrowl)
 NAME = 'test'
 
 if RUBY_PLATFORM=~/darwin/
@@ -94,9 +94,21 @@ Zip::ZipFile.open(runtime_zip, Zip::ZipFile::CREATE) do |zipfile|
 
 end
 
+def script?(f)
+  e = File.extname(f)
+  return e == '.rb' || e == '.py' || e == '.js'
+end
+
+LANGS = {
+  '.rb'=>'ruby',
+  '.py'=>'python',
+  '.js'=>'javascript'
+}
+
 FileUtils.cp File.join(outdir,'kinstall'+ext), File.join(installdir,'kinstall'+ext)
 
 PLUGINS.each do |plugin|
+  plugin.strip!
   plugin_zip = File.join(installdir,"module-#{plugin}-0.1.zip")
   FileUtils.rm_rf plugin_zip
 
@@ -104,9 +116,15 @@ PLUGINS.each do |plugin|
     Dir["#{outdir}/**"].each do |f|
       name = f.gsub(outdir+'/','')
 		  next if File.extname(name)=='.o'
-		  next if File.extname(name)=='.rb' and plugin == 'ruby' and (name=~/^ruby/).nil?
-		  next if File.extname(name)=='.py' and plugin == 'python' and (name=~/^python/).nil?
-	    next unless name.index(plugin) and name.index('module')
+		  lang = LANGS[File.extname(f)]
+		  if lang
+		    e = File.extname(f)[1..-1]
+		    re = "^#{plugin}module(.*?)#{e}$"
+		    r = Regexp.new re
+		    next unless r.match(name)
+	    else
+  	    next unless name.index(plugin) and name.index('module')
+	    end
       zipfile.add name,f
     end
 		Dir["#{outdir}/modules/*"].each do |f|

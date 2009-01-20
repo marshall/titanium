@@ -7,6 +7,8 @@
 #include "filesystem_binding.h"
 #include "file.h"
 
+#include "api/file_utils.h"
+
 #ifdef OS_OSX
 #include <Cocoa/Cocoa.h>
 #elif defined(OS_WIN32)
@@ -29,6 +31,7 @@ namespace ti
 		this->SetMethod("createTempDirectory",&FilesystemBinding::CreateTempDirectory);
 		this->SetMethod("getFile",&FilesystemBinding::GetFile);
 		this->SetMethod("getApplicationDirectory",&FilesystemBinding::GetApplicationDirectory);
+		this->SetMethod("getResourcesDirectory",&FilesystemBinding::GetResourcesDirectory);
 		this->SetMethod("getDesktopDirectory",&FilesystemBinding::GetDesktopDirectory);
 		this->SetMethod("getDocumentsDirectory",&FilesystemBinding::GetDocumentsDirectory);
 		this->SetMethod("getUserDirectory",&FilesystemBinding::GetUserDirectory);
@@ -56,7 +59,7 @@ namespace ti
 			std::cerr << "Problem creating temp file:::: " << exc.displayText() << std::endl;
 
 			// TODO test this
-			SharedValue v = Value::NewString(exc.displayText());
+			SharedValue v = Value::NewString(exc.displayText().c_str());
 			throw v;
 		}
 	}
@@ -88,6 +91,16 @@ namespace ti
 	void FilesystemBinding::GetApplicationDirectory(const ValueList& args, SharedValue result)
 	{
 		std::cout << "GetApplicationDirectory() called" << std::endl;
+		std::string dir = FileUtils::GetApplicationDirectory();
+
+		result->SetString(dir.c_str());
+	}
+	void FilesystemBinding::GetResourcesDirectory(const ValueList& args, SharedValue result)
+	{
+		std::cout << "GetResourcesDirectory() called" << std::endl;
+		std::string dir = FileUtils::GetResourcesDirectory();
+
+		result->SetString(dir.c_str());
 	}
 	void FilesystemBinding::GetDesktopDirectory(const ValueList& args, SharedValue result)
 	{
@@ -102,7 +115,8 @@ namespace ti
 			dir.append(path);
 		}
 #elif OS_OSX
-		// TODO
+		NSString *fullPath = [@"~/Desktop" stringByExpandingTildeInPath];
+		dir = [fullPath UTF8String];
 #elif OS_LINUX
 		// TODO
 #endif
@@ -127,7 +141,8 @@ namespace ti
 			dir.append(path);
 		}
 #elif OS_OSX
-		// TODO
+		NSString *fullPath = [@"~/Documents" stringByExpandingTildeInPath];
+		dir = [fullPath UTF8String];
 #elif OS_LINUX
 		// TODO
 #endif
