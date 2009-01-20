@@ -106,12 +106,12 @@ static void window_object_cleared_cb (WebKitWebView* web_view,
 	BoundObject* tiObject = new DelegateStaticBoundObject(global_tibo);
 
 	// Set user window into the Titanium object
-	Value *user_window_val = new Value(user_window);
+	Value *user_window_val = Value::NewObject(user_window);
 	tiObject->Set("currentWindow", user_window_val);
 
 	// Place the Titanium object into the window's global object
 	BoundObject *global_bound_object = new KJSBoundObject(context, global_object);
-	Value *tiObjectValue = new Value(tiObject);
+	Value *tiObjectValue = Value::NewObject(tiObject);
 	global_bound_object->Set(PRODUCT_NAME, tiObjectValue);
 
 	JSStringRef script;

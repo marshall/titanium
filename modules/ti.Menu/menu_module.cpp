@@ -20,7 +20,7 @@ namespace ti
 		this->variables = new MenuBinding(host->GetGlobalObject());
 
 		// set our ti.Menu
-		SharedPtr<Value> value = new Value(this->variables);
+		SharedValue value = Value::NewObject(this->variables);
 		host->GetGlobalObject()->Set("Menu",value);
 	}
 

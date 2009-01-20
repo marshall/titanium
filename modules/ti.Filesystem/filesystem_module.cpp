@@ -20,7 +20,7 @@ namespace ti
 		this->variables = new FilesystemBinding(host->GetGlobalObject());
 
 		// set our ti.Filesystem
-		Value *value = new Value(this->variables);
+		SharedValue value = Value::NewObject(this->variables);
 		host->GetGlobalObject()->Set("Filesystem",value);
 	}
 

@@ -44,10 +44,10 @@
 	if (value->IsList())
 	{
 		NSMutableArray *result = [[NSMutableArray alloc] init];
-		BoundList *list = value->ToList();
+		SharedBoundList list = value->ToList();
 		for (int c=0;c<list->Size();c++)
 		{
-			Value *v = list->At(c);
+			SharedValue v = list->At(c);
 			id arg = [ObjcBoundObject ValueToID:v key:[NSString stringWithFormat:@"%@[%d]",key,c] context:context];
 			[result addObject:arg];
 			[arg release];
@@ -57,7 +57,7 @@
 	return nil;
 }
 
-+(Value*)IDToValue:(id)arg context:(JSContextRef)context
++(SharedValue)IDToValue:(id)arg context:(JSContextRef)context
 {
 	/**
 	 *  Conversion from WebScriptObject
@@ -85,50 +85,51 @@
 	  NSString *type = [NSString stringWithFormat:@"%s",[num objCType]];
 	  if ([type isEqualToString:@"c"])
 	  {
-	    return new Value((bool)[num boolValue]);
+	    return Value::NewBool((bool)[num boolValue]);
 	  }
 	  else if ([type isEqualToString:@"d"] || [type isEqualToString:@"f"])
 	  {
-	    return new Value((double)[num doubleValue]);
+	    return Value::NewDouble((double)[num doubleValue]);
 	  }
 	  else
 	  {
-	    return new Value((int)[num intValue]);
+	    return Value::NewInt((int)[num intValue]);
 	  }
 	}  
 	if ([arg isKindOfClass:[NSString class]])
 	{
-	  return new Value([(NSString*)arg UTF8String]);
+	  return Value::NewString([(NSString*)arg UTF8String]);
 	}
 	if ([arg isKindOfClass:[NSArray class]])
 	{
-		BoundList *list = new StaticBoundList;
+		SharedBoundList list = new StaticBoundList;
 		NSArray* args = (NSArray*)arg;
 		for (int c=0;c<(int)[args count];c++)
 		{
 			id value = [args objectAtIndex:c];
-			Value *v = [ObjcBoundObject IDToValue:value context:context];
+			SharedValue v = [ObjcBoundObject IDToValue:value context:context];
 			list->Append(v);
 		}
-		Value *result = new Value(list);
-		return result;
+		return Value::NewList(list);
 	}
 	if ([arg isKindOfClass:[ObjcBoundObject class]])
 	{
 		ObjcBoundObject *b = (ObjcBoundObject*)arg;
-		BoundObject *bound_object = [b boundObject];
+		SharedBoundObject bound_object = [b boundObject];
 		// attempt to up cast to these other types first
-		BoundObject *bound_method = dynamic_cast<BoundMethod*>(bound_object);
+		BoundMethod *bound_method = dynamic_cast<BoundMethod*>(bound_object.get());
 		if (bound_method!=NULL)
 		{
-			return new Value(bound_method);
+			SharedBoundMethod sbm = bound_method;
+			return Value::NewMethod(sbm);
 		}
-		BoundList *bound_list = dynamic_cast<BoundList*>(bound_object);
+		BoundList *bound_list = dynamic_cast<BoundList*>(bound_object.get());
 		if (bound_list!=NULL)
 		{
-			return new Value(bound_list);
+			SharedBoundList sbl = bound_list;
+			return Value::NewList(sbl);
 		}
-		return new Value(bound_object);
+		return Value::NewObject(bound_object);
 	}
 	if ([arg isKindOfClass:[WebScriptObject class]])
 	{
@@ -157,33 +158,32 @@
 		JSObjectRef js = [script JSObject];
 		if (JSObjectIsFunction(context,js))
 		{
-			KJSBoundMethod *method = KJSUtil::ToBoundMethod(context,js);
-		  	ScopedDereferencer r(method);
-		  	return new Value(method);
+			SharedBoundMethod method = KJSUtil::ToBoundMethod(context,js);
+		  	return Value::NewMethod(method);
 		}
-		KJSBoundObject *object = KJSUtil::ToBoundObject(context,js);
-	  	ScopedDereferencer r(object);
-	  	return new Value(object);
+		SharedBoundObject object = KJSUtil::ToBoundObject(context,js);
+	  	return Value::NewObject(object);
 	}  
 	return Value::Undefined;
 }
--(id)initWithObject:(BoundObject*)obj key:(NSString*)k context:(JSContextRef)ctx
+-(id)initWithObject:(SharedPtr<BoundObject>)obj key:(NSString*)k context:(JSContextRef)ctx
 {
 	self = [super init];
 	if (self!=nil)
 	{
-		object = obj;
+		// in objective-c you can't alloc a C++ when an objective-c class 
+		// is instantiated
+		object = new SharedPtr<BoundObject>(obj);
 		key = k;
 		context = ctx;
 		[key retain];
-		KR_ADDREF(object);
 	}
 	return self;
 }
 -(void)dealloc
 {
-	KR_DECREF(object);
 	[key release];
+	delete object;
 	context = nil;
 	[super dealloc];
 }
@@ -191,13 +191,14 @@
 {
 	return YES;
 }
--(BoundObject*)boundObject
+-(SharedPtr<BoundObject>)boundObject
 {
-	return object;
+	SharedPtr<BoundObject> o = object->get();
+	return o;
 }
 -(NSString*)description
 {
-	Value *toString = object->Get("toString");
+	SharedValue toString = object->get()->Get("toString");
 	if (toString && toString->IsMethod())
 	{
 		ValueList args;
@@ -224,49 +225,48 @@
 }
 -(void)finalizeForWebScript
 {
-	KR_DECREF(object);
 }
 - (void)setValue:(id)value forUndefinedKey:(NSString *)k
 {
-	Value* v = [ObjcBoundObject IDToValue:value context:context];
-	object->Set([k UTF8String],v);
+	SharedValue v = [ObjcBoundObject IDToValue:value context:context];
+	object->get()->Set([k UTF8String],v);
 }
 - (id)valueForUndefinedKey:(NSString *)k
 {
-	Value *result = object->Get([k UTF8String]);
+	SharedValue result = object->get()->Get([k UTF8String]);
 	return [ObjcBoundObject ValueToID:result key:k context:context];
 }
 -(id)invokeDefaultMethodWithArguments:(NSArray*)args
 {
-	BoundMethod *method = dynamic_cast<BoundMethod*>(object);
+	SharedBoundMethod method = dynamic_cast<BoundMethod*>(object->get());
 	if (method)
 	{
 		ValueList a;
 		for (int c=0;c<(int)[args count];c++)
 		{
 			id value = [args objectAtIndex:c];
-			Value *arg = [ObjcBoundObject IDToValue:value context:context];
+			SharedValue arg = [ObjcBoundObject IDToValue:value context:context];
 			a.push_back(arg);
 		}
-		Value *result = method->Call(a);
+		SharedValue result = method->Call(a);
 		return [ObjcBoundObject ValueToID:result key:@"" context:context];
 	}
 	return [WebUndefined undefined];
 }
 -(id)invokeUndefinedMethodFromWebScript:(NSString *)name withArguments:(NSArray*)args
 {
-	SharedValue value = object->Get([name UTF8String]);
+	SharedValue value = object->get()->Get([name UTF8String]);
 	if (value->IsMethod())
 	{
 		ValueList a;
 		for (int c=0;c<(int)[args count];c++)
 		{
 			id value = [args objectAtIndex:c];
-			Value *arg = [ObjcBoundObject IDToValue:value context:context];
+			SharedValue arg = [ObjcBoundObject IDToValue:value context:context];
 			a.push_back(arg);
 		}
-		BoundMethod *method = value->ToMethod();
-		Value *result = method->Call(a);
+		SharedBoundMethod method = value->ToMethod();
+		SharedValue result = method->Call(a);
 		return [ObjcBoundObject ValueToID:result key:name context:context];
 	}
 	return [WebUndefined undefined];

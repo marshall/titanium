@@ -31,7 +31,7 @@ namespace ti
 	{
 		if (this->opened)
 		{
-			throw new Value("socket is already open");
+			throw Value::NewString("socket is already open");
 			return;
 		}
 		this->callback = args.at(0)->ToMethod();
@@ -48,17 +48,17 @@ namespace ti
 		{
 			std::cout << "exception:" << e.displayText() << std::endl;
 			std::string msg = e.displayText();
-			throw new Value(msg);
+			throw Value::NewString(msg);
 		}
 		catch(std::exception &e)
 		{
 			std::string msg("connect exception: ");
 			msg+=e.what();
-			throw new Value(msg);
+			throw Value::NewString(msg);
 		}
 		catch(...)
 		{
-			throw new Value("unknown exception caught in connect");
+			throw Value::NewString("unknown exception caught in connect");
 		}
 	}
 	void TCPSocketBinding::OnRead(const Poco::AutoPtr<ReadableNotification>& n)
@@ -70,7 +70,7 @@ namespace ti
 			if (size <= 0) return;
 			data[size]='\0';
 			std::string s(data);
-			Value* value = new Value(s);
+			Value* value = Value::NewString(s);
 			ValueList* args = new ValueList;
 			args->push_back(value);
 //FIXME:!
@@ -87,7 +87,7 @@ namespace ti
 	{
 		if (!this->opened)
 		{
-			SharedValue exception = new Value("socket is closed");
+			SharedValue exception = Value::NewString("socket is closed");
 			throw exception;
 			return;
 		}
