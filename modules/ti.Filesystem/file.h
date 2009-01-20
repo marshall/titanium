@@ -9,6 +9,7 @@
 #include <api/binding/binding.h>
 #include <api/binding/static_bound_list.h>
 #include <string>
+#include <Poco/FileStream.h>
 
 namespace ti
 {
@@ -20,6 +21,7 @@ namespace ti
 			virtual ~File();
 		private:
 			std::string filename;
+			Poco::FileInputStream* readLineFS;
 
 			/**
 			 * Function: ToString
@@ -81,6 +83,26 @@ namespace ti
 			 *   the text file contents as a string
 			 */
 			void Read(const ValueList& args, SharedValue result);
+			/**
+			 * Function: ReadLine
+			 *   Reads the next line of this File.
+			 *   The file must be open for reading the first time this method is called.
+			 *
+			 *   Typical usage is:
+			 *     var file = Titanium.Filesystem.getFile(filename);
+			 *     var line = file.readLine(true);
+			 *     while(line != null) {
+			 *       // do something with the line
+			 *       line = file.readLine();
+			 *     }
+			 *
+			 * Parameters:
+			 *   openFile - if this is true, start reading at the beginning of the file again
+			 *
+			 * Returns:
+			 *   a string representing the next line of text in the file.
+			 */
+			void ReadLine(const ValueList& args, SharedValue result);
 			/**
 			 * Function: Copy
 			 *   Copies this file or directory to a given destination

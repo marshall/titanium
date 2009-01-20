@@ -8,6 +8,7 @@
 			div.debug { color: #696969; height: 200px; }
 		</style>
 		<script>
+			var readLineFile = null;
 			var tests = new Object();
 
 			tests.isFile = function(params) {
@@ -144,6 +145,30 @@
 				contents = contents.replace(/\r/g,"<br>");
 				
 				return '<br>' + contents;
+			}
+
+			tests.readLine = function(params) {
+				debug('readLineFile = ' + readLineFile);
+				// should a new readLineFile be created?
+				if(readLineFile == null || readLineFile.toString() != params[0]) {
+					log("creating new file object for readLine");
+					readLineFile = Titanium.Filesystem.getFile(params[0]);
+				}
+
+				var line = null;
+				if(params.length > 1) {
+					line = readLineFile.readLine(params[1] == "true");
+				}
+				else {
+					line = readLineFile.readLine();
+				}
+				
+				if(line)
+				{
+					line = line.replace(/\r/g,"<br>");
+				}
+				
+				return line;
 			}
 
 			tests.getApplicationDirectory = function(params) {
@@ -334,6 +359,7 @@
 				<option value="deleteFile">deleteFile</option>
 				<option value="directoryListing">directoryListing</option>
 				<option value="read">read</option>
+				<option value="readLine">readLine</option>
 				<option value="getApplicationDirectory">getApplicationDirectory</option>
 				<option value="getResourcesDirectory">getResourcesDirectory</option>
 				<option value="getDesktopDirectory">getDesktopDirectory</option>
@@ -487,6 +513,18 @@
 			<div class="params">
 				<table>
 					<tr><td>name</td><td><input id="read_param1" class="param" size="50" value="c:\dev\TI.FS.Test\test.txt" /></td></tr>
+				</table>
+			</div>
+		</div>
+		<div id="test_readLine" class="test">
+			<div class="memberInfo">
+				bool File.readLine([openFile])<br>
+				<span style="font-size:8pt;">Change file name to force a new File object be created</span>
+			</div>
+			<div class="params">
+				<table>
+					<tr><td>name</td><td><input id="readLine_param1" class="param" size="50" value="c:\dev\TI.FS.Test\test.txt" /></td></tr>
+					<tr><td>openFile</td><td><input id="readLine_param2" class="param" size="50" value="false" /></td></tr>
 				</table>
 			</div>
 		</div>

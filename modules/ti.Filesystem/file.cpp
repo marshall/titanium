@@ -21,6 +21,7 @@ namespace ti
 		this->SetMethod("isSymbolicLink",&File::IsSymbolicLink);
 
 		this->SetMethod("read",&File::Read);
+		this->SetMethod("readLine",&File::ReadLine);
 		this->SetMethod("copy",&File::Copy);
 		this->SetMethod("move",&File::Move);
 		this->SetMethod("createDirectory",&File::CreateDirectoryX);
@@ -36,6 +37,8 @@ namespace ti
 		this->SetMethod("extension",&File::GetExtension);
 		this->SetMethod("nativePath",&File::GetNativePath);
 		this->SetMethod("size",&File::GetSize);
+
+		this->readLineFS = NULL;
 	}
 
 	File::~File()
@@ -134,6 +137,57 @@ namespace ti
 			else
 			{
 				result->SetNull();
+			}
+		}
+		catch (Poco::Exception& exc)
+		{
+			std::cerr << "Problem reading file:::: " << exc.displayText() << std::endl;
+
+			result->SetNull();
+		}
+	}
+	void File::ReadLine(const ValueList& args, SharedValue result)
+	{
+		try
+		{
+			bool openFile = false;
+			if(args.size() > 0)
+			{
+				openFile = args.at(0)->ToBool();
+			}
+
+			if(openFile)
+			{
+				// close file if it's already open
+				if(this->readLineFS)
+				{
+					this->readLineFS->close();
+				}
+
+				// now open the file
+				this->readLineFS = new Poco::FileInputStream(this->filename);
+			}
+
+			if(this->readLineFS == NULL)
+			{
+				result->SetNull();
+			}
+			else
+			{
+				std::string line;
+
+				if(this->readLineFS->eof())
+				{
+					// close the file
+					this->readLineFS->close();
+					this->readLineFS = NULL;
+					result->SetNull();
+				}
+				else {
+					std::string line;
+					std::getline(*(this->readLineFS), line);
+					result->SetString(line.c_str());
+				}
 			}
 		}
 		catch (Poco::Exception& exc)
