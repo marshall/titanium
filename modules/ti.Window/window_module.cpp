@@ -72,13 +72,11 @@ namespace ti
 		SharedValue platform = Value::NewString("win32");
 #endif
 		global->Set("platform",platform);
-		//KR_DECREF(global);
 
 		window->Open();
 	}
 
 	void WindowModule::Destroy()
 	{
-		//KR_DECREF(this->runtime);
 	}
 }

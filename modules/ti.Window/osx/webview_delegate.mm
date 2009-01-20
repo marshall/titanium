@@ -85,6 +85,7 @@
 -(void)dealloc
 {
 	KR_DECREF(host);
+	[url release];
 	[super dealloc];
 }
 
@@ -319,7 +320,7 @@
 
 - (void)inject:(WebScriptObject *)windowScriptObject context:(JSContextRef)context
 {
-	kroll::StaticBoundObject* ti = host->GetGlobalObject();
+	SharedBoundObject ti = host->GetGlobalObject();
 	id newti = [windowScriptObject evaluateWebScript:@"Titanium = new Object;"];
 	KR_UNUSED(newti); //FIXME: release?
 	WebScriptObject* tiJS = [windowScriptObject valueForKey:@"Titanium"];

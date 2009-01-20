@@ -44,10 +44,10 @@
 	if (value->IsList())
 	{
 		NSMutableArray *result = [[NSMutableArray alloc] init];
-		BoundList *list = value->ToList();
+		SharedBoundList list = value->ToList();
 		for (int c=0;c<list->Size();c++)
 		{
-			Value *v = list->At(c);
+			SharedValue v = list->At(c);
 			id arg = [ObjcBoundObject ValueToID:v key:[NSString stringWithFormat:@"%@[%d]",key,c] context:context];
 			[result addObject:arg];
 			[arg release];
@@ -102,7 +102,7 @@
 	}
 	if ([arg isKindOfClass:[NSArray class]])
 	{
-		BoundList *list = new StaticBoundList;
+		SharedBoundList list = new StaticBoundList;
 		NSArray* args = (NSArray*)arg;
 		for (int c=0;c<(int)[args count];c++)
 		{
@@ -115,17 +115,19 @@
 	if ([arg isKindOfClass:[ObjcBoundObject class]])
 	{
 		ObjcBoundObject *b = (ObjcBoundObject*)arg;
-		BoundObject *bound_object = [b boundObject];
+		SharedBoundObject bound_object = [b boundObject];
 		// attempt to up cast to these other types first
-		BoundObject *bound_method = dynamic_cast<BoundMethod*>(bound_object);
+		BoundObject *bound_method = dynamic_cast<BoundMethod*>(bound_object.get());
 		if (bound_method!=NULL)
 		{
-			return new Value(bound_method);
+			SharedBoundObject bo = bound_method;
+			return new Value(bo);
 		}
-		BoundList *bound_list = dynamic_cast<BoundList*>(bound_object);
+		BoundList *bound_list = dynamic_cast<BoundList*>(bound_object.get());
 		if (bound_list!=NULL)
 		{
-			return new Value(bound_list);
+			SharedBoundList bl = bound_list;
+			return new Value(bl);
 		}
 		return new Value(bound_object);
 	}
@@ -156,10 +158,10 @@
 		JSObjectRef js = [script JSObject];
 		if (JSObjectIsFunction(context,js))
 		{
-			KJSBoundMethod *method = KJSUtil::ToBoundMethod(context,js);
+			SharedBoundMethod method = KJSUtil::ToBoundMethod(context,js);
 		  	return new Value(method);
 		}
-		KJSBoundObject *object = KJSUtil::ToBoundObject(context,js);
+		SharedBoundObject object = KJSUtil::ToBoundObject(context,js);
 	  	return new Value(object);
 	}  
 	return Value::Undefined;
@@ -169,6 +171,8 @@
 	self = [super init];
 	if (self!=nil)
 	{
+		// in objective-c you can't alloc a C++ when an objective-c class 
+		// is instantiated
 		object = new SharedPtr<BoundObject>(obj);
 		key = k;
 		context = ctx;
@@ -234,7 +238,7 @@
 }
 -(id)invokeDefaultMethodWithArguments:(NSArray*)args
 {
-	BoundMethod *method = dynamic_cast<BoundMethod*>(object->get());
+	SharedBoundMethod method = dynamic_cast<BoundMethod*>(object->get());
 	if (method)
 	{
 		ValueList a;
@@ -261,7 +265,7 @@
 			SharedValue arg = [ObjcBoundObject IDToValue:value context:context];
 			a.push_back(arg);
 		}
-		BoundMethod *method = value->ToMethod();
+		SharedBoundMethod method = value->ToMethod();
 		SharedValue result = method->Call(a);
 		return [ObjcBoundObject ValueToID:result key:name context:context];
 	}
