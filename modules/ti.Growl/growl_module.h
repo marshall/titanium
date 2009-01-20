@@ -31,7 +31,7 @@ namespace ti
 		void Test();
 
 	private:
-		SharedBoundObject variables;
+		SharedBoundObject binding;
 	};
 
 }
