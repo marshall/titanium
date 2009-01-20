@@ -56,7 +56,7 @@ namespace ti
 			std::cerr << "Problem creating temp file:::: " << exc.displayText() << std::endl;
 
 			// TODO test this
-			SharedValue v = Value::NewString(exc.displayText());
+			SharedValue v = Value::NewString(exc.displayText().c_str());
 			throw v;
 		}
 	}
