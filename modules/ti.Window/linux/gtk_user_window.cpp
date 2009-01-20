@@ -67,6 +67,12 @@ void GtkUserWindow::Open() {
 		{
 			gtk_widget_show_all(window);
 		}
+
+		if (this->config->IsFullscreen())
+		{
+			gtk_window_fullscreen(this->gtk_window);
+		}
+
 		UserWindow::Open(this);
 	}
 	else
@@ -309,5 +315,12 @@ void GtkUserWindow::SetTransparency(double alpha) {
 }
 
 void GtkUserWindow::SetFullScreen(bool fullscreen) {
-	//TODO
+	if (fullscreen)
+	{
+		gtk_window_fullscreen(this->gtk_window);
+	}
+	else
+	{
+		gtk_window_unfullscreen(this->gtk_window);
+	}
 }
