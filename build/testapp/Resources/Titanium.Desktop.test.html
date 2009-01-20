@@ -1,0 +1,72 @@
+<html>
+	<head>
+		<style>
+			body { font-family: sans, sans-serif; background-color: white; }
+			div{
+				margin:10px;
+			}
+		</style>
+		<script>
+			function chooseFiles()
+			{
+				var result = Titanium.Desktop.openFiles();
+				alert('You chose: '+result.length+' files');
+			}
+			function chooseDirs()
+			{
+				var result = Titanium.Desktop.openFiles({
+					directories:true,
+					files:false
+				});
+				alert('You chose: '+result.length+' files');
+			}
+			function chooseDirsAndFiles()
+			{
+				var result = Titanium.Desktop.openFiles({
+					directories:true,
+					files:true
+				});
+				alert('You chose: '+result.length+' files');
+			}
+			function chooseMultiple()
+			{
+				var result = Titanium.Desktop.openFiles({
+					directories:true,
+					files:true,
+					multiple:true
+				});
+				alert('You chose: '+result.length+' files');
+			}
+			function chooseFileTypes()
+			{
+				var result = Titanium.Desktop.openFiles({
+					directories:false,
+					files:true,
+					multiple:true,
+					types:[
+						'js','html'
+					]
+				});
+				alert('You chose: '+result.length+' files');
+			}
+		</script>
+	</head>
+	<body>
+		<h2>Titanium Desktop test app</h2>
+		<div>
+			<button onclick="chooseFiles()">Open File Dialog (default)</button>
+		</div>
+		<div>
+			<button onclick="chooseDirs()">Open File Dialog (directories only)</button>
+		</div>
+		<div>
+			<button onclick="chooseDirsAndFiles()">Open File Dialog (directories+files)</button>
+		</div>
+		<div>
+			<button onclick="chooseMultiple()">Open File Dialog (multiple selection)</button>
+		</div>
+		<div>
+			<button onclick="chooseFileTypes()">Open File Dialog (JS or HTML files only)</button>
+		</div>
+	</body>
+</html>
