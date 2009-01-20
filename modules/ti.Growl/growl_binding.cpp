@@ -6,10 +6,6 @@
 #include <kroll/kroll.h>
 #include "growl_binding.h"
 
-#ifdef OS_OSX
-#import "GrowlApplicationBridge.h"
-#endif
-
 namespace ti
 {
 	GrowlBinding::GrowlBinding(SharedBoundObject global) : global(global)
@@ -22,17 +18,7 @@ namespace ti
 		std::string title = args.at(0)->ToString();
 		std::string description = args.at(1)->ToString();
 
-#ifdef OS_OSX
-		[GrowlApplicationBridge setGrowlDelegate:@""];
-		[GrowlApplicationBridge
-			 notifyWithTitle:[NSString stringWithCString:title.c_str()]
-			 description:[NSString stringWithCString:description.c_str()]
-			 notificationName:@"tiNotification"
-			 iconData:nil
-			 priority:0
-			 isSticky:NO
-			 clickContext:nil];
-#endif
+		ShowNotification(title, description);
 	}
 
 	GrowlBinding::~GrowlBinding()

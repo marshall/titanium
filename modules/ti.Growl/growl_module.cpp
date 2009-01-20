@@ -8,10 +8,9 @@
 #include "growl_test.h"
 
 #if defined(OS_OSX)
-#import <Foundation/Foundation.h>
-#import <Cocoa/Cocoa.h>
-#include <sys/types.h>
-#include <sys/stat.h>
+#include "osx/growl_osx.h"
+#elif defined(OS_WIN32)
+#include "win32/snarl_win32.h"
 #endif
 
 using namespace kroll;
@@ -23,35 +22,19 @@ namespace ti
 
 	void GrowlModule::Initialize()
 	{
-		CopyToApp();
 
+#if defined(OS_OSX)
 		// load our variables
-		this->variables = new GrowlBinding(host->GetGlobalObject());
+		GrowlOSX *g = new GrowlOSX(host->GetGlobalObject());
+		binding = g;
+		g->CopyToApp(host,this);
+#elif defined(OS_WIN32)
+		binding = new SnarlWin32(host->GetGlobalObject());
+#endif
 
 		// set our ti.Growl
-		SharedValue value = Value::NewObject(this->variables);
-		host->GetGlobalObject()->Set("Growl",value);
-	}
-
-	void GrowlModule::CopyToApp()
-	{
-#if defined(OS_OSX)
-		std::string dir = host->GetApplicationHome() + KR_PATH_SEP + "Contents" +
-			KR_PATH_SEP + "Frameworks" + KR_PATH_SEP + "Growl.framework";
-
-		if (!FileUtils::IsDirectory(dir))
-		{
-
-			NSFileManager *fm = [NSFileManager defaultManager];
-			NSString *src = [NSString stringWithFormat:@"%@/Resources/Growl.framework", GetPath()];
-			NSString *dest = [NSString stringWithFormat:@"%@/Contents/Frameworks", host->GetApplicationHome().c_str()];
-			[fm copyPath:src toPath:dest handler:nil];
-
-			src = [NSString stringWithFormat:@"%@/Resources/Growl Registration Ticket.growlRegDict", GetPath()];
-			dest = [NSString stringWithFormat:@"%@/Contents/Resources", host->GetApplicationHome().c_str()];
-			[fm copyPath:src toPath:dest handler:nil];
-		}
-#endif
+		SharedValue value = Value::NewObject(binding);
+		host->GetGlobalObject()->Set("Growl", value);
 	}
 
 	void GrowlModule::Destroy()

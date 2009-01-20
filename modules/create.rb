@@ -47,8 +47,6 @@ namespace ti
 {
 	class #{module_name}Binding : public StaticBoundObject
 	{
-	  friend class SharedPtr;
-	  
 	public:
 		#{module_name}Binding(SharedBoundObject);
 	protected:
@@ -119,7 +117,7 @@ namespace ti
 		void Test();
 
 	private:
-		kroll::SharedBoundObject variables;
+		kroll::SharedBoundObject binding;
 	};
 
 }
@@ -148,11 +146,11 @@ namespace ti
 	void #{module_name}Module::Initialize()
 	{
 		// load our variables
-		this->variables = new #{module_name}Binding(host->GetGlobalObject());
+		this->binding = new #{module_name}Binding(host->GetGlobalObject());
 
 		// set our #{module_dir_name}
-		SharedValue value = new Value(this->variables);
-		host->GetGlobalObject()->Set("#{module_name}",value);
+		SharedValue value = new Value(this->binding);
+		host->GetGlobalObject()->Set("#{module_name}", value);
 	}
 
 	void #{module_name}Module::Destroy()

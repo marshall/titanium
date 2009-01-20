@@ -19,6 +19,7 @@ namespace ti
 	{
 		this->SetMethod("openApplication",&DesktopBinding::OpenApplication);
 		this->SetMethod("openURL",&DesktopBinding::OpenURL);
+		this->SetMethod("openFiles",&DesktopBinding::OpenFiles);
 		this->SetMethod("getSystemIdleTime",&DesktopBinding::GetSystemIdleTime);
 	}
 	DesktopBinding::~DesktopBinding()
@@ -33,6 +34,91 @@ namespace ti
 	void DesktopBinding::OpenFiles(const ValueList& args, SharedValue result)
 	{
 #ifdef OS_OSX
+		NSOpenPanel* openDlg = [NSOpenPanel openPanel];
+		[openDlg setCanChooseFiles:YES];
+		[openDlg setCanChooseDirectories:NO]; 
+		[openDlg setAllowsMultipleSelection:NO];
+		[openDlg setResolvesAliases:YES];
+		
+		// pass in a set of properties with each key being
+		// the name of the property and a boolean for its setting
+		// example:
+		//
+		// var selected = Titanium.Desktop.openFiles({
+		//    multiple:true,
+		//    files:false,
+		//    directories:true,
+		//    types:['js','html']	
+		// });
+		//
+		NSMutableArray *filetypes = nil;
+		NSString *begin = nil, *filename = nil;
+		if (args.size() > 0)
+		{
+			SharedValue properties = args.at(0);
+			if (properties->IsObject())
+			{
+				SharedBoundObject props = properties->ToObject();
+				SharedValue multiple = props->Get("multiple");
+				if (!multiple->IsNull())
+				{
+					[openDlg setAllowsMultipleSelection:multiple->ToBool()];
+				}
+				SharedValue path = props->Get("path");
+				if (!path->IsNull() && path->IsString())
+				{
+					begin = [NSString stringWithCString:path->ToString()];
+				}
+				SharedValue file = props->Get("filename");
+				if (!file->IsNull() && file->IsString())
+				{
+					filename = [NSString stringWithCString:file->ToString()];
+				}
+				SharedValue files = props->Get("files");
+				if (!files->IsNull())
+				{
+					[openDlg setCanChooseFiles:files->ToBool()];
+				}
+				SharedValue dirs = props->Get("directories");
+				if (!dirs->IsNull())
+				{
+					[openDlg setCanChooseDirectories:dirs->ToBool()];
+				}
+				SharedValue types = props->Get("types");
+				if (!types->IsNull() && types->IsList())
+				{
+					SharedBoundList list = types->ToList();
+					if (list->Size()>0)
+					{
+						filetypes = [[NSMutableArray alloc] init]; 
+						for (int c=0;c<list->Size();c++)
+						{
+							SharedValue v = list->At(c);
+							if (v->IsString())
+							{
+								const char *s = v->ToString();
+								[filetypes addObject:[NSString stringWithCString:s]];
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		SharedBoundList files = new StaticBoundList();
+		if ( [openDlg runModalForDirectory:begin file:filename types:filetypes] == NSOKButton )
+		{
+		    NSArray* selected = [openDlg filenames];
+		    for( int i = 0; i < (int)[selected count]; i++ )
+		    {
+		        NSString* fileName = [selected objectAtIndex:i];
+				std::string fn = [fileName UTF8String];
+				SharedValue f = Value::NewString(fn.c_str());
+				//FIXME: files->Append(f);
+		    }
+		}
+		[filetypes release];
+		result->SetList(files);
 #endif
 	}
 	void DesktopBinding::OpenApplication(const ValueList& args, SharedValue result)
