@@ -16,8 +16,23 @@ testSuite("Titanium.Filesystem API tests", "dummy.html", {
 			assert(Titanium != null);
 			assert(Titanium.Filesystem != null);
 			assert(Titanium.Filesystem.getFile != null);
+			assert(Titanium.Filesystem.getApplicationDirectory != null);
+			assert(Titanium.Filesystem.getResourcesDirectory != null);
+			assert(Titanium.Filesystem.getDesktopDirectory != null);
+			assert(Titanium.Filesystem.getDocumentsDirectory != null);
+			assert(Titanium.Filesystem.getUserDirectory != null);
+			assert(Titanium.Filesystem.getRootDirectories != null);
 			assert(Titanium.Filesystem.createTempDirectory != null);
 			assert(Titanium.Filesystem.createTempFile != null);
+
+			assert(Titanium.Filesystem.getApplicationDirectory() != null);
+			assert(Titanium.Filesystem.getResourcesDirectory() != null);
+			assert(Titanium.Filesystem.getDesktopDirectory() != null);
+			assert(Titanium.Filesystem.getDocumentsDirectory() != null);
+			assert(Titanium.Filesystem.getUserDirectory() != null);
+			assert(Titanium.Filesystem.getRootDirectories() != null);
+			assert(Titanium.Filesystem.createTempDirectory() != null);
+			assert(Titanium.Filesystem.createTempFile() != null);	
 		});
 
 		test("file object API - file types", function() {
