@@ -1,36 +1,44 @@
 /**
  * Appcelerator Kroll - licensed under the Apache Public License 2
- * see LICENSE in the root folder for details on the license. 
+ * see LICENSE in the root folder for details on the license.
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
- */	
+ */
 #include "media_binding.h"
 #include <kroll/kroll.h>
 
 #ifdef OS_OSX
-#include <Cocoa/Cocoa.h>
+#include "osx/osx_media.h"
+#elif defined(OS_WIN32)
+#include "win32/win32_media.h"
+#elif defined(OS_LINUX)
+#include "linux/linux_media.h"
 #endif
+
+#if defined(OS_OSX)
+	#define TI_MEDIA OSXMedia
+#elif defined(OS_WIN32)
+	#define TI_MEDIA Win32Media
+#elif defined(OS_LINUX)
+	#define TI_MEDIA LinuxMedia
+#endif
+
 
 namespace ti
 {
-	MediaBinding::MediaBinding(BoundObject *global) : global(global)
+	MediaBinding::MediaBinding(SharedBoundObject global) : global(global)
 	{
-		//KR_ADDREF(global);
-		
 		this->SetMethod("createSound",&MediaBinding::CreateSound);
 		this->SetMethod("beep",&MediaBinding::Beep);
 	}
 	MediaBinding::~MediaBinding()
 	{
-		//KR_DECREF(global);
 	}
 	void MediaBinding::CreateSound(const ValueList& args, SharedValue result)
 	{
-		//TODO
+		TI_MEDIA::CreateSound(args,result);
 	}
 	void MediaBinding::Beep(const ValueList& args, SharedValue result)
 	{
-#ifdef OS_OSX
-		NSBeep();
-#endif
+		TI_MEDIA::Beep(args,result);
 	}
 }

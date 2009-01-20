@@ -24,7 +24,7 @@ namespace ti
 	protected:
 		virtual ~DesktopBinding();
 	private:
-		SharedPtr<BoundObject> global;
+		SharedBoundObject global;
 		void CreateShortcut(const ValueList& args, SharedValue result);
 		void OpenFiles(const ValueList& args, SharedValue result);
 		void OpenApplication(const ValueList& args, SharedValue result);

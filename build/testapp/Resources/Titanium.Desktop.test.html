@@ -1,0 +1,121 @@
+<html>
+	<head>
+		<style>
+			body { font-family: sans, sans-serif; background-color: white; }
+			div{
+				margin:10px;
+			}
+		</style>
+		<script>
+			function debug(result)
+			{
+				var el = document.getElementById("debug");
+				
+				var html = "<div>You selected the following:</div>";
+				html+="<ul>";
+				for (var c=0;c<result.length;c++)
+				{
+					var row = result[c];
+					html+="<li>"+row+"</li>";
+				}
+				html+="</ul>";
+				el.innerHTML = html;
+			}
+			function chooseFiles()
+			{
+				var result = Titanium.Desktop.openFiles();
+				debug(result);
+				alert('You chose: '+result.length+' files');
+			}
+			function chooseDirs()
+			{
+				var result = Titanium.Desktop.openFiles({
+					directories:true,
+					files:false
+				});
+				debug(result);
+				alert('You chose: '+result.length+' files');
+			}
+			function chooseDirsAndFiles()
+			{
+				var result = Titanium.Desktop.openFiles({
+					directories:true,
+					files:true
+				});
+				debug(result);
+				alert('You chose: '+result.length+' files');
+			}
+			function chooseMultiple()
+			{
+				var result = Titanium.Desktop.openFiles({
+					directories:true,
+					files:true,
+					multiple:true
+				});
+				debug(result);
+				alert('You chose: '+result.length+' files');
+			}
+			function chooseFileTypes()
+			{
+				var result = Titanium.Desktop.openFiles({
+					directories:false,
+					files:true,
+					multiple:true,
+					types:[
+						'js','html'
+					]
+				});
+				debug(result);
+				alert('You chose: '+result.length+' files');
+			}
+			function openApp()
+			{
+				var name = prompt("which app?");
+				if (name)
+				{
+					Titanium.Desktop.openApplication(name);
+				}
+			}
+			function openURL()
+			{
+				Titanium.Desktop.openURL("http://titaniumapp.com");
+			}
+			function createShortcut()
+			{
+				var from = prompt("where from?");
+				var to = prompt("where to?");
+				var worked =Titanium.Desktop.createShortcut(from,to);
+				alert("Worked? " + (worked?"you bet ya!":"nope..."));
+			}
+		</script>
+	</head>
+	<body>
+		<h2>Titanium Desktop test app</h2>
+		<div>
+			<button onclick="chooseFiles()">Open File Dialog (default)</button>
+		</div>
+		<div>
+			<button onclick="chooseDirs()">Open File Dialog (directories only)</button>
+		</div>
+		<div>
+			<button onclick="chooseDirsAndFiles()">Open File Dialog (directories+files)</button>
+		</div>
+		<div>
+			<button onclick="chooseMultiple()">Open File Dialog (multiple selection)</button>
+		</div>
+		<div>
+			<button onclick="chooseFileTypes()">Open File Dialog (JS or HTML files only)</button>
+		</div>
+		<div>
+			<button onclick="openApp()">Open Application</button>
+		</div>
+		<div>
+			<button onclick="openURL()">Open URL</button>
+		</div>
+		<div>
+			<button onclick="createShortcut()">Create Shortcut</button>
+		</div>
+		<div id="debug">
+		</div>
+	</body>
+</html>

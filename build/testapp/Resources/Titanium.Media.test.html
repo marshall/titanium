@@ -1,0 +1,22 @@
+<html>
+	<head>
+		<style>
+			body { font-family: sans, sans-serif; background-color: white; }
+			div{
+				margin:10px;
+			}
+		</style>
+		<script>
+			function systemBeep()
+			{
+				Titanium.Media.beep();
+			}
+		</script>
+	</head>
+	<body>
+		<h2>Titanium Media test app</h2>
+		<div>
+			<button onclick="systemBeep()">Do a system beep</button>
+		</div>
+	</body>
+</html>

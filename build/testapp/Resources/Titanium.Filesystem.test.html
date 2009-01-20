@@ -8,13 +8,6 @@
 			div.debug { color: #696969; height: 200px; }
 		</style>
 		<script>
-			var File = new Object();
-			File.isFile = function() { return "ss"; }
-
-			var Titanium = new Object();
-			Titanium.Filesystem = new Object();
-			Titanium.Filesystem.getFile = function(s) { return new File(); };
-
 			var tests = new Object();
 
 			tests.isFile = function(params) {
@@ -86,12 +79,12 @@
 				var dir = Titanium.Filesystem.getFile(params[0]);
 				
 				var success;
-				var createParents = params[1]
-				
-				if(-1 == createParents) {
+
+				if(params.length < 2) {
 					success= dir.createDirectory();
 				}
 				else {
+					var createParents = (params[1] == 'true');
 					success = dir.createDirectory(createParents);
 				}
 				
@@ -102,12 +95,12 @@
 				var dir = Titanium.Filesystem.getFile(params[0]);
 				
 				var success;
-				var deleteContents = params[1];
 				
-				if(-1 == deleteContents) {
+				if(params.length < 2) {
 					success = dir.deleteDirectory();
 				}
 				else {
+					var deleteContents = (params[1] == 'true');
 					success = dir.deleteDirectory(deleteContents);
 				}
 
@@ -133,10 +126,10 @@
 					s += 'invalid location';
 				}
 				else {
-					s += files.length + ' files\n';
+					s += files.length + ' files<br>';
 					
 					for(i = 0; i < files.length; i++) {
-						s += '' + i + ': ' + files[i] + '\n';
+						s += '' + i + ': ' + files[i] + '<br>';
 					}
 				}
 				s += '\n\n';
@@ -148,33 +141,88 @@
 				var f = Titanium.Filesystem.getFile(params[0]);
 				
 				var contents = f.read();
+				contents = contents.replace(/\r/g,"<br>");
 				
-				return contents;
+				return '<br>' + contents;
+			}
+
+			tests.getApplicationDirectory = function(params) {
+				var dir = Titanium.Filesystem.getApplicationDirectory();
+				return dir;
+			}
+
+			tests.getResourcesDirectory = function(params) {
+				var dir = Titanium.Filesystem.getResourcesDirectory();
+				return dir;
+			}
+
+			tests.getDesktopDirectory = function(params) {
+				var dir = Titanium.Filesystem.getDesktopDirectory();
+				return dir;
+			}
+
+			tests.getDocumentsDirectory = function(params) {
+				var dir = Titanium.Filesystem.getDocumentsDirectory();
+				return dir;
+			}
+
+			tests.getUserDirectory = function(params) {
+				var dir = Titanium.Filesystem.getUserDirectory();
+				return dir;
+			}
+
+			tests.getLineEnding = function(params) {
+				var s = Titanium.Filesystem.getLineEnding();
+
+				s = 'LineEnding:#1"' + s + '#2' + s + '"';
+
+				return s;
+			}
+
+			tests.getSeparator = function(params) {
+				var s = Titanium.Filesystem.getSeparator();
+				return s;
+			}
+
+			tests.getRootDirectories = function(params) {
+				var s = 'Root Directories:\n';
+				
+				var dirs = Titanium.Filesystem.getRootDirectories();
+				
+				s += dirs.length + ' dirs<br>';
+				
+				for(i = 0; i < dirs.length; i++) {
+					s += '' + i + ': ' + dirs[i] + '<br>';
+				}
+
+				s += '\n\n';
+				
+				return s;
 			}
 
 			function executeTest() {
 				var testName = $('testsSelect').value;
 
-				var params = new Array();
-				var index = 1;
-				while(true) {
-					var p = $(testName + "_param" + index);
-					if(!p) { break; }
-
-					params.push(p.value);
-
-					index++;
-				}
-
-				var s = 'executing: ' + testName + '(';
-				for(i = 0; i < params.length; i++) {
-					if(i != 0) { s += ','; }
-					s += '"' + params[i] + '"';
-				}
-				s += ')';
-				log(s);
-
 				try {
+					var params = new Array();
+					var index = 1;
+					while(true) {
+						var p = $(testName + "_param" + index);
+						if(!p || '' == p.value) { break; }
+
+						params.push(p.value);
+						index++;
+					}
+				
+					var s = 'executing: ' + testName + '(';
+	
+					for(i = 0; i < params.length; i++) {
+						if(i != 0) { s += ','; }
+						s += '"' + params[i] + '"';
+					}
+					s += ')';
+					log(s);
+				
 					var r = tests[testName](params);
 
 					log('>>>>>>>> ' + r);
@@ -186,8 +234,6 @@
 				log('finished test ' + testName);
 			}
 			
-
-
 			function $(id) { return document.getElementById(id); }
 
 			function show(id) { $(id).style.display = 'block'; }
@@ -264,7 +310,10 @@
 	<body onload="initPage();">
 		<h2>Titanium Filesystem test app</h2>
 		<br>
-		<div>Titanium.Filesystem = <script>$w(Titanium.Filesystem)</script></div>
+		<div>Titanium = <script>document.write(Titanium)</script></div>
+		<div>Titanium.version = <script>document.write(Titanium.version)</script></div>
+		<div>Titanium.platform = <script>document.write(Titanium.platform)</script></div>
+		<div>Titanium.Filesystem = <script>document.write(Titanium.Filesystem)</script></div>
 		<div id="objectInfo"></div>
 		<br>
 		<div>
@@ -285,6 +334,14 @@
 				<option value="deleteFile">deleteFile</option>
 				<option value="directoryListing">directoryListing</option>
 				<option value="read">read</option>
+				<option value="getApplicationDirectory">getApplicationDirectory</option>
+				<option value="getResourcesDirectory">getResourcesDirectory</option>
+				<option value="getDesktopDirectory">getDesktopDirectory</option>
+				<option value="getDocumentsDirectory">getDocumentsDirectory</option>
+				<option value="getUserDirectory">getUserDirectory</option>
+				<option value="getLineEnding">getLineEnding</option>
+				<option value="getSeparator">getSeparator</option>
+				<option value="getRootDirectories">getRootDirectories</option>
 			</select>
 		</div>
 		<div id="test_isFile" class="test">
@@ -366,7 +423,7 @@
 			<div class="params">
 				<table>
 					<tr><td>from</td><td><input id="copy_param1" class="param" size="50" value="c:\dev\TI.FS.Test\test.txt" /></td></tr>
-					<tr><td>to</td><td><input id="copy_param2" class="param" size="50" value="c:\temp" /></td></tr>
+					<tr><td>to</td><td><input id="copy_param2" class="param" size="50" value="c:\dev\TI.FS.Test\test-copy.txt" /></td></tr>
 				</table>
 			</div>
 		</div>
@@ -387,7 +444,7 @@
 			</div>
 			<div class="params">
 				<table>
-					<tr><td>name</td><td><input id="createDirectory_param1" class="param" size="50" value="c:\dev\TI.FS.Test\test.txt" /></td></tr>
+					<tr><td>name</td><td><input id="createDirectory_param1" class="param" size="50" value="c:\dev\TI.FS.Test\SubFolder\testDirCreated" /></td></tr>
 					<tr><td>createParents</td><td><input id="createDirectory_param2" class="param" size="50" value="false" /></td></tr>
 				</table>
 			</div>
@@ -398,7 +455,7 @@
 			</div>
 			<div class="params">
 				<table>
-					<tr><td>name</td><td><input id="deleteDirectory_param1" class="param" size="50" value="c:\dev\TI.FS.Test\test.txt" /></td></tr>
+					<tr><td>name</td><td><input id="deleteDirectory_param1" class="param" size="50" value="c:\dev\TI.FS.Test\SubFolder\testDirCreated" /></td></tr>
 					<tr><td>deleteContents</td><td><input id="deleteDirectory_param2" class="param" size="50" value="false" /></td></tr>
 				</table>
 			</div>
@@ -409,7 +466,7 @@
 			</div>
 			<div class="params">
 				<table>
-					<tr><td>name</td><td><input id="deleteFile_param1" class="param" size="50" value="c:\dev\TI.FS.Test\test.txt" /></td></tr>
+					<tr><td>name</td><td><input id="deleteFile_param1" class="param" size="50" value="c:\dev\TI.FS.Test\test-copy.txt" /></td></tr>
 				</table>
 			</div>
 		</div>
@@ -419,7 +476,7 @@
 			</div>
 			<div class="params">
 				<table>
-					<tr><td>name</td><td><input id="directoryListing_param1" class="param" size="50" value="c:\dev\TI.FS.Test\test.txt" /></td></tr>
+					<tr><td>name</td><td><input id="directoryListing_param1" class="param" size="50" value="c:\dev\TI.FS.Test" /></td></tr>
 				</table>
 			</div>
 		</div>
@@ -431,6 +488,46 @@
 				<table>
 					<tr><td>name</td><td><input id="read_param1" class="param" size="50" value="c:\dev\TI.FS.Test\test.txt" /></td></tr>
 				</table>
+			</div>
+		</div>
+		<div id="test_getApplicationDirectory" class="test">
+			<div class="memberInfo">
+				string Filesystem.getApplicationDirectory()
+			</div>
+		</div>
+		<div id="test_getResourcesDirectory" class="test">
+			<div class="memberInfo">
+				string Filesystem.getResourcesDirectory()
+			</div>
+		</div>
+		<div id="test_getDesktopDirectory" class="test">
+			<div class="memberInfo">
+				string Filesystem.getDesktopDirectory()
+			</div>
+		</div>
+		<div id="test_getDocumentsDirectory" class="test">
+			<div class="memberInfo">
+				string Filesystem.getDocumentsDirectory()
+			</div>
+		</div>
+		<div id="test_getUserDirectory" class="test">
+			<div class="memberInfo">
+				string Filesystem.getUserDirectory()
+			</div>
+		</div>
+		<div id="test_getLineEnding" class="test">
+			<div class="memberInfo">
+				string Filesystem.getLineEnding()
+			</div>
+		</div>
+		<div id="test_getSeparator" class="test">
+			<div class="memberInfo">
+				string Filesystem.getSeparator()
+			</div>
+		</div>
+		<div id="test_getRootDirectories" class="test">
+			<div class="memberInfo">
+				string Filesystem.getRootDirectories()
 			</div>
 		</div>
 		<div class='output log'><code id="log"></code></div>

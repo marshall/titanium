@@ -321,15 +321,16 @@
 - (void)inject:(WebScriptObject *)windowScriptObject context:(JSContextRef)context
 {
 	SharedBoundObject ti = host->GetGlobalObject();
-	id newti = [windowScriptObject evaluateWebScript:@"Titanium = new Object;"];
+	NSString *tiKey = [NSString stringWithCString:GLOBAL_NS_VARNAME];
+	id newti = [windowScriptObject evaluateWebScript:[NSString stringWithFormat:@"%@ = new Object;",tiKey]];
 	KR_UNUSED(newti); //FIXME: release?
-	WebScriptObject* tiJS = [windowScriptObject valueForKey:@"Titanium"];
+	WebScriptObject* tiJS = [windowScriptObject valueForKey:tiKey];
 	SharedStringList properties = ti->GetPropertyNames();
 	for (size_t i = 0; i < properties->size(); i++)
 	{
 		SharedString skey = properties->at(i);
 		std::string key = *skey;
-		if (key == "ti") continue;
+		if (key == GLOBAL_NS_VARNAME) continue;
 		SharedValue value = ti->Get(key.c_str());
 		@try
 		{
@@ -340,7 +341,7 @@
 		}
 		@catch(id ex)
 		{
-			NSLog(@"exception caught binding ti.%s => %@",key.c_str(),ex);
+			NSLog(@"exception caught binding %@.%s => %@",tiKey,key.c_str(),ex);
 		}
 	}
 	//NOTE: don't release tiJS or newti

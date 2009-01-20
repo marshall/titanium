@@ -18,11 +18,11 @@ namespace ti
 	class MediaBinding : public StaticBoundObject
 	{
 	public:
-		MediaBinding(BoundObject*);
+		MediaBinding(SharedBoundObject);
 	protected:
 		virtual ~MediaBinding();
 	private:
-		BoundObject *global;
+		SharedBoundObject global;
 		void CreateSound(const ValueList& args, SharedValue result);
 		void Beep(const ValueList& args, SharedValue result);
 	};

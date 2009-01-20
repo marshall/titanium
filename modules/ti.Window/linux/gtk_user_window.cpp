@@ -145,7 +145,7 @@ static void window_object_cleared_cb (WebKitWebView* web_view,
 	// Place the Titanium object into the window's global object
 	BoundObject *global_bound_object = new KJSBoundObject(context, global_object);
 	SharedValue ti_object_value = Value::NewObject(shared_ti_obj);
-	global_bound_object->Set(PRODUCT_NAME, ti_object_value);
+	global_bound_object->Set(GLOBAL_NS_VARNAME, ti_object_value);
 
 	JSStringRef script;
 	char code[1024];

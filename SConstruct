@@ -10,7 +10,7 @@ from build.common import BuildConfig
 build = BuildConfig(
 	INSTALL_PREFIX = '/usr/local',
 	PRODUCT_NAME = 'Titanium',
-	GLOBAL_NS_VARNAME = 'ti',
+	GLOBAL_NS_VARNAME = 'Titanium',
 	CONFIG_FILENAME = 'tiapp.xml',
 	BUILD_DIR = path.abspath('build'),
 	THIRD_PARTY_DIR = path.join(path.abspath('kroll'), 'thirdparty')

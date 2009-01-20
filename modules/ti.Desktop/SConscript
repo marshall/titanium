@@ -8,6 +8,8 @@ env.Append(CPPDEFINES = {'TITANIUM_DESKTOP_API_EXPORT' : 1})
 env.Append(CPPPATH = ['#kroll'])
 tiBuild.add_thirdparty(env, 'poco')
 
+sources = Glob('*.cpp')
+
 if tiBuild.is_osx():
 	OSX_SDK = '/Developer/SDKs/MacOSX10.4u.sdk'
 	OSX_UNIV_COMPILER = '-isysroot '+OSX_SDK+' -arch ppc -arch i386'
@@ -16,7 +18,14 @@ if tiBuild.is_osx():
 	env.Append(CCFLAGS = ['-x', 'objective-c++'])
 	env.Append(CCFLAGS=OSX_UNIV_COMPILER)
 	env.Append(LDFLAGS=OSX_UNIV_LINKER)
-
-
-s = env.SharedLibrary(target = tiBuild.dir + '/tidesktopmodule', source = Glob('*.cpp'))
+	sources+=Glob('osx/*.cpp')
+elif tiBuild.is_win32():
+	env.Append(LIBS=['shell32', 'user32'])
+	env.Append(CPPDEFINES = {'WIN32_LEAN_AND_MEAN':1})
+	sources+=Glob('win32/*.cpp')
+elif tiBuild.is_linux():
+	sources+=Glob('linux/*.cpp')
+	
+	
+s = env.SharedLibrary(target = tiBuild.dir + '/tidesktopmodule', source = sources)
 

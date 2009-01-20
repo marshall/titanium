@@ -47,7 +47,7 @@ Win32FrameLoadDelegate::windowScriptObjectAvailable (
 	// place Titanium object into the window's global object
 	SharedBoundObject global_bound_object = new KJSBoundObject(context, global_object);
 	SharedValue tiObjectValue = Value::NewObject(tiObject);
-	global_bound_object->Set(PRODUCT_NAME, tiObjectValue);
+	global_bound_object->Set(GLOBAL_NS_VARNAME, tiObjectValue);
 
 	return S_OK;
 }

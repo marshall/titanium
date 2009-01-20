@@ -6,8 +6,24 @@
 	</head>
 	<body>
 		<h2>Titanium test app</h2>
+		<div id="ts">idle time will go here in ~10 seconds</div>
 		Titanium = <script>document.write(Titanium);</script><br>
-		<br>
-		<a href="app://Titanium.Filesystem.test.html">Titanium.Filesystem test</a>
+		
+		<div>
+			<ul>
+				<li><a href="app://Titanium.Filesystem.test.html">Titanium.Filesystem test</a></li>
+				<li><a href="app://Titanium.Desktop.test.html">Titanium.Desktop test</a></li>
+				<li><a href="app://Titanium.Notification.test.html">Titanium.Notification test</a></li>
+				<li><a href="app://Titanium.Media.test.html">Titanium.Media test</a></li>
+			</ul>
+		</div>
+		
+		<script>
+			setTimeout(function()
+			{
+				var ts = Titanium.Desktop.getSystemIdleTime();
+				document.getElementById("ts").innerHTML = "idle time: "  + ts;
+			},10000);
+		</script>
 	</body>
 </html>
