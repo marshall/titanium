@@ -5,6 +5,7 @@
  */
 #include "file.h"
 
+#include <windows.h>
 #include <Poco/File.h>
 #include <Poco/Path.h>
 #include <Poco/FileStream.h>
@@ -20,15 +21,17 @@ namespace ti
 		this->SetMethod("isHidden",&File::IsHidden);
 		this->SetMethod("isSymbolicLink",&File::IsSymbolicLink);
 
+		this->SetMethod("write",&File::Write);
 		this->SetMethod("read",&File::Read);
+		this->SetMethod("readLine",&File::ReadLine);
 		this->SetMethod("copy",&File::Copy);
 		this->SetMethod("move",&File::Move);
 		this->SetMethod("createDirectory",&File::CreateDirectoryX);
 		this->SetMethod("deleteDirectory",&File::DeleteDirectory);
 		this->SetMethod("deleteFile",&File::DeleteFileX);
 		this->SetMethod("getDirectoryListing",&File::GetDirectoryListing);
-		this->SetMethod("getParent",&File::GetParent);
 
+		this->SetMethod("parent",&File::GetParent);
 		this->SetMethod("exists",&File::GetExists);
 		this->SetMethod("createTimestamp",&File::GetCreateTimestamp);
 		this->SetMethod("modificationTimestamp",&File::GetModificationTimestamp);
@@ -36,6 +39,9 @@ namespace ti
 		this->SetMethod("extension",&File::GetExtension);
 		this->SetMethod("nativePath",&File::GetNativePath);
 		this->SetMethod("size",&File::GetSize);
+		this->SetMethod("spaceAvailable",&File::GetSpaceAvailable);
+
+		this->readLineFS = NULL;
 	}
 
 	File::~File()
@@ -110,30 +116,108 @@ namespace ti
 
 		result->SetBool(isLink);
 	}
+	void File::Write(const ValueList& args, SharedValue result)
+	{
+		try
+		{
+			std::string text = args.at(0)->ToString();
+			bool append = false;
+
+			if(args.size() > 1)
+			{
+				append = args.at(1)->ToBool();
+			}
+
+			std::ios_base::openmode mode;
+			if(append)
+			{
+				mode = std::ios_base::out | std::ios_base::app;
+			}
+			else
+			{
+				mode = std::ios_base::out | std::ios_base::trunc;
+			}
+
+			Poco::FileOutputStream fos(this->filename, mode);
+			fos.write(text.c_str(), text.size());
+			fos.close();
+
+			result->SetBool(true);
+		}
+		catch (Poco::Exception& exc)
+		{
+			std::cerr << "Problem writing file:::: " << exc.displayText() << std::endl;
+
+			result->SetBool(false);
+		}
+	}
 	void File::Read(const ValueList& args, SharedValue result)
 	{
 		try
 		{
-			Poco::File file(this->filename);
-			if(file.canRead())
+			Poco::FileInputStream fis(this->filename);
+
+			std::string contents;
+
+			while(! fis.eof())
 			{
-				Poco::FileInputStream fis(this->filename);
+				std::string s;
+				std::getline(fis, s);
 
-				std::string contents;
+				contents.append(s);
+			}
 
-				while(! fis.eof())
+			result->SetString(contents.c_str());
+		}
+		catch (Poco::Exception& exc)
+		{
+			std::cerr << "Problem reading file:::: " << exc.displayText() << std::endl;
+
+			result->SetNull();
+		}
+	}
+	void File::ReadLine(const ValueList& args, SharedValue result)
+	{
+		try
+		{
+			bool openFile = false;
+			if(args.size() > 0)
+			{
+				openFile = args.at(0)->ToBool();
+			}
+
+			if(openFile)
+			{
+				// close file if it's already open
+				if(this->readLineFS)
 				{
-					std::string s;
-					std::getline(fis, s);
-
-					contents.append(s);
+					this->readLineFS->close();
 				}
 
-				result->SetString(contents.c_str());
+				// now open the file
+				this->readLineFS = new Poco::FileInputStream(this->filename);
+			}
+
+			if(this->readLineFS == NULL)
+			{
+				result->SetNull();
 			}
 			else
 			{
-				result->SetNull();
+				std::string line;
+
+				if(this->readLineFS->eof())
+				{
+					// close the file
+					this->readLineFS->close();
+					this->readLineFS = NULL;
+					result->SetNull();
+				}
+				else {
+					std::string line;
+					std::getline(*(this->readLineFS), line);
+					result->SetString(line.c_str());
+				}
 			}
 		}
 		catch (Poco::Exception& exc)
@@ -306,13 +390,11 @@ namespace ti
 	}
 	void File::GetParent(const ValueList& args, SharedValue result)
 	{
-		std::cout << "GetParent() called" << std::endl;
-
 		try
 		{
 			Poco::Path path(this->filename);
 
-			result->SetString(path.parent().getFileName().c_str());
+			result->SetString(path.parent().toString().c_str());
 		}
 		catch (Poco::Exception& exc)
 		{
@@ -338,8 +420,6 @@ namespace ti
 	}
 	void File::GetCreateTimestamp(const ValueList& args, SharedValue result)
 	{
-		std::cout << "GetCreateTimestamp() called" << std::endl;
-
 		try
 		{
 			Poco::File file(this->filename);
@@ -355,8 +435,6 @@ namespace ti
 	}
 	void File::GetModificationTimestamp(const ValueList& args, SharedValue result)
 	{
-		std::cout << "GetModificationDate() called" << std::endl;
-
 		try
 		{
 			Poco::File file(this->filename);
@@ -372,14 +450,10 @@ namespace ti
 	}
 	void File::GetName(const ValueList& args, SharedValue result)
 	{
-		std::cout << "GetName() called" << std::endl;
-
 		result->SetString(this->filename.c_str());
 	}
 	void File::GetExtension(const ValueList& args, SharedValue result)
 	{
-		std::cout << "GetExtension() called" << std::endl;
-
 		try
 		{
 			Poco::Path path(this->filename);
@@ -401,13 +475,11 @@ namespace ti
 	}
 	void File::GetNativePath(const ValueList& args, SharedValue result)
 	{
-		std::cout << "GetNativePath() called" << std::endl;
-
 		try
 		{
 			Poco::Path path(this->filename);
 
-			result->SetString(path.absolute().getFileName().c_str());
+			result->SetString(path.makeAbsolute().toString().c_str());
 		}
 		catch (Poco::Exception& exc)
 		{
@@ -417,8 +489,6 @@ namespace ti
 	}
 	void File::GetSize(const ValueList& args, SharedValue result)
 	{
-		std::cout << "GetSize() called" << std::endl;
-
 		try
 		{
 			Poco::File file(this->filename);
@@ -429,6 +499,36 @@ namespace ti
 		{
 			std::cerr << "Problem getting file modify date:::: " << exc.displayText() << std::endl;
 			result->SetNull();
+		}
+	}
+	void File::GetSpaceAvailable(const ValueList& args, SharedValue result)
+	{
+		std::cout << "GetSpaceAvailable() called" << std::endl;
+
+		long avail = -1;
+		Poco::Path path(this->filename);
+
+#ifdef OS_OSX
+		// TODO complete and test this
+#elif OS_WIN32
+		PULARGE_INTEGER freeBytesAvail = 0;
+		PULARGE_INTEGER totalNumOfBytes = 0;
+		PULARGE_INTEGER totalNumOfFreeBytes = 0;
+		if(GetDiskFreeSpaceEx(path.absolute().getFileName().c_str(), freeBytesAvail, totalNumOfBytes, totalNumOfFreeBytes))
+		{
+			avail = long(freeBytesAvail);
+		}
+#elif OS_LINUX
+		// TODO complete and test this
+#endif
+
+		if(avail == -1)
+		{
+			result->SetNull();
+		}
+		else
+		{
+			result->SetDouble(avail);
 		}
 	}
 }

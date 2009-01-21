@@ -5,6 +5,7 @@
 		"menu.js",
 		"media.js",
 		"dock.js",
+		"filesystem.js",
 		"gears.js"
 	]
 }
