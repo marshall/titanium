@@ -11,13 +11,7 @@ env.Append(CPPPATH = ['#kroll'])
 sources = Glob('*.cpp')
 
 if tiBuild.is_osx():
-	OSX_SDK = '/Developer/SDKs/MacOSX10.4u.sdk'
-	OSX_UNIV_COMPILER = '-isysroot '+OSX_SDK+' -arch ppc -arch i386'
-	OSX_UNIV_LINKER = '-isysroot '+OSX_SDK+' -syslibroot,'+OSX_SDK
 	env.Append(FRAMEWORKS = ['Cocoa'])
-	env.Append(CCFLAGS = ['-x', 'objective-c++'])
-	env.Append(CCFLAGS=OSX_UNIV_COMPILER)
-	env.Append(LDFLAGS=OSX_UNIV_LINKER)
 	sources+=Glob('osx/*.cpp') + Glob('osx/*.mm')
 elif tiBuild.is_win32():
 	env.Append(LIBS = ['user32'])

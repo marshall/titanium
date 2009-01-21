@@ -8,7 +8,7 @@
 
 namespace ti
 {
-	MenuBinding::MenuBinding(SharedPtr<BoundObject> global) : global(global)
+	MenuBinding::MenuBinding(SharedBoundObject global) : global(global)
 	{
 		this->SetMethod("createAppMenu",&MenuBinding::CreateAppMenu);
 		this->SetMethod("createTrayMenu",&MenuBinding::CreateAppMenu);

@@ -30,7 +30,7 @@ namespace ti
 
 	void MenuModule::Test()
 	{
-	  MenuUnitTestSuite test;
-	  test.Run(host);
+		MenuUnitTestSuite test;
+	  	test.Run(host);
 	}
 }
