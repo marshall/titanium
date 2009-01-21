@@ -41,16 +41,64 @@
 				return f.exists();
 			}
 
+			tests.name = function(params) {
+				var f = Titanium.Filesystem.getFile(params[0]);
+
+				return f.name();
+			}
+
 			tests.toString = function(params) {
 				var f = Titanium.Filesystem.getFile(params[0]);
 
 				return f.toString();
 			}
 
+			tests.parent = function(params) {
+				var f = Titanium.Filesystem.getFile(params[0]);
+
+				return f.parent();
+			}
+
+			tests.modificationTimestamp = function(params) {
+				var f = Titanium.Filesystem.getFile(params[0]);
+
+				var secs = f.modificationTimestamp();
+
+				if(secs) {
+					var d = new Date();
+					d.setTime(secs * 1000);
+					return d;
+				}
+				else {
+					return secs;
+				}
+			}
+
+			tests.createTimestamp = function(params) {
+				var f = Titanium.Filesystem.getFile(params[0]);
+
+				var secs = f.createTimestamp();
+
+				if(secs) {
+					var d = new Date();
+					d.setTime(secs * 1000);
+					return d;
+				}
+				else {
+					return secs;
+				}
+			}
+
 			tests.nativePath = function(params) {
 				var f = Titanium.Filesystem.getFile(params[0]);
 
 				return f.nativePath();
+			}
+
+			tests.extension = function(params) {
+				var f = Titanium.Filesystem.getFile(params[0]);
+
+				return f.extension();
 			}
 
 			tests.size = function(params) {
@@ -386,6 +434,11 @@
 				<option value="size">size</option>
 				<option value="spaceAvailable">spaceAvailable</option>
 				<option value="nativePath">nativePath</option>
+				<option value="extension">extension</option>
+				<option value="name">name</option>
+				<option value="createTimestamp">createTimestamp</option>
+				<option value="modificationTimestamp">modificationTimestamp</option>
+				<option value="parent">parent</option>
 				<option value="toString">toString</option>
 				<option value="createTempFile">createTempFile</option>
 				<option value="createTempDirectory">createTempDirectory</option>
@@ -458,6 +511,16 @@
 				</table>
 			</div>
 		</div>
+		<div id="test_extension" class="test">
+			<div class="memberInfo">
+				bool File.extension()
+			</div>
+			<div class="params">
+				<table>
+					<tr><td>name</td><td><input id="extension_param1" class="param" size="50" value="c:\dev\TI.FS.Test\test.txt" /></td></tr>
+				</table>
+			</div>
+		</div>
 		<div id="test_size" class="test">
 			<div class="memberInfo">
 				bool File.size()
@@ -488,6 +551,36 @@
 				</table>
 			</div>
 		</div>
+		<div id="test_createTimestamp" class="test">
+			<div class="memberInfo">
+				bool File.createTimestamp()
+			</div>
+			<div class="params">
+				<table>
+					<tr><td>name</td><td><input id="createTimestamp_param1" class="param" size="50" value="c:\dev\TI.FS.Test\test.txt" /></td></tr>
+				</table>
+			</div>
+		</div>
+		<div id="test_modificationTimestamp" class="test">
+			<div class="memberInfo">
+				bool File.modificationTimestamp()
+			</div>
+			<div class="params">
+				<table>
+					<tr><td>name</td><td><input id="modificationTimestamp_param1" class="param" size="50" value="c:\dev\TI.FS.Test\test.txt" /></td></tr>
+				</table>
+			</div>
+		</div>
+		<div id="test_name" class="test">
+			<div class="memberInfo">
+				bool File.name()
+			</div>
+			<div class="params">
+				<table>
+					<tr><td>name</td><td><input id="name_param1" class="param" size="50" value="c:\dev\TI.FS.Test\test.txt" /></td></tr>
+				</table>
+			</div>
+		</div>
 		<div id="test_toString" class="test">
 			<div class="memberInfo">
 				bool File.toString()
@@ -495,6 +588,16 @@
 			<div class="params">
 				<table>
 					<tr><td>name</td><td><input id="toString_param1" class="param" size="50" value="c:\dev\TI.FS.Test\test.txt" /></td></tr>
+				</table>
+			</div>
+		</div>
+		<div id="test_parent" class="test">
+			<div class="memberInfo">
+				bool File.parent()
+			</div>
+			<div class="params">
+				<table>
+					<tr><td>name</td><td><input id="parent_param1" class="param" size="50" value="c:\dev\TI.FS.Test\test.txt" /></td></tr>
 				</table>
 			</div>
 		</div>

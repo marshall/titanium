@@ -203,23 +203,23 @@ namespace ti
 			 */
 			void GetExists(const ValueList& args, SharedValue result);
 			/**
-			 * Function: GetCreateDate
-			 *   Returns the date this file or directory was created
+			 * Function: GetCreateTimestamp
+			 *   Returns the create date as the number of seconds since midnight January 1, 1970
 			 *
 			 * Parameters:
 			 *
 			 * Returns:
-			 *   timestamp when the file/directory was created; null is returned if the timestamp can't be determined
+			 *   seconds since midnight January 1, 1970; null if create date can't be determined
 			 */
 			void GetCreateTimestamp(const ValueList& args, SharedValue result);
 			/**
-			 * Function: GetModificationDate
-			 *   Returns the date this file or directory was modified
+			 * Function: GetModificationTimestamp
+			 *   Returns the modification date as the number of seconds since midnight January 1, 1970
 			 *
 			 * Parameters:
 			 *
 			 * Returns:
-			 *   timestamp when the file/directory was modified; null is returned if the timestamp can't be determined
+			 *   seconds since midnight January 1, 1970; null if modification date can't be determined
 			 */
 			void GetModificationTimestamp(const ValueList& args, SharedValue result);
 			/**
@@ -239,7 +239,7 @@ namespace ti
 			 * Parameters:
 			 *
 			 * Returns:
-			 *   the file extension; null if this is an invalid file
+			 *   the file extension; null if this is a directory
 			 */
 			void GetExtension(const ValueList& args, SharedValue result);
 			/**

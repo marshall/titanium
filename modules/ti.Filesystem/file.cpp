@@ -30,8 +30,8 @@ namespace ti
 		this->SetMethod("deleteDirectory",&File::DeleteDirectory);
 		this->SetMethod("deleteFile",&File::DeleteFileX);
 		this->SetMethod("getDirectoryListing",&File::GetDirectoryListing);
-		this->SetMethod("getParent",&File::GetParent);
 
+		this->SetMethod("parent",&File::GetParent);
 		this->SetMethod("exists",&File::GetExists);
 		this->SetMethod("createTimestamp",&File::GetCreateTimestamp);
 		this->SetMethod("modificationTimestamp",&File::GetModificationTimestamp);
@@ -390,13 +390,11 @@ namespace ti
 	}
 	void File::GetParent(const ValueList& args, SharedValue result)
 	{
-		std::cout << "GetParent() called" << std::endl;
-
 		try
 		{
 			Poco::Path path(this->filename);
 
-			result->SetString(path.parent().getFileName().c_str());
+			result->SetString(path.parent().toString().c_str());
 		}
 		catch (Poco::Exception& exc)
 		{
@@ -422,8 +420,6 @@ namespace ti
 	}
 	void File::GetCreateTimestamp(const ValueList& args, SharedValue result)
 	{
-		std::cout << "GetCreateTimestamp() called" << std::endl;
-
 		try
 		{
 			Poco::File file(this->filename);
@@ -439,8 +435,6 @@ namespace ti
 	}
 	void File::GetModificationTimestamp(const ValueList& args, SharedValue result)
 	{
-		std::cout << "GetModificationDate() called" << std::endl;
-
 		try
 		{
 			Poco::File file(this->filename);
@@ -456,14 +450,10 @@ namespace ti
 	}
 	void File::GetName(const ValueList& args, SharedValue result)
 	{
-		std::cout << "GetName() called" << std::endl;
-
 		result->SetString(this->filename.c_str());
 	}
 	void File::GetExtension(const ValueList& args, SharedValue result)
 	{
-		std::cout << "GetExtension() called" << std::endl;
-
 		try
 		{
 			Poco::Path path(this->filename);
@@ -485,8 +475,6 @@ namespace ti
 	}
 	void File::GetNativePath(const ValueList& args, SharedValue result)
 	{
-		std::cout << "GetNativePath() called" << std::endl;
-
 		try
 		{
 			Poco::Path path(this->filename);

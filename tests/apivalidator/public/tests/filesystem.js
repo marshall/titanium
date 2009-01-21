@@ -98,6 +98,10 @@ testSuite("Titanium.Filesystem API tests", "dummy.html", {
 			assert(file.extension != null);
 			assert(file.nativePath != null);
 			assert(file.size != null);
+			assert(file.parent != null);
+			assert(file.createTimestamp != null);
+			assert(file.modificationTimestamp != null);
+			assert(file.spaceAvailable != null);
 			
 			assert(file.createTimestamp() != null);
 			assert(file.modificationTimestamp() != null);
@@ -105,6 +109,10 @@ testSuite("Titanium.Filesystem API tests", "dummy.html", {
 			assert(file.extension() != null);
 			assert(file.nativePath() != null);
 			assert(file.size() != null);
+			assert(file.parent() != null);
+			assert(file.createTimestamp() != null);
+			assert(file.modificationTimestamp() != null);
+			assert(file.spaceAvailable() != null);
 			assert(file.toString() != null);
 		});
 		
