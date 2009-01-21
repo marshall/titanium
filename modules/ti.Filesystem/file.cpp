@@ -21,7 +21,7 @@ namespace ti
 #else
 		this->filename = filename;
 #endif
-		
+
 		this->SetMethod("toString",&File::ToString);
 		this->SetMethod("isFile",&File::IsFile);
 		this->SetMethod("isDirectory",&File::IsDirectory);
