@@ -47,6 +47,18 @@
 				return f.toString();
 			}
 
+			tests.size = function(params) {
+				var f = Titanium.Filesystem.getFile(params[0]);
+
+				return f.size();
+			}
+
+			tests.spaceAvailable = function(params) {
+				var f = Titanium.Filesystem.getFile(params[0]);
+
+				return f.spaceAvailable();
+			}
+
 			tests.createTempFile = function(params) {
 				var f = Titanium.Filesystem.createTempFile();
 
@@ -365,6 +377,8 @@
 				<option value="isSymbolicLink">isSymbolicLink</option>
 				<option value="isHidden">isHidden</option>
 				<option value="exists">exists</option>
+				<option value="size">size</option>
+				<option value="spaceAvailable">spaceAvailable</option>
 				<option value="toString">toString</option>
 				<option value="createTempFile">createTempFile</option>
 				<option value="createTempDirectory">createTempDirectory</option>
@@ -389,7 +403,7 @@
 		</div>
 		<div id="test_isFile" class="test">
 			<div class="memberInfo">
-				bool File.isFile(name)
+				bool File.isFile()
 			</div>
 			<div class="params">
 				<table>
@@ -399,7 +413,7 @@
 		</div>
 		<div id="test_isDirectory" class="test">
 			<div class="memberInfo">
-				bool File.isDirectory(name)
+				bool File.isDirectory()
 			</div>
 			<div class="params">
 				<table>
@@ -409,7 +423,7 @@
 		</div>
 		<div id="test_isHidden" class="test">
 			<div class="memberInfo">
-				bool File.isHidden(name)
+				bool File.isHidden()
 			</div>
 			<div class="params">
 				<table>
@@ -419,7 +433,7 @@
 		</div>
 		<div id="test_isSymbolicLink" class="test">
 			<div class="memberInfo">
-				bool File.isSymbolicLink(name)
+				bool File.isSymbolicLink()
 			</div>
 			<div class="params">
 				<table>
@@ -429,11 +443,31 @@
 		</div>
 		<div id="test_exists" class="test">
 			<div class="memberInfo">
-				bool File.exists(name)
+				bool File.exists()
 			</div>
 			<div class="params">
 				<table>
 					<tr><td>name</td><td><input id="exists_param1" class="param" size="50" value="c:\dev\TI.FS.Test\test.txt" /></td></tr>
+				</table>
+			</div>
+		</div>
+		<div id="test_size" class="test">
+			<div class="memberInfo">
+				bool File.size()
+			</div>
+			<div class="params">
+				<table>
+					<tr><td>name</td><td><input id="size_param1" class="param" size="50" value="c:\dev\TI.FS.Test\test.txt" /></td></tr>
+				</table>
+			</div>
+		</div>
+		<div id="test_spaceAvailable" class="test">
+			<div class="memberInfo">
+				bool File.spaceAvailable()
+			</div>
+			<div class="params">
+				<table>
+					<tr><td>name</td><td><input id="spaceAvailable_param1" class="param" size="50" value="c:\dev\TI.FS.Test\test.txt" /></td></tr>
 				</table>
 			</div>
 		</div>

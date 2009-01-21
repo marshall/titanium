@@ -5,6 +5,7 @@
  */
 #include "file.h"
 
+#include <windows.h>
 #include <Poco/File.h>
 #include <Poco/Path.h>
 #include <Poco/FileStream.h>
@@ -38,6 +39,7 @@ namespace ti
 		this->SetMethod("extension",&File::GetExtension);
 		this->SetMethod("nativePath",&File::GetNativePath);
 		this->SetMethod("size",&File::GetSize);
+		this->SetMethod("spaceAvailable",&File::GetSpaceAvailable);
 
 		this->readLineFS = NULL;
 	}
@@ -499,8 +501,6 @@ namespace ti
 	}
 	void File::GetSize(const ValueList& args, SharedValue result)
 	{
-		std::cout << "GetSize() called" << std::endl;
-
 		try
 		{
 			Poco::File file(this->filename);
@@ -511,6 +511,36 @@ namespace ti
 		{
 			std::cerr << "Problem getting file modify date:::: " << exc.displayText() << std::endl;
 			result->SetNull();
+		}
+	}
+	void File::GetSpaceAvailable(const ValueList& args, SharedValue result)
+	{
+		std::cout << "GetSpaceAvailable() called" << std::endl;
+
+		long avail = -1;
+		Poco::Path path(this->filename);
+
+#ifdef OS_OSX
+		// TODO complete and test this
+#elif OS_WIN32
+		PULARGE_INTEGER freeBytesAvail = 0;
+		PULARGE_INTEGER totalNumOfBytes = 0;
+		PULARGE_INTEGER totalNumOfFreeBytes = 0;
+		if(GetDiskFreeSpaceEx(path.absolute().getFileName().c_str(), freeBytesAvail, totalNumOfBytes, totalNumOfFreeBytes))
+		{
+			avail = long(freeBytesAvail);
+		}
+#elif OS_LINUX
+		// TODO complete and test this
+#endif
+
+		if(avail == -1)
+		{
+			result->SetNull();
+		}
+		else
+		{
+			result->SetDouble(avail);
 		}
 	}
 }

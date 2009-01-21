@@ -262,6 +262,16 @@ namespace ti
 			 *   the file size in bytes
 			 */
 			void GetSize(const ValueList& args, SharedValue result);
+			/**
+			 * Function: GetSpaceAvailable
+			 *   returns the disk space available in bytes
+			 *
+			 * Parameters:
+			 *
+			 * Returns:
+			 *   the disk space available in bytes
+			 */
+			void GetSpaceAvailable(const ValueList& args, SharedValue result);
 	};
 }
 
