@@ -22,11 +22,11 @@ namespace ti
 	class Win32Desktop
 	{
 	public:
-		static void CreateShortcut(const ValueList& args, SharedValue result);
-		static void OpenFiles(const ValueList& args, SharedValue result);
-		static void OpenApplication(const ValueList& args, SharedValue result);
-		static void OpenURL(const ValueList& args, SharedValue result);
-		static void GetSystemIdleTime(const ValueList& args, SharedValue result);
+		static bool CreateShortcut(std::string &from, std::string &to);
+		static SharedBoundList OpenFiles(SharedBoundObject properties);
+		static bool OpenApplication(std::string &name);
+		static bool OpenURL(std::string &url);
+		static int GetSystemIdleTime();
 	private:
 		Win32Desktop();
 		~Win32Desktop();

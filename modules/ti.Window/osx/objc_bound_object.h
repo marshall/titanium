@@ -10,15 +10,17 @@
 #import "WebInspector.h"
 #import "WebScriptDebugDelegate.h"
 #import "WebScriptObject.h"
+#import "bound_method_dispatch.h"
 
 @interface ObjcBoundObject : NSObject {
-	SharedPtr<BoundObject>* object;
+	SharedBoundObject* object;
+	ti::BoundMethodDispatch* dispatch;
 	JSContextRef context;
 	NSString *key; //TODO: debug only
 }
--(id)initWithObject:(SharedPtr<BoundObject>)object key:(NSString*)key context:(JSContextRef)ctx;
+-(id)initWithObject:(SharedBoundObject)object key:(NSString*)key context:(JSContextRef)ctx;
 -(BOOL)isWrappedBoundObject;
--(SharedPtr<BoundObject>)boundObject;
+-(SharedBoundObject)boundObject;
 +(id)ValueToID:(Value*)value key:(NSString*)key context:(JSContextRef)ctx;
 +(SharedValue)IDToValue:(id)value context:(JSContextRef)ctx;
 @end

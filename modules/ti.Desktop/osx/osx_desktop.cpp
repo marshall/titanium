@@ -13,12 +13,12 @@ namespace ti
 	OSXDesktop::~OSXDesktop()
 	{
 	}
-	void OSXDesktop::CreateShortcut(const ValueList& args, SharedValue result)
+	bool OSXDesktop::CreateShortcut(std::string& from, std::string& to)
 	{
 		// http://www.mail-archive.com/cocoa-dev@lists.apple.com/msg18273.html
 		
-		NSString* originalPath = [NSString stringWithCString:args.at(0)->ToString()];
-		NSString* destPath = [NSString stringWithCString:args.at(1)->ToString()];
+		NSString* originalPath = [NSString stringWithCString:from.c_str()];
+		NSString* destPath = [NSString stringWithCString:to.c_str()];
 		
 		NSMutableString *source = [NSMutableString stringWithString:@"tell application \"Finder\"\n"];
 
@@ -34,15 +34,15 @@ namespace ti
 		if (desc==nil)
 		{
 			//TODO: throw exception?
-			result->SetBool(false);
+			return false;
 		}
 		else
 		{
 			BOOL worked = [[NSFileManager defaultManager] movePath:[desc stringValue] toPath:[destPath stringByExpandingTildeInPath] handler:nil];
-			result->SetBool(worked);
+			return worked;
 		}
 	}
-	void OSXDesktop::OpenFiles(const ValueList& args, SharedValue result)
+	SharedBoundList OSXDesktop::OpenFiles(SharedBoundObject props)
 	{
 		NSOpenPanel* openDlg = [NSOpenPanel openPanel];
 		[openDlg setCanChooseFiles:YES];
@@ -63,59 +63,51 @@ namespace ti
 		//
 		NSMutableArray *filetypes = nil;
 		NSString *begin = nil, *filename = nil;
-		if (args.size() > 0)
+		SharedValue multiple = props->Get("multiple");
+		if (!multiple->IsNull())
 		{
-			SharedValue properties = args.at(0);
-			if (properties->IsObject())
+			[openDlg setAllowsMultipleSelection:multiple->ToBool()];
+		}
+		SharedValue path = props->Get("path");
+		if (!path->IsNull() && path->IsString())
+		{
+			begin = [NSString stringWithCString:path->ToString()];
+		}
+		SharedValue file = props->Get("filename");
+		if (!file->IsNull() && file->IsString())
+		{
+			filename = [NSString stringWithCString:file->ToString()];
+		}
+		SharedValue files = props->Get("files");
+		if (!files->IsNull())
+		{
+			[openDlg setCanChooseFiles:files->ToBool()];
+		}
+		SharedValue dirs = props->Get("directories");
+		if (!dirs->IsNull())
+		{
+			[openDlg setCanChooseDirectories:dirs->ToBool()];
+		}
+		SharedValue types = props->Get("types");
+		if (!types->IsNull() && types->IsList())
+		{
+			SharedBoundList list = types->ToList();
+			if (list->Size()>0)
 			{
-				SharedBoundObject props = properties->ToObject();
-				SharedValue multiple = props->Get("multiple");
-				if (!multiple->IsNull())
+				filetypes = [[NSMutableArray alloc] init]; 
+				for (int c=0;c<list->Size();c++)
 				{
-					[openDlg setAllowsMultipleSelection:multiple->ToBool()];
-				}
-				SharedValue path = props->Get("path");
-				if (!path->IsNull() && path->IsString())
-				{
-					begin = [NSString stringWithCString:path->ToString()];
-				}
-				SharedValue file = props->Get("filename");
-				if (!file->IsNull() && file->IsString())
-				{
-					filename = [NSString stringWithCString:file->ToString()];
-				}
-				SharedValue files = props->Get("files");
-				if (!files->IsNull())
-				{
-					[openDlg setCanChooseFiles:files->ToBool()];
-				}
-				SharedValue dirs = props->Get("directories");
-				if (!dirs->IsNull())
-				{
-					[openDlg setCanChooseDirectories:dirs->ToBool()];
-				}
-				SharedValue types = props->Get("types");
-				if (!types->IsNull() && types->IsList())
-				{
-					SharedBoundList list = types->ToList();
-					if (list->Size()>0)
+					SharedValue v = list->At(c);
+					if (v->IsString())
 					{
-						filetypes = [[NSMutableArray alloc] init]; 
-						for (int c=0;c<list->Size();c++)
-						{
-							SharedValue v = list->At(c);
-							if (v->IsString())
-							{
-								const char *s = v->ToString();
-								[filetypes addObject:[NSString stringWithCString:s]];
-							}
-						}
+						const char *s = v->ToString();
+						[filetypes addObject:[NSString stringWithCString:s]];
 					}
 				}
 			}
 		}
 		
-		SharedBoundList files = new StaticBoundList();
+		SharedBoundList results = new StaticBoundList();
 		if ( [openDlg runModalForDirectory:begin file:filename types:filetypes] == NSOKButton )
 		{
 		    NSArray* selected = [openDlg filenames];
@@ -124,25 +116,25 @@ namespace ti
 		        NSString* fileName = [selected objectAtIndex:i];
 				std::string fn = [fileName UTF8String];
 				SharedValue f = Value::NewString(fn.c_str());
-				files->Append(f);
+				results->Append(f);
 		    }
 		}
 		[filetypes release];
-		result->SetList(files);
+		return results;
 	}
-	void OSXDesktop::OpenApplication(const ValueList& args, SharedValue result)
+	bool OSXDesktop::OpenApplication(std::string& app)
+	{
+		NSWorkspace* ws = [NSWorkspace sharedWorkspace];
+		BOOL wasLaunched = [ws launchApplication:[NSString stringWithCString:app.c_str()]];
+		return wasLaunched;
+	}
+	bool OSXDesktop::OpenURL(std::string& url)
 	{
 		NSWorkspace * ws = [NSWorkspace sharedWorkspace];
-		BOOL wasLaunched = [ws launchApplication:[NSString stringWithCString:args.at(0)->ToString()]];
-		result->SetBool(wasLaunched);
+		BOOL wasOpened = [ws openURL:[NSURL URLWithString:[NSString stringWithCString:url.c_str()]]];
+		return wasOpened;
 	}
-	void OSXDesktop::OpenURL(const ValueList& args, SharedValue result)
-	{
-		NSWorkspace * ws = [NSWorkspace sharedWorkspace];
-		BOOL wasOpened = [ws openURL:[NSURL URLWithString:[NSString stringWithCString:args.at(0)->ToString()]]];
-		result->SetBool(wasOpened);
-	}
-	void OSXDesktop::GetSystemIdleTime(const ValueList& args, SharedValue result)
+	int OSXDesktop::GetSystemIdleTime()
 	{
 		// some of the code for this was from:
 		// http://ryanhomer.com/blog/2007/05/31/detecting-when-your-cocoa-application-is-idle/
@@ -158,8 +150,7 @@ namespace ti
 		IOServiceGetMatchingServices(masterPort, IOServiceMatching("IOHIDSystem"), &iter);
 		if (iter == 0)
 		{
-			result->SetInt(-1);
-			return;
+			return -1;
 		}
 		else
 		{
@@ -172,8 +163,7 @@ namespace ti
 		}
 		else
 		{
-			result->SetInt(-1);
-			return;
+			return -1;
 		}
 
 		uint64_t tHandle = 0;
@@ -207,6 +197,6 @@ namespace ti
 		CFRelease((CFTypeRef)properties);
 		IOObjectRelease(curObj);
 		IOObjectRelease(iter);
-		result->SetInt((int)tHandle);
+		return (int)tHandle;
 	}
 }

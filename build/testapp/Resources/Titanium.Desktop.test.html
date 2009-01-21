@@ -80,6 +80,17 @@
 			{
 				Titanium.Desktop.openURL("http://titaniumapp.com");
 			}
+			function openURLEx()
+			{
+				try
+				{
+					Titanium.Desktop.openURL();
+				}
+				catch (e)
+				{
+					alert("exception: "+e);
+				}
+			}
 			function createShortcut()
 			{
 				var from = prompt("where from?");
@@ -111,6 +122,9 @@
 		</div>
 		<div>
 			<button onclick="openURL()">Open URL</button>
+		</div>
+		<div>
+			<button onclick="openURLEx()">Open URL with no parameters (test exception)</button>
 		</div>
 		<div>
 			<button onclick="createShortcut()">Create Shortcut</button>

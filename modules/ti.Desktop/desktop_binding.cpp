@@ -37,22 +37,39 @@ namespace ti
 	}
 	void DesktopBinding::CreateShortcut(const ValueList& args, SharedValue result)
 	{
-		TI_DESKTOP::CreateShortcut(args,result);
+		if (args.size()!=2)
+		{
+			throw "invalid parameters passed. createShortcut takes 2 parameters";
+		}
+		std::string from = args.at(0)->ToString();
+		std::string to = args.at(1)->ToString();
+		result->SetBool(TI_DESKTOP::CreateShortcut(from,to));
 	}
 	void DesktopBinding::OpenFiles(const ValueList& args, SharedValue result)
 	{
-		TI_DESKTOP::OpenFiles(args,result);
+		SharedBoundObject props = args.size()>0 && args.at(0)->IsObject() ? args.at(0)->ToObject() : new StaticBoundObject();
+		result->SetList(TI_DESKTOP::OpenFiles(props));
 	}
 	void DesktopBinding::OpenApplication(const ValueList& args, SharedValue result)
 	{
-		TI_DESKTOP::OpenApplication(args,result);
+		if (args.size()!=1)
+		{
+			throw "invalid parameters passed. openApplication takes 1 parameter";
+		}
+		std::string app = args.at(0)->ToString();
+		result->SetBool(TI_DESKTOP::OpenApplication(app));
 	}
 	void DesktopBinding::OpenURL(const ValueList& args, SharedValue result)
 	{
-		TI_DESKTOP::OpenURL(args,result);
+		if (args.size()!=1)
+		{
+			throw "invalid parameters passed. openURL takes 1 parameter";
+		}
+		std::string url = args.at(0)->ToString();
+		result->SetBool(TI_DESKTOP::OpenURL(url));
 	}
 	void DesktopBinding::GetSystemIdleTime(const ValueList& args, SharedValue result)
 	{
-		TI_DESKTOP::GetSystemIdleTime(args,result);
+		result->SetInt(TI_DESKTOP::GetSystemIdleTime());
 	}
 }

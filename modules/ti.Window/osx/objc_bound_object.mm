@@ -4,6 +4,7 @@
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
 #import "objc_bound_object.h"
+#import "bound_method_dispatch.h"
 
 @implementation ObjcBoundObject
 
@@ -150,14 +151,15 @@
 	}  
 	return Value::Undefined;
 }
--(id)initWithObject:(SharedPtr<BoundObject>)obj key:(NSString*)k context:(JSContextRef)ctx
+-(id)initWithObject:(SharedBoundObject)obj key:(NSString*)k context:(JSContextRef)ctx
 {
 	self = [super init];
 	if (self!=nil)
 	{
 		// in objective-c you can't alloc a C++ when an objective-c class 
 		// is instantiated
-		object = new SharedPtr<BoundObject>(obj);
+		object = new SharedBoundObject(obj);
+		dispatch = nil;
 		key = k;
 		context = ctx;
 		[key retain];
@@ -169,6 +171,11 @@
 	[key release];
 	delete object;
 	context = nil;
+	if (dispatch!=nil)
+	{
+		delete dispatch;
+		dispatch = nil;
+	}
 	[super dealloc];
 }
 -(BOOL)isWrappedBoundObject
@@ -220,6 +227,29 @@
 	SharedValue result = object->get()->Get([k UTF8String]);
 	return [ObjcBoundObject ValueToID:result key:k context:context];
 }
+-(id)invoke:(const ValueList&)args name:(NSString*)name method:(SharedBoundMethod)method
+{
+	SharedValue m = (*object)->Get([name UTF8String]);
+	if (!m->IsMethod())
+	{
+		NSString *err = [NSString stringWithFormat:@"no method named: %@",name];
+		[WebScriptObject throwException:err];
+		return [WebUndefined undefined];
+	}
+	Value exception;
+	ti::BoundMethodDispatch bmd(m->ToMethod());
+	SharedValue result = bmd.Call(args,&exception);
+	if (exception.IsString())
+	{
+		NSString *err = [NSString stringWithCString:exception.ToString()];
+		[WebScriptObject throwException:err];
+	}
+	else
+	{
+		return [ObjcBoundObject ValueToID:result key:name context:context];
+	}
+	return [WebUndefined undefined];
+}
 -(id)invokeDefaultMethodWithArguments:(NSArray*)args
 {
 	SharedBoundMethod method = dynamic_cast<BoundMethod*>(object->get());
@@ -232,13 +262,13 @@
 			SharedValue arg = [ObjcBoundObject IDToValue:value context:context];
 			a.push_back(arg);
 		}
-		SharedValue result = method->Call(a);
-		return [ObjcBoundObject ValueToID:result key:@"" context:context];
+		return [self invoke:a name:@"" method:method];
 	}
 	return [WebUndefined undefined];
 }
 -(id)invokeUndefinedMethodFromWebScript:(NSString *)name withArguments:(NSArray*)args
 {
+	NSLog(@"invoking method %@ on %@",name,key);
 	SharedValue value = object->get()->Get([name UTF8String]);
 	if (value->IsMethod())
 	{
@@ -250,8 +280,7 @@
 			a.push_back(arg);
 		}
 		SharedBoundMethod method = value->ToMethod();
-		SharedValue result = method->Call(a);
-		return [ObjcBoundObject ValueToID:result key:name context:context];
+		return [self invoke:a name:name method:method];
 	}
 	return [WebUndefined undefined];
 }

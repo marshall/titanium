@@ -13,21 +13,24 @@ namespace ti
 	Win32Desktop::~Win32Desktop()
 	{
 	}
-	void Win32Desktop::CreateShortcut(const ValueList& args, SharedValue result)
+	bool Win32Desktop::CreateShortcut(std::string &from, std::string &to)
 	{
+		return false;
 	}
-	void Win32Desktop::OpenFiles(const ValueList& args, SharedValue result)
+	bool Win32Desktop::OpenFiles(SharedBoundObject properties)
 	{
+		return false;
 	}
-	void Win32Desktop::OpenApplication(const ValueList& args, SharedValue result)
+	bool Win32Desktop::OpenApplication(std::string &name)
 	{
+		return false;
 	}
-	void Win32Desktop::OpenURL(const ValueList& args, SharedValue result)
+	bool Win32Desktop::OpenURL(std::string &url)
 	{
-		long response = (long)ShellExecuteA(NULL, "open", args.at(0)->ToString(), NULL, NULL, SW_SHOWNORMAL);
-		result->SetBool(response > 0);
+		long response = (long)ShellExecuteA(NULL, "open", url.c_str(), NULL, NULL, SW_SHOWNORMAL);
+		return (response > 0);
 	}
-	void Win32Desktop::GetSystemIdleTime(const ValueList& args, SharedValue result)
+	int Win32Desktop::GetSystemIdleTime()
 	{
 		LASTINPUTINFO lii;
 		memset(&lii, 0, sizeof(lii));
@@ -38,6 +41,6 @@ namespace ti
 		DWORD currentTickCount = GetTickCount();
 		long idleTicks = currentTickCount - lii.dwTime;
 
-		result->SetInt((int)idleTicks);
+		return (int)idleTicks;
 	}
 }

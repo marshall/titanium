@@ -13,19 +13,24 @@ namespace ti
 	LinuxDesktop::~LinuxDesktop()
 	{
 	}
-	void LinuxDesktop::CreateShortcut(const ValueList& args, SharedValue result)
+	bool LinuxDesktop::CreateShortcut(std::string &from, std::string &to)
 	{
+		return false;
 	}
-	void LinuxDesktop::OpenFiles(const ValueList& args, SharedValue result)
+	bool LinuxDesktop::OpenFiles(SharedBoundObject properties)
 	{
+		return false;
 	}
-	void LinuxDesktop::OpenApplication(const ValueList& args, SharedValue result)
+	bool LinuxDesktop::OpenApplication(std::string &name)
 	{
+		return false;
 	}
-	void LinuxDesktop::OpenURL(const ValueList& args, SharedValue result)
+	bool LinuxDesktop::OpenURL(std::string &url)
 	{
+		return false;
 	}
-	void LinuxDesktop::GetSystemIdleTime(const ValueList& args, SharedValue result)
+	int LinuxDesktop::GetSystemIdleTime()
 	{
+		return -1;
 	}
 }
