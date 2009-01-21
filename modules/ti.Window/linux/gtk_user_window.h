@@ -20,6 +20,7 @@ namespace ti
 		GtkUserWindow(Host *host, ti::WindowConfig *config);
 		~GtkUserWindow();
 		void SetupDecorations();
+		void SetupTransparency();
 
 		void Hide();
 		void Show();
