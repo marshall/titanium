@@ -25,7 +25,7 @@
 
 namespace ti
 {
-	FilesystemBinding::FilesystemBinding(BoundObject *global) : global(global)
+	FilesystemBinding::FilesystemBinding(SharedBoundObject global) : global(global)
 	{
 		this->SetMethod("createTempFile",&FilesystemBinding::CreateTempFile);
 		this->SetMethod("createTempDirectory",&FilesystemBinding::CreateTempDirectory);
@@ -56,11 +56,7 @@ namespace ti
 		}
 		catch (Poco::Exception& exc)
 		{
-			std::cerr << "Problem creating temp file:::: " << exc.displayText() << std::endl;
-
-			// TODO test this
-			SharedValue v = Value::NewString(exc.displayText().c_str());
-			throw v;
+			throw exc.displayText().c_str();
 		}
 	}
 	void FilesystemBinding::CreateTempDirectory(const ValueList& args, SharedValue result)
@@ -76,8 +72,7 @@ namespace ti
 		}
 		catch (Poco::Exception& exc)
 		{
-			std::cerr << "Problem creating temp directory:::: " << exc.displayText() << std::endl;
-			result->SetNull();
+			throw exc.displayText().c_str();
 		}
 	}
 	void FilesystemBinding::GetFile(const ValueList& args, SharedValue result)
@@ -90,22 +85,18 @@ namespace ti
 	}
 	void FilesystemBinding::GetApplicationDirectory(const ValueList& args, SharedValue result)
 	{
-		std::cout << "GetApplicationDirectory() called" << std::endl;
 		std::string dir = FileUtils::GetApplicationDirectory();
 
 		result->SetString(dir.c_str());
 	}
 	void FilesystemBinding::GetResourcesDirectory(const ValueList& args, SharedValue result)
 	{
-		std::cout << "GetResourcesDirectory() called" << std::endl;
 		std::string dir = FileUtils::GetResourcesDirectory();
 
 		result->SetString(dir.c_str());
 	}
 	void FilesystemBinding::GetDesktopDirectory(const ValueList& args, SharedValue result)
 	{
-		std::cout << "GetDesktopDirectory() called" << std::endl;
-
 		std::string dir;
 
 #ifdef OS_WIN32
@@ -131,7 +122,6 @@ namespace ti
 	}
 	void FilesystemBinding::GetDocumentsDirectory(const ValueList& args, SharedValue result)
 	{
-		std::cout << "GetDocumentsDirectory() called" << std::endl;
 		std::string dir;
 
 #ifdef OS_WIN32
@@ -163,28 +153,18 @@ namespace ti
 		}
 		catch (Poco::Exception& exc)
 		{
-			std::cerr << "Problem getting home dir:::: " << exc.displayText() << std::endl;
-
-			// TODO test this
-			//SharedValue v = Value::NewString(exc.displayText());
-			//throw v;
+			throw exc.displayText().c_str();
 		}
 	}
 	void FilesystemBinding::GetLineEnding(const ValueList& args, SharedValue result)
 	{
-		std::cout << "GetLineEnding() called" << std::endl;
-
 		try
 		{
 			result->SetString(Poco::LineEnding::NEWLINE_LF.c_str());
 		}
 		catch (Poco::Exception& exc)
 		{
-			std::cerr << "Problem getting line ending:::: " << exc.displayText() << std::endl;
-
-			// TODO test this
-			//SharedValue v = Value::NewString(exc.displayText());
-			//throw v;
+			throw exc.displayText().c_str();
 		}
 	}
 	void FilesystemBinding::GetSeparator(const ValueList& args, SharedValue result)
@@ -197,11 +177,7 @@ namespace ti
 		}
 		catch (Poco::Exception& exc)
 		{
-			std::cerr << "Problem getting separator:::: " << exc.displayText() << std::endl;
-
-			// TODO test this
-			//SharedValue v = Value::NewString(exc.displayText());
-			//throw v;
+			throw exc.displayText().c_str();
 		}
 	}
 	void FilesystemBinding::GetRootDirectories(const ValueList& args, SharedValue result)
@@ -226,11 +202,7 @@ namespace ti
 		}
 		catch (Poco::Exception& exc)
 		{
-			std::cerr << "Problem getting root directories:::: " << exc.displayText() << std::endl;
-
-			// TODO test this
-			//SharedValue v = Value::NewString(exc.displayText());
-			///throw v;
+			throw exc.displayText().c_str();
 		}
 	}
 }

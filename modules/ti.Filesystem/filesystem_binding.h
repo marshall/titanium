@@ -15,11 +15,11 @@ namespace ti
 	class FilesystemBinding : public StaticBoundObject
 	{
 	public:
-		FilesystemBinding(BoundObject*);
+		FilesystemBinding(SharedBoundObject);
 	protected:
 		virtual ~FilesystemBinding();
 	private:
-		BoundObject *global;
+		SharedBoundObject global;
 
 		/**
 		 * Function: CreateTempFile

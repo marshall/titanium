@@ -5,7 +5,6 @@
  */
 #include "file.h"
 
-#include <windows.h>
 #include <Poco/File.h>
 #include <Poco/Path.h>
 #include <Poco/FileStream.h>
@@ -13,8 +12,16 @@
 
 namespace ti
 {
-	File::File(std::string filename) : filename(filename)
+	File::File(std::string filename)
 	{
+#ifdef OS_OSX
+		// in OSX, we need to expand ~ in paths to their absolute path value
+		// we do that with a nifty helper method in NSString
+		this->filename = [[[NSString stringWithCString:filename.c_str()] stringByExpandingTildeInPath] UTF8String];
+#else
+		this->filename = filename;
+#endif
+		
 		this->SetMethod("toString",&File::ToString);
 		this->SetMethod("isFile",&File::IsFile);
 		this->SetMethod("isDirectory",&File::IsDirectory);
@@ -46,6 +53,10 @@ namespace ti
 
 	File::~File()
 	{
+		if (this->readLineFS)
+		{
+			delete this->readLineFS;
+		}
 	}
 
 	void File::ToString(const ValueList& args, SharedValue result)
@@ -63,7 +74,7 @@ namespace ti
 		}
 		catch (Poco::Exception& exc)
 		{
-			std::cerr << "Problem getting file info:::: " << exc.displayText() << std::endl;
+			throw exc.displayText().c_str();
 		}
 
 		result->SetBool(isFile);
@@ -79,7 +90,7 @@ namespace ti
 		}
 		catch (Poco::Exception& exc)
 		{
-			std::cerr << "Problem getting file info:::: " << exc.displayText() << std::endl;
+			throw exc.displayText().c_str();
 		}
 
 		result->SetBool(isDir);
@@ -95,7 +106,7 @@ namespace ti
 		}
 		catch (Poco::Exception& exc)
 		{
-			std::cerr << "Problem getting file info:::: " << exc.displayText() << std::endl;
+			throw exc.displayText().c_str();
 		}
 
 		result->SetBool(isHidden);
@@ -111,7 +122,7 @@ namespace ti
 		}
 		catch (Poco::Exception& exc)
 		{
-			std::cerr << "Problem getting file info:::: " << exc.displayText() << std::endl;
+			throw exc.displayText().c_str();
 		}
 
 		result->SetBool(isLink);
@@ -146,9 +157,7 @@ namespace ti
 		}
 		catch (Poco::Exception& exc)
 		{
-			std::cerr << "Problem writing file:::: " << exc.displayText() << std::endl;
-
-			result->SetBool(false);
+			throw exc.displayText().c_str();
 		}
 	}
 	void File::Read(const ValueList& args, SharedValue result)
@@ -171,9 +180,7 @@ namespace ti
 		}
 		catch (Poco::Exception& exc)
 		{
-			std::cerr << "Problem reading file:::: " << exc.displayText() << std::endl;
-
-			result->SetNull();
+			throw exc.displayText().c_str();
 		}
 	}
 	void File::ReadLine(const ValueList& args, SharedValue result)
@@ -222,9 +229,7 @@ namespace ti
 		}
 		catch (Poco::Exception& exc)
 		{
-			std::cerr << "Problem reading file:::: " << exc.displayText() << std::endl;
-
-			result->SetNull();
+			throw exc.displayText().c_str();
 		}
 	}
 	void File::Copy(const ValueList& args, SharedValue result)
@@ -244,7 +249,7 @@ namespace ti
 		}
 		catch (Poco::Exception& exc)
 		{
-			std::cerr << "Problem copying file:::: " << exc.displayText() << std::endl;
+			throw exc.displayText().c_str();
 		}
 
 		result->SetBool(success);
@@ -266,7 +271,7 @@ namespace ti
 		}
 		catch (Poco::Exception& exc)
 		{
-			std::cerr << "Problem moving file:::: " << exc.displayText() << std::endl;
+			throw exc.displayText().c_str();
 		}
 
 		result->SetBool(success);
@@ -299,7 +304,7 @@ namespace ti
 		}
 		catch (Poco::Exception& exc)
 		{
-			std::cerr << "Problem creating directory:::: " << exc.displayText() << std::endl;
+			throw exc.displayText().c_str();
 		}
 
 		result->SetBool(created);
@@ -327,7 +332,7 @@ namespace ti
 		}
 		catch (Poco::Exception& exc)
 		{
-			std::cerr << "Problem deleting directory:::: " << exc.displayText() << std::endl;
+			throw exc.displayText().c_str();
 		}
 
 		result->SetBool(deleted);
@@ -349,7 +354,7 @@ namespace ti
 		}
 		catch (Poco::Exception& exc)
 		{
-			std::cerr << "Problem deleting file:::: " << exc.displayText() << std::endl;
+			throw exc.displayText().c_str();
 		}
 
 		result->SetBool(deleted);
@@ -383,9 +388,7 @@ namespace ti
 		}
 		catch (Poco::Exception& exc)
 		{
-			std::cerr << "Problem deleting file:::: " << exc.displayText() << std::endl;
-
-			result->SetNull();
+			throw exc.displayText().c_str();
 		}
 	}
 	void File::GetParent(const ValueList& args, SharedValue result)
@@ -398,8 +401,7 @@ namespace ti
 		}
 		catch (Poco::Exception& exc)
 		{
-			std::cerr << "Problem getting file parent:::: " << exc.displayText() << std::endl;
-			result->SetNull();
+			throw exc.displayText().c_str();
 		}
 	}
 	void File::GetExists(const ValueList& args, SharedValue result)
@@ -413,7 +415,7 @@ namespace ti
 		}
 		catch (Poco::Exception& exc)
 		{
-			std::cerr << "Problem getting file info:::: " << exc.displayText() << std::endl;
+			throw exc.displayText().c_str();
 		}
 
 		result->SetBool(exists);
@@ -429,8 +431,7 @@ namespace ti
 		}
 		catch (Poco::Exception& exc)
 		{
-			std::cerr << "Problem getting file create date:::: " << exc.displayText() << std::endl;
-			result->SetNull();
+			throw exc.displayText().c_str();
 		}
 	}
 	void File::GetModificationTimestamp(const ValueList& args, SharedValue result)
@@ -444,8 +445,7 @@ namespace ti
 		}
 		catch (Poco::Exception& exc)
 		{
-			std::cerr << "Problem getting file modify date:::: " << exc.displayText() << std::endl;
-			result->SetNull();
+			throw exc.displayText().c_str();
 		}
 	}
 	void File::GetName(const ValueList& args, SharedValue result)
@@ -469,8 +469,7 @@ namespace ti
 		}
 		catch (Poco::Exception& exc)
 		{
-			std::cerr << "Problem getting file extension:::: " << exc.displayText() << std::endl;
-			result->SetNull();
+			throw exc.displayText().c_str();
 		}
 	}
 	void File::GetNativePath(const ValueList& args, SharedValue result)
@@ -483,8 +482,7 @@ namespace ti
 		}
 		catch (Poco::Exception& exc)
 		{
-			std::cerr << "Problem getting file native path:::: " << exc.displayText() << std::endl;
-			result->SetNull();
+			throw exc.displayText().c_str();
 		}
 	}
 	void File::GetSize(const ValueList& args, SharedValue result)
@@ -497,19 +495,17 @@ namespace ti
 		}
 		catch (Poco::Exception& exc)
 		{
-			std::cerr << "Problem getting file modify date:::: " << exc.displayText() << std::endl;
-			result->SetNull();
+			throw exc.displayText().c_str();
 		}
 	}
 	void File::GetSpaceAvailable(const ValueList& args, SharedValue result)
 	{
-		std::cout << "GetSpaceAvailable() called" << std::endl;
-
 		long avail = -1;
 		Poco::Path path(this->filename);
 
 #ifdef OS_OSX
-		// TODO complete and test this
+		NSString *p = [NSString stringWithCString:this->filename.c_str()];
+		avail = [[[[NSFileManager defaultManager] fileSystemAttributesAtPath:p] objectForKey:NSFileSystemFreeSize] longValue];
 #elif OS_WIN32
 		PULARGE_INTEGER freeBytesAvail = 0;
 		PULARGE_INTEGER totalNumOfBytes = 0;

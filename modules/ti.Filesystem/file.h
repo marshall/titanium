@@ -6,6 +6,13 @@
 #ifndef _TI_FILE_H_
 #define _TI_FILE_H_
 
+#ifdef OS_WIN32
+#include <windows.h>
+#elif OS_OSX
+#import <Foundation/Foundation.h>
+#endif
+
+
 #include <api/binding/binding.h>
 #include <api/binding/static_bound_list.h>
 #include <string>
