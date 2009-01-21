@@ -7,9 +7,51 @@
 			}
 		</style>
 		<script>
+			window.sound = null;
+			
 			function systemBeep()
 			{
 				Titanium.Media.beep();
+			}
+			function stopSound()
+			{
+				window.sound.stop();
+			}
+			function pauseSound()
+			{
+				window.sound.pause();
+			}
+			function resumeSound()
+			{
+				window.sound.resume();
+			}
+			function resetSound()
+			{
+				window.sound.reset();
+			}
+			function playSound()
+			{
+				if (window.sound)
+				{
+					window.sound.stop();
+					window.sound = null;
+				}
+				
+				var url = prompt("which url to play?");
+				window.sound = Titanium.Media.createSound(url);
+				try
+				{
+					window.sound.onComplete(function(finished)
+					{
+						alert("sound has finished playing " + finished);
+						window.sound = null;
+					})
+					window.sound.play();
+				}
+				catch(e)
+				{
+					alert(e);
+				}
 			}
 		</script>
 	</head>
@@ -17,6 +59,15 @@
 		<h2>Titanium Media test app</h2>
 		<div>
 			<button onclick="systemBeep()">Do a system beep</button>
+		</div>
+		<div>
+			<button onclick="playSound()">Play a media file</button>
+			<div>
+				<button onclick="pauseSound()">Pause</button>
+				<button onclick="resumeSound()">Resume</button>
+				<button onclick="stopSound()">Stop</button>
+				<button onclick="resetSound()">Reset</button>
+			</div>
 		</div>
 	</body>
 </html>

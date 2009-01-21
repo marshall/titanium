@@ -17,8 +17,7 @@ namespace ti
 	class LinuxMedia
 	{
 	public:
-		static void CreateSound(const ValueList& args, SharedValue result);
-		static void Beep(const ValueList& args, SharedValue result);
+		static void Beep();
 	private:
 		LinuxMedia();
 		~LinuxMedia();

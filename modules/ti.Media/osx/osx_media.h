@@ -17,8 +17,7 @@ namespace ti
 	class OSXMedia
 	{
 	public:
-		static void CreateSound(const ValueList& args, SharedValue result);
-		static void Beep(const ValueList& args, SharedValue result);
+		static void Beep();
 	private:
 		OSXMedia();
 		~OSXMedia();

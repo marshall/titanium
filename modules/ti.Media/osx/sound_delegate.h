@@ -3,18 +3,16 @@
  * see LICENSE in the root folder for details on the license.
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
-#include "win32_media.h"
+#import <Cocoa/Cocoa.h>
+#import "osx_sound.h"
 
-namespace ti
+using namespace ti;
+
+@interface SoundDelegate : NSObject
 {
-	Win32Media::Win32Media()
-	{
-	}
-	Win32Media::~Win32Media()
-	{
-	}
-	void Win32Media::Beep()
-	{
-		MessageBeep(MB_OK);
-	}
+	OSXSound* sound;
 }
+-(id)initWithSound:(OSXSound*)sound;
+-(void)dealloc;
+@end
+

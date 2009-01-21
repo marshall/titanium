@@ -13,10 +13,7 @@ namespace ti
 	OSXMedia::~OSXMedia()
 	{
 	}
-	void OSXMedia::CreateSound(const ValueList& args, SharedValue result)
-	{
-	}
-	void OSXMedia::Beep(const ValueList& args, SharedValue result)
+	void OSXMedia::Beep()
 	{
 		NSBeep();
 	}

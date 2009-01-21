@@ -13,10 +13,8 @@ namespace ti
 	LinuxMedia::~LinuxMedia()
 	{
 	}
-	void LinuxMedia::CreateSound(const ValueList& args, SharedValue result)
+	void LinuxMedia::Beep()
 	{
-	}
-	void LinuxMedia::Beep(const ValueList& args, SharedValue result)
-	{
+		printf("\a"); // \a to console should cause the beep sound
 	}
 }
