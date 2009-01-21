@@ -10,6 +10,7 @@ testSuite("Titanium.Filesystem API tests", "dummy.html", {
 	var dirCreateName = stageDir + "dir-created";
 	var dirCreatedWithContentsName = stageDir + "dir-created-with-contents";
 	var subDirCreatedName = dirCreateWithConentsName + "\"" + "sub-dir-created";
+	var fileWriteName = stageDir + "file-written.txt";
 	
 	run: function () {
 		test("top level API", function() {
@@ -220,6 +221,24 @@ testSuite("Titanium.Filesystem API tests", "dummy.html", {
 			
 			var files = file.getDirectoryListing();
 			assert(files != null);
+		});
+		
+		test("file object API - file write", function() {
+			assert(Titanium != null);
+			assert(Titanium.Filesystem != null);
+
+			var file = null;
+			
+			file = Titanium.Filesystem.getFile(fileWriteName);
+			assert(file != null);
+			assert(file.write != null);
+			
+			var textToWrite = "this is the text to write."
+			var success = file.write(textToWrite);
+			assert(success == true);
+			
+			var textRead = file.read();
+			assert(textRead == textToWrite);
 		});
 	}
 });
