@@ -491,7 +491,7 @@ namespace ti
 		{
 			Poco::Path path(this->filename);
 
-			result->SetString(path.absolute().getFileName().c_str());
+			result->SetString(path.makeAbsolute().toString().c_str());
 		}
 		catch (Poco::Exception& exc)
 		{

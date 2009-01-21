@@ -47,6 +47,12 @@
 				return f.toString();
 			}
 
+			tests.nativePath = function(params) {
+				var f = Titanium.Filesystem.getFile(params[0]);
+
+				return f.nativePath();
+			}
+
 			tests.size = function(params) {
 				var f = Titanium.Filesystem.getFile(params[0]);
 
@@ -379,6 +385,7 @@
 				<option value="exists">exists</option>
 				<option value="size">size</option>
 				<option value="spaceAvailable">spaceAvailable</option>
+				<option value="nativePath">nativePath</option>
 				<option value="toString">toString</option>
 				<option value="createTempFile">createTempFile</option>
 				<option value="createTempDirectory">createTempDirectory</option>
@@ -471,9 +478,19 @@
 				</table>
 			</div>
 		</div>
+		<div id="test_nativePath" class="test">
+			<div class="memberInfo">
+				bool File.nativePath()
+			</div>
+			<div class="params">
+				<table>
+					<tr><td>name</td><td><input id="nativePath_param1" class="param" size="50" value="c:\dev\TI.FS.Test\test.txt" /></td></tr>
+				</table>
+			</div>
+		</div>
 		<div id="test_toString" class="test">
 			<div class="memberInfo">
-				bool File.toString(name)
+				bool File.toString()
 			</div>
 			<div class="params">
 				<table>
