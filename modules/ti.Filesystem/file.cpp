@@ -20,6 +20,7 @@ namespace ti
 		this->SetMethod("isHidden",&File::IsHidden);
 		this->SetMethod("isSymbolicLink",&File::IsSymbolicLink);
 
+		this->SetMethod("write",&File::Write);
 		this->SetMethod("read",&File::Read);
 		this->SetMethod("readLine",&File::ReadLine);
 		this->SetMethod("copy",&File::Copy);
@@ -113,31 +114,58 @@ namespace ti
 
 		result->SetBool(isLink);
 	}
+	void File::Write(const ValueList& args, SharedValue result)
+	{
+		try
+		{
+			std::string text = args.at(0)->ToString();
+			bool append = false;
+
+			if(args.size() > 1)
+			{
+				append = args.at(1)->ToBool();
+			}
+
+			std::ios_base::openmode mode;
+			if(append)
+			{
+				mode = std::ios_base::out | std::ios_base::app;
+			}
+			else
+			{
+				mode = std::ios_base::out | std::ios_base::trunc;
+			}
+
+			Poco::FileOutputStream fos(this->filename, mode);
+			fos.write(text.c_str(), text.size());
+			fos.close();
+
+			result->SetBool(true);
+		}
+		catch (Poco::Exception& exc)
+		{
+			std::cerr << "Problem writing file:::: " << exc.displayText() << std::endl;
+
+			result->SetBool(false);
+		}
+	}
 	void File::Read(const ValueList& args, SharedValue result)
 	{
 		try
 		{
-			Poco::File file(this->filename);
-			if(file.canRead())
+			Poco::FileInputStream fis(this->filename);
+
+			std::string contents;
+
+			while(! fis.eof())
 			{
-				Poco::FileInputStream fis(this->filename);
+				std::string s;
+				std::getline(fis, s);
 
-				std::string contents;
-
-				while(! fis.eof())
-				{
-					std::string s;
-					std::getline(fis, s);
-
-					contents.append(s);
-				}
-
-				result->SetString(contents.c_str());
+				contents.append(s);
 			}
-			else
-			{
-				result->SetNull();
-			}
+
+			result->SetString(contents.c_str());
 		}
 		catch (Poco::Exception& exc)
 		{

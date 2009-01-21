@@ -74,6 +74,18 @@ namespace ti
 			 */
 			void IsSymbolicLink(const ValueList& args, SharedValue result);
 			/**
+			 * Function: Write
+			 *   writes a string of text to a file
+			 *
+			 * Parameters:
+			 *   text = text to write to file
+			 *   append - boolean flag that indicates if the text should be appended to the file (if the file exists)
+			 *
+			 * Returns:
+			 *   true if the text was written successfully; false otherwise
+			 */
+			void Write(const ValueList& args, SharedValue result);
+			/**
 			 * Function: Read
 			 *   Reads the contents of this File
 			 *
