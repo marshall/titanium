@@ -9,6 +9,7 @@
 
 #include <api/module.h>
 #include <api/binding/binding.h>
+#include "menu_item.h"
 
 namespace ti
 {

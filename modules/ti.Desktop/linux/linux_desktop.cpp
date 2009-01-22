@@ -17,7 +17,7 @@ namespace ti
 	{
 		return false;
 	}
-	bool LinuxDesktop::OpenFiles(SharedBoundObject properties)
+	SharedBoundList LinuxDesktop::OpenFiles(SharedBoundObject properties)
 	{
 		return false;
 	}
