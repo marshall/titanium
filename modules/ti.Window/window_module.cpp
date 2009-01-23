@@ -67,6 +67,8 @@ namespace ti
 #elif defined(OS_OSX)
 		OSXUserWindow* window = new OSXUserWindow(this->host, main_window_config);
 		SharedValue platform = Value::NewString("osx");
+		NativeWindow* nw = window->GetNative();
+		[nw setInitialWindow:YES];
 #elif defined(OS_WIN32)
 		Win32UserWindow* window = new Win32UserWindow(this->host, main_window_config);
 		SharedValue platform = Value::NewString("win32");

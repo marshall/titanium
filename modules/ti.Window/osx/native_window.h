@@ -20,10 +20,15 @@ using namespace ti;
 	WindowConfig* config;
 	WebView* webView;
 	WebViewDelegate* delegate;
+	BOOL requiresDisplay;
 }
 - (void)setupDecorations:(WindowConfig*)config host:(Host*)h;
 - (void)setTransparency:(double)transparency;
 - (void)setFullScreen:(BOOL)yn;
+- (void)close;
+- (void)open;
+- (void)frameLoaded;
 - (WebView*)webView;
 - (WindowConfig*)config;
+- (void)setInitialWindow:(BOOL)yn;
 @end

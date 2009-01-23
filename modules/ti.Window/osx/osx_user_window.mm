@@ -90,9 +90,12 @@ namespace ti
 	}
 	void OSXUserWindow::Open()
 	{
+		//TODO: validate properties like URL
+		[window open];
 	}
 	void OSXUserWindow::Close()
 	{
+		[window close];
 	}
 	double OSXUserWindow::GetX()
 	{
@@ -110,14 +113,14 @@ namespace ti
 	}
 	double OSXUserWindow::GetWidth()
 	{
-		return 0;
+		return [window frame].size.width;
 	}
 	void OSXUserWindow::SetWidth(double width)
 	{
 	}
 	double OSXUserWindow::GetHeight()
 	{
-		return 0;
+		return [window frame].size.height;
 	}
 	void OSXUserWindow::SetHeight(double height)
 	{
@@ -125,10 +128,18 @@ namespace ti
 	Bounds OSXUserWindow::GetBounds()
 	{
 		Bounds b;
+		b.width = this->GetWidth();
+		b.height = this->GetHeight();
+		b.x = this->GetX();
+		b.y = this->GetY();
 		return b;
 	}
 	void OSXUserWindow::SetBounds(Bounds bounds)
 	{
+		this->SetX(bounds.x);
+		this->SetY(bounds.y);
+		this->SetWidth(bounds.width);
+		this->SetHeight(bounds.height);
 	}
 	std::string OSXUserWindow::GetTitle()
 	{

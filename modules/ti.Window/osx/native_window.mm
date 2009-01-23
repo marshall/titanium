@@ -40,17 +40,6 @@
     [self setContentView:webView];
     [self setDelegate:self];
 	[self setTransparency:config->GetTransparency()];
-	
-	//NSTimeInterval now = [[[NSDate alloc] init] timeIntervalSince1970];
-	//NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://localhost/~jhaynie/index.html?ts=%d",now]];
-	NSURL *url = [NSURL URLWithString:[NSString stringWithCString:config->GetURL().c_str()]];
-	
-	NSLog(@"fetching: %@",url);
-	
-    [[webView mainFrame] loadRequest:[NSURLRequest requestWithURL:url]];
-
-    [self makeKeyAndOrderFront:nil];	
-	[NSApp arrangeInFront:self];
 }
 - (void)dealloc
 {
@@ -114,5 +103,27 @@
 {
 	return config;
 }
-
+- (void)open
+{
+	NSURL *url = [NSURL URLWithString:[NSString stringWithCString:config->GetURL().c_str()]];
+    [[webView mainFrame] loadRequest:[NSURLRequest requestWithURL:url]];
+}
+- (void)close
+{
+	[super close];
+}
+- (void)setInitialWindow:(BOOL)yn
+{
+	requiresDisplay = yn;
+}
+- (void)frameLoaded
+{
+	if (requiresDisplay)
+	{
+		requiresDisplay = NO;
+		config->SetVisible(true);
+	    [self makeKeyAndOrderFront:self];	
+		[NSApp arrangeInFront:self];
+	}
+}
 @end
