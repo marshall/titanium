@@ -23,15 +23,16 @@ merge_config(TITANIUM_CONFIG)
 
 namespace :titanium do
 
-  namespace :modules do
-    
+  task :scons do
+    system "scons"
   end
   
+  require File.join(TITANIUM_DIR, 'runtime.rb')
   require File.join(TITANIUM_DIR,'project','build.rb')
-
+  
   task :dev do
     Rake::Task["service:titanium"].invoke
-    Rake::Task["titanium:runtime:#{platform_string}"].invoke
+    Rake::Task["titanium:scons"].invoke
     Rake::Task["titanium:project"].invoke
 
     ts = get_config(:service,:titanium)
