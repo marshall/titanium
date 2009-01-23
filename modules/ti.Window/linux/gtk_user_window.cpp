@@ -261,11 +261,11 @@ void GtkUserWindow::SetTitle(std::string& title) {
 	this->config->SetTitle(title);
 }
 
-std::string GtkUserWindow::GetUrl() {
+std::string GtkUserWindow::GetURL() {
 	return this->config->GetURL();
 }
 
-void GtkUserWindow::SetUrl(std::string& uri) {
+void GtkUserWindow::SetURL(std::string& uri) {
 	webkit_web_view_open (this->web_view, uri.c_str());
 	this->config->SetURL(uri);
 }
@@ -356,4 +356,7 @@ void GtkUserWindow::SetFullScreen(bool fullscreen) {
 	{
 		gtk_window_unfullscreen(this->gtk_window);
 	}
+}
+void GtkUserWindow::SetUsingChrome(bool chrome) {
+	//TODO: implement
 }

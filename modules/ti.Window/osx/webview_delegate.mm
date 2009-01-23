@@ -3,10 +3,9 @@
  * see LICENSE in the root folder for details on the license.
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
-#import "../../ti.App/app_config.h"
 #import "webview_delegate.h"
+#import "app_config.h"
 #import "native_window.h"
-#import "osx_user_window.h"
 #import "objc_bound_object.h"
 
 #define TRACE  NSLog
@@ -332,7 +331,7 @@
 {
 	SharedBoundObject ti = host->GetGlobalObject();
 	NSString *tiKey = [NSString stringWithCString:GLOBAL_NS_VARNAME];
-	[windowScriptObject evaluateWebScript:[NSString stringWithFormat:@"%@ = new Object; %@.toString = function() { return '[%@ native]' }; %@.currentWindow = new Object;",tiKey,tiKey,tiKey,tiKey]];
+	[windowScriptObject evaluateWebScript:[NSString stringWithFormat:@"%@ = new Object; %@.toString = function() { return '[%@ native]' };",tiKey,tiKey,tiKey]];
 	WebScriptObject* tiJS = [windowScriptObject valueForKey:tiKey];
 	SharedStringList properties = ti->GetPropertyNames();
 	for (size_t i = 0; i < properties->size(); i++)
@@ -352,11 +351,13 @@
 			NSLog(@"exception caught binding %@.%s => %@",tiKey,key.c_str(),ex);
 		}
 	}
-	WebScriptObject* cwJS = [tiJS valueForKey:@"currentWindow"];
-	SharedValue cwv = Value::NewObject(SharedBoundObject([window userWindow]));
-	id cw = [ObjcBoundObject ValueToID:cwv key:@"window" context:context];
-	[cwJS setValue:cw forKey:@"window"];
-	//NOTE: don't release tiJS or newti
+	SharedBoundObject suw = [window userWindow];
+	SharedBoundObject wo = new Window(suw);
+	SharedValue cwv = Value::NewObject(wo);
+	id cw = [ObjcBoundObject ValueToID:cwv key:@"currentWindow" context:context];
+	[tiJS setValue:cw forKey:@"currentWindow"];
+	
+	//NOTE: don't release tiJS or newti or cw
 	scriptCleared = YES;
 }
 

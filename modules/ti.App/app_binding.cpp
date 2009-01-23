@@ -9,7 +9,7 @@
 
 namespace ti
 {
-	AppBinding::AppBinding(BoundObject *global) : global(global)
+	AppBinding::AppBinding(SharedBoundObject global) : global(global)
 	{
 		this->SetMethod("getID",&AppBinding::GetID);
 		this->SetMethod("getName",&AppBinding::GetName);

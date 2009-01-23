@@ -4,14 +4,14 @@
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
 #import "preinclude.h"
-#import "../window_module.h"
 #import <WebKit/WebKit.h>
+#import "../user_window.h"
 #import "native_window.h"
 
 namespace ti
 {
-	class OSXUserWindow : public UserWindow {
-
+	class OSXUserWindow : public UserWindow 
+	{
 		public:
 			OSXUserWindow(Host *host, WindowConfig *config);
 		protected:
@@ -37,8 +37,8 @@ namespace ti
 			void SetBounds(Bounds bounds);
 			std::string GetTitle();
 			void SetTitle(std::string& title);
-			std::string GetUrl();
-			void SetUrl(std::string& url);
+			std::string GetURL();
+			void SetURL(std::string& url);
 			bool IsResizable();
 			void SetResizable(bool resizable);
 			bool IsMaximizable();
@@ -52,11 +52,13 @@ namespace ti
 			double GetTransparency();
 			void SetTransparency(double transparency);
 			void SetFullScreen(bool fullscreen);
+			void SetUsingChrome(bool chrome);
 
-			const NativeWindow* GetNative() const { return window; }
+			NativeWindow* GetNative() { return window; }
 
 		private:
 			NativeWindow *window;
+			bool opened;
 			
 			DISALLOW_EVIL_CONSTRUCTORS(OSXUserWindow);
 	};

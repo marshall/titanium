@@ -1,0 +1,34 @@
+<html>
+	<head>
+		<style>
+			body { font-family: sans, sans-serif; background-color: white; }
+			div{
+				margin:10px;
+			}
+		</style>
+		<script>
+			function openWindowA()
+			{
+				var w = Titanium.Window.createWindow();
+				try
+				{
+					w.setTitle("hello world from fullscreen");
+					w.setURL("app://fullscreen.html");
+					w.setUsingChrome(true);
+					w.setFullscreen(true);
+					w.open();
+				}
+				catch(e)
+				{
+					alert("Exception: "+e);
+				}
+			}
+		</script>
+	</head>
+	<body>
+		<h2>Titanium Window test app</h2>
+		<div>
+			<button onclick="openWindowA()">Open Window</button>
+		</div>
+	</body>
+</html>

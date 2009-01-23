@@ -200,7 +200,7 @@ void Win32UserWindow::Open() {
 	ResizeSubViews();
 
 	UserWindow::Open(this);
-	SetUrl(this->config->GetURL());
+	SetURL(this->config->GetURL());
 
 }
 
@@ -273,12 +273,12 @@ void Win32UserWindow::SetTitle(std::string& title) {
 	SetWindowText(window_handle, title.c_str());
 }
 
-void Win32UserWindow::SetUrl(std::string& url_) {
+void Win32UserWindow::SetURL(std::string& url_) {
 	std::string url = url_;
 
 	this->config->SetURL(url);
 
-	std::cout << "SetUrl: " << url << std::endl;
+	std::cout << "SetURL: " << url << std::endl;
 
 	IWebMutableURLRequest* request = 0;
 	std::wstring method = L"GET";
@@ -365,6 +365,10 @@ void Win32UserWindow::SetTransparency(double transparency) {
 }
 
 void Win32UserWindow::SetFullScreen(bool fullscreen) {
+	//TODO: implement
+}
+
+void Win32UserWindow::SetUsingChrome(bool chrome) {
 	//TODO: implement
 }
 

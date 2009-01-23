@@ -4,8 +4,8 @@
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
 #import "native_window.h"
-#import "WebViewPrivate.h" 
 #import <Carbon/Carbon.h>
+#import "../user_window.h"
 
 @implementation NativeWindow
 - (BOOL)canBecomeKeyWindow
@@ -16,12 +16,12 @@
 {
 	config = cfg;
 
-	if (config->IsFullscreen())
+	if (config->IsFullScreen())
 	{
-		SetSystemUIMode(kUIModeAllHidden, kUIModeContentSuppressed);
+		[self setFullScreen:YES];
 	}
 	
-	userWindow = uw;
+	userWindow = new SharedBoundObject(uw);
 
 	[self setTitle:[NSString stringWithCString:config->GetTitle().c_str()]];
 	[self setOpaque:false];
@@ -45,21 +45,24 @@
 }
 - (void)dealloc
 {
+	KR_DUMP_LOCATION
+	delete userWindow;
 	[delegate release];
 	delegate = nil;
 	[webView release];
 	webView = nil;
 	[super dealloc];
 }
-- (UserWindow*)userWindow
+- (SharedBoundObject)userWindow
 {
-	return userWindow;
+	return *userWindow;
 }
 - (void)windowWillClose:(NSNotification *)notification
 {
 }
 - (NSSize)windowWillResize:(NSWindow *) window toSize:(NSSize)newSize
 {
+	//TODO: refactor to use setMin/setMax on window
 	if (config->IsResizable())
 	{
 		// if we're resizable, we need to resize within the constraints of the 
@@ -78,6 +81,21 @@
 	}
 	return [window frame].size;
 }
+- (void)updateConfig
+{
+	NSRect frame = [self frame];
+	config->SetWidth(frame.size.width);
+	config->SetHeight(frame.size.height);
+	//FIXME: so x,y but need to translate
+}
+- (void)windowDidResize:(NSNotification*)notification
+{
+	[self updateConfig];
+}
+- (void)windowDidMove:(NSNotification*)notification
+{
+	[self updateConfig];
+}
 - (void)setTransparency:(double)transparency
 {
 	[self setAlphaValue:transparency];
@@ -92,13 +110,17 @@
 }
 - (void)setFullScreen:(BOOL)yn
 {
+	NSMutableDictionary *options = [[[NSMutableDictionary alloc] init] autorelease];
 	if (yn)
 	{
-		SetSystemUIMode(kUIModeAllHidden, kUIModeContentSuppressed);
+		NSNumber *value = [NSNumber numberWithInt:NSNormalWindowLevel];
+		[options setValue:value forKey:NSFullScreenModeWindowLevel];
+		NSScreen *screen = [NSScreen mainScreen];
+		[webView enterFullScreenMode:screen withOptions:options];
 	}
 	else
 	{
-		SetSystemUIMode(kUIModeNormal, 0); 
+		[webView exitFullScreenModeWithOptions:options];
 	}
 }
 - (WebView*)webView
@@ -111,6 +133,13 @@
 }
 - (void)open
 {
+	if (!requiresDisplay && config->IsVisible())
+	{
+		// if we call open and we're initially visible
+		// we need to basically set requires display which
+		// will cause the window to be shown once the url is loaded
+		requiresDisplay = YES;
+	}
 	NSURL *url = [NSURL URLWithString:[NSString stringWithCString:config->GetURL().c_str()]];
     [[webView mainFrame] loadRequest:[NSURLRequest requestWithURL:url]];
 }
@@ -120,6 +149,8 @@
 }
 - (void)setInitialWindow:(BOOL)yn
 {
+	// this is a boolean to indicate that when the frame is loaded,
+	// we should go ahead and display the window
 	requiresDisplay = yn;
 }
 - (void)frameLoaded
@@ -130,6 +161,10 @@
 		config->SetVisible(true);
 	    [self makeKeyAndOrderFront:self];	
 		[NSApp arrangeInFront:self];
+		if (config->IsFullScreen())
+		{
+			[self setFullScreen:YES];
+		}
 	}
 }
 @end

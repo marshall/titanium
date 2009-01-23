@@ -4,14 +4,13 @@
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
 #import "preinclude.h"
-#import <WebKit/WebKit.h>
 #import <Cocoa/Cocoa.h>
+#import <WebKit/WebKit.h>
 #import "webview_delegate.h"
-#import "../user_window.h"
-#import "../../ti.App/window_config.h"
+#import "window_config.h"
+//#import "../user_window.h"
 
 @class WebViewDelegate;
-class OSXUserWindow;
 
 using namespace ti;
 
@@ -21,7 +20,7 @@ using namespace ti;
 	WebView* webView;
 	WebViewDelegate* delegate;
 	BOOL requiresDisplay;
-	UserWindow *userWindow;
+	SharedBoundObject* userWindow;
 }
 - (void)setupDecorations:(WindowConfig*)config host:(Host*)h userwindow:(UserWindow*)uw;
 - (void)setTransparency:(double)transparency;
@@ -31,6 +30,6 @@ using namespace ti;
 - (void)frameLoaded;
 - (WebView*)webView;
 - (WindowConfig*)config;
-- (UserWindow*)userWindow;
+- (SharedBoundObject)userWindow;
 - (void)setInitialWindow:(BOOL)yn;
 @end

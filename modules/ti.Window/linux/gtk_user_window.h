@@ -42,8 +42,8 @@ namespace ti
 		void SetBounds(Bounds bounds);
 		std::string GetTitle();
 		void SetTitle(std::string& title);
-		std::string GetUrl();
-		void SetUrl(std::string& url);
+		std::string GetURL();
+		void SetURL(std::string& url);
 		bool IsResizable();
 		void SetResizable(bool resizable);
 		bool IsMaximizable();
@@ -57,6 +57,7 @@ namespace ti
 		double GetTransparency();
 		void SetTransparency(double transparency);
 		void SetFullScreen(bool fullscreen);
+		void SetUsingChrome(bool chrome);
 	protected:
 		GtkWindow* gtk_window;
 		WebKitWebView* web_view;

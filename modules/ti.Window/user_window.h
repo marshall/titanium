@@ -29,10 +29,14 @@ class UserWindow : public kroll::StaticBoundObject {
 		~UserWindow(){};
 	public:
 		kroll::Host* GetHost() { return this->host; }
+		
+		//FIXME: add the following that are missing
+		// minWidth, maxWidth, minHeight, maxHeight
 
 		void hide_cb(const kroll::ValueList&, kroll::SharedValue );
 		void show_cb(const kroll::ValueList&, kroll::SharedValue );
 		void is_using_chrome_cb(const kroll::ValueList&, kroll::SharedValue );
+		void set_using_chrome_cb(const kroll::ValueList&, kroll::SharedValue );
 		void is_using_scrollbars_cb(const kroll::ValueList&, kroll::SharedValue );
 		void is_full_screen_cb(const kroll::ValueList&, kroll::SharedValue );
 		void set_full_screen_cb(const kroll::ValueList&, kroll::SharedValue );
@@ -86,8 +90,8 @@ class UserWindow : public kroll::StaticBoundObject {
 		virtual void SetBounds(Bounds bounds) = 0;
 		virtual std::string GetTitle() = 0;
 		virtual void SetTitle(std::string& title) = 0;
-		virtual std::string GetUrl() = 0;
-		virtual void SetUrl(std::string &url) = 0;
+		virtual std::string GetURL() = 0;
+		virtual void SetURL(std::string &url) = 0;
 		virtual bool IsResizable() = 0;
 		virtual void SetResizable(bool resizable) = 0;
 		virtual bool IsMaximizable() = 0;
@@ -101,6 +105,7 @@ class UserWindow : public kroll::StaticBoundObject {
 		virtual double GetTransparency() = 0;
 		virtual void SetTransparency(double transparency) = 0;
 		virtual void SetFullScreen(bool fullscreen) = 0;
+		virtual void SetUsingChrome(bool chrome) = 0;
 
 	protected:
 		kroll::Host *host;
