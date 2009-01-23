@@ -21,7 +21,7 @@ namespace ti
 #else
 		this->filename = filename;
 #endif
-		
+
 		this->SetMethod("toString",&File::ToString);
 		this->SetMethod("isFile",&File::IsFile);
 		this->SetMethod("isDirectory",&File::IsDirectory);
@@ -65,67 +65,55 @@ namespace ti
 	}
 	void File::IsFile(const ValueList& args, SharedValue result)
 	{
-		bool isFile = false;
-
 		try
 		{
 			Poco::File file(this->filename);
-			isFile = file.isFile();
+			bool isFile = file.isFile();
+			result->SetBool(isFile);
 		}
 		catch (Poco::Exception& exc)
 		{
-			throw exc.displayText().c_str();
+			throw exc.displayText();
 		}
-
-		result->SetBool(isFile);
 	}
 	void File::IsDirectory(const ValueList& args, SharedValue result)
 	{
-		bool isDir = false;
-
 		try
 		{
 			Poco::File dir(this->filename);
-			isDir = dir.isDirectory();
+			bool isDir = dir.isDirectory();
+			result->SetBool(isDir);
 		}
 		catch (Poco::Exception& exc)
 		{
-			throw exc.displayText().c_str();
+			throw exc.displayText();
 		}
-
-		result->SetBool(isDir);
 	}
 	void File::IsHidden(const ValueList& args, SharedValue result)
 	{
-		bool isHidden = false;
-
 		try
 		{
 			Poco::File file(this->filename);
-			isHidden = file.isHidden();
+			bool isHidden = file.isHidden();
+			result->SetBool(isHidden);
 		}
 		catch (Poco::Exception& exc)
 		{
-			throw exc.displayText().c_str();
+			throw exc.displayText();
 		}
-
-		result->SetBool(isHidden);
 	}
 	void File::IsSymbolicLink(const ValueList& args, SharedValue result)
 	{
-		bool isLink = false;
-
 		try
 		{
 			Poco::File file(this->filename);
-			isLink = file.isLink();
+			bool isLink = file.isLink();
+			result->SetBool(isLink);
 		}
 		catch (Poco::Exception& exc)
 		{
-			throw exc.displayText().c_str();
+			throw exc.displayText();
 		}
-
-		result->SetBool(isLink);
 	}
 	void File::Write(const ValueList& args, SharedValue result)
 	{
@@ -157,7 +145,7 @@ namespace ti
 		}
 		catch (Poco::Exception& exc)
 		{
-			throw exc.displayText().c_str();
+			throw exc.displayText();
 		}
 	}
 	void File::Read(const ValueList& args, SharedValue result)
@@ -180,7 +168,7 @@ namespace ti
 		}
 		catch (Poco::Exception& exc)
 		{
-			throw exc.displayText().c_str();
+			throw exc.displayText();
 		}
 	}
 	void File::ReadLine(const ValueList& args, SharedValue result)
@@ -229,57 +217,45 @@ namespace ti
 		}
 		catch (Poco::Exception& exc)
 		{
-			throw exc.displayText().c_str();
+			throw exc.displayText();
 		}
 	}
 	void File::Copy(const ValueList& args, SharedValue result)
 	{
-		bool success = false;
-
 		try
 		{
 			std::string dest = args.at(0)->ToString();
 			// TODO need to verify parameters
 
 			Poco::File from(this->filename);
-
 			from.copyTo(dest);
-
-			success = true;
+			result->SetBool(true);
 		}
 		catch (Poco::Exception& exc)
 		{
-			throw exc.displayText().c_str();
+			throw exc.displayText();
 		}
 
-		result->SetBool(success);
+
 	}
 	void File::Move(const ValueList& args, SharedValue result)
 	{
-		bool success = false;
-
 		try
 		{
 			std::string dest = args.at(0)->ToString();
 			// TODO need to verify parameters
 
 			Poco::File from(this->filename);
-
 			from.moveTo(dest);
-
-			success = true;
+			result->SetBool(true);
 		}
 		catch (Poco::Exception& exc)
 		{
-			throw exc.displayText().c_str();
+			throw exc.displayText();
 		}
-
-		result->SetBool(success);
 	}
 	void File::CreateDirectoryX(const ValueList& args, SharedValue result)
 	{
-		bool created = false;
-
 		try
 		{
 			bool createParents = false;
@@ -289,7 +265,7 @@ namespace ti
 			}
 
 			Poco::File dir(this->filename);
-
+			bool created = false;
 			if(! dir.exists())
 			{
 				if(createParents)
@@ -301,18 +277,15 @@ namespace ti
 					created = dir.createDirectory();
 				}
 			}
+			result->SetBool(created);
 		}
 		catch (Poco::Exception& exc)
 		{
-			throw exc.displayText().c_str();
+			throw exc.displayText();
 		}
-
-		result->SetBool(created);
 	}
 	void File::DeleteDirectory(const ValueList& args, SharedValue result)
 	{
-		bool deleted = false;
-
 		try
 		{
 			bool deleteContents = false;
@@ -322,42 +295,38 @@ namespace ti
 			}
 
 			Poco::File dir(this->filename);
-
+			bool deleted = false;
 			if(dir.exists() && dir.isDirectory())
 			{
 				dir.remove(deleteContents);
 
 				deleted = true;
 			}
+			result->SetBool(deleted);
 		}
 		catch (Poco::Exception& exc)
 		{
-			throw exc.displayText().c_str();
+			throw exc.displayText();
 		}
-
-		result->SetBool(deleted);
 	}
 	void File::DeleteFileX(const ValueList& args, SharedValue result)
 	{
-		bool deleted = false;
-
 		try
 		{
 			Poco::File file(this->filename);
-
+			bool deleted = false;
 			if(file.exists() && file.isFile())
 			{
 				file.remove();
 
 				deleted = true;
 			}
+			result->SetBool(deleted);
 		}
 		catch (Poco::Exception& exc)
 		{
-			throw exc.displayText().c_str();
+			throw exc.displayText();
 		}
-
-		result->SetBool(deleted);
 	}
 	void File::GetDirectoryListing(const ValueList& args, SharedValue result)
 	{
@@ -388,7 +357,7 @@ namespace ti
 		}
 		catch (Poco::Exception& exc)
 		{
-			throw exc.displayText().c_str();
+			throw exc.displayText();
 		}
 	}
 	void File::GetParent(const ValueList& args, SharedValue result)
@@ -401,24 +370,21 @@ namespace ti
 		}
 		catch (Poco::Exception& exc)
 		{
-			throw exc.displayText().c_str();
+			throw exc.displayText();
 		}
 	}
 	void File::GetExists(const ValueList& args, SharedValue result)
 	{
-		bool exists = false;
-
 		try
 		{
 			Poco::File file(this->filename);
-			exists = file.exists();
+			bool exists = file.exists();
+			result->SetBool(exists);
 		}
 		catch (Poco::Exception& exc)
 		{
-			throw exc.displayText().c_str();
+			throw exc.displayText();
 		}
-
-		result->SetBool(exists);
 	}
 	void File::GetCreateTimestamp(const ValueList& args, SharedValue result)
 	{
@@ -431,7 +397,7 @@ namespace ti
 		}
 		catch (Poco::Exception& exc)
 		{
-			throw exc.displayText().c_str();
+			throw exc.displayText();
 		}
 	}
 	void File::GetModificationTimestamp(const ValueList& args, SharedValue result)
@@ -445,7 +411,7 @@ namespace ti
 		}
 		catch (Poco::Exception& exc)
 		{
-			throw exc.displayText().c_str();
+			throw exc.displayText();
 		}
 	}
 	void File::GetName(const ValueList& args, SharedValue result)
@@ -469,7 +435,7 @@ namespace ti
 		}
 		catch (Poco::Exception& exc)
 		{
-			throw exc.displayText().c_str();
+			throw exc.displayText();
 		}
 	}
 	void File::GetNativePath(const ValueList& args, SharedValue result)
@@ -482,7 +448,7 @@ namespace ti
 		}
 		catch (Poco::Exception& exc)
 		{
-			throw exc.displayText().c_str();
+			throw exc.displayText();
 		}
 	}
 	void File::GetSize(const ValueList& args, SharedValue result)
@@ -495,7 +461,7 @@ namespace ti
 		}
 		catch (Poco::Exception& exc)
 		{
-			throw exc.displayText().c_str();
+			throw exc.displayText();
 		}
 	}
 	void File::GetSpaceAvailable(const ValueList& args, SharedValue result)

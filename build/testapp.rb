@@ -12,7 +12,7 @@ PLUGINS =
   %w(api javascript 
     foo foojs foorb foopy
     tiapp tiwindow tinetwork tifilesystem 
-    timedia tidesktop timenu tigrowl)
+    timedia tidesktop timenu tigrowl tidatabase)
 NAME = 'test'
 
 if RUBY_PLATFORM=~/darwin/

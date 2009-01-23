@@ -17,9 +17,9 @@ namespace ti
 	{
 		return false;
 	}
-	bool Win32Desktop::OpenFiles(SharedBoundObject properties)
+	SharedBoundList Win32Desktop::OpenFiles(SharedBoundObject properties)
 	{
-		return false;
+		return NULL;
 	}
 	bool Win32Desktop::OpenApplication(std::string &name)
 	{
