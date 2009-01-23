@@ -12,7 +12,7 @@
 {
 	return YES;
 }
-- (void)setupDecorations:(WindowConfig*)cfg host:(Host*)h
+- (void)setupDecorations:(WindowConfig*)cfg host:(Host*)h userwindow:(UserWindow*)uw
 {
 	config = cfg;
 
@@ -20,6 +20,8 @@
 	{
 		SetSystemUIMode(kUIModeAllHidden, kUIModeContentSuppressed);
 	}
+	
+	userWindow = uw;
 
 	[self setTitle:[NSString stringWithCString:config->GetTitle().c_str()]];
 	[self setOpaque:false];
@@ -48,6 +50,10 @@
 	[webView release];
 	webView = nil;
 	[super dealloc];
+}
+- (UserWindow*)userWindow
+{
+	return userWindow;
 }
 - (void)windowWillClose:(NSNotification *)notification
 {

@@ -21,8 +21,9 @@ using namespace ti;
 	WebView* webView;
 	WebViewDelegate* delegate;
 	BOOL requiresDisplay;
+	UserWindow *userWindow;
 }
-- (void)setupDecorations:(WindowConfig*)config host:(Host*)h;
+- (void)setupDecorations:(WindowConfig*)config host:(Host*)h userwindow:(UserWindow*)uw;
 - (void)setTransparency:(double)transparency;
 - (void)setFullScreen:(BOOL)yn;
 - (void)close;
@@ -30,5 +31,6 @@ using namespace ti;
 - (void)frameLoaded;
 - (WebView*)webView;
 - (WindowConfig*)config;
+- (UserWindow*)userWindow;
 - (void)setInitialWindow:(BOOL)yn;
 @end

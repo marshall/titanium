@@ -332,7 +332,7 @@
 {
 	SharedBoundObject ti = host->GetGlobalObject();
 	NSString *tiKey = [NSString stringWithCString:GLOBAL_NS_VARNAME];
-	[windowScriptObject evaluateWebScript:[NSString stringWithFormat:@"%@ = new Object; %@.toString = function() { return '[%@ native]' };",tiKey,tiKey,tiKey]];
+	[windowScriptObject evaluateWebScript:[NSString stringWithFormat:@"%@ = new Object; %@.toString = function() { return '[%@ native]' }; %@.currentWindow = new Object;",tiKey,tiKey,tiKey,tiKey]];
 	WebScriptObject* tiJS = [windowScriptObject valueForKey:tiKey];
 	SharedStringList properties = ti->GetPropertyNames();
 	for (size_t i = 0; i < properties->size(); i++)
@@ -352,6 +352,10 @@
 			NSLog(@"exception caught binding %@.%s => %@",tiKey,key.c_str(),ex);
 		}
 	}
+	WebScriptObject* cwJS = [tiJS valueForKey:@"currentWindow"];
+	SharedValue cwv = Value::NewObject(SharedBoundObject([window userWindow]));
+	id cw = [ObjcBoundObject ValueToID:cwv key:@"window" context:context];
+	[cwJS setValue:cw forKey:@"window"];
 	//NOTE: don't release tiJS or newti
 	scriptCleared = YES;
 }

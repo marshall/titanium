@@ -55,7 +55,7 @@ namespace ti
 		                  styleMask:mask
 		                    backing:NSBackingStoreBuffered
 		                      defer:false];
-		[window setupDecorations:config host:host];
+		[window setupDecorations:config host:host userwindow:this];
 	}
 	OSXUserWindow::~OSXUserWindow()
 	{
