@@ -6,6 +6,7 @@
 
 #include "win32_user_window.h"
 #include "frame_load_delegate.h"
+#include "ui_delegate.h"
 #include "string_util.h"
 #include "../url/app_url.h"
 #include <math.h>
@@ -143,11 +144,14 @@ Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config)
 		else fprintf(stderr, "Unknown Error? %x\n", hr);
 	}
 
-	std::cout << "create delegate " << std::endl;
-	delegate = new Win32FrameLoadDelegate(this);
+	std::cout << "create frame load delegate " << std::endl;
+	frameLoadDelegate = new Win32FrameLoadDelegate(this);
+	uiDelegate = new Win32UIDelegate(this);
 
-	std::cout << "set frame load delegate, set host window, webview=" << (int)web_view  << std::endl;
-	hr = web_view->setFrameLoadDelegate(delegate);
+	std::cout << "set delegates, set host window, webview=" << (int)web_view  << std::endl;
+	hr = web_view->setFrameLoadDelegate(frameLoadDelegate);
+	// don't set the ui delegate yet, because it crashes the app
+	//hr = web_view->setUIDelegate(uiDelegate);
 	hr = web_view->setHostWindow((OLE_HANDLE)window_handle);
 
 	std::cout << "init with frame" << std::endl;

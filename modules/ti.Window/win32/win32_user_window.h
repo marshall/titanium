@@ -23,6 +23,7 @@
 namespace ti {
 
 class Win32FrameLoadDelegate;
+class Win32UIDelegate;
 
 class Win32UserWindow : public UserWindow {
 
@@ -30,7 +31,8 @@ protected:
 	static bool ole_initialized;
 
 	kroll::Win32Host *win32_host;
-	Win32FrameLoadDelegate *delegate;
+	Win32FrameLoadDelegate *frameLoadDelegate;
+	Win32UIDelegate *uiDelegate;
 
 	HWND window_handle, view_window_handle;
 	IWebView* web_view;

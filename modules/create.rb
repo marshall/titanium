@@ -149,7 +149,7 @@ namespace ti
 		this->binding = new #{module_name}Binding(host->GetGlobalObject());
 
 		// set our #{module_dir_name}
-		SharedValue value = new Value(this->binding);
+		SharedValue value = Value::NewObject(this->binding);
 		host->GetGlobalObject()->Set("#{module_name}", value);
 	}
 

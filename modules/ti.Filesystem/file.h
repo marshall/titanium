@@ -7,6 +7,7 @@
 #define _TI_FILE_H_
 
 #ifdef OS_WIN32
+#include <api/base.h>
 #include <windows.h>
 #elif OS_OSX
 #import <Foundation/Foundation.h>

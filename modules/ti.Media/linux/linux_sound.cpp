@@ -4,7 +4,7 @@
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
 
-#include "win32_sound.h"
+#include "linux_sound.h"
 
 namespace ti
 {
