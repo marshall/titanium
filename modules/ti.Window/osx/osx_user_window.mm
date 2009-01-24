@@ -44,7 +44,6 @@ namespace ti
 		NSRect frame = NSMakeRect(config->GetX(), config->GetY(), config->GetWidth(), config->GetHeight());
 
 		NSUInteger mask = toWindowMask(config);
-		NSLog(@"window mask = %d",mask);
 
 		if (config->IsFullScreen())
 		{
@@ -259,6 +258,7 @@ namespace ti
 	}
 	void OSXUserWindow::SetFullScreen(bool fullscreen)
 	{
+		config->SetFullScreen(fullscreen);
 		[window setFullScreen:fullscreen];
 	}
 

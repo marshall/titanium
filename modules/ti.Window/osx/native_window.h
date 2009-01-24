@@ -8,7 +8,6 @@
 #import <WebKit/WebKit.h>
 #import "webview_delegate.h"
 #import "window_config.h"
-//#import "../user_window.h"
 
 @class WebViewDelegate;
 
@@ -21,6 +20,7 @@ using namespace ti;
 	WebViewDelegate* delegate;
 	BOOL requiresDisplay;
 	SharedBoundObject* userWindow;
+	CGDisplayFadeReservationToken tok;  /** Fade out/in token */
 }
 - (void)setupDecorations:(WindowConfig*)config host:(Host*)h userwindow:(UserWindow*)uw;
 - (void)setTransparency:(double)transparency;

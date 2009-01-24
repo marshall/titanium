@@ -9,7 +9,8 @@ namespace ti
 {
 	Window::Window(SharedBoundObject window) : kroll::StaticBoundObject() 
 	{
-	    this->SetObject("window", window);
+		SharedValue w = Value::NewObject(window);
+		this->Set("window",w);
 	}
 }
 

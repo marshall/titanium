@@ -69,6 +69,7 @@ class UserWindow : public kroll::StaticBoundObject {
 		void set_visible_cb(const kroll::ValueList&, kroll::SharedValue );
 		void get_transparency_cb(const kroll::ValueList&, kroll::SharedValue );
 		void set_transparency_cb(const kroll::ValueList&, kroll::SharedValue );
+		void set_menu_cb(const kroll::ValueList&, kroll::SharedValue );
 
 		virtual void Hide() = 0;
 		virtual void Show() = 0;
