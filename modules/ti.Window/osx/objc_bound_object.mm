@@ -138,7 +138,7 @@
 		JSObjectRef js = [script JSObject];
 		if (JSObjectIsFunction(context,js))
 		{
-			SharedBoundMethod method = KJSUtil::ToBoundMethod(context,js);
+			SharedBoundMethod method = KJSUtil::ToBoundMethod(context,js,NULL);
 		  	return Value::NewMethod(method);
 		}
 		else if (KJSUtil::IsArrayLike(js,context))

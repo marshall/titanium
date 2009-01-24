@@ -7,6 +7,7 @@
 #define _WINDOW_MODULE_H_
 
 #include <kroll/kroll.h>
+#include "../ti.Menu/menu_item.h"
 
 
 namespace ti {

@@ -30,6 +30,11 @@ namespace ti
 
 	}
 
+	MenuItem::~MenuItem()
+	{
+		printf("destroying: %x\n", (int) this);
+	}
+
 	void MenuItem::SetMethod(const char *name, void (MenuItem::*method)(const ValueList&, SharedValue))
 	{
 		MethodCallback* callback = NewCallback<MenuItem, const ValueList&, SharedValue>(static_cast<MenuItem*>(this), method);
@@ -208,6 +213,24 @@ namespace ti
 
 		SharedValue new_item = this->AddSubMenu(label, icon_url);
 		result->SetValue(new_item);
+	}
+
+	const char* MenuItem::GetLabel()
+	{
+		SharedValue label_value = this->Get("label");
+		if (label_value->IsString())
+			return label_value->ToString();
+		else
+			return NULL;
+	}
+
+	const char* MenuItem::GetIconURL()
+	{
+		SharedValue label_value = this->Get("iconURL");
+		if (label_value->IsString())
+			return label_value->ToString();
+		else
+			return NULL;
 	}
 
 }

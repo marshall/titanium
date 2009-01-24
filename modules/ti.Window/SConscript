@@ -18,7 +18,9 @@ webkit_inc = path.join(webkit_tp, 'include')
 
 
 if tiBuild.is_linux():
-	sources = sources + Glob('linux/*.cpp') + Glob('url/*.cpp')
+	sources = sources + Glob('linux/*.cpp') \
+	                  + Glob('url/*.cpp') \
+	                  + ['%s/modules/ti.Menu/linux/gtk_menu_wrapper.os' % build.dir]
 
 	curl_tp = path.join(build.third_party, 'libcurl')
 	curl_lib = path.join(curl_tp, 'lib')

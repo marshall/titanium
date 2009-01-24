@@ -86,6 +86,7 @@ public:
 	double GetTransparency() { return config->GetTransparency(); }
 	void SetTransparency(double transparency);
 	void SetFullScreen(bool fullscreen);
+	void SetMenu(SharedBoundList menu);
 
 };
 

@@ -19,6 +19,7 @@ GtkUserWindow::GtkUserWindow(Host *host, WindowConfig* config) : UserWindow(host
 {
 	this->gtk_window = NULL;
 	this->web_view = NULL;
+	this->menu_wrapper = NULL;
 }
 
 GtkUserWindow::~GtkUserWindow()
@@ -37,38 +38,38 @@ void GtkUserWindow::Open() {
 	{
 		/* web view */
 		WebKitWebView* web_view = WEBKIT_WEB_VIEW (webkit_web_view_new ());
-		g_signal_connect (G_OBJECT (web_view), "window-object-cleared",
-		                  G_CALLBACK (window_object_cleared_cb),
-		                  this);
+		g_signal_connect(G_OBJECT (web_view), "window-object-cleared",
+		                 G_CALLBACK (window_object_cleared_cb),
+		                 this);
 
 		/* web view scroller */
 		GtkWidget* scrolled_window = gtk_scrolled_window_new (NULL, NULL);
-		gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_window),
-		                                GTK_POLICY_AUTOMATIC,
-		                                GTK_POLICY_AUTOMATIC);
-		gtk_container_add (GTK_CONTAINER (scrolled_window),
-		                   GTK_WIDGET (web_view));
+		gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW (scrolled_window),
+		                               GTK_POLICY_AUTOMATIC,
+		                               GTK_POLICY_AUTOMATIC);
+		gtk_container_add(GTK_CONTAINER (scrolled_window),
+		                  GTK_WIDGET (web_view));
 
 		/* main window vbox */
-		GtkWidget* vbox = gtk_vbox_new (FALSE, 0);
-		gtk_box_pack_start (GTK_BOX (vbox),
-		                    GTK_WIDGET(scrolled_window),
-		                    TRUE, TRUE, 0);
+		this->vbox = gtk_vbox_new(FALSE, 0);
+		gtk_box_pack_start(GTK_BOX (vbox),
+		                   GTK_WIDGET(scrolled_window),
+		                   TRUE, TRUE, 0);
 
 		/* main window */
 		GtkWidget* window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 		gtk_window_set_default_size(GTK_WINDOW (window),
 		                            this->config->GetWidth(),
 		                            this->config->GetHeight());
-		gtk_widget_set_name (window, this->config->GetTitle().c_str());
+		gtk_widget_set_name(window, this->config->GetTitle().c_str());
 
-		g_signal_connect (G_OBJECT (window), "destroy",
-		                  G_CALLBACK (destroy_cb), NULL);
-		gtk_container_add (GTK_CONTAINER (window), vbox);
+		g_signal_connect(G_OBJECT (window), "destroy",
+		                 G_CALLBACK (destroy_cb), NULL);
+		gtk_container_add(GTK_CONTAINER (window), vbox);
 
 		this->gtk_window = GTK_WINDOW(window);
 		this->web_view = web_view;
-		this->SetupTransparency();
+		//this->SetupTransparency();
 
 		gtk_widget_realize(window);
 		this->SetupDecorations();
@@ -146,15 +147,6 @@ static void window_object_cleared_cb (WebKitWebView* web_view,
 	BoundObject *global_bound_object = new KJSBoundObject(context, global_object);
 	SharedValue ti_object_value = Value::NewObject(shared_ti_obj);
 	global_bound_object->Set(GLOBAL_NS_VARNAME, ti_object_value);
-
-	JSStringRef script;
-	char code[1024];
-	sprintf(code, "alert(Titanium.currentWindow); alert(Titanium.foo.number);");
-	//sprintf(code, "var o = Object(); o.prop = 'one'; foo.prop = 'two'; var f = function() {alert(this.prop);}; o.f = f; o.f(); foo.f = o.f; foo.f();");
-	script = JSStringCreateWithUTF8CString(code);
-	if(JSCheckScriptSyntax(context, script, NULL, 0, NULL))
-		JSEvaluateScript(context, script, NULL, NULL, 1, NULL);
-	JSStringRelease(script);
 
 }
 
@@ -256,21 +248,25 @@ std::string GtkUserWindow::GetTitle() {
 	return std::string(gtk_window_get_title(this->gtk_window));
 }
 
-void GtkUserWindow::SetTitle(std::string& title) {
+void GtkUserWindow::SetTitle(std::string& title)
+{
 	gtk_window_set_title (this->gtk_window, title.c_str());
 	this->config->SetTitle(title);
 }
 
-std::string GtkUserWindow::GetUrl() {
+std::string GtkUserWindow::GetUrl()
+{
 	return this->config->GetURL();
 }
 
-void GtkUserWindow::SetUrl(std::string& uri) {
+void GtkUserWindow::SetUrl(std::string& uri)
+{
 	webkit_web_view_open (this->web_view, uri.c_str());
 	this->config->SetURL(uri);
 }
 
-void GtkUserWindow::SetupDecorations() {
+void GtkUserWindow::SetupDecorations()
+{
 	GdkWindow *gdk_window = gtk_widget_get_window(GTK_WIDGET(this->gtk_window));
 	int d = 0;
 
@@ -291,46 +287,56 @@ void GtkUserWindow::SetupDecorations() {
 	gdk_window_set_decorations(gdk_window, (GdkWMDecoration) d);
 }
 
-bool GtkUserWindow::IsResizable() {
+bool GtkUserWindow::IsResizable()
+{
 	return gtk_window_get_resizable(this->gtk_window);
 }
 
-void GtkUserWindow::SetResizable(bool resizable) {
+void GtkUserWindow::SetResizable(bool resizable)
+{
 	gtk_window_set_resizable(this->gtk_window, resizable);
 	this->config->SetResizable(resizable);
 }
 
-bool GtkUserWindow::IsMaximizable() {
+bool GtkUserWindow::IsMaximizable()
+{
 	return this->config->IsMaximizable();
 }
 
-void GtkUserWindow::SetMaximizable(bool maximizable) {
+void GtkUserWindow::SetMaximizable(bool maximizable)
+{
 	this->config->SetMaximizable(maximizable);
 	this->SetupDecorations();
 }
 
-bool GtkUserWindow::IsMinimizable() {
+bool GtkUserWindow::IsMinimizable()
+{
 	return this->config->IsMinimizable();
 }
 
-void GtkUserWindow::SetMinimizable(bool minimizable) {
+void GtkUserWindow::SetMinimizable(bool minimizable)
+{
 	this->config->SetMinimizable(minimizable);
 	this->SetupDecorations();
 }
 
-bool GtkUserWindow::IsCloseable() {
+bool GtkUserWindow::IsCloseable()
+{
 	return gtk_window_get_deletable(this->gtk_window);
 }
-void GtkUserWindow::SetCloseable(bool closeable) {
+void GtkUserWindow::SetCloseable(bool closeable)
+{
 	this->config->SetCloseable(closeable);
 	gtk_window_set_deletable(this->gtk_window, closeable);
 }
 
-bool GtkUserWindow::IsVisible() {
+bool GtkUserWindow::IsVisible()
+{
 	return this->config->IsVisible();
 }
 
-void GtkUserWindow::SetVisible(bool visible) {
+void GtkUserWindow::SetVisible(bool visible)
+{
 	if (visible) {
 		this->Show();
 	} else {
@@ -338,16 +344,19 @@ void GtkUserWindow::SetVisible(bool visible) {
 	}
 }
 
-double GtkUserWindow::GetTransparency() {
+double GtkUserWindow::GetTransparency()
+{
 	return gtk_window_get_opacity(this->gtk_window);
 }
 
-void GtkUserWindow::SetTransparency(double alpha) {
+void GtkUserWindow::SetTransparency(double alpha)
+{
 	return gtk_window_set_opacity(this->gtk_window, alpha);
 	this->config->SetTransparency(alpha);
 }
 
-void GtkUserWindow::SetFullScreen(bool fullscreen) {
+void GtkUserWindow::SetFullScreen(bool fullscreen)
+{
 	if (fullscreen)
 	{
 		gtk_window_fullscreen(this->gtk_window);
@@ -357,3 +366,21 @@ void GtkUserWindow::SetFullScreen(bool fullscreen) {
 		gtk_window_unfullscreen(this->gtk_window);
 	}
 }
+
+void GtkUserWindow::SetMenu(SharedBoundList menu)
+{
+	if (this->menu_wrapper != NULL)
+	{
+		GtkWidget* old_menu_bar = this->menu_wrapper->GetMenuBar();
+		gtk_container_remove(GTK_CONTAINER(this->vbox), old_menu_bar);
+		delete this->menu_wrapper;
+	}
+
+	this->menu_wrapper = new GtkMenuWrapper(menu);
+	GtkWidget* gtk_menu_bar = this->menu_wrapper->GetMenuBar();
+	gtk_box_pack_start(GTK_BOX(this->vbox), gtk_menu_bar, FALSE, FALSE, 2);
+	gtk_box_reorder_child(GTK_BOX(this->vbox), gtk_menu_bar, 0);
+	gtk_widget_show(gtk_menu_bar);
+
+}
+

@@ -9,6 +9,7 @@
 #define _GTK_USER_WINDOW_H_
 
 #include "../window_module.h"
+#include "../../ti.Menu/linux/gtk_menu_wrapper.h"
 #include <gdk/gdk.h>
 #include <gdk/gdkx.h>
 #include <webkit/webkit.h>
@@ -57,9 +58,13 @@ namespace ti
 		double GetTransparency();
 		void SetTransparency(double transparency);
 		void SetFullScreen(bool fullscreen);
+		void SetMenu(SharedBoundList menu);
+
 	protected:
 		GtkWindow* gtk_window;
+		GtkWidget* vbox;
 		WebKitWebView* web_view;
+		GtkMenuWrapper* menu_wrapper;
 	};
 }
 

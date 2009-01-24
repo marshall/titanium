@@ -372,3 +372,7 @@ void Win32UserWindow::SetFullScreen(bool fullscreen) {
 	//TODO: implement
 }
 
+void Win32UserWindow::SetMenu(SharedBoundList menu)
+{
+}
+

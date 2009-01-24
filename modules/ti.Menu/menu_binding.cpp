@@ -20,8 +20,9 @@ namespace ti
 	void MenuBinding::CreateAppMenu(const ValueList& args, SharedValue result)
 	{
 		MenuItem* item = new MenuItem();
-		SharedBoundObject so = SharedBoundObject(item);
-		result->SetObject(so);
+		printf("root menu: %x\n", (int) item);
+		SharedBoundList so = SharedBoundList(item);
+		result->SetList(so);
 	}
 	void MenuBinding::CreateTrayMenu(const ValueList& args, SharedValue result)
 	{

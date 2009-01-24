@@ -52,6 +52,7 @@ namespace ti
 			double GetTransparency();
 			void SetTransparency(double transparency);
 			void SetFullScreen(bool fullscreen);
+			void SetMenu(SharedBoundList menu);
 
 			const NativeWindow* GetNative() const { return window; }
 

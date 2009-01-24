@@ -75,6 +75,7 @@ UserWindow::UserWindow(kroll::Host *host, WindowConfig *config) : kroll::StaticB
 	this->SetMethod("setVisible", &UserWindow::set_visible_cb);
 	this->SetMethod("getTransparency", &UserWindow::get_transparency_cb);
 	this->SetMethod("setTransparency", &UserWindow::set_transparency_cb);
+	this->SetMethod("setMenu", &UserWindow::set_menu_cb);
 }
 
 void UserWindow::hide_cb(const kroll::ValueList& args, kroll::SharedValue result)
@@ -299,5 +300,15 @@ void UserWindow::set_transparency_cb(const kroll::ValueList& args, kroll::Shared
 {
 	if (args.size() > 0) {
 		this->SetTransparency(args.at(0)->ToDouble());
+	}
+}
+
+void UserWindow::set_menu_cb(const kroll::ValueList& args, kroll::SharedValue result)
+{
+	SharedBoundObject val = args.at(0)->ToObject();
+	printf("%x\n", (int) val.get()); 
+	if (args.size() > 0 && args.at(0)->IsList()) {
+		SharedBoundList menu = args.at(0)->ToList();
+		this->SetMenu(menu);
 	}
 }

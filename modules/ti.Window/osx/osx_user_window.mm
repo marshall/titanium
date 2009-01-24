@@ -216,4 +216,7 @@ namespace ti
 	{
 		[window setFullScreen:fullscreen];
 	}
+	void OSXUserWindow::SetMenu(SharedBoundList menu)
+	{
+	}
 }
