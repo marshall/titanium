@@ -1,0 +1,45 @@
+<html>
+	<head>
+		<style>
+			body { font-family: sans, sans-serif; background-color: white; }
+			div{
+				margin:10px;
+			}
+		</style>
+		<script>
+			function fetchLocalhost()
+			{
+				var textarea = document.getElementById("output");
+				try
+				{
+					var socket = Titanium.Network.createTCPSocket("localhost",80);
+					socket.onRead(function(data)
+					{
+						textarea.value+=data;
+					});
+					socket.onReadComplete(function()
+					{
+						socket.close();
+					});
+					socket.onTimeout(function()
+					{
+						socket.close();
+					});
+					socket.connect();
+					socket.write("GET / HTTP/1.0\r\n\r\n");
+				}
+				catch(e)
+				{
+					alert("Error: "+e);
+				}
+			}
+		</script>
+	</head>
+	<body>
+		<h2>Titanium Network test app</h2>
+		<div>
+			<button onclick="fetchLocalhost()">Fetch localhost</button>
+		</div>
+		<textarea id="output" style="width:500px;height:250px;"></textarea>
+	</body>
+</html>

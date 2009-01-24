@@ -20,12 +20,11 @@ namespace ti
 		this->variables = new NetworkBinding(host->GetGlobalObject());
 
 		// set our ti.Network
-		Value *value = Value::NewObject(this->variables);
+		SharedValue value = Value::NewObject(this->variables);
 		host->GetGlobalObject()->Set("Network",value);
 	}
 
 	void NetworkModule::Destroy()
 	{
-		//KR_DECREF(this->variables);
 	}
 }

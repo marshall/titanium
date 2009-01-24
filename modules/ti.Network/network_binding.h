@@ -14,11 +14,11 @@ namespace ti
 	class NetworkBinding : public StaticBoundObject
 	{
 	public:
-		NetworkBinding(BoundObject*);
+		NetworkBinding(SharedBoundObject);
 	protected:
 		virtual ~NetworkBinding();
 	private:
-		BoundObject *global;
+		SharedBoundObject global;
 		void Create(const ValueList& args, SharedValue result);
 		void OnConnectivityChange(const ValueList& args, SharedValue result);
 	};

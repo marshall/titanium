@@ -10,10 +10,8 @@
 
 namespace ti
 {
-	NetworkBinding::NetworkBinding(BoundObject *global) : global(global)
+	NetworkBinding::NetworkBinding(SharedBoundObject global) : global(global)
 	{
-		//KR_ADDREF(global);
-
 		// TODO: this state change needs to be implemented
 		SharedValue online = Value::NewBool(true);
 		this->Set("online",online);
@@ -23,13 +21,12 @@ namespace ti
 	}
 	NetworkBinding::~NetworkBinding()
 	{
-		//KR_DECREF(global);
 	}
 	void NetworkBinding::Create(const ValueList& args, SharedValue result)
 	{
-		BoundObject *tcp = new TCPSocketBinding(args.at(0)->ToString(), args.at(1)->ToInt());
+		//TODO: check for args
+		SharedBoundObject tcp = new TCPSocketBinding(args.at(0)->ToString(), args.at(1)->ToInt());
 		result->SetObject(tcp);
-		//KR_DECREF(tcp);
 	}
 	void NetworkBinding::OnConnectivityChange(const ValueList& args, SharedValue result)
 	{
