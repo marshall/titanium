@@ -16,7 +16,7 @@ namespace ti
 	class GtkMenuWrapper
 	{
 	public:
-		GtkMenuWrapper(SharedBoundList root_item);
+		GtkMenuWrapper(SharedBoundList root_item, SharedBoundObject global);
 		~GtkMenuWrapper();
 		GtkWidget* GetMenu();
 		GtkWidget* GetMenuBar();
@@ -24,13 +24,14 @@ namespace ti
 	private:
 		GtkWidget* ItemFromValue(SharedBoundList value);
 		void AddChildrenToMenu(SharedBoundList menu, GtkWidget *gtk_menu);
-		static void MenuCallback(gpointer *data);
+		SharedValue GetIconPath(const char *url);
 		static const char* ItemGetStringProp(SharedBoundList item, const char* prop_name);
 		static bool ItemIsSubMenu(SharedBoundList item);
 
 		GtkWidget* gtk_menu;
 		GtkWidget* gtk_menu_bar;
 		std::vector<SharedBoundMethod> callbacks;;
+		SharedBoundObject global;
 	};
 }
 

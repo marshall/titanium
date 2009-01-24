@@ -26,6 +26,7 @@ namespace ti
 		void GetVersion(const ValueList& args, SharedValue result);
 		void GetUpdateURL(const ValueList& args, SharedValue result);
 		void GetGUID(const ValueList& args, SharedValue result);
+		void AppURLToPath(const ValueList& args, SharedValue result);
 	};
 }
 

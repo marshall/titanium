@@ -30,6 +30,11 @@ GtkUserWindow::~GtkUserWindow()
 		this->gtk_window = NULL;
 		this->web_view = NULL;
 	}
+
+	if (this->menu_wrapper != NULL)
+	{
+		delete menu_wrapper;
+	}
 }
 
 void GtkUserWindow::Open() {
@@ -83,7 +88,7 @@ void GtkUserWindow::Open() {
 			gtk_widget_show_all(window);
 		}
 
-		if (this->config->IsFullscreen())
+		if (this->config->IsFullScreen())
 		{
 			gtk_window_fullscreen(this->gtk_window);
 		}
@@ -165,7 +170,7 @@ bool GtkUserWindow::IsUsingScrollbars() {
 }
 
 bool GtkUserWindow::IsFullScreen() {
-	return this->config->IsFullscreen();
+	return this->config->IsFullScreen();
 }
 
 std::string GtkUserWindow::GetId() {
@@ -380,7 +385,7 @@ void GtkUserWindow::SetMenu(SharedBoundList menu)
 		delete this->menu_wrapper;
 	}
 
-	this->menu_wrapper = new GtkMenuWrapper(menu);
+	this->menu_wrapper = new GtkMenuWrapper(menu, this->GetHost()->GetGlobalObject());
 	GtkWidget* gtk_menu_bar = this->menu_wrapper->GetMenuBar();
 	gtk_box_pack_start(GTK_BOX(this->vbox), gtk_menu_bar, FALSE, FALSE, 2);
 	gtk_box_reorder_child(GTK_BOX(this->vbox), gtk_menu_bar, 0);
