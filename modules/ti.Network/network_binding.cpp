@@ -3,10 +3,11 @@
  * see LICENSE in the root folder for details on the license.
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
+#include <kroll/kroll.h>
 
 #include "network_binding.h"
 #include "tcp_socket_binding.h"
-#include <kroll/kroll.h>
+#include "ipaddress_binding.h"
 
 namespace ti
 {
@@ -17,12 +18,18 @@ namespace ti
 		this->Set("online",online);
 
 		this->SetMethod("onConnectivityChange",&NetworkBinding::OnConnectivityChange);
-		this->SetMethod("createTCPSocket",&NetworkBinding::Create);
+		this->SetMethod("createTCPSocket",&NetworkBinding::CreateTCPSocket);
+		this->SetMethod("createIPAddress",&NetworkBinding::CreateIPAddress);
 	}
 	NetworkBinding::~NetworkBinding()
 	{
 	}
-	void NetworkBinding::Create(const ValueList& args, SharedValue result)
+	void NetworkBinding::CreateIPAddress(const ValueList& args, SharedValue result)
+	{
+		SharedBoundObject ip = new IPAddressBinding(args.at(0)->ToString());
+		result->SetObject(ip);
+	}
+	void NetworkBinding::CreateTCPSocket(const ValueList& args, SharedValue result)
 	{
 		//TODO: check for args
 		SharedBoundObject tcp = new TCPSocketBinding(args.at(0)->ToString(), args.at(1)->ToInt());

@@ -19,7 +19,8 @@ namespace ti
 		virtual ~NetworkBinding();
 	private:
 		SharedBoundObject global;
-		void Create(const ValueList& args, SharedValue result);
+		void CreateIPAddress(const ValueList& args, SharedValue result);
+		void CreateTCPSocket(const ValueList& args, SharedValue result);
 		void OnConnectivityChange(const ValueList& args, SharedValue result);
 	};
 }

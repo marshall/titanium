@@ -40,6 +40,16 @@
 		<div>
 			<button onclick="fetchLocalhost()">Fetch localhost</button>
 		</div>
+		<div>
+			<script>
+				var ip = Titanium.Network.createIPAddress("127.0.0.1");
+				document.write("<div>ipaddress:" + ip + "</div>");
+				document.write("<div>invalid?:" + ip.isInvalid() + "</div>");
+				document.write("<div>ipv4?:" + ip.isIPV4() + "</div>");
+				document.write("<div>ipv6?:" + ip.isIPV6() + "</div>");
+				document.write("<div>loopback?:" + ip.isLoopback() + "</div>");
+			</script>
+		</div>
 		<textarea id="output" style="width:500px;height:250px;"></textarea>
 	</body>
 </html>
