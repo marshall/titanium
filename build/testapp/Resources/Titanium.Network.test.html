@@ -48,6 +48,18 @@
 				document.write("<div>ipv4?:" + ip.isIPV4() + "</div>");
 				document.write("<div>ipv6?:" + ip.isIPV6() + "</div>");
 				document.write("<div>loopback?:" + ip.isLoopback() + "</div>");
+
+				try
+				{
+					var host = Titanium.Network.getHostByName("localhost");
+					document.write("<div>host:"+host.getName()+"</div>");
+					document.write("<div>object:"+host+"</div>");
+					document.write("<div>resolve with address:"+Titanium.Network.getHostByAddress(ip)+"</div>");
+				}
+				catch(e)
+				{
+					alert("Host resolution error: "+e);
+				}
 			</script>
 		</div>
 		<textarea id="output" style="width:500px;height:250px;"></textarea>

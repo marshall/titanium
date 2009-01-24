@@ -21,14 +21,19 @@ namespace ti
 	{
 	public:
 		IPAddressBinding(std::string);
-	protected:
+		IPAddressBinding(IPAddress);
 		virtual ~IPAddressBinding();
+	protected:
+		void Init();
 	private:
 		IPAddress *address;
 		bool invalid;
 		
-		const bool isInvalid() const { return invalid; }
+	public:
+		const bool IsInvalid() const { return invalid; }
+		const IPAddress* GetAddress() const { return address; }
 
+	private:
 		void ToString(const ValueList& args, SharedValue result);
 		void IsInvalid(const ValueList& args, SharedValue result);
 		void IsIPV4(const ValueList& args, SharedValue result);

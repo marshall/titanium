@@ -9,6 +9,32 @@ namespace ti
 {
 	IPAddressBinding::IPAddressBinding(std::string ip) : invalid(false)
 	{
+		this->Init();
+		
+		try
+		{
+			this->address = new IPAddress(ip.c_str());
+		}
+		catch(InvalidAddressException &e)
+		{
+			this->invalid = true;
+			this->address = new IPAddress("0.0.0.0");
+		}
+	}
+	IPAddressBinding::IPAddressBinding(IPAddress ip) : invalid(false) 
+	{
+		this->Init();
+		this->address = new IPAddress(ip);
+	}
+	IPAddressBinding::~IPAddressBinding()
+	{
+		if (this->address)
+		{
+			delete this->address;
+		}
+	}
+	void IPAddressBinding::Init()
+	{
 		this->SetMethod("toString",&IPAddressBinding::ToString);
 		this->SetMethod("isInvalid",&IPAddressBinding::IsInvalid);
 		this->SetMethod("isIPV4",&IPAddressBinding::IsIPV4);
@@ -26,23 +52,6 @@ namespace ti
 		this->SetMethod("isSiteLocalMC",&IPAddressBinding::IsSiteLocalMC);
 		this->SetMethod("isOrgLocalMC",&IPAddressBinding::IsOrgLocalMC);
 		this->SetMethod("isGlobalMC",&IPAddressBinding::IsGlobalMC);
-		
-		try
-		{
-			this->address = new IPAddress(ip.c_str());
-		}
-		catch(InvalidAddressException &e)
-		{
-			this->invalid = true;
-			this->address = new IPAddress("0.0.0.0");
-		}
-	}
-	IPAddressBinding::~IPAddressBinding()
-	{
-		if (this->address)
-		{
-			delete this->address;
-		}
 	}
 	void IPAddressBinding::IsInvalid(const ValueList& args, SharedValue result)
 	{
