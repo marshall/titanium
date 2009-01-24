@@ -160,10 +160,6 @@ void GtkUserWindow::Show() {
 	this->config->SetVisible(true);
 }
 
-bool GtkUserWindow::IsUsingChrome() {
-	return gtk_window_get_decorated(this->gtk_window);
-}
-
 bool GtkUserWindow::IsUsingScrollbars() {
 	return this->config->IsUsingScrollbars();
 }
@@ -254,12 +250,12 @@ void GtkUserWindow::SetTitle(std::string& title)
 	this->config->SetTitle(title);
 }
 
-std::string GtkUserWindow::GetUrl()
+std::string GtkUserWindow::GetURL()
 {
 	return this->config->GetURL();
 }
 
-void GtkUserWindow::SetUrl(std::string& uri)
+void GtkUserWindow::SetURL(std::string& uri)
 {
 	webkit_web_view_open (this->web_view, uri.c_str());
 	this->config->SetURL(uri);
@@ -285,6 +281,14 @@ void GtkUserWindow::SetupDecorations()
 	this->SetTransparency(config->GetTransparency());
 
 	gdk_window_set_decorations(gdk_window, (GdkWMDecoration) d);
+}
+
+bool GtkUserWindow::IsUsingChrome() {
+	return gtk_window_get_decorated(this->gtk_window);
+}
+
+void GtkUserWindow::SetUsingChrome(bool chrome) {
+	//TODO: implement
 }
 
 bool GtkUserWindow::IsResizable()

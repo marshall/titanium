@@ -11,6 +11,32 @@ using namespace ti;
 
 #define STUB printf("__FILE__:__LINE__: called a stub method!\n")
 
+#define TI_SET_BOOL(method,index) \
+{ \
+	SharedValue arg = args.at(index);\
+	if (arg->IsBool()) \
+	{ \
+		this->method(arg->ToBool()); \
+	}\
+	else if (arg->IsInt()) \
+	{ \
+		this->method(arg->ToInt()==1); \
+	} \
+	else if (arg->IsString()) \
+	{ \
+		std::string yn(arg->ToString()); \
+		if (yn=="yes" || yn=="true" || yn=="1") \
+		{ \
+			this->method(true); \
+		} \
+		else \
+		{ \
+			this->method(false); \
+		} \
+	} \
+}
+
+
 std::vector<UserWindow *> UserWindow::windows;
 void UserWindow::Open(UserWindow *window)
 {
@@ -44,9 +70,10 @@ UserWindow::UserWindow(kroll::Host *host, WindowConfig *config) : kroll::StaticB
 	this->SetMethod("hide", &UserWindow::hide_cb);
 	this->SetMethod("show", &UserWindow::show_cb);
 	this->SetMethod("isUsingChrome", &UserWindow::is_using_chrome_cb);
-	this->SetMethod("isFullScreen", &UserWindow::is_full_screen_cb);
-	this->SetMethod("setFullScreen", &UserWindow::set_full_screen_cb);
-	this->SetMethod("getId", &UserWindow::get_id_cb);
+	this->SetMethod("setUsingChrome", &UserWindow::set_using_chrome_cb);
+	this->SetMethod("isFullscreen", &UserWindow::is_full_screen_cb);
+	this->SetMethod("setFullscreen", &UserWindow::set_full_screen_cb);
+	this->SetMethod("getID", &UserWindow::get_id_cb);
 	this->SetMethod("open", &UserWindow::open_cb);
 	this->SetMethod("close", &UserWindow::close_cb);
 	this->SetMethod("getX", &UserWindow::get_x_cb);
@@ -61,8 +88,8 @@ UserWindow::UserWindow(kroll::Host *host, WindowConfig *config) : kroll::StaticB
 	this->SetMethod("setBounds", &UserWindow::set_bounds_cb);
 	this->SetMethod("getTitle", &UserWindow::get_title_cb);
 	this->SetMethod("setTitle", &UserWindow::set_title_cb);
-	this->SetMethod("getUrl", &UserWindow::get_url_cb);
-	this->SetMethod("setUrl", &UserWindow::set_url_cb);
+	this->SetMethod("getURL", &UserWindow::get_url_cb);
+	this->SetMethod("setURL", &UserWindow::set_url_cb);
 	this->SetMethod("isResizable", &UserWindow::is_resizable_cb);
 	this->SetMethod("setResizable", &UserWindow::set_resizable_cb);
 	this->SetMethod("isMaximizable", &UserWindow::is_maximizable_cb);
@@ -93,6 +120,11 @@ void UserWindow::is_using_chrome_cb(const kroll::ValueList& args, kroll::SharedV
 	result->SetBool(this->IsUsingChrome());
 }
 
+void UserWindow::set_using_chrome_cb(const kroll::ValueList& args, kroll::SharedValue result)
+{
+	TI_SET_BOOL(SetUsingChrome,0);
+}
+
 void UserWindow::is_using_scrollbars_cb(const kroll::ValueList& args, kroll::SharedValue result)
 {
 	result->SetBool(this->IsUsingScrollbars());
@@ -105,7 +137,7 @@ void UserWindow::is_full_screen_cb(const kroll::ValueList& args, kroll::SharedVa
 
 void UserWindow::set_full_screen_cb(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	this->SetFullScreen(args.at(0)->ToBool());
+	TI_SET_BOOL(SetFullScreen,0);
 }
 
 void UserWindow::get_id_cb(const kroll::ValueList& args, kroll::SharedValue result)
@@ -220,14 +252,14 @@ void UserWindow::set_title_cb(const kroll::ValueList& args, kroll::SharedValue r
 
 void UserWindow::get_url_cb(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	result->SetString(this->GetUrl().c_str());
+	result->SetString(this->GetURL().c_str());
 }
 
 void UserWindow::set_url_cb(const kroll::ValueList& args, kroll::SharedValue result)
 {
 	if (args.size() > 0) {
 		std::string url = args.at(0)->ToString();
-		this->SetUrl(url);
+		this->SetURL(url);
 	}
 }
 
@@ -238,9 +270,7 @@ void UserWindow::is_resizable_cb(const kroll::ValueList& args, kroll::SharedValu
 
 void UserWindow::set_resizable_cb(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	if (args.size() > 0) {
-		this->SetResizable(args.at(0)->ToBool());
-	}
+	TI_SET_BOOL(SetResizable,0);
 }
 
 void UserWindow::is_maximizable_cb(const kroll::ValueList& args, kroll::SharedValue result)
@@ -250,9 +280,7 @@ void UserWindow::is_maximizable_cb(const kroll::ValueList& args, kroll::SharedVa
 
 void UserWindow::set_maximizable_cb(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	if (args.size() > 0) {
-		this->SetMaximizable(args.at(0)->ToBool());
-	}
+	TI_SET_BOOL(SetMaximizable,0);
 }
 
 void UserWindow::is_minimizable_cb(const kroll::ValueList& args, kroll::SharedValue result)
@@ -262,9 +290,7 @@ void UserWindow::is_minimizable_cb(const kroll::ValueList& args, kroll::SharedVa
 
 void UserWindow::set_minimizable_cb(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	if (args.size() > 0) {
-		this->SetMinimizable(args.at(0)->ToBool());
-	}
+	TI_SET_BOOL(SetMinimizable,0);
 }
 
 void UserWindow::is_closeable_cb(const kroll::ValueList& args, kroll::SharedValue result)
@@ -274,9 +300,7 @@ void UserWindow::is_closeable_cb(const kroll::ValueList& args, kroll::SharedValu
 
 void UserWindow::set_closeable_cb(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	if (args.size() > 0) {
-		this->SetCloseable(args.at(0)->ToBool());
-	}
+	TI_SET_BOOL(SetCloseable,0);
 }
 
 void UserWindow::is_visible_cb(const kroll::ValueList& args, kroll::SharedValue result)
@@ -286,9 +310,7 @@ void UserWindow::is_visible_cb(const kroll::ValueList& args, kroll::SharedValue 
 
 void UserWindow::set_visible_cb(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	if (args.size() > 0) {
-		this->SetVisible(args.at(0)->ToBool());
-	}
+	TI_SET_BOOL(SetVisible,0);
 }
 
 void UserWindow::get_transparency_cb(const kroll::ValueList& args, kroll::SharedValue result)

@@ -16,11 +16,11 @@ namespace ti
 	class AppBinding : public StaticBoundObject
 	{
 	public:
-		AppBinding(BoundObject*);
+		AppBinding(SharedBoundObject);
 	protected:
 		virtual ~AppBinding();
 	private:
-		BoundObject *global;
+		SharedBoundObject global;
 		void GetID(const ValueList& args, SharedValue result);
 		void GetName(const ValueList& args, SharedValue result);
 		void GetVersion(const ValueList& args, SharedValue result);

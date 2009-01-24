@@ -9,7 +9,7 @@ tiBuild.add_thirdparty(build.env, 'poco')
 env = tiBuild.env.Clone()
 env.Append(LIBPATH=[path.join(tiBuild.dir, 'modules', 'ti.App')])
 env.Append(LIBS=['kroll', 'tiappmodule','javascriptmodule'])
-env.Append(CPPPATH = [build.kroll_include_dir, '%s/modules/javascript' % build.kroll_source_dir])
+env.Append(CPPPATH = [build.kroll_include_dir, '%s/modules/javascript' % build.kroll_source_dir, '%s/modules/ti.App' % tiBuild.titanium_source_dir])
 
 sources = Glob('*.cpp')
 webkit_tp = path.join(build.third_party, 'webkit')
