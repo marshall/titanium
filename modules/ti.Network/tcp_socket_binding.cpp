@@ -12,11 +12,25 @@
 namespace ti
 {
 	TCPSocketBinding::TCPSocketBinding(std::string host, int port) :
-		host(host), port(port), opened(false), callback(0)
+		host(host), port(port), opened(false), 
+		onRead(0), onWrite(0), onTimeout(0), onReadComplete(0)
 	{
+		// methods
 		this->SetMethod("connect",&TCPSocketBinding::Connect);
 		this->SetMethod("close",&TCPSocketBinding::Close);
 		this->SetMethod("write",&TCPSocketBinding::Write);
+		this->SetMethod("isClosed",&TCPSocketBinding::IsClosed);
+
+		// event handler callbacks
+		this->SetMethod("onRead",&TCPSocketBinding::SetOnRead);
+		this->SetMethod("onWrite",&TCPSocketBinding::SetOnWrite);
+		this->SetMethod("onTimeout",&TCPSocketBinding::SetOnTimeout);
+		this->SetMethod("onReadComplete",&TCPSocketBinding::SetOnReadComplete);
+
+		// our reactor event handlers
+		this->reactor.addEventHandler(this->socket,NObserver<TCPSocketBinding, ReadableNotification>(*this, &TCPSocketBinding::OnRead));
+		this->reactor.addEventHandler(this->socket,NObserver<TCPSocketBinding, WritableNotification>(*this, &TCPSocketBinding::OnWrite));
+		this->reactor.addEventHandler(this->socket,NObserver<TCPSocketBinding, TimeoutNotification>(*this, &TCPSocketBinding::OnTimeout));
 	}
 	TCPSocketBinding::~TCPSocketBinding()
 	{
@@ -25,28 +39,75 @@ namespace ti
 			this->reactor.stop();
 			this->socket.close();
 		}
-		//KR_DECREF(this->callback);
+		if (this->onTimeout)
+		{
+			delete this->onTimeout;
+		}
+		if (this->onRead)
+		{
+			delete this->onRead;
+		}
+		if (this->onWrite)
+		{
+			delete this->onWrite;
+		}
+		if (this->onReadComplete)
+		{
+			delete this->onReadComplete;
+		}
+	}
+	void TCPSocketBinding::SetOnRead(const ValueList& args, SharedValue result)
+	{
+		if (this->onRead)
+		{
+			delete this->onRead;
+		}
+		this->onRead = new SharedBoundMethod(args.at(0)->ToMethod());
+	}
+	void TCPSocketBinding::SetOnWrite(const ValueList& args, SharedValue result)
+	{
+		if (this->onWrite)
+		{
+			delete this->onWrite;
+		}
+		this->onWrite = new SharedBoundMethod(args.at(0)->ToMethod());
+	}
+	void TCPSocketBinding::SetOnTimeout(const ValueList& args, SharedValue result)
+	{
+		if (this->onTimeout)
+		{
+			delete this->onTimeout;
+		}
+		this->onTimeout = new SharedBoundMethod(args.at(0)->ToMethod());
+	}
+	void TCPSocketBinding::SetOnReadComplete(const ValueList& args, SharedValue result)
+	{
+		if (this->onReadComplete)
+		{
+			delete this->onReadComplete;
+		}
+		this->onReadComplete = new SharedBoundMethod(args.at(0)->ToMethod());
+	}
+	void TCPSocketBinding::IsClosed(const ValueList& args, SharedValue result)
+	{
+		return result->SetBool(!this->opened);
 	}
 	void TCPSocketBinding::Connect(const ValueList& args, SharedValue result)
 	{
 		if (this->opened)
 		{
 			throw Value::NewString("socket is already open");
-			return;
 		}
-		this->callback = args.at(0)->ToMethod();
-		//KR_ADDREF(this->callback);
 		try
 		{
 			SocketAddress a(this->host.c_str(),this->port);
-			this->reactor.addEventHandler(this->socket,NObserver<TCPSocketBinding, ReadableNotification>(*this, &TCPSocketBinding::OnRead));
 			this->socket.connectNB(a);
 			this->thread.start(this->reactor);
 			this->opened = true;
+			result->SetBool(true);
 		}
 		catch(Poco::IOException &e)
 		{
-			std::cout << "exception:" << e.displayText() << std::endl;
 			std::string msg = e.displayText();
 			throw Value::NewString(msg);
 		}
@@ -63,46 +124,91 @@ namespace ti
 	}
 	void TCPSocketBinding::OnRead(const Poco::AutoPtr<ReadableNotification>& n)
 	{
-		char data[BUFFER_SIZE];
+		// if we have no listeners, just bail...
+		if (this->onRead==NULL && this->onReadComplete==NULL)
+		{
+			return;
+		}
 		try
 		{
+			char data[BUFFER_SIZE];
 			int size = socket.receiveBytes(&data,BUFFER_SIZE);
-			if (size <= 0) return;
+			if (size <= 0)
+			{
+				if (this->onReadComplete)
+				{
+					SharedPtr<ValueList> a(new ValueList);
+					InvokeMethodOnMainThread(*this->onReadComplete,a);
+				}
+				return;
+			}
+			// do this after we read so that we can deal with 
+			// on read complete
+			if (this->onRead == NULL)
+			{
+				return;
+			}
 			data[size]='\0';
 			std::string s(data);
-			Value* value = Value::NewString(s);
-			ValueList* args = new ValueList;
+			SharedValue value = Value::NewString(s);
+			ValueList *args = new ValueList;
 			args->push_back(value);
-//FIXME:!
-//			SharedBoundMethod p = this->callback;
-//			kroll::InvokeMethodOnMainThread(p,args);
-			delete args;
+			SharedPtr<ValueList> a(args);
+			InvokeMethodOnMainThread(*this->onRead,a);
+		}
+		catch(std::exception &e)
+		{
+			std::cerr << "Network error TCPSocketBinding::OnRead: " << e.what() << std::endl;
+		}
+		catch(SharedValue &e)
+		{
+			std::cerr << "Network error TCPSocketBinding::OnRead: " << e->ToString() << std::endl;
 		}
 		catch(...)
 		{
 			std::cerr << "Network error TCPSocketBinding::OnRead" << std::endl;
 		}
 	}
+	void TCPSocketBinding::OnWrite(const Poco::AutoPtr<WritableNotification>& n)
+	{
+		if (this->onWrite == NULL)
+		{
+			return;
+		}
+		SharedPtr<ValueList> a(new ValueList);
+		InvokeMethodOnMainThread(*this->onWrite,a);
+	}
+	void TCPSocketBinding::OnTimeout(const Poco::AutoPtr<TimeoutNotification>& n)
+	{
+		if (this->onTimeout == NULL)
+		{
+			return;
+		}
+		SharedPtr<ValueList> a(new ValueList);
+		InvokeMethodOnMainThread(*this->onTimeout,a);
+	}
 	void TCPSocketBinding::Write(const ValueList& args, SharedValue result)
 	{
 		if (!this->opened)
 		{
-			SharedValue exception = Value::NewString("socket is closed");
-			throw exception;
-			return;
+			throw Value::NewString("socket is closed");
 		}
 		std::string buf = args.at(0)->ToString();
 		int count = this->socket.sendBytes(buf.c_str(),buf.length());
-		std::cout << "count = " << count << std::endl;
 		result->SetInt(count);
 	}
 	void TCPSocketBinding::Close(const ValueList& args, SharedValue result)
 	{
 		if (this->opened)
 		{
-			this->socket.close();
 			this->opened = false;
-			return;
+			this->reactor.stop();
+			this->socket.close();
+			result->SetBool(true);
+		}
+		else
+		{
+			result->SetBool(false);
 		}
 	}
 }

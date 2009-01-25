@@ -6,8 +6,9 @@
 		try
 		{
 			var fs = Titanium.currentWindow.window.isFullscreen();
-			alert("is full screen? "+fs);
-			Titanium.currentWindow.window.setFullscreen(fs);
+			Titanium.api.log("fullscreen = "+fs);
+			Titanium.api.debug("fullscreen = "+fs);
+			Titanium.currentWindow.window.setFullscreen(!fs);
 		}
 		catch(e)
 		{

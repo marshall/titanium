@@ -326,13 +326,53 @@
 		[window setTitle:title];
     }
 }
-
+/* THIS IS THE RECURSIVE WRAPPING CODE -- IT SORTA WORKS BUT CAUSES CRASH ON EXIT
+- (void)wrap:(WebScriptObject*)scope context:(JSContextRef)context forValue:(SharedValue)value forKey:(NSString*)key
+{
+	if (value->IsObject())
+	{
+		SharedBoundObject obj = value->ToObject();
+		NSString *js = @"var obj = new Object(); obj";
+		WebScriptObject* newObject = (WebScriptObject*)[scope evaluateWebScript:js];
+		std::string parentkey([key UTF8String]);
+		SharedStringList properties = obj->GetPropertyNames();
+		for (size_t i = 0; i < properties->size(); i++)
+		{
+			SharedString skey = properties->at(i);
+			std::string _key = *skey;
+			if (_key == parentkey) continue;
+			NSLog(@"wrapping: %@.%s",key,_key.c_str());
+			SharedValue value = obj->Get(_key.c_str());
+			[self wrap:newObject context:context forValue:value forKey:[NSString stringWithCString:_key.c_str()]];
+		}
+		SharedValue v = obj->Get("toString");
+		if (v->IsUndefined())
+		{
+			WebScriptObject* toString = (WebScriptObject*)[scope evaluateWebScript:[NSString stringWithFormat:@"var f = function() { return '[%@ native]' }; f",key]];
+			[newObject setValue:toString forKey:@"toString"];
+		}
+		[scope setValue:newObject forKey:key];
+	}
+	else
+	{
+		id newobj = [ObjcBoundObject ValueToID:value key:key context:context];
+		[scope setValue:newobj forKey:key];
+	}
+}*/
 - (void)inject:(WebScriptObject *)windowScriptObject context:(JSContextRef)context
 {
+	TRACE(@"inject called");
+	
 	SharedBoundObject ti = host->GetGlobalObject();
+	
+	
+	// NSString *tiKey = [NSString stringWithCString:GLOBAL_NS_VARNAME];
+	// SharedValue value = Value::NewObject(ti);
+	// [self wrap:windowScriptObject context:context forValue:value forKey:tiKey];
+
 	NSString *tiKey = [NSString stringWithCString:GLOBAL_NS_VARNAME];
-	[windowScriptObject evaluateWebScript:[NSString stringWithFormat:@"%@ = new Object; %@.toString = function() { return '[%@ native]' };",tiKey,tiKey,tiKey]];
-	WebScriptObject* tiJS = [windowScriptObject valueForKey:tiKey];
+	WebScriptObject* tiJS = (WebScriptObject*)[windowScriptObject evaluateWebScript:[NSString stringWithFormat:@"var o = new Object; o.toString = function() { return '[%@ native]' }; o;",tiKey]];
+	[windowScriptObject setValue:tiJS forKey:tiKey];
 	SharedStringList properties = ti->GetPropertyNames();
 	for (size_t i = 0; i < properties->size(); i++)
 	{
@@ -351,11 +391,14 @@
 			NSLog(@"exception caught binding %@.%s => %@",tiKey,key.c_str(),ex);
 		}
 	}
+	
+	// make the Titanium.currentWindow object
 	SharedBoundObject suw = [window userWindow];
-	SharedBoundObject wo = new Window(suw);
-	SharedValue cwv = Value::NewObject(wo);
+	SharedValue cwv = Value::NewObject(suw);
 	id cw = [ObjcBoundObject ValueToID:cwv key:@"currentWindow" context:context];
-	[tiJS setValue:cw forKey:@"currentWindow"];
+	WebScriptObject* cwjs = (WebScriptObject*)[windowScriptObject evaluateWebScript:@"var o = new Object; o.toString = function() { return '[currentWindow native]' }; o;"];
+	[tiJS setValue:cwjs forKey:@"currentWindow"];
+	[cwjs setValue:cw forKey:@"window"];
 	
 	//NOTE: don't release tiJS or newti or cw
 	scriptCleared = YES;
@@ -568,7 +611,7 @@
 
 - (void)webView:(WebView *)wv runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WebFrame *)frame 
 {
-	NSLog(@"alert = %@",message);
+	TRACE(@"alert = %@",message);
 	
 	NSRunInformationalAlertPanel(NSLocalizedString(@"JavaScript", @""),	// title
 								 message,								// message

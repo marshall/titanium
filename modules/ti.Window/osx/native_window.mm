@@ -12,6 +12,10 @@
 {
 	return YES;
 }
+- (BOOL)canBecomeMainWindow
+{
+	return YES;
+}
 - (void)setupDecorations:(WindowConfig*)cfg host:(Host*)h userwindow:(UserWindow*)uw
 {
 	config = cfg;
@@ -42,6 +46,7 @@
     [self setContentView:webView];
     [self setDelegate:self];
 	[self setTransparency:config->GetTransparency()];
+	[self setInitialFirstResponder:webView];
 }
 - (void)dealloc
 {
@@ -108,20 +113,59 @@
 		[webView setBackgroundColor:[NSColor whiteColor]];
 	}
 }
+- (NSScreen *)activeScreen
+{
+    NSArray *screens = [NSScreen screens];
+
+    /* if we've only got one screen then return it */
+    if ([screens count] <= 1) 
+	{
+		return [NSScreen mainScreen];
+	}
+	
+	NSScreen* screen = [self deepestScreen];
+	if (screen != nil)
+	{
+		return screen;
+	}
+	
+	return [NSScreen mainScreen];
+}
+- (void)fadeOut
+{
+    CGAcquireDisplayFadeReservation(1.0, &tok);
+    CGDisplayFade(tok, 0.5, kCGDisplayBlendNormal, kCGDisplayBlendSolidColor, 0, 0, 0, TRUE);
+}
+
+- (void)fadeIn
+{
+    CGDisplayFade(tok, 1, kCGDisplayBlendSolidColor, kCGDisplayBlendNormal, 0, 0, 0, TRUE);
+    CGReleaseDisplayFadeReservation(tok);
+}
 - (void)setFullScreen:(BOOL)yn
 {
-	NSMutableDictionary *options = [[[NSMutableDictionary alloc] init] autorelease];
+	NSMutableDictionary *options = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+	                            [NSNumber numberWithBool:NO], NSFullScreenModeAllScreens, nil];
+	
+	[self fadeOut];
+	
 	if (yn)
 	{
-		NSNumber *value = [NSNumber numberWithInt:NSNormalWindowLevel];
-		[options setValue:value forKey:NSFullScreenModeWindowLevel];
-		NSScreen *screen = [NSScreen mainScreen];
+		// figure out which screen to display on
+		NSScreen *screen = [self activeScreen];
 		[webView enterFullScreenMode:screen withOptions:options];
 	}
 	else
 	{
+		// we hide and then later rehide so that the shadow
+		// on the window will actually refresh correctly
+		[self orderOut:nil];
 		[webView exitFullScreenModeWithOptions:options];
 	}
+	[self makeKeyAndOrderFront:self];	
+ 	[self makeFirstResponder:webView];
+
+	[self fadeIn];
 }
 - (WebView*)webView
 {

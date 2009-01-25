@@ -66,7 +66,7 @@ UserWindow::UserWindow(kroll::Host *host, WindowConfig *config) : kroll::StaticB
 	this->host = host;
 	this->config = config;
 
-	/* this object is accessed by tiRuntime.Window.currentWindow */
+	/* this object is accessed by Titanium.currentWindow.window */
 	this->SetMethod("hide", &UserWindow::hide_cb);
 	this->SetMethod("show", &UserWindow::show_cb);
 	this->SetMethod("isUsingChrome", &UserWindow::is_using_chrome_cb);
