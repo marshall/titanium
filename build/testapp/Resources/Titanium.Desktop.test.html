@@ -68,6 +68,16 @@
 				debug(result);
 				log('You chose: '+result.length+' files');
 			}
+			function chooseMultipleFiles()
+			{
+				var result = Titanium.Desktop.openFiles({
+					directories:false,
+					files:true,
+					multiple:true
+				});
+				debug(result);
+				log('You chose: '+result.length+' files');
+			}
 			function chooseMultiple()
 			{
 				var result = Titanium.Desktop.openFiles({
@@ -147,7 +157,10 @@
 			<button onclick="chooseDirsAndFiles()">Open File Dialog (directories+files)</button>
 		</div>
 		<div>
-			<button onclick="chooseMultiple()">Open File Dialog (multiple selection)</button>
+			<button onclick="chooseMultipleFiles()">Open File Dialog (multiple files)</button>
+		</div>
+		<div>
+			<button onclick="chooseMultiple()">Open File Dialog (multiple files and directories)</button>
 		</div>
 		<div>
 			<button onclick="chooseFileTypes()">Open File Dialog (JS or HTML files only)</button>

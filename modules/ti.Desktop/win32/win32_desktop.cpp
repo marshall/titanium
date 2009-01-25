@@ -65,6 +65,28 @@ namespace ti
 
 		return false;
 	}
+	SharedBoundList Win32Desktop::SelectDirectory(SharedBoundObject props)
+	{
+		BROWSEINFO bi = { 0 };
+		//std::string title("Select a directory");
+		//bi.lpszTitle = title.c_str();
+		LPITEMIDLIST pidl = SHBrowseForFolder(&bi);
+
+		SharedBoundList results = new StaticBoundList();
+
+		if(pidl != 0)
+		{
+			// get folder name
+			TCHAR path[MAX_PATH];
+			if(SHGetPathFromIDList(pidl, path))
+			{
+				SharedValue f = Value::NewString(path);
+				results->Append(f);
+			}
+		}
+
+		return results;
+	}
 	SharedBoundList Win32Desktop::OpenFiles(SharedBoundObject props)
 	{
 		// pass in a set of properties with each key being
@@ -79,9 +101,15 @@ namespace ti
 		// });
 		//
 
-		// TODO need to add logic to allow selection of directories
+		// TODO this is not the logic followed by the osx desktop implementation, but as of right now
+		// the windows implementation allows the user to browse/select for file OR a directory, but not both
 		//bool chooseFiles = props->GetBool("files", true);
-		//bool chooseDirectories = props->GetBool("directories", false);
+		bool chooseDirectories = props->GetBool("directories", false);
+
+		if(chooseDirectories) {
+			return SelectDirectory(props);
+		}
+
 		bool multipleFiles = props->GetBool("multiple", false);
 		std::string path = props->GetString("path", "");
 		std::string filename = props->GetString("filename", "");
