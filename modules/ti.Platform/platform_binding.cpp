@@ -27,9 +27,6 @@ namespace ti
 		{
 			this->Set("id",Value::NewString(""));
 		}
-		this->SetMethod("getEnv",&PlatformBinding::GetEnv);
-		this->SetMethod("setEnv",&PlatformBinding::SetEnv);
-		this->SetMethod("hasEnv",&PlatformBinding::HasEnv);
 
 #ifdef OS_OSX
 		NSProcessInfo *p = [NSProcessInfo processInfo];
@@ -41,38 +38,5 @@ namespace ti
 	}
 	PlatformBinding::~PlatformBinding()
 	{
-	}
-	void PlatformBinding::GetEnv(const ValueList& args, SharedValue result)
-	{
-		std::string key(args.at(0)->ToString());
-		try
-		{
-			std::string value = Poco::Environment::get(key);
-			result->SetString(value.c_str());
-		}
-		catch(...)
-		{
-			// if they specified a default as 2nd parameter, return it
-			// otherwise, return null
-			if (args.size()==2)
-			{
-				result->SetString(args.at(1)->ToString());
-			}
-			else
-			{
-				result->SetNull();
-			}
-		}
-	}
-	void PlatformBinding::HasEnv(const ValueList& args, SharedValue result)
-	{
-		std::string key(args.at(0)->ToString());
-		result->SetBool(Poco::Environment::has(key));
-	}
-	void PlatformBinding::SetEnv(const ValueList& args, SharedValue result)
-	{
-		std::string key(args.at(1)->ToString());
-		std::string value(args.at(2)->ToString());
-		Poco::Environment::set(key,value);
 	}
 }

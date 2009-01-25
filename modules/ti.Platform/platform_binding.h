@@ -20,10 +20,6 @@ namespace ti
 		virtual ~PlatformBinding();
 	private:
 		SharedBoundObject global;
-		
-		void GetEnv(const ValueList& args, SharedValue result);
-		void HasEnv(const ValueList& args, SharedValue result);
-		void SetEnv(const ValueList& args, SharedValue result);
 	};
 }
 

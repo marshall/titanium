@@ -2,7 +2,7 @@
 Import('build')
 import os
 
-modules = ['ti.App', 'ti.Window','ti.Network','ti.Filesystem','ti.Media','ti.Desktop','ti.Menu','ti.Database', 'ti.Platform']
+modules = ['ti.App', 'ti.Window','ti.Network','ti.Filesystem','ti.Media','ti.Desktop','ti.Menu','ti.Database', 'ti.Platform', 'ti.Process']
 
 if build.is_osx() or build.is_win32():
 	modules.append('ti.Growl')
