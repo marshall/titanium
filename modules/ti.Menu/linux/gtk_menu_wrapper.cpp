@@ -66,8 +66,11 @@ namespace ti
 		SharedValue callback_val = menu_item->Get("callback");
 
 		GtkWidget* gtk_item;
-
-		if (!icon_val->IsString())
+		if (GtkMenuWrapper::ItemIsSeparator(menu_item))
+		{
+			gtk_item = gtk_separator_menu_item_new();
+		}
+		else if (!icon_val->IsString())
 		{
 			gtk_item = gtk_menu_item_new_with_label(label);
 		}
@@ -88,7 +91,7 @@ namespace ti
 			g_signal_connect_swapped(
 			    G_OBJECT (gtk_item), "activate",
 			    G_CALLBACK(menu_callback), 
-			    (gpointer) &meth);
+			    (gpointer) new SharedBoundMethod(meth));
 		}
 
 		return gtk_item;
@@ -96,20 +99,18 @@ namespace ti
 
 	void menu_callback(gpointer data)
 	{
-		printf("menu callback\n");
-		//SharedBoundMethod* shared_meth = (SharedBoundMethod*) data;
-		//BoundMethod* meth = shared_meth->get();
+		SharedBoundMethod* shared_meth = (SharedBoundMethod*) data;
 
-		//// TODO: Handle exceptions in some way
-		//try
-		//{
-		//	ValueList args;
-		//	meth->Call(args);
-		//}
-		//catch(...)
-		//{
-		//	std::cout << "Menu callback failed" << std::endl;
-		//}
+		// TODO: Handle exceptions in some way
+		try
+		{
+			ValueList args;
+			shared_meth->get()->Call(args);
+		}
+		catch(...)
+		{
+			std::cout << "Menu callback failed" << std::endl;
+		}
 
 	}
 
@@ -121,6 +122,17 @@ namespace ti
 
 		ValueList args;
 		SharedValue result = submenu_test->Call(args);
+		return result->IsBool() && result->ToBool();
+	}
+
+	bool GtkMenuWrapper::ItemIsSeparator(SharedBoundList item)
+	{
+		SharedBoundMethod sep_test = item->Get("isSeparator")->ToMethod();
+		if (sep_test.isNull())
+			return false;
+
+		ValueList args;
+		SharedValue result = sep_test->Call(args);
 		return result->IsBool() && result->ToBool();
 	}
 

@@ -132,6 +132,9 @@ static void window_object_cleared_cb (WebKitWebView* web_view,
                                       JSObjectRef window_object,
                                       gpointer data) {
 
+	JSContextGroupRef group = JSContextGetGroup(context);
+	KJSUtil::RegisterGlobalContext(group, context);
+
 	JSObjectRef global_object = JSContextGetGlobalObject(context);
 	GtkUserWindow* user_window = (GtkUserWindow*) data;
 	Host* tihost = user_window->GetHost();

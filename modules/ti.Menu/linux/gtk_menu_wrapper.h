@@ -27,6 +27,7 @@ namespace ti
 		SharedValue GetIconPath(const char *url);
 		static const char* ItemGetStringProp(SharedBoundList item, const char* prop_name);
 		static bool ItemIsSubMenu(SharedBoundList item);
+		static bool ItemIsSeparator(SharedBoundList item);
 
 		GtkWidget* gtk_menu;
 		GtkWidget* gtk_menu_bar;
