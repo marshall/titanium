@@ -30,6 +30,8 @@ namespace ti
 	private:
 		Win32Desktop();
 		~Win32Desktop();
+
+		static void ParseStringNullSeparated(const char *s, std::vector<std::string> &tokens);
 	};
 }
 
