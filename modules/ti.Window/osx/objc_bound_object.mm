@@ -138,7 +138,7 @@
 		JSObjectRef js = [script JSObject];
 		if (JSObjectIsFunction(context,js))
 		{
-			SharedBoundMethod method = KJSUtil::ToBoundMethod(context,js);
+			SharedBoundMethod method = KJSUtil::ToBoundMethod(context,js,NULL);
 		  	return Value::NewMethod(method);
 		}
 		else if (KJSUtil::IsArrayLike(js,context))
@@ -196,7 +196,7 @@
 		SharedValue result = toString->ToMethod()->Call(args);
 		return [NSString stringWithCString:result->ToString()];
 	}
-	return [NSString stringWithFormat:@"[ObjcBoundObject:%@ native]",key];
+	return [NSString stringWithFormat:@"[%@ native]",key];
 }
 +(BOOL)isKeyExcludedFromWebScript:(const char*)name
 {
@@ -269,7 +269,7 @@
 -(id)invokeUndefinedMethodFromWebScript:(NSString *)name withArguments:(NSArray*)args
 {
 	NSLog(@"invoking method %@ on %@",name,key);
-	SharedValue value = object->get()->Get([name UTF8String]);
+	SharedValue value = (*object)->Get([name UTF8String]);
 	if (value->IsMethod())
 	{
 		ValueList a;

@@ -9,6 +9,7 @@
 #define _GTK_USER_WINDOW_H_
 
 #include "../window_module.h"
+#include "../../ti.Menu/linux/gtk_menu_wrapper.h"
 #include <gdk/gdk.h>
 #include <gdk/gdkx.h>
 #include <webkit/webkit.h>
@@ -25,6 +26,7 @@ namespace ti
 		void Hide();
 		void Show();
 		bool IsUsingChrome();
+		void SetUsingChrome(bool chrome);
 		bool IsUsingScrollbars();
 		bool IsFullScreen();
 		std::string GetId();
@@ -42,8 +44,8 @@ namespace ti
 		void SetBounds(Bounds bounds);
 		std::string GetTitle();
 		void SetTitle(std::string& title);
-		std::string GetUrl();
-		void SetUrl(std::string& url);
+		std::string GetURL();
+		void SetURL(std::string& url);
 		bool IsResizable();
 		void SetResizable(bool resizable);
 		bool IsMaximizable();
@@ -57,9 +59,14 @@ namespace ti
 		double GetTransparency();
 		void SetTransparency(double transparency);
 		void SetFullScreen(bool fullscreen);
+		void SetMenu(SharedBoundList menu);
+
+
 	protected:
 		GtkWindow* gtk_window;
+		GtkWidget* vbox;
 		WebKitWebView* web_view;
+		GtkMenuWrapper* menu_wrapper;
 	};
 }
 

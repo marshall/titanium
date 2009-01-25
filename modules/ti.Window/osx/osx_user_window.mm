@@ -10,7 +10,7 @@ namespace ti
 	static NSUInteger toWindowMask(WindowConfig *config)
 	{
 		NSUInteger mask = 0;
-		if (config->IsUsingChrome() || config->IsFullscreen())
+		if (config->IsUsingChrome() || config->IsFullScreen())
 		{
 			mask = NSBorderlessWindowMask;
 		}
@@ -37,7 +37,7 @@ namespace ti
 		return mask;
 	}
 
-	OSXUserWindow::OSXUserWindow(Host *host, WindowConfig *config) : UserWindow(host,config)
+	OSXUserWindow::OSXUserWindow(Host *host, WindowConfig *config) : UserWindow(host,config), window(0), opened(false)
 	{
 		[NSApplication sharedApplication];
 
@@ -45,7 +45,7 @@ namespace ti
 
 		NSUInteger mask = toWindowMask(config);
 
-		if (config->IsFullscreen())
+		if (config->IsFullScreen())
 		{
 			frame = [[NSScreen mainScreen] frame];
 		}
@@ -55,7 +55,7 @@ namespace ti
 		                  styleMask:mask
 		                    backing:NSBackingStoreBuffered
 		                      defer:false];
-		[window setupDecorations:config host:host];
+		[window setupDecorations:config host:host userwindow:this];
 	}
 	OSXUserWindow::~OSXUserWindow()
 	{
@@ -65,12 +65,18 @@ namespace ti
 	void OSXUserWindow::Hide()
 	{
 		this->config->SetVisible(false);
-		[window orderOut:nil];
+		if (opened)
+		{
+			[window orderOut:nil];
+		}
 	}
 	void OSXUserWindow::Show()
 	{
 		this->config->SetVisible(true);
-	    [window makeKeyAndOrderFront:nil];	
+		if (opened)
+		{
+		    [window makeKeyAndOrderFront:nil];	
+		}
 	}
 	bool OSXUserWindow::IsUsingChrome()
 	{
@@ -82,7 +88,7 @@ namespace ti
 	}
 	bool OSXUserWindow::IsFullScreen()
 	{
-		return this->config->IsFullscreen();
+		return this->config->IsFullScreen();
 	}
 	std::string OSXUserWindow::GetId()
 	{
@@ -90,45 +96,79 @@ namespace ti
 	}
 	void OSXUserWindow::Open()
 	{
+		opened = true;
+		[window open];
 	}
 	void OSXUserWindow::Close()
 	{
+		opened = false;
+		[window close];
 	}
 	double OSXUserWindow::GetX()
 	{
+		//FIXME
 		return 0;
 	}
 	void OSXUserWindow::SetX(double x)
 	{
+		NSPoint p;
+		p.x = x;
+		p.y = this->GetY();
+		config->SetX(x);
+		[window setFrameTopLeftPoint:p];
 	}
 	double OSXUserWindow::GetY()
 	{
+		//FIXME
 		return 0;
 	}
 	void OSXUserWindow::SetY(double y)
 	{
+		NSPoint p;
+		p.x = this->GetX();
+		p.y = y;
+		config->SetY(y);
+		[window setFrameTopLeftPoint:p];
 	}
 	double OSXUserWindow::GetWidth()
 	{
-		return 0;
+		return [window frame].size.width;
 	}
 	void OSXUserWindow::SetWidth(double width)
 	{
+		NSRect frame = [window frame];
+		BOOL display = config->IsVisible();
+		frame.size.width = width;
+		config->SetWidth(width);
+		[window setFrame:frame display:display animate:display];
 	}
 	double OSXUserWindow::GetHeight()
 	{
-		return 0;
+		return [window frame].size.height;
 	}
 	void OSXUserWindow::SetHeight(double height)
 	{
+		NSRect frame = [window frame];
+		BOOL display = config->IsVisible();
+		frame.size.height = height;
+		config->SetHeight(height);
+		[window setFrame:frame display:display animate:display];
 	}
 	Bounds OSXUserWindow::GetBounds()
 	{
 		Bounds b;
+		b.width = this->GetWidth();
+		b.height = this->GetHeight();
+		b.x = this->GetX();
+		b.y = this->GetY();
 		return b;
 	}
 	void OSXUserWindow::SetBounds(Bounds bounds)
 	{
+		this->SetX(bounds.x);
+		this->SetY(bounds.y);
+		this->SetWidth(bounds.width);
+		this->SetHeight(bounds.height);
 	}
 	std::string OSXUserWindow::GetTitle()
 	{
@@ -139,14 +179,18 @@ namespace ti
 		this->config->SetTitle(title);
 		[window setTitle:[NSString stringWithCString:this->config->GetTitle().c_str()]];
 	}
-	std::string OSXUserWindow::GetUrl()
+	std::string OSXUserWindow::GetURL()
 	{
 		return this->config->GetURL();
 	}
-	void OSXUserWindow::SetUrl(std::string& url)
+	void OSXUserWindow::SetURL(std::string& url)
 	{
 		this->config->SetURL(url);
-		//TODO
+		if (opened)
+		{
+			NSURL *nsurl = [NSURL URLWithString:[NSString stringWithCString:url.c_str()]];
+			[[[window webView] mainFrame] loadRequest:[NSURLRequest requestWithURL:nsurl]];
+		}
 	}
 	bool OSXUserWindow::IsResizable()
 	{
@@ -214,6 +258,17 @@ namespace ti
 	}
 	void OSXUserWindow::SetFullScreen(bool fullscreen)
 	{
+		config->SetFullScreen(fullscreen);
 		[window setFullScreen:fullscreen];
+	}
+
+	void OSXUserWindow::SetUsingChrome(bool chrome)
+	{
+		this->config->SetUsingChrome(chrome);
+	}
+
+	void OSXUserWindow::SetMenu(SharedBoundList menu)
+	{	
+		// TODO: Implement
 	}
 }

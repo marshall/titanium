@@ -7,9 +7,7 @@
 #ifndef _WINDOW_MODULE_OSX_H_
 #define _WINDOW_MODULE_OSX_H_
 
-class OSXUserWindow;
-
 #import "preinclude.h"
-#import "osx_user_window.h"
+#import "native_window.h"
 
 #endif

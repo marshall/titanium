@@ -9,7 +9,7 @@ tiBuild.add_thirdparty(build.env, 'poco')
 env = tiBuild.env.Clone()
 env.Append(LIBPATH=[path.join(tiBuild.dir, 'modules', 'ti.App')])
 env.Append(LIBS=['kroll', 'tiappmodule','javascriptmodule'])
-env.Append(CPPPATH = [build.kroll_include_dir, '%s/modules/javascript' % build.kroll_source_dir])
+env.Append(CPPPATH = [build.kroll_include_dir, '%s/modules/javascript' % build.kroll_source_dir, '%s/modules/ti.App' % tiBuild.titanium_source_dir])
 
 sources = Glob('*.cpp')
 webkit_tp = path.join(build.third_party, 'webkit')
@@ -18,7 +18,9 @@ webkit_inc = path.join(webkit_tp, 'include')
 
 
 if tiBuild.is_linux():
-	sources = sources + Glob('linux/*.cpp') + Glob('url/*.cpp')
+	sources = sources + Glob('linux/*.cpp') \
+	                  + Glob('url/*.cpp') \
+	                  + ['%s/modules/ti.Menu/linux/gtk_menu_wrapper.os' % build.dir]
 
 	curl_tp = path.join(build.third_party, 'libcurl')
 	curl_lib = path.join(curl_tp, 'lib')
