@@ -19,6 +19,7 @@
 #include "../window_module.h"
 #include <kroll/kroll.h>
 #include "../../../kroll/host/win32/host.h"
+#include "../user_window.h"
 
 namespace ti {
 
@@ -55,7 +56,7 @@ public:
 	void Show();
 	bool IsUsingChrome() { return config->IsUsingChrome(); }
 	bool IsUsingScrollbars() { return config->IsUsingScrollbars(); }
-	bool IsFullScreen() { return config->IsFullscreen(); }
+	bool IsFullScreen() { return config->IsFullScreen(); }
 	std::string GetId() { return config->GetID(); }
 	void Open();
 	void Close();

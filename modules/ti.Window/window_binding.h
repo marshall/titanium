@@ -11,6 +11,10 @@
 #include "window_module.h"
 #include "window_config.h"
 
+#ifdef OS_WIN32
+#undef CreateWindow
+#endif
+
 namespace ti
 {
 	class WindowBinding : public StaticBoundObject
@@ -24,7 +28,7 @@ namespace ti
 		SharedBoundObject global;
 
 		void CreateWindow(const ValueList& args, SharedValue result);
-		
+
 		SharedBoundObject CreateWindow(SharedBoundObject properties);
 	};
 }
