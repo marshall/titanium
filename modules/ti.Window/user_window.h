@@ -9,6 +9,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 #include <kroll/kroll.h>
 
 #include "../ti.App/app_config.h"
@@ -33,6 +34,7 @@ class UserWindow : public kroll::StaticBoundObject {
 		//FIXME: add the following that are missing
 		// minWidth, maxWidth, minHeight, maxHeight
 
+	private:
 		void hide_cb(const kroll::ValueList&, kroll::SharedValue );
 		void show_cb(const kroll::ValueList&, kroll::SharedValue );
 		void is_using_chrome_cb(const kroll::ValueList&, kroll::SharedValue );
@@ -70,7 +72,9 @@ class UserWindow : public kroll::StaticBoundObject {
 		void get_transparency_cb(const kroll::ValueList&, kroll::SharedValue );
 		void set_transparency_cb(const kroll::ValueList&, kroll::SharedValue );
 		void set_menu_cb(const kroll::ValueList&, kroll::SharedValue );
+		void get_parent_cb(const kroll::ValueList&, kroll::SharedValue );
 
+	public:
 		virtual void Hide() = 0;
 		virtual void Show() = 0;
 		virtual bool IsUsingChrome() = 0;
@@ -112,13 +116,25 @@ class UserWindow : public kroll::StaticBoundObject {
 	protected:
 		kroll::Host *host;
 		WindowConfig *config;
+		UserWindow *parent;
+		
+		virtual UserWindow* get_parent();
+		virtual void set_parent(UserWindow *parent);
+		virtual void add_child(UserWindow *window);
+		virtual void remove_child(UserWindow *window);
 
 		static std::vector<UserWindow*> windows;
+		static std::map<UserWindow*, std::vector<UserWindow*> > windowsMap;
+		
 		static void Open(UserWindow *);
 		static void Close(UserWindow *);
+		static void AddChild(UserWindow *parent, UserWindow *child);
+		static void RemoveChild(UserWindow *parent, UserWindow *child);
 
 	private:
 		DISALLOW_EVIL_CONSTRUCTORS(UserWindow);
+		
+		friend class WindowBinding;
 };
 
 }

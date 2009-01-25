@@ -11,6 +11,14 @@
 #include "window_module.h"
 #include "window_config.h"
 
+// this is the code that needs to be executed once the window has bound
+// into its window frame the JS binding code for the top level Titanium
+// objects
+#define TI_WINDOW_BINDING_JS_CODE \
+	GLOBAL_NS_VARNAME".Window.createWindow = function(props) { return "\
+	GLOBAL_NS_VARNAME".Window._createWindow("GLOBAL_NS_VARNAME\
+	".currentWindow.window,props); };"
+
 namespace ti
 {
 	class WindowBinding : public StaticBoundObject
@@ -25,7 +33,7 @@ namespace ti
 
 		void CreateWindow(const ValueList& args, SharedValue result);
 		
-		SharedBoundObject CreateWindow(SharedBoundObject properties);
+		SharedBoundObject CreateWindow(UserWindow *,SharedBoundObject properties);
 	};
 }
 

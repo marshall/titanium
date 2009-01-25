@@ -7,6 +7,7 @@
 #import "app_config.h"
 #import "native_window.h"
 #import "objc_bound_object.h"
+#import "../window_binding.h"
 
 #define TRACE  NSLog
 
@@ -408,6 +409,9 @@
 	[tiJS setValue:cwjs forKey:@"currentWindow"];
 	[cwjs setValue:cw forKey:@"window"];
 	
+	// define Titanium.Window.createWindow to call Titanium.Window._createWindow with parent as first parameter
+	[windowScriptObject evaluateWebScript:[NSString stringWithCString:TI_WINDOW_BINDING_JS_CODE]];
+
 	//NOTE: don't release tiJS or newti or cw
 	scriptCleared = YES;
 }
