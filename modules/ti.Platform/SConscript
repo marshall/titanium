@@ -1,0 +1,14 @@
+#!/usr/bin/env python
+import os
+
+Import("tiBuild")
+Import('build')
+
+tiBuild.add_thirdparty(build.env, 'poco')
+
+env = tiBuild.env.Clone();
+env.Append(CPPDEFINES = {'TITANIUM_PLATFORM_API_EXPORT' : 1})
+env.Append(CPPPATH = ['#kroll'])
+
+
+s = env.SharedLibrary(target = tiBuild.dir + '/tiplatformmodule', source = Glob('*.cpp'))
