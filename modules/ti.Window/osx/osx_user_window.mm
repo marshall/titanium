@@ -59,8 +59,8 @@ namespace ti
 	}
 	OSXUserWindow::~OSXUserWindow()
 	{
-		[window release];
-		window = nil;
+		KR_DUMP_LOCATION
+		window = nil; // don't release
 	}
 	void OSXUserWindow::Hide()
 	{

@@ -28,8 +28,8 @@ namespace ti
 	public:
 		HostBinding(IPAddress);
 		HostBinding(std::string);
-	protected:
 		virtual ~HostBinding();
+	protected:
 		void Init();
 	private:
 		HostEntry host;

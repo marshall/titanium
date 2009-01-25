@@ -45,6 +45,7 @@ namespace ti
 	}
 	HostBinding::~HostBinding()
 	{
+		KR_DUMP_LOCATION
 	}
 	void HostBinding::Init() 
 	{

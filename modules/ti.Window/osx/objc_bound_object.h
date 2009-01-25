@@ -14,7 +14,6 @@
 
 @interface ObjcBoundObject : NSObject {
 	SharedBoundObject* object;
-	ti::BoundMethodDispatch* dispatch;
 	JSContextRef context;
 	NSString *key; //TODO: debug only
 }

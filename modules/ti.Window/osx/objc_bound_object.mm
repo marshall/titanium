@@ -4,7 +4,6 @@
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
 #import "objc_bound_object.h"
-#import "bound_method_dispatch.h"
 
 @implementation ObjcBoundObject
 
@@ -117,18 +116,15 @@
 	{
 		ObjcBoundObject *b = (ObjcBoundObject*)arg;
 		SharedBoundObject bound_object = [b boundObject];
-		// attempt to up cast to these other types first
-		BoundMethod *bound_method = dynamic_cast<BoundMethod*>(bound_object.get());
-		if (bound_method!=NULL)
+		SharedBoundMethod method = bound_object.cast<BoundMethod>();
+		if (!method.isNull())
 		{
-			SharedBoundMethod sbm = bound_method;
-			return Value::NewMethod(sbm);
+			return Value::NewMethod(method);
 		}
-		BoundList *bound_list = dynamic_cast<BoundList*>(bound_object.get());
-		if (bound_list!=NULL)
+		SharedBoundList list = bound_object.cast<BoundList>();
+		if (!list.isNull())
 		{
-			SharedBoundList sbl = bound_list;
-			return Value::NewList(sbl);
+			return Value::NewList(list);
 		}
 		return Value::NewObject(bound_object);
 	}
@@ -159,23 +155,22 @@
 		// in objective-c you can't alloc a C++ when an objective-c class 
 		// is instantiated
 		object = new SharedBoundObject(obj);
-		dispatch = nil;
-		key = k;
+		key = [[NSString alloc] initWithString:k];
 		context = ctx;
-		[key retain];
 	}
 	return self;
 }
 -(void)dealloc
 {
+	KR_DUMP_LOCATION
+	
 	[key release];
-	delete object;
-	context = nil;
-	if (dispatch!=nil)
+	if (object!=nil)
 	{
-		delete dispatch;
-		dispatch = nil;
+		delete object;
+		object = nil;
 	}
+	context = nil;
 	[super dealloc];
 }
 -(BOOL)isWrappedBoundObject
@@ -184,7 +179,7 @@
 }
 -(SharedPtr<BoundObject>)boundObject
 {
-	SharedPtr<BoundObject> o = object->get();
+	SharedPtr<BoundObject> o(*object);
 	return o;
 }
 -(NSString*)description
@@ -216,6 +211,9 @@
 }
 -(void)finalizeForWebScript
 {
+	KR_DUMP_LOCATION
+	NSLog(@"Finalize: %@, count=%d",key,[self retainCount]);
+	[self release]; // we can now release the reference that the JS layer held
 }
 - (void)setValue:(id)value forUndefinedKey:(NSString *)k
 {

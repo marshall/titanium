@@ -13,6 +13,7 @@ namespace ti
 	}
 	BoundMethodDispatch::~BoundMethodDispatch()
 	{
+		// KR_DUMP_LOCATION
 	}	
 	SharedValue BoundMethodDispatch::Call(ValueList args, Value *exception)
 	{

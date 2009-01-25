@@ -27,16 +27,16 @@ namespace ti
 	}
 	NetworkBinding::~NetworkBinding()
 	{
+		KR_DUMP_LOCATION
 	}
 	void NetworkBinding::_GetByHost(std::string hostname, SharedValue result)
 	{
-		HostBinding *binding = new HostBinding(hostname);
+		SharedPtr<HostBinding> binding = new HostBinding(hostname);
 		if (binding->IsInvalid())
 		{
 			throw Value::NewString("could not resolve address");
 		}
-		SharedBoundObject host = binding;
-		result->SetObject(host);
+		result->SetObject(binding);
 	}
 	void NetworkBinding::GetHostByAddress(const ValueList& args, SharedValue result)
 	{
@@ -50,13 +50,12 @@ namespace ti
 				// object, which we can just retrieve the ipaddress
 				// instance and resolving using it
 				IPAddress addr(b->GetAddress()->toString());
-				HostBinding *binding = new HostBinding(addr);
+				SharedPtr<HostBinding> binding = new HostBinding(addr);
 				if (binding->IsInvalid())
 				{
 					throw Value::NewString("could not resolve address");
 				}
-				SharedBoundObject host = binding;
-				result->SetObject(host);
+				result->SetObject(binding);
 				return;
 			}
 			else
@@ -86,18 +85,17 @@ namespace ti
 	}
 	void NetworkBinding::CreateIPAddress(const ValueList& args, SharedValue result)
 	{
-		IPAddressBinding *binding = new IPAddressBinding(args.at(0)->ToString());
+		SharedPtr<IPAddressBinding> binding = new IPAddressBinding(args.at(0)->ToString());
 		if (binding->IsInvalid())
 		{
 			throw Value::NewString("invalid address");
 		}
-		SharedBoundObject ip = binding;
-		result->SetObject(ip);
+		result->SetObject(binding);
 	}
 	void NetworkBinding::CreateTCPSocket(const ValueList& args, SharedValue result)
 	{
 		//TODO: check for args
-		SharedBoundObject tcp = new TCPSocketBinding(args.at(0)->ToString(), args.at(1)->ToInt());
+		SharedPtr<TCPSocketBinding> tcp = new TCPSocketBinding(args.at(0)->ToString(), args.at(1)->ToInt());
 		result->SetObject(tcp);
 	}
 	void NetworkBinding::OnConnectivityChange(const ValueList& args, SharedValue result)

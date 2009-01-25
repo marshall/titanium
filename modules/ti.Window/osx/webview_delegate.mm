@@ -86,6 +86,12 @@
 
 -(void)dealloc
 {
+	KR_DUMP_LOCATION
+	
+	// just for safety, remove our main JS key
+	NSString *tiKey = [NSString stringWithCString:GLOBAL_NS_VARNAME];
+	[windowJS removeWebScriptKey:tiKey];
+	
 	KR_DECREF(host);
 	[url release];
 	[super dealloc];
@@ -363,6 +369,8 @@
 {
 	TRACE(@"inject called");
 	
+	windowJS = windowScriptObject;
+	
 	SharedBoundObject ti = host->GetGlobalObject();
 	
 	
@@ -371,7 +379,7 @@
 	// [self wrap:windowScriptObject context:context forValue:value forKey:tiKey];
 
 	NSString *tiKey = [NSString stringWithCString:GLOBAL_NS_VARNAME];
-	WebScriptObject* tiJS = (WebScriptObject*)[windowScriptObject evaluateWebScript:[NSString stringWithFormat:@"var o = new Object; o.toString = function() { return '[%@ native]' }; o;",tiKey]];
+	WebScriptObject *tiJS = (WebScriptObject*)[windowScriptObject evaluateWebScript:[NSString stringWithFormat:@"var o = new Object; o.toString = function() { return '[%@ native]' }; o;",tiKey]];
 	[windowScriptObject setValue:tiJS forKey:tiKey];
 	SharedStringList properties = ti->GetPropertyNames();
 	for (size_t i = 0; i < properties->size(); i++)
@@ -487,18 +495,15 @@
 
 - (void)webViewShow:(WebView *)sender
 {
+	KR_DUMP_LOCATION
 	TRACE(@"webview_delegate::webViewShow = %x",self);
 	//TODO: so we need to deal with this at all?
 }
 
 
-// WebResourceLoadDelegate Methods
-#pragma mark -
-#pragma mark WebResourceLoadDelegate
-
 - (void)webViewClose:(WebView *)wv 
 {
-	TRACE(@"webview_delegate::webViewClose = %x",self);
+	KR_DUMP_LOCATION
 	[[wv window] close];
 	WindowConfig *config = [window config];
 	config->SetVisible(NO);
@@ -512,7 +517,7 @@
 
 - (void)webViewFocus:(WebView *)wv 
 {
-	TRACE(@"webview_delegate::webViewFocus = %x",self);
+	KR_DUMP_LOCATION
 	// [[TiController instance] activate:self];
 	[[wv window] makeKeyAndOrderFront:wv];
 }
@@ -520,7 +525,7 @@
 
 - (void)webViewUnfocus:(WebView *)wv 
 {
-	TRACE(@"webview_delegate::webViewUnfocus = %x",self);
+	KR_DUMP_LOCATION
 	if ([[wv window] isKeyWindow] || [[[wv window] attachedSheet] isKeyWindow]) 
 	{
 		[NSApp _cycleWindowsReversed:FALSE];
@@ -586,6 +591,10 @@
 {
 	return NO;
 }
+
+// WebResourceLoadDelegate Methods
+#pragma mark -
+#pragma mark WebResourceLoadDelegate
 
 - (id)webView:(WebView *)sender identifierForInitialRequest:(NSURLRequest *)request fromDataSource:(WebDataSource *)dataSource
 {

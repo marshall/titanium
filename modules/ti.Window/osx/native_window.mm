@@ -189,6 +189,9 @@
 }
 - (void)close
 {
+	KR_DUMP_LOCATION
+	
+	[webView close];
 	[super close];
 }
 - (void)setInitialWindow:(BOOL)yn
