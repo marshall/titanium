@@ -184,12 +184,14 @@ namespace ti
 	}
 	bool Win32Desktop::OpenApplication(std::string &name)
 	{
-		return false;
+		// this can actually open applications or documents (wordpad, notepad, file-test.txt, etc.)
+		long response = (long)ShellExecuteA(NULL, "open", name.c_str(), NULL, NULL, SW_SHOWNORMAL);
+		return (response > 32);
 	}
 	bool Win32Desktop::OpenURL(std::string &url)
 	{
 		long response = (long)ShellExecuteA(NULL, "open", url.c_str(), NULL, NULL, SW_SHOWNORMAL);
-		return (response > 0);
+		return (response > 32);
 	}
 	int Win32Desktop::GetSystemIdleTime()
 	{

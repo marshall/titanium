@@ -94,15 +94,19 @@
 			}
 			function openApp()
 			{
-				var name = prompt("which app?");
+				var name = document.getElementById("openApp_param1").value;
 				if (name)
 				{
-					Titanium.Desktop.openApplication(name);
+					var r = Titanium.Desktop.openApplication(name);
+
+					log("open app result = " + r);
 				}
 			}
 			function openURL()
 			{
-				Titanium.Desktop.openURL("http://titaniumapp.com");
+				var r = Titanium.Desktop.openURL("http://titaniumapp.com");
+
+				log("open url result = " + r);
 			}
 			function openURLEx()
 			{
@@ -149,7 +153,8 @@
 			<button onclick="chooseFileTypes()">Open File Dialog (JS or HTML files only)</button>
 		</div>
 		<div>
-			<button onclick="openApp()">Open Application</button>
+			<button onclick="openApp()">Open Application</button><br/>
+			which app?<input id="openApp_param1" size="75" value="wordpad" />
 		</div>
 		<div>
 			<button onclick="openURL()">Open URL</button>
