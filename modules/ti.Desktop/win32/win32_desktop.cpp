@@ -7,6 +7,8 @@
 
 #include <windows.h>
 #include <commdlg.h>
+#include <shellapi.h>
+#include <shlobj.h>
 #include <string>
 
 namespace ti
@@ -19,6 +21,48 @@ namespace ti
 	}
 	bool Win32Desktop::CreateShortcut(std::string &from, std::string &to)
 	{
+		HRESULT hResult;
+		IShellLink* psl;
+
+		if(from.length() == 0 || to.length() == 0) {
+			std::string ex = "Invalid arguments given to createShortcut()";
+
+			throw ex;
+		}
+
+		hResult = CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER, IID_IShellLink, (LPVOID*)&psl);
+
+		if(SUCCEEDED(hResult))
+		{
+			IPersistFile* ppf;
+
+			// set path to the shortcut target and add description
+			psl->SetPath(from.c_str());
+			psl->SetDescription("Link description goes here");
+
+			hResult = psl->QueryInterface(IID_IPersistFile, (LPVOID*) &ppf);
+
+			if(SUCCEEDED(hResult))
+			{
+				// ensure to ends with .lnk
+				to.append(".lnk");
+				WCHAR wsz[MAX_PATH];
+
+				// ensure string is unicode
+				if(MultiByteToWideChar(CP_ACP, 0, to.c_str(), -1, wsz, MAX_PATH))
+				{
+					// save the link
+					hResult = ppf->Save(wsz, TRUE);
+					ppf->Release();
+
+					if(SUCCEEDED(hResult))
+					{
+						return true;
+					}
+				}
+			}
+		}
+
 		return false;
 	}
 	SharedBoundList Win32Desktop::OpenFiles(SharedBoundObject props)

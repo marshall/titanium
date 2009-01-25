@@ -117,8 +117,9 @@
 			}
 			function createShortcut()
 			{
-				var from = prompt("where from?");
-				var to = prompt("where to?");
+				// alert, prompt etc not yet working in windows, so use input fields
+				var from = document.getElementById("createShortcut_param1").value;
+				var to = document.getElementById("createShortcut_param2").value;
 				var worked =Titanium.Desktop.createShortcut(from,to);
 				log("Worked? " + (worked?"you bet ya!":"nope..."));
 			}
@@ -157,7 +158,9 @@
 			<button onclick="openURLEx()">Open URL with no parameters (test exception)</button>
 		</div>
 		<div>
-			<button onclick="createShortcut()">Create Shortcut</button>
+			<button onclick="createShortcut()">Create Shortcut</button><br/>
+			from<input id="createShortcut_param1" size="75" value="test-file.txt" /><br/>
+			to<input id="createShortcut_param2" size="75" value="test-file-shortcut" />
 		</div>
 		<div id="log">
 		</div>
