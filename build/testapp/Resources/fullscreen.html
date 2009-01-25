@@ -1,0 +1,23 @@
+<html>
+<head>
+<script>
+	function toggleFullscreen()
+	{
+		try
+		{
+			var fs = Titanium.currentWindow.window.isFullscreen();
+			Titanium.api.log("fullscreen = "+fs);
+			Titanium.api.debug("fullscreen = "+fs);
+			Titanium.currentWindow.window.setFullscreen(!fs);
+		}
+		catch(e)
+		{
+			alert("exception: "+e);
+		}
+	}
+</script>
+</head>
+<body>
+	<button onclick="toggleFullscreen()">Toggle Fullscreen</button>
+</body>
+</html>

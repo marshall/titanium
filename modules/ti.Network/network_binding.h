@@ -14,12 +14,17 @@ namespace ti
 	class NetworkBinding : public StaticBoundObject
 	{
 	public:
-		NetworkBinding(BoundObject*);
+		NetworkBinding(SharedBoundObject);
 	protected:
 		virtual ~NetworkBinding();
 	private:
-		BoundObject *global;
-		void Create(const ValueList& args, SharedValue result);
+		SharedBoundObject global;
+		
+		void CreateIPAddress(const ValueList& args, SharedValue result);
+		void CreateTCPSocket(const ValueList& args, SharedValue result);
+		void _GetByHost(std::string host, SharedValue result);
+		void GetHostByName(const ValueList& args, SharedValue result);
+		void GetHostByAddress(const ValueList& args, SharedValue result);
 		void OnConnectivityChange(const ValueList& args, SharedValue result);
 	};
 }

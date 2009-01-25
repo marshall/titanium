@@ -3,10 +3,9 @@
  * see LICENSE in the root folder for details on the license.
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
-#import "../../ti.App/app_config.h"
 #import "webview_delegate.h"
+#import "app_config.h"
 #import "native_window.h"
-#import "osx_user_window.h"
 #import "objc_bound_object.h"
 
 #define TRACE  NSLog
@@ -68,7 +67,7 @@
 	{
 		window = win;
 		host = h;
-		KR_ADDREF(host);
+		KR_ADDREF(host); //TODO: move to sharedValue
 		webView = [window webView];
 		[self setup];
 		[webView setFrameLoadDelegate:self];
@@ -77,7 +76,10 @@
 		[webView setPolicyDelegate:self];
 		[webView setScriptDebugDelegate:self];
 		
-		TRACE(@"webview_delegate::initWithWindow = %x",win);
+		SharedBoundObject global = host->GetGlobalObject();
+		double version = global->Get("version")->ToDouble();
+		NSString *useragent = [NSString stringWithFormat:@"%s/%0.2f",PRODUCT_NAME,version];
+		[webView setApplicationNameForUserAgent:useragent];
 	}
 	return self;
 }
@@ -98,6 +100,7 @@
 
 -(void)closePrecedent
 {
+	//TODO:
 }
 
 - (NSURL *)url
@@ -314,17 +317,62 @@
     // Only report feedback for the main frame.
     if (frame == [sender mainFrame]) 
 	{
+		// set the title on the config in case they
+		// programatically set the title on the window
+		// so that it correctly is reflected in the config 
+		WindowConfig *config = [window config];
+		std::string t = std::string([title UTF8String]);
+		config->SetTitle(t);
 		[window setTitle:title];
     }
 }
-
+/* THIS IS THE RECURSIVE WRAPPING CODE -- IT SORTA WORKS BUT CAUSES CRASH ON EXIT
+- (void)wrap:(WebScriptObject*)scope context:(JSContextRef)context forValue:(SharedValue)value forKey:(NSString*)key
+{
+	if (value->IsObject())
+	{
+		SharedBoundObject obj = value->ToObject();
+		NSString *js = @"var obj = new Object(); obj";
+		WebScriptObject* newObject = (WebScriptObject*)[scope evaluateWebScript:js];
+		std::string parentkey([key UTF8String]);
+		SharedStringList properties = obj->GetPropertyNames();
+		for (size_t i = 0; i < properties->size(); i++)
+		{
+			SharedString skey = properties->at(i);
+			std::string _key = *skey;
+			if (_key == parentkey) continue;
+			NSLog(@"wrapping: %@.%s",key,_key.c_str());
+			SharedValue value = obj->Get(_key.c_str());
+			[self wrap:newObject context:context forValue:value forKey:[NSString stringWithCString:_key.c_str()]];
+		}
+		SharedValue v = obj->Get("toString");
+		if (v->IsUndefined())
+		{
+			WebScriptObject* toString = (WebScriptObject*)[scope evaluateWebScript:[NSString stringWithFormat:@"var f = function() { return '[%@ native]' }; f",key]];
+			[newObject setValue:toString forKey:@"toString"];
+		}
+		[scope setValue:newObject forKey:key];
+	}
+	else
+	{
+		id newobj = [ObjcBoundObject ValueToID:value key:key context:context];
+		[scope setValue:newobj forKey:key];
+	}
+}*/
 - (void)inject:(WebScriptObject *)windowScriptObject context:(JSContextRef)context
 {
+	TRACE(@"inject called");
+	
 	SharedBoundObject ti = host->GetGlobalObject();
+	
+	
+	// NSString *tiKey = [NSString stringWithCString:GLOBAL_NS_VARNAME];
+	// SharedValue value = Value::NewObject(ti);
+	// [self wrap:windowScriptObject context:context forValue:value forKey:tiKey];
+
 	NSString *tiKey = [NSString stringWithCString:GLOBAL_NS_VARNAME];
-	id newti = [windowScriptObject evaluateWebScript:[NSString stringWithFormat:@"%@ = new Object;",tiKey]];
-	KR_UNUSED(newti); //FIXME: release?
-	WebScriptObject* tiJS = [windowScriptObject valueForKey:tiKey];
+	WebScriptObject* tiJS = (WebScriptObject*)[windowScriptObject evaluateWebScript:[NSString stringWithFormat:@"var o = new Object; o.toString = function() { return '[%@ native]' }; o;",tiKey]];
+	[windowScriptObject setValue:tiJS forKey:tiKey];
 	SharedStringList properties = ti->GetPropertyNames();
 	for (size_t i = 0; i < properties->size(); i++)
 	{
@@ -337,14 +385,22 @@
 			NSString *k = [NSString stringWithCString:key.c_str()];
 			id wrapped = [ObjcBoundObject ValueToID:value key:k context:context];
 			[tiJS setValue:wrapped forKey:k];
-//			[wrapped release];
 		}
 		@catch(id ex)
 		{
 			NSLog(@"exception caught binding %@.%s => %@",tiKey,key.c_str(),ex);
 		}
 	}
-	//NOTE: don't release tiJS or newti
+	
+	// make the Titanium.currentWindow object
+	SharedBoundObject suw = [window userWindow];
+	SharedValue cwv = Value::NewObject(suw);
+	id cw = [ObjcBoundObject ValueToID:cwv key:@"currentWindow" context:context];
+	WebScriptObject* cwjs = (WebScriptObject*)[windowScriptObject evaluateWebScript:@"var o = new Object; o.toString = function() { return '[currentWindow native]' }; o;"];
+	[tiJS setValue:cwjs forKey:@"currentWindow"];
+	[cwjs setValue:cw forKey:@"window"];
+	
+	//NOTE: don't release tiJS or newti or cw
 	scriptCleared = YES;
 }
 
@@ -369,16 +425,12 @@
 		}
 		[self closePrecedent];
 		
-		// let the controller know we're open and ready
-		// [TiController documentOpened:self];
-
 		if (initialDisplay==NO)
 		{
 			initialDisplay=YES;
 			// cause the initial window to show since it was initially opened hidden
 			// so you don't get the nasty wide screen while content is loading
-			[self performSelector:@selector(show) withObject:nil afterDelay:.005];
-			
+			[window performSelector:@selector(frameLoaded) withObject:nil afterDelay:.005];
 		}
     }
 }
@@ -394,21 +446,19 @@
 			return;
 		}
 		NSString *err = [NSString stringWithFormat:@"Error loading URL: %@. %@", url,[error localizedDescription]];
-		//[TiController error:err];
 		TRACE(@"error: %@",err);
 		
 		// in this case we need to ensure that the window is showing if not initially shown
 		if (initialDisplay==NO)
 		{
 			initialDisplay=YES;
-			[self performSelector:@selector(show) withObject:nil afterDelay:.500];
+			[window performSelector:@selector(frameLoaded) withObject:nil afterDelay:.005];
 		}
     }
 }
 
 - (void)webView:(WebView *)sender didClearWindowObject:(WebScriptObject *)windowScriptObject forFrame:(WebFrame*)frame 
 {
-	TRACE(@"webview_delegate::didClearWindowObject = %x",self);
 	JSContextRef context = [frame globalContext];
 	[self inject:windowScriptObject context:context];
 }
@@ -438,8 +488,7 @@
 - (void)webViewShow:(WebView *)sender
 {
 	TRACE(@"webview_delegate::webViewShow = %x",self);
-    // id myDocument = [[NSDocumentController sharedDocumentController] documentForWindow:[sender window]];
-    //   [myDocument showWindows];
+	//TODO: so we need to deal with this at all?
 }
 
 
@@ -451,6 +500,9 @@
 {
 	TRACE(@"webview_delegate::webViewClose = %x",self);
 	[[wv window] close];
+	WindowConfig *config = [window config];
+	config->SetVisible(NO);
+	
 	if (inspector)
 	{
 		[inspector webViewClosed];
@@ -497,12 +549,15 @@
 
 - (BOOL)webViewIsResizable:(WebView *)wv 
 {
-	return [[wv window] showsResizeIndicator];
+	WindowConfig *config = [window config];
+	return config->IsResizable();
 }
 
 
 - (void)webView:(WebView *)wv setResizable:(BOOL)resizable; 
 {
+	WindowConfig *config = [window config];
+	config->SetResizable(resizable);
 	[[wv window] setShowsResizeIndicator:resizable];
 }
 
@@ -556,7 +611,7 @@
 
 - (void)webView:(WebView *)wv runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WebFrame *)frame 
 {
-	NSLog(@"alert = %@",message);
+	TRACE(@"alert = %@",message);
 	
 	NSRunInformationalAlertPanel(NSLocalizedString(@"JavaScript", @""),	// title
 								 message,								// message
@@ -606,29 +661,36 @@
 
 - (NSString *)webView:(WebView *)wv generateReplacementFile:(NSString *)path 
 {
+	NSLog(@"generateReplacementFile: %@",path);
 	return nil;
 }
 
 
 - (BOOL)webView:(WebView *)wv shouldBeginDragForElement:(NSDictionary *)element dragImage:(NSImage *)dragImage mouseDownEvent:(NSEvent *)mouseDownEvent mouseDraggedEvent:(NSEvent *)mouseDraggedEvent 
 {
+	NSLog(@"shouldBeginDragForElement");
 	return YES;
 }
 
 
 - (NSUInteger)webView:(WebView *)wv dragDestinationActionMaskForDraggingInfo:(id <NSDraggingInfo>)draggingInfo 
 {
+	NSLog(@"dragDestinationActionMaskForDraggingInfo");
 	return WebDragDestinationActionAny;
 }
 
 
 - (void)webView:(WebView *)webView willPerformDragDestinationAction:(WebDragDestinationAction)action forDraggingInfo:(id <NSDraggingInfo>)draggingInfo 
 {
+	NSLog(@"willPerformDragDestinationAction: %d",action);
+	NSPasteboard *pasteboard = [draggingInfo draggingPasteboard];
+	NSLog(@"pasteboard types: %@",[pasteboard types]);
 }
 
 
 - (NSUInteger)webView:(WebView *)wv dragSourceActionMaskForPoint:(NSPoint)point
 {
+	NSLog(@"dragSourceActionMaskForPoint");
 	return WebDragSourceActionAny;
 }
 

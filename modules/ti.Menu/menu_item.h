@@ -17,6 +17,7 @@ namespace ti
 
 	public:
 		MenuItem();
+		~MenuItem();
 
 		void SetMethod(const char *name, void (MenuItem::*method)(const ValueList&, SharedValue));
 
@@ -46,6 +47,9 @@ namespace ti
 		void _AddSeparator(const ValueList& args, SharedValue result);
 		void _AddItem(const ValueList& args, SharedValue result);
 		void _AddSubMenu(const ValueList& args, SharedValue result);
+
+		const char* GetLabel();
+		const char* GetIconURL();
 
 	private:
 		enum Type { SEP, ITEM, SUBMENU };

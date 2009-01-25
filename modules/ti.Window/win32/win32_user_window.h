@@ -71,8 +71,8 @@ public:
 	void SetBounds(Bounds bounds);
 	std::string GetTitle() { return config->GetTitle(); }
 	void SetTitle(std::string& title);
-	std::string GetUrl() { return config->GetURL(); }
-	void SetUrl(std::string& url);
+	std::string GetURL() { return config->GetURL(); }
+	void SetURL(std::string& url);
 	bool IsResizable() { return config->IsResizable(); }
 	void SetResizable(bool resizable);
 	bool IsMaximizable() { return config->IsMaximizable(); }
@@ -86,6 +86,8 @@ public:
 	double GetTransparency() { return config->GetTransparency(); }
 	void SetTransparency(double transparency);
 	void SetFullScreen(bool fullscreen);
+	void SetUsingChrome(bool chrome);
+	void SetMenu(SharedBoundList menu);
 
 };
 

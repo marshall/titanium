@@ -13,15 +13,19 @@ namespace ti
 		this->SetMethod("createAppMenu",&MenuBinding::CreateAppMenu);
 		this->SetMethod("createTrayMenu",&MenuBinding::CreateAppMenu);
 		this->SetMethod("createDockMenu",&MenuBinding::CreateDockMenu);
+		this->SetMethod("New",&MenuBinding::New);
 	}
 	MenuBinding::~MenuBinding()
 	{
 	}
-	void MenuBinding::CreateAppMenu(const ValueList& args, SharedValue result)
+	void MenuBinding::New(const ValueList& args, SharedValue result)
 	{
 		MenuItem* item = new MenuItem();
-		SharedBoundObject so = SharedBoundObject(item);
-		result->SetObject(so);
+		SharedBoundList so = SharedBoundList(item);
+		result->SetList(so);
+	}
+	void MenuBinding::CreateAppMenu(const ValueList& args, SharedValue result)
+	{
 	}
 	void MenuBinding::CreateTrayMenu(const ValueList& args, SharedValue result)
 	{

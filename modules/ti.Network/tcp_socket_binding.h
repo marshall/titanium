@@ -47,13 +47,23 @@ namespace ti
 		SocketReactor reactor;
 		Thread thread;
 		bool opened;
-		BoundMethod *callback;
+		SharedBoundMethod *onRead;
+		SharedBoundMethod *onWrite;
+		SharedBoundMethod *onTimeout;
+		SharedBoundMethod *onReadComplete;
 
 		void Connect(const ValueList& args, SharedValue result);
 		void Write(const ValueList& args, SharedValue result);
 		void Close(const ValueList& args, SharedValue result);
+		void IsClosed(const ValueList& args, SharedValue result);
+		void SetOnRead(const ValueList& args, SharedValue result);
+		void SetOnWrite(const ValueList& args, SharedValue result);
+		void SetOnTimeout(const ValueList& args, SharedValue result);
+		void SetOnReadComplete(const ValueList& args, SharedValue result);
 
 		void OnRead(const Poco::AutoPtr<ReadableNotification>& n);
+		void OnWrite(const Poco::AutoPtr<WritableNotification>& n);
+		void OnTimeout(const Poco::AutoPtr<TimeoutNotification>& n);
 	};
 }
 

@@ -9,8 +9,8 @@ require 'fileutils'
 
 VER = 0.1
 PLUGINS =
-  %w(api javascript ruby python
-    foo foojs foorb foopy
+  %w(api javascript 
+    foo foojs foorb foopy python ruby
     tiapp tiwindow tinetwork tifilesystem 
     timedia tidesktop timenu tigrowl tidatabase)
 NAME = 'test'
@@ -44,7 +44,7 @@ if OS=='osx'
 	FileUtils.rm_rf "/Library/Application Support/Titanium"
 end
 if OS=='linux'
-	FileUtils.rm_rf "~/Titanium"
+	FileUtils.rm_rf File.expand_path("~/Titanium")
 end
 if OS=='win32'
   FileUtils.rm_rf "c:/ProgramData/Titanium"  

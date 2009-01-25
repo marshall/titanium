@@ -4,28 +4,8 @@
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
 
-
-#ifdef OS_WIN32
-// A little disorganization; header include order is very sensitive in win32,
-// and the build breaks if this below the other OS_ defines
-#include "win32/win32_user_window.h"
-
-#endif
-
 #include "window_module.h"
-#include <iostream>
-
-#ifdef OS_LINUX
-#include "linux/window_module_linux.h"
-#include "url/app_url.h"
-#endif
-
-#ifdef OS_OSX
-#include "osx/preinclude.h"
-#include <WebKit/WebKit.h>
-#include "osx/window_module_osx.h"
-#include "osx/ti_app.h"
-#endif
+#include "window_binding.h"
 
 namespace ti
 {
@@ -35,9 +15,9 @@ namespace ti
 	{
 		std::cout << "Initializing ti.Window..." << std::endl;
 
-		#ifdef OS_OSX
+#ifdef OS_OSX
 		OSXInitialize();
-		#endif
+#endif
 
 		AppConfig *config = AppConfig::Instance();
 		if (config == NULL)
@@ -54,7 +34,12 @@ namespace ti
 
 		// add some titanium specific global info here
 		SharedBoundObject global = this->host->GetGlobalObject();
-
+		
+		// add the Titanium.Window module
+		SharedBoundObject win = new WindowBinding(this->host,global);
+		SharedValue winmodule = Value::NewObject(win);
+		global->Set("Window",winmodule);
+		
 		// version
 		SharedValue version = Value::NewDouble(0.2); // FIXME: for now this is hardcoded
 		global->Set("version",version);
@@ -67,6 +52,8 @@ namespace ti
 #elif defined(OS_OSX)
 		OSXUserWindow* window = new OSXUserWindow(this->host, main_window_config);
 		SharedValue platform = Value::NewString("osx");
+		NativeWindow* nw = window->GetNative();
+		[nw setInitialWindow:YES];
 #elif defined(OS_WIN32)
 		Win32UserWindow* window = new Win32UserWindow(this->host, main_window_config);
 		SharedValue platform = Value::NewString("win32");

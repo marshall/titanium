@@ -4,14 +4,12 @@
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
 #import "preinclude.h"
-#import <WebKit/WebKit.h>
 #import <Cocoa/Cocoa.h>
+#import <WebKit/WebKit.h>
 #import "webview_delegate.h"
-#import "../user_window.h"
-#import "../../ti.App/window_config.h"
+#import "window_config.h"
 
 @class WebViewDelegate;
-class OSXUserWindow;
 
 using namespace ti;
 
@@ -20,10 +18,18 @@ using namespace ti;
 	WindowConfig* config;
 	WebView* webView;
 	WebViewDelegate* delegate;
+	BOOL requiresDisplay;
+	SharedBoundObject* userWindow;
+	CGDisplayFadeReservationToken tok;  /** Fade out/in token */
 }
-- (void)setupDecorations:(WindowConfig*)config host:(Host*)h;
+- (void)setupDecorations:(WindowConfig*)config host:(Host*)h userwindow:(UserWindow*)uw;
 - (void)setTransparency:(double)transparency;
 - (void)setFullScreen:(BOOL)yn;
+- (void)close;
+- (void)open;
+- (void)frameLoaded;
 - (WebView*)webView;
 - (WindowConfig*)config;
+- (SharedBoundObject)userWindow;
+- (void)setInitialWindow:(BOOL)yn;
 @end

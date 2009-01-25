@@ -13,7 +13,7 @@ namespace ti {
 
 class Window : public kroll::StaticBoundObject {
 	public:
-		Window(UserWindow* window);
+		Window(SharedBoundObject window);
 	protected:
 		~Window() {}
 	private:

@@ -3,12 +3,14 @@
  * see LICENSE in the root folder for details on the license. 
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
+#include "window.h"
 
-#include "window_module.h"
-
-using namespace ti;
-
-Window::Window(UserWindow* window) : kroll::StaticBoundObject() {
-    this->SetObject("currentWindow", window);
+namespace ti
+{
+	Window::Window(SharedBoundObject window) : kroll::StaticBoundObject() 
+	{
+		SharedValue w = Value::NewObject(window);
+		this->Set("window",w);
+	}
 }
 

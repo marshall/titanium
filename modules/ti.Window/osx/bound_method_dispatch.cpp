@@ -20,6 +20,10 @@ namespace ti
 		{
 			return method->Call(args);
 		}
+		catch (SharedValue &e)
+		{
+			exception->SetString(e->ToString());
+		}
 		catch (std::exception &e)
 		{
 			exception->SetString(e.what());

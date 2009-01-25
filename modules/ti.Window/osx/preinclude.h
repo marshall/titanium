@@ -7,26 +7,12 @@
 #ifndef TI_OSX_PREINCLUDE
 #define TI_OSX_PREINCLUDE
 
-/*
-#if __LP64__
-	#define NSInteger long
-	#define NSUInteger unsigned long
-#else
-	#define NSInteger int
-	#define NSUInteger unsigned int
-#endif
-
-#ifdef BUILDING_ON_TIGER
-typedef int WebNSInteger;
-typedef unsigned int WebNSUInteger;
-#else
-typedef NSInteger WebNSInteger;
-typedef NSUInteger WebNSUInteger;
-#endif
-*/
-
 #import <kroll/kroll.h>
-#import "../window_module.h"
 #import "javascript_module.h"
+
+namespace ti
+{
+	class UserWindow;
+}
 
 #endif
