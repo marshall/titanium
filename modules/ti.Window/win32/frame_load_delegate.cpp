@@ -22,32 +22,29 @@ Win32FrameLoadDelegate::windowScriptObjectAvailable (
 		IWebView *webView, JSContextRef context, JSObjectRef windowScriptObject)
 {
 	JSObjectRef global_object = JSContextGetGlobalObject(context);
-	kroll::Host* tihost = window->GetHost();
+	Host* tihost = window->GetHost();
 
-	// Bind all child objects to global context
-	SharedPtr<StaticBoundObject> global_tibo = tihost->GetGlobalObject();
-	SharedPtr<StaticBoundObject> tiObject = new StaticBoundObject();
+	// Produce a delegating object to represent the top-level
+	// Titanium object. When a property isn't found in this object
+	// it will look for it in global_tibo.
+	SharedBoundObject global_tibo = tihost->GetGlobalObject();
+	BoundObject* ti_object = new DelegateStaticBoundObject(global_tibo);
+	SharedBoundObject shared_ti_obj = SharedBoundObject(ti_object);
 
-	SharedStringList prop_names = global_tibo->GetPropertyNames();
-	for (size_t i = 0; i < prop_names->size(); i++)
-	{
-		SharedString name = prop_names->at(i);
-		SharedValue value = global_tibo->Get(name->c_str());
-		tiObject->Set(name->c_str(), value);
-	}
+	// Set user window into the Titanium object
+	SharedBoundObject* shared_user_window = new SharedBoundObject(window);
+	SharedValue user_window_val = Value::NewObject(*shared_user_window);
+	BoundObject *current_window = new StaticBoundObject();
+	SharedBoundObject shared_current_window(current_window);
+	shared_current_window->Set("window", user_window_val);
 
-	// set user window into the Titanium object
-	SharedBoundObject w = this->window;
-	SharedValue user_window_val = Value::NewObject(w);
-	SharedValue tiWindow = tiObject->Get("Window");
+	SharedValue current_window_val = Value::NewObject(shared_current_window);
+	ti_object->Set("currentWindow", current_window_val);
 
-	if (!tiWindow.isNull() && tiWindow->IsObject())
-		tiWindow->ToObject()->Set("currentWindow", user_window_val);
-
-	// place Titanium object into the window's global object
-	SharedBoundObject global_bound_object = new KJSBoundObject(context, global_object);
-	SharedValue tiObjectValue = Value::NewObject(tiObject);
-	global_bound_object->Set(GLOBAL_NS_VARNAME, tiObjectValue);
+	// Place the Titanium object into the window's global object
+	BoundObject *global_bound_object = new KJSBoundObject(context, global_object);
+	SharedValue ti_object_value = Value::NewObject(shared_ti_obj);
+	global_bound_object->Set(GLOBAL_NS_VARNAME, ti_object_value);
 
 	return S_OK;
 }
