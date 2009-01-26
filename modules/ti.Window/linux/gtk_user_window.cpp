@@ -30,6 +30,11 @@ GtkUserWindow::~GtkUserWindow()
 		this->gtk_window = NULL;
 		this->web_view = NULL;
 	}
+
+	if (this->menu_wrapper != NULL)
+	{
+		delete menu_wrapper;
+	}
 }
 
 void GtkUserWindow::Open() {
@@ -83,7 +88,7 @@ void GtkUserWindow::Open() {
 			gtk_widget_show_all(window);
 		}
 
-		if (this->config->IsFullscreen())
+		if (this->config->IsFullScreen())
 		{
 			gtk_window_fullscreen(this->gtk_window);
 		}
@@ -127,6 +132,9 @@ static void window_object_cleared_cb (WebKitWebView* web_view,
                                       JSObjectRef window_object,
                                       gpointer data) {
 
+	JSContextGroupRef group = JSContextGetGroup(context);
+	KJSUtil::RegisterGlobalContext(group, context);
+
 	JSObjectRef global_object = JSContextGetGlobalObject(context);
 	GtkUserWindow* user_window = (GtkUserWindow*) data;
 	Host* tihost = user_window->GetHost();
@@ -138,10 +146,21 @@ static void window_object_cleared_cb (WebKitWebView* web_view,
 	BoundObject* ti_object = new DelegateStaticBoundObject(global_tibo);
 	SharedBoundObject shared_ti_obj = SharedBoundObject(ti_object);
 
-	// Set user window into the Titanium object
-	SharedBoundObject* shared_user_window = new SharedBoundObject(user_window);
-	SharedValue user_window_val = Value::NewObject(*shared_user_window);
-	ti_object->Set("currentWindow", user_window_val);
+	SharedValue window_api_value = ti_object->Get("Window");
+	if (window_api_value->IsObject())
+	{
+		// Create a delegate object for the Window API for currentWindow
+		SharedBoundObject window_api = window_api_value->ToObject();
+		BoundObject* delegate_window_api = new DelegateStaticBoundObject(window_api);
+		SharedBoundObject* shared_user_window = new SharedBoundObject(user_window);
+		SharedValue user_window_val = Value::NewObject(*shared_user_window);
+		delegate_window_api->Set("currentWindow", user_window_val);
+		ti_object->Set("Window", Value::NewObject(delegate_window_api));
+	}
+	else
+	{
+		std::cerr << "Could not find Window API point!" << std::endl;
+	}
 
 	// Place the Titanium object into the window's global object
 	BoundObject *global_bound_object = new KJSBoundObject(context, global_object);
@@ -168,7 +187,7 @@ bool GtkUserWindow::IsUsingScrollbars() {
 }
 
 bool GtkUserWindow::IsFullScreen() {
-	return this->config->IsFullscreen();
+	return this->config->IsFullScreen();
 }
 
 std::string GtkUserWindow::GetId() {
@@ -383,7 +402,7 @@ void GtkUserWindow::SetMenu(SharedBoundList menu)
 		delete this->menu_wrapper;
 	}
 
-	this->menu_wrapper = new GtkMenuWrapper(menu);
+	this->menu_wrapper = new GtkMenuWrapper(menu, this->GetHost()->GetGlobalObject());
 	GtkWidget* gtk_menu_bar = this->menu_wrapper->GetMenuBar();
 	gtk_box_pack_start(GTK_BOX(this->vbox), gtk_menu_bar, FALSE, FALSE, 2);
 	gtk_box_reorder_child(GTK_BOX(this->vbox), gtk_menu_bar, 0);

@@ -3,12 +3,12 @@
 :name: titanium
 :licenses: [6]
 :releases:
-		:titanium:
-      :win32:
-        :version: "0.2"
-      :osx:
-        :version: "0.2"
-      :linux:
-        :version: "0.2"
-      :project:
-        :version: "0.2"
+  :titanium:
+    :win32:
+      :version: "0.2"
+    :osx:
+      :version: "0.2"
+    :linux:
+      :version: "0.2"
+    :project:
+      :version: "0.2"

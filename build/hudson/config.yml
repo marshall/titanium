@@ -1,0 +1,14 @@
+---
+:version: "0.2.<%= TITANIUM_REVISION %>"
+:name: titanium
+:licenses: [6]
+:releases:
+  :titanium:
+    :win32:
+      :version: "0.2.<%= TITANIUM_REVISION %>"
+    :osx:
+      :version: "0.2.<%= TITANIUM_REVISION %>"
+    :linux:
+      :version: "0.2.<%= TITANIUM_REVISION %>"
+    :project:
+      :version: "0.2.<%= TITANIUM_REVISION %>"

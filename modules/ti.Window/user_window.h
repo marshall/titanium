@@ -139,4 +139,3 @@ class UserWindow : public kroll::StaticBoundObject {
 
 }
 #endif
-

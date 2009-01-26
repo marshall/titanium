@@ -6,15 +6,18 @@
  */
 #include <kroll/kroll.h>
 #include "gtk_menu_wrapper.h"
+#include <cstring>
 
 namespace ti
 {
 
-	GtkMenuWrapper::GtkMenuWrapper(SharedBoundList root_item)
+	void menu_callback(gpointer data);
+
+	GtkMenuWrapper::GtkMenuWrapper(SharedBoundList root_item, SharedBoundObject global)
 	{
+		this->global = global;
 		this->gtk_menu_bar = gtk_menu_bar_new ();
 		this->AddChildrenToMenu(root_item, gtk_menu_bar);
-
 	}
 
 	GtkMenuWrapper::~GtkMenuWrapper()
@@ -58,11 +61,26 @@ namespace ti
 	GtkWidget* GtkMenuWrapper::ItemFromValue(SharedBoundList menu_item)
 	{
 		const char* label = ItemGetStringProp(menu_item, "label");
-		//const char* icon_url = ItemGetStringProp(menu_item, "iconURL");
+		const char* icon_url = ItemGetStringProp(menu_item, "iconURL");
+		SharedValue icon_val = this->GetIconPath(icon_url);
 		SharedValue callback_val = menu_item->Get("callback");
 
-		printf("label: %s\n", label);
-		GtkWidget* gtk_item = gtk_menu_item_new_with_label(label);
+		GtkWidget* gtk_item;
+		if (GtkMenuWrapper::ItemIsSeparator(menu_item))
+		{
+			gtk_item = gtk_separator_menu_item_new();
+		}
+		else if (!icon_val->IsString())
+		{
+			gtk_item = gtk_menu_item_new_with_label(label);
+		}
+		else
+		{
+			gtk_item = gtk_image_menu_item_new_with_label(label);
+			GtkWidget* image = gtk_image_new_from_file(icon_val->ToString());
+			gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(gtk_item), image);
+		}
+
 		if (callback_val->IsMethod())
 		{
 			// we need to do our own memory management here because
@@ -71,24 +89,23 @@ namespace ti
 			this->callbacks.push_back(meth);
 
 			g_signal_connect_swapped(
-			    G_OBJECT (gtk_item), "clicked",
-			    G_CALLBACK(GtkMenuWrapper::MenuCallback), 
-			    (gpointer) &meth);
+			    G_OBJECT (gtk_item), "activate",
+			    G_CALLBACK(menu_callback), 
+			    (gpointer) new SharedBoundMethod(meth));
 		}
 
 		return gtk_item;
 	}
 
-	void GtkMenuWrapper::MenuCallback(gpointer *data)
+	void menu_callback(gpointer data)
 	{
 		SharedBoundMethod* shared_meth = (SharedBoundMethod*) data;
-		BoundMethod* meth = shared_meth->get();
 
 		// TODO: Handle exceptions in some way
 		try
 		{
 			ValueList args;
-			meth->Call(args);
+			shared_meth->get()->Call(args);
 		}
 		catch(...)
 		{
@@ -108,6 +125,17 @@ namespace ti
 		return result->IsBool() && result->ToBool();
 	}
 
+	bool GtkMenuWrapper::ItemIsSeparator(SharedBoundList item)
+	{
+		SharedBoundMethod sep_test = item->Get("isSeparator")->ToMethod();
+		if (sep_test.isNull())
+			return false;
+
+		ValueList args;
+		SharedValue result = sep_test->Call(args);
+		return result->IsBool() && result->ToBool();
+	}
+
 	const char* GtkMenuWrapper::ItemGetStringProp(SharedBoundList item, const char* prop_name)
 	{
 		SharedValue prop = item->Get(prop_name);
@@ -117,5 +145,23 @@ namespace ti
 			return "";
 	}
 
+	SharedValue GtkMenuWrapper::GetIconPath(const char *url)
+	{
+		if (!strcmp(url, ""))
+			return Value::Undefined;
+
+		SharedValue app_obj = this->global->Get("App");
+		if (!app_obj->IsObject())
+			return Value::Undefined;
+
+		SharedValue meth_val = app_obj->ToObject()->Get("appURLToPath");
+		if (!meth_val->IsMethod())
+			return Value::Undefined;
+
+		SharedBoundMethod meth = meth_val->ToMethod();
+		ValueList args;
+		args.push_back(Value::NewString(url));
+		return meth->Call(args);
+	}
 
 }

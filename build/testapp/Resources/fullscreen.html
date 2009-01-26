@@ -5,6 +5,9 @@
 	{
 		try
 		{
+			var cw = Titanium.currentWindow;
+			Titanium.api.log("currentWindow="+cw);
+			Titanium.api.log("window="+cw.window);
 			var fs = Titanium.currentWindow.window.isFullscreen();
 			Titanium.api.log("fullscreen = "+fs);
 			Titanium.api.debug("fullscreen = "+fs);

@@ -266,8 +266,6 @@ void UserWindow::get_bounds_cb(const kroll::ValueList& args, kroll::SharedValue 
 	b->Set("width", kroll::Value::NewInt(bounds.width));
 	b->Set("height", kroll::Value::NewInt(bounds.height));
 	result->SetObject(b);
-
-	//KR_DECREF(b);
 }
 
 void UserWindow::set_bounds_cb(const kroll::ValueList& args, kroll::SharedValue result)

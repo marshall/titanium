@@ -35,6 +35,13 @@
 				return f.isSymbolicLink();
 			}
 
+			tests.resolve = function(params) {
+				var f = Titanium.Filesystem.getFile(params[0]);
+				var r = f.resolve(params[1]);
+
+				return r;
+			}
+			
 			tests.exists = function(params) {
 				var f = Titanium.Filesystem.getFile(params[0]);
 
@@ -430,6 +437,7 @@
 				<option value="isDirectory">isDirectory</option>
 				<option value="isSymbolicLink">isSymbolicLink</option>
 				<option value="isHidden">isHidden</option>
+				<option value="resolve">resolve</option>
 				<option value="exists">exists</option>
 				<option value="size">size</option>
 				<option value="spaceAvailable">spaceAvailable</option>
@@ -498,6 +506,17 @@
 			<div class="params">
 				<table>
 					<tr><td>name</td><td><input id="isSymbolicLink_param1" class="param" size="50" value="c:\dev\TI.FS.Test\test.txt" /></td></tr>
+				</table>
+			</div>
+		</div>
+		<div id="test_resolve" class="test">
+			<div class="memberInfo">
+				File File.resolve(path)
+			</div>
+			<div class="params">
+				<table>
+					<tr><td>dir to resolve from</td><td><input id="resolve_param1" class="param" size="50" value="c:\dev\TI.FS.Test\" /></td></tr>
+					<tr><td>path to resolve</td><td><input id="resolve_param2" class="param" size="50" value="resolved-file.txt" /></td></tr>
 				</table>
 			</div>
 		</div>

@@ -19,29 +19,34 @@ TITANIUM_TRANSPORT = S3Transport.new(DISTRO_BUCKET, TITANIUM_CONFIG)
 TITANIUM_MANIFEST = TITANIUM_TRANSPORT.manifest
 TITANIUM_CONFIG[:releases] = build_config(TITANIUM_CONFIG,TITANIUM_MANIFEST)
 merge_config(TITANIUM_CONFIG)
-
+thisdir = File.expand_path(File.dirname(__FILE__))
+TITANIUM_MODULES = %w(tiapp tidatabase tidesktop tifilesystem tigrowl timedia timenu tinetwork tiwindow)
 
 namespace :titanium do
 
-  namespace :modules do
-    
+  task :modules do
+    system "scons"
+    TITANIUM_MODULES.each do |mod|
+      mod.strip!
+      package_module(mod, File.join(thisdir, 'build', platform_string), "0.1", "titanium-module-#{mod}-0.1.zip")
+    end
   end
   
-  require File.join(TITANIUM_DIR,'project','build.rb')
-
+  #require File.join(TITANIUM_DIR,'project','build.rb')
+  
   task :dev do
     Rake::Task["service:titanium"].invoke
-    Rake::Task["titanium:runtime:#{platform_string}"].invoke
-    Rake::Task["titanium:project"].invoke
+    Rake::Task["titanium:modules"].invoke
+    #Rake::Task["titanium:project"].invoke
 
     ts = get_config(:service,:titanium)
     system "app install:service #{ts[:output_filename]} --force"
     
-    tp = get_config(:titanium,:project)
-    system "app install:titanium #{tp[:output_filename]} --force"
+    #tp = get_config(:titanium,:project)
+    #system "app install:titanium #{tp[:output_filename]} --force"
     
-    tr = get_config(:titanium,platform_string.to_sym)
-    system "app install:titanium #{tr[:output_filename]} --force"
+    #tr = get_config(:titanium,platform_string.to_sym)
+    #system "app install:titanium #{tr[:output_filename]} --force"
   end
 
   

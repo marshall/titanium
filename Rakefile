@@ -19,4 +19,3 @@ APPC_SDK_DIR = File.expand_path(ENV['APPC_SDK'] || File.join(TITANIUM_ROOT_DIR,'
 
 # use the build infrastructure from the SDK
 load "#{APPC_SDK_DIR}/Rakefile"
-

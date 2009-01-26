@@ -28,6 +28,7 @@ namespace ti
 		this->SetMethod("isHidden",&File::IsHidden);
 		this->SetMethod("isSymbolicLink",&File::IsSymbolicLink);
 
+		this->SetMethod("resolve",&File::Resolve);
 		this->SetMethod("write",&File::Write);
 		this->SetMethod("read",&File::Read);
 		this->SetMethod("readLine",&File::ReadLine);
@@ -109,6 +110,23 @@ namespace ti
 			Poco::File file(this->filename);
 			bool isLink = file.isLink();
 			result->SetBool(isLink);
+		}
+		catch (Poco::Exception& exc)
+		{
+			throw exc.displayText();
+		}
+	}
+	void File::Resolve(const ValueList& args, SharedValue result)
+	{
+		try
+		{
+			std::string pathToResolve = args.at(0)->ToString();
+
+			Poco::Path path(this->filename);
+			path.resolve(pathToResolve);
+
+			ti::File* file = new ti::File(path.toString());
+			result->SetObject(file);
 		}
 		catch (Poco::Exception& exc)
 		{
@@ -343,7 +361,8 @@ namespace ti
 
 				for(size_t i = 0; i < files.size(); i++)
 				{
-					SharedValue value = Value::NewString(files.at(i));
+					ti::File* file = new ti::File(files.at(i));
+					SharedValue value = Value::NewObject((SharedBoundObject) file);
 					fileList->Append(value);
 				}
 
@@ -366,7 +385,8 @@ namespace ti
 		{
 			Poco::Path path(this->filename);
 
-			result->SetString(path.parent().toString().c_str());
+			ti::File* file = new ti::File(path.parent().toString());
+			result->SetObject(file);
 		}
 		catch (Poco::Exception& exc)
 		{

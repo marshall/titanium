@@ -11,6 +11,10 @@
 #include "window_module.h"
 #include "window_config.h"
 
+#ifdef OS_WIN32
+#undef CreateWindow
+#endif
+
 // this is the code that needs to be executed once the window has bound
 // into its window frame the JS binding code for the top level Titanium
 // objects
@@ -32,7 +36,6 @@ namespace ti
 		SharedBoundObject global;
 
 		void CreateWindow(const ValueList& args, SharedValue result);
-		
 		SharedBoundObject CreateWindow(UserWindow *,SharedBoundObject properties);
 	};
 }

@@ -21,11 +21,34 @@
 				html+="</ul>";
 				el.innerHTML = html;
 			}
+			function log(s)
+			{
+				var el = document.getElementById("log");
+
+				el.innerHTML = s;
+			}
 			function chooseFiles()
 			{
 				var result = Titanium.Desktop.openFiles();
 				debug(result);
-				alert('You chose: '+result.length+' files');
+				log('You chose: '+result.length+' files');
+			}
+			function chooseFilesWithPath()
+			{
+				var result = Titanium.Desktop.openFiles({
+					path: 'c:\\windows'
+				});
+				debug(result);
+				log('You chose: '+result.length+' files');
+			}
+			function chooseFilesWithPathAndFilename()
+			{
+				var result = Titanium.Desktop.openFiles({
+					path: 'c:\\windows',
+					filename: 'notepad.exe'
+				});
+				debug(result);
+				log('You chose: '+result.length+' files');
 			}
 			function chooseDirs()
 			{
@@ -34,7 +57,7 @@
 					files:false
 				});
 				debug(result);
-				alert('You chose: '+result.length+' files');
+				log('You chose: '+result.length+' files');
 			}
 			function chooseDirsAndFiles()
 			{
@@ -43,7 +66,17 @@
 					files:true
 				});
 				debug(result);
-				alert('You chose: '+result.length+' files');
+				log('You chose: '+result.length+' files');
+			}
+			function chooseMultipleFiles()
+			{
+				var result = Titanium.Desktop.openFiles({
+					directories:false,
+					files:true,
+					multiple:true
+				});
+				debug(result);
+				log('You chose: '+result.length+' files');
 			}
 			function chooseMultiple()
 			{
@@ -53,7 +86,7 @@
 					multiple:true
 				});
 				debug(result);
-				alert('You chose: '+result.length+' files');
+				log('You chose: '+result.length+' files');
 			}
 			function chooseFileTypes()
 			{
@@ -63,22 +96,27 @@
 					multiple:true,
 					types:[
 						'js','html'
-					]
+					],
+					typesDescription: 'Web Files'
 				});
 				debug(result);
-				alert('You chose: '+result.length+' files');
+				log('You chose: '+result.length+' files');
 			}
 			function openApp()
 			{
-				var name = prompt("which app?");
+				var name = document.getElementById("openApp_param1").value;
 				if (name)
 				{
-					Titanium.Desktop.openApplication(name);
+					var r = Titanium.Desktop.openApplication(name);
+
+					log("open app result = " + r);
 				}
 			}
 			function openURL()
 			{
-				Titanium.Desktop.openURL("http://titaniumapp.com");
+				var r = Titanium.Desktop.openURL("http://titaniumapp.com");
+
+				log("open url result = " + r);
 			}
 			function openURLEx()
 			{
@@ -88,15 +126,16 @@
 				}
 				catch (e)
 				{
-					alert("exception: "+e);
+					log("exception: "+e);
 				}
 			}
 			function createShortcut()
 			{
-				var from = prompt("where from?");
-				var to = prompt("where to?");
+				// alert, prompt etc not yet working in windows, so use input fields
+				var from = document.getElementById("createShortcut_param1").value;
+				var to = document.getElementById("createShortcut_param2").value;
 				var worked =Titanium.Desktop.createShortcut(from,to);
-				alert("Worked? " + (worked?"you bet ya!":"nope..."));
+				log("Worked? " + (worked?"you bet ya!":"nope..."));
 			}
 		</script>
 	</head>
@@ -106,19 +145,29 @@
 			<button onclick="chooseFiles()">Open File Dialog (default)</button>
 		</div>
 		<div>
+			<button onclick="chooseFilesWithPath()">Open File Dialog (with path)</button>
+		</div>
+		<div>
+			<button onclick="chooseFilesWithPathAndFilename()">Open File Dialog (with path & filename)</button>
+		</div>
+		<div>
 			<button onclick="chooseDirs()">Open File Dialog (directories only)</button>
 		</div>
 		<div>
 			<button onclick="chooseDirsAndFiles()">Open File Dialog (directories+files)</button>
 		</div>
 		<div>
-			<button onclick="chooseMultiple()">Open File Dialog (multiple selection)</button>
+			<button onclick="chooseMultipleFiles()">Open File Dialog (multiple files)</button>
+		</div>
+		<div>
+			<button onclick="chooseMultiple()">Open File Dialog (multiple files and directories)</button>
 		</div>
 		<div>
 			<button onclick="chooseFileTypes()">Open File Dialog (JS or HTML files only)</button>
 		</div>
 		<div>
-			<button onclick="openApp()">Open Application</button>
+			<button onclick="openApp()">Open Application</button><br/>
+			which app?<input id="openApp_param1" size="75" value="wordpad" />
 		</div>
 		<div>
 			<button onclick="openURL()">Open URL</button>
@@ -127,7 +176,11 @@
 			<button onclick="openURLEx()">Open URL with no parameters (test exception)</button>
 		</div>
 		<div>
-			<button onclick="createShortcut()">Create Shortcut</button>
+			<button onclick="createShortcut()">Create Shortcut</button><br/>
+			from<input id="createShortcut_param1" size="75" value="test-file.txt" /><br/>
+			to<input id="createShortcut_param2" size="75" value="test-file-shortcut" />
+		</div>
+		<div id="log">
 		</div>
 		<div id="debug">
 		</div>
