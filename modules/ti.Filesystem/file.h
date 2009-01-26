@@ -82,6 +82,17 @@ namespace ti
 			 */
 			void IsSymbolicLink(const ValueList& args, SharedValue result);
 			/**
+			 * Function: Resolve
+			 *   resolves a given relative path against this File
+			 *
+			 * Parameters:
+			 *   path - absolute or relative path to resolve
+			 *
+			 * Returns:
+			 *   a new File object that represents the resolved path
+			 */
+			void Resolve(const ValueList& args, SharedValue result);
+			/**
 			 * Function: Write
 			 *   writes a string of text to a file
 			 *
