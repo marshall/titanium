@@ -21,6 +21,9 @@ HRESULT STDMETHODCALLTYPE
 Win32FrameLoadDelegate::windowScriptObjectAvailable (
 		IWebView *webView, JSContextRef context, JSObjectRef windowScriptObject)
 {
+	JSContextGroupRef group = JSContextGetGroup(context);
+	KJSUtil::RegisterGlobalContext(group, (JSGlobalContextRef) context);
+
 	JSObjectRef global_object = JSContextGetGlobalObject(context);
 	Host* tihost = window->GetHost();
 
