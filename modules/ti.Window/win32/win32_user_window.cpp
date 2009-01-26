@@ -16,13 +16,13 @@ using namespace ti;
 bool Win32UserWindow::ole_initialized = false;
 
 static void* SetWindowUserData(HWND hwnd, void* user_data) {
-  return
-      reinterpret_cast<void*>(SetWindowLongPtr(hwnd, GWLP_USERDATA,
-          reinterpret_cast<LONG_PTR>(user_data)));
+	return
+		reinterpret_cast<void*>(SetWindowLongPtr(hwnd, GWLP_USERDATA,
+			reinterpret_cast<LONG_PTR>(user_data)));
 }
 
 static void* GetWindowUserData(HWND hwnd) {
-  return reinterpret_cast<void*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
+	return reinterpret_cast<void*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
 }
 
 /*static*/
@@ -106,9 +106,9 @@ Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config)
 
 	Win32UserWindow::RegisterWindowClass(win32_host->GetInstanceHandle());
 	window_handle = CreateWindow(windowClassName, "Titanium Application",
-            WS_OVERLAPPEDWINDOW,
-            CW_USEDEFAULT, 0, CW_USEDEFAULT, 0,
-            NULL, NULL, win32_host->GetInstanceHandle(), NULL);
+			WS_OVERLAPPEDWINDOW,
+			CW_USEDEFAULT, 0, CW_USEDEFAULT, 0,
+			NULL, NULL, win32_host->GetInstanceHandle(), NULL);
 
 	if (window_handle == NULL) {
 		std::cout << "Error Creating Window: " << GetLastError() << std::endl;
@@ -181,9 +181,9 @@ Win32UserWindow::~Win32UserWindow()
 
 void Win32UserWindow::ResizeSubViews()
 {
-    RECT rcClient;
-    GetClientRect(window_handle, &rcClient);
-    MoveWindow(view_window_handle, 0, 0, rcClient.right, rcClient.bottom, TRUE);
+	RECT rcClient;
+	GetClientRect(window_handle, &rcClient);
+	MoveWindow(view_window_handle, 0, 0, rcClient.right, rcClient.bottom, TRUE);
 }
 
 void Win32UserWindow::Hide() {
