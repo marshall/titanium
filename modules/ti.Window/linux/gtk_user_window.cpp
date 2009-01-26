@@ -146,10 +146,21 @@ static void window_object_cleared_cb (WebKitWebView* web_view,
 	BoundObject* ti_object = new DelegateStaticBoundObject(global_tibo);
 	SharedBoundObject shared_ti_obj = SharedBoundObject(ti_object);
 
-	// Set user window into the Titanium object
-	SharedBoundObject* shared_user_window = new SharedBoundObject(user_window);
-	SharedValue user_window_val = Value::NewObject(*shared_user_window);
-	ti_object->Set("currentWindow", user_window_val);
+	SharedValue window_api_value = ti_object->Get("Window");
+	if (window_api_value->IsObject())
+	{
+		// Create a delegate object for the Window API for currentWindow
+		SharedBoundObject window_api = window_api_value->ToObject();
+		BoundObject* delegate_window_api = new DelegateStaticBoundObject(window_api);
+		SharedBoundObject* shared_user_window = new SharedBoundObject(user_window);
+		SharedValue user_window_val = Value::NewObject(*shared_user_window);
+		delegate_window_api->Set("currentWindow", user_window_val);
+		ti_object->Set("Window", Value::NewObject(delegate_window_api));
+	}
+	else
+	{
+		std::cerr << "Could not find Window API point!" << std::endl;
+	}
 
 	// Place the Titanium object into the window's global object
 	BoundObject *global_bound_object = new KJSBoundObject(context, global_object);
