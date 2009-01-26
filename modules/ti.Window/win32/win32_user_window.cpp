@@ -369,7 +369,21 @@ void Win32UserWindow::SetTransparency(double transparency) {
 }
 
 void Win32UserWindow::SetFullScreen(bool fullscreen) {
-	//TODO: implement
+	config->SetFullScreen(fullscreen);
+
+	if (fullscreen) {
+		restore_bounds = GetBounds();
+		restore_styles = GetWindowLong(window_handle, GWL_STYLE);
+
+		RECT desktopRect;
+		if (SystemParametersInfoA(SPI_GETWORKAREA, 0, &desktopRect, NULL) == 1) {
+			SetWindowLong(window_handle, GWL_STYLE, 0);
+			SetWindowPos(window_handle, NULL, 0, 0, desktopRect.right - desktopRect.left, desktopRect.bottom - desktopRect.top, SWP_SHOWWINDOW);
+		}
+	} else {
+		SetWindowLong(window_handle, GWL_STYLE, restore_styles);
+		SetBounds(restore_bounds);
+	}
 }
 
 void Win32UserWindow::SetUsingChrome(bool chrome) {

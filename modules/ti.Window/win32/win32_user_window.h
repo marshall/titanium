@@ -34,6 +34,8 @@ protected:
 	kroll::Win32Host *win32_host;
 	Win32FrameLoadDelegate *frameLoadDelegate;
 	Win32UIDelegate *uiDelegate;
+	Bounds restore_bounds;
+	long restore_styles;
 
 	HWND window_handle, view_window_handle;
 	IWebView* web_view;
