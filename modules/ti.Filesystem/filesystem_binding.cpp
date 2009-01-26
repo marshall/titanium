@@ -86,14 +86,14 @@ namespace ti
 	void FilesystemBinding::GetApplicationDirectory(const ValueList& args, SharedValue result)
 	{
 		std::string dir = FileUtils::GetApplicationDirectory();
-
-		result->SetString(dir.c_str());
+		ti::File* file = new ti::File(dir);
+		result->SetObject(file);
 	}
 	void FilesystemBinding::GetResourcesDirectory(const ValueList& args, SharedValue result)
 	{
 		std::string dir = FileUtils::GetResourcesDirectory();
-
-		result->SetString(dir.c_str());
+		ti::File* file = new ti::File(dir);
+		result->SetObject(file);
 	}
 	void FilesystemBinding::GetDesktopDirectory(const ValueList& args, SharedValue result)
 	{
@@ -117,7 +117,8 @@ namespace ti
 		}
 		else
 		{
-			result->SetString(dir.c_str());
+			ti::File* file = new ti::File(dir);
+			result->SetObject(file);
 		}
 	}
 	void FilesystemBinding::GetDocumentsDirectory(const ValueList& args, SharedValue result)
@@ -142,14 +143,17 @@ namespace ti
 		}
 		else
 		{
-			result->SetString(dir.c_str());
+			ti::File* file = new ti::File(dir);
+			result->SetObject(file);
 		}
 	}
 	void FilesystemBinding::GetUserDirectory(const ValueList& args, SharedValue result)
 	{
 		try
 		{
-			result->SetString(Poco::Path::home().c_str());
+			std::string dir = Poco::Path::home().c_str();
+			ti::File* file = new ti::File(dir);
+			result->SetObject(file);
 		}
 		catch (Poco::Exception& exc)
 		{
@@ -193,7 +197,8 @@ namespace ti
 
 			for(size_t i = 0; i < roots.size(); i++)
 			{
-				SharedValue value = Value::NewString(roots.at(i));
+				ti::File* file = new ti::File(roots.at(i));
+				SharedValue value = Value::NewObject((SharedBoundObject) file);
 				rootList->Append(value);
 			}
 
