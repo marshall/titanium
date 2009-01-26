@@ -14,6 +14,27 @@
 			document.write("<div>KR_HOME environment = "+Titanium.Process.getEnv('KR_HOME','Not defined in your environment')+"</div>");
 			document.write("<div>USER environment = "+Titanium.Process.getEnv('USER','Not defined in your environment')+"</div>");
 			document.write("<div>HOME environment = "+Titanium.Process.getEnv('HOME','Not defined in your environment')+"</div>");
+			
+			try
+			{
+				var process = Titanium.Process.launch("ls",["-la"]);
+				var result = '';
+				// while (true)
+				// {
+				// 	var out = process.out.read();
+				// 	if (out==null)
+				// 	{
+				// 		break;
+				// 	}
+				// 	result += out;
+				// }
+				document.write("<div>Result from ls -la was:</div><div><pre>"+result+"</pre></div>");
+				document.write("<div>Process pid was: "+process.pid+"</div>");
+			}
+			catch(e)
+			{
+				alert("Caught exception launching process:"+e);
+			}
 		</script>
 	</body>
 </html>

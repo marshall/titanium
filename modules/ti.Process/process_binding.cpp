@@ -7,6 +7,7 @@
 #include <Poco/Environment.h>
 #include <Poco/Process.h>
 #include "process_binding.h"
+#include "process.h"
 
 #ifdef OS_OSX
 	#include <Foundation/Foundation.h>
@@ -35,7 +36,28 @@ namespace ti
 	}
 	void ProcessBinding::Launch(const ValueList& args, SharedValue result)
 	{
-		//TODO: use Poco::Process
+		std::vector<std::string> arguments;
+		std::string cmd = std::string(args.at(0)->ToString());
+		if (args.size()>1)
+		{
+			if (args.at(1)->IsString())
+			{
+				std::string arglist = args.at(1)->ToString();
+				kroll::FileUtils::Tokenize(arglist,arguments," ");
+			}
+			else if (args.at(1)->IsList())
+			{
+				SharedBoundList list = args.at(1)->ToList();
+				for (int c=0;c<list->Size();c++)
+				{
+					SharedValue value = list->At(c);
+					arguments.push_back(value->ToString());
+				}
+			}
+		}
+		std::cout << "calling: " << cmd << " with " << arguments.size() << " args" << std::endl;
+		SharedBoundObject p = new Process(cmd,arguments);
+		result->SetObject(p);
 	}
 	void ProcessBinding::GetEnv(const ValueList& args, SharedValue result)
 	{
