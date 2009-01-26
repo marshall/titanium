@@ -12,35 +12,6 @@
 			
 			var tests = new Object();
 			
-			tests.nativeDB = function(params) {
-				log("openDatabase = " + openDatabase);
-				var d = openDatabase("tiTestDB", "0.7");
-				log("d = " + d);
-				
-				d.transaction(
-					{
-						handleEvent: function(txn) {
-							log('txnCallback called');
-							//var sql = "select * from cats";
-							var sql = "select * from test1";
-							txn.executeSql(sql, null, {
-								handleEvent: function(txn, rs) {
-									log('sqlCallback called');
-									log('rowsAffected=' + rs.rowsAffected);
-									log('rows=' + rs.rows);
-									log('rows.length=' + rs.rows.length);
-									for(i = 0; i < rs.rows.length; i++) {
-										var row = rs.rows.item(i);
-										log('row[' + i + ']=' + row);
-										for(p in row) log('row[' + p + ']=' + row[p]);
-									}
-								}
-							});
-						}
-					}
-				);
-			}
-			
 			tests.open = function(params) {
 				var dbname = params[0];
 				var dbversion = params[1];
@@ -232,7 +203,6 @@
 			<select id="testsSelect" onchange="testChanged()">
 				<option value="open">open</option>
 				<option value="transaction">transaction</option>
-				<option value="nativeDB">nativeDB</option>
 			</select>
 		</div>
 		<div id="test_open" class="test">
@@ -258,16 +228,6 @@
 insert into customers values('john', 'dallas', 'tx')
 select * from customers
 					</textarea></td></tr>
-				</table>
-			</div>
-		</div>
-		<div id="test_nativeDB" class="test">
-			<div class="memberInfo">
-				test native DB support
-			</div>
-			<div class="params">
-				<table>
-					<tr><td>no params</td></tr>
 				</table>
 			</div>
 		</div>
