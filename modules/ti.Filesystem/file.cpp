@@ -361,7 +361,8 @@ namespace ti
 
 				for(size_t i = 0; i < files.size(); i++)
 				{
-					SharedValue value = Value::NewString(files.at(i));
+					ti::File* file = new ti::File(files.at(i));
+					SharedValue value = Value::NewObject((SharedBoundObject) file);
 					fileList->Append(value);
 				}
 
@@ -384,7 +385,8 @@ namespace ti
 		{
 			Poco::Path path(this->filename);
 
-			result->SetString(path.parent().toString().c_str());
+			ti::File* file = new ti::File(path.parent().toString());
+			result->SetObject(file);
 		}
 		catch (Poco::Exception& exc)
 		{
