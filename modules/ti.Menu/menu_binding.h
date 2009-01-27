@@ -21,11 +21,9 @@ namespace ti
 	protected:
 		virtual ~MenuBinding();
 	private:
+		Host *host;
 		BoundObject *global;
-		void CreateAppMenu(const ValueList& args, SharedValue result);
-		void CreateTrayMenu(const ValueList& args, SharedValue result);
-		void CreateDockMenu(const ValueList& args, SharedValue result);
-		void New(const ValueList& args, SharedValue result);
+		void CreateMenu(const ValueList& args, SharedValue result);
 	};
 }
 
