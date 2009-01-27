@@ -17,7 +17,7 @@ namespace ti
 	{
 		friend class SharedPtr<BoundObject>;
 	public:
-		MenuBinding(Host *host, SharedPtr<BoundObject>);
+		MenuBinding(SharedPtr<BoundObject>);
 	protected:
 		virtual ~MenuBinding();
 	private:

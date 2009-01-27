@@ -1,14 +1,16 @@
 /**
  * Appcelerator Kroll - licensed under the Apache Public License 2
- * see LICENSE in the root folder for details on the license. 
+ * see LICENSE in the root folder for details on the license.
  * Copyright (c) 2009 Appcelerator, Inc. All Rights Reserved.
- */	
+ */
 #include <kroll/kroll.h>
 #include <Poco/Environment.h>
 #include "platform_binding.h"
 
 #ifdef OS_OSX
 #include <Foundation/Foundation.h>
+#elif defined(OS_WIN32)
+#include <windows.h>
 #endif
 
 namespace ti
@@ -31,6 +33,12 @@ namespace ti
 #ifdef OS_OSX
 		NSProcessInfo *p = [NSProcessInfo processInfo];
 		this->Set("processorCount",Value::NewInt([p processorCount]));
+#elif defined(OS_WIN32)
+		SYSTEM_INFO SysInfo ;
+		GetSystemInfo ( & SysInfo ) ;
+		DWORD count = SysInfo.dwNumberOfProcessors;
+
+		this->Set("processorCount", Value::NewInt(count));
 #else
 		//TODO - Linux / Win32
 		this->Set("processorCount",Value::NewInt(1));
