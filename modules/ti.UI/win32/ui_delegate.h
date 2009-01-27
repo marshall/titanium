@@ -11,12 +11,14 @@
 #include <windows.h>
 
 #include "WebKit.h"
+#include "popup_dialog.h"
 
 namespace ti {
 
 class Win32UserWindow;
 
-class Win32UIDelegate : public IWebUIDelegate, IWebUIDelegatePrivate3 {
+//class Win32UIDelegate : public IWebUIDelegate, IWebUIDelegatePrivate3 {
+class Win32UIDelegate : public IWebUIDelegate {
 protected:
 	int ref_count;
 	Win32UserWindow *window;
