@@ -125,7 +125,11 @@ namespace ti
 	WindowBinding::WindowBinding(Host *host, SharedBoundObject global) : host(host),global(global)
 	{
 		KR_ADDREF(host);
-		this->SetMethod("createWindow",&WindowBinding::CreateWindow);
+		
+		// we set createWindow in the window implementation which
+		// automatically passes the current window as the parent
+		// before then invoking this method
+		this->SetMethod("_createWindow",&WindowBinding::CreateWindow);
 	}
 	WindowBinding::~WindowBinding()
 	{
@@ -133,10 +137,12 @@ namespace ti
 	}
 	void WindowBinding::CreateWindow(const ValueList& args, SharedValue result)
 	{
-		SharedBoundObject properties = args.size()==1 && args.at(0)->IsObject() ? args.at(0)->ToObject() : new StaticBoundObject();
-		result->SetObject(this->CreateWindow(properties));
+		SharedBoundObject parent = args.at(0)->ToObject();
+		UserWindow *win = dynamic_cast<UserWindow*>(parent.get());
+		SharedBoundObject properties = args.size()==2 && args.at(1)->IsObject() ? args.at(1)->ToObject() : new StaticBoundObject();
+		result->SetObject(this->CreateWindow(win,properties));
 	}
-	SharedBoundObject WindowBinding::CreateWindow(SharedBoundObject properties)
+	SharedBoundObject WindowBinding::CreateWindow(UserWindow *parent, SharedBoundObject properties)
 	{
 		//TODO: wrap in sharedptr
 		WindowConfig *config = new WindowConfig();
@@ -176,6 +182,10 @@ namespace ti
 #elif defined(OS_WIN32)
 		Win32UserWindow* window = new Win32UserWindow(this->host, config);
 #endif
+
+		// set the parent of the window
+		window->set_parent(parent);
+		
 		return window;
 	}
 }

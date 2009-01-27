@@ -23,15 +23,11 @@ namespace ti
 	}
 	IPAddressBinding::IPAddressBinding(IPAddress ip) : invalid(false) 
 	{
-		this->Init();
-		this->address = new IPAddress(ip);
+		IPAddressBinding(ip.toString());
 	}
 	IPAddressBinding::~IPAddressBinding()
 	{
-		if (this->address)
-		{
-			delete this->address;
-		}
+		KR_DUMP_LOCATION
 	}
 	void IPAddressBinding::Init()
 	{

@@ -37,7 +37,7 @@ namespace ti
 		return mask;
 	}
 
-	OSXUserWindow::OSXUserWindow(Host *host, WindowConfig *config) : UserWindow(host,config), window(0), opened(false)
+	OSXUserWindow::OSXUserWindow(Host *host, WindowConfig *config) : UserWindow(host,config), window(0), opened(false), closed(false)
 	{
 		[NSApplication sharedApplication];
 
@@ -59,8 +59,12 @@ namespace ti
 	}
 	OSXUserWindow::~OSXUserWindow()
 	{
-		[window release];
-		window = nil;
+		KR_DUMP_LOCATION
+		window = nil; // don't release
+		if (!closed)
+		{
+			UserWindow::Close(this);
+		}
 	}
 	void OSXUserWindow::Hide()
 	{
@@ -98,11 +102,14 @@ namespace ti
 	{
 		opened = true;
 		[window open];
+		UserWindow::Open(this);
 	}
 	void OSXUserWindow::Close()
 	{
 		opened = false;
+		closed = true;
 		[window close];
+		UserWindow::Close(this);
 	}
 	double OSXUserWindow::GetX()
 	{

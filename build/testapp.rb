@@ -11,8 +11,8 @@ VER = 0.1
 PLUGINS =
   %w(api javascript 
     foo foojs foorb foopy python ruby
-    tiapp tiwindow tinetwork tifilesystem 
-    timedia tidesktop timenu tigrowl tidatabase)
+    tiplatform tiapp tiwindow tinetwork tifilesystem 
+    timedia tidesktop timenu tigrowl tidatabase tiprocess)
 NAME = 'test'
 
 if RUBY_PLATFORM=~/darwin/

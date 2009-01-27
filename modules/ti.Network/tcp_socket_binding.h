@@ -38,7 +38,6 @@ namespace ti
 	{
 	public:
 		TCPSocketBinding(Host *ti_host, std::string host, int port);
-	protected:
 		virtual ~TCPSocketBinding();
 	private:
 		Host* ti_host;

@@ -11,7 +11,7 @@ using namespace ti;
 
 #define STUB printf("__FILE__:__LINE__: called a stub method!\n")
 
-#define TI_SET_BOOL(method,index) \
+#define TI_SET_BOOL(method, index) \
 { \
 	SharedValue arg = args.at(index);\
 	if (arg->IsBool()) \
@@ -38,6 +38,8 @@ using namespace ti;
 
 
 std::vector<UserWindow *> UserWindow::windows;
+std::map<UserWindow*, std::vector<UserWindow*> > UserWindow::windowsMap;
+
 void UserWindow::Open(UserWindow *window)
 {
 	// Don't do any refcounting here,
@@ -46,27 +48,78 @@ void UserWindow::Open(UserWindow *window)
 }
 void UserWindow::Close(UserWindow *window)
 {
-	// delete from vector
+	// check to see if we have a parent, and if so,
+	// remove us from the parent list
+	UserWindow *parent = window->get_parent();
+	if (parent!=NULL)
+	{
+		UserWindow::RemoveChild(parent,window);
+	}
+	
+	// see if we have any open child windows
+	std::vector<UserWindow*> children = windowsMap[window];
 	std::vector<UserWindow*>::iterator iter;
-	for (iter = windows.begin(); iter != windows.end(); iter++) {
-		if ((*iter) == window) {
+	for (iter = children.begin(); iter != children.end(); iter++) 
+	{
+		UserWindow *child = (*iter);
+		child->Close();
+	}
+	children.clear();
+	windowsMap.erase(window);
+	
+
+	// delete from vector
+	for (iter = windows.begin(); iter != windows.end(); iter++) 
+	{
+		if ((*iter) == window) 
+		{
 			break;
 		}
 	}
-	if (iter != windows.end()) {
+	if (iter != windows.end()) 
+	{
 		windows.erase(iter);
 	}
-
-	//KR_DECREF(window);
-
+	
+	// when we have no more windows, we exit ...
+	if (windows.size()==0)
+	{
+#if defined(OS_OSX)
+		[NSApp terminate:nil];
+#else
+		//TODO: in Win32, do we exit some other way??
+		exit(0); 
+#endif		
+	}
+}
+void UserWindow::AddChild(UserWindow *parent, UserWindow *child)
+{
+	std::vector<UserWindow*> children = windowsMap[parent];
+	children.push_back(child);
+	windowsMap[parent]=children;
+}
+void UserWindow::RemoveChild(UserWindow *parent, UserWindow *child)
+{
+	std::vector<UserWindow*> children = windowsMap[parent];
+	std::vector<UserWindow*>::iterator iter;
+	for (iter = children.begin(); iter != children.end(); iter++) {
+		if ((*iter) == child) {
+			break;
+		}
+	}
+	if (iter != children.end()) {
+		children.erase(iter);
+	}
 }
 
-UserWindow::UserWindow(kroll::Host *host, WindowConfig *config) : kroll::StaticBoundObject() {
+UserWindow::UserWindow(kroll::Host *host, WindowConfig *config) : 
+	kroll::StaticBoundObject(), parent(0)
+{
 
 	this->host = host;
 	this->config = config;
 
-	/* this object is accessed by Titanium.currentWindow.window */
+	/* this object is accessed by Titanium.Window.currentWindow */
 	this->SetMethod("hide", &UserWindow::hide_cb);
 	this->SetMethod("show", &UserWindow::show_cb);
 	this->SetMethod("isUsingChrome", &UserWindow::is_using_chrome_cb);
@@ -103,6 +156,7 @@ UserWindow::UserWindow(kroll::Host *host, WindowConfig *config) : kroll::StaticB
 	this->SetMethod("getTransparency", &UserWindow::get_transparency_cb);
 	this->SetMethod("setTransparency", &UserWindow::set_transparency_cb);
 	this->SetMethod("setMenu", &UserWindow::set_menu_cb);
+	this->SetMethod("getParent", &UserWindow::get_parent_cb);
 }
 
 void UserWindow::hide_cb(const kroll::ValueList& args, kroll::SharedValue result)
@@ -122,7 +176,7 @@ void UserWindow::is_using_chrome_cb(const kroll::ValueList& args, kroll::SharedV
 
 void UserWindow::set_using_chrome_cb(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	TI_SET_BOOL(SetUsingChrome,0);
+	TI_SET_BOOL(SetUsingChrome, 0);
 }
 
 void UserWindow::is_using_scrollbars_cb(const kroll::ValueList& args, kroll::SharedValue result)
@@ -137,7 +191,7 @@ void UserWindow::is_full_screen_cb(const kroll::ValueList& args, kroll::SharedVa
 
 void UserWindow::set_full_screen_cb(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	TI_SET_BOOL(SetFullScreen,0);
+	TI_SET_BOOL(SetFullScreen, 0);
 }
 
 void UserWindow::get_id_cb(const kroll::ValueList& args, kroll::SharedValue result)
@@ -212,8 +266,6 @@ void UserWindow::get_bounds_cb(const kroll::ValueList& args, kroll::SharedValue 
 	b->Set("width", kroll::Value::NewInt(bounds.width));
 	b->Set("height", kroll::Value::NewInt(bounds.height));
 	result->SetObject(b);
-
-	//KR_DECREF(b);
 }
 
 void UserWindow::set_bounds_cb(const kroll::ValueList& args, kroll::SharedValue result)
@@ -270,7 +322,7 @@ void UserWindow::is_resizable_cb(const kroll::ValueList& args, kroll::SharedValu
 
 void UserWindow::set_resizable_cb(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	TI_SET_BOOL(SetResizable,0);
+	TI_SET_BOOL(SetResizable, 0);
 }
 
 void UserWindow::is_maximizable_cb(const kroll::ValueList& args, kroll::SharedValue result)
@@ -280,7 +332,7 @@ void UserWindow::is_maximizable_cb(const kroll::ValueList& args, kroll::SharedVa
 
 void UserWindow::set_maximizable_cb(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	TI_SET_BOOL(SetMaximizable,0);
+	TI_SET_BOOL(SetMaximizable, 0);
 }
 
 void UserWindow::is_minimizable_cb(const kroll::ValueList& args, kroll::SharedValue result)
@@ -290,7 +342,7 @@ void UserWindow::is_minimizable_cb(const kroll::ValueList& args, kroll::SharedVa
 
 void UserWindow::set_minimizable_cb(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	TI_SET_BOOL(SetMinimizable,0);
+	TI_SET_BOOL(SetMinimizable, 0);
 }
 
 void UserWindow::is_closeable_cb(const kroll::ValueList& args, kroll::SharedValue result)
@@ -300,7 +352,7 @@ void UserWindow::is_closeable_cb(const kroll::ValueList& args, kroll::SharedValu
 
 void UserWindow::set_closeable_cb(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	TI_SET_BOOL(SetCloseable,0);
+	TI_SET_BOOL(SetCloseable, 0);
 }
 
 void UserWindow::is_visible_cb(const kroll::ValueList& args, kroll::SharedValue result)
@@ -310,7 +362,7 @@ void UserWindow::is_visible_cb(const kroll::ValueList& args, kroll::SharedValue 
 
 void UserWindow::set_visible_cb(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	TI_SET_BOOL(SetVisible,0);
+	TI_SET_BOOL(SetVisible, 0);
 }
 
 void UserWindow::get_transparency_cb(const kroll::ValueList& args, kroll::SharedValue result)
@@ -333,4 +385,31 @@ void UserWindow::set_menu_cb(const kroll::ValueList& args, kroll::SharedValue re
 		SharedBoundList menu = args.at(0)->ToList();
 		this->SetMenu(menu);
 	}
+}
+void UserWindow::get_parent_cb(const kroll::ValueList& args, kroll::SharedValue result)
+{
+	if (this->parent==NULL)
+	{
+		result->SetNull();
+		return;
+	}
+	SharedBoundObject o = this->get_parent();
+	result->SetObject(o);
+}
+void UserWindow::set_parent(UserWindow *parent)
+{
+	this->parent = parent;
+	parent->add_child(this);
+}
+UserWindow* UserWindow::get_parent()
+{
+	return this->parent;
+}
+void UserWindow::add_child(UserWindow *window)
+{
+	UserWindow::AddChild(this,window);
+}
+void UserWindow::remove_child(UserWindow *window)
+{
+	UserWindow::RemoveChild(this,window);
 }

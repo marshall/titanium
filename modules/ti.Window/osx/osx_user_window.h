@@ -60,6 +60,7 @@ namespace ti
 		private:
 			NativeWindow *window;
 			bool opened;
+			bool closed;
 			
 			DISALLOW_EVIL_CONSTRUCTORS(OSXUserWindow);
 	};

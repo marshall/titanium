@@ -7,6 +7,7 @@
 #import "app_config.h"
 #import "native_window.h"
 #import "objc_bound_object.h"
+#import "../window_binding.h"
 
 #define TRACE  NSLog
 
@@ -86,6 +87,12 @@
 
 -(void)dealloc
 {
+	KR_DUMP_LOCATION
+	
+	// just for safety, remove our main JS key
+	NSString *tiKey = [NSString stringWithCString:GLOBAL_NS_VARNAME];
+	[windowJS removeWebScriptKey:tiKey];
+	
 	KR_DECREF(host);
 	[url release];
 	[super dealloc];
@@ -373,51 +380,32 @@
 	BoundObject* ti_object = new DelegateStaticBoundObject(global_tibo);
 	SharedBoundObject shared_ti_obj = SharedBoundObject(ti_object);
 
-	// Set user window into the Titanium object
-	SharedBoundObject shared_user_window = [window userWindow];
-	SharedValue user_window_val = Value::NewObject(shared_user_window);
-	ti_object->Set("currentWindow", user_window_val);
+	// Create a delegate object for the Window API for currentWindow
+	SharedValue window_api_value = ti_object->Get("Window");
+	if (window_api_value->IsObject())
+	{
+		SharedBoundObject window_api = window_api_value->ToObject();
+		BoundObject* delegate_window_api = new DelegateStaticBoundObject(window_api);
+		SharedBoundObject shared_user_window = [window userWindow];
+		SharedValue user_window_val = Value::NewObject(shared_user_window);
+		delegate_window_api->Set("currentWindow", user_window_val);
+		ti_object->Set("Window", Value::NewObject(delegate_window_api));
+	}
+	else
+	{
+		std::cerr << "Could not find Window API point!" << std::endl;
+	}
 
 	// Place the Titanium object into the window's global object
 	JSObjectRef global_object = JSContextGetGlobalObject(context);
 	BoundObject *global_bound_object = new KJSBoundObject(context, global_object);
 	SharedValue ti_object_value = Value::NewObject(shared_ti_obj);
 	global_bound_object->Set(GLOBAL_NS_VARNAME, ti_object_value);
-	
-	// NSString *tiKey = [NSString stringWithCString:GLOBAL_NS_VARNAME];
-	// SharedValue value = Value::NewObject(ti);
-	// [self wrap:windowScriptObject context:context forValue:value forKey:tiKey];
 
-	//NSString *tiKey = [NSString stringWithCString:GLOBAL_NS_VARNAME];
-	//WebScriptObject* tiJS = (WebScriptObject*)[windowScriptObject evaluateWebScript:[NSString stringWithFormat:@"var o = new Object; o.toString = function() { return '[%@ native]' }; o;",tiKey]];
-	//[windowScriptObject setValue:tiJS forKey:tiKey];
-	//SharedStringList properties = ti->GetPropertyNames();
-	//for (size_t i = 0; i < properties->size(); i++)
-	//{
-	//	SharedString skey = properties->at(i);
-	//	std::string key = *skey;
-	//	if (key == GLOBAL_NS_VARNAME) continue;
-	//	SharedValue value = ti->Get(key.c_str());
-	//	@try
-	//	{
-	//		NSString *k = [NSString stringWithCString:key.c_str()];
-	//		id wrapped = [ObjcBoundObject ValueToID:value key:k context:context];
-	//		[tiJS setValue:wrapped forKey:k];
-	//	}
-	//	@catch(id ex)
-	//	{
-	//		NSLog(@"exception caught binding %@.%s => %@",tiKey,key.c_str(),ex);
-	//	}
-	//}
-	//
-	//// make the Titanium.currentWindow object
-	//SharedBoundObject suw = [window userWindow];
-	//SharedValue cwv = Value::NewObject(suw);
-	//id cw = [ObjcBoundObject ValueToID:cwv key:@"currentWindow" context:context];
-	//WebScriptObject* cwjs = (WebScriptObject*)[windowScriptObject evaluateWebScript:@"var o = new Object; o.toString = function() { return '[currentWindow native]' }; o;"];
-	//[tiJS setValue:cwjs forKey:@"currentWindow"];
-	//[cwjs setValue:cw forKey:@"window"];
-	
+	windowJS = windowScriptObject;
+	// define Titanium.Window.createWindow to call Titanium.Window._createWindow with parent as first parameter
+	[windowScriptObject evaluateWebScript:[NSString stringWithCString:TI_WINDOW_BINDING_JS_CODE]];
+
 	//NOTE: don't release tiJS or newti or cw
 	scriptCleared = YES;
 }
@@ -505,18 +493,15 @@
 
 - (void)webViewShow:(WebView *)sender
 {
+	KR_DUMP_LOCATION
 	TRACE(@"webview_delegate::webViewShow = %x",self);
 	//TODO: so we need to deal with this at all?
 }
 
 
-// WebResourceLoadDelegate Methods
-#pragma mark -
-#pragma mark WebResourceLoadDelegate
-
 - (void)webViewClose:(WebView *)wv 
 {
-	TRACE(@"webview_delegate::webViewClose = %x",self);
+	KR_DUMP_LOCATION
 	[[wv window] close];
 	WindowConfig *config = [window config];
 	config->SetVisible(NO);
@@ -530,7 +515,7 @@
 
 - (void)webViewFocus:(WebView *)wv 
 {
-	TRACE(@"webview_delegate::webViewFocus = %x",self);
+	KR_DUMP_LOCATION
 	// [[TiController instance] activate:self];
 	[[wv window] makeKeyAndOrderFront:wv];
 }
@@ -538,7 +523,7 @@
 
 - (void)webViewUnfocus:(WebView *)wv 
 {
-	TRACE(@"webview_delegate::webViewUnfocus = %x",self);
+	KR_DUMP_LOCATION
 	if ([[wv window] isKeyWindow] || [[[wv window] attachedSheet] isKeyWindow]) 
 	{
 		[NSApp _cycleWindowsReversed:FALSE];
@@ -604,6 +589,10 @@
 {
 	return NO;
 }
+
+// WebResourceLoadDelegate Methods
+#pragma mark -
+#pragma mark WebResourceLoadDelegate
 
 - (id)webView:(WebView *)sender identifierForInitialRequest:(NSURLRequest *)request fromDataSource:(WebDataSource *)dataSource
 {

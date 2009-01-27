@@ -26,7 +26,7 @@ namespace ti
 	protected:
 		void Init();
 	private:
-		IPAddress *address;
+		SharedPtr<IPAddress> address;
 		bool invalid;
 		
 	public:

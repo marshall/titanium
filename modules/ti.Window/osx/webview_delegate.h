@@ -22,6 +22,7 @@
 	WebInspector *inspector;
 	BOOL scriptCleared;
 	BOOL initialDisplay;
+	WebScriptObject* windowJS;
 }
 -(id)initWithWindow:(NativeWindow*)window host:(Host*)h;
 -(void)setURL:(NSURL*)url;

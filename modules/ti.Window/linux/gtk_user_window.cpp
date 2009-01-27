@@ -167,6 +167,9 @@ static void window_object_cleared_cb (WebKitWebView* web_view,
 	SharedValue ti_object_value = Value::NewObject(shared_ti_obj);
 	global_bound_object->Set(GLOBAL_NS_VARNAME, ti_object_value);
 
+	//FIXME: evaluate TI_WINDOW_BINDING_JS_CODE (as javascript) in the
+	//JS global context so that Titanium.Window.createWindow function
+	//is correctly defined to pass in parent  (see define in window_binding.h)
 }
 
 void GtkUserWindow::Hide() {
