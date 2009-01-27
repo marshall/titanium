@@ -1,4 +1,4 @@
-name: ti.Window
+name: ti.UI
 version: 0.1
-description: Windowing module
+description: ui module
 os: win32, osx, linux

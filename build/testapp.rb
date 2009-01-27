@@ -9,10 +9,9 @@ require 'fileutils'
 
 VER = 0.1
 PLUGINS =
-  %w(api javascript 
-    foo foojs foorb foopy python ruby
-    tiplatform tiapp tiwindow tinetwork tifilesystem 
-    timedia tidesktop timenu tigrowl tidatabase tiprocess)
+  %w(api javascript foo foojs foorb foopy python ruby
+    tiplatform tiapp tiui tinetwork tifilesystem 
+    timedia tidesktop tigrowl tidatabase tiprocess)
 NAME = 'test'
 
 if RUBY_PLATFORM=~/darwin/
