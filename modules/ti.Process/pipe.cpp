@@ -5,6 +5,7 @@
  */	
 #include "pipe.h"
 #include <vector>
+#include <cstring>
 
 namespace ti
 {

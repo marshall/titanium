@@ -1,0 +1,36 @@
+<html>
+	<head>
+		<style>
+			body { font-family: sans, sans-serif; background-color: white; }
+			div{
+				margin:10px;
+			}
+		</style>
+		<script>
+			function addWindowMenu()
+			{
+				var menu = Titanium.Menu.createMenu();
+				var file = menu.addSubMenu("File");
+				var edit = menu.addSubMenu("Edit");
+				var rap = menu.addSubMenu("Rap", "app://fonts.png");
+
+				file.addItem("Open", function () {alert("open called"); }, "app://open.png");
+				file.addItem("Close", function () {alert("close called"); });
+				file.addItem("Exit", function () {alert("exit called"); });
+
+				Titanium.Window.currentWindow.setMenu(menu);
+
+			}
+		</script>
+	</head>
+	<body>
+		<h2>Titanium Window test app</h2>
+		<div>
+			<button onclick="addWindowMenu()">Add window menu</button>
+		</div>
+		<div>
+			What it should look like:<br/>
+			<img src="app://linux_menus.png">
+		</div>
+	</body>
+</html>
