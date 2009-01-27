@@ -12,7 +12,7 @@
 
 namespace ti
 {
-	NetworkBinding::NetworkBinding(SharedBoundObject global) : global(global)
+	NetworkBinding::NetworkBinding(Host* host) : host(host), global(host->GetGlobalObject())
 	{
 		// TODO: this state change needs to be implemented
 		SharedValue online = Value::NewBool(true);
@@ -97,7 +97,7 @@ namespace ti
 	void NetworkBinding::CreateTCPSocket(const ValueList& args, SharedValue result)
 	{
 		//TODO: check for args
-		SharedBoundObject tcp = new TCPSocketBinding(args.at(0)->ToString(), args.at(1)->ToInt());
+		SharedBoundObject tcp = new TCPSocketBinding(host, args.at(0)->ToString(), args.at(1)->ToInt());
 		result->SetObject(tcp);
 	}
 	void NetworkBinding::OnConnectivityChange(const ValueList& args, SharedValue result)

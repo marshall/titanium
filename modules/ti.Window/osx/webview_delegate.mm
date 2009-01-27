@@ -359,46 +359,64 @@
 		[scope setValue:newobj forKey:key];
 	}
 }*/
-- (void)inject:(WebScriptObject *)windowScriptObject context:(JSContextRef)context
+- (void)inject:(WebScriptObject *)windowScriptObject context:(JSGlobalContextRef)context
 {
 	TRACE(@"inject called");
 	
-	SharedBoundObject ti = host->GetGlobalObject();
-	
+	JSContextGroupRef group = JSContextGetGroup(context);
+	KJSUtil::RegisterGlobalContext(group, context);
+
+	// Produce a delegating object to represent the top-level
+	// Titanium object. When a property isn't found in this object
+	// it will look for it in global_tibo.
+	SharedBoundObject global_tibo = host->GetGlobalObject();
+	BoundObject* ti_object = new DelegateStaticBoundObject(global_tibo);
+	SharedBoundObject shared_ti_obj = SharedBoundObject(ti_object);
+
+	// Set user window into the Titanium object
+	SharedBoundObject shared_user_window = [window userWindow];
+	SharedValue user_window_val = Value::NewObject(shared_user_window);
+	ti_object->Set("currentWindow", user_window_val);
+
+	// Place the Titanium object into the window's global object
+	JSObjectRef global_object = JSContextGetGlobalObject(context);
+	BoundObject *global_bound_object = new KJSBoundObject(context, global_object);
+	SharedValue ti_object_value = Value::NewObject(shared_ti_obj);
+	global_bound_object->Set(GLOBAL_NS_VARNAME, ti_object_value);
 	
 	// NSString *tiKey = [NSString stringWithCString:GLOBAL_NS_VARNAME];
 	// SharedValue value = Value::NewObject(ti);
 	// [self wrap:windowScriptObject context:context forValue:value forKey:tiKey];
 
-	NSString *tiKey = [NSString stringWithCString:GLOBAL_NS_VARNAME];
-	WebScriptObject* tiJS = (WebScriptObject*)[windowScriptObject evaluateWebScript:[NSString stringWithFormat:@"var o = new Object; o.toString = function() { return '[%@ native]' }; o;",tiKey]];
-	[windowScriptObject setValue:tiJS forKey:tiKey];
-	SharedStringList properties = ti->GetPropertyNames();
-	for (size_t i = 0; i < properties->size(); i++)
-	{
-		SharedString skey = properties->at(i);
-		std::string key = *skey;
-		if (key == GLOBAL_NS_VARNAME) continue;
-		SharedValue value = ti->Get(key.c_str());
-		@try
-		{
-			NSString *k = [NSString stringWithCString:key.c_str()];
-			id wrapped = [ObjcBoundObject ValueToID:value key:k context:context];
-			[tiJS setValue:wrapped forKey:k];
-		}
-		@catch(id ex)
-		{
-			NSLog(@"exception caught binding %@.%s => %@",tiKey,key.c_str(),ex);
-		}
-	}
-	
-	// make the Titanium.currentWindow object
-	SharedBoundObject suw = [window userWindow];
-	SharedValue cwv = Value::NewObject(suw);
-	id cw = [ObjcBoundObject ValueToID:cwv key:@"currentWindow" context:context];
-	WebScriptObject* cwjs = (WebScriptObject*)[windowScriptObject evaluateWebScript:@"var o = new Object; o.toString = function() { return '[currentWindow native]' }; o;"];
-	[tiJS setValue:cwjs forKey:@"currentWindow"];
-	[cwjs setValue:cw forKey:@"window"];
+	//NSString *tiKey = [NSString stringWithCString:GLOBAL_NS_VARNAME];
+	//WebScriptObject* tiJS = (WebScriptObject*)[windowScriptObject evaluateWebScript:[NSString stringWithFormat:@"var o = new Object; o.toString = function() { return '[%@ native]' }; o;",tiKey]];
+	//[windowScriptObject setValue:tiJS forKey:tiKey];
+	//SharedStringList properties = ti->GetPropertyNames();
+	//for (size_t i = 0; i < properties->size(); i++)
+	//{
+	//	SharedString skey = properties->at(i);
+	//	std::string key = *skey;
+	//	if (key == GLOBAL_NS_VARNAME) continue;
+	//	SharedValue value = ti->Get(key.c_str());
+	//	@try
+	//	{
+	//		NSString *k = [NSString stringWithCString:key.c_str()];
+	//		id wrapped = [ObjcBoundObject ValueToID:value key:k context:context];
+	//		[tiJS setValue:wrapped forKey:k];
+	//	}
+	//	@catch(id ex)
+	//	{
+	//		NSLog(@"exception caught binding %@.%s => %@",tiKey,key.c_str(),ex);
+	//	}
+	//}
+	//
+	//// make the Titanium.currentWindow object
+	//SharedBoundObject suw = [window userWindow];
+	//SharedValue cwv = Value::NewObject(suw);
+	//id cw = [ObjcBoundObject ValueToID:cwv key:@"currentWindow" context:context];
+	//WebScriptObject* cwjs = (WebScriptObject*)[windowScriptObject evaluateWebScript:@"var o = new Object; o.toString = function() { return '[currentWindow native]' }; o;"];
+	//[tiJS setValue:cwjs forKey:@"currentWindow"];
+	//[cwjs setValue:cw forKey:@"window"];
 	
 	//NOTE: don't release tiJS or newti or cw
 	scriptCleared = YES;
@@ -415,7 +433,7 @@
 		if (!scriptCleared)
 		{
 			TRACE(@"page loaded with no <script> tags, manually injecting Titanium runtime", scriptCleared);
-			JSContextRef context = [frame globalContext];
+			JSGlobalContextRef context = [frame globalContext];
 			[self inject:[frame windowObject] context:context];
 		}
 		
@@ -459,7 +477,7 @@
 
 - (void)webView:(WebView *)sender didClearWindowObject:(WebScriptObject *)windowScriptObject forFrame:(WebFrame*)frame 
 {
-	JSContextRef context = [frame globalContext];
+	JSGlobalContextRef context = [frame globalContext];
 	[self inject:windowScriptObject context:context];
 }
 

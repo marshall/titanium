@@ -37,10 +37,11 @@ namespace ti
 	class TCPSocketBinding : public StaticBoundObject
 	{
 	public:
-		TCPSocketBinding(std::string host, int port);
+		TCPSocketBinding(Host *ti_host, std::string host, int port);
 	protected:
 		virtual ~TCPSocketBinding();
 	private:
+		Host* ti_host;
 		std::string host;
 		int port;
 		StreamSocket socket;

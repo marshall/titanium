@@ -17,11 +17,11 @@ namespace ti
 	void NetworkModule::Initialize()
 	{
 		// load our variables
-		this->variables = new NetworkBinding(host->GetGlobalObject());
+		this->variables = new NetworkBinding(host);
 
 		// set our ti.Network
 		SharedValue value = Value::NewObject(this->variables);
-		host->GetGlobalObject()->Set("Network",value);
+		host->GetGlobalObject()->Set("Network", value);
 	}
 
 	void NetworkModule::Destroy()

@@ -14,10 +14,11 @@ namespace ti
 	class NetworkBinding : public StaticBoundObject
 	{
 	public:
-		NetworkBinding(SharedBoundObject);
+		NetworkBinding(Host*);
 	protected:
 		virtual ~NetworkBinding();
 	private:
+		Host* host;
 		SharedBoundObject global;
 		
 		void CreateIPAddress(const ValueList& args, SharedValue result);
