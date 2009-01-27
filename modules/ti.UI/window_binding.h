@@ -8,7 +8,7 @@
 #define _WINDOW_BINDING_H_
 
 #include <kroll/kroll.h>
-#include "window_module.h"
+#include "ui_module.h"
 #include "window_config.h"
 
 #ifdef OS_WIN32

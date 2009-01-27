@@ -16,7 +16,7 @@
 #include <wininet.h>
 #include "WebKit.h"
 
-#include "../window_module.h"
+#include "../ui_module.h"
 #include <kroll/kroll.h>
 #include "../../../kroll/host/win32/host.h"
 #include "../user_window.h"

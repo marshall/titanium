@@ -3,16 +3,10 @@
  * see LICENSE in the root folder for details on the license. 
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
-
-
 #ifndef _GTK_USER_WINDOW_H_
 #define _GTK_USER_WINDOW_H_
 
-#include "../window_module.h"
-#include "../../ti.Menu/linux/gtk_menu_wrapper.h"
-#include <gdk/gdk.h>
-#include <gdk/gdkx.h>
-#include <webkit/webkit.h>
+#include "../ui_module.h"
 
 namespace ti
 {

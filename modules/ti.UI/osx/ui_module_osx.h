@@ -4,8 +4,8 @@
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
 
-#ifndef _WINDOW_MODULE_OSX_H_
-#define _WINDOW_MODULE_OSX_H_
+#ifndef _UI_MODULE_OSX_H_
+#define _UI_MODULE_OSX_H_
 
 #import "preinclude.h"
 #import "native_window.h"

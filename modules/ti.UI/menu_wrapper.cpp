@@ -4,6 +4,7 @@
  * Copyright (c) 2009 Appcelerator, Inc. All Rights Reserved.
  */
 #include "menu_wrapper.h"
+#include <cstring>
 
 namespace ti
 {

@@ -6,7 +6,7 @@
 
 #include "frame_load_delegate.h"
 #include "win32_user_window.h"
-#include "../window_module.h"
+#include "../ui_module.h"
 #include "../../../kroll/modules/javascript/javascript_module.h"
 
 using namespace ti;

@@ -8,9 +8,6 @@
 #ifndef _GTK_MENU_CREATOR_H_
 #define _GTK_MENU_CREATOR_H_
 
-#include <gtk/gtk.h>
-#include "../../ti.Menu/menu_item.h"
-
 namespace ti
 {
 	class GtkMenuWrapper

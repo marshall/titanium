@@ -4,7 +4,7 @@
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
 
-#include "window_module_linux.h"
+#include "ui_module_linux.h"
 #include <iostream>
 
 using namespace ti;

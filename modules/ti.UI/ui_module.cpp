@@ -4,14 +4,13 @@
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
 
-#include "window_module.h"
-#include "window_binding.h"
+#include "ui_module.h"
 
 namespace ti
 {
-	KROLL_MODULE(WindowModule)
+	KROLL_MODULE(UIModule)
 
-	void WindowModule::Initialize()
+	void UIModule::Initialize()
 	{
 		std::cout << "Initializing ti.Window..." << std::endl;
 
@@ -34,15 +33,20 @@ namespace ti
 
 		// add some titanium specific global info here
 		SharedBoundObject global = this->host->GetGlobalObject();
-		
+
 		// add the Titanium.Window module
-		SharedBoundObject win = new WindowBinding(this->host,global);
-		SharedValue winmodule = Value::NewObject(win);
-		global->Set("Window",winmodule);
-		
+		SharedBoundObject win_binding = new WindowBinding(this->host, global);
+		SharedValue win_binding_val = Value::NewObject(win_binding);
+		global->Set("Window", win_binding_val);
+
+		// add the Titanium.Menu module
+		SharedBoundObject menu_binding = new MenuBinding(host->GetGlobalObject());
+		SharedValue menu_binding_val = Value::NewObject(menu_binding);
+		host->GetGlobalObject()->Set("Menu", menu_binding_val);
+
 		// version
 		SharedValue version = Value::NewDouble(0.2); // FIXME: for now this is hardcoded
-		global->Set("version",version);
+		global->Set("version", version);
 
 		// platform
 #if defined(OS_LINUX)
@@ -63,7 +67,7 @@ namespace ti
 		window->Open();
 	}
 
-	void WindowModule::Destroy()
+	void UIModule::Destroy()
 	{
 	}
 }
