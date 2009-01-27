@@ -60,7 +60,15 @@ namespace ti
 	OSXUserWindow::~OSXUserWindow()
 	{
 		KR_DUMP_LOCATION
+		
 		window = nil; // don't release
+		
+		if (this->menu_wrapper)
+		{
+			delete this->menu_wrapper;
+			this->menu_wrapper = NULL;
+		}
+		
 		if (!closed)
 		{
 			UserWindow::Close(this);
@@ -276,6 +284,16 @@ namespace ti
 
 	void OSXUserWindow::SetMenu(SharedBoundList menu)
 	{	
-		// TODO: Implement
+		if (this->menu_wrapper != NULL)
+		{
+			delete this->menu_wrapper;
+		}
+		
+		// NOTE: we probably have to toggle this based on when
+		// the window is focused or not
+
+		this->menu_wrapper = new OSXMenuWrapper(menu,this->GetHost()->GetGlobalObject());
+		NSMenu *nsmenu = this->menu_wrapper->getNSMenu();
+		[NSApp setMainMenu:nsmenu];
 	}
 }
