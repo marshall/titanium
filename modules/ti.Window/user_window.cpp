@@ -55,41 +55,43 @@ void UserWindow::Close(UserWindow *window)
 	{
 		UserWindow::RemoveChild(parent,window);
 	}
-	
+
 	// see if we have any open child windows
 	std::vector<UserWindow*> children = windowsMap[window];
 	std::vector<UserWindow*>::iterator iter;
-	for (iter = children.begin(); iter != children.end(); iter++) 
+	for (iter = children.begin(); iter != children.end(); iter++)
 	{
 		UserWindow *child = (*iter);
 		child->Close();
 	}
 	children.clear();
 	windowsMap.erase(window);
-	
+
 
 	// delete from vector
-	for (iter = windows.begin(); iter != windows.end(); iter++) 
+	for (iter = windows.begin(); iter != windows.end(); iter++)
 	{
-		if ((*iter) == window) 
+		if ((*iter) == window)
 		{
 			break;
 		}
 	}
-	if (iter != windows.end()) 
+	if (iter != windows.end())
 	{
 		windows.erase(iter);
 	}
-	
+
 	// when we have no more windows, we exit ...
 	if (windows.size()==0)
 	{
 #if defined(OS_OSX)
 		[NSApp terminate:nil];
+#elif defined(OS_WIN32)
+		ExitProcess(0);
 #else
 		//TODO: in Win32, do we exit some other way??
-		exit(0); 
-#endif		
+		exit(0);
+#endif
 	}
 }
 void UserWindow::AddChild(UserWindow *parent, UserWindow *child)
@@ -112,7 +114,7 @@ void UserWindow::RemoveChild(UserWindow *parent, UserWindow *child)
 	}
 }
 
-UserWindow::UserWindow(kroll::Host *host, WindowConfig *config) : 
+UserWindow::UserWindow(kroll::Host *host, WindowConfig *config) :
 	kroll::StaticBoundObject(), parent(0)
 {
 
@@ -380,7 +382,7 @@ void UserWindow::set_transparency_cb(const kroll::ValueList& args, kroll::Shared
 void UserWindow::set_menu_cb(const kroll::ValueList& args, kroll::SharedValue result)
 {
 	SharedBoundObject val = args.at(0)->ToObject();
-	printf("%x\n", (int) val.get()); 
+	printf("%x\n", (int) val.get());
 	if (args.size() > 0 && args.at(0)->IsList()) {
 		SharedBoundList menu = args.at(0)->ToList();
 		this->SetMenu(menu);
