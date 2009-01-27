@@ -150,8 +150,7 @@ Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config)
 
 	std::cout << "set delegates, set host window, webview=" << (int)web_view  << std::endl;
 	hr = web_view->setFrameLoadDelegate(frameLoadDelegate);
-	// don't set the ui delegate yet, because it crashes the app
-	//hr = web_view->setUIDelegate(uiDelegate);
+	hr = web_view->setUIDelegate(uiDelegate);
 	hr = web_view->setHostWindow((OLE_HANDLE)window_handle);
 
 	std::cout << "init with frame" << std::endl;
@@ -184,6 +183,10 @@ void Win32UserWindow::ResizeSubViews()
 	RECT rcClient;
 	GetClientRect(window_handle, &rcClient);
 	MoveWindow(view_window_handle, 0, 0, rcClient.right, rcClient.bottom, TRUE);
+}
+
+HWND Win32UserWindow::GetWindowHandle() {
+	return this->window_handle;
 }
 
 void Win32UserWindow::Hide() {

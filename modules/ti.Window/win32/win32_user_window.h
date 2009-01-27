@@ -54,6 +54,7 @@ public:
 	virtual ~Win32UserWindow();
 	void ResizeSubViews();
 
+	HWND GetWindowHandle();
 	void Hide();
 	void Show();
 	bool IsUsingChrome() { return config->IsUsingChrome(); }
