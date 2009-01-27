@@ -10,7 +10,7 @@
 #include <api/module.h>
 #include <api/binding/binding.h>
 #include <Poco/Process.h>
-#include <Poco/Pipe.h>
+#include <Poco/PipeStream.h>
 #include <Poco/Exception.h>
 
 namespace ti
@@ -18,10 +18,10 @@ namespace ti
 	class Pipe : public StaticBoundObject
 	{
 	public:
-		Pipe(Poco::Pipe &pipe);
+		Pipe(Poco::PipeIOS *pipe);
 		virtual ~Pipe();
 	private:
-		Poco::Pipe pipe;
+		Poco::PipeIOS *pipe;
 		bool closed;
 
 		void Write(const ValueList& args, SharedValue result);

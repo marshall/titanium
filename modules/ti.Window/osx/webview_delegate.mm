@@ -388,6 +388,7 @@
 		BoundObject* delegate_window_api = new DelegateStaticBoundObject(window_api);
 		SharedBoundObject shared_user_window = [window userWindow];
 		SharedValue user_window_val = Value::NewObject(shared_user_window);
+		//FIXME: this holds user window beyond dealloc of native 
 		delegate_window_api->Set("currentWindow", user_window_val);
 		ti_object->Set("Window", Value::NewObject(delegate_window_api));
 	}
@@ -395,13 +396,13 @@
 	{
 		std::cerr << "Could not find Window API point!" << std::endl;
 	}
-
+	
 	// Place the Titanium object into the window's global object
 	JSObjectRef global_object = JSContextGetGlobalObject(context);
 	BoundObject *global_bound_object = new KJSBoundObject(context, global_object);
 	SharedValue ti_object_value = Value::NewObject(shared_ti_obj);
 	global_bound_object->Set(GLOBAL_NS_VARNAME, ti_object_value);
-
+	
 	windowJS = windowScriptObject;
 	// define Titanium.Window.createWindow to call Titanium.Window._createWindow with parent as first parameter
 	[windowScriptObject evaluateWebScript:[NSString stringWithCString:TI_WINDOW_BINDING_JS_CODE]];

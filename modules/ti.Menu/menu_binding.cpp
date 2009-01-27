@@ -12,15 +12,18 @@ namespace ti
 	{
 		this->SetMethod("createMenu", &MenuBinding::CreateMenu);
 	}
+
 	MenuBinding::~MenuBinding()
 	{
 	}
+
 	void MenuBinding::CreateMenu(const ValueList& args, SharedValue result)
 	{
 		MenuItem* item = new MenuItem();
 		SharedBoundList so = SharedBoundList(item);
 		result->SetList(so);
 	}
+
 }
 
 

@@ -7,6 +7,7 @@
 #import <WebKit/WebKit.h>
 #import "../user_window.h"
 #import "native_window.h"
+#include "../../ti.Menu/osx/osx_menu_wrapper.h"
 
 namespace ti
 {
@@ -61,6 +62,7 @@ namespace ti
 			NativeWindow *window;
 			bool opened;
 			bool closed;
+			OSXMenuWrapper *menu_wrapper;
 			
 			DISALLOW_EVIL_CONSTRUCTORS(OSXUserWindow);
 	};

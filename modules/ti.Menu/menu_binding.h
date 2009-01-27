@@ -21,6 +21,7 @@ namespace ti
 	protected:
 		virtual ~MenuBinding();
 	private:
+		Host *host;
 		BoundObject *global;
 		void CreateMenu(const ValueList& args, SharedValue result);
 	};

@@ -45,6 +45,7 @@ elif tiBuild.is_osx():
 	env.Append(FRAMEWORKS=['Cocoa','Carbon','WebKit','JavaScriptCore'])
 	sources = sources + Glob('osx/*.mm') + Glob('osx/*.cpp')
 	env.Append(CCFLAGS=['-x', 'objective-c++'])
+	env.Append(LIBS=['timenumodule'])
 	
 s = env.SharedLibrary(target = tiBuild.dir + '/tiwindowmodule',
                         source = sources)

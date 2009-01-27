@@ -19,15 +19,24 @@
 			{
 				var process = Titanium.Process.launch("ls",["-la"]);
 				var result = '';
-				// while (true)
-				// {
-				// 	var out = process.out.read();
-				// 	if (out==null)
-				// 	{
-				// 		break;
-				// 	}
-				// 	result += out;
-				// }
+				while (true)
+				{
+					try
+					{
+						var out = process.out.read();
+						if (out==null)
+						{
+							break;
+						}
+						result += out;
+					}
+					catch (ex)
+					{
+						alert("exception on read: "+ex);
+						break;
+					}
+				}
+				process.terminate();
 				document.write("<div>Result from ls -la was:</div><div><pre>"+result+"</pre></div>");
 				document.write("<div>Process pid was: "+process.pid+"</div>");
 			}
