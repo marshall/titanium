@@ -8,7 +8,7 @@
 
 namespace ti
 {
-	Pipe::Pipe(Poco::Pipe& pipe) : pipe(pipe), closed(false)
+	Pipe::Pipe(Poco::PipeIOS* pipe) : pipe(pipe), closed(false)
 	{
 		this->Set("closed",Value::NewBool(false));
 		this->SetMethod("close",&Pipe::Close);
@@ -18,6 +18,8 @@ namespace ti
 	Pipe::~Pipe()
 	{
 		Close();
+		delete pipe;
+		pipe = NULL;
 	}
 	void Pipe::Write(const ValueList& args, SharedValue result)
 	{
@@ -29,11 +31,17 @@ namespace ti
 		{
 			throw Value::NewString("can only write string data");
 		}
+		Poco::PipeOutputStream *os = dynamic_cast<Poco::PipeOutputStream*>(pipe);
+		if (os==NULL)
+		{
+			throw Value::NewString("stream is not writeable");
+		}
 		const char *data = args.at(0)->ToString();
 		int len = (int)strlen(data);
 		try
 		{
-			result->SetInt(pipe.writeBytes(data,len));
+			os->write(data,len);
+			result->SetInt(len);
 		}
 		catch (Poco::WriteFileException &e)
 		{
@@ -46,6 +54,11 @@ namespace ti
 		{
 			throw Value::NewString("pipe already closed");
 		}
+		Poco::PipeInputStream *is = dynamic_cast<Poco::PipeInputStream*>(pipe);
+		if (is==NULL)
+		{
+			throw Value::NewString("stream is not readable");
+		}
 		char *buf = NULL;
 		try
 		{
@@ -57,8 +70,9 @@ namespace ti
 				size = args.at(0)->ToInt();
 			}
 			buf = new char[size];
-			int count = pipe.readBytes(buf,size);
-			if (count <= 0)
+			is->read(buf,size);
+			int count = is->gcount();
+			if (count <=0)
 			{
 				result->SetNull();
 			}
@@ -83,7 +97,7 @@ namespace ti
 	{
 		if (!closed)
 		{
-			pipe.close();
+			pipe->close();
 			closed=true;
 			this->Set("closed",Value::NewBool(true));
 		}

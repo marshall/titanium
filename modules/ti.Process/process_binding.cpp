@@ -55,7 +55,6 @@ namespace ti
 				}
 			}
 		}
-		std::cout << "calling: " << cmd << " with " << arguments.size() << " args" << std::endl;
 		SharedBoundObject p = new Process(cmd,arguments);
 		result->SetObject(p);
 	}

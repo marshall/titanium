@@ -22,14 +22,14 @@ namespace ti
 	protected:
 		virtual ~Process();
 	private:
-		Poco::Pipe inp;
-		Poco::Pipe outp;
-		Poco::Pipe errp;
 		Poco::ProcessHandle *process;
 		bool running;
 		Pipe *in;
 		Pipe *out;
 		Pipe *err;
+		Poco::Pipe *errp;
+		Poco::Pipe *outp;
+		Poco::Pipe *inp;
 		
 		void Terminate(const ValueList& args, SharedValue result);
 		void Terminate();
