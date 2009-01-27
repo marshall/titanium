@@ -380,7 +380,6 @@ void UserWindow::set_transparency_cb(const kroll::ValueList& args, kroll::Shared
 void UserWindow::set_menu_cb(const kroll::ValueList& args, kroll::SharedValue result)
 {
 	SharedBoundObject val = args.at(0)->ToObject();
-	printf("%x\n", (int) val.get()); 
 	if (args.size() > 0 && args.at(0)->IsList()) {
 		SharedBoundList menu = args.at(0)->ToList();
 		this->SetMenu(menu);

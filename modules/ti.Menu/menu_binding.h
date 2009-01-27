@@ -17,10 +17,11 @@ namespace ti
 	{
 		friend class SharedPtr<BoundObject>;
 	public:
-		MenuBinding(SharedPtr<BoundObject>);
+		MenuBinding(Host *host, SharedPtr<BoundObject>);
 	protected:
 		virtual ~MenuBinding();
 	private:
+		Host *host;
 		BoundObject *global;
 		void CreateMenu(const ValueList& args, SharedValue result);
 	};

@@ -27,6 +27,7 @@ namespace ti
 		void GetUpdateURL(const ValueList& args, SharedValue result);
 		void GetGUID(const ValueList& args, SharedValue result);
 		void AppURLToPath(const ValueList& args, SharedValue result);
+		void SetMenu(const ValueList& args, SharedValue result);
 	};
 }
 
