@@ -22,6 +22,7 @@ using kroll::StaticBoundList;
 #include <webkit/webkit.h>
 
 #include "javascript_module.h"
-#include "gtk_menu_wrapper.h"
+#include "gtk_menu_item_impl.h"
 #include "gtk_user_window.h"
+
 #endif

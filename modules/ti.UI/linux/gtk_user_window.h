@@ -6,8 +6,6 @@
 #ifndef _GTK_USER_WINDOW_H_
 #define _GTK_USER_WINDOW_H_
 
-#include "../ui_module.h"
-
 namespace ti
 {
 	class GtkUserWindow : public UserWindow {
@@ -60,8 +58,9 @@ namespace ti
 		GtkWindow* gtk_window;
 		GtkWidget* vbox;
 		WebKitWebView* web_view;
-		GtkMenuWrapper* menu_wrapper;
+		SharedPtr<GtkMenuItemImpl> menu;
 	};
+
 }
 
 

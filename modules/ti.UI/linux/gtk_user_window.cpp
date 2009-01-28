@@ -4,7 +4,7 @@
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
 
-#include "ui_module_linux.h"
+#include "../ui_module.h"
 #include <iostream>
 
 using namespace ti;
@@ -19,7 +19,7 @@ GtkUserWindow::GtkUserWindow(Host *host, WindowConfig* config) : UserWindow(host
 {
 	this->gtk_window = NULL;
 	this->web_view = NULL;
-	this->menu_wrapper = NULL;
+	this->menu = NULL;
 }
 
 GtkUserWindow::~GtkUserWindow()
@@ -31,10 +31,6 @@ GtkUserWindow::~GtkUserWindow()
 		this->web_view = NULL;
 	}
 
-	if (this->menu_wrapper != NULL)
-	{
-		delete menu_wrapper;
-	}
 }
 
 void GtkUserWindow::Open() {
@@ -393,20 +389,23 @@ void GtkUserWindow::SetFullScreen(bool fullscreen)
 	}
 }
 
-void GtkUserWindow::SetMenu(SharedBoundList menu)
+void GtkUserWindow::SetMenu(SharedBoundList value)
 {
-	if (this->menu_wrapper != NULL)
+	if (!this->menu.isNull())
 	{
-		GtkWidget* old_menu_bar = this->menu_wrapper->GetMenuBar();
+		GtkWidget* old_menu_bar = this->menu->GetMenuBar();
 		gtk_container_remove(GTK_CONTAINER(this->vbox), old_menu_bar);
-		delete this->menu_wrapper;
 	}
 
-	this->menu_wrapper = new GtkMenuWrapper(menu, this->GetHost()->GetGlobalObject());
-	GtkWidget* gtk_menu_bar = this->menu_wrapper->GetMenuBar();
-	gtk_box_pack_start(GTK_BOX(this->vbox), gtk_menu_bar, FALSE, FALSE, 2);
-	gtk_box_reorder_child(GTK_BOX(this->vbox), gtk_menu_bar, 0);
-	gtk_widget_show(gtk_menu_bar);
+	SharedPtr<GtkMenuItemImpl> menu = value.cast<GtkMenuItemImpl>();
+	if (!menu.isNull())
+	{
+		this->menu = menu;
+		GtkWidget* gtk_menu_bar = menu->GetMenuBar();
+		gtk_box_pack_start(GTK_BOX(this->vbox), gtk_menu_bar, FALSE, FALSE, 2);
+		gtk_box_reorder_child(GTK_BOX(this->vbox), gtk_menu_bar, 0);
+		gtk_widget_show(gtk_menu_bar);
+	}
 
 }
 

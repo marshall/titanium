@@ -19,7 +19,11 @@ namespace ti
 		MenuItem();
 		~MenuItem();
 
-		void SetMethod(const char *name, void (MenuItem::*method)(const ValueList&, SharedValue));
+		void SetMethod(const char *name,
+		               void (MenuItem::*method)(const ValueList&, SharedValue));
+
+		void SetParent(MenuItem*);
+		MenuItem* GetParent();
 
 		bool IsSeparator();
 		bool IsSubMenu();
@@ -28,25 +32,30 @@ namespace ti
 		void _IsItem(const ValueList& args, SharedValue result);
 		void _IsSubMenu(const ValueList& args, SharedValue result);
 
+
+		virtual SharedValue AddSeparator() = 0;
+		virtual SharedValue AddItem(SharedValue label,
+		                    SharedValue callback,
+		                    SharedValue icon_url) = 0;
+		virtual SharedValue AddSubMenu(SharedValue label,
+		                               SharedValue icon_url) = 0;
+		void _AddSeparator(const ValueList& args, SharedValue result);
+		void _AddItem(const ValueList& args, SharedValue result);
+		void _AddSubMenu(const ValueList& args, SharedValue result);
+
+		SharedValue AppendItem(MenuItem* item);
+
 		void MakeSeparator();
 		void MakeItem(SharedValue label,
 		              SharedValue callback,
 		              SharedValue icon_url);
 		void MakeSubMenu(SharedValue label,
 		                 SharedValue icon_url);
-		void _MakeSeparator(const ValueList& args, SharedValue result);
-		void _MakeItem(const ValueList& args, SharedValue result);
-		void _MakeSubMenu(const ValueList& args, SharedValue result);
 
-		SharedValue AddSeparator();
-		SharedValue AddItem();
-		SharedValue AddItem(SharedValue label,
-		                    SharedValue callback,
-		                    SharedValue icon_url);
-		SharedValue AddSubMenu(SharedValue label, SharedValue icon_url);
-		void _AddSeparator(const ValueList& args, SharedValue result);
-		void _AddItem(const ValueList& args, SharedValue result);
-		void _AddSubMenu(const ValueList& args, SharedValue result);
+		void Enable();
+		void Disable();
+		void _Enable(const ValueList& args, SharedValue result);
+		void _Disable(const ValueList& args, SharedValue result);
 
 		const char* GetLabel();
 		const char* GetIconURL();

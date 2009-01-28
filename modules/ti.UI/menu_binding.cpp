@@ -3,8 +3,7 @@
  * see LICENSE in the root folder for details on the license.
  * Copyright (c) 2009 Appcelerator, Inc. All Rights Reserved.
  */
-#include <kroll/kroll.h>
-#include "menu_binding.h"
+#include "ui_module.h"
 
 namespace ti
 {
@@ -19,7 +18,9 @@ namespace ti
 
 	void MenuBinding::CreateMenu(const ValueList& args, SharedValue result)
 	{
-		MenuItem* item = new MenuItem();
+#ifdef OS_LINUX
+		MenuItem* item = new GtkMenuItemImpl(this->global, true);
+#endif
 		SharedBoundList so = SharedBoundList(item);
 		result->SetList(so);
 	}
