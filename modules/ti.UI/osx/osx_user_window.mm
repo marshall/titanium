@@ -37,7 +37,7 @@ namespace ti
 		return mask;
 	}
 
-	OSXUserWindow::OSXUserWindow(Host *host, WindowConfig *config) : UserWindow(host,config), window(0), opened(false), closed(false)
+	OSXUserWindow::OSXUserWindow(Host *host, WindowConfig *config) : UserWindow(host,config), window(NULL), opened(false), closed(false), menu_wrapper(NULL)
 	{
 		[NSApplication sharedApplication];
 
