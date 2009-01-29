@@ -33,11 +33,8 @@ namespace ti {
 #include "gtk/ui_module_gtk.h"
 
 #elif defined(OS_OSX)
-#include <WebKit/WebKit.h>
 #include "osx/ui_module_osx.h"
-#include "osx/native_window.h"
-#include "osx/osx_user_window.h"
-#include "osx/ti_app.h"
+
 #elif defined(OS_WIN32)
 #include "win32/win32_ui_binding.h"
 #endif

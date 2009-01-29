@@ -60,8 +60,16 @@ UserWindow::UserWindow(kroll::Host *host, WindowConfig *config) :
 	this->SetMethod("setY", &UserWindow::_SetY);
 	this->SetMethod("getWidth", &UserWindow::_GetWidth);
 	this->SetMethod("setWidth", &UserWindow::_SetWidth);
+	this->SetMethod("getMaxWidth", &UserWindow::_GetMaxWidth);
+	this->SetMethod("setMaxWidth", &UserWindow::_SetMaxWidth);
+	this->SetMethod("getMinWidth", &UserWindow::_GetMinWidth);
+	this->SetMethod("setMinWidth", &UserWindow::_SetMinWidth);
 	this->SetMethod("getHeight", &UserWindow::_GetHeight);
 	this->SetMethod("setHeight", &UserWindow::_SetHeight);
+	this->SetMethod("getMaxHeight", &UserWindow::_GetMaxHeight);
+	this->SetMethod("setMaxHeight", &UserWindow::_SetMaxHeight);
+	this->SetMethod("getMinHeight", &UserWindow::_GetMinHeight);
+	this->SetMethod("setMinHeight", &UserWindow::_SetMinHeight);
 	this->SetMethod("getBounds", &UserWindow::_GetBounds);
 	this->SetMethod("setBounds", &UserWindow::_SetBounds);
 	this->SetMethod("getTitle", &UserWindow::_GetTitle);
@@ -229,6 +237,30 @@ void UserWindow::_SetWidth(const kroll::ValueList& args, kroll::SharedValue resu
 	}
 }
 
+void UserWindow::_GetMinWidth(const kroll::ValueList& args, kroll::SharedValue result)
+{
+	result->SetDouble(this->GetMinWidth());
+}
+
+void UserWindow::_SetMinWidth(const kroll::ValueList& args, kroll::SharedValue result)
+{
+	if (args.size() > 0) {
+		this->SetMinWidth(args.at(0)->ToDouble());
+	}
+}
+
+void UserWindow::_GetMaxWidth(const kroll::ValueList& args, kroll::SharedValue result)
+{
+	result->SetDouble(this->GetMaxWidth());
+}
+
+void UserWindow::_SetMaxWidth(const kroll::ValueList& args, kroll::SharedValue result)
+{
+	if (args.size() > 0) {
+		this->SetMaxWidth(args.at(0)->ToDouble());
+	}
+}
+
 void UserWindow::_GetHeight(const kroll::ValueList& args, kroll::SharedValue result)
 {
 	result->SetDouble(this->GetHeight());
@@ -238,6 +270,30 @@ void UserWindow::_SetHeight(const kroll::ValueList& args, kroll::SharedValue res
 {
 	if (args.size() > 0) {
 		this->SetHeight(args.at(0)->ToDouble());
+	}
+}
+
+void UserWindow::_GetMinHeight(const kroll::ValueList& args, kroll::SharedValue result)
+{
+	result->SetDouble(this->GetMinHeight());
+}
+
+void UserWindow::_SetMinHeight(const kroll::ValueList& args, kroll::SharedValue result)
+{
+	if (args.size() > 0) {
+		this->SetMinHeight(args.at(0)->ToDouble());
+	}
+}
+
+void UserWindow::_GetMaxHeight(const kroll::ValueList& args, kroll::SharedValue result)
+{
+	result->SetDouble(this->GetMaxHeight());
+}
+
+void UserWindow::_SetMaxHeight(const kroll::ValueList& args, kroll::SharedValue result)
+{
+	if (args.size() > 0) {
+		this->SetMaxHeight(args.at(0)->ToDouble());
 	}
 }
 

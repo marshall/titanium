@@ -3,11 +3,7 @@
  * see LICENSE in the root folder for details on the license.
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
-#import "webview_delegate.h"
-#import "app_config.h"
-#import "native_window.h"
-#import "objc_bound_object.h"
-#import "../window_binding.h"
+#include "../ui_module.h"
 
 #define TRACE  NSLog
 
@@ -380,32 +376,34 @@
 	BoundObject* ti_object = new DelegateStaticBoundObject(global_tibo);
 	SharedBoundObject shared_ti_obj = SharedBoundObject(ti_object);
 
-	// Create a delegate object for the Window API for currentWindow
-	SharedValue window_api_value = ti_object->Get("Window");
-	if (window_api_value->IsObject())
+	SharedValue ui_api_value = ti_object->Get("UI");
+	if (ui_api_value->IsObject())
 	{
-		SharedBoundObject window_api = window_api_value->ToObject();
-		BoundObject* delegate_window_api = new DelegateStaticBoundObject(window_api);
+		// Create a delegate object for the UI API.
+		SharedBoundObject ui_api = ui_api_value->ToObject();
+		BoundObject* delegate_ui_api = new DelegateStaticBoundObject(ui_api);
+
+		// Place currentWindow in the delegate.
 		SharedBoundObject shared_user_window = [window userWindow];
 		SharedValue user_window_val = Value::NewObject(shared_user_window);
-		//FIXME: this holds user window beyond dealloc of native 
-		delegate_window_api->Set("currentWindow", user_window_val);
-		ti_object->Set("Window", Value::NewObject(delegate_window_api));
+		delegate_ui_api->Set("currentWindow", user_window_val);
+
+		// Place currentWindow.createWindow in the delegate.
+		SharedValue create_window_value = shared_user_window->Get("createWindow");
+		delegate_ui_api->Set("createWindow", create_window_value);
+
+		ti_object->Set("UI", Value::NewObject(delegate_ui_api));
 	}
 	else
 	{
-		std::cerr << "Could not find Window API point!" << std::endl;
+		std::cerr << "Could not find UI API point!" << std::endl;
 	}
-	
+
 	// Place the Titanium object into the window's global object
 	JSObjectRef global_object = JSContextGetGlobalObject(context);
 	BoundObject *global_bound_object = new KJSBoundObject(context, global_object);
 	SharedValue ti_object_value = Value::NewObject(shared_ti_obj);
 	global_bound_object->Set(GLOBAL_NS_VARNAME, ti_object_value);
-	
-	windowJS = windowScriptObject;
-	// define Titanium.Window.createWindow to call Titanium.Window._createWindow with parent as first parameter
-	[windowScriptObject evaluateWebScript:[NSString stringWithCString:TI_WINDOW_BINDING_JS_CODE]];
 
 	//NOTE: don't release tiJS or newti or cw
 	scriptCleared = YES;

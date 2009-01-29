@@ -187,9 +187,21 @@ namespace ti
 		return this->config->GetMinWidth();
 	}
 	
+	void OSXUserWindow::ReconfigureWindowConstraints()
+	{
+		NSSize min_size, max_size;
+		min_size.width = this->GetMinWidth();
+		min_size.height = this->GetMinHeight();
+		max_size.width = this->GetMaxWidth();
+		max_size.height = this->GetMaxHeight();
+
+		[window setContentMinSize: min_size];
+		[window setContentMaxSize: max_size];
+	}
+
 	void OSXUserWindow::SetMinWidth(double width) {
 		this->config->SetMinWidth(width);
-		STUB();
+		this->ReconfigureWindowConstraints();
 	}
 	
 	double OSXUserWindow::GetMaxHeight() {
@@ -198,7 +210,7 @@ namespace ti
 	
 	void OSXUserWindow::SetMaxHeight(double height) {
 		this->config->SetMaxHeight(height);
-		STUB();
+		this->ReconfigureWindowConstraints();
 	}
 	
 	double OSXUserWindow::GetMinHeight() {
@@ -207,7 +219,7 @@ namespace ti
 	
 	void OSXUserWindow::SetMinHeight(double height) {
 		this->config->SetMinHeight(height);
-		STUB();
+		this->ReconfigureWindowConstraints();
 	}
 	Bounds OSXUserWindow::GetBounds()
 	{

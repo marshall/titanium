@@ -3,11 +3,11 @@
  * see LICENSE in the root folder for details on the license.
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
-#import "preinclude.h"
+#ifndef _NATIVE_WINDOW_H_
+#define _NATIVE_WINDOW_H_
+
+#import "../ui_module.h"
 #import <Cocoa/Cocoa.h>
-#import <WebKit/WebKit.h>
-#import "webview_delegate.h"
-#import "window_config.h"
 
 @class WebViewDelegate;
 
@@ -33,3 +33,5 @@ using namespace ti;
 - (SharedBoundObject)userWindow;
 - (void)setInitialWindow:(BOOL)yn;
 @end
+
+#endif

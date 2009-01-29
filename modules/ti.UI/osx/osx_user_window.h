@@ -41,6 +41,7 @@ namespace ti
 			void SetHeight(double height);
 			double GetMaxHeight();
 			void SetMaxHeight(double height);
+			void ReconfigureWindowConstraints();
 			double GetMinHeight();
 			void SetMinHeight(double height);
 			Bounds GetBounds();
