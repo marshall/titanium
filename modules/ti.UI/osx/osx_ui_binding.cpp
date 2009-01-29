@@ -26,7 +26,8 @@ namespace ti
 
 	SharedPtr<MenuItem> OSXUIBinding::CreateMenu()
 	{
-		SharedPtr<MenuItem> menu = new OSXMenuItemImpl(true);
+		//SharedPtr<MenuItem> menu = new OSXMenuItem(true);
+		SharedPtr<MenuItem> menu = NULL;
 		return menu;
 	}
 
@@ -42,20 +43,21 @@ namespace ti
 		SharedString icon_path,
 		SharedBoundMethod cb)
 	{
-
+		SharedPtr<TrayItem> item = NULL;
+		return item;
 	}
 
-	virtual void OSX::SetDockIcon(SharedString icon_path)
+	void OSXUIBinding::SetDockIcon(SharedString icon_path)
 	{
 
 	}
 
-	virtual void OSX::SetDockMenu(SharedPtr<MenuItem>)
+	void OSXUIBinding::SetDockMenu(SharedPtr<MenuItem>)
 	{
 
 	}
 
-	virtual void OSX::SetBadge(SharedString badge_path)
+	void OSXUIBinding::SetBadge(SharedString badge_path)
 	{
 
 	}

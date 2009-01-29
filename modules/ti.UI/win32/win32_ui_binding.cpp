@@ -17,8 +17,9 @@ namespace ti
 
 	SharedPtr<MenuItem> Win32UIBinding::CreateMenu()
 	{
-		SharedPtr<MenuItem> menu = new Win32MenuItemImpl(true);
-		return menu;
+		//SharedPtr<MenuItem> menu = new Win32MenuItemImpl(true);
+		//return menu;
+		return NULL;
 	}
 
 	void Win32UIBinding::SetMenu(SharedPtr<MenuItem>)
@@ -33,7 +34,7 @@ namespace ti
 		SharedString icon_path,
 		SharedBoundMethod cb)
 	{
-
+		return NULL;
 	}
 
 }

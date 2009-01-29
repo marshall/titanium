@@ -128,14 +128,14 @@ Win32UIDelegate::runJavaScriptAlertPanelWithMessage(
 {
 	HWND handle = window->GetWindowHandle();
 	std::string msg;
-	std::string title("JavaScript Alert");
+	std::string title("Titanium Alert");
 
 	if(message)
 	{
 		msg.append(_bstr_t(message));
 	}
 
-	MessageBox(handle, (LPCTSTR) msg.c_str(), (LPCTSTR) title.c_str(), MB_OK | MB_ICONQUESTION);
+	MessageBox(handle, (LPCTSTR) msg.c_str(), (LPCTSTR) title.c_str(), MB_OK | MB_ICONEXCLAMATION);
 
 	return S_OK;
 }
@@ -147,7 +147,7 @@ Win32UIDelegate::runJavaScriptConfirmPanelWithMessage(
 	/* [retval][out] */ BOOL *result)
 {
 	HWND handle = window->GetWindowHandle();
-	std::string title("JavaScript Confirm");
+	std::string title("Titanium Confirmation");
 	std::string msg;
 
 	if(message)
@@ -155,7 +155,7 @@ Win32UIDelegate::runJavaScriptConfirmPanelWithMessage(
 		msg.append(bstr_t(message));
 	}
 
-	int r = MessageBox(handle, (LPCTSTR) msg.c_str(), (LPCTSTR) title.c_str(), MB_YESNO | MB_ICONEXCLAMATION);
+	int r = MessageBox(handle, (LPCTSTR) msg.c_str(), (LPCTSTR) title.c_str(), MB_YESNO | MB_ICONQUESTION);
 	*result = (r == IDYES);
 
 	return S_OK;
@@ -169,7 +169,7 @@ Win32UIDelegate::runJavaScriptTextInputPanelWithPrompt(
 	/* [retval][out] */ BSTR *result)
 {
 	HWND handle = window->GetWindowHandle();
-	std::string title("JavaScript Prompt");
+	std::string title("Titanium Prompt");
 	std::string msg = _bstr_t(message);
 	std::string def;
 
@@ -185,6 +185,7 @@ Win32UIDelegate::runJavaScriptTextInputPanelWithPrompt(
 	popupDialog.SetMessage(msg);
 	popupDialog.SetShowInputText(true);
 	popupDialog.SetInputText(def);
+	popupDialog.SetShowCancelButton(true);
 	int r = popupDialog.Show();
 
 	if(r == IDYES)
