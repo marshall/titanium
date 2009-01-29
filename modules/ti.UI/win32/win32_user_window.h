@@ -101,6 +101,9 @@ public:
 	void SetFullScreen(bool fullscreen);
 	void SetUsingChrome(bool chrome);
 	void SetMenu(SharedBoundList menu);
+	SharedBoundList GetMenu();
+	void SetIcon(SharedString icon_path);
+	SharedString GetIcon();
 
 };
 

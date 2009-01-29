@@ -20,6 +20,7 @@ namespace ti
 		GtkWidget* GetWidget();
 		GtkWidget* GetMenu();
 		GtkWidget* GetMenuBar();
+		void DeleteWidget(GtkWidget*);
 		void SetParent(GtkMenuItemImpl* parent);
 		GtkMenuItemImpl* GetParent();
 

@@ -81,6 +81,9 @@ UserWindow::UserWindow(kroll::Host *host, WindowConfig *config) :
 	this->SetMethod("getTransparency", &UserWindow::_GetTransparency);
 	this->SetMethod("setTransparency", &UserWindow::_SetTransparency);
 	this->SetMethod("setMenu", &UserWindow::_SetMenu);
+	this->SetMethod("getMenu", &UserWindow::_GetMenu);
+	this->SetMethod("setIcon", &UserWindow::_SetIcon);
+	this->SetMethod("getIcon", &UserWindow::_GetIcon);
 
 	this->SetMethod("createWindow", &UserWindow::_CreateWindow);
 	this->SetMethod("getParent", &UserWindow::_GetParent);
@@ -363,12 +366,35 @@ void UserWindow::_SetTransparency(const kroll::ValueList& args, kroll::SharedVal
 
 void UserWindow::_SetMenu(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	SharedBoundObject val = args.at(0)->ToObject();
-	if (args.size() > 0 && args.at(0)->IsList()) {
-		SharedBoundList menu = args.at(0)->ToList();
-		this->SetMenu(menu);
+	SharedPtr<MenuItem> menu = NULL; // A NULL value is an unset
+	if (args.size() > 0 && args.at(0)->IsList())
+	{
+		menu = args.at(0)->ToList().cast<MenuItem>();
 	}
+	this->SetMenu(menu);
 }
+
+void UserWindow::_GetMenu(const kroll::ValueList& args, kroll::SharedValue result)
+{
+	result->SetObject(this->GetMenu());
+}
+
+void UserWindow::_SetIcon(const kroll::ValueList& args, kroll::SharedValue result)
+{
+	SharedString icon_path = NULL; // a NULL value is an unset
+	if (args.size() > 0 && args.at(0)->IsString())
+	{
+		const char *icon_url = args.at(0)->ToString();
+		icon_path = UIModule::GetResourcePath(icon_url);
+	}
+	this->SetIcon(icon_path);
+}
+
+void UserWindow::_GetIcon(const kroll::ValueList& args, kroll::SharedValue result)
+{
+	result->SetString(this->GetIcon()->c_str());
+}
+
 void UserWindow::_GetParent(const kroll::ValueList& args, kroll::SharedValue result)
 {
 	if (this->parent==NULL)
@@ -403,6 +429,10 @@ SharedBoundObject UserWindow::CreateWindow(SharedBoundObject properties)
 
 }
 
+std::vector<UserWindow*>& UserWindow::GetWindows()
+{
+	return UserWindow::windows;
+}
 
 void UserWindow::SetParent(UserWindow *parent)
 {
