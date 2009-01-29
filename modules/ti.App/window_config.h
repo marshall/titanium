@@ -16,20 +16,39 @@ namespace ti {
 class TITANIUM_APP_API WindowConfig
 {
 private:
-	std::string winid, url, title;
-	int x, y, width, height, minWidth, minHeight, maxWidth, maxHeight;
+	std::string winid;
+	std::string url;
+	std::string title;
+
+	int x;
+	int y;
+	int width;
+	int height;
+	int minWidth;
+	int minHeight;
+	int maxWidth;
+	int maxHeight;
+
 	float transparency;
 
-	bool visible, maximizable, minimizable, closeable,
-		resizable, fullscreen, usingChrome, usingScrollbars;
+	bool visible;
+	bool maximizable;
+	bool minimizable;
+	bool closeable;
+	bool resizable;
+	bool fullscreen;
+	bool usingChrome;
+	bool usingScrollbars;
 
 	void SetDefaults();
 
 public:
 	static int DEFAULT_POSITION;
+	static int window_count;
 
 	WindowConfig() { SetDefaults(); }
 	WindowConfig(void* data);
+	void UseProperties(SharedBoundObject properties);
 
 	std::string ToString();
 

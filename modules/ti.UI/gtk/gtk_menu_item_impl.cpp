@@ -9,8 +9,8 @@ namespace ti {
 
 	void menu_callback(gpointer data);
 
-	GtkMenuItemImpl::GtkMenuItemImpl(SharedBoundObject global, bool top)
-		 : top_level(top), global(global)
+	GtkMenuItemImpl::GtkMenuItemImpl(bool top)
+		 : top_level(top)
 	{
 		if (top_level)
 		{
@@ -49,7 +49,7 @@ namespace ti {
 
 	SharedValue GtkMenuItemImpl::AddSeparator()
 	{
-		GtkMenuItemImpl* item = new GtkMenuItemImpl(this->global, false);
+		GtkMenuItemImpl* item = new GtkMenuItemImpl(false);
 		item->MakeSeparator();
 		item->MakeWidget();
 
@@ -60,7 +60,7 @@ namespace ti {
 	                              SharedValue callback,
 	                              SharedValue icon_url)
 	{
-		GtkMenuItemImpl* item = new GtkMenuItemImpl(this->global, false);
+		GtkMenuItemImpl* item = new GtkMenuItemImpl(false);
 		item->MakeItem(label, callback, icon_url);
 		item->MakeWidget();
 
@@ -70,7 +70,7 @@ namespace ti {
 	SharedValue GtkMenuItemImpl::AddSubMenu(SharedValue label,
 	                                 SharedValue icon_url)
 	{
-		GtkMenuItemImpl* item = new GtkMenuItemImpl(this->global, false);
+		GtkMenuItemImpl* item = new GtkMenuItemImpl(false);
 		item->MakeSubMenu(label, icon_url);
 		item->MakeWidget();
 
@@ -101,7 +101,7 @@ namespace ti {
 	{
 		const char* label = this->GetLabel();
 		const char* icon_url = this->GetIconURL();
-		SharedValue icon_val = this->GetIconPath(icon_url);
+		SharedString icon_path = UIModule::GetResourcePath(icon_url);
 		SharedValue callback_val = this->Get("callback");
 
 		GtkWidget* widget;
@@ -109,14 +109,14 @@ namespace ti {
 		{
 			widget = gtk_separator_menu_item_new();
 		}
-		else if (!icon_val->IsString())
+		else if (icon_path.isNull())
 		{
 			widget = gtk_menu_item_new_with_label(label);
 		}
 		else
 		{
 			widget = gtk_image_menu_item_new_with_label(label);
-			GtkWidget* image = gtk_image_new_from_file(icon_val->ToString());
+			GtkWidget* image = gtk_image_new_from_file(icon_path->c_str());
 			gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(widget), image);
 		}
 
@@ -139,25 +139,6 @@ namespace ti {
 		}
 
 		this->widget = widget;
-	}
-
-	SharedValue GtkMenuItemImpl::GetIconPath(const char *url)
-	{
-		if (url == NULL || !strcmp(url, ""))
-			return Value::Undefined;
-
-		SharedValue app_obj = this->global->Get("App");
-		if (!app_obj->IsObject())
-			return Value::Undefined;
-
-		SharedValue meth_val = app_obj->ToObject()->Get("appURLToPath");
-		if (!meth_val->IsMethod())
-			return Value::Undefined;
-
-		SharedBoundMethod meth = meth_val->ToMethod();
-		ValueList args;
-		args.push_back(Value::NewString(url));
-		return meth->Call(args);
 	}
 
 	void GtkMenuItemImpl::Enable()

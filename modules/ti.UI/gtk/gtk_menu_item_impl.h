@@ -15,7 +15,7 @@ namespace ti
 	{
 
 	public:
-		GtkMenuItemImpl(SharedBoundObject global, bool top_level=false);
+		GtkMenuItemImpl(bool top_level=false);
 
 		GtkWidget* GetWidget();
 		GtkWidget* GetMenu();
@@ -39,7 +39,6 @@ namespace ti
 
 	private:
 		bool top_level;
-		SharedBoundObject global;
 
 		GtkWidget *gtk_menu_bar;
 		GtkWidget *gtk_menu;

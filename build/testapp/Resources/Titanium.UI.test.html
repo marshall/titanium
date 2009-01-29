@@ -10,7 +10,7 @@
 		<script>
 			function openWindowA()
 			{
-				var w = Titanium.Window.createWindow();
+				var w = Titanium.UI.createWindow();
 				try
 				{
 					w.setTitle("hello world from fullscreen");
@@ -63,7 +63,7 @@
 		</script>
 	</head>
 	<body>
-		<h2>Titanium Window test app</h2>
+		<h2>Titanium UI test app</h2>
 		<div><button onclick="openWindowA()">Open Window</button></div>
 		<div><button onclick="jsAlert()">Javascript alert</button></div>
 		<div><button onclick="jsConfirm()">Javascript confirm</button></div>

@@ -4,8 +4,8 @@
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
 
-#ifndef _UI_MODULE_LINUX_H_
-#define _UI_MODULE_LINUX_H_
+#ifndef _UI_MODULE_GTK_H_
+#define _UI_MODULE_GTK_H_
 
 #include <kroll/kroll.h>
 
@@ -21,8 +21,11 @@ using kroll::StaticBoundList;
 #include <gdk/gdkx.h>
 #include <webkit/webkit.h>
 
+#include "../url/app_url.h"
 #include "javascript_module.h"
 #include "gtk_menu_item_impl.h"
 #include "gtk_user_window.h"
+
+#include "gtk_ui_binding.h"
 
 #endif

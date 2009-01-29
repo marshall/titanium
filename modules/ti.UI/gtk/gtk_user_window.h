@@ -14,6 +14,8 @@ namespace ti
 		~GtkUserWindow();
 		void SetupDecorations();
 		void SetupTransparency();
+		void SetupSizeLimits();
+		UserWindow* WindowFactory(Host *, WindowConfig*);
 
 		void Hide();
 		void Show();
@@ -28,10 +30,21 @@ namespace ti
 		void SetX(double x);
 		double GetY();
 		void SetY(double y);
+
 		double GetWidth();
-		void SetWidth(double width);
+		void SetWidth(double width) ;
+		double GetMaxWidth();
+		void SetMaxWidth(double width);
+		double GetMinWidth();
+		void SetMinWidth(double width);
+
 		double GetHeight();
 		void SetHeight(double height);
+		double GetMaxHeight();
+		void SetMaxHeight(double height);
+		double GetMinHeight();
+		void SetMinHeight(double height);
+
 		Bounds GetBounds();
 		void SetBounds(Bounds bounds);
 		std::string GetTitle();

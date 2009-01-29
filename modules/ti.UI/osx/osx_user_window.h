@@ -18,6 +18,7 @@ namespace ti
 		protected:
 			~OSXUserWindow();
 		public:
+			UserWindow* WindowFactory(Host*, WindowConfig*);
 			void Hide();
 			void Show();
 			bool IsUsingChrome();

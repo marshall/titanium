@@ -74,6 +74,10 @@ namespace ti
 			UserWindow::Close(this);
 		}
 	}
+	UserWindow* OSXUserWindow::WindowFactory(Host* host, WindowConfig* config)
+	{
+		return new OSXUserWindow(host, config);
+	}
 	void OSXUserWindow::Hide()
 	{
 		this->config->SetVisible(false);

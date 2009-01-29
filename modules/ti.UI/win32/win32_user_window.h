@@ -52,6 +52,7 @@ public:
 
 	Win32UserWindow(kroll::Host *host, WindowConfig *config);
 	virtual ~Win32UserWindow();
+	UserWindow* WindowFactory(Host*, WindowConfig*);
 	void ResizeSubViews();
 
 	HWND GetWindowHandle();

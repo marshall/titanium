@@ -178,6 +178,11 @@ Win32UserWindow::~Win32UserWindow()
 		main_frame->Release();
 }
 
+UserWindow* Win32UserWindow::WindowFactory(Host *host, WindowConfig* config)
+{
+	return new Win32UserWindow(host, config);
+}
+
 void Win32UserWindow::ResizeSubViews()
 {
 	RECT rcClient;

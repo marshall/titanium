@@ -30,51 +30,61 @@ class UserWindow : public kroll::StaticBoundObject {
 		~UserWindow(){};
 	public:
 		kroll::Host* GetHost() { return this->host; }
-		
-		//FIXME: add the following that are missing
-		// minWidth, maxWidth, minHeight, maxHeight
+		SharedBoundObject CreateWindow(SharedBoundObject properties);
 
 	private:
-		void hide_cb(const kroll::ValueList&, kroll::SharedValue );
-		void show_cb(const kroll::ValueList&, kroll::SharedValue );
-		void is_using_chrome_cb(const kroll::ValueList&, kroll::SharedValue );
-		void set_using_chrome_cb(const kroll::ValueList&, kroll::SharedValue );
-		void is_using_scrollbars_cb(const kroll::ValueList&, kroll::SharedValue );
-		void is_full_screen_cb(const kroll::ValueList&, kroll::SharedValue );
-		void set_full_screen_cb(const kroll::ValueList&, kroll::SharedValue );
-		void get_id_cb(const kroll::ValueList&, kroll::SharedValue );
-		void open_cb(const kroll::ValueList&, kroll::SharedValue );
-		void close_cb(const kroll::ValueList&, kroll::SharedValue );
-		void get_x_cb(const kroll::ValueList&, kroll::SharedValue );
-		void set_x_cb(const kroll::ValueList&, kroll::SharedValue );
-		void get_y_cb(const kroll::ValueList&, kroll::SharedValue );
-		void set_y_cb(const kroll::ValueList&, kroll::SharedValue );
-		void get_width_cb(const kroll::ValueList&, kroll::SharedValue );
-		void set_width_cb(const kroll::ValueList&, kroll::SharedValue );
-		void get_height_cb(const kroll::ValueList&, kroll::SharedValue );
-		void set_height_cb(const kroll::ValueList&, kroll::SharedValue );
-		void get_bounds_cb(const kroll::ValueList&, kroll::SharedValue );
-		void set_bounds_cb(const kroll::ValueList&, kroll::SharedValue );
-		void get_title_cb(const kroll::ValueList&, kroll::SharedValue );
-		void set_title_cb(const kroll::ValueList&, kroll::SharedValue );
-		void get_url_cb(const kroll::ValueList&, kroll::SharedValue );
-		void set_url_cb(const kroll::ValueList&, kroll::SharedValue );
-		void is_resizable_cb(const kroll::ValueList&, kroll::SharedValue );
-		void set_resizable_cb(const kroll::ValueList&, kroll::SharedValue );
-		void is_maximizable_cb(const kroll::ValueList&, kroll::SharedValue );
-		void set_maximizable_cb(const kroll::ValueList&, kroll::SharedValue );
-		void is_minimizable_cb(const kroll::ValueList&, kroll::SharedValue );
-		void set_minimizable_cb(const kroll::ValueList&, kroll::SharedValue );
-		void is_closeable_cb(const kroll::ValueList&, kroll::SharedValue );
-		void set_closeable_cb(const kroll::ValueList&, kroll::SharedValue );
-		void is_visible_cb(const kroll::ValueList&, kroll::SharedValue );
-		void set_visible_cb(const kroll::ValueList&, kroll::SharedValue );
-		void get_transparency_cb(const kroll::ValueList&, kroll::SharedValue );
-		void set_transparency_cb(const kroll::ValueList&, kroll::SharedValue );
-		void set_menu_cb(const kroll::ValueList&, kroll::SharedValue );
-		void get_parent_cb(const kroll::ValueList&, kroll::SharedValue );
+		void _Hide(const kroll::ValueList&, kroll::SharedValue);
+		void _Show(const kroll::ValueList&, kroll::SharedValue);
+		void _IsUsingChrome(const kroll::ValueList&, kroll::SharedValue);
+		void _SetUsingChrome(const kroll::ValueList&, kroll::SharedValue);
+		void _IsUsingScrollbars(const kroll::ValueList&, kroll::SharedValue);
+		void _IsFullScreen(const kroll::ValueList&, kroll::SharedValue);
+		void _SetFullScreen(const kroll::ValueList&, kroll::SharedValue);
+		void _GetId(const kroll::ValueList&, kroll::SharedValue);
+		void _Open(const kroll::ValueList&, kroll::SharedValue);
+		void _Close(const kroll::ValueList&, kroll::SharedValue);
+		void _GetX(const kroll::ValueList&, kroll::SharedValue);
+		void _SetX(const kroll::ValueList&, kroll::SharedValue);
+		void _GetY(const kroll::ValueList&, kroll::SharedValue);
+		void _SetY(const kroll::ValueList&, kroll::SharedValue);
+		void _GetWidth(const kroll::ValueList&, kroll::SharedValue);
+		void _SetWidth(const kroll::ValueList&, kroll::SharedValue);
+		void _GetMaxWidth(const kroll::ValueList&, kroll::SharedValue);
+		void _SetMaxWidth(const kroll::ValueList&, kroll::SharedValue);
+		void _GetMinWidth(const kroll::ValueList&, kroll::SharedValue);
+		void _SetMinWidth(const kroll::ValueList&, kroll::SharedValue);
+		void _GetHeight(const kroll::ValueList&, kroll::SharedValue);
+		void _SetHeight(const kroll::ValueList&, kroll::SharedValue);
+		void _GetMaxHeight(const kroll::ValueList&, kroll::SharedValue);
+		void _SetMaxHeight(const kroll::ValueList&, kroll::SharedValue);
+		void _GetMinHeight(const kroll::ValueList&, kroll::SharedValue);
+		void _SetMinHeight(const kroll::ValueList&, kroll::SharedValue);
+		void _GetBounds(const kroll::ValueList&, kroll::SharedValue);
+		void _SetBounds(const kroll::ValueList&, kroll::SharedValue);
+		void _GetTitle(const kroll::ValueList&, kroll::SharedValue);
+		void _SetTitle(const kroll::ValueList&, kroll::SharedValue);
+		void _GetURL(const kroll::ValueList&, kroll::SharedValue);
+		void _SetURL(const kroll::ValueList&, kroll::SharedValue);
+		void _IsResizable(const kroll::ValueList&, kroll::SharedValue);
+		void _SetResizable(const kroll::ValueList&, kroll::SharedValue);
+		void _IsMaximizable(const kroll::ValueList&, kroll::SharedValue);
+		void _SetMaximizable(const kroll::ValueList&, kroll::SharedValue);
+		void _IsMinimizable(const kroll::ValueList&, kroll::SharedValue);
+		void _SetMinimizable(const kroll::ValueList&, kroll::SharedValue);
+		void _IsCloseable(const kroll::ValueList&, kroll::SharedValue);
+		void _SetCloseable(const kroll::ValueList&, kroll::SharedValue);
+		void _IsVisible(const kroll::ValueList&, kroll::SharedValue);
+		void _SetVisible(const kroll::ValueList&, kroll::SharedValue);
+		void _GetTransparency(const kroll::ValueList&, kroll::SharedValue);
+		void _SetTransparency(const kroll::ValueList&, kroll::SharedValue);
+		void _GetParent(const kroll::ValueList&, kroll::SharedValue);
+
+		void _SetMenu(const kroll::ValueList&, kroll::SharedValue);
+		void _SetIcon(const kroll::ValueList&, kroll::SharedValue);
+		void _CreateWindow(const kroll::ValueList&, kroll::SharedValue);
 
 	public:
+		virtual UserWindow* WindowFactory(Host*, WindowConfig*) = 0;
 		virtual void Hide() = 0;
 		virtual void Show() = 0;
 		virtual bool IsUsingChrome() = 0;
@@ -83,14 +93,26 @@ class UserWindow : public kroll::StaticBoundObject {
 		virtual std::string GetId() = 0;
 		virtual void Open() = 0;
 		virtual void Close() = 0;
+
 		virtual double GetX() = 0;
 		virtual void SetX(double x) = 0;
 		virtual double GetY() = 0;
 		virtual void SetY(double y) = 0;
+
 		virtual double GetWidth() = 0;
 		virtual void SetWidth(double width) = 0;
+		virtual double GetMaxWidth() = 0;
+		virtual void SetMaxWidth(double width) = 0;
+		virtual double GetMinWidth() = 0;
+		virtual void SetMinWidth(double width) = 0;
+
 		virtual double GetHeight() = 0;
 		virtual void SetHeight(double height) = 0;
+		virtual double GetMaxHeight() = 0;
+		virtual void SetMaxHeight(double height) = 0;
+		virtual double GetMinHeight() = 0;
+		virtual void SetMinHeight(double height) = 0;
+
 		virtual Bounds GetBounds() = 0;
 		virtual void SetBounds(Bounds bounds) = 0;
 		virtual std::string GetTitle() = 0;
@@ -118,10 +140,10 @@ class UserWindow : public kroll::StaticBoundObject {
 		WindowConfig *config;
 		UserWindow *parent;
 		
-		virtual UserWindow* get_parent();
-		virtual void set_parent(UserWindow *parent);
-		virtual void add_child(UserWindow *window);
-		virtual void remove_child(UserWindow *window);
+		virtual UserWindow* GetParent();
+		virtual void SetParent(UserWindow *parent);
+		virtual void AddChild(UserWindow *window);
+		virtual void RemoveChild(UserWindow *window);
 
 		static std::vector<UserWindow*> windows;
 		static std::map<UserWindow*, std::vector<UserWindow*> > windowsMap;

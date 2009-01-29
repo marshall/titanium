@@ -9,6 +9,8 @@
 
 using namespace ti;
 
+#define STUB() printf("Method is still a stub, %s:%i\n", __FILE__, __LINE__)
+
 static void destroy_cb (GtkWidget* widget, gpointer data);
 static void window_object_cleared_cb (WebKitWebView*,
                                       WebKitWebFrame*,
@@ -31,6 +33,11 @@ GtkUserWindow::~GtkUserWindow()
 		this->web_view = NULL;
 	}
 
+}
+
+UserWindow* GtkUserWindow::WindowFactory(Host *host, WindowConfig* config)
+{
+	return new GtkUserWindow(host, config);
 }
 
 void GtkUserWindow::Open() {
@@ -74,6 +81,7 @@ void GtkUserWindow::Open() {
 
 		gtk_widget_realize(window);
 		this->SetupDecorations();
+		this->SetupSizeLimits();
 
 		webkit_web_view_open(web_view, this->config->GetURL().c_str());
 
@@ -99,19 +107,62 @@ void GtkUserWindow::Open() {
 
 void GtkUserWindow::SetupTransparency()
 {
-	GValue val = {0,};
-	g_value_init(&val, G_TYPE_BOOLEAN);
-	g_value_set_boolean(&val, 1);
-	g_object_set_property(G_OBJECT (this->web_view), "transparent", &val); 
+	if (this->gtk_window != NULL)
+	{
+		GValue val = {0,};
+		g_value_init(&val, G_TYPE_BOOLEAN);
+		g_value_set_boolean(&val, 1);
+		g_object_set_property(G_OBJECT (this->web_view), "transparent", &val); 
 
-	GdkScreen* screen = gtk_widget_get_screen(GTK_WIDGET(this->gtk_window));
-	GdkColormap* colormap = gdk_screen_get_rgba_colormap(screen);
-	if (!colormap) {
-		std::cerr << "Could not use ARGB colormap. "
-		          << "True transparency not available." << std::endl;
-		colormap = gdk_screen_get_rgb_colormap(screen);
+		GdkScreen* screen = gtk_widget_get_screen(GTK_WIDGET(this->gtk_window));
+		GdkColormap* colormap = gdk_screen_get_rgba_colormap(screen);
+		if (!colormap) {
+			std::cerr << "Could not use ARGB colormap. "
+			          << "True transparency not available." << std::endl;
+			colormap = gdk_screen_get_rgb_colormap(screen);
+		}
+		gtk_widget_set_colormap(GTK_WIDGET(this->gtk_window), colormap);
 	}
-	gtk_widget_set_colormap(GTK_WIDGET(this->gtk_window), colormap);
+}
+
+void GtkUserWindow::SetupDecorations()
+{
+	if (this->gtk_window != NULL)
+	{
+		GdkWindow *gdk_window = gtk_widget_get_window(GTK_WIDGET(this->gtk_window));
+		int d = 0;
+
+		if (this->config->IsUsingChrome())
+			d = d | GDK_DECOR_BORDER | GDK_DECOR_TITLE | GDK_DECOR_MENU;
+
+		if (this->config->IsResizable())
+			d = d | GDK_DECOR_RESIZEH;
+
+		if (this->config->IsMinimizable())
+			d = d | GDK_DECOR_MINIMIZE;
+
+		if (this->config->IsMaximizable())
+			d = d | GDK_DECOR_MAXIMIZE;
+
+		this->SetTransparency(config->GetTransparency());
+
+		gdk_window_set_decorations(gdk_window, (GdkWMDecoration) d);
+	}
+}
+
+
+void GtkUserWindow::SetupSizeLimits()
+{
+	if (this->gtk_window != NULL)
+	{
+		GdkGeometry hints;
+		hints.max_width = this->config->GetMaxWidth();
+		hints.min_width = this->config->GetMinWidth();
+		hints.max_height = this->config->GetMaxHeight();
+		hints.min_height = this->config->GetMinHeight();
+		GdkWindowHints mask = (GdkWindowHints) (GDK_HINT_MIN_SIZE | GDK_HINT_MAX_SIZE);
+		gtk_window_set_geometry_hints(this->gtk_window, NULL, &hints, mask);
+	}
 }
 
 void GtkUserWindow::Close()
@@ -142,20 +193,27 @@ static void window_object_cleared_cb (WebKitWebView* web_view,
 	BoundObject* ti_object = new DelegateStaticBoundObject(global_tibo);
 	SharedBoundObject shared_ti_obj = SharedBoundObject(ti_object);
 
-	SharedValue window_api_value = ti_object->Get("Window");
-	if (window_api_value->IsObject())
+	SharedValue ui_api_value = ti_object->Get("UI");
+	if (ui_api_value->IsObject())
 	{
-		// Create a delegate object for the Window API for currentWindow
-		SharedBoundObject window_api = window_api_value->ToObject();
-		BoundObject* delegate_window_api = new DelegateStaticBoundObject(window_api);
+		// Create a delegate object for the UI API.
+		SharedBoundObject ui_api = ui_api_value->ToObject();
+		BoundObject* delegate_ui_api = new DelegateStaticBoundObject(ui_api);
+
+		// Place currentWindow in the delegate.
 		SharedBoundObject* shared_user_window = new SharedBoundObject(user_window);
 		SharedValue user_window_val = Value::NewObject(*shared_user_window);
-		delegate_window_api->Set("currentWindow", user_window_val);
-		ti_object->Set("Window", Value::NewObject(delegate_window_api));
+		delegate_ui_api->Set("currentWindow", user_window_val);
+
+		// Place currentWindow.createWindow in the delegate.
+		SharedValue create_window_value = user_window->Get("createWindow");
+		delegate_ui_api->Set("createWindow", create_window_value);
+
+		ti_object->Set("UI", Value::NewObject(delegate_ui_api));
 	}
 	else
 	{
-		std::cerr << "Could not find Window API point!" << std::endl;
+		std::cerr << "Could not find UI API point!" << std::endl;
 	}
 
 	// Place the Titanium object into the window's global object
@@ -217,19 +275,37 @@ void GtkUserWindow::SetY(double y) {
 
 double GtkUserWindow::GetWidth() {
 	int width, height;
-	gtk_window_get_size (this->gtk_window, &width, &height);
+	gtk_window_get_size(this->gtk_window, &width, &height);
 	return width;
 }
 
 void GtkUserWindow::SetWidth(double width) {
 	int height = GetHeight();
 	gtk_window_resize(this->gtk_window, int(width), height);
-	this->config->SetWidth(width);
+	this->config->SetMaxWidth(width);
+}
+
+double GtkUserWindow::GetMaxWidth() {
+	return this->config->GetMaxWidth();
+}
+
+void GtkUserWindow::SetMaxWidth(double width) {
+	this->config->SetMaxWidth(width);
+	this->SetupSizeLimits();
+}
+
+double GtkUserWindow::GetMinWidth() {
+	return this->config->GetMinWidth();
+}
+
+void GtkUserWindow::SetMinWidth(double width) {
+	this->config->SetMinWidth(width);
+	this->SetupSizeLimits();
 }
 
 double GtkUserWindow::GetHeight() {
 	int width, height;
-	gtk_window_get_size (this->gtk_window, &width, &height);
+	gtk_window_get_size(this->gtk_window, &width, &height);
 	return width;
 }
 
@@ -237,6 +313,24 @@ void GtkUserWindow::SetHeight(double height) {
 	int width = GetWidth();
 	gtk_window_resize(this->gtk_window, width, int(height));
 	this->config->SetHeight(height);
+}
+
+double GtkUserWindow::GetMaxHeight() {
+	return this->config->GetMaxHeight();
+}
+
+void GtkUserWindow::SetMaxHeight(double height) {
+	this->config->SetMaxHeight(height);
+	this->SetupSizeLimits();
+}
+
+double GtkUserWindow::GetMinHeight() {
+	return this->config->GetMinHeight();
+}
+
+void GtkUserWindow::SetMinHeight(double height) {
+	this->config->SetMinHeight(height);
+	this->SetupSizeLimits();
 }
 
 Bounds GtkUserWindow::GetBounds() {
@@ -277,28 +371,6 @@ void GtkUserWindow::SetURL(std::string& uri)
 {
 	webkit_web_view_open (this->web_view, uri.c_str());
 	this->config->SetURL(uri);
-}
-
-void GtkUserWindow::SetupDecorations()
-{
-	GdkWindow *gdk_window = gtk_widget_get_window(GTK_WIDGET(this->gtk_window));
-	int d = 0;
-
-	if (this->config->IsUsingChrome())
-		d = d | GDK_DECOR_BORDER | GDK_DECOR_TITLE | GDK_DECOR_MENU;
-
-	if (this->config->IsResizable())
-		d = d | GDK_DECOR_RESIZEH;
-
-	if (this->config->IsMinimizable())
-		d = d | GDK_DECOR_MINIMIZE;
-
-	if (this->config->IsMaximizable())
-		d = d | GDK_DECOR_MAXIMIZE;
-
-	this->SetTransparency(config->GetTransparency());
-
-	gdk_window_set_decorations(gdk_window, (GdkWMDecoration) d);
 }
 
 bool GtkUserWindow::IsUsingChrome() {

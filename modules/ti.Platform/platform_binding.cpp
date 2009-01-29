@@ -17,33 +17,39 @@ namespace ti
 {
 	PlatformBinding::PlatformBinding(SharedBoundObject global) : global(global)
 	{
-		this->Set("name",Value::NewString(Poco::Environment::osName().c_str()));
-		this->Set("version",Value::NewString(Poco::Environment::osVersion().c_str()));
-		this->Set("architecture",Value::NewString(Poco::Environment::osArchitecture().c_str()));
-		this->Set("address",Value::NewString(Poco::Environment::nodeName().c_str()));
-		try
-		{
-			this->Set("id",Value::NewString(Poco::Environment::nodeId().c_str()));
-		}
-		catch(...)
-		{
-			this->Set("id",Value::NewString(""));
-		}
+		const char *os_name = Poco::Environment::osName().c_str();
+		const char *os_version = Poco::Environment::osVersion().c_str();
+		const char *arch = Poco::Environment::osArchitecture().c_str();
+		const char *address = Poco::Environment::nodeName().c_str();
 
-#ifdef OS_OSX
+#if defined(OS_OSX)
 		NSProcessInfo *p = [NSProcessInfo processInfo];
-		this->Set("processorCount",Value::NewInt([p processorCount]));
+		int num_proc = [p processorCount]
 #elif defined(OS_WIN32)
 		SYSTEM_INFO SysInfo ;
-		GetSystemInfo ( & SysInfo ) ;
-		DWORD count = SysInfo.dwNumberOfProcessors;
-
-		this->Set("processorCount", Value::NewInt(count));
+		GetSystemInfo (&SysInfo) ;
+		DWORD num_proc = SysInfo.dwNumberOfProcessors;
 #else
-		//TODO - Linux / Win32
-		this->Set("processorCount",Value::NewInt(1));
+		// Is there an easy way to do this in Linux without external
+		// libraries or running "cat /proc/cpuinfo" ?
+		int num_proc = 1;
 #endif
+
+		const char *id = "";
+		try
+		{
+			id = Poco::Environment::nodeId().c_str();
+		}
+		catch (...) { }
+
+		this->Set("name", Value::NewString(os_name));
+		this->Set("version", Value::NewString(os_version));
+		this->Set("architecture", Value::NewString(arch));
+		this->Set("address", Value::NewString(address));
+		this->Set("id", Value::NewString(id));
+		this->Set("processorCount", Value::NewInt(num_proc));
 	}
+
 	PlatformBinding::~PlatformBinding()
 	{
 	}
