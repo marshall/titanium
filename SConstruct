@@ -77,6 +77,9 @@ Export ('build')
 
 SConscript('kroll/SConscript')
 
+# Kroll *must not be required* for installation
+SConscript('installation/SConscript')
+
 # Kroll library is now built (hopefully)
 build.env.Append(LIBS=['kroll']) 
 SConscript('modules/SConscript')

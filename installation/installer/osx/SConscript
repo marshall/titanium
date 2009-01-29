@@ -1,0 +1,9 @@
+#!/usr/bin/env python
+Import('build')
+
+Env = build.env.Clone()
+Env.Append(FRAMEWORKS=['Cocoa','SystemConfiguration'])
+Env.Append(LIBS=['curl'])
+Env.Append(CPPFLAGS=['-Wno-error']) #turn off warnings, CURLHandle has a lot
+
+Env.Program(build.dir + '/installer', Glob('*.m'))
