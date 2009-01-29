@@ -11,23 +11,122 @@
 #include "app_config.h"
 #include "window_config.h"
 
+#define SET_STRING(name, prop) \
+{ \
+	SharedValue v = properties->Get(#name); \
+	if (v->IsString()) \
+	{ \
+		std::string value(v->ToString()); \
+		this->prop = value; \
+	} \
+}
+
+#define SET_BOOL(name, prop) \
+{ \
+	SharedValue v = properties->Get(#name); \
+	if (v->IsString()) \
+	{ \
+		std::string value(v->ToString()); \
+		if (value=="yes" || value=="1" || value=="true" || value=="True") \
+		{\
+			this->prop = true; \
+		} \
+		else \
+		{ \
+			this->prop = false; \
+		} \
+	} \
+	else if (v->IsInt()) \
+	{ \
+		this->prop = v->ToInt() == 1; \
+	} \
+	else if (v->IsBool()) \
+	{ \
+		this->prop = v->ToBool(); \
+	} \
+}
+
+#define SET_INT(name, prop) \
+{ \
+	SharedValue v = properties->Get(#name); \
+	if (v->IsNumber()) \
+	{ \
+		this->prop = v->ToInt(); \
+	} \
+}
+
+#define SET_DOUBLE(name, prop) \
+{ \
+	SharedValue v = properties->Get(#name); \
+	if (v->IsNumber()) \
+	{ \
+		this->prop = v->ToDouble(); \
+	} \
+}
+
 using namespace ti;
 
 int WindowConfig::DEFAULT_POSITION = -1;
+int WindowConfig::window_count = 0;
 
 void WindowConfig::SetDefaults ()
 {
-	maximizable = minimizable = closeable = resizable = true;
-	usingChrome = usingScrollbars = fullscreen = false;
-	transparency = 1.0;
-	width = 800;
-	height = 600;
-	x = y = WindowConfig::DEFAULT_POSITION;
-	minWidth = minHeight = 0;
-	maxWidth = maxHeight = 9000;
-	url = "app://" + AppConfig::Instance()->GetAppID() + "/index.html";
-	title = "Titanium Application";
-	visible = true;
+
+	WindowConfig::window_count++;
+	std::ostringstream winid;
+	winid << "win_" << WindowConfig::window_count;
+	this->winid = winid.str();
+
+	this->maximizable = true;
+	this->minimizable = true;
+	this->closeable = true;
+	this->resizable = true;
+
+	this->usingChrome = false;
+	this->usingScrollbars = false;
+	this->fullscreen = false;
+	this->visible = true;
+
+	this->transparency = 1.0;
+	this->width = 800;
+	this->height = 600;
+	this->x = WindowConfig::DEFAULT_POSITION;
+	this->y = WindowConfig::DEFAULT_POSITION;
+
+	this->minWidth = 0;
+	this->minHeight = 0;
+
+	this->maxWidth = 9000;
+	this->maxHeight = 9000;
+
+	this->url = "app://" + AppConfig::Instance()->GetAppID() + "/index.html";
+	this->title = "Titanium Application";
+}
+
+void WindowConfig::UseProperties(SharedBoundObject properties)
+{
+	this->SetDefaults();
+
+	SET_STRING(id, winid)
+	SET_STRING(url, url);
+	SET_STRING(title, title);
+	SET_INT(x, x);
+	SET_INT(y, y);
+	SET_INT(width, width);
+	SET_INT(minWidth, minWidth);
+	SET_INT(maxWidth, maxWidth);
+	SET_INT(height, height);
+	SET_INT(minHeight, minHeight);
+	SET_INT(maxHeight, maxHeight);
+	SET_BOOL(visible, visible);
+	SET_BOOL(maximizable, maximizable);
+	SET_BOOL(minimizable, minimizable);
+	SET_BOOL(closeable, closeable);
+	SET_BOOL(resizable, resizable);
+	SET_BOOL(fullscreen, fullscreen);
+	SET_BOOL(usingChrome, usingChrome);
+	SET_BOOL(usingScrollbars, usingScrollbars);
+	SET_DOUBLE(transparency, transparency);
 }
 
 WindowConfig::WindowConfig(void* data)

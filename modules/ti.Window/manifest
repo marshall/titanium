@@ -1,4 +1,0 @@
-name: ti.Window
-version: 0.1
-description: Windowing module
-os: win32, osx, linux

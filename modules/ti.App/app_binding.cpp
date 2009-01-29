@@ -18,8 +18,22 @@ namespace ti
 		this->SetMethod("getUpdateURL", &AppBinding::GetUpdateURL);
 		this->SetMethod("getGUID", &AppBinding::GetGUID);
 		this->SetMethod("appURLToPath", &AppBinding::AppURLToPath);
-		this->SetMethod("setMenu", &AppBinding::SetMenu);
+
+		// FIXME: for now this version is hardcoded
+		SharedValue version = Value::NewDouble(0.2); 
+		global->Set("version", version);
+
+		// platform
+#if defined(OS_LINUX)
+		SharedValue platform = Value::NewString("linux");
+#elif defined(OS_OSX)
+		SharedValue platform = Value::NewString("osx");
+#elif defined(OS_WIN32)
+		SharedValue platform = Value::NewString("win32");
+#endif
+		global->Set("platform",platform);
 	}
+
 	AppBinding::~AppBinding()
 	{
 	}
@@ -60,11 +74,6 @@ namespace ti
 		std::string path = Poco::Environment::get("KR_HOME", "");
 
 		result->SetString(std::string(path + kAppURLPrefix + "/" + url).c_str());
-	}
-
-	void AppBinding::SetMenu(const ValueList& args, SharedValue result)
-	{
-		//FIXME: implement this
 	}
 
 }

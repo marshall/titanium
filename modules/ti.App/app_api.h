@@ -7,6 +7,7 @@
 #define _APP_API__H_
 
 #ifdef __cplusplus
+#include <kroll/kroll.h>
 #include <string>
 #include <map>
 #include <vector>

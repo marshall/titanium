@@ -1,0 +1,74 @@
+<html>
+	<head>
+		<style>
+			body { font-family: sans, sans-serif; background-color: white; }
+			div{
+				margin:10px;
+			}
+			div.output { border: 1px solid #c3c3c3; padding: 5px; margin: 8px 0 px 0; background-color: black; color: white; height: 350px; overflow: scroll; }
+		</style>
+		<script>
+			function openWindowA()
+			{
+				var w = Titanium.UI.createWindow();
+				try
+				{
+					w.setTitle("hello world from fullscreen");
+					w.setURL("app://fullscreen.html");
+					w.setUsingChrome(true);
+					w.setFullScreen(true);
+					w.open();
+				}
+				catch(e)
+				{
+					alert("Exception: "+e);
+				}
+			}
+			function jsAlert()
+			{
+				var msg = 'This is a JavaScript alert';
+				alert(msg);
+			}
+			function jsConfirm()
+			{
+				var msg = 'This is a JavaScript confirm';
+				var r = confirm(msg);
+				log(r);
+			}
+			function jsPrompt()
+			{
+				var msg = 'This is a JavaScript prompt';
+				var r = prompt(msg);
+				log(r);
+			}
+			function jsPromptWithDefault()
+			{
+				var msg = 'This is a JavaScript prompt with default';
+				var val = 'default value here';
+				var r = prompt(msg, val);
+				log(r);
+			}
+
+			function $(id) { return document.getElementById(id); }
+			function log(s) { appendToLog($('log'), s); }
+			function appendToLog(d, s) {
+				s = timestamp() + " : " + s;
+				d.innerHTML = d.innerHTML + s + '<br>';
+			}
+			function timestamp() { 
+				var d = new Date(); 
+				var s = (d.getHours()<10?'0'+d.getHours():d.getHours()) + ":" + (d.getMinutes()<10?'0'+d.getMinutes():d.getMinutes()) + ":" + (d.getSeconds()<10?'0'+d.getSeconds():d.getSeconds());
+				return s;
+			}
+		</script>
+	</head>
+	<body>
+		<h2>Titanium UI test app</h2>
+		<div><button onclick="openWindowA()">Open Window</button></div>
+		<div><button onclick="jsAlert()">Javascript alert</button></div>
+		<div><button onclick="jsConfirm()">Javascript confirm</button></div>
+		<div><button onclick="jsPrompt()">Javascript prompt</button></div>
+		<div><button onclick="jsPromptWithDefault()">Javascript prompt (with default)</button></div>
+		<div class='output log'><code id="log"></code></div>
+	</body>
+</html>
