@@ -33,8 +33,16 @@ namespace ti
 			void SetY(double y);
 			double GetWidth();
 			void SetWidth(double width);
+			double GetMaxWidth();
+			void SetMaxWidth(double width);
+			double GetMinWidth();
+			void SetMinWidth(double width);
 			double GetHeight();
 			void SetHeight(double height);
+			double GetMaxHeight();
+			void SetMaxHeight(double height);
+			double GetMinHeight();
+			void SetMinHeight(double height);
 			Bounds GetBounds();
 			void SetBounds(Bounds bounds);
 			std::string GetTitle();

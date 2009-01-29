@@ -37,6 +37,55 @@ using namespace ti;
 std::vector<UserWindow *> UserWindow::windows;
 std::map<UserWindow*, std::vector<UserWindow*> > UserWindow::windowsMap;
 
+UserWindow::UserWindow(kroll::Host *host, WindowConfig *config) :
+	kroll::StaticBoundObject(), parent(NULL)
+{
+
+	this->host = host;
+	this->config = config;
+
+	/* this object is accessed by Titanium.Window.currentWindow */
+	this->SetMethod("hide", &UserWindow::_Hide);
+	this->SetMethod("show", &UserWindow::_Show);
+	this->SetMethod("isUsingChrome", &UserWindow::_IsUsingChrome);
+	this->SetMethod("setUsingChrome", &UserWindow::_SetUsingChrome);
+	this->SetMethod("isFullScreen", &UserWindow::_IsFullScreen);
+	this->SetMethod("setFullScreen", &UserWindow::_SetFullScreen);
+	this->SetMethod("getID", &UserWindow::_GetId);
+	this->SetMethod("open", &UserWindow::_Open);
+	this->SetMethod("close", &UserWindow::_Close);
+	this->SetMethod("getX", &UserWindow::_GetX);
+	this->SetMethod("setX", &UserWindow::_SetX);
+	this->SetMethod("getY", &UserWindow::_GetY);
+	this->SetMethod("setY", &UserWindow::_SetY);
+	this->SetMethod("getWidth", &UserWindow::_GetWidth);
+	this->SetMethod("setWidth", &UserWindow::_SetWidth);
+	this->SetMethod("getHeight", &UserWindow::_GetHeight);
+	this->SetMethod("setHeight", &UserWindow::_SetHeight);
+	this->SetMethod("getBounds", &UserWindow::_GetBounds);
+	this->SetMethod("setBounds", &UserWindow::_SetBounds);
+	this->SetMethod("getTitle", &UserWindow::_GetTitle);
+	this->SetMethod("setTitle", &UserWindow::_SetTitle);
+	this->SetMethod("getURL", &UserWindow::_GetURL);
+	this->SetMethod("setURL", &UserWindow::_SetURL);
+	this->SetMethod("isResizable", &UserWindow::_IsResizable);
+	this->SetMethod("setResizable", &UserWindow::_SetResizable);
+	this->SetMethod("isMaximizable", &UserWindow::_IsMaximizable);
+	this->SetMethod("setMaimizable", &UserWindow::_SetMaximizable);
+	this->SetMethod("isMinimizable", &UserWindow::_IsMinimizable);
+	this->SetMethod("setMinizable", &UserWindow::_SetMinimizable);
+	this->SetMethod("isCloseable", &UserWindow::_IsCloseable);
+	this->SetMethod("setCloseable", &UserWindow::_SetCloseable);
+	this->SetMethod("isVisible", &UserWindow::_IsVisible);
+	this->SetMethod("setVisible", &UserWindow::_SetVisible);
+	this->SetMethod("getTransparency", &UserWindow::_GetTransparency);
+	this->SetMethod("setTransparency", &UserWindow::_SetTransparency);
+	this->SetMethod("setMenu", &UserWindow::_SetMenu);
+
+	this->SetMethod("createWindow", &UserWindow::_CreateWindow);
+	this->SetMethod("getParent", &UserWindow::_GetParent);
+}
+
 void UserWindow::Open(UserWindow *window)
 {
 	// Don't do any refcounting here,
@@ -93,54 +142,6 @@ void UserWindow::Close(UserWindow *window)
 	}
 }
 
-UserWindow::UserWindow(kroll::Host *host, WindowConfig *config) :
-	kroll::StaticBoundObject(), parent(NULL)
-{
-
-	this->host = host;
-	this->config = config;
-
-	/* this object is accessed by Titanium.Window.currentWindow */
-	this->SetMethod("hide", &UserWindow::_Hide);
-	this->SetMethod("show", &UserWindow::_Show);
-	this->SetMethod("isUsingChrome", &UserWindow::_IsUsingChrome);
-	this->SetMethod("setUsingChrome", &UserWindow::_SetUsingChrome);
-	this->SetMethod("isFullscreen", &UserWindow::_IsFullScreen);
-	this->SetMethod("setFullscreen", &UserWindow::_SetFullScreen);
-	this->SetMethod("getID", &UserWindow::_GetId);
-	this->SetMethod("open", &UserWindow::_Open);
-	this->SetMethod("close", &UserWindow::_Close);
-	this->SetMethod("getX", &UserWindow::_GetX);
-	this->SetMethod("setX", &UserWindow::_SetX);
-	this->SetMethod("getY", &UserWindow::_GetY);
-	this->SetMethod("setY", &UserWindow::_SetY);
-	this->SetMethod("getWidth", &UserWindow::_GetWidth);
-	this->SetMethod("setWidth", &UserWindow::_SetWidth);
-	this->SetMethod("getHeight", &UserWindow::_GetHeight);
-	this->SetMethod("setHeight", &UserWindow::_SetHeight);
-	this->SetMethod("getBounds", &UserWindow::_GetBounds);
-	this->SetMethod("setBounds", &UserWindow::_SetBounds);
-	this->SetMethod("getTitle", &UserWindow::_GetTitle);
-	this->SetMethod("setTitle", &UserWindow::_SetTitle);
-	this->SetMethod("getURL", &UserWindow::_GetURL);
-	this->SetMethod("setURL", &UserWindow::_SetURL);
-	this->SetMethod("isResizable", &UserWindow::_IsResizable);
-	this->SetMethod("setResizable", &UserWindow::_SetResizable);
-	this->SetMethod("isMaximizable", &UserWindow::_IsMaximizable);
-	this->SetMethod("setMaimizable", &UserWindow::_SetMaximizable);
-	this->SetMethod("isMinimizable", &UserWindow::_IsMinimizable);
-	this->SetMethod("setMinizable", &UserWindow::_SetMinimizable);
-	this->SetMethod("isCloseable", &UserWindow::_IsCloseable);
-	this->SetMethod("setCloseable", &UserWindow::_SetCloseable);
-	this->SetMethod("isVisible", &UserWindow::_IsVisible);
-	this->SetMethod("setVisible", &UserWindow::_SetVisible);
-	this->SetMethod("getTransparency", &UserWindow::_GetTransparency);
-	this->SetMethod("setTransparency", &UserWindow::_SetTransparency);
-	this->SetMethod("setMenu", &UserWindow::_SetMenu);
-
-	this->SetMethod("createWindow", &UserWindow::_CreateWindow);
-	this->SetMethod("getParent", &UserWindow::_GetParent);
-}
 
 void UserWindow::_Hide(const kroll::ValueList& args, kroll::SharedValue result)
 {

@@ -8,10 +8,10 @@
 			var cw = Titanium.UI.currentWindow;
 			Titanium.api.log("currentWindow="+cw);
 			Titanium.api.log("window="+cw);
-			var fs = cw.isFullscreen();
+			var fs = cw.isFullScreen();
 			Titanium.api.log("fullscreen = "+fs);
 			Titanium.api.debug("fullscreen = "+fs);
-			cw.setFullscreen(!fs);
+			cw.setFullScreen(!fs);
 		}
 		catch(e)
 		{

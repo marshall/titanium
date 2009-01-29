@@ -262,6 +262,42 @@ void Win32UserWindow::SetHeight(double height) {
 	SetBounds(b);
 }
 
+double Win32UserWindow::GetMaxWidth() {
+	return this->config->GetMaxWidth();
+}
+
+void Win32UserWindow::SetMaxWidth(double width) {
+	this->config->SetMaxWidth(width);
+	STUB();
+}
+
+double Win32UserWindow::GetMinWidth() {
+	return this->config->GetMinWidth();
+}
+
+void Win32UserWindow::SetMinWidth(double width) {
+	this->config->SetMinWidth(width);
+	STUB();
+}
+
+double Win32UserWindow::GetMaxHeight() {
+	return this->config->GetMaxHeight();
+}
+
+void Win32UserWindow::SetMaxHeight(double height) {
+	this->config->SetMaxHeight(height);
+	STUB();
+}
+
+double Win32UserWindow::GetMinHeight() {
+	return this->config->GetMinHeight();
+}
+
+void Win32UserWindow::SetMinHeight(double height) {
+	this->config->SetMinHeight(height);
+	STUB();
+}
+
 Bounds Win32UserWindow::GetBounds() {
 	Bounds bounds;
 

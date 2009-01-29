@@ -4,6 +4,7 @@
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
 #import "osx_user_window.h"
+#define STUB() printf("Method is still a stub, %s:%i\n", __FILE__, __LINE__)
 
 namespace ti
 {
@@ -172,6 +173,41 @@ namespace ti
 		frame.size.height = height;
 		config->SetHeight(height);
 		[window setFrame:frame display:display animate:display];
+	}
+	double OSXUserWindow::GetMaxWidth() {
+		return this->config->GetMaxWidth();
+	}
+	
+	void OSXUserWindow::SetMaxWidth(double width) {
+		this->config->SetMaxWidth(width);
+		STUB();
+	}
+	
+	double OSXUserWindow::GetMinWidth() {
+		return this->config->GetMinWidth();
+	}
+	
+	void OSXUserWindow::SetMinWidth(double width) {
+		this->config->SetMinWidth(width);
+		STUB();
+	}
+	
+	double OSXUserWindow::GetMaxHeight() {
+		return this->config->GetMaxHeight();
+	}
+	
+	void OSXUserWindow::SetMaxHeight(double height) {
+		this->config->SetMaxHeight(height);
+		STUB();
+	}
+	
+	double OSXUserWindow::GetMinHeight() {
+		return this->config->GetMinHeight();
+	}
+	
+	void OSXUserWindow::SetMinHeight(double height) {
+		this->config->SetMinHeight(height);
+		STUB();
 	}
 	Bounds OSXUserWindow::GetBounds()
 	{

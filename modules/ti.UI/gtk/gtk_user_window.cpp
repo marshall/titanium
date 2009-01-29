@@ -364,23 +364,26 @@ Bounds GtkUserWindow::GetBounds() {
 }
 
 void GtkUserWindow::SetBounds(Bounds b) {
-	gtk_window_resize(this->gtk_window, int(b.width), int(b.height));
-	gtk_window_move(this->gtk_window, int(b.x), int(b.y));
-
 	this->config->SetX(b.x);
 	this->config->SetY(b.y);
 	this->config->SetWidth(b.width);
 	this->config->SetHeight(b.height);
+
+	if (this->gtk_window == NULL) return;
+	gtk_window_resize(this->gtk_window, int(b.width), int(b.height));
+	gtk_window_move(this->gtk_window, int(b.x), int(b.y));
 }
 
 std::string GtkUserWindow::GetTitle() {
-	return std::string(gtk_window_get_title(this->gtk_window));
+	return this->config->GetTitle();
 }
 
 void GtkUserWindow::SetTitle(std::string& title)
 {
-	gtk_window_set_title (this->gtk_window, title.c_str());
 	this->config->SetTitle(title);
+
+	if (this->gtk_window == NULL) return;
+	gtk_window_set_title(this->gtk_window, title.c_str());
 }
 
 std::string GtkUserWindow::GetURL()
@@ -390,16 +393,22 @@ std::string GtkUserWindow::GetURL()
 
 void GtkUserWindow::SetURL(std::string& uri)
 {
-	webkit_web_view_open (this->web_view, uri.c_str());
 	this->config->SetURL(uri);
+
+	if (this->gtk_window == NULL) return;
+	if (this->web_view == NULL) return;
+	webkit_web_view_open(this->web_view, uri.c_str());
 }
 
 bool GtkUserWindow::IsUsingChrome() {
-	return gtk_window_get_decorated(this->gtk_window);
+	return this->config->IsUsingChrome();
 }
 
 void GtkUserWindow::SetUsingChrome(bool chrome) {
-	//TODO: implement
+	this->config->SetUsingChrome(chrome);
+
+	if (this->gtk_window == NULL) return;
+	gtk_window_set_decorated(this->gtk_window, chrome);
 }
 
 bool GtkUserWindow::IsResizable()
