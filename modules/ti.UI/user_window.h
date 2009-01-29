@@ -12,6 +12,10 @@
 #include <map>
 #include <kroll/kroll.h>
 
+#ifdef OS_WIN32
+#undef CreateWindow
+#endif
+
 #include "../ti.App/app_config.h"
 
 namespace ti {
@@ -139,7 +143,7 @@ class UserWindow : public kroll::StaticBoundObject {
 		kroll::Host *host;
 		WindowConfig *config;
 		UserWindow *parent;
-		
+
 		virtual UserWindow* GetParent();
 		virtual void SetParent(UserWindow *parent);
 		virtual void AddChild(UserWindow *window);
@@ -147,7 +151,7 @@ class UserWindow : public kroll::StaticBoundObject {
 
 		static std::vector<UserWindow*> windows;
 		static std::map<UserWindow*, std::vector<UserWindow*> > windowsMap;
-		
+
 		static void Open(UserWindow *);
 		static void Close(UserWindow *);
 		static void AddChild(UserWindow *parent, UserWindow *child);
@@ -155,7 +159,7 @@ class UserWindow : public kroll::StaticBoundObject {
 
 	private:
 		DISALLOW_EVIL_CONSTRUCTORS(UserWindow);
-		
+
 		friend class WindowBinding;
 };
 

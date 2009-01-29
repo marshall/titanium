@@ -10,7 +10,7 @@
 namespace ti
 {
 
-	MenuItem::MenuItem() : StaticBoundList() 
+	MenuItem::MenuItem() : StaticBoundList()
 	{
 
 		// query methods

@@ -52,8 +52,8 @@ namespace ti
 		void MakeSubMenu(SharedValue label,
 		                 SharedValue icon_url);
 
-		void Enable();
-		void Disable();
+		virtual void Enable() = 0;
+		virtual void Disable() = 0;
 		void _Enable(const ValueList& args, SharedValue result);
 		void _Disable(const ValueList& args, SharedValue result);
 

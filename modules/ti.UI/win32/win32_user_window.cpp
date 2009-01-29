@@ -105,7 +105,7 @@ Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config)
 	std::cout << "HINSTANCE = " << (int)win32_host->GetInstanceHandle() << std::endl;
 
 	Win32UserWindow::RegisterWindowClass(win32_host->GetInstanceHandle());
-	window_handle = CreateWindow(windowClassName, "Titanium Application",
+	window_handle = CreateWindowA(windowClassName, "Titanium Application",
 			WS_OVERLAPPEDWINDOW,
 			CW_USEDEFAULT, 0, CW_USEDEFAULT, 0,
 			NULL, NULL, win32_host->GetInstanceHandle(), NULL);
@@ -268,7 +268,7 @@ double Win32UserWindow::GetMaxWidth() {
 
 void Win32UserWindow::SetMaxWidth(double width) {
 	this->config->SetMaxWidth(width);
-	STUB();
+	//STUB();
 }
 
 double Win32UserWindow::GetMinWidth() {
@@ -277,7 +277,7 @@ double Win32UserWindow::GetMinWidth() {
 
 void Win32UserWindow::SetMinWidth(double width) {
 	this->config->SetMinWidth(width);
-	STUB();
+	//STUB();
 }
 
 double Win32UserWindow::GetMaxHeight() {
@@ -286,7 +286,7 @@ double Win32UserWindow::GetMaxHeight() {
 
 void Win32UserWindow::SetMaxHeight(double height) {
 	this->config->SetMaxHeight(height);
-	STUB();
+	//STUB();
 }
 
 double Win32UserWindow::GetMinHeight() {
@@ -295,7 +295,7 @@ double Win32UserWindow::GetMinHeight() {
 
 void Win32UserWindow::SetMinHeight(double height) {
 	this->config->SetMinHeight(height);
-	STUB();
+	//STUB();
 }
 
 Bounds Win32UserWindow::GetBounds() {
