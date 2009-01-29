@@ -5,22 +5,29 @@
 	{
 		try
 		{
-			var cw = Titanium.currentWindow;
+			var cw = Titanium.UI.currentWindow;
 			Titanium.api.log("currentWindow="+cw);
-			Titanium.api.log("window="+cw.window);
-			var fs = Titanium.currentWindow.window.isFullscreen();
+			Titanium.api.log("window="+cw);
+			var fs = cw.isFullscreen();
 			Titanium.api.log("fullscreen = "+fs);
 			Titanium.api.debug("fullscreen = "+fs);
-			Titanium.currentWindow.window.setFullscreen(!fs);
+			cw.setFullscreen(!fs);
 		}
 		catch(e)
 		{
 			alert("exception: "+e);
 		}
 	}
+
+	function closeMe()
+	{
+		Titanium.UI.currentWindow.close();
+	}
+
 </script>
 </head>
 <body>
 	<button onclick="toggleFullscreen()">Toggle Fullscreen</button>
+	<button onclick="closeMe()">Bye</button>
 </body>
 </html>

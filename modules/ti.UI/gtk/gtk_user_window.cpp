@@ -167,6 +167,13 @@ void GtkUserWindow::SetupSizeLimits()
 
 void GtkUserWindow::Close()
 {
+	if (this->gtk_window != NULL)
+	{
+		gtk_widget_destroy(GTK_WIDGET(gtk_window));
+		this->gtk_window = NULL;
+		this->web_view = NULL;
+	}
+
 	UserWindow::Close(this);
 }
 
@@ -243,6 +250,20 @@ bool GtkUserWindow::IsUsingScrollbars() {
 bool GtkUserWindow::IsFullScreen() {
 	return this->config->IsFullScreen();
 }
+
+void GtkUserWindow::SetFullScreen(bool fullscreen)
+{
+	if (fullscreen)
+	{
+		gtk_window_fullscreen(this->gtk_window);
+	}
+	else
+	{
+		gtk_window_unfullscreen(this->gtk_window);
+	}
+	this->config->SetFullScreen(fullscreen);
+}
+
 
 std::string GtkUserWindow::GetId() {
 	return this->config->GetID();
@@ -447,18 +468,6 @@ void GtkUserWindow::SetTransparency(double alpha)
 {
 	return gtk_window_set_opacity(this->gtk_window, alpha);
 	this->config->SetTransparency(alpha);
-}
-
-void GtkUserWindow::SetFullScreen(bool fullscreen)
-{
-	if (fullscreen)
-	{
-		gtk_window_fullscreen(this->gtk_window);
-	}
-	else
-	{
-		gtk_window_unfullscreen(this->gtk_window);
-	}
 }
 
 void GtkUserWindow::SetMenu(SharedBoundList value)

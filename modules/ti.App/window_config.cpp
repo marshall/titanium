@@ -14,8 +14,11 @@
 #define SET_STRING(name, prop) \
 { \
 	SharedValue v = properties->Get(#name); \
-	std::string value(v->ToString()); \
-	this->prop = value; \
+	if (v->IsString()) \
+	{ \
+		std::string value(v->ToString()); \
+		this->prop = value; \
+	} \
 }
 
 #define SET_BOOL(name, prop) \
