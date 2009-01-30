@@ -24,8 +24,8 @@
 
 namespace ti {
 
-class Win32FrameLoadDelegate;
-class Win32UIDelegate;
+class Win32WebKitFrameLoadDelegate;
+class Win32WebKitUIDelegate;
 
 class Win32UserWindow : public UserWindow {
 
@@ -33,8 +33,8 @@ protected:
 	static bool ole_initialized;
 
 	kroll::Win32Host *win32_host;
-	Win32FrameLoadDelegate *frameLoadDelegate;
-	Win32UIDelegate *uiDelegate;
+	Win32WebKitFrameLoadDelegate *frameLoadDelegate;
+	Win32WebKitUIDelegate *uiDelegate;
 	Bounds restore_bounds;
 	long restore_styles;
 
