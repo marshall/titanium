@@ -67,9 +67,7 @@ when 'win32'
 	EXT='.dll'
 end
 
-
-
-runtime_zip = File.join(installdir,"runtime-#{OS}-#{VER}.zip")
+runtime_zip = File.join(outdir,"runtime-#{OS}-#{VER}.zip")
 FileUtils.rm_rf runtime_zip
 
 Zip::ZipFile.open(runtime_zip, Zip::ZipFile::CREATE) do |zipfile|
@@ -91,6 +89,15 @@ Zip::ZipFile.open(runtime_zip, Zip::ZipFile::CREATE) do |zipfile|
       zipfile.add name,f unless (name=~/\.h$/ or name=~/\.defs$/)
     end
   end
+  
+  # add the installer app resources - this will eventually go into the module
+  path = File.expand_path "#{topdir}/installation/runtime"
+  puts path
+  Dir["#{path}/**/**"].each do |f|
+    name = f.gsub(path+'/','')
+    zipfile.add "installer/#{name}",f
+    puts "adding: #{name}"
+  end
 
 end
 
@@ -105,11 +112,11 @@ LANGS = {
   '.js'=>'javascript'
 }
 
-FileUtils.cp File.join(outdir,'kinstall'+ext), File.join(installdir,'kinstall'+ext)
+#FileUtils.cp File.join(outdir,'kinstall'+ext), File.join(installdir,'kinstall'+ext)
 
 PLUGINS.each do |plugin|
   plugin.strip!
-  plugin_zip = File.join(installdir,"module-#{plugin}-0.1.zip")
+  plugin_zip = File.join(outdir,"module-#{plugin}-0.1.zip")
   FileUtils.rm_rf plugin_zip
 
   Zip::ZipFile.open(plugin_zip, Zip::ZipFile::CREATE) do |zipfile|
@@ -161,25 +168,19 @@ manifest.close
 FileUtils.cp_r(thisdir+'/testapp/.', appdir)
 
 
-# create installer app
-installapp = File.join(installdir,'Installer App.app','Contents')
-lproj = File.join(installapp,'Resources','English.lproj')
-tinstall = File.join(outdir,'tinstaller')
+if OS == 'osx'
+  # create installer app
+  installapp = File.join(installdir,'Installer App.app','Contents')
+  lproj = File.join(installapp,'Resources','English.lproj')
+  tinstall = File.join(outdir,'tinstaller')
 
-FileUtils.mkdir_p(File.join(installapp,'MacOS'))
-FileUtils.mkdir_p(File.join(installapp,'Resources'))
-FileUtils.mkdir_p(lproj)
+  FileUtils.mkdir_p(File.join(installapp,'MacOS'))
+  FileUtils.mkdir_p(File.join(installapp,'Resources'))
+  FileUtils.mkdir_p(lproj)
 
-FileUtils.cp(File.join(outdir,'installer'),File.join(installapp,'MacOS','Installer App'))
-FileUtils.cp(File.join(tinstall,'Info.plist'),installapp)
-FileUtils.cp(File.join(tinstall,'MainMenu.nib'),lproj)
+  FileUtils.cp(File.join(outdir,'installer'),File.join(installapp,'MacOS','Installer App'))
+  FileUtils.cp(File.join(tinstall,'Info.plist'),installapp)
+  FileUtils.cp(File.join(tinstall,'MainMenu.nib'),lproj)
 
-FileUtils.cp(File.join(topdir,'support',OS,'titanium.icns'),File.join(installapp,'Resources'))
-
-
-
-
-
-
-
-
+  FileUtils.cp(File.join(topdir,'support',OS,'titanium.icns'),File.join(installapp,'Resources'))
+end
