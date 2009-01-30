@@ -10,6 +10,7 @@
 #include "string_util.h"
 #include "../url/app_url.h"
 #include <math.h>
+#include <shellapi.h>
 
 #define STUB() printf("Method is still a stub, %s:%i\n", __FILE__, __LINE__)
 
@@ -432,10 +433,11 @@ void Win32UserWindow::SetFullScreen(bool fullscreen) {
 	}
 }
 
-void Win32UserWindow::SetMenu(SharedBoundList menu)
+void Win32UserWindow::SetMenu(SharedBoundList value)
 {
-	STUB();
-	//TODO: implement
+	SharedPtr<Win32MenuItemImpl> menu = value.cast<Win32MenuItemImpl>();
+	this->menu = menu;
+	this->SetupMenu();
 }
 
 SharedBoundList Win32UserWindow::GetMenu()
@@ -459,3 +461,38 @@ void Win32UserWindow::SetUsingChrome(bool chrome) {
 	STUB();
 	//TODO: implement
 }
+
+void Win32UserWindow::AppMenuChanged()
+{
+	if (this->menu.isNull())
+	{
+		this->SetupMenu();
+	}
+}
+void Win32UserWindow::SetupMenu()
+{
+	SharedPtr<Win32MenuItemImpl> menu = this->menu;
+	SharedPtr<MenuItem> appMenu = UIModule::GetMenu();
+
+	// No window menu, try to use the application menu.
+	if (menu.isNull() && !appMenu.isNull())
+	{
+		menu = appMenu.cast<Win32MenuItemImpl>();
+	}
+
+	// Only do this if the menu is actually changing.
+	if (menu == this->menuInUse)
+		return;
+
+	// TODO remove old menu
+	//this->RemoveOldMenu();
+
+	if (!menu.isNull() && this->window_handle)
+	{
+		::SetMenu(this->window_handle, menu->GetMenuHandle());
+		DrawMenuBar(this->window_handle);
+	}
+
+	this->menuInUse = menu;
+}
+

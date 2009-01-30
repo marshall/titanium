@@ -4,6 +4,7 @@
  * Copyright (c) 2009 Appcelerator, Inc. All Rights Reserved.
  */
 #include "../ui_module.h"
+#include "win32_menu_item_impl.h"
 
 namespace ti
 {
@@ -17,13 +18,23 @@ namespace ti
 
 	SharedPtr<MenuItem> Win32UIBinding::CreateMenu()
 	{
-		//SharedPtr<MenuItem> menu = new Win32MenuItemImpl(true);
-		//return menu;
-		return NULL;
+		SharedPtr<MenuItem> menu = new Win32MenuItemImpl(NULL);
+		return menu;
 	}
 
 	void Win32UIBinding::SetMenu(SharedPtr<MenuItem>)
 	{
+		// Notify all windows that the app menu has changed.
+		std::vector<UserWindow*>& windows = UserWindow::GetWindows();
+		std::vector<UserWindow*>::iterator i = windows.begin();
+		while (i != windows.end())
+		{
+			Win32UserWindow* wuw = dynamic_cast<Win32UserWindow*>(*i);
+			if (wuw != NULL)
+				wuw->AppMenuChanged();
+
+			i++;
+		}
 	}
 
 	void Win32UIBinding::SetIcon(SharedString icon_path)

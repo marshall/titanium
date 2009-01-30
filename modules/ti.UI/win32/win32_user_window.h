@@ -20,6 +20,7 @@
 #include <kroll/kroll.h>
 #include "../../../kroll/host/win32/host.h"
 #include "../user_window.h"
+#include "win32_menu_item_impl.h"
 
 namespace ti {
 
@@ -45,6 +46,22 @@ protected:
 		resizable, using_chrome, minimizable, maximizable, closeable;
 	double transparency;
 
+	/*
+	 * The window-specific menu.
+	 */
+	SharedPtr<Win32MenuItemImpl> menu;
+
+	/*
+	 * The menu this window is using. This
+	 * might just be a copy of the app menu.
+	 */
+	SharedPtr<Win32MenuItemImpl> menuInUse;
+
+	/*
+	 * The widget this window is for a menu.
+	 */
+	HMENU menuBar;
+
 public:
 	static void RegisterWindowClass(HINSTANCE hInstance);
 	static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
@@ -54,6 +71,8 @@ public:
 	virtual ~Win32UserWindow();
 	UserWindow* WindowFactory(Host*, WindowConfig*);
 	void ResizeSubViews();
+
+	void AppMenuChanged();
 
 	HWND GetWindowHandle();
 	void Hide();
@@ -104,6 +123,8 @@ public:
 	SharedBoundList GetMenu();
 	void SetIcon(SharedString icon_path);
 	SharedString GetIcon();
+
+	void SetupMenu();
 
 };
 
