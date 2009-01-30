@@ -19,10 +19,10 @@ namespace ti
 		TrayItem();
 		~TrayItem();
 
-		void SetIcon(SharedString icon_path);
-		void SetMenu(SharedPtr<MenuItem> menu);
-		void SetHint(SharedString hint);
-		void Remove();
+		virtual void SetIcon(SharedString icon_path) = 0;
+		virtual void SetMenu(SharedBoundList menu) = 0;
+		virtual void SetHint(SharedString hint) = 0;
+		virtual void Remove() = 0;
 
 		void _SetIcon(const ValueList& args, SharedValue result);
 		void _SetMenu(const ValueList& args, SharedValue result);

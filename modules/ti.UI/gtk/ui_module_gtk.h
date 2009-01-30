@@ -25,6 +25,7 @@ using kroll::StaticBoundList;
 #include "javascript_module.h"
 #include "gtk_menu_item_impl.h"
 #include "gtk_user_window.h"
+#include "gtk_tray_item.h"
 
 #include "gtk_ui_binding.h"
 

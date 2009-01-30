@@ -14,8 +14,8 @@ namespace ti {
 	{
 		if (top_level)
 		{
-			this->gtk_menu_bar = gtk_menu_bar_new();
-			//this->gtk_menu = gtk_menu_new();
+			//this->gtk_menu_bar = gtk_menu_bar_new();
+			this->gtk_menu = gtk_menu_new();
 			this->MakeSubMenu(Value::Undefined, Value::Undefined);
 		}
 		else
@@ -97,12 +97,9 @@ namespace ti {
 		 * that the interface can also assign this menu to windows */
 		if (top_level)
 		{
-			gtk_menu_shell_append(GTK_MENU_SHELL(gtk_menu_bar), w);
+			//gtk_menu_shell_append(GTK_MENU_SHELL(gtk_menu_bar), w);
 		}
-		else
-		{
-			gtk_menu_shell_append(GTK_MENU_SHELL(gtk_menu), w);
-		}
+		gtk_menu_shell_append(GTK_MENU_SHELL(gtk_menu), w);
 
 		gtk_widget_show(w);
 		return MenuItem::AppendItem(item);

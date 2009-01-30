@@ -45,18 +45,27 @@ void GtkUserWindow::Open() {
 		                 G_CALLBACK (window_object_cleared_cb),
 		                 this);
 
-		/* web view scroller */
-		GtkWidget* scrolled_window = gtk_scrolled_window_new (NULL, NULL);
-		gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW (scrolled_window),
-		                               GTK_POLICY_AUTOMATIC,
-		                               GTK_POLICY_AUTOMATIC);
-		gtk_container_add(GTK_CONTAINER (scrolled_window),
-		                  GTK_WIDGET (web_view));
+		GtkWidget* view_container = NULL;
+		if (this->IsUsingScrollbars())
+		{
+			/* web view scroller */
+			GtkWidget* scrolled_window = gtk_scrolled_window_new (NULL, NULL);
+			gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW (scrolled_window),
+			                               GTK_POLICY_AUTOMATIC,
+			                               GTK_POLICY_AUTOMATIC);
+			gtk_container_add(GTK_CONTAINER (scrolled_window),
+			                  GTK_WIDGET (web_view));
+			view_container = scrolled_window;
+		}
+		else // No scrollin' fer ya.
+		{
+			view_container = GTK_WIDGET(web_view);
+		}
 
 		/* main window vbox */
 		this->vbox = gtk_vbox_new(FALSE, 0);
 		gtk_box_pack_start(GTK_BOX (vbox),
-		                   GTK_WIDGET(scrolled_window),
+		                   GTK_WIDGET(view_container),
 		                   TRUE, TRUE, 0);
 
 		/* main window */
