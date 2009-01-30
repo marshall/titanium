@@ -15,7 +15,7 @@ namespace ti
 
 	SharedPtr<MenuItem> GtkUIBinding::CreateMenu()
 	{
-		SharedPtr<MenuItem> menu = new GtkMenuItemImpl(true);
+		SharedPtr<MenuItem> menu = new GtkMenuItemImpl();
 		return menu;
 	}
 

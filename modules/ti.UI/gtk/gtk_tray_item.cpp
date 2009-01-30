@@ -66,7 +66,7 @@ namespace ti
 
 		if (!this->menu.isNull() && this->menu_widget != NULL)
 		{
-			this->menu->DeleteWidget(this->menu_widget);
+			this->menu->ClearRealization(this->menu_widget);
 		}
 
 		this->menu = gtk_menu;
