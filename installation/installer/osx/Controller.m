@@ -4,7 +4,8 @@
  * Copyright (c) 2009 Appcelerator, Inc. All Rights Reserved.
  */
 #import "Controller.h"
-
+#import <string>
+#import "file_utils.h"
 
 @implementation Controller
 
@@ -33,6 +34,43 @@
 	return directory;
 }
 
+-(NSString*)installDirectory
+{
+	return installDirectory;
+}
+
+-(void)install:(NSString *)file destination:(NSString*)dir
+{
+	NSArray *parts = [[file lastPathComponent] componentsSeparatedByString:@"-"];
+	if ([parts count] == 3)
+	{
+		NSString *type = [parts objectAtIndex:0];
+		NSString *subtype = [parts objectAtIndex:1];
+		NSString *version = [[parts objectAtIndex:2] stringByDeletingPathExtension];
+		/**
+		 * directories:
+		 *
+		 * /runtime/<version>/<files>
+		 * /modules/<name>/<version>
+		 */
+		NSString *destdir = nil;
+		if ([type isEqualToString:@"runtime"])
+		{
+			destdir = [NSString stringWithFormat:@"%@/runtime/%@/%@",dir,subtype,version];
+		}
+		else if ([type isEqualToString:@"module"])
+		{
+			destdir = [NSString stringWithFormat:@"%@/modules/%@/%@",dir,subtype,version];
+		}
+		if (destdir)
+		{
+			[[NSFileManager defaultManager]createDirectoryAtPath:destdir attributes:nil];
+			std::string src([file UTF8String]);
+			std::string dest([destdir UTF8String]);
+			kroll::FileUtils::Unzip(src,dest);
+		}
+	}
+}
 -(void)download:(Controller*)controller 
 {
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
@@ -40,12 +78,14 @@
 	NSArray *u = [controller urls];
 	int count = [u count];
 	NSString *dir = [controller directory];
+	NSMutableArray *files = [[[NSMutableArray alloc] init] autorelease];
+	NSProgressIndicator *progressBar = [controller progress];
 	
 	for (int c=0;c<count;c++)
 	{
 		NSURL *url = [u objectAtIndex:c];
 		[controller updateMessage:[NSString stringWithFormat:@"Downloading %d of %d",c+1,count]];
-		Downloader *downloader = [[Downloader alloc] initWithURL:url progress:[controller progress]];
+		Downloader *downloader = [[Downloader alloc] initWithURL:url progress:progressBar];
 		while ([downloader isDownloadComplete] == NO)
 		{
 			[NSThread sleepForTimeInterval:0.2]; // this could be more elegant, but it works
@@ -56,7 +96,28 @@
 		// write out our data
 		[data writeToFile:path atomically:YES];
 		[downloader release];
+		[files addObject:path];
 	}
+	
+	[progressBar setIndeterminate:NO];
+	[progressBar setMinValue:0.0];
+	[progressBar setMaxValue:[files count]];
+	[progressBar setDoubleValue:0.0];
+	[controller updateMessage:[NSString stringWithFormat:@"Installing %d file%s",[files count],[files count]>1?"s":""]];
+	
+	NSString *destination = [controller installDirectory];
+	NSLog(@"installing to: %@, count: %d",destination,[files count]);
+	
+	
+	for (int c=0;c<(int)[files count];c++)
+	{
+		[progressBar setDoubleValue:c+1];
+		[controller updateMessage:[NSString stringWithFormat:@"Installing %d of %d file%s",c+1,[files count],[files count]>1?"s":""]];
+		[controller install:[files objectAtIndex:c] destination:destination];
+	}
+	[progressBar setDoubleValue:[files count]];
+
+	[controller updateMessage:@"Installation complete"];
 	
 	[pool release];
 	[NSApp terminate:self];
@@ -66,6 +127,7 @@
 {
 	[urls release];
 	[directory release];
+	[installDirectory release];
 	[super dealloc];
 }
 
@@ -98,6 +160,10 @@
 	// figure out where the caller wants us to write the files once download
 	directory = [[args objectAtIndex:4] stringByExpandingTildeInPath];
 	[directory retain];
+
+	// figure out where the caller wants us to install once download
+	installDirectory = [[args objectAtIndex:5] stringByExpandingTildeInPath];
+	[installDirectory retain];
 	
 	NSFileManager *fm = [NSFileManager defaultManager];
 	BOOL dir = NO;
@@ -108,7 +174,7 @@
 	
 	// slurp in the URLS
 	urls = [[NSMutableArray alloc] init];
-	for (int c=5;c<count;c++)
+	for (int c=6;c<count;c++)
 	{
 		NSURL *url = [NSURL URLWithString:[args objectAtIndex:c]];
 		[urls addObject:url];

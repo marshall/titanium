@@ -21,9 +21,9 @@
 		[handle retain];
 		[handle setFailsOnError:YES];	
 		[handle setFollowsRedirects:YES];
+		[handle setConnectionTimeout:4];
 		[handle setUserAgent:@"Mozilla/5.0 (compatible; Titanium_Downloader/0.2; Mac)"];
 		[handle addClient:self];
-		[handle setConnectionTimeout:4];
 		[handle setProgressIndicator:progress];
 		[progress startAnimation:self];
 		// directly call up the results

@@ -23,6 +23,7 @@ else
 end
 
 thisdir = File.expand_path(File.dirname(__FILE__))
+topdir = File.expand_path(File.join(thisdir,'/../'))
 outdir = File.join(thisdir, OS)
 rootdir = File.join(outdir, NAME + (OS=='osx' ? '.app':'' ))
 appdir = OS=='osx' ? File.join(rootdir,'Contents') : rootdir
@@ -158,3 +159,27 @@ manifest.close
 
 #copy test app files
 FileUtils.cp_r(thisdir+'/testapp/.', appdir)
+
+
+# create installer app
+installapp = File.join(installdir,'Installer App.app','Contents')
+lproj = File.join(installapp,'Resources','English.lproj')
+tinstall = File.join(outdir,'tinstaller')
+
+FileUtils.mkdir_p(File.join(installapp,'MacOS'))
+FileUtils.mkdir_p(File.join(installapp,'Resources'))
+FileUtils.mkdir_p(lproj)
+
+FileUtils.cp(File.join(outdir,'installer'),File.join(installapp,'MacOS','Installer App'))
+FileUtils.cp(File.join(tinstall,'Info.plist'),installapp)
+FileUtils.cp(File.join(tinstall,'MainMenu.nib'),lproj)
+
+FileUtils.cp(File.join(topdir,'support',OS,'titanium.icns'),File.join(installapp,'Resources'))
+
+
+
+
+
+
+
+

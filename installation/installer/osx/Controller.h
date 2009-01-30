@@ -19,11 +19,13 @@
 	IBOutlet NSWindow* window;
 	NSMutableArray *urls;
 	NSString *directory;
+	NSString *installDirectory;
 }
 
 -(IBAction)cancel:(id)sender;
 -(void)updateMessage:(NSString*)msg;
 -(NSArray*)urls;
 -(NSString*)directory;
+-(NSString*)installDirectory;
 
 @end
