@@ -30,18 +30,29 @@ namespace ti {
 	{
 		return this->widget;
 	}
+
 	GtkWidget* GtkMenuItemImpl::GetMenu()
 	{
 		return this->gtk_menu;
 	}
+
 	GtkWidget* GtkMenuItemImpl::GetMenuBar()
 	{
+		// XXX: REMOVE THIS ONCE MULTI-USE CODE IS WRITTEN XXX
+		g_object_ref(this->gtk_menu_bar);
 		return this->gtk_menu_bar;
 	}
+
+	void GtkMenuItemImpl::DeleteWidget(GtkWidget* w)
+	{
+		// TODO: Recursively delete a menu widget thingit here
+	}
+
 	void GtkMenuItemImpl::SetParent(GtkMenuItemImpl* parent)
 	{
 		this->parent = parent;
 	}
+
 	GtkMenuItemImpl* GtkMenuItemImpl::GetParent()
 	{
 		return this->parent;

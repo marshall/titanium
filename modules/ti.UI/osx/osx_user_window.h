@@ -22,6 +22,7 @@ namespace ti
 			void Hide();
 			void Show();
 			bool IsUsingChrome();
+			void SetUsingChrome(bool chrome);
 			bool IsUsingScrollbars();
 			bool IsFullScreen();
 			std::string GetId();
@@ -63,8 +64,11 @@ namespace ti
 			double GetTransparency();
 			void SetTransparency(double transparency);
 			void SetFullScreen(bool fullscreen);
+
 			void SetMenu(SharedBoundList menu);
-			void SetUsingChrome(bool chrome);
+			SharedBoundList GetMenu();
+			void SetIcon(SharedString icon_path);
+			SharedString GetIcon();
 
 			NativeWindow* GetNative() { return window; }
 

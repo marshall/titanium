@@ -11,6 +11,8 @@
 #include "../url/app_url.h"
 #include <math.h>
 
+#define STUB() printf("Method is still a stub, %s:%i\n", __FILE__, __LINE__)
+
 using namespace ti;
 
 bool Win32UserWindow::ole_initialized = false;
@@ -430,13 +432,30 @@ void Win32UserWindow::SetFullScreen(bool fullscreen) {
 	}
 }
 
-void Win32UserWindow::SetUsingChrome(bool chrome) {
-	//TODO: implement
-}
-
 void Win32UserWindow::SetMenu(SharedBoundList menu)
 {
+	STUB();
 	//TODO: implement
 }
 
+SharedBoundList Win32UserWindow::GetMenu()
+{
+	STUB();
+	return NULL;
+}
 
+void Win32UserWindow::SetIcon(SharedString icon_path)
+{
+	STUB();
+}
+
+SharedString Win32UserWindow::GetIcon()
+{
+	STUB();
+	return NULL;
+}
+
+void Win32UserWindow::SetUsingChrome(bool chrome) {
+	STUB();
+	//TODO: implement
+}

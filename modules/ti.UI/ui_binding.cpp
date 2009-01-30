@@ -41,16 +41,14 @@ namespace ti
 
 	void UIBinding::_SetMenu(const ValueList& args, SharedValue result)
 	{
-
-		SharedBoundList sbl;
-		GET_ARG_OR_RETURN(0, List, sbl);
-
-		SharedPtr<MenuItem> menu = sbl.cast<MenuItem>();
-		if (menu.isNull())
-			return;
-
+		SharedPtr<MenuItem> menu = NULL; // A NULL value is an unset
+		if (args.size() > 0 && args.at(0)->IsList())
+		{
+			menu = args.at(0)->ToList().cast<MenuItem>();
+		}
 		UIModule::SetMenu(menu);
 		this->SetMenu(menu);
+
 	}
 
 	void UIBinding::_GetMenu(const ValueList& args, SharedValue result)
@@ -62,12 +60,13 @@ namespace ti
 
 	void UIBinding::_SetIcon(const ValueList& args, SharedValue result)
 	{
-		const char *icon_url;
-		GET_ARG_OR_RETURN(0, String, icon_url);
-		SharedString icon_path = UIModule::GetResourcePath(icon_url);
-		if (icon_path.isNull())
-			return
-
+		SharedString icon_path = NULL; // a NULL value is an unset
+		if (args.size() > 0 && args.at(0)->IsString())
+		{
+			const char *icon_url = args.at(0)->ToString();
+			icon_path = UIModule::GetResourcePath(icon_url);
+		}
+		UIModule::SetIcon(icon_path);
 		this->SetIcon(icon_path);
 	}
 
@@ -88,36 +87,33 @@ namespace ti
 
 	void UIBinding::_SetDockIcon(const ValueList& args, SharedValue result)
 	{
-		const char *icon_url;
-		GET_ARG_OR_RETURN(0, String, icon_url);
-		SharedString icon_path = UIModule::GetResourcePath(icon_url);
-		if (icon_path.isNull())
-			return
-
+		SharedString icon_path = NULL; // a NULL value is an unset
+		if (args.size() > 0 && args.at(0)->IsString())
+		{
+			const char *icon_url = args.at(0)->ToString();
+			icon_path = UIModule::GetResourcePath(icon_url);
+		}
 		this->SetDockIcon(icon_path);
 	}
 
 	void UIBinding::_SetDockMenu(const ValueList& args, SharedValue result)
 	{
-
-		SharedBoundList sbl;
-		GET_ARG_OR_RETURN(0, List, sbl);
-
-		SharedPtr<MenuItem> menu = sbl.cast<MenuItem>();
-		if (menu.isNull())
-			return;
-
+		SharedPtr<MenuItem> menu = NULL; // A NULL value is an unset
+		if (args.size() > 0 && args.at(0)->IsList())
+		{
+			menu = args.at(0)->ToList().cast<MenuItem>();
+		}
 		this->SetDockMenu(menu);
 	}
 
 	void UIBinding::_SetBadge(const ValueList& args, SharedValue result)
 	{
-		const char *badge_url;
-		GET_ARG_OR_RETURN(0, String, badge_url);
-		SharedString badge_path = UIModule::GetResourcePath(badge_url);
-		if (badge_path.isNull())
-			return
-
+		SharedString badge_path = NULL; // a NULL value is an unset
+		if (args.size() > 0 && args.at(0)->IsString())
+		{
+			const char *badge_url = args.at(0)->ToString();
+			badge_path = UIModule::GetResourcePath(badge_url);
+		}
 		this->SetBadge(badge_path);
 	}
 

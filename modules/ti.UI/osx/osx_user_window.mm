@@ -348,4 +348,22 @@ namespace ti
 		NSMenu *nsmenu = this->menu_wrapper->getNSMenu();
 		[NSApp setMainMenu:nsmenu];
 	}
+
+	SharedBoundList OSXUserWindow::GetMenu()
+	{
+		STUB();
+		return NULL;
+	}
+	
+	void OSXUserWindow::SetIcon(SharedString icon_path)
+	{
+		STUB();
+	}
+	
+	SharedString OSXUserWindow::GetIcon()
+	{
+		STUB();
+		return NULL;
+	}
+
 }
