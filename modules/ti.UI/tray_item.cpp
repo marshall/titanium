@@ -22,37 +22,43 @@ namespace ti
 	{
 	}
 
-	void TrayItem::SetIcon(SharedString icon_path)
-	{
-	}
-
-	void TrayItem::SetMenu(SharedPtr<MenuItem> menu)
-	{
-	}
-
-	void TrayItem::SetHint(SharedString hint)
-	{
-
-	}
-
-	void TrayItem::Remove()
-	{
-	}
-
 	void TrayItem::_SetIcon(const ValueList& args, SharedValue result)
 	{
+		// Cannot set a NULL icon
+		if (args.size() > 0 && args.at(0)->IsString())
+		{
+			const char *icon_url = args.at(0)->ToString();
+			SharedString icon_path = UIModule::GetResourcePath(icon_url);
+			if (!icon_path.isNull())
+			{
+				this->SetIcon(icon_path);
+			}
+		}
 	}
 
 	void TrayItem::_SetMenu(const ValueList& args, SharedValue result)
 	{
+		SharedPtr<BoundList> menu = NULL; // A NULL value is an unset
+		if (args.size() > 0 && args.at(0)->IsList())
+		{
+			menu = args.at(0)->ToList().cast<BoundList>();
+		}
+		this->SetMenu(menu);
 	}
 
 	void TrayItem::_SetHint(const ValueList& args, SharedValue result)
 	{
+		SharedString hint = NULL; // A NULL value is an unset
+		if (args.size() > 0 && args.at(0)->IsString())
+		{
+			hint = new std::string(args.at(0)->ToString());
+		}
+		this->SetHint(hint);
 	}
 
 	void TrayItem::_Remove(const ValueList& args, SharedValue result)
 	{
+		this->Remove();
 	}
 
 }

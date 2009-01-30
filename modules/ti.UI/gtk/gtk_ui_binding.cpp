@@ -54,7 +54,7 @@ namespace ti
 		SharedString icon_path,
 		SharedBoundMethod cb)
 	{
-		SharedPtr<TrayItem> item = new TrayItem();
+		SharedPtr<TrayItem> item = new GtkTrayItem(icon_path, cb);
 		return item;
 	}
 
