@@ -41,7 +41,17 @@
 			{
 				Titanium.UI.currentWindow.setMenu(null);
 			}
-
+			function addTrayIcon()
+			{
+				var cb = function()
+				{
+					alert("What...you think you can just click any old jaz disk you see?");
+				}
+				var icon = Titanium.UI.addTray("app://tray.png", cb);
+				icon.setHint("Hinty McHints");
+				var menu = preBakedMenu("TrayMenu");
+				icon.setMenu(menu);
+			}
 			function openWindowA()
 			{
 				var w = Titanium.UI.createWindow();
@@ -138,6 +148,10 @@
 				<span style="font-size: 10px;">(no more icons)</span>
 			</td>
 		</tr></table>
+		</div>
+
+		<div>
+			Tray Icon: <button onclick="addTrayIcon();">Add Tray Icon</button>
 		</div>
 
 		<div class='output log'><code id="log"></code></div>
