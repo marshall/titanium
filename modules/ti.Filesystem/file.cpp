@@ -74,7 +74,7 @@ namespace ti
 		}
 		catch (Poco::Exception& exc)
 		{
-			throw exc.displayText();
+			throw ValueException::FromString(exc.displayText());
 		}
 	}
 	void File::IsDirectory(const ValueList& args, SharedValue result)
@@ -87,7 +87,7 @@ namespace ti
 		}
 		catch (Poco::Exception& exc)
 		{
-			throw exc.displayText();
+			throw ValueException::FromString(exc.displayText());
 		}
 	}
 	void File::IsHidden(const ValueList& args, SharedValue result)
@@ -100,7 +100,7 @@ namespace ti
 		}
 		catch (Poco::Exception& exc)
 		{
-			throw exc.displayText();
+			throw ValueException::FromString(exc.displayText());
 		}
 	}
 	void File::IsSymbolicLink(const ValueList& args, SharedValue result)
@@ -113,7 +113,7 @@ namespace ti
 		}
 		catch (Poco::Exception& exc)
 		{
-			throw exc.displayText();
+			throw ValueException::FromString(exc.displayText());
 		}
 	}
 	void File::Resolve(const ValueList& args, SharedValue result)
@@ -130,7 +130,7 @@ namespace ti
 		}
 		catch (Poco::Exception& exc)
 		{
-			throw exc.displayText();
+			throw ValueException::FromString(exc.displayText());
 		}
 	}
 	void File::Write(const ValueList& args, SharedValue result)
@@ -163,7 +163,7 @@ namespace ti
 		}
 		catch (Poco::Exception& exc)
 		{
-			throw exc.displayText();
+			throw ValueException::FromString(exc.displayText());
 		}
 	}
 	void File::Read(const ValueList& args, SharedValue result)
@@ -186,7 +186,7 @@ namespace ti
 		}
 		catch (Poco::Exception& exc)
 		{
-			throw exc.displayText();
+			throw ValueException::FromString(exc.displayText());
 		}
 	}
 	void File::ReadLine(const ValueList& args, SharedValue result)
@@ -235,7 +235,7 @@ namespace ti
 		}
 		catch (Poco::Exception& exc)
 		{
-			throw exc.displayText();
+			throw ValueException::FromString(exc.displayText());
 		}
 	}
 	void File::Copy(const ValueList& args, SharedValue result)
@@ -251,7 +251,7 @@ namespace ti
 		}
 		catch (Poco::Exception& exc)
 		{
-			throw exc.displayText();
+			throw ValueException::FromString(exc.displayText());
 		}
 
 
@@ -269,7 +269,7 @@ namespace ti
 		}
 		catch (Poco::Exception& exc)
 		{
-			throw exc.displayText();
+			throw ValueException::FromString(exc.displayText());
 		}
 	}
 	void File::CreateDirectoryX(const ValueList& args, SharedValue result)
@@ -299,7 +299,7 @@ namespace ti
 		}
 		catch (Poco::Exception& exc)
 		{
-			throw exc.displayText();
+			throw ValueException::FromString(exc.displayText());
 		}
 	}
 	void File::DeleteDirectory(const ValueList& args, SharedValue result)
@@ -324,7 +324,7 @@ namespace ti
 		}
 		catch (Poco::Exception& exc)
 		{
-			throw exc.displayText();
+			throw ValueException::FromString(exc.displayText());
 		}
 	}
 	void File::DeleteFileX(const ValueList& args, SharedValue result)
@@ -343,7 +343,7 @@ namespace ti
 		}
 		catch (Poco::Exception& exc)
 		{
-			throw exc.displayText();
+			throw ValueException::FromString(exc.displayText());
 		}
 	}
 	void File::GetDirectoryListing(const ValueList& args, SharedValue result)
@@ -376,7 +376,7 @@ namespace ti
 		}
 		catch (Poco::Exception& exc)
 		{
-			throw exc.displayText();
+			throw ValueException::FromString(exc.displayText());
 		}
 	}
 	void File::GetParent(const ValueList& args, SharedValue result)
@@ -390,7 +390,7 @@ namespace ti
 		}
 		catch (Poco::Exception& exc)
 		{
-			throw exc.displayText();
+			throw ValueException::FromString(exc.displayText());
 		}
 	}
 	void File::GetExists(const ValueList& args, SharedValue result)
@@ -403,7 +403,7 @@ namespace ti
 		}
 		catch (Poco::Exception& exc)
 		{
-			throw exc.displayText();
+			throw ValueException::FromString(exc.displayText());
 		}
 	}
 	void File::GetCreateTimestamp(const ValueList& args, SharedValue result)
@@ -417,7 +417,7 @@ namespace ti
 		}
 		catch (Poco::Exception& exc)
 		{
-			throw exc.displayText();
+			throw ValueException::FromString(exc.displayText());
 		}
 	}
 	void File::GetModificationTimestamp(const ValueList& args, SharedValue result)
@@ -431,7 +431,7 @@ namespace ti
 		}
 		catch (Poco::Exception& exc)
 		{
-			throw exc.displayText();
+			throw ValueException::FromString(exc.displayText());
 		}
 	}
 	void File::GetName(const ValueList& args, SharedValue result)
@@ -455,7 +455,7 @@ namespace ti
 		}
 		catch (Poco::Exception& exc)
 		{
-			throw exc.displayText();
+			throw ValueException::FromString(exc.displayText());
 		}
 	}
 	void File::GetNativePath(const ValueList& args, SharedValue result)
@@ -468,7 +468,7 @@ namespace ti
 		}
 		catch (Poco::Exception& exc)
 		{
-			throw exc.displayText();
+			throw ValueException::FromString(exc.displayText());
 		}
 	}
 	void File::GetSize(const ValueList& args, SharedValue result)
@@ -481,7 +481,7 @@ namespace ti
 		}
 		catch (Poco::Exception& exc)
 		{
-			throw exc.displayText();
+			throw ValueException::FromString(exc.displayText());
 		}
 	}
 	void File::GetSpaceAvailable(const ValueList& args, SharedValue result)

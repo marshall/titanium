@@ -43,7 +43,7 @@ namespace ti
 	{
 		if (args.size()!=1)
 		{
-			throw "invalid parameters passed. createSound takes 1 parameter";
+			throw ValueException::FromString("createSound takes 1 parameter");
 		}
 		std::string path(args.at(0)->ToString());
 		SharedBoundObject sound = new TI_SOUND(path);

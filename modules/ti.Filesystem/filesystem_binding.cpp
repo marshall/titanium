@@ -56,7 +56,7 @@ namespace ti
 		}
 		catch (Poco::Exception& exc)
 		{
-			throw exc.displayText();
+			throw ValueException::FromString(exc.displayText());
 		}
 	}
 	void FilesystemBinding::CreateTempDirectory(const ValueList& args, SharedValue result)
@@ -72,7 +72,7 @@ namespace ti
 		}
 		catch (Poco::Exception& exc)
 		{
-			throw exc.displayText();
+			throw ValueException::FromString(exc.displayText());
 		}
 	}
 	void FilesystemBinding::GetFile(const ValueList& args, SharedValue result)
@@ -157,7 +157,7 @@ namespace ti
 		}
 		catch (Poco::Exception& exc)
 		{
-			throw exc.displayText();
+			throw ValueException::FromString(exc.displayText());
 		}
 	}
 	void FilesystemBinding::GetLineEnding(const ValueList& args, SharedValue result)
@@ -168,7 +168,7 @@ namespace ti
 		}
 		catch (Poco::Exception& exc)
 		{
-			throw exc.displayText();
+			throw ValueException::FromString(exc.displayText());
 		}
 	}
 	void FilesystemBinding::GetSeparator(const ValueList& args, SharedValue result)
@@ -181,7 +181,7 @@ namespace ti
 		}
 		catch (Poco::Exception& exc)
 		{
-			throw exc.displayText();
+			throw ValueException::FromString(exc.displayText());
 		}
 	}
 	void FilesystemBinding::GetRootDirectories(const ValueList& args, SharedValue result)
@@ -207,7 +207,7 @@ namespace ti
 		}
 		catch (Poco::Exception& exc)
 		{
-			throw exc.displayText();
+			throw ValueException::FromString(exc.displayText());
 		}
 	}
 }

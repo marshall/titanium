@@ -34,7 +34,7 @@ namespace ti
 	{
 		if (!this->IsPlaying())
 		{
-			throw "sound is not currently playing";
+			throw ValueException::FromString("Sounds is not currently playing");
 		}
 		this->Pause();
 	}
@@ -42,7 +42,7 @@ namespace ti
 	{
 		if (this->IsPlaying())
 		{
-			throw "sound is currently playing";
+			throw ValueException::FromString("Sounds is currently playing");
 		}
 		this->Pause();
 	}
@@ -62,7 +62,7 @@ namespace ti
 	{
 		if (args.size()!=1)
 		{
-			throw "invalid parameters passed. setVolume takes 1 parameter";
+			throw ValueException::FromString("setVolume takes 1 parameter");
 		}
 		this->SetVolume(args.at(0)->ToDouble());
 	}
@@ -74,7 +74,7 @@ namespace ti
 	{
 		if (args.size()!=1)
 		{
-			throw "invalid parameters passed. setLooping takes 1 parameter";
+			throw ValueException::FromString("setLooping takes 1 parameter");
 		}
 		this->SetLooping(args.at(0)->ToBool());
 	}
@@ -94,11 +94,11 @@ namespace ti
 	{
 		if (args.size()!=1)
 		{
-			throw "invalid parameters passed. onComplete takes 1 parameter";
+			throw ValueException::FromString("onComplete takes 1 parameter");
 		}
 		if (!args.at(0)->IsMethod())
 		{
-			throw "invalid parameters passed. onComplete takes a function parameter";
+			throw ValueException::FromString("onComplete takes a function parameter");
 		}
 		SharedBoundMethod method = args.at(0)->ToMethod();
 		this->OnComplete(method);

@@ -21,7 +21,7 @@ namespace ti
 		}
 		catch (std::exception &e)
 		{
-			throw Value::NewString(e.what());
+			throw ValueException::FromString(e.what());
 		}
 		
 		this->Set("command",Value::NewString(cmd));
