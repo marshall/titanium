@@ -18,9 +18,9 @@ namespace ti
 	{
 		const char *home = getenv("KR_HOME");
 		std::string config(home);
-#ifdef OS_OSX
-		config+="/Contents";
-#endif
+		
+		std::cout << "~~~~~~~~~~~~~~~~~~ " << home << std::endl;
+		
 		config+="/"CONFIG_FILENAME;
 
 		if (!FileUtils::IsFile(config))
@@ -36,7 +36,7 @@ namespace ti
 		this->variables = new AppBinding(host->GetGlobalObject());
 
 		// add our command line array
-		StaticBoundList *args = new StaticBoundList();
+		SharedBoundList args = new StaticBoundList();
 		// skip the first argument which is the filepath to the
 		// executable
 		for (int c=1;c<host->GetCommandLineArgCount();c++)
@@ -47,7 +47,6 @@ namespace ti
 		}
 		SharedValue argsvalue = Value::NewList(args);
 		this->variables->Set("commandline",argsvalue);
-		//KR_DECREF(args);
 
 		// set our ti.App
 		SharedValue value = Value::NewObject(this->variables);
@@ -56,6 +55,5 @@ namespace ti
 
 	void AppModule::Destroy()
 	{
-		//KR_DECREF(this->variables);
 	}
 }

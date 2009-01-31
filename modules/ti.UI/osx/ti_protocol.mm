@@ -54,9 +54,12 @@
 	{
 		s=[ts substringFromIndex:[[TiProtocol specialProtocolScheme] length]+1];	
 	}
-	NSString *basePath = [[NSBundle mainBundle] resourcePath];
+	NSString *basePath = [NSString stringWithFormat:@"%s/Resources",getenv("KR_HOME")];
 	basePath = [basePath stringByAppendingPathComponent:@"titanium"];
 	NSString *resourcePath = nil;
+	
+	//TODO: this class still needs implementation
+	KR_UNUSED(basePath);
 	
 	NSData *data = nil;
 	NSString *mime = nil;

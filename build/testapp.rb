@@ -181,4 +181,10 @@ if OS == 'osx'
   FileUtils.cp(File.join(tinstall,'MainMenu.nib'),lproj)
 
   FileUtils.cp(File.join(topdir,'support',OS,'titanium.icns'),File.join(installapp,'Resources'))
+  
+  website = File.join(ENV['HOME'],'Sites','titanium')
+  FileUtils.mkdir_p website unless File.exists? website
+  Dir["#{outdir}/*.zip"].each do |file|
+    FileUtils.cp file,website
+  end
 end

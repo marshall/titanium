@@ -125,7 +125,7 @@
 	
 	NSURL *url = [request URL];
 	NSString *s = [AppProtocol getPath:url];
-	NSString *basePath = [[NSBundle mainBundle] resourcePath];
+	NSString *basePath = [NSString stringWithFormat:@"%s/Resources",getenv("KR_HOME")];
 	NSString *resourcePath = [basePath stringByAppendingPathComponent:s];
 	
 	// support loading app://blank as a special url to an empty page
@@ -139,16 +139,7 @@
 		[response release];
 		return;
 	}
-	
-	// we're going to ignore any load for app://gears_init.js in case the developer left it in
-	if ([[resourcePath lastPathComponent] isEqualToString:@"gears_init.js"])
-	{
-		NSError *error = [NSError errorWithDomain:@"titanium" code:-1 userInfo:nil];
-		[client URLProtocol:self didFailWithError:error];
-		[client URLProtocolDidFinishLoading:self];
-		return;
-	}
-	
+		
 	// TiAppArguments *args = (TiAppArguments *)[[TiController instance] arguments];
 	// 
 	// if ([args devLaunch]) 
