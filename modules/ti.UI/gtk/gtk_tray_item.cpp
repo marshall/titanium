@@ -19,11 +19,15 @@ namespace ti
 		this->menu = NULL;
 		this->menu_widget = NULL;
 
-		g_signal_connect(
-			G_OBJECT(this->widget),
-			"activate", 
-			G_CALLBACK(tray_click_callback),
-			this);
+		if (!cb.isNull())
+		{
+			this->callback = cb;
+			g_signal_connect(
+				G_OBJECT(this->widget),
+				"activate", 
+				G_CALLBACK(tray_click_callback),
+				cb.get());
+		}
 
 		g_signal_connect(
 			G_OBJECT(this->widget), 
@@ -62,11 +66,11 @@ namespace ti
 
 		if (!this->menu.isNull() && this->menu_widget != NULL)
 		{
-			this->menu->DeleteWidget(this->menu_widget);
+			this->menu->ClearRealization(this->menu_widget);
 		}
 
 		this->menu = gtk_menu;
-		this->menu_widget = gtk_menu->GetMenuBar();
+		this->menu_widget = gtk_menu->GetMenu();
 	}
 
 	void GtkTrayItem::SetHint(SharedString hint)
@@ -84,9 +88,9 @@ namespace ti
 		gtk_widget_destroy(GTK_WIDGET(this->widget));
 	}
 
-	GtkWidget* GtkTrayItem::GetWidget()
+	GtkStatusIcon* GtkTrayItem::GetWidget()
 	{
-		return GTK_WIDGET(this->widget);
+		return this->widget;
 	}
 
 	GtkWidget* GtkTrayItem::GetMenuWidget()
@@ -99,11 +103,19 @@ namespace ti
 		return this->menu;
 	}
 
-	void tray_click_callback(
-		GtkStatusIcon *status_icon, 
-		gpointer user_data)
+	void tray_click_callback(GtkStatusIcon *status_icon, gpointer data)
 	{
-		printf("Clicked on tray icon\n");
+		BoundMethod* cb = (BoundMethod*) data;
+		// TODO: Handle exceptions in some way
+		try
+		{
+			ValueList args;
+			cb->Call(args);
+		}
+		catch(...)
+		{
+			std::cout << "Tray icon callback failed" << std::endl;
+		}
 	}
 
 	void tray_menu_callback(
@@ -112,10 +124,9 @@ namespace ti
 		guint activate_time,
 		gpointer data)
 	{
-		printf("Menu callback\n");
 		GtkTrayItem* item = (GtkTrayItem*) data;
 
-		GtkWidget* tray_widget = item->GetWidget();
+		GtkStatusIcon* tray_widget = item->GetWidget();
 		GtkWidget* menu_widget = item->GetMenuWidget();
 		SharedPtr<GtkMenuItemImpl> menu = item->GetMenu();
 

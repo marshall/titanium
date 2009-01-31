@@ -23,7 +23,7 @@ namespace ti
 		void SetHint(SharedString hint);
 		void Remove();
 
-		GtkWidget* GetWidget();
+		GtkStatusIcon* GetWidget();
 		GtkWidget* GetMenuWidget();
 		SharedPtr<GtkMenuItemImpl> GetMenu();
 
@@ -31,6 +31,7 @@ namespace ti
 		GtkStatusIcon* widget;
 		SharedPtr<GtkMenuItemImpl> menu;
 		GtkWidget* menu_widget;
+		SharedBoundMethod callback;
 
 	};
 }

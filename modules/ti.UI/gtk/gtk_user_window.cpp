@@ -565,8 +565,8 @@ void GtkUserWindow::RemoveOldMenu()
 	    !this->menu_in_use.isNull() &&
 	    this->menu_bar != NULL)
 	{
+		this->menu_in_use->ClearRealization(this->menu_bar);
 		gtk_container_remove(GTK_CONTAINER(this->vbox), this->menu_bar);
-		this->menu_in_use->DeleteWidget(this->menu_bar);
 	}
 
 	this->menu_in_use = NULL;
