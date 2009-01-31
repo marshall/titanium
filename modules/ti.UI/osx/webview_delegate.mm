@@ -404,8 +404,15 @@
 	BoundObject *global_bound_object = new KJSBoundObject(context, global_object);
 	SharedValue ti_object_value = Value::NewObject(shared_ti_obj);
 	global_bound_object->Set(GLOBAL_NS_VARNAME, ti_object_value);
-
-	//NOTE: don't release tiJS or newti or cw
+	
+	// we need to place window and document into our shared global
+	SharedBoundObject shared_global_bound_object = global_bound_object;
+	SharedValue win_object_value = Value::NewObject(shared_global_bound_object);
+	ti_object->Set("window",win_object_value);
+	
+	SharedValue doc_value = global_bound_object->Get("document");
+	ti_object->Set("document",doc_value);
+	
 	scriptCleared = YES;
 }
 
