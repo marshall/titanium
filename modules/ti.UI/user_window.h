@@ -35,6 +35,7 @@ class UserWindow : public kroll::StaticBoundObject {
 	public:
 		kroll::Host* GetHost() { return this->host; }
 		SharedBoundObject CreateWindow(SharedBoundObject properties);
+		static std::vector<UserWindow*>& GetWindows();
 
 	private:
 		void _Hide(const kroll::ValueList&, kroll::SharedValue);
@@ -45,50 +46,69 @@ class UserWindow : public kroll::StaticBoundObject {
 		void _IsFullScreen(const kroll::ValueList&, kroll::SharedValue);
 		void _SetFullScreen(const kroll::ValueList&, kroll::SharedValue);
 		void _GetId(const kroll::ValueList&, kroll::SharedValue);
+
 		void _Open(const kroll::ValueList&, kroll::SharedValue);
 		void _Close(const kroll::ValueList&, kroll::SharedValue);
+
 		void _GetX(const kroll::ValueList&, kroll::SharedValue);
 		void _SetX(const kroll::ValueList&, kroll::SharedValue);
+
 		void _GetY(const kroll::ValueList&, kroll::SharedValue);
 		void _SetY(const kroll::ValueList&, kroll::SharedValue);
+
 		void _GetWidth(const kroll::ValueList&, kroll::SharedValue);
 		void _SetWidth(const kroll::ValueList&, kroll::SharedValue);
 		void _GetMaxWidth(const kroll::ValueList&, kroll::SharedValue);
 		void _SetMaxWidth(const kroll::ValueList&, kroll::SharedValue);
 		void _GetMinWidth(const kroll::ValueList&, kroll::SharedValue);
 		void _SetMinWidth(const kroll::ValueList&, kroll::SharedValue);
+
 		void _GetHeight(const kroll::ValueList&, kroll::SharedValue);
 		void _SetHeight(const kroll::ValueList&, kroll::SharedValue);
 		void _GetMaxHeight(const kroll::ValueList&, kroll::SharedValue);
 		void _SetMaxHeight(const kroll::ValueList&, kroll::SharedValue);
 		void _GetMinHeight(const kroll::ValueList&, kroll::SharedValue);
 		void _SetMinHeight(const kroll::ValueList&, kroll::SharedValue);
+
 		void _GetBounds(const kroll::ValueList&, kroll::SharedValue);
 		void _SetBounds(const kroll::ValueList&, kroll::SharedValue);
+
 		void _GetTitle(const kroll::ValueList&, kroll::SharedValue);
 		void _SetTitle(const kroll::ValueList&, kroll::SharedValue);
+
 		void _GetURL(const kroll::ValueList&, kroll::SharedValue);
 		void _SetURL(const kroll::ValueList&, kroll::SharedValue);
+
 		void _IsResizable(const kroll::ValueList&, kroll::SharedValue);
 		void _SetResizable(const kroll::ValueList&, kroll::SharedValue);
+
 		void _IsMaximizable(const kroll::ValueList&, kroll::SharedValue);
 		void _SetMaximizable(const kroll::ValueList&, kroll::SharedValue);
+
 		void _IsMinimizable(const kroll::ValueList&, kroll::SharedValue);
 		void _SetMinimizable(const kroll::ValueList&, kroll::SharedValue);
+
 		void _IsCloseable(const kroll::ValueList&, kroll::SharedValue);
 		void _SetCloseable(const kroll::ValueList&, kroll::SharedValue);
+
 		void _IsVisible(const kroll::ValueList&, kroll::SharedValue);
 		void _SetVisible(const kroll::ValueList&, kroll::SharedValue);
+
 		void _GetTransparency(const kroll::ValueList&, kroll::SharedValue);
 		void _SetTransparency(const kroll::ValueList&, kroll::SharedValue);
-		void _GetParent(const kroll::ValueList&, kroll::SharedValue);
 
+		void _GetMenu(const kroll::ValueList&, kroll::SharedValue);
 		void _SetMenu(const kroll::ValueList&, kroll::SharedValue);
+
+		void _GetIcon(const kroll::ValueList&, kroll::SharedValue);
 		void _SetIcon(const kroll::ValueList&, kroll::SharedValue);
+
+		void _GetParent(const kroll::ValueList&, kroll::SharedValue);
 		void _CreateWindow(const kroll::ValueList&, kroll::SharedValue);
 
 	public:
 		virtual UserWindow* WindowFactory(Host*, WindowConfig*) = 0;
+
 		virtual void Hide() = 0;
 		virtual void Show() = 0;
 		virtual bool IsUsingChrome() = 0;
@@ -138,6 +158,9 @@ class UserWindow : public kroll::StaticBoundObject {
 		virtual void SetFullScreen(bool fullscreen) = 0;
 		virtual void SetUsingChrome(bool chrome) = 0;
 		virtual void SetMenu(SharedBoundList menu) = 0;
+		virtual SharedBoundList GetMenu() = 0;
+		virtual void SetIcon(SharedString icon_path) = 0;
+		virtual SharedString GetIcon() = 0;
 
 	protected:
 		kroll::Host *host;
@@ -159,8 +182,6 @@ class UserWindow : public kroll::StaticBoundObject {
 
 	private:
 		DISALLOW_EVIL_CONSTRUCTORS(UserWindow);
-
-		friend class WindowBinding;
 };
 
 }

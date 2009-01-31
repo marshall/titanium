@@ -8,6 +8,50 @@
 			div.output { border: 1px solid #c3c3c3; padding: 5px; margin: 8px 0 px 0; background-color: black; color: white; height: 350px; overflow: scroll; }
 		</style>
 		<script>
+			function preBakedMenu(ident)
+			{
+				var menu = Titanium.UI.createMenu();
+				var identm = menu.addSubMenu(ident);
+				var file = menu.addSubMenu("File");
+				var edit = menu.addSubMenu("Edit");
+				var rap = menu.addSubMenu("Rap", "app://fonts.png");
+
+				file.addItem("Open", function () {alert("open called"); }, "app://open.png");
+				file.addItem("Open As...", function () {alert("open as called"); });
+				file.addSeparator();
+				file.addItem("Close", function () {alert("close called"); });
+				file.addItem("Exit", function () {alert("exit called"); });
+				return menu;
+			}
+			function setAppMenu()
+			{
+				var menu = preBakedMenu("App Menu");
+				Titanium.UI.setMenu(menu);
+			}
+			function unsetAppMenu()
+			{
+				Titanium.UI.setMenu(null);
+			}
+			function setWindowMenu()
+			{
+				var menu = preBakedMenu("Window Menu");
+				Titanium.UI.currentWindow.setMenu(menu);
+			}
+			function unsetWindowMenu()
+			{
+				Titanium.UI.currentWindow.setMenu(null);
+			}
+			function addTrayIcon()
+			{
+				var cb = function()
+				{
+					alert("What...you think you can just click any old jaz disk you see?");
+				}
+				var icon = Titanium.UI.addTray("app://tray.png", cb);
+				icon.setHint("Hinty McHints");
+				var menu = preBakedMenu("TrayMenu");
+				icon.setMenu(menu);
+			}
 			function openWindowA()
 			{
 				var w = Titanium.UI.createWindow();
@@ -65,10 +109,51 @@
 	<body>
 		<h2>Titanium UI test app</h2>
 		<div><button onclick="openWindowA()">Open Window</button></div>
-		<div><button onclick="jsAlert()">Javascript alert</button></div>
-		<div><button onclick="jsConfirm()">Javascript confirm</button></div>
-		<div><button onclick="jsPrompt()">Javascript prompt</button></div>
-		<div><button onclick="jsPromptWithDefault()">Javascript prompt (with default)</button></div>
+		<div>Delegate:<br/>
+			<button onclick="jsAlert()">alert</button>
+			<button onclick="jsConfirm()">confirm</button>
+			<button onclick="jsPrompt()">prompt</button>
+			<button onclick="jsPromptWithDefault()">prompt (def)</button>
+		</div>
+
+		<div>Menus:<br/>
+		<table>
+		<tr>
+			<td> <button onclick="setAppMenu()">App Menu</button></td>
+			<td><button onclick="setWindowMenu()">Window Menu</button><br/>
+				<span style="font-size: 10px;">(should override app menu)</span>
+			</td>
+		</tr><tr>
+			<td> <button onclick="unsetWindowMenu()">Remove Window Menu</button><br/>
+				<span style="font-size: 10px;">(should revert to app menu)</span>
+			</td>
+			<td><button onclick="unsetAppMenu()">Remove App Menu</button><br/>
+				<span style="font-size: 10px;">(no more menus)</span>
+			</td>
+		</tr></table>
+		</div>
+
+		<div>Icons:<br/>
+		<table>
+		<tr>
+			<td> <button onclick="Titanium.UI.setIcon('app://open.png');">App Icon</button></td>
+			<td><button onclick="Titanium.UI.currentWindow.setIcon('app://fonts.png');">Window Icon</button><br/>
+				<span style="font-size: 10px;">(should override app icon)</span>
+			</td>
+		</tr><tr>
+			<td> <button onclick="Titanium.UI.currentWindow.setIcon(null);">Remove Window Icon</button><br/>
+				<span style="font-size: 10px;">(should revert to app menu)</span>
+			</td>
+			<td><button onclick="Titanium.UI.setIcon(null);">Remove App Icon</button><br/>
+				<span style="font-size: 10px;">(no more icons)</span>
+			</td>
+		</tr></table>
+		</div>
+
+		<div>
+			Tray Icon: <button onclick="addTrayIcon();">Add Tray Icon</button>
+		</div>
+
 		<div class='output log'><code id="log"></code></div>
 	</body>
 </html>

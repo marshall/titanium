@@ -4,8 +4,8 @@
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
 
-#ifndef TI_WIN32_FRAME_LOAD_DELEGATE_H_
-#define TI_WIN32_FRAME_LOAD_DELEGATE_H_
+#ifndef TI_WIN32_WEBKIT_FRAME_LOAD_DELEGATE_H_
+#define TI_WIN32_WEBKIT_FRAME_LOAD_DELEGATE_H_
 #include <api/base.h>
 #include <windows.h>
 
@@ -15,13 +15,13 @@ namespace ti {
 
 class Win32UserWindow;
 
-class Win32FrameLoadDelegate : public IWebFrameLoadDelegate {
+class Win32WebKitFrameLoadDelegate : public IWebFrameLoadDelegate {
 protected:
 	int ref_count;
 	Win32UserWindow *window;
 
 public:
-	Win32FrameLoadDelegate(Win32UserWindow *window);
+	Win32WebKitFrameLoadDelegate(Win32UserWindow *window);
 
 	// IUnknown
 	virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
@@ -92,4 +92,4 @@ public:
 
 }
 
-#endif /* TI_WIN32_FRAME_LOAD_DELEGATE_H_ */
+#endif /* TI_WIN32_WEBKIT_FRAME_LOAD_DELEGATE_H_ */

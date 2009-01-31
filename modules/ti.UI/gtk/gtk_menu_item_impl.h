@@ -15,11 +15,9 @@ namespace ti
 	{
 
 	public:
-		GtkMenuItemImpl(bool top_level=false);
+		GtkMenuItemImpl();
 
-		GtkWidget* GetWidget();
-		GtkWidget* GetMenu();
-		GtkWidget* GetMenuBar();
+		void DeleteWidget(GtkWidget*);
 		void SetParent(GtkMenuItemImpl* parent);
 		GtkMenuItemImpl* GetParent();
 
@@ -30,21 +28,37 @@ namespace ti
 		SharedValue AddSubMenu(SharedValue label,
 		                       SharedValue icon_url);
 
-		void MakeWidget();
-		SharedValue GetIconPath(const char *url);
 		SharedValue AppendItem(GtkMenuItemImpl* item);
+
+		GtkWidget* GetMenu();
+		GtkWidget* GetMenuBar();
+		void ClearRealization(GtkWidget *parent_menu);
 
 		void Enable();
 		void Disable();
 
-	private:
-		bool top_level;
+		struct MenuPieces
+		{
+			MenuPieces()
+				 : item(NULL),
+				   menu(NULL),
+				   callback(NULL),
+				   parent_menu(NULL) { }
+			GtkWidget* item; // This item's widget
+			GtkWidget* menu; // This item's submenu
+			SharedBoundMethod callback; // This item's callback
+			GtkWidget* parent_menu; // This item's parent's widget
+		};
 
-		GtkWidget *gtk_menu_bar;
-		GtkWidget *gtk_menu;
-		GtkWidget *widget;
-		GtkMenuItemImpl *parent;
-		SharedBoundMethod callback;
+	private:
+		GtkMenuItemImpl *parent; // NULL parent means this is top-level menu.
+		std::vector<GtkMenuItemImpl*> children;
+		std::vector<MenuPieces*> instances;
+		std::vector<GtkWidget*> widget_menus;
+
+		MenuPieces* Realize(bool is_menu_bar);
+		void MakeMenuPieces(MenuPieces& pieces);
+
 
 	};
 

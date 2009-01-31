@@ -11,7 +11,7 @@ namespace ti
 	KROLL_MODULE(UIModule)
 
 	SharedBoundObject UIModule::global = SharedBoundObject(NULL);
-	SharedPtr<MenuItem> UIModule::application_menu = SharedPtr<MenuItem>(NULL);
+	SharedPtr<MenuItem> UIModule::app_menu = SharedPtr<MenuItem>(NULL);
 	SharedString UIModule::icon_path = SharedString(NULL);
 
 	void UIModule::Initialize()
@@ -100,12 +100,12 @@ namespace ti
 
 	void UIModule::SetMenu(SharedPtr<MenuItem> menu)
 	{
-		UIModule::application_menu = menu;
+		UIModule::app_menu = menu;
 	}
 
 	SharedPtr<MenuItem> UIModule::GetMenu()
 	{
-		return UIModule::application_menu;
+		return UIModule::app_menu;
 	}
 
 	void UIModule::SetIcon(SharedString icon_path)

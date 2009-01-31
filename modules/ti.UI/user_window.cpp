@@ -60,8 +60,16 @@ UserWindow::UserWindow(kroll::Host *host, WindowConfig *config) :
 	this->SetMethod("setY", &UserWindow::_SetY);
 	this->SetMethod("getWidth", &UserWindow::_GetWidth);
 	this->SetMethod("setWidth", &UserWindow::_SetWidth);
+	this->SetMethod("getMaxWidth", &UserWindow::_GetMaxWidth);
+	this->SetMethod("setMaxWidth", &UserWindow::_SetMaxWidth);
+	this->SetMethod("getMinWidth", &UserWindow::_GetMinWidth);
+	this->SetMethod("setMinWidth", &UserWindow::_SetMinWidth);
 	this->SetMethod("getHeight", &UserWindow::_GetHeight);
 	this->SetMethod("setHeight", &UserWindow::_SetHeight);
+	this->SetMethod("getMaxHeight", &UserWindow::_GetMaxHeight);
+	this->SetMethod("setMaxHeight", &UserWindow::_SetMaxHeight);
+	this->SetMethod("getMinHeight", &UserWindow::_GetMinHeight);
+	this->SetMethod("setMinHeight", &UserWindow::_SetMinHeight);
 	this->SetMethod("getBounds", &UserWindow::_GetBounds);
 	this->SetMethod("setBounds", &UserWindow::_SetBounds);
 	this->SetMethod("getTitle", &UserWindow::_GetTitle);
@@ -81,6 +89,9 @@ UserWindow::UserWindow(kroll::Host *host, WindowConfig *config) :
 	this->SetMethod("getTransparency", &UserWindow::_GetTransparency);
 	this->SetMethod("setTransparency", &UserWindow::_SetTransparency);
 	this->SetMethod("setMenu", &UserWindow::_SetMenu);
+	this->SetMethod("getMenu", &UserWindow::_GetMenu);
+	this->SetMethod("setIcon", &UserWindow::_SetIcon);
+	this->SetMethod("getIcon", &UserWindow::_GetIcon);
 
 	this->SetMethod("createWindow", &UserWindow::_CreateWindow);
 	this->SetMethod("getParent", &UserWindow::_GetParent);
@@ -229,6 +240,30 @@ void UserWindow::_SetWidth(const kroll::ValueList& args, kroll::SharedValue resu
 	}
 }
 
+void UserWindow::_GetMinWidth(const kroll::ValueList& args, kroll::SharedValue result)
+{
+	result->SetDouble(this->GetMinWidth());
+}
+
+void UserWindow::_SetMinWidth(const kroll::ValueList& args, kroll::SharedValue result)
+{
+	if (args.size() > 0) {
+		this->SetMinWidth(args.at(0)->ToDouble());
+	}
+}
+
+void UserWindow::_GetMaxWidth(const kroll::ValueList& args, kroll::SharedValue result)
+{
+	result->SetDouble(this->GetMaxWidth());
+}
+
+void UserWindow::_SetMaxWidth(const kroll::ValueList& args, kroll::SharedValue result)
+{
+	if (args.size() > 0) {
+		this->SetMaxWidth(args.at(0)->ToDouble());
+	}
+}
+
 void UserWindow::_GetHeight(const kroll::ValueList& args, kroll::SharedValue result)
 {
 	result->SetDouble(this->GetHeight());
@@ -238,6 +273,30 @@ void UserWindow::_SetHeight(const kroll::ValueList& args, kroll::SharedValue res
 {
 	if (args.size() > 0) {
 		this->SetHeight(args.at(0)->ToDouble());
+	}
+}
+
+void UserWindow::_GetMinHeight(const kroll::ValueList& args, kroll::SharedValue result)
+{
+	result->SetDouble(this->GetMinHeight());
+}
+
+void UserWindow::_SetMinHeight(const kroll::ValueList& args, kroll::SharedValue result)
+{
+	if (args.size() > 0) {
+		this->SetMinHeight(args.at(0)->ToDouble());
+	}
+}
+
+void UserWindow::_GetMaxHeight(const kroll::ValueList& args, kroll::SharedValue result)
+{
+	result->SetDouble(this->GetMaxHeight());
+}
+
+void UserWindow::_SetMaxHeight(const kroll::ValueList& args, kroll::SharedValue result)
+{
+	if (args.size() > 0) {
+		this->SetMaxHeight(args.at(0)->ToDouble());
 	}
 }
 
@@ -363,12 +422,35 @@ void UserWindow::_SetTransparency(const kroll::ValueList& args, kroll::SharedVal
 
 void UserWindow::_SetMenu(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	SharedBoundObject val = args.at(0)->ToObject();
-	if (args.size() > 0 && args.at(0)->IsList()) {
-		SharedBoundList menu = args.at(0)->ToList();
-		this->SetMenu(menu);
+	SharedPtr<MenuItem> menu = NULL; // A NULL value is an unset
+	if (args.size() > 0 && args.at(0)->IsList())
+	{
+		menu = args.at(0)->ToList().cast<MenuItem>();
 	}
+	this->SetMenu(menu);
 }
+
+void UserWindow::_GetMenu(const kroll::ValueList& args, kroll::SharedValue result)
+{
+	result->SetObject(this->GetMenu());
+}
+
+void UserWindow::_SetIcon(const kroll::ValueList& args, kroll::SharedValue result)
+{
+	SharedString icon_path = NULL; // a NULL value is an unset
+	if (args.size() > 0 && args.at(0)->IsString())
+	{
+		const char *icon_url = args.at(0)->ToString();
+		icon_path = UIModule::GetResourcePath(icon_url);
+	}
+	this->SetIcon(icon_path);
+}
+
+void UserWindow::_GetIcon(const kroll::ValueList& args, kroll::SharedValue result)
+{
+	result->SetString(this->GetIcon()->c_str());
+}
+
 void UserWindow::_GetParent(const kroll::ValueList& args, kroll::SharedValue result)
 {
 	if (this->parent==NULL)
@@ -403,6 +485,10 @@ SharedBoundObject UserWindow::CreateWindow(SharedBoundObject properties)
 
 }
 
+std::vector<UserWindow*>& UserWindow::GetWindows()
+{
+	return UserWindow::windows;
+}
 
 void UserWindow::SetParent(UserWindow *parent)
 {

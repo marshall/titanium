@@ -7,7 +7,15 @@
 #ifndef _UI_MODULE_OSX_H_
 #define _UI_MODULE_OSX_H_
 
-#import "preinclude.h"
-#import "native_window.h"
+#include <WebKit/WebKit.h>
+
+#include "preinclude.h"
+#include "native_window.h"
+#include "webview_delegate.h"
+
+#include "osx_ui_binding.h"
+#include "native_window.h"
+#include "osx_user_window.h"
+#include "ti_app.h"
 
 #endif

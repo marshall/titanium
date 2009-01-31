@@ -9,39 +9,17 @@ namespace ti {
 
 	void menu_callback(gpointer data);
 
-	GtkMenuItemImpl::GtkMenuItemImpl(bool top)
-		 : top_level(top)
+	GtkMenuItemImpl::GtkMenuItemImpl()
+		 : parent(NULL)
 	{
-		if (top_level)
-		{
-			this->gtk_menu_bar = gtk_menu_bar_new();
-			//this->gtk_menu = gtk_menu_new();
-			this->MakeSubMenu(Value::Undefined, Value::Undefined);
-		}
-		else
-		{
-			this->gtk_menu_bar = NULL;
-			this->gtk_menu = NULL;
-		}
-		this->widget = NULL;
+
 	}
 
-	GtkWidget* GtkMenuItemImpl::GetWidget()
-	{
-		return this->widget;
-	}
-	GtkWidget* GtkMenuItemImpl::GetMenu()
-	{
-		return this->gtk_menu;
-	}
-	GtkWidget* GtkMenuItemImpl::GetMenuBar()
-	{
-		return this->gtk_menu_bar;
-	}
 	void GtkMenuItemImpl::SetParent(GtkMenuItemImpl* parent)
 	{
 		this->parent = parent;
 	}
+
 	GtkMenuItemImpl* GtkMenuItemImpl::GetParent()
 	{
 		return this->parent;
@@ -49,10 +27,8 @@ namespace ti {
 
 	SharedValue GtkMenuItemImpl::AddSeparator()
 	{
-		GtkMenuItemImpl* item = new GtkMenuItemImpl(false);
+		GtkMenuItemImpl* item = new GtkMenuItemImpl();
 		item->MakeSeparator();
-		item->MakeWidget();
-
 		return this->AppendItem(item);
 	}
 
@@ -60,108 +36,204 @@ namespace ti {
 	                              SharedValue callback,
 	                              SharedValue icon_url)
 	{
-		GtkMenuItemImpl* item = new GtkMenuItemImpl(false);
+		GtkMenuItemImpl* item = new GtkMenuItemImpl();
 		item->MakeItem(label, callback, icon_url);
-		item->MakeWidget();
-
 		return this->AppendItem(item);
 	}
 
 	SharedValue GtkMenuItemImpl::AddSubMenu(SharedValue label,
-	                                 SharedValue icon_url)
+	                                        SharedValue icon_url)
 	{
-		GtkMenuItemImpl* item = new GtkMenuItemImpl(false);
+		GtkMenuItemImpl* item = new GtkMenuItemImpl();
 		item->MakeSubMenu(label, icon_url);
-		item->MakeWidget();
-
 		return this->AppendItem(item);
 	}
 
 	SharedValue GtkMenuItemImpl::AppendItem(GtkMenuItemImpl* item)
 	{
-		GtkWidget* w = item->GetWidget();
 		item->SetParent(this);
-
-		/* If this is a top-level menu also maintain a menu bar, so
-		 * that the interface can also assign this menu to windows */
-		if (top_level)
-		{
-			gtk_menu_shell_append(GTK_MENU_SHELL(gtk_menu_bar), w);
-		}
-		else
-		{
-			gtk_menu_shell_append(GTK_MENU_SHELL(gtk_menu), w);
-		}
-
-		gtk_widget_show(w);
+		this->children.push_back(item);
 		return MenuItem::AppendItem(item);
 	}
 
-	void GtkMenuItemImpl::MakeWidget()
+	GtkWidget* GtkMenuItemImpl::GetMenu()
+	{
+		if (this->parent == NULL) // top-level
+		{
+			MenuPieces* pieces = this->Realize(false);
+			return pieces->menu;
+		}
+		else
+		{
+			// For now we do not support using a submenu as a menu,
+			// as that makes determining parent-child relationships
+			// really hard, so just return NULL and check above.
+			return NULL;
+		}
+	}
+
+	GtkWidget* GtkMenuItemImpl::GetMenuBar()
+	{
+		if (this->parent == NULL) // top level
+		{
+			MenuPieces* pieces = this->Realize(true);
+			return pieces->menu;
+		}
+		else
+		{
+			// For now we do not support using a submenu as a menu,
+			// as that makes determining parent-child relationships
+			// really hard, so just return NULL and check above.
+			return NULL;
+		}
+	}
+
+	void GtkMenuItemImpl::ClearRealization(GtkWidget *parent_menu)
+	{
+		std::vector<MenuPieces*>::iterator i;
+		std::vector<GtkMenuItemImpl*>::iterator c;
+
+		// Find the instance which is contained in parent_menu or,
+		// if we are the root, find the instance which uses this
+		// menu to contain it's children.
+		for (i = this->instances.begin(); i != this->instances.end(); i++)
+		{
+			if ((*i)->parent_menu == parent_menu
+				|| (this->parent == NULL && (*i)->menu == parent_menu))
+				break;
+		}
+
+		// Could not find an instance which uses the menu.
+		if (i == this->instances.end()) return;
+
+		// Erase all children which use
+		// the sub-menu as their parent.
+		for (c = this->children.begin(); c != this->children.end(); c++)
+		{
+			(*c)->ClearRealization((*i)->menu);
+		}
+
+		this->instances.erase(i); // Erase the instance
+	}
+
+	GtkMenuItemImpl::MenuPieces* GtkMenuItemImpl::Realize(bool is_menu_bar)
+	{
+		MenuPieces* pieces = new MenuPieces();
+		if (this->parent == NULL) // top-level
+		{
+			if (is_menu_bar)
+				pieces->menu = gtk_menu_bar_new();
+			else
+				pieces->menu = gtk_menu_new();
+		}
+		else
+		{
+			this->MakeMenuPieces(*pieces);
+		}
+
+		/* Realize this widget's children */
+		if (this->IsSubMenu() || this->parent == NULL)
+		{
+			std::vector<GtkMenuItemImpl*>::iterator i = this->children.begin();
+			while (i != this->children.end())
+			{
+				MenuPieces* child_pieces = (*i)->Realize(false);
+				child_pieces->parent_menu = pieces->menu;
+
+				gtk_menu_shell_append(
+					GTK_MENU_SHELL(pieces->menu),
+					child_pieces->item);
+				gtk_widget_show(child_pieces->item);
+				i++;
+			}
+		}
+
+		this->instances.push_back(pieces);
+		return pieces;
+	}
+
+	void GtkMenuItemImpl::MakeMenuPieces(MenuPieces& pieces)
 	{
 		const char* label = this->GetLabel();
 		const char* icon_url = this->GetIconURL();
 		SharedString icon_path = UIModule::GetResourcePath(icon_url);
 		SharedValue callback_val = this->Get("callback");
 
-		GtkWidget* widget;
 		if (this->IsSeparator())
 		{
-			widget = gtk_separator_menu_item_new();
+			pieces.item = gtk_separator_menu_item_new();
 		}
 		else if (icon_path.isNull())
 		{
-			widget = gtk_menu_item_new_with_label(label);
+			pieces.item = gtk_menu_item_new_with_label(label);
 		}
 		else
 		{
-			widget = gtk_image_menu_item_new_with_label(label);
+			pieces.item = gtk_image_menu_item_new_with_label(label);
 			GtkWidget* image = gtk_image_new_from_file(icon_path->c_str());
-			gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(widget), image);
+			gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(pieces.item), image);
 		}
 
 		if (callback_val->IsMethod())
 		{
-			// we need to do our own memory management here because
-			// we don't know when GTK will decide to clean up
-			this->callback = callback_val->ToMethod();
+			// The callback is stored as a property of this MenuItem
+			// so we do not need to worry about the pointer being freed
+			// out from under us. At some point, in threaded code we will
+			// have to protect it with a mutex though, in the case that
+			// the callback is fired after it has been reassigned.
+			BoundMethod* cb = callback_val->ToMethod().get();
 
 			g_signal_connect_swapped(
-			    G_OBJECT (widget), "activate",
-			    G_CALLBACK(menu_callback), 
-			    (gpointer) new SharedBoundMethod(this->callback));
+				G_OBJECT (pieces.item), "activate",
+				G_CALLBACK(menu_callback), 
+				(gpointer) cb);
 		}
 
 		if (this->IsSubMenu())
 		{
-			this->gtk_menu = gtk_menu_new();
-			gtk_menu_item_set_submenu(GTK_MENU_ITEM(widget), this->gtk_menu);
+			pieces.menu = gtk_menu_new();
+			gtk_menu_item_set_submenu(GTK_MENU_ITEM(pieces.item), pieces.menu);
 		}
 
-		this->widget = widget;
 	}
 
+
+
+	/* Crazy mutations below */
 	void GtkMenuItemImpl::Enable()
 	{
-		if (this->widget != NULL)
-			gtk_widget_set_sensitive(this->widget, TRUE);
+		std::vector<MenuPieces*>::iterator i = this->instances.begin();
+		while (i != this->instances.end())
+		{
+			GtkWidget *w = (*i)->item;
+			if (w != NULL)
+				gtk_widget_set_sensitive(w, TRUE);
+			i++;
+		}
 	}
 
 	void GtkMenuItemImpl::Disable()
 	{
-		if (this->widget != NULL)
-			gtk_widget_set_sensitive(this->widget, FALSE);
+		std::vector<MenuPieces*>::iterator i = this->instances.begin();
+		while (i != this->instances.end())
+		{
+			GtkWidget *w = (*i)->item;
+			if (w != NULL)
+				gtk_widget_set_sensitive(w, FALSE);
+			i++;
+		}
 	}
 
+	/* Le callback */
 	void menu_callback(gpointer data)
 	{
-		SharedBoundMethod* shared_meth = (SharedBoundMethod*) data;
+		BoundMethod* cb = (BoundMethod*) data;
 
 		// TODO: Handle exceptions in some way
 		try
 		{
 			ValueList args;
-			shared_meth->get()->Call(args);
+			cb->Call(args);
 		}
 		catch(...)
 		{

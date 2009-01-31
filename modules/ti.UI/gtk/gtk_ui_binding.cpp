@@ -15,33 +15,46 @@ namespace ti
 
 	SharedPtr<MenuItem> GtkUIBinding::CreateMenu()
 	{
-		SharedPtr<MenuItem> menu = new GtkMenuItemImpl(true);
+		SharedPtr<MenuItem> menu = new GtkMenuItemImpl();
 		return menu;
 	}
 
 	void GtkUIBinding::SetMenu(SharedPtr<MenuItem>)
 	{
-		// On all Windows which do not have a menu, tell them
-		// the application menu changed
+		// Notify all windows that the app menu has changed.
+		std::vector<UserWindow*>& windows = UserWindow::GetWindows();
+		std::vector<UserWindow*>::iterator i = windows.begin();
+		while (i != windows.end())
+		{
+			GtkUserWindow* guw = dynamic_cast<GtkUserWindow*>(*i);
+			if (guw != NULL)
+				guw->AppMenuChanged();
 
-		// All new windows will inherit the applicaiton menu
-		// if no menu is specified
+			i++;
+		}
 	}
 
 	void GtkUIBinding::SetIcon(SharedString icon_path)
 	{
-		// On all Windows which do not have an icon, tell them
-		// the application icon changed
 
-		// All new windows will inherit the applicaiton icon
-		// if no menu is specified
+		// Notify all windows that the app icon has changed.
+		std::vector<UserWindow*>& windows = UserWindow::GetWindows();
+		std::vector<UserWindow*>::iterator i = windows.begin();
+		while (i != windows.end())
+		{
+			GtkUserWindow* guw = dynamic_cast<GtkUserWindow*>(*i);
+			if (guw != NULL)
+				guw->AppIconChanged();
+
+			i++;
+		}
 	}
 
 	SharedPtr<TrayItem> GtkUIBinding::AddTray(
 		SharedString icon_path,
 		SharedBoundMethod cb)
 	{
-		SharedPtr<TrayItem> item = new TrayItem();
+		SharedPtr<TrayItem> item = new GtkTrayItem(icon_path, cb);
 		return item;
 	}
 

@@ -21,11 +21,12 @@
 #include "../../../kroll/host/win32/host.h"
 #include "../user_window.h"
 #include "script_evaluator.h"
+#include "win32_menu_item_impl.h"
 
 namespace ti {
 
-class Win32FrameLoadDelegate;
-class Win32UIDelegate;
+class Win32WebKitFrameLoadDelegate;
+class Win32WebKitUIDelegate;
 
 class Win32UserWindow : public UserWindow {
 
@@ -33,8 +34,8 @@ protected:
 	static bool ole_initialized;
 
 	kroll::Win32Host *win32_host;
-	Win32FrameLoadDelegate *frameLoadDelegate;
-	Win32UIDelegate *uiDelegate;
+	Win32WebKitFrameLoadDelegate *frameLoadDelegate;
+	Win32WebKitUIDelegate *uiDelegate;
 	Bounds restore_bounds;
 	long restore_styles;
 	ScriptEvaluator script_evaluator;
@@ -47,6 +48,22 @@ protected:
 		resizable, using_chrome, minimizable, maximizable, closeable;
 	double transparency;
 
+	/*
+	 * The window-specific menu.
+	 */
+	SharedPtr<Win32MenuItemImpl> menu;
+
+	/*
+	 * The menu this window is using. This
+	 * might just be a copy of the app menu.
+	 */
+	SharedPtr<Win32MenuItemImpl> menuInUse;
+
+	/*
+	 * The widget this window is for a menu.
+	 */
+	HMENU menuBar;
+
 public:
 	static void RegisterWindowClass(HINSTANCE hInstance);
 	static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
@@ -56,6 +73,8 @@ public:
 	virtual ~Win32UserWindow();
 	UserWindow* WindowFactory(Host*, WindowConfig*);
 	void ResizeSubViews();
+
+	void AppMenuChanged();
 
 	HWND GetWindowHandle();
 	void Hide();
@@ -103,6 +122,11 @@ public:
 	void SetFullScreen(bool fullscreen);
 	void SetUsingChrome(bool chrome);
 	void SetMenu(SharedBoundList menu);
+	SharedBoundList GetMenu();
+	void SetIcon(SharedString icon_path);
+	SharedString GetIcon();
+
+	void SetupMenu();
 
 };
 

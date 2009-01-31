@@ -4,7 +4,7 @@
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
 
-#include "frame_load_delegate.h"
+#include "webkit_frame_load_delegate.h"
 #include "win32_user_window.h"
 #include "../ui_module.h"
 #include "../../../kroll/modules/javascript/javascript_module.h"
@@ -12,13 +12,13 @@
 using namespace ti;
 using namespace kroll;
 
-Win32FrameLoadDelegate::Win32FrameLoadDelegate(Win32UserWindow *window_) : window(window_), ref_count(1) {
+Win32WebKitFrameLoadDelegate::Win32WebKitFrameLoadDelegate(Win32UserWindow *window_) : window(window_), ref_count(1) {
 	// TODO Auto-generated constructor stub
 
 }
 
 HRESULT STDMETHODCALLTYPE
-Win32FrameLoadDelegate::windowScriptObjectAvailable (
+Win32WebKitFrameLoadDelegate::windowScriptObjectAvailable (
 		IWebView *webView, JSContextRef context, JSObjectRef windowScriptObject)
 {
 	JSContextGroupRef group = JSContextGetGroup(context);
@@ -56,7 +56,7 @@ Win32FrameLoadDelegate::windowScriptObjectAvailable (
 }
 
 HRESULT STDMETHODCALLTYPE
-Win32FrameLoadDelegate::QueryInterface(REFIID riid, void **ppvObject)
+Win32WebKitFrameLoadDelegate::QueryInterface(REFIID riid, void **ppvObject)
 {
 	*ppvObject = 0;
 	if (IsEqualGUID(riid, IID_IUnknown)) {
@@ -72,13 +72,13 @@ Win32FrameLoadDelegate::QueryInterface(REFIID riid, void **ppvObject)
 }
 
 ULONG STDMETHODCALLTYPE
-Win32FrameLoadDelegate::AddRef()
+Win32WebKitFrameLoadDelegate::AddRef()
 {
 	return ++ref_count;
 }
 
 ULONG STDMETHODCALLTYPE
-Win32FrameLoadDelegate::Release()
+Win32WebKitFrameLoadDelegate::Release()
 {
 	ULONG new_count = --ref_count;
 	if (!new_count) delete(this);
