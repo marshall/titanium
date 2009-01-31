@@ -3,9 +3,8 @@
  * see LICENSE in the root folder for details on the license.
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
-
-#ifndef TI_WIN32_UI_DELEGATE_H_
-#define TI_WIN32_UI_DELEGATE_H_
+#ifndef TI_WEBKIT_WIN32_UI_DELEGATE_H_
+#define TI_WEBKIT_WIN32_UI_DELEGATE_H_
 
 #include <api/base.h>
 #include <windows.h>
@@ -17,13 +16,13 @@ namespace ti {
 
 class Win32UserWindow;
 
-//class Win32UIDelegate : public IWebUIDelegate, IWebUIDelegatePrivate3 {
-class Win32UIDelegate : public IWebUIDelegate {
+//class Win32WebKitUIDelegate : public IWebUIDelegate, IWebUIDelegatePrivate3 {
+class Win32WebKitUIDelegate : public IWebUIDelegate {
 protected:
 	int ref_count;
 	Win32UserWindow *window;
 public:
-	Win32UIDelegate(Win32UserWindow *window);
+	Win32WebKitUIDelegate(Win32UserWindow *window);
 
 	// These function declarations copied from WebKit source (UIDelegate.cpp)
 
@@ -302,4 +301,4 @@ protected:
 
 }
 
-#endif /* TI_WIN32_UI_DELEGATE_H_ */
+#endif /* TI_WEBKIT_WIN32_UI_DELEGATE_H_ */

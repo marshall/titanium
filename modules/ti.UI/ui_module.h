@@ -8,6 +8,13 @@
 
 #include <kroll/kroll.h>
 
+namespace ti {
+	class UIBinding;
+	class WindowBinding;
+	class MenuItem;
+	class TrayItem;
+}
+
 #ifdef OS_WIN32
 // A little disorganization; header include order is very sensitive in win32,
 // and the build breaks if this below the other OS_ defines
@@ -19,34 +26,52 @@
 #include "user_window.h"
 #include "window.h"
 #include "menu_item.h"
+#include "tray_item.h"
+#include "ui_binding.h"
 
 #ifdef OS_LINUX
-#include "linux/ui_module_linux.h"
-#include "url/app_url.h"
-#endif
+#include "gtk/ui_module_gtk.h"
 
-#ifdef OS_OSX
-#include <WebKit/WebKit.h>
+#elif defined(OS_OSX)
 #include "osx/ui_module_osx.h"
-#include "osx/native_window.h"
-#include "osx/osx_user_window.h"
-#include "osx/ti_app.h"
-#endif
 
-#include "menu_binding.h"
-#include "window_binding.h"
+#elif defined(OS_WIN32)
+#include "win32/win32_ui_binding.h"
+#endif
 
 
 namespace ti {
 
-class UIModule : public kroll::Module
-{
-	KROLL_MODULE_CLASS(UIModule)
+	class UIModule : public kroll::Module
+	{
+		KROLL_MODULE_CLASS(UIModule)
 
-protected:
+		public:
 
-	DISALLOW_EVIL_CONSTRUCTORS(UIModule);
-};
+		/*
+		 * Function: GetResourcePath
+		 * Get the real path to a resource given an app:// URL. This
+		 * will access the appropriate function in the global object.
+		 * Arguments:
+		 *  url - the app:// URL to resolve
+		 * Returns: The path to the resource on this system or a
+		 *          NULL SharedString on failure.
+		 */
+		static SharedString GetResourcePath(const char *URL);
+
+		static void SetMenu(SharedPtr<MenuItem> menu);
+		static SharedPtr<MenuItem> GetMenu();
+		static void SetIcon(SharedString icon_path);
+		static SharedString GetIcon();
+
+		protected:
+		static SharedBoundObject global;
+		static SharedPtr<MenuItem> app_menu;
+		static SharedString icon_path;
+
+		DISALLOW_EVIL_CONSTRUCTORS(UIModule);
+
+	};
 
 }
 #endif

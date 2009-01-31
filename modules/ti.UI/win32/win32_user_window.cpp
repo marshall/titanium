@@ -5,11 +5,14 @@
  */
 
 #include "win32_user_window.h"
-#include "frame_load_delegate.h"
-#include "ui_delegate.h"
+#include "webkit_frame_load_delegate.h"
+#include "webkit_ui_delegate.h"
 #include "string_util.h"
 #include "../url/app_url.h"
 #include <math.h>
+#include <shellapi.h>
+
+#define STUB() printf("Method is still a stub, %s:%i\n", __FILE__, __LINE__)
 
 using namespace ti;
 
@@ -88,7 +91,7 @@ Win32UserWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 }
 
 Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config)
-	: UserWindow(host, config)
+	: UserWindow(host, config), script_evaluator(host)
 {
 	static bool initialized = false;
 	win32_host = static_cast<kroll::Win32Host*>(host);
@@ -100,12 +103,13 @@ Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config)
 		InitCommonControlsEx(&InitCtrlEx);
 
 		curl_register_local_handler(&Titanium_app_url_handler);
+		addScriptEvaluator(&script_evaluator);
 	}
 
 	std::cout << "HINSTANCE = " << (int)win32_host->GetInstanceHandle() << std::endl;
 
 	Win32UserWindow::RegisterWindowClass(win32_host->GetInstanceHandle());
-	window_handle = CreateWindow(windowClassName, "Titanium Application",
+	window_handle = CreateWindowA(windowClassName, "Titanium Application",
 			WS_OVERLAPPEDWINDOW,
 			CW_USEDEFAULT, 0, CW_USEDEFAULT, 0,
 			NULL, NULL, win32_host->GetInstanceHandle(), NULL);
@@ -145,8 +149,8 @@ Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config)
 	}
 
 	std::cout << "create frame load delegate " << std::endl;
-	frameLoadDelegate = new Win32FrameLoadDelegate(this);
-	uiDelegate = new Win32UIDelegate(this);
+	frameLoadDelegate = new Win32WebKitFrameLoadDelegate(this);
+	uiDelegate = new Win32WebKitUIDelegate(this);
 
 	std::cout << "set delegates, set host window, webview=" << (int)web_view  << std::endl;
 	hr = web_view->setFrameLoadDelegate(frameLoadDelegate);
@@ -176,6 +180,11 @@ Win32UserWindow::~Win32UserWindow()
 
 	if (main_frame)
 		main_frame->Release();
+}
+
+UserWindow* Win32UserWindow::WindowFactory(Host *host, WindowConfig* config)
+{
+	return new Win32UserWindow(host, config);
 }
 
 void Win32UserWindow::ResizeSubViews()
@@ -255,6 +264,42 @@ void Win32UserWindow::SetHeight(double height) {
 	Bounds b = GetBounds();
 	b.height = height;
 	SetBounds(b);
+}
+
+double Win32UserWindow::GetMaxWidth() {
+	return this->config->GetMaxWidth();
+}
+
+void Win32UserWindow::SetMaxWidth(double width) {
+	this->config->SetMaxWidth(width);
+	//STUB();
+}
+
+double Win32UserWindow::GetMinWidth() {
+	return this->config->GetMinWidth();
+}
+
+void Win32UserWindow::SetMinWidth(double width) {
+	this->config->SetMinWidth(width);
+	//STUB();
+}
+
+double Win32UserWindow::GetMaxHeight() {
+	return this->config->GetMaxHeight();
+}
+
+void Win32UserWindow::SetMaxHeight(double height) {
+	this->config->SetMaxHeight(height);
+	//STUB();
+}
+
+double Win32UserWindow::GetMinHeight() {
+	return this->config->GetMinHeight();
+}
+
+void Win32UserWindow::SetMinHeight(double height) {
+	this->config->SetMinHeight(height);
+	//STUB();
 }
 
 Bounds Win32UserWindow::GetBounds() {
@@ -389,13 +434,66 @@ void Win32UserWindow::SetFullScreen(bool fullscreen) {
 	}
 }
 
-void Win32UserWindow::SetUsingChrome(bool chrome) {
-	//TODO: implement
-}
-
-void Win32UserWindow::SetMenu(SharedBoundList menu)
+void Win32UserWindow::SetMenu(SharedBoundList value)
 {
+	SharedPtr<Win32MenuItemImpl> menu = value.cast<Win32MenuItemImpl>();
+	this->menu = menu;
+	this->SetupMenu();
+}
+
+SharedBoundList Win32UserWindow::GetMenu()
+{
+	STUB();
+	return NULL;
+}
+
+void Win32UserWindow::SetIcon(SharedString icon_path)
+{
+	STUB();
+}
+
+SharedString Win32UserWindow::GetIcon()
+{
+	STUB();
+	return NULL;
+}
+
+void Win32UserWindow::SetUsingChrome(bool chrome) {
+	STUB();
 	//TODO: implement
 }
 
+void Win32UserWindow::AppMenuChanged()
+{
+	if (this->menu.isNull())
+	{
+		this->SetupMenu();
+	}
+}
+void Win32UserWindow::SetupMenu()
+{
+	SharedPtr<Win32MenuItemImpl> menu = this->menu;
+	SharedPtr<MenuItem> appMenu = UIModule::GetMenu();
+
+	// No window menu, try to use the application menu.
+	if (menu.isNull() && !appMenu.isNull())
+	{
+		menu = appMenu.cast<Win32MenuItemImpl>();
+	}
+
+	// Only do this if the menu is actually changing.
+	if (menu == this->menuInUse)
+		return;
+
+	// TODO remove old menu
+	//this->RemoveOldMenu();
+
+	if (!menu.isNull() && this->window_handle)
+	{
+		::SetMenu(this->window_handle, menu->GetMenuHandle());
+		DrawMenuBar(this->window_handle);
+	}
+
+	this->menuInUse = menu;
+}
 

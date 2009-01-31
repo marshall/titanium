@@ -10,6 +10,10 @@ namespace ti
 {
 	KROLL_MODULE(UIModule)
 
+	SharedBoundObject UIModule::global = SharedBoundObject(NULL);
+	SharedPtr<MenuItem> UIModule::app_menu = SharedPtr<MenuItem>(NULL);
+	SharedString UIModule::icon_path = SharedString(NULL);
+
 	void UIModule::Initialize()
 	{
 		std::cout << "Initializing ti.Window..." << std::endl;
@@ -21,53 +25,98 @@ namespace ti
 		AppConfig *config = AppConfig::Instance();
 		if (config == NULL)
 		{
-			std::cerr << "Error loading tiapp.xml. Your application is not properly configured or packaged." << std::endl;
+			std::cerr << "Error loading tiapp.xml. Your application "
+			          << " is not properly configured or packaged."
+			          << std::endl;
 			return;
 		}
 		WindowConfig *main_window_config = config->GetMainWindow();
 		if (main_window_config == NULL)
 		{
-			std::cerr << "Error loading tiapp.xml. Your application window is not properly configured or packaged." << std::endl;
+			std::cerr << "Error loading tiapp.xml. Your application "
+			          << "window is not properly configured or packaged."
+			          << std::endl;
 			return;
 		}
 
-		// add some titanium specific global info here
+		// We are keeping this object in a static variable, which means 
+		// that we should only ever have one copy of the UI module.
 		SharedBoundObject global = this->host->GetGlobalObject();
+		UIModule::global = global;
 
-		// add the Titanium.Window module
-		SharedBoundObject win_binding = new WindowBinding(this->host, global);
-		SharedValue win_binding_val = Value::NewObject(win_binding);
-		global->Set("Window", win_binding_val);
-
-		// add the Titanium.Menu module
-		SharedBoundObject menu_binding = new MenuBinding(host->GetGlobalObject());
-		SharedValue menu_binding_val = Value::NewObject(menu_binding);
-		host->GetGlobalObject()->Set("Menu", menu_binding_val);
-
-		// version
-		SharedValue version = Value::NewDouble(0.2); // FIXME: for now this is hardcoded
-		global->Set("version", version);
-
-		// platform
+		// Add the Titanium.UI binding and initialize the main window.
 #if defined(OS_LINUX)
-		curl_register_local_handler(&Titanium_app_url_handler);
+		SharedBoundObject ui_binding = new GtkUIBinding();
 		GtkUserWindow* window = new GtkUserWindow(this->host, main_window_config);
-		SharedValue platform = Value::NewString("linux");
+
 #elif defined(OS_OSX)
+		SharedBoundObject ui_binding = new OSXUIBinding();
 		OSXUserWindow* window = new OSXUserWindow(this->host, main_window_config);
-		SharedValue platform = Value::NewString("osx");
 		NativeWindow* nw = window->GetNative();
 		[nw setInitialWindow:YES];
+
 #elif defined(OS_WIN32)
+		SharedBoundObject ui_binding = new Win32UIBinding();
 		Win32UserWindow* window = new Win32UserWindow(this->host, main_window_config);
-		SharedValue platform = Value::NewString("win32");
 #endif
-		global->Set("platform",platform);
+
+		SharedValue ui_binding_val = Value::NewObject(ui_binding);
+		host->GetGlobalObject()->Set("UI", ui_binding_val);
 
 		window->Open();
 	}
 
 	void UIModule::Destroy()
 	{
+		// Only one copy of the UI module loaded hopefully,
+		// otherwise we need to count instances and free
+		// this variable when the last instance disappears
+		UIModule::global = SharedBoundObject(NULL);
 	}
+
+	SharedString UIModule::GetResourcePath(const char *URL)
+	{
+		if (URL == NULL || !strcmp(URL, ""))
+			return SharedString(NULL);
+
+		SharedValue meth_val = UIModule::global->GetNS("App.appURLToPath");
+		if (!meth_val->IsMethod())
+			return SharedString(NULL);
+
+		SharedBoundMethod meth = meth_val->ToMethod();
+		ValueList args;
+		args.push_back(Value::NewString(URL));
+		SharedValue out_val = meth->Call(args);
+
+		if (out_val->IsString())
+		{
+			return SharedString(new std::string(out_val->ToString()));
+		}
+		else
+		{
+			return SharedString(NULL);
+		}
+	}
+
+	void UIModule::SetMenu(SharedPtr<MenuItem> menu)
+	{
+		UIModule::app_menu = menu;
+	}
+
+	SharedPtr<MenuItem> UIModule::GetMenu()
+	{
+		return UIModule::app_menu;
+	}
+
+	void UIModule::SetIcon(SharedString icon_path)
+	{
+		UIModule::icon_path = icon_path;
+	}
+
+	SharedString UIModule::GetIcon()
+	{
+		return UIModule::icon_path;
+	}
+
+
 }

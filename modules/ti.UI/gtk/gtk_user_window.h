@@ -6,8 +6,6 @@
 #ifndef _GTK_USER_WINDOW_H_
 #define _GTK_USER_WINDOW_H_
 
-#include "../ui_module.h"
-
 namespace ti
 {
 	class GtkUserWindow : public UserWindow {
@@ -16,7 +14,16 @@ namespace ti
 		~GtkUserWindow();
 		void SetupDecorations();
 		void SetupTransparency();
+		void SetupSizeLimits();
+		void SetupSize();
+		void SetupPosition();
+		void SetupMenu();
+		void SetupIcon();
+		void AppMenuChanged();
+		void AppIconChanged(); 
+		void RemoveOldMenu();
 
+		UserWindow* WindowFactory(Host *, WindowConfig*);
 		void Hide();
 		void Show();
 		bool IsUsingChrome();
@@ -30,10 +37,21 @@ namespace ti
 		void SetX(double x);
 		double GetY();
 		void SetY(double y);
+
 		double GetWidth();
-		void SetWidth(double width);
+		void SetWidth(double width) ;
+		double GetMaxWidth();
+		void SetMaxWidth(double width);
+		double GetMinWidth();
+		void SetMinWidth(double width);
+
 		double GetHeight();
 		void SetHeight(double height);
+		double GetMaxHeight();
+		void SetMaxHeight(double height);
+		double GetMinHeight();
+		void SetMinHeight(double height);
+
 		Bounds GetBounds();
 		void SetBounds(Bounds bounds);
 		std::string GetTitle();
@@ -53,15 +71,40 @@ namespace ti
 		double GetTransparency();
 		void SetTransparency(double transparency);
 		void SetFullScreen(bool fullscreen);
-		void SetMenu(SharedBoundList menu);
 
+		void SetMenu(SharedBoundList menu);
+		SharedBoundList GetMenu(); // me
+
+		void SetIcon(SharedString icon_path); // me
+		SharedString GetIcon(); // me
 
 	protected:
 		GtkWindow* gtk_window;
 		GtkWidget* vbox;
 		WebKitWebView* web_view;
-		GtkMenuWrapper* menu_wrapper;
+
+		/*
+		 * The window-specific menu.
+		 */
+		SharedPtr<GtkMenuItemImpl> menu;
+
+		/*
+		 * The menu this window is using. This
+		 * might just be a copy of the app menu.
+		 */
+		SharedPtr<GtkMenuItemImpl> menu_in_use;
+
+		/*
+		 * The widget this window is for a menu.
+		 */
+		GtkWidget* menu_bar;
+
+		/*
+		 * The path to this window's icon
+		 */
+		SharedString icon_path;
 	};
+
 }
 
 

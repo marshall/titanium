@@ -9,8 +9,6 @@
 
 using namespace ti;
 
-#define STUB printf("__FILE__:__LINE__: called a stub method!\n")
-
 #define TI_SET_BOOL(method, index) \
 { \
 	SharedValue arg = args.at(index);\
@@ -36,9 +34,68 @@ using namespace ti;
 	} \
 }
 
-
 std::vector<UserWindow *> UserWindow::windows;
 std::map<UserWindow*, std::vector<UserWindow*> > UserWindow::windowsMap;
+
+UserWindow::UserWindow(kroll::Host *host, WindowConfig *config) :
+	kroll::StaticBoundObject(), parent(NULL)
+{
+
+	this->host = host;
+	this->config = config;
+
+	/* this object is accessed by Titanium.Window.currentWindow */
+	this->SetMethod("hide", &UserWindow::_Hide);
+	this->SetMethod("show", &UserWindow::_Show);
+	this->SetMethod("isUsingChrome", &UserWindow::_IsUsingChrome);
+	this->SetMethod("setUsingChrome", &UserWindow::_SetUsingChrome);
+	this->SetMethod("isFullScreen", &UserWindow::_IsFullScreen);
+	this->SetMethod("setFullScreen", &UserWindow::_SetFullScreen);
+	this->SetMethod("getID", &UserWindow::_GetId);
+	this->SetMethod("open", &UserWindow::_Open);
+	this->SetMethod("close", &UserWindow::_Close);
+	this->SetMethod("getX", &UserWindow::_GetX);
+	this->SetMethod("setX", &UserWindow::_SetX);
+	this->SetMethod("getY", &UserWindow::_GetY);
+	this->SetMethod("setY", &UserWindow::_SetY);
+	this->SetMethod("getWidth", &UserWindow::_GetWidth);
+	this->SetMethod("setWidth", &UserWindow::_SetWidth);
+	this->SetMethod("getMaxWidth", &UserWindow::_GetMaxWidth);
+	this->SetMethod("setMaxWidth", &UserWindow::_SetMaxWidth);
+	this->SetMethod("getMinWidth", &UserWindow::_GetMinWidth);
+	this->SetMethod("setMinWidth", &UserWindow::_SetMinWidth);
+	this->SetMethod("getHeight", &UserWindow::_GetHeight);
+	this->SetMethod("setHeight", &UserWindow::_SetHeight);
+	this->SetMethod("getMaxHeight", &UserWindow::_GetMaxHeight);
+	this->SetMethod("setMaxHeight", &UserWindow::_SetMaxHeight);
+	this->SetMethod("getMinHeight", &UserWindow::_GetMinHeight);
+	this->SetMethod("setMinHeight", &UserWindow::_SetMinHeight);
+	this->SetMethod("getBounds", &UserWindow::_GetBounds);
+	this->SetMethod("setBounds", &UserWindow::_SetBounds);
+	this->SetMethod("getTitle", &UserWindow::_GetTitle);
+	this->SetMethod("setTitle", &UserWindow::_SetTitle);
+	this->SetMethod("getURL", &UserWindow::_GetURL);
+	this->SetMethod("setURL", &UserWindow::_SetURL);
+	this->SetMethod("isResizable", &UserWindow::_IsResizable);
+	this->SetMethod("setResizable", &UserWindow::_SetResizable);
+	this->SetMethod("isMaximizable", &UserWindow::_IsMaximizable);
+	this->SetMethod("setMaimizable", &UserWindow::_SetMaximizable);
+	this->SetMethod("isMinimizable", &UserWindow::_IsMinimizable);
+	this->SetMethod("setMinizable", &UserWindow::_SetMinimizable);
+	this->SetMethod("isCloseable", &UserWindow::_IsCloseable);
+	this->SetMethod("setCloseable", &UserWindow::_SetCloseable);
+	this->SetMethod("isVisible", &UserWindow::_IsVisible);
+	this->SetMethod("setVisible", &UserWindow::_SetVisible);
+	this->SetMethod("getTransparency", &UserWindow::_GetTransparency);
+	this->SetMethod("setTransparency", &UserWindow::_SetTransparency);
+	this->SetMethod("setMenu", &UserWindow::_SetMenu);
+	this->SetMethod("getMenu", &UserWindow::_GetMenu);
+	this->SetMethod("setIcon", &UserWindow::_SetIcon);
+	this->SetMethod("getIcon", &UserWindow::_GetIcon);
+
+	this->SetMethod("createWindow", &UserWindow::_CreateWindow);
+	this->SetMethod("getParent", &UserWindow::_GetParent);
+}
 
 void UserWindow::Open(UserWindow *window)
 {
@@ -46,14 +103,15 @@ void UserWindow::Open(UserWindow *window)
 	// since we are holding onto our copy
 	windows.push_back(window);
 }
+
 void UserWindow::Close(UserWindow *window)
 {
 	// check to see if we have a parent, and if so,
 	// remove us from the parent list
-	UserWindow *parent = window->get_parent();
+	UserWindow *parent = window->GetParent();
 	if (parent!=NULL)
 	{
-		UserWindow::RemoveChild(parent,window);
+		UserWindow::RemoveChild(parent, window);
 	}
 
 	// see if we have any open child windows
@@ -94,172 +152,155 @@ void UserWindow::Close(UserWindow *window)
 #endif
 	}
 }
-void UserWindow::AddChild(UserWindow *parent, UserWindow *child)
-{
-	std::vector<UserWindow*> children = windowsMap[parent];
-	children.push_back(child);
-	windowsMap[parent]=children;
-}
-void UserWindow::RemoveChild(UserWindow *parent, UserWindow *child)
-{
-	std::vector<UserWindow*> children = windowsMap[parent];
-	std::vector<UserWindow*>::iterator iter;
-	for (iter = children.begin(); iter != children.end(); iter++) {
-		if ((*iter) == child) {
-			break;
-		}
-	}
-	if (iter != children.end()) {
-		children.erase(iter);
-	}
-}
 
-UserWindow::UserWindow(kroll::Host *host, WindowConfig *config) :
-	kroll::StaticBoundObject(), parent(0)
-{
 
-	this->host = host;
-	this->config = config;
-
-	/* this object is accessed by Titanium.Window.currentWindow */
-	this->SetMethod("hide", &UserWindow::hide_cb);
-	this->SetMethod("show", &UserWindow::show_cb);
-	this->SetMethod("isUsingChrome", &UserWindow::is_using_chrome_cb);
-	this->SetMethod("setUsingChrome", &UserWindow::set_using_chrome_cb);
-	this->SetMethod("isFullscreen", &UserWindow::is_full_screen_cb);
-	this->SetMethod("setFullscreen", &UserWindow::set_full_screen_cb);
-	this->SetMethod("getID", &UserWindow::get_id_cb);
-	this->SetMethod("open", &UserWindow::open_cb);
-	this->SetMethod("close", &UserWindow::close_cb);
-	this->SetMethod("getX", &UserWindow::get_x_cb);
-	this->SetMethod("setX", &UserWindow::set_x_cb);
-	this->SetMethod("getY", &UserWindow::get_y_cb);
-	this->SetMethod("setY", &UserWindow::set_y_cb);
-	this->SetMethod("getWidth", &UserWindow::get_width_cb);
-	this->SetMethod("setWidth", &UserWindow::set_width_cb);
-	this->SetMethod("getHeight", &UserWindow::get_height_cb);
-	this->SetMethod("setHeight", &UserWindow::set_height_cb);
-	this->SetMethod("getBounds", &UserWindow::get_bounds_cb);
-	this->SetMethod("setBounds", &UserWindow::set_bounds_cb);
-	this->SetMethod("getTitle", &UserWindow::get_title_cb);
-	this->SetMethod("setTitle", &UserWindow::set_title_cb);
-	this->SetMethod("getURL", &UserWindow::get_url_cb);
-	this->SetMethod("setURL", &UserWindow::set_url_cb);
-	this->SetMethod("isResizable", &UserWindow::is_resizable_cb);
-	this->SetMethod("setResizable", &UserWindow::set_resizable_cb);
-	this->SetMethod("isMaximizable", &UserWindow::is_maximizable_cb);
-	this->SetMethod("setMaimizable", &UserWindow::set_maximizable_cb);
-	this->SetMethod("isMinimizable", &UserWindow::is_minimizable_cb);
-	this->SetMethod("setMinizable", &UserWindow::set_minimizable_cb);
-	this->SetMethod("isCloseable", &UserWindow::is_closeable_cb);
-	this->SetMethod("setCloseable", &UserWindow::set_closeable_cb);
-	this->SetMethod("isVisible", &UserWindow::is_visible_cb);
-	this->SetMethod("setVisible", &UserWindow::set_visible_cb);
-	this->SetMethod("getTransparency", &UserWindow::get_transparency_cb);
-	this->SetMethod("setTransparency", &UserWindow::set_transparency_cb);
-	this->SetMethod("setMenu", &UserWindow::set_menu_cb);
-	this->SetMethod("getParent", &UserWindow::get_parent_cb);
-}
-
-void UserWindow::hide_cb(const kroll::ValueList& args, kroll::SharedValue result)
+void UserWindow::_Hide(const kroll::ValueList& args, kroll::SharedValue result)
 {
 	this->Hide();
 }
 
-void UserWindow::show_cb(const kroll::ValueList& args, kroll::SharedValue result)
+void UserWindow::_Show(const kroll::ValueList& args, kroll::SharedValue result)
 {
 	this->Show();
 }
 
-void UserWindow::is_using_chrome_cb(const kroll::ValueList& args, kroll::SharedValue result)
+void UserWindow::_IsUsingChrome(const kroll::ValueList& args, kroll::SharedValue result)
 {
 	result->SetBool(this->IsUsingChrome());
 }
 
-void UserWindow::set_using_chrome_cb(const kroll::ValueList& args, kroll::SharedValue result)
+void UserWindow::_SetUsingChrome(const kroll::ValueList& args, kroll::SharedValue result)
 {
 	TI_SET_BOOL(SetUsingChrome, 0);
 }
 
-void UserWindow::is_using_scrollbars_cb(const kroll::ValueList& args, kroll::SharedValue result)
+void UserWindow::_IsUsingScrollbars(const kroll::ValueList& args, kroll::SharedValue result)
 {
 	result->SetBool(this->IsUsingScrollbars());
 }
 
-void UserWindow::is_full_screen_cb(const kroll::ValueList& args, kroll::SharedValue result)
+void UserWindow::_IsFullScreen(const kroll::ValueList& args, kroll::SharedValue result)
 {
 	result->SetBool(this->IsFullScreen());
 }
 
-void UserWindow::set_full_screen_cb(const kroll::ValueList& args, kroll::SharedValue result)
+void UserWindow::_SetFullScreen(const kroll::ValueList& args, kroll::SharedValue result)
 {
 	TI_SET_BOOL(SetFullScreen, 0);
 }
 
-void UserWindow::get_id_cb(const kroll::ValueList& args, kroll::SharedValue result)
+void UserWindow::_GetId(const kroll::ValueList& args, kroll::SharedValue result)
 {
 	result->SetString(this->GetId().c_str());
 }
 
-void UserWindow::open_cb(const kroll::ValueList& args, kroll::SharedValue result)
+void UserWindow::_Open(const kroll::ValueList& args, kroll::SharedValue result)
 {
 	this->Open();
 }
 
-void UserWindow::close_cb(const kroll::ValueList& args, kroll::SharedValue result)
+void UserWindow::_Close(const kroll::ValueList& args, kroll::SharedValue result)
 {
 	this->Close();
 }
 
-void UserWindow::get_x_cb(const kroll::ValueList& args, kroll::SharedValue result)
+void UserWindow::_GetX(const kroll::ValueList& args, kroll::SharedValue result)
 {
 	result->SetDouble(this->GetX());
 }
 
-void UserWindow::set_x_cb(const kroll::ValueList& args, kroll::SharedValue result)
+void UserWindow::_SetX(const kroll::ValueList& args, kroll::SharedValue result)
 {
 	if (args.size() > 0) {
 		this->SetX(args.at(0)->ToDouble());
 	}
 }
 
-void UserWindow::get_y_cb(const kroll::ValueList& args, kroll::SharedValue result)
+void UserWindow::_GetY(const kroll::ValueList& args, kroll::SharedValue result)
 {
 	result->SetDouble(this->GetY());
 }
 
-void UserWindow::set_y_cb(const kroll::ValueList& args, kroll::SharedValue result)
+void UserWindow::_SetY(const kroll::ValueList& args, kroll::SharedValue result)
 {
 	if (args.size() > 0) {
 		this->SetY(args.at(0)->ToDouble());
 	}
 }
 
-void UserWindow::get_width_cb(const kroll::ValueList& args, kroll::SharedValue result)
+void UserWindow::_GetWidth(const kroll::ValueList& args, kroll::SharedValue result)
 {
 	result->SetDouble(this->GetWidth());
 }
 
-void UserWindow::set_width_cb(const kroll::ValueList& args, kroll::SharedValue result)
+void UserWindow::_SetWidth(const kroll::ValueList& args, kroll::SharedValue result)
 {
 	if (args.size() > 0) {
 		this->SetWidth(args.at(0)->ToDouble());
 	}
 }
 
-void UserWindow::get_height_cb(const kroll::ValueList& args, kroll::SharedValue result)
+void UserWindow::_GetMinWidth(const kroll::ValueList& args, kroll::SharedValue result)
+{
+	result->SetDouble(this->GetMinWidth());
+}
+
+void UserWindow::_SetMinWidth(const kroll::ValueList& args, kroll::SharedValue result)
+{
+	if (args.size() > 0) {
+		this->SetMinWidth(args.at(0)->ToDouble());
+	}
+}
+
+void UserWindow::_GetMaxWidth(const kroll::ValueList& args, kroll::SharedValue result)
+{
+	result->SetDouble(this->GetMaxWidth());
+}
+
+void UserWindow::_SetMaxWidth(const kroll::ValueList& args, kroll::SharedValue result)
+{
+	if (args.size() > 0) {
+		this->SetMaxWidth(args.at(0)->ToDouble());
+	}
+}
+
+void UserWindow::_GetHeight(const kroll::ValueList& args, kroll::SharedValue result)
 {
 	result->SetDouble(this->GetHeight());
 }
 
-void UserWindow::set_height_cb(const kroll::ValueList& args, kroll::SharedValue result)
+void UserWindow::_SetHeight(const kroll::ValueList& args, kroll::SharedValue result)
 {
 	if (args.size() > 0) {
 		this->SetHeight(args.at(0)->ToDouble());
 	}
 }
 
-void UserWindow::get_bounds_cb(const kroll::ValueList& args, kroll::SharedValue result)
+void UserWindow::_GetMinHeight(const kroll::ValueList& args, kroll::SharedValue result)
+{
+	result->SetDouble(this->GetMinHeight());
+}
+
+void UserWindow::_SetMinHeight(const kroll::ValueList& args, kroll::SharedValue result)
+{
+	if (args.size() > 0) {
+		this->SetMinHeight(args.at(0)->ToDouble());
+	}
+}
+
+void UserWindow::_GetMaxHeight(const kroll::ValueList& args, kroll::SharedValue result)
+{
+	result->SetDouble(this->GetMaxHeight());
+}
+
+void UserWindow::_SetMaxHeight(const kroll::ValueList& args, kroll::SharedValue result)
+{
+	if (args.size() > 0) {
+		this->SetMaxHeight(args.at(0)->ToDouble());
+	}
+}
+
+void UserWindow::_GetBounds(const kroll::ValueList& args, kroll::SharedValue result)
 {
 	Bounds bounds = this->GetBounds();
 	kroll::StaticBoundObject *b = new kroll::StaticBoundObject();
@@ -270,7 +311,7 @@ void UserWindow::get_bounds_cb(const kroll::ValueList& args, kroll::SharedValue 
 	result->SetObject(b);
 }
 
-void UserWindow::set_bounds_cb(const kroll::ValueList& args, kroll::SharedValue result)
+void UserWindow::_SetBounds(const kroll::ValueList& args, kroll::SharedValue result)
 {
 	if (args.size() > 0 && args.at(0)->IsObject())
 	{
@@ -291,12 +332,12 @@ void UserWindow::set_bounds_cb(const kroll::ValueList& args, kroll::SharedValue 
 	}
 }
 
-void UserWindow::get_title_cb(const kroll::ValueList& args, kroll::SharedValue result)
+void UserWindow::_GetTitle(const kroll::ValueList& args, kroll::SharedValue result)
 {
 	result->SetString(this->GetTitle().c_str());
 }
 
-void UserWindow::set_title_cb(const kroll::ValueList& args, kroll::SharedValue result)
+void UserWindow::_SetTitle(const kroll::ValueList& args, kroll::SharedValue result)
 {
 	if (args.size() > 0) {
 		std::string title = args.at(0)->ToString();
@@ -304,12 +345,12 @@ void UserWindow::set_title_cb(const kroll::ValueList& args, kroll::SharedValue r
 	}
 }
 
-void UserWindow::get_url_cb(const kroll::ValueList& args, kroll::SharedValue result)
+void UserWindow::_GetURL(const kroll::ValueList& args, kroll::SharedValue result)
 {
 	result->SetString(this->GetURL().c_str());
 }
 
-void UserWindow::set_url_cb(const kroll::ValueList& args, kroll::SharedValue result)
+void UserWindow::_SetURL(const kroll::ValueList& args, kroll::SharedValue result)
 {
 	if (args.size() > 0) {
 		std::string url = args.at(0)->ToString();
@@ -317,100 +358,177 @@ void UserWindow::set_url_cb(const kroll::ValueList& args, kroll::SharedValue res
 	}
 }
 
-void UserWindow::is_resizable_cb(const kroll::ValueList& args, kroll::SharedValue result)
+void UserWindow::_IsResizable(const kroll::ValueList& args, kroll::SharedValue result)
 {
 	result->SetBool(this->IsResizable());
 }
 
-void UserWindow::set_resizable_cb(const kroll::ValueList& args, kroll::SharedValue result)
+void UserWindow::_SetResizable(const kroll::ValueList& args, kroll::SharedValue result)
 {
 	TI_SET_BOOL(SetResizable, 0);
 }
 
-void UserWindow::is_maximizable_cb(const kroll::ValueList& args, kroll::SharedValue result)
+void UserWindow::_IsMaximizable(const kroll::ValueList& args, kroll::SharedValue result)
 {
 	result->SetBool(this->IsMaximizable());
 }
 
-void UserWindow::set_maximizable_cb(const kroll::ValueList& args, kroll::SharedValue result)
+void UserWindow::_SetMaximizable(const kroll::ValueList& args, kroll::SharedValue result)
 {
 	TI_SET_BOOL(SetMaximizable, 0);
 }
 
-void UserWindow::is_minimizable_cb(const kroll::ValueList& args, kroll::SharedValue result)
+void UserWindow::_IsMinimizable(const kroll::ValueList& args, kroll::SharedValue result)
 {
 	result->SetBool(this->IsMinimizable());
 }
 
-void UserWindow::set_minimizable_cb(const kroll::ValueList& args, kroll::SharedValue result)
+void UserWindow::_SetMinimizable(const kroll::ValueList& args, kroll::SharedValue result)
 {
 	TI_SET_BOOL(SetMinimizable, 0);
 }
 
-void UserWindow::is_closeable_cb(const kroll::ValueList& args, kroll::SharedValue result)
+void UserWindow::_IsCloseable(const kroll::ValueList& args, kroll::SharedValue result)
 {
 	result->SetBool(this->IsCloseable());
 }
 
-void UserWindow::set_closeable_cb(const kroll::ValueList& args, kroll::SharedValue result)
+void UserWindow::_SetCloseable(const kroll::ValueList& args, kroll::SharedValue result)
 {
 	TI_SET_BOOL(SetCloseable, 0);
 }
 
-void UserWindow::is_visible_cb(const kroll::ValueList& args, kroll::SharedValue result)
+void UserWindow::_IsVisible(const kroll::ValueList& args, kroll::SharedValue result)
 {
 	result->SetBool(this->IsVisible());
 }
 
-void UserWindow::set_visible_cb(const kroll::ValueList& args, kroll::SharedValue result)
+void UserWindow::_SetVisible(const kroll::ValueList& args, kroll::SharedValue result)
 {
 	TI_SET_BOOL(SetVisible, 0);
 }
 
-void UserWindow::get_transparency_cb(const kroll::ValueList& args, kroll::SharedValue result)
+void UserWindow::_GetTransparency(const kroll::ValueList& args, kroll::SharedValue result)
 {
 	result->SetDouble(this->GetTransparency());
 }
 
-void UserWindow::set_transparency_cb(const kroll::ValueList& args, kroll::SharedValue result)
+void UserWindow::_SetTransparency(const kroll::ValueList& args, kroll::SharedValue result)
 {
 	if (args.size() > 0) {
 		this->SetTransparency(args.at(0)->ToDouble());
 	}
 }
 
-void UserWindow::set_menu_cb(const kroll::ValueList& args, kroll::SharedValue result)
+void UserWindow::_SetMenu(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	SharedBoundObject val = args.at(0)->ToObject();
-	if (args.size() > 0 && args.at(0)->IsList()) {
-		SharedBoundList menu = args.at(0)->ToList();
-		this->SetMenu(menu);
+	SharedPtr<MenuItem> menu = NULL; // A NULL value is an unset
+	if (args.size() > 0 && args.at(0)->IsList())
+	{
+		menu = args.at(0)->ToList().cast<MenuItem>();
 	}
+	this->SetMenu(menu);
 }
-void UserWindow::get_parent_cb(const kroll::ValueList& args, kroll::SharedValue result)
+
+void UserWindow::_GetMenu(const kroll::ValueList& args, kroll::SharedValue result)
+{
+	result->SetObject(this->GetMenu());
+}
+
+void UserWindow::_SetIcon(const kroll::ValueList& args, kroll::SharedValue result)
+{
+	SharedString icon_path = NULL; // a NULL value is an unset
+	if (args.size() > 0 && args.at(0)->IsString())
+	{
+		const char *icon_url = args.at(0)->ToString();
+		icon_path = UIModule::GetResourcePath(icon_url);
+	}
+	this->SetIcon(icon_path);
+}
+
+void UserWindow::_GetIcon(const kroll::ValueList& args, kroll::SharedValue result)
+{
+	result->SetString(this->GetIcon()->c_str());
+}
+
+void UserWindow::_GetParent(const kroll::ValueList& args, kroll::SharedValue result)
 {
 	if (this->parent==NULL)
 	{
 		result->SetNull();
 		return;
 	}
-	SharedBoundObject o = this->get_parent();
+	SharedBoundObject o = this->GetParent();
 	result->SetObject(o);
 }
-void UserWindow::set_parent(UserWindow *parent)
+
+void UserWindow::_CreateWindow(const ValueList& args, SharedValue result)
+{
+	SharedBoundObject props = SharedBoundObject(new StaticBoundObject());
+	if (args.size() > 0 && args.at(0)->IsObject())
+		props = args.at(0)->ToObject();
+
+	result->SetObject(this->CreateWindow(props));
+}
+
+SharedBoundObject UserWindow::CreateWindow(SharedBoundObject properties)
+{
+	//TODO: wrap in sharedptr
+	WindowConfig *config = new WindowConfig();
+	config->UseProperties(properties);
+
+	UserWindow* window = this->WindowFactory(this->host, config);
+
+	// Track parent/child relationship.
+	window->SetParent(this); 
+	return window;
+
+}
+
+std::vector<UserWindow*>& UserWindow::GetWindows()
+{
+	return UserWindow::windows;
+}
+
+void UserWindow::SetParent(UserWindow *parent)
 {
 	this->parent = parent;
-	parent->add_child(this);
+	parent->AddChild(this);
 }
-UserWindow* UserWindow::get_parent()
+
+UserWindow* UserWindow::GetParent()
 {
 	return this->parent;
 }
-void UserWindow::add_child(UserWindow *window)
+
+void UserWindow::AddChild(UserWindow *window)
 {
-	UserWindow::AddChild(this,window);
+	UserWindow::AddChild(this, window);
 }
-void UserWindow::remove_child(UserWindow *window)
+
+void UserWindow::RemoveChild(UserWindow *window)
 {
 	UserWindow::RemoveChild(this,window);
 }
+
+void UserWindow::AddChild(UserWindow *parent, UserWindow *child)
+{
+	std::vector<UserWindow*> children = windowsMap[parent];
+	children.push_back(child);
+	windowsMap[parent]=children;
+}
+
+void UserWindow::RemoveChild(UserWindow *parent, UserWindow *child)
+{
+	std::vector<UserWindow*> children = windowsMap[parent];
+	std::vector<UserWindow*>::iterator iter;
+	for (iter = children.begin(); iter != children.end(); iter++) {
+		if ((*iter) == child) {
+			break;
+		}
+	}
+	if (iter != children.end()) {
+		children.erase(iter);
+	}
+}
+

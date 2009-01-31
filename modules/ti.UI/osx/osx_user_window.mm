@@ -4,6 +4,7 @@
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
 #import "osx_user_window.h"
+#define STUB() printf("Method is still a stub, %s:%i\n", __FILE__, __LINE__)
 
 namespace ti
 {
@@ -73,6 +74,10 @@ namespace ti
 		{
 			UserWindow::Close(this);
 		}
+	}
+	UserWindow* OSXUserWindow::WindowFactory(Host* host, WindowConfig* config)
+	{
+		return new OSXUserWindow(host, config);
 	}
 	void OSXUserWindow::Hide()
 	{
@@ -168,6 +173,53 @@ namespace ti
 		frame.size.height = height;
 		config->SetHeight(height);
 		[window setFrame:frame display:display animate:display];
+	}
+	double OSXUserWindow::GetMaxWidth() {
+		return this->config->GetMaxWidth();
+	}
+	
+	void OSXUserWindow::SetMaxWidth(double width) {
+		this->config->SetMaxWidth(width);
+		STUB();
+	}
+	
+	double OSXUserWindow::GetMinWidth() {
+		return this->config->GetMinWidth();
+	}
+	
+	void OSXUserWindow::ReconfigureWindowConstraints()
+	{
+		NSSize min_size, max_size;
+		min_size.width = this->GetMinWidth();
+		min_size.height = this->GetMinHeight();
+		max_size.width = this->GetMaxWidth();
+		max_size.height = this->GetMaxHeight();
+
+		[window setContentMinSize: min_size];
+		[window setContentMaxSize: max_size];
+	}
+
+	void OSXUserWindow::SetMinWidth(double width) {
+		this->config->SetMinWidth(width);
+		this->ReconfigureWindowConstraints();
+	}
+	
+	double OSXUserWindow::GetMaxHeight() {
+		return this->config->GetMaxHeight();
+	}
+	
+	void OSXUserWindow::SetMaxHeight(double height) {
+		this->config->SetMaxHeight(height);
+		this->ReconfigureWindowConstraints();
+	}
+	
+	double OSXUserWindow::GetMinHeight() {
+		return this->config->GetMinHeight();
+	}
+	
+	void OSXUserWindow::SetMinHeight(double height) {
+		this->config->SetMinHeight(height);
+		this->ReconfigureWindowConstraints();
 	}
 	Bounds OSXUserWindow::GetBounds()
 	{
@@ -296,4 +348,22 @@ namespace ti
 		NSMenu *nsmenu = this->menu_wrapper->getNSMenu();
 		[NSApp setMainMenu:nsmenu];
 	}
+
+	SharedBoundList OSXUserWindow::GetMenu()
+	{
+		STUB();
+		return NULL;
+	}
+	
+	void OSXUserWindow::SetIcon(SharedString icon_path)
+	{
+		STUB();
+	}
+	
+	SharedString OSXUserWindow::GetIcon()
+	{
+		STUB();
+		return NULL;
+	}
+
 }

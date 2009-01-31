@@ -22,6 +22,7 @@ namespace ti {
 		void SetMessage(std::string _message) { this->message = _message; }
 		void SetInputText(std::string _inputText) { this->inputText = _inputText; }
 		std::string GetInputText() { return this->inputText; }
+		void SetShowCancelButton(bool flag) { this->showCancelButton = flag; }
 
 		int Show();
 	private:
@@ -31,6 +32,7 @@ namespace ti {
 		std::string title;
 		std::string message;
 		std::string inputText;
+		bool showCancelButton;
 
 		BOOL CALLBACK Callback(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam);
 	};

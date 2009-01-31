@@ -1,23 +1,21 @@
-/*
- * Win32UIDelegate.cpp
- *
- *  Created on: Jan 22, 2009
- *      Author: jorge
+/**
+ * Appcelerator Titanium - licensed under the Apache Public License 2
+ * see LICENSE in the root folder for details on the license.
+ * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
-
-#include "ui_delegate.h"
+#include "webkit_ui_delegate.h"
 
 #include <comdef.h>
 #include "win32_user_window.h"
 
 using namespace ti;
 
-Win32UIDelegate::Win32UIDelegate(Win32UserWindow *window_) : window(window_), ref_count(1) {
+Win32WebKitUIDelegate::Win32WebKitUIDelegate(Win32UserWindow *window_) : window(window_), ref_count(1) {
 
 }
 
 HRESULT STDMETHODCALLTYPE
-Win32UIDelegate::QueryInterface(REFIID riid, void **ppvObject)
+Win32WebKitUIDelegate::QueryInterface(REFIID riid, void **ppvObject)
 {
 	*ppvObject = 0;
 
@@ -40,13 +38,13 @@ Win32UIDelegate::QueryInterface(REFIID riid, void **ppvObject)
 }
 
 ULONG STDMETHODCALLTYPE
-Win32UIDelegate::AddRef()
+Win32WebKitUIDelegate::AddRef()
 {
 	return ++ref_count;
 }
 
 ULONG STDMETHODCALLTYPE
-Win32UIDelegate::Release()
+Win32WebKitUIDelegate::Release()
 {
 	ULONG new_count = --ref_count;
 	if (!new_count) delete(this);
@@ -55,7 +53,7 @@ Win32UIDelegate::Release()
 }
 
 HRESULT STDMETHODCALLTYPE
-Win32UIDelegate::createWebViewWithRequest(
+Win32WebKitUIDelegate::createWebViewWithRequest(
 	/* [in] */ IWebView *sender,
 	/* [in] */ IWebURLRequest *request,
 	/* [retval][out] */ IWebView **newWebView)
@@ -65,7 +63,7 @@ Win32UIDelegate::createWebViewWithRequest(
 }
 
 HRESULT STDMETHODCALLTYPE
-Win32UIDelegate::webViewClose(
+Win32WebKitUIDelegate::webViewClose(
 	/* [in] */ IWebView *sender)
 {
 	std::cout << "&&&&&&&&&&&&&&  webViewClose() called" << std::endl;
@@ -73,7 +71,7 @@ Win32UIDelegate::webViewClose(
 }
 
 HRESULT STDMETHODCALLTYPE
-Win32UIDelegate::webViewFocus(
+Win32WebKitUIDelegate::webViewFocus(
 	/* [in] */ IWebView *sender)
 {
 	std::cout << "&&&&&&&&&&&&&&  webViewFocus() called" << std::endl;
@@ -81,7 +79,7 @@ Win32UIDelegate::webViewFocus(
 }
 
 HRESULT STDMETHODCALLTYPE
-Win32UIDelegate::webViewUnfocus(
+Win32WebKitUIDelegate::webViewUnfocus(
 	/* [in] */ IWebView *sender)
 {
 	std::cout << "&&&&&&&&&&&&&&  webViewUnfocus() called" << std::endl;
@@ -89,7 +87,7 @@ Win32UIDelegate::webViewUnfocus(
 }
 
 HRESULT STDMETHODCALLTYPE
-Win32UIDelegate::setStatusText(
+Win32WebKitUIDelegate::setStatusText(
 	/* [in] */ IWebView *sender,
 	/* [in] */ BSTR text)
 {
@@ -104,7 +102,7 @@ Win32UIDelegate::setStatusText(
 }
 
 HRESULT STDMETHODCALLTYPE
-Win32UIDelegate::setFrame(
+Win32WebKitUIDelegate::setFrame(
 	/* [in] */ IWebView *sender,
 	/* [in] */ RECT *frame)
 {
@@ -113,7 +111,7 @@ Win32UIDelegate::setFrame(
 }
 
 HRESULT STDMETHODCALLTYPE
-Win32UIDelegate::webViewFrame(
+Win32WebKitUIDelegate::webViewFrame(
 	/* [in] */ IWebView *sender,
 	/* [retval][out] */ RECT *frame)
 {
@@ -122,32 +120,32 @@ Win32UIDelegate::webViewFrame(
 }
 
 HRESULT STDMETHODCALLTYPE
-Win32UIDelegate::runJavaScriptAlertPanelWithMessage(
+Win32WebKitUIDelegate::runJavaScriptAlertPanelWithMessage(
 	/* [in] */ IWebView *sender,
 	/* [in] */ BSTR message)
 {
 	HWND handle = window->GetWindowHandle();
 	std::string msg;
-	std::string title("JavaScript Alert");
+	std::string title("Titanium Alert");
 
 	if(message)
 	{
 		msg.append(_bstr_t(message));
 	}
 
-	MessageBox(handle, (LPCTSTR) msg.c_str(), (LPCTSTR) title.c_str(), MB_OK | MB_ICONQUESTION);
+	MessageBox(handle, (LPCTSTR) msg.c_str(), (LPCTSTR) title.c_str(), MB_OK | MB_ICONEXCLAMATION);
 
 	return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE
-Win32UIDelegate::runJavaScriptConfirmPanelWithMessage(
+Win32WebKitUIDelegate::runJavaScriptConfirmPanelWithMessage(
 	/* [in] */ IWebView *sender,
 	/* [in] */ BSTR message,
 	/* [retval][out] */ BOOL *result)
 {
 	HWND handle = window->GetWindowHandle();
-	std::string title("JavaScript Confirm");
+	std::string title("Titanium Confirmation");
 	std::string msg;
 
 	if(message)
@@ -155,21 +153,21 @@ Win32UIDelegate::runJavaScriptConfirmPanelWithMessage(
 		msg.append(bstr_t(message));
 	}
 
-	int r = MessageBox(handle, (LPCTSTR) msg.c_str(), (LPCTSTR) title.c_str(), MB_YESNO | MB_ICONEXCLAMATION);
+	int r = MessageBox(handle, (LPCTSTR) msg.c_str(), (LPCTSTR) title.c_str(), MB_YESNO | MB_ICONQUESTION);
 	*result = (r == IDYES);
 
 	return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE
-Win32UIDelegate::runJavaScriptTextInputPanelWithPrompt(
+Win32WebKitUIDelegate::runJavaScriptTextInputPanelWithPrompt(
 	/* [in] */ IWebView *sender,
 	/* [in] */ BSTR message,
 	/* [in] */ BSTR defaultText,
 	/* [retval][out] */ BSTR *result)
 {
 	HWND handle = window->GetWindowHandle();
-	std::string title("JavaScript Prompt");
+	std::string title("Titanium Prompt");
 	std::string msg = _bstr_t(message);
 	std::string def;
 
@@ -185,6 +183,7 @@ Win32UIDelegate::runJavaScriptTextInputPanelWithPrompt(
 	popupDialog.SetMessage(msg);
 	popupDialog.SetShowInputText(true);
 	popupDialog.SetInputText(def);
+	popupDialog.SetShowCancelButton(true);
 	int r = popupDialog.Show();
 
 	if(r == IDYES)
@@ -197,7 +196,7 @@ Win32UIDelegate::runJavaScriptTextInputPanelWithPrompt(
 }
 
 HRESULT STDMETHODCALLTYPE
-Win32UIDelegate::runBeforeUnloadConfirmPanelWithMessage(
+Win32WebKitUIDelegate::runBeforeUnloadConfirmPanelWithMessage(
 	/* [in] */ IWebView *sender,
 	/* [in] */ BSTR message,
 	/* [in] */ IWebFrame *initiatedByFrame,
@@ -208,7 +207,7 @@ Win32UIDelegate::runBeforeUnloadConfirmPanelWithMessage(
 }
 
 HRESULT STDMETHODCALLTYPE
-Win32UIDelegate::hasCustomMenuImplementation(
+Win32WebKitUIDelegate::hasCustomMenuImplementation(
 	/* [retval][out] */ BOOL *hasCustomMenus)
 {
 	std::cout << "&&&&&&&&&&&&&&  hasCustomMenuImplementation() called" << std::endl;
@@ -216,7 +215,7 @@ Win32UIDelegate::hasCustomMenuImplementation(
 }
 
 HRESULT STDMETHODCALLTYPE
-Win32UIDelegate::trackCustomPopupMenu(
+Win32WebKitUIDelegate::trackCustomPopupMenu(
 	/* [in] */ IWebView *sender,
 	/* [in] */ OLE_HANDLE menu,
 	/* [in] */ LPPOINT point)
@@ -226,7 +225,7 @@ Win32UIDelegate::trackCustomPopupMenu(
 }
 
 HRESULT STDMETHODCALLTYPE
-Win32UIDelegate::registerUndoWithTarget(
+Win32WebKitUIDelegate::registerUndoWithTarget(
 	/* [in] */ IWebUndoTarget *target,
 	/* [in] */ BSTR actionName,
 	/* [in] */ IUnknown *actionArg)
@@ -236,7 +235,7 @@ Win32UIDelegate::registerUndoWithTarget(
 }
 
 HRESULT STDMETHODCALLTYPE
-Win32UIDelegate::removeAllActionsWithTarget(
+Win32WebKitUIDelegate::removeAllActionsWithTarget(
 	/* [in] */ IWebUndoTarget *target)
 {
 	std::cout << "&&&&&&&&&&&&&&  removeAllActionsWithTarget() called " << (int)target << std::endl;
@@ -244,7 +243,7 @@ Win32UIDelegate::removeAllActionsWithTarget(
 }
 
 HRESULT STDMETHODCALLTYPE
-Win32UIDelegate::setActionTitle(
+Win32WebKitUIDelegate::setActionTitle(
 	/* [in] */ BSTR actionTitle)
 {
 	std::cout << "&&&&&&&&&&&&&&  setActionTitle() called" << std::endl;
@@ -252,21 +251,21 @@ Win32UIDelegate::setActionTitle(
 }
 
 HRESULT STDMETHODCALLTYPE
-Win32UIDelegate::undo()
+Win32WebKitUIDelegate::undo()
 {
 	std::cout << "&&&&&&&&&&&&&&  undo() called" << std::endl;
 	return E_NOTIMPL;
 }
 
 HRESULT STDMETHODCALLTYPE
-Win32UIDelegate::redo()
+Win32WebKitUIDelegate::redo()
 {
 	std::cout << "&&&&&&&&&&&&&&  redo() called" << std::endl;
 	return E_NOTIMPL;
 }
 
 HRESULT STDMETHODCALLTYPE
-Win32UIDelegate::canUndo(
+Win32WebKitUIDelegate::canUndo(
 	/* [retval][out] */ BOOL *result)
 {
 	std::cout << "&&&&&&&&&&&&&&  canUndo() called" << std::endl;
@@ -274,7 +273,7 @@ Win32UIDelegate::canUndo(
 }
 
 HRESULT STDMETHODCALLTYPE
-Win32UIDelegate::canRedo(
+Win32WebKitUIDelegate::canRedo(
 	/* [retval][out] */ BOOL *result)
 {
 	std::cout << "&&&&&&&&&&&&&&  canRedo() called" << std::endl;
@@ -282,7 +281,7 @@ Win32UIDelegate::canRedo(
 }
 
 HRESULT STDMETHODCALLTYPE
-Win32UIDelegate::webViewAddMessageToConsole(
+Win32WebKitUIDelegate::webViewAddMessageToConsole(
 	/* [in] */ IWebView *sender,
 	/* [in] */ BSTR message,
 	/* [in] */ int lineNumber,
@@ -294,7 +293,7 @@ Win32UIDelegate::webViewAddMessageToConsole(
 }
 
 HRESULT STDMETHODCALLTYPE
-Win32UIDelegate::doDragDrop(
+Win32WebKitUIDelegate::doDragDrop(
 	/* [in] */ IWebView *sender,
 	/* [in] */ IDataObject *dataObject,
 	/* [in] */ IDropSource *dropSource,
@@ -306,7 +305,7 @@ Win32UIDelegate::doDragDrop(
 }
 
 HRESULT STDMETHODCALLTYPE
-Win32UIDelegate::webViewGetDlgCode(
+Win32WebKitUIDelegate::webViewGetDlgCode(
 	/* [in] */ IWebView *sender,
 	/* [in] */ UINT keyCode,
 	/* [retval][out] */ LONG_PTR *code)
@@ -316,7 +315,7 @@ Win32UIDelegate::webViewGetDlgCode(
 }
 
 HRESULT STDMETHODCALLTYPE
-Win32UIDelegate::webViewPainted(
+Win32WebKitUIDelegate::webViewPainted(
 	/* [in] */ IWebView *sender)
 {
 	std::cout << "&&&&&&&&&&&&&&  webViewPainted() called" << std::endl;
@@ -324,7 +323,7 @@ Win32UIDelegate::webViewPainted(
 }
 
 HRESULT STDMETHODCALLTYPE
-Win32UIDelegate::exceededDatabaseQuota(
+Win32WebKitUIDelegate::exceededDatabaseQuota(
 	/* [in] */ IWebView *sender,
 	/* [in] */ IWebFrame *frame,
 	/* [in] */ IWebSecurityOrigin *origin,
