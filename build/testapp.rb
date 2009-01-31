@@ -111,7 +111,9 @@ LANGS = {
   '.js'=>'javascript'
 }
 
-#FileUtils.cp File.join(outdir,'kinstall'+ext), File.join(installdir,'kinstall'+ext)
+if OS!='osx'
+  FileUtils.cp File.join(outdir,'kinstall'+ext), File.join(installdir,'kinstall'+ext)
+end
 
 PLUGINS.each do |plugin|
   plugin.strip!
