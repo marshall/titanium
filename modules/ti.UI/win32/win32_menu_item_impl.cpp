@@ -69,35 +69,36 @@ namespace ti
 		return MenuItem::AppendItem(item);
 	}
 
+	/* static */
 	void Win32MenuItemImpl::MakeAndAddWidget(Win32MenuItemImpl* item)
 	{
-		const char* label = this->GetLabel();
-		const char* iconUrl = this->GetIconURL();
+		const char* label = item->GetLabel();
+		const char* iconUrl = item->GetIconURL();
 		SharedString iconPath = UIModule::GetResourcePath(iconUrl);
-		SharedValue callbackVal = this->Get("callback");
+		SharedValue callbackVal = item->Get("callback");
 
-		if(this->IsSeparator())
+		if(item->IsSeparator())
 		{
-			AppendMenu(this->parent->hMenu, MF_SEPARATOR, 1, "Separator");
+			AppendMenu(item->parent->hMenu, MF_SEPARATOR, 1, "Separator");
 		}
-		else if(this->IsItem())
+		else if(item->IsItem())
 		{
-			menuItemID = nextMenuUID();
-			AppendMenu(this->parent->hMenu, MF_STRING, menuItemID, (LPCTSTR) label);
+			item->menuItemID = nextMenuUID();
+			AppendMenu(item->parent->hMenu, MF_STRING, item->menuItemID, (LPCTSTR) label);
 
 			if (callbackVal->IsMethod())
 			{
 				// we need to do our own memory management here because
 				// we don't know when GTK will decide to clean up
-				this->callback = callbackVal->ToMethod();
+				item->callback = callbackVal->ToMethod();
 
 				// TODO add code to handle the callbacks
 			}
 		}
-		else if(this->IsSubMenu())
+		else if(item->IsSubMenu())
 		{
-			hMenu = CreatePopupMenu();
-			AppendMenu(this->parent->hMenu, MF_STRING | MF_POPUP, (UINT_PTR) hMenu, (LPCTSTR) label);
+			item->hMenu = CreatePopupMenu();
+			AppendMenu(item->parent->hMenu, MF_STRING | MF_POPUP, (UINT_PTR) item->hMenu, (LPCTSTR) label);
 		}
 		else
 		{

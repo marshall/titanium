@@ -20,6 +20,7 @@
 #include <kroll/kroll.h>
 #include "../../../kroll/host/win32/host.h"
 #include "../user_window.h"
+#include "script_evaluator.h"
 #include "win32_menu_item_impl.h"
 
 namespace ti {
@@ -37,6 +38,7 @@ protected:
 	Win32WebKitUIDelegate *uiDelegate;
 	Bounds restore_bounds;
 	long restore_styles;
+	ScriptEvaluator script_evaluator;
 
 	HWND window_handle, view_window_handle;
 	IWebView* web_view;
@@ -129,5 +131,7 @@ public:
 };
 
 }
+
+ void STDMETHODCALLTYPE addScriptEvaluator(IWebScriptEvaluator *evaluator);
 
 #endif

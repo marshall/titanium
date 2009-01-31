@@ -32,8 +32,6 @@ namespace ti
 		SharedValue AddSubMenu(SharedValue label,
 		                       SharedValue icon_url);
 
-		void MakeAndAddWidget(Win32MenuItemImpl* item);
-
 		SharedValue GetIconPath(const char *url);
 
 		void Enable();
@@ -51,6 +49,8 @@ namespace ti
 		int menuItemID;
 
 		SharedBoundMethod callback;
+
+		static void MakeAndAddWidget(Win32MenuItemImpl* item);
 
 		static int currentUID;
 	};
