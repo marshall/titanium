@@ -18,9 +18,6 @@ namespace ti
 	{
 		const char *home = getenv("KR_HOME");
 		std::string config(home);
-		
-		std::cout << "~~~~~~~~~~~~~~~~~~ " << home << std::endl;
-		
 		config+="/"CONFIG_FILENAME;
 
 		if (!FileUtils::IsFile(config))
