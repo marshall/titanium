@@ -1,8 +1,7 @@
-/*
- * win32_menu_item_impl.cpp
- *
- *  Created on: Jan 29, 2009
- *      Author: jorge
+/**
+ * Appcelerator Titanium - licensed under the Apache Public License 2
+ * see LICENSE in the root folder for details on the license.
+ * Copyright (c) 2009 Appcelerator, Inc. All Rights Reserved.
  */
 
 #include "win32_menu_item_impl.h"
