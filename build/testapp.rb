@@ -92,11 +92,9 @@ Zip::ZipFile.open(runtime_zip, Zip::ZipFile::CREATE) do |zipfile|
   
   # add the installer app resources - this will eventually go into the module
   path = File.expand_path "#{topdir}/installation/runtime"
-  puts path
   Dir["#{path}/**/**"].each do |f|
     name = f.gsub(path+'/','')
     zipfile.add "installer/#{name}",f
-    puts "adding: #{name}"
   end
 
 end
