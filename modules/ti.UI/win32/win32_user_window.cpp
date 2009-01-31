@@ -88,7 +88,7 @@ Win32UserWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 }
 
 Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config)
-	: UserWindow(host, config)
+	: UserWindow(host, config), script_evaluator(host)
 {
 	static bool initialized = false;
 	win32_host = static_cast<kroll::Win32Host*>(host);
@@ -100,6 +100,7 @@ Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config)
 		InitCommonControlsEx(&InitCtrlEx);
 
 		curl_register_local_handler(&Titanium_app_url_handler);
+		addScriptEvaluator(&script_evaluator);
 	}
 
 	std::cout << "HINSTANCE = " << (int)win32_host->GetInstanceHandle() << std::endl;
