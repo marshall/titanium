@@ -188,4 +188,11 @@ if OS == 'osx'
   Dir["#{outdir}/*.zip"].each do |file|
     FileUtils.cp file,website
   end
+else
+  # TEMP FIX FOR WIN32/LINUX
+  Dir["#{outdir}/*.zip"].each do |file|
+    FileUtils.cp file,installdir
+  end
 end
+
+
