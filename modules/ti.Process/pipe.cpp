@@ -26,16 +26,16 @@ namespace ti
 	{
 		if (closed)
 		{
-			throw Value::NewString("pipe already closed");
+			throw ValueException::FromString("Pipe is already closed");
 		}
 		if (!args.at(0)->IsString())
 		{
-			throw Value::NewString("can only write string data");
+			throw ValueException::FromString("Can only write string data");
 		}
 		Poco::PipeOutputStream *os = dynamic_cast<Poco::PipeOutputStream*>(pipe);
 		if (os==NULL)
 		{
-			throw Value::NewString("stream is not writeable");
+			throw ValueException::FromString("Stream is not writeable");
 		}
 		const char *data = args.at(0)->ToString();
 		int len = (int)strlen(data);
@@ -46,19 +46,19 @@ namespace ti
 		}
 		catch (Poco::WriteFileException &e)
 		{
-			throw Value::NewString(e.what());
+			throw ValueException::FromString(e.what());
 		}
 	}
 	void Pipe::Read(const ValueList& args, SharedValue result)
 	{
 		if (closed)
 		{
-			throw Value::NewString("pipe already closed");
+			throw ValueException::FromString("Pipe is already closed");
 		}
 		Poco::PipeInputStream *is = dynamic_cast<Poco::PipeInputStream*>(pipe);
 		if (is==NULL)
 		{
-			throw Value::NewString("stream is not readable");
+			throw ValueException::FromString("Stream is not readable");
 		}
 		char *buf = NULL;
 		try
@@ -87,7 +87,7 @@ namespace ti
 		catch (Poco::ReadFileException &e)
 		{
 			if (buf) delete[] buf;
-			throw Value::NewString(e.what());
+			throw ValueException::FromString(e.what());
 		}
 	}
 	void Pipe::Close(const ValueList& args, SharedValue result)

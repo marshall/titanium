@@ -39,7 +39,7 @@ namespace ti
 	{
 		if (args.size()!=2)
 		{
-			throw "invalid parameters passed. createShortcut takes 2 parameters";
+			throw ValueException::FromString("createShortcut takes 2 parameters");
 		}
 		std::string from = args.at(0)->ToString();
 		std::string to = args.at(1)->ToString();
@@ -54,7 +54,7 @@ namespace ti
 	{
 		if (args.size()!=1)
 		{
-			throw "invalid parameters passed. openApplication takes 1 parameter";
+			throw ValueException::FromString("openApplication takes 1 parameter");
 		}
 		std::string app = args.at(0)->ToString();
 		result->SetBool(TI_DESKTOP::OpenApplication(app));
@@ -63,7 +63,7 @@ namespace ti
 	{
 		if (args.size()!=1)
 		{
-			throw "invalid parameters passed. openURL takes 1 parameter";
+			throw ValueException::FromString("openURL takes 1 parameter");
 		}
 		std::string url = args.at(0)->ToString();
 		result->SetBool(TI_DESKTOP::OpenURL(url));

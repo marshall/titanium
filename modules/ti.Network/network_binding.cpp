@@ -34,7 +34,7 @@ namespace ti
 		SharedPtr<HostBinding> binding = new HostBinding(hostname);
 		if (binding->IsInvalid())
 		{
-			throw Value::NewString("could not resolve address");
+			throw ValueException::FromString("Could not resolve address");
 		}
 		result->SetObject(binding);
 	}
@@ -53,7 +53,7 @@ namespace ti
 				SharedPtr<HostBinding> binding = new HostBinding(addr);
 				if (binding->IsInvalid())
 				{
-					throw Value::NewString("could not resolve address");
+					throw ValueException::FromString("Could not resolve address");
 				}
 				result->SetObject(binding);
 				return;
@@ -69,7 +69,7 @@ namespace ti
 					this->_GetByHost(tostr->ToString(),result);
 					return;
 				}
-				throw Value::NewString("unknown object passed");
+				throw ValueException::FromString("Unknown object passed");
 			}
 		}
 		else if (args.at(0)->IsString())
@@ -88,7 +88,7 @@ namespace ti
 		SharedPtr<IPAddressBinding> binding = new IPAddressBinding(args.at(0)->ToString());
 		if (binding->IsInvalid())
 		{
-			throw Value::NewString("invalid address");
+			throw ValueException::FromString("Invalid address");
 		}
 		result->SetObject(binding);
 	}

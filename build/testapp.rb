@@ -3,6 +3,7 @@
 # this is a simple test builder for packaging a new app
 #
 #
+#lkjll
 require 'rubygems'
 require 'zip/zip'
 require 'fileutils'

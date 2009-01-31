@@ -99,9 +99,10 @@ namespace ti
 	}
 	void TCPSocketBinding::Connect(const ValueList& args, SharedValue result)
 	{
+		std::string eprefix = "Connect exception: ";
 		if (this->opened)
 		{
-			throw Value::NewString("socket is already open");
+			throw ValueException::FromString(eprefix + "Socket is already open");
 		}
 		try
 		{
@@ -113,18 +114,15 @@ namespace ti
 		}
 		catch(Poco::IOException &e)
 		{
-			std::string msg = e.displayText();
-			throw Value::NewString(msg);
+			throw ValueException::FromString(eprefix + e.displayText());
 		}
 		catch(std::exception &e)
 		{
-			std::string msg("connect exception: ");
-			msg+=e.what();
-			throw Value::NewString(msg);
+			throw ValueException::FromString(eprefix + e.what());
 		}
 		catch(...)
 		{
-			throw Value::NewString("unknown exception caught in connect");
+			throw ValueException::FromString(eprefix + "Unknown exception");
 		}
 	}
 	void TCPSocketBinding::OnRead(const Poco::AutoPtr<ReadableNotification>& n)
@@ -134,6 +132,8 @@ namespace ti
 		{
 			return;
 		}
+
+		std::string eprefix = "TCPSocketBinding::OnRead: ";
 		try
 		{
 			char data[BUFFER_SIZE];
@@ -161,17 +161,17 @@ namespace ti
 			SharedPtr<ValueList> a(args);
 			ti_host->InvokeMethodOnMainThread(*this->onRead,a);
 		}
+		catch(ValueException& e)
+		{
+			std::cerr << eprefix << e.GetValue()->DisplayString() << std::endl;
+		}
 		catch(std::exception &e)
 		{
-			std::cerr << "Network error TCPSocketBinding::OnRead: " << e.what() << std::endl;
-		}
-		catch(SharedValue &e)
-		{
-			std::cerr << "Network error TCPSocketBinding::OnRead: " << e->ToString() << std::endl;
+			std::cerr << eprefix << e.what() << std::endl;
 		}
 		catch(...)
 		{
-			std::cerr << "Network error TCPSocketBinding::OnRead" << std::endl;
+			std::cerr << eprefix << "Unknown exception" << std::endl;
 		}
 	}
 	void TCPSocketBinding::OnWrite(const Poco::AutoPtr<WritableNotification>& n)
@@ -194,13 +194,23 @@ namespace ti
 	}
 	void TCPSocketBinding::Write(const ValueList& args, SharedValue result)
 	{
+		std::string eprefix = "TCPSocketBinding::Write: ";
 		if (!this->opened)
 		{
-			throw Value::NewString("socket is closed");
+			throw ValueException::FromString(eprefix +  "Socket is not open");
 		}
-		std::string buf = args.at(0)->ToString();
-		int count = this->socket.sendBytes(buf.c_str(),buf.length());
-		result->SetInt(count);
+
+		try
+		{
+			std::string buf = args.at(0)->ToString();
+			int count = this->socket.sendBytes(buf.c_str(),buf.length());
+			result->SetInt(count);
+		}
+		catch(Poco::Exception &e)
+		{
+			throw ValueException::FromString(eprefix + e.displayText());
+		}
+
 	}
 	void TCPSocketBinding::Close(const ValueList& args, SharedValue result)
 	{

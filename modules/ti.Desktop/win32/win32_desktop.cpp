@@ -26,8 +26,7 @@ namespace ti
 
 		if(from.length() == 0 || to.length() == 0) {
 			std::string ex = "Invalid arguments given to createShortcut()";
-
-			throw ex;
+			throw ValueException::FromString(ex);
 		}
 
 		hResult = CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER, IID_IShellLink, (LPVOID*)&psl);

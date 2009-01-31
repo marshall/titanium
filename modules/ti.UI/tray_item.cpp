@@ -24,15 +24,15 @@ namespace ti
 
 	void TrayItem::_SetIcon(const ValueList& args, SharedValue result)
 	{
-		// Cannot set a NULL icon
-		if (args.size() > 0 && args.at(0)->IsString())
+		bool valid = ArgUtils::VerifyArgs(args, "s", NULL);
+		if (!valid)
+			return;
+
+		const char *icon_url = args.at(0)->ToString();
+		SharedString icon_path = UIModule::GetResourcePath(icon_url);
+		if (!icon_path.isNull())
 		{
-			const char *icon_url = args.at(0)->ToString();
-			SharedString icon_path = UIModule::GetResourcePath(icon_url);
-			if (!icon_path.isNull())
-			{
-				this->SetIcon(icon_path);
-			}
+			this->SetIcon(icon_path);
 		}
 	}
 
