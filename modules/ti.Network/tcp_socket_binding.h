@@ -47,10 +47,11 @@ namespace ti
 		SocketReactor reactor;
 		Thread thread;
 		bool opened;
-		SharedBoundMethod *onRead;
-		SharedBoundMethod *onWrite;
-		SharedBoundMethod *onTimeout;
-		SharedBoundMethod *onReadComplete;
+
+		SharedBoundMethod onRead;
+		SharedBoundMethod onWrite;
+		SharedBoundMethod onTimeout;
+		SharedBoundMethod onReadComplete;
 
 		void Connect(const ValueList& args, SharedValue result);
 		void Write(const ValueList& args, SharedValue result);
