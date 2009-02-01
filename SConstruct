@@ -37,12 +37,14 @@ build.env.Append(LIBPATH=[build.dir])
 # debug build flags
 if ARGUMENTS.get('debug', 0):
 	build.env.Append(CPPDEFINES = {'DEBUG' : 1})
+	debug = 1
 	if not build.is_win32():
 		build.env.Append(CCFLAGS = ['-g'])  # debug
 	else:
 		build.env.Append(CCFLAGS = ['/Z7','/GR'])  # max debug, C++ RTTI
 else:
 	build.env.Append(CPPDEFINES = {'NDEBUG' : 1 })
+	debug = 0
 	if not build.is_win32():
 		build.env.Append(CCFLAGS = ['-O9']) # max optimizations
 	else:
@@ -75,7 +77,7 @@ tiBuild = build
 Export ('tiBuild')
 Export ('build')
 
-SConscript('kroll/SConscript')
+SConscript('kroll/SConscript', exports='debug')
 
 # Kroll *must not be required* for installation
 SConscript('installation/SConscript')
