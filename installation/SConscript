@@ -2,3 +2,4 @@
 Import('build')
 
 SConscript('installer/' + build.os + '/SConscript', build_dir=build.dir + '/tinstaller', duplicate=0)
+SConscript('resolver/SConscript', build_dir=build.dir + '/resolver', duplicate=0)

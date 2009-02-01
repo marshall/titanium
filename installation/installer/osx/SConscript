@@ -9,13 +9,13 @@ Env.Append(LIBS=['curl'])
 Env.Append(CPPFLAGS=['-Wno-error']) #turn off warnings, CURLHandle has a lot
 Env.Append(CPPPATH=[build.kroll_source_dir+'/api'])
 
-s = Env.Program(build.dir + '/installer', Glob('*.m')+[build.kroll_source_dir+'/api/file_utils.cpp'])
+s = Env.Program(build.dir + '/installer', Glob('*.m')+[build.dir+'/api/file_utils.os'])
 
 for i in Glob('English.lproj/*.xib'):
 	base = path.splitext(path.basename(str(i)))[0]
 	Env.AddPostAction(s, 'ibtool --errors --warnings --notices --output-format human-readable-text --compile '+build.dir + '/tinstaller/'+ base+'.nib '+str(i))
 	
 
-for i in Glob('*.plist'):
+for i in Glob('*.plist'): 
    base = path.splitext(path.basename(str(i)))[0]
    Env.AddPostAction(s, 'cp '+str(i)+' '+build.dir + '/tinstaller')
