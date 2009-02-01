@@ -106,8 +106,9 @@
 	[controller updateMessage:[NSString stringWithFormat:@"Installing %d file%s",[files count],[files count]>1?"s":""]];
 	
 	NSString *destination = [controller installDirectory];
+#ifdef DEBUG
 	NSLog(@"installing to: %@, count: %d",destination,[files count]);
-	
+#endif
 	
 	for (int c=0;c<(int)[files count];c++)
 	{
@@ -141,11 +142,14 @@
 	[progress setMaxValue:100.0];
 	[progress setDoubleValue:0.0];
 	[window center];
+	
+	NSBeep();
 
 	NSProcessInfo *p = [NSProcessInfo processInfo];
 	NSArray *args = [p arguments];
+#ifdef DEBUG
 	NSLog(@"arguments = %@",args);
- 
+#endif
 	int count = [args count];
 	
 	NSString *appname = count > 1 ? [args objectAtIndex:1] : @"Application Installer";
