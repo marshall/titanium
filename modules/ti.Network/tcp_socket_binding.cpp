@@ -13,7 +13,7 @@ namespace ti
 {
 	TCPSocketBinding::TCPSocketBinding(Host* ti_host, std::string host, int port) :
 		ti_host(ti_host), host(host), port(port), opened(false), 
-		onRead(0), onWrite(0), onTimeout(0), onReadComplete(0)
+		onRead(NULL), onWrite(NULL), onTimeout(NULL), onReadComplete(NULL)
 	{
 		// methods
 		this->SetMethod("connect",&TCPSocketBinding::Connect);
@@ -36,22 +36,6 @@ namespace ti
 	{
 		KR_DUMP_LOCATION
 		
-		if (this->onTimeout)
-		{
-			delete this->onTimeout;
-		}
-		if (this->onRead)
-		{
-			delete this->onRead;
-		}
-		if (this->onWrite)
-		{
-			delete this->onWrite;
-		}
-		if (this->onReadComplete)
-		{
-			delete this->onReadComplete;
-		}
 		if (this->opened)
 		{
 			std::cout << "before ~TCPSocketBinding reactor.stop" << std::endl;
@@ -63,35 +47,19 @@ namespace ti
 	}
 	void TCPSocketBinding::SetOnRead(const ValueList& args, SharedValue result)
 	{
-		if (this->onRead)
-		{
-			delete this->onRead;
-		}
-		this->onRead = new SharedBoundMethod(args.at(0)->ToMethod());
+		this->onRead = args.at(0)->ToMethod();
 	}
 	void TCPSocketBinding::SetOnWrite(const ValueList& args, SharedValue result)
 	{
-		if (this->onWrite)
-		{
-			delete this->onWrite;
-		}
-		this->onWrite = new SharedBoundMethod(args.at(0)->ToMethod());
+		this->onWrite = args.at(0)->ToMethod();
 	}
 	void TCPSocketBinding::SetOnTimeout(const ValueList& args, SharedValue result)
 	{
-		if (this->onTimeout)
-		{
-			delete this->onTimeout;
-		}
-		this->onTimeout = new SharedBoundMethod(args.at(0)->ToMethod());
+		this->onTimeout = args.at(0)->ToMethod();
 	}
 	void TCPSocketBinding::SetOnReadComplete(const ValueList& args, SharedValue result)
 	{
-		if (this->onReadComplete)
-		{
-			delete this->onReadComplete;
-		}
-		this->onReadComplete = new SharedBoundMethod(args.at(0)->ToMethod());
+		this->onReadComplete = args.at(0)->ToMethod();
 	}
 	void TCPSocketBinding::IsClosed(const ValueList& args, SharedValue result)
 	{
@@ -127,47 +95,35 @@ namespace ti
 	}
 	void TCPSocketBinding::OnRead(const Poco::AutoPtr<ReadableNotification>& n)
 	{
-		// if we have no listeners, just bail...
-		if (this->onRead==NULL && this->onReadComplete==NULL)
-		{
-			return;
-		}
-
 		std::string eprefix = "TCPSocketBinding::OnRead: ";
 		try
 		{
-			char data[BUFFER_SIZE];
-			int size = socket.receiveBytes(&data,BUFFER_SIZE);
-			if (size <= 0)
+			// Always read bytes, so that the tubes get cleared.
+			char data[BUFFER_SIZE + 1];
+			int size = socket.receiveBytes(&data, BUFFER_SIZE);
+
+			bool read_complete = (size <= 0);
+			if (read_complete && !this->onReadComplete.isNull())
 			{
-				if (this->onReadComplete)
-				{
-					SharedPtr<ValueList> a(new ValueList);
-					ti_host->InvokeMethodOnMainThread(*this->onReadComplete,a);
-				}
-				return;
+				ValueList args;
+				ti_host->InvokeMethodOnMainThread(this->onReadComplete, args);
 			}
-			// do this after we read so that we can deal with 
-			// on read complete
-			if (this->onRead == NULL)
+			else if (!read_complete && !this->onRead.isNull())
 			{
-				return;
+				data[size] = '\0';
+
+				ValueList args;
+				args.push_back(Value::NewString(data));
+				SharedValue v = ti_host->InvokeMethodOnMainThread(this->onRead, args);
 			}
-			data[size]='\0';
-			std::string s(data);
-			SharedValue value = Value::NewString(s);
-			ValueList *args = new ValueList;
-			args->push_back(value);
-			SharedPtr<ValueList> a(args);
-			ti_host->InvokeMethodOnMainThread(*this->onRead,a);
 		}
 		catch(ValueException& e)
 		{
-			std::cerr << eprefix << e.GetValue()->DisplayString() << std::endl;
+			std::cerr << eprefix << *(e.GetValue()->DisplayString()) << std::endl;
 		}
-		catch(std::exception &e)
+		catch(Poco::Exception &e)
 		{
-			std::cerr << eprefix << e.what() << std::endl;
+			std::cerr << eprefix << e.displayText() << std::endl;
 		}
 		catch(...)
 		{
@@ -176,21 +132,21 @@ namespace ti
 	}
 	void TCPSocketBinding::OnWrite(const Poco::AutoPtr<WritableNotification>& n)
 	{
-		if (this->onWrite == NULL)
+		if (this->onWrite.isNull())
 		{
 			return;
 		}
-		SharedPtr<ValueList> a(new ValueList);
-		ti_host->InvokeMethodOnMainThread(*this->onWrite,a);
+		ValueList args;
+		ti_host->InvokeMethodOnMainThread(this->onWrite, args);
 	}
 	void TCPSocketBinding::OnTimeout(const Poco::AutoPtr<TimeoutNotification>& n)
 	{
-		if (this->onTimeout == NULL)
+		if (this->onTimeout.isNull())
 		{
 			return;
 		}
-		SharedPtr<ValueList> a(new ValueList);
-		ti_host->InvokeMethodOnMainThread(*this->onTimeout,a);
+		ValueList args;
+		ti_host->InvokeMethodOnMainThread(this->onTimeout, args);
 	}
 	void TCPSocketBinding::Write(const ValueList& args, SharedValue result)
 	{
