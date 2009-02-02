@@ -61,6 +61,7 @@ if build.is_win32():
 
 if build.is_linux() or build.is_osx():
     build.env.Append(CPPFLAGS=['-m32', '-Wall', '-Werror','-fno-common','-fvisibility=hidden'])
+    build.env.Append(LINKFLAGS=['-m32'])
 
 if build.is_osx():
 	OSX_SDK = '/Developer/SDKs/MacOSX10.5.sdk'
