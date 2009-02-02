@@ -23,7 +23,7 @@ namespace ti
 
 	void TrayItem::_SetIcon(const ValueList& args, SharedValue result)
 	{
-		bool valid = ArgUtils::VerifyArgs(args, "s", NULL);
+		bool valid = ArgUtils::VerifyArgs(args, "s");
 		if (!valid)
 			return;
 
