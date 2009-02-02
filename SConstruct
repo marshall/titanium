@@ -60,7 +60,7 @@ if build.is_win32():
 	build.env.Append(LINKFLAGS=['/DEBUG', '/PDB:${TARGET}.pdb'])
 
 if build.is_linux() or build.is_osx():
-    build.env.Append(CPPFLAGS=['-Wall', '-Werror','-fno-common','-fvisibility=hidden'])
+    build.env.Append(CPPFLAGS=['-m32', '-Wall', '-Werror','-fno-common','-fvisibility=hidden'])
 
 if build.is_osx():
 	OSX_SDK = '/Developer/SDKs/MacOSX10.5.sdk'
