@@ -6,6 +6,7 @@
 #include "app_module.h"
 #include "app_config.h"
 #include "app_binding.h"
+#include "Properties/properties_binding.h"
 
 using namespace kroll;
 using namespace ti;
@@ -22,7 +23,7 @@ namespace ti
 
 		if (!FileUtils::IsFile(config))
 		{
-			//FIXME: in this scenario we need a cleaner way of stopping the 
+			//FIXME: in this scenario we need a cleaner way of stopping the
 			//boot
 			std::cerr << "can't load " CONFIG_FILENAME " from: " << config << std::endl;
 			return;
@@ -32,7 +33,7 @@ namespace ti
 		AppConfig::Init(config);
 
 		// load our variables
-		this->variables = new AppBinding(host->GetGlobalObject());
+		this->app_binding = new AppBinding(host->GetGlobalObject());
 
 		// add our command line array
 		SharedBoundList args = new StaticBoundList();
@@ -45,11 +46,15 @@ namespace ti
 			args->Append(value);
 		}
 		SharedValue argsvalue = Value::NewList(args);
-		this->variables->Set("commandline",argsvalue);
+		this->app_binding->Set("commandline",argsvalue);
 
 		// set our ti.App
-		SharedValue value = Value::NewObject(this->variables);
+		SharedValue value = Value::NewObject(this->app_binding);
 		host->GetGlobalObject()->Set("App",value);
+
+		this->properties_binding = new PropertiesBinding(host);
+		SharedValue properties_value = Value::NewObject(this->properties_binding);
+		this->app_binding->Set("Properties", properties_value);
 	}
 
 	void AppModule::Destroy()
