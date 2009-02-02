@@ -35,6 +35,13 @@ namespace ti {
 		void ListProperties(const ValueList& args, SharedValue result);
 
 	protected:
+		typedef enum {
+			Bool, Double, Int, String
+		} Type;
+
+		void Getter(const ValueList& args, SharedValue result, Type type);
+		void Setter(const ValueList& args, Type type);
+
 		Poco::AutoPtr<Poco::Util::PropertyFileConfiguration> config;
 		std::string file_path;
 	};

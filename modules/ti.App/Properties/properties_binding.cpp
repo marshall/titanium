@@ -41,61 +41,76 @@ namespace ti {
 		config->save(file_path);
 	}
 
-
-#define Setter(type) Set ## type
-#define Getter(type) Get ## type
-#define LSetter(type) set ## type
-#define LGetter(type) get ## type
-#define IsType(type) Is ## type
-#define ToType(type) To ## type
-#define PropertyGetter(type)\
-	if (args.size() > 0 && args.at(0)->IsString()) { \
-		std::string eprefix = "PropertiesBinding::Get: "; \
-		try { \
-			std::string property = args.at(0)->ToString(); \
-			if (args.size() == 1) { \
-				result->Setter(type)(config->LGetter(type)(property)); \
-				return; \
-			} \
-			else if (args.size() >= 2 && args.at(1)->IsType(type)()) { \
-				result->Setter(type)(config->LGetter(type)(property, args.at(1)->ToType(type)())); \
-				return; \
-			} \
-		} catch(Poco::Exception &e) { \
-			throw ValueException::FromString(eprefix + e.displayText()); \
-		} \
+	void PropertiesBinding::Getter(const ValueList& args, SharedValue result, Type type)
+	{
+		if (args.size() > 0 && args.at(0)->IsString()) {
+			std::string eprefix = "PropertiesBinding::Get: ";
+			try {
+				std::string property = args.at(0)->ToString();
+				if (args.size() == 1) {
+					switch (type) {
+						case Bool: result->SetBool(config->getBool(property)); break;
+						case Double: result->SetDouble(config->getDouble(property)); break;
+						case Int: result->SetInt(config->getInt(property)); break;
+						case String: result->SetString(config->getString(property).c_str()); break;
+						default: break;
+					}
+					return;
+				}
+				else if (args.size() >= 2) {
+					switch (type) {
+						case Bool: result->SetBool(config->getBool(property, args.at(1)->ToBool())); break;
+						case Double: result->SetDouble(config->getDouble(property, args.at(1)->ToDouble())); break;
+						case Int: result->SetInt(config->getInt(property, args.at(1)->ToInt())); break;
+						case String: result->SetString(config->getString(property, args.at(1)->ToString()).c_str()); break;
+						default: break;
+					}
+					return;
+				}
+			} catch(Poco::Exception &e) {
+				throw ValueException::FromString(eprefix + e.displayText());
+			}
+		}
 	}
 
-#define PropertySetter(type)\
-	if (args.size() >= 2 && args.at(0)->IsString()) { \
-		std::string eprefix = "PropertiesBinding::Set: "; \
-		try { \
-			std::string property = args.at(0)->ToString(); \
-			config->LSetter(type)(property, args.at(1)->ToType(type)()); \
-			config->save(file_path); \
-		} catch(Poco::Exception &e) { \
-			throw ValueException::FromString(eprefix + e.displayText()); \
-		} \
+	void PropertiesBinding::Setter(const ValueList& args, Type type)
+	{
+		if (args.size() >= 2 && args.at(0)->IsString()) {
+			std::string eprefix = "PropertiesBinding::Set: ";
+			try {
+				std::string property = args.at(0)->ToString();
+				switch (type) {
+					case Bool: config->setBool(property, args.at(1)->ToBool()); break;
+					case Double: config->setDouble(property, args.at(1)->ToDouble()); break;
+					case Int: config->setInt(property, args.at(1)->ToInt()); break;
+					case String: config->setString(property, args.at(1)->ToString()); break;
+					default: break;
+				}
+				config->save(file_path);
+			} catch(Poco::Exception &e) {
+				throw ValueException::FromString(eprefix + e.displayText());
+			}
+		}
 	}
 
 	void PropertiesBinding::GetBool(const ValueList& args, SharedValue result)
 	{
-		PropertyGetter(Bool)
+		Getter(args, result, Bool);
 	}
 
 	void PropertiesBinding::GetDouble(const ValueList& args, SharedValue result)
 	{
-		PropertyGetter(Double)
+		Getter(args, result, Double);
 	}
 
 	void PropertiesBinding::GetInt(const ValueList& args, SharedValue result)
 	{
-		PropertyGetter(Int)
+		Getter(args, result, Int);
 	}
 
 	void PropertiesBinding::GetString(const ValueList& args, SharedValue result)
 	{
-		PropertyGetter(String)
+		Getter(args, result, String);
 	}
 
 	void PropertiesBinding::GetList(const ValueList& args, SharedValue result)
@@ -119,22 +134,22 @@ namespace ti {
 
 	void PropertiesBinding::SetBool(const ValueList& args, SharedValue result)
 	{
-		PropertySetter(Bool)
+		Setter(args, Bool);
 	}
 
 	void PropertiesBinding::SetDouble(const ValueList& args, SharedValue result)
 	{
-		PropertySetter(Double)
+		Setter(args, Double);
 	}
 
 	void PropertiesBinding::SetInt(const ValueList& args, SharedValue result)
 	{
-		PropertySetter(Int)
+		Setter(args, Int);
 	}
 
 	void PropertiesBinding::SetString(const ValueList& args, SharedValue result)
 	{
-		PropertySetter(String)
+		Setter(args, String);
 	}
 
 	void PropertiesBinding::SetList(const ValueList& args, SharedValue result)
