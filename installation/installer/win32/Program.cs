@@ -36,7 +36,13 @@ namespace Titanium
             string installdir = args[5];
             string unzipper = args[6];
 
-            //TODO: confirm
+            // do the confirmation for the user
+            DialogResult result = MessageBox.Show(message, title, MessageBoxButtons.OKCancel, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
+            if (result != DialogResult.OK)
+            {
+                MessageBox.Show("Installation Aborted. To install later, re-run the application again.", title, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
 
             int count = args.Length - 7;
             string[] urls = new string[count];
