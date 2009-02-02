@@ -41,6 +41,9 @@ namespace ti
 
 		HMENU GetMenuHandle() { return this->hMenu; }
 
+		static bool invokeCallback(int menuItemUID);
+		static LRESULT CALLBACK handleMenuClick(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+
 	private:
 		Win32MenuItemImpl *parent;
 		HMENU hMenu;

@@ -84,7 +84,12 @@ Win32UserWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			window->ResizeSubViews();
 			break;
 		default:
-			return DefWindowProc(hWnd, message, wParam, lParam);
+			LRESULT handled = Win32MenuItemImpl::handleMenuClick(hWnd, message, wParam, lParam);
+
+			if(! handled)
+			{
+				return DefWindowProc(hWnd, message, wParam, lParam);
+			}
 	}
 
 	return 0;

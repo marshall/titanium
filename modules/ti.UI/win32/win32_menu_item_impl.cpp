@@ -15,6 +15,8 @@ namespace ti
 {
 	int Win32MenuItemImpl::currentUID = TI_MENU_ITEM_ID_BEGIN + 1;
 
+	std::vector<Win32MenuItemImpl *> menuItemsWithCallbacks;
+
 	Win32MenuItemImpl::Win32MenuItemImpl(Win32MenuItemImpl* _parent) : parent(_parent)
 	{
 		if(this->parent == NULL)
@@ -91,7 +93,7 @@ namespace ti
 				// we don't know when GTK will decide to clean up
 				item->callback = callbackVal->ToMethod();
 
-				// TODO add code to handle the callbacks
+				menuItemsWithCallbacks.push_back(item);
 			}
 		}
 		else if(item->IsSubMenu())
@@ -116,6 +118,49 @@ namespace ti
 	}
 	void Win32MenuItemImpl::Disable()
 	{
+	}
+
+
+	/*static*/
+	bool Win32MenuItemImpl::invokeCallback(int menuItemUID)
+	{
+		for(size_t i = 0; i < menuItemsWithCallbacks.size(); i++)
+		{
+			Win32MenuItemImpl* item = menuItemsWithCallbacks[i];
+
+			if(item->menuItemID == menuItemUID)
+			{
+				BoundMethod* cb = (BoundMethod*) item->callback;
+
+				// TODO: Handle exceptions in some way
+				try
+				{
+					ValueList args;
+					cb->Call(args);
+				}
+				catch(...)
+				{
+					std::cout << "Menu callback failed" << std::endl;
+				}
+
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/*static*/
+	LRESULT CALLBACK Win32MenuItemImpl::handleMenuClick(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+	{
+		if(message == WM_COMMAND)
+		{
+			int wmId = LOWORD(wParam);
+
+			return invokeCallback(wmId);
+		}
+
+		return FALSE;
 	}
 
 }
