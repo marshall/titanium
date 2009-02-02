@@ -59,10 +59,7 @@ protected:
 	 */
 	SharedPtr<Win32MenuItemImpl> menuInUse;
 
-	/*
-	 * The widget this window is for a menu.
-	 */
-	HMENU menuBar;
+	void RemoveMenu();
 
 public:
 	static void RegisterWindowClass(HINSTANCE hInstance);

@@ -475,6 +475,19 @@ void Win32UserWindow::AppMenuChanged()
 		this->SetupMenu();
 	}
 }
+
+void Win32UserWindow::RemoveMenu()
+{
+	// Check if we are already using a menu
+	// and the window is initialized.
+	if (this->window_handle != NULL && !this->menuInUse.isNull())
+	{
+		::SetMenu(this->window_handle, NULL);
+	}
+
+	this->menuInUse = NULL;
+}
+
 void Win32UserWindow::SetupMenu()
 {
 	SharedPtr<Win32MenuItemImpl> menu = this->menu;
@@ -490,8 +503,7 @@ void Win32UserWindow::SetupMenu()
 	if (menu == this->menuInUse)
 		return;
 
-	// TODO remove old menu
-	//this->RemoveOldMenu();
+	this->RemoveMenu();
 
 	if (!menu.isNull() && this->window_handle)
 	{

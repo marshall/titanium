@@ -26,8 +26,8 @@ namespace ti
 		}
 	}
 
-	Win32MenuItemImpl::~Win32MenuItemImpl() {
-		// TODO Auto-generated destructor stub
+	Win32MenuItemImpl::~Win32MenuItemImpl()
+	{
 	}
 
 	void Win32MenuItemImpl::SetParent(Win32MenuItemImpl* parent)
@@ -89,8 +89,6 @@ namespace ti
 
 			if (callbackVal->IsMethod())
 			{
-				// we need to do our own memory management here because
-				// we don't know when GTK will decide to clean up
 				item->callback = callbackVal->ToMethod();
 
 				menuItemsWithCallbacks.push_back(item);
