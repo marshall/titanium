@@ -159,7 +159,7 @@ namespace ti {
 			SharedBoundList list = args.at(1)->ToList();
 
 			std::string value;
-			for (size_t i = 0; i < list->Size(); i++) {
+			for (int i = 0; i < list->Size(); i++) {
 				value += list->At(i)->ToString();
 				if (i < list->Size() - 1) {
 					value += ",";
@@ -186,7 +186,7 @@ namespace ti {
 		config->keys(keys);
 
 		SharedPtr<StaticBoundList> property_list = new StaticBoundList();
-		for (int i = 0; i < keys.size(); i++) {
+		for (size_t i = 0; i < keys.size(); i++) {
 			std::string property_name = keys.at(i);
 			SharedValue name_value = Value::NewString(property_name.c_str());
 			property_list->Append(name_value);
