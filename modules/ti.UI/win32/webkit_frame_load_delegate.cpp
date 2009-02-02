@@ -25,6 +25,7 @@ Win32WebKitFrameLoadDelegate::windowScriptObjectAvailable (
 	KJSUtil::RegisterGlobalContext(group, (JSGlobalContextRef) context);
 
 	JSObjectRef global_object = JSContextGetGlobalObject(context);
+	Win32UserWindow* user_window = this->window;
 	Host* tihost = window->GetHost();
 
 	// Produce a delegating object to represent the top-level
@@ -34,23 +35,47 @@ Win32WebKitFrameLoadDelegate::windowScriptObjectAvailable (
 	BoundObject* ti_object = new DelegateStaticBoundObject(global_tibo);
 	SharedBoundObject shared_ti_obj = SharedBoundObject(ti_object);
 
+	SharedValue ui_api_value = ti_object->Get("UI");
+	if (ui_api_value->IsObject())
+	{
+		// Create a delegate object for the UI API.
+		SharedBoundObject ui_api = ui_api_value->ToObject();
+		BoundObject* delegate_ui_api = new DelegateStaticBoundObject(ui_api);
+
+		// Place currentWindow in the delegate.
+		SharedBoundObject* shared_user_window = new SharedBoundObject(user_window);
+		SharedValue user_window_val = Value::NewObject(*shared_user_window);
+		delegate_ui_api->Set("currentWindow", user_window_val);
+
+		// Place currentWindow.createWindow in the delegate.
+		SharedValue create_window_value = user_window->Get("createWindow");
+		delegate_ui_api->Set("createWindow", create_window_value);
+
+		ti_object->Set("UI", Value::NewObject(delegate_ui_api));
+	}
+	else
+	{
+		std::cerr << "Could not find UI API point!" << std::endl;
+	}
+
+	// Place the Titanium object into the window's global object
+	BoundObject *global_bound_object = new KJSBoundObject(context, global_object);
+	SharedValue ti_object_value = Value::NewObject(shared_ti_obj);
+	global_bound_object->Set(GLOBAL_NS_VARNAME, ti_object_value);
+	//TODO: evaluate TI_WINDOW_BINDING_JS_CODE (as javascript) in the
+	//JS global context so that Titanium.Window.createWindow function
+	//is correctly defined to pass in parent  (see define in window_binding.h)
+
+
+	/*
+
 	// Set user window into the Titanium object
 	SharedBoundObject* shared_user_window = new SharedBoundObject(window);
 	SharedValue user_window_val = Value::NewObject(*shared_user_window);
 	BoundObject *current_window = new StaticBoundObject();
 	SharedBoundObject shared_current_window(current_window);
 	shared_current_window->Set("window", user_window_val);
-
-	SharedValue current_window_val = Value::NewObject(shared_current_window);
-	ti_object->Set("currentWindow", current_window_val);
-
-	// Place the Titanium object into the window's global object
-	BoundObject *global_bound_object = new KJSBoundObject(context, global_object);
-	SharedValue ti_object_value = Value::NewObject(shared_ti_obj);
-	global_bound_object->Set(GLOBAL_NS_VARNAME, ti_object_value);
-	//FIXME: evaluate TI_WINDOW_BINDING_JS_CODE (as javascript) in the
-	//JS global context so that Titanium.Window.createWindow function
-	//is correctly defined to pass in parent  (see define in window_binding.h)
+	*/
 
 	return S_OK;
 }
