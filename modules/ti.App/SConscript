@@ -20,5 +20,5 @@ else:
 	env.ParseConfig('pkg-config --cflags --libs libxml-2.0')
 
 
-s = env.SharedLibrary(target = tiBuild.dir + '/tiappmodule', source = Glob('*.cpp'))
+s = env.SharedLibrary(target = tiBuild.dir + '/tiappmodule', source = Glob('*.cpp') + Glob('Properties/*.cpp'))
 
