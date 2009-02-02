@@ -80,9 +80,9 @@ Export ('build')
 SConscript('kroll/SConscript', exports='debug')
 
 # Kroll *must not be required* for installation
-SConscript('installation/SConscript')
+#SConscript('installation/SConscript')
 
 # Kroll library is now built (hopefully)
-build.env.Append(LIBS=['kroll']) 
-SConscript('modules/SConscript')
-SConscript('launcher/SConscript')
+#build.env.Append(LIBS=['kroll']) 
+#SConscript('modules/SConscript')
+#SConscript('launcher/SConscript')
