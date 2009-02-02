@@ -89,6 +89,27 @@ namespace ti {
 		}
 	}
 
+	void GtkMenuItemImpl::AddChildrenTo(GtkWidget* menu)
+	{
+
+		std::vector<GtkMenuItemImpl*>::iterator c;
+		for (c = this->children.begin(); c != this->children.end(); c++)
+		{
+			MenuPieces* pieces = new MenuPieces();
+			(*c)->MakeMenuPieces(*pieces);
+			gtk_menu_shell_append(GTK_MENU_SHELL(menu), pieces->item);
+			gtk_widget_show(pieces->item);
+
+			if (this->IsSubMenu() || this->parent == NULL)
+			{
+				(*c)->AddChildrenTo(pieces->menu);
+			}
+
+			delete pieces;
+		}
+
+	}
+
 	void GtkMenuItemImpl::ClearRealization(GtkWidget *parent_menu)
 	{
 		std::vector<MenuPieces*>::iterator i;

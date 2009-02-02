@@ -354,7 +354,18 @@ namespace ti
 		STUB();
 		return NULL;
 	}
-	
+
+	void OSXUserWindow::SetContextMenu(SharedBoundList value)
+	{
+		STUB();
+	}
+
+	SharedBoundList OSXUserWindow::GetContextMenu()
+	{
+		STUB();
+		return NULL;
+	}
+
 	void OSXUserWindow::SetIcon(SharedString icon_path)
 	{
 		STUB();

@@ -32,6 +32,11 @@ namespace ti
 
 		GtkWidget* GetMenu();
 		GtkWidget* GetMenuBar();
+
+		/* This is used for transient menus, and the widgets
+		 * are not recorded in the instances list */
+		void AddChildrenTo(GtkWidget* menu);
+
 		void ClearRealization(GtkWidget *parent_menu);
 
 		void Enable();

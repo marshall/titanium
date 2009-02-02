@@ -27,11 +27,14 @@ namespace ti
 		void _CreateMenu(const ValueList& args, SharedValue result);
 		void _SetMenu(const ValueList& args, SharedValue result);
 		void _GetMenu(const ValueList& args, SharedValue result);
+		void _SetContextMenu(const ValueList& args, SharedValue result);
+		void _GetContextMenu(const ValueList& args, SharedValue result);
 		void _SetIcon(const ValueList& args, SharedValue result);
 		void _AddTray(const ValueList& args, SharedValue result);
 
 		virtual SharedPtr<MenuItem> CreateMenu() = 0;
 		virtual void SetMenu(SharedPtr<MenuItem>) = 0;
+		virtual void SetContextMenu(SharedPtr<MenuItem>) = 0;
 		virtual void SetIcon(SharedString icon_path) = 0;
 		virtual SharedPtr<TrayItem> AddTray(SharedString icon_path,
 		                                    SharedBoundMethod cb) = 0;

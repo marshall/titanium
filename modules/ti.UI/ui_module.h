@@ -61,12 +61,15 @@ namespace ti {
 
 		static void SetMenu(SharedPtr<MenuItem> menu);
 		static SharedPtr<MenuItem> GetMenu();
+		static void SetContextMenu(SharedPtr<MenuItem> menu);
+		static SharedPtr<MenuItem> GetContextMenu();
 		static void SetIcon(SharedString icon_path);
 		static SharedString GetIcon();
 
 		protected:
 		static SharedBoundObject global;
 		static SharedPtr<MenuItem> app_menu;
+		static SharedPtr<MenuItem> app_context_menu;
 		static SharedString icon_path;
 
 		DISALLOW_EVIL_CONSTRUCTORS(UIModule);

@@ -37,6 +37,10 @@ namespace ti
 		}
 	}
 
+	void Win32UIBinding::SetContextMenu(SharedPtr<MenuItem>)
+	{
+	}
+
 	void Win32UIBinding::SetIcon(SharedString icon_path)
 	{
 	}

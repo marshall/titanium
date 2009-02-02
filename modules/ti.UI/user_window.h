@@ -100,6 +100,9 @@ class UserWindow : public kroll::StaticBoundObject {
 		void _GetMenu(const kroll::ValueList&, kroll::SharedValue);
 		void _SetMenu(const kroll::ValueList&, kroll::SharedValue);
 
+		void _GetContextMenu(const kroll::ValueList&, kroll::SharedValue);
+		void _SetContextMenu(const kroll::ValueList&, kroll::SharedValue);
+
 		void _GetIcon(const kroll::ValueList&, kroll::SharedValue);
 		void _SetIcon(const kroll::ValueList&, kroll::SharedValue);
 
@@ -159,6 +162,8 @@ class UserWindow : public kroll::StaticBoundObject {
 		virtual void SetUsingChrome(bool chrome) = 0;
 		virtual void SetMenu(SharedBoundList menu) = 0;
 		virtual SharedBoundList GetMenu() = 0;
+		virtual void SetContextMenu(SharedBoundList menu) = 0;
+		virtual SharedBoundList GetContextMenu() = 0;
 		virtual void SetIcon(SharedString icon_path) = 0;
 		virtual SharedString GetIcon() = 0;
 

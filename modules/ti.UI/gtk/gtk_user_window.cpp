@@ -16,6 +16,10 @@ static void window_object_cleared_cb (WebKitWebView*,
                                       WebKitWebFrame*,
                                       JSGlobalContextRef,
                                       JSObjectRef, gpointer);
+static void destroy_cb (GtkWidget* widget, gpointer data);
+static void populate_popup_cb(WebKitWebView *web_view,
+                                GtkMenu *menu,
+                                gpointer data);
 
 GtkUserWindow::GtkUserWindow(Host *host, WindowConfig* config) : UserWindow(host, config)
 {
@@ -43,6 +47,10 @@ void GtkUserWindow::Open() {
 		WebKitWebView* web_view = WEBKIT_WEB_VIEW (webkit_web_view_new ());
 		g_signal_connect(G_OBJECT (web_view), "window-object-cleared",
 		                 G_CALLBACK (window_object_cleared_cb),
+		                 this);
+
+		g_signal_connect(G_OBJECT (web_view), "populate-popup",
+		                 G_CALLBACK (populate_popup_cb),
 		                 this);
 
 		GtkWidget* view_container = NULL;
@@ -283,6 +291,31 @@ static void window_object_cleared_cb (WebKitWebView* web_view,
 	global_bound_object->Set(GLOBAL_NS_VARNAME, ti_object_value);
 
 }
+
+static void populate_popup_cb(WebKitWebView *web_view,
+                               GtkMenu *menu,
+                               gpointer data)
+{
+	GtkUserWindow* user_window = (GtkUserWindow*) data;
+	SharedPtr<GtkMenuItemImpl> m =
+		user_window->GetContextMenu().cast<GtkMenuItemImpl>();
+
+	if (m.isNull())
+		m = UIModule::GetContextMenu().cast<GtkMenuItemImpl>();
+
+	GList* children = gtk_container_get_children(GTK_CONTAINER(menu));
+	for (size_t i = 0; i < g_list_length(children); i++)
+	{
+		GtkWidget* w = (GtkWidget*) g_list_nth_data(children, i);
+		gtk_container_remove(GTK_CONTAINER(menu), w);
+	}
+
+	if (m.isNull())
+		return;
+
+	m->AddChildrenTo(GTK_WIDGET(menu));
+}
+
 
 void GtkUserWindow::Hide() {
 	this->config->SetVisible(false);
@@ -545,6 +578,18 @@ SharedBoundList GtkUserWindow::GetMenu()
 {
 	return this->menu;
 }
+
+void GtkUserWindow::SetContextMenu(SharedBoundList value)
+{
+	SharedPtr<GtkMenuItemImpl> menu = value.cast<GtkMenuItemImpl>();
+	this->context_menu = menu;
+}
+
+SharedBoundList GtkUserWindow::GetContextMenu()
+{
+	return this->context_menu;
+}
+
 
 void GtkUserWindow::SetIcon(SharedString icon_path)
 {

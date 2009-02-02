@@ -452,6 +452,17 @@ SharedBoundList Win32UserWindow::GetMenu()
 	return NULL;
 }
 
+void Win32UserWindow::SetContextMenu(SharedBoundList value)
+{
+	STUB();
+}
+
+SharedBoundList Win32UserWindow::GetContextMenu()
+{
+	STUB();
+	return NULL;
+}
+
 void Win32UserWindow::SetIcon(SharedString icon_path)
 {
 	STUB();

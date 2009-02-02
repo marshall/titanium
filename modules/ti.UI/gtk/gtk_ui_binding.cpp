@@ -20,7 +20,7 @@ namespace ti
 		return menu;
 	}
 
-	void GtkUIBinding::SetMenu(SharedPtr<MenuItem>)
+	void GtkUIBinding::SetMenu(SharedPtr<MenuItem> new_menu)
 	{
 		// Notify all windows that the app menu has changed.
 		std::vector<UserWindow*>& windows = UserWindow::GetWindows();
@@ -33,6 +33,10 @@ namespace ti
 
 			i++;
 		}
+	}
+
+	void GtkUIBinding::SetContextMenu(SharedPtr<MenuItem> new_menu)
+	{
 	}
 
 	void GtkUIBinding::SetIcon(SharedString icon_path)

@@ -8,7 +8,7 @@
       <title>test</title>
       <url>app://index.html</url>
       <width>700</width>
-      <height>620</height>
+      <height>900</height>
 		<fullscreen>false</fullscreen>
    </window>
 </ti:app>

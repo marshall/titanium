@@ -21,6 +21,7 @@ namespace ti
 
 		SharedPtr<MenuItem> CreateMenu();
 		void SetMenu(SharedPtr<MenuItem>);
+		void SetContextMenu(SharedPtr<MenuItem>);
 		void SetIcon(SharedString icon_path);
 		SharedPtr<TrayItem> AddTray(SharedString icon_path,
 		                            SharedBoundMethod cb);

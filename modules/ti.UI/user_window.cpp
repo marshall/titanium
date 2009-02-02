@@ -90,6 +90,8 @@ UserWindow::UserWindow(kroll::Host *host, WindowConfig *config) :
 	this->SetMethod("setTransparency", &UserWindow::_SetTransparency);
 	this->SetMethod("setMenu", &UserWindow::_SetMenu);
 	this->SetMethod("getMenu", &UserWindow::_GetMenu);
+	this->SetMethod("setContextMenu", &UserWindow::_SetContextMenu);
+	this->SetMethod("getContextMenu", &UserWindow::_GetContextMenu);
 	this->SetMethod("setIcon", &UserWindow::_SetIcon);
 	this->SetMethod("getIcon", &UserWindow::_GetIcon);
 
@@ -433,6 +435,21 @@ void UserWindow::_SetMenu(const kroll::ValueList& args, kroll::SharedValue resul
 void UserWindow::_GetMenu(const kroll::ValueList& args, kroll::SharedValue result)
 {
 	result->SetObject(this->GetMenu());
+}
+
+void UserWindow::_SetContextMenu(const kroll::ValueList& args, kroll::SharedValue result)
+{
+	SharedPtr<MenuItem> menu = NULL; // A NULL value is an unset
+	if (args.size() > 0 && args.at(0)->IsList())
+	{
+		menu = args.at(0)->ToList().cast<MenuItem>();
+	}
+	this->SetContextMenu(menu);
+}
+
+void UserWindow::_GetContextMenu(const kroll::ValueList& args, kroll::SharedValue result)
+{
+	result->SetObject(this->GetContextMenu());
 }
 
 void UserWindow::_SetIcon(const kroll::ValueList& args, kroll::SharedValue result)

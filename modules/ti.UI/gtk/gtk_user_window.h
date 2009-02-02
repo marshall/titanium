@@ -73,10 +73,13 @@ namespace ti
 		void SetFullScreen(bool fullscreen);
 
 		void SetMenu(SharedBoundList menu);
-		SharedBoundList GetMenu(); // me
+		SharedBoundList GetMenu();
 
-		void SetIcon(SharedString icon_path); // me
-		SharedString GetIcon(); // me
+		void SetContextMenu(SharedBoundList menu);
+		SharedBoundList GetContextMenu();
+
+		void SetIcon(SharedString icon_path);
+		SharedString GetIcon();
 
 	protected:
 		GtkWindow* gtk_window;
@@ -95,7 +98,7 @@ namespace ti
 		SharedPtr<GtkMenuItemImpl> menu_in_use;
 
 		/*
-		 * The widget this window is for a menu.
+		 * The widget this window uses for a menu.
 		 */
 		GtkWidget* menu_bar;
 
@@ -103,6 +106,12 @@ namespace ti
 		 * The path to this window's icon
 		 */
 		SharedString icon_path;
+
+		/*
+		 * The widget this window uses for a context menu.
+		 */
+		SharedPtr<GtkMenuItemImpl> context_menu;
+
 	};
 
 }

@@ -67,6 +67,8 @@ namespace ti
 
 			void SetMenu(SharedBoundList menu);
 			SharedBoundList GetMenu();
+			void SetContextMenu(SharedBoundList menu);
+			SharedBoundList GetContextMenu();
 			void SetIcon(SharedString icon_path);
 			SharedString GetIcon();
 

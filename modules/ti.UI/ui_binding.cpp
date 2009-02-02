@@ -21,6 +21,8 @@ namespace ti
 		this->SetMethod("createMenu", &UIBinding::_CreateMenu);
 		this->SetMethod("setMenu", &UIBinding::_SetMenu);
 		this->SetMethod("getMenu", &UIBinding::_GetMenu);
+		this->SetMethod("setContextMenu", &UIBinding::_SetContextMenu);
+		this->SetMethod("getContextMenu", &UIBinding::_GetContextMenu);
 		this->SetMethod("setIcon", &UIBinding::_SetIcon);
 		this->SetMethod("addTray", &UIBinding::_AddTray);
 
@@ -57,6 +59,26 @@ namespace ti
 		SharedBoundList list = menu;
 		result->SetList(list);
 	}
+
+	void UIBinding::_SetContextMenu(const ValueList& args, SharedValue result)
+	{
+		SharedPtr<MenuItem> menu = NULL; // A NULL value is an unset
+		if (args.size() > 0 && args.at(0)->IsList())
+		{
+			menu = args.at(0)->ToList().cast<MenuItem>();
+		}
+		UIModule::SetContextMenu(menu);
+		this->SetContextMenu(menu);
+
+	}
+
+	void UIBinding::_GetContextMenu(const ValueList& args, SharedValue result)
+	{
+		SharedPtr<MenuItem> menu = UIModule::GetContextMenu();
+		SharedBoundList list = menu;
+		result->SetList(list);
+	}
+
 
 	void UIBinding::_SetIcon(const ValueList& args, SharedValue result)
 	{

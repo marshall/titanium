@@ -36,6 +36,10 @@ namespace ti
 	{
 	}
 
+	void OSXUIBinding::SetContextMenu(SharedPtr<MenuItem>)
+	{
+	}
+
 	void OSXUIBinding::SetIcon(SharedString icon_path)
 	{
 	}

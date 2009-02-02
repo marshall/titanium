@@ -41,6 +41,24 @@
 			{
 				Titanium.UI.currentWindow.setMenu(null);
 			}
+			function setAppContextMenu()
+			{
+				var menu = preBakedMenu("App Context Menu");
+				Titanium.UI.setContextMenu(menu);
+			}
+			function unsetAppContextMenu()
+			{
+				Titanium.UI.setContextMenu(null);
+			}
+			function setWindowContextMenu()
+			{
+				var menu = preBakedMenu("Window Context Menu");
+				Titanium.UI.currentWindow.setContextMenu(menu);
+			}
+			function unsetWindowContextMenu()
+			{
+				Titanium.UI.currentWindow.setContextMenu(null);
+			}
 			function addTrayIcon()
 			{
 				var cb = function()
@@ -128,6 +146,23 @@
 				<span style="font-size: 10px;">(should revert to app menu)</span>
 			</td>
 			<td><button onclick="unsetAppMenu()">Remove App Menu</button><br/>
+				<span style="font-size: 10px;">(no more menus)</span>
+			</td>
+		</tr></table>
+		</div>
+
+		<div>Menus:<br/>
+		<table>
+		<tr>
+			<td> <button onclick="setAppContextMenu()">App Context Menu</button></td>
+			<td><button onclick="setWindowContextMenu()">Window Context Menu</button><br/>
+				<span style="font-size: 10px;">(should override app menu)</span>
+			</td>
+		</tr><tr>
+			<td> <button onclick="unsetWindowContextMenu()">Remove Window Menu</button><br/>
+				<span style="font-size: 10px;">(should revert to app menu)</span>
+			</td>
+			<td><button onclick="unsetAppContextMenu()">Remove App Menu</button><br/>
 				<span style="font-size: 10px;">(no more menus)</span>
 			</td>
 		</tr></table>

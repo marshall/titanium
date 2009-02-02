@@ -46,6 +46,7 @@ namespace ti
 
 	SharedBoundObject UIModule::global = SharedBoundObject(NULL);
 	SharedPtr<MenuItem> UIModule::app_menu = SharedPtr<MenuItem>(NULL);
+	SharedPtr<MenuItem> UIModule::app_context_menu = SharedPtr<MenuItem>(NULL);
 	SharedString UIModule::icon_path = SharedString(NULL);
 
 	void UIModule::Initialize()
@@ -134,6 +135,16 @@ namespace ti
 	SharedPtr<MenuItem> UIModule::GetMenu()
 	{
 		return UIModule::app_menu;
+	}
+
+	void UIModule::SetContextMenu(SharedPtr<MenuItem> menu)
+	{
+		UIModule::app_context_menu = menu;
+	}
+
+	SharedPtr<MenuItem> UIModule::GetContextMenu()
+	{
+		return UIModule::app_context_menu;
 	}
 
 	void UIModule::SetIcon(SharedString icon_path)
