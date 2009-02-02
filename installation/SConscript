@@ -2,4 +2,5 @@
 import os
 Import('build')
 
+Execute(Mkdir(os.path.join(build.dir, 'tinstaller')))
 SConscript(os.path.join('installer',build.os,'SConscript'), build_dir=os.path.join(build.dir,'tinstaller'), duplicate=0)
