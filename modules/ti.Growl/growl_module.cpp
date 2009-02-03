@@ -37,7 +37,7 @@ namespace ti
 		host->GetGlobalObject()->Set("Growl", value);
 	}
 
-	void GrowlModule::Destroy()
+	void GrowlModule::Stop()
 	{
 	}
 

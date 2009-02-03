@@ -24,7 +24,7 @@ namespace ti
 		host->GetGlobalObject()->Set("Filesystem",value);
 	}
 
-	void FilesystemModule::Destroy()
+	void FilesystemModule::Stop()
 	{
 
 	}

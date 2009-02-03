@@ -57,7 +57,7 @@ namespace ti
 		host->GetGlobalObject()->Set("App",value);
 	}
 
-	void AppModule::Destroy()
+	void AppModule::Stop()
 	{
 	}
 }

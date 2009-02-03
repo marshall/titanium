@@ -24,7 +24,7 @@ namespace ti
 		host->GetGlobalObject()->Set("Desktop",value);
 	}
 
-	void DesktopModule::Destroy()
+	void DesktopModule::Stop()
 	{
 	}
 }

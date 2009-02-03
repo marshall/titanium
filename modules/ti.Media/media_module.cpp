@@ -24,7 +24,7 @@ namespace ti
 		host->GetGlobalObject()->Set("Media",value);
 	}
 
-	void MediaModule::Destroy()
+	void MediaModule::Stop()
 	{
 	}
 }
