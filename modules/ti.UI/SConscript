@@ -54,7 +54,7 @@ if build.is_osx():
 if build.is_win32():
 	manifest1 = os.path.join(build.dir, 'tiuimodule.embed.manifest')
 	manifest2 = os.path.join(build.dir, 'tiuimodule.dll.manifest')
-	env.AddPostAction(s, 'mt.exe /nologo /manifest ' + manifest2 + ' /tlb:' + path.join(webkit_lib, 'WebKit.tlb') + ' /dll:bin/WebKit /out:'+manifest1)
+	env.AddPostAction(s, 'mt.exe /nologo /manifest "' + manifest2 + '" /tlb:"' + path.join(webkit_lib, 'WebKit.tlb') + '" /dll:bin/WebKit /out:"'+manifest1+'"')
 	#env.AddPostAction(s, 'mt.exe /nologo /tlb:' + path.join(win32_webkit, 'lib', 'WebKit.tlb') + ' /dll:WebKit /outputresource:'+build.dir+'/tikernel.exe;1')
-	env.AddPostAction(s, 'mt.exe -nologo -manifest "'+manifest1+'" -outputresource:'+build.dir+'/kkernel.exe;1')
+	#env.AddPostAction(s, 'mt.exe -nologo -manifest "'+manifest1+'" -outputresource:"'+build.dir+'/kkernel.exe;1"')
 	#env.AddPostAction(s, 'mt.exe -nologo -manifest "'+manifest1+'" -outputresource:'+build.dir+'/tiuimodule.dll;2')
