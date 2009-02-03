@@ -1,7 +1,9 @@
+#!/usr/bin/env ruby
 #
 # Titanium Runtime Bundle Builder
 #
 #
+require 'rubygems'
 require 'fileutils'
 require 'zip/zip'
 
@@ -78,30 +80,37 @@ case OS
 		out.close
 	when 'osx'
 		app = File.join(OUTDIR,"#{NAME}.app")
-		FileUtils.rm_rf zf if File.exists?(app)
+		FileUtils.rm_rf app if File.exists?(app)
 		contents = File.join(app,'Contents')
 		macos = File.join(contents,'MacOS')
 		resources = File.join(contents,'Resources')
 		runtime = File.join(contents,'runtime')
 		modules = File.join(contents,'modules')
 		lproj = File.join(resources,'English.lproj')
+		
+		FileUtils.mkdir_p [contents,macos,resources,runtime,modules,lproj]
 
 		RUNTIME.each do |file|
-			dir = File.join(modules,file)
-			FileUtils.mkdir dir
-			FileUtils.cp File.join(OUTDIR,"lib#{file}.dylib"), dir
+			FileUtils.cp File.join(OUTDIR,"lib#{file}.dylib"), runtime
 		end
 		THIRDPARTY.each do |lib|
-			Dir["#{TOPDIR}/kroll/thirdparty/#{OS}/#{lib}/bin/*"].each do |f|
+			Dir["#{TOPDIR}/kroll/thirdparty/#{OS}/#{lib}/lib/*"].each do |f|
+			  next if File.basename(f)=~/6/  #FIXME: deal with this
 				FileUtils.cp f,runtime
 			end
 		end
 		MODULES.each do |m|
 			mf = File.join(OUTDIR,"lib#{m}module.dylib")
 			next unless File.exists?(mf)
-			FileUtils.cp mf,File.join(modules,m)
+			dir = File.join(modules,m)
+			FileUtils.mkdir dir
+			FileUtils.cp mf,dir
 			manifest << "#{m}:#{VER}\n"
 		end
+		manf = File.open "#{contents}/manifest",'w'
+		manf.puts manifest
+		manf.close
+		FileUtils.cp "#{OUTDIR}/kboot","#{macos}/#{NAME}"
 		FileUtils.cp_r "#{TOPDIR}/installation/runtime/.",contents
 		FileUtils.cp_r "#{SUPPORTDIR}/titanium.icns",lproj
 		plist = File.read "#{SUPPORTDIR}/Info.plist"
@@ -112,6 +121,8 @@ case OS
 		plistf = File.open(File.join(contents,'Info.plist'),'w')	
 		plistf.puts plist
 		plistf.close
+		
+		#TODO: build DMG
 		
 	when 'linux'
 end
