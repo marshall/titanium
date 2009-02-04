@@ -15,7 +15,7 @@ static void cancel_cb(GtkWidget *widget, gpointer data);
 static void destroy_cb(GtkWidget *widget, gpointer data);
 
 #define WINDOW_WIDTH 350 
-#define WINDOW_HEIGHT 150 
+#define WINDOW_HEIGHT 130
 
 Installer::Installer(
 	std::string app_name,
@@ -80,7 +80,7 @@ Installer::Installer(
 	GtkWidget* vbox = gtk_vbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), this->bar, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox2, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox2, FALSE, FALSE, 10);
 
 	gtk_container_add(GTK_CONTAINER(this->window), vbox);
 
@@ -118,6 +118,7 @@ void Installer::Run()
 
 	if (r == GTK_RESPONSE_YES)
 	{
+	
 		this->StartDownloading();
 
 		int timer = g_timeout_add(100, watcher, this);
@@ -128,6 +129,7 @@ void Installer::Run()
 		gdk_threads_leave();
 
 		g_source_remove(timer);
+
 	}
 
 }
@@ -144,16 +146,21 @@ void Installer::StartDownloading()
 
 void Installer::StartInstalling()
 {
-	g_thread_join(this->download_thread);
+	if (this->download_thread != NULL)
+	{
+		g_thread_join(this->download_thread);
 
-	// This has to happen when no other threads are
-	// running, since CURL's global shutdown is not
-	// thread safe and we need access to downloaded
-	// files now.
-	Job::ShutdownDownloader();
+		// This has to happen when no other threads are
+		// running, since CURL's global shutdown is not
+		// thread safe and we need access to downloaded
+		// files now.
+		Job::ShutdownDownloader();
 
-	if(!g_thread_create(&install_thread_f, this, FALSE, NULL))
-		g_warning("Can't create install thread!\n");
+		if(!g_thread_create(&install_thread_f, this, FALSE, NULL))
+			g_warning("Can't create install thread!\n");
+
+		this->download_thread = NULL;
+	}
 }
 
 

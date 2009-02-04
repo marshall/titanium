@@ -99,9 +99,13 @@ void Job::Fetch()
 
 		if (result != CURLE_OK)
 			throw std::string("Download failJob::ed: some files failed to download.");
+		fflush(out);
+		fclose(out);
+
 	}
 	catch (...)
 	{
+		printf("Error\n");
 		// Cleanup
 		if (out != NULL)
 		{
@@ -109,13 +113,6 @@ void Job::Fetch()
 			fclose(out);
 		}
 		throw;
-	}
-
-	// Cleanup
-	if (out != NULL)
-	{
-		fflush(out);
-		fclose(out);
 	}
 
 	this->progress = 1.0;
@@ -184,7 +181,7 @@ int curl_progress_func(
 	double ulnow)
 {
 
-	sleep(1);
+	usleep(10000);
 
 	if (job->GetInstaller()->IsCancelled())
 		return 1;
