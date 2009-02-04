@@ -184,7 +184,7 @@
 		// will cause the window to be shown once the url is loaded
 		requiresDisplay = YES;
 	}
-	NSURL *url = [NSURL URLWithString:[NSString stringWithCString:config->GetURL().c_str()]];
+	NSURL *url = [TiApplication normalizeURL:[NSString stringWithCString:config->GetURL().c_str()]];
     [[webView mainFrame] loadRequest:[NSURLRequest requestWithURL:url]];
 }
 - (void)close

@@ -25,11 +25,13 @@ namespace ti
 	{
 		public:
 			File(std::string filename);
-		protected:
 			virtual ~File();
+			std::string& GetFilename() { return this->filename; }
+			
 		private:
 			std::string filename;
 			Poco::FileInputStream* readLineFS;
+			
 
 			/**
 			 * Function: ToString
@@ -169,7 +171,7 @@ namespace ti
 			 * Returns:
 			 *   true if the directory is created; false otherwise
 			 */
-			void CreateDirectoryX(const ValueList& args, SharedValue result);
+			void CreateDirectory(const ValueList& args, SharedValue result);
 			/**
 			 * Function: DeleteDirectory
 			 *   Deletes this directory
@@ -190,7 +192,7 @@ namespace ti
 			 * Returns:
 			 *   true if the file is deleted; false otherwise
 			 */
-			void DeleteFileX(const ValueList& args, SharedValue result);
+			void DeleteFile(const ValueList& args, SharedValue result);
 			/**
 			 * Function: GetDirectoryListing
 			 *   Gets a list of files/directories under this directory

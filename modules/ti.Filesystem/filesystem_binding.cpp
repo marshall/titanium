@@ -6,6 +6,7 @@
 #include <kroll/kroll.h>
 #include "filesystem_binding.h"
 #include "file.h"
+#include "async_copy.h"
 
 #include "api/file_utils.h"
 
@@ -25,7 +26,7 @@
 
 namespace ti
 {
-	FilesystemBinding::FilesystemBinding(SharedBoundObject global) : global(global)
+	FilesystemBinding::FilesystemBinding(Host *host, SharedBoundObject global) : host(host), global(global)
 	{
 		this->SetMethod("createTempFile",&FilesystemBinding::CreateTempFile);
 		this->SetMethod("createTempDirectory",&FilesystemBinding::CreateTempDirectory);
@@ -38,6 +39,7 @@ namespace ti
 		this->SetMethod("getLineEnding",&FilesystemBinding::GetLineEnding);
 		this->SetMethod("getSeparator",&FilesystemBinding::GetSeparator);
 		this->SetMethod("getRootDirectories",&FilesystemBinding::GetRootDirectories);
+		this->SetMethod("asyncCopy",&FilesystemBinding::AsyncCopy);
 	}
 	FilesystemBinding::~FilesystemBinding()
 	{
@@ -77,10 +79,32 @@ namespace ti
 	}
 	void FilesystemBinding::GetFile(const ValueList& args, SharedValue result)
 	{
-		std::string filename = args.at(0)->ToString();
-
+		std::string filename;
+		if (args.at(0)->IsList())
+		{
+			// you can pass in an array of parts to join
+			SharedBoundList list = args.at(0)->ToList();
+			for (int c=0;c<list->Size();c++)
+			{
+				std::string arg = list->At(c)->ToString();
+				filename = kroll::FileUtils::Join(filename.c_str(),arg.c_str(),NULL);
+			}
+		}
+		else
+		{
+			// you can pass in vararg of strings which acts like 
+			// a join
+			for (size_t c=0;c<args.size();c++)
+			{
+				std::string arg = args.at(c)->ToString();
+				filename = kroll::FileUtils::Join(filename.c_str(),arg.c_str(),NULL);
+			}
+		}
+		if (filename.empty())
+		{
+			throw ValueException::FromString("invalid file type");
+		}
 		ti::File* file = new ti::File(filename);
-
 		result->SetObject(file);
 	}
 	void FilesystemBinding::GetApplicationDirectory(const ValueList& args, SharedValue result)
@@ -209,5 +233,68 @@ namespace ti
 		{
 			throw ValueException::FromString(exc.displayText());
 		}
+	}
+	void FilesystemBinding::AsyncCopy(const ValueList& args, SharedValue result)
+	{
+		if (args.size()!=3)
+		{
+			throw ValueException::FromString("invalid arguments - this method takes 3 arguments");
+		}
+		std::vector<std::string> files;
+		if (args.at(0)->IsString())
+		{
+			files.push_back(args.at(0)->ToString());
+		}
+		else if (args.at(0)->IsList())
+		{
+			SharedBoundList list = args.at(0)->ToList();
+			for (int c=0;c<list->Size();c++)
+			{
+				SharedValue v = list->At(c);
+				if (v->IsString())
+				{
+					files.push_back(v->ToString());
+				}
+				else if (v->IsObject())
+				{
+					SharedBoundObject bo = v->ToObject();
+					SharedPtr<File> file = bo.cast<File>();
+					if (file.isNull())
+					{
+						throw ValueException::FromString("invalid type passed as first argument");
+					}
+					files.push_back(file->GetFilename());
+				}
+			}
+		}
+		else if (args.at(0)->IsObject())
+		{
+			SharedBoundObject bo = args.at(0)->ToObject();
+			SharedPtr<File> file = bo.cast<File>();
+			if (file.isNull())
+			{
+				throw ValueException::FromString("invalid type passed as first argument");
+			}
+			files.push_back(file->GetFilename());
+		}
+		std::string destination;
+		SharedValue v = args.at(1);
+		if (v->IsString())
+		{
+			destination = v->ToString();
+		}
+		else if (v->IsObject())
+		{
+			SharedBoundObject bo = v->ToObject();
+			SharedPtr<File> file = bo.cast<File>();
+			if (file.isNull())
+			{
+				throw ValueException::FromString("invalid type passed as first argument");
+			}
+			destination = file->GetFilename();
+		}
+		SharedBoundMethod method = args.at(2)->ToMethod();
+		SharedBoundObject copier = new ti::AsyncCopy(host,files,destination,method);
+		result->SetObject(copier);
 	}
 }

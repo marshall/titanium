@@ -7,6 +7,7 @@ require 'rubygems'
 require 'fileutils'
 require 'zip/zip'
 
+#change this too
 NAME="titanium_runtime"
 VER = 0.1
 RUNTIME_VER = 0.2
@@ -98,9 +99,12 @@ case OS
 			  next if File.basename(f)=~/6/  #FIXME: deal with this
 				FileUtils.cp f,runtime
 			end
+			#FIXME! deal with symlinks
 			Dir["#{TOPDIR}/kroll/thirdparty/#{OS}/#{lib}/*.framework"].each do |f|
 			  FileUtils.mkdir File.join(runtime,File.basename(f))
 				FileUtils.cp_r "#{f}/.",File.join(runtime,File.basename(f))
+				FileUtils.rm_rf File.join(runtime,File.basename(f),'Headers')
+				FileUtils.rm_rf File.join(runtime,File.basename(f),'PrivateHeaders')
 			end
 		end
 		MODULES.each do |m|
@@ -115,6 +119,7 @@ case OS
 		manf.puts manifest
 		manf.close
 		FileUtils.cp "#{OUTDIR}/kboot","#{macos}/#{NAME}"
+		## change to my  dir name
 		FileUtils.cp_r "#{TOPDIR}/installation/runtime/.",contents
 		FileUtils.cp_r "#{SUPPORTDIR}/titanium.icns",lproj
 		FileUtils.cp_r "#{OUTDIR}/modules/ti.UI/MainMenu.nib",lproj

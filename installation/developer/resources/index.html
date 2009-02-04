@@ -1,0 +1,199 @@
+<html>
+<head>
+	<script type="text/javascript" charset="utf-8" src="js/jquery.js"></script>
+	<script type="text/javascript" charset="utf-8" src="js/jquery-ui.js"></script>
+	<link rel="stylesheet" href="css/index.css" type="text/css" media="screen" charset="utf-8" />
+	<link rel="stylesheet" href="css/themes/ui.all.css" type="text/css" media="screen" charset="utf-8" />
+
+
+</head>
+
+<body id="body"> 
+
+	<div id="body_content">
+		
+		<!-- LOGO -->
+		<div id="logo"></div>
+
+		<!-- HOME SCREEN -->
+		<div id="intro" class="page">
+			<div class="header_text">Welcome to Titanuim Developer</div>
+			<div class="section text">What would you like to do?</div>
+			<div class="section text">
+				<div id="new" class="button1 " style="width:250px;">
+					<div class="button2">
+						Create a new project
+					</div>
+				</div>
+			</div>
+			<div style="clear:both"></div>
+			<div class="section text">
+				<div id="package" class="button1"  style="width:250px;">
+					<div class="button2">
+						Package existing project
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<!-- PACKAGE PROJECT -->
+		<div id="package_project" style="display:none" class="page">
+			<div class="header_text">Package Existing Project</div>
+
+			<div class="section text">
+				<span style="margin-right:10px">Select Project:</span>
+				<select id="project_select">
+					<option value="1">Project 1</option>
+					<option value="2">Project 2</option>
+					<option value="3">Project 3</option>
+				</select>
+			</div>
+			
+			<div class="section_text">
+				<div class="text" style="margin-bottom:20px;margin-top:20px">
+					Select one or more targets (click to select)
+				</div>
+				<div class="button1" id="win"  style="float:left;margin-right:10px;height:60px">
+					<div class="button2" style="height:58px">
+						<img src="images/win_small.png" style="position:relative;top:7px"/>
+					</div>
+					<div style="margin-top:5px;margin-bottom:10px;display:none"  id="win_yes" >
+						<img src="images/accept.png"  style="position:relative;left:35px">
+					</div>
+
+				</div>
+				<div class="button1" id="mac"  style="float:left;margin-right:10px;height:60px">
+					<div class="button2" style="height:58px">
+						<img src="images/mac_small.png" style="position:relative;top:5px"/>
+					</div>
+					<div style="margin-top:5px;margin-bottom:10px;display:none" id="mac_yes">
+						<img src="images/accept.png"  style="position:relative;left:35px">
+					</div>
+				</div>
+				<div class="button1" id="linux"  style="float:left;margin-right:10px;height:60px">
+					<div class="button2" style="height:58px">
+						<img src="images/linux_small.png" style="position:relative;top:5px"/>
+					</div>
+					<div style="margin-top:5px;margin-bottom:10px;display:none"  id="linux_yes">
+						<img src="images/accept.png" style="position:relative;left:35px" >
+					</div>
+				</div>
+
+			</div>
+			<div style="clear:both"></div>
+
+			<div class="section text" style="margin-top:40px">
+				<div class="button1" id="create_package"  style="float:left;margin-right:10px">
+					<div class="button2">
+						Package
+					</div>
+				</div>
+				<div class="button1" id="cancel_package" style="float:left;" >
+					<div class="button2">
+						Cancel
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<!-- NEW PROJECT -->
+		<div id="new_project" style="display:none" class="page">
+			<div class="header_text">Create a New Project</div>
+			<table class="section text" cellspacing="15px">
+				<tr>
+					<td valign="middle">Project Name:</td>
+					<td> <input type="text" id="project_name"/> </td>
+				</tr>
+				<tr>
+					<td valign="middle">Location:</td>
+					<td> 
+						<input type="text" id="project_location" style="float:left"/> 
+						<div class="button1" id="file_browse"
+							style="float:left;width:25px;height:25px;position:relative;top:1px;margin-left:10px" >
+							<div class="button2" style="height:23px">
+								<img src="images/folder_go.png" style="position:relative;top:3px;left:1px"/>
+							</div>
+						</div>
+					</td>
+				</tr>
+
+			</table>
+			<div class="section text">
+				<div class="button1" id="create_new"  style="float:left;margin-right:10px">
+					<div class="button2">
+						Create
+					</div>
+				</div>
+				<div class="button1" id="cancel_new" style="float:left;" >
+					<div class="button2">
+						Cancel
+					</div>
+				</div>
+
+			</div>
+			
+		</div>
+	</div>
+
+<script>
+
+$('#mac').click(function()
+{
+	$('#mac_yes').toggle(500);
+})
+$('#win').click(function()
+{
+	$('#win_yes').toggle(500);
+})
+$('#linux').click(function()
+{
+	$('#linux_yes').toggle(500);
+})
+
+$('#cancel_new').click(function()
+{
+	$('#new_project').slideUp(500,function()
+	{
+		$('#intro').fadeIn(1200);
+		Titanium.UI.currentWindow.setHeight(250);
+		
+	});
+})
+$('#cancel_package').click(function()
+{
+	$('#package_project').slideUp(500,function()
+	{
+		$('#intro').fadeIn(1200);
+		Titanium.UI.currentWindow.setHeight(250);		
+	});
+})
+
+$('#new').click(function()
+{
+	$('#body_content').animate({'height':'230px'},700);
+
+	$('#intro').slideUp(500,function()
+	{
+		$('#new_project').fadeIn()
+		Titanium.UI.currentWindow.setHeight(300);
+		
+	});
+});
+$('#package').click(function()
+{
+	$('#intro').slideUp(500,function()
+	{
+		$('#linux_yes').hide();
+		$('#win_yes').hide();
+		$('#mac_yes').hide();
+		$('#project_select').get(0).selectedIndex=0;
+		$('#package_project').fadeIn(1200);
+		Titanium.UI.currentWindow.setHeight(350);
+
+		
+	});
+	
+});
+</script>
+</body>
+</html>
