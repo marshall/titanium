@@ -36,7 +36,7 @@ function runCopyTasks()
 	{
 		var task = tasks.shift();
 		//FIXME: copy actually copies symlinks inside of moving them...
-		copiers.push(Titanium.Filesystem.asyncCopy(task.files,task.dest,function(filename,_count,_total)
+		Titanium.Filesystem.asyncCopy(task.files,task.dest,function(filename,_count,_total)
 		{
 			current+=moveby;
 			count++;
@@ -51,7 +51,7 @@ function runCopyTasks()
 			{
 				runCopyTasks();
 			}
-		}));
+		});
 	}
 }
 

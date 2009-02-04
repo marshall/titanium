@@ -20,6 +20,7 @@
 #include <Poco/Thread.h>
 #include <Poco/Exception.h>
 #include <Poco/File.h>
+#include "filesystem_binding.h"
 
 
 namespace ti
@@ -27,10 +28,11 @@ namespace ti
 	class AsyncCopy : public StaticBoundObject
 	{
 		public:
-			AsyncCopy(kroll::Host *host,std::vector<std::string> files, std::string destination, SharedBoundMethod callback);
+			AsyncCopy(FilesystemBinding* parent,kroll::Host *host,std::vector<std::string> files, std::string destination, SharedBoundMethod callback);
 			virtual ~AsyncCopy();
 
 		private:
+			FilesystemBinding* parent;
 			Host *host;
 			std::vector<std::string> files;
 			std::string destination;

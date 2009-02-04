@@ -26,7 +26,7 @@
 
 namespace ti
 {
-	FilesystemBinding::FilesystemBinding(Host *host, SharedBoundObject global) : host(host), global(global)
+	FilesystemBinding::FilesystemBinding(Host *host, SharedBoundObject global) : host(host), global(global), timer(0)
 	{
 		this->SetMethod("createTempFile",&FilesystemBinding::CreateTempFile);
 		this->SetMethod("createTempDirectory",&FilesystemBinding::CreateTempDirectory);
@@ -39,11 +39,16 @@ namespace ti
 		this->SetMethod("getLineEnding",&FilesystemBinding::GetLineEnding);
 		this->SetMethod("getSeparator",&FilesystemBinding::GetSeparator);
 		this->SetMethod("getRootDirectories",&FilesystemBinding::GetRootDirectories);
-		this->SetMethod("asyncCopy",&FilesystemBinding::AsyncCopy);
+		this->SetMethod("asyncCopy",&FilesystemBinding::ExecuteAsyncCopy);
 	}
 	FilesystemBinding::~FilesystemBinding()
 	{
-
+		if (this->timer!=NULL)
+		{
+			this->timer->stop();
+			delete this->timer;
+			this->timer = NULL;
+		}
 	}
 	void FilesystemBinding::CreateTempFile(const ValueList& args, SharedValue result)
 	{
@@ -234,7 +239,7 @@ namespace ti
 			throw ValueException::FromString(exc.displayText());
 		}
 	}
-	void FilesystemBinding::AsyncCopy(const ValueList& args, SharedValue result)
+	void FilesystemBinding::ExecuteAsyncCopy(const ValueList& args, SharedValue result)
 	{
 		if (args.size()!=3)
 		{
@@ -294,7 +299,56 @@ namespace ti
 			destination = file->GetFilename();
 		}
 		SharedBoundMethod method = args.at(2)->ToMethod();
-		SharedBoundObject copier = new ti::AsyncCopy(host,files,destination,method);
+		SharedBoundObject copier = new ti::AsyncCopy(this,host,files,destination,method);
 		result->SetObject(copier);
+		asyncOperations.push_back(copier);
+		// we need to create a timer thread that can cleanup operations
+		if (timer==NULL)
+		{
+			this->SetMethod("_invoke",&FilesystemBinding::DeletePendingOperations);
+			timer = new Poco::Timer(500,10000);
+			Poco::TimerCallback<FilesystemBinding> cb(*this, &FilesystemBinding::OnAsyncOperationTimer);
+			timer->start(cb);
+		}
+		else
+		{
+			timer->restart(10000);
+		}
+	}
+	void FilesystemBinding::DeletePendingOperations(const ValueList& args, SharedValue result)
+	{
+		KR_DUMP_LOCATION
+std::cout << "BEFORE async count = " << asyncOperations.size() << std::endl;
+		while (asyncOperations.size() > 0)
+		{
+			SharedBoundObject c = (*(asyncOperations.begin()));
+			SharedValue v = c->Get("running");
+			bool running = v->ToBool();
+			if (!running)
+			{
+				asyncOperations.erase(asyncOperations.begin());
+			}
+		}
+		if (asyncOperations.size()==0)
+		{
+			this->timer->restart(0);
+		}
+std::cout << "AFTER async count = " << asyncOperations.size() << std::endl;
+	}
+	void FilesystemBinding::OnAsyncOperationTimer(Poco::Timer &timer)
+	{
+		std::cout << "TIMER FIRING: " << std::endl;
+#ifdef OS_OSX
+		NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+#endif
+		KR_DUMP_LOCATION
+		ValueList *args = new ValueList;
+		SharedPtr<ValueList> a(args);
+		SharedBoundMethod m = this->Get("_invoke")->ToMethod();
+		host->InvokeMethodOnMainThread(m,a);
+#ifdef OS_OSX
+		[pool release];
+#endif
+		std::cout << "AFTER TIMER FIRING: " << std::endl;
 	}
 }

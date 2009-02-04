@@ -7,8 +7,11 @@
 #ifndef _FILESYSTEM_BINDING_H_
 #define _FILESYSTEM_BINDING_H_
 
+#include <vector>
 #include <api/module.h>
 #include <api/binding/binding.h>
+#include <Poco/Mutex.h>
+#include <Poco/Timer.h>
 
 namespace ti
 {
@@ -16,11 +19,15 @@ namespace ti
 	{
 	public:
 		FilesystemBinding(Host*,SharedBoundObject);
-	protected:
 		virtual ~FilesystemBinding();
+		
 	private:
 		Host *host;
 		SharedBoundObject global;
+		std::vector< SharedBoundObject > asyncOperations;
+		Poco::Timer *timer;
+		
+		void OnAsyncOperationTimer(Poco::Timer &timer);
 
 		/**
 		 * Function: CreateTempFile
@@ -135,7 +142,7 @@ namespace ti
 		void GetRootDirectories(const ValueList& args, SharedValue result);
 
 		/**
-		 * Function: AsyncCopy
+		 * Function: ExecuteAsyncCopy
 		 *   performs an asynchoronous copy operation, making a callback
 		 *
 		 * Params:
@@ -145,7 +152,11 @@ namespace ti
 		 * Returns:
 		 *   an async copy object
 		 */
-		void AsyncCopy(const ValueList& args, SharedValue result);
+		void ExecuteAsyncCopy(const ValueList& args, SharedValue result);
+
+
+		//INTERNAL ONLY
+		void DeletePendingOperations(const ValueList& args, SharedValue result);
 	};
 }
 
