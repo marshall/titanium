@@ -1,0 +1,199 @@
+<html>
+<head>
+	<script type="text/javascript" charset="utf-8" src="js/jquery.js"></script>
+	<script type="text/javascript" charset="utf-8" src="js/jquery-ui.js"></script>
+	<link rel="stylesheet" href="css/install.css" type="text/css" media="screen" charset="utf-8" />
+	<link rel="stylesheet" href="css/themes/ui.all.css" type="text/css" media="screen" charset="utf-8" />
+</head>
+
+<body> 
+	<div id="body_content">
+	
+		<!-- APP ICON -->
+		<div style="float:left">
+			<div class="app_icon_container">
+				<div class="app_icon text">
+					my icon
+				</div>
+			</div>
+		</div>
+		
+		<!-- INSTALLER CONTENT -->
+		<div id="content">
+			
+			<!-- APP DOWNLOAD PROGRESS BAR -->
+			<div id="download"  class="page">
+				<div class="header_text">Your App Name</div>
+
+				<div class="text section">
+					Downloading application...
+				</div>
+				<div id="progressbar" class="section" style="height:10px"></div>
+			</div>
+			
+			<!-- INSTALL INFO -->
+			<div id="installation_info"  class="page" style="display:none">
+				<div class="header_text">Your App Name</div>
+
+				<div class="text section">
+					Information about the application you are about to install:
+				</div>
+				<div class="text section">
+					<div style="width:100px;float:left" class="light">
+						<div>File:</div>
+						<div>Publisher:</div>
+						<div>From:</div>
+					</div>	
+					<div style="width:200px;float:left;color:#087fb5">
+						<div>AppFoo.app</div>
+						<div>3 Guys and a Plumber</div>
+						<div>titaniumapp.com</div>
+					</div>	
+					<div style="clear:both"></div>
+				</div>
+				<div class="text section">
+					Installation Preferences:
+				</div>
+				<div class="text section light">
+					<div>
+						<input type="checkbox" checked="true" id="open_after_install"/> 
+						Start application after install?
+					</div>
+					<div style="margin-top:10px">
+						<input type="checkbox" checked="true" id="create_shortcut"/> 
+						Create a shortcut for the application?
+					</div>
+					<div style="margin-top:10px">
+						<span style="float:left;position:relative;top:6px;margin-right:10px">Location:</span>
+						<input type="text" id="install_location" style="float:left"/> 
+						<div class="button1" id="file_browse"
+							style="float:left;width:25px;height:25px;position:relative;top:1px;margin-left:10px" >
+							<div class="button2" style="height:23px">
+								<img src="images/folder_go.png" style="position:relative;top:3px;left:1px"/>
+							</div>
+						</div>
+						<div style="clear:both"></div>
+					</div>
+				</div>
+				<div class="text section">
+					<div class="button1 disabled" id="install">
+						<div class="button2">Install</div>
+					</div>
+					<div class="button1" id="cancel">
+						<div class="button2">Cancel</div>
+					</div>
+
+				</div>
+			</div>
+			
+			<!-- INSTALL APP -->
+			<div id="install_app"  class="page" style="display:none">
+				<div class="header_text">Your App Name</div>
+				<div class="text section">
+					Installing application...
+				</div>
+				<div id="progressbar_install" class="section" style="height:10px"></div>
+			</div>
+
+			<!-- SUCCESS -->
+			<div id="install_app_finished" style="display:none">
+				<div class="header_text">Success!</div>
+				<div class="text section">
+					The application was successfully installed.  Click 'Close' to complete the installation process.
+				</div>
+				<div class="section text" >
+					<div class="button1" id="finish">
+						<div class="button2">Close</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<!-- POWERED BY LOGO -->
+	<div id="powered_by" class="section"></div>
+
+	<script>
+	// create progress bars
+	$('#progressbar').progressbar({value:0})
+	$('#progressbar_install').progressbar({value:0})
+
+	// cancel install click
+	$('#cancel').click(function()
+	{
+		if (confirm('Are you sure you want to cancel the installation?')==true)
+		{
+			Titanium.UI.currentWindow.close();
+		}
+	});
+	
+	// finish install click
+	$('#finish').click(function()
+	{
+		Titanium.UI.currentWindow.close();
+	})
+	
+	
+	// simulate download app progress
+	var value=0;
+	var fileInterval = null;
+	var pb = setInterval(function()
+	{
+		value++;
+		$('#progressbar').progressbar('value',value)
+		if (value == 100)
+		{
+			value = 0;			
+			clearInterval(pb)
+			Titanium.UI.currentWindow.setHeight(450)
+			
+			// show install info screen
+			$("#download").slideUp(500);
+			$('#installation_info').fadeIn();
+	
+			// track file location input - required field
+			fileInterval = setInterval(function()
+			{
+				if ($('#install_location').val() != '')
+				{
+					$('#install').removeClass('disabled')
+				}
+				else
+				{
+					$('#install').addClass('disabled');
+				}
+			},100)
+		}
+	},50);
+	
+	
+	// install app click
+	$('#install').click(function()
+	{
+		clearInterval(fileInterval);
+		$('#installation_info').slideUp(500);
+		Titanium.UI.currentWindow.setHeight(220)
+		
+		// show installation screen
+		$('#install_app').fadeIn()
+		
+		// simulate progress
+		var pbInstall = setInterval(function()
+		{
+			value++
+			$('#progressbar_install').progressbar('value',value)
+			
+			// on finish show success
+			if (value==100)
+			{
+				clearInterval(pbInstall);
+				$('#install_app').slideUp(500);
+				$('#install_app_finished').fadeIn();
+			}
+
+		},50)
+
+	})
+	</script>
+</body>
+</html>
