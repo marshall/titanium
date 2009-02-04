@@ -1,26 +1,55 @@
 body
 {
-	width:700px;
-/*	background-color:#26466D;*/
-  background-color:#292929;
-	-webkit-border-bottom-right-radius: 10px;
-	-webkit-border-bottom-left-radius: 10px;
+  	background-color:#292929;
 	padding:1px;
 	padding-top:0px;
 	margin:0px;
 }
-.body_content
+/******************
+ * ID CLASSES
+ ******************/
+#body_content
 {
 	border-top:none;
 	padding:20px;
-	width:698px;
-	-webkit-border-bottom-right-radius: 10px;
-	-webkit-border-bottom-left-radius: 10px;
 	font-family:Georgia;
 	color:white;
 	overflow:hidden;
 	position:relative;
 }
+#header
+{
+	width:390px;	
+	margin-left:40px;
+	overflow:hidden;
+	position:relative;
+}
+#logo
+{
+	background:url(../images/logo_large.png);
+	height:133px;
+	width:156px;
+	float:left;
+}
+#license
+{
+	padding-left:20px;
+	padding-right:20px;
+	margin-top:10px;
+}
+#terms
+{
+	background-color:#393939;
+	border:1px solid #555;
+	color:white;
+	height:180px;
+	overflow:auto;
+	line-height:17px;
+}
+
+/******************
+ * BUTTON CLASSES
+ ******************/
 .button1
 {
 	-webkit-border-bottom-right-radius: 3px;
@@ -53,27 +82,11 @@ body
 {
 	border:1px solid #777;
 }
-input[type=checkbox]
-{
-	background-color:#444;
-	color:#444;
-}
-sup
-{
-	font-size:10px;
-}
-a
-{
-	color:#fff;
-}
-a:hover
-{
-	color:#fff;
-}
-a:visited
-{
-	color:#fff;
-}
+
+
+/******************
+ * STYLE CLASSES
+ ******************/
 .header_text
 {
 	font-size:28px;
@@ -89,59 +102,23 @@ a:visited
 {
 	margin-top:20px;
 }
-.page
+
+/******************
+ * ELEMENT CLASSES
+ ******************/
+sup
 {
-	width:390px;
-	float:left;
+	font-size:10px;
 }
-#powered_by
+a
 {
-	height:26px;
-	width:150px;
-	background:url(../images/poweredby.png);
-	position:absolute;
-	bottom:10px;
-	right:15px;
+	color:#fff;
 }
-#logo
+a:hover
 {
-	background:url(../images/logo_large.png);
-	height:133px;
-	width:156px;
-	float:left;
+	color:#fff;
 }
-#terms
+a:visited
 {
-/*	background-color:#506987; */
-	background-color:#393939;
-	border:1px solid #555;
-	color:white;
-	height:180px;
-	width:400px;
-	overflow:auto;
-	line-height:17px;
-}
-.app_icon_container
-{
-	border:1px solid #202020;
-	height:80px;
-	width:80px;
-	padding:1px;
-}
-.app_icon
-{
-	height:78px;
-	width:78px;
-	line-height:78px;
-	text-align:center;
-	border:1px solid #404040;
-	background-color:#303030;
-}
-#content
-{
-	float:left;
-	width:400px;	
-	margin-left:30px;
-	overflow:hidden;
-	position:relative;
+	color:#fff;
 }

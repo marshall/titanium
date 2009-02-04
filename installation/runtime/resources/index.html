@@ -10,13 +10,18 @@
 
 <body id="body"> 
 
-	<div class="body_content">
+	<div id="body_content">
+		
+		<!-- TI LOGO -->
 		<div id="logo"></div>
-		<div id="content">
+		
+		<!-- HEADER -->
+		<div id="header">
 			
-			<!-- LICENSE PAGE -->
-			<div id="license_page" class="page">
-				<div class="header_text">Appcelerator<sup>&#0174;</sup> Titanium<sup>&#0153;</sup></div>
+			<div class="header_text">Appcelerator<sup>&#0174;</sup> Titanium<sup>&#0153;</sup></div>
+			
+			<!-- LICENSE HEADER -->
+			<div id="license_header">
 				<div class="text section">
 					This installer will setup 
 					<a onclick="javascript:Titanium.Desktop.openURL('http://www.titaniumapp.com');return false;" 
@@ -26,6 +31,44 @@
 					software that will enable you to run web-connected desktop applications.  Please review
 					and agree to the license agreement to continue
 				</div>
+			</div>
+
+			<!-- INSTALL PROGRESS BAR -->
+			<div id="install" style="display:none" class="page">
+				<div class="text section">
+					Installing...
+				</div>
+				<div id="progressbar" class="section" style="height:10px"></div>
+				<div class="section text" >
+					<div class="button1" id="cancel_install">
+						<div class="button2">Cancel</div>
+					</div>
+				</div>
+
+			</div>
+			
+			<!-- INSTALLATION COMPLETED -->
+			<div id="install_completed" style="display:none" class="page">
+				<div class="text section">
+					Installation completed.
+				</div>
+				<div class="section text" >
+					Appcelerator Titanium has been successfully installed.
+				</div>
+				<div class="section text" >
+					<div class="button1" id="finish">
+						<div class="button2">Finish</div>
+					</div>
+				</div>
+
+			</div>
+
+		</div>
+		
+		<!-- LICENSE PAGE -->
+		<div id="license" style="clear:both">
+			
+			<div class="page">
 				<div class="text section">
 					<div id="terms">
 						<div>
@@ -75,37 +118,6 @@
 				</div>
 			</div>
 			
-			<!-- INSTALL PROGRESS BAR -->
-			<div id="install" style="display:none" class="page">
-				<div class="header_text">Appcelerator<sup>&#0174;</sup> Titanium<sup>&#0153;</sup></div>
-				<div class="text section">
-					Installing...
-				</div>
-				<div id="progressbar" class="section" style="height:10px"></div>
-				<div class="section text" >
-					<div class="button1" id="cancel_install">
-						<div class="button2">Cancel</div>
-					</div>
-				</div>
-
-			</div>
-			
-			<!-- INSTALLATION COMPLETED -->
-			<div id="install_completed" style="display:none" class="page">
-				<div class="header_text">Appcelerator<sup>&#0174;</sup> Titanium<sup>&#0153;</sup></div>
-				<div class="text section">
-					Installation completed.
-				</div>
-				<div class="section text" >
-					Appcelerator Titanium has been successfully installed.
-				</div>
-				<div class="section text" >
-					<div class="button1" id="finish">
-						<div class="button2">Finish</div>
-					</div>
-				</div>
-
-			</div>
 			
 		</div>
 	</div>
@@ -128,7 +140,8 @@
 		// accept terms
 		$('#accept').click(function()
 		{
-			$('#license_page').slideUp(500,function()
+			$('#license').hide();
+			$('#license_header').slideUp(500,function()
 			{
 				$('#install').fadeIn();
 				$('#progressbar').progressbar({value:0})
@@ -149,8 +162,6 @@
 				},50);
 
 			});
-
-			
 		})
 	</script>
 </body>
