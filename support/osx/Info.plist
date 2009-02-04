@@ -13,13 +13,13 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string></string>
+	<string>APPNAME</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
-	<key>CFBundleSignature</key>
-	<string>????</string>
-	<key>CFBundleVersion</key>
-	<string>1.0</string>
+  	<key>CFBundleSignature</key>
+  	<string>WRUN</string>
+  	<key>CFBundleVersion</key>
+  	<string>APPVER</string>
 	<key>NSMainNibFile</key>
 	<string>APPNIB</string>
 	<key>NSPrincipalClass</key>

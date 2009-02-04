@@ -5,13 +5,14 @@
    <version>0.1</version>
    <window>
       <id>initial</id>
-      <title>Welcome to Appcelerator Titanium</title>
+      <title>Appcelerator Titanium Installation</title>
       <url>app://index.html</url>
-      <width>500</width>
-      <height>425</height>
-		<fullscreen>false</fullscreen>
-		<maximizable>false</maximizable>
-		<minimizable>false</minimizable>
-		<resizable>false</resizable>
+      <width>600</width>
+      <height>475</height>
+	  <fullscreen>false</fullscreen>
+	  <maximizable>false</maximizable>
+	  <minimizable>false</minimizable>
+	  <closeable>true</closeable>
+	  <resizable>false</resizable>
    </window>
 </ti:app>

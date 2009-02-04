@@ -1,0 +1,126 @@
+body
+{
+  	background-color:#292929;
+	padding:1px;
+	padding-top:0px;
+	margin:0px;
+}
+/******************
+ * ID CLASSES
+ ******************/
+#body_content
+{
+	border-top:none;
+	padding:20px;
+	font-family:Georgia;
+	color:white;
+	overflow:hidden;
+	position:relative;
+}
+#header
+{
+	width:390px;	
+	margin-left:40px;
+	overflow:hidden;
+	position:relative;
+}
+#logo
+{
+	background:url(../images/logo_large.png);
+	height:133px;
+	width:156px;
+	float:left;
+}
+#license
+{
+	padding-left:20px;
+	padding-right:20px;
+	margin-top:10px;
+}
+#terms
+{
+	background-color:#393939;
+	border:1px solid #555;
+	color:#999;
+	height:180px;
+	overflow:auto;
+	line-height:17px;
+	padding:20px;
+	padding-top:3px;
+}
+
+/******************
+ * BUTTON CLASSES
+ ******************/
+.button1
+{
+	-webkit-border-bottom-right-radius: 3px;
+	-webkit-border-bottom-left-radius: 3px;
+	-webkit-border-top-right-radius: 3px;
+	-webkit-border-top-left-radius: 3px;
+	height:25px;
+	width:80px;
+	border:1px solid #111;
+	padding:0px;
+	background-color:#151515;
+	float:left;
+	margin-right:10px;
+	cursor:pointer;
+}
+.button2
+{
+	border:1px solid #555;
+	height:23px;
+	line-height:23px;
+	text-align:center;
+	background-color:#333;
+	-webkit-border-bottom-right-radius: 3px;
+	-webkit-border-bottom-left-radius: 3px;
+	-webkit-border-top-right-radius: 3px;
+	-webkit-border-top-left-radius: 3px;
+
+}
+.button2:hover
+{
+	border:1px solid #777;
+}
+
+
+/******************
+ * STYLE CLASSES
+ ******************/
+.header_text
+{
+	font-size:28px;
+	position:relative;
+	top:-3px;
+}
+.text
+{
+	font-family:'Lucida Grande';
+	font-size:12px;
+}
+.section
+{
+	margin-top:20px;
+}
+
+/******************
+ * ELEMENT CLASSES
+ ******************/
+sup
+{
+	font-size:10px;
+}
+a
+{
+	color:#fff;
+}
+a:hover
+{
+	color:#fff;
+}
+a:visited
+{
+	color:#fff;
+}

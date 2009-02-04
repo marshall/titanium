@@ -626,7 +626,7 @@
 {
 	TRACE(@"alert = %@",message);
 	
-	NSRunInformationalAlertPanel(NSLocalizedString(@"JavaScript", @""),	// title
+	NSRunInformationalAlertPanel([window title],	// title
 								 message,								// message
 								 NSLocalizedString(@"OK", @""),			// default button
 								 nil,									// alt button
@@ -636,7 +636,7 @@
 
 - (BOOL)webView:(WebView *)wv runJavaScriptConfirmPanelWithMessage:(NSString *)message initiatedByFrame:(WebFrame *)frame 
 {
-	NSInteger result = NSRunInformationalAlertPanel(NSLocalizedString(@"JavaScript", @""),	// title
+	NSInteger result = NSRunInformationalAlertPanel([window title],	// title
 													message,								// message
 													NSLocalizedString(@"OK", @""),			// default button
 													NSLocalizedString(@"Cancel", @""),		// alt button

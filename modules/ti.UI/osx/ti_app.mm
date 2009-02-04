@@ -16,6 +16,7 @@ void OSXInitialize()
 {
 	[TiProtocol registerSpecialProtocol];
 	[AppProtocol registerSpecialProtocol];
-	[NSApp setDelegate:app];
-	[NSBundle loadNibNamed:@"MainMenu" owner:NSApp];
+	NSApplication *nsapp = [NSApplication sharedApplication];
+	[nsapp setDelegate:app];
+	[NSBundle loadNibNamed:@"MainMenu" owner:nsapp];
 }

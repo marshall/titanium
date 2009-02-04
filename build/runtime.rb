@@ -98,6 +98,10 @@ case OS
 			  next if File.basename(f)=~/6/  #FIXME: deal with this
 				FileUtils.cp f,runtime
 			end
+			Dir["#{TOPDIR}/kroll/thirdparty/#{OS}/#{lib}/*.framework"].each do |f|
+			  FileUtils.mkdir File.join(runtime,File.basename(f))
+				FileUtils.cp_r "#{f}/.",File.join(runtime,File.basename(f))
+			end
 		end
 		MODULES.each do |m|
 			mf = File.join(OUTDIR,"lib#{m}module.dylib")
@@ -113,11 +117,13 @@ case OS
 		FileUtils.cp "#{OUTDIR}/kboot","#{macos}/#{NAME}"
 		FileUtils.cp_r "#{TOPDIR}/installation/runtime/.",contents
 		FileUtils.cp_r "#{SUPPORTDIR}/titanium.icns",lproj
+		FileUtils.cp_r "#{OUTDIR}/modules/ti.UI/MainMenu.nib",lproj
 		plist = File.read "#{SUPPORTDIR}/Info.plist"
 		plist.gsub! 'APPNAME',NAME
 		plist.gsub! 'APPICON','titanium.icns'
 		plist.gsub! 'APPID','com.titaniumapp.installer.runtime'
 		plist.gsub! 'APPNIB','MainMenu'
+		plist.gsub! 'APPVER',RUNTIME_VER.to_s
 		plistf = File.open(File.join(contents,'Info.plist'),'w')	
 		plistf.puts plist
 		plistf.close
