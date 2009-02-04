@@ -170,9 +170,12 @@ namespace ti
 	{
 		NSRect frame = [window frame];
 		BOOL display = config->IsVisible();
+		double originalHeight = NSHeight(frame);
 		frame.size.height = height;
 		config->SetHeight(height);
-		[window setFrame:frame display:display animate:display];
+	    NSPoint origin = frame.origin;
+	    origin.y += (originalHeight - height);
+	    [window setFrame: NSMakeRect(origin.x, origin.y, frame.size.width, height) display:display animate:YES];
 	}
 	double OSXUserWindow::GetMaxWidth() {
 		return this->config->GetMaxWidth();
