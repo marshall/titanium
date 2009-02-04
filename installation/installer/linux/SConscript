@@ -1,0 +1,14 @@
+#!/usr/bin/env python
+import os.path as path
+
+Import('build')
+
+Env = build.env.Clone()
+Env.Append(LIBS=['curl'])
+Env.ParseConfig('pkg-config --cflags --libs gtk+-2.0 gdk-2.0 gthread-2.0')
+Env.Append(CPPFLAGS=['-Wno-error']) # turn off warnings, CURLHandle has a lot
+Env.Append(CPPPATH=[build.kroll_source_dir + '/api'])
+
+sources = Glob('*.cpp')
+sources.append(build.dir + '/api/file_utils.os')
+s = Env.Program(build.dir + '/installer', sources)
