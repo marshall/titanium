@@ -2,10 +2,9 @@
 <head>
 	<script type="text/javascript" charset="utf-8" src="js/jquery.js"></script>
 	<script type="text/javascript" charset="utf-8" src="js/jquery-ui.js"></script>
+	<script type="text/javascript" charset="utf-8" src="js/installer.js"></script>
 	<link rel="stylesheet" href="css/install.css" type="text/css" media="screen" charset="utf-8" />
 	<link rel="stylesheet" href="css/themes/ui.all.css" type="text/css" media="screen" charset="utf-8" />
-
-
 </head>
 
 <body id="body"> 
@@ -35,7 +34,7 @@
 
 			<!-- INSTALL PROGRESS BAR -->
 			<div id="install" style="display:none" class="page">
-				<div class="text section">
+				<div class="text section" id="statusbar">
 					Installing...
 				</div>
 				<div id="progressbar" class="section" style="height:10px"></div>
@@ -134,6 +133,8 @@
 		// finish
 		$('#finish').click(function()
 		{
+			//	Titanium.Desktop.openURL('http://titaniumapp.com/sdk_welcome');
+			Titanium.Desktop.openURL('http://titaniumapp.com/');
 			Titanium.UI.currentWindow.close();
 		})
 		
@@ -142,26 +143,12 @@
 		{
 			$('#license').hide();
 			Titanium.UI.currentWindow.setHeight(220);
-			$('#license_header').slideUp(100,function()
-			{
-				$('#install').fadeIn();
+			$('#install').fadeIn();
+			$('#license_header').slideUp(100);
+			setTimeout(function(){
 				$('#progressbar').progressbar({value:0})
-				
-				// simulate progress
-				var value=0;
-				var pb = setInterval(function()
-				{
-					value++;
-					$('#progressbar').progressbar('value',value)
-					if (value == 100)
-					{
-						clearInterval(pb)
-						$('#install').slideUp();
-						$('#install_completed').fadeIn();
-					}
-				},50);
-
-			});
+				runInstaller();
+			},10);
 		})
 	</script>
 </body>

@@ -8,6 +8,7 @@
 
 #import "../ui_module.h"
 #import <Cocoa/Cocoa.h>
+#import "ti_app.h"
 
 @class WebViewDelegate;
 

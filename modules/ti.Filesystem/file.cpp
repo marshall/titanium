@@ -34,9 +34,9 @@ namespace ti
 		this->SetMethod("readLine",&File::ReadLine);
 		this->SetMethod("copy",&File::Copy);
 		this->SetMethod("move",&File::Move);
-		this->SetMethod("createDirectory",&File::CreateDirectoryX);
+		this->SetMethod("createDirectory",&File::CreateDirectory);
 		this->SetMethod("deleteDirectory",&File::DeleteDirectory);
-		this->SetMethod("deleteFile",&File::DeleteFileX);
+		this->SetMethod("deleteFile",&File::DeleteFile);
 		this->SetMethod("getDirectoryListing",&File::GetDirectoryListing);
 
 		this->SetMethod("parent",&File::GetParent);
@@ -72,6 +72,10 @@ namespace ti
 			bool isFile = file.isFile();
 			result->SetBool(isFile);
 		}
+		catch (Poco::FileNotFoundException &fnf)
+		{
+			result->SetBool(false);
+		}
 		catch (Poco::Exception& exc)
 		{
 			throw ValueException::FromString(exc.displayText());
@@ -84,6 +88,10 @@ namespace ti
 			Poco::File dir(this->filename);
 			bool isDir = dir.isDirectory();
 			result->SetBool(isDir);
+		}
+		catch (Poco::FileNotFoundException &fnf)
+		{
+			result->SetBool(false);
 		}
 		catch (Poco::Exception& exc)
 		{
@@ -98,6 +106,10 @@ namespace ti
 			bool isHidden = file.isHidden();
 			result->SetBool(isHidden);
 		}
+		catch (Poco::FileNotFoundException &fnf)
+		{
+			result->SetBool(false);
+		}
 		catch (Poco::Exception& exc)
 		{
 			throw ValueException::FromString(exc.displayText());
@@ -110,6 +122,10 @@ namespace ti
 			Poco::File file(this->filename);
 			bool isLink = file.isLink();
 			result->SetBool(isLink);
+		}
+		catch (Poco::FileNotFoundException &fnf)
+		{
+			result->SetBool(false);
 		}
 		catch (Poco::Exception& exc)
 		{
@@ -242,9 +258,26 @@ namespace ti
 	{
 		try
 		{
-			std::string dest = args.at(0)->ToString();
-			// TODO need to verify parameters
-
+			std::string dest;
+			
+			if (args.at(0)->IsObject())
+			{
+				SharedBoundObject bo = args.at(0)->ToObject();
+				SharedPtr<ti::File> f = bo.cast<ti::File>();
+				if (!f.isNull())
+				{
+					dest = f->GetFilename();
+				}
+				else
+				{
+					throw ValueException::FromString("unknown object type");
+				}
+			}
+			else if (args.at(0)->IsString())
+			{
+				dest = args.at(0)->ToString();
+			}
+			std::cout << "from => " << this->filename << " to => " << dest << std::endl;
 			Poco::File from(this->filename);
 			from.copyTo(dest);
 			result->SetBool(true);
@@ -253,8 +286,6 @@ namespace ti
 		{
 			throw ValueException::FromString(exc.displayText());
 		}
-
-
 	}
 	void File::Move(const ValueList& args, SharedValue result)
 	{
@@ -272,7 +303,7 @@ namespace ti
 			throw ValueException::FromString(exc.displayText());
 		}
 	}
-	void File::CreateDirectoryX(const ValueList& args, SharedValue result)
+	void File::CreateDirectory(const ValueList& args, SharedValue result)
 	{
 		try
 		{
@@ -327,7 +358,7 @@ namespace ti
 			throw ValueException::FromString(exc.displayText());
 		}
 	}
-	void File::DeleteFileX(const ValueList& args, SharedValue result)
+	void File::DeleteFile(const ValueList& args, SharedValue result)
 	{
 		try
 		{
@@ -361,7 +392,10 @@ namespace ti
 
 				for(size_t i = 0; i < files.size(); i++)
 				{
-					ti::File* file = new ti::File(files.at(i));
+					std::string entry = files.at(i);
+					// store it as the fullpath
+					std::string filename = kroll::FileUtils::Join(this->filename.c_str(),entry.c_str(),NULL);
+					ti::File* file = new ti::File(filename);
 					SharedValue value = Value::NewObject((SharedBoundObject) file);
 					fileList->Append(value);
 				}
@@ -436,7 +470,15 @@ namespace ti
 	}
 	void File::GetName(const ValueList& args, SharedValue result)
 	{
-		result->SetString(this->filename.c_str());
+		try
+		{
+			Poco::Path path(this->filename);
+			result->SetString(path.getFileName().c_str());
+		}
+		catch (Poco::Exception& exc)
+		{
+			throw ValueException::FromString(exc.displayText());
+		}
 	}
 	void File::GetExtension(const ValueList& args, SharedValue result)
 	{

@@ -258,7 +258,7 @@ namespace ti
 		this->config->SetURL(url);
 		if (opened)
 		{
-			NSURL *nsurl = [NSURL URLWithString:[NSString stringWithCString:url.c_str()]];
+			NSURL *nsurl = [TiApplication normalizeURL:[NSString stringWithCString:url.c_str()]];
 			[[[window webView] mainFrame] loadRequest:[NSURLRequest requestWithURL:nsurl]];
 		}
 	}

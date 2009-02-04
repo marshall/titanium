@@ -17,7 +17,7 @@ namespace ti
 	void FilesystemModule::Initialize()
 	{
 		// load our variables
-		this->variables = new FilesystemBinding(host->GetGlobalObject());
+		this->variables = new FilesystemBinding(host,host->GetGlobalObject());
 
 		// set our ti.Filesystem
 		SharedValue value = Value::NewObject(this->variables);

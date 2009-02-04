@@ -98,9 +98,12 @@ case OS
 			  next if File.basename(f)=~/6/  #FIXME: deal with this
 				FileUtils.cp f,runtime
 			end
+			#FIXME! deal with symlinks
 			Dir["#{TOPDIR}/kroll/thirdparty/#{OS}/#{lib}/*.framework"].each do |f|
 			  FileUtils.mkdir File.join(runtime,File.basename(f))
 				FileUtils.cp_r "#{f}/.",File.join(runtime,File.basename(f))
+				FileUtils.rm_rf File.join(runtime,File.basename(f),'Headers')
+				FileUtils.rm_rf File.join(runtime,File.basename(f),'PrivateHeaders')
 			end
 		end
 		MODULES.each do |m|

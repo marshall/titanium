@@ -15,10 +15,11 @@ namespace ti
 	class FilesystemBinding : public StaticBoundObject
 	{
 	public:
-		FilesystemBinding(SharedBoundObject);
+		FilesystemBinding(Host*,SharedBoundObject);
 	protected:
 		virtual ~FilesystemBinding();
 	private:
+		Host *host;
 		SharedBoundObject global;
 
 		/**
@@ -132,6 +133,19 @@ namespace ti
 		 *   a list of strings
 		 */
 		void GetRootDirectories(const ValueList& args, SharedValue result);
+
+		/**
+		 * Function: AsyncCopy
+		 *   performs an asynchoronous copy operation, making a callback
+		 *
+		 * Params:
+	 	 *   file(s) - the name of the file (as string) or an array of files
+	     *   callback - function to invoke when each copy operation is completed
+		 *
+		 * Returns:
+		 *   an async copy object
+		 */
+		void AsyncCopy(const ValueList& args, SharedValue result);
 	};
 }
 

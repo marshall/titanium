@@ -7,10 +7,14 @@
 #import <Cocoa/Cocoa.h>
 #import "app_protocol.h"
 #import "ti_protocol.h"
+#import "../ui_module.h"
 
 @interface TiApplication : NSObject
 {
+	NSString *appid;
 }
++(NSURL*)normalizeURL:(NSString *)url;
++(NSString*)appID;
 
 @end
 
