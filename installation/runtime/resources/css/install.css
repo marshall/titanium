@@ -41,10 +41,12 @@ body
 {
 	background-color:#393939;
 	border:1px solid #555;
-	color:white;
+	color:#999;
 	height:180px;
 	overflow:auto;
 	line-height:17px;
+	padding:20px;
+	padding-top:3px;
 }
 
 /******************
