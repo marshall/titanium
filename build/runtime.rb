@@ -7,6 +7,7 @@ require 'rubygems'
 require 'fileutils'
 require 'zip/zip'
 
+#change this too
 NAME="titanium_runtime"
 VER = 0.1
 RUNTIME_VER = 0.2
@@ -115,6 +116,7 @@ case OS
 		manf.puts manifest
 		manf.close
 		FileUtils.cp "#{OUTDIR}/kboot","#{macos}/#{NAME}"
+		## change to my  dir name
 		FileUtils.cp_r "#{TOPDIR}/installation/runtime/.",contents
 		FileUtils.cp_r "#{SUPPORTDIR}/titanium.icns",lproj
 		FileUtils.cp_r "#{OUTDIR}/modules/ti.UI/MainMenu.nib",lproj
