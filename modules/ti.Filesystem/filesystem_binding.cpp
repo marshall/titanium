@@ -347,10 +347,9 @@ namespace ti
 		NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 #endif
 		KR_DUMP_LOCATION
-		ValueList *args = new ValueList;
-		SharedPtr<ValueList> a(args);
+		ValueList args = ValueList();
 		SharedBoundMethod m = this->Get("_invoke")->ToMethod();
-		SharedValue result = host->InvokeMethodOnMainThread(m,a);
+		SharedValue result = host->InvokeMethodOnMainThread(m, args);
 		if (result->ToBool())
 		{
 			timer.restart(0);

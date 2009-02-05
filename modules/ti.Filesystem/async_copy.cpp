@@ -51,12 +51,11 @@ namespace ti
 			std::cout << "copied async file: " << file << " (" << c << "/" << ac->files.size() << ")" << std::endl;
 #endif
 				SharedValue value = Value::NewString(file);
-				ValueList *args = new ValueList;
-				args->push_back(value);
-				args->push_back(Value::NewInt(c));
-				args->push_back(Value::NewInt(ac->files.size()));
-				SharedPtr<ValueList> a(args);
-				ac->host->InvokeMethodOnMainThread(ac->callback,a);
+				ValueList args;
+				args.push_back(value);
+				args.push_back(Value::NewInt(c));
+				args.push_back(Value::NewInt(ac->files.size()));
+				ac->host->InvokeMethodOnMainThread(ac->callback, args);
 #ifdef DEBUG
 			std::cout << "after callback for async file: " << file << " (" << c << "/" << ac->files.size() << ")" << std::endl;
 #endif

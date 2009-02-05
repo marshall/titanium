@@ -139,8 +139,8 @@ namespace ti
 			{
 				if (this->onReadComplete)
 				{
-					SharedPtr<ValueList> a(new ValueList);
-					ti_host->InvokeMethodOnMainThread(*this->onReadComplete,a);
+					ValueList args;
+					ti_host->InvokeMethodOnMainThread(*this->onReadComplete,args);
 				}
 				return;
 			}
@@ -153,10 +153,9 @@ namespace ti
 			data[size]='\0';
 			std::string s(data);
 			SharedValue value = Value::NewString(s);
-			ValueList *args = new ValueList;
-			args->push_back(value);
-			SharedPtr<ValueList> a(args);
-			ti_host->InvokeMethodOnMainThread(*this->onRead,a);
+			ValueList args;
+			args.push_back(value);
+			ti_host->InvokeMethodOnMainThread(*this->onRead,args);
 		}
 		catch(ValueException& e)
 		{
@@ -177,8 +176,8 @@ namespace ti
 		{
 			return;
 		}
-		SharedPtr<ValueList> a(new ValueList);
-		ti_host->InvokeMethodOnMainThread(*this->onWrite,a);
+		ValueList args;
+		ti_host->InvokeMethodOnMainThread(*this->onWrite,args);
 	}
 	void TCPSocketBinding::OnTimeout(const Poco::AutoPtr<TimeoutNotification>& n)
 	{
@@ -186,8 +185,8 @@ namespace ti
 		{
 			return;
 		}
-		SharedPtr<ValueList> a(new ValueList);
-		ti_host->InvokeMethodOnMainThread(*this->onTimeout,a);
+		ValueList args;
+		ti_host->InvokeMethodOnMainThread(*this->onTimeout,args);
 	}
 	void TCPSocketBinding::Write(const ValueList& args, SharedValue result)
 	{
