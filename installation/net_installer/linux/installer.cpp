@@ -112,10 +112,11 @@ void Installer::Run()
 		GTK_BUTTONS_YES_NO,
 		"%s",
 		this->message.c_str());
-
+	gtk_window_set_title(GTK_WINDOW(dialog), this->confirm_title.c_str());
 	gint r = gtk_dialog_run(GTK_DIALOG(dialog));
 	gtk_widget_destroy(dialog);
 
+	sleep(30);
 	if (r == GTK_RESPONSE_YES)
 	{
 	

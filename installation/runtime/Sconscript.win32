@@ -1,0 +1,18 @@
+import os.path as p
+import zipfil
+
+Import('build name build_dir')
+out = p.join(build_dir, name + 'zip')
+zip = ZipFile(out, 'w')
+
+files = []
+for lib in runtime_libs:
+	append(build.dir + '\' lib + '.dll'))
+
+for f in glob('%s\
+build.third_party, tp, 'bin'
+for tp in third_party:
+	tp_path = p.join(build.third_party, tp, 'bin', '*')
+	for file in glob.glob(tp_path):
+		bn = p.basename(file)
+		zip.write(file, 'runtime/%s' % lib)
