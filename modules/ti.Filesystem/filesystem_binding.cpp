@@ -31,6 +31,7 @@ namespace ti
 		this->SetMethod("createTempFile",&FilesystemBinding::CreateTempFile);
 		this->SetMethod("createTempDirectory",&FilesystemBinding::CreateTempDirectory);
 		this->SetMethod("getFile",&FilesystemBinding::GetFile);
+		this->SetMethod("getProgramsDirectory",&FilesystemBinding::GetProgramsDirectory);
 		this->SetMethod("getApplicationDirectory",&FilesystemBinding::GetApplicationDirectory);
 		this->SetMethod("getResourcesDirectory",&FilesystemBinding::GetResourcesDirectory);
 		this->SetMethod("getDesktopDirectory",&FilesystemBinding::GetDesktopDirectory);
@@ -124,6 +125,25 @@ namespace ti
 		ti::File* file = new ti::File(dir);
 		result->SetObject(file);
 	}
+	void FilesystemBinding::GetProgramsDirectory(const ValueList &args, SharedValue result)
+	{
+#ifdef OS_WIN32
+		std::string dir;
+		char path[MAX_PATH];
+		if(SHGetSpecialFolderPath(NULL,path,CSIDL_PROGRAM_FILES,FALSE))
+		{
+			dir.append(path);
+		}
+#elif OS_OSX
+		NSString *fullPath = @"/Applications";
+		std::string dir = [fullPath UTF8String];
+#else OS_LINUX
+		std::string dir = "/usr/local/bin"; //TODO: this might need to be configurable
+#endif		
+		ti::File* file = new ti::File(dir);
+		result->SetObject(file);
+	}
+	
 	void FilesystemBinding::GetDesktopDirectory(const ValueList& args, SharedValue result)
 	{
 		std::string dir;
