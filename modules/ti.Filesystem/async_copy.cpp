@@ -57,6 +57,9 @@ namespace ti
 				args->push_back(Value::NewInt(ac->files.size()));
 				SharedPtr<ValueList> a(args);
 				ac->host->InvokeMethodOnMainThread(ac->callback,a);
+#ifdef DEBUG
+			std::cout << "after callback for async file: " << file << " (" << c << "/" << ac->files.size() << ")" << std::endl;
+#endif
 			}
 			catch (Poco::Exception &ex)
 			{
@@ -90,9 +93,8 @@ namespace ti
 		if (thread!=NULL && thread->isRunning())
 		{
 			this->stopped = true;
-			thread->tryJoin(100); // just wait a brief amount to not lock up JS thread
-			result->SetBool(true);
 			this->Set("running",Value::NewBool(false));
+			result->SetBool(true);
 		}
 		else
 		{

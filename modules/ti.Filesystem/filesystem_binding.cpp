@@ -306,32 +306,40 @@ namespace ti
 		if (timer==NULL)
 		{
 			this->SetMethod("_invoke",&FilesystemBinding::DeletePendingOperations);
-			timer = new Poco::Timer(500,10000);
+			timer = new Poco::Timer(1000,1000);
 			Poco::TimerCallback<FilesystemBinding> cb(*this, &FilesystemBinding::OnAsyncOperationTimer);
 			timer->start(cb);
 		}
 		else
 		{
-			timer->restart(10000);
+			this->timer->restart(1000);
 		}
 	}
 	void FilesystemBinding::DeletePendingOperations(const ValueList& args, SharedValue result)
 	{
 		KR_DUMP_LOCATION
-		while (asyncOperations.size() > 0)
+		if (asyncOperations.size()==0)
 		{
-			SharedBoundObject c = (*(asyncOperations.begin()));
+			result->SetBool(true);
+			return;
+		}
+		std::vector< SharedBoundObject >::iterator iter = asyncOperations.begin();
+
+		while (iter!=asyncOperations.end())
+		{
+			SharedBoundObject c = (*iter);
 			SharedValue v = c->Get("running");
 			bool running = v->ToBool();
 			if (!running)
 			{
-				asyncOperations.erase(asyncOperations.begin());
+				asyncOperations.erase(iter);
+				break;
 			}
+			iter++;
 		}
-		if (asyncOperations.size()==0)
-		{
-			this->timer->restart(0);
-		}
+
+		// return true to pause the timer
+		result->SetBool(asyncOperations.size()==0);
 	}
 	void FilesystemBinding::OnAsyncOperationTimer(Poco::Timer &timer)
 	{
@@ -342,7 +350,11 @@ namespace ti
 		ValueList *args = new ValueList;
 		SharedPtr<ValueList> a(args);
 		SharedBoundMethod m = this->Get("_invoke")->ToMethod();
-		host->InvokeMethodOnMainThread(m,a);
+		SharedValue result = host->InvokeMethodOnMainThread(m,a);
+		if (result->ToBool())
+		{
+			timer.restart(0);
+		}
 #ifdef OS_OSX
 		[pool release];
 #endif
