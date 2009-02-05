@@ -7,19 +7,27 @@
 #ifndef _FILESYSTEM_BINDING_H_
 #define _FILESYSTEM_BINDING_H_
 
+#include <vector>
 #include <api/module.h>
 #include <api/binding/binding.h>
+#include <Poco/Mutex.h>
+#include <Poco/Timer.h>
 
 namespace ti
 {
 	class FilesystemBinding : public StaticBoundObject
 	{
 	public:
-		FilesystemBinding(SharedBoundObject);
-	protected:
+		FilesystemBinding(Host*,SharedBoundObject);
 		virtual ~FilesystemBinding();
+		
 	private:
+		Host *host;
 		SharedBoundObject global;
+		std::vector< SharedBoundObject > asyncOperations;
+		Poco::Timer *timer;
+		
+		void OnAsyncOperationTimer(Poco::Timer &timer);
 
 		/**
 		 * Function: CreateTempFile
@@ -132,6 +140,23 @@ namespace ti
 		 *   a list of strings
 		 */
 		void GetRootDirectories(const ValueList& args, SharedValue result);
+
+		/**
+		 * Function: ExecuteAsyncCopy
+		 *   performs an asynchoronous copy operation, making a callback
+		 *
+		 * Params:
+	 	 *   file(s) - the name of the file (as string) or an array of files
+	     *   callback - function to invoke when each copy operation is completed
+		 *
+		 * Returns:
+		 *   an async copy object
+		 */
+		void ExecuteAsyncCopy(const ValueList& args, SharedValue result);
+
+
+		//INTERNAL ONLY
+		void DeletePendingOperations(const ValueList& args, SharedValue result);
 	};
 }
 

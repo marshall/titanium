@@ -24,7 +24,7 @@ namespace ti
 		host->GetGlobalObject()->Set("Platform", value);
 	}
 
-	void PlatformModule::Destroy()
+	void PlatformModule::Stop()
 	{
 	}
 	

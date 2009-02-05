@@ -3,8 +3,9 @@
  * see LICENSE in the root folder for details on the license.
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
-#import "app_protocol.h"
 #import <WebKit/WebKit.h>
+#import "app_protocol.h"
+#import "ti_app.h"
 
 @implementation AppProtocol
 
@@ -46,19 +47,19 @@
 	}
 	else
 	{
-		// if (![[url host] isEqual:[[TiController instance] appID]])
-		// {
-		// 	// this means we have multiple paths and the first part of the path
-		// 	// is sitting in the host field
-		// 	s = [NSString stringWithFormat:@"%@/%@",[url host],[url path]];
-		// }
-		// else
-		// {
-		// 	if (![s hasPrefix:@"/"])
-		// 	{
-		// 		s = [NSString stringWithFormat:@"/%@",s];
-		// 	}
-		// }
+		if (![[url host] isEqual:[TiApplication appID]])
+		{
+			// this means we have multiple paths and the first part of the path
+			// is sitting in the host field
+			s = [NSString stringWithFormat:@"%@/%@",[url host],[url path]];
+		}
+		else
+		{
+			if (![s hasPrefix:@"/"])
+			{
+				s = [NSString stringWithFormat:@"/%@",s];
+			}
+		}
 	}
 	return s;
 }

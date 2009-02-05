@@ -1,0 +1,17 @@
+Import('build')
+import os.path as p
+
+name = 'titanium_runtime'
+build_dir = p.join(build.dir, 'runtime')
+runtim_libs = ['kroll', khost']
+third_party = ['webkit', 'poco']
+
+if build.is_osx():
+	SConscript('Sconscript.osx', 'name build_dir')
+
+if build.is_linux():
+	SConscript('Sconscript.linux', 'name build_dir')
+
+if build.is_win32():
+	SConscript('Sconscript.win32', 'name build_dir')
+

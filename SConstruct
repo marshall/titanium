@@ -37,12 +37,14 @@ build.env.Append(LIBPATH=[build.dir])
 # debug build flags
 if ARGUMENTS.get('debug', 0):
 	build.env.Append(CPPDEFINES = {'DEBUG' : 1})
+	debug = 1
 	if not build.is_win32():
 		build.env.Append(CCFLAGS = ['-g'])  # debug
 	else:
 		build.env.Append(CCFLAGS = ['/Z7','/GR'])  # max debug, C++ RTTI
 else:
 	build.env.Append(CPPDEFINES = {'NDEBUG' : 1 })
+	debug = 0
 	if not build.is_win32():
 		build.env.Append(CCFLAGS = ['-O9']) # max optimizations
 	else:
@@ -56,7 +58,7 @@ if ARGUMENTS.get('debug_refcount', 0) == 1:
 if build.is_win32():
 	execfile('kroll/build/win32.py')
 	build.env.Append(CCFLAGS=['/EHsc'])
-	build.env.Append(CPPDEFINES={'WIN32_CONSOLE': 1})
+#build.env.Append(CPPDEFINES={'WIN32_CONSOLE': 0})
 	build.env.Append(LINKFLAGS=['/DEBUG', '/PDB:${TARGET}.pdb'])
 
 if build.is_linux() or build.is_osx():
@@ -65,9 +67,9 @@ if build.is_linux() or build.is_osx():
 
 if build.is_osx():
 	OSX_SDK = '/Developer/SDKs/MacOSX10.5.sdk'
-	OSX_UNIV_LINKER = '-isysroot '+OSX_SDK+' -syslibroot,'+OSX_SDK+' -arch i386 -arch ppc -mmacosx-version-min=10.5 -lstdc++'
-	build.env.Append(CXXFLAGS=['-isysroot',OSX_SDK,'-arch','i386','-arch','ppc','-mmacosx-version-min=10.5','-x','objective-c++'])
-	build.env.Append(CPPFLAGS=['-isysroot',OSX_SDK,'-arch','i386','-arch','ppc','-mmacosx-version-min=10.5','-x','objective-c++'])
+	OSX_UNIV_LINKER = '-isysroot '+OSX_SDK+' -syslibroot,'+OSX_SDK+' -arch i386 -mmacosx-version-min=10.5 -lstdc++'
+	build.env.Append(CXXFLAGS=['-isysroot',OSX_SDK,'-arch','i386','-mmacosx-version-min=10.5','-x','objective-c++'])
+	build.env.Append(CPPFLAGS=['-isysroot',OSX_SDK,'-arch','i386','-mmacosx-version-min=10.5','-x','objective-c++'])
 	build.env.Append(LINKFLAGS=OSX_UNIV_LINKER)
 	build.env.Append(FRAMEWORKS=['Foundation'])
 
@@ -76,7 +78,7 @@ tiBuild = build
 Export ('tiBuild')
 Export ('build')
 
-SConscript('kroll/SConscript')
+SConscript('kroll/SConscript', exports='debug')
 
 # Kroll *must not be required* for installation
 SConscript('installation/SConscript')
@@ -84,4 +86,4 @@ SConscript('installation/SConscript')
 # Kroll library is now built (hopefully)
 build.env.Append(LIBS=['kroll']) 
 SConscript('modules/SConscript')
-SConscript('launcher/SConscript')
+#SConscript('launcher/SConscript')

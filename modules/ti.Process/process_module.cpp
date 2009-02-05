@@ -24,7 +24,7 @@ namespace ti
 		host->GetGlobalObject()->Set("Process", value);
 	}
 
-	void ProcessModule::Destroy()
+	void ProcessModule::Stop()
 	{
 	}
 	

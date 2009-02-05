@@ -95,7 +95,7 @@ namespace ti
 		window->Open();
 	}
 
-	void UIModule::Destroy()
+	void UIModule::Stop()
 	{
 		// Only one copy of the UI module loaded hopefully,
 		// otherwise we need to count instances and free

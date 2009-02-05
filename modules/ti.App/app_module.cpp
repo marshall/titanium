@@ -18,8 +18,13 @@ namespace ti
 	void AppModule::Initialize()
 	{
 		const char *home = getenv("KR_HOME");
+		
+		
 		std::string config(home);
 		config+="/"CONFIG_FILENAME;
+
+		std::cout << "+++home = " << home << std::endl;
+		std::cout << "+++config = " << config << std::endl;
 
 		if (!FileUtils::IsFile(config))
 		{
@@ -57,7 +62,7 @@ namespace ti
 		this->app_binding->Set("Properties", properties_value);
 	}
 
-	void AppModule::Destroy()
+	void AppModule::Stop()
 	{
 	}
 }

@@ -24,7 +24,7 @@ namespace ti
 		host->GetGlobalObject()->Set("Database", value);
 	}
 
-	void DatabaseModule::Destroy()
+	void DatabaseModule::Stop()
 	{
 	}
 	

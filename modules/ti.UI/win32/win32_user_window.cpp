@@ -524,4 +524,3 @@ void Win32UserWindow::SetupMenu()
 
 	this->menuInUse = menu;
 }
-

@@ -17,14 +17,14 @@ namespace ti
 	void FilesystemModule::Initialize()
 	{
 		// load our variables
-		this->variables = new FilesystemBinding(host->GetGlobalObject());
+		this->variables = new FilesystemBinding(host,host->GetGlobalObject());
 
 		// set our ti.Filesystem
 		SharedValue value = Value::NewObject(this->variables);
 		host->GetGlobalObject()->Set("Filesystem",value);
 	}
 
-	void FilesystemModule::Destroy()
+	void FilesystemModule::Stop()
 	{
 
 	}

@@ -24,7 +24,7 @@ namespace ti
 		host->GetGlobalObject()->Set("Network", value);
 	}
 
-	void NetworkModule::Destroy()
+	void NetworkModule::Stop()
 	{
 	}
 }

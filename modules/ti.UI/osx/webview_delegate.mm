@@ -329,39 +329,6 @@
 		[window setTitle:title];
     }
 }
-/* THIS IS THE RECURSIVE WRAPPING CODE -- IT SORTA WORKS BUT CAUSES CRASH ON EXIT
-- (void)wrap:(WebScriptObject*)scope context:(JSContextRef)context forValue:(SharedValue)value forKey:(NSString*)key
-{
-	if (value->IsObject())
-	{
-		SharedBoundObject obj = value->ToObject();
-		NSString *js = @"var obj = new Object(); obj";
-		WebScriptObject* newObject = (WebScriptObject*)[scope evaluateWebScript:js];
-		std::string parentkey([key UTF8String]);
-		SharedStringList properties = obj->GetPropertyNames();
-		for (size_t i = 0; i < properties->size(); i++)
-		{
-			SharedString skey = properties->at(i);
-			std::string _key = *skey;
-			if (_key == parentkey) continue;
-			NSLog(@"wrapping: %@.%s",key,_key.c_str());
-			SharedValue value = obj->Get(_key.c_str());
-			[self wrap:newObject context:context forValue:value forKey:[NSString stringWithCString:_key.c_str()]];
-		}
-		SharedValue v = obj->Get("toString");
-		if (v->IsUndefined())
-		{
-			WebScriptObject* toString = (WebScriptObject*)[scope evaluateWebScript:[NSString stringWithFormat:@"var f = function() { return '[%@ native]' }; f",key]];
-			[newObject setValue:toString forKey:@"toString"];
-		}
-		[scope setValue:newObject forKey:key];
-	}
-	else
-	{
-		id newobj = [ObjcBoundObject ValueToID:value key:key context:context];
-		[scope setValue:newobj forKey:key];
-	}
-}*/
 - (void)inject:(WebScriptObject *)windowScriptObject context:(JSGlobalContextRef)context
 {
 	TRACE(@"inject called");
@@ -626,7 +593,7 @@
 {
 	TRACE(@"alert = %@",message);
 	
-	NSRunInformationalAlertPanel(NSLocalizedString(@"JavaScript", @""),	// title
+	NSRunInformationalAlertPanel([window title],	// title
 								 message,								// message
 								 NSLocalizedString(@"OK", @""),			// default button
 								 nil,									// alt button
@@ -636,7 +603,7 @@
 
 - (BOOL)webView:(WebView *)wv runJavaScriptConfirmPanelWithMessage:(NSString *)message initiatedByFrame:(WebFrame *)frame 
 {
-	NSInteger result = NSRunInformationalAlertPanel(NSLocalizedString(@"JavaScript", @""),	// title
+	NSInteger result = NSRunInformationalAlertPanel([window title],	// title
 													message,								// message
 													NSLocalizedString(@"OK", @""),			// default button
 													NSLocalizedString(@"Cancel", @""),		// alt button
