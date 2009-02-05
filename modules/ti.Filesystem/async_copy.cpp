@@ -17,16 +17,12 @@ namespace ti
 	}
 	AsyncCopy::~AsyncCopy()
 	{
-		KR_DUMP_LOCATION
 		if (this->thread!=NULL)
 		{
-			std::cout << "~AsyncCopy:: before delete thread" << std::endl;
-			this->thread->tryJoin(10);
+			this->thread->tryJoin(10); // precaution, should already be stopped
 			delete this->thread;
-			std::cout << "~AsyncCopy:: after delete thread" << std::endl;
 			this->thread = NULL;
 		}
-		std::cout << "after ~AsyncCopy" << std::endl;
 	}
 	void AsyncCopy::Run(void* data)
 	{
@@ -61,9 +57,6 @@ namespace ti
 				args->push_back(Value::NewInt(ac->files.size()));
 				SharedPtr<ValueList> a(args);
 				ac->host->InvokeMethodOnMainThread(ac->callback,a);
-#ifdef DEBUG
-			std::cout << "after callback for file #" << c << std::endl;
-#endif
 			}
 			catch (Poco::Exception &ex)
 			{
@@ -83,7 +76,6 @@ namespace ti
 #ifdef DEBUG
 		std::cout << "async copy finished by copying " << c << " files" << std::endl;
 #endif
-		std::cerr << "+++++++++++++++++++++++++++++++++++++++++++++++" << std::endl;
 #ifdef OS_OSX
 		[pool release];
 #endif

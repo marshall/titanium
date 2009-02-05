@@ -318,7 +318,6 @@ namespace ti
 	void FilesystemBinding::DeletePendingOperations(const ValueList& args, SharedValue result)
 	{
 		KR_DUMP_LOCATION
-std::cout << "BEFORE async count = " << asyncOperations.size() << std::endl;
 		while (asyncOperations.size() > 0)
 		{
 			SharedBoundObject c = (*(asyncOperations.begin()));
@@ -333,11 +332,9 @@ std::cout << "BEFORE async count = " << asyncOperations.size() << std::endl;
 		{
 			this->timer->restart(0);
 		}
-std::cout << "AFTER async count = " << asyncOperations.size() << std::endl;
 	}
 	void FilesystemBinding::OnAsyncOperationTimer(Poco::Timer &timer)
 	{
-		std::cout << "TIMER FIRING: " << std::endl;
 #ifdef OS_OSX
 		NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 #endif
@@ -349,6 +346,5 @@ std::cout << "AFTER async count = " << asyncOperations.size() << std::endl;
 #ifdef OS_OSX
 		[pool release];
 #endif
-		std::cout << "AFTER TIMER FIRING: " << std::endl;
 	}
 }
