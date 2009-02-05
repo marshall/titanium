@@ -30,6 +30,9 @@ namespace ti
 	void AsyncCopy::Copy(Poco::Path &src, Poco::Path &dest)
 	{
 		Poco::File from(src.toString());
+#ifdef DEBUG
+		std::cout << "COPY: " << src.toString() << " => " << dest.toString() << " LINK=" << from.isLink() << std::endl;
+#endif
 		if (from.isDirectory() && !from.isLink())
 		{
 			Poco::File d(dest.toString());
@@ -62,7 +65,7 @@ namespace ti
 				[source appendFormat:@"set theAlias to make alias at POSIX file \"%@\" to POSIX file \"%@\"\n", NSTemporaryDirectory(), [originalPath stringByExpandingTildeInPath]];
 				[source appendFormat:@"get POSIX path of (theAlias as string)\n"];
 				[source appendFormat:@"end tell"];
-
+				
 				NSAppleScript *script = [[[NSAppleScript alloc] initWithSource:source] autorelease];
 
 				NSDictionary *error = nil;
@@ -111,8 +114,17 @@ namespace ti
 			try
 			{
 				Poco::Path from(file);
-				Poco::Path dest(to,from.getFileName());
-				ac->Copy(from,dest);
+				Poco::File f(file);
+				if (f.isDirectory())
+				{
+					std::cout << "++++++++++++++++++++++++++++++++++"<<std::endl;
+					ac->Copy(from,to);
+				}
+				else
+				{
+					Poco::Path dest(to,from.getFileName());
+					ac->Copy(from,dest);
+				}
 #ifdef DEBUG
 			std::cout << "copied async file: " << file << " (" << c << "/" << ac->files.size() << ")" << std::endl;
 #endif

@@ -1,12 +1,13 @@
+var TFS = Titanium.Filesystem;
+
 function updateProgressMessage(msg)
 {
 	$('#statusbar').html(msg);
 }
 
-function finishInstall()
+function updateProgressValue(value)
 {
-	$('#install').slideUp();
-	$('#install_completed').fadeIn();
+	$('#progressbar').progressbar('value',value);
 }
 
 function parseEntry(entry)
@@ -28,7 +29,7 @@ var moveby = 0;
 var current = 0;
 var count = 0;
 
-function runCopyTasks()
+function runCopyTasks(fn)
 {
 	if (tasks.length > 0)
 	{
@@ -38,19 +39,17 @@ function runCopyTasks()
 			current+=moveby;
 			count++;
 			updateProgressMessage('Copying '+count+' of '+total+' files...');
-			$('#progressbar').progressbar('value',current);
+			updateProgressValue(current);
 			if (count == total)
 			{
-				copiers = null;
-				finishInstall();
+				fn();
 			}
 			else
 			{
-				runCopyTasks();
+				runCopyTasks(fn);
 			}
 		};
-		//FIXME: copy actually copies symlinks inside of moving them...
-		Titanium.Filesystem.asyncCopy(task.files,task.dest,onFileCopy);
+		TFS.asyncCopy(task.files,task.dest,onFileCopy);
 	}
 }
 
@@ -60,14 +59,14 @@ function runInstaller()
 
 	var src = Titanium.Process.getEnv('KR_HOME');
 	var dest = Titanium.Process.getEnv('KR_RUNTIME_HOME');
-	var runtimeDir = Titanium.Filesystem.getFile(dest);
+	var runtimeDir = TFS.getFile(dest);
 	
 	
 	if (!runtimeDir.isDirectory())
 	{
 		runtimeDir.createDirectory(true);
 	}
-	var manifest = Titanium.Filesystem.getFile(src,'manifest');
+	var manifest = TFS.getFile(src,'manifest');
 	if (!manifest.isFile())
 	{
 		alert("Invalid runtime installer. Couldn't find manifest!");
@@ -92,13 +91,13 @@ function runInstaller()
 			alert("Invalid runtime installer. Couldn't find runtime in manifest!");
 			return false;
 		}
-		var runtimeSrc = Titanium.Filesystem.getFile(src,'runtime');
+		var runtimeSrc = TFS.getFile(src,'runtime');
 		if (!runtimeSrc.exists())
 		{
 			alert("Invalid runtime installer. Couldn't find runtime source directory!");
 			return false;
 		}
-		var runtimeDir = Titanium.Filesystem.getFile(dest,'runtime',Titanium.platform,runtime);
+		var runtimeDir = TFS.getFile(dest,'runtime',Titanium.platform,runtime);
 		//TODO: do we need to overwrite or confirm?
 		if (!runtimeDir.exists())
 		{
@@ -108,37 +107,130 @@ function runInstaller()
 				return false;
 			}
 		}
+		
+		var appname;
 
 		for (p in map)
 		{
-			if (p == 'runtime' || p == 'appid' || p == 'appname') continue;
-			var moduleSrc = Titanium.Filesystem.getFile(src,'modules',p);
+			if (p=='appname')
+			{
+				appname = map[p];
+				continue;
+			}
+			if (p == 'runtime' || p == 'appid') continue;
+			var moduleSrc = TFS.getFile(src,'modules',p);
 			if (!moduleSrc.exists()) continue;
-			var moduleDest = Titanium.Filesystem.getFile(dest,'modules',p,map[p]);
+			var moduleDest = TFS.getFile(dest,'modules',p,map[p]);
 			moduleDest.createDirectory(true);
 			tasks.push({
 				dest:moduleDest,
-				files:[moduleSrc]
+				files:moduleSrc
 			});
 			total++;
 		}
 		
 		var files = runtimeSrc.getDirectoryListing();
-		total += files.length;
-		moveby = 100/total;
+		total += 1;//files.length;
+		moveby = 100 / (total+3);
 
 		updateProgressMessage(total+' files to install ... ');
 		
 		tasks.push({
 			dest:runtimeDir,
-			files:files
+			files:runtimeSrc
 		});
 		
 		//TODO: add installer, developer product, etc.
 		//TODO: module and runtime directories not quite correct
 		//TODO: fix symlink problem
 		
-		runCopyTasks();
+		runCopyTasks(function()
+		{
+			updateProgressMessage('Configuring system paths ...');
+			
+			// create templates
+			try
+			{
+				var template = TFS.getFile(runtimeDir,'template');
+				template.createDirectory(true);
+
+				switch(Titanium.platform)
+				{
+					case 'osx':
+					
+						// link up WebKit
+						var fw = ['WebKit','WebCore','JavaScriptCore'];
+						for (var c=0;c<fw.length;c++)
+						{
+							var fwn = fw[c];
+							var fwd = TFS.getFile(runtimeDir,fwn+'.framework');
+							var ver = TFS.getFile(fwd,'Versions','A');
+							var current = TFS.getFile(fwd,'Versions','Current');
+							ver.createShortcut(current);
+							var hf = TFS.getFile(current,'Headers');
+							hf.createShortcut(TFS.getFile(fwd,'Headers'));
+							var ph = TFS.getFile(current,'PrivateHeaders');
+							ph.createShortcut(TFS.getFile(fwd,'PrivateHeaders'));
+							var rf = TFS.getFile(current,'Resources');
+							rf.createShortcut(TFS.getFile(fwd,'Resources'));
+							TFS.getFile(current,fwn).createShortcut(TFS.getFile(fwd,fwn));
+						}
+					
+						var boot = TFS.getFile(src,'MacOS',appname);
+						boot.copy(template);
+						var target = TFS.getFile(template,appname);
+						target.rename('kboot');
+						target.setExecutable(true);
+						var lproj = TFS.getFile(src,'Resources','English.lproj');
+						var menu = TFS.getFile(lproj,'MainMenu.nib');
+						var icons = TFS.getFile(lproj,'titanium.icns');
+						menu.copy(template);
+						icons.copy(template);
+						break;
+					case 'win32':
+						var boot = TFS.getFile(src,appname+'.exe');
+						boot.copy(template);
+						var target = TFS.getFile(template,appname);
+						target.rename('kboot.exe');
+						var target = TFS.getFile(template,'kboot.exe');
+						boot.copy(target);
+						break;
+					case 'linux':
+						var boot = TFS.getFile(src,appname);
+						boot.copy(template);
+						var target = TFS.getFile(template,appname);
+						target.rename('kboot');
+						target.setExecutable(true);
+						break;
+				}
+				
+				current+=moveby;
+				updateProgressValue(current);
+				
+				// developer product
+				var developer = App.CreateApp(runtimeDir,runtimeDir,'Titanium Developer','com.titaniumapp.developer');
+				var devsrc = TFS.getFile(src,'developer');
+				var devresources = TFS.getFile(devsrc,'resources');
+				var devtiapp = TFS.getFile(devsrc,'tiapp.xml');
+				devtiapp.copy(developer.base);
+				var devmanifest = TFS.getFile(devsrc,'manifest');
+				devmanifest.copy(developer.base);
+				TFS.asyncCopy(devresources,developer.resources,function()
+				{
+					current+=moveby;
+					updateProgressValue(current);
+				});
+				
+				current+=moveby;
+				updateProgressValue(current);
+
+				finishInstall();
+			}
+			catch(E)
+			{
+				alert("error="+E);
+			}
+		});
 	}
 	catch(E)
 	{

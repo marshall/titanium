@@ -198,7 +198,9 @@
 	}
 	[alert release];
 
-	[window makeKeyAndOrderFront:nil];
+	[NSApp arrangeInFront:window];
+	[window makeKeyAndOrderFront:window];
+	[NSApp activateIgnoringOtherApps:YES];
 }
 
 -(IBAction)cancel:(id)sender

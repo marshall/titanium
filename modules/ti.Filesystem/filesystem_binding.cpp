@@ -7,8 +7,8 @@
 #include "filesystem_binding.h"
 #include "file.h"
 #include "async_copy.h"
-
 #include "api/file_utils.h"
+#include "filesystem_utils.h"
 
 #ifdef OS_OSX
 #include <Cocoa/Cocoa.h>
@@ -101,7 +101,7 @@ namespace ti
 			// a join
 			for (size_t c=0;c<args.size();c++)
 			{
-				std::string arg = args.at(c)->ToString();
+				std::string arg = FileSystemUtils::GetFileName(args.at(c));
 				filename = kroll::FileUtils::Join(filename.c_str(),arg.c_str(),NULL);
 			}
 		}
@@ -256,20 +256,8 @@ namespace ti
 			for (int c=0;c<list->Size();c++)
 			{
 				SharedValue v = list->At(c);
-				if (v->IsString())
-				{
-					files.push_back(v->ToString());
-				}
-				else if (v->IsObject())
-				{
-					SharedBoundObject bo = v->ToObject();
-					SharedPtr<File> file = bo.cast<File>();
-					if (file.isNull())
-					{
-						throw ValueException::FromString("invalid type passed as first argument");
-					}
-					files.push_back(file->GetFilename());
-				}
+				std::string s(FileSystemUtils::GetFileName(v));
+				files.push_back(s);
 			}
 		}
 		else if (args.at(0)->IsObject())
@@ -282,22 +270,8 @@ namespace ti
 			}
 			files.push_back(file->GetFilename());
 		}
-		std::string destination;
 		SharedValue v = args.at(1);
-		if (v->IsString())
-		{
-			destination = v->ToString();
-		}
-		else if (v->IsObject())
-		{
-			SharedBoundObject bo = v->ToObject();
-			SharedPtr<File> file = bo.cast<File>();
-			if (file.isNull())
-			{
-				throw ValueException::FromString("invalid type passed as first argument");
-			}
-			destination = file->GetFilename();
-		}
+		std::string destination(FileSystemUtils::GetFileName(v));
 		SharedBoundMethod method = args.at(2)->ToMethod();
 		SharedBoundObject copier = new ti::AsyncCopy(this,host,files,destination,method);
 		result->SetObject(copier);

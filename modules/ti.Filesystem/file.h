@@ -84,6 +84,36 @@ namespace ti
 			 */
 			void IsSymbolicLink(const ValueList& args, SharedValue result);
 			/**
+			 * Function: IsExecutable
+			 *   Determines if this File is executable
+			 *
+			 * Parameters:
+			 *
+			 * Returns:
+			 *   true if this File is executable; false otherwise
+			 */
+			void IsExecutable(const ValueList& args, SharedValue result);
+			/**
+			 * Function: IsReadonly
+			 *   Determines if this File is readonly or not
+			 *
+			 * Parameters:
+			 *
+			 * Returns:
+			 *   true if this File is readonly; false otherwise
+			 */
+			void IsReadonly(const ValueList& args, SharedValue result);
+			/**
+			 * Function: IsWriteable
+			 *   Determines if this File is writeable or not
+			 *
+			 * Parameters:
+			 *
+			 * Returns:
+			 *   true if this File is writeable; false otherwise
+			 */
+			void IsWriteable(const ValueList& args, SharedValue result);
+			/**
 			 * Function: Resolve
 			 *   resolves a given relative path against this File
 			 *
@@ -161,6 +191,17 @@ namespace ti
 			 *   true if the move operation is successful; false otherwise
 			 */
 			void Move(const ValueList& args, SharedValue result);
+			/**
+			 * Function: Rename
+			 *   Renames the file or directory to the new name
+			 *
+			 * Parameters:
+			 *   newname - the name as a string
+			 *
+			 * Returns:
+			 *   true if the operation is successful; false otherwise
+			 */
+			void Rename(const ValueList& args, SharedValue result);
 			/**
 			 * Function: CreateDirectory
 			 *   Creates this directory
@@ -293,6 +334,50 @@ namespace ti
 			 *   the disk space available in bytes
 			 */
 			void GetSpaceAvailable(const ValueList& args, SharedValue result);
+			/**
+			 * Function: CreateShortcut
+			 *   creates a filesystem shortcut 
+			 *
+			 * Parameters:
+			 *   destination - destination directory
+			 *
+			 * Returns:
+			 *   true if shortcut is created
+			 */
+			void CreateShortcut(const ValueList& args, SharedValue result);
+			/**
+			 * Function: SetExecutable
+			 *   set executable
+			 *
+			 * Parameters:
+			 *   onoff - true to make executable, false to make it not
+			 *
+			 * Returns:
+			 *   true if succeeded
+			 */
+			void SetExecutable(const ValueList& args, SharedValue result);
+			/**
+			 * Function: SetReadonly
+			 *   set readonly
+			 *
+			 * Parameters:
+			 *   onoff - true to make readonly, false to make it not
+			 *
+			 * Returns:
+			 *   true if succeeded
+			 */
+			void SetReadonly(const ValueList& args, SharedValue result);
+			/**
+			 * Function: SetWriteable
+			 *   set writeable
+			 *
+			 * Parameters:
+			 *   onoff - true to make writable, false to make it not
+			 *
+			 * Returns:
+			 *   true if succeeded
+			 */
+			void SetWriteable(const ValueList& args, SharedValue result);
 	};
 }
 

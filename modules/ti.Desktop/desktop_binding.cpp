@@ -30,20 +30,9 @@ namespace ti
 		this->SetMethod("openURL",&DesktopBinding::OpenURL);
 		this->SetMethod("openFiles",&DesktopBinding::OpenFiles);
 		this->SetMethod("getSystemIdleTime",&DesktopBinding::GetSystemIdleTime);
-		this->SetMethod("createShortcut",&DesktopBinding::CreateShortcut);
 	}
 	DesktopBinding::~DesktopBinding()
 	{
-	}
-	void DesktopBinding::CreateShortcut(const ValueList& args, SharedValue result)
-	{
-		if (args.size()!=2)
-		{
-			throw ValueException::FromString("createShortcut takes 2 parameters");
-		}
-		std::string from = args.at(0)->ToString();
-		std::string to = args.at(1)->ToString();
-		result->SetBool(TI_DESKTOP::CreateShortcut(from,to));
 	}
 	void DesktopBinding::OpenFiles(const ValueList& args, SharedValue result)
 	{

@@ -13,10 +13,6 @@ namespace ti
 	LinuxDesktop::~LinuxDesktop()
 	{
 	}
-	bool LinuxDesktop::CreateShortcut(std::string &from, std::string &to)
-	{
-		return false;
-	}
 	SharedBoundList LinuxDesktop::OpenFiles(SharedBoundObject properties)
 	{
 		return false;

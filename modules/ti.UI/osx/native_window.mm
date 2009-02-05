@@ -206,8 +206,11 @@
 	{
 		requiresDisplay = NO;
 		config->SetVisible(true);
-	    [self makeKeyAndOrderFront:self];	
+		
 		[NSApp arrangeInFront:self];
+		[self makeKeyAndOrderFront:self];
+		[NSApp activateIgnoringOtherApps:YES];
+		
 		if (config->IsFullScreen())
 		{
 			[self setFullScreen:YES];

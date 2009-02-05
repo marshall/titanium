@@ -1,9 +1,10 @@
 /**
- * Appcelerator Kroll - licensed under the Apache Public License 2
+ * Appcelerator Titanium - licensed under the Apache Public License 2
  * see LICENSE in the root folder for details on the license.
  * Copyright (c) 2009 Appcelerator, Inc. All Rights Reserved.
  */
 #include "file.h"
+#include "filesystem_utils.h"
 
 #include <Poco/File.h>
 #include <Poco/Path.h>
@@ -27,6 +28,9 @@ namespace ti
 		this->SetMethod("isDirectory",&File::IsDirectory);
 		this->SetMethod("isHidden",&File::IsHidden);
 		this->SetMethod("isSymbolicLink",&File::IsSymbolicLink);
+		this->SetMethod("isExecutable",&File::IsExecutable);
+		this->SetMethod("isReadonly",&File::IsReadonly);
+		this->SetMethod("isWriteable",&File::IsWriteable);
 
 		this->SetMethod("resolve",&File::Resolve);
 		this->SetMethod("write",&File::Write);
@@ -34,6 +38,7 @@ namespace ti
 		this->SetMethod("readLine",&File::ReadLine);
 		this->SetMethod("copy",&File::Copy);
 		this->SetMethod("move",&File::Move);
+		this->SetMethod("rename",&File::Rename);
 		this->SetMethod("createDirectory",&File::CreateDirectory);
 		this->SetMethod("deleteDirectory",&File::DeleteDirectory);
 		this->SetMethod("deleteFile",&File::DeleteFile);
@@ -48,6 +53,10 @@ namespace ti
 		this->SetMethod("nativePath",&File::GetNativePath);
 		this->SetMethod("size",&File::GetSize);
 		this->SetMethod("spaceAvailable",&File::GetSpaceAvailable);
+		this->SetMethod("createShortcut",&File::CreateShortcut);
+		this->SetMethod("setExecutable",&File::SetExecutable);
+		this->SetMethod("setReadonly",&File::SetReadonly);
+		this->SetMethod("setWriteable",&File::SetWriteable);
 
 		this->readLineFS = NULL;
 	}
@@ -122,6 +131,54 @@ namespace ti
 			Poco::File file(this->filename);
 			bool isLink = file.isLink();
 			result->SetBool(isLink);
+		}
+		catch (Poco::FileNotFoundException &fnf)
+		{
+			result->SetBool(false);
+		}
+		catch (Poco::Exception& exc)
+		{
+			throw ValueException::FromString(exc.displayText());
+		}
+	}
+	void File::IsExecutable(const ValueList& args, SharedValue result)
+	{
+		try
+		{
+			Poco::File file(this->filename);
+			result->SetBool(file.canExecute());
+		}
+		catch (Poco::FileNotFoundException &fnf)
+		{
+			result->SetBool(false);
+		}
+		catch (Poco::Exception& exc)
+		{
+			throw ValueException::FromString(exc.displayText());
+		}
+	}
+	void File::IsReadonly(const ValueList& args, SharedValue result)
+	{
+		try
+		{
+			Poco::File file(this->filename);
+			result->SetBool(file.canRead());
+		}
+		catch (Poco::FileNotFoundException &fnf)
+		{
+			result->SetBool(false);
+		}
+		catch (Poco::Exception& exc)
+		{
+			throw ValueException::FromString(exc.displayText());
+		}
+	}
+	void File::IsWriteable(const ValueList& args, SharedValue result)
+	{
+		try
+		{
+			Poco::File file(this->filename);
+			result->SetBool(file.canWrite());
 		}
 		catch (Poco::FileNotFoundException &fnf)
 		{
@@ -258,26 +315,7 @@ namespace ti
 	{
 		try
 		{
-			std::string dest;
-			
-			if (args.at(0)->IsObject())
-			{
-				SharedBoundObject bo = args.at(0)->ToObject();
-				SharedPtr<ti::File> f = bo.cast<ti::File>();
-				if (!f.isNull())
-				{
-					dest = f->GetFilename();
-				}
-				else
-				{
-					throw ValueException::FromString("unknown object type");
-				}
-			}
-			else if (args.at(0)->IsString())
-			{
-				dest = args.at(0)->ToString();
-			}
-			std::cout << "from => " << this->filename << " to => " << dest << std::endl;
+			std::string dest = FileSystemUtils::GetFileName(args.at(0));
 			Poco::File from(this->filename);
 			from.copyTo(dest);
 			result->SetBool(true);
@@ -291,11 +329,25 @@ namespace ti
 	{
 		try
 		{
-			std::string dest = args.at(0)->ToString();
-			// TODO need to verify parameters
-
+			std::string dest = FileSystemUtils::GetFileName(args.at(0));
 			Poco::File from(this->filename);
 			from.moveTo(dest);
+			result->SetBool(true);
+		}
+		catch (Poco::Exception& exc)
+		{
+			throw ValueException::FromString(exc.displayText());
+		}
+	}
+	void File::Rename(const ValueList& args, SharedValue result)
+	{
+		try
+		{
+			std::string name = args.at(0)->ToString();
+			Poco::File f(this->filename);
+			Poco::Path p(this->filename);
+			p.setFileName(name);
+			f.renameTo(p.toString());
 			result->SetBool(true);
 		}
 		catch (Poco::Exception& exc)
@@ -553,6 +605,141 @@ namespace ti
 		else
 		{
 			result->SetDouble(avail);
+		}
+	}
+	void File::CreateShortcut(const ValueList& args, SharedValue result)
+	{
+		if (args.size()!=1)
+		{
+			throw ValueException::FromString("createShortcut takes a parameter");
+		}
+		std::string from = this->filename;
+		std::string to = FileSystemUtils::GetFileName(args.at(0));
+#ifdef OS_OSX
+		// http://www.mail-archive.com/cocoa-dev@lists.apple.com/msg18273.html
+		NSString* originalPath = [NSString stringWithCString:from.c_str()];
+		NSString* destPath = [NSString stringWithCString:to.c_str()];
+		
+		NSMutableString *source = [NSMutableString stringWithString:@"tell application \"Finder\"\n"];
+
+		[source appendFormat:@"set theAlias to make alias at POSIX file \"%@\" to POSIX file \"%@\"\n", NSTemporaryDirectory(), [originalPath stringByExpandingTildeInPath]];
+		[source appendFormat:@"get POSIX path of (theAlias as string)\n"];
+		[source appendFormat:@"end tell"];
+
+		NSAppleScript *script = [[[NSAppleScript alloc] initWithSource:source] autorelease];
+
+		NSDictionary *error = nil;
+		NSAppleEventDescriptor *desc = [script executeAndReturnError:&error];
+
+		if (desc==nil)
+		{
+			//TODO: throw exception?
+			result->SetBool(false);
+		}
+		else
+		{
+			BOOL worked = [[NSFileManager defaultManager] movePath:[desc stringValue] toPath:[destPath stringByExpandingTildeInPath] handler:nil];
+			result->SetBool(worked);
+		}
+#elif OS_WIN32
+		HRESULT hResult;
+		IShellLink* psl;
+
+		if(from.length() == 0 || to.length() == 0) {
+			std::string ex = "Invalid arguments given to createShortcut()";
+			throw ValueException::FromString(ex);
+		}
+
+		hResult = CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER, IID_IShellLink, (LPVOID*)&psl);
+
+		if(SUCCEEDED(hResult))
+		{
+			IPersistFile* ppf;
+
+			// set path to the shortcut target and add description
+			psl->SetPath(from.c_str());
+			psl->SetDescription("File shortcut");
+
+			hResult = psl->QueryInterface(IID_IPersistFile, (LPVOID*) &ppf);
+
+			if(SUCCEEDED(hResult))
+			{
+				// ensure to ends with .lnk
+				to.append(".lnk");
+				WCHAR wsz[MAX_PATH];
+
+				// ensure string is unicode
+				if(MultiByteToWideChar(CP_ACP, 0, to.c_str(), -1, wsz, MAX_PATH))
+				{
+					// save the link
+					hResult = ppf->Save(wsz, TRUE);
+					ppf->Release();
+
+					if(SUCCEEDED(hResult))
+					{
+						result->SetBool(true);
+						return ;
+					}
+				}
+			}
+		}
+		result->SetBool(false);
+#elif OS_LINUX
+		result->SetBool(link(this->filename,to.c_str()) == 0);
+#else
+		result->SetBool(false);
+#endif
+
+	}
+	void File::SetExecutable(const ValueList& args, SharedValue result)
+	{
+		try
+		{
+			Poco::File file(this->filename);
+			file.setExecutable(args.at(0)->ToBool());
+			result->SetBool(true);
+		}
+		catch (Poco::FileNotFoundException &fnf)
+		{
+			result->SetBool(false);
+		}
+		catch (Poco::Exception& exc)
+		{
+			throw ValueException::FromString(exc.displayText());
+		}
+	}
+	void File::SetReadonly(const ValueList& args, SharedValue result)
+	{
+		try
+		{
+			Poco::File file(this->filename);
+			file.setReadOnly(args.at(0)->ToBool());
+			result->SetBool(true);
+		}
+		catch (Poco::FileNotFoundException &fnf)
+		{
+			result->SetBool(false);
+		}
+		catch (Poco::Exception& exc)
+		{
+			throw ValueException::FromString(exc.displayText());
+		}
+	}
+	void File::SetWriteable(const ValueList& args, SharedValue result)
+	{
+		try
+		{
+			Poco::File file(this->filename);
+			file.setWriteable(args.at(0)->ToBool());
+			result->SetBool(true);
+		}
+		catch (Poco::FileNotFoundException &fnf)
+		{
+			result->SetBool(false);
+		}
+		catch (Poco::Exception& exc)
+		{
+			throw ValueException::FromString(exc.displayText());
 		}
 	}
 }

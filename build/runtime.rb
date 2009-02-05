@@ -139,6 +139,9 @@ case OS
 		plistf = File.open(File.join(contents,'Info.plist'),'w')	
 		plistf.puts plist
 		plistf.close
+
+    #developer product
+		FileUtils.cp_r "#{TOPDIR}/installation/developer/.","#{contents}/developer"
 		
 		#TODO: build DMG
 		
