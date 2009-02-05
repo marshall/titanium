@@ -28,6 +28,7 @@ var total = 0;
 var moveby = 0;
 var current = 0;
 var count = 0;
+var taskTimer = null;
 
 function runCopyTasks(fn)
 {
@@ -36,6 +37,8 @@ function runCopyTasks(fn)
 		var task = tasks.shift();
 		var onFileCopy = function(filename,_count,_total)
 		{
+			if (taskTimer) clearTimeout(taskTimer);
+			$("#ajax").fadeOut();
 			current+=moveby;
 			count++;
 			updateProgressMessage('Copying '+count+' of '+total+' files...');
@@ -49,6 +52,10 @@ function runCopyTasks(fn)
 				runCopyTasks(fn);
 			}
 		};
+		setTimeout(function()
+		{
+			$('#ajax').fadeIn();
+		},2000)
 		TFS.asyncCopy(task.files,task.dest,onFileCopy);
 	}
 }
@@ -186,6 +193,7 @@ function runInstaller()
 						var icons = TFS.getFile(lproj,'titanium.icns');
 						menu.copy(template);
 						icons.copy(template);
+						
 						break;
 					case 'win32':
 						var boot = TFS.getFile(src,appname+'.exe');
@@ -208,7 +216,8 @@ function runInstaller()
 				updateProgressValue(current);
 				
 				// developer product
-				var developer = App.CreateApp(runtimeDir,runtimeDir,'Titanium Developer','com.titaniumapp.developer');
+				var devDest = TFS.getProgramsDirectory();
+				var developer = App.CreateApp(runtimeDir,devDest,'Titanium Developer','com.titaniumapp.developer');
 				var devsrc = TFS.getFile(src,'developer');
 				var devresources = TFS.getFile(devsrc,'resources');
 				var devtiapp = TFS.getFile(devsrc,'tiapp.xml');
@@ -220,11 +229,12 @@ function runInstaller()
 					current+=moveby;
 					updateProgressValue(current);
 				});
+						
 				
 				current+=moveby;
 				updateProgressValue(current);
 
-				finishInstall();
+				finishInstall(developer.executable);
 			}
 			catch(E)
 			{

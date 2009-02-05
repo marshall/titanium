@@ -616,31 +616,36 @@ namespace ti
 		std::string from = this->filename;
 		std::string to = FileSystemUtils::GetFileName(args.at(0));
 #ifdef OS_OSX
-		// http://www.mail-archive.com/cocoa-dev@lists.apple.com/msg18273.html
 		NSString* originalPath = [NSString stringWithCString:from.c_str()];
 		NSString* destPath = [NSString stringWithCString:to.c_str()];
+		BOOL worked = [[NSFileManager defaultManager] createSymbolicLinkAtPath:destPath pathContent:originalPath];
+		NSLog(@"SYMLINK:%@=>%@ (%d)",originalPath,destPath,worked);
+		result->SetBool(worked);
 		
-		NSMutableString *source = [NSMutableString stringWithString:@"tell application \"Finder\"\n"];
-
-		[source appendFormat:@"set theAlias to make alias at POSIX file \"%@\" to POSIX file \"%@\"\n", NSTemporaryDirectory(), [originalPath stringByExpandingTildeInPath]];
-		[source appendFormat:@"get POSIX path of (theAlias as string)\n"];
-		[source appendFormat:@"end tell"];
-
-		NSAppleScript *script = [[[NSAppleScript alloc] initWithSource:source] autorelease];
-
-		NSDictionary *error = nil;
-		NSAppleEventDescriptor *desc = [script executeAndReturnError:&error];
-
-		if (desc==nil)
-		{
-			//TODO: throw exception?
-			result->SetBool(false);
-		}
-		else
-		{
-			BOOL worked = [[NSFileManager defaultManager] movePath:[desc stringValue] toPath:[destPath stringByExpandingTildeInPath] handler:nil];
-			result->SetBool(worked);
-		}
+		// 
+		// // http://www.mail-archive.com/cocoa-dev@lists.apple.com/msg18273.html
+		// 
+		// NSMutableString *source = [NSMutableString stringWithString:@"tell application \"Finder\"\n"];
+		// 
+		// [source appendFormat:@"set theAlias to make alias at POSIX file \"%@\" to POSIX file \"%@\"\n", NSTemporaryDirectory(), [originalPath stringByExpandingTildeInPath]];
+		// [source appendFormat:@"get POSIX path of (theAlias as string)\n"];
+		// [source appendFormat:@"end tell"];
+		// 
+		// NSAppleScript *script = [[[NSAppleScript alloc] initWithSource:source] autorelease];
+		// 
+		// NSDictionary *error = nil;
+		// NSAppleEventDescriptor *desc = [script executeAndReturnError:&error];
+		// 
+		// if (desc==nil)
+		// {
+		// 	//TODO: throw exception?
+		// 	result->SetBool(false);
+		// }
+		// else
+		// {
+		// 	BOOL worked = [[NSFileManager defaultManager] movePath:[desc stringValue] toPath:[destPath stringByExpandingTildeInPath] handler:nil];
+		// 	result->SetBool(worked);
+		// }
 #elif OS_WIN32
 		HRESULT hResult;
 		IShellLink* psl;

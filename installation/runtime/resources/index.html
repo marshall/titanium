@@ -36,6 +36,7 @@
 				<div class="text section" id="statusbar">
 					Installing...
 				</div>
+				<div id="ajax" style="display:none"><img src="images/ajax.gif"/></div>
 				<div id="progressbar" class="section" style="height:10px"></div>
 				<div class="section text" >
 					<div class="button1" id="cancel_install">
@@ -85,7 +86,7 @@
 					Titanium related modifications:
 						</p>
 
-					Copyright 2006-2008 Appcelerator, Inc.
+					Copyright 2008-2009 Appcelerator, Inc.
 
 					Licensed under the Apache License, Version 2.0 (the "License");
 					you may not use this file except in compliance with the License.
@@ -133,12 +134,26 @@
 		}
 		$('#cancel_terms, #cancel_install').click(cancelInstaller);
 
+		var appToRunPostInstall = null;
+		
 		// finish
 		$('#finish').click(function()
 		{
-			//	Titanium.Desktop.openURL('http://titaniumapp.com/sdk_welcome');
-			Titanium.Desktop.openURL('http://titaniumapp.com/');
-			Titanium.UI.currentWindow.close();
+			try
+			{
+				if (appToRunPostInstall)
+				{
+					Titanium.Desktop.openApplication(String(appToRunPostInstall));
+				}
+				else
+				{
+					Titanium.Desktop.openURL('http://titaniumapp.com/');
+				}
+			}
+			catch(E)
+			{
+				alert("error: "+E);
+			}
 		});
 		
 		var installerRunning = false;
@@ -155,9 +170,10 @@
 			},10);
 		};
 		
-		function finishInstall()
+		function finishInstall(openapp)
 		{
 			state = 1;
+			appToRunPostInstall = openapp;
 			$('#install').slideUp();
 			$('#install_completed').fadeIn();
 		};

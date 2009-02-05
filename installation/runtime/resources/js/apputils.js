@@ -64,7 +64,8 @@ App.Creator = {
 
 		return {
 			resources:resources,
-			base:contents
+			base:contents,
+			executable:src
 		};
 	},
 
