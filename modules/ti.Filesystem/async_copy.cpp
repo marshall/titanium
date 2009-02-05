@@ -76,7 +76,7 @@ namespace ti
 					[[NSFileManager defaultManager] movePath:[desc stringValue] toPath:[destPath stringByExpandingTildeInPath] handler:nil];
 				}
 #else
-				link(src.toString().c_str(),targetFile.path().c_str());
+				link(src.toString().c_str(),dest.toString().c_str());
 #endif				
 			}
 			else
