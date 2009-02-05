@@ -80,6 +80,17 @@ namespace ti
 		 *   path to the Resources folder
 		 */
 		void GetResourcesDirectory(const ValueList& args, SharedValue result);
+		
+		/**
+		 * Function: GetProgramsDirectory
+		 *   return the path to the user's programs directory in a platform specific way
+		 *
+		 * Params:
+		 *
+		 * Returns:
+		 *   path to the user's programs folder; null if the directory cannot be determined
+		 */
+		void GetProgramsDirectory(const ValueList &args, SharedValue result);
 		/**
 		 * Function: GetDesktopDirectory
 		 *   return the path to the user's desktop directory

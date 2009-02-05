@@ -9,6 +9,10 @@
 #ifdef OS_WIN32
 #include <api/base.h>
 #include <windows.h>
+#include <commdlg.h>
+#include <shellapi.h>
+#include <shlobj.h>
+#include <string>
 #elif OS_OSX
 #import <Foundation/Foundation.h>
 #endif
@@ -27,11 +31,11 @@ namespace ti
 			File(std::string filename);
 			virtual ~File();
 			std::string& GetFilename() { return this->filename; }
-			
+
 		private:
 			std::string filename;
 			Poco::FileInputStream* readLineFS;
-			
+
 
 			/**
 			 * Function: ToString
@@ -336,7 +340,7 @@ namespace ti
 			void GetSpaceAvailable(const ValueList& args, SharedValue result);
 			/**
 			 * Function: CreateShortcut
-			 *   creates a filesystem shortcut 
+			 *   creates a filesystem shortcut
 			 *
 			 * Parameters:
 			 *   destination - destination directory

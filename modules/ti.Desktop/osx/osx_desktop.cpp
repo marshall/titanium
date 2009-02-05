@@ -96,8 +96,8 @@ namespace ti
 	bool OSXDesktop::OpenApplication(std::string& app)
 	{
 		NSWorkspace* ws = [NSWorkspace sharedWorkspace];
-		BOOL wasLaunched = [ws launchApplication:[NSString stringWithCString:app.c_str()]];
-		return wasLaunched;
+		NSString *name = [NSString stringWithCString:app.c_str()];
+		return [ws launchApplication:name];
 	}
 	bool OSXDesktop::OpenURL(std::string& url)
 	{

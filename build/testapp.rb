@@ -111,7 +111,7 @@ LANGS = {
   '.js'=>'javascript'
 }
 
-if OS!='osx'
+if OS=='linux'
   FileUtils.cp File.join(outdir,'kinstall'+ext), File.join(installdir,'kinstall'+ext)
 end
 
