@@ -20,6 +20,7 @@ build.titanium_source_dir = path.abspath('.')
 build.kroll_source_dir = path.abspath('kroll')
 build.kroll_third_party = build.third_party
 build.kroll_include_dir = path.join(build.dir, 'include')
+build.titanium_support_dir = path.join(build.titanium_source_dir, 'support', build.os)
 
 # This should only be used for accessing various
 # scripts in the kroll build directory. All resources
@@ -75,15 +76,19 @@ if build.is_osx():
 
 
 tiBuild = build
-Export ('tiBuild')
-Export ('build')
+Export('tiBuild')
+Export('build')
+Export ('debug')
 
-SConscript('kroll/SConscript', exports='debug')
+if 'runtime' in COMMAND_LINE_TARGETS:
+	SConscript('installation/runtime/SConscript')
+else:
+	SConscript('kroll/SConscript', exports='debug')
 
-# Kroll *must not be required* for installation
-SConscript('installation/SConscript')
+	# Kroll *must not be required* for installation
+	SConscript('installation/SConscript')
 
-# Kroll library is now built (hopefully)
-build.env.Append(LIBS=['kroll']) 
-SConscript('modules/SConscript')
-#SConscript('launcher/SConscript')
+	# Kroll library is now built (hopefully)
+	build.env.Append(LIBS=['kroll']) 
+	SConscript('modules/SConscript')
+	#SConscript('launcher/SConscript')

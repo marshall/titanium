@@ -1,18 +1,30 @@
 import os.path as p
-import zipfil
+import zipfile as z, glob
 
-Import('build name build_dir')
-out = p.join(build_dir, name + 'zip')
-zip = ZipFile(out, 'w')
+Import('build name build_dir runtime_libs third_party modules')
 
+out = p.join(build_dir, name + '.zip')
+zip = z.ZipFile(out, 'w')
+
+# Gather all runtime files
 files = []
 for lib in runtime_libs:
-	append(build.dir + '\' lib + '.dll'))
-
-for f in glob('%s\
-build.third_party, tp, 'bin'
+	files.append('%s\%s.dll' % (build.dir, lib))
 for tp in third_party:
-	tp_path = p.join(build.third_party, tp, 'bin', '*')
-	for file in glob.glob(tp_path):
-		bn = p.basename(file)
-		zip.write(file, 'runtime/%s' % lib)
+	for f in glob.glob('%s\%s\bin\*' % (build.third_party, tp)):
+		files.append(file)
+for f in files:
+	zip.write(f, 'runtime/' + p.basename(f))
+
+# Add all modules 
+for m in modules:
+	f = p.join(build.dir, m + '.dll')
+	op = 'modules/%s/%smodule.dll' % (m,m)
+	zip.add(f, op)
+
+# Write all runtime installer files
+for f in glob('*') + glob(p.join('*', '**')):
+	if f.startswith('Sconscript'): continue
+	zip.write(f, f)
+
+# Create self-extracting, self-executing zip here

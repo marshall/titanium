@@ -2,16 +2,35 @@ Import('build')
 import os.path as p
 
 name = 'titanium_runtime'
-build_dir = p.join(build.dir, 'runtime')
-runtim_libs = ['kroll', khost']
+version = '0.2'
+appid ='com.titaniumapp.installer.runtime'
+
+runtime_libs = ['kroll', 'khost']
 third_party = ['webkit', 'poco']
+modules = [
+	'api', 'javascript', 'foo', 
+	# 'ruby', 'python'
+	'tiplatform', 'tiapp', 'tiui', 'tinetwork', 'tifilesystem',
+	'timedia', 'tidesktop', 'tigrowl', 'tidatabase', 'tiprocess',
+]
 
+manifest_text="""
+appname: %s
+appid: %s
+runtime: %s
+"""
+manifest_text = manifest_text % (name, appid, version)
+for module in modules:
+	manifest_text += "%s: 0.1\n" % module
+
+vars = 'vars build name version runtime_libs '
+vars += ' third_party modules appid manifest_text'
 if build.is_osx():
-	SConscript('Sconscript.osx', 'name build_dir')
+	SConscript('Sconscript.osx', vars)
 
-if build.is_linux():
-	SConscript('Sconscript.linux', 'name build_dir')
-
-if build.is_win32():
-	SConscript('Sconscript.win32', 'name build_dir')
+#if build.is_linux():
+#	SConscript('Sconscript.linux', vars)
+#
+#if build.is_win32():
+#	SConscript('Sconscript.win32', vars)
 
