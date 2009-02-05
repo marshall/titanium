@@ -4,26 +4,25 @@
  * Copyright (c) 2009 Appcelerator, Inc. All Rights Reserved.
  */
 #include "async_copy.h"
+#include "filesystem_binding.h"
 
 namespace ti
 {
-	AsyncCopy::AsyncCopy(Host *host,std::vector<std::string> files, std::string destination, SharedBoundMethod callback) :
-		host(host), files(files), destination(destination), callback(callback), stopped(false)
+	AsyncCopy::AsyncCopy(FilesystemBinding* parent,Host *host,std::vector<std::string> files, std::string destination, SharedBoundMethod callback) :
+		parent(parent), host(host), files(files), destination(destination), callback(callback), stopped(false)
 	{
+		this->Set("running",Value::NewBool(true));
 		this->thread = new Poco::Thread();
 		this->thread->start(&AsyncCopy::Run,this);
 	}
 	AsyncCopy::~AsyncCopy()
 	{
-		KR_DUMP_LOCATION
 		if (this->thread!=NULL)
 		{
-			std::cout << "~AsyncCopy:: before delete thread" << std::endl;
+			this->thread->tryJoin(10); // precaution, should already be stopped
 			delete this->thread;
-			std::cout << "~AsyncCopy:: after delete thread" << std::endl;
 			this->thread = NULL;
 		}
-		std::cout << "after ~AsyncCopy" << std::endl;
 	}
 	void AsyncCopy::Run(void* data)
 	{
@@ -59,7 +58,7 @@ namespace ti
 				SharedPtr<ValueList> a(args);
 				ac->host->InvokeMethodOnMainThread(ac->callback,a);
 #ifdef DEBUG
-			std::cout << "after callback for file #" << c << std::endl;
+			std::cout << "after callback for async file: " << file << " (" << c << "/" << ac->files.size() << ")" << std::endl;
 #endif
 			}
 			catch (Poco::Exception &ex)
@@ -75,6 +74,7 @@ namespace ti
 				std::cerr << "Unknown error running async file copy" << std::endl;
 			}
 		}
+		ac->Set("running",Value::NewBool(false));
 		ac->stopped = true;
 #ifdef DEBUG
 		std::cout << "async copy finished by copying " << c << " files" << std::endl;
@@ -89,11 +89,11 @@ namespace ti
 	}
 	void AsyncCopy::Cancel(const ValueList& args, SharedValue result)
 	{
-		
+		KR_DUMP_LOCATION
 		if (thread!=NULL && thread->isRunning())
 		{
 			this->stopped = true;
-			thread->tryJoin(100); // just wait a brief amount to not lock up JS thread
+			this->Set("running",Value::NewBool(false));
 			result->SetBool(true);
 		}
 		else
