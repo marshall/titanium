@@ -101,10 +101,17 @@ case OS
 			end
 			#FIXME! deal with symlinks
 			Dir["#{TOPDIR}/kroll/thirdparty/#{OS}/#{lib}/*.framework"].each do |f|
-			  FileUtils.mkdir File.join(runtime,File.basename(f))
-				FileUtils.cp_r "#{f}/.",File.join(runtime,File.basename(f))
-				FileUtils.rm_rf File.join(runtime,File.basename(f),'Headers')
-				FileUtils.rm_rf File.join(runtime,File.basename(f),'PrivateHeaders')
+			  target = File.join(runtime,File.basename(f))
+			  FileUtils.mkdir target
+				FileUtils.cp_r "#{f}/.",target
+				# get rid of these files which are only for development
+				['h','defs'].each do |ext|
+  				Dir["#{target}/**/**/*.#{ext}"].each do |hf|
+  				  FileUtils.rm_rf hf
+  			  end
+			  end
+			  # this isn't needed it appears
+			  FileUtils.rm_rf "#{target}/JavaScriptGlue.framework"
 			end
 		end
 		MODULES.each do |m|

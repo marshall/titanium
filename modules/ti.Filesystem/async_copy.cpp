@@ -5,6 +5,9 @@
  */
 #include "async_copy.h"
 #include "filesystem_binding.h"
+#ifdef OS_LINUX
+#include <unistd.h>
+#endif
 
 namespace ti
 {
@@ -24,6 +27,67 @@ namespace ti
 			this->thread = NULL;
 		}
 	}
+	void AsyncCopy::Copy(Poco::Path &src, Poco::Path &dest)
+	{
+		Poco::File from(src.toString());
+		if (from.isDirectory() && !from.isLink())
+		{
+			Poco::File d(dest.toString());
+			if (!d.exists())
+			{
+				d.createDirectories();
+			}
+			std::vector<std::string> files;
+			from.list(files);
+			std::vector<std::string>::iterator i = files.begin();
+			while(i!=files.end())
+			{
+				std::string fn = (*i++);
+				Poco::Path sp(kroll::FileUtils::Join(src.toString().c_str(),fn.c_str(),NULL));
+				Poco::Path dp(kroll::FileUtils::Join(dest.toString().c_str(),fn.c_str(),NULL));
+				this->Copy(sp,dp);
+			}
+		}
+		else
+		{
+#ifndef OS_WIN32
+			if (from.isLink())
+			{
+#ifdef OS_OSX
+				NSString* originalPath = [NSString stringWithCString:src.toString().c_str()];
+				NSString* destPath = [NSString stringWithCString:dest.toString().c_str()];
+
+				NSMutableString *source = [NSMutableString stringWithString:@"tell application \"Finder\"\n"];
+
+				[source appendFormat:@"set theAlias to make alias at POSIX file \"%@\" to POSIX file \"%@\"\n", NSTemporaryDirectory(), [originalPath stringByExpandingTildeInPath]];
+				[source appendFormat:@"get POSIX path of (theAlias as string)\n"];
+				[source appendFormat:@"end tell"];
+
+				NSAppleScript *script = [[[NSAppleScript alloc] initWithSource:source] autorelease];
+
+				NSDictionary *error = nil;
+				NSAppleEventDescriptor *desc = [script executeAndReturnError:&error];
+
+				if (desc!=nil)
+				{
+					[[NSFileManager defaultManager] movePath:[desc stringValue] toPath:[destPath stringByExpandingTildeInPath] handler:nil];
+				}
+#else
+				link(src.toString().c_str(),targetFile.path().c_str());
+#endif				
+			}
+			else
+			{
+#endif			
+				// in this case it's a regular file
+				Poco::File s(src.toString());
+				//s.copyTo(target.toString().c_str());
+				s.copyTo(dest.toString().c_str());
+#ifndef OS_WIN32
+			}
+#endif			
+		}
+	}
 	void AsyncCopy::Run(void* data)
 	{
 #ifdef OS_OSX
@@ -35,6 +99,7 @@ namespace ti
 		std::cout << "async copy started with " << ac->files.size() << " files" << std::endl;
 #endif
 		std::vector<std::string>::iterator iter = ac->files.begin();
+		Poco::Path to(ac->destination);
 		int c = 0;
 		while(!ac->stopped && iter!=ac->files.end())
 		{
@@ -45,8 +110,9 @@ namespace ti
 #endif
 			try
 			{
-				Poco::File from(file);
-				from.copyTo(ac->destination);
+				Poco::Path from(file);
+				Poco::Path dest(to,from.getFileName());
+				ac->Copy(from,dest);
 #ifdef DEBUG
 			std::cout << "copied async file: " << file << " (" << c << "/" << ac->files.size() << ")" << std::endl;
 #endif

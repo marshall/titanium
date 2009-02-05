@@ -19,6 +19,7 @@
 #include <vector>
 #include <Poco/Thread.h>
 #include <Poco/Exception.h>
+#include <Poco/Path.h>
 #include <Poco/File.h>
 #include "filesystem_binding.h"
 
@@ -62,6 +63,8 @@ namespace ti
 			 *   true if this File repesents a file; false otherwise
 			 */
 			void Cancel(const ValueList& args, SharedValue result);
+			
+			void Copy(Poco::Path &src, Poco::Path &dest);
 	};
 }
 
