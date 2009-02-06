@@ -19,7 +19,7 @@ out_dir = path.join(build.dir, 'net_installer')
 
 for i in Glob('English.lproj/*.xib'):
 	base = path.splitext(path.basename(str(i)))[0]
-	Env.AddPostAction(s, 'ibtool --errors --warnings --notices --output-format human-readable-text --compile '+out_dir+ base+'.nib '+str(i))
+	Env.AddPostAction(s, 'ibtool --errors --warnings --notices --output-format human-readable-text --compile '+out_dir+'/'+base+'.nib '+str(i))
 	
 
 for i in Glob('*.plist'): 
