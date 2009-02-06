@@ -3,19 +3,47 @@ import glob, distutils.dir_util as dir_util
 Import('vars')
 Import(vars)
 
-kboot = p.join(build.dir, 'kboot')
-app_dir = p.join(build.dir, '%s.app' % name)
-contents = p.join(app_dir, 'Contents');
-macos = p.join(contents, 'MacOS');
-resources = p.join(contents, 'Resources');
-runtime = p.join(contents, 'runtime');
-modules_dir = p.join(contents, 'modules');
-lproj = p.join(resources, 'English.lproj');
+class Bundler(object): 
+	def __init__(self, name, dest, tiapp, resources, lprojs):
+		self.basedir = p.join(dest,'%s.app' % name)
+		if p.isdir(self.basedir):
+		  dir_util.remove_tree(self.basedir)
+		self.contents = p.join(self.basedir,'Contents')
+		macos = p.join(self.contents,'MacOS')
+		self.resources = p.join(self.contents,'Resources')
+		self.lproj = p.join(self.resources,'English.lproj')
+		for d in [self.basedir,self.contents,macos,self.resources,self.lproj]:
+			os.makedirs(d)
+		if tiapp:
+			shutil.copy(tiapp, self.contents)
+		kboot = p.join(build.dir, 'kboot')
+		shutil.copy(kboot, p.join(macos,name))
+		out_file = open(p.join(self.contents, 'manifest'), 'w')
+		out_file.write(manifest_text)
+		out_file.close()
+		icns = p.join(build.titanium_support_dir, 'titanium.icns')
+		shutil.copy(icns, self.lproj)
+		if resources:
+			dir_util.copy_tree(resources, self.resources, preserve_symlinks=True)
+		if lprojs:
+			dir_util.copy_tree(lprojs, self.lproj, preserve_symlinks=False)
+		plist = open(p.join(build.titanium_support_dir, 'Info.plist')).read()
+		plist = plist.replace('APPNAME', name)
+		plist = plist.replace('APPICON', 'titanium.icns')
+		plist = plist.replace('APPID', appid)
+		plist = plist.replace('APPNIB', 'MainMenu')
+		plist = plist.replace('APPVER', version)
+		out_file = open(p.join(self.contents, 'Info.plist'), 'w')
+		out_file.write(plist)
+		out_file.close()
+		out_file = open(p.join(self.contents, 'manifest'), 'w')
+		out_file.write(manifest_text)
+		out_file.close()		
 
-if p.isdir(app_dir):
-	dir_util.remove_tree(app_dir)
-
-for d in [app_dir, contents, macos, resources, runtime, modules_dir, lproj]:
+bundle = Bundler(name,build.dir,'tiapp.xml','resources',None)
+runtime = p.join(bundle.contents, 'runtime');
+modules_dir = p.join(bundle.contents, 'modules');
+for d in [runtime,modules_dir]:
 	os.makedirs(d)
 
 # Gather all runtime third-party libraries
@@ -39,40 +67,32 @@ for m in modules:
 	os.makedirs(out_dir)
 	shutil.copy(mlib, out_dir)
 
-shutil.copy(kboot, p.join(macos, name))
-dir_util.copy_tree(".", contents, preserve_symlinks=True)
-out_file = open(p.join(contents, 'manifest'), 'w')
-out_file.write(manifest_text)
-out_file.close()
-
-# Copy support files
-icns = p.join(build.titanium_support_dir, 'titanium.icns')
-shutil.copy(icns, lproj)
 menu_nib = p.join(build.dir, 'modules', 'ti.UI', 'MainMenu.nib')
-shutil.copy(menu_nib, lproj)
-developer = p.join(build.titanium_source_dir, "installation", "developer")
-dir_util.copy_tree(developer, contents, preserve_symlinks=True)
-
-plist = open(p.join(build.titanium_support_dir, 'Info.plist')).read()
-plist = plist.replace('APPNAME', name)
-plist = plist.replace('APPICON', 'titanium.icns')
-plist = plist.replace('APPID', appid)
-plist = plist.replace('APPNIB', 'MainMenu')
-plist = plist.replace('APPVER', version)
-out_file = open(p.join(contents, 'Info.plist'), 'w')
-out_file.write(plist)
-out_file.close()
+shutil.copy(menu_nib, bundle.lproj)
 
 # Remove uneeded files
-to_remove = []
-files = os.walk(app_dir)
-for walk in os.walk(app_dir):
+files = os.walk(bundle.basedir)
+for walk in os.walk(bundle.basedir):
 	for dir in walk[1]:
 		if dir == 'JavaScriptGlue.framework':
-			dir_util.remove_tree(p.join(app_dir, walk[0], dir))
+			dir_util.remove_tree(p.join(bundle.basedir, walk[0], dir))
 	for file in walk[2]:
 		if (file.endswith('.h')
 		  or file.endswith('.defs')
 		  or file.startswith('SConscript')
 		  or file.startswith('.')):
-			os.remove(p.join(app_dir, walk[0], file))
+			os.remove(p.join(bundle.basedir, walk[0], file))
+
+# copy the developer product
+developer = p.join(bundle.contents,'developer')
+os.makedirs(developer)
+dir_util.copy_tree(p.join(build.titanium_source_dir,'installation','developer'), developer, preserve_symlinks=True)
+
+# copy the network installer
+installer = p.join(bundle.contents,'installer')
+os.makedirs(installer)
+netinstaller = p.join(build.dir, 'net_installer')
+bundle = Bundler('Installer App',installer,None,None,None)
+shutil.copy(p.join(netinstaller,'Info.plist'),bundle.basedir)
+shutil.copy(p.join(netinstaller,'MainMenu.nib'),bundle.basedir)
+
