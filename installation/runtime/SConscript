@@ -1,0 +1,38 @@
+#!/usr/bin/env python
+Import('build')
+import os.path as p
+
+name = 'titanium_runtime'
+version = '0.2'
+appid ='com.titaniumapp.installer.runtime'
+
+runtime_libs = ['kroll', 'khost']
+third_party = ['webkit', 'poco']
+modules = [
+	'api', 'javascript', 'foo', # 'ruby', 'python'
+	'tiplatform', 'tiapp', 'tiui', 'tinetwork', 'tifilesystem',
+	'timedia', 'tidesktop', 'tidatabase', 'tiprocess',
+]
+if not build.is_linux():
+	modules.append('tigrowl')
+
+manifest_text="""
+appname: %s
+appid: %s
+runtime: %s
+"""
+manifest_text = manifest_text % (name, appid, version)
+for module in modules:
+	manifest_text += "%s: 0.1\n" % module
+
+vars = 'vars build name version runtime_libs '
+vars += ' third_party modules appid manifest_text'
+if build.is_osx():
+	SConscript('SConscript.osx', vars)
+
+if build.is_linux():
+	SConscript('SConscript.linux', vars)
+
+#if build.is_win32():
+#	SConscript('SConscript.win32', vars)
+

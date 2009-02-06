@@ -109,8 +109,10 @@ srcfolder=p.join(build.dir,name+'.app')
 tdmgname='_'+name
 dmgname=name
 
-os.remove(tdmgname+'.dmg')
-os.remove(dmgname+'.dmg')
+for d in [tdmgname,dmgname]:
+	n = d+'.dmg'
+	if p.isfile(n):
+		os.remove(n)
 
 invoke("hdiutil create -srcfolder \"%s\" -scrub -volname \"Titanium\" -fs HFS+ -fsargs \"-c c=64,a=16,e=16\" -format UDRW \"%s\"" % (srcfolder,tdmgname))
 invoke("hdiutil attach -readwrite -noverify -noautoopen \"%s.dmg\"" % tdmgname)
