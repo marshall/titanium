@@ -33,6 +33,6 @@ if build.is_osx():
 if build.is_linux():
 	SConscript('SConscript.linux', vars)
 
-#if build.is_win32():
-#	SConscript('SConscript.win32', vars)
+if build.is_win32():
+	SConscript('SConscript.win32', vars)
 
