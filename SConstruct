@@ -78,7 +78,6 @@ if build.is_osx():
 tiBuild = build
 Export('tiBuild')
 Export('build')
-Export ('debug')
 
 SConscript('kroll/SConscript', exports='debug')
 
