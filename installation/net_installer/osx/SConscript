@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import os.path as path
+import os.path as path, distutils.dir_util as dir_util
 
 Import('build')
 
@@ -23,5 +23,5 @@ for i in Glob('English.lproj/*.xib'):
 	
 
 for i in Glob('*.plist'): 
-   base = path.splitext(path.basename(str(i)))[0]
-   Env.AddPostAction(s, 'cp '+str(i)+' '+out_dir)
+	base = path.splitext(path.basename(str(i)))[0]
+	Env.AddPostAction(s, 'cp -f '+str(i)+' '+out_dir)
