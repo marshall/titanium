@@ -1,0 +1,207 @@
+<html>
+<head>
+	<script type="text/javascript" charset="utf-8" src="js/appcelerator-debug.js"></script>
+	<link rel="stylesheet" href="css/index.css" type="text/css" media="screen" charset="utf-8" />
+
+
+</head>
+
+<body id="body" on="l:main[val=project] then script[Titanium.UI.currentWindow.setHeight(280)] after 500ms or
+					l:main[val=package] then script[Titanium.UI.currentWindow.setHeight(400)] after 500ms or
+					l:cancel then script[Titanium.UI.currentWindow.setHeight(250)] after 500ms or
+					l:create.project then script[Titanium.UI.currentWindow.setHeight(230)] after 500ms or
+					l:create.project.success then script[Titanium.UI.currentWindow.setHeight(200)] after 500ms"> 
+
+	<div id="body_content">
+		
+		<!-- LOGO -->
+		<div id="logo"></div>
+
+		<!-- HOME SCREEN -->
+		<div class="page" on="l:main then effect[slideUp,speed=500] or l:cancel then effect[fadeIn] after 1s">
+			<div class="header_text">Welcome to Titanuim Developer</div>
+			<div class="section text">What would you like to do?</div>
+			<div class="section text">
+				<div id="new" class="button1 " style="width:250px;"
+					on="click then l:main[val=project]">
+					<div class="button2">
+						Create a new project
+					</div>
+				</div>
+			</div>
+			<div style="clear:both"></div>
+			<div class="section text">
+				<div id="package" class="button1"  style="width:250px;"
+					on="click then l:main[val=package]">
+					<div class="button2">
+						Package existing project
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<!-- PACKAGE PROJECT -->
+		<div style="display:none" class="page"
+			on="l:main[val=package] then effect[fadeIn] after 1s or l:cancel[val=package] then effect[slideUp,speed=500]">
+			<div class="header_text">Package Existing Project</div>
+
+			<div class="section text">
+				<span style="margin-right:10px">Select Project:</span>
+				<select id="project_select">
+					<option value="1">Project 1</option>
+					<option value="2">Project 2</option>
+					<option value="3">Project 3</option>
+				</select>
+			</div>
+			
+			<div class="section_text">
+				<div class="text" style="margin-bottom:20px;margin-top:20px">
+					Select one or more targets (click to select)
+				</div>
+				<div class="button1" id="win"  style="float:left;margin-right:10px;height:60px">
+					<div class="button2" style="height:58px">
+						<img src="images/win_small.png" style="position:relative;top:7px"/>
+					</div>
+					<div style="margin-top:5px;margin-bottom:10px;display:none"  id="win_yes" >
+						<img src="images/accept.png"  style="position:relative;left:35px">
+					</div>
+
+				</div>
+				<div class="button1" id="mac"  style="float:left;margin-right:10px;height:60px">
+					<div class="button2" style="height:58px">
+						<img src="images/mac_small.png" style="position:relative;top:5px"/>
+					</div>
+					<div style="margin-top:5px;margin-bottom:10px;display:none" id="mac_yes">
+						<img src="images/accept.png"  style="position:relative;left:35px">
+					</div>
+				</div>
+				<div class="button1" id="linux"  style="float:left;margin-right:10px;height:60px">
+					<div class="button2" style="height:58px">
+						<img src="images/linux_small.png" style="position:relative;top:5px"/>
+					</div>
+					<div style="margin-top:5px;margin-bottom:10px;display:none"  id="linux_yes">
+						<img src="images/accept.png" style="position:relative;left:35px" >
+					</div>
+				</div>
+
+			</div>
+			<div style="clear:both"></div>
+
+			<div class="section text" style="margin-top:40px">
+				<div class="button1"  style="float:left;margin-right:10px">
+					<div class="button2">
+						Package
+					</div>
+				</div>
+				<div class="button1" style="float:left;" on="click then l:cancel[val=package]">
+					<div class="button2">
+						Cancel
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<!-- NEW PROJECT -->
+		<div style="display:none" class="page"
+			on="(l:cancel[val=project] or l:create.project) then effect[slideUp,speed=500] or 
+			l:main[val=project] then effect[fadeIn] after 1s">
+			<div class="header_text">Create a New Project</div>
+			<table class="section text" cellspacing="15px">
+				<tr>
+					<td valign="middle">Project Name:</td>
+					<td> <input type="text" id="project_name" validator="required" fieldset="new_project"/> </td>
+				</tr>
+				<tr>
+					<td valign="middle">Location:</td>
+					<td> 
+						<input type="text" id="project_location" style="float:left" 
+							validator="required" fieldset="new_project" on="l:file.selected then value[value]"/> 
+						<div class="button1" 
+							style="float:left;width:25px;height:25px;position:relative;top:1px;margin-left:10px" >
+							<div class="button2" style="height:23px" 
+								on="click then l:show.filedialog">
+								<img src="images/folder_go.png" style="position:relative;top:3px;left:1px"/>
+							</div>
+						</div>
+					</td>
+				</tr>
+
+			</table>
+			<div class="section text">
+				<div class="button1" style="float:left;margin-right:10px" id="create_project_button"
+					on="click then l:create.project if expr[$('#create_project_button').attr('disabled')!=true]" 
+					activators="project_location,project_name"  fieldset="new_project">
+					<div class="button2">
+						Create
+					</div>
+				</div>
+				<div class="button1" style="float:left;"  on="click then l:cancel[val=project]">
+					<div class="button2">
+						Cancel
+					</div>
+				</div>
+
+			</div>
+			
+		</div>
+
+		<!-- NEW PROJECT PROGRESS -->
+		<div style="display:none;width:400px" class="page" on="l:create.project then effect[fadeIn] after 500ms
+			or l:create.project.success then effect[slideUp]">
+			<div class="header_text">
+				Creating Project 
+				<span on="l:create.project then value[project_name]"></span>
+			</div>
+			<div class="text section" style="font-size:11px">
+				<span on="l:create.project then value[project_location]"></span>
+			</div>
+			<div control="jquery_progressbar[value=0]" on="l:project.progress then value" 
+				class="section" style="height:10px">
+			</div>
+			
+		</div>
+
+		<!-- NEW PROJECT SUCCESS -->
+		<div style="display:none;width:400px" class="page" on="l:create.project.success then effect[fadeIn] after 500ms">
+			<div class="header_text">
+				Success!
+			</div>
+			<div class="text section">
+				Project '<span on="l:create.project then value[project_name]"></span>'
+				was created in:
+				<span on="l:create.project then value[project_location]"></span>
+			</div>
+			<div class="section text" >
+				<div class="button1" on="click then script[Titanium.UI.currentWindow.close()]">
+					<div class="button2">Close</div>
+				</div>
+			</div>
+			
+		</div>
+
+	</div>
+	
+	<!-- progress script simulators -->
+	<script>
+	$MQL('l:show.filedialog',function()
+	{
+		var files = Titanium.Desktop.openFiles({directories:true});
+		$MQ('l:file.selected',{value:files['0']});
+	})
+	$MQL('l:create.project',function(msg)
+	{
+		var value =0;
+		var i = setInterval(function()
+		{
+			value++
+			$MQ('l:project.progress',{value:value});
+			if (value==100)
+			{
+				clearInterval(i);
+				$MQ('l:create.project.success')
+			}
+		},50)
+	})
+	</script>
+</body>
+</html>
