@@ -80,15 +80,15 @@ Export('tiBuild')
 Export('build')
 Export ('debug')
 
+SConscript('kroll/SConscript', exports='debug')
+
+# Kroll *must not be required* for installation
+SConscript('installation/SConscript')
+
+# Kroll library is now built (hopefully)
+build.env.Append(LIBS=['kroll']) 
+SConscript('modules/SConscript')
+
 if ARGUMENTS.get('package',0):
-	print "including runtime SConscript.."
+	print "building packaging ..."
 	SConscript('installation/runtime/SConscript')
-else:
-	SConscript('kroll/SConscript', exports='debug')
-
-	# Kroll *must not be required* for installation
-	SConscript('installation/SConscript')
-
-	# Kroll library is now built (hopefully)
-	build.env.Append(LIBS=['kroll']) 
-	SConscript('modules/SConscript')
