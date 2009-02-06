@@ -690,7 +690,7 @@ namespace ti
 		}
 		result->SetBool(false);
 #elif OS_LINUX
-		result->SetBool(link(this->filename,to.c_str()) == 0);
+		result->SetBool(link(this->filename.c_str(), to.c_str()) == 0);
 #else
 		result->SetBool(false);
 #endif
