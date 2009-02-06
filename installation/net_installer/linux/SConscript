@@ -11,4 +11,4 @@ Env.Append(CPPPATH=[build.kroll_source_dir + '/api'])
 
 sources = Glob('*.cpp')
 sources.append(build.dir + '/api/file_utils.os')
-s = Env.Program(build.dir + '/installer', sources)
+s = Env.Program('net_installer', sources)

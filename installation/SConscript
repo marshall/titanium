@@ -1,8 +1,5 @@
 #!/usr/bin/env python
-import os
+import os, os.path as p
 Import('build')
 
-net_installer = os.path.join('net_installer', build.os, 'Sconscript')
-
-Execute(Mkdir(os.path.join(build.dir, 'tinstaller')))
-SConscript(net_installer, build_dir=os.path.join(build.dir,'tinstaller'), duplicate=0)
+SConscript(p.join('net_installer', 'SConscript'))
