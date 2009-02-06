@@ -9,13 +9,19 @@ Env.Append(LIBS=['curl'])
 Env.Append(CPPFLAGS=['-Wno-error']) #turn off warnings, CURLHandle has a lot
 Env.Append(CPPPATH=[build.kroll_source_dir+'/api'])
 
-s = Env.Program(build.dir + '/installer', Glob('*.m')+[build.dir+'/api/file_utils.os'])
+sources = Glob('*.m')
+sources.append(build.dir + '/api/file_utils.os')
+s = Env.Program('net_installer', sources)
+
+# TODO: is there some way to read the incomming build_dir?
+# If so we should do that instead.
+out_dir = path.join(build.dir, 'net_installer')
 
 for i in Glob('English.lproj/*.xib'):
 	base = path.splitext(path.basename(str(i)))[0]
-	Env.AddPostAction(s, 'ibtool --errors --warnings --notices --output-format human-readable-text --compile '+build.dir + '/tinstaller/'+ base+'.nib '+str(i))
+	Env.AddPostAction(s, 'ibtool --errors --warnings --notices --output-format human-readable-text --compile '+out_dir+ base+'.nib '+str(i))
 	
 
 for i in Glob('*.plist'): 
    base = path.splitext(path.basename(str(i)))[0]
-   Env.AddPostAction(s, 'cp '+str(i)+' '+build.dir + '/tinstaller')
+   Env.AddPostAction(s, 'cp '+str(i)+' '+out_dir)

@@ -8,6 +8,7 @@ Env = build.env.Clone(BUILDERS = {'CSProgram': csbuilder})
 Env.Append(CPPPATH=[build.kroll_source_dir+'/api'])
 
 p = Env.CSProgram('bin/Release/Installer.exe', 'Installer.sln')
-Env.AddPostAction(p, Copy(build.dir+'/tinstaller/Installer.exe', build.titanium_source_dir+'/installation/net_installer/win32/bin/Release/Installer.exe'))
+out_dir = path.join(build.dir, 'net_installer')
+Env.AddPostAction(p, Copy(out_dir + '/Installer.exe', out_dir + '/bin/Release/Installer.exe'))
 
 #s = Env.Program(build.dir + '/installer', Glob('*.m')+[build.dir+'/api/file_utils.os'])
