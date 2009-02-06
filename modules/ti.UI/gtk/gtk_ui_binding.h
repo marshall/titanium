@@ -26,6 +26,7 @@ namespace ti
 		                            SharedBoundMethod cb);
 
 		private:
+			SharedPtr<ScriptEvaluator> evaluator;
 	};
 }
 

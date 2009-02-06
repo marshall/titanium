@@ -20,8 +20,10 @@ using kroll::StaticBoundList;
 #include <gdk/gdk.h>
 #include <gdk/gdkx.h>
 #include <webkit/webkit.h>
+#include <webkit/webkitwebscriptevaluator.h>
 
 #include "../url/app_url.h"
+#include "script_evaluator.h"
 #include "javascript_module.h"
 #include "gtk_menu_item_impl.h"
 #include "gtk_user_window.h"
