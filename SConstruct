@@ -80,7 +80,8 @@ Export('tiBuild')
 Export('build')
 Export ('debug')
 
-if 'runtime' in COMMAND_LINE_TARGETS:
+if ARGUMENTS.get('runtime',0):
+	print "including runtime SConscript.."
 	SConscript('installation/runtime/SConscript')
 else:
 	SConscript('kroll/SConscript', exports='debug')
