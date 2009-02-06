@@ -137,7 +137,7 @@ namespace ti
 #elif OS_OSX
 		NSString *fullPath = @"/Applications";
 		std::string dir = [fullPath UTF8String];
-#else OS_LINUX
+#elif OS_LINUX
 		std::string dir = "/usr/local/bin"; //TODO: this might need to be configurable
 #endif		
 		ti::File* file = new ti::File(dir);

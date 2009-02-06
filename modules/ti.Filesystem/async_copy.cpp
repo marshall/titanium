@@ -76,8 +76,14 @@ namespace ti
 					[[NSFileManager defaultManager] movePath:[desc stringValue] toPath:[destPath stringByExpandingTildeInPath] handler:nil];
 				}
 #else
-				link(src.toString().c_str(),targetFile.path().c_str());
-#endif				
+				int result = link(src.toString().c_str(),dest.toString().c_str());
+				if (result != 0)
+				{
+					std::string err = "Copy failed: Could not make link (";
+					err += dest.toString() + ")";
+					throw kroll::ValueException::FromString(err);
+				}
+#endif
 			}
 			else
 			{
