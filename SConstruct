@@ -80,7 +80,7 @@ Export('tiBuild')
 Export('build')
 Export ('debug')
 
-if ARGUMENTS.get('runtime',0):
+if ARGUMENTS.get('package',0):
 	print "including runtime SConscript.."
 	SConscript('installation/runtime/SConscript')
 else:
@@ -92,4 +92,3 @@ else:
 	# Kroll library is now built (hopefully)
 	build.env.Append(LIBS=['kroll']) 
 	SConscript('modules/SConscript')
-	#SConscript('launcher/SConscript')

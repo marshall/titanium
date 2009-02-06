@@ -1,199 +1,185 @@
 <html>
 <head>
-	<script type="text/javascript" charset="utf-8" src="js/jquery.js"></script>
-	<script type="text/javascript" charset="utf-8" src="js/jquery-ui.js"></script>
+	<script type="text/javascript" charset="utf-8" src="js/appcelerator-debug.js"></script>
+	<script type="text/javascript" charset="utf-8" src="js/index.js"></script>
 	<link rel="stylesheet" href="css/index.css" type="text/css" media="screen" charset="utf-8" />
-	<link rel="stylesheet" href="css/themes/ui.all.css" type="text/css" media="screen" charset="utf-8" />
-
-
 </head>
 
-<body id="body"> 
+<!-- ADJUST WINDOW HEIGHT BASED ON CURRENT STATE -->
+<body on="l:menu[val=create] then script[Titanium.UI.currentWindow.setHeight(380)] or
+		  l:menu[val=manage] then script[Titanium.UI.currentWindow.setHeight(500)] if expr[ $('#project_count_hidden').val() != 0] or
+		  l:menu[val=manage] then script[Titanium.UI.currentWindow.setHeight(160)] if expr[ $('#project_count_hidden').val() == 0] or
+		  l:cancel[val=project] then script[Titanium.UI.currentWindow.setHeight(160)]">
 
-	<div id="body_content">
+	<!-- HEADER MENU -->
+	<div class="menu">
+		<div id="project_count">You have no projects  </div>
+		<div id="online_count"> developers on-line: <span style="color:#809eb3">5</span>  </div>
+	</div>
+	
+	<!-- CONTENT -->
+	<div id="content">
 		
-		<!-- LOGO -->
-		<div id="logo"></div>
-
-		<!-- HOME SCREEN -->
-		<div id="intro" class="page">
-			<div class="header_text">Welcome to Titanium Developer</div>
-			<div class="section text">What would you like to do?</div>
-			<div class="section text">
-				<div id="new" class="button1 " style="width:250px;">
-					<div class="button2">
-						Create a new project
-					</div>
-				</div>
-			</div>
-			<div style="clear:both"></div>
-			<div class="section text">
-				<div id="package" class="button1"  style="width:250px;">
-					<div class="button2">
-						Package existing project
-					</div>
-				</div>
-			</div>
+		<!-- MAJOR ACTION BUTTONS -->
+		<div class="button1" style="display:inline-block;width:150px" 
+			on="click then l:menu[val=create] and add[class=active] 
+			or (l:menu[val!=create] or l:cancel[val=project]) then remove[class=active]">
+			<div class="button2">Create Project</div>
 		</div>
-		
-		<!-- PACKAGE PROJECT -->
-		<div id="package_project" style="display:none" class="page">
-			<div class="header_text">Package Existing Project</div>
-
-			<div class="section text">
-				<span style="margin-right:10px">Select Project:</span>
-				<select id="project_select">
-					<option value="1">Project 1</option>
-					<option value="2">Project 2</option>
-					<option value="3">Project 3</option>
-				</select>
-			</div>
-			
-			<div class="section_text">
-				<div class="text" style="margin-bottom:20px;margin-top:20px">
-					Select one or more targets (click to select)
-				</div>
-				<div class="button1" id="win"  style="float:left;margin-right:10px;height:60px">
-					<div class="button2" style="height:58px">
-						<img src="images/win_small.png" style="position:relative;top:7px"/>
-					</div>
-					<div style="margin-top:5px;margin-bottom:10px;display:none"  id="win_yes" >
-						<img src="images/accept.png"  style="position:relative;left:35px">
-					</div>
-
-				</div>
-				<div class="button1" id="mac"  style="float:left;margin-right:10px;height:60px">
-					<div class="button2" style="height:58px">
-						<img src="images/mac_small.png" style="position:relative;top:5px"/>
-					</div>
-					<div style="margin-top:5px;margin-bottom:10px;display:none" id="mac_yes">
-						<img src="images/accept.png"  style="position:relative;left:35px">
-					</div>
-				</div>
-				<div class="button1" id="linux"  style="float:left;margin-right:10px;height:60px">
-					<div class="button2" style="height:58px">
-						<img src="images/linux_small.png" style="position:relative;top:5px"/>
-					</div>
-					<div style="margin-top:5px;margin-bottom:10px;display:none"  id="linux_yes">
-						<img src="images/accept.png" style="position:relative;left:35px" >
-					</div>
-				</div>
-
-			</div>
-			<div style="clear:both"></div>
-
-			<div class="section text" style="margin-top:40px">
-				<div class="button1" id="create_package"  style="float:left;margin-right:10px">
-					<div class="button2">
-						Package
-					</div>
-				</div>
-				<div class="button1" id="cancel_package" style="float:left;" >
-					<div class="button2">
-						Cancel
-					</div>
-				</div>
-			</div>
+		<div class="button1" style="display:inline-block;width:150px" 
+			on="click then l:menu[val=manage] and add[class=active] or l:menu[val!=manage] then remove[class=active]">
+			<div class="button2">Manage Projects</div>
 		</div>
-		
-		<!-- NEW PROJECT -->
-		<div id="new_project" style="display:none" class="page">
-			<div class="header_text">Create a New Project</div>
-			<table class="section text" cellspacing="15px">
-				<tr>
-					<td valign="middle">Project Name:</td>
-					<td> <input type="text" id="project_name"/> </td>
-				</tr>
-				<tr>
-					<td valign="middle">Location:</td>
-					<td> 
-						<input type="text" id="project_location" style="float:left"/> 
-						<div class="button1" id="file_browse"
-							style="float:left;width:25px;height:25px;position:relative;top:1px;margin-left:10px" >
-							<div class="button2" style="height:23px">
-								<img src="images/folder_go.png" style="position:relative;top:3px;left:1px"/>
-							</div>
+		<div class="button1" style="display:inline-block;width:150px" 
+			on="click then l:menu[val=tv] and add[class=active] or l:menu[val!=tv] then remove[class=active]">
+			<div class="button2">Titanium TV</div>
+		</div>
+		<div class="button1" style="display:inline-block;width:150px" 
+			on="click then l:menu[val=social] and add[class=active] or l:menu[val!=social] then remove[class=active]">
+			<div class="button2">Social</div>
+		</div>
+		<div style="clear:both"></div>
+
+		<!-- ************* -->
+		<!-- CONTENT FILES -->
+		<!-- ************* -->
+
+
+		<!-- CREATE A NEW PROJECT -->
+		<div style="display:none;"
+			on="l:menu[val=create] then effect[fadeIn] else hide or l:cancel[val=project] then effect[fadeOut]">
+
+			<!-- VARIOUS CREATE PROJECT MESSAGES: HINT, ERROR, SUCCESS, PROGRESS -->
+			<div style="height:18px;line-height:18px" >
+				<div class="section hint_text" 
+					on="l:create.project.request then hide or l:menu[val=create] then show
+					or l:create.project.response[result=success] then effect[fadeIn] after 2300ms">
+					Enter a project name and file location for your new project.
+				</div>
+				<div class="section action_text" style="display:none" 
+				on="(l:menu[val=create] or l:create.project.response) then hide or l:create.project.request then show">
+					<img src="images/lightning.png"/>
+					<span style="position:relative;top:-4px">Creating project...</span>
+				</div>
+				<div class="section success_text" style="display:none" 
+				on="(l:menu[val=create] or l:create.project.request) then hide 
+					or l:create.project.response[result=success] then show
+					or l:create.project.response[result=success] then effect[fadeOut] after 2s">
+					<img src="images/accept.png"/>
+					<span style="position:relative;top:-4px">Project created!</span>
+				</div>
+				<div class="section error_text" style="display:none" 
+				on="(l:menu[val=create] or l:create.project.request) then hide 
+					or l:create.project.response[result=error] then show">
+					<img src="images/error.png"/>
+					<span style="position:relative;top:-4px">
+						<span on="l:create.project.response then value[message]"></span>
+					</span>
+				</div>
+
+			</div>
+
+			<!-- PROJECT NAME -->
+			<div class="section text">
+				<div>Project Name:</div>
+				<div>
+					<input type="text" id="project_name" validator="required" fieldset="new_project"
+						on="(l:create.project.response[result=success] or l:menu[val=create]) then reset"/> 
+				</div>
+			</div>
+
+			<!-- PROJECT LOCATION -->
+			<div class="section text">
+				<div>Project Location:</div>
+				<div>
+					<input type="text" id="project_location" style="float:left;width:600px" 
+						validator="required" fieldset="new_project" on="l:file.selected then value[value]
+						or (l:create.project.response[result=success] or l:menu[val=create]) then reset"/> 
+					<div class="button1" 
+						style="float:left;width:23px;height:23px;position:relative;top:1px;margin-left:10px" >
+						<div class="button2" style="height:21px" 
+							on="click then l:show.filedialog">
+							<img src="images/folder_go.png" style="position:relative;top:3px;left:1px"/>
 						</div>
-					</td>
-				</tr>
+					</div>
+				</div>
+			</div>
+			<div style="clear:both"></div>
 
-			</table>
+			<!-- CREATE PROJECT BUTTONS -->
 			<div class="section text">
-				<div class="button1" id="create_new"  style="float:left;margin-right:10px">
-					<div class="button2">
+				<div class="button1" style="float:left;margin-right:10px" >
+					<div class="button2" id="create_project_button"
+					on="click then l:create.project.request if expr[$('#create_project_button').attr('disabled')!=true]" 
+						activators="project_location,project_name"  fieldset="new_project">
 						Create
 					</div>
 				</div>
-				<div class="button1" id="cancel_new" style="float:left;" >
+				<div class="button1" style="float:left;"  on="click then l:cancel[val=project]">
 					<div class="button2">
 						Cancel
 					</div>
 				</div>
 
 			</div>
-			
+
 		</div>
+
+		<!-- PACKAGE PROJECT -->
+		<div style="display:none;margin-top:15px" 
+			on="l:menu[val=manage] then effect[fadeIn] else hide or l:cancel[val=manage] then effect[fadeOut]">
+
+			<!-- NO PROJECTS CREATED MESSAGE -->
+			<div style="float:left;width:300px" class="error_text" 
+				on="l:project.list.response[count!=0] then hide else effect[fadeIn]">
+				<img src="images/error.png"/>
+				<span style="position:relative;top:-4px">
+					You haven't created any projects.  Get on it!
+				</span>
+			</div>
+			
+			<!-- PROJECT LIST ITERATOR -->
+			<div on="l:project.list.response[count=0] then hide else effect[fadeIn]">
+				<div style="float:left;width:250px" >
+					<div style="margin-bottom:10px" class="hint_text">
+						<span on="l:project.list.response then value[count]"></span>
+						<span> projects found</span>
+						<img src="images/magnifier.png" style="position:relative;top:4px;cursor:pointer"
+							on="click then l:project.search"/>
+						<div style="display:none;margin-top:5px;margin-bottom:5px" 
+							on="l:project.search then effect[slideToggle]">
+							<input type="text"  validator="required" value="find projects"
+							 	on="click then clear or keyup[enter] then l:project.list.request"
+								fieldset="project_search" id="search_value"/> 
+						</div>
+					</div>
+					<div control="iterator[property=rows]" on="l:project.list.response then render">
+						<div class="project_row">
+							<div class="project_name">#{name}</div>
+							<div class="project_date">#{date}</div>
+						</div>
+					</div>
+				</div>
+				<!-- INFO MESSAGE -->
+				<div style="float:left;height:70px;margin-left:50px;width:335px" class="infobox">
+					<div class="content" style="height:58px">
+						<div style="float:left;width:20px">
+							<img src="images/information.png" style="position:relative;top:-1px"/>
+						</div>
+						<div style="float:left;width:290px">
+							Manage Projects currently allows you to package and remove existing projects.
+							We will be adding more features in the near future.  We welcome your feedback.
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
 	</div>
-
-<script>
-
-$('#mac').click(function()
-{
-	$('#mac_yes').toggle(500);
-})
-$('#win').click(function()
-{
-	$('#win_yes').toggle(500);
-})
-$('#linux').click(function()
-{
-	$('#linux_yes').toggle(500);
-})
-
-$('#cancel_new').click(function()
-{
-	$('#new_project').slideUp(500,function()
-	{
-		$('#intro').fadeIn(1200);
-		Titanium.UI.currentWindow.setHeight(250);
-		
-	});
-})
-$('#cancel_package').click(function()
-{
-	$('#package_project').slideUp(500,function()
-	{
-		$('#intro').fadeIn(1200);
-		Titanium.UI.currentWindow.setHeight(250);		
-	});
-})
-
-$('#new').click(function()
-{
-	$('#body_content').animate({'height':'230px'},700);
-
-	$('#intro').slideUp(500,function()
-	{
-		$('#new_project').fadeIn()
-		Titanium.UI.currentWindow.setHeight(300);
-		
-	});
-});
-$('#package').click(function()
-{
-	$('#intro').slideUp(500,function()
-	{
-		$('#linux_yes').hide();
-		$('#win_yes').hide();
-		$('#mac_yes').hide();
-		$('#project_select').get(0).selectedIndex=0;
-		$('#package_project').fadeIn(1200);
-		Titanium.UI.currentWindow.setHeight(350);
-
-		
-	});
 	
-});
-</script>
+	<!-- POWERED BY LOGO -->
+	<div id="powered_by" ></div>
+	
+	<input type="hidden" on="l:project.list.response then value[count]" value="0" id="project_count_hidden"/>
 </body>
 </html>
