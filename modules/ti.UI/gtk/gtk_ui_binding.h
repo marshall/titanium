@@ -24,8 +24,11 @@ namespace ti
 		void SetIcon(SharedString icon_path);
 		SharedPtr<TrayItem> AddTray(SharedString icon_path,
 		                            SharedBoundMethod cb);
-
-		private:
+		std::vector<SharedValue> OpenFiles(
+			bool multiple,
+			bool files,
+			bool directories,
+			std::vector<std::string> types);
 	};
 }
 

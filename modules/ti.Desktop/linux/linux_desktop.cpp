@@ -4,27 +4,31 @@
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
 #include "linux_desktop.h"
+#include <Poco/Process.h>
+using Poco::Process;
 
 namespace ti
 {
 	LinuxDesktop::LinuxDesktop()
 	{
 	}
+
 	LinuxDesktop::~LinuxDesktop()
 	{
 	}
-	SharedBoundList LinuxDesktop::OpenFiles(SharedBoundObject properties)
-	{
-		return false;
-	}
+
 	bool LinuxDesktop::OpenApplication(std::string &name)
 	{
-		return false;
+		std::vector<std::string> args;
+		Process::launch(name, args);
+		return true;
 	}
+
 	bool LinuxDesktop::OpenURL(std::string &url)
 	{
 		return false;
 	}
+
 	int LinuxDesktop::GetSystemIdleTime()
 	{
 		return -1;

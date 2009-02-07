@@ -29,6 +29,8 @@ namespace ti
 		this->SetMethod("setDockIcon", &UIBinding::_SetDockIcon);
 		this->SetMethod("setDockMenu", &UIBinding::_SetDockMenu);
 		this->SetMethod("setBadge", &UIBinding::_SetBadge);
+
+		this->SetMethod("openFiles", &UIBinding::_OpenFiles);
 	}
 
 	UIBinding::~UIBinding()
@@ -137,6 +139,46 @@ namespace ti
 			badge_path = UIModule::GetResourcePath(badge_url);
 		}
 		this->SetBadge(badge_path);
+	}
+
+	void UIBinding::_OpenFiles(const ValueList& args, SharedValue result)
+	{
+		// These are the defaults for file dialogs
+		bool multiple = false, files = false, directories = true;
+		std::vector<std::string> types;
+		types.push_back("js");
+		types.push_back("html");
+
+		if (args.size() > 0 && args.at(0)->IsObject())
+		{
+			SharedBoundObject props = args.at(0)->ToObject();
+
+			if (props->Get("multiple")->IsBool())
+				multiple = props->Get("multiple")->ToBool();
+
+			if (props->Get("files")->IsBool())
+				files = props->Get("files")->ToBool();
+
+			if (props->Get("directories")->IsBool())
+				files = props->Get("directories")->ToBool();
+
+			if (props->Get("types")->IsList())
+			{
+				types.clear();
+				SharedBoundList l = props->Get("types")->ToList();
+				for (int i = 0; i < l->Size(); i++)
+				{
+					if (l->At(i)->IsString())
+					{
+						types.push_back(l->At(i)->ToString());
+					}
+				}
+			}
+		}
+
+		std::vector<SharedValue> file_vec =
+			this->OpenFiles(multiple, files, directories, types);
+		SharedBoundList file_list = StaticBoundList::FromVector(file_vec);
 	}
 
 }
