@@ -31,6 +31,7 @@ namespace ti {
 
 #ifdef OS_LINUX
 #include "gtk/ui_module_gtk.h"
+#include "gtk/script_evaluator.h"
 
 #elif defined(OS_OSX)
 #include "osx/ui_module_osx.h"

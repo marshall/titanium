@@ -12,6 +12,10 @@ namespace ti
 	{
 		/* Prepare the custom curl URL handler */
 		curl_register_local_handler(&Titanium_app_url_handler);
+
+		/* Register the script evaluator */
+		evaluator = new ScriptEvaluator();
+		addScriptEvaluator(evaluator);
 	}
 
 	SharedPtr<MenuItem> GtkUIBinding::CreateMenu()
