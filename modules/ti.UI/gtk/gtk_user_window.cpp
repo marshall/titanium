@@ -479,7 +479,7 @@ void GtkUserWindow::SetURL(std::string& uri)
 {
 	this->config->SetURL(uri);
 
-	if (this->gtk_window != NULL and this->web_view != NULL)
+	if (this->gtk_window != NULL && this->web_view != NULL)
 		webkit_web_view_open(this->web_view, uri.c_str());
 }
 

@@ -183,7 +183,7 @@ namespace ti
 	
 	void OSXUserWindow::SetMaxWidth(double width) {
 		this->config->SetMaxWidth(width);
-		STUB();
+		this->ReconfigureWindowConstraints();
 	}
 	
 	double OSXUserWindow::GetMinWidth() {

@@ -10,11 +10,16 @@
 
 using namespace kroll;
 
-namespace ti {
-	PropertiesBinding::PropertiesBinding(kroll::Host *host) {
-		file_path = FileUtils::GetApplicationDirectory();
+namespace ti 
+{
+	PropertiesBinding::PropertiesBinding(kroll::Host *host) 
+	{
+		std::string appid = AppConfig::Instance()->GetAppID();
+		file_path = kroll::FileUtils::GetApplicationDataDirectory(appid);
 		file_path += KR_PATH_SEP;
 		file_path += "application.properties";
+		
+		std::cout << "+++ FILE PATH=" << file_path << std::endl;
 
 		Poco::File file(file_path);
 		if (!file.exists()) {
