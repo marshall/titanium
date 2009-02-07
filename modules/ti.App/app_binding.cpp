@@ -66,6 +66,7 @@ namespace ti
 		if (args.size() < 0 || !args.at(0)->IsString())
 			return;
 
+//FIXME: take into consider the appid which is in the host position of the URL
 		std::string url = std::string(args.at(0)->ToString());
 		if (url.find("app://") == 0)
 		{

@@ -8,7 +8,10 @@ tiBuild.add_thirdparty(build.env, 'poco')
 
 env = tiBuild.env.Clone();
 env.Append(CPPDEFINES = {'TITANIUM_FILESYSTEM_API_EXPORT' : 1})
-env.Append(CPPPATH = ['#kroll'])
+env.Append(CPPPATH = ['#kroll','%s/modules/ti.App' % build.titanium_source_dir])
+env.Append(LIBPATH=[path.join(build.dir, 'modules', 'ti.App')])
+env.Append(LIBS=['kroll', 'tiappmodule'])
+
 
 if tiBuild.is_win32():
     env.Append(CCFLAGS=['/MD'])

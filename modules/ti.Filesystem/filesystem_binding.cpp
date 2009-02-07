@@ -9,6 +9,7 @@
 #include "async_copy.h"
 #include "api/file_utils.h"
 #include "filesystem_utils.h"
+#include "app_config.h"
 
 #ifdef OS_OSX
 #include <Cocoa/Cocoa.h>
@@ -33,6 +34,7 @@ namespace ti
 		this->SetMethod("getFile",&FilesystemBinding::GetFile);
 		this->SetMethod("getProgramsDirectory",&FilesystemBinding::GetProgramsDirectory);
 		this->SetMethod("getApplicationDirectory",&FilesystemBinding::GetApplicationDirectory);
+		this->SetMethod("getApplicationDataDirectory",&FilesystemBinding::GetApplicationDataDirectory);
 		this->SetMethod("getResourcesDirectory",&FilesystemBinding::GetResourcesDirectory);
 		this->SetMethod("getDesktopDirectory",&FilesystemBinding::GetDesktopDirectory);
 		this->SetMethod("getDocumentsDirectory",&FilesystemBinding::GetDocumentsDirectory);
@@ -41,7 +43,7 @@ namespace ti
 		this->SetMethod("getSeparator",&FilesystemBinding::GetSeparator);
 		this->SetMethod("getRootDirectories",&FilesystemBinding::GetRootDirectories);
 		this->SetMethod("asyncCopy",&FilesystemBinding::ExecuteAsyncCopy);
-	}
+	} 
 	FilesystemBinding::~FilesystemBinding()
 	{
 		if (this->timer!=NULL)
@@ -116,6 +118,14 @@ namespace ti
 	void FilesystemBinding::GetApplicationDirectory(const ValueList& args, SharedValue result)
 	{
 		std::string dir = FileUtils::GetApplicationDirectory();
+		ti::File* file = new ti::File(dir);
+		result->SetObject(file);
+	}
+	void FilesystemBinding::GetApplicationDataDirectory(const ValueList& args, SharedValue result)
+	{
+		std::string appid = AppConfig::Instance()->GetAppID();
+		std::string dir = FileUtils::GetApplicationDataDirectory(appid);
+		std::cout << "APPID=" << appid << ", dir="<<dir<<std::endl;
 		ti::File* file = new ti::File(dir);
 		result->SetObject(file);
 	}

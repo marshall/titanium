@@ -2,6 +2,7 @@
 <head>
 	<script type="text/javascript" charset="utf-8" src="js/jquery.js"></script>
 	<script type="text/javascript" charset="utf-8" src="js/jquery-ui.js"></script>
+	<script type="text/javascript" charset="utf-8" src="js/installer.js"></script>
 	<link rel="stylesheet" href="css/install.css" type="text/css" media="screen" charset="utf-8" />
 	<link rel="stylesheet" href="css/themes/ui.all.css" type="text/css" media="screen" charset="utf-8" />
 </head>
@@ -12,7 +13,7 @@
 		<!-- APP ICON -->
 		<div style="float:left">
 			<div class="app_icon_container">
-				<div class="app_icon text">
+				<div class="app_icon text" id="icon">
 					my icon
 				</div>
 			</div>
@@ -23,9 +24,9 @@
 			
 			<!-- APP DOWNLOAD PROGRESS BAR -->
 			<div id="download"  class="page">
-				<div class="header_text">Your App Name</div>
+				<div class="header_text appname">Your App Name</div>
 
-				<div class="text section">
+				<div class="text section" id="statusmsg">
 					Downloading application...
 				</div>
 				<div id="progressbar" class="section" style="height:10px"></div>
@@ -33,7 +34,7 @@
 			
 			<!-- INSTALL INFO -->
 			<div id="installation_info"  class="page" style="display:none">
-				<div class="header_text">Your App Name</div>
+				<div class="header_text appname">Your App Name</div>
 
 				<div class="text section">
 					Information about the application you are about to install:
@@ -45,9 +46,9 @@
 						<div>From:</div>
 					</div>	
 					<div style="width:200px;float:left;color:#087fb5">
-						<div>AppFoo.app</div>
-						<div>3 Guys and a Plumber</div>
-						<div>titaniumapp.com</div>
+						<div id="appfile">AppFoo.app</div>
+						<div id="apppub">3 Guys and a Plumber</div>
+						<div id="appurl">titaniumapp.com</div>
 					</div>	
 					<div style="clear:both"></div>
 				</div>
@@ -57,11 +58,15 @@
 				<div class="text section light">
 					<div>
 						<input type="checkbox" checked="true" id="open_after_install"/> 
-						Start application after install?
+						Start application after install
 					</div>
 					<div style="margin-top:10px">
 						<input type="checkbox" checked="true" id="create_shortcut"/> 
-						Create a shortcut for the application?
+						Create a shortcut for the application
+					</div>
+					<div style="margin-top:10px">
+						<input type="checkbox" checked="true" id="check_updates"/> 
+						Periodically check for application updates
 					</div>
 					<div style="margin-top:10px">
 						<span style="float:left;position:relative;top:6px;margin-right:10px">Location:</span>
@@ -73,6 +78,9 @@
 							</div>
 						</div>
 						<div style="clear:both"></div>
+					</div>
+					<div style="margin-top:10px;">
+						<img src="images/warning.png" /> This application has application access like all installed applications running on the desktop.
 					</div>
 				</div>
 				<div class="text section">
@@ -88,7 +96,7 @@
 			
 			<!-- INSTALL APP -->
 			<div id="install_app"  class="page" style="display:none">
-				<div class="header_text">Your App Name</div>
+				<div class="header_text appname">Your App Name</div>
 				<div class="text section">
 					Installing application...
 				</div>
