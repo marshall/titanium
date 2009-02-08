@@ -71,6 +71,16 @@ namespace ti
 		 */
 		void GetApplicationDirectory(const ValueList& args, SharedValue result);
 		/**
+		 * Function: GetApplicationDataDirectory
+		 *   returns a path to the applications data directory
+		 *
+		 * Params:
+		 *
+		 * Returns:
+		 *   path to the Titanium Data folder
+		 */
+		void GetApplicationDataDirectory(const ValueList& args, SharedValue result);
+		/**
 		 * Function: GetResourcesDirectory
 		 *   returns a path to the application's Resource directory
 		 *

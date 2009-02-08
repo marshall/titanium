@@ -13,7 +13,11 @@ build = BuildConfig(
 	GLOBAL_NS_VARNAME = 'Titanium',
 	CONFIG_FILENAME = 'tiapp.xml',
 	BUILD_DIR = path.abspath('build'),
-	THIRD_PARTY_DIR = path.join(path.abspath('kroll'), 'thirdparty')
+	THIRD_PARTY_DIR = path.join(path.abspath('kroll'), 'thirdparty'),
+	BOOT_RUNTIME_FLAG = '--runtime',
+	BOOT_HOME_FLAG = '--start',
+	BOOT_UPDATESITE_ENVNAME = 'TI_UPDATESITE',
+	BOOT_UPDATESITE_URL = 'http://updatesite.titaniumapp.com'
 )
 
 build.titanium_source_dir = path.abspath('.')
@@ -78,18 +82,20 @@ if build.is_osx():
 tiBuild = build
 Export('tiBuild')
 Export('build')
-Export ('debug')
 
-if ARGUMENTS.get('runtime',0):
-	print "including runtime SConscript.."
+SConscript('kroll/SConscript', exports='debug')
+
+# Kroll *must not be required* for installation
+SConscript('installation/SConscript')
+
+# Kroll library is now built (hopefully)
+build.env.Append(LIBS=['kroll']) 
+SConscript('modules/SConscript')
+
+if ARGUMENTS.get('package',0):
+	print "building packaging ..."
 	SConscript('installation/runtime/SConscript')
-else:
-	SConscript('kroll/SConscript', exports='debug')
-
-	# Kroll *must not be required* for installation
-	SConscript('installation/SConscript')
-
-	# Kroll library is now built (hopefully)
-	build.env.Append(LIBS=['kroll']) 
-	SConscript('modules/SConscript')
-	#SConscript('launcher/SConscript')
+	
+if ARGUMENTS.get('testapp',0):
+	print "building test app ..."
+	SConscript('build/testapp/SConscript')
