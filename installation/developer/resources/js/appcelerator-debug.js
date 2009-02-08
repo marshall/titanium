@@ -14804,7 +14804,7 @@ App.Browser.initialize = function()
 	App.Browser.isFirefox = App.Browser.isGecko && (App.Browser.ua.indexOf('firefox') > -1 || App.Browser.isCamino || App.Browser.ua.indexOf('minefield') > -1 || App.Browser.ua.indexOf('granparadiso') > -1 || App.Browser.ua.indexOf('bonecho') > -1);
 	App.Browser.isIPhone = App.Browser.isSafari && App.Browser.ua.indexOf('iphone') > -1;
 	App.Browser.isMozilla = App.Browser.isGecko && App.Browser.ua.indexOf('mozilla/') > -1;
-	App.Browser.isWebkit = App.Browser.isMozilla && App.Browser.isGecko && App.Browser.ua.indexOf('applewebkit') > 0;
+	App.Browser.isWebkit = App.Browser.ua.indexOf('applewebkit') > 0;
 	App.Browser.isSeamonkey = App.Browser.isMozilla && App.Browser.ua.indexOf('seamonkey') > -1;
 	App.Browser.isPrism = App.Browser.isMozilla && App.Browser.ua.indexOf('prism/') > 0;
 	App.Browser.isIceweasel = App.Browser.isMozilla && App.Browser.ua.indexOf('iceweasel') > 0;
@@ -15602,7 +15602,7 @@ var $MQI = null;
 		
 		//Plug-In Configuration
 		config: {
-			queue_scan_interval: 333 //The default interval to scan the queue for new messages
+			queue_scan_interval: 50 //The default interval to scan the queue for new messages
 		},
 		
 		//Publish a message to the message queue
@@ -18073,7 +18073,7 @@ App.Wel.registerCustomAction('hide',
 	execute: function(id,action,params)
 	{
 		var el = App.Wel.findTarget(id,params);
-  		swiss('#'+el).hide();
+ 		swiss('#'+el).hide();
 	}
 });
 
@@ -19315,7 +19315,9 @@ if (App && App.mq)
 			var params = actionParams ? actionParams[2] : null;
 			var actionFunc = App.Wel.makeConditionalAction(id,action,ifCond);
 			var elseActionFunc = (elseAction ? App.Wel.makeConditionalAction(id,elseAction,null) : null);
+			
 			return App.Wel.MessageAction.makeMBListener(element,type,actionFunc,params,delay,elseActionFunc);
+			
 		}
 		return false;
 	});
@@ -19339,7 +19341,8 @@ if (App && App.mq)
 		
 		$MQL(type,function(msg)
 		{
-			App.Wel.MessageAction.onMessage(element,msg.name,msg.payload,actionParams,action,delay,elseaction);
+			if (swiss('#'+element.id).get(0))
+				App.Wel.MessageAction.onMessage(element,msg.name,msg.payload,actionParams,action,delay,elseaction);
 		},element.scope,element);
 
 		return true;
@@ -20658,8 +20661,8 @@ App.getActionValue = function(obj,name,def)
 App.UI.UIManager = {managers:{}};
 App.UI.UIComponents = {};
 App.UI.fetching = {};
-App.UI.componentRoot = '../components/';
-App.UI.commonRoot = '../common/';
+App.UI.componentRoot = '/components/';
+App.UI.commonRoot = '/common/';
 
 
 
@@ -20733,7 +20736,6 @@ App.UI.remoteLoad = function(tag,type,path,onload,onerror)
 	var timer = null;
     var loader = function()
     {
-	   if (App.Util.Logger) App.Util.Logger.debug('loaded '+path);
 	   if (timer) clearTimeout(timer);
        var callbacks = App.UI.fetching[path];
        if (callbacks)
@@ -20751,7 +20753,7 @@ App.UI.remoteLoad = function(tag,type,path,onload,onerror)
 	    {
 	        //this is a hack because we can't determine in safari 2
 	        //when the script has finished loading
-	        loader.delay(1.5);
+	        setTimeout(function(){loader(); },1500);
 	    }
 	    else
 	    {
@@ -21007,6 +21009,7 @@ App.UI.activateUIComponent = function(impl,setdir,type,name,element,options,call
 		if (jsFiles !=null)
 		{
 			App.UI.componentJSFiles[element.id+'_'+type+'_'+name] = jsFiles.length;
+			
 			for (var i=0;i<jsFiles.length;i++)
 			{
 				App.UI.remoteLoadScript(componentRootDir + "/" + jsFiles[i],function()
@@ -21268,13 +21271,13 @@ App.Compiler.registerAttributeProcessor('*','control',
 	{
 		var compiler = function()
 		{
-			App.Compiler.compileElementChildren(element);
+//			App.Compiler.compileElementChildren(element);
 		};
 		
 		var options = App.UI.parseDeclarativeUIExpr(value)
 		element.stopCompile=true;
 		App.loadUIManager("control",options.type,element,options.args,false,compiler);
-
+		
 	},
 	metadata:
 	{

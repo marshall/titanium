@@ -2,14 +2,14 @@
 Import('build')
 import os.path as p
 
-name = 'titanium_runtime'
+name = 'testapp'
 version = '0.2'
-appid ='com.titaniumapp.installer.runtime'
+appid ='com.titaniumapp.test.manualtestapp'
 
 runtime_libs = ['kroll', 'khost']
 third_party = ['webkit', 'poco']
 modules = [
-	'api', 'javascript', 'foo',  'ruby', 'python',
+	'api', 'javascript', 'foo', # 'ruby', 'python'
 	'tiplatform', 'tiapp', 'tiui', 'tinetwork', 'tifilesystem',
 	'timedia', 'tidesktop', 'tiprocess',
 ]
