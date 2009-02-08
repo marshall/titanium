@@ -1,7 +1,9 @@
 <html>
 <head>
+
 	<script type="text/javascript" charset="utf-8" src="js/appcelerator-debug.js"></script>
 	<script type="text/javascript" charset="utf-8" src="js/index.js"></script>
+
 	<link rel="stylesheet" href="css/index.css" type="text/css" media="screen" charset="utf-8" />
 </head>
 
@@ -131,7 +133,7 @@
 
 			<!-- NO PROJECTS CREATED MESSAGE -->
 			<div style="float:left;width:300px" class="error_text" 
-				on="l:project.list.response[count!=0] then hide else effect[fadeIn]">
+				on="l:project.list.response[totalRecords!=0] then hide else effect[fadeIn]">
 				<img src="images/error.png"/>
 				<span style="position:relative;top:-4px">
 					You haven't created any projects.  Get on it!
@@ -139,27 +141,70 @@
 			</div>
 			
 			<!-- PROJECT LIST ITERATOR -->
-			<div on="l:project.list.response[count=0] then hide else effect[fadeIn]">
+			<div on="l:project.list.response[totalRecords=0] then hide else effect[fadeIn]">
 				<div style="float:left;width:250px" >
-					<div style="margin-bottom:10px" class="hint_text">
-						<span on="l:project.list.response then value[count]"></span>
-						<span> projects found</span>
-						<img src="images/magnifier.png" style="position:relative;top:4px;cursor:pointer"
-							on="click then l:project.search"/>
+					<div style="margin-bottom:10px;font-size:11px" class="hint_text">
+						<span on="click then l:project.search" style="cursor:pointer">
+							<img src="images/magnifier.png" style="position:relative;top:4px;"/>
+							find projects
+						</span>
 						<div style="display:none;margin-top:5px;margin-bottom:5px" 
 							on="l:project.search then effect[slideToggle]">
-							<input type="text"  validator="required" value="find projects"
-							 	on="click then clear or keyup[enter] then l:project.list.request"
+							<input type="text"  validator="required" value="type and hit enter"
+							 	on="click then clear or keyup[enter] then l:project.search.request"
 								fieldset="project_search" id="search_value"/> 
 						</div>
 					</div>
-					<div control="iterator[property=rows]" on="l:project.list.response then render">
-						<div class="project_row">
-							<div class="project_name">#{name}</div>
-							<div class="project_date">#{date}</div>
+					
+					<!-- PAGINATION -->
+					<div id="project_pagination">
+						
+						<!-- YUI PAGINATION -->
+						<div control="yui_paginator[rowsPerPage=10, message=l:page.data.request, previousPageLinkLabel=prev, nextPageLinkLabel=next]" on="l:project.list.response then render	   
+								or l:project.search.response then render"
+							style="font-size:11px;position:absolute;right:5px;top:-5px;color:#fff" class="page_links">
+							<div>
+								{CurrentPageReport}  {PreviousPageLink} {NextPageLink} 
+							</div>	
+						</div>
+						<!-- RECORD COUNT -->
+						<div style="font-size:11px;position:absolute;left:5px;top:4px;color:#fff" class="page_links">
+							<span on="l:project.list.response then value[totalRecords] 
+								or l:project.search.response then value[totalRecords]">
+							</span>
+							<span>found</span>
+
 						</div>
 					</div>
+					<div style="clear:both"></div>
+					<div control="iterator[property=rows]" 
+						on="l:project.list.response then render or l:project.search.response then render">
+						<div class="project_row"
+							on="mouseover then l:row.selected[row=#{iterator_index}] and add[class=row_selected]
+							and show[id=action_#{iterator_index}] and hide[id=view_#{iterator_index}]
+							or mouseout then remove[class=row_selected] and hide[id=action_#{iterator_index}] 
+							and show[id=view_#{iterator_index}]">
+							<div id="view_#{iterator_index}">
+								<div class="project_name">#{name}</div>
+								<div class="project_date" >
+									#{date}
+								</div>
+							</div>
+							<div id="action_#{iterator_index}" style="display:none">
+								<div class="project_name">#{name}</div>
+								<div class="project_controls">
+									<img src="images/delete.png" style="margin-right:2px"
+										on="click then l:delete.project.request[id=#{id},name=#{name}]"/>
+									<img src="images/package_go.png"/>
+								</div>
+							</div>
+							
+						</div>
+						<div style="height:1px;border-bottom:1px solid #222;margin-bottom:1px"></div>
+					</div>
+
 				</div>
+				
 				<!-- INFO MESSAGE -->
 				<div style="float:left;height:70px;margin-left:50px;width:335px" class="infobox">
 					<div class="content" style="height:58px">
@@ -180,6 +225,5 @@
 	<!-- POWERED BY LOGO -->
 	<div id="powered_by" ></div>
 	
-	<input type="hidden" on="l:project.list.response then value[count]" value="0" id="project_count_hidden"/>
 </body>
 </html>

@@ -23,6 +23,20 @@ ID STYLES
 	top:0px;
 	left:10px;
 }
+#project_pagination
+{
+	margin-bottom:5px;
+	height:15px;
+	/*background:-webkit-gradient(linear, left top, left bottom, from(#336699), to(#809eb3));*/
+	background-color:#336699;
+	position:relative;
+	-webkit-border-bottom-right-radius: 5px;
+	-webkit-border-bottom-left-radius: 5px;
+	-webkit-border-top-right-radius: 5px;
+	-webkit-border-top-left-radius: 5px;
+	padding:3px;
+	
+}
 #online_count
 {
 	position:absolute;
@@ -144,8 +158,20 @@ input:focus
 .hint_text
 {
 /*	color:#42C0FB;font-size:11px*/
-	color:#809eb3;font-size:12px
-
+	color:#809eb3;
+	font-size:12px;
+/*	color:#457db3 */
+}
+.page_links a
+{
+	color:#809eb3 !important;
+	padding: 3px 2px !important;
+	color:white !important;	
+}
+.page_links span
+{
+	padding: 3px 2px !important;		
+	color:white !important;
 }
 .action_text
 {
@@ -162,18 +188,17 @@ input:focus
 
 .project_row
 {
-	border-bottom:1px solid #222;
-	margin-bottom:5px;
 	position:relative;
 	height:20px;
 	cursor:pointer;
+	color:#ccc;
 }
 .project_name
 {
 	position:absolute;
 	font-size:11px;
 	top:3px;
-	left:0px;
+	left:5px;
 	
 }
 .project_date
@@ -181,7 +206,22 @@ input:focus
 	position:absolute;
 	font-size:11px;
 	top:3px;
-	right:0px;
+	right:5px;
+}
+.project_controls
+{
+	position:absolute;
+	right:5px;
+	top:2px;
+}
+.row_selected
+{
+	background-color:#444;
+	color:#457db3;
+	-webkit-border-bottom-right-radius: 5px;
+	-webkit-border-bottom-left-radius: 5px;
+	-webkit-border-top-right-radius: 5px;
+	-webkit-border-top-left-radius: 5px;
 }
 .infobox
 {
