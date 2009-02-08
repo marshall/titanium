@@ -18,13 +18,15 @@ namespace ti
 	{
 	public:
 		GrowlBinding(SharedBoundObject);
-	protected:
-		virtual ~GrowlBinding();
-	private:
-		kroll::SharedBoundObject global;
 
 		void ShowNotification(const ValueList& args, SharedValue result);
-		virtual void ShowNotification(std::string& title, std::string& description) = 0;
+		void IsRunning(const ValueList& args, SharedValue result);
+	protected:
+		virtual ~GrowlBinding();
+		kroll::SharedBoundObject global;
+
+		virtual void ShowNotification(std::string& title, std::string& description, std::string& iconURL, int notification_delay, SharedBoundMethod callback) = 0;
+		virtual bool IsRunning() = 0;
 	};
 }
 

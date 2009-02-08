@@ -17,7 +17,8 @@ namespace ti {
 		SnarlWin32(SharedBoundObject global);
 		virtual ~SnarlWin32();
 
-		virtual void SnarlWin32::ShowNotification(std::string& title, std::string& description);
+		virtual bool IsRunning();
+		virtual void ShowNotification(std::string& title, std::string& description, std::string& iconURL, int notification_delay, SharedBoundMethod callback);
 	};
 }
 

@@ -1,8 +1,8 @@
 /**
  * Appcelerator Titanium - licensed under the Apache Public License 2
- * see LICENSE in the root folder for details on the license. 
+ * see LICENSE in the root folder for details on the license.
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
- */	
+ */
 #include <kroll/kroll.h>
 #include <Poco/Environment.h>
 #include "app_binding.h"
@@ -20,7 +20,7 @@ namespace ti
 		this->SetMethod("appURLToPath", &AppBinding::AppURLToPath);
 
 		// FIXME: for now this version is hardcoded
-		SharedValue version = Value::NewDouble(0.2); 
+		SharedValue version = Value::NewDouble(0.2);
 		global->Set("version", version);
 
 		// platform
@@ -32,6 +32,13 @@ namespace ti
 		SharedValue platform = Value::NewString("win32");
 #endif
 		global->Set("platform",platform);
+
+		SharedBoundList argList = new StaticBoundList();
+		for (int i = 0; i < Host::GetInstance()->GetCommandLineArgCount(); i++) {
+			argList->Append(Value::NewString(Host::GetInstance()->GetCommandLineArg(i)));
+		}
+		SharedValue arguments = Value::NewList(argList);
+		global->Set("arguments", arguments);
 	}
 
 	AppBinding::~AppBinding()

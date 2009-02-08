@@ -18,7 +18,8 @@ namespace ti {
 		virtual ~GrowlOSX();
 
 		void CopyToApp(kroll::Host *host, kroll::Module *module);
-		virtual void ShowNotification(std::string& title, std::string& description);
+		virtual void ShowNotification(std::string& title, std::string& description, std::string& iconURL, int notification_delay, SharedBoundMethod callback);
+		virtual bool IsRunning();
 	};
 }
 
