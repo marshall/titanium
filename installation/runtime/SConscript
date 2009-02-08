@@ -11,7 +11,7 @@ third_party = ['webkit', 'poco']
 modules = [
 	'api', 'javascript', 'foo', # 'ruby', 'python'
 	'tiplatform', 'tiapp', 'tiui', 'tinetwork', 'tifilesystem',
-	'timedia', 'tidesktop', 'tidatabase', 'tiprocess',
+	'timedia', 'tidesktop', 'tiprocess',
 ]
 if not build.is_linux():
 	modules.append('tigrowl')
