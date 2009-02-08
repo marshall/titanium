@@ -128,12 +128,12 @@
 		</div>
 
 		<!-- PACKAGE PROJECT -->
-		<div style="display:none;margin-top:15px" 
+		<div style="display:none;margin-top:5px" 
 			on="l:menu[val=manage] then effect[fadeIn] else hide or l:cancel[val=manage] then effect[fadeOut]">
 
 			<!-- NO PROJECTS CREATED MESSAGE -->
 			<div style="float:left;width:300px" class="error_text" 
-				on="l:project.list.response[totalRecords!=0] then hide else effect[fadeIn]">
+				on="l:project.list.response[totalRecords!=0] then hide else effect[fadeIn,speed=3000]">
 				<img src="images/error.png"/>
 				<span style="position:relative;top:-4px">
 					You haven't created any projects.  Get on it!
@@ -141,12 +141,13 @@
 			</div>
 			
 			<!-- PROJECT LIST ITERATOR -->
-			<div on="l:project.list.response[totalRecords=0] then hide else effect[fadeIn]">
+			<div on="l:project.list.response[totalRecords=0] then hide else effect[fadeIn]
+				or l:package.project.request then effect[slideUp] or l:cancel[val=package] then effect[fadeIn] after 400ms">
 				<div style="float:left;width:250px" >
-					<div style="margin-bottom:10px;font-size:11px" class="hint_text">
+					<div style="margin-bottom:10px;font-size:11px;position:relative;top:-5px" class="hint_text">
 						<span on="click then l:project.search" style="cursor:pointer">
 							<img src="images/magnifier.png" style="position:relative;top:4px;"/>
-							find projects
+							Find Projects
 						</span>
 						<div style="display:none;margin-top:5px;margin-bottom:5px" 
 							on="l:project.search then effect[slideToggle]">
@@ -157,7 +158,7 @@
 					</div>
 					
 					<!-- PAGINATION -->
-					<div id="project_pagination">
+					<div id="project_pagination" class="black_gradient">
 						
 						<!-- YUI PAGINATION -->
 						<div control="yui_paginator[rowsPerPage=10, message=l:page.data.request, previousPageLinkLabel=prev, nextPageLinkLabel=next]" on="l:project.list.response then render	   
@@ -180,7 +181,7 @@
 					<div control="iterator[property=rows]" 
 						on="l:project.list.response then render or l:project.search.response then render">
 						<div class="project_row"
-							on="mouseover then l:row.selected[row=#{iterator_index}] and add[class=row_selected]
+							on="mouseover then l:row.selected[row=#{iterator_index},name=#{name},date=#{date},dir=#{dir}] and add[class=row_selected]
 							and show[id=action_#{iterator_index}] and hide[id=view_#{iterator_index}]
 							or mouseout then remove[class=row_selected] and hide[id=action_#{iterator_index}] 
 							and show[id=view_#{iterator_index}]">
@@ -195,7 +196,8 @@
 								<div class="project_controls">
 									<img src="images/delete.png" style="margin-right:2px"
 										on="click then l:delete.project.request[id=#{id},name=#{name}]"/>
-									<img src="images/package_go.png"/>
+									<img src="images/package_go.png"
+										on="click then l:package.project.request[id=#{id},name=#{name}]"/>
 								</div>
 							</div>
 							
@@ -205,8 +207,63 @@
 
 				</div>
 				
+				<!-- PROJECT DETAILS -->
+				<div class="manage_right" style="margin-left:50px;display:none" on="l:row.selected then show
+				or l:menu[val=manage] then hide">
+					<div class="infobox">
+						<div class="content">
+							<table>
+								<tr>
+									<td style="font-size:11px" width="90px" class="hint_text">Project Name:</td>
+									<td style="font-size:11px" on="l:row.selected then value[name]"></td>
+								</tr>
+								<tr>
+									<td style="font-size:11px" width="90px" class="hint_text">Date Created:</td>
+									<td style="font-size:11px"  on="l:row.selected then value[date]"></td>
+								</tr>
+								<tr>
+									<td style="font-size:11px" width="90px" class="hint_text">Location:</td>
+									<td  width="220px" style="font-size:11px;">
+										<a style="color:#fff;text-decoration:underline;cursor:pointer;display:none" 
+											id="project_detail_dir_a"
+											on="l:row.selected then script[TiDeveloper.formatDirectory(this.data.dir)]
+											or click then l:show.project.modal">
+										</a>
+										<span id="project_detail_dir_span" style="display:none"
+											on="l:row.selected then script[TiDeveloper.formatDirectory(this.data.dir)]">
+										</span>
+
+									</td>
+								</tr>
+
+							</table>
+							<!-- MODAL FOR DISPLAYING LONG LOCATION NAMES -->
+							<div behavior="modal[opacity=0.9,showEffect=fadeIn,hideEffect=fadeOut]" 
+								on="l:show.project.modal then show or l:hide.project.modal then hide">
+								<div class="black_gradient" style="padding:5px;font-size:11px;margin:0px">
+									Project Location
+								</div>
+								<div class="infobox" >
+									<div class="content" style="padding:10px">
+										<div on="l:row.selected then value[dir]" 
+											style="padding:10px;color:#fff;font-size:11px">
+										</div>
+										<div class="button1" style="margin:auto;float:none"  
+											on="click then l:hide.project.modal">
+											<div class="button2">
+												Close
+											</div>
+										</div>
+										
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>				
 				<!-- INFO MESSAGE -->
-				<div style="float:left;height:70px;margin-left:50px;width:335px" class="infobox">
+				<div class="infobox manage_right" style="margin-left:50px" 
+					on="l:row.selected then hide or l:menu[val=manage] then show">
 					<div class="content" style="height:58px">
 						<div style="float:left;width:20px">
 							<img src="images/information.png" style="position:relative;top:-1px"/>
@@ -217,7 +274,50 @@
 						</div>
 					</div>
 				</div>
+				
 			</div>
+			<div on="l:package.project.request then effect[fadeIn,speed=1200] or l:cancel[val=package] then effect[slideUp]" 
+				style="display:none;" class="manage_right">
+				<div>	
+					<img src="images/package_large.png">
+					<span style="position:relative;top:-10px;margin-left:5px"/>
+						<span class="hint_text">Package Project:</span> 
+						<span on="l:package.project.request then value[name]"></span>
+					</span>
+				</div>
+				<div style="margin-top:10px;margin-bottom:10px">	
+					<div class="infobox" style="margin-top:10px;width:200px">
+						<div class="content">
+							<input type="radio" name="packaging" value="network" checked="true"
+								on="click then l:package[val=network]"/>
+							<span style="margin-right:20px" >Network</span>
+							<input type="radio" name="packaging" value="bundled"
+								on="click then l:package[val=bundled]"/>
+							<span style="margin-right:10px">Bundled</span>
+						</div>
+					</div>
+					<div class="hint_text" style="margin-top:10px;color:#ccc">
+						<span on="l:package[val=network] then show else hide">
+							Create small archive and download required files during install
+						</span>
+						<span style="display:none" on="l:package[val=bundled] then show else hide">
+							Bundle all files into archive
+						</span>
+					</div>
+				</div>
+				<div class="button1" style="float:left;margin-right:10px" >
+					<div class="button2">
+						Create
+					</div>
+				</div>
+				<div class="button1" style="float:left;"  on="click then l:cancel[val=package]">
+					<div class="button2">
+						Cancel
+					</div>
+				</div>
+
+			</div>
+
 		</div>
 
 	</div>

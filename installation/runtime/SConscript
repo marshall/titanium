@@ -9,7 +9,7 @@ appid ='com.titaniumapp.installer.runtime'
 runtime_libs = ['kroll', 'khost']
 third_party = ['webkit', 'poco']
 modules = [
-	'api', 'javascript', 'foo', # 'ruby', 'python'
+	'api', 'javascript', 'foo',  'ruby', 'python',
 	'tiplatform', 'tiapp', 'tiui', 'tinetwork', 'tifilesystem',
 	'timedia', 'tidesktop', 'tiprocess',
 ]
