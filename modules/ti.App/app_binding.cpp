@@ -38,7 +38,7 @@ namespace ti
 			argList->Append(Value::NewString(Host::GetInstance()->GetCommandLineArg(i)));
 		}
 		SharedValue arguments = Value::NewList(argList);
-		global->Set("arguments", arguments);
+		Set("arguments", arguments);
 	}
 
 	AppBinding::~AppBinding()

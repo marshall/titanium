@@ -1,25 +1,31 @@
 
 sdk_commands = {}
-from commands import *
+from commands import CreateProject, PackageProject
 import re
 
 def printUsage():
-	print ("Titanium SDK (c) 2008-2009 Appcelerator, Inc" +
-		"Usage:" +
-		"  ti <command> [<arguments>]" +
-		"Commands:" +
-		"  create:project <projectname>"
+	print ("Titanium SDK (c) 2008-2009 Appcelerator, Inc\n"+
+		"Usage:\n"+
+		"  ti <command> [<arguments>]\n"+
+		"Commands:\n "+
+		"  create:project <projectname>\n"
 	)
 	exit()
 
-print str(Titanium)
-
-if len(Titanium.App.arguments) is 0:
+arguments = Titanium.App.arguments
+if len(arguments) is 1:
 	printUsage()
 
-if len(Titanium.App.arguments) is 1 and re.matches(Titanium.App.arguments[0], "-help$"):
+if len(arguments) is 2 and re.match(arguments[0], "-help$"):
 	printUsage()
 	
 
 Titanium.api.setRunUILoop(False)
-sdk_commands[Titanium.Spp.arguments[0]].execute(Titanium.Spp.arguments[1:])
+
+sdk["create:project"] = commands.CreateProject()
+
+if not arguments[1] in sdk_commands:
+	print "Titanium SDK (c) 2008-2009 Appcelerator, Inc\n" + "  Error: command %s not found\n" % arguments[1]
+	exit()
+	
+sdk_commands[arguments[1]].execute(arguments[2:])
