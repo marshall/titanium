@@ -8,7 +8,7 @@
       <title>Appcelerator Titanium Installation</title>
       <url>app://index.html</url>
       <width>600</width>
-      <height>475</height>
+      <height>525</height>
 	  <fullscreen>false</fullscreen>
 	  <maximizable>false</maximizable>
 	  <minimizable>false</minimizable>

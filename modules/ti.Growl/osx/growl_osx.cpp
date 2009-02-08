@@ -24,7 +24,7 @@ namespace ti {
 		// TODO Auto-generated destructor stub
 	}
 
-	void GrowlOSX::ShowNotification(std::string& title, std::string& description)
+	void GrowlOSX::ShowNotification(std::string& title, std::string& description, std::string& iconURL, int notification_delay, SharedBoundMethod callback)
 	{
 		[GrowlApplicationBridge setGrowlDelegate:@""];
 		[GrowlApplicationBridge
@@ -35,6 +35,12 @@ namespace ti {
 			 priority:0
 			 isSticky:NO
 			 clickContext:nil];
+	}
+
+	bool GrowlOSX::IsRunning()
+	{
+		//TODO: implement me http://growl.info/documentation/developer/implementing-growl.php?lang=cocoa
+		return false;
 	}
 
 	void GrowlOSX::CopyToApp(kroll::Host *host, kroll::Module *module)
