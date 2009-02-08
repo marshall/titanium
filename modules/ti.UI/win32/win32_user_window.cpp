@@ -78,6 +78,7 @@ Win32UserWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
 		case WM_DESTROY:
 			PostQuitMessage(0);
+			window->Close();
 			break;
 		case WM_SIZE:
 			if (!window->web_view) break;
