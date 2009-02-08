@@ -27,14 +27,14 @@ ID STYLES
 {
 	margin-bottom:5px;
 	height:15px;
-	/*background:-webkit-gradient(linear, left top, left bottom, from(#336699), to(#809eb3));*/
-	background-color:#336699;
+	background:-webkit-gradient(linear, left top, left bottom, from(#333), to(#111));
 	position:relative;
 	-webkit-border-bottom-right-radius: 5px;
 	-webkit-border-bottom-left-radius: 5px;
 	-webkit-border-top-right-radius: 5px;
 	-webkit-border-top-left-radius: 5px;
 	padding:3px;
+	color:#fff !important;
 	
 }
 #online_count
@@ -66,7 +66,7 @@ input[type=text], select
 	outline:none;
 	font-size:12px;
 	padding:3px;
-	color:#000;
+	color:#eee;
 	width:250px;
 }
 input:focus
