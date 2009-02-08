@@ -51,6 +51,9 @@ App.UI.registerUIComponent('behavior','modal',
 			}
 			// set left for element based on width
 			// trying to center the element
+			this.bodyHeight = swiss(document).height();
+			this.bodyWidth = swiss(document).width();	
+
 			var elWidth = swiss('#'+this.id).width();
 			var left = (this.bodyWidth - elWidth)/2 + 'px';
 			var container = swiss('#'+this.id+'_modal_container').get(0)
@@ -88,8 +91,6 @@ App.UI.registerUIComponent('behavior','modal',
 			this.id = element.id
 			this.element = element;
 			this.options = options;
-			this.bodyHeight = swiss(document).height();
-			this.bodyWidth = swiss(document).width();	
 			
 			// create modal container
 			var modalContainer = document.createElement('div');

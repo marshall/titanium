@@ -23,20 +23,6 @@ ID STYLES
 	top:0px;
 	left:10px;
 }
-#project_pagination
-{
-	margin-bottom:5px;
-	height:15px;
-	background:-webkit-gradient(linear, left top, left bottom, from(#333), to(#111));
-	position:relative;
-	-webkit-border-bottom-right-radius: 5px;
-	-webkit-border-bottom-left-radius: 5px;
-	-webkit-border-top-right-radius: 5px;
-	-webkit-border-top-left-radius: 5px;
-	padding:3px;
-	color:#fff !important;
-	
-}
 #online_count
 {
 	position:absolute;
@@ -243,4 +229,24 @@ input:focus
 	-webkit-border-top-right-radius: 5px;
 	-webkit-border-top-left-radius: 5px;
 	color:#ddd;
+}
+.black_gradient
+{
+	margin-bottom:5px;
+	height:15px;
+	background:-webkit-gradient(linear, left top, left bottom, from(#333), to(#111));
+	position:relative;
+	-webkit-border-bottom-right-radius: 5px;
+	-webkit-border-bottom-left-radius: 5px;
+	-webkit-border-top-right-radius: 5px;
+	-webkit-border-top-left-radius: 5px;
+	padding:3px;
+	color:#fff !important;
+	
+}
+
+.manage_right
+{
+	float:left;
+	width:335px;
 }
