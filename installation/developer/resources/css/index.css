@@ -5,6 +5,7 @@ body
 	font-family:"Helvetica Neue";
 	color:white;
 	font-size:12px;
+	min-width:700px;
 
 }
 
@@ -243,6 +244,42 @@ input:focus
 	padding:3px;
 	color:#fff !important;
 	
+}
+.module_row
+{
+	padding:5px;
+	margin-bottom:5px;
+	border:1px solid #111;
+	border:1px solid #141414;
+	background-color:#333;
+}
+.include_box
+{
+	height:10px;
+	width:10px;
+	border:1px solid #aaa;
+	background-color:#222;
+	float:left;
+	margin-right:5px;
+	text-align:center;
+}
+.module_row .name
+{
+	font-size:11px;
+	margin-left:10px;
+	float:left;
+}
+.module_row .exclude
+{
+	background-color:red;
+}
+.module_row .network
+{
+	background-color:blue;
+}
+.module_row .bundled
+{
+	background-color:green;
 }
 
 .manage_right

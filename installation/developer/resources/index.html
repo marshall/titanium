@@ -9,11 +9,10 @@
 </head>
 
 <!-- ADJUST WINDOW HEIGHT BASED ON CURRENT STATE -->
-<body on="l:menu[val=create] then script[Titanium.UI.currentWindow.setHeight(380)] or
+<body  on="l:menu[val=create] then script[Titanium.UI.currentWindow.setHeight(380)] or
 		  l:menu[val=manage] then script[Titanium.UI.currentWindow.setHeight(500)] if expr[ $('#project_count_hidden').val() != 0] or
 		  l:menu[val=manage] then script[Titanium.UI.currentWindow.setHeight(160)] if expr[ $('#project_count_hidden').val() == 0] or
 		  l:cancel[val=project] then script[Titanium.UI.currentWindow.setHeight(160)]">
-
 	<!-- HEADER MENU -->
 	<div class="menu">
 		<div id="project_count">You have no projects  </div>
@@ -25,21 +24,21 @@
 		
 		<!-- MAJOR ACTION BUTTONS -->
 		<div class="button1" style="display:inline-block;width:150px" 
+			on="click then l:menu[val=manage] and add[class=active] or l:menu[val!=manage] then remove[class=active]">
+			<div class="button2">Manage Projects</div>
+		</div>
+		<div class="button1" style="display:inline-block;width:150px" 
 			on="click then l:menu[val=create] and add[class=active] 
 			or (l:menu[val!=create] or l:cancel[val=project]) then remove[class=active]">
 			<div class="button2">Create Project</div>
 		</div>
 		<div class="button1" style="display:inline-block;width:150px" 
-			on="click then l:menu[val=manage] and add[class=active] or l:menu[val!=manage] then remove[class=active]">
-			<div class="button2">Manage Projects</div>
-		</div>
-		<div class="button1" style="display:inline-block;width:150px" 
 			on="click then l:menu[val=tv] and add[class=active] or l:menu[val!=tv] then remove[class=active]">
-			<div class="button2">Titanium TV</div>
+			<div class="button2">API Documentation</div>
 		</div>
 		<div class="button1" style="display:inline-block;width:150px" 
 			on="click then l:menu[val=social] and add[class=active] or l:menu[val!=social] then remove[class=active]">
-			<div class="button2">Social</div>
+			<div class="button2">Ti IRC</div>
 		</div>
 		<div style="clear:both"></div>
 
@@ -128,8 +127,8 @@
 
 		</div>
 
-		<!-- PACKAGE PROJECT -->
-		<div style="display:none;margin-top:5px" 
+		<!-- MANAGE PROJECT -->
+		<div style="margin-top:5px;display:none" 
 			on="l:menu[val=manage] then effect[fadeIn] else hide or l:cancel[val=manage] then effect[fadeOut]">
 
 			<!-- NO PROJECTS CREATED MESSAGE -->
@@ -143,7 +142,8 @@
 			
 			<!-- PROJECT LIST ITERATOR -->
 			<div on="l:project.list.response[totalRecords=0] then hide else effect[fadeIn]
-				or l:package.project.request then effect[slideUp] or l:cancel[val=package] then effect[fadeIn] after 400ms">
+				or l:package.project.request then effect[fadeOut] 
+					or l:cancel[val=package] then effect[fadeIn] after 400ms">
 				<div style="float:left;width:250px" >
 					<div style="margin-bottom:10px;font-size:11px;position:relative;top:-5px" class="hint_text">
 						<span on="click then l:project.search" style="cursor:pointer">
@@ -277,38 +277,89 @@
 				</div>
 				
 			</div>
-			<div on="l:package.project.request then effect[fadeIn,speed=1200] or l:cancel[val=package] then effect[slideUp]" 
-				style="display:none;" class="manage_right">
-				<div>	
-					<img src="images/package_large.png">
-					<span style="position:relative;top:-10px;margin-left:5px"/>
-						<span class="hint_text">Package Project:</span> 
-						<span on="l:package.project.request then value[name]"></span>
-					</span>
+
+			<!-- PACKAGE PROJECT -->
+			<div on="l:package.project.request then effect[fadeIn] after 800ms 
+				or l:cancel[val=package] then effect[slideUp]" style="display:none;" >
+
+				<!-- HEADER TEXT -->
+				<div style="position:relative;height:40px">
+					<div style="position:absolute;left:0px">
+						<img src="images/package_large.png">
+						<span style="position:relative;top:-10px;margin-left:5px"/>
+							<span id="package_project_name" on="l:package.project.request then value[name]"></span>
+							<span class="hint_text" style="margin-left:10px">
+							Select the modules to be included with your application.
+							</span> 
+							
+						</span>
+					</div>
 				</div>
-				<div style="margin-top:10px;margin-bottom:10px">	
-					<div class="infobox" style="margin-top:10px;width:200px">
-						<div class="content">
-							<input type="radio" name="packaging" value="network" checked="true"
-								on="click then l:package[val=network]"/>
-							<span style="margin-right:20px" >Network</span>
-							<input type="radio" name="packaging" value="bundled"
-								on="click then l:package[val=bundled]"/>
-							<span style="margin-right:10px">Bundled</span>
+				<div>
+					<!-- HEADERS FOR MODULE TABLE -->
+					<div style="width:460px;color:#bbb">
+						<div style="width:45px;float:left;text-decoration:underline;cursor:pointer"
+							on="click then l:package.all[val=exclude]">
+							<a title="exclude module from applicaiton">Exclude</a>
 						</div>
+						<div style="width:95px;float:left;margin-left:10px;text-decoration:underline;cursor:pointer"
+						 	on="click then l:package.all[val=network]">
+							<a title="load module at installation time">Include (Network)</a>
+						</div>
+						<div style="width:120px;float:left;margin-left:10px;text-decoration:underline;cursor:pointer"
+							on="click then l:package.all[val=bundled]">
+							<a title="include module with distribution">Include (Bundled)</a>
+						</div>
+						<div style="width:90px;float:left;margin-left:10px;" >Module</div>
+
 					</div>
-					<div class="hint_text" style="margin-top:10px;color:#ccc">
-						<span on="l:package[val=network] then show else hide">
-							Create small archive and download required files during install
-						</span>
-						<span style="display:none" on="l:package[val=bundled] then show else hide">
-							Bundle all files into archive
-						</span>
+					<div style="clear:both;"></div>
+					
+					<!-- MODULE ITERATOR FOR CREATING MANIFEST -->
+					<div control="iterator[property=rows]" on="l:package.project.data then render"
+						style="margin-top:10px;height:240px;overflow:auto;margin-bottom:20px">
+						<div class="module_row">
+							<div style="width:45px;float:left;text-align:center">
+								<div class="include_box" style="position:relative;left:10px"
+									on="click then l:package.select[val=exclude,name=#{name}] and toggle[class=exclude]
+										or l:package.select[val!=exclude,name=#{name}] then remove[class=exclude]
+										or l:package.all[val=exclude] then add[class=exclude] else remove[class=exclude]">
+								</div>
+							</div>
+							<div style="width:95px;float:left;text-align:center">
+								<div class="include_box" style="position:relative;left:40px"
+									on="click then l:package.select[val=network,name=#{name}] and toggle[class=network]
+										or l:package.select[val!=network,name=#{name}] then remove[class=network]
+										or l:package.all[val=network] then add[class=network] else remove[class=network]">				
+								</div>							
+							</div>
+							<div style="width:120px;float:left;text-align:center">
+								<div class="include_box" style="position:relative;left:50px"
+									on="click then l:package.select[val=bundled,name=#{name}] and toggle[class=bundled]
+									or l:package.select[val!=bundled,name=#{name}] then remove[class=bundled]
+									or l:package.all[val=bundled] then add[class=bundled] else remove[class=bundled]">
+								</div>
+							</div>
+							<div style="width:200px;display:inline;text-align:center;position:relative;left:25px"
+								on="l:package.select[name=#{name}] then set[state=expr(this.data.val)] 
+								or  l:package.all then set[state=expr(this.data.val)]">
+								#{name}
+							</div>
+						</div>
+						<div style="clear:both;margin-bottom:5px"></div>
+				</div>
+				
+				<!-- BUTTON BAR FOR PACKAGE PROJECT -->
+				<div class="button1" style="float:left;margin-right:10px;width:130px"
+				 	on="click then l:create.package.request[launch=true]">
+					<div class="button2">
+						Package & Launch
 					</div>
 				</div>
-				<div class="button1" style="float:left;margin-right:10px" >
+				<div class="button1" style="float:left;margin-right:10px" 
+					on="click then l:create.package.request[launch=false]">
 					<div class="button2">
-						Create
+						Package
 					</div>
 				</div>
 				<div class="button1" style="float:left;"  on="click then l:cancel[val=package]">

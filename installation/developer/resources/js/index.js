@@ -110,6 +110,54 @@ $MQL('l:menu',function(msg)
 		$MQ('l:project.list.response',{totalRecords:TiDeveloper.ProjectArray.length,'rows':data});
 		TiDeveloper.init=true;
 	}
+});
+//
+//  Project Package Request - get details about modules, etc
+//
+$MQL('l:package.project.request',function(msg)
+{
+	$MQ('l:package.project.data',{rows:[
+	{name:'Titanium Runtime'},
+	{name:'Ruby Language Module'},
+	{name:'Python'},
+	{name:'network'},
+	{name:'file'},
+	{name:'chat'},
+	{name:'java'},
+	{name:'php'},
+	{name:'desktop_core'},
+	{name:'custom_module_1'},
+	{name:'custom_module_2'},
+	{name:'custom_module_3'},
+	{name:'custom_module_4'}
+		
+		
+	]})
+});
+
+//
+// Create Package Request
+//
+$MQL('l:create.package.request',function(msg)
+{
+	// elements that are included for network bundle
+	var network = $("div[state='network']").length;
+	
+	// elements that are included (bundled)
+	var bundled = $("div[state='bundled']").length;
+
+	// project name
+	var project = $('#package_project_name').html();
+	
+	var launch = msg.payload.launch;
+	if (msg.payload.launch ==true)
+	{
+		// do  launch
+	}
+	else
+	{
+		
+	}
 })
 
 //
