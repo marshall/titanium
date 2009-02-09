@@ -19,7 +19,8 @@ Titanium.Project =
 		var normalized_name = name.replace(' ','_');
 		// write out the TIAPP.xml
 		var tiappxml = this.XML_PROLOG;
-		tiappxml+=this.makeEntry('id','com.yourdomain.'+normalized_name);
+		var id = 'com.yourdomain.'+normalized_name;
+		tiappxml+=this.makeEntry('id',id);
 		tiappxml+=this.makeEntry('name',name);
 		tiappxml+=this.makeEntry('version','1.0');
 		tiappxml+=this.makeEntry('copyright','2009 by YourCompany');
@@ -47,7 +48,13 @@ Titanium.Project =
 		resources.createDirectory();
 		var index = TFS.getFile(resources,'index.html');
 		index.write('<html>\n<head>\n</head>\n<body>\nHello,world\n</body>\n</html>');
-		return true;
+		return {
+			basedir: outdir,
+			resources: resources,
+			id: id,
+			name: name,
+			success:true
+		};
 	},
 	makeEntry:function(key,value,attrs)
 	{

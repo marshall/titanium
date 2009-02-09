@@ -18,8 +18,10 @@ namespace ti
 		file_path = kroll::FileUtils::GetApplicationDataDirectory(appid);
 		file_path += KR_PATH_SEP;
 		file_path += "application.properties";
-		
-		std::cout << "+++ FILE PATH=" << file_path << std::endl;
+
+#ifdef DEBUG		
+		std::cout << "Application properties path=" << file_path << std::endl;
+#endif
 
 		Poco::File file(file_path);
 		if (!file.exists()) {

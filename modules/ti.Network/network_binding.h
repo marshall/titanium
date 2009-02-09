@@ -1,5 +1,5 @@
 /**
- * Appcelerator Kroll - licensed under the Apache Public License 2
+ * Appcelerator Titanium - licensed under the Apache Public License 2
  * see LICENSE in the root folder for details on the license.
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
@@ -23,6 +23,8 @@ namespace ti
 		
 		void CreateIPAddress(const ValueList& args, SharedValue result);
 		void CreateTCPSocket(const ValueList& args, SharedValue result);
+		void CreateIRCClient(const ValueList& args, SharedValue result);
+		
 		void _GetByHost(std::string host, SharedValue result);
 		void GetHostByName(const ValueList& args, SharedValue result);
 		void GetHostByAddress(const ValueList& args, SharedValue result);
