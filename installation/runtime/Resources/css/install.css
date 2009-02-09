@@ -52,6 +52,7 @@ body
 /******************
  * BUTTON CLASSES
  ******************/
+
 .button1
 {
 	-webkit-border-bottom-right-radius: 3px;
@@ -97,7 +98,7 @@ body
 }
 .text
 {
-	font-family:'Lucida Grande';
+	font-family:'Lucida Grande', Georgia;
 	font-size:12px;
 }
 .section

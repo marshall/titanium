@@ -67,7 +67,7 @@ namespace ti
 		return item;
 	}
 
-	std::vector<SharedValue> GtkUIBinding::OpenFiles(
+	std::vector<std::string> GtkUIBinding::OpenFiles(
 		bool multiple,
 		bool files,
 		bool directories,
@@ -89,17 +89,19 @@ namespace ti
 			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 			GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
 			NULL);
-		gtk_file_chooser_set_select_multiple(GTK_FILE_CHOOSER(chooser), multiple);
+		
 
-		GtkFileFilter* filter = gtk_file_filter_new();
-		for (size_t i = 0; i < types.size(); i++)
-		{
-			std::string pat = std::string("*.") + types.at(i);
-			gtk_file_filter_add_pattern(filter, pat.c_str());
-		}
-		gtk_file_chooser_set_filter(GTK_FILE_CHOOSER(chooser), filter);
+		//gtk_file_chooser_set_select_multiple(GTK_FILE_CHOOSER(chooser), multiple);
 
-		std::vector<SharedValue> to_ret;
+		//GtkFileFilter* filter = gtk_file_filter_new();
+		//for (size_t i = 0; i < types.size(); i++)
+		//{
+		//	std::string pat = std::string("*.") + types.at(i);
+		//	gtk_file_filter_add_pattern(filter, pat.c_str());
+		//}
+		//gtk_file_chooser_set_filter(GTK_FILE_CHOOSER(chooser), filter);
+
+		std::vector<std::string> to_ret;
 		if (gtk_dialog_run(GTK_DIALOG(chooser)) == GTK_RESPONSE_ACCEPT)
 		{
 			if (multiple)
@@ -108,7 +110,7 @@ namespace ti
 				for (size_t i = 0; i < g_slist_length(files); i++)
 				{
 					char* f = (char*) g_slist_nth_data(files, i);
-					to_ret.push_back(Value::NewString(f));
+					to_ret.push_back(std::string(f));
 					g_free(f);
 				}
 				g_slist_free(files);
@@ -116,7 +118,7 @@ namespace ti
 			else
 			{
 				char *f = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(chooser));
-				to_ret.push_back(Value::NewString(f));
+				to_ret.push_back(std::string(f));
 				g_free(f);
 			}
 		}
@@ -124,5 +126,25 @@ namespace ti
 
 		return to_ret;
 	}
-
 }
+
+// GtkDialogFlags f = (GtkDialogFlags) GTK_DIALOG_MODAL;
+// GtkWidget *dialog = gtk_dialog_new_with_buttons ("My dialog",
+//                                                  NULL,
+//                                                  f,
+//                                                  GTK_STOCK_OK,
+//                                                  GTK_RESPONSE_ACCEPT,
+//                                                  GTK_STOCK_CANCEL,
+//                                                  GTK_RESPONSE_REJECT,
+//                                                  NULL);
+//  gint result = gtk_dialog_run (GTK_DIALOG (dialog));
+//  switch (result)
+//    {
+//      case GTK_RESPONSE_ACCEPT:
+//         printf("yes\n");
+//         break;
+//      default:
+//         printf("no\n");
+//         break;
+//    }
+//  gtk_widget_destroy (dialog);

@@ -176,9 +176,10 @@ namespace ti
 			}
 		}
 
-		std::vector<SharedValue> file_vec =
+		std::vector<std::string> file_vec =
 			this->OpenFiles(multiple, files, directories, types);
-		SharedBoundList file_list = StaticBoundList::FromVector(file_vec);
+		result->SetList(StaticBoundList::FromStringVector(file_vec));
+		
 	}
 
 }

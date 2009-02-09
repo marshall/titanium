@@ -51,7 +51,7 @@ namespace ti
 		virtual void SetDockMenu(SharedPtr<MenuItem>) {} 
 		virtual void SetBadge(SharedString badge_path) {}
 
-		virtual std::vector<SharedValue> OpenFiles(
+		virtual std::vector<std::string> OpenFiles(
 			bool multiple,
 			bool files,
 			bool directories,

@@ -25,7 +25,7 @@ namespace ti
 		SharedPtr<TrayItem> AddTray(SharedString icon_path,
 		                            SharedBoundMethod cb);
 
-		std::vector<SharedValue> OpenFiles(
+		std::vector<std::string> OpenFiles(
 			bool multiple,
 			bool files,
 			bool directories,
