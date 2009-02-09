@@ -141,6 +141,9 @@ $MQL('l:create.package.request',function(msg)
 	
 	// elements that are included (bundled)
 	var bundled = $("div[state='bundled']").length;
+
+	// project name
+	var project = $('#package_project_name').html();
 	
 	var launch = msg.payload.launch;
 	if (msg.payload.launch ==true)

@@ -141,7 +141,7 @@
 			
 			<!-- PROJECT LIST ITERATOR -->
 			<div on="l:project.list.response[totalRecords=0] then hide else effect[fadeIn]
-				or l:package.project.request then effect[slideUp] 
+				or l:package.project.request then effect[fadeOut] 
 					or l:cancel[val=package] then effect[fadeIn] after 400ms">
 				<div style="float:left;width:250px" >
 					<div style="margin-bottom:10px;font-size:11px;position:relative;top:-5px" class="hint_text">
@@ -286,7 +286,7 @@
 					<div style="position:absolute;left:0px">
 						<img src="images/package_large.png">
 						<span style="position:relative;top:-10px;margin-left:5px"/>
-							<span on="l:package.project.request then value[name]"></span>
+							<span id="package_project_name" on="l:package.project.request then value[name]"></span>
 							<span class="hint_text" style="margin-left:10px">
 							Select the modules to be included with your application.
 							</span> 
