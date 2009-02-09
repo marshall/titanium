@@ -86,9 +86,6 @@ Export('build')
 if ARGUMENTS.get('package',0):
 	print "building packaging ..."
 	SConscript('installation/runtime/SConscript')	
-elif ARGUMENTS.get('testapp',0):
-	print "building test app ..."
-	SConscript('build/testapp/SConscript')
 else:
 	SConscript('kroll/SConscript', exports='debug')
 
