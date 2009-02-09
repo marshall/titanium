@@ -9,6 +9,7 @@
 #import "../ui_module.h"
 #import <Cocoa/Cocoa.h>
 #import "ti_app.h"
+#import "WebInspector.h" 
 
 @class WebViewDelegate;
 
@@ -22,6 +23,8 @@ using namespace ti;
 	BOOL requiresDisplay;
 	SharedBoundObject* userWindow;
 	CGDisplayFadeReservationToken tok;  /** Fade out/in token */
+	WebInspector *inspector;
+	BOOL closed;
 }
 - (void)setupDecorations:(WindowConfig*)config host:(Host*)h userwindow:(UserWindow*)uw;
 - (void)setTransparency:(double)transparency;
@@ -33,6 +36,7 @@ using namespace ti;
 - (WindowConfig*)config;
 - (SharedBoundObject)userWindow;
 - (void)setInitialWindow:(BOOL)yn;
+- (void)showInspector;
 @end
 
 #endif

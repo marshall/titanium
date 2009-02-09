@@ -36,6 +36,7 @@ TiDeveloper.ProjectArray = [
 //
 $MQL('l:create.project.request',function(msg)
 {
+	/*
 	setTimeout(function()
 	{
 		if (msg.payload.project_name == 'foo')
@@ -48,7 +49,10 @@ $MQL('l:create.project.request',function(msg)
 		}
 		
 	},1000);
-})
+	*/
+	Titanium.Project.create(msg.payload.project_name,msg.payload.project_location);
+	$MQ('l:create.project.response',{result:'success'});
+});
 
 //
 // Handling paging requests

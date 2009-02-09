@@ -119,10 +119,14 @@ namespace ti
 	}
 	void OSXUserWindow::Close()
 	{
-		opened = false;
-		closed = true;
-		[window close];
-		UserWindow::Close(this);
+		KR_DUMP_LOCATION
+		if (!closed)
+		{
+			opened = false;
+			closed = true;
+			[window close];
+			UserWindow::Close(this);
+		}
 	}
 	double OSXUserWindow::GetX()
 	{
