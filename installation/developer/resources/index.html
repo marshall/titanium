@@ -1,16 +1,18 @@
 <html>
 <head>
+
 	<script type="text/javascript" charset="utf-8" src="js/appcelerator-debug.js"></script>
 	<script type="text/javascript" charset="utf-8" src="js/index.js"></script>
+	<script type="text/javascript" charset="utf-8" src="js/project.js"></script>
+
 	<link rel="stylesheet" href="css/index.css" type="text/css" media="screen" charset="utf-8" />
 </head>
 
 <!-- ADJUST WINDOW HEIGHT BASED ON CURRENT STATE -->
-<body on="l:menu[val=create] then script[Titanium.UI.currentWindow.setHeight(380)] or
+<body  on="l:menu[val=create] then script[Titanium.UI.currentWindow.setHeight(380)] or
 		  l:menu[val=manage] then script[Titanium.UI.currentWindow.setHeight(500)] if expr[ $('#project_count_hidden').val() != 0] or
 		  l:menu[val=manage] then script[Titanium.UI.currentWindow.setHeight(160)] if expr[ $('#project_count_hidden').val() == 0] or
 		  l:cancel[val=project] then script[Titanium.UI.currentWindow.setHeight(160)]">
-
 	<!-- HEADER MENU -->
 	<div class="menu">
 		<div id="project_count">You have no projects  </div>
@@ -22,21 +24,21 @@
 		
 		<!-- MAJOR ACTION BUTTONS -->
 		<div class="button1" style="display:inline-block;width:150px" 
+			on="click then l:menu[val=manage] and add[class=active] or l:menu[val!=manage] then remove[class=active]">
+			<div class="button2">Manage Projects</div>
+		</div>
+		<div class="button1" style="display:inline-block;width:150px" 
 			on="click then l:menu[val=create] and add[class=active] 
 			or (l:menu[val!=create] or l:cancel[val=project]) then remove[class=active]">
 			<div class="button2">Create Project</div>
 		</div>
 		<div class="button1" style="display:inline-block;width:150px" 
-			on="click then l:menu[val=manage] and add[class=active] or l:menu[val!=manage] then remove[class=active]">
-			<div class="button2">Manage Projects</div>
-		</div>
-		<div class="button1" style="display:inline-block;width:150px" 
 			on="click then l:menu[val=tv] and add[class=active] or l:menu[val!=tv] then remove[class=active]">
-			<div class="button2">Titanium TV</div>
+			<div class="button2">API Documentation</div>
 		</div>
 		<div class="button1" style="display:inline-block;width:150px" 
 			on="click then l:menu[val=social] and add[class=active] or l:menu[val!=social] then remove[class=active]">
-			<div class="button2">Social</div>
+			<div class="button2">Ti IRC</div>
 		</div>
 		<div style="clear:both"></div>
 
@@ -125,13 +127,13 @@
 
 		</div>
 
-		<!-- PACKAGE PROJECT -->
-		<div style="display:none;margin-top:15px" 
+		<!-- MANAGE PROJECT -->
+		<div style="margin-top:5px;display:none" 
 			on="l:menu[val=manage] then effect[fadeIn] else hide or l:cancel[val=manage] then effect[fadeOut]">
 
 			<!-- NO PROJECTS CREATED MESSAGE -->
 			<div style="float:left;width:300px" class="error_text" 
-				on="l:project.list.response[count!=0] then hide else effect[fadeIn]">
+				on="l:project.list.response[totalRecords!=0] then hide else effect[fadeIn,speed=3000]">
 				<img src="images/error.png"/>
 				<span style="position:relative;top:-4px">
 					You haven't created any projects.  Get on it!
@@ -139,29 +141,130 @@
 			</div>
 			
 			<!-- PROJECT LIST ITERATOR -->
-			<div on="l:project.list.response[count=0] then hide else effect[fadeIn]">
+			<div on="l:project.list.response[totalRecords=0] then hide else effect[fadeIn]
+				or l:package.project.request then effect[fadeOut] 
+					or l:cancel[val=package] then effect[fadeIn] after 400ms">
 				<div style="float:left;width:250px" >
-					<div style="margin-bottom:10px" class="hint_text">
-						<span on="l:project.list.response then value[count]"></span>
-						<span> projects found</span>
-						<img src="images/magnifier.png" style="position:relative;top:4px;cursor:pointer"
-							on="click then l:project.search"/>
+					<div style="margin-bottom:10px;font-size:11px;position:relative;top:-5px" class="hint_text">
+						<span on="click then l:project.search" style="cursor:pointer">
+							<img src="images/magnifier.png" style="position:relative;top:4px;"/>
+							Find Projects
+						</span>
 						<div style="display:none;margin-top:5px;margin-bottom:5px" 
 							on="l:project.search then effect[slideToggle]">
-							<input type="text"  validator="required" value="find projects"
-							 	on="click then clear or keyup[enter] then l:project.list.request"
+							<input type="text"  validator="required" value="type and hit enter"
+							 	on="click then clear or keyup[enter] then l:project.search.request"
 								fieldset="project_search" id="search_value"/> 
 						</div>
 					</div>
-					<div control="iterator[property=rows]" on="l:project.list.response then render">
-						<div class="project_row">
-							<div class="project_name">#{name}</div>
-							<div class="project_date">#{date}</div>
+					
+					<!-- PAGINATION -->
+					<div id="project_pagination" class="black_gradient">
+						
+						<!-- YUI PAGINATION -->
+						<div control="yui_paginator[rowsPerPage=10, message=l:page.data.request, previousPageLinkLabel=prev, nextPageLinkLabel=next]" on="l:project.list.response then render	   
+								or l:project.search.response then render"
+							style="font-size:11px;position:absolute;right:5px;top:-5px;color:#fff" class="page_links">
+							<div>
+								{CurrentPageReport}  {PreviousPageLink} {NextPageLink} 
+							</div>	
+						</div>
+						<!-- RECORD COUNT -->
+						<div style="font-size:11px;position:absolute;left:5px;top:4px;color:#fff" class="page_links">
+							<span on="l:project.list.response then value[totalRecords] 
+								or l:project.search.response then value[totalRecords]">
+							</span>
+							<span>found</span>
+
 						</div>
 					</div>
+					<div style="clear:both"></div>
+					<div control="iterator[property=rows]" 
+						on="l:project.list.response then render or l:project.search.response then render">
+						<div class="project_row"
+							on="mouseover then l:row.selected[row=#{iterator_index},name=#{name},date=#{date},dir=#{dir}] and add[class=row_selected]
+							and show[id=action_#{iterator_index}] and hide[id=view_#{iterator_index}]
+							or mouseout then remove[class=row_selected] and hide[id=action_#{iterator_index}] 
+							and show[id=view_#{iterator_index}]">
+							<div id="view_#{iterator_index}">
+								<div class="project_name">#{name}</div>
+								<div class="project_date" >
+									#{date}
+								</div>
+							</div>
+							<div id="action_#{iterator_index}" style="display:none">
+								<div class="project_name">#{name}</div>
+								<div class="project_controls">
+									<img src="images/delete.png" style="margin-right:2px"
+										on="click then l:delete.project.request[id=#{id},name=#{name}]"/>
+									<img src="images/package_go.png"
+										on="click then l:package.project.request[id=#{id},name=#{name}]"/>
+								</div>
+							</div>
+							
+						</div>
+						<div style="height:1px;border-bottom:1px solid #222;margin-bottom:1px"></div>
+					</div>
+
 				</div>
+				
+				<!-- PROJECT DETAILS -->
+				<div class="manage_right" style="margin-left:50px;display:none" on="l:row.selected then show
+				or l:menu[val=manage] then hide">
+					<div class="infobox">
+						<div class="content">
+							<table>
+								<tr>
+									<td style="font-size:11px" width="90px" class="hint_text">Project Name:</td>
+									<td style="font-size:11px" on="l:row.selected then value[name]"></td>
+								</tr>
+								<tr>
+									<td style="font-size:11px" width="90px" class="hint_text">Date Created:</td>
+									<td style="font-size:11px"  on="l:row.selected then value[date]"></td>
+								</tr>
+								<tr>
+									<td style="font-size:11px" width="90px" class="hint_text">Location:</td>
+									<td  width="220px" style="font-size:11px;">
+										<a style="color:#fff;text-decoration:underline;cursor:pointer;display:none" 
+											id="project_detail_dir_a"
+											on="l:row.selected then script[TiDeveloper.formatDirectory(this.data.dir)]
+											or click then l:show.project.modal">
+										</a>
+										<span id="project_detail_dir_span" style="display:none"
+											on="l:row.selected then script[TiDeveloper.formatDirectory(this.data.dir)]">
+										</span>
+
+									</td>
+								</tr>
+
+							</table>
+							<!-- MODAL FOR DISPLAYING LONG LOCATION NAMES -->
+							<div behavior="modal[opacity=0.9,showEffect=fadeIn,hideEffect=fadeOut]" 
+								on="l:show.project.modal then show or l:hide.project.modal then hide">
+								<div class="black_gradient" style="padding:5px;font-size:11px;margin:0px">
+									Project Location
+								</div>
+								<div class="infobox" >
+									<div class="content" style="padding:10px">
+										<div on="l:row.selected then value[dir]" 
+											style="padding:10px;color:#fff;font-size:11px">
+										</div>
+										<div class="button1" style="margin:auto;float:none"  
+											on="click then l:hide.project.modal">
+											<div class="button2">
+												Close
+											</div>
+										</div>
+										
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>				
 				<!-- INFO MESSAGE -->
-				<div style="float:left;height:70px;margin-left:50px;width:335px" class="infobox">
+				<div class="infobox manage_right" style="margin-left:50px" 
+					on="l:row.selected then hide or l:menu[val=manage] then show">
 					<div class="content" style="height:58px">
 						<div style="float:left;width:20px">
 							<img src="images/information.png" style="position:relative;top:-1px"/>
@@ -172,7 +275,101 @@
 						</div>
 					</div>
 				</div>
+				
 			</div>
+
+			<!-- PACKAGE PROJECT -->
+			<div on="l:package.project.request then effect[fadeIn] after 800ms 
+				or l:cancel[val=package] then effect[slideUp]" style="display:none;" >
+
+				<!-- HEADER TEXT -->
+				<div style="position:relative;height:40px">
+					<div style="position:absolute;left:0px">
+						<img src="images/package_large.png">
+						<span style="position:relative;top:-10px;margin-left:5px"/>
+							<span id="package_project_name" on="l:package.project.request then value[name]"></span>
+							<span class="hint_text" style="margin-left:10px">
+							Select the modules to be included with your application.
+							</span> 
+							
+						</span>
+					</div>
+				</div>
+				<div>
+					<!-- HEADERS FOR MODULE TABLE -->
+					<div style="width:460px;color:#bbb">
+						<div style="width:45px;float:left;text-decoration:underline;cursor:pointer"
+							on="click then l:package.all[val=exclude]">
+							<a title="exclude module from applicaiton">Exclude</a>
+						</div>
+						<div style="width:95px;float:left;margin-left:10px;text-decoration:underline;cursor:pointer"
+						 	on="click then l:package.all[val=network]">
+							<a title="load module at installation time">Include (Network)</a>
+						</div>
+						<div style="width:120px;float:left;margin-left:10px;text-decoration:underline;cursor:pointer"
+							on="click then l:package.all[val=bundled]">
+							<a title="include module with distribution">Include (Bundled)</a>
+						</div>
+						<div style="width:90px;float:left;margin-left:10px;" >Module</div>
+
+					</div>
+					<div style="clear:both;"></div>
+					
+					<!-- MODULE ITERATOR FOR CREATING MANIFEST -->
+					<div control="iterator[property=rows]" on="l:package.project.data then render"
+						style="margin-top:10px;height:240px;overflow:auto;margin-bottom:20px">
+						<div class="module_row">
+							<div style="width:45px;float:left;text-align:center">
+								<div class="include_box" style="position:relative;left:10px"
+									on="click then l:package.select[val=exclude,name=#{name}] and toggle[class=exclude]
+										or l:package.select[val!=exclude,name=#{name}] then remove[class=exclude]
+										or l:package.all[val=exclude] then add[class=exclude] else remove[class=exclude]">
+								</div>
+							</div>
+							<div style="width:95px;float:left;text-align:center">
+								<div class="include_box" style="position:relative;left:40px"
+									on="click then l:package.select[val=network,name=#{name}] and toggle[class=network]
+										or l:package.select[val!=network,name=#{name}] then remove[class=network]
+										or l:package.all[val=network] then add[class=network] else remove[class=network]">				
+								</div>							
+							</div>
+							<div style="width:120px;float:left;text-align:center">
+								<div class="include_box" style="position:relative;left:50px"
+									on="click then l:package.select[val=bundled,name=#{name}] and toggle[class=bundled]
+									or l:package.select[val!=bundled,name=#{name}] then remove[class=bundled]
+									or l:package.all[val=bundled] then add[class=bundled] else remove[class=bundled]">
+								</div>
+							</div>
+							<div style="width:200px;display:inline;text-align:center;position:relative;left:25px"
+								on="l:package.select[name=#{name}] then set[state=expr(this.data.val)] 
+								or  l:package.all then set[state=expr(this.data.val)]">
+								#{name}
+							</div>
+						</div>
+						<div style="clear:both;margin-bottom:5px"></div>
+				</div>
+				
+				<!-- BUTTON BAR FOR PACKAGE PROJECT -->
+				<div class="button1" style="float:left;margin-right:10px;width:130px"
+				 	on="click then l:create.package.request[launch=true]">
+					<div class="button2">
+						Package & Launch
+					</div>
+				</div>
+				<div class="button1" style="float:left;margin-right:10px" 
+					on="click then l:create.package.request[launch=false]">
+					<div class="button2">
+						Package
+					</div>
+				</div>
+				<div class="button1" style="float:left;"  on="click then l:cancel[val=package]">
+					<div class="button2">
+						Cancel
+					</div>
+				</div>
+
+			</div>
+
 		</div>
 
 	</div>
@@ -180,6 +377,5 @@
 	<!-- POWERED BY LOGO -->
 	<div id="powered_by" ></div>
 	
-	<input type="hidden" on="l:project.list.response then value[count]" value="0" id="project_count_hidden"/>
 </body>
 </html>

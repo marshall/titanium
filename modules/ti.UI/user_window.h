@@ -30,9 +30,7 @@ typedef struct {
 class UserWindow : public kroll::StaticBoundObject {
 	public:
 		UserWindow(kroll::Host *host, WindowConfig *config);
-	protected:
 		~UserWindow(){};
-	public:
 		kroll::Host* GetHost() { return this->host; }
 		SharedBoundObject CreateWindow(SharedBoundObject properties);
 		static std::vector<UserWindow*>& GetWindows();

@@ -7,7 +7,7 @@
 #import <WebKit/WebKit.h>
 #import "../user_window.h"
 #import "native_window.h"
-#include "osx_menu_wrapper.h"
+#import "osx_menu_wrapper.h"
 
 namespace ti
 {
@@ -15,7 +15,6 @@ namespace ti
 	{
 		public:
 			OSXUserWindow(Host *host, WindowConfig *config);
-		protected:
 			~OSXUserWindow();
 		public:
 			UserWindow* WindowFactory(Host*, WindowConfig*);

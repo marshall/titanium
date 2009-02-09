@@ -1,7 +1,6 @@
-var TFS = Titanium.Filesystem;
+if (typeof(Titanium)=='undefined') Titanium = {};
 
-App = {};
-App.Creator = {
+Titanium.AppCreator = {
 	
 	osx: function(runtime,destination,name,appid)
 	{
@@ -81,10 +80,10 @@ App.Creator = {
 };
 
 
-App.CreateApp = function(runtime,destination,name,appid)
+Titanium.createApp = function(runtime,destination,name,appid)
 {
 	var platform = Titanium.platform;
-	var fn = App.Creator[platform];
+	var fn = Titanium.AppCreator[platform];
 	return fn(runtime,destination,name,appid);
 };
 

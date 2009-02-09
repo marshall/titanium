@@ -1,5 +1,10 @@
 var TFS = Titanium.Filesystem;
 
+if (Titanium.platform=='osx')
+{
+	Titanium.UI.currentWindow.setHeight(500);
+}
+
 function updateProgressMessage(msg)
 {
 	$('#statusbar').html(msg);
@@ -217,7 +222,7 @@ function runInstaller()
 				
 				// developer product
 				var devDest = TFS.getProgramsDirectory();
-				var developer = App.CreateApp(runtimeDir,devDest,'Titanium Developer','com.titaniumapp.developer');
+				var developer = Titanium.createApp(runtimeDir,devDest,'Titanium Developer','com.titaniumapp.developer');
 				var devsrc = TFS.getFile(src,'developer');
 				var devresources = TFS.getFile(devsrc,'resources');
 				var devtiapp = TFS.getFile(devsrc,'tiapp.xml');

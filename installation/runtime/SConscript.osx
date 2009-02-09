@@ -45,6 +45,7 @@ runtime = p.join(bundle.contents, 'runtime');
 modules_dir = p.join(bundle.contents, 'modules');
 for d in [runtime,modules_dir]:
 	os.makedirs(d)
+dir_util.copy_tree(p.join(build.titanium_source_dir,'installation','common','js'), p.join(bundle.resources,'js'), preserve_symlinks=True)
 
 # create a flag file on the runtime bundle so we don't
 # attempt to re-run the application installer	
@@ -92,6 +93,7 @@ for walk in os.walk(bundle.basedir):
 developer = p.join(bundle.contents,'developer')
 os.makedirs(developer)
 dir_util.copy_tree(p.join(build.titanium_source_dir,'installation','developer'), developer, preserve_symlinks=True)
+dir_util.copy_tree(p.join(build.titanium_source_dir,'installation','common','js'), p.join(developer,'resources','js'), preserve_symlinks=True)
 
 # copy the app installer product
 appinstaller = p.join(bundle.contents,'appinstaller')
@@ -131,19 +133,20 @@ for d in [tdmgname,dmgname]:
 	if p.isfile(n):
 		os.remove(n)
 
-invoke("hdiutil create -srcfolder \"%s\" -scrub -volname \"Titanium\" -fs HFS+ -fsargs \"-c c=64,a=16,e=16\" -format UDRW \"%s\"" % (srcfolder,tdmgname))
-invoke("hdiutil attach -readwrite -noverify -noautoopen \"%s.dmg\"" % tdmgname)
-invoke("bless --folder /Volumes/Titanium --openfolder /Volumes/Titanium")
-shutil.move("/Volumes/Titanium/titanium_runtime.app","/Volumes/Titanium/Install Titanium.app")
-invoke("strip -u -r \"/Volumes/Titanium/Install Titanium.app/Contents/MacOS/titanium_runtime\"")
-invoke("ditto %s/installation/runtime/installer_DS_Store /Volumes/Titanium/.DS_Store" % build.titanium_source_dir)
-invoke("ditto %s/installation/runtime/background.jpg /Volumes/Titanium/background.jpg" % build.titanium_source_dir)
-invoke("ditto %s/support/osx/titanium.icns /Volumes/Titanium/.VolumeIcon.icns" % build.titanium_source_dir)
-invoke("/Developer/Tools/SetFile -a C /Volumes/Titanium")
-invoke("/Developer/Tools/SetFile -a V /Volumes/Titanium/background.jpg")
-invoke("hdiutil detach /Volumes/Titanium")
-invoke("hdiutil convert %s.dmg -format UDBZ -imagekey zlib-level=9 -o %s.dmg" % (tdmgname,dmgname))
-invoke("hdiutil internet-enable -yes %s.dmg" % dmgname)
-os.remove(tdmgname+'.dmg')
-shutil.move(dmgname+'.dmg',build.dir)
+if not ARGUMENTS.get('skipdmg', 0):
+	invoke("hdiutil create -srcfolder \"%s\" -scrub -volname \"Titanium\" -fs HFS+ -fsargs \"-c c=64,a=16,e=16\" -format UDRW \"%s\"" % (srcfolder,tdmgname))
+	invoke("hdiutil attach -readwrite -noverify -noautoopen \"%s.dmg\"" % tdmgname)
+	invoke("bless --folder /Volumes/Titanium --openfolder /Volumes/Titanium")
+	shutil.move("/Volumes/Titanium/titanium_runtime.app","/Volumes/Titanium/Install Titanium.app")
+	invoke("strip -u -r \"/Volumes/Titanium/Install Titanium.app/Contents/MacOS/titanium_runtime\"")
+	invoke("ditto %s/installation/runtime/installer_DS_Store /Volumes/Titanium/.DS_Store" % build.titanium_source_dir)
+	invoke("ditto %s/installation/runtime/background.jpg /Volumes/Titanium/background.jpg" % build.titanium_source_dir)
+	invoke("ditto %s/support/osx/titanium.icns /Volumes/Titanium/.VolumeIcon.icns" % build.titanium_source_dir)
+	invoke("/Developer/Tools/SetFile -a C /Volumes/Titanium")
+	invoke("/Developer/Tools/SetFile -a V /Volumes/Titanium/background.jpg")
+	invoke("hdiutil detach /Volumes/Titanium")
+	invoke("hdiutil convert %s.dmg -format UDBZ -imagekey zlib-level=9 -o %s.dmg" % (tdmgname,dmgname))
+	invoke("hdiutil internet-enable -yes %s.dmg" % dmgname)
+	os.remove(tdmgname+'.dmg')
+	shutil.move(dmgname+'.dmg',build.dir)
 
