@@ -75,7 +75,21 @@ Titanium.AppCreator = {
 
 	win32: function(runtime,destination,name,appid)
 	{
+		var appDir = TFS.getFile(destination,name);
+		appDir.createDirectory(true);
+		var resources = TFS.getFile(appDir,'Resources');
+		resources.createDirectory(true);
 
+		var templates = TFS.getFile(runtime,'template');
+		var kboot = TFS.getFile(templates,'kboot.exe');
+		var appExecutable = TFS.getFile(appDir, name + '.exe');
+		kboot.copy(appExecutable);
+		
+		return {
+			resources:resources,
+			base:appDir,
+			executable:appExecutable
+		};
 	}
 };
 
