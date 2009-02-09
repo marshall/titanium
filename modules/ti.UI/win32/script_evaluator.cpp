@@ -4,8 +4,12 @@
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
 
+#include <kroll/base.h>
+#include <comdef.h>
+
 #include "script_evaluator.h"
 #include <kroll/kroll.h>
+#include "../../../kroll/modules/javascript/javascript_module.h"
 
 using namespace kroll;
 
@@ -15,8 +19,8 @@ ScriptEvaluator::~ScriptEvaluator() {
 
 std::string ScriptEvaluator::BSTRToString(BSTR bstr)
 {
-	std::wstring wstr(bstr);
-	return std::string(wstr.begin(), wstr.end());
+	std::string str = _bstr_t(bstr);
+	return str;
 }
 
 std::string ScriptEvaluator::GetModuleName(std::string type)
@@ -52,10 +56,12 @@ ScriptEvaluator::matchesMimeType(BSTR mimeType, BOOL *result)
 }
 
 HRESULT STDMETHODCALLTYPE
-ScriptEvaluator::evaluate(BSTR mimeType, BSTR sourceCode)
+ScriptEvaluator::evaluate(BSTR mimeType, BSTR sourceCode, int *context)
 {
 	std::string type = BSTRToString(mimeType);
 	std::string moduleName = GetModuleName(type);
+	JSContextRef contextRef = reinterpret_cast<JSContextRef>(context);
+
 	SharedBoundObject global = host->GetGlobalObject();
 
 	SharedValue moduleValue = global->Get(moduleName.c_str());
@@ -65,8 +71,12 @@ ScriptEvaluator::evaluate(BSTR mimeType, BSTR sourceCode)
 			ValueList args;
 			SharedValue typeValue = Value::NewString(type);
 			SharedValue sourceCodeValue = Value::NewString(BSTRToString(sourceCode));
+			JSObjectRef globalObjectRef = JSContextGetGlobalObject(contextRef);
+			SharedBoundObject contextObject = new KJSBoundObject(contextRef, globalObjectRef);
+			SharedValue contextValue = Value::NewObject(contextObject);
 			args.push_back(typeValue);
 			args.push_back(sourceCodeValue);
+			args.push_back(contextValue);
 
 			evalValue->ToMethod()->Call(args);
 		}
