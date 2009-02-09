@@ -13,7 +13,7 @@
 	  <maximizable>true</maximizable>
 	  <minimizable>true</minimizable>
 	  <closeable>true</closeable>
-	  <resizable>false</resizable>
+	  <resizable>true</resizable>
 	
    </window>
 </ti:app>
