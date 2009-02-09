@@ -1,5 +1,10 @@
 var TFS = Titanium.Filesystem;
 
+if (Titanium.platform=='osx')
+{
+	Titanium.UI.currentWindow.setHeight(500);
+}
+
 function updateProgressMessage(msg)
 {
 	$('#statusbar').html(msg);
@@ -196,10 +201,8 @@ function runInstaller()
 						
 						break;
 					case 'win32':
+						// copy titanium_runtime.exe to template/kboot.exe
 						var boot = TFS.getFile(src,appname+'.exe');
-						boot.copy(template);
-						var target = TFS.getFile(template,appname);
-						target.rename('kboot.exe');
 						var target = TFS.getFile(template,'kboot.exe');
 						boot.copy(target);
 						break;
@@ -217,7 +220,7 @@ function runInstaller()
 				
 				// developer product
 				var devDest = TFS.getProgramsDirectory();
-				var developer = App.CreateApp(runtimeDir,devDest,'Titanium Developer','com.titaniumapp.developer');
+				var developer = Titanium.createApp(runtimeDir,devDest,'Titanium Developer','com.titaniumapp.developer');
 				var devsrc = TFS.getFile(src,'developer');
 				var devresources = TFS.getFile(devsrc,'resources');
 				var devtiapp = TFS.getFile(devsrc,'tiapp.xml');

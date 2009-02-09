@@ -13919,27 +13919,16 @@ $.effects.transfer = function(o) {
 				case 'transfer':
 				case 'animate':
 				{
-//					if (options.options)
-//					{
-						var opt = {};
-						// options=to:{foo:bar;foo:bar};foo:bar,
-						// var parts = options.options.split('')
-						// for (var i=0;i<parts.length;i++)
-						// {
-						// 	var nvPairs = parts[i].split(':');
-						// 	opt[nvPairs[0]] = nvPairs[1]
-						// }
-						for (var v in options)
+					var opt = {};
+					for (var v in options)
+					{
+						if (v == 'speed')
 						{
-							if (v == 'speed')
-							{
-								continue;
-							}
-							opt[v] = options[v]
-							opts.push(opt)
+							continue;
 						}
-//						opts.push(opt)
-//					}
+						opt[v] = options[v]
+					}
+					opts.push(opt)
 				}
 				
 				// speed option - need to do this second

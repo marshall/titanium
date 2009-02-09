@@ -16,7 +16,7 @@
 {
 	return YES;
 }
-- (void)setupDecorations:(WindowConfig*)cfg host:(Host*)h userwindow:(UserWindow*)uw
+- (void)setupDecorations:(WindowConfig*)cfg host:(Host*)host userwindow:(UserWindow*)uw
 {
 	config = cfg;
 
@@ -42,16 +42,32 @@
 	}
 	
     webView = [[WebView alloc] init];
-	delegate = [[WebViewDelegate alloc] initWithWindow:self host:h];
+	delegate = [[WebViewDelegate alloc] initWithWindow:self host:host];
     [self setContentView:webView];
     [self setDelegate:self];
 	[self setTransparency:config->GetTransparency()];
 	[self setInitialFirstResponder:webView];
+
+	NSMenu *windowMenu = [[[NSApp mainMenu] itemWithTitle:NSLocalizedString(@"Window",@"")] submenu];
+	NSMenuItem *showInspector = [windowMenu itemWithTitle:NSLocalizedString(@"Show Inspector", @"")];
+	if (host->IsDebugMode())
+	{
+	    [showInspector setEnabled:YES];
+	    [showInspector setAction:@selector(showInspector)];
+	}
+	else
+	{
+	    [showInspector setHidden:YES];
+	    NSMenuItem *showInspectorSep = [windowMenu itemWithTitle:@"Show Inspector Separator"];
+	    [showInspectorSep setHidden:YES];
+	}
+	closed = NO;
 }
 - (void)dealloc
 {
 	KR_DUMP_LOCATION
 	delete userWindow;
+	[inspector release];
 	[delegate release];
 	delegate = nil;
 	[webView release];
@@ -62,8 +78,25 @@
 {
 	return *userWindow;
 }
+- (void)showInspector
+{
+	if (inspector==nil)
+	{
+		inspector = [[WebInspector alloc] initWithWebView:webView];
+		[inspector detach:self];
+	}
+	[inspector show:self];
+}
 - (void)windowWillClose:(NSNotification *)notification
 {
+	KR_DUMP_LOCATION
+	if (inspector)
+	{
+		[inspector close:self];
+		[inspector release];
+		inspector = nil;
+	}
+	config->SetVisible(false);
 }
 - (NSSize)windowWillResize:(NSWindow *) window toSize:(NSSize)newSize
 {
@@ -190,9 +223,14 @@
 - (void)close
 {
 	KR_DUMP_LOCATION
-	
-	[webView close];
-	[super close];
+	if (!closed)
+	{
+		closed = YES;
+		[webView close];
+		[super close];
+		SharedPtr<UserWindow> uw = userWindow->cast<UserWindow>();
+		uw->Close();
+	}
 }
 - (void)setInitialWindow:(BOOL)yn
 {

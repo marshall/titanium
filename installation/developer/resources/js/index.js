@@ -6,36 +6,50 @@ TiDeveloper.currentPage = 1;
 TiDeveloper.init = false;
 
 // holder var for all projects
-TiDeveloper.ProjectArray = [
-	{id:0,name:'Titanium',date:'11/01/2008'},
-	{id:1,name:'Playtanium',date:'11/01/2008'},
-	{id:2,name:'Tweetanium',date:'11/01/2008'},
-	{id:3,name:'MS Excel',date:'11/01/2008'},
-	{id:4,name:'MS Word',date:'11/01/2008'},
-	{id:5,name:'MS Powerpoint',date:'11/01/2008'},
-	{id:6,name:'Facebook',date:'11/01/2008'},
-	{id:7,name:'Meebo',date:'11/01/2008'},
-	{id:8,name:'Fluto',date:'11/01/2008'},
-	{id:9,name:'Frankenfurter',date:'11/01/2008'},
-	{id:10,name:'Doofus',date:'11/01/2008'},
-	{id:11,name:'Janus',date:'11/01/2008'},
-	{id:12,name:'Mint',date:'11/01/2008'},
-	{id:13,name:'Installer',date:'11/01/2008'},
-	{id:14,name:'Sample 2',date:'11/01/2008'},
-	{id:15,name:'Sandbox',date:'11/01/2008'},
-	{id:16,name:'Test App',date:'11/01/2008'},
-	{id:17,name:'Test App 2',date:'11/01/2008'},
-	{id:18,name:'My App',date:'11/01/2008'},
-	{id:19,name:'Desktop 2',date:'11/01/2008'},
-	{id:20,name:'Fred',date:'11/01/2008'}
-	
-];
+TiDeveloper.ProjectArray = [];
+
+
+function makeDate()
+{
+	var d = new Date;
+	return (d.getMonth() + 1) + '/' + d.getDate() + '/' + d.getFullYear();
+}
+
+(function()
+{
+	//TODO: switch this to SQL ASAP
+	if (Titanium.App.Properties.hasProperty("projects"))
+	{
+		var projects = Titanium.App.Properties.getList("projects");
+		for (var c=0;c<projects.length;c++)
+		{
+			var project = projects[c];
+			var id = project[0];
+			var name = project[1];
+			var date = project[2];
+			var dir = project[3];
+			
+			TiDeveloper.ProjectArray.push({
+				id: id,
+				name:name,
+				date:data,
+				dir:dir
+			});
+		}
+	}
+})();
+
+function save()
+{
+	Titanium.App.Properties.setList("projects",TiDeveloper.ProjectArray);
+}
 
 //
 //  create.project mock service
 //
 $MQL('l:create.project.request',function(msg)
 {
+	/*
 	setTimeout(function()
 	{
 		if (msg.payload.project_name == 'foo')
@@ -48,7 +62,24 @@ $MQL('l:create.project.request',function(msg)
 		}
 		
 	},1000);
-})
+	*/
+	
+	// CHECK
+	
+	//TODO: do we check for existence of directory and fail?
+	var result = Titanium.Project.create(msg.payload.project_name,msg.payload.project_location);
+	if (result.success)
+	{
+		TiDeveloper.ProjectArray.push({
+			id: String(TiDeveloper.ProjectArray.length),
+			name: result.name,
+			date: makeDate(),
+			dir: result.basedir
+		});
+		$MQ('l:create.project.response',{result:'success'});
+		save();
+	}
+});
 
 //
 // Handling paging requests
@@ -63,7 +94,23 @@ $MQL('l:page.data.request',function(msg)
 	$MQ('l:project.list.response',{page:page,totalRecords:TiDeveloper.ProjectArray.length,'rows':data})
 	
 });
-
+TiDeveloper.formatDirectory =function(dir)
+{
+	var dirStr = dir
+	if (dir.length > 40)
+	{
+		dirStr = dir.substring(0,40) + '...';
+		$('#project_detail_dir_a').css('display','block');
+		$('#project_detail_dir_span').css('display','none');
+		$('#project_detail_dir_a').html(dirStr);
+	}
+	else
+	{
+		$('#project_detail_dir_span').css('display','block');
+		$('#project_detail_dir_a').css('display','none');
+		$('#project_detail_dir_span').html(dirStr);
+	}
+}
 //
 // Get a page of data
 //
@@ -89,6 +136,54 @@ $MQL('l:menu',function(msg)
 		var data = TiDeveloper.getProjectPage(10,0)
 		$MQ('l:project.list.response',{totalRecords:TiDeveloper.ProjectArray.length,'rows':data});
 		TiDeveloper.init=true;
+	}
+});
+//
+//  Project Package Request - get details about modules, etc
+//
+$MQL('l:package.project.request',function(msg)
+{
+	$MQ('l:package.project.data',{rows:[
+	{name:'Titanium Runtime'},
+	{name:'Ruby Language Module'},
+	{name:'Python'},
+	{name:'network'},
+	{name:'file'},
+	{name:'chat'},
+	{name:'java'},
+	{name:'php'},
+	{name:'desktop_core'},
+	{name:'custom_module_1'},
+	{name:'custom_module_2'},
+	{name:'custom_module_3'},
+	{name:'custom_module_4'}
+		
+		
+	]})
+});
+
+//
+// Create Package Request
+//
+$MQL('l:create.package.request',function(msg)
+{
+	// elements that are included for network bundle
+	var network = $("div[state='network']").length;
+	
+	// elements that are included (bundled)
+	var bundled = $("div[state='bundled']").length;
+
+	// project name
+	var project = $('#package_project_name').html();
+	
+	var launch = msg.payload.launch;
+	if (msg.payload.launch ==true)
+	{
+		// do  launch
+	}
+	else
+	{
+		
 	}
 })
 
@@ -133,9 +228,29 @@ $MQL('l:project.search.request',function(msg)
 $MQL('l:show.filedialog',function()
 {
 	var files = Titanium.Desktop.openFiles({directories:true});
-	var val = (files['0'])?files['0']:'';
+	var val = files.length ? files[0] : '';
 	$MQ('l:file.selected',{value:val});
 })
 
-
+setTimeout(function()
+{
+	try
+	{
+		var irc = Titanium.Network.createIRCClient();
+		irc.connect("irc.freenode.net",6667,"jeffhaynie1","jeff haynie","jeffhaynie",String(new Date().getTime()),function(cmd,channel,data)
+		{
+			$('#irc').append(cmd+"=>"+channel+':'+data+'\n');
+		});
+		irc.join("#titanium_dev");
+		$('#irc_send').click(function()
+		{
+			irc.send('#titanium_dev',$('#irc_msg').val());
+			$('#irc_msg').val('');
+		})
+	}
+	catch(E)
+	{
+		alert("Exception: "+E);
+	}
+},1000);
 

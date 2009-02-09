@@ -1,7 +1,6 @@
-var TFS = Titanium.Filesystem;
+if (typeof(Titanium)=='undefined') Titanium = {};
 
-App = {};
-App.Creator = {
+Titanium.AppCreator = {
 	
 	osx: function(runtime,destination,name,appid)
 	{
@@ -76,15 +75,29 @@ App.Creator = {
 
 	win32: function(runtime,destination,name,appid)
 	{
+		var appDir = TFS.getFile(destination,name);
+		appDir.createDirectory(true);
+		var resources = TFS.getFile(appDir,'Resources');
+		resources.createDirectory(true);
 
+		var templates = TFS.getFile(runtime,'template');
+		var kboot = TFS.getFile(templates,'kboot.exe');
+		var appExecutable = TFS.getFile(appDir, name + '.exe');
+		kboot.copy(appExecutable);
+		
+		return {
+			resources:resources,
+			base:appDir,
+			executable:appExecutable
+		};
 	}
 };
 
 
-App.CreateApp = function(runtime,destination,name,appid)
+Titanium.createApp = function(runtime,destination,name,appid)
 {
 	var platform = Titanium.platform;
-	var fn = App.Creator[platform];
+	var fn = Titanium.AppCreator[platform];
 	return fn(runtime,destination,name,appid);
 };
 

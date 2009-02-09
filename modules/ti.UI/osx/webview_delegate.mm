@@ -16,7 +16,8 @@
 - (void)setup 
 {
 	AppConfig *appConfig = AppConfig::Instance();
-	NSString *appID = [NSString stringWithCString:appConfig->GetAppID().c_str()];
+	std::string appid = appConfig->GetAppID();
+	NSString *appID = [NSString stringWithCString:appid.c_str()];
 	
 	[webView setPreferencesIdentifier:appID];
 	
@@ -25,10 +26,27 @@
 	// this reduces memory cache footprint significantly.
 
 	[webPrefs setCacheModel:WebCacheModelDocumentBrowser];
-
-	[webPrefs setPlugInsEnabled:YES]; // ?? this disallows Flash content
+	[webPrefs setDeveloperExtrasEnabled:host->IsDebugMode()];
+	[webPrefs setPlugInsEnabled:YES]; 
 	[webPrefs setJavaEnabled:NO]; // ?? this disallows Java Craplets
 	[webPrefs setJavaScriptEnabled:YES];
+	if ([webPrefs respondsToSelector:@selector(setDatabasesEnabled:)])
+	{
+		[webPrefs setDatabasesEnabled:YES];
+	}
+	if ([webPrefs respondsToSelector:@selector(setLocalStorageEnabled:)])
+	{
+		[webPrefs setLocalStorageEnabled:YES];
+	}
+	[webPrefs setDOMPasteAllowed:YES];
+	
+	// Setup the DB to store it's DB under our data directory for the app
+	NSString *datadir = [NSString stringWithCString:kroll::FileUtils::GetApplicationDataDirectory(appid).c_str()];
+	[webPrefs _setLocalStorageDatabasePath:datadir];
+	
+	//TODO: make sure this is OK
+	[webPrefs setFullDocumentTeardownEnabled:YES];
+
 	[webView setPreferences:webPrefs];
 
 	[webPrefs release];
