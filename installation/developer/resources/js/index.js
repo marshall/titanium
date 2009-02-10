@@ -32,7 +32,7 @@ TiDeveloper.stateMachine.addListener(function()
 TiDeveloper.ircMessageCount = 0;
 TiDeveloper.startIRCTrack = function()
 {
-	// TiDeveloper.ircMessageCount = 0;
+	 TiDeveloper.ircMessageCount = 0;
 	// $('#irc_message_count').html('');
 	$('#irc_message_count').css('display','inline');
 	
