@@ -82,6 +82,7 @@ public:
 	int is_op(char* channel, char* nick);
 	int is_voice(char* channel, char* nick);
 	char* current_nick();
+	channel_user* get_users();
 private:
 	void call_hook(char* irc_command, char*params, irc_reply_data* hostd);
 	/*void call_the_hook(irc_command_hook* hook, char* irc_command, char*params, irc_host_data* hostd);*/

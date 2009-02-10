@@ -6,6 +6,7 @@ body
 	color:white;
 	font-size:12px;
 	min-width:700px;
+	padding-bottom:200px;
 
 }
 
@@ -36,8 +37,8 @@ ID STYLES
 	width:150px;
 	background:url(../images/poweredby.png);
 	position:absolute;
-	bottom:15px;
-	right:27px;
+	bottom:5px;
+	right:10px;
 }
 /*********************
 ELEMENT STYLES 
@@ -60,6 +61,10 @@ input:focus
 {
 	border:1px solid #777;
 	background-color:#444;
+}
+#irc
+{
+	width:100%;height:100%;min-height:50px;font-family:courier;background-color:#444;color:yellow;font-size:12px;overflow:auto;
 }
 /*********************
  BUTTON CLASSES
