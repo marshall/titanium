@@ -55,8 +55,24 @@ namespace ti
 				}
 			}
 		}
-		SharedBoundObject p = new Process(cmd,arguments);
+		SharedPtr<ProcessBinding> parent = this;
+		SharedBoundObject p = new Process(parent,cmd,arguments);
+		processes.push_back(p);
 		result->SetObject(p);
+	}
+	void ProcessBinding::Terminated(SharedBoundObject p)
+	{
+		std::vector<SharedBoundObject>::iterator i = processes.begin();
+		while(i!=processes.end())
+		{
+			SharedBoundObject obj = (*i);
+			if (obj.get()==p.get())
+			{
+				processes.erase(i);
+				break;
+			}
+			i++;
+		}
 	}
 	void ProcessBinding::GetEnv(const ValueList& args, SharedValue result)
 	{

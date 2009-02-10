@@ -47,6 +47,7 @@ namespace ti
 		this->Set("address", Value::NewString(address));
 		this->Set("id", Value::NewString(nodeId));
 		this->Set("processorCount", Value::NewInt(num_proc));
+		this->Set("username", Value::NewString(kroll::FileUtils::GetUsername()));
 	}
 
 	PlatformBinding::~PlatformBinding()
