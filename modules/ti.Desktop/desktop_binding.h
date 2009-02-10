@@ -26,10 +26,8 @@ namespace ti
 	private:
 		SharedBoundObject global;
 		void CreateShortcut(const ValueList& args, SharedValue result);
-		void OpenFiles(const ValueList& args, SharedValue result);
 		void OpenApplication(const ValueList& args, SharedValue result);
 		void OpenURL(const ValueList& args, SharedValue result);
-		void GetSystemIdleTime(const ValueList& args, SharedValue result);
 	};
 }
 

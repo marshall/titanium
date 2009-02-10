@@ -15591,7 +15591,7 @@ var $MQI = null;
 		
 		//Plug-In Configuration
 		config: {
-			queue_scan_interval: 50 //The default interval to scan the queue for new messages
+			queue_scan_interval: 10 //The default interval to scan the queue for new messages
 		},
 		
 		//Publish a message to the message queue

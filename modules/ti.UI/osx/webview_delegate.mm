@@ -82,7 +82,6 @@
 	{
 		window = win;
 		host = h;
-		KR_ADDREF(host); //TODO: move to sharedValue
 		webView = [window webView];
 		[self setup];
 		[webView setFrameLoadDelegate:self];
@@ -107,7 +106,6 @@
 	NSString *tiKey = [NSString stringWithCString:GLOBAL_NS_VARNAME];
 	[windowJS removeWebScriptKey:tiKey];
 	
-	KR_DECREF(host);
 	[url release];
 	[super dealloc];
 }

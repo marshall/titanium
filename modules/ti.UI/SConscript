@@ -8,7 +8,10 @@ build.add_thirdparty(build.env, 'poco')
 env = build.env.Clone()
 env.Append(LIBPATH=[path.join(build.dir, 'modules', 'ti.App')])
 env.Append(LIBS=['kroll', 'tiappmodule','javascriptmodule'])
-env.Append(CPPPATH = [build.kroll_include_dir, '%s/modules/javascript' % build.kroll_source_dir, '%s/modules/ti.App' % build.titanium_source_dir])
+env.Append(CPPPATH = [
+	build.kroll_include_dir,
+	'%s/modules/javascript' % build.kroll_source_dir,
+	'%s/modules/ti.App' % build.titanium_source_dir])
 
 sources = Glob('*.cpp')
 webkit_tp = path.join(build.third_party, 'webkit')
@@ -23,10 +26,10 @@ if build.is_linux():
 	curl_lib = path.join(curl_tp, 'lib')
 	curl_inc = path.join(curl_tp, 'include')
 
-	env.Append(LIBS=['webkit-1.0', 'curl'])
+	env.Append(LIBS=['webkit-1.0', 'curl', 'Xss'])
 	env.Append(LIBPATH=[webkit_lib, curl_lib])
 	env.Append(CPPPATH=[webkit_inc, curl_inc])
-	env.ParseConfig('pkg-config --cflags --libs gtk+-2.0 gdk-2.0')
+	env.ParseConfig('pkg-config --cflags --libs gtk+-2.0 gdk-2.0 x11 xext')
 
 elif build.is_win32():
 	sources = sources + Glob('win32/*.cpp') + Glob('win32/*.cc') + Glob('url/*.cpp')
@@ -39,7 +42,7 @@ elif build.is_win32():
 
 elif build.is_osx():
 	env.Append(FRAMEWORKPATH=[webkit_tp])
-	env.Append(FRAMEWORKS=['Cocoa','Carbon','WebKit','JavaScriptCore'])
+	env.Append(FRAMEWORKS=['Cocoa','Carbon','WebKit','JavaScriptCore','IOKit'])
 	sources = sources + Glob('osx/*.mm') + Glob('osx/*.cpp')
 	env.Append(CCFLAGS=['-x', 'objective-c++'])
 	

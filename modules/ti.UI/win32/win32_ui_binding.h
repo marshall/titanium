@@ -14,7 +14,7 @@ namespace ti
 	class Win32UIBinding : public UIBinding
 	{
 
-		public:
+	public:
 		Win32UIBinding();
 		~Win32UIBinding();
 
@@ -24,6 +24,20 @@ namespace ti
 		void SetIcon(SharedString icon_path);
 		SharedPtr<TrayItem> AddTray(SharedString icon_path,
 		                            SharedBoundMethod cb);
+
+		std::vector<std::string> OpenFiles(
+			bool multiple,
+			bool files,
+			bool directories,
+			std::string& path,
+			std::string& file,
+			std::vector<std::string>& types);
+
+		long GetSystemIdleTime();
+
+	private:
+		//static SharedBoundList SelectDirectory(SharedBoundObject properties);
+		//static void ParseStringNullSeparated(const char *s, std::vector<std::string> &tokens);
 	};
 }
 

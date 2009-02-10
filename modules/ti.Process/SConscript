@@ -7,7 +7,7 @@ Import('build')
 tiBuild.add_thirdparty(build.env, 'poco')
 
 env = tiBuild.env.Clone();
-env.Append(CPPDEFINES = {'TITANIUM_PROCESS_API_EXPORT' : 1})
+env.Append(CPPDEFINES = ('TITANIUM_PROCESS_API_EXPORT', 1))
 env.Append(CPPPATH = ['#kroll'])
 
 

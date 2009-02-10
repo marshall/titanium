@@ -28,17 +28,12 @@ namespace ti
 	{
 		this->SetMethod("openApplication",&DesktopBinding::OpenApplication);
 		this->SetMethod("openURL",&DesktopBinding::OpenURL);
-		this->SetMethod("openFiles",&DesktopBinding::OpenFiles);
-		this->SetMethod("getSystemIdleTime",&DesktopBinding::GetSystemIdleTime);
 	}
+
 	DesktopBinding::~DesktopBinding()
 	{
 	}
-	void DesktopBinding::OpenFiles(const ValueList& args, SharedValue result)
-	{
-		SharedBoundObject props = args.size()>0 && args.at(0)->IsObject() ? args.at(0)->ToObject() : new StaticBoundObject();
-		result->SetList(TI_DESKTOP::OpenFiles(props));
-	}
+
 	void DesktopBinding::OpenApplication(const ValueList& args, SharedValue result)
 	{
 		if (args.size()!=1)
@@ -48,6 +43,7 @@ namespace ti
 		std::string app = args.at(0)->ToString();
 		result->SetBool(TI_DESKTOP::OpenApplication(app));
 	}
+
 	void DesktopBinding::OpenURL(const ValueList& args, SharedValue result)
 	{
 		if (args.size()!=1)
@@ -56,9 +52,5 @@ namespace ti
 		}
 		std::string url = args.at(0)->ToString();
 		result->SetBool(TI_DESKTOP::OpenURL(url));
-	}
-	void DesktopBinding::GetSystemIdleTime(const ValueList& args, SharedValue result)
-	{
-		result->SetInt(TI_DESKTOP::GetSystemIdleTime());
 	}
 }

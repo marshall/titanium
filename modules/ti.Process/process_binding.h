@@ -9,6 +9,7 @@
 
 #include <api/module.h>
 #include <api/binding/binding.h>
+#include <vector>
 
 namespace ti
 {
@@ -16,15 +17,19 @@ namespace ti
 	{
 	public:
 		ProcessBinding(SharedBoundObject);
-	protected:
 		virtual ~ProcessBinding();
+		
+		void Terminated(SharedBoundObject p);
+		
 	private:
 		SharedBoundObject global;
+		std::vector< SharedBoundObject > processes;
 		
 		void Launch(const ValueList& args, SharedValue result);
 		void GetEnv(const ValueList& args, SharedValue result);
 		void HasEnv(const ValueList& args, SharedValue result);
 		void SetEnv(const ValueList& args, SharedValue result);
+		
 	};
 }
 

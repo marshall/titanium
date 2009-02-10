@@ -25,8 +25,19 @@ namespace ti
 		SharedPtr<TrayItem> AddTray(SharedString icon_path,
 		                            SharedBoundMethod cb);
 
+		std::vector<std::string> OpenFiles(
+			bool multiple,
+			bool files,
+			bool directories,
+			std::string& path,
+			std::string& file,
+			std::vector<std::string>& types);
+
+		long GetSystemIdleTime();
+
 		private:
 			SharedPtr<ScriptEvaluator> evaluator;
+
 	};
 }
 

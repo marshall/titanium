@@ -9,17 +9,22 @@
 
 namespace ti
 {
-	Process::Process(std::string& cmd, std::vector<std::string>& args) : process(0), running(true)
+	Process::Process(SharedPtr<ProcessBinding> parent, std::string& cmd, std::vector<std::string>& args) : process(0), running(true)
 	{
-		
+		this->parent = parent;
 		this->errp = new Poco::Pipe();
 		this->outp = new Poco::Pipe();
 		this->inp = new Poco::Pipe();
+
+#ifdef DEBUG
+		std::cout << "Running process: " << cmd << std::endl;
+#endif
+
 		try
 		{
 			this->process = new Poco::ProcessHandle(Poco::Process::launch(cmd,args,inp,outp,errp));
 		}
-		catch (std::exception &e)
+		catch (std::exception &e)	
 		{
 			throw ValueException::FromString(e.what());
 		}
@@ -93,6 +98,8 @@ namespace ti
 			Poco::Process::kill(this->process->id());
 			running = false;
 			this->Set("running",Value::NewBool(false));
+			SharedBoundObject p = this;
+			this->parent->Terminated(p);
 		}
 	}
 }

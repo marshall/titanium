@@ -5,6 +5,11 @@
  */
 
 #include "../ui_module.h"
+#include <unistd.h>
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
+#include <X11/extensions/scrnsaver.h>
+#include <gdk/gdkx.h>
 
 namespace ti
 {
@@ -65,6 +70,80 @@ namespace ti
 	{
 		SharedPtr<TrayItem> item = new GtkTrayItem(icon_path, cb);
 		return item;
+	}
+
+	std::vector<std::string> GtkUIBinding::OpenFiles(
+		bool multiple,
+		bool files,
+		bool directories,
+		std::string& path,
+		std::string& file,
+		std::vector<std::string>& types)
+	{
+		std::vector<std::string> results;
+		return results;
+
+		//std::string text = "Choose File";
+		//GtkFileChooserAction a = GTK_FILE_CHOOSER_ACTION_OPEN;
+		//if (directories)
+		//{
+		//	text = "Choose Directory";
+		//	a = GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER;
+		//}
+
+		//GtkWidget* chooser = gtk_file_chooser_dialog_new(
+		//	text.c_str(),
+		//	NULL,
+		//	a,
+		//	GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+		//	GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
+		//	NULL);
+		//gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(chooser), "/home/martin");
+
+		//int result = gtk_dialog_run(GTK_DIALOG(chooser));
+		//printf("got result\n");
+
+		//if (result == GTK_RESPONSE_ACCEPT)
+		//{
+		//	printf("here1\n");
+		//	if (multiple)
+		//	{
+		//	printf("here3\n");
+		//		GSList* files = gtk_file_chooser_get_filenames(GTK_FILE_CHOOSER(chooser));
+		//		for (size_t i = 0; i < g_slist_length(files); i++)
+		//		{
+		//			char* f = (char*) g_slist_nth_data(files, i);
+		//			to_ret.push_back(std::string(f));
+		//			g_free(f);
+		//		}
+		//		g_slist_free(files);
+		//	}
+		//	else
+		//	{
+		//	printf("here2\n");
+		//		char *f = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(chooser));
+		//		to_ret.push_back(std::string(f));
+		//		g_free(f);
+		//	}
+		//}
+		//printf("destroying\n");
+		//gtk_widget_destroy(chooser);
+		//return to_ret;
+	}
+
+	long GtkUIBinding::GetSystemIdleTime()
+	{
+		Display *display = gdk_x11_get_default_xdisplay();
+		if (display == NULL)
+			return -1;
+		int screen = gdk_x11_get_default_screen();
+
+		XScreenSaverInfo *mit_info = XScreenSaverAllocInfo();
+		XScreenSaverQueryInfo(display, RootWindow(display, screen), mit_info);
+		long idle_time = mit_info->idle;
+		XFree(mit_info);
+
+		return idle_time;
 	}
 
 }

@@ -165,11 +165,19 @@ namespace ti
 			std::string property = args.at(0)->ToString();
 			SharedBoundList list = args.at(1)->ToList();
 
-			std::string value;
+			std::string value = "";
 			for (int i = 0; i < list->Size(); i++) {
-				value += list->At(i)->ToString();
-				if (i < list->Size() - 1) {
-					value += ",";
+				SharedValue arg = list->At(i);
+				if (arg->IsString())
+				{
+					value += list->At(i)->ToString();
+					if (i < list->Size() - 1) {
+						value += ",";
+					}
+				}
+				else
+				{
+					std::cerr << "skipping object: " << arg->ToTypeString() << std::endl;
 				}
 			}
 			config->setString(property, value);

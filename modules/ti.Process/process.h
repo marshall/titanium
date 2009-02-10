@@ -12,16 +12,18 @@
 #include <Poco/Process.h>
 #include <Poco/Pipe.h>
 #include "pipe.h"
+#include "process_binding.h"
 
 namespace ti
 {
 	class Process : public StaticBoundObject
 	{
 	public:
-		Process(std::string& command, std::vector<std::string>& args);
+		Process(SharedPtr<ProcessBinding> parent, std::string& command, std::vector<std::string>& args);
 	protected:
 		virtual ~Process();
 	private:
+		SharedPtr<ProcessBinding> parent;
 		Poco::ProcessHandle *process;
 		bool running;
 		Pipe *in;

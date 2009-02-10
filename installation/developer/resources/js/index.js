@@ -1,6 +1,7 @@
 //
 // load projects when manage projects is clicked
 //
+var TFS = Titanium.Filesystem;
 var TiDeveloper  = {};
 TiDeveloper.currentPage = 1;
 TiDeveloper.init = false;
@@ -18,22 +19,17 @@ function makeDate()
 (function()
 {
 	//TODO: switch this to SQL ASAP
-	if (Titanium.App.Properties.hasProperty("projects"))
+	if (Titanium.App.Properties.hasProperty("project_count"))
 	{
-		var projects = Titanium.App.Properties.getList("projects");
-		for (var c=0;c<projects.length;c++)
+		var count = Titanium.App.Properties.getInt("project_count");
+		for (var c=0;c<count;c++)
 		{
-			var project = projects[c];
-			var id = project[0];
-			var name = project[1];
-			var date = project[2];
-			var dir = project[3];
-			
+			var project = Titanium.App.Properties.getList("project."+c);
 			TiDeveloper.ProjectArray.push({
-				id: id,
-				name:name,
-				date:data,
-				dir:dir
+				id:project[0],
+				name:project[1],
+				date:project[2],
+				dir:project[3]
 			});
 		}
 	}
@@ -41,7 +37,13 @@ function makeDate()
 
 function save()
 {
-	Titanium.App.Properties.setList("projects",TiDeveloper.ProjectArray);
+	Titanium.App.Properties.setInt("project_count",TiDeveloper.ProjectArray.length);
+	for (var c=0;c<TiDeveloper.ProjectArray.length;c++)
+	{
+		var project = TiDeveloper.ProjectArray[c];
+		var entry = [String(project.id),project.name,project.date,String(project.dir)];
+		Titanium.App.Properties.setList("project."+c,entry);
+	}
 }
 
 //
@@ -49,23 +51,6 @@ function save()
 //
 $MQL('l:create.project.request',function(msg)
 {
-	/*
-	setTimeout(function()
-	{
-		if (msg.payload.project_name == 'foo')
-		{
-			$MQ('l:create.project.response',{result:'error',message:'Project already exists - try again...'});
-		}
-		else
-		{
-			$MQ('l:create.project.response',{result:'success'});
-		}
-		
-	},1000);
-	*/
-	
-	// CHECK
-	
 	//TODO: do we check for existence of directory and fail?
 	var result = Titanium.Project.create(msg.payload.project_name,msg.payload.project_location);
 	if (result.success)
@@ -74,10 +59,15 @@ $MQL('l:create.project.request',function(msg)
 			id: String(TiDeveloper.ProjectArray.length),
 			name: result.name,
 			date: makeDate(),
-			dir: result.basedir
+			dir: String(result.basedir)
 		});
 		$MQ('l:create.project.response',{result:'success'});
 		save();
+		$MQ('l:project.list.response',{page:1,totalRecords:TiDeveloper.ProjectArray.length,'rows':TiDeveloper.ProjectArray})
+	}
+	else
+	{
+		$MQ('l:create.project.response',{result:'error',message:result.message});
 	}
 });
 
@@ -92,7 +82,6 @@ $MQL('l:page.data.request',function(msg)
 	TiDeveloper.currentPage = page;
 	var data = TiDeveloper.getProjectPage(rowsPerPage,page);
 	$MQ('l:project.list.response',{page:page,totalRecords:TiDeveloper.ProjectArray.length,'rows':data})
-	
 });
 TiDeveloper.formatDirectory =function(dir)
 {
@@ -162,6 +151,18 @@ $MQL('l:package.project.request',function(msg)
 	]})
 });
 
+function findProject(name)
+{
+	for (var i=0;i<TiDeveloper.ProjectArray.length;i++)
+	{
+		if (TiDeveloper.ProjectArray[i].name == name)
+		{
+			return TiDeveloper.ProjectArray[i];
+		}
+	}
+	return null;
+}
+
 //
 // Create Package Request
 //
@@ -177,9 +178,23 @@ $MQL('l:create.package.request',function(msg)
 	var project = $('#package_project_name').html();
 	
 	var launch = msg.payload.launch;
+	
 	if (msg.payload.launch ==true)
 	{
 		// do  launch
+		var dest = Titanium.Process.getEnv('KR_RUNTIME');
+		var runtimeDir = TFS.getFile(dest);
+		var ext = (Titanium.platform == 'win32') ? '.exe' : '';
+		var exec = TFS.getFile(runtimeDir,'template','kboot'+ext);
+		var proj = findProject(project);
+		// try
+		// 		{
+		// 			Titanium.Process.launch(String(exec),'--start="'+proj.dir+'"');
+		// 		}
+		// 		catch (E)
+		// 		{
+		// 			alert("Error: "+E);
+		// 		}
 	}
 	else
 	{
@@ -227,7 +242,7 @@ $MQL('l:project.search.request',function(msg)
 //
 $MQL('l:show.filedialog',function()
 {
-	var files = Titanium.Desktop.openFiles({directories:true});
+	var files = Titanium.UI.openFiles({directories:true});
 	var val = files.length ? files[0] : '';
 	$MQ('l:file.selected',{value:val});
 })
