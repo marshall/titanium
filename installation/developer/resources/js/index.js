@@ -242,7 +242,7 @@ $MQL('l:project.search.request',function(msg)
 //
 $MQL('l:show.filedialog',function()
 {
-	var files = Titanium.Desktop.openFiles({directories:true});
+	var files = Titanium.UI.openFiles({directories:true});
 	var val = files.length ? files[0] : '';
 	$MQ('l:file.selected',{value:val});
 })

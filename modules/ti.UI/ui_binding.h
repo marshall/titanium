@@ -56,9 +56,9 @@ namespace ti
 			bool multiple,
 			bool files,
 			bool directories,
-			std::string path,
-			std::string file,
-			std::vector<std::string> types) = 0;
+			std::string& path,
+			std::string& file,
+			std::vector<std::string>& types) = 0;
 
 		virtual long GetSystemIdleTime() = 0;
 

@@ -69,9 +69,9 @@ namespace ti
 		bool multiple,
 		bool files,
 		bool directories,
-		std::string path,
-		std::string file,
-		std::vector<std::string> types)
+		std::string& path,
+		std::string& file,
+		std::vector<std::string>& types)
 	{
 		std::vector<std::string> results;
 
@@ -85,17 +85,16 @@ namespace ti
 		NSString *begin = nil, *filename = nil;
 		[openDlg setAllowsMultipleSelection:multiple];
 		[openDlg setCanChooseFiles:files];
-		[openDlg setCanChooseDirectories:dirs->ToBool()];
-		filename = [NSString stringWithCString:file];
-		begin = [NSString stringWithCString:path];
+		[openDlg setCanChooseDirectories:directories];
+		filename = [NSString stringWithCString:file.c_str()];
+		begin = [NSString stringWithCString:path.c_str()];
 
-		for (int t = 0; t < types.size(); t++)
+		for (size_t t = 0; t < types.size(); t++)
 		{
 			const char *s = types.at(t).c_str();
 			[filetypes addObject:[NSString stringWithCString:s]];
 		}
 
-		SharedBoundList results = new StaticBoundList();
 		if ( [openDlg runModalForDirectory:begin file:filename types:filetypes] == NSOKButton )
 		{
 			NSArray* selected = [openDlg filenames];

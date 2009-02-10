@@ -34,12 +34,6 @@ namespace ti
 	{
 	}
 
-	void DesktopBinding::OpenFiles(const ValueList& args, SharedValue result)
-	{
-		SharedBoundObject props = args.size()>0 && args.at(0)->IsObject() ? args.at(0)->ToObject() : new StaticBoundObject();
-		result->SetList(TI_DESKTOP::OpenFiles(props));
-	}
-
 	void DesktopBinding::OpenApplication(const ValueList& args, SharedValue result)
 	{
 		if (args.size()!=1)

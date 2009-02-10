@@ -31,6 +31,8 @@ namespace ti
 		this->SetMethod("setBadge", &UIBinding::_SetBadge);
 
 		this->SetMethod("openFiles", &UIBinding::_OpenFiles);
+		
+		//TODO move this to platform
 		this->SetMethod("getSystemIdleTime", &UIBinding::_GetSystemIdleTime);
 	}
 
