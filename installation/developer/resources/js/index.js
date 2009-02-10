@@ -11,6 +11,11 @@ TiDeveloper.ProjectArray = [];
 var db = openDatabase("TiDeveloper","1.0");
 var highestId = 0;
 
+function formatCountMessage(count,things)
+{
+	return (count == 0) ? 'You have no '+things+'s' : count == 1 ? 'You have 1 '+things : 'You have ' + count + ' '+things+'s';
+}
+
 // State Machine for UI tab state
 TiDeveloper.stateMachine = new App.StateMachine('ui_state');
 TiDeveloper.stateMachine.addState('manage','l:menu[val=manage]',false);
@@ -69,20 +74,35 @@ function loadProjects()
 	{
         tx.executeSql("SELECT id, timestamp, name, directory, appid FROM Projects", [], function(tx, result) 
 		{
+			TiDeveloper.ProjectArray = [];
             for (var i = 0; i < result.rows.length; ++i) {
                 var row = result.rows.item(i);
-				TiDeveloper.ProjectArray.push({
-					id: row['id'],
-					date: row['timestamp'],
-					name: row['name'],
-					dir: row['directory'],
-					appid: row['appid']
-				});
-				if (highestId < row['id'])
+				// check to see if the user has deleted it and if
+				// so remove it
+				var cd = TFS.getFile(row['directory']);
+				if (!cd.exists())
 				{
-					highestId = row['id'];
+					tx.executeSql('DELETE FROM Projects where id = ?',[row['id']]);
+				}
+				else
+				{
+					TiDeveloper.ProjectArray.push({
+						id: row['id'],
+						date: row['timestamp'],
+						name: row['name'],
+						dir: row['directory'],
+						appid: row['appid']
+					});
+					if (highestId < row['id'])
+					{
+						highestId = row['id'];
+					}
 				}
             }
+			TiDeveloper.currentPage = 1;
+			var data = TiDeveloper.getProjectPage(10,TiDeveloper.currentPage);
+			var count = formatCountMessage(TiDeveloper.ProjectArray.length,'project');
+			$MQ('l:project.list.response',{count:count,page:TiDeveloper.currentPage,totalRecords:TiDeveloper.ProjectArray.length,'rows':data})
         }, function(tx, error) {
             alert('Failed to retrieve projects from database - ' + error.message);
             return;
@@ -116,7 +136,8 @@ $MQL('l:create.project.request',function(msg)
 		{
 			createRecord(result.name,result.basedir,result.id);
 			$MQ('l:create.project.response',{result:'success'});
-			$MQ('l:project.list.response',{page:1,totalRecords:TiDeveloper.ProjectArray.length,'rows':TiDeveloper.ProjectArray})
+			var count = formatCountMessage(TiDeveloper.ProjectArray.length,'project');
+			$MQ('l:project.list.response',{count:count,page:1,totalRecords:TiDeveloper.ProjectArray.length,'rows':TiDeveloper.ProjectArray})
 		}
 		else
 		{
@@ -139,7 +160,8 @@ $MQL('l:page.data.request',function(msg)
 	var page = state.page
 	TiDeveloper.currentPage = page;
 	var data = TiDeveloper.getProjectPage(rowsPerPage,page);
-	$MQ('l:project.list.response',{page:page,totalRecords:TiDeveloper.ProjectArray.length,'rows':data})
+	var count = formatCountMessage(TiDeveloper.ProjectArray.length,'project');
+	$MQ('l:project.list.response',{count:count,page:page,totalRecords:TiDeveloper.ProjectArray.length,'rows':data})
 });
 
 TiDeveloper.formatDirectory =function(dir)
@@ -173,19 +195,6 @@ TiDeveloper.getProjectPage = function(pageSize,page)
 	}
 	return pageData
 };
-
-//
-// Load initial projects
-//
-$MQL('l:menu',function(msg)
-{
-	if (msg.payload.val == 'manage' && TiDeveloper.init == false)
-	{
-		var data = TiDeveloper.getProjectPage(10,0)
-		$MQ('l:project.list.response',{totalRecords:TiDeveloper.ProjectArray.length,'rows':data});
-		TiDeveloper.init=true;
-	}
-});
 
 var modules = [];
 var module_map = {};
@@ -283,7 +292,9 @@ $MQL('l:create.package.request',function(msg)
 		
 		var runtime = TFS.getFile(modules[0].dir,modules[0].versions[0]);
 		
-		var app = Titanium.createApp(runtime,dist,project_name,project.appid);
+		//TODO: toggle installed flag here based on testing installer or not
+		var installed = true;
+		var app = Titanium.createApp(runtime,dist,project_name,project.appid,installed);
 		var app_manifest = TFS.getFile(app.base,'manifest');
 		app_manifest.write(manifest);
 		var resources = TFS.getFile(project.dir,'resources');
@@ -331,13 +342,27 @@ $MQL('l:create.package.request',function(msg)
 					{
 						if (++count==modules_to_bundle.length)
 						{
+							// link libraries if runtime included
+							if (e.dest == runtime_dir)
+							{
+								Titanium.linkLibraries(e.dest);
+							}
 							launch_fn();
 						}
 					});
 				}
 			}
+			else
+			{
+				// no modules to bundle, installer the net installer
+				var net_installer_src = TFS.getFile(runtime,'installer');
+				var net_installer_dest = TFS.getFile(app.base,'installer');
+				TFS.asyncCopy(net_installer_src,net_installer_dest,function(filename,c,total)
+				{
+					launch_fn();
+				});
+			}
 			
-			launch_fn();
 		});
 	}
 	catch(E)
@@ -355,18 +380,14 @@ $MQL('l:delete.project.request',function(msg)
 	var id = msg.payload.id
 	if (confirm('Are you sure you want to delete project: ' + name + '?')==true)
 	{
-		for (var i=0;i<TiDeveloper.ProjectArray.length;i++)
-		{
-			if (TiDeveloper.ProjectArray[i].id == id)
-			{
-				TiDeveloper.ProjectArray.splice(i,1);
-				break;
-			}
-		}
+		db.transaction(function (tx) 
+	    {
+	        tx.executeSql("DELETE FROM Projects where id = ?", [id]);
+			loadProjects();
+	    });
 	}
-	var data = TiDeveloper.getProjectPage(10,TiDeveloper.currentPage);
-	$MQ('l:project.list.response',{page:TiDeveloper.currentPage,totalRecords:TiDeveloper.ProjectArray.length,'rows':data})
-})
+});
+
 //
 // project search request
 //
@@ -405,7 +426,7 @@ $MQL('l:project.search.request',function(msg)
 			alert("E="+e);
 		}
 	});
-})
+});
 
 //
 // Show file dialog and send value
@@ -415,7 +436,7 @@ $MQL('l:show.filedialog',function()
 	var files = Titanium.UI.openFiles({directories:true});
 	var val = files.length ? files[0] : '';
 	$MQ('l:file.selected',{value:val});
-})
+});
 
 var irc_count = 0;
 

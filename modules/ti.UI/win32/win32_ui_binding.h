@@ -36,7 +36,7 @@ namespace ti
 		long GetSystemIdleTime();
 
 	private:
-		static std::vector<std:string> SelectDirectory(
+		static std::vector<std::string> SelectDirectory(
 			bool multiple,
 			std::string& path,
 			std::string& file);

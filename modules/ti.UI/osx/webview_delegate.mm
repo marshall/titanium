@@ -4,6 +4,7 @@
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
 #include "../ui_module.h"
+#include "WebScriptElement.h"
 
 #define TRACE  NSLog
 
@@ -93,6 +94,7 @@
 		[webView setResourceLoadDelegate:self];
 		[webView setPolicyDelegate:self];
 		[webView setScriptDebugDelegate:self];
+		[WebScriptElement addScriptEvaluator:self];
 		
 		SharedBoundObject global = host->GetGlobalObject();
 		double version = global->Get("version")->ToDouble();
@@ -793,6 +795,69 @@
 	
 	[origin performSelector:@selector(setQuota:) withObject:[NSNumber numberWithInt:defaultQuota]];
 }
+
+
+////// WebScriptEvaluator selectors
+std::string GetModuleName(NSString *typeStr)
+{
+	std::string type = [typeStr UTF8String];
+	if (type.find("text/") == 0) {
+		type = type.substr(5);
+	}
+	
+	std::string moduleName = "";
+	moduleName += (char)std::toupper(type.at(0));
+	moduleName += type.substr(1);
+	
+	return moduleName;
+}
+
+-(BOOL) matchesMimeType:(NSString*)mimeType
+{
+	std::string moduleName = GetModuleName(mimeType);
+	SharedBoundObject global = host->GetGlobalObject();
+	SharedValue moduleValue = global->Get(moduleName.c_str());
+	if (!moduleValue->IsNull() && moduleValue->IsObject()) {
+		if (!moduleValue->ToObject()->Get("evaluate")->IsNull()
+			&& !moduleValue->ToObject()->Get("evaluate")->IsUndefined()
+			&& moduleValue->ToObject()->Get("evaluate")->IsMethod()) {
+			
+			return YES;
+		}
+	}
+	return NO;
+}
+
+-(void) evaluate:(NSString *)mimeType sourceCode:(NSString*)sourceCode
+		 context:(void *)context
+{
+	
+	std::string type = [mimeType UTF8String];
+	std::string moduleName = GetModuleName(mimeType);
+	JSContextRef contextRef = reinterpret_cast<JSContextRef>(context);
+
+	SharedBoundObject global = host->GetGlobalObject();
+	SharedValue moduleValue = global->Get(moduleName.c_str());
+
+	if (!moduleValue->IsNull()) {
+		SharedValue evalValue = moduleValue->ToObject()->Get("evaluate");
+		if (!evalValue->IsNull() && evalValue->IsMethod()) {
+			ValueList args;
+			SharedValue typeValue = Value::NewString(type);
+			SharedValue sourceCodeValue = Value::NewString([sourceCode UTF8String]);
+			JSObjectRef globalObjectRef = JSContextGetGlobalObject(contextRef);
+			SharedBoundObject contextObject = new KJSBoundObject(contextRef, globalObjectRef);
+			SharedValue contextValue = Value::NewObject(contextObject);
+			args.push_back(typeValue);
+			args.push_back(sourceCodeValue);
+			args.push_back(contextValue);
+			
+			evalValue->ToMethod()->Call(args);
+		}
+	}
+}
+
+
 @end
 
 
