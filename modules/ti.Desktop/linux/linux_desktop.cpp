@@ -26,7 +26,11 @@ namespace ti
 
 	bool LinuxDesktop::OpenURL(std::string &url)
 	{
-		return false;
+		std::vector<std::string> args;
+		args.push_back(url);
+		std::string name = "xdg-open";
+		Process::launch(name, args);
+		return true;
 	}
 
 }

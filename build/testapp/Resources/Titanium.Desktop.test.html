@@ -27,81 +27,6 @@
 
 				el.innerHTML = s;
 			}
-			function chooseFiles()
-			{
-				var result = Titanium.Desktop.openFiles();
-				debug(result);
-				log('You chose: '+result.length+' files');
-			}
-			function chooseFilesWithPath()
-			{
-				var result = Titanium.Desktop.openFiles({
-					path: 'c:\\windows'
-				});
-				debug(result);
-				log('You chose: '+result.length+' files');
-			}
-			function chooseFilesWithPathAndFilename()
-			{
-				var result = Titanium.Desktop.openFiles({
-					path: 'c:\\windows',
-					filename: 'notepad.exe'
-				});
-				debug(result);
-				log('You chose: '+result.length+' files');
-			}
-			function chooseDirs()
-			{
-				var result = Titanium.Desktop.openFiles({
-					directories:true,
-					files:false
-				});
-				debug(result);
-				log('You chose: '+result.length+' files');
-			}
-			function chooseDirsAndFiles()
-			{
-				var result = Titanium.Desktop.openFiles({
-					directories:true,
-					files:true
-				});
-				debug(result);
-				log('You chose: '+result.length+' files');
-			}
-			function chooseMultipleFiles()
-			{
-				var result = Titanium.Desktop.openFiles({
-					directories:false,
-					files:true,
-					multiple:true
-				});
-				debug(result);
-				log('You chose: '+result.length+' files');
-			}
-			function chooseMultiple()
-			{
-				var result = Titanium.Desktop.openFiles({
-					directories:true,
-					files:true,
-					multiple:true
-				});
-				debug(result);
-				log('You chose: '+result.length+' files');
-			}
-			function chooseFileTypes()
-			{
-				var result = Titanium.Desktop.openFiles({
-					directories:false,
-					files:true,
-					multiple:true,
-					types:[
-						'js','html'
-					],
-					typesDescription: 'Web Files'
-				});
-				debug(result);
-				log('You chose: '+result.length+' files');
-			}
 			function openApp()
 			{
 				var name = document.getElementById("openApp_param1").value;
@@ -141,30 +66,6 @@
 	</head>
 	<body>
 		<h2>Titanium Desktop test app</h2>
-		<div>
-			<button onclick="chooseFiles()">Open File Dialog (default)</button>
-		</div>
-		<div>
-			<button onclick="chooseFilesWithPath()">Open File Dialog (with path)</button>
-		</div>
-		<div>
-			<button onclick="chooseFilesWithPathAndFilename()">Open File Dialog (with path & filename)</button>
-		</div>
-		<div>
-			<button onclick="chooseDirs()">Open File Dialog (directories only)</button>
-		</div>
-		<div>
-			<button onclick="chooseDirsAndFiles()">Open File Dialog (directories+files)</button>
-		</div>
-		<div>
-			<button onclick="chooseMultipleFiles()">Open File Dialog (multiple files)</button>
-		</div>
-		<div>
-			<button onclick="chooseMultiple()">Open File Dialog (multiple files and directories)</button>
-		</div>
-		<div>
-			<button onclick="chooseFileTypes()">Open File Dialog (JS or HTML files only)</button>
-		</div>
 		<div>
 			<button onclick="openApp()">Open Application</button><br/>
 			which app?<input id="openApp_param1" size="75" value="wordpad" />
