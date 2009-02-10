@@ -21,10 +21,6 @@ namespace ti
 	{
 	}
 
-	SharedBoundList Win32Desktop::OpenFiles(SharedBoundObject props)
-	{
-	}
-
 	bool Win32Desktop::OpenApplication(std::string &name)
 	{
 		// this can actually open applications or documents (wordpad, notepad, file-test.txt, etc.)
