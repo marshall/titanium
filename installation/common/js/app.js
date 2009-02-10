@@ -128,6 +128,7 @@ Titanium.linkLibraries = function(runtimeDir)
 			var fwd_name = fwd.name();
 			var versions = TFS.getFile(fwd,'Versions');
 			var ver = TFS.getFile(versions,'A');
+			if (ver.exists()) continue; // skip if already linked
 			var current = TFS.getFile(fwd,'Versions','Current');
 			ver.createShortcut('Current',versions);
 			var hf = TFS.getFile(fwd,'Headers');
