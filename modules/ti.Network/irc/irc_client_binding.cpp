@@ -5,6 +5,7 @@
  */
 #include <kroll/kroll.h>
 #include "irc_client_binding.h"
+#include <cstring>
 
 #ifdef OS_OSX
   #import <Cocoa/Cocoa.h>
