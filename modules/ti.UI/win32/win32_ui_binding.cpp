@@ -6,6 +6,12 @@
 #include "../ui_module.h"
 #include "win32_menu_item_impl.h"
 
+#include <windows.h>
+#include <commdlg.h>
+#include <shellapi.h>
+#include <shlobj.h>
+#include <string>
+
 namespace ti
 {
 	Win32UIBinding::Win32UIBinding() : UIBinding()
@@ -125,6 +131,7 @@ namespace ti
 
 		if(multiple) ofn.Flags |= OFN_ALLOWMULTISELECT;
 
+		std::vector<std::string> results;
 		// display the open dialog box
 		if(GetOpenFileName(&ofn) == TRUE)
 		{
@@ -230,5 +237,4 @@ namespace ti
 			token.push_back(c);
 		}
 	}
-
 }
