@@ -23,6 +23,7 @@ namespace ti
 		this->SetMethod("sendPrivate",&IRCClientBinding::SendPrivate);
 		this->SetMethod("setNick",&IRCClientBinding::SetNick);
 		this->SetMethod("getNick",&IRCClientBinding::GetNick);
+		this->SetMethod("getUsers",&IRCClientBinding::GetUsers);
 		this->SetMethod("join",&IRCClientBinding::Join);
 		this->SetMethod("unjoin",&IRCClientBinding::Unjoin);
 		this->SetMethod("isOp",&IRCClientBinding::IsOp);
@@ -58,7 +59,6 @@ namespace ti
 			args.push_back(param ? Value::NewString(param) : Value::Null);
 			args.push_back(data->target ? Value::NewString(data->target): Value::Null);
 			args.push_back(data->nick ? Value::NewString(data->nick): Value::Null);
-
 			binding->host->InvokeMethodOnMainThread(binding->callback,args);
 		}
 		return 0;
@@ -73,6 +73,25 @@ namespace ti
 #ifdef OS_OSX
 		[pool release];
 #endif
+	}
+	void IRCClientBinding::GetUsers(const ValueList& args, SharedValue result)
+	{
+		const char *channel = args.at(0)->ToString();
+		SharedBoundList list = new StaticBoundList();
+		channel_user* cu = irc.get_users();
+		while(cu)
+		{
+			if (!strcmp(cu->channel,(char*)channel) && cu->nick && strlen(cu->nick)>0)
+			{
+				SharedBoundObject entry = new StaticBoundObject();
+				entry->Set("name",Value::NewString(cu->nick));
+				entry->Set("operator",Value::NewBool(cu->flags & IRC_USER_OP));
+				entry->Set("voice",Value::NewBool(cu->flags & IRC_USER_VOICE));
+				list->Append(Value::NewObject(entry));
+			}
+			cu = cu->next;
+		}
+		result->SetList(list);
 	}
 	void IRCClientBinding::Connect(const ValueList& args, SharedValue result)
 	{
@@ -146,8 +165,13 @@ namespace ti
 		if (connected)
 		{
 			const char *channel = args.at(0)->ToString();
+#ifdef DEBUG
 			std::cout << "JOIN " << channel << std::endl;
+#endif
 			this->irc.join((char*)channel);
+			char msg[255];
+			sprintf(msg,"NAMES %s",channel);
+//			this->irc.raw(msg);
 		}
 	}
 	void IRCClientBinding::Unjoin(const ValueList& args, SharedValue result)

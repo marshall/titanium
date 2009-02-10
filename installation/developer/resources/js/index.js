@@ -251,9 +251,9 @@ setTimeout(function()
 {
 	try
 	{
-		var myNick = 'jeffhaynie1';
-		var myName = "jeff haynie";
-		var myNameStr = "jeffhaynie"
+		var myNick = Titanium.Platform.username+'1';
+		var myName = Titanium.Platform.username+'1';
+		var myNameStr = Titanium.Platform.username+'1';
 
 		$('#irc').append('<div style="color:#111">you are joining the room. one moment...</div>');
 		
@@ -267,6 +267,15 @@ setTimeout(function()
 				{
 					$('#irc').append('<div style="color:yellow">' + nick + ': <span style="color:#fff">' + channel.substring(1,channel.length) + '</span></div>');
 					break;
+				}
+				case '366':
+				{
+					var users = irc.getUsers('#titanium_dev')
+					alert('number of users = '+users.length);
+					for (var i=0;i<users.length;i++)
+					{
+						alert(users[i].name)
+					}
 				}
 				case 'JOIN':
 				{

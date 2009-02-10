@@ -277,6 +277,11 @@ int IRC::is_voice(char* channel, char* nick)
 	return 0;
 }
 
+channel_user* IRC::get_users()
+{
+	return chan_users;
+}
+
 void IRC::parse_irc_reply(char* data)
 {
 	char* hostd;
@@ -289,7 +294,9 @@ void IRC::parse_irc_reply(char* data)
 
 	hostd_tmp.target=0;
 
-//	printf("%s\n", data);
+#ifdef DEBUG
+	printf("INCOMING: %s\n", data);
+#endif
 
 	if (data[0]==':')
 	{
