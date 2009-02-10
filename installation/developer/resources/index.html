@@ -4,6 +4,7 @@
 	<script type="text/javascript" charset="utf-8" src="js/appcelerator-debug.js"></script>
 	<script type="text/javascript" charset="utf-8" src="js/index.js"></script>
 	<script type="text/javascript" charset="utf-8" src="js/project.js"></script>
+	<script type="text/javascript" charset="utf-8" src="js/app.js"></script>
 
 	<link rel="stylesheet" href="css/index.css" type="text/css" media="screen" charset="utf-8" />
 </head>
@@ -367,7 +368,7 @@
 									or l:package.all[val=bundled] then add[class=bundled] else remove[class=bundled]">
 								</div>
 							</div>
-							<div style="width:200px;display:inline;text-align:center;position:relative;left:25px"
+							<div class="modulename" style="width:200px;display:inline;text-align:center;position:relative;left:25px"
 								on="l:package.select[name=#{name}] then set[state=expr(this.data.val)] 
 								or  l:package.all then set[state=expr(this.data.val)]">
 								#{name}

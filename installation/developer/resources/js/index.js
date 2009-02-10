@@ -47,18 +47,19 @@ TiDeveloper.stopIRCTrack = function()
 	
 };
 
-function createRecord(name,dir)
+function createRecord(name,dir,appid)
 {
 	var record = {
 		name: name,
 		dir: dir,
 		id: highestId++,
+		appid: appid,
 		date: new Date().getTime()
 	};
 	TiDeveloper.ProjectArray.push(record);
     db.transaction(function (tx) 
     {
-        tx.executeSql("INSERT INTO Projects (id, timestamp, name, directory) VALUES (?, ?, ?, ?)", [record.id, record.date, record.name, record.dir]);
+        tx.executeSql("INSERT INTO Projects (id, timestamp, name, directory, appid) VALUES (?, ?, ?, ?, ?)", [record.id, record.date, record.name, record.dir, record.appid]);
     });
 }
 
@@ -66,7 +67,7 @@ function loadProjects()
 {
 	db.transaction(function(tx) 
 	{
-        tx.executeSql("SELECT id, timestamp, name, directory FROM Projects", [], function(tx, result) 
+        tx.executeSql("SELECT id, timestamp, name, directory, appid FROM Projects", [], function(tx, result) 
 		{
             for (var i = 0; i < result.rows.length; ++i) {
                 var row = result.rows.item(i);
@@ -74,7 +75,8 @@ function loadProjects()
 					id: row['id'],
 					date: row['timestamp'],
 					name: row['name'],
-					dir: row['directory']
+					dir: row['directory'],
+					appid: row['appid']
 				});
 				if (highestId < row['id'])
 				{
@@ -95,7 +97,7 @@ db.transaction(function(tx)
        loadProjects();
    }, function(tx, error) 
    {
-       tx.executeSql("CREATE TABLE Projects (id REAL UNIQUE, timestamp REAL, name TEXT, directory TEXT)", [], function(result) 
+       tx.executeSql("CREATE TABLE Projects (id REAL UNIQUE, timestamp REAL, name TEXT, directory TEXT, appid TEXT)", [], function(result) 
 	   { 
           loadProjects(); 
        });
@@ -112,7 +114,7 @@ $MQL('l:create.project.request',function(msg)
 		var result = Titanium.Project.create(msg.payload.project_name,msg.payload.project_location);
 		if (result.success)
 		{
-			createRecord(result.name,result.basedir);
+			createRecord(result.name,result.basedir,result.id);
 			$MQ('l:create.project.response',{result:'success'});
 			$MQ('l:project.list.response',{page:1,totalRecords:TiDeveloper.ProjectArray.length,'rows':TiDeveloper.ProjectArray})
 		}
@@ -184,28 +186,36 @@ $MQL('l:menu',function(msg)
 		TiDeveloper.init=true;
 	}
 });
+
+var modules = [];
+var module_map = {};
+
+setTimeout(function()
+{
+	var result = Titanium.Project.getModulesAndRuntime();
+	modules.push({name:'Titanium Runtime',versions:result.runtime.versions,dir:result.runtime.dir});
+	for (var c=0;c<result.modules.length;c++)
+	{
+		var name = result.modules[c].name;
+		module_map[name]=result.modules[c];
+		modules.push({name:name,versions:result.modules[c].versions,dir:result.modules[c].dir});
+	}
+},500);
+
 //
 //  Project Package Request - get details about modules, etc
 //
 $MQL('l:package.project.request',function(msg)
 {
-	$MQ('l:package.project.data',{rows:[
-	{name:'Titanium Runtime'},
-	{name:'Ruby Language Module'},
-	{name:'Python'},
-	{name:'network'},
-	{name:'file'},
-	{name:'chat'},
-	{name:'java'},
-	{name:'php'},
-	{name:'desktop_core'},
-	{name:'custom_module_1'},
-	{name:'custom_module_2'},
-	{name:'custom_module_3'},
-	{name:'custom_module_4'}
-		
-		
-	]})
+	try
+	{
+		$MQ('l:package.project.data',{rows:modules});
+		$MQ('l:package.all',{val:'network'});
+	}
+	catch (E)
+	{
+		alert("Exception = "+E);
+	}
 });
 
 function findProject(name)
@@ -225,37 +235,114 @@ function findProject(name)
 //
 $MQL('l:create.package.request',function(msg)
 {
-	// elements that are included for network bundle
-	var network = $("div[state='network']").length;
-	
-	// elements that are included (bundled)
-	var bundled = $("div[state='bundled']").length;
+	try
+	{
+		// elements that are included for network bundle
+		var networkEl = $("div[state='network']");
 
-	// project name
-	var project = $('#package_project_name').html();
-	
-	var launch = msg.payload.launch;
-	
-	if (msg.payload.launch ==true)
-	{
-		// do  launch
-		var dest = Titanium.Process.getEnv('KR_RUNTIME');
-		var runtimeDir = TFS.getFile(dest);
-		var ext = (Titanium.platform == 'win32') ? '.exe' : '';
-		var exec = TFS.getFile(runtimeDir,'template','kboot'+ext);
-		var proj = findProject(project);
-		// try
-		// 		{
-		// 			Titanium.Process.launch(String(exec),'--start="'+proj.dir+'"');
-		// 		}
-		// 		catch (E)
-		// 		{
-		// 			alert("Error: "+E);
-		// 		}
-	}
-	else
-	{
+		// elements that are included (bundled)
+		var bundledEl = $("div[state='bundled']");
+
+		// elements that are excluded
+		var excludedEl = $("div[state='exclude']");
 		
+		var excluded = {};
+		
+		$.each(excludedEl,function()
+		{
+			var key = $.trim($(this).html());
+			excluded[key]=true;
+		});
+		
+		// project name
+		var project_name = $('#package_project_name').html();
+
+		var launch = msg.payload.launch;
+
+		var project = findProject(project_name);
+
+		// build the manifest
+		var manifest = 'appname:'+project_name+'\n';
+		manifest+='appid:'+project.appid+'\n';
+		manifest+='runtime:'+modules[0].versions[0]+'\n';
+		
+		// 0 is always runtime, skip it
+		for (var c=1;c<modules.length;c++)
+		{
+			if (!excluded[modules[c].name])
+			{
+				manifest+=modules[c].name+':'+modules[c].versions[0]+'\n';
+			}
+		}
+		
+		var mf = TFS.getFile(project.dir,'manifest');
+		mf.write(manifest);
+		
+		var dist = TFS.getFile(project.dir,'dist',Titanium.platform);
+		dist.createDirectory(true);
+		
+		var runtime = TFS.getFile(modules[0].dir,modules[0].versions[0]);
+		
+		var app = Titanium.createApp(runtime,dist,project_name,project.appid);
+		var app_manifest = TFS.getFile(app.base,'manifest');
+		app_manifest.write(manifest);
+		var resources = TFS.getFile(project.dir,'resources');
+		var tiapp = TFS.getFile(project.dir,'tiapp.xml');
+		tiapp.copy(app.base);
+		var launch_fn = function()
+		{
+			if (launch)
+			{
+				Titanium.Desktop.openApplication(app.executable.nativePath());
+			}
+		};
+		TFS.asyncCopy(resources,app.resources,function()
+		{
+			var module_dir = TFS.getFile(app.base,'modules');
+			var runtime_dir = TFS.getFile(app.base,'runtime');
+			var modules_to_bundle = [];
+			$.each(bundledEl,function()
+			{
+				var key = $.trim($(this).html());
+				var target, dest;
+				if (key == 'Titanium Runtime') //TODO: we need to make this defined
+				{
+					runtime_dir.createDirectory();
+					target = TFS.getFile(modules[0].dir,modules[0].versions[0]);
+					dest = runtime_dir;
+				}
+				else
+				{
+					module_dir.createDirectory();
+					var module = module_map[key];
+					target = TFS.getFile(module.dir,module.versions[0]);
+					dest = TFS.getFile(module_dir,module.dir.name());
+				}
+				modules_to_bundle.push({target:target,dest:dest});
+			});
+			
+			if (modules_to_bundle.length > 0)
+			{
+				var count = 0;
+				for (var c=0;c<modules_to_bundle.length;c++)
+				{
+					var e = modules_to_bundle[c];
+					TFS.asyncCopy(e.target,e.dest,function(filename,c,total)
+					{
+						if (++count==modules_to_bundle.length)
+						{
+							launch_fn();
+						}
+					});
+				}
+			}
+			
+			launch_fn();
+		});
+	}
+	catch(E)
+	{
+		alert("Exception = "+E);
 	}
 })
 

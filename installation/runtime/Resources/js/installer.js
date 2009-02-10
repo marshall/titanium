@@ -15,19 +15,6 @@ function updateProgressValue(value)
 	$('#progressbar').progressbar('value',value);
 }
 
-function parseEntry(entry)
-{
-	if (entry[0]=='#' || entry[0]==' ') return null;
-	var i = entry.indexOf(':');
-	if (i < 0) return null;
-	var key = jQuery.trim(entry.substring(0,i));
-	var value = jQuery.trim(entry.substring(i+1));
-	return {
-			key: key,
-			value: value
-	};
-}
-
 var tasks = [];
 var total = 0;
 var moveby = 0;
@@ -65,7 +52,7 @@ function runCopyTasks(fn)
 	}
 }
 
-function _runInstaller()
+function runInstaller()
 {
 	updateProgressMessage('Gathering installation details ... ');
 
@@ -232,7 +219,7 @@ function _runInstaller()
 	return true;
 }
 
-function runInstaller()
+function _runInstaller()
 {
 	updateProgressMessage('Gathering installation details ... ');
 
@@ -319,10 +306,6 @@ function runInstaller()
 			files:runtimeSrc
 		});
 		
-		//TODO: add installer, developer product, etc.
-		//TODO: module and runtime directories not quite correct
-		//TODO: fix symlink problem
-		
 		runCopyTasks(function()
 		{
 			updateProgressMessage('Configuring system paths ...');
@@ -336,7 +319,7 @@ function runInstaller()
 				switch(Titanium.platform)
 				{
 					case 'osx':
-					
+					{
 						// link up WebKit
 						var fw = ['WebKit','WebCore','JavaScriptCore'];
 						for (var c=0;c<fw.length;c++)
@@ -354,7 +337,7 @@ function runInstaller()
 							rf.createShortcut(TFS.getFile(fwd,'Resources'));
 							TFS.getFile(current,fwn).createShortcut(TFS.getFile(fwd,fwn));
 						}
-					
+				
 						var boot = TFS.getFile(src,'MacOS',appname);
 						boot.copy(template);
 						var target = TFS.getFile(template,appname);
@@ -365,21 +348,25 @@ function runInstaller()
 						var icons = TFS.getFile(lproj,'titanium.icns');
 						menu.copy(template);
 						icons.copy(template);
-						
 						break;
+					}
 					case 'win32':
+					{
 						// copy titanium_runtime.exe to template/kboot.exe
 						var boot = TFS.getFile(src,appname+'.exe');
 						var target = TFS.getFile(template,'kboot.exe');
 						boot.copy(target);
 						break;
+					}
 					case 'linux':
+					{
 						var boot = TFS.getFile(src,appname);
 						boot.copy(template);
 						var target = TFS.getFile(template,appname);
 						target.rename('kboot');
 						target.setExecutable(true);
 						break;
+					}
 				}
 				
 				current+=moveby;
