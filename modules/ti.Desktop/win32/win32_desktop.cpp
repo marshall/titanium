@@ -16,211 +16,26 @@ namespace ti
 	Win32Desktop::Win32Desktop()
 	{
 	}
+
 	Win32Desktop::~Win32Desktop()
 	{
 	}
-	SharedBoundList Win32Desktop::SelectDirectory(SharedBoundObject props)
-	{
-		BROWSEINFO bi = { 0 };
-		//std::string title("Select a directory");
-		//bi.lpszTitle = title.c_str();
-		LPITEMIDLIST pidl = SHBrowseForFolder(&bi);
 
-		SharedBoundList results = new StaticBoundList();
-
-		if(pidl != 0)
-		{
-			// get folder name
-			TCHAR path[MAX_PATH];
-			if(SHGetPathFromIDList(pidl, path))
-			{
-				SharedValue f = Value::NewString(path);
-				results->Append(f);
-			}
-		}
-
-		return results;
-	}
 	SharedBoundList Win32Desktop::OpenFiles(SharedBoundObject props)
 	{
-		// pass in a set of properties with each key being
-		// the name of the property and a boolean for its setting
-		// example:
-		//
-		// var selected = Titanium.Desktop.openFiles({
-		//    multiple:true,
-		//    files:false,
-		//    directories:true,
-		//    types:['js','html']
-		// });
-		//
-
-		// TODO this is not the logic followed by the osx desktop implementation, but as of right now
-		// the windows implementation allows the user to browse/select for file OR a directory, but not both
-		//bool chooseFiles = props->GetBool("files", true);
-		bool chooseDirectories = props->GetBool("directories", false);
-
-		if(chooseDirectories) {
-			return SelectDirectory(props);
-		}
-
-		bool multipleFiles = props->GetBool("multiple", false);
-		std::string path = props->GetString("path", "");
-		std::string filename = props->GetString("filename", "");
-		std::string filterName = props->GetString("typesDescription", "Filtered Files");
-		std::string filter;
-
-		// get types
-		std::vector<std::string> types;
-		props->GetStringList("types", types);
-
-		if(types.size() > 0)
-		{
-			//"All\0*.*\0Test\0*.TXT\0";
-			filter.append(filterName);
-			filter.push_back('\0');
-
-			for(int i = 0; i < types.size(); i++)
-			{
-				std::string type = types.at(i);
-
-				//multiple filters: "*.TXT;*.DOC;*.BAK"
-				size_t found = type.find("*.");
-				if(found != 0)
-				{
-					filter.append("*.");
-				}
-				filter.append(type);
-				filter.append(";");
-			}
-
-			filter.push_back('\0');
-		}
-
-		OPENFILENAME ofn;
-		char filen[255];
-		HWND hWindow;		// NEED to get handle to main or current titanium user window
-
-		ZeroMemory(&filen, sizeof(filen));
-
-		if(filename.size() == 0)
-		{
-			filen[0] = '\0';
-		}
-		else
-		{
-			strcpy(filen, filename.c_str());
-		}
-
-		// init OPENFILE
-		ZeroMemory(&ofn, sizeof(ofn));
-		ofn.lStructSize = sizeof(ofn);
-		ofn.hwndOwner = NULL;
-		ofn.lpstrFile = filen;
-		ofn.nMaxFile = sizeof(filen);
-		ofn.lpstrFilter = (filter.length() == 0 ? NULL : filter.c_str());
-		ofn.nFilterIndex = 1;
-		ofn.lpstrFileTitle = NULL;
-		ofn.nMaxFileTitle = 0;
-		ofn.lpstrInitialDir = (path.length() == 0 ? NULL : path.c_str());
-		ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_EXPLORER;
-
-		if(multipleFiles) ofn.Flags |= OFN_ALLOWMULTISELECT;
-
-		SharedBoundList results = new StaticBoundList();
-
-		// display the open dialog box
-		if(GetOpenFileName(&ofn) == TRUE)
-		{
-			// if the user selected multiple files, ofn.lpstrFile is a NULL-separated list of filenames
-			// if the user only selected one file, ofn.lpstrFile is a normal string
-
-			std::vector<std::string> tokens;
-			ParseStringNullSeparated(ofn.lpstrFile, tokens);
-
-			if(tokens.size() == 1)
-			{
-				std::string n(tokens.at(0));
-
-				SharedValue f = Value::NewString(n.c_str());
-				results->Append(f);
-			}
-			else if(tokens.size() > 1)
-			{
-				std::string directory(tokens.at(0));
-				for(int i = 1; i < tokens.size(); i++)
-				{
-					std::string n;
-					n.append(directory.c_str());
-					n.append("\\");
-					n.append(tokens.at(i).c_str());
-
-					SharedValue f = Value::NewString(n.c_str());
-					results->Append(f);
-				}
-			}
-		}
-
-
-		return results;
 	}
+
 	bool Win32Desktop::OpenApplication(std::string &name)
 	{
 		// this can actually open applications or documents (wordpad, notepad, file-test.txt, etc.)
 		long response = (long)ShellExecuteA(NULL, "open", name.c_str(), NULL, NULL, SW_SHOWNORMAL);
 		return (response > 32);
 	}
+
 	bool Win32Desktop::OpenURL(std::string &url)
 	{
 		long response = (long)ShellExecuteA(NULL, "open", url.c_str(), NULL, NULL, SW_SHOWNORMAL);
 		return (response > 32);
 	}
-	int Win32Desktop::GetSystemIdleTime()
-	{
-		LASTINPUTINFO lii;
-		memset(&lii, 0, sizeof(lii));
 
-		lii.cbSize = sizeof(lii);
-		::GetLastInputInfo(&lii);
-
-		DWORD currentTickCount = GetTickCount();
-		long idleTicks = currentTickCount - lii.dwTime;
-
-		return (int)idleTicks;
-	}
-
-	void Win32Desktop::ParseStringNullSeparated(const char *s, std::vector<std::string> &tokens)
-	{
-		std::string token;
-
-		// input string is expected to be composed of single-NULL-separated tokens, and double-NULL terminated
-		int i = 0;
-		while(true)
-		{
-			char c;
-
-			c = s[i++];
-
-			if(c == '\0')
-			{
-				// finished reading a token, save it in tokens vectory
-				tokens.push_back(token);
-				token.clear();
-
-				c = s[i];		// don't increment index because next token loop needs to read this char again
-
-				// if next char is NULL, then break out of the while loop
-				if(c == '\0')
-				{
-					break;	// out of while loop
-				}
-				else
-				{
-					continue;	// read next token
-				}
-			}
-
-			token.push_back(c);
-		}
-	}
 }

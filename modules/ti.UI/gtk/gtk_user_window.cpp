@@ -41,6 +41,7 @@ UserWindow* GtkUserWindow::WindowFactory(Host *host, WindowConfig* config)
 
 void GtkUserWindow::Open() {
 
+
 	if (this->gtk_window == NULL)
 	{
 		/* web view */
@@ -119,6 +120,32 @@ void GtkUserWindow::Open() {
 	{
 		this->Show();
 	}
+
+	printf("opening files\n");
+	std::string text = "Choose File";
+	GtkFileChooserAction a = GTK_FILE_CHOOSER_ACTION_OPEN;
+	GtkWidget* chooser = gtk_file_chooser_dialog_new(
+		text.c_str(),
+		NULL,
+		a,
+		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+		GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
+		NULL);
+	gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(chooser), "/home/martin");
+
+	int r = gtk_dialog_run(GTK_DIALOG(chooser));
+	printf("got result\n");
+
+	if (r== GTK_RESPONSE_ACCEPT)
+	{
+		printf("here2\n");
+		char *f = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(chooser));
+		printf("file: %s\n", f);
+		g_free(f);
+	}
+	printf("destroying\n");
+	gtk_widget_destroy(chooser);
+
 }
 
 void GtkUserWindow::Close()

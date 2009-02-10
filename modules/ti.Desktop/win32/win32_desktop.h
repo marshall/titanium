@@ -22,16 +22,12 @@ namespace ti
 	class Win32Desktop
 	{
 	public:
-		static SharedBoundList OpenFiles(SharedBoundObject properties);
 		static bool OpenApplication(std::string &name);
 		static bool OpenURL(std::string &url);
-		static int GetSystemIdleTime();
 	private:
 		Win32Desktop();
 		~Win32Desktop();
 
-		static SharedBoundList SelectDirectory(SharedBoundObject properties);
-		static void ParseStringNullSeparated(const char *s, std::vector<std::string> &tokens);
 	};
 }
 

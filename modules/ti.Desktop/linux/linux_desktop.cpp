@@ -29,8 +29,4 @@ namespace ti
 		return false;
 	}
 
-	int LinuxDesktop::GetSystemIdleTime()
-	{
-		return -1;
-	}
 }

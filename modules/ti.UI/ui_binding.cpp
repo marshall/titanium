@@ -31,6 +31,7 @@ namespace ti
 		this->SetMethod("setBadge", &UIBinding::_SetBadge);
 
 		this->SetMethod("openFiles", &UIBinding::_OpenFiles);
+		this->SetMethod("getSystemIdleTime", &UIBinding::_GetSystemIdleTime);
 	}
 
 	UIBinding::~UIBinding()
@@ -143,43 +144,68 @@ namespace ti
 
 	void UIBinding::_OpenFiles(const ValueList& args, SharedValue result)
 	{
-		// These are the defaults for file dialogs
-		bool multiple = false, files = false, directories = true;
+		// pass in a set of properties with each key being
+		// the name of the property and a boolean for its setting
+		// example:
+		//
+		// var selected = Titanium.Desktop.openFiles({
+		//    multiple:true,
+		//    files:false,
+		//    directories:true,
+		//    types:['js','html']
+		// });
+		//
+		//
+		SharedBoundObject props;
+		if (args.size() < 0 || args.at(0)->IsObject())
+		{
+			props = new StaticBoundObject();
+		}
+		else
+		{
+			props = args.at(0)->ToObject();
+		}
+
+		bool multiple = props->GetBool("multiple", false);
+		bool files = props->GetBool("multiple", true);
+		bool directories = props->GetBool("multiple", false);
+		std::string path = props->GetString("path", "");
+		std::string file = props->GetString("file", "");
+
 		std::vector<std::string> types;
 		types.push_back("js");
 		types.push_back("html");
-
-		if (args.size() > 0 && args.at(0)->IsObject())
+		if (props->Get("types")->IsList())
 		{
-			SharedBoundObject props = args.at(0)->ToObject();
-
-			if (props->Get("multiple")->IsBool())
-				multiple = props->Get("multiple")->ToBool();
-
-			if (props->Get("files")->IsBool())
-				files = props->Get("files")->ToBool();
-
-			if (props->Get("directories")->IsBool())
-				files = props->Get("directories")->ToBool();
-
-			if (props->Get("types")->IsList())
+			types.clear();
+			SharedBoundList l = props->Get("types")->ToList();
+			for (int i = 0; i < l->Size(); i++)
 			{
-				types.clear();
-				SharedBoundList l = props->Get("types")->ToList();
-				for (int i = 0; i < l->Size(); i++)
+				if (l->At(i)->IsString())
 				{
-					if (l->At(i)->IsString())
-					{
-						types.push_back(l->At(i)->ToString());
-					}
+					types.push_back(l->At(i)->ToString());
 				}
 			}
 		}
+		
 
 		std::vector<std::string> file_vec =
-			this->OpenFiles(multiple, files, directories, types);
+			this->OpenFiles(
+				multiple,
+				files,
+				directories,
+				path,
+				file,
+				types);
 		result->SetList(StaticBoundList::FromStringVector(file_vec));
 		
+	}
+
+	void UIBinding::_GetSystemIdleTime(
+		const ValueList& args,
+		SharedValue result)
+	{
+		result->SetDouble(this->GetSystemIdleTime());
 	}
 
 }

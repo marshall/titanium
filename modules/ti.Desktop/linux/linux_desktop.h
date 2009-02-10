@@ -20,10 +20,8 @@ namespace ti
 	class LinuxDesktop
 	{
 	public:
-		static SharedBoundList OpenFiles(SharedBoundObject properties);
 		static bool OpenApplication(std::string &name);
 		static bool OpenURL(std::string &url);
-		static int GetSystemIdleTime();
 	private:
 		LinuxDesktop();
 		~LinuxDesktop();

@@ -40,6 +40,7 @@ namespace ti
 		                                    SharedBoundMethod cb) = 0;
 
 		void _OpenFiles(const ValueList& args, SharedValue result);
+		void _GetSystemIdleTime(const ValueList& args, SharedValue result);
 
 		/* OS X specific callbacks */
 		void _SetDockIcon(const ValueList& args, SharedValue result);
@@ -55,7 +56,11 @@ namespace ti
 			bool multiple,
 			bool files,
 			bool directories,
+			std::string path,
+			std::string file,
 			std::vector<std::string> types) = 0;
+
+		virtual long GetSystemIdleTime() = 0;
 
 	};
 }

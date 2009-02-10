@@ -10,6 +10,7 @@ namespace ti
 {
 	class GtkUserWindow : public UserWindow {
 	public:
+	void _FileDialog(const kroll::ValueList& args, kroll::SharedValue result);
 		GtkUserWindow(Host *host, ti::WindowConfig *config);
 		~GtkUserWindow();
 		void SetupDecorations();

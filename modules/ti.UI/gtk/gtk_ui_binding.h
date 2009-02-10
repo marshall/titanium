@@ -29,7 +29,11 @@ namespace ti
 			bool multiple,
 			bool files,
 			bool directories,
+			std::string path,
+			std::string file,
 			std::vector<std::string> types);
+
+		long GetSystemIdleTime();
 
 		private:
 			SharedPtr<ScriptEvaluator> evaluator;
