@@ -65,7 +65,7 @@ function runCopyTasks(fn)
 	}
 }
 
-function runInstaller()
+function _runInstaller()
 {
 	updateProgressMessage('Gathering installation details ... ');
 
@@ -232,7 +232,7 @@ function runInstaller()
 	return true;
 }
 
-function _runInstaller()
+function runInstaller()
 {
 	updateProgressMessage('Gathering installation details ... ');
 

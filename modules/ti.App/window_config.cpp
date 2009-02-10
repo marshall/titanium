@@ -82,7 +82,7 @@ void WindowConfig::SetDefaults ()
 	this->closeable = true;
 	this->resizable = true;
 
-	this->usingChrome = true;
+	this->usingChrome = false;
 	this->usingScrollbars = true;
 	this->fullscreen = false;
 	this->visible = true;
