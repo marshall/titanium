@@ -65,15 +65,16 @@ namespace ti
 		return item;
 	}
 
-	void OSXUIBinding::OpenFiles(
+	std::vector<std::string> OSXUIBinding::OpenFiles(
 		bool multiple,
 		bool files,
 		bool directories,
 		std::string& path,
 		std::string& file,
-		std::vector<std::string>& types,
-		std::vector<std::string>& results)
+		std::vector<std::string>& types)
 	{
+		std::vector<std::string> results;
+
 		NSOpenPanel* openDlg = [NSOpenPanel openPanel];
 		[openDlg setCanChooseFiles:files];
 		[openDlg setCanChooseDirectories:directories]; 
@@ -112,6 +113,8 @@ namespace ti
 			}
 		}
 		[filetypes release];
+
+		return results;
 	}
 
 	long OSXUIBinding::GetSystemIdleTime()

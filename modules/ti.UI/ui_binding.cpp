@@ -189,16 +189,9 @@ namespace ti
 		}
 		
 
-		std::vector<std::string> file_vec;
-		this->OpenFiles(
-			multiple,
-			files,
-			directories,
-			path,
-			file,
-			types,
-			file_vec);
-		result->SetList(StaticBoundList::FromStringVector(file_vec));
+		std::vector<std::string> results = 
+			this->OpenFiles(multiple, files, directories, path, file, types);
+		result->SetList(StaticBoundList::FromStringVector(results));
 		
 	}
 
