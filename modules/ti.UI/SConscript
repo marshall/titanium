@@ -43,6 +43,7 @@ elif build.is_win32():
 elif build.is_osx():
 	env.Append(FRAMEWORKPATH=[webkit_tp])
 	env.Append(FRAMEWORKS=['Cocoa','Carbon','WebKit','JavaScriptCore','IOKit'])
+	env.Append(CPPPATH=[path.join(webkit_tp, 'WebKit.framework', 'Headers')])
 	sources = sources + Glob('osx/*.mm') + Glob('osx/*.cpp')
 	env.Append(CCFLAGS=['-x', 'objective-c++'])
 	
