@@ -15,19 +15,6 @@ function updateProgressValue(value)
 	$('#progressbar').progressbar('value',value);
 }
 
-function parseEntry(entry)
-{
-	if (entry[0]=='#' || entry[0]==' ') return null;
-	var i = entry.indexOf(':');
-	if (i < 0) return null;
-	var key = jQuery.trim(entry.substring(0,i));
-	var value = jQuery.trim(entry.substring(i+1));
-	return {
-			key: key,
-			value: value
-	};
-}
-
 var tasks = [];
 var total = 0;
 var moveby = 0;
@@ -66,6 +53,173 @@ function runCopyTasks(fn)
 }
 
 function runInstaller()
+{
+	updateProgressMessage('Gathering installation details ... ');
+
+	var src = Titanium.Process.getEnv('KR_HOME');
+	var dest = Titanium.Process.getEnv('KR_RUNTIME_HOME');
+	var runtimeDir = TFS.getFile(dest);
+	if (!runtimeDir.isDirectory())
+	{
+		runtimeDir.createDirectory(true);
+	}
+	var manifest = TFS.getFile(src,'manifest');
+	if (!manifest.isFile())
+	{
+		alert("Invalid runtime installer. Couldn't find manifest!");
+		return false;
+	}
+	var results = Titanium.Project.getManifest(manifest);
+	if (!results.success)
+	{
+		alert(results.message);
+		return false;
+	}
+	var runtime = results.map['runtime'];
+	if (!runtime)
+	{
+		alert("Invalid runtime installer. Couldn't find runtime in manifest!");
+		return false;
+	}
+	var runtimeSrc = TFS.getFile(src,'runtime');
+	if (!runtimeSrc.exists())
+	{
+		alert("Invalid runtime installer. Couldn't find runtime source directory!");
+		return false;
+	}
+	var runtimeDir = TFS.getFile(dest,'runtime',Titanium.platform,runtime);
+	//TODO: do we need to overwrite or confirm?
+	if (!runtimeDir.exists())
+	{
+		if (!runtimeDir.createDirectory(true))
+		{
+			alert("Error installing runtime. Couldn't create directory: \n\n"+runtimeDir);
+			return false;
+		}
+	}
+	var appname;
+
+	for (p in results.map)
+	{
+		if (p=='appname')
+		{
+			appname = results.map[p];
+			continue;
+		}
+		if (p == 'runtime' || p == 'appid') continue;
+		var moduleSrc = TFS.getFile(src,'modules',p);
+		if (!moduleSrc.exists()) continue;
+		var moduleDest = TFS.getFile(dest,'modules',p,results.map[p]);
+		moduleDest.createDirectory(true);
+		tasks.push({
+			dest:moduleDest,
+			files:moduleSrc
+		});
+		total++;
+	}
+	var files = runtimeSrc.getDirectoryListing();
+	total += 1;//files.length;
+	moveby = 100 / (total+3);
+
+	updateProgressMessage(total+' files to install ... ');
+	
+	tasks.push({
+		dest:runtimeDir,
+		files:runtimeSrc
+	});
+	
+	runCopyTasks(function()
+	{
+		updateProgressMessage('Configuring system paths ...');
+		
+		// create templates
+		try
+		{
+			var template = TFS.getFile(runtimeDir,'template');
+			template.createDirectory(true);
+
+			switch(Titanium.platform)
+			{
+				case 'osx':
+				
+					// link up WebKit
+					var fw = ['WebKit','WebCore','JavaScriptCore'];
+					for (var c=0;c<fw.length;c++)
+					{
+						var fwn = fw[c];
+						var fwd = TFS.getFile(runtimeDir,fwn+'.framework');
+						var ver = TFS.getFile(fwd,'Versions','A');
+						var current = TFS.getFile(fwd,'Versions','Current');
+						ver.createShortcut(current);
+						var hf = TFS.getFile(current,'Headers');
+						hf.createShortcut(TFS.getFile(fwd,'Headers'));
+						var ph = TFS.getFile(current,'PrivateHeaders');
+						ph.createShortcut(TFS.getFile(fwd,'PrivateHeaders'));
+						var rf = TFS.getFile(current,'Resources');
+						rf.createShortcut(TFS.getFile(fwd,'Resources'));
+						TFS.getFile(current,fwn).createShortcut(TFS.getFile(fwd,fwn));
+					}
+				
+					var boot = TFS.getFile(src,'MacOS',appname);
+					boot.copy(template);
+					var target = TFS.getFile(template,appname);
+					target.rename('kboot');
+					target.setExecutable(true);
+					var lproj = TFS.getFile(src,'Resources','English.lproj');
+					var menu = TFS.getFile(lproj,'MainMenu.nib');
+					var icons = TFS.getFile(lproj,'titanium.icns');
+					menu.copy(template);
+					icons.copy(template);
+					
+					break;
+				case 'win32':
+					// copy titanium_runtime.exe to template/kboot.exe
+					var boot = TFS.getFile(src,appname+'.exe');
+					var target = TFS.getFile(template,'kboot.exe');
+					boot.copy(target);
+					break;
+				case 'linux':
+					var boot = TFS.getFile(src,appname);
+					boot.copy(template);
+					var target = TFS.getFile(template,appname);
+					target.rename('kboot');
+					target.setExecutable(true);
+					break;
+			}
+			
+			current+=moveby;
+			updateProgressValue(current);
+			
+			// developer product
+			var devDest = TFS.getProgramsDirectory();
+			var developer = Titanium.createApp(runtimeDir,devDest,'Titanium Developer','com.titaniumapp.developer');
+			var devsrc = TFS.getFile(src,'developer');
+			var devresources = TFS.getFile(devsrc,'resources');
+			var devtiapp = TFS.getFile(devsrc,'tiapp.xml');
+			devtiapp.copy(developer.base);
+			var devmanifest = TFS.getFile(devsrc,'manifest');
+			devmanifest.copy(developer.base);
+			TFS.asyncCopy(devresources,developer.resources,function()
+			{
+				current+=moveby;
+				updateProgressValue(current);
+			});
+					
+			
+			current+=moveby;
+			updateProgressValue(current);
+
+			finishInstall(developer.executable);
+		}
+		catch(E)
+		{
+			alert("error="+E);
+		}
+	});
+	return true;
+}
+
+function _runInstaller()
 {
 	updateProgressMessage('Gathering installation details ... ');
 
@@ -152,10 +306,6 @@ function runInstaller()
 			files:runtimeSrc
 		});
 		
-		//TODO: add installer, developer product, etc.
-		//TODO: module and runtime directories not quite correct
-		//TODO: fix symlink problem
-		
 		runCopyTasks(function()
 		{
 			updateProgressMessage('Configuring system paths ...');
@@ -169,7 +319,7 @@ function runInstaller()
 				switch(Titanium.platform)
 				{
 					case 'osx':
-					
+					{
 						// link up WebKit
 						var fw = ['WebKit','WebCore','JavaScriptCore'];
 						for (var c=0;c<fw.length;c++)
@@ -187,7 +337,7 @@ function runInstaller()
 							rf.createShortcut(TFS.getFile(fwd,'Resources'));
 							TFS.getFile(current,fwn).createShortcut(TFS.getFile(fwd,fwn));
 						}
-					
+				
 						var boot = TFS.getFile(src,'MacOS',appname);
 						boot.copy(template);
 						var target = TFS.getFile(template,appname);
@@ -198,21 +348,25 @@ function runInstaller()
 						var icons = TFS.getFile(lproj,'titanium.icns');
 						menu.copy(template);
 						icons.copy(template);
-						
 						break;
+					}
 					case 'win32':
+					{
 						// copy titanium_runtime.exe to template/kboot.exe
 						var boot = TFS.getFile(src,appname+'.exe');
 						var target = TFS.getFile(template,'kboot.exe');
 						boot.copy(target);
 						break;
+					}
 					case 'linux':
+					{
 						var boot = TFS.getFile(src,appname);
 						boot.copy(template);
 						var target = TFS.getFile(template,appname);
 						target.rename('kboot');
 						target.setExecutable(true);
 						break;
+					}
 				}
 				
 				current+=moveby;

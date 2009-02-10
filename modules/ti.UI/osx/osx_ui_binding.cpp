@@ -76,23 +76,30 @@ namespace ti
 		std::vector<std::string> results;
 
 		NSOpenPanel* openDlg = [NSOpenPanel openPanel];
-		[openDlg setCanChooseFiles:YES];
-		[openDlg setCanChooseDirectories:NO]; 
-		[openDlg setAllowsMultipleSelection:NO];
+		[openDlg setCanChooseFiles:files];
+		[openDlg setCanChooseDirectories:directories]; 
+		[openDlg setAllowsMultipleSelection:multiple];
 		[openDlg setResolvesAliases:YES];
-		
+
 		NSMutableArray *filetypes = nil;
 		NSString *begin = nil, *filename = nil;
-		[openDlg setAllowsMultipleSelection:multiple];
-		[openDlg setCanChooseFiles:files];
-		[openDlg setCanChooseDirectories:directories];
-		filename = [NSString stringWithCString:file.c_str()];
-		begin = [NSString stringWithCString:path.c_str()];
 
-		for (size_t t = 0; t < types.size(); t++)
+		if (file != "")
 		{
-			const char *s = types.at(t).c_str();
-			[filetypes addObject:[NSString stringWithCString:s]];
+			filename = [NSString stringWithCString:file.c_str()];
+		}
+		if (path != "")
+		{
+			begin = [NSString stringWithCString:path.c_str()];
+		}
+		if (types.size() > 0)
+		{
+			filetypes = [[NSMutableArray alloc] init]; 
+			for (size_t t = 0; t < types.size(); t++)
+			{
+				const char *s = types.at(t).c_str();
+				[filetypes addObject:[NSString stringWithCString:s]];
+			}
 		}
 
 		if ( [openDlg runModalForDirectory:begin file:filename types:filetypes] == NSOKButton )
@@ -102,10 +109,11 @@ namespace ti
 			{
 				NSString* fileName = [selected objectAtIndex:i];
 				std::string fn = [fileName UTF8String];
-				results.push_back(fn);
+				results.push_back(std::string(fn));
 			}
 		}
 		[filetypes release];
+
 		return results;
 	}
 
