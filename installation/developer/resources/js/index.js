@@ -330,6 +330,8 @@ $MQL('l:show.filedialog',function()
 	$MQ('l:file.selected',{value:val});
 })
 
+var irc_count = 0;
+
 setTimeout(function()
 {
 	try
@@ -346,27 +348,31 @@ setTimeout(function()
 			// switch on command
 			switch(cmd)
 			{
+				case 'NOTICE':
 				case 'PRIVMSG':
 				{
-					TiDeveloper.ircMessageCount ++;
-					$('#irc_message_count').html(TiDeveloper.ircMessageCount);
-					
-					$('#irc').append('<div style="color:yellow">' + nick + ': ' + channel.substring(1,channel.length) + '</div>');
+					if (nick)
+					{
+						TiDeveloper.ircMessageCount ++;
+						$('#irc_message_count').html(TiDeveloper.ircMessageCount);
+						$('#irc').append('<div style="color:yellow">' + nick + ': ' + channel.substring(1,channel.length) + '</div>');
+					}
 					break;
 				}
 				case '366':
 				{					
-					var users = irc.getUsers('#titanium_dev')
-					$MQ('l:online.count',{count:users.length})
+					var users = irc.getUsers('#titanium_dev');
+					$MQ('l:online.count',{count:users.length});
+					irc_count = users.length;
 					for (var i=0;i<users.length;i++)
 					{
 						if (users[i].operator == true)
 						{
-							$('#irc_users').append('<div class="'+users[i].name+'" style="color:#457db3">(op) '+users[i].name+'</div>');
+							$('#irc_users').append('<div class="'+users[i].name+'" style="color:#457db3">'+users[i].name+'(op)</div>');
 						}
 						else if (users[i].voice==true)
 						{
-							$('#irc_users').append('<div class="'+users[i].name+'" style="color:#457db3">(v) '+users[i].name+'</div>');
+							$('#irc_users').append('<div class="'+users[i].name+'" style="color:#457db3">'+users[i].name+'(v)</div>');
 						}
 						else
 						{
@@ -386,8 +392,13 @@ setTimeout(function()
 						$('#irc').append('<div style="color:#aaa"> you are now in the room. </div>');
 						break
 					}
+					else
+					{
+						irc_count++;
+					}
 					$('#irc').append('<div style="color:#aaa">' + nick + ' has joined the room </div>');
 					$('#irc_users').append('<div class="'+nick+'" style="color:#457db3">'+nick+'</div>');
+					$MQ('l:online.count',{count:irc_count});
 					break;
 					
 				}
@@ -395,11 +406,12 @@ setTimeout(function()
 				{
 					$('#irc').append('<div style="color:#aaa">' + nick + ' has left the room </div>');
 					$('.'+nick).html('');
+					irc_count--;
+					$MQ('l:online.count',{count:irc_count});
 					break;
 					
 				}
 			}
-//			$('#irc').append('<div>'+cmd+"=>"+channel+':'+data+ ' ' + nick + '</div>');
 			$('#irc').get(0).scrollTop = $('#irc').get(0).scrollHeight;
 		});
 
