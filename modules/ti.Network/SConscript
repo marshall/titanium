@@ -9,5 +9,6 @@ tiBuild.add_thirdparty(build.env, 'poco')
 env = tiBuild.env.Clone();
 env.Append(CPPDEFINES = ('TITANIUM_NETWORK_API_EXPORT', 1))
 
-s = env.SharedLibrary(target = tiBuild.dir + '/tinetworkmodule', source = Glob('*.cpp'))
+s = env.SharedLibrary(target = tiBuild.dir + '/tinetworkmodule', source = Glob('*.cpp')+Glob('irc/*.cpp'))
+
 

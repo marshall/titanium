@@ -32,7 +32,7 @@ FileUtils.mkdir_p module_dir_name unless File.exists?(module_dir_name)
 bh = File.open(File.join(module_dir_name,"#{name}_binding.h"),'w')
 bh.puts <<-END
 /**
- * Appcelerator Kroll - licensed under the Apache Public License 2
+ * Appcelerator Titanium - licensed under the Apache Public License 2
  * see LICENSE in the root folder for details on the license.
  * Copyright (c) 2009 Appcelerator, Inc. All Rights Reserved.
  */
@@ -64,7 +64,7 @@ bh.close
 bc = File.open(File.join(module_dir_name,"#{name}_binding.cpp"),'w')
 bc.puts <<-END
 /**
- * Appcelerator Kroll - licensed under the Apache Public License 2
+ * Appcelerator Titanium - licensed under the Apache Public License 2
  * see LICENSE in the root folder for details on the license. 
  * Copyright (c) 2009 Appcelerator, Inc. All Rights Reserved.
  */	
@@ -169,7 +169,7 @@ mc.close
 th = File.open(File.join(module_dir_name,"#{name}_test.h"),'w')
 th.puts <<-END
 /**
- * Appcelerator Kroll - licensed under the Apache Public License 2
+ * Appcelerator Titanium - licensed under the Apache Public License 2
  * see LICENSE in the root folder for details on the license.
  * Copyright (c) 2009 Appcelerator, Inc. All Rights Reserved.
  */
@@ -196,7 +196,7 @@ th.close
 tc = File.open(File.join(module_dir_name,"#{name}_test.cpp"),'w')
 tc.puts <<-END
 /**
- * Appcelerator Kroll - licensed under the Apache Public License 2
+ * Appcelerator Titanium - licensed under the Apache Public License 2
  * see LICENSE in the root folder for details on the license.
  * Copyright (c) 2009 Appcelerator, Inc. All Rights Reserved.
  */

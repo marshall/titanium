@@ -30,8 +30,14 @@
 	[webPrefs setPlugInsEnabled:YES]; 
 	[webPrefs setJavaEnabled:NO]; // ?? this disallows Java Craplets
 	[webPrefs setJavaScriptEnabled:YES];
-	[webPrefs setDatabasesEnabled:YES];
-	[webPrefs setLocalStorageEnabled:YES];
+	if ([webPrefs respondsToSelector:@selector(setDatabasesEnabled:)])
+	{
+		[webPrefs setDatabasesEnabled:YES];
+	}
+	if ([webPrefs respondsToSelector:@selector(setLocalStorageEnabled:)])
+	{
+		[webPrefs setLocalStorageEnabled:YES];
+	}
 	[webPrefs setDOMPasteAllowed:YES];
 	
 	// Setup the DB to store it's DB under our data directory for the app

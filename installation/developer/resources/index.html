@@ -38,7 +38,7 @@
 		</div>
 		<div class="button1" style="display:inline-block;width:150px" 
 			on="click then l:menu[val=social] and add[class=active] or l:menu[val!=social] then remove[class=active]">
-			<div class="button2">Ti IRC</div>
+			<div class="button2">Social</div>
 		</div>
 		<div style="clear:both"></div>
 
@@ -46,6 +46,14 @@
 		<!-- CONTENT FILES -->
 		<!-- ************* -->
 
+		<div style="display:none;"
+			on="l:menu[val=social] then effect[fadeIn] else hide">
+			<textarea id="irc" style="width:600px;height:200px;font-family:courier;"></textarea>
+			<div>
+				<input type="text" value="" id="irc_msg"/>
+				<button id="irc_send">Send</button>
+			</div>
+		</div>
 
 		<!-- CREATE A NEW PROJECT -->
 		<div style="display:none;"

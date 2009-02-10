@@ -1,5 +1,5 @@
 /**
- * Appcelerator Kroll - licensed under the Apache Public License 2
+ * Appcelerator Titanium - licensed under the Apache Public License 2
  * see LICENSE in the root folder for details on the license.
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
@@ -9,6 +9,8 @@
 #include "tcp_socket_binding.h"
 #include "ipaddress_binding.h"
 #include "host_binding.h"
+#include "irc/irc_client_binding.h"
+
 
 namespace ti
 {
@@ -21,6 +23,7 @@ namespace ti
 		// methods that are available on Titanium.Network
 		this->SetMethod("onConnectivityChange",&NetworkBinding::OnConnectivityChange);
 		this->SetMethod("createTCPSocket",&NetworkBinding::CreateTCPSocket);
+		this->SetMethod("createIRCClient",&NetworkBinding::CreateIRCClient);
 		this->SetMethod("createIPAddress",&NetworkBinding::CreateIPAddress);
 		this->SetMethod("getHostByName",&NetworkBinding::GetHostByName);
 		this->SetMethod("getHostByAddress",&NetworkBinding::GetHostByAddress);
@@ -97,6 +100,12 @@ namespace ti
 		//TODO: check for args
 		SharedPtr<TCPSocketBinding> tcp = new TCPSocketBinding(host, args.at(0)->ToString(), args.at(1)->ToInt());
 		result->SetObject(tcp);
+	}
+	void NetworkBinding::CreateIRCClient(const ValueList& args, SharedValue result)
+	{
+		
+		SharedPtr<IRCClientBinding> irc = new IRCClientBinding(host);
+		result->SetObject(irc);
 	}
 	void NetworkBinding::OnConnectivityChange(const ValueList& args, SharedValue result)
 	{

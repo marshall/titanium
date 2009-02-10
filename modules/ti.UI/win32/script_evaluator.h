@@ -24,7 +24,7 @@ public:
 
 	// IWebScriptEvaluator
 	virtual HRESULT STDMETHODCALLTYPE matchesMimeType(BSTR mimeType, BOOL *result);
-	virtual HRESULT STDMETHODCALLTYPE evaluate(BSTR mimeType, BSTR sourceCode);
+	virtual HRESULT STDMETHODCALLTYPE evaluate(BSTR mimeType, BSTR sourceCode, int* context);
 
 protected:
 	kroll::Host *host;
