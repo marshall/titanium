@@ -251,16 +251,62 @@ setTimeout(function()
 {
 	try
 	{
+		var myNick = Titanium.Platform.username+'1';
+		var myName = Titanium.Platform.username+'1';
+		var myNameStr = Titanium.Platform.username+'1';
+
+		$('#irc').append('<div style="color:#111">you are joining the room. one moment...</div>');
+		
 		var irc = Titanium.Network.createIRCClient();
-		irc.connect("irc.freenode.net",6667,"jeffhaynie1","jeff haynie","jeffhaynie",String(new Date().getTime()),function(cmd,channel,data)
+		irc.connect("irc.freenode.net",6667,myNick,myName,myNameStr,String(new Date().getTime()),function(cmd,channel,data,nick)
 		{
-			$('#irc').append(cmd+"=>"+channel+':'+data+'\n');
+			// switch on command
+			switch(cmd)
+			{
+				case 'PRIVMSG':
+				{
+					$('#irc').append('<div style="color:yellow">' + nick + ': <span style="color:#fff">' + channel.substring(1,channel.length) + '</span></div>');
+					break;
+				}
+				case '366':
+				{
+					var users = irc.getUsers('#titanium_dev')
+					alert('number of users = '+users.length);
+					for (var i=0;i<users.length;i++)
+					{
+						alert(users[i].name)
+					}
+				}
+				case 'JOIN':
+				{
+					if (nick == myNick)
+					{
+						$('#irc').append('<div style="color:#111"> you are now in the room. </div>');
+						break
+					}
+					$('#irc').append('<div style="color:#aaa">' + nick + ' has joined the room </div>');
+					break;
+					
+				}
+				case 'PART':
+				{
+					$('#irc').append('<div style="color:#aaa">' + nick + ' has left the room </div>');
+					break;
+					
+				}
+			}
+			$('#irc').append('<div>'+cmd+"=>"+channel+':'+data+ ' ' + nick + '</div>');
+			$('#irc').get(0).scrollTop = $('#irc').get(0).scrollHeight;
 		});
+
 		irc.join("#titanium_dev");
 		$('#irc_send').click(function()
 		{
 			irc.send('#titanium_dev',$('#irc_msg').val());
+			$('#irc').append('<div><span style="color:#fff">'+myNick + ':</span> ' + $('#irc_msg').val() + '</div>');
 			$('#irc_msg').val('');
+			$('#irc').get(0).scrollTop = $('#irc').get(0).scrollHeight;
+
 		})
 	}
 	catch(E)
