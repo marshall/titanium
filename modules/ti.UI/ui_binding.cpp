@@ -159,7 +159,7 @@ namespace ti
 		//
 		//
 		SharedBoundObject props;
-		if (args.size() < 0 || args.at(0)->IsObject())
+		if (args.size() < 1 || !args.at(0)->IsObject())
 		{
 			props = new StaticBoundObject();
 		}
@@ -168,15 +168,13 @@ namespace ti
 			props = args.at(0)->ToObject();
 		}
 
+		bool files = props->GetBool("files", true);
 		bool multiple = props->GetBool("multiple", false);
-		bool files = props->GetBool("multiple", true);
-		bool directories = props->GetBool("multiple", false);
+		bool directories = props->GetBool("directories", false);
 		std::string path = props->GetString("path", "");
 		std::string file = props->GetString("file", "");
 
 		std::vector<std::string> types;
-		types.push_back("js");
-		types.push_back("html");
 		if (props->Get("types")->IsList())
 		{
 			types.clear();
@@ -191,15 +189,9 @@ namespace ti
 		}
 		
 
-		std::vector<std::string> file_vec =
-			this->OpenFiles(
-				multiple,
-				files,
-				directories,
-				path,
-				file,
-				types);
-		result->SetList(StaticBoundList::FromStringVector(file_vec));
+		std::vector<std::string> results = 
+			this->OpenFiles(multiple, files, directories, path, file, types);
+		result->SetList(StaticBoundList::FromStringVector(results));
 		
 	}
 

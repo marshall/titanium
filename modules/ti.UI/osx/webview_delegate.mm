@@ -31,10 +31,10 @@
 	[webPrefs setPlugInsEnabled:YES]; 
 	[webPrefs setJavaEnabled:NO]; // ?? this disallows Java Craplets
 	[webPrefs setJavaScriptEnabled:YES];
-	if ([webPrefs respondsToSelector:@selector(setDatabasesEnabled:)])
-	{
+//	if ([webPrefs respondsToSelector:@selector(setDatabasesEnabled:)])
+//	{
 		[webPrefs setDatabasesEnabled:YES];
-	}
+//	}
 	if ([webPrefs respondsToSelector:@selector(setLocalStorageEnabled:)])
 	{
 		[webPrefs setLocalStorageEnabled:YES];
@@ -45,11 +45,15 @@
 	NSString *datadir = [NSString stringWithCString:kroll::FileUtils::GetApplicationDataDirectory(appid).c_str()];
 	[webPrefs _setLocalStorageDatabasePath:datadir];
 	
+	
 	//TODO: make sure this is OK
 	[webPrefs setFullDocumentTeardownEnabled:YES];
 
+	NSUserDefaults *standardUserDefaults = [NSUserDefaults standardUserDefaults];
+	[standardUserDefaults setObject:datadir forKey:@"WebDatabaseDirectory"];
+	[standardUserDefaults synchronize];
+		
 	[webView setPreferences:webPrefs];
-
 	[webPrefs release];
 
 	// this stuff adjusts the webview/window for chromeless windows.
@@ -688,8 +692,27 @@
 
 - (NSUInteger)webView:(WebView *)wv dragSourceActionMaskForPoint:(NSPoint)point
 {
-	NSLog(@"dragSourceActionMaskForPoint");
 	return WebDragSourceActionAny;
+}
+
+- (NSArray *)webView:(WebView *)sender contextMenuItemsForElement:(NSDictionary *)element defaultMenuItems:(NSArray *)defaultMenuItems
+{
+	//TODO: finish implementation of menu
+	
+	if (!host->IsDebugMode())
+	{
+		for (int c=0;c<(int)[defaultMenuItems count];c++)
+		{
+			NSMenuItem *item = [defaultMenuItems objectAtIndex:c];
+			// in non-DEBUG mode, we remove by default the Reload menu action
+			if ([item tag] == 12 && [[item title] isEqualToString:@"Reload"])
+			{
+				[item setHidden:YES];
+				break;
+			}
+		}
+	}
+	return defaultMenuItems;
 }
 
 #pragma mark -

@@ -9,6 +9,6 @@
       <url>app://index.html</url>
       <width>700</width>
       <height>900</height>
-		<fullscreen>false</fullscreen>
+      <fullscreen>false</fullscreen>
    </window>
 </ti:app>

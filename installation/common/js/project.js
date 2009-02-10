@@ -5,9 +5,66 @@ var TFS = Titanium.Filesystem;
 
 Titanium.Project = 
 {
-	bundle:function()
+	getVersions:function(dir)
 	{
-		
+		var entry = {name:dir.name(), versions:[], dir:dir};
+		var versions = dir.getDirectoryListing();
+		for (var v=0;v<versions.length;v++)
+		{
+			entry.versions.push(versions[v].name());
+		}
+		return entry;
+	},
+	getModulesAndRuntime:function()
+	{
+		var dir = Titanium.Process.getEnv('KR_RUNTIME_HOME');
+		var modules = TFS.getFile(dir,'modules');
+		var dirs = modules.getDirectoryListing();
+		var result = [];
+		for (var c=0;c<dirs.length;c++)
+		{
+			result.push(this.getVersions(dirs[c]));
+		}
+		var runtime = TFS.getFile(dir,'runtime',Titanium.platform);
+		return {
+			modules: result,
+			runtime: this.getVersions(runtime)
+		};
+	},
+	parseEntry:function(entry)
+	{
+		if (entry[0]=='#' || entry[0]==' ') return null;
+		var i = entry.indexOf(':');
+		if (i < 0) return null;
+		var key = jQuery.trim(entry.substring(0,i));
+		var value = jQuery.trim(entry.substring(i+1));
+		return {
+			key: key,
+			value: value
+		};
+	},
+	getManifest:function(mf)
+	{
+		var manifest = TFS.getFile(mf);
+		if (!manifest.isFile())
+		{
+			return {
+				success:false,
+				message:"Couldn't find manifest!"
+			};
+		}
+		var result = {success:true,file:manifest,map:{}};
+		var line = manifest.readLine(true);
+		var entry = Titanium.Project.parseEntry(line);
+		if (entry) result.map[entry.key]=entry.value;
+		while (true)
+		{
+			line = manifest.readLine();
+			if(!line) break;
+			entry = Titanium.Project.parseEntry(line);
+			if (entry) result.map[entry.key]=entry.value;
+		}
+		return result;
 	},
 	create:function(name,dir)
 	{
@@ -53,23 +110,17 @@ Titanium.Project =
 		var index = TFS.getFile(resources,'index.html');
 		index.write('<html>\n<head>\n</head>\n<body>\nHello,world\n</body>\n</html>');
 		
-		//FIXME
 		var manifest = "appname: "+name+"\n" +
-		"appid: "+id+"\n"+
-		"runtime: 0.2\n"+
-		"api:0.1\n"+
-		"javascript:0.1\n"+
-		"tiplatform:0.1\n"+
-		"tiapp:0.1\n"+
-		"tiui:0.1\n"+
-		"tinetwork:0.1\n"+
-		"tifilesystem:0.1\n"+
-		"timedia:0.1\n"+
-		"tidesktop:0.1\n"+
-		"tiprocess:0.1\n";
+		"appid: "+id+"\n";
 		
 		var mf = TFS.getFile(outdir,'manifest');
 		mf.write(manifest);
+		
+		var gi = TFS.getFile(outdir,'.gitignore');
+		gi.write('dist\ntmp\n');
+		
+		var dist = TFS.getFile(outdir,'dist');
+		dist.createDirectory();
 		
 		return {
 			basedir: outdir,

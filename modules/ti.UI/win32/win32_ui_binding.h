@@ -36,8 +36,11 @@ namespace ti
 		long GetSystemIdleTime();
 
 	private:
-		//static SharedBoundList SelectDirectory(SharedBoundObject properties);
-		//static void ParseStringNullSeparated(const char *s, std::vector<std::string> &tokens);
+		static std::vector<std::string> SelectDirectory(
+			bool multiple,
+			std::string& path,
+			std::string& file);
+		static void ParseStringNullSeparated(const char *s, std::vector<std::string> &tokens);
 	};
 }
 

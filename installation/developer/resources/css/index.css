@@ -7,6 +7,7 @@ body
 	font-size:12px;
 	min-width:700px;
 	padding-bottom:200px;
+	overflow:hidden;
 
 }
 
@@ -64,8 +65,21 @@ input:focus
 }
 #irc
 {
-	width:100%;height:100%;min-height:50px;font-family:courier;background-color:#444;color:yellow;font-size:12px;overflow:auto;
+	height:100%;min-height:50px;font-family:courier;
+	background-color:#111;color:yellow;font-size:11px;overflow:auto;
+	padding:3px;
 }
+#irc_users
+{
+	width:100%;height:100%;
+	min-height:50px;
+	font-family:courier;
+	background-color:#444;
+	color:#ccc;
+	font-size:11px;
+	overflow:auto;
+}
+
 /*********************
  BUTTON CLASSES
 **********************/
@@ -286,7 +300,21 @@ input:focus
 {
 	background-color:green;
 }
-
+.message_indicator
+{
+	-webkit-border-bottom-right-radius: 6px;
+	-webkit-border-bottom-left-radius: 6px;
+	-webkit-border-top-right-radius: 6px;
+	-webkit-border-top-left-radius: 6px;
+	padding:1px;
+	padding-left:4px;
+	padding-right:5px;
+	background-color:#ff0000;
+	color:#fff;
+	margin-left:4px;
+	font-size:11px;
+	
+}
 .manage_right
 {
 	float:left;

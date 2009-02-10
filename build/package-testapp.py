@@ -5,6 +5,7 @@
 
 import os, os.path as path, shutil, glob
 import distutils.dir_util as dir_util
+import sys
 
 app_name = 'titanium_testapp'
 version = '0.2'
@@ -17,9 +18,20 @@ modules = [
     'tifilesystem', 'timedia', 'tidesktop', 'tiprocess',
 ]
 
-osname = 'win32'
-lib_ext = '.dll'
-exe_ext = '.exe'
+lib_prefix = ''
+
+if sys.platform == 'win32':
+	osname = 'win32'
+	lib_ext = '.dll'
+	exe_ext = '.exe'
+	lib_dir = 'bin'
+elif sys.platform == 'linux2':
+	osname = 'linux'
+	lib_ext = '.so'
+	exe_ext = ''
+	lib_prefix = 'lib'
+	lib_dir = 'lib'
+	third_party.append('libcurl')
 
 #if not build.is_linux():
 #    modules.append('tigrowl')
@@ -45,17 +57,20 @@ for d in [app_dir, runtime_dir, modules_dir]:
     
 # Gather all runtime third-party libraries
 for lib in runtime_libs:
-    f = path.join(build_dir, lib + lib_ext)
+    f = path.join(build_dir, lib_prefix + lib + lib_ext)
     shutil.copy(f, runtime_dir)
 
 for tp in third_party:
-    pattern = '%s/%s/bin/*' % (third_party_dir, tp)
-    for d in glob.glob(pattern):
+    lib_files_dir = path.join(third_party_dir, tp)
+    lib_files_dir = path.join(lib_files_dir, lib_dir)
+    lib_files_dir = path.join(lib_files_dir, '*')
+    for d in glob.glob(lib_files_dir):
         shutil.copy(d, runtime_dir)
         
 # Gather all module libs
 for m in modules:
-    mlib = path.join('%s/%smodule.dll' % (build_dir, m))
+    mlib = lib_prefix + m + 'module' + lib_ext
+    mlib = path.join(build_dir, mlib)
     out_dir = '%s/%s' % (modules_dir, m)
     os.makedirs(out_dir)
     shutil.copy(mlib, out_dir)
