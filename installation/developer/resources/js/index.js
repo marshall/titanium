@@ -351,7 +351,7 @@ setTimeout(function()
 				case 'NOTICE':
 				case 'PRIVMSG':
 				{
-					if (nick)
+					if (nick && nick!='NickServ')
 					{
 						if (TiDeveloper.currentState != 'interact') TiDeveloper.ircMessageCount ++;
 						$('#irc_message_count').html(TiDeveloper.ircMessageCount);
