@@ -8,66 +8,86 @@ TiDeveloper.init = false;
 
 // holder var for all projects
 TiDeveloper.ProjectArray = [];
+var db = openDatabase("TiDeveloper","1.0");
+var highestId = 0;
 
-
-function makeDate()
+function createRecord(name,dir)
 {
-	var d = new Date;
-	return (d.getMonth() + 1) + '/' + d.getDate() + '/' + d.getFullYear();
+	var record = {
+		name: name,
+		dir: dir,
+		id: highestId++,
+		date: new Date().getTime()
+	};
+	TiDeveloper.ProjectArray.push(record);
+    db.transaction(function (tx) 
+    {
+        tx.executeSql("INSERT INTO Projects (id, timestamp, name, directory) VALUES (?, ?, ?, ?)", [record.id, record.date, record.name, record.dir]);
+    });
 }
 
-(function()
+function loadProjects()
 {
-	//TODO: switch this to SQL ASAP
-	if (Titanium.App.Properties.hasProperty("project_count"))
+	db.transaction(function(tx) 
 	{
-		var count = Titanium.App.Properties.getInt("project_count");
-		for (var c=0;c<count;c++)
+        tx.executeSql("SELECT id, timestamp, name, directory FROM Projects", [], function(tx, result) 
 		{
-			var project = Titanium.App.Properties.getList("project."+c);
-			TiDeveloper.ProjectArray.push({
-				id:project[0],
-				name:project[1],
-				date:project[2],
-				dir:project[3]
-			});
-		}
-	}
-})();
-
-function save()
-{
-	Titanium.App.Properties.setInt("project_count",TiDeveloper.ProjectArray.length);
-	for (var c=0;c<TiDeveloper.ProjectArray.length;c++)
-	{
-		var project = TiDeveloper.ProjectArray[c];
-		var entry = [String(project.id),project.name,project.date,String(project.dir)];
-		Titanium.App.Properties.setList("project."+c,entry);
-	}
+            for (var i = 0; i < result.rows.length; ++i) {
+                var row = result.rows.item(i);
+				TiDeveloper.ProjectArray.push({
+					id: row['id'],
+					date: row['timestamp'],
+					name: row['name'],
+					dir: row['directory']
+				});
+				if (highestId < row['id'])
+				{
+					highestId = row['id'];
+				}
+            }
+        }, function(tx, error) {
+            alert('Failed to retrieve projects from database - ' + error.message);
+            return;
+        });
+	});	
 }
+
+db.transaction(function(tx) 
+{
+   tx.executeSql("SELECT COUNT(*) FROM Projects", [], function(result) 
+   {
+       loadProjects();
+   }, function(tx, error) 
+   {
+       tx.executeSql("CREATE TABLE Projects (id REAL UNIQUE, timestamp REAL, name TEXT, directory TEXT)", [], function(result) 
+	   { 
+          loadProjects(); 
+       });
+   });
+});
 
 //
-//  create.project mock service
+//  create.project service
 //
 $MQL('l:create.project.request',function(msg)
 {
-	//TODO: do we check for existence of directory and fail?
-	var result = Titanium.Project.create(msg.payload.project_name,msg.payload.project_location);
-	if (result.success)
+	try
 	{
-		TiDeveloper.ProjectArray.push({
-			id: String(TiDeveloper.ProjectArray.length),
-			name: result.name,
-			date: makeDate(),
-			dir: String(result.basedir)
-		});
-		$MQ('l:create.project.response',{result:'success'});
-		save();
-		$MQ('l:project.list.response',{page:1,totalRecords:TiDeveloper.ProjectArray.length,'rows':TiDeveloper.ProjectArray})
+		var result = Titanium.Project.create(msg.payload.project_name,msg.payload.project_location);
+		if (result.success)
+		{
+			createRecord(result.name,result.basedir);
+			$MQ('l:create.project.response',{result:'success'});
+			$MQ('l:project.list.response',{page:1,totalRecords:TiDeveloper.ProjectArray.length,'rows':TiDeveloper.ProjectArray})
+		}
+		else
+		{
+			$MQ('l:create.project.response',{result:'error',message:result.message});
+		}
 	}
-	else
+	catch(E)
 	{
-		$MQ('l:create.project.response',{result:'error',message:result.message});
+		alert('Exception = '+E);
 	}
 });
 
@@ -228,13 +248,39 @@ $MQL('l:delete.project.request',function(msg)
 //
 $MQL('l:project.search.request',function(msg)
 {
-	TiDeveloper.ProjectArray = [
-		{id:0,name:'Project 1',date:'11/10/2009'},
-		{id:1,name:'Project 2',date:'10/12/2009'},
-		{id:2,name:'Project 3',date:'10/12/2009'}
-	];
-	$MQ('l:project.search.response',{totalRecords:3,'rows':TiDeveloper.ProjectArray})
-	
+	var q = msg.payload.search_value;
+
+	db.transaction(function(tx) 
+	{
+		try
+		{
+	        tx.executeSql("SELECT id, timestamp, name, directory FROM Projects where name LIKE 'foobar'", [], function(tx, result) 
+			{
+				try
+				{
+					var results = [];
+		            for (var i = 0; i < result.rows.length; ++i) {
+		                var row = result.rows.item(i);
+						results.push({
+							id: row['id'],
+							date: row['timestamp'],
+							name: row['name'],
+							dir: row['directory']
+						});
+					}
+					$MQ('l:project.search.response',{totalRecords:results.length,'rows':results});
+				}
+				catch (EX)
+				{
+					alert("EXCEPTION = "+EX);
+				}
+			});
+		}
+		catch (E)
+		{
+			alert("E="+e);
+		}
+	});
 })
 
 //
@@ -271,11 +317,6 @@ setTimeout(function()
 				case '366':
 				{
 					var users = irc.getUsers('#titanium_dev')
-					alert('number of users = '+users.length);
-					for (var i=0;i<users.length;i++)
-					{
-						alert(users[i].name)
-					}
 				}
 				case 'JOIN':
 				{

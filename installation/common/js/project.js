@@ -12,8 +12,7 @@ Titanium.Project =
 		if (i < 0) return null;
 		var key = jQuery.trim(entry.substring(0,i));
 		var value = jQuery.trim(entry.substring(i+1));
-		return 
-		{
+		return {
 			key: key,
 			value: value
 		};
@@ -43,7 +42,6 @@ Titanium.Project =
 	},
 	bundle:function()
 	{
-		
 	},
 	create:function(name,dir)
 	{
