@@ -114,7 +114,16 @@ namespace ti
 	void Win32MenuItemImpl::Enable()
 	{
 	}
+
 	void Win32MenuItemImpl::Disable()
+	{
+	}
+
+	void Win32MenuItemImpl::SetLabel(std::string label)
+	{
+	}
+
+	void Win32MenuItemImpl::SetIcon(std::string icon_path)
 	{
 	}
 

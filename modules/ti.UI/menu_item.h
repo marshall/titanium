@@ -12,7 +12,7 @@
 
 namespace ti
 {
-	class MenuItem : public StaticBoundList
+	class MenuItem : public AccessorBoundList
 	{
 
 	public:
@@ -31,7 +31,6 @@ namespace ti
 		void _IsSeparator(const ValueList& args, SharedValue result);
 		void _IsItem(const ValueList& args, SharedValue result);
 		void _IsSubMenu(const ValueList& args, SharedValue result);
-
 
 		virtual SharedValue AddSeparator() = 0;
 		virtual SharedValue AddItem(SharedValue label,
@@ -56,6 +55,11 @@ namespace ti
 		virtual void Disable() = 0;
 		void _Enable(const ValueList& args, SharedValue result);
 		void _Disable(const ValueList& args, SharedValue result);
+
+		void _SetLabel(const ValueList& args, SharedValue result);
+		void _SetIcon(const ValueList& args, SharedValue result);
+		virtual void SetLabel(std::string label) = 0;
+		virtual void SetIcon(std::string icon_path) = 0;
 
 		const char* GetLabel();
 		const char* GetIconURL();
