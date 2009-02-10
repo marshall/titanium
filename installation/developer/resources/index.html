@@ -36,11 +36,11 @@
 			<div class="button2">Create Project</div>
 		</div>
 		<div class="button1" style="display:inline-block;width:150px" 
-			on="click then l:menu[val=api] and add[class=active] or l:menu[val!=tv] then remove[class=active]">
+			on="click then l:menu[val=api] and add[class=active] or l:menu[val!=api] then remove[class=active]">
 			<div class="button2">API Documentation</div>
 		</div>
 		<div class="button1" style="display:inline-block;width:150px" 
-			on="click then l:menu[val=interact] and add[class=active] or l:menu[val!=social] then remove[class=active]">
+			on="click then l:menu[val=interact] and add[class=active] or l:menu[val!=interact] then remove[class=active]">
 			<div class="button2">Interact <span id="irc_message_count" class="message_indicator"></span></div>
 		</div>
 		<div style="clear:both"></div>
@@ -67,11 +67,9 @@
 					</div>
 				</div>
 				<div style="margin-top:10px;">
-					<input type="text" value="" id="irc_msg" style="float:left;margin-right:10px;width:80%"
-						on="keyup[enter] then click[id=irc_send]"/>
-					<div class="button1" style="float:left;" id="irc_send">
-						<div class="button2">Send</div>
-					</div>
+					<input type="text" value="type message and hit enter" id="irc_msg" 
+						style="float:left;margin-right:10px;width:100%"
+						on="click then clear or keyup[enter] then l:send.irc.msg"/>
 				</div>
 			</div>
 		</div>

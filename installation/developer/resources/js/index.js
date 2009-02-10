@@ -416,7 +416,7 @@ setTimeout(function()
 		});
 
 		irc.join("#titanium_dev");
-		$('#irc_send').click(function()
+		$MQL('l:send.irc.msg',function()
 		{
 			irc.send('#titanium_dev',$('#irc_msg').val());
 			$('#irc').append('<div style="color:#fff">'+myNick + ': ' + $('#irc_msg').val() + '</div>');
