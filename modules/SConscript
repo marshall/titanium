@@ -2,7 +2,7 @@
 Import('build')
 import os
 
-modules = ['ti.App', 'ti.UI', 'ti.Network',
+modules = ['ti.App', 'ti.UI', #'ti.Network',
            'ti.Filesystem', 'ti.Media', 'ti.Desktop',
            'ti.Platform', 'ti.Process']
 
