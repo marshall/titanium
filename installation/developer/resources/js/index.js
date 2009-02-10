@@ -402,6 +402,7 @@ setTimeout(function()
 					break;
 					
 				}
+				case 'QUIT':
 				case 'PART':
 				{
 					$('#irc').append('<div style="color:#aaa">' + nick + ' has left the room </div>');
@@ -409,7 +410,6 @@ setTimeout(function()
 					irc_count--;
 					$MQ('l:online.count',{count:irc_count});
 					break;
-					
 				}
 			}
 			$('#irc').get(0).scrollTop = $('#irc').get(0).scrollHeight;
