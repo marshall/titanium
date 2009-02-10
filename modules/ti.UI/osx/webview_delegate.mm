@@ -690,8 +690,27 @@
 
 - (NSUInteger)webView:(WebView *)wv dragSourceActionMaskForPoint:(NSPoint)point
 {
-	NSLog(@"dragSourceActionMaskForPoint");
 	return WebDragSourceActionAny;
+}
+
+- (NSArray *)webView:(WebView *)sender contextMenuItemsForElement:(NSDictionary *)element defaultMenuItems:(NSArray *)defaultMenuItems
+{
+	//TODO: finish implementation of menu
+	
+	if (!host->IsDebugMode())
+	{
+		for (int c=0;c<(int)[defaultMenuItems count];c++)
+		{
+			NSMenuItem *item = [defaultMenuItems objectAtIndex:c];
+			// in non-DEBUG mode, we remove by default the Reload menu action
+			if ([item tag] == 12 && [[item title] isEqualToString:@"Reload"])
+			{
+				[item setHidden:YES];
+				break;
+			}
+		}
+	}
+	return defaultMenuItems;
 }
 
 #pragma mark -
