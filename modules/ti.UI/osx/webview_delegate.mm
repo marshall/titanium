@@ -761,6 +761,15 @@
 	// }
 }
 
+// return whether or not quota has been reached for a db (enabling db support)
+- (void)webView:(WebView*)webView	frame:(WebFrame*)frame
+	exceededDatabaseQuotaForSecurityOrigin:(id)origin
+	database:(NSString*)dbName
+{
+	const unsigned long long defaultQuota = 5 * 1024 * 1024;
+	
+	[origin performSelector:@selector(setQuota:) withObject:[NSNumber numberWithInt:defaultQuota]];
+}
 @end
 
 
