@@ -11,13 +11,15 @@
 <!-- ADJUST WINDOW HEIGHT BASED ON CURRENT STATE -->
 <body  on="l:menu[val=create] then script[Titanium.UI.currentWindow.setHeight(380)] or
 		  l:menu[val=manage] then script[Titanium.UI.currentWindow.setHeight(500)] if expr[ $('#project_count_hidden').val() != 0] or
-		  l:menu[val=manage] then script[Titanium.UI.currentWindow.setHeight(160)] if expr[ $('#project_count_hidden').val() == 0] or
+		  l:menu[val=api] then script[Titanium.UI.currentWindow.setHeight(160)] if expr[ $('#project_count_hidden').val() == 0] or
 		  l:cancel[val=project] then script[Titanium.UI.currentWindow.setHeight(160)]
 		or l:menu[val=interact] then script[Titanium.UI.currentWindow.setHeight(650)]">
 	<!-- HEADER MENU -->
 	<div class="menu">
 		<div id="project_count">You have no projects  </div>
-		<div id="online_count"> developers on-line: <span style="color:#809eb3">5</span>  </div>
+		<div id="online_count"> developers on-line: 
+			<span style="color:#809eb3" on="l:online.count then value[count]">loading...</span>  
+		</div>
 	</div>
 	
 	<!-- CONTENT -->
@@ -34,12 +36,12 @@
 			<div class="button2">Create Project</div>
 		</div>
 		<div class="button1" style="display:inline-block;width:150px" 
-			on="click then l:menu[val=tv] and add[class=active] or l:menu[val!=tv] then remove[class=active]">
+			on="click then l:menu[val=api] and add[class=active] or l:menu[val!=tv] then remove[class=active]">
 			<div class="button2">API Documentation</div>
 		</div>
 		<div class="button1" style="display:inline-block;width:150px" 
 			on="click then l:menu[val=interact] and add[class=active] or l:menu[val!=social] then remove[class=active]">
-			<div class="button2">Interact</div>
+			<div class="button2">Interact <span id="irc_message_count" class="message_indicator"></span></div>
 		</div>
 		<div style="clear:both"></div>
 
@@ -49,19 +51,29 @@
 
 		<div style="display:none;margin-bottom:20px;min-height:90%"
 			on="l:menu[val=interact] then effect[fadeIn] else hide">
-			<div class="infobox">
-				<div class="content">
-					<div id="irc" ></div>
+			<div style="float:left;width:25%;margin-right:20px">
+				<div class="infobox">
+					<div class="content">
+						<div id="irc_users" ></div>
+					</div>
 				</div>
-			</div>
-			<div style="margin-top:10px;">
-				<input type="text" value="" id="irc_msg" style="float:left;margin-right:10px;width:80%"
-					on="keyup[enter] then click[id=irc_send]"/>
-				<div class="button1" style="float:left;" id="irc_send">
-					<div class="button2">Send</div>
-				</div>
+				
 			</div>
 
+			<div style="float:left;width:70%">
+				<div class="infobox">
+					<div class="content">
+						<div id="irc" ></div>
+					</div>
+				</div>
+				<div style="margin-top:10px;">
+					<input type="text" value="" id="irc_msg" style="float:left;margin-right:10px;width:80%"
+						on="keyup[enter] then click[id=irc_send]"/>
+					<div class="button1" style="float:left;" id="irc_send">
+						<div class="button2">Send</div>
+					</div>
+				</div>
+			</div>
 		</div>
 
 		<!-- CREATE A NEW PROJECT -->
@@ -391,8 +403,6 @@
 
 	</div>
 	
-	<!-- POWERED BY LOGO -->
-	<div id="powered_by" ></div>
-	
+
 </body>
 </html>

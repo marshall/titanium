@@ -11,6 +11,42 @@ TiDeveloper.ProjectArray = [];
 var db = openDatabase("TiDeveloper","1.0");
 var highestId = 0;
 
+// State Machine for UI tab state
+TiDeveloper.stateMachine = new App.StateMachine('ui_state');
+TiDeveloper.stateMachine.addState('manage','l:menu[val=manage]',false);
+TiDeveloper.stateMachine.addState('create','l:menu[val=create]',false);
+TiDeveloper.stateMachine.addState('api','l:menu[val=api]',false);
+TiDeveloper.stateMachine.addState('interact','l:menu[val=interact]',true);
+TiDeveloper.currentState = null;
+TiDeveloper.stateMachine.addListener(function()
+{
+	var state = this.getActiveState();
+	if (state != 'interact')
+	{
+		TiDeveloper.startIRCTrack();
+	}
+	else
+	{
+		TiDeveloper.stopIRCTrack();
+		
+	}
+});
+TiDeveloper.ircMessageCount = 0;
+TiDeveloper.startIRCTrack = function()
+{
+	// TiDeveloper.ircMessageCount = 0;
+	// $('#irc_message_count').html('');
+	$('#irc_message_count').css('display','inline');
+	
+};
+TiDeveloper.stopIRCTrack = function()
+{
+	TiDeveloper.ircMessageCount = 0;
+	$('#irc_message_count').css('display','none');
+	$('#irc_message_count').html('');
+	
+};
+
 function createRecord(name,dir)
 {
 	var record = {
@@ -103,6 +139,7 @@ $MQL('l:page.data.request',function(msg)
 	var data = TiDeveloper.getProjectPage(rowsPerPage,page);
 	$MQ('l:project.list.response',{page:page,totalRecords:TiDeveloper.ProjectArray.length,'rows':data})
 });
+
 TiDeveloper.formatDirectory =function(dir)
 {
 	var dirStr = dir
@@ -301,7 +338,7 @@ setTimeout(function()
 		var myName = Titanium.Platform.username+'1';
 		var myNameStr = Titanium.Platform.username+'1';
 
-		$('#irc').append('<div style="color:#111">you are joining the room. one moment...</div>');
+		$('#irc').append('<div style="color:#aaa">you are joining the room. one moment...</div>');
 		
 		var irc = Titanium.Network.createIRCClient();
 		irc.connect("irc.freenode.net",6667,myNick,myName,myNameStr,String(new Date().getTime()),function(cmd,channel,data,nick)
@@ -311,32 +348,58 @@ setTimeout(function()
 			{
 				case 'PRIVMSG':
 				{
-					$('#irc').append('<div style="color:yellow">' + nick + ': <span style="color:#fff">' + channel.substring(1,channel.length) + '</span></div>');
+					TiDeveloper.ircMessageCount ++;
+					$('#irc_message_count').html(TiDeveloper.ircMessageCount);
+					
+					$('#irc').append('<div style="color:yellow">' + nick + ': ' + channel.substring(1,channel.length) + '</div>');
 					break;
 				}
 				case '366':
-				{
+				{					
 					var users = irc.getUsers('#titanium_dev')
+					$MQ('l:online.count',{count:users.length})
+					for (var i=0;i<users.length;i++)
+					{
+						if (users[i].operator == true)
+						{
+							$('#irc_users').append('<div class="'+users[i].name+'" style="color:#457db3">(op) '+users[i].name+'</div>');
+						}
+						else if (users[i].voice==true)
+						{
+							$('#irc_users').append('<div class="'+users[i].name+'" style="color:#457db3">(v) '+users[i].name+'</div>');
+						}
+						else
+						{
+							$('#irc_users').append('<div class="'+users[i].name+'">'+users[i].name+'</div>');
+						}
+					}
 				}
 				case 'JOIN':
 				{
+					if (nick.indexOf('freenode.net') != -1)
+					{
+						continue;
+					}
+					
 					if (nick == myNick)
 					{
-						$('#irc').append('<div style="color:#111"> you are now in the room. </div>');
+						$('#irc').append('<div style="color:#aaa"> you are now in the room. </div>');
 						break
 					}
 					$('#irc').append('<div style="color:#aaa">' + nick + ' has joined the room </div>');
+					$('#irc_users').append('<div class="'+nick+'" style="color:#457db3">'+nick+'</div>');
 					break;
 					
 				}
 				case 'PART':
 				{
 					$('#irc').append('<div style="color:#aaa">' + nick + ' has left the room </div>');
+					$('.'+nick).html('');
 					break;
 					
 				}
 			}
-			$('#irc').append('<div>'+cmd+"=>"+channel+':'+data+ ' ' + nick + '</div>');
+//			$('#irc').append('<div>'+cmd+"=>"+channel+':'+data+ ' ' + nick + '</div>');
 			$('#irc').get(0).scrollTop = $('#irc').get(0).scrollHeight;
 		});
 
@@ -344,7 +407,7 @@ setTimeout(function()
 		$('#irc_send').click(function()
 		{
 			irc.send('#titanium_dev',$('#irc_msg').val());
-			$('#irc').append('<div><span style="color:#fff">'+myNick + ':</span> ' + $('#irc_msg').val() + '</div>');
+			$('#irc').append('<div style="color:#fff">'+myNick + ': ' + $('#irc_msg').val() + '</div>');
 			$('#irc_msg').val('');
 			$('#irc').get(0).scrollTop = $('#irc').get(0).scrollHeight;
 
