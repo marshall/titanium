@@ -57,6 +57,8 @@ namespace ti
 			args.push_back(irc_command ? Value::NewString(irc_command) : Value::Null);
 			args.push_back(param ? Value::NewString(param) : Value::Null);
 			args.push_back(data->target ? Value::NewString(data->target): Value::Null);
+			args.push_back(data->nick ? Value::NewString(data->nick): Value::Null);
+
 			binding->host->InvokeMethodOnMainThread(binding->callback,args);
 		}
 		return 0;
