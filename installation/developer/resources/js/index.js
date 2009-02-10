@@ -291,7 +291,7 @@ $MQL('l:project.search.request',function(msg)
 	{
 		try
 		{
-	        tx.executeSql("SELECT id, timestamp, name, directory FROM Projects where name LIKE 'foobar'", [], function(tx, result) 
+	        tx.executeSql("SELECT id, timestamp, name, directory FROM Projects where name LIKE '%' || ? || '%'", [q], function(tx, result) 
 			{
 				try
 				{
