@@ -52,13 +52,14 @@ namespace ti
 		virtual void SetDockMenu(SharedPtr<MenuItem>) {} 
 		virtual void SetBadge(SharedString badge_path) {}
 
-		virtual std::vector<std::string> OpenFiles(
+		virtual void OpenFiles(
 			bool multiple,
 			bool files,
 			bool directories,
 			std::string& path,
 			std::string& file,
-			std::vector<std::string>& types) = 0;
+			std::vector<std::string>& types,
+			std::vector<std::string>& results) = 0;
 
 		virtual long GetSystemIdleTime() = 0;
 
