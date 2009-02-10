@@ -17,7 +17,7 @@
 		or l:menu[val=interact] then script[Titanium.UI.currentWindow.setHeight(650)]">
 	<!-- HEADER MENU -->
 	<div class="menu">
-		<div id="project_count">You have no projects  </div>
+		<div id="project_count" on="l:project.list.response then value[count]">loading...</div>
 		<div id="online_count"> developers on-line: 
 			<span style="color:#809eb3" on="l:online.count then value[count]">loading...</span>  
 		</div>

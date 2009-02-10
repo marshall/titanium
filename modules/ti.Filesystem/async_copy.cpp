@@ -59,22 +59,10 @@ namespace ti
 #ifdef OS_OSX
 				NSString* originalPath = [NSString stringWithCString:src.toString().c_str()];
 				NSString* destPath = [NSString stringWithCString:dest.toString().c_str()];
-
-				NSMutableString *source = [NSMutableString stringWithString:@"tell application \"Finder\"\n"];
-
-				[source appendFormat:@"set theAlias to make alias at POSIX file \"%@\" to POSIX file \"%@\"\n", NSTemporaryDirectory(), [originalPath stringByExpandingTildeInPath]];
-				[source appendFormat:@"get POSIX path of (theAlias as string)\n"];
-				[source appendFormat:@"end tell"];
-				
-				NSAppleScript *script = [[[NSAppleScript alloc] initWithSource:source] autorelease];
-
-				NSDictionary *error = nil;
-				NSAppleEventDescriptor *desc = [script executeAndReturnError:&error];
-
-				if (desc!=nil)
-				{
-					[[NSFileManager defaultManager] movePath:[desc stringValue] toPath:[destPath stringByExpandingTildeInPath] handler:nil];
-				}
+				BOOL worked = [[NSFileManager defaultManager] createSymbolicLinkAtPath:destPath pathContent:originalPath];
+#ifdef DEBUG
+				NSLog(@"SYMLINK:%@=>%@ (%d)",originalPath,destPath,worked);
+#endif
 #else
 				int result = link(src.toString().c_str(),dest.toString().c_str());
 				if (result != 0)

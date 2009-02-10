@@ -18,7 +18,7 @@ namespace ti
 #ifdef OS_OSX
 		// in OSX, we need to expand ~ in paths to their absolute path value
 		// we do that with a nifty helper method in NSString
-		this->filename = [[[NSString stringWithCString:filename.c_str()] stringByExpandingTildeInPath] UTF8String];
+		this->filename = [[[NSString stringWithCString:filename.c_str()] stringByExpandingTildeInPath] fileSystemRepresentation];
 #else
 		this->filename = filename;
 #endif
@@ -609,43 +609,47 @@ namespace ti
 	}
 	void File::CreateShortcut(const ValueList& args, SharedValue result)
 	{
-		if (args.size()!=1)
+		if (args.size()<1)
 		{
 			throw ValueException::FromString("createShortcut takes a parameter");
 		}
 		std::string from = this->filename;
-		std::string to = FileSystemUtils::GetFileName(args.at(0));
+		std::string to = args.at(0)->IsString() ? args.at(0)->ToString() : FileSystemUtils::GetFileName(args.at(0));
+
 #ifdef OS_OSX
 		NSString* originalPath = [NSString stringWithCString:from.c_str()];
 		NSString* destPath = [NSString stringWithCString:to.c_str()];
-		BOOL worked = [[NSFileManager defaultManager] createSymbolicLinkAtPath:destPath pathContent:originalPath];
-		NSLog(@"SYMLINK:%@=>%@ (%d)",originalPath,destPath,worked);
-		result->SetBool(worked);
+		NSString* cwd = nil;
+		NSFileManager* fm = [NSFileManager defaultManager];
+
+		// support 2nd argument as a relative path to symlink from
+		if (args.size()>1)
+		{
+			cwd = [fm currentDirectoryPath];
+			NSString *p = [NSString stringWithCString:FileSystemUtils::GetFileName(args.at(1))];
+			BOOL isDirectory = NO;
+			if ([fm fileExistsAtPath:p isDirectory:&isDirectory])
+			{
+				if (!isDirectory)
+				{
+					// trim it off to see if it's a directory
+					p = [p stringByDeletingLastPathComponent];
+				}
+				[fm changeCurrentDirectoryPath:p];
+				originalPath = [originalPath stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"%@/",p] withString:@""];
+			}
+		}
 		
-		// 
-		// // http://www.mail-archive.com/cocoa-dev@lists.apple.com/msg18273.html
-		// 
-		// NSMutableString *source = [NSMutableString stringWithString:@"tell application \"Finder\"\n"];
-		// 
-		// [source appendFormat:@"set theAlias to make alias at POSIX file \"%@\" to POSIX file \"%@\"\n", NSTemporaryDirectory(), [originalPath stringByExpandingTildeInPath]];
-		// [source appendFormat:@"get POSIX path of (theAlias as string)\n"];
-		// [source appendFormat:@"end tell"];
-		// 
-		// NSAppleScript *script = [[[NSAppleScript alloc] initWithSource:source] autorelease];
-		// 
-		// NSDictionary *error = nil;
-		// NSAppleEventDescriptor *desc = [script executeAndReturnError:&error];
-		// 
-		// if (desc==nil)
-		// {
-		// 	//TODO: throw exception?
-		// 	result->SetBool(false);
-		// }
-		// else
-		// {
-		// 	BOOL worked = [[NSFileManager defaultManager] movePath:[desc stringValue] toPath:[destPath stringByExpandingTildeInPath] handler:nil];
-		// 	result->SetBool(worked);
-		// }
+		int rc = symlink([originalPath UTF8String],[destPath UTF8String]);
+		BOOL worked = rc >= 0;
+#ifdef DEBUG
+		NSLog(@"++++ SYMLINK:%@=>%@ (%d)",originalPath,destPath,worked);
+#endif
+		result->SetBool(worked);
+		if (cwd)
+		{
+			[[NSFileManager defaultManager] changeCurrentDirectoryPath:cwd];
+		}
 #elif OS_WIN32
 		HRESULT hResult;
 		IShellLink* psl;
