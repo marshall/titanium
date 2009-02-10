@@ -5,6 +5,42 @@ var TFS = Titanium.Filesystem;
 
 Titanium.Project = 
 {
+	parseEntry:function(entry)
+	{
+		if (entry[0]=='#' || entry[0]==' ') return null;
+		var i = entry.indexOf(':');
+		if (i < 0) return null;
+		var key = jQuery.trim(entry.substring(0,i));
+		var value = jQuery.trim(entry.substring(i+1));
+		return 
+		{
+			key: key,
+			value: value
+		};
+	},
+	getManifest:function(mf)
+	{
+		var manifest = TFS.getFile(mf);
+		if (!manifest.isFile())
+		{
+			return {
+				success:false,
+				message:"Couldn't find manifest!"
+			};
+		}
+		var result = {success:true,file:manifest,map:{}};
+		var line = manifest.readLine(true);
+		var entry = this.parseEntry(line);
+		if (entry) result.map[entry.key]=entry.value;
+		while (true)
+		{
+			line = manifest.readLine();
+			if(!line) break;
+			entry = this.parseEntry(line);
+			if (entry) result.map[entry.key]=entry.value;
+		}
+		return result;
+	},
 	bundle:function()
 	{
 		
