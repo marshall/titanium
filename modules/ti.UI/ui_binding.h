@@ -39,6 +39,9 @@ namespace ti
 		virtual SharedPtr<TrayItem> AddTray(SharedString icon_path,
 		                                    SharedBoundMethod cb) = 0;
 
+		void _OpenFiles(const ValueList& args, SharedValue result);
+		void _GetSystemIdleTime(const ValueList& args, SharedValue result);
+
 		/* OS X specific callbacks */
 		void _SetDockIcon(const ValueList& args, SharedValue result);
 		void _SetDockMenu(const ValueList& args, SharedValue result);
@@ -48,6 +51,16 @@ namespace ti
 		virtual void SetDockIcon(SharedString icon_path) {} 
 		virtual void SetDockMenu(SharedPtr<MenuItem>) {} 
 		virtual void SetBadge(SharedString badge_path) {}
+
+		virtual std::vector<std::string> OpenFiles(
+			bool multiple,
+			bool files,
+			bool directories,
+			std::string path,
+			std::string file,
+			std::vector<std::string> types) = 0;
+
+		virtual long GetSystemIdleTime() = 0;
 
 	};
 }

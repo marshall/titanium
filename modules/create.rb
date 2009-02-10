@@ -223,7 +223,7 @@ Import("tiBuild")
 Import('build')
 
 env = tiBuild.env.Clone();
-env.Append(CPPDEFINES = {'TITANIUM_#{header_define}_API_EXPORT' : 1})
+env.Append(CPPDEFINES = ('TITANIUM_#{header_define}_API_EXPORT, 1))
 env.Append(CPPPATH = ['#kroll'])
 
 

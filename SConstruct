@@ -41,14 +41,14 @@ build.env.Append(LIBPATH=[build.dir])
 
 # debug build flags
 if ARGUMENTS.get('debug', 0):
-	build.env.Append(CPPDEFINES = {'DEBUG' : 1})
+	build.env.Append(CPPDEFINES = ('DEBUG', 1))
 	debug = 1
 	if not build.is_win32():
 		build.env.Append(CCFLAGS = ['-g'])  # debug
 	else:
 		build.env.Append(CCFLAGS = ['/Z7','/GR'])  # max debug, C++ RTTI
 else:
-	build.env.Append(CPPDEFINES = {'NDEBUG' : 1 })
+	build.env.Append(CPPDEFINES = ('NDEBUG', 1 ))
 	debug = 0
 	if not build.is_win32():
 		build.env.Append(CCFLAGS = ['-O9']) # max optimizations
@@ -57,7 +57,7 @@ else:
 
 # turn on special debug printouts for reference counting
 if ARGUMENTS.get('debug_refcount', 0) == 1:
-	build.env.Append(CPPDEFINES = {'DEBUG_REFCOUNT': 1})
+	build.env.Append(CPPDEFINES = ('DEBUG_REFCOUNT', 1))
 
 
 if build.is_win32():
@@ -86,9 +86,6 @@ Export('build')
 if ARGUMENTS.get('package',0):
 	print "building packaging ..."
 	SConscript('installation/runtime/SConscript')	
-elif ARGUMENTS.get('testapp',0):
-	print "building test app ..."
-	SConscript('build/testapp/SConscript')
 else:
 	SConscript('kroll/SConscript', exports='debug')
 

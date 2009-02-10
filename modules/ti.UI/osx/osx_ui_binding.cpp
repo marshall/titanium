@@ -40,6 +40,19 @@ namespace ti
 	{
 	}
 
+	void OSXUIBinding::SetDockIcon(SharedString icon_path)
+	{
+
+	}
+
+	void OSXUIBinding::SetDockMenu(SharedPtr<MenuItem>)
+	{
+	}
+
+	void OSXUIBinding::SetBadge(SharedString badge_path)
+	{
+	}
+
 	void OSXUIBinding::SetIcon(SharedString icon_path)
 	{
 	}
@@ -52,19 +65,115 @@ namespace ti
 		return item;
 	}
 
-	void OSXUIBinding::SetDockIcon(SharedString icon_path)
+	std::vector<std::string> OSXUIBinding::OpenFiles(
+		bool multiple,
+		bool files,
+		bool directories,
+		std::string path,
+		std::string file,
+		std::vector<std::string> types)
 	{
+		std::vector<std::string> results;
 
+		NSOpenPanel* openDlg = [NSOpenPanel openPanel];
+		[openDlg setCanChooseFiles:YES];
+		[openDlg setCanChooseDirectories:NO]; 
+		[openDlg setAllowsMultipleSelection:NO];
+		[openDlg setResolvesAliases:YES];
+		
+		NSMutableArray *filetypes = nil;
+		NSString *begin = nil, *filename = nil;
+		[openDlg setAllowsMultipleSelection:multiple];
+		[openDlg setCanChooseFiles:files];
+		[openDlg setCanChooseDirectories:dirs->ToBool()];
+		filename = [NSString stringWithCString:file];
+		begin = [NSString stringWithCString:path];
+
+		for (int t = 0; t < types.size(); t++)
+		{
+			const char *s = types.at(t).c_str();
+			[filetypes addObject:[NSString stringWithCString:s]];
+		}
+
+		SharedBoundList results = new StaticBoundList();
+		if ( [openDlg runModalForDirectory:begin file:filename types:filetypes] == NSOKButton )
+		{
+			NSArray* selected = [openDlg filenames];
+			for (int i = 0; i < (int)[selected count]; i++)
+			{
+				NSString* fileName = [selected objectAtIndex:i];
+				std::string fn = [fileName UTF8String];
+				results.push_back(fn);
+			}
+		}
+		[filetypes release];
+		return results;
 	}
 
-	void OSXUIBinding::SetDockMenu(SharedPtr<MenuItem>)
+	long OSXUIBinding::GetSystemIdleTime()
 	{
+		// some of the code for this was from:
+		// http://ryanhomer.com/blog/2007/05/31/detecting-when-your-cocoa-application-is-idle/
+		CFMutableDictionaryRef properties = 0;
+		CFTypeRef obj;
+		mach_port_t masterPort;
+		io_iterator_t iter;
+		io_registry_entry_t curObj;
 
-	}
+		IOMasterPort(MACH_PORT_NULL, &masterPort);
 
-	void OSXUIBinding::SetBadge(SharedString badge_path)
-	{
+		/* Get IOHIDSystem */
+		IOServiceGetMatchingServices(masterPort, IOServiceMatching("IOHIDSystem"), &iter);
+		if (iter == 0)
+		{
+			return -1;
+		}
+		else
+		{
+			curObj = IOIteratorNext(iter);
+		}
+		if (IORegistryEntryCreateCFProperties(curObj, &properties, kCFAllocatorDefault, 0) == KERN_SUCCESS && properties != NULL)
+		{
+			obj = CFDictionaryGetValue(properties, CFSTR("HIDIdleTime"));
+			CFRetain(obj);
+		}
+		else
+		{
+			return -1;
+		}
 
+		uint64_t tHandle = 0;
+		if (obj)
+		{
+			CFTypeID type = CFGetTypeID(obj);
+
+			if (type == CFDataGetTypeID())
+			{
+				CFDataGetBytes((CFDataRef) obj, CFRangeMake(0, sizeof(tHandle)), (UInt8*) &tHandle);
+			}
+			else if (type == CFNumberGetTypeID())
+			{
+				CFNumberGetValue((CFNumberRef)obj, kCFNumberSInt64Type, &tHandle);
+			}
+			else
+			{
+				// error
+				tHandle = 0;
+			}
+
+			CFRelease(obj);
+
+			tHandle /= 1000000; // return as milliseconds
+		}
+		else
+		{
+			tHandle = -1;
+		}
+
+		CFRelease((CFTypeRef)properties);
+		IOObjectRelease(curObj);
+		IOObjectRelease(iter);
+		return (long)tHandle;
 	}
 
 }
