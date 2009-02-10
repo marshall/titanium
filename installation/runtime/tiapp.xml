@@ -14,5 +14,6 @@
 	  <minimizable>false</minimizable>
 	  <closeable>true</closeable>
 	  <resizable>false</resizable>
+	  <chrome scrollbars="false">false</chrome>
    </window>
 </ti:app>
