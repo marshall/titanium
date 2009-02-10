@@ -20,8 +20,8 @@ TiDeveloper.stateMachine.addState('interact','l:menu[val=interact]',true);
 TiDeveloper.currentState = null;
 TiDeveloper.stateMachine.addListener(function()
 {
-	var state = this.getActiveState();
-	if (state != 'interact')
+	TiDeveloper.currentState = this.getActiveState();
+	if (TiDeveloper.currentState != 'interact')
 	{
 		TiDeveloper.startIRCTrack();
 	}
@@ -34,8 +34,8 @@ TiDeveloper.stateMachine.addListener(function()
 TiDeveloper.ircMessageCount = 0;
 TiDeveloper.startIRCTrack = function()
 {
-	 TiDeveloper.ircMessageCount = 0;
-	// $('#irc_message_count').html('');
+	TiDeveloper.ircMessageCount = 0;
+	$('#irc_message_count').html('');
 	$('#irc_message_count').css('display','inline');
 	
 };
@@ -353,7 +353,7 @@ setTimeout(function()
 				{
 					if (nick)
 					{
-						TiDeveloper.ircMessageCount ++;
+						if (TiDeveloper.currentState != 'interact') TiDeveloper.ircMessageCount ++;
 						$('#irc_message_count').html(TiDeveloper.ircMessageCount);
 						$('#irc').append('<div style="color:yellow">' + nick + ': ' + channel.substring(1,channel.length) + '</div>');
 					}
