@@ -42,6 +42,7 @@ namespace ti
 		void Unjoin(const ValueList& args, SharedValue result);
 		void IsOp(const ValueList& args, SharedValue result);
 		void IsVoice(const ValueList& args, SharedValue result);
+		void GetUsers(const ValueList& args, SharedValue result);
 
 	};
 }
