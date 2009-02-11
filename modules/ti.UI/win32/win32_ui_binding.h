@@ -47,7 +47,7 @@ namespace ti
 			bool multiple,
 			std::string& path,
 			std::string& file,
-			std::vector<std::string>& types)
+			std::vector<std::string>& types);
 
 			static void ParseStringNullSeparated(const char *s, std::vector<std::string> &tokens);
 	};
