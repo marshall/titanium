@@ -327,6 +327,17 @@ Bounds Win32UserWindow::GetBounds() {
 }
 
 void Win32UserWindow::SetBounds(Bounds bounds) {
+	HWND desktop = GetDesktopWindow();
+	RECT desktopRect;
+	GetWindowRect(desktop, &desktopRect);
+
+	if (bounds.x == WindowConfig::DEFAULT_POSITION) {
+		bounds.x = (desktopRect.right - bounds.width) / 2;
+	}
+	if (bounds.y == WindowConfig::DEFAULT_POSITION) {
+		bounds.y = (desktopRect.bottom - bounds.height) / 2;
+	}
+
 	SetWindowPos(window_handle, NULL, bounds.x, bounds.y, bounds.width, bounds.height, SWP_SHOWWINDOW | SWP_NOZORDER);
 }
 
