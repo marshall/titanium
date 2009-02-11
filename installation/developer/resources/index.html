@@ -2,6 +2,10 @@
 <head>
 
 	<script type="text/javascript" charset="utf-8" src="js/appcelerator-debug.js"></script>
+
+
+	<script type="text/javascript" charset="utf-8" src="js/swfobject.js"></script>
+
 	<script type="text/javascript" charset="utf-8" src="js/index.js"></script>
 	<script type="text/javascript" charset="utf-8" src="js/project.js"></script>
 	<script type="text/javascript" charset="utf-8" src="js/app.js"></script>
@@ -11,10 +15,12 @@
 
 <!-- ADJUST WINDOW HEIGHT BASED ON CURRENT STATE -->
 <body  on="l:menu[val=create] then script[Titanium.UI.currentWindow.setHeight(380)] or
-		  l:menu[val=manage] then script[Titanium.UI.currentWindow.setHeight(500)] if expr[ $('#project_count_hidden').val() != 0] or
-		  l:menu[val=api] then script[Titanium.UI.currentWindow.setHeight(160)] if expr[ $('#project_count_hidden').val() == 0] or
-		  l:cancel[val=project] then script[Titanium.UI.currentWindow.setHeight(160)]
-		or l:menu[val=interact] then script[Titanium.UI.currentWindow.setHeight(650)]">
+		  l:menu[val=manage] then script[Titanium.UI.currentWindow.setHeight(500)] if expr[ $('#project_count_hidden').val() != 0] 
+		or l:menu[val=api] then script[Titanium.UI.currentWindow.setHeight(160)] if expr[ $('#project_count_hidden').val() == 0] 
+		or l:cancel[val=project] then script[Titanium.UI.currentWindow.setHeight(160)]
+		or l:menu[val=interact] then script[Titanium.UI.currentWindow.setHeight(650)]
+		or l:menu[val=social] then script[Titanium.UI.currentWindow.setHeight(650)]">
+
 	<!-- HEADER MENU -->
 	<div class="menu">
 		<div id="project_count">You have no projects  </div>
@@ -27,6 +33,11 @@
 	<div id="content">
 		
 		<!-- MAJOR ACTION BUTTONS -->
+		<div class="button1" style="display:inline-block;width:150px" 
+			on="click then l:menu[val=social] and add[class=active] or l:menu[val!=social] then remove[class=active]">
+			<div class="button2">Ti Social</div>
+		</div>
+		
 		<div class="button1" style="display:inline-block;width:150px" 
 			on="click then l:menu[val=manage] and add[class=active] or l:menu[val!=manage] then remove[class=active]">
 			<div class="button2">Manage Projects</div>
@@ -49,10 +60,47 @@
 		<!-- ************* -->
 		<!-- CONTENT FILES -->
 		<!-- ************* -->
+		<div style="display:none;margin-bottom:20px;min-height:90%"
+			on="l:menu[val=social] then effect[fadeIn] else hide">
+			
+			 <div id="ytapiplayer" style="float:left;width:60%;display:none" on="l:play.video then effect[fadeIn]">
+		      You need Flash player 8+ and JavaScript enabled to view this video.
+		    </div>
+		
+			<div style="width:30%;float:left;" on="l:play.video then effect[fadeOut]">
+				<div style="text-align:center;margin-bottom:10px;margin-top:10px">Titanium News</div>
+				<div class="infobox">
+					<div class="content">
+						<div id="news_feed" style="height:100%">
+						</div>
+					</div>
+				</div>
+			</div>
+			<div style="width:30%;float:left;margin-left:20px"  on="l:play.video then effect[fadeOut]">
+				<div style="text-align:center;margin-bottom:10px;margin-top:10px">Titanium on Twitter</div>
 
+				<div class="infobox">
+					<div class="content">
+						<div id="twitter_feed" style="height:100%">
+						</div>
+					</div>
+				</div>
+			</div>
+			<div style="width:30%;float:left;margin-left:20px;">
+				<div style="text-align:center;margin-bottom:10px;margin-top:10px">Titanium on You Tube</div>
+
+				<div class="infobox">
+					<div class="content" style="background-color:#000">
+						<div id="youtube_feed" style="height:100%;overflow:auto">
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</div>
 		<div style="display:none;margin-bottom:20px;min-height:90%"
 			on="l:menu[val=interact] then effect[fadeIn] else hide">
-			<div style="float:left;width:25%;margin-right:20px">
+			<div style="float:left;width:22%;margin-right:20px">
 				<div class="infobox">
 					<div class="content">
 						<div id="irc_users" ></div>
@@ -61,7 +109,7 @@
 				
 			</div>
 
-			<div style="float:left;width:70%">
+			<div style="float:left;width:73%">
 				<div class="infobox">
 					<div class="content">
 						<div id="irc" ></div>

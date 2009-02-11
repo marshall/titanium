@@ -3,9 +3,97 @@
 //
 var TFS = Titanium.Filesystem;
 var TiDeveloper  = {};
+
+TiDeveloper.yk ='AI39si6YKvME9BMIerJYsJEAmM46e829Ovs_LMaR_jW1u0-4xHN7ehjW49EUqNgnZaNoK3aY_fUhs62mTw_0_x4EQ3f7uaaW6w';
+TiDeveloper.yc ='ytapi-Appcelerator-TitaniumDevelope-utomjlgd-0';
 TiDeveloper.currentPage = 1;
 TiDeveloper.init = false;
+TiDeveloper.ytAuthToken = null;
 
+
+//
+// YouTube Setup
+//
+window.onYouTubePlayerReady = function(playerId)
+{
+	ytplayer = document.getElementById("myytplayer");
+	$('#ytapiplayer').css('display','none')
+
+};
+var params = { allowScriptAccess: "always" };
+var atts = { id: "myytplayer" };
+swfobject.embedSWF("http://www.youtube.com/apiplayer?enablejsapi=1&amp;playerapiid=ytplayer", 
+                 "ytapiplayer", "400px", "300px", "8", null, null, params, atts);
+
+//
+// Authenticate youtube user
+// 
+$.ajax({
+	type: "POST",
+   	url: "https://www.google.com/youtube/accounts/ClientLogin",
+   	data: "Email=titaniumdev&Passwd=timetrac&service=youtube&source=titanium_developer",
+   	success: function(resp)
+	{
+     	TiDeveloper.ytAuthToken = resp;
+		TiDeveloper.loadVids()
+   	},
+   	error: function(resp)
+	{
+		if (resp.responseText == 'BadAuthentication')
+		{
+			// login failed
+		}
+	}
+});
+
+TiDeveloper.loadVids = function()
+{
+	$.ajax({
+		type:"GET",
+		url:"http://gdata.youtube.com/feeds/api/videos/-/music", 
+		data:'alt=json',
+		success: function(data)
+		{
+			
+			var videoData = eval("(" + data + ")");
+			var count = 0;
+			$.each(videoData.feed.entry,function() // Protoplasim
+			{
+				var html = "<div class='social_row' id='video_"+count+"' videoid='"+this.link[0].href.substr(this.link[0].href.lastIndexOf("=") + 1, this.link[0].href.length)+"'>"
+				html += "<div style='text-align:center'><img src='"+this.media$group.media$thumbnail[0].url+"' /></div>";
+				html += "<div style='font-size:11px;color;#fff;text-align:center;margin-top:10px'>";
+				html +=  this.media$group.media$title.$t
+				html += "</div>";
+
+				html += "</div>";
+				
+				$('#youtube_feed').append(html);
+				$('#video_'+ count).click(function()
+				{
+					var id = $(this).attr('videoid')
+					if(ytplayer)
+					{
+						ytplayer.loadVideoById(id, 0);
+					}
+				})
+
+				count++
+				// html += "<div style='float:left;width:50%;margin-left:10px'>"+ this.media$group.media$title.$t + "</span></div>";
+				// 
+				// var href = this.link[0].href;
+				// var title = '';
+				// var desc = this.media$group.media$description.$t;
+				// var thumbnail = this.media$group.media$thumbnail[2].url;
+			});
+		},
+		error: function(resp)
+		{
+			alert(resp);
+		}
+	});
+	
+}
+		
 // holder var for all projects
 TiDeveloper.ProjectArray = [];
 var db = openDatabase("TiDeveloper","1.0");
