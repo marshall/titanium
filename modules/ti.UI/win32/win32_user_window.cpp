@@ -540,8 +540,8 @@ void Win32UserWindow::ReloadTiWindowConfig()
 	SetFlag(windowStyle, WS_MINIMIZEBOX, config->IsMinimizable());
 	SetFlag(windowStyle, WS_MAXIMIZEBOX, config->IsMaximizable());
 
-	SetFlag(windowStyle, WS_OVERLAPPEDWINDOW, ! config->IsUsingChrome() && config->IsResizable());
-	SetFlag(windowStyle, WS_CAPTION, ! config->IsUsingChrome());
+	SetFlag(windowStyle, WS_OVERLAPPEDWINDOW, config->IsUsingChrome() && config->IsResizable());
+	SetFlag(windowStyle, WS_CAPTION, config->IsUsingChrome());
 
 	SetWindowLong(this->window_handle, GWL_STYLE, windowStyle);
 
