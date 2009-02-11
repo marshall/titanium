@@ -15,7 +15,6 @@
 			function debug(result)
 			{
 				var el = document.getElementById("log");
-				
 				var html = "<div>You selected the following:</div>";
 				html+="<ul>";
 				for (var c=0;c<result.length;c++)
@@ -30,7 +29,7 @@
 			{
 				var el = document.getElementById("log");
 
-				el.innerHTML = s;
+				el.innerHTML += s;
 			}
 			function chooseFiles()
 			{
@@ -118,8 +117,6 @@
 		</div>
 		<div>
 			<button onclick="chooseFileTypes()">Open File Dialog (JS or HTML files only)</button>
-		</div>
-		<div style="backgroud: black; color: white" id="log">
 		</div>
 		<div id="log">
 		</div>

@@ -145,7 +145,6 @@ namespace ti
 		/* Let gtk_main continue */
 		gdk_threads_leave();
 
-		printf("before\n");
 		ValueList args;
 		args.push_back(Value::NewList(results));
 
@@ -158,7 +157,6 @@ namespace ti
 			std::cerr << "openFiles callback failed because of an exception" << std::endl;
 		}
 
-		printf("after\n");
 		return NULL;
 	}
 
