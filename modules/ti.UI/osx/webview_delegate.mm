@@ -68,7 +68,7 @@
 	{
 		[[[webView mainFrame] frameView] setAllowsScrolling:NO];
 	}
-	if (o->IsResizable() && !o->IsUsingChrome())
+	if (o->IsResizable() && o->IsUsingChrome())
 	{
 		[window setShowsResizeIndicator:YES];
 	}
