@@ -14,7 +14,7 @@
 
 namespace ti
 {
-	Win32UIBinding::Win32UIBinding() : UIBinding()
+	Win32UIBinding::Win32UIBinding(Host *host) : UIBinding(host)
 	{
 	}
 
@@ -77,7 +77,7 @@ namespace ti
 		}
 		else
 		{
-			results = SelectFile(multiple, path, file, types);
+			results = SelectFile(callback, multiple, path, file, types);
 		}
 
 		ValueList args;
@@ -85,7 +85,7 @@ namespace ti
 		callback->Call(args);
 	}
 
-	SharedBoundList SelectFile(
+	SharedBoundList Win32UIBinding::SelectFile(
 		SharedBoundMethod callback,
 		bool multiple,
 		std::string& path,
@@ -176,6 +176,7 @@ namespace ti
 				}
 			}
 		}
+		return results;
 	}
 
 	SharedBoundList Win32UIBinding::SelectDirectory(

@@ -15,7 +15,7 @@ namespace ti
 	{
 
 	public:
-		Win32UIBinding();
+		Win32UIBinding(Host *host);
 		~Win32UIBinding();
 
 		SharedPtr<MenuItem> CreateMenu();
@@ -49,7 +49,7 @@ namespace ti
 			std::string& file,
 			std::vector<std::string>& types);
 
-			static void ParseStringNullSeparated(const char *s, std::vector<std::string> &tokens);
+		static void ParseStringNullSeparated(const char *s, std::vector<std::string> &tokens);
 	};
 }
 
