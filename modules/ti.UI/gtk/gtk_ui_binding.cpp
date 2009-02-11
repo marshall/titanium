@@ -111,6 +111,17 @@ namespace ti
 			NULL);
 		gtk_file_chooser_set_select_multiple(GTK_FILE_CHOOSER(chooser), job->multiple);
 
+		if (job->types.size() > 0)
+		{
+			GtkFileFilter* f = gtk_file_filter_new();
+			for (size_t fi = 0; fi < job->types.size(); fi++)
+			{
+				std::string filter = std::string("*.") + job->types.at(fi);
+				gtk_file_filter_add_pattern(f, filter.c_str());
+			}
+			gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(chooser), f);
+		}
+
 		int result = gtk_dialog_run(GTK_DIALOG(chooser));
 		if (result == GTK_RESPONSE_ACCEPT && job->multiple)
 		{
@@ -134,9 +145,20 @@ namespace ti
 		/* Let gtk_main continue */
 		gdk_threads_leave();
 
+		printf("before\n");
 		ValueList args;
 		args.push_back(Value::NewList(results));
-		job->host->InvokeMethodOnMainThread(job->callback, args);
+
+		try
+		{
+			job->host->InvokeMethodOnMainThread(job->callback, args);
+		}
+		catch (ValueException &e)
+		{
+			std::cerr << "openFiles callback failed because of an exception" << std::endl;
+		}
+
+		printf("after\n");
 		return NULL;
 	}
 
