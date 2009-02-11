@@ -22,7 +22,7 @@ namespace ti
 		const char *arch = Poco::Environment::osArchitecture().c_str();
 		const char *address = Poco::Environment::nodeName().c_str();
 
-		
+
 #if defined(OS_OSX)
 		int num_proc = [[NSProcessInfo processInfo] processorCount];
 #elif defined(OS_WIN32)
@@ -35,7 +35,7 @@ namespace ti
 		int num_proc = 1;
 #endif
 
-		char *nodeId = "";
+		char *nodeId = (char*)"";
 		try
 		{
 			nodeId = (char*)Poco::Environment::nodeId().c_str();
