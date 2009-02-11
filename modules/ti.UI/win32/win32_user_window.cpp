@@ -13,6 +13,8 @@
 #include <shellapi.h>
 
 #define STUB() printf("Method is still a stub, %s:%i\n", __FILE__, __LINE__)
+#define SetFlag(x,flag,b) ((b) ? x |= flag : x &= ~flag)
+#define UnsetFlag(x,flag) (x &= ~flag)=
 
 using namespace ti;
 
@@ -115,14 +117,16 @@ Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config)
 	std::cout << "HINSTANCE = " << (int)win32_host->GetInstanceHandle() << std::endl;
 
 	Win32UserWindow::RegisterWindowClass(win32_host->GetInstanceHandle());
-	window_handle = CreateWindowA(windowClassName, "Titanium Application",
-			WS_OVERLAPPEDWINDOW,
+	window_handle = CreateWindowA(windowClassName, config->GetTitle().c_str(),
+			WS_CLIPCHILDREN,
 			CW_USEDEFAULT, 0, CW_USEDEFAULT, 0,
 			NULL, NULL, win32_host->GetInstanceHandle(), NULL);
 
 	if (window_handle == NULL) {
 		std::cout << "Error Creating Window: " << GetLastError() << std::endl;
 	}
+
+	this->ReloadTiWindowConfig();
 
 	if (!initialized) {
 		HRESULT r = OleInitialize(NULL);
@@ -524,4 +528,32 @@ void Win32UserWindow::SetupMenu()
 	}
 
 	this->menuInUse = menu;
+}
+
+void Win32UserWindow::ReloadTiWindowConfig()
+{
+	//host->webview()->GetMainFrame()->SetAllowsScrolling(tiWindowConfig->isUsingScrollbars());
+	//SetWindowText(hWnd, UTF8ToWide(tiWindowConfig->getTitle()).c_str());
+
+	long windowStyle = GetWindowLong(this->window_handle, GWL_STYLE);
+
+	SetFlag(windowStyle, WS_MINIMIZEBOX, config->IsMinimizable());
+	SetFlag(windowStyle, WS_MAXIMIZEBOX, config->IsMaximizable());
+
+	SetFlag(windowStyle, WS_OVERLAPPEDWINDOW, config->IsUsingChrome() && config->IsResizable());
+	SetFlag(windowStyle, WS_CAPTION, config->IsUsingChrome());
+
+	SetWindowLong(this->window_handle, GWL_STYLE, windowStyle);
+
+	//UINT flags = SWP_NOZORDER | SWP_FRAMECHANGED;
+
+	//sizeTo(tiWindowConfig->getX(), tiWindowConfig->getY(), tiWindowConfig->getWidth(), tiWindowConfig->getHeight(), flags);
+
+	//SetLayeredWindowAttributes(hWnd, 0, (BYTE)0, LWA_ALPHA);
+	/*
+	if (tiWindowConfig->getTransparency() < 1.0) {
+		SetLayeredWindowAttributes(hWnd, 0, (BYTE)floor(tiWindowConfig->getTransparency()*255), LWA_ALPHA);
+	}
+	SetLayeredWindowAttributes(hWnd, transparencyColor, 0, LWA_COLORKEY);
+	*/
 }

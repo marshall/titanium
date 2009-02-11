@@ -112,7 +112,6 @@ namespace ti
 				Poco::File f(file);
 				if (f.isDirectory())
 				{
-					std::cout << "++++++++++++++++++++++++++++++++++"<<std::endl;
 					ac->Copy(from,to);
 				}
 				else

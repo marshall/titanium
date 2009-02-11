@@ -162,11 +162,11 @@
 			$('#license').hide();
 			Titanium.UI.currentWindow.setHeight(220);
 			$('#install').fadeIn();
-			$('#license_header').slideUp(100);
+			$('#progressbar').progressbar({value:0})
+			$('#license_header').slideUp(50);
 			setTimeout(function(){
-				$('#progressbar').progressbar({value:0})
 				runInstaller();
-			},10);
+			},60);
 		};
 		
 		function finishInstall(openapp)

@@ -97,16 +97,11 @@ function runInstaller()
 			return false;
 		}
 	}
-	var appname;
+	var appname = results.properties['appname'];
 
 	for (p in results.map)
 	{
-		if (p=='appname')
-		{
-			appname = results.map[p];
-			continue;
-		}
-		if (p == 'runtime' || p == 'appid') continue;
+		if (p == 'runtime') continue;
 		var moduleSrc = TFS.getFile(src,'modules',p);
 		if (!moduleSrc.exists()) continue;
 		var moduleDest = TFS.getFile(dest,'modules',p,results.map[p]);
@@ -176,7 +171,7 @@ function runInstaller()
 			
 			// developer product
 			var devDest = TFS.getProgramsDirectory();
-			var developer = Titanium.createApp(runtimeDir,devDest,'Titanium Developer','com.titaniumapp.developer');
+			var developer = Titanium.createApp(runtimeDir,devDest,'Titanium Developer','com.titaniumapp.developer',false);
 			var devsrc = TFS.getFile(src,'developer');
 			var devresources = TFS.getFile(devsrc,'resources');
 			var devtiapp = TFS.getFile(devsrc,'tiapp.xml');
