@@ -179,7 +179,7 @@ namespace ti {
 		const char* label = this->GetLabel();
 		const char* icon_url = this->GetIconURL();
 		SharedString icon_path = UIModule::GetResourcePath(icon_url);
-		SharedValue callback_val = this->Get("callback");
+		SharedValue callback_val = this->RawGet("callback");
 
 		if (this->IsSeparator())
 		{
@@ -242,6 +242,34 @@ namespace ti {
 			GtkWidget *w = (*i)->item;
 			if (w != NULL)
 				gtk_widget_set_sensitive(w, FALSE);
+			i++;
+		}
+	}
+
+	void GtkMenuItemImpl::SetLabel(std::string label)
+	{
+		std::vector<MenuPieces*>::iterator i = this->instances.begin();
+		while (i != this->instances.end())
+		{
+			GtkWidget *w = (*i)->item;
+			if (w != NULL)
+			{
+				GtkWidget *menu_label = gtk_bin_get_child(GTK_BIN(w));
+				gtk_label_set_text(GTK_LABEL(menu_label), label.c_str()); 
+			}
+			i++;
+		}
+	}
+
+	void GtkMenuItemImpl::SetIcon(std::string icon_path)
+	{
+		std::vector<MenuPieces*>::iterator i = this->instances.begin();
+		while (i != this->instances.end())
+		{
+			GtkWidget *w = (*i)->item;
+			if (w != NULL)
+			{
+			}
 			i++;
 		}
 	}

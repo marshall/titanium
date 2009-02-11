@@ -33,7 +33,7 @@
 			Titanium.UI.setIcon("app://open.png");
 			setTimeout(function()
 			{
-				var ts = Titanium.Desktop.getSystemIdleTime();
+				var ts = Titanium.UI.getSystemIdleTime();
 				document.getElementById("ts").innerHTML = "idle time: "  + ts;
 			},10000);
 		</script>
