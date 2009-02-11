@@ -10,7 +10,7 @@ For details on Titanium, please see <http://titaniumapp.com>.
 
 To build Titanium from source, you will need the following prerequisites:
 
-  - Python
+  - Python (see platform specific notes below)
   - Scons package - <http://www.scons.org/>
   - Platform compiler (see below for each platform)
 
@@ -69,6 +69,16 @@ Win32
 You will need Microsoft Visual Studio 2005 + Service Packs to build Titanium. We have
 not tested building Titanium on Visual Studio 2008.  You will need to obtain the 
 Microsoft Visual Studio Service Pack 1 to compile Titanium.
+
+Win32 Python Notes
+==================
+
+You will need to set the environment variable PYTHONHOME to the location of your 
+installed python.
+
+You will need to have Python 2.5 installed to build Win32. Later versions currently
+are not supported. You can download Python at <http://www.python.org/download/releases/2.5.2>
+
 
 Win32 Ruby Notes
 ================
