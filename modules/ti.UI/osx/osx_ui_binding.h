@@ -30,7 +30,8 @@ namespace ti
 		virtual void SetDockMenu(SharedPtr<MenuItem>);
 		virtual void SetBadge(SharedString badge_path);
 
-		std::vector<std::string> OpenFiles(
+		void OpenFiles(
+			SharedBoundMethod callback,
 			bool multiple,
 			bool files,
 			bool directories,

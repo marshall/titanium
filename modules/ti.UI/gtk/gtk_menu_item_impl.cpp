@@ -261,14 +261,18 @@ namespace ti {
 		}
 	}
 
-	void GtkMenuItemImpl::SetIcon(std::string icon_path)
+	void GtkMenuItemImpl::SetIcon(std::string icon_url)
 	{
 		std::vector<MenuPieces*>::iterator i = this->instances.begin();
+		SharedString icon_path = UIModule::GetResourcePath(icon_url.c_str());
+
 		while (i != this->instances.end())
 		{
 			GtkWidget *w = (*i)->item;
-			if (w != NULL)
+			if (w != NULL && G_TYPE_FROM_INSTANCE(w) == GTK_TYPE_IMAGE_MENU_ITEM)
 			{
+				GtkWidget* image = gtk_image_new_from_file(icon_path->c_str());
+				gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(w), image);
 			}
 			i++;
 		}
