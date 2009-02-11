@@ -540,7 +540,6 @@ $MQL('l:project.search.request',function(msg)
 $MQL('l:show.filedialog',function(msg)
 {
 	var el = msg.payload['for'];
-	alert(el);
 	var props = {multiple:false};
 	if (el == 'project_image')
 	{
