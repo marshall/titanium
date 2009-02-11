@@ -233,11 +233,11 @@ sc.close
 
 mf = File.open(File.join(module_dir_name,"manifest"),'w')
 mf.puts <<-END
-name: #{module_dir_name}
-version: 0.1
-description: #{module_dir_name}
-os: win32, linux, osx
-depends:
+#name: #{module_dir_name}
+#version: 0.1
+#description: #{module_dir_name}
+#os: win32, linux, osx
+#depends:
 END
 mf.close
 

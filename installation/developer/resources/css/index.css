@@ -56,7 +56,7 @@ input[type=text], select
 	font-size:12px;
 	padding:3px;
 	color:#eee;
-	width:250px;
+	width:220px;
 }
 input:focus
 {
@@ -319,4 +319,27 @@ input:focus
 {
 	float:left;
 	width:335px;
+}
+.social_row
+{
+	margin-bottom:20px;
+	height:120px;
+	background-color:#000;
+}
+.social_row_overlay
+{
+	background-color:#111;
+	opacity:0.7;
+	width:100%;
+	height:97px;
+}
+td div
+{
+	font-size:12px;
+}
+
+div.formhint
+{
+	font-size:10px;
+	color:#000;
 }

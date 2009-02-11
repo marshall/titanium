@@ -28,20 +28,41 @@ Titanium.Project =
 		var runtime = TFS.getFile(dir,'runtime',Titanium.platform);
 		return {
 			modules: result,
-			runtime: this.getVersions(runtime)
+			runtime: this.getVersions(runtime),
+			runtime_basedir: runtime,
+			modules_basedir: modules
 		};
 	},
 	parseEntry:function(entry)
 	{
-		if (entry[0]=='#' || entry[0]==' ') return null;
+		if (entry[0]==' ' || entry.length==0) return null;
 		var i = entry.indexOf(':');
 		if (i < 0) return null;
 		var key = jQuery.trim(entry.substring(0,i));
 		var value = jQuery.trim(entry.substring(i+1));
+		var token = false;
+		if (key.charAt(0)=='#')
+		{
+			token = true;
+			key = key.substring(1);
+		}
 		return {
 			key: key,
-			value: value
+			value: value,
+			token: token
 		};
+	},
+	addEntry:function(line,result)
+	{
+		if (line)
+		{
+			var entry = Titanium.Project.parseEntry(line);
+			if (!entry) return;
+			if (entry.token) 
+				result.properties[entry.key]=entry.value;
+			else
+				result.map[entry.key]=entry.value;
+		}
 	},
 	getManifest:function(mf)
 	{
@@ -53,20 +74,23 @@ Titanium.Project =
 				message:"Couldn't find manifest!"
 			};
 		}
-		var result = {success:true,file:manifest,map:{}};
+		var result = {
+			success:true,
+			file:manifest,
+			map:{},
+			properties:{}
+		};
 		var line = manifest.readLine(true);
-		var entry = Titanium.Project.parseEntry(line);
-		if (entry) result.map[entry.key]=entry.value;
+		Titanium.Project.addEntry(line,result);
 		while (true)
 		{
 			line = manifest.readLine();
 			if(!line) break;
-			entry = Titanium.Project.parseEntry(line);
-			if (entry) result.map[entry.key]=entry.value;
+			Titanium.Project.addEntry(line,result);
 		}
 		return result;
 	},
-	create:function(name,dir)
+	create:function(name,dir,publisher,url,image)
 	{
 		var outdir = TFS.getFile(dir,name);
 		if (outdir.isDirectory())
@@ -77,14 +101,18 @@ Titanium.Project =
 			}
 		}
 		outdir.createDirectory(true);
-		var normalized_name = name.replace(' ','_');
+		var normalized_name = name.replace(' ','_').toLowerCase();
+		var normalized_publisher = publisher.replace(' ','_').toLowerCase();
 		// write out the TIAPP.xml
 		var tiappxml = this.XML_PROLOG;
-		var id = 'com.yourdomain.'+normalized_name;
+		var year = new Date().getFullYear();
+		var id = 'com.'+normalized_publisher+'.'+normalized_name;
 		tiappxml+=this.makeEntry('id',id);
 		tiappxml+=this.makeEntry('name',name);
 		tiappxml+=this.makeEntry('version','1.0');
-		tiappxml+=this.makeEntry('copyright','2009 by YourCompany');
+		tiappxml+=this.makeEntry('publisher',publisher);
+		tiappxml+=this.makeEntry('url',url);
+		tiappxml+=this.makeEntry('copyright',year+' by '+publisher);
 		tiappxml+="<window>\n";
 		tiappxml+=this.makeEntry('id','initial');
 		tiappxml+=this.makeEntry('title',name);
@@ -97,7 +125,7 @@ Titanium.Project =
 		tiappxml+=this.makeEntry('min-height','0');
 		tiappxml+=this.makeEntry('fullscreen','false');
 		tiappxml+=this.makeEntry('resizable','true');
-		tiappxml+=this.makeEntry('chrome','false');
+		tiappxml+=this.makeEntry('chrome','true',{'scrollbars':'true'});
 		tiappxml+=this.makeEntry('maximizable','true');
 		tiappxml+=this.makeEntry('minimizable','true');
 		tiappxml+=this.makeEntry('closeable','true');
@@ -110,8 +138,11 @@ Titanium.Project =
 		var index = TFS.getFile(resources,'index.html');
 		index.write('<html>\n<head>\n</head>\n<body>\nHello,world\n</body>\n</html>');
 		
-		var manifest = "appname: "+name+"\n" +
-		"appid: "+id+"\n";
+		var manifest = "#appname: "+name+"\n" +
+		"#publisher: "+publisher+"\n"+
+		"#url: "+url+"\n"+
+		"#image: "+image+"\n"+
+		"#appid: "+id+"\n";
 		
 		var mf = TFS.getFile(outdir,'manifest');
 		mf.write(manifest);
@@ -142,7 +173,7 @@ Titanium.Project =
 				var v = attrs[name];
 				if (v)
 				{
-					values.push_back(name + '=' + '"' + v + '"');
+					values.push(name + '=' + '"' + v + '"');
 				}
 			}
 			str+=values.join(' ');

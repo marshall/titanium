@@ -1,5 +1,5 @@
-appname: Titanium Developer
-appid: com.titaniumapp.developer
+#appname: Titanium Developer
+#appid: com.titaniumapp.developer
 runtime: 0.2
 api:0.1
 javascript:0.1

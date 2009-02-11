@@ -622,7 +622,7 @@ namespace ti
 		NSString* cwd = nil;
 		NSFileManager* fm = [NSFileManager defaultManager];
 
-		// support 2nd argument as a relative path to symlink from
+		// support 2nd argument as a relative path to symlink for
 		if (args.size()>1)
 		{
 			cwd = [fm currentDirectoryPath];

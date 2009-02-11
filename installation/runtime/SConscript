@@ -17,8 +17,8 @@ if not build.is_linux():
 	modules.append('tigrowl')
 
 manifest_text="""
-appname: %s
-appid: %s
+#appname: %s
+#appid: %s
 runtime: %s
 """
 manifest_text = manifest_text % (name, appid, version)

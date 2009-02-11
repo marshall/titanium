@@ -1,5 +1,5 @@
 /**
- * Appcelerator Kroll - licensed under the Apache Public License 2
+ * Appcelerator Titanium - licensed under the Apache Public License 2
  * see LICENSE in the root folder for details on the license.
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
@@ -17,9 +17,37 @@ namespace ti
 
 	bool OSXDesktop::OpenApplication(std::string& app)
 	{
+		NSDictionary *dictionary = [[NSProcessInfo processInfo] environment];
+		NSMutableDictionary *remember = [[NSMutableDictionary alloc] init];
+		// unset any KR_ environment variables and the library path
+		// so it doesn't interfere with process we're launching 
+		// (reset below)
+		for (id key in dictionary)
+		{
+			if ([key hasPrefix:@"KR_"])
+			{
+				[remember setObject:[dictionary objectForKey:key] forKey:key];
+			}
+		}
+		[remember setObject:[dictionary objectForKey:@"DYLD_LIBRARY_PATH"] forKey:@"DYLD_LIBRARY_PATH"];
+		
 		NSWorkspace* ws = [NSWorkspace sharedWorkspace];
 		NSString *name = [NSString stringWithCString:app.c_str()];
-		return [ws launchApplication:name];
+#ifdef DEBUG
+		NSLog(@"launching external app: %@",name);
+#endif
+		BOOL result = [ws launchApplication:name];
+
+		for (id key in remember)
+		{
+			id value = [remember objectForKey:key];
+			setenv([key UTF8String],[value UTF8String],1);
+		}
+#ifdef DEBUG
+		NSLog(@"launched external app, returned = %d",result);
+#endif
+		[remember release];
+		return result;
 	}
 
 	bool OSXDesktop::OpenURL(std::string& url)

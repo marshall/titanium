@@ -28,13 +28,14 @@
 
 	[webPrefs setCacheModel:WebCacheModelDocumentBrowser];
 	[webPrefs setDeveloperExtrasEnabled:host->IsDebugMode()];
+	[webPrefs setDeveloperExtrasEnabled:YES];
 	[webPrefs setPlugInsEnabled:YES]; 
 	[webPrefs setJavaEnabled:NO]; // ?? this disallows Java Craplets
 	[webPrefs setJavaScriptEnabled:YES];
-//	if ([webPrefs respondsToSelector:@selector(setDatabasesEnabled:)])
-//	{
+	if ([webPrefs respondsToSelector:@selector(setDatabasesEnabled:)])
+	{
 		[webPrefs setDatabasesEnabled:YES];
-//	}
+	}
 	if ([webPrefs respondsToSelector:@selector(setLocalStorageEnabled:)])
 	{
 		[webPrefs setLocalStorageEnabled:YES];
@@ -67,7 +68,7 @@
 	{
 		[[[webView mainFrame] frameView] setAllowsScrolling:NO];
 	}
-	if (o->IsResizable() && !o->IsUsingChrome())
+	if (o->IsResizable() && o->IsUsingChrome())
 	{
 		[window setShowsResizeIndicator:YES];
 	}
@@ -93,7 +94,7 @@
 		[webView setUIDelegate:self];
 		[webView setResourceLoadDelegate:self];
 		[webView setPolicyDelegate:self];
-		[webView setScriptDebugDelegate:self];
+//		[webView setScriptDebugDelegate:self];
 		[WebScriptElement addScriptEvaluator:self];
 		
 		SharedBoundObject global = host->GetGlobalObject();
