@@ -5,7 +5,7 @@
    <version>0.1</version>
    <window>
       <id>initial</id>
-      <title>test</title>
+      <title>Titanium Test Application</title>
       <url>app://index.html</url>
       <width>700</width>
       <height>900</height>

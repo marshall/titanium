@@ -126,7 +126,7 @@ Win32WebKitUIDelegate::runJavaScriptAlertPanelWithMessage(
 {
 	HWND handle = window->GetWindowHandle();
 	std::string msg;
-	std::string title("Titanium Alert");
+	std::string title(window->GetTitle());
 
 	if(message)
 	{
@@ -145,7 +145,7 @@ Win32WebKitUIDelegate::runJavaScriptConfirmPanelWithMessage(
 	/* [retval][out] */ BOOL *result)
 {
 	HWND handle = window->GetWindowHandle();
-	std::string title("Titanium Confirmation");
+	std::string title(window->GetTitle());
 	std::string msg;
 
 	if(message)
@@ -167,7 +167,7 @@ Win32WebKitUIDelegate::runJavaScriptTextInputPanelWithPrompt(
 	/* [retval][out] */ BSTR *result)
 {
 	HWND handle = window->GetWindowHandle();
-	std::string title("Titanium Prompt");
+	std::string title(window->GetTitle());
 	std::string msg = _bstr_t(message);
 	std::string def;
 

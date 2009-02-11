@@ -115,7 +115,7 @@ Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config)
 	std::cout << "HINSTANCE = " << (int)win32_host->GetInstanceHandle() << std::endl;
 
 	Win32UserWindow::RegisterWindowClass(win32_host->GetInstanceHandle());
-	window_handle = CreateWindowA(windowClassName, "Titanium Application",
+	window_handle = CreateWindowA(windowClassName, config->GetTitle().c_str(),
 			WS_OVERLAPPEDWINDOW,
 			CW_USEDEFAULT, 0, CW_USEDEFAULT, 0,
 			NULL, NULL, win32_host->GetInstanceHandle(), NULL);
