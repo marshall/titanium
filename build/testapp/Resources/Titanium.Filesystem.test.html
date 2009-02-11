@@ -5,7 +5,6 @@
 			div.test { border: 1px solid #c3c3c3; padding: 5px; margin: 8px 0 8px 0; display: none; }
 			div.test div { padding: 6px; }
 			div.output { border: 1px solid #c3c3c3; padding: 5px; margin: 8px 0 px 0; background-color: black; color: white; height: 350px; overflow: scroll; }
-			div.debug { color: #696969; height: 200px; }
 		</style>
 		<script>
 			var readLineFile = null;
@@ -238,7 +237,7 @@
 			}
 
 			tests.readLine = function(params) {
-				debug('readLineFile = ' + readLineFile);
+				log('readLineFile = ' + readLineFile);
 				// should a new readLineFile be created?
 				if(readLineFile == null || readLineFile.toString() != params[0]) {
 					log("creating new file object for readLine");
@@ -399,7 +398,6 @@
 				}
 			}
 
-			function debug(s) { appendToLog($('debug'), s); }
 			function log(s) { appendToLog($('log'), s); }
 
 			function appendToLog(d, s) {
@@ -414,10 +412,7 @@
 			}
 
 			function initPage() {
-				debug('initializing..');
 				testChanged();
-
-				debug('done initializing.');
 			}
 		</script>
 	</head>
@@ -771,6 +766,5 @@
 			</div>
 		</div>
 		<div class='output log'><code id="log"></code></div>
-		<div class='output debug'><code id="debug"></code><div>
 	</body>
 </html>

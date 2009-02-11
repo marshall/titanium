@@ -10,7 +10,7 @@
 namespace ti
 {
 
-	MenuItem::MenuItem() : StaticBoundList()
+	MenuItem::MenuItem() : AccessorBoundList()
 	{
 
 		// query methods
@@ -25,6 +25,9 @@ namespace ti
 
 		this->SetMethod("enable", &MenuItem::_Enable);
 		this->SetMethod("disable", &MenuItem::_Disable);
+
+		this->SetMethod("setLabel", &MenuItem::_SetLabel);
+		this->SetMethod("setIcon", &MenuItem::_SetIcon);
 
 		// mutators
 		//this->SetMethod("makeSeparator", &MenuItem::_MakeSeparator);
@@ -41,24 +44,24 @@ namespace ti
 		MethodCallback* callback = NewCallback<MenuItem, const ValueList&, SharedValue>(static_cast<MenuItem*>(this), method);
 		SharedBoundMethod bound_method = new StaticBoundMethod(callback);
 		SharedValue method_value = Value::NewMethod(bound_method);
-		this->Set(name, method_value);
+		this->RawSet(name, method_value);
 	}
 
 	bool MenuItem::IsSeparator()
 	{
-		SharedValue type = this->Get("type");
+		SharedValue type = this->RawGet("type");
 		return (type->IsInt() && type->ToInt() == SEP);
 	}
 
 	bool MenuItem::IsItem()
 	{
-		SharedValue type = this->Get("type");
+		SharedValue type = this->RawGet("type");
 		return (type->IsInt() && type->ToInt() == ITEM);
 	}
 
 	bool MenuItem::IsSubMenu()
 	{
-		SharedValue type = this->Get("type");
+		SharedValue type = this->RawGet("type");
 		return (type->IsInt() && type->ToInt() == SUBMENU);
 	}
 
@@ -120,13 +123,29 @@ namespace ti
 	void MenuItem::_Enable(const ValueList& args, SharedValue result)
 	{
 		this->Enable();
-		this->Set("enabled", Value::NewBool(true));
+		this->RawSet("enabled", Value::NewBool(true));
 	}
 
 	void MenuItem::_Disable(const ValueList& args, SharedValue result)
 	{
 		this->Disable();
-		this->Set("enabled", Value::NewBool(false));
+		this->RawSet("enabled", Value::NewBool(false));
+	}
+
+	void MenuItem::_SetLabel(const ValueList& args, SharedValue result)
+	{
+		printf("set label\n");
+		this->RawSet("label", args.at(0));
+
+		std::string label = std::string(args.at(0)->ToString());
+		this->SetLabel(label);
+	}
+	void MenuItem::_SetIcon(const ValueList& args, SharedValue result)
+	{
+		printf("set icon\n");
+		this->RawSet("icon", args.at(0));
+		std::string icon_path = std::string(args.at(0)->ToString());
+		this->SetLabel(icon_path);
 	}
 
 	/* The function below, modify the bound object values
@@ -134,28 +153,28 @@ namespace ti
 	 * a consistent state */
 	void MenuItem::MakeSeparator()
 	{
-		this->Set("type", Value::NewInt(SEP));
-		this->Set("iconURL", Value::Undefined);
-		this->Set("label", Value::Undefined);
+		this->RawSet("type", Value::NewInt(SEP));
+		this->RawSet("iconURL", Value::Undefined);
+		this->RawSet("label", Value::Undefined);
 	}
 
 	void MenuItem::MakeItem(SharedValue label,
 	                       SharedValue callback,
 	                       SharedValue icon_url)
 	{
-		this->Set("type", Value::NewInt(ITEM));
-		this->Set("label", label);
-		this->Set("callback", callback);
-		this->Set("iconURL", icon_url);
+		this->RawSet("type", Value::NewInt(ITEM));
+		this->RawSet("label", label);
+		this->RawSet("callback", callback);
+		this->RawSet("iconURL", icon_url);
 	}
 
 	void MenuItem::MakeSubMenu(SharedValue label,
 	                          SharedValue icon_url)
 	{
-		this->Set("type", Value::NewInt(SUBMENU));
-		this->Set("label", label);
-		this->Set("iconURL", icon_url);
-		this->Set("callback", Value::Undefined);
+		this->RawSet("type", Value::NewInt(SUBMENU));
+		this->RawSet("label", label);
+		this->RawSet("iconURL", icon_url);
+		this->RawSet("callback", Value::Undefined);
 	}
 
 	SharedValue MenuItem::AppendItem(MenuItem* item)
@@ -170,7 +189,7 @@ namespace ti
 	/* Handy accessor functions */
 	const char* MenuItem::GetLabel()
 	{
-		SharedValue label_value = this->Get("label");
+		SharedValue label_value = this->RawGet("label");
 		if (label_value->IsString())
 			return label_value->ToString();
 		else
@@ -179,7 +198,7 @@ namespace ti
 
 	const char* MenuItem::GetIconURL()
 	{
-		SharedValue label_value = this->Get("iconURL");
+		SharedValue label_value = this->RawGet("iconURL");
 		if (label_value->IsString())
 			return label_value->ToString();
 		else

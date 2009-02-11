@@ -34,6 +34,8 @@ namespace ti
 
 		void Enable();
 		void Disable();
+		void SetLabel(std::string label);
+		void SetIcon(std::string icon_path);
 
 		static int nextMenuUID() {
 			return currentUID++;
