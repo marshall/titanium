@@ -140,19 +140,22 @@ TiDeveloper.stopIRCTrack = function()
 	
 };
 
-function createRecord(name,dir,appid)
+function createRecord(name,dir,appid,publisher,url,image)
 {
 	var record = {
 		name: name,
 		dir: dir,
 		id: highestId++,
 		appid: appid,
-		date: new Date().getTime()
+		date: new Date().getTime(),
+		publisher:publisher,
+		url:url,
+		image:image
 	};
 	TiDeveloper.ProjectArray.push(record);
     db.transaction(function (tx) 
     {
-        tx.executeSql("INSERT INTO Projects (id, timestamp, name, directory, appid) VALUES (?, ?, ?, ?, ?)", [record.id, record.date, record.name, record.dir, record.appid]);
+        tx.executeSql("INSERT INTO Projects (id, timestamp, name, directory, appid, publisher, url, image) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", [record.id,record.date,record.name,record.dir,record.appid,record.publisher,record.url,record.image]);
     });
 }
 
@@ -160,7 +163,7 @@ function loadProjects()
 {
 	db.transaction(function(tx) 
 	{
-        tx.executeSql("SELECT id, timestamp, name, directory, appid FROM Projects", [], function(tx, result) 
+        tx.executeSql("SELECT id, timestamp, name, directory, appid, publisher, url, image FROM Projects", [], function(tx, result) 
 		{
 			TiDeveloper.ProjectArray = [];
             for (var i = 0; i < result.rows.length; ++i) {
@@ -179,7 +182,10 @@ function loadProjects()
 						date: row['timestamp'],
 						name: row['name'],
 						dir: row['directory'],
-						appid: row['appid']
+						appid: row['appid'],
+						publisher: row['publisher'],
+						url: row['url'],
+						image: row['image']
 					});
 					if (highestId < row['id'])
 					{
@@ -205,7 +211,7 @@ db.transaction(function(tx)
        loadProjects();
    }, function(tx, error) 
    {
-       tx.executeSql("CREATE TABLE Projects (id REAL UNIQUE, timestamp REAL, name TEXT, directory TEXT, appid TEXT)", [], function(result) 
+       tx.executeSql("CREATE TABLE Projects (id REAL UNIQUE, timestamp REAL, name TEXT, directory TEXT, appid TEXT, publisher TEXT, url TEXT, image TEXT)", [], function(result) 
 	   { 
           loadProjects(); 
        });
@@ -219,10 +225,10 @@ $MQL('l:create.project.request',function(msg)
 {
 	try
 	{
-		var result = Titanium.Project.create(msg.payload.project_name,msg.payload.project_location);
+		var result = Titanium.Project.create(msg.payload.project_name,msg.payload.project_location,msg.payload.publisher,msg.payload.url,msg.payload.image);
 		if (result.success)
 		{
-			createRecord(result.name,result.basedir,result.id);
+			createRecord(result.name,result.basedir,result.id,msg.payload.publisher,msg.payload.url,msg.payload.image);
 			$MQ('l:create.project.response',{result:'success'});
 			var count = formatCountMessage(TiDeveloper.ProjectArray.length,'project');
 			$MQ('l:project.list.response',{count:count,page:1,totalRecords:TiDeveloper.ProjectArray.length,'rows':TiDeveloper.ProjectArray})
@@ -356,12 +362,25 @@ $MQL('l:create.package.request',function(msg)
 		var project_name = $('#package_project_name').html();
 
 		var launch = msg.payload.launch;
+		var install = typeof(msg.payload.install)=='undefined' ? false : msg.payload.install;
 
 		var project = findProject(project_name);
+		var resources = TFS.getFile(project.dir,'resources');
 
 		// build the manifest
-		var manifest = 'appname:'+project_name+'\n';
-		manifest+='appid:'+project.appid+'\n';
+		var manifest = '#appname:'+project_name+'\n';
+		manifest+='#appid:'+project.appid+'\n';
+		manifest+='#publisher:'+project.publisher+'\n';
+
+		if (project.image)
+		{
+			var image = TFS.getFile(project.image);
+			var image_dest = TFS.getFile(resources,image.name());
+			image.copy(image_dest);
+			manifest+='#image:'+image.name()+'\n';
+		}
+		
+		manifest+='#url:'+project.url+'\n';
 		manifest+='runtime:'+modules[0].versions[0]+'\n';
 		
 		// 0 is always runtime, skip it
@@ -381,9 +400,7 @@ $MQL('l:create.package.request',function(msg)
 		
 		var runtime = TFS.getFile(modules[0].dir,modules[0].versions[0]);
 		
-		//TODO: toggle installed flag here based on testing installer or not
-		var installed = true;
-		var app = Titanium.createApp(runtime,dist,project_name,project.appid,installed);
+		var app = Titanium.createApp(runtime,dist,project_name,project.appid,install);
 		var app_manifest = TFS.getFile(app.base,'manifest');
 		app_manifest.write(manifest);
 		var resources = TFS.getFile(project.dir,'resources');
@@ -520,11 +537,28 @@ $MQL('l:project.search.request',function(msg)
 //
 // Show file dialog and send value
 //
-$MQL('l:show.filedialog',function()
+$MQL('l:show.filedialog',function(msg)
 {
-	var files = Titanium.UI.openFiles({directories:true});
-	var val = files.length ? files[0] : '';
-	$MQ('l:file.selected',{value:val});
+	var el = msg.payload['for'];
+	alert(el);
+	var props = {multiple:false};
+	if (el == 'project_image')
+	{
+		props.directories = false;
+		props.files = true;
+		props.types = ['gif','png','jpg'];
+	}
+	else
+	{
+		props.directories = true;
+		props.files = false;
+	}
+	
+	var files = Titanium.UI.openFiles(props);
+	if (files.length)
+	{
+		$MQ('l:file.selected',{'for':el,'value':files[0]});
+	}
 });
 
 var irc_count = 0;

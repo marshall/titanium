@@ -99,6 +99,7 @@ dir_util.copy_tree(p.join(build.titanium_source_dir,'installation','common','js'
 appinstaller = p.join(bundle.contents,'appinstaller')
 os.makedirs(appinstaller)
 dir_util.copy_tree(p.join(build.titanium_source_dir,'installation','app_installer'), appinstaller, preserve_symlinks=True)
+dir_util.copy_tree(p.join(build.titanium_source_dir,'installation','common','js'), p.join(appinstaller,'resources','js'), preserve_symlinks=True)
 
 # copy the network installer
 installer = p.join(bundle.contents,'installer')
@@ -108,7 +109,7 @@ bundle = Bundler('Installer App',installer,None,None,None)
 shutil.copy(p.join(netinstaller,'Info.plist'),bundle.basedir)
 shutil.copy(p.join(netinstaller,'MainMenu.nib'),bundle.basedir)
 
-for i in [developer,appinstaller,installer]:
+for i in [developer,appinstaller,bundle.contents]:
 	# create a flag file on the netinstaller bundle so we don't
 	# attempt to re-run the application installer	
 	out_file = open(p.join(i, '.installed'), 'w')

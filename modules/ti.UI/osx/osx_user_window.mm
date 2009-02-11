@@ -11,7 +11,7 @@ namespace ti
 	static NSUInteger toWindowMask(WindowConfig *config)
 	{
 		NSUInteger mask = 0;
-		if (config->IsUsingChrome() || config->IsFullScreen())
+		if (!config->IsUsingChrome() || config->IsFullScreen())
 		{
 			mask = NSBorderlessWindowMask;
 		}

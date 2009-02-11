@@ -62,6 +62,8 @@ namespace ti
 				BOOL worked = [[NSFileManager defaultManager] createSymbolicLinkAtPath:destPath pathContent:originalPath];
 #ifdef DEBUG
 				NSLog(@"SYMLINK:%@=>%@ (%d)",originalPath,destPath,worked);
+#else
+				KR_UNUSED(worked);
 #endif
 #else
 				int result = link(src.toString().c_str(),dest.toString().c_str());
@@ -78,7 +80,6 @@ namespace ti
 #endif			
 				// in this case it's a regular file
 				Poco::File s(src.toString());
-				//s.copyTo(target.toString().c_str());
 				s.copyTo(dest.toString().c_str());
 #ifndef OS_WIN32
 			}
@@ -111,7 +112,6 @@ namespace ti
 				Poco::File f(file);
 				if (f.isDirectory())
 				{
-					std::cout << "++++++++++++++++++++++++++++++++++"<<std::endl;
 					ac->Copy(from,to);
 				}
 				else

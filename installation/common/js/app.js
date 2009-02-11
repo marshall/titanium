@@ -1,8 +1,8 @@
-if (typeof(Titanium)=='undefined') Titanium = {};
+var TFS = Titanium.Filesystem;
 
 Titanium.AppCreator = {
 	
-	osx: function(runtime,destination,name,appid,installed)
+	osx: function(runtime,destination,name,appid,install)
 	{
 		var src = TFS.getFile(destination,name+'.app');
 		src.createDirectory(true);
@@ -28,7 +28,6 @@ Titanium.AppCreator = {
 		var icns = TFS.getFile(templates,'titanium.icns');
 		icns.copy(lproj);
 
-		//TIXML, LINK, INFO, MAINMENU
 		var plist = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
 		"<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n"+
 		"<plist version=\"1.0\">\n"+
@@ -40,7 +39,7 @@ Titanium.AppCreator = {
 		"	<key>CFBundleIconFile</key>\n"+
 		"	<string>titanium.icns</string>\n"+
 		"	<key>CFBundleIdentifier</key>\n"+
-		"	<string>"+appid+"</string>\n"+
+		"	<string>"+appid+(install?'.installer':'')+"</string>\n"+
 		"	<key>CFBundleInfoDictionaryVersion</key>\n"+
 		"	<string>6.0</string>\n"+
 		"	<key>CFBundleName</key>\n"+
@@ -62,10 +61,14 @@ Titanium.AppCreator = {
 		infoplist.write(plist);
 		
 		// set our marker file
-		if (installed)
+		var marker = TFS.getFile(contents,'.installed');
+		if (!install)
 		{
-			var marker = TFS.getFile(contents,'.installed');
 			marker.write(String(new Date()));
+		}
+		else
+		{
+			marker.deleteFile();
 		}
 
 		return {
@@ -75,12 +78,12 @@ Titanium.AppCreator = {
 		};
 	},
 
-	linux: function(runtime,destination,name,appid,installed)
+	linux: function(runtime,destination,name,appid,install)
 	{
 
 	},
 
-	win32: function(runtime,destination,name,appid,installed)
+	win32: function(runtime,destination,name,appid,install)
 	{
 		var appDir = TFS.getFile(destination,name);
 		appDir.createDirectory(true);
@@ -93,10 +96,14 @@ Titanium.AppCreator = {
 		kboot.copy(appExecutable);
 		
 		// set our marker file
-		if (installed)
+		var marker = TFS.getFile(appDir,'.installed');
+		if (!install)
 		{
-			var marker = TFS.getFile(appDir,'.installed');
 			marker.write(String(new Date()));
+		}
+		else
+		{
+			marker.deleteFile();
 		}
 
 		return {
@@ -108,12 +115,12 @@ Titanium.AppCreator = {
 };
 
 
-Titanium.createApp = function(runtime,destination,name,appid,installed)
+Titanium.createApp = function(runtime,destination,name,appid,install)
 {
-	installed = (typeof(installed)=='undefined') ? true : installed;
+	install = (typeof(install)=='undefined') ? true : install;
 	var platform = Titanium.platform;
 	var fn = Titanium.AppCreator[platform];
-	return fn(runtime,destination,name,appid,installed);
+	return fn(runtime,destination,name,appid,install);
 };
 
 Titanium.linkLibraries = function(runtimeDir)

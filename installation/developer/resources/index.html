@@ -16,13 +16,11 @@
 </head>
 
 <!-- ADJUST WINDOW HEIGHT BASED ON CURRENT STATE -->
-<body  on="l:menu[val=create] then script[Titanium.UI.currentWindow.setHeight(380)] or
-		  l:menu[val=manage] then script[Titanium.UI.currentWindow.setHeight(500)] if expr[ $('#project_count_hidden').val() != 0] 
-		or l:menu[val=api] then script[Titanium.UI.currentWindow.setHeight(160)] if expr[ $('#project_count_hidden').val() == 0] 
-		or l:cancel[val=project] then script[Titanium.UI.currentWindow.setHeight(160)]
-		or l:menu[val=interact] then script[Titanium.UI.currentWindow.setHeight(650)]
-		or l:menu[val=social] then script[Titanium.UI.currentWindow.setHeight(650)]">
-
+<body  on="l:menu[val=create] then script[Titanium.UI.currentWindow.setHeight(400)] or
+		  l:menu[val=manage] then script[Titanium.UI.currentWindow.setHeight(500)] if expr[ $('#project_count_hidden').val() != 0] or
+		  l:menu[val=api] then script[Titanium.UI.currentWindow.setHeight(160)] if expr[ $('#project_count_hidden').val() == 0] or
+		  l:cancel[val=project] then script[Titanium.UI.currentWindow.setHeight(160)]
+		or l:menu[val=interact] then script[Titanium.UI.currentWindow.setHeight(650)]">
 	<!-- HEADER MENU -->
 	<div class="menu">
 		<div id="project_count">You have no projects  </div>
@@ -134,7 +132,7 @@
 				<div class="section hint_text" 
 					on="l:create.project.request then hide or l:menu[val=create] then show
 					or l:create.project.response[result=success] then effect[fadeIn] after 2300ms">
-					Enter a project name and file location for your new project.
+					Enter the following project details. Your project will be created using this initial information.
 				</div>
 				<div class="section action_text" style="display:none" 
 				on="(l:menu[val=create] or l:create.project.response) then hide or l:create.project.request then show">
@@ -161,28 +159,68 @@
 
 			<!-- PROJECT NAME -->
 			<div class="section text">
-				<div>Project Name:</div>
-				<div>
-					<input type="text" id="project_name" validator="required" fieldset="new_project"
-						on="(l:create.project.response[result=success] or l:menu[val=create]) then reset"/> 
-				</div>
+				<table>
+					<tr>
+						<td><div>Project Name:</div></td>
+						<td><div>Publisher Name:</div></td>
+						<td><div>Publisher URL:</div></td>
+					</tr>
+					<tr>
+						<td><div><input type="text" id="project_name" validator="required" fieldset="new_project"
+						on="(l:create.project.response[result=success] or l:menu[val=create]) then reset"/></div></td>
+						<td><div><input type="text" id="publisher_name" name="publisher" validator="required" fieldset="new_project"
+						on="(l:create.project.response[result=success] or l:menu[val=create]) then reset"/></div></td>
+						<td><div><input type="text" id="app_url" name="url" validator="required" fieldset="new_project"
+						on="(l:create.project.response[result=success] or l:menu[val=create]) then reset"/></div></td>
+					</tr>
+					<tr>
+						<td><div class="hint">The application name</div></td>
+						<td><div class="hint">The name of the publisher</div></td>
+						<td><div class="hint">The URL for your application</div></td>
+					</tr>
+				</table>
 			</div>
 
 			<!-- PROJECT LOCATION -->
 			<div class="section text">
-				<div>Project Location:</div>
-				<div>
-					<input type="text" id="project_location" style="float:left;width:600px" 
-						validator="required" fieldset="new_project" on="l:file.selected then value[value]
+				<table>
+					<tr>
+						<td><div>Project Image:</div></td>
+						<td><div>Project Location:</div></td>
+					</tr>
+					<tr>
+						<td>
+							<div>
+								<input type="text" id="project_image" name="image" style="width:300px;float:left;" 
+						validator="required" fieldset="new_project" on="l:file.selected[for=project_image] then value[value]
 						or (l:create.project.response[result=success] or l:menu[val=create]) then reset"/> 
-					<div class="button1" 
-						style="float:left;width:23px;height:23px;position:relative;top:1px;margin-left:10px" >
-						<div class="button2" style="height:21px" 
-							on="click then l:show.filedialog">
-							<img src="images/folder_go.png" style="position:relative;top:3px;left:1px"/>
-						</div>
-					</div>
-				</div>
+								<div class="button1" 
+									style="float:left;width:23px;height:23px;position:relative;top:1px;margin-left:10px" >
+									<div class="button2" style="height:21px" 
+										on="click then l:show.filedialog[for=project_image]">
+										<img src="images/folder_go.png" style="position:relative;top:3px;left:1px"/>
+									</div>
+								</div>
+								<div class="hint" style="clear:both;margin-top:0">The application's image</div>
+							</div>
+						</td>
+						<td>
+							<div>
+								<input type="text" id="project_location" style="width:300px;float:left;" 
+						validator="required" fieldset="new_project" on="l:file.selected[for=project_location] then value[value]
+						or (l:create.project.response[result=success] or l:menu[val=create]) then reset"/> 
+								<div class="button1" 
+									style="float:left;width:23px;height:23px;position:relative;top:1px;margin-left:10px" >
+									<div class="button2" style="height:21px" 
+										on="click then l:show.filedialog[for=project_location]">
+										<img src="images/folder_go.png" style="position:relative;top:3px;left:1px"/>
+									</div>
+								</div>
+								<div class="hint" style="clear:both;margin-top:0">The project directory</div>
+							</div>
+						</td>
+					</tr>
+				</table>
 			</div>
 			<div style="clear:both"></div>
 
@@ -378,7 +416,7 @@
 					<div style="width:460px;color:#bbb">
 						<div style="width:45px;float:left;text-decoration:underline;cursor:pointer"
 							on="click then l:package.all[val=exclude]">
-							<a title="exclude module from applicaiton">Exclude</a>
+							<a title="exclude module from application">Exclude</a>
 						</div>
 						<div style="width:95px;float:left;margin-left:10px;text-decoration:underline;cursor:pointer"
 						 	on="click then l:package.all[val=network]">
@@ -432,6 +470,12 @@
 				 	on="click then l:create.package.request[launch=true]">
 					<div class="button2">
 						Package & Launch
+					</div>
+				</div>
+				<div class="button1" style="float:left;margin-right:10px;width:130px"
+				 	on="click then l:create.package.request[launch=true,install=true]">
+					<div class="button2">
+						Package & Install
 					</div>
 				</div>
 				<div class="button1" style="float:left;margin-right:10px" 

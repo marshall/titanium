@@ -3,6 +3,8 @@
 	<script type="text/javascript" charset="utf-8" src="js/jquery.js"></script>
 	<script type="text/javascript" charset="utf-8" src="js/jquery-ui.js"></script>
 	<script type="text/javascript" charset="utf-8" src="js/installer.js"></script>
+	<script type="text/javascript" charset="utf-8" src="js/project.js"></script>
+	<script type="text/javascript" charset="utf-8" src="js/app.js"></script>
 	<link rel="stylesheet" href="css/install.css" type="text/css" media="screen" charset="utf-8" />
 	<link rel="stylesheet" href="css/themes/ui.all.css" type="text/css" media="screen" charset="utf-8" />
 </head>
@@ -14,41 +16,29 @@
 		<div style="float:left">
 			<div class="app_icon_container">
 				<div class="app_icon text" id="icon">
-					my icon
+					<img src="" class="appimg" width="78" height="78">
 				</div>
 			</div>
 		</div>
 		
 		<!-- INSTALLER CONTENT -->
 		<div id="content">
-			
-			<!-- APP DOWNLOAD PROGRESS BAR -->
-			<div id="download"  class="page">
-				<div class="header_text appname">Your App Name</div>
 
-				<div class="text section" id="statusmsg">
-					Downloading application...
-				</div>
-				<div id="progressbar" class="section" style="height:10px"></div>
-			</div>
-			
 			<!-- INSTALL INFO -->
 			<div id="installation_info"  class="page" style="display:none">
-				<div class="header_text appname">Your App Name</div>
+				<div class="header_text appname">Loading...</div>
 
 				<div class="text section">
 					Information about the application you are about to install:
 				</div>
 				<div class="text section">
 					<div style="width:100px;float:left" class="light">
-						<div>File:</div>
 						<div>Publisher:</div>
 						<div>From:</div>
 					</div>	
-					<div style="width:200px;float:left;color:#087fb5">
-						<div id="appfile">AppFoo.app</div>
-						<div id="apppub">3 Guys and a Plumber</div>
-						<div id="appurl">titaniumapp.com</div>
+					<div style="width:200px;float:left;" class="metadata">
+						<div id="apppub"></div>
+						<div id="appurl"></div>
 					</div>	
 					<div style="clear:both"></div>
 				</div>
@@ -79,7 +69,7 @@
 						</div>
 						<div style="clear:both"></div>
 					</div>
-					<div style="margin-top:10px;">
+					<div style="margin-top:10px;" id="app_warning">
 						<img src="images/warning.png" /> This application has application access like all installed applications running on the desktop.
 					</div>
 				</div>
@@ -119,7 +109,7 @@
 	</div>
 	
 	<!-- POWERED BY LOGO -->
-	<div id="powered_by" class="section"></div>
+	<div id="powered_by" class="section" onclick="Titanium.Desktop.openURL('http://titaniumapp.com');"></div>
 
 	<script>
 	// create progress bars
@@ -138,73 +128,34 @@
 	// finish install click
 	$('#finish').click(function()
 	{
-		//FIXME: after install, we want to open up
-		//the system browser to the app's home page (redirecting through 
-		//our system)
-		Titanium.UI.currentWindow.close();
-	})
-	
-	
-	// simulate download app progress
-	var value=0;
-	var fileInterval = null;
-	var pb = setInterval(function()
-	{
-		value++;
-		$('#progressbar').progressbar('value',value)
-		if (value == 100)
+		if ($('#open_after_install').is(':checked'))
 		{
-			value = 0;			
-			clearInterval(pb)
-			Titanium.UI.currentWindow.setHeight(450)
-			
-			// show install info screen
-			$("#download").slideUp(500);
-			$('#installation_info').fadeIn();
-	
-			// track file location input - required field
-			fileInterval = setInterval(function()
-			{
-				if ($('#install_location').val() != '')
-				{
-					$('#install').removeClass('disabled')
-				}
-				else
-				{
-					$('#install').addClass('disabled');
-				}
-			},100)
+			launchApp();
 		}
-	},50);
+		else
+		{
+			Titanium.App.exit(0);
+		}
+	})
+
+	Titanium.UI.currentWindow.setHeight(450)
 	
+	// show install info screen
+	$('#installation_info').fadeIn();
+	$('#install').removeClass('disabled');
 	
 	// install app click
 	$('#install').click(function()
 	{
-		clearInterval(fileInterval);
 		$('#installation_info').slideUp(500);
 		Titanium.UI.currentWindow.setHeight(220)
 		
 		// show installation screen
 		$('#install_app').fadeIn()
 		
-		// simulate progress
-		var pbInstall = setInterval(function()
-		{
-			value++
-			$('#progressbar_install').progressbar('value',value)
-			
-			// on finish show success
-			if (value==100)
-			{
-				clearInterval(pbInstall);
-				$('#install_app').slideUp(500);
-				$('#install_app_finished').fadeIn();
-			}
-
-		},50)
-
-	})
+		// run the installer
+		installApp($('#install_location').val());
+	});
 	</script>
 </body>
 </html>

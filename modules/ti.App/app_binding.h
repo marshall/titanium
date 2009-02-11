@@ -16,10 +16,10 @@ namespace ti
 	class AppBinding : public StaticBoundObject
 	{
 	public:
-		AppBinding(SharedBoundObject);
-	protected:
+		AppBinding(Host *host,SharedBoundObject);
 		virtual ~AppBinding();
 	private:
+		Host *host;
 		SharedBoundObject global;
 		void GetID(const ValueList& args, SharedValue result);
 		void GetName(const ValueList& args, SharedValue result);
@@ -28,6 +28,7 @@ namespace ti
 		void GetGUID(const ValueList& args, SharedValue result);
 		void AppURLToPath(const ValueList& args, SharedValue result);
 		void SetMenu(const ValueList& args, SharedValue result);
+		void Exit(const ValueList& args, SharedValue result);
 	};
 }
 
