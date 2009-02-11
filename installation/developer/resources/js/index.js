@@ -267,6 +267,7 @@ $MQL('l:create.package.request',function(msg)
 		var project_name = $('#package_project_name').html();
 
 		var launch = msg.payload.launch;
+		var install = typeof(msg.payload.install)=='undefined' ? false : msg.payload.install;
 
 		var project = findProject(project_name);
 
@@ -293,8 +294,7 @@ $MQL('l:create.package.request',function(msg)
 		var runtime = TFS.getFile(modules[0].dir,modules[0].versions[0]);
 		
 		//TODO: toggle installed flag here based on testing installer or not
-		var installed = true;
-		var app = Titanium.createApp(runtime,dist,project_name,project.appid,installed);
+		var app = Titanium.createApp(runtime,dist,project_name,project.appid,install);
 		var app_manifest = TFS.getFile(app.base,'manifest');
 		app_manifest.write(manifest);
 		var resources = TFS.getFile(project.dir,'resources');
