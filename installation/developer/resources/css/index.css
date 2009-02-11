@@ -338,8 +338,8 @@ td div
 	font-size:12px;
 }
 
-div.hint
+div.formhint
 {
 	font-size:10px;
-	color:#333;
+	color:#000;
 }
