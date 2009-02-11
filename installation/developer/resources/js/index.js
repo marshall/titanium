@@ -10,41 +10,41 @@ TiDeveloper.currentPage = 1;
 TiDeveloper.init = false;
 TiDeveloper.ytAuthToken = null;
 
-
+// YOU TUBE STUFF - COME BACK TO LATER
 //
 // YouTube Setup
 //
-window.onYouTubePlayerReady = function(playerId)
-{
-	ytplayer = document.getElementById("myytplayer");
-	$('#ytapiplayer').css('display','none')
-
-};
-var params = { allowScriptAccess: "always" };
-var atts = { id: "myytplayer" };
-swfobject.embedSWF("http://www.youtube.com/apiplayer?enablejsapi=1&amp;playerapiid=ytplayer", 
-                 "ytapiplayer", "400px", "300px", "8", null, null, params, atts);
-
-//
-// Authenticate youtube user
+// window.onYouTubePlayerReady = function(playerId)
+// {
+// 	ytplayer = document.getElementById("myytplayer");
+// 	$('#ytapiplayer').css('display','none')
 // 
-$.ajax({
-	type: "POST",
-   	url: "https://www.google.com/youtube/accounts/ClientLogin",
-   	data: "Email=titaniumdev&Passwd=timetrac&service=youtube&source=titanium_developer",
-   	success: function(resp)
-	{
-     	TiDeveloper.ytAuthToken = resp;
-		TiDeveloper.loadVids()
-   	},
-   	error: function(resp)
-	{
-		if (resp.responseText == 'BadAuthentication')
-		{
-			// login failed
-		}
-	}
-});
+// };
+// var params = { allowScriptAccess: "always" };
+// var atts = { id: "myytplayer" };
+// swfobject.embedSWF("http://www.youtube.com/apiplayer?enablejsapi=1&amp;playerapiid=ytplayer", 
+//                  "ytapiplayer", "400px", "300px", "8", null, null, params, atts);
+// 
+// //
+// // Authenticate youtube user
+// // 
+// $.ajax({
+// 	type: "POST",
+//    	url: "https://www.google.com/youtube/accounts/ClientLogin",
+//    	data: "Email=titaniumdev&Passwd=timetrac&service=youtube&source=titanium_developer",
+//    	success: function(resp)
+// 	{
+//      	TiDeveloper.ytAuthToken = resp;
+// 		TiDeveloper.loadVids()
+//    	},
+//    	error: function(resp)
+// 	{
+// 		if (resp.responseText == 'BadAuthentication')
+// 		{
+// 			// login failed
+// 		}
+// 	}
+// });
 
 TiDeveloper.loadVids = function()
 {
