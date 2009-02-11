@@ -16,7 +16,7 @@ namespace ti
 	{
 
 		public:
-		GtkUIBinding();
+		GtkUIBinding(Host* host);
 
 		SharedPtr<MenuItem> CreateMenu();
 		void SetMenu(SharedPtr<MenuItem>);
@@ -25,7 +25,8 @@ namespace ti
 		SharedPtr<TrayItem> AddTray(SharedString icon_path,
 		                            SharedBoundMethod cb);
 
-		std::vector<std::string> OpenFiles(
+		void OpenFiles(
+			SharedBoundMethod callback,
 			bool multiple,
 			bool files,
 			bool directories,

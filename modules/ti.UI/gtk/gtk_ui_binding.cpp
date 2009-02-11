@@ -13,7 +13,7 @@
 
 namespace ti
 {
-	GtkUIBinding::GtkUIBinding() : UIBinding()
+	GtkUIBinding::GtkUIBinding(Host *host) : UIBinding(host)
 	{
 		/* Prepare the custom curl URL handler */
 		curl_register_local_handler(&Titanium_app_url_handler);
@@ -71,8 +71,77 @@ namespace ti
 		SharedPtr<TrayItem> item = new GtkTrayItem(icon_path, cb);
 		return item;
 	}
+	
 
-	std::vector<std::string> GtkUIBinding::OpenFiles(
+	struct OpenFilesJob
+	{
+		Host *host;
+		SharedBoundMethod callback;
+		bool multiple;
+		bool files;
+		bool directories;
+		std::string path;
+		std::string file;
+		std::vector<std::string> types;
+	};
+
+	void* open_files_thread(gpointer data)
+	{
+		OpenFilesJob* job = reinterpret_cast<OpenFilesJob*>(data);
+		SharedBoundList results = new StaticBoundList();
+
+		/* Must do this because we are running on a separate thread
+		 * from the GTK main loop */
+		gdk_threads_enter();
+
+		std::string text = "Select File";
+		GtkFileChooserAction a = GTK_FILE_CHOOSER_ACTION_OPEN;
+		if (job->directories)
+		{
+			text = "Select Directory";
+			a = GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER;
+		}
+
+		GtkWidget* chooser = gtk_file_chooser_dialog_new(
+			text.c_str(),
+			NULL,
+			a,
+			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+			GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
+			NULL);
+		gtk_file_chooser_set_select_multiple(GTK_FILE_CHOOSER(chooser), job->multiple);
+
+		int result = gtk_dialog_run(GTK_DIALOG(chooser));
+		if (result == GTK_RESPONSE_ACCEPT && job->multiple)
+		{
+			GSList* files = gtk_file_chooser_get_filenames(GTK_FILE_CHOOSER(chooser));
+			for (size_t i = 0; i < g_slist_length(files); i++)
+			{
+				char* f = (char*) g_slist_nth_data(files, i);
+				results->Append(Value::NewString(f));
+				g_free(f);
+			}
+			g_slist_free(files);
+		}
+		else if (result == GTK_RESPONSE_ACCEPT)
+		{
+			char *f = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(chooser));
+			results->Append(Value::NewString(f));
+			g_free(f);
+		}
+		gtk_widget_destroy(chooser);
+
+		/* Let gtk_main continue */
+		gdk_threads_leave();
+
+		ValueList args;
+		args.push_back(Value::NewList(results));
+		job->host->InvokeMethodOnMainThread(job->callback, args);
+		return NULL;
+	}
+
+	void GtkUIBinding::OpenFiles(
+		SharedBoundMethod callback,
 		bool multiple,
 		bool files,
 		bool directories,
@@ -80,55 +149,17 @@ namespace ti
 		std::string& file,
 		std::vector<std::string>& types)
 	{
-		std::vector<std::string> results;
-		return results;
+		OpenFilesJob* job = new OpenFilesJob;
+		job->callback = callback;
+		job->host = host;
+		job->multiple = multiple;
+		job->files = files;
+		job->directories = directories;
+		job->path = path;
+		job->file = file;
+		job->types = types;
 
-		//std::string text = "Choose File";
-		//GtkFileChooserAction a = GTK_FILE_CHOOSER_ACTION_OPEN;
-		//if (directories)
-		//{
-		//	text = "Choose Directory";
-		//	a = GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER;
-		//}
-
-		//GtkWidget* chooser = gtk_file_chooser_dialog_new(
-		//	text.c_str(),
-		//	NULL,
-		//	a,
-		//	GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-		//	GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
-		//	NULL);
-		//gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(chooser), "/home/martin");
-
-		//int result = gtk_dialog_run(GTK_DIALOG(chooser));
-		//printf("got result\n");
-
-		//if (result == GTK_RESPONSE_ACCEPT)
-		//{
-		//	printf("here1\n");
-		//	if (multiple)
-		//	{
-		//	printf("here3\n");
-		//		GSList* files = gtk_file_chooser_get_filenames(GTK_FILE_CHOOSER(chooser));
-		//		for (size_t i = 0; i < g_slist_length(files); i++)
-		//		{
-		//			char* f = (char*) g_slist_nth_data(files, i);
-		//			to_ret.push_back(std::string(f));
-		//			g_free(f);
-		//		}
-		//		g_slist_free(files);
-		//	}
-		//	else
-		//	{
-		//	printf("here2\n");
-		//		char *f = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(chooser));
-		//		to_ret.push_back(std::string(f));
-		//		g_free(f);
-		//	}
-		//}
-		//printf("destroying\n");
-		//gtk_widget_destroy(chooser);
-		//return to_ret;
+		g_thread_create(&open_files_thread, job, false, NULL);
 	}
 
 	long GtkUIBinding::GetSystemIdleTime()

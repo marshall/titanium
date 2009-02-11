@@ -75,7 +75,7 @@ namespace ti
 
 		// Add the Titanium.UI binding and initialize the main window.
 #if defined(OS_LINUX)
-		SharedBoundObject ui_binding = new GtkUIBinding();
+		SharedBoundObject ui_binding = new GtkUIBinding(this->host);
 		GtkUserWindow* window = new GtkUserWindow(this->host, main_window_config);
 
 #elif defined(OS_OSX)
