@@ -11,13 +11,15 @@
 
 #include "../ui_module.h"
 
+#define STUB() printf("Method is still a stub, %s:%i\n", __FILE__, __LINE__)
+
 namespace ti
 {
 	int Win32MenuItemImpl::currentUID = TI_MENU_ITEM_ID_BEGIN + 1;
 
 	std::vector<Win32MenuItemImpl *> menuItemsWithCallbacks;
 
-	Win32MenuItemImpl::Win32MenuItemImpl(Win32MenuItemImpl* _parent) : parent(_parent)
+	Win32MenuItemImpl::Win32MenuItemImpl(Win32MenuItemImpl* _parent) : parent(_parent), hMenu(0), menuItemID(0)
 	{
 		if(this->parent == NULL)
 		{
@@ -108,23 +110,42 @@ namespace ti
 
 	SharedValue Win32MenuItemImpl::GetIconPath(const char *url)
 	{
+		STUB();
 		return NULL;
 	}
 
 	void Win32MenuItemImpl::Enable()
 	{
+		STUB();
 	}
 
 	void Win32MenuItemImpl::Disable()
 	{
+		STUB();
 	}
 
 	void Win32MenuItemImpl::SetLabel(std::string label)
 	{
+		if(this->parent)
+		{
+			// parent must not be null in order to change the menu label
+			// TODO after modifying the menu, we need to call DrawMenuBar() on the window that contains this menu
+			if(this->hMenu)
+			{
+				// this is a sub menu
+				ModifyMenu(this->parent->hMenu, (UINT_PTR) this->hMenu, MF_POPUP | MF_STRING, (UINT_PTR) this->hMenu, label.c_str());
+			}
+			else
+			{
+				// this is a menu item
+				ModifyMenu(this->parent->hMenu, this->menuItemID, MF_BYCOMMAND | MF_STRING, this->menuItemID, label.c_str());
+			}
+		}
 	}
 
 	void Win32MenuItemImpl::SetIcon(std::string icon_path)
 	{
+		STUB();
 	}
 
 
