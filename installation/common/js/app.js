@@ -2,7 +2,7 @@ if (typeof(Titanium)=='undefined') Titanium = {};
 
 Titanium.AppCreator = {
 	
-	osx: function(runtime,destination,name,appid,installed)
+	osx: function(runtime,destination,name,appid,install)
 	{
 		var src = TFS.getFile(destination,name+'.app');
 		src.createDirectory(true);
@@ -62,7 +62,7 @@ Titanium.AppCreator = {
 		infoplist.write(plist);
 		
 		// set our marker file
-		if (installed)
+		if (!install)
 		{
 			var marker = TFS.getFile(contents,'.installed');
 			marker.write(String(new Date()));
@@ -75,12 +75,12 @@ Titanium.AppCreator = {
 		};
 	},
 
-	linux: function(runtime,destination,name,appid,installed)
+	linux: function(runtime,destination,name,appid,install)
 	{
 
 	},
 
-	win32: function(runtime,destination,name,appid,installed)
+	win32: function(runtime,destination,name,appid,install)
 	{
 		var appDir = TFS.getFile(destination,name);
 		appDir.createDirectory(true);
@@ -93,7 +93,7 @@ Titanium.AppCreator = {
 		kboot.copy(appExecutable);
 		
 		// set our marker file
-		if (installed)
+		if (!install)
 		{
 			var marker = TFS.getFile(appDir,'.installed');
 			marker.write(String(new Date()));
@@ -108,12 +108,12 @@ Titanium.AppCreator = {
 };
 
 
-Titanium.createApp = function(runtime,destination,name,appid,installed)
+Titanium.createApp = function(runtime,destination,name,appid,install)
 {
-	installed = (typeof(installed)=='undefined') ? true : installed;
+	install = (typeof(install)=='undefined') ? true : install;
 	var platform = Titanium.platform;
 	var fn = Titanium.AppCreator[platform];
-	return fn(runtime,destination,name,appid,installed);
+	return fn(runtime,destination,name,appid,install);
 };
 
 Titanium.linkLibraries = function(runtimeDir)
