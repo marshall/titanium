@@ -18,10 +18,6 @@ App.UI.registerUIComponent('control','iterator',
 					];
 	
 		};
-		this.getControlJS = function()
-		{
-			return ['../../../../common/js/tablemodel.js']
-		}
 		
 		/**
 		 * The version of the control. This will automatically be corrected when you
