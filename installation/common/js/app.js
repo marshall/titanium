@@ -2,7 +2,7 @@ if (typeof(Titanium)=='undefined') Titanium = {};
 
 Titanium.AppCreator = {
 	
-	osx: function(runtime,destination,name,appid)
+	osx: function(runtime,destination,name,appid,installed)
 	{
 		var src = TFS.getFile(destination,name+'.app');
 		src.createDirectory(true);
@@ -60,6 +60,13 @@ Titanium.AppCreator = {
 
 		var infoplist = TFS.getFile(contents,'Info.plist');
 		infoplist.write(plist);
+		
+		// set our marker file
+		if (installed)
+		{
+			var marker = TFS.getFile(contents,'.installed');
+			marker.write(String(new Date()));
+		}
 
 		return {
 			resources:resources,
@@ -68,12 +75,12 @@ Titanium.AppCreator = {
 		};
 	},
 
-	linux: function(runtime,destination,name,appid)
+	linux: function(runtime,destination,name,appid,installed)
 	{
 
 	},
 
-	win32: function(runtime,destination,name,appid)
+	win32: function(runtime,destination,name,appid,installed)
 	{
 		var appDir = TFS.getFile(destination,name);
 		appDir.createDirectory(true);
@@ -85,6 +92,13 @@ Titanium.AppCreator = {
 		var appExecutable = TFS.getFile(appDir, name + '.exe');
 		kboot.copy(appExecutable);
 		
+		// set our marker file
+		if (installed)
+		{
+			var marker = TFS.getFile(appDir,'.installed');
+			marker.write(String(new Date()));
+		}
+
 		return {
 			resources:resources,
 			base:appDir,
@@ -94,10 +108,35 @@ Titanium.AppCreator = {
 };
 
 
-Titanium.createApp = function(runtime,destination,name,appid)
+Titanium.createApp = function(runtime,destination,name,appid,installed)
 {
+	installed = (typeof(installed)=='undefined') ? true : installed;
 	var platform = Titanium.platform;
 	var fn = Titanium.AppCreator[platform];
-	return fn(runtime,destination,name,appid);
+	return fn(runtime,destination,name,appid,installed);
 };
 
+Titanium.linkLibraries = function(runtimeDir)
+{
+	if (Titanium.platform == 'osx')
+	{
+		var fw = ['WebKit','WebCore','JavaScriptCore'];
+		for (var c=0;c<fw.length;c++)
+		{
+			var fwn = fw[c];
+			var fwd = TFS.getFile(runtimeDir,fwn+'.framework');
+			var fwd_name = fwd.name();
+			var versions = TFS.getFile(fwd,'Versions');
+			var ver = TFS.getFile(versions,'A');
+			if (ver.exists()) continue; // skip if already linked
+			var current = TFS.getFile(fwd,'Versions','Current');
+			ver.createShortcut('Current',versions);
+			var hf = TFS.getFile(fwd,'Headers');
+			hf.createShortcut('Versions/Current/Headers',fwd);
+			var ph = TFS.getFile(fwd,'PrivateHeaders');
+			ph.createShortcut('Versions/Current/PrivateHeaders',fwd);
+			var rf = TFS.getFile(fwd,'Resources');
+			rf.createShortcut('Versions/Current/Resources',fwd);
+		}
+	}
+};
