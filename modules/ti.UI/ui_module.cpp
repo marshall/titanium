@@ -68,14 +68,14 @@ namespace ti
 			TI_FATAL_ERROR("Error loading tiapp.xml. Your application window is not properly configured or packaged.");
 		}
 
-		// We are keeping this object in a static variable, which means 
+		// We are keeping this object in a static variable, which means
 		// that we should only ever have one copy of the UI module.
 		SharedBoundObject global = this->host->GetGlobalObject();
 		UIModule::global = global;
 
 		// Add the Titanium.UI binding and initialize the main window.
 #if defined(OS_LINUX)
-		SharedBoundObject ui_binding = new GtkUIBinding();
+		SharedBoundObject ui_binding = new GtkUIBinding(this->host);
 		GtkUserWindow* window = new GtkUserWindow(this->host, main_window_config);
 
 #elif defined(OS_OSX)
@@ -85,7 +85,7 @@ namespace ti
 		[nw setInitialWindow:YES];
 
 #elif defined(OS_WIN32)
-		SharedBoundObject ui_binding = new Win32UIBinding();
+		SharedBoundObject ui_binding = new Win32UIBinding(this->host);
 		Win32UserWindow* window = new Win32UserWindow(this->host, main_window_config);
 #endif
 
