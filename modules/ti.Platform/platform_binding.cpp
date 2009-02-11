@@ -22,6 +22,7 @@ namespace ti
 		const char *arch = Poco::Environment::osArchitecture().c_str();
 		const char *address = Poco::Environment::nodeName().c_str();
 
+		
 #if defined(OS_OSX)
 		int num_proc = [[NSProcessInfo processInfo] processorCount];
 #elif defined(OS_WIN32)
@@ -34,10 +35,10 @@ namespace ti
 		int num_proc = 1;
 #endif
 
-		const char *nodeId = "";
+		char *nodeId = "";
 		try
 		{
-			nodeId = Poco::Environment::nodeId().c_str();
+			nodeId = (char*)Poco::Environment::nodeId().c_str();
 		}
 		catch (...) { }
 
@@ -48,7 +49,8 @@ namespace ti
 		this->Set("id", Value::NewString(nodeId));
 		this->Set("processorCount", Value::NewInt(num_proc));
 		this->Set("username", Value::NewString(kroll::FileUtils::GetUsername()));
-	}
+
+		}
 
 	PlatformBinding::~PlatformBinding()
 	{
