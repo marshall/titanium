@@ -50,17 +50,17 @@
 
 	NSMenu *windowMenu = [[[NSApp mainMenu] itemWithTitle:NSLocalizedString(@"Window",@"")] submenu];
 	NSMenuItem *showInspector = [windowMenu itemWithTitle:NSLocalizedString(@"Show Inspector", @"")];
-	if (host->IsDebugMode())
-	{
+	// if (host->IsDebugMode())
+	// {
 	    [showInspector setEnabled:YES];
 	    [showInspector setAction:@selector(showInspector)];
-	}
-	else
-	{
-	    [showInspector setHidden:YES];
-	    NSMenuItem *showInspectorSep = [windowMenu itemWithTitle:@"Show Inspector Separator"];
-	    [showInspectorSep setHidden:YES];
-	}
+	// }
+	// else
+	// {
+	//     [showInspector setHidden:YES];
+	//     NSMenuItem *showInspectorSep = [windowMenu itemWithTitle:@"Show Inspector Separator"];
+	//     [showInspectorSep setHidden:YES];
+	// }
 	closed = NO;
 }
 - (void)dealloc

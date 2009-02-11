@@ -1,5 +1,5 @@
-appname: testapp 
-appid: com.titaniumapp.test.testapp
+#appname: testapp 
+#appid: com.titaniumapp.test.testapp
 runtime: 0.2
 api: 0.1
 javascript: 0.1

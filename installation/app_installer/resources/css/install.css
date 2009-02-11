@@ -140,3 +140,23 @@ input:focus
 	border:1px solid #404040;
 	background-color:#303030;
 }
+
+#app_warning img
+{
+	float:left;
+	margin-top:3px;
+	margin-right:12px;
+}
+
+#app_warning
+{
+	color:#fdd126;
+	font-size:10px;
+}
+
+.metadata
+{
+	color:#087fb5;
+	cursor:hand;
+}
+

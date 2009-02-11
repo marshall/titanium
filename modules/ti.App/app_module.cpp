@@ -38,7 +38,7 @@ namespace ti
 		AppConfig::Init(config);
 
 		// load our variables
-		this->app_binding = new AppBinding(host->GetGlobalObject());
+		this->app_binding = new AppBinding(host,host->GetGlobalObject());
 
 		// add our command line array
 		SharedBoundList args = new StaticBoundList();

@@ -10,7 +10,7 @@
 
 namespace ti
 {
-	AppBinding::AppBinding(SharedBoundObject global) : global(global)
+	AppBinding::AppBinding(Host *host,SharedBoundObject global) : host(host),global(global)
 	{
 		this->SetMethod("getID", &AppBinding::GetID);
 		this->SetMethod("getName", &AppBinding::GetName);
@@ -39,6 +39,8 @@ namespace ti
 		}
 		SharedValue arguments = Value::NewList(argList);
 		Set("arguments", arguments);
+		
+		this->SetMethod("exit",&AppBinding::Exit);
 	}
 
 	AppBinding::~AppBinding()
@@ -63,6 +65,10 @@ namespace ti
 	void AppBinding::GetGUID(const ValueList& args, SharedValue result)
 	{
 		//FIXME: implement this
+	}
+	void AppBinding::Exit(const ValueList& args, SharedValue result)
+	{
+		host->Exit(args.size()==0 ? 0 : args.at(0)->ToInt());
 	}
 
 	static const char *kAppURLPrefix = "/Resources";

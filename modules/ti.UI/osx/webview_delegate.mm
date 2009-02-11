@@ -27,7 +27,8 @@
 	// this reduces memory cache footprint significantly.
 
 	[webPrefs setCacheModel:WebCacheModelDocumentBrowser];
-	[webPrefs setDeveloperExtrasEnabled:host->IsDebugMode()];
+//	[webPrefs setDeveloperExtrasEnabled:host->IsDebugMode()];
+	[webPrefs setDeveloperExtrasEnabled:YES];
 	[webPrefs setPlugInsEnabled:YES]; 
 	[webPrefs setJavaEnabled:NO]; // ?? this disallows Java Craplets
 	[webPrefs setJavaScriptEnabled:YES];

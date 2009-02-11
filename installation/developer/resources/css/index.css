@@ -56,7 +56,7 @@ input[type=text], select
 	font-size:12px;
 	padding:3px;
 	color:#eee;
-	width:250px;
+	width:220px;
 }
 input:focus
 {
@@ -319,4 +319,15 @@ input:focus
 {
 	float:left;
 	width:335px;
+}
+
+td div
+{
+	font-size:12px;
+}
+
+div.hint
+{
+	font-size:10px;
+	color:#333;
 }

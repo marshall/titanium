@@ -1,6 +1,5 @@
-
-appname: titanium_sdk
-appid: com.titaniumapp.sdk
+#appname: titanium_sdk
+#appid: com.titaniumapp.sdk
 runtime: 0.2
 api: 0.1
 javascript: 0.1
