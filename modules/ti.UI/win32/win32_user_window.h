@@ -60,6 +60,7 @@ protected:
 	SharedPtr<Win32MenuItemImpl> menuInUse;
 
 	void RemoveMenu();
+	void ReloadTiWindowConfig();
 
 public:
 	static void RegisterWindowClass(HINSTANCE hInstance);
