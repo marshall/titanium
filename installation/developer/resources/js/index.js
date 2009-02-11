@@ -296,6 +296,7 @@ setTimeout(function()
 		var name = result.modules[c].name;
 		module_map[name]=result.modules[c];
 		modules.push({name:name,versions:result.modules[c].versions,dir:result.modules[c].dir});
+	
 	}
 },500);
 
@@ -307,7 +308,7 @@ $MQL('l:package.project.request',function(msg)
 	try
 	{
 		$MQ('l:package.project.data',{rows:modules});
-		$MQ('l:package.all',{val:'network'});
+	 	$MQ('l:package.all',{val:'network'});
 	}
 	catch (E)
 	{

@@ -57,7 +57,7 @@ App.UI.registerUIComponent('control','yui_paginator',
 		*/
 		// this.getControlJS = function()
 		// {
-		// 	return ['js/yahoo-min.js','js/paginator-min.js']
+		// 	return ['js/paginator-min.js']
 		// }
 				
 		/*
@@ -69,36 +69,18 @@ App.UI.registerUIComponent('control','yui_paginator',
 		}
 		this.rowsPerPage = function(value)
 		{
-			this.createPaginator(this.options)
-
-			if (this.pager == null)
-			{
-				return;
-			}
 			this.options.rowsPerPage = App.getActionValue(value,'rowsPerPage',this.options.rowsPerPage)
 			this.pager.setRowsPerPage(parseInt(this.options.rowsPerPage))
 			this.pager.render();
 		}  
 		this.page = function(value)
 		{
-			this.createPaginator(this.options)
-
-			if (this.pager == null)
-			{
-				return;
-			}
 			this.options.initialPage = App.getActionValue(value,'page',this.options.initialPage)
 			this.pager.setPage(parseInt(this.options.initialPage))
 			this.pager.render();
 		}  
 		this.totalRecords = function(value)
 		{
-			this.createPaginator(this.options)
-
-			if (this.pager == null)
-			{
-				return;
-			}
 			this.options.totalRecords = App.getActionValue(value,'totalRecords',this.options.totalRecords)
 			this.pager.setTotalRecords(parseInt(this.options.totalRecords))
 			this.pager.render();
@@ -110,12 +92,6 @@ App.UI.registerUIComponent('control','yui_paginator',
 		}
 		this.update = function(value)
 		{
-			this.createPaginator(this.options)
-
-			if (this.pager == null)
-			{
-				return;
-			}
 			this.options.rowsPerPage = App.getActionValue(value,'rowsPerPage',this.options.rowsPerPage)
 			this.options.initialPage = App.getActionValue(value,'page',this.options.initialPage)
 			this.options.totalRecords = App.getActionValue(value,'totalRecords',this.options.totalRecords);
@@ -139,49 +115,31 @@ App.UI.registerUIComponent('control','yui_paginator',
 			this.options = options;
 			this.element.style.display = 'none'
 
-			// had to do this b/c YAHOO + Safari had issues via normal loading route
-			var self = this;
-			var componentRootDir = App.docRoot + App.UI.componentRoot +'controls/yui_paginator/';
-			App.UI.remoteLoadScript(componentRootDir + "../../../../common/js/yahoo-min.js",function()
-			{
-				setTimeout(function()
-				{
-					App.UI.remoteLoadScript(componentRootDir + "js/paginator-min.js",function()
-					{
-						self.createPaginator(options);
-					});
-				},100)
+			this.pager = new YAHOO.widget.Paginator({ 
+				    rowsPerPage  : parseInt(options.rowsPerPage), 
+				    totalRecords : parseInt(options.totalRecords), 
+				    containers   : this.element.id, 
+				    template     : this.element.innerHTML,
+					alwaysVisible: options.alwaysVisible,
+					nextPageLinkLabel:options.nextPageLinkLabel,
+					previousPageLinkLabel:options.previousPageLinkLabel,
+					firstPageLinkLabel:options.firstPageLinkLabel,
+					lastPageLinkLabel:options.lastPageLinkLabel,
+					initialPage:parseInt(options.initialPage),
+					pageReportTemplate    : options.pageReportTemplate,
+					pageLinks:parseInt(options.pageLinks)
 			});
+			var self = this;
+			this.pager.subscribe('changeRequest',function(state)
+			{
+				self.pager.setState(state)
+				if (self.options.message != null)
+				{
+					$MQ(self.options.message,state);
+				}
+			})
+
 		};
 		
-		this.createPaginator = function(options)
-		{
-			if (YAHOO.widget.Paginator  && this.pager == null)
-			{
-				this.pager = new YAHOO.widget.Paginator({ 
-					    rowsPerPage  : parseInt(options.rowsPerPage), 
-					    totalRecords : parseInt(options.totalRecords), 
-					    containers   : this.element.id, 
-					    template     : this.element.innerHTML,
-						alwaysVisible: options.alwaysVisible,
-						nextPageLinkLabel:options.nextPageLinkLabel,
-						previousPageLinkLabel:options.previousPageLinkLabel,
-						firstPageLinkLabel:options.firstPageLinkLabel,
-						lastPageLinkLabel:options.lastPageLinkLabel,
-						initialPage:parseInt(options.initialPage),
-						pageReportTemplate    : options.pageReportTemplate,
-						pageLinks:parseInt(options.pageLinks)
-				});
-				var self = this;
-				this.pager.subscribe('changeRequest',function(state)
-				{
-					self.pager.setState(state)
-					if (self.options.message != null)
-					{
-						$MQ(self.options.message,state);
-					}
-				})
-			}
-		}
 	}
 });
