@@ -19,7 +19,7 @@ namespace ti
 		OSXUIBinding(Host *host);
 		~OSXUIBinding();
 
-		SharedPtr<MenuItem> CreateMenu();
+		SharedPtr<MenuItem> CreateMenu(bool trayMenu);
 		void SetMenu(SharedPtr<MenuItem>);
 		void SetContextMenu(SharedPtr<MenuItem>);
 		void SetIcon(SharedString icon_path);

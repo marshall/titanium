@@ -18,8 +18,8 @@ namespace ti
 	void AppModule::Initialize()
 	{
 		const char *home = getenv("KR_HOME");
-		
-		
+
+
 		std::string config(home);
 		config+="/"CONFIG_FILENAME;
 
@@ -57,7 +57,12 @@ namespace ti
 		SharedValue value = Value::NewObject(this->app_binding);
 		host->GetGlobalObject()->Set("App",value);
 
-		this->properties_binding = new PropertiesBinding(host);
+		std::string appid = AppConfig::Instance()->GetAppID();
+		std::string app_properties = kroll::FileUtils::GetApplicationDataDirectory(appid);
+		app_properties += KR_PATH_SEP;
+		app_properties += "application.properties";
+
+		this->properties_binding = new PropertiesBinding(app_properties);
 		SharedValue properties_value = Value::NewObject(this->properties_binding);
 		this->app_binding->Set("Properties", properties_value);
 	}

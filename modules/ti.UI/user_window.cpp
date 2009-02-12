@@ -497,7 +497,7 @@ SharedBoundObject UserWindow::CreateWindow(SharedBoundObject properties)
 	UserWindow* window = this->WindowFactory(this->host, config);
 
 	// Track parent/child relationship.
-	window->SetParent(this); 
+	window->SetParent(this);
 	return window;
 
 }

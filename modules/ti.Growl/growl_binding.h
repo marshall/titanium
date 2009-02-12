@@ -24,8 +24,8 @@ namespace ti
 	protected:
 		virtual ~GrowlBinding();
 		kroll::SharedBoundObject global;
-
 		virtual void ShowNotification(std::string& title, std::string& description, std::string& iconURL, int notification_delay, SharedBoundMethod callback) = 0;
+
 		virtual bool IsRunning() = 0;
 	};
 }

@@ -7,6 +7,7 @@
 #include "win32_user_window.h"
 #include "webkit_frame_load_delegate.h"
 #include "webkit_ui_delegate.h"
+#include "win32_tray_item.h"
 #include "string_util.h"
 #include "../url/app_url.h"
 #include <math.h>
@@ -70,11 +71,31 @@ void Win32UserWindow::RegisterWindowClass (HINSTANCE hInstance)
 	}
 }
 
+void Win32UserWindow::AddMessageHandler(const ValueList& args, SharedValue result)
+{
+	if (args.size() < 2 || !args.at(0)->IsNumber() || !args.at(1)->IsMethod())
+		return;
+
+	long messageCode = (long)args.at(0)->ToDouble();
+	SharedBoundMethod callback = args.at(1)->ToMethod();
+
+	messageHandlers[messageCode] = callback;
+}
+
 /*static*/
 LRESULT CALLBACK
 Win32UserWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	Win32UserWindow *window = Win32UserWindow::FromWindow(hWnd);
+
+	if (window && window->messageHandlers.find(message) != window->messageHandlers.end())
+	{
+		SharedBoundMethod handler = window->messageHandlers[message];
+		ValueList args;
+		handler->Call(args);
+
+		return 0;
+	}
 
 	switch (message)
 	{
@@ -85,6 +106,19 @@ Win32UserWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case WM_SIZE:
 			if (!window->web_view) break;
 			window->ResizeSubViews();
+			break;
+		case TI_TRAY_CLICKED:
+			{
+				UINT uMouseMsg = (UINT) lParam;
+				if(uMouseMsg == WM_LBUTTONDOWN)
+				{
+					Win32TrayItem::InvokeLeftClickCallback(hWnd, message, wParam, lParam);
+				}
+				else if (uMouseMsg == WM_RBUTTONDOWN)
+				{
+					Win32TrayItem::ShowTrayMenu(hWnd, message, wParam, lParam);
+				}
+			}
 			break;
 		default:
 			LRESULT handled = Win32MenuItemImpl::handleMenuClick(hWnd, message, wParam, lParam);
@@ -114,8 +148,6 @@ Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config)
 		addScriptEvaluator(&script_evaluator);
 	}
 
-	std::cout << "HINSTANCE = " << (int)win32_host->GetInstanceHandle() << std::endl;
-
 	Win32UserWindow::RegisterWindowClass(win32_host->GetInstanceHandle());
 	window_handle = CreateWindowA(windowClassName, config->GetTitle().c_str(),
 			WS_CLIPCHILDREN,
@@ -125,6 +157,12 @@ Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config)
 	if (window_handle == NULL) {
 		std::cout << "Error Creating Window: " << GetLastError() << std::endl;
 	}
+	std::cout << "window_handle = " << (int)window_handle << std::endl;
+
+	// make our HWND available to 3rd party devs without needing our headers
+	SharedValue windowHandle = Value::NewVoidPtr((void*)window_handle);
+	this->Set("windowHandle", windowHandle);
+	this->SetMethod("addMessageHandler", &Win32UserWindow::AddMessageHandler);
 
 	this->ReloadTiWindowConfig();
 

@@ -11,6 +11,7 @@ using namespace ti;
 using namespace kroll;
 
 namespace ti {
+
 	SnarlWin32::SnarlWin32(SharedBoundObject global) : GrowlBinding(global) {
 
 	}
@@ -27,7 +28,8 @@ namespace ti {
 		return snarlInterface.snGetVersion(&major, &minor);
 	}
 
-	void SnarlWin32::ShowNotification(std::string& title, std::string& description, std::string& iconURL, int notification_delay, SharedBoundMethod callback)
+	void SnarlWin32::ShowNotification(std::string& title, std::string& description,
+		std::string& iconURL, int notification_delay, SharedBoundMethod callback)
 	{
 		SnarlInterface::SNARLSTRUCT snarlStruct;
 		snarlStruct.cmd = SnarlInterface::SNARL_SHOW;
@@ -61,10 +63,23 @@ namespace ti {
 
 		snarlStruct.timeout = notification_delay;
 
-		// TODO : we'll need to create a custom window class/empty window just to handle the callback, sigh
+		if (!callback.isNull()) {
+			static const UINT SnarlClickCallback = ::RegisterWindowMessage("SnarlGlobalMessage");
 
-		//snarlStruct.lngData2 = reinterpret_cast<long>(hWndReply);
+			// retrieve the window handle using the native void* interface
+			HWND windowHandle = (HWND) Host::GetInstance()->GetGlobalObject()->GetNS("UI.mainWindow.windowHandle")->ToVoidPtr();
+			snarlStruct.lngData2 = reinterpret_cast<long>(windowHandle);
+			snarlStruct.id = SnarlClickCallback;
+
+			// add a callback handler through the binding framework
+			ValueList args;
+			SharedValue messageValue = Value::NewDouble(SnarlClickCallback);
+			SharedValue callbackValue = Value::NewMethod(callback);
+			args.push_back(messageValue);
+			args.push_back(callbackValue);
+			Host::GetInstance()->GetGlobalObject()->CallNS("UI.mainWindow.addMessageHandler", args);
+		}
+
 		SnarlInterface::send(snarlStruct);
-		//snarlStruct.id = uReplyMsg;
 	}
 }

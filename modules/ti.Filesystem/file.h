@@ -239,6 +239,15 @@ namespace ti
 			 */
 			void DeleteFile(const ValueList& args, SharedValue result);
 			/**
+			 * Function: Equals
+			 *
+			 * Parameters:
+			 *   another file/path
+			 * Returns:
+			 *   true if the passed in file equals this file
+			 */
+			void Equals(const ValueList& args, SharedValue result);
+			/**
 			 * Function: GetDirectoryListing
 			 *   Gets a list of files/directories under this directory
 			 *
