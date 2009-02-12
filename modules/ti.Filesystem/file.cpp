@@ -57,6 +57,7 @@ namespace ti
 		this->SetMethod("setExecutable",&File::SetExecutable);
 		this->SetMethod("setReadonly",&File::SetReadonly);
 		this->SetMethod("setWriteable",&File::SetWriteable);
+		this->SetMethod("equals", &File::Equals);
 
 		this->readLineFS = NULL;
 	}
@@ -639,7 +640,7 @@ namespace ti
 				originalPath = [originalPath stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"%@/",p] withString:@""];
 			}
 		}
-		
+
 		int rc = symlink([originalPath UTF8String],[destPath UTF8String]);
 		BOOL worked = rc >= 0;
 #ifdef DEBUG
@@ -750,5 +751,18 @@ namespace ti
 		{
 			throw ValueException::FromString(exc.displayText());
 		}
+	}
+	void File::Equals(const ValueList& args, SharedValue result)
+	{
+		std::string otherPath;
+		if (args.at(0)->IsString()) {
+			otherPath = args.at(0)->ToString();
+		}
+		else if (args.at(0)->IsObject()) {
+			SharedPtr<File> file = args.at(0)->ToObject().cast<File>();
+			otherPath = file->GetFilename();
+		}
+
+		result->SetBool(this->filename == otherPath);
 	}
 }
