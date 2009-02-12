@@ -30,6 +30,9 @@ namespace ti
 			}
 
 			SharedBoundMethod callback;
+			if (args.size() >= 5 && args.at(4)->IsMethod()) {
+				callback = args.at(4)->ToMethod();
+			}
 
 			ShowNotification(title, description, iconURL, notification_timeout, callback);
 		}

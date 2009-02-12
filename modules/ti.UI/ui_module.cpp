@@ -92,6 +92,9 @@ namespace ti
 		SharedValue ui_binding_val = Value::NewObject(ui_binding);
 		host->GetGlobalObject()->Set("UI", ui_binding_val);
 
+		SharedBoundObject main_window = window;
+		SharedValue main_window_val = Value::NewObject(main_window);
+		host->GetGlobalObject()->SetNS("UI.mainWindow", main_window_val);
 		window->Open();
 	}
 

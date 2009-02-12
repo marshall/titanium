@@ -16,6 +16,7 @@ modules = [
     'api', 'javascript', 'foo', # 'ruby', 'python'
     'tiplatform', 'tiapp', 'tiui', #'tinetwork',
     'tifilesystem', 'timedia', 'tidesktop', 'tiprocess',
+		'tigrowl'
 ]
 
 lib_prefix = ''
