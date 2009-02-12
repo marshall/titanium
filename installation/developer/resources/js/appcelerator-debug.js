@@ -17157,6 +17157,7 @@ App.Wel.decodeParameterValue = function(token,wasquoted)
 		var match = App.Wel.jsonRe.exec(token);
 		if (match)
 		{
+			alert(match + ' ' + match[0])
 			value = String(match[0]).evalJSON();
 		}
 		if (!value)

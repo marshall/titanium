@@ -19,6 +19,7 @@ namespace ti
 	UIBinding::UIBinding(Host *host) : host(host)
 	{
 		this->SetMethod("createMenu", &UIBinding::_CreateMenu);
+		this->SetMethod("createTrayMenu", &UIBinding::_CreateTrayMenu);
 		this->SetMethod("setMenu", &UIBinding::_SetMenu);
 		this->SetMethod("getMenu", &UIBinding::_GetMenu);
 		this->SetMethod("setContextMenu", &UIBinding::_SetContextMenu);
@@ -31,7 +32,7 @@ namespace ti
 		this->SetMethod("setBadge", &UIBinding::_SetBadge);
 
 		this->SetMethod("openFiles", &UIBinding::_OpenFiles);
-		
+
 		//TODO move this to platform
 		this->SetMethod("getSystemIdleTime", &UIBinding::_GetSystemIdleTime);
 	}
@@ -42,7 +43,13 @@ namespace ti
 
 	void UIBinding::_CreateMenu(const ValueList& args, SharedValue result)
 	{
-		SharedPtr<MenuItem> menu = this->CreateMenu();
+		SharedPtr<MenuItem> menu = this->CreateMenu(false);
+		result->SetList(menu);
+	}
+
+	void UIBinding::_CreateTrayMenu(const ValueList& args, SharedValue result)
+	{
+		SharedPtr<MenuItem> menu = this->CreateMenu(true);
 		result->SetList(menu);
 	}
 
@@ -193,7 +200,7 @@ namespace ti
 				}
 			}
 		}
-		
+
 
 		this->OpenFiles(callback, multiple, files, directories, path, file, types);
 	}

@@ -11,6 +11,8 @@
 #include "osx/growl_osx.h"
 #elif defined(OS_WIN32)
 #include "win32/snarl_win32.h"
+#elif defined(OS_LINUX)
+#include "libnotify/libnotify_binding.h"
 #endif
 
 using namespace kroll;
@@ -30,6 +32,8 @@ namespace ti
 		g->CopyToApp(host,this);
 #elif defined(OS_WIN32)
 		binding = new SnarlWin32(host->GetGlobalObject());
+#elif defined(OS_LINUX)
+		binding = new LibNotifyBinding(host->GetGlobalObject());
 #endif
 
 		// set our ti.Growl

@@ -10,9 +10,17 @@
 		<script>
 			var appEditMenu;
 			var appFileOpenMenu;
-			function preBakedMenu(ident)
+			function preBakedMenu(ident, trayMenu)
 			{
-				var menu = Titanium.UI.createMenu();
+				var menu = null;
+
+				if(trayMenu) {
+					menu = Titanium.UI.createTrayMenu();
+				}
+				else {
+					menu = Titanium.UI.createMenu();
+				}
+				
 				var identm = menu.addSubMenu(ident);
 				var file = menu.addSubMenu("File");
 				var edit = menu.addSubMenu("Edit");
@@ -86,16 +94,27 @@
 			{
 				Titanium.UI.currentWindow.setContextMenu(null);
 			}
+			var trayIcon = null;
 			function addTrayIcon()
 			{
 				var cb = function()
 				{
 					alert("What...you think you can just click any old jaz disk you see?");
 				}
-				var icon = Titanium.UI.addTray("app://tray.png", cb);
-				icon.setHint("Hinty McHints");
-				var menu = preBakedMenu("TrayMenu");
-				icon.setMenu(menu);
+				trayIcon = Titanium.UI.addTray("app://tray.ico", cb);
+				trayIcon.setHint("Hinty McHints");
+				var menu = preBakedMenu("TrayMenu", true);
+				trayIcon.setMenu(menu);
+			}
+			function removeTrayIcon() {
+				if(trayIcon) {
+					trayIcon.remove();
+				}
+			}
+			function setTrayIcon() {
+				if(trayIcon) {
+					trayIcon.setIcon("app://tray2.ico");
+				}
 			}
 			function openWindowA()
 			{
@@ -224,6 +243,8 @@
 
 		<div>
 			Tray Icon: <button onclick="addTrayIcon();">Add Tray Icon</button>
+			<button onclick="removeTrayIcon();">Remove Tray Icon</button>
+			<button onclick="setTrayIcon();">Change Tray Icon</button>
 		</div>
 
 		<div class='output log'><code id="log"></code></div>

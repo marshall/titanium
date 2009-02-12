@@ -51,7 +51,6 @@ namespace ti
 
 	void UIModule::Initialize()
 	{
-		std::cout << "Initializing ti.Window..." << std::endl;
 
 #ifdef OS_OSX
 		OSXInitialize();

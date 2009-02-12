@@ -20,10 +20,10 @@ ID STYLES
 	padding-left:30px;
 }
 
-#project_count
+#logo
 {
 	position:absolute;
-	top:0px;
+	top:4px;
 	left:10px;
 }
 #online_count
@@ -268,8 +268,9 @@ input:focus
 {
 	padding:5px;
 	margin-bottom:5px;
-	border:1px solid #111;
 	border:1px solid #141414;
+	border-left:none;
+	border-right:none;
 	background-color:#333;
 }
 .include_box
