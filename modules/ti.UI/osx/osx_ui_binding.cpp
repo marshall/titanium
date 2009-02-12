@@ -15,7 +15,7 @@ namespace ti
 	* http://developer.apple.com/samplecode/DeskPictAppDockMenu/index.html
 	*/
 
-	OSXUIBinding::OSXUIBinding() : UIBinding()
+	OSXUIBinding::OSXUIBinding(Host *host) : UIBinding(host)
 	{
 
 	}
