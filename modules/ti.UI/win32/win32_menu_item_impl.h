@@ -18,7 +18,7 @@ namespace ti
 	class Win32MenuItemImpl : public MenuItem
 	{
 	public:
-		Win32MenuItemImpl(Win32MenuItemImpl* _parent = NULL);
+		Win32MenuItemImpl(Win32MenuItemImpl* _parent = NULL, bool trayMenu = false);
 		virtual ~Win32MenuItemImpl();
 
 		void SetParent(Win32MenuItemImpl* parent);

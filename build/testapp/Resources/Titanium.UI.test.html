@@ -10,9 +10,17 @@
 		<script>
 			var appEditMenu;
 			var appFileOpenMenu;
-			function preBakedMenu(ident)
+			function preBakedMenu(ident, trayMenu)
 			{
-				var menu = Titanium.UI.createMenu();
+				var menu = null;
+
+				if(trayMenu) {
+					menu = Titanium.UI.createTrayMenu();
+				}
+				else {
+					menu = Titanium.UI.createMenu();
+				}
+				
 				var identm = menu.addSubMenu(ident);
 				var file = menu.addSubMenu("File");
 				var edit = menu.addSubMenu("Edit");
@@ -95,7 +103,7 @@
 				}
 				trayIcon = Titanium.UI.addTray("app://tray.ico", cb);
 				trayIcon.setHint("Hinty McHints");
-				var menu = preBakedMenu("TrayMenu");
+				var menu = preBakedMenu("TrayMenu", true);
 				trayIcon.setMenu(menu);
 			}
 			function removeTrayIcon() {
