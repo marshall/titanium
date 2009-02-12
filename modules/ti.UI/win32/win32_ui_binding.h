@@ -15,17 +15,18 @@ namespace ti
 	{
 
 	public:
-		Win32UIBinding();
+		Win32UIBinding(Host *host);
 		~Win32UIBinding();
 
-		SharedPtr<MenuItem> CreateMenu();
+		SharedPtr<MenuItem> CreateMenu(bool trayMenu);
 		void SetMenu(SharedPtr<MenuItem>);
 		void SetContextMenu(SharedPtr<MenuItem>);
 		void SetIcon(SharedString icon_path);
 		SharedPtr<TrayItem> AddTray(SharedString icon_path,
 		                            SharedBoundMethod cb);
 
-		std::vector<std::string> OpenFiles(
+		void OpenFiles(
+			SharedBoundMethod callback,
 			bool multiple,
 			bool files,
 			bool directories,
@@ -36,10 +37,18 @@ namespace ti
 		long GetSystemIdleTime();
 
 	private:
-		static std::vector<std::string> SelectDirectory(
+		static SharedBoundList SelectDirectory(
 			bool multiple,
 			std::string& path,
 			std::string& file);
+
+		static SharedBoundList SelectFile(
+			SharedBoundMethod callback,
+			bool multiple,
+			std::string& path,
+			std::string& file,
+			std::vector<std::string>& types);
+
 		static void ParseStringNullSeparated(const char *s, std::vector<std::string> &tokens);
 	};
 }

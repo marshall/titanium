@@ -16,10 +16,10 @@ namespace ti
 	{
 
 		public:
-		OSXUIBinding();
+		OSXUIBinding(Host *host);
 		~OSXUIBinding();
 
-		SharedPtr<MenuItem> CreateMenu();
+		SharedPtr<MenuItem> CreateMenu(bool trayMenu);
 		void SetMenu(SharedPtr<MenuItem>);
 		void SetContextMenu(SharedPtr<MenuItem>);
 		void SetIcon(SharedString icon_path);
@@ -30,7 +30,8 @@ namespace ti
 		virtual void SetDockMenu(SharedPtr<MenuItem>);
 		virtual void SetBadge(SharedString badge_path);
 
-		std::vector<std::string> OpenFiles(
+		void OpenFiles(
+			SharedBoundMethod callback,
 			bool multiple,
 			bool files,
 			bool directories,

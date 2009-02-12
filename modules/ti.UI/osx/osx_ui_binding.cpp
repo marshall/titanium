@@ -15,7 +15,7 @@ namespace ti
 	* http://developer.apple.com/samplecode/DeskPictAppDockMenu/index.html
 	*/
 
-	OSXUIBinding::OSXUIBinding() : UIBinding()
+	OSXUIBinding::OSXUIBinding(Host *host) : UIBinding(host)
 	{
 
 	}
@@ -25,7 +25,7 @@ namespace ti
 
 	}
 
-	SharedPtr<MenuItem> OSXUIBinding::CreateMenu()
+	SharedPtr<MenuItem> OSXUIBinding::CreateMenu(bool trayMenu)
 	{
 		//SharedPtr<MenuItem> menu = new OSXMenuItem(true);
 		SharedPtr<MenuItem> menu = NULL;
@@ -65,7 +65,8 @@ namespace ti
 		return item;
 	}
 
-	std::vector<std::string> OSXUIBinding::OpenFiles(
+	void OSXUIBinding::OpenFiles(
+		SharedBoundMethod callback,
 		bool multiple,
 		bool files,
 		bool directories,
@@ -73,11 +74,11 @@ namespace ti
 		std::string& file,
 		std::vector<std::string>& types)
 	{
-		std::vector<std::string> results;
+		SharedBoundList results = new StaticBoundList();
 
 		NSOpenPanel* openDlg = [NSOpenPanel openPanel];
 		[openDlg setCanChooseFiles:files];
-		[openDlg setCanChooseDirectories:directories]; 
+		[openDlg setCanChooseDirectories:directories];
 		[openDlg setAllowsMultipleSelection:multiple];
 		[openDlg setResolvesAliases:YES];
 
@@ -94,7 +95,7 @@ namespace ti
 		}
 		if (types.size() > 0)
 		{
-			filetypes = [[NSMutableArray alloc] init]; 
+			filetypes = [[NSMutableArray alloc] init];
 			for (size_t t = 0; t < types.size(); t++)
 			{
 				const char *s = types.at(t).c_str();
@@ -109,12 +110,14 @@ namespace ti
 			{
 				NSString* fileName = [selected objectAtIndex:i];
 				std::string fn = [fileName UTF8String];
-				results.push_back(std::string(fn));
+				results->Append(Value::NewString(fn));
 			}
 		}
 		[filetypes release];
 
-		return results;
+		ValueList args;
+		args.push_back(Value::NewList(results));
+		callback->Call(args);
 	}
 
 	long OSXUIBinding::GetSystemIdleTime()

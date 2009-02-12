@@ -57,7 +57,6 @@ namespace ti
 		this->SetMethod("setExecutable",&File::SetExecutable);
 		this->SetMethod("setReadonly",&File::SetReadonly);
 		this->SetMethod("setWriteable",&File::SetWriteable);
-		this->SetMethod("equals", &File::Equals);
 
 		this->readLineFS = NULL;
 	}
@@ -86,6 +85,10 @@ namespace ti
 		{
 			result->SetBool(false);
 		}
+		catch (Poco::PathNotFoundException &fnf)
+		{
+			result->SetBool(false);
+		}
 		catch (Poco::Exception& exc)
 		{
 			throw ValueException::FromString(exc.displayText());
@@ -100,6 +103,10 @@ namespace ti
 			result->SetBool(isDir);
 		}
 		catch (Poco::FileNotFoundException &fnf)
+		{
+			result->SetBool(false);
+		}
+		catch (Poco::PathNotFoundException &fnf)
 		{
 			result->SetBool(false);
 		}
@@ -120,6 +127,10 @@ namespace ti
 		{
 			result->SetBool(false);
 		}
+		catch (Poco::PathNotFoundException &fnf)
+		{
+			result->SetBool(false);
+		}
 		catch (Poco::Exception& exc)
 		{
 			throw ValueException::FromString(exc.displayText());
@@ -134,6 +145,10 @@ namespace ti
 			result->SetBool(isLink);
 		}
 		catch (Poco::FileNotFoundException &fnf)
+		{
+			result->SetBool(false);
+		}
+		catch (Poco::PathNotFoundException &fnf)
 		{
 			result->SetBool(false);
 		}
@@ -153,6 +168,10 @@ namespace ti
 		{
 			result->SetBool(false);
 		}
+		catch (Poco::PathNotFoundException &fnf)
+		{
+			result->SetBool(false);
+		}
 		catch (Poco::Exception& exc)
 		{
 			throw ValueException::FromString(exc.displayText());
@@ -169,6 +188,10 @@ namespace ti
 		{
 			result->SetBool(false);
 		}
+		catch (Poco::PathNotFoundException &fnf)
+		{
+			result->SetBool(false);
+		}
 		catch (Poco::Exception& exc)
 		{
 			throw ValueException::FromString(exc.displayText());
@@ -182,6 +205,10 @@ namespace ti
 			result->SetBool(file.canWrite());
 		}
 		catch (Poco::FileNotFoundException &fnf)
+		{
+			result->SetBool(false);
+		}
+		catch (Poco::PathNotFoundException &fnf)
 		{
 			result->SetBool(false);
 		}
@@ -713,6 +740,10 @@ namespace ti
 		{
 			result->SetBool(false);
 		}
+		catch (Poco::PathNotFoundException &fnf)
+		{
+			result->SetBool(false);
+		}
 		catch (Poco::Exception& exc)
 		{
 			throw ValueException::FromString(exc.displayText());
@@ -727,6 +758,10 @@ namespace ti
 			result->SetBool(true);
 		}
 		catch (Poco::FileNotFoundException &fnf)
+		{
+			result->SetBool(false);
+		}
+		catch (Poco::PathNotFoundException &fnf)
 		{
 			result->SetBool(false);
 		}
@@ -747,22 +782,13 @@ namespace ti
 		{
 			result->SetBool(false);
 		}
+		catch (Poco::PathNotFoundException &fnf)
+		{
+			result->SetBool(false);
+		}
 		catch (Poco::Exception& exc)
 		{
 			throw ValueException::FromString(exc.displayText());
 		}
-	}
-	void File::Equals(const ValueList& args, SharedValue result)
-	{
-		std::string otherPath;
-		if (args.at(0)->IsString()) {
-			otherPath = args.at(0)->ToString();
-		}
-		else if (args.at(0)->IsObject()) {
-			SharedPtr<File> file = args.at(0)->ToObject().cast<File>();
-			otherPath = file->GetFilename();
-		}
-
-		result->SetBool(this->filename == otherPath);
 	}
 }

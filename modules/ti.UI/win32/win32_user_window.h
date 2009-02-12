@@ -23,6 +23,8 @@
 #include "script_evaluator.h"
 #include "win32_menu_item_impl.h"
 
+#include <map>
+
 namespace ti {
 
 class Win32WebKitFrameLoadDelegate;
@@ -47,6 +49,7 @@ protected:
 	bool showing, full_screen, using_scrollbars,
 		resizable, using_chrome, minimizable, maximizable, closeable;
 	double transparency;
+	std::map<long, SharedBoundMethod> messageHandlers;
 
 	/*
 	 * The window-specific menu.
@@ -70,6 +73,9 @@ public:
 	Win32UserWindow(kroll::Host *host, WindowConfig *config);
 	virtual ~Win32UserWindow();
 	UserWindow* WindowFactory(Host*, WindowConfig*);
+
+	void AddMessageHandler(const ValueList& args, SharedValue result);
+
 	void ResizeSubViews();
 
 	void AppMenuChanged();

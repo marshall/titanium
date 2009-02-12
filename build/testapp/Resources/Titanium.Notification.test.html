@@ -9,7 +9,9 @@
 		<script>
 			function showNotification()
 			{
-				Titanium.Growl.showNotification("title","description here");
+				Titanium.Growl.showNotification("title","description here", "app://images/logo_large.png", 3, function() {
+					alert("notification was clicked");
+				});
 			}
 		</script>
 	</head>

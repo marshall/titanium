@@ -31,6 +31,7 @@ namespace ti
 				notification_timeout = args.at(3)->ToInt();
 			}
 
+			SharedBoundMethod callback;
 			if (args.size() >= 5 && args.at(4)->IsMethod()) {
 				callback = args.at(4)->ToMethod();
 			}

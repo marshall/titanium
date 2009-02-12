@@ -63,7 +63,8 @@ if ARGUMENTS.get('debug_refcount', 0) == 1:
 if build.is_win32():
 	execfile('kroll/build/win32.py')
 	build.env.Append(CCFLAGS=['/EHsc'])
-#build.env.Append(CPPDEFINES={'WIN32_CONSOLE': 0})
+	if build.debug:
+		build.env.Append(CPPDEFINES=('WIN32_CONSOLE', 1))
 	build.env.Append(LINKFLAGS=['/DEBUG', '/PDB:${TARGET}.pdb'])
 
 if build.is_linux() or build.is_osx():

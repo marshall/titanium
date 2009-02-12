@@ -16,9 +16,10 @@
 
 namespace ti
 {
-	UIBinding::UIBinding()
+	UIBinding::UIBinding(Host *host) : host(host)
 	{
 		this->SetMethod("createMenu", &UIBinding::_CreateMenu);
+		this->SetMethod("createTrayMenu", &UIBinding::_CreateTrayMenu);
 		this->SetMethod("setMenu", &UIBinding::_SetMenu);
 		this->SetMethod("getMenu", &UIBinding::_GetMenu);
 		this->SetMethod("setContextMenu", &UIBinding::_SetContextMenu);
@@ -31,7 +32,7 @@ namespace ti
 		this->SetMethod("setBadge", &UIBinding::_SetBadge);
 
 		this->SetMethod("openFiles", &UIBinding::_OpenFiles);
-		
+
 		//TODO move this to platform
 		this->SetMethod("getSystemIdleTime", &UIBinding::_GetSystemIdleTime);
 	}
@@ -42,7 +43,13 @@ namespace ti
 
 	void UIBinding::_CreateMenu(const ValueList& args, SharedValue result)
 	{
-		SharedPtr<MenuItem> menu = this->CreateMenu();
+		SharedPtr<MenuItem> menu = this->CreateMenu(false);
+		result->SetList(menu);
+	}
+
+	void UIBinding::_CreateTrayMenu(const ValueList& args, SharedValue result)
+	{
+		SharedPtr<MenuItem> menu = this->CreateMenu(true);
 		result->SetList(menu);
 	}
 
@@ -158,14 +165,21 @@ namespace ti
 		// });
 		//
 		//
+		SharedBoundMethod callback;
+		if (args.size() < 1 || !args.at(0)->IsMethod())
+		{
+			throw ValueException::FromString("openFiles expects first argument to be a callback");
+		}
+		callback = args.at(0)->ToMethod();
+
 		SharedBoundObject props;
-		if (args.size() < 1 || !args.at(0)->IsObject())
+		if (args.size() < 2 || !args.at(1)->IsObject())
 		{
 			props = new StaticBoundObject();
 		}
 		else
 		{
-			props = args.at(0)->ToObject();
+			props = args.at(1)->ToObject();
 		}
 
 		bool files = props->GetBool("files", true);
@@ -177,7 +191,6 @@ namespace ti
 		std::vector<std::string> types;
 		if (props->Get("types")->IsList())
 		{
-			types.clear();
 			SharedBoundList l = props->Get("types")->ToList();
 			for (int i = 0; i < l->Size(); i++)
 			{
@@ -187,13 +200,11 @@ namespace ti
 				}
 			}
 		}
-		
 
-		std::vector<std::string> results = 
-			this->OpenFiles(multiple, files, directories, path, file, types);
-		result->SetList(StaticBoundList::FromStringVector(results));
-		
+
+		this->OpenFiles(callback, multiple, files, directories, path, file, types);
 	}
+
 
 	void UIBinding::_GetSystemIdleTime(
 		const ValueList& args,

@@ -2,15 +2,15 @@
 import os, inspect, os.path as path, shutil
 import distutils.dir_util as dirutil
 
-Import("tiBuild")
 Import('build')
 
-env = tiBuild.env.Clone();
+env = build.env.Clone();
 env.Append(CPPDEFINES = ('TITANIUM_GROWL_API_EXPORT', 1))
 env.Append(CPPPATH = ['#kroll'])
 build.add_thirdparty(env, 'poco')
 
-sources = Glob('*.cpp') + Glob(build.os + '/*.cpp')
+sources = Glob('*.cpp')
+
 if build.is_osx():
 	OSX_SDK = '/Developer/SDKs/MacOSX10.4u.sdk'
 	OSX_UNIV_COMPILER = '-isysroot '+OSX_SDK+' -arch ppc -arch i386'
@@ -23,17 +23,23 @@ if build.is_osx():
 	env.Append(LDFLAGS=OSX_UNIV_LINKER)
 	env.Append(LIBS = ['dl'])
 	sources += Glob(build.os + '/*.mm')
-	
+	sources += Glob('%s/*.cpp' % build.os)
+
 elif build.is_win32():
 	env.Append(LIBS = ['user32', 'shell32', 'advapi32'])
+	sources += Glob('%s/*.cpp' % build.os)
 
-s = env.SharedLibrary(target = tiBuild.dir + '/tigrowlmodule', source = sources)
+elif build.is_linux():
+	sources += Glob('libnotify/*.cpp')
+	env.ParseConfig('pkg-config --cflags --libs libnotify')
+
+s = env.SharedLibrary(target = build.dir + '/tigrowlmodule', source=sources)
 
 
-dirutil.mkpath(tiBuild.dir+'/modules/ti.Growl/Resources')
+dirutil.mkpath(build.dir+'/modules/ti.Growl/Resources')
 cwd = path.dirname(inspect.currentframe().f_code.co_filename)
 
 if build.is_osx():
-	dirutil.mkpath(tiBuild.dir+'/modules.ti.Growl/Growl.framework')
-	shutil.copy(cwd+'/Resources/osx/Growl Registration Ticket.growlRegDict', tiBuild.dir+'/modules/ti.Growl/Resources')
-	dirutil.copy_tree(build.third_party+'/growl/Growl.framework', tiBuild.dir+'/modules/ti.Growl/Resources/Growl.framework', update=1)
+	dirutil.mkpath(build.dir+'/modules.ti.Growl/Growl.framework')
+	shutil.copy(cwd+'/Resources/osx/Growl Registration Ticket.growlRegDict', build.dir+'/modules/ti.Growl/Resources')
+	dirutil.copy_tree(build.third_party+'/growl/Growl.framework', build.dir+'/modules/ti.Growl/Resources/Growl.framework', update=1)

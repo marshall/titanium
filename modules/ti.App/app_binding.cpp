@@ -73,7 +73,7 @@ namespace ti
 		host->Exit(args.size()==0 ? 0 : args.at(0)->ToInt());
 	}
 
-	static const char *kAppURLPrefix = "/Resources";
+	static const char *kAppURLPrefix = "Resources";
 	void AppBinding::AppURLToPath(const ValueList& args, SharedValue result)
 	{
 		result->SetString("");
@@ -89,7 +89,7 @@ namespace ti
 		}
 		std::string path = Poco::Environment::get("KR_HOME", "");
 
-		result->SetString(std::string(path + kAppURLPrefix + "/" + url).c_str());
+		result->SetString(std::string(path + KR_PATH_SEP + kAppURLPrefix + KR_PATH_SEP + url).c_str());
 	}
 
 	void AppBinding::LoadProperties(const ValueList& args, SharedValue result)
