@@ -3,14 +3,13 @@
 //
 var TFS = Titanium.Filesystem;
 var TiDeveloper  = {};
-
-TiDeveloper.yk ='AI39si6YKvME9BMIerJYsJEAmM46e829Ovs_LMaR_jW1u0-4xHN7ehjW49EUqNgnZaNoK3aY_fUhs62mTw_0_x4EQ3f7uaaW6w';
-TiDeveloper.yc ='ytapi-Appcelerator-TitaniumDevelope-utomjlgd-0';
 TiDeveloper.currentPage = 1;
 TiDeveloper.init = false;
 TiDeveloper.ytAuthToken = null;
 
 // YOU TUBE STUFF - COME BACK TO LATER
+//TiDeveloper.yk ='AI39si6YKvME9BMIerJYsJEAmM46e829Ovs_LMaR_jW1u0-4xHN7ehjW49EUqNgnZaNoK3aY_fUhs62mTw_0_x4EQ3f7uaaW6w';
+//TiDeveloper.yc ='ytapi-Appcelerator-TitaniumDevelope-utomjlgd-0';
 //
 // YouTube Setup
 //
@@ -46,59 +45,60 @@ TiDeveloper.ytAuthToken = null;
 // 	}
 // });
 
-TiDeveloper.loadVids = function()
-{
-	$.ajax({
-		type:"GET",
-		url:"http://gdata.youtube.com/feeds/api/videos/-/music", 
-		data:'alt=json',
-		success: function(data)
-		{
-			
-			var videoData = eval("(" + data + ")");
-			var count = 0;
-			$.each(videoData.feed.entry,function() // Protoplasim
-			{
-				var html = "<div class='social_row' id='video_"+count+"' videoid='"+this.link[0].href.substr(this.link[0].href.lastIndexOf("=") + 1, this.link[0].href.length)+"'>"
-				html += "<div style='text-align:center'><img src='"+this.media$group.media$thumbnail[0].url+"' /></div>";
-				html += "<div style='font-size:11px;color;#fff;text-align:center;margin-top:10px'>";
-				html +=  this.media$group.media$title.$t
-				html += "</div>";
-
-				html += "</div>";
-				
-				$('#youtube_feed').append(html);
-				$('#video_'+ count).click(function()
-				{
-					var id = $(this).attr('videoid')
-					if(ytplayer)
-					{
-						ytplayer.loadVideoById(id, 0);
-					}
-				})
-
-				count++
-				// html += "<div style='float:left;width:50%;margin-left:10px'>"+ this.media$group.media$title.$t + "</span></div>";
-				// 
-				// var href = this.link[0].href;
-				// var title = '';
-				// var desc = this.media$group.media$description.$t;
-				// var thumbnail = this.media$group.media$thumbnail[2].url;
-			});
-		},
-		error: function(resp)
-		{
-			alert(resp);
-		}
-	});
-	
-}
+// TiDeveloper.loadVids = function()
+// {
+// 	$.ajax({
+// 		type:"GET",
+// 		url:"http://gdata.youtube.com/feeds/api/videos/-/music", 
+// 		data:'alt=json',
+// 		success: function(data)
+// 		{
+// 			
+// 			var videoData = eval("(" + data + ")");
+// 			var count = 0;
+// 			$.each(videoData.feed.entry,function() // Protoplasim
+// 			{
+// 				var html = "<div class='social_row' id='video_"+count+"' videoid='"+this.link[0].href.substr(this.link[0].href.lastIndexOf("=") + 1, this.link[0].href.length)+"'>"
+// 				html += "<div style='text-align:center'><img src='"+this.media$group.media$thumbnail[0].url+"' /></div>";
+// 				html += "<div style='font-size:11px;color;#fff;text-align:center;margin-top:10px'>";
+// 				html +=  this.media$group.media$title.$t
+// 				html += "</div>";
+// 
+// 				html += "</div>";
+// 				
+// 				$('#youtube_feed').append(html);
+// 				$('#video_'+ count).click(function()
+// 				{
+// 					var id = $(this).attr('videoid')
+// 					if(ytplayer)
+// 					{
+// 						ytplayer.loadVideoById(id, 0);
+// 					}
+// 				})
+// 
+// 				count++
+// 				// html += "<div style='float:left;width:50%;margin-left:10px'>"+ this.media$group.media$title.$t + "</span></div>";
+// 				// 
+// 				// var href = this.link[0].href;
+// 				// var title = '';
+// 				// var desc = this.media$group.media$description.$t;
+// 				// var thumbnail = this.media$group.media$thumbnail[2].url;
+// 			});
+// 		},
+// 		error: function(resp)
+// 		{
+// 			alert(resp);
+// 		}
+// 	});
+// 	
+// }
 		
 // holder var for all projects
 TiDeveloper.ProjectArray = [];
 var db = openDatabase("TiDeveloper","1.0");
 var highestId = 0;
 
+// generic count format function
 function formatCountMessage(count,things)
 {
 	return (count == 0) ? 'You have no '+things+'s' : count == 1 ? 'You have 1 '+things : 'You have ' + count + ' '+things+'s';
@@ -140,27 +140,38 @@ TiDeveloper.stopIRCTrack = function()
 	
 };
 
-function createRecord(name,dir,appid,publisher,url,image)
+function createRecord(options,callback)
 {
+	var date = new Date();
+	var dateStr = (date.getMonth()+1)+"/"+date.getDate()+"/"+date.getFullYear();
 	var record = {
-		name: name,
-		dir: dir,
-		id: highestId++,
-		appid: appid,
-		date: new Date().getTime(),
-		publisher:publisher,
-		url:url,
-		image:image
+		name: options.name,
+		dir: options.dir,
+		id: ++highestId,
+		appid: options.appid,
+		date: dateStr,
+		publisher:options.publisher,
+		url:options.url,
+		image:options.image
 	};
-	TiDeveloper.ProjectArray.push(record);
     db.transaction(function (tx) 
     {
-        tx.executeSql("INSERT INTO Projects (id, timestamp, name, directory, appid, publisher, url, image) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", [record.id,record.date,record.name,record.dir,record.appid,record.publisher,record.url,record.image]);
-    });
+        tx.executeSql("INSERT INTO Projects (id, timestamp, name, directory, appid, publisher, url, image) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", [record.id,date.getTime(),record.name,record.dir,record.appid,record.publisher,record.url,record.image]);
+    },
+	function(error)
+	{
+		callback({code:1,id:error.id,msg:error.message})
+	},
+	function()
+	{
+		TiDeveloper.ProjectArray.push(record);
+		callback({code:0})
+	});
 }
 
 function loadProjects()
 {
+
 	db.transaction(function(tx) 
 	{
         tx.executeSql("SELECT id, timestamp, name, directory, appid, publisher, url, image FROM Projects", [], function(tx, result) 
@@ -177,9 +188,12 @@ function loadProjects()
 				}
 				else
 				{
+					var date = new Date();
+					date.setTime(row['timestamp'])
+					
 					TiDeveloper.ProjectArray.push({
 						id: row['id'],
-						date: row['timestamp'],
+						date: (date.getMonth()+1)+"/"+date.getDate()+"/"+date.getFullYear(),
 						name: row['name'],
 						dir: row['directory'],
 						appid: row['appid'],
@@ -228,19 +242,29 @@ $MQL('l:create.project.request',function(msg)
 		var result = Titanium.Project.create(msg.payload.project_name,msg.payload.project_location,msg.payload.publisher,msg.payload.url,msg.payload.image);
 		if (result.success)
 		{
-			createRecord(result.name,result.basedir,result.id,msg.payload.publisher,msg.payload.url,msg.payload.image);
-			$MQ('l:create.project.response',{result:'success'});
-			var count = formatCountMessage(TiDeveloper.ProjectArray.length,'project');
-			$MQ('l:project.list.response',{count:count,page:1,totalRecords:TiDeveloper.ProjectArray.length,'rows':TiDeveloper.ProjectArray})
+			var options = {name:result.name, dir:result.basedir,appid:result.id,publisher:msg.payload.publisher,url:msg.payload.url,image:msg.payload.image}
+			var r = createRecord(options,function(obj)
+			{
+				if (obj.code == 0)
+				{
+					$MQ('l:create.project.response',{result:'success'});
+					var count = formatCountMessage(TiDeveloper.ProjectArray.length,'project');
+					$MQ('l:project.list.response',{count:count,page:1,totalRecords:TiDeveloper.ProjectArray.length,'rows':TiDeveloper.ProjectArray})
+				}
+				else
+				{
+					$MQ('l:create.project.response',{result:'error',msg:obj.msg});
+				}
+			});		
 		}
 		else
 		{
-			$MQ('l:create.project.response',{result:'error',message:result.message});
+			$MQ('l:create.project.response',{result:'error',msg:result.message});
 		}
 	}
 	catch(E)
 	{
-		alert('Exception = '+E);
+		$MQ('l:create.project.response',{result:'error',msg:E});
 	}
 });
 
@@ -249,30 +273,50 @@ $MQL('l:create.project.request',function(msg)
 //
 $MQL('l:page.data.request',function(msg)
 {
+	// paging gets called in both search and list
+	// cases - if search yields 0 results, do nothing
+	if (TiDeveloper.ProjectArray.length == 0)return;
+	
 	var state =msg.payload
 	var rowsPerPage = state.rowsPerPage
 	var page = state.page
 	TiDeveloper.currentPage = page;
 	var data = TiDeveloper.getProjectPage(rowsPerPage,page);
 	var count = formatCountMessage(TiDeveloper.ProjectArray.length,'project');
+	
 	$MQ('l:project.list.response',{count:count,page:page,totalRecords:TiDeveloper.ProjectArray.length,'rows':data})
 });
 
-TiDeveloper.formatDirectory =function(dir)
+TiDeveloper.formatDirectory =function(id,truncate)
 {
-	var dirStr = dir
-	if (dir.length > 40)
+	var dir = null
+	for (var i=0;i<TiDeveloper.ProjectArray.length;i++)
 	{
-		dirStr = dir.substring(0,40) + '...';
-		$('#project_detail_dir_a').css('display','block');
-		$('#project_detail_dir_span').css('display','none');
-		$('#project_detail_dir_a').html(dirStr);
+		if (TiDeveloper.ProjectArray[i].id == id)
+		{
+			dir = TiDeveloper.ProjectArray[i].dir;
+			break;
+		}
 	}
-	else
+	// return whole dir
+	if (truncate == false)return dir;
+	
+	if (dir != null)
 	{
-		$('#project_detail_dir_span').css('display','block');
-		$('#project_detail_dir_a').css('display','none');
-		$('#project_detail_dir_span').html(dirStr);
+		var dirStr = dir
+		if (dir.length > 40)
+		{
+			dirStr = dir.substring(0,40) + '...';
+			$('#project_detail_dir_a').css('display','block');
+			$('#project_detail_dir_span').css('display','none');
+			$('#project_detail_dir_a').get(0).innerHTML = dirStr;
+		}
+		else
+		{
+			$('#project_detail_dir_span').css('display','block');
+			$('#project_detail_dir_a').css('display','none');
+			$('#project_detail_dir_span').get(0).innerHTML = dirStr;
+		}
 	}
 }
 //
@@ -500,7 +544,6 @@ $MQL('l:delete.project.request',function(msg)
 $MQL('l:project.search.request',function(msg)
 {
 	var q = msg.payload.search_value;
-
 	db.transaction(function(tx) 
 	{
 		try
@@ -510,16 +553,24 @@ $MQL('l:project.search.request',function(msg)
 				try
 				{
 					var results = [];
-		            for (var i = 0; i < result.rows.length; ++i) {
+					TiDeveloper.ProjectArray = [];
+		            for (var i = 0; i < result.rows.length; ++i) 
+					{
 		                var row = result.rows.item(i);
-						results.push({
+						var date = new Date();
+						date.setTime(row['timestamp'])
+						TiDeveloper.ProjectArray.push({
 							id: row['id'],
-							date: row['timestamp'],
+							date: (date.getMonth()+1)+"/"+date.getDate()+"/"+date.getFullYear(),
 							name: row['name'],
-							dir: row['directory']
+							dir: row['directory'],
+							appid: row['appid'],
+							publisher: row['publisher'],
+							url: row['url'],
+							image: row['image']
 						});
 					}
-					$MQ('l:project.search.response',{totalRecords:results.length,'rows':results});
+					$MQ('l:project.search.response',{count:TiDeveloper.ProjectArray.length,page:1,totalRecords:TiDeveloper.ProjectArray.length,'rows':TiDeveloper.ProjectArray});
 				}
 				catch (EX)
 				{

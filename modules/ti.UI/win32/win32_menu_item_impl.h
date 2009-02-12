@@ -10,6 +10,7 @@
 #include <kroll/base.h>
 
 #define TI_MENU_ITEM_ID_BEGIN 7500
+#define TI_TRAY_CLICKED 7499
 
 namespace ti
 {
@@ -17,7 +18,7 @@ namespace ti
 	class Win32MenuItemImpl : public MenuItem
 	{
 	public:
-		Win32MenuItemImpl(Win32MenuItemImpl* _parent = NULL);
+		Win32MenuItemImpl(Win32MenuItemImpl* _parent = NULL, bool trayMenu = false);
 		virtual ~Win32MenuItemImpl();
 
 		void SetParent(Win32MenuItemImpl* parent);
@@ -42,6 +43,7 @@ namespace ti
 		}
 
 		HMENU GetMenuHandle() { return this->hMenu; }
+		int GetMenuItemID() { return this->menuItemID; }
 
 		static bool invokeCallback(int menuItemUID);
 		static LRESULT CALLBACK handleMenuClick(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);

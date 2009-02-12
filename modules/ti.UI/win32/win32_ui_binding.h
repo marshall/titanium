@@ -18,7 +18,7 @@ namespace ti
 		Win32UIBinding(Host *host);
 		~Win32UIBinding();
 
-		SharedPtr<MenuItem> CreateMenu();
+		SharedPtr<MenuItem> CreateMenu(bool trayMenu);
 		void SetMenu(SharedPtr<MenuItem>);
 		void SetContextMenu(SharedPtr<MenuItem>);
 		void SetIcon(SharedString icon_path);

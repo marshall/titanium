@@ -23,7 +23,7 @@
 		or l:menu[val=interact] then script[Titanium.UI.currentWindow.setHeight(650)]">
 	<!-- HEADER MENU -->
 	<div class="menu">
-		<div id="project_count">You have no projects  </div>
+		<div id="logo"><img src="images/titanium_developer.png"/> </div>
 		<div id="online_count"> developers on-line: 
 			<span style="color:#809eb3" on="l:online.count then value[count]">loading...</span>  
 		</div>
@@ -151,7 +151,8 @@
 					or l:create.project.response[result=error] then show">
 					<img src="images/error.png"/>
 					<span style="position:relative;top:-4px">
-						<span on="l:create.project.response then value[message]"></span>
+						<span>Create project failed with message: </span>
+						<span on="l:create.project.response then value[msg]"></span>
 					</span>
 				</div>
 
@@ -192,7 +193,8 @@
 						<td>
 							<div>
 								<input type="text" id="project_image" name="image" style="width:300px;float:left;" 
-						validator="required" fieldset="new_project" on="l:file.selected[for=project_image] then value[value]
+						validator="required" fieldset="new_project" 
+						on="l:file.selected[for=project_image] then value[value]
 						or (l:create.project.response[result=success] or l:menu[val=create]) then reset"/> 
 								<div class="button1" 
 									style="float:left;width:23px;height:23px;position:relative;top:1px;margin-left:10px" >
@@ -258,7 +260,7 @@
 			
 			<!-- PROJECT LIST ITERATOR -->
 			<div on="l:project.list.response[totalRecords=0] then hide else effect[fadeIn]
-				or l:package.project.request then effect[fadeOut] 
+				or l:package.project.request then effect[slideUp] 
 					or l:cancel[val=package] then effect[fadeIn] after 400ms">
 				<div style="float:left;width:250px" >
 					<div style="margin-bottom:10px;font-size:11px;position:relative;top:-5px" class="hint_text">
@@ -269,7 +271,7 @@
 						<div style="display:none;margin-top:5px;margin-bottom:5px" 
 							on="l:project.search then effect[slideToggle]">
 							<input type="text"  validator="required" value="type and hit enter"
-							 	on="click then clear or keyup[enter] then l:project.search.request"
+							 	on="click then clear or keyup then l:project.search.request after 100ms"
 								fieldset="project_search" id="search_value"/> 
 						</div>
 					</div>
@@ -287,19 +289,19 @@
 						</div>
 						<!-- RECORD COUNT -->
 						<div style="font-size:11px;position:absolute;left:5px;top:4px;color:#fff" class="page_links">
-							<span on="l:project.list.response then value[totalRecords] 
-								or l:project.search.response then value[totalRecords]">
-							</span>
-							<span>found</span>
-
+							<span on="l:project.list.response[totalRecords!=0] then value[totalRecords] 
+								or l:project.search.response[totalRecords!=0] then value[totalRecords] 
+								else value[No projects]">
+							</span><span>found</span>
 						</div>
 					</div>
 					<div style="clear:both"></div>
 					<div control="iterator[property=rows]" 
 						on="l:project.list.response then render or l:project.search.response then render">
 						<div class="project_row"
-							on="mouseover then l:row.selected[row=#{iterator_index},name=#{name},date=#{date},dir=#{dir}] and add[class=row_selected]
-							and show[id=action_#{iterator_index}] and hide[id=view_#{iterator_index}]
+							on="mouseover then l:row.selected[id=#{id},name=#{name},date=#{date}] 
+							and add[class=row_selected] and show[id=action_#{iterator_index}] 
+							and hide[id=view_#{iterator_index}]
 							or mouseout then remove[class=row_selected] and hide[id=action_#{iterator_index}] 
 							and show[id=view_#{iterator_index}]">
 							<div id="view_#{iterator_index}">
@@ -343,11 +345,11 @@
 									<td  width="220px" style="font-size:11px;">
 										<a style="color:#fff;text-decoration:underline;cursor:pointer;display:none" 
 											id="project_detail_dir_a"
-											on="l:row.selected then script[TiDeveloper.formatDirectory(this.data.dir)]
+											on="l:row.selected then script[TiDeveloper.formatDirectory(this.data.id)]
 											or click then l:show.project.modal">
 										</a>
 										<span id="project_detail_dir_span" style="display:none"
-											on="l:row.selected then script[TiDeveloper.formatDirectory(this.data.dir)]">
+											on="l:row.selected then script[TiDeveloper.formatDirectory(this.data.id)]">
 										</span>
 
 									</td>
@@ -362,7 +364,8 @@
 								</div>
 								<div class="infobox" >
 									<div class="content" style="padding:10px">
-										<div on="l:row.selected then value[dir]" 
+										<div 
+										on="l:row.selected then value[TiDeveloper.formatDirectory(this.data.id,false)]" 
 											style="padding:10px;color:#fff;font-size:11px">
 										</div>
 										<div class="button1" style="margin:auto;float:none"  
@@ -395,7 +398,7 @@
 			</div>
 
 			<!-- PACKAGE PROJECT -->
-			<div on="l:package.project.request then effect[fadeIn] after 1ms 
+			<div on="l:package.project.request then effect[fadeIn] after 500ms 
 				or l:cancel[val=package] then effect[slideUp]" style="display:none;" >
 
 				<!-- HEADER TEXT -->
@@ -414,7 +417,7 @@
 				<div>
 					<!-- HEADERS FOR MODULE TABLE -->
 					<div style="width:460px;color:#bbb">
-						<div style="width:45px;float:left;text-decoration:underline;cursor:pointer"
+						<div style="width:45px;float:left;text-decoration:underline;cursor:pointer;" 
 							on="click then l:package.all[val=exclude]">
 							<a title="exclude module from application">Exclude</a>
 						</div>
@@ -434,26 +437,35 @@
 					<!-- MODULE ITERATOR FOR CREATING MANIFEST -->
 					<div control="iterator[property=rows]" on="l:package.project.data then render"
 						style="margin-top:10px;height:240px;overflow:auto;margin-bottom:20px">
-						<div class="module_row">
+						<div class="module_row" style="width:98%">
 							<div style="width:45px;float:left;text-align:center">
-								<div class="include_box" style="position:relative;left:10px"
-									on="click then l:package.select[val=exclude,name=#{name}] and toggle[class=exclude]
+								<div class="include_box" style="position:relative;left:10px" 
+								    id="exclude_#{iterator_index}"
+									on="click then l:package.select[val=exclude,name=#{name}] and add[class=exclude]
 										or l:package.select[val!=exclude,name=#{name}] then remove[class=exclude]
 										or l:package.all[val=exclude] then add[class=exclude] else remove[class=exclude]">
 								</div>
 							</div>
 							<div style="width:95px;float:left;text-align:center">
 								<div class="include_box" style="position:relative;left:40px"
+									id="network_#{iterator_index}"
 									on="click then l:package.select[val=network,name=#{name}] and toggle[class=network]
+										or l:package.select[val=network,name=#{name}] then 
+											script[$('#exclude_#{iterator_index}').addClass('exclude')] 
+											if expr[!$('#network_#{iterator_index}').hasClass('network')] after 100ms
 										or l:package.select[val!=network,name=#{name}] then remove[class=network]
 										or l:package.all[val=network] then add[class=network] else remove[class=network]">				
 								</div>							
 							</div>
 							<div style="width:120px;float:left;text-align:center">
 								<div class="include_box" style="position:relative;left:50px"
+									id="bundled_#{iterator_index}"
 									on="click then l:package.select[val=bundled,name=#{name}] and toggle[class=bundled]
-									or l:package.select[val!=bundled,name=#{name}] then remove[class=bundled]
-									or l:package.all[val=bundled] then add[class=bundled] else remove[class=bundled]">
+										or l:package.select[val=bundled,name=#{name}] then 
+											script[$('#exclude_#{iterator_index}').addClass('exclude')] 
+											if expr[!$('#bundled_#{iterator_index}').hasClass('bundled')] after 100ms
+										or l:package.select[val!=bundled,name=#{name}] then remove[class=bundled]
+										or l:package.all[val=bundled] then add[class=bundled] else remove[class=bundled]">
 								</div>
 							</div>
 							<div class="modulename" style="width:200px;display:inline;text-align:center;position:relative;left:25px"

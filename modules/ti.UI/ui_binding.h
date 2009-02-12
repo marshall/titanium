@@ -27,6 +27,7 @@ namespace ti
 
 	private:
 		void _CreateMenu(const ValueList& args, SharedValue result);
+		void _CreateTrayMenu(const ValueList& args, SharedValue result);
 		void _SetMenu(const ValueList& args, SharedValue result);
 		void _GetMenu(const ValueList& args, SharedValue result);
 		void _SetContextMenu(const ValueList& args, SharedValue result);
@@ -34,7 +35,7 @@ namespace ti
 		void _SetIcon(const ValueList& args, SharedValue result);
 		void _AddTray(const ValueList& args, SharedValue result);
 
-		virtual SharedPtr<MenuItem> CreateMenu() = 0;
+		virtual SharedPtr<MenuItem> CreateMenu(bool trayMenu) = 0;
 		virtual void SetMenu(SharedPtr<MenuItem>) = 0;
 		virtual void SetContextMenu(SharedPtr<MenuItem>) = 0;
 		virtual void SetIcon(SharedString icon_path) = 0;
@@ -50,8 +51,8 @@ namespace ti
 		void _SetBadge(const ValueList& args, SharedValue result);
 
 		/* These have empty impls, because are OS X-only for now */
-		virtual void SetDockIcon(SharedString icon_path) {} 
-		virtual void SetDockMenu(SharedPtr<MenuItem>) {} 
+		virtual void SetDockIcon(SharedString icon_path) {}
+		virtual void SetDockMenu(SharedPtr<MenuItem>) {}
 		virtual void SetBadge(SharedString badge_path) {}
 
 		virtual void OpenFiles(

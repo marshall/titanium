@@ -7,6 +7,7 @@
 #include "win32_user_window.h"
 #include "webkit_frame_load_delegate.h"
 #include "webkit_ui_delegate.h"
+#include "win32_tray_item.h"
 #include "string_util.h"
 #include "../url/app_url.h"
 #include <math.h>
@@ -85,6 +86,19 @@ Win32UserWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case WM_SIZE:
 			if (!window->web_view) break;
 			window->ResizeSubViews();
+			break;
+		case TI_TRAY_CLICKED:
+			{
+				UINT uMouseMsg = (UINT) lParam;
+				if(uMouseMsg == WM_LBUTTONDOWN)
+				{
+					Win32TrayItem::InvokeLeftClickCallback(hWnd, message, wParam, lParam);
+				}
+				else if (uMouseMsg == WM_RBUTTONDOWN)
+				{
+					Win32TrayItem::ShowTrayMenu(hWnd, message, wParam, lParam);
+				}
+			}
 			break;
 		default:
 			LRESULT handled = Win32MenuItemImpl::handleMenuClick(hWnd, message, wParam, lParam);

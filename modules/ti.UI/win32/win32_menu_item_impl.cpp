@@ -19,12 +19,18 @@ namespace ti
 
 	std::vector<Win32MenuItemImpl *> menuItemsWithCallbacks;
 
-	Win32MenuItemImpl::Win32MenuItemImpl(Win32MenuItemImpl* _parent) : parent(_parent), hMenu(0), menuItemID(0)
+	Win32MenuItemImpl::Win32MenuItemImpl(Win32MenuItemImpl* _parent, bool trayMenu) : parent(_parent), hMenu(0), menuItemID(0)
 	{
 		if(this->parent == NULL)
 		{
 			// this is the menu bar
-			hMenu = CreateMenu();
+			if(trayMenu)
+			{
+				hMenu = CreatePopupMenu();
+			}
+			else {
+				hMenu = CreateMenu();
+			}
 		}
 	}
 
