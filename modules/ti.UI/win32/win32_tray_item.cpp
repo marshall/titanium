@@ -16,7 +16,7 @@ std::vector<Win32TrayItem *> trayItems;
 Win32TrayItem::Win32TrayItem(SharedString iconPath, SharedBoundMethod cb)
 {
 	this->callback = cb;
-	this->menuHandle = NULL;
+	this->trayMenu = NULL;
 
 	this->CreateTrayIcon(*iconPath, std::string("Titanium Application"));
 
@@ -45,7 +45,19 @@ void Win32TrayItem::SetIcon(SharedString iconPath)
 }
 void Win32TrayItem::SetMenu(SharedBoundList menu)
 {
-	STUB();
+	SharedPtr<Win32MenuItemImpl> menuToUse = menu.cast<Win32MenuItemImpl>();
+	if (menuToUse == this->trayMenu)
+		return;	// nothing to change since it's the same menu
+
+	/*
+	if (!this->trayMenu->isNull())
+	{
+		//TODO do we ned to delete the current menu in win?
+		this->menu->ClearRealization();
+	}
+	*/
+
+	this->trayMenu = menuToUse;
 }
 void Win32TrayItem::SetHint(SharedString hint)
 {
@@ -69,6 +81,36 @@ void Win32TrayItem::Remove()
 	Shell_NotifyIcon(NIM_DELETE, this->trayIconData);
 
 	this->trayIconData = NULL;
+}
+/*static*/
+bool Win32TrayItem::ShowTrayMenu(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	int trayIconID = LOWORD(wParam);
+
+	return ShowTrayMenu(trayIconID);
+}
+/*static*/
+bool Win32TrayItem::ShowTrayMenu(int trayIconID)
+{
+	for(size_t i = 0; i < trayItems.size(); i++)
+	{
+		Win32TrayItem* item = trayItems[i];
+
+		if(item->trayIconData && item->trayMenu && item->trayIconData->uID == trayIconID)
+		{
+			// handle the tray menu
+			POINT pt;
+			GetCursorPos(&pt);
+			TrackPopupMenu(item->trayMenu->GetMenuHandle(),
+				TPM_BOTTOMALIGN,
+				pt.x, pt.y, 0,
+				item->trayIconData->hWnd, NULL);
+
+			return true;
+		}
+	}
+
+	return false;
 }
 void Win32TrayItem::CreateTrayIcon(std::string &iconPath, std::string &caption)
 {

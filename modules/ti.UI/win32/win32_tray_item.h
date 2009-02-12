@@ -11,6 +11,7 @@
 #include <windows.h>
 #include <shellapi.h>
 #include "../tray_item.h"
+#include "win32_menu_item_impl.h"
 
 namespace ti
 {
@@ -28,9 +29,11 @@ public:
 
 	static bool InvokeLeftClickCallback(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 	static bool InvokeLeftClickCallback(int trayIconID);
+	static bool ShowTrayMenu(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+	static bool ShowTrayMenu(int trayIconID);
 private:
-	HMENU menuHandle;
 	SharedBoundMethod callback;
+	SharedPtr<Win32MenuItemImpl> trayMenu;
 
 	NOTIFYICONDATA* trayIconData;
 	void CreateTrayIcon(std::string &iconPath, std::string &caption);

@@ -96,7 +96,7 @@ Win32UserWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				}
 				else if (uMouseMsg == WM_RBUTTONDOWN)
 				{
-					std::cout << "tray icon - menu" << std::endl;
+					Win32TrayItem::ShowTrayMenu(hWnd, message, wParam, lParam);
 				}
 			}
 			break;

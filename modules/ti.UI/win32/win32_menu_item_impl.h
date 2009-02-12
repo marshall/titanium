@@ -43,6 +43,7 @@ namespace ti
 		}
 
 		HMENU GetMenuHandle() { return this->hMenu; }
+		int GetMenuItemID() { return this->menuItemID; }
 
 		static bool invokeCallback(int menuItemUID);
 		static LRESULT CALLBACK handleMenuClick(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
