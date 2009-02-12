@@ -106,6 +106,10 @@ namespace ti
 		{
 			result->SetBool(false);
 		}
+		catch (Poco::PathNotFoundException &fnf)
+		{
+			result->SetBool(false);
+		}
 		catch (Poco::Exception& exc)
 		{
 			throw ValueException::FromString(exc.displayText());
@@ -120,6 +124,10 @@ namespace ti
 			result->SetBool(isHidden);
 		}
 		catch (Poco::FileNotFoundException &fnf)
+		{
+			result->SetBool(false);
+		}
+		catch (Poco::PathNotFoundException &fnf)
 		{
 			result->SetBool(false);
 		}
@@ -140,6 +148,10 @@ namespace ti
 		{
 			result->SetBool(false);
 		}
+		catch (Poco::PathNotFoundException &fnf)
+		{
+			result->SetBool(false);
+		}
 		catch (Poco::Exception& exc)
 		{
 			throw ValueException::FromString(exc.displayText());
@@ -153,6 +165,10 @@ namespace ti
 			result->SetBool(file.canExecute());
 		}
 		catch (Poco::FileNotFoundException &fnf)
+		{
+			result->SetBool(false);
+		}
+		catch (Poco::PathNotFoundException &fnf)
 		{
 			result->SetBool(false);
 		}
@@ -172,6 +188,10 @@ namespace ti
 		{
 			result->SetBool(false);
 		}
+		catch (Poco::PathNotFoundException &fnf)
+		{
+			result->SetBool(false);
+		}
 		catch (Poco::Exception& exc)
 		{
 			throw ValueException::FromString(exc.displayText());
@@ -185,6 +205,10 @@ namespace ti
 			result->SetBool(file.canWrite());
 		}
 		catch (Poco::FileNotFoundException &fnf)
+		{
+			result->SetBool(false);
+		}
+		catch (Poco::PathNotFoundException &fnf)
 		{
 			result->SetBool(false);
 		}
@@ -716,6 +740,10 @@ namespace ti
 		{
 			result->SetBool(false);
 		}
+		catch (Poco::PathNotFoundException &fnf)
+		{
+			result->SetBool(false);
+		}
 		catch (Poco::Exception& exc)
 		{
 			throw ValueException::FromString(exc.displayText());
@@ -733,6 +761,10 @@ namespace ti
 		{
 			result->SetBool(false);
 		}
+		catch (Poco::PathNotFoundException &fnf)
+		{
+			result->SetBool(false);
+		}
 		catch (Poco::Exception& exc)
 		{
 			throw ValueException::FromString(exc.displayText());
@@ -747,6 +779,10 @@ namespace ti
 			result->SetBool(true);
 		}
 		catch (Poco::FileNotFoundException &fnf)
+		{
+			result->SetBool(false);
+		}
+		catch (Poco::PathNotFoundException &fnf)
 		{
 			result->SetBool(false);
 		}
