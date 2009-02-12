@@ -2,13 +2,10 @@
 Import('build')
 import os
 
-modules = ['ti.App', 'ti.UI', 'ti.Network',
+modules = ['ti.App', 'ti.UI', 'ti.Network', 'ti.Growl',
            'ti.Filesystem', 'ti.Media', 'ti.Desktop',
            'ti.Platform', 'ti.Process']
 
-if build.is_osx() or build.is_win32():
-	modules.append('ti.Growl')
-#
 for module in modules:
 	module_dir = os.path.join(build.dir,'modules',module)
 	SConscript(os.path.join(module,'SConscript'), build_dir=module_dir, duplicate=0)

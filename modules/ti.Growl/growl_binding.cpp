@@ -30,7 +30,6 @@ namespace ti
 			}
 
 			SharedBoundMethod callback;
-
 			ShowNotification(title, description, iconURL, notification_timeout, callback);
 		}
 	}
