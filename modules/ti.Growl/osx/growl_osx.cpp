@@ -16,31 +16,44 @@ using namespace ti;
 
 namespace ti {
 	GrowlOSX::GrowlOSX(SharedBoundObject global) : GrowlBinding(global) {
-
-
+		delegate = [[TiGrowlDelegate alloc] init];
+		[delegate retain];
 	}
 
 	GrowlOSX::~GrowlOSX() {
-		// TODO Auto-generated destructor stub
+		[delegate release];
 	}
 
 	void GrowlOSX::ShowNotification(std::string& title, std::string& description, std::string& iconURL, int notification_delay, SharedBoundMethod callback)
 	{
-		[GrowlApplicationBridge setGrowlDelegate:@""];
+		NSData *iconData = [NSData data];
+
+		if (iconURL.size() > 0) {
+			SharedValue iconPathValue = global->CallNS("App.appURLToPath", Value::NewString(iconURL));
+			if (iconPathValue->IsString()) {
+				std::string iconPath = iconPathValue->ToString();
+				iconData = [NSData dataWithContentsOfFile:[NSString stringWithCString:iconPath.c_str()]];
+			}
+		}
+
+		id clickContext = nil;
+		if (!callback.isNull()) {
+			clickContext = [[MethodWrapper alloc] initWithMethod:new SharedBoundMethod(callback)];
+		}
+
 		[GrowlApplicationBridge
 			 notifyWithTitle:[NSString stringWithCString:title.c_str()]
 			 description:[NSString stringWithCString:description.c_str()]
 			 notificationName:@"tiNotification"
-			 iconData:nil
+			 iconData:iconData
 			 priority:0
 			 isSticky:NO
-			 clickContext:nil];
+			 clickContext:clickContext];
 	}
 
 	bool GrowlOSX::IsRunning()
 	{
-		//TODO: implement me http://growl.info/documentation/developer/implementing-growl.php?lang=cocoa
-		return false;
+		return [delegate growlReady];
 	}
 
 	void GrowlOSX::CopyToApp(kroll::Host *host, kroll::Module *module)

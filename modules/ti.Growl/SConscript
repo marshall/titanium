@@ -10,6 +10,7 @@ env.Append(CPPDEFINES = ('TITANIUM_GROWL_API_EXPORT', 1))
 env.Append(CPPPATH = ['#kroll'])
 build.add_thirdparty(env, 'poco')
 
+sources = Glob('*.cpp') + Glob(build.os + '/*.cpp')
 if build.is_osx():
 	OSX_SDK = '/Developer/SDKs/MacOSX10.4u.sdk'
 	OSX_UNIV_COMPILER = '-isysroot '+OSX_SDK+' -arch ppc -arch i386'
@@ -21,11 +22,12 @@ if build.is_osx():
 	env.Append(CCFLAGS=OSX_UNIV_COMPILER)
 	env.Append(LDFLAGS=OSX_UNIV_LINKER)
 	env.Append(LIBS = ['dl'])
+	sources += Glob(build.os + '/*.mm')
 	
 elif build.is_win32():
 	env.Append(LIBS = ['user32', 'shell32', 'advapi32'])
 
-s = env.SharedLibrary(target = tiBuild.dir + '/tigrowlmodule', source = Glob('*.cpp') + Glob(build.os + '/*.cpp'))
+s = env.SharedLibrary(target = tiBuild.dir + '/tigrowlmodule', source = sources)
 
 
 dirutil.mkpath(tiBuild.dir+'/modules/ti.Growl/Resources')
