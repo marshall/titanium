@@ -15,7 +15,7 @@ third_party = ['webkit', 'poco']
 modules = [
     'api', 'javascript', 'foo', # 'ruby', 'python'
     'tiplatform', 'tiapp', 'tiui', #'tinetwork',
-    'tifilesystem', 'timedia', 'tidesktop', 'tiprocess',
+    'tigrowl', 'tifilesystem', 'timedia', 'tidesktop', 'tiprocess',
 ]
 
 lib_prefix = ''
@@ -32,10 +32,7 @@ elif sys.platform == 'linux2':
 	lib_prefix = 'lib'
 	lib_dir = 'lib'
 	third_party.append('libcurl')
-
-#if not build.is_linux():
-#    modules.append('tigrowl')
-
+	third_party.append('libicu')
 
 top_dir = path.abspath('./../')
 build_dir = path.join(top_dir, 'build')
