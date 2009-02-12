@@ -10,6 +10,7 @@
 #include <kroll/base.h>
 
 #define TI_MENU_ITEM_ID_BEGIN 7500
+#define TI_TRAY_CLICKED 7499
 
 namespace ti
 {

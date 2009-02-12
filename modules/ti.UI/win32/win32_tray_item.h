@@ -25,6 +25,9 @@ public:
 	void SetMenu(SharedBoundList menu);
 	void SetHint(SharedString hint);
 	void Remove();
+
+	static bool InvokeLeftClickCallback(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+	static bool InvokeLeftClickCallback(int trayIconID);
 private:
 	HMENU menuHandle;
 	SharedBoundMethod callback;

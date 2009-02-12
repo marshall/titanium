@@ -11,12 +11,16 @@
 
 namespace ti
 {
+std::vector<Win32TrayItem *> trayItems;
+
 Win32TrayItem::Win32TrayItem(SharedString iconPath, SharedBoundMethod cb)
 {
 	this->callback = cb;
 	this->menuHandle = NULL;
 
 	this->CreateTrayIcon(*iconPath, std::string("Titanium Application"));
+
+	trayItems.push_back(this);
 }
 
 Win32TrayItem::~Win32TrayItem()
@@ -95,5 +99,43 @@ void Win32TrayItem::CreateTrayIcon(std::string &iconPath, std::string &caption)
 	Shell_NotifyIcon(NIM_ADD, notifyIconData);
 
 	this->trayIconData = notifyIconData;
+}
+/*static*/
+bool Win32TrayItem::InvokeLeftClickCallback(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	int trayIconID = LOWORD(wParam);
+
+	return InvokeLeftClickCallback(trayIconID);
+}
+/*static*/
+bool Win32TrayItem::InvokeLeftClickCallback(int trayIconID)
+{
+	for(size_t i = 0; i < trayItems.size(); i++)
+	{
+		Win32TrayItem* item = trayItems[i];
+
+		if(item->trayIconData && item->trayIconData->uID == trayIconID)
+		{
+			if(item->callback)
+			{
+				BoundMethod* cb = (BoundMethod*) item->callback;
+
+				// TODO: Handle exceptions in some way
+				try
+				{
+					ValueList args;
+					cb->Call(args);
+				}
+				catch(...)
+				{
+					std::cout << "Menu callback failed" << std::endl;
+				}
+
+				return true;
+			}
+		}
+	}
+
+	return false;
 }
 }
