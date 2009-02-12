@@ -7,6 +7,7 @@
 #include <Poco/Environment.h>
 #include "app_binding.h"
 #include "app_config.h"
+#include "Properties/properties_binding.h"
 
 namespace ti
 {
@@ -39,8 +40,9 @@ namespace ti
 		}
 		SharedValue arguments = Value::NewList(argList);
 		Set("arguments", arguments);
-		
+
 		this->SetMethod("exit",&AppBinding::Exit);
+		this->SetMethod("loadProperties", &AppBinding::LoadProperties);
 	}
 
 	AppBinding::~AppBinding()
@@ -88,6 +90,15 @@ namespace ti
 		std::string path = Poco::Environment::get("KR_HOME", "");
 
 		result->SetString(std::string(path + kAppURLPrefix + "/" + url).c_str());
+	}
+
+	void AppBinding::LoadProperties(const ValueList& args, SharedValue result)
+	{
+		if (args.size() >= 1 && args.at(0)->IsString()) {
+			std::string file_path = args.at(1)->ToString();
+			SharedBoundObject properties = new PropertiesBinding(file_path);
+			result->SetObject(properties);
+		}
 	}
 
 }

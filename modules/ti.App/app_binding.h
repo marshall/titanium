@@ -29,6 +29,8 @@ namespace ti
 		void AppURLToPath(const ValueList& args, SharedValue result);
 		void SetMenu(const ValueList& args, SharedValue result);
 		void Exit(const ValueList& args, SharedValue result);
+
+		void LoadProperties(const ValueList& args, SharedValue result);
 	};
 }
 

@@ -19,7 +19,7 @@ using namespace kroll;
 namespace ti {
 	class PropertiesBinding : public kroll::StaticBoundObject {
 	public:
-		PropertiesBinding(kroll::Host *host);
+		PropertiesBinding(std::string& file_path);
 		virtual ~PropertiesBinding();
 
 		void GetBool(const ValueList& args, SharedValue result);
