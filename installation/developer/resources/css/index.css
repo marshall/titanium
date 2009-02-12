@@ -282,6 +282,7 @@ input:focus
 	float:left;
 	margin-right:5px;
 	text-align:center;
+	cursor:pointer;
 }
 .module_row .name
 {
@@ -291,15 +292,24 @@ input:focus
 }
 .module_row .exclude
 {
-	background-color:red;
+	border:none;
+	background:url(../images/x_pink.png) no-repeat;
+	height:12px;
+	width:10px;
 }
 .module_row .network
 {
-	background-color:blue;
+	border:none;
+	background:url(../images/check_white.png) no-repeat;
+	height:10px;
+	width:12px;
 }
 .module_row .bundled
 {
-	background-color:green;
+	border:none;
+	background:url(../images/check_white.png) no-repeat;
+	height:10px;
+	width:12px;
 }
 .message_indicator
 {

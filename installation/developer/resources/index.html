@@ -27,7 +27,7 @@
 	<div class="menu">
 		<div id="logo"><img src="images/titanium_developer.png"/> </div>
 		<div id="online_count"> developers on-line: 
-			<span style="color:#809eb3" on="l:online.count then value[count]">loading...</span>  
+			<span style="color:#42C0FB" on="l:online.count then value[count]">loading...</span>  
 		</div>
 	</div>
 	
@@ -240,8 +240,8 @@
 				</div>
 				
 				<!-- PROJECT DETAILS -->
-				<div class="manage_right" style="margin-left:50px;display:none" on="l:row.selected then show
-				or l:menu[val=manage] then hide">
+				<div class="manage_right" style="margin-left:50px;display:none;margin-top:7px" 
+					on="l:row.selected then show or l:menu[val=manage] then hide">
 					<div class="infobox">
 						<div class="content">
 							<table>
@@ -309,7 +309,7 @@
 					</div>
 				</div>				
 				<!-- INFO MESSAGE -->
-				<div class="infobox manage_right" style="margin-left:50px" 
+				<div class="infobox manage_right" style="margin-left:50px;margin-top:7px" 
 					on="l:row.selected then hide or l:menu[val=manage] then show">
 					<div class="content" style="height:45px">
 						<div style="float:left;width:20px">
@@ -344,20 +344,20 @@
 							Your project will be created using this initial information.
 						</span>
 					</div>
-					<div class="section action_text" style="display:none" 
+					<div class="section action_text" style="display:none;position:relative;top:7px;" 
 					on="(l:menu[val=create] or l:create.project.response) then hide 
 						or l:create.project.request then show">
 						<img src="images/lightning.png"/>
 						<span style="position:relative;top:-4px">Creating project...</span>
 					</div>
-					<div class="section success_text" style="display:none" 
+					<div class="section success_text" style="display:none;position:relative;top:7px;" 
 					on="(l:menu[val=create] or l:create.project.request) then hide 
 						or l:create.project.response[result=success] then show
 						or l:create.project.response[result=success] then effect[fadeOut] after 700ms">
 						<img src="images/accept.png"/>
 						<span style="position:relative;top:-4px">Project created!</span>
 					</div>
-					<div class="section error_text" style="display:none" 
+					<div class="section error_text" style="display:none;position:relative;top:7px;" 
 					on="(l:menu[val=create] or l:create.project.request) then hide 
 						or l:create.project.response[result=error] then show">
 						<img src="images/error.png"/>
@@ -452,10 +452,10 @@
 						<img src="images/package_large.png">
 						<span style="position:relative;top:-10px;margin-left:5px"/>
 							<span style="color:#fff;font-size:16px;">
-								Package Project
+								Package Project:
 							</span>
 							
-							<span class="hint_text"  id="package_project_name" style="margin-left:10px"
+							<span class="hint_text"  id="package_project_name" style="margin-left:10px;font-size:16px"
 								on="l:package.project.request then value[name]"></span>
 							
 						</span>
@@ -463,7 +463,7 @@
 				</div>
 				<div>
 					<!-- HEADERS FOR MODULE TABLE -->
-					<div style="width:460px;color:#bbb">
+					<div style="width:460px;color:#999">
 						<div style="width:45px;float:left;text-decoration:underline;cursor:pointer;" 
 							on="click then l:package.all[val=exclude]">
 							<a title="exclude module from application">Exclude</a>

@@ -605,11 +605,14 @@ $MQL('l:show.filedialog',function(msg)
 		props.files = false;
 	}
 	
-	var files = Titanium.UI.openFiles(props);
-	if (files.length)
+	Titanium.UI.openFiles(function(f)
 	{
-		$MQ('l:file.selected',{'for':el,'value':files[0]});
-	}
+		if (f.length)
+		{
+			$MQ('l:file.selected',{'for':el,'value':f[0]});
+		}
+	},
+	props);
 });
 
 var irc_count = 0;
@@ -650,11 +653,11 @@ setTimeout(function()
 					{
 						if (users[i].operator == true)
 						{
-							$('#irc_users').append('<div class="'+users[i].name+'" style="color:#457db3">'+users[i].name+'(op)</div>');
+							$('#irc_users').append('<div class="'+users[i].name+'" style="color:#42C0FB">'+users[i].name+'(op)</div>');
 						}
 						else if (users[i].voice==true)
 						{
-							$('#irc_users').append('<div class="'+users[i].name+'" style="color:#457db3">'+users[i].name+'(v)</div>');
+							$('#irc_users').append('<div class="'+users[i].name+'" style="color:#42C0FB">'+users[i].name+'(v)</div>');
 						}
 						else
 						{
