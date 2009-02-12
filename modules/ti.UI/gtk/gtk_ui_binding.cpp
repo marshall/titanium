@@ -23,7 +23,7 @@ namespace ti
 		addScriptEvaluator(evaluator);
 	}
 
-	SharedPtr<MenuItem> GtkUIBinding::CreateMenu()
+	SharedPtr<MenuItem> GtkUIBinding::CreateMenu(bool trayMenu)
 	{
 		SharedPtr<MenuItem> menu = new GtkMenuItemImpl();
 		return menu;
@@ -71,7 +71,7 @@ namespace ti
 		SharedPtr<TrayItem> item = new GtkTrayItem(icon_path, cb);
 		return item;
 	}
-	
+
 
 	struct OpenFilesJob
 	{

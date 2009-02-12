@@ -25,7 +25,7 @@ namespace ti
 
 	}
 
-	SharedPtr<MenuItem> OSXUIBinding::CreateMenu()
+	SharedPtr<MenuItem> OSXUIBinding::CreateMenu(bool trayMenu)
 	{
 		//SharedPtr<MenuItem> menu = new OSXMenuItem(true);
 		SharedPtr<MenuItem> menu = NULL;
@@ -78,7 +78,7 @@ namespace ti
 
 		NSOpenPanel* openDlg = [NSOpenPanel openPanel];
 		[openDlg setCanChooseFiles:files];
-		[openDlg setCanChooseDirectories:directories]; 
+		[openDlg setCanChooseDirectories:directories];
 		[openDlg setAllowsMultipleSelection:multiple];
 		[openDlg setResolvesAliases:YES];
 
@@ -95,7 +95,7 @@ namespace ti
 		}
 		if (types.size() > 0)
 		{
-			filetypes = [[NSMutableArray alloc] init]; 
+			filetypes = [[NSMutableArray alloc] init];
 			for (size_t t = 0; t < types.size(); t++)
 			{
 				const char *s = types.at(t).c_str();
