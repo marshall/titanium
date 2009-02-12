@@ -16,7 +16,7 @@ namespace ti
 	{
 
 		public:
-		OSXUIBinding();
+		OSXUIBinding(Host *host);
 		~OSXUIBinding();
 
 		SharedPtr<MenuItem> CreateMenu();
