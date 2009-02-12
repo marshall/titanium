@@ -11,6 +11,7 @@
 #include <shellapi.h>
 #include <shlobj.h>
 #include <string>
+#include "win32_tray_item.h"
 
 namespace ti
 {
@@ -55,7 +56,8 @@ namespace ti
 		SharedString icon_path,
 		SharedBoundMethod cb)
 	{
-		return NULL;
+		SharedPtr<TrayItem> item = new Win32TrayItem(icon_path, cb);
+		return item;
 	}
 
 	void Win32UIBinding::OpenFiles(

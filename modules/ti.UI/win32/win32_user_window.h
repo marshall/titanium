@@ -23,6 +23,8 @@
 #include "script_evaluator.h"
 #include "win32_menu_item_impl.h"
 
+#define TI_TRAY_CLICKED 7499
+
 namespace ti {
 
 class Win32WebKitFrameLoadDelegate;
