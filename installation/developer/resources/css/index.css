@@ -55,7 +55,7 @@ input[type=text], select
 	outline:none;
 	font-size:12px;
 	padding:3px;
-	color:#eee;
+	color:#000;
 	width:220px;
 }
 input:focus
@@ -319,7 +319,7 @@ input:focus
 .manage_right
 {
 	float:left;
-	width:335px;
+	width:60%;
 }
 .social_row
 {

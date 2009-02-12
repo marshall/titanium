@@ -16,11 +16,13 @@
 </head>
 
 <!-- ADJUST WINDOW HEIGHT BASED ON CURRENT STATE -->
-<body  on="l:menu[val=create] then script[Titanium.UI.currentWindow.setHeight(400)] or
-		  l:menu[val=manage] then script[Titanium.UI.currentWindow.setHeight(500)] if expr[ $('#project_count_hidden').val() != 0] or
-		  l:menu[val=api] then script[Titanium.UI.currentWindow.setHeight(160)] if expr[ $('#project_count_hidden').val() == 0] or
-		  l:cancel[val=project] then script[Titanium.UI.currentWindow.setHeight(160)]
-		or l:menu[val=interact] then script[Titanium.UI.currentWindow.setHeight(650)]">
+<body  on="l:menu[val=manage] then script[Titanium.UI.currentWindow.setHeight(580)] 
+				if expr[Titanium.UI.currentWindow.getHeight()< 580]  or
+		   l:menu[val=interact] then script[Titanium.UI.currentWindow.setHeight(650)]
+				if expr[Titanium.UI.currentWindow.getHeight()< 650] ">
+		
+	<input type="hidden" id="project_count_hidden" />
+	
 	<!-- HEADER MENU -->
 	<div class="menu">
 		<div id="logo"><img src="images/titanium_developer.png"/> </div>
@@ -41,11 +43,6 @@
 		<div class="button1" style="display:inline-block;width:150px" 
 			on="click then l:menu[val=manage] and add[class=active] or l:menu[val!=manage] then remove[class=active]">
 			<div class="button2">Manage Projects</div>
-		</div>
-		<div class="button1" style="display:inline-block;width:150px" 
-			on="click then l:menu[val=create] and add[class=active] 
-			or (l:menu[val!=create] or l:cancel[val=project]) then remove[class=active]">
-			<div class="button2">Create Project</div>
 		</div>
 		<div class="button1" style="display:inline-block;width:150px" 
 			on="click then l:menu[val=api] and add[class=active] or l:menu[val!=api] then remove[class=active]">
@@ -123,154 +120,69 @@
 			</div>
 		</div>
 
-		<!-- CREATE A NEW PROJECT -->
-		<div style="display:none;"
-			on="l:menu[val=create] then effect[fadeIn] else hide or l:cancel[val=project] then effect[fadeOut]">
-
-			<!-- VARIOUS CREATE PROJECT MESSAGES: HINT, ERROR, SUCCESS, PROGRESS -->
-			<div style="height:18px;line-height:18px" >
-				<div class="section hint_text" 
-					on="l:create.project.request then hide or l:menu[val=create] then show
-					or l:create.project.response[result=success] then effect[fadeIn] after 2300ms">
-					Enter the following project details. Your project will be created using this initial information.
-				</div>
-				<div class="section action_text" style="display:none" 
-				on="(l:menu[val=create] or l:create.project.response) then hide or l:create.project.request then show">
-					<img src="images/lightning.png"/>
-					<span style="position:relative;top:-4px">Creating project...</span>
-				</div>
-				<div class="section success_text" style="display:none" 
-				on="(l:menu[val=create] or l:create.project.request) then hide 
-					or l:create.project.response[result=success] then show
-					or l:create.project.response[result=success] then effect[fadeOut] after 2s">
-					<img src="images/accept.png"/>
-					<span style="position:relative;top:-4px">Project created!</span>
-				</div>
-				<div class="section error_text" style="display:none" 
-				on="(l:menu[val=create] or l:create.project.request) then hide 
-					or l:create.project.response[result=error] then show">
-					<img src="images/error.png"/>
-					<span style="position:relative;top:-4px">
-						<span>Create project failed with message: </span>
-						<span on="l:create.project.response then value[msg]"></span>
-					</span>
-				</div>
-
-			</div>
-
-			<!-- PROJECT NAME -->
-			<div class="section text">
-				<table>
-					<tr>
-						<td><div>Project Name:</div></td>
-						<td><div>Publisher Name:</div></td>
-						<td><div>Publisher URL:</div></td>
-					</tr>
-					<tr>
-						<td><div><input type="text" id="project_name" validator="required" fieldset="new_project"
-						on="(l:create.project.response[result=success] or l:menu[val=create]) then reset"/></div></td>
-						<td><div><input type="text" id="publisher_name" name="publisher" validator="required" fieldset="new_project"
-						on="(l:create.project.response[result=success] or l:menu[val=create]) then reset"/></div></td>
-						<td><div><input type="text" id="app_url" name="url" validator="required" fieldset="new_project"
-						on="(l:create.project.response[result=success] or l:menu[val=create]) then reset"/></div></td>
-					</tr>
-					<tr>
-						<td><div class="formhint">The application name</div></td>
-						<td><div class="formhint">The name of the publisher</div></td>
-						<td><div class="formhint">The URL for your application</div></td>
-					</tr>
-				</table>
-			</div>
-
-			<!-- PROJECT LOCATION -->
-			<div class="section text">
-				<table>
-					<tr>
-						<td><div>Project Image:</div></td>
-						<td><div>Project Location:</div></td>
-					</tr>
-					<tr>
-						<td>
-							<div>
-								<input type="text" id="project_image" name="image" style="width:300px;float:left;" 
-						validator="required" fieldset="new_project" 
-						on="l:file.selected[for=project_image] then value[value]
-						or (l:create.project.response[result=success] or l:menu[val=create]) then reset"/> 
-								<div class="button1" 
-									style="float:left;width:23px;height:23px;position:relative;top:1px;margin-left:10px" >
-									<div class="button2" style="height:21px" 
-										on="click then l:show.filedialog[for=project_image]">
-										<img src="images/folder_go.png" style="position:relative;top:3px;left:1px"/>
-									</div>
-								</div>
-								<div class="formhint" style="clear:both;margin-top:0">The application's image</div>
-							</div>
-						</td>
-						<td>
-							<div>
-								<input type="text" id="project_location" style="width:300px;float:left;" 
-						validator="required" fieldset="new_project" on="l:file.selected[for=project_location] then value[value]
-						or (l:create.project.response[result=success] or l:menu[val=create]) then reset"/> 
-								<div class="button1" 
-									style="float:left;width:23px;height:23px;position:relative;top:1px;margin-left:10px" >
-									<div class="button2" style="height:21px" 
-										on="click then l:show.filedialog[for=project_location]">
-										<img src="images/folder_go.png" style="position:relative;top:3px;left:1px"/>
-									</div>
-								</div>
-								<div class="formhint" style="clear:both;margin-top:0">The project directory</div>
-							</div>
-						</td>
-					</tr>
-				</table>
-			</div>
-			<div style="clear:both"></div>
-
-			<!-- CREATE PROJECT BUTTONS -->
-			<div class="section text">
-				<div class="button1" style="float:left;margin-right:10px" >
-					<div class="button2" id="create_project_button"
-					on="click then l:create.project.request if expr[$('#create_project_button').attr('disabled')!=true]" 
-						activators="project_location,project_name"  fieldset="new_project">
-						Create
-					</div>
-				</div>
-				<div class="button1" style="float:left;"  on="click then l:cancel[val=project]">
-					<div class="button2">
-						Cancel
-					</div>
-				</div>
-
-			</div>
-
-		</div>
-
 		<!-- MANAGE PROJECT -->
-		<div style="margin-top:5px;display:none" 
+		<div style="display:none" 
 			on="l:menu[val=manage] then effect[fadeIn] else hide or l:cancel[val=manage] then effect[fadeOut]">
 
 			<!-- NO PROJECTS CREATED MESSAGE -->
-			<div style="float:left;width:300px" class="error_text" 
+			<div style="margin-top:10px;width:450px" 
 				on="l:project.list.response[totalRecords!=0] then hide else effect[fadeIn,speed=3000]">
-				<img src="images/error.png"/>
-				<span style="position:relative;top:-4px">
-					You haven't created any projects.  Get on it!
-				</span>
+				<!-- INFO MESSAGE -->
+				<div class="infobox">
+					<div class="content" style="height:20px;position:relative">
+						<div style="position:absolute;top:7px;left:5px">
+							<img src="images/information.png" style="position:relative;top:-1px"/>
+						</div>
+						<div style="position:absolute;top:7px;left:30px">
+							You haven't created any projects yet!  Get started by creating one now!
+						</div>
+					</div>
+				</div>
 			</div>
 			
 			<!-- PROJECT LIST ITERATOR -->
-			<div on="l:project.list.response[totalRecords=0] then hide else effect[fadeIn]
+			<div on="l:project.list.response[totalRecords=0] then hide
 				or l:package.project.request then effect[slideUp] 
-					or l:cancel[val=package] then effect[fadeIn] after 400ms">
-				<div style="float:left;width:250px" >
-					<div style="margin-bottom:10px;font-size:11px;position:relative;top:-5px" class="hint_text">
-						<span on="click then l:project.search" style="cursor:pointer">
-							<img src="images/magnifier.png" style="position:relative;top:4px;"/>
-							Find Projects
-						</span>
+				or l:cancel[val=package] then effect[fadeIn] after 500ms
+				or l:create.project then effect[slideUp]
+				or l:cancel[val=project] then effect[fadeIn] after 500ms
+				or l:create.project.response[result=success] then effect[fadeIn] after 1500ms">
+				<div style="float:left;width:30%;margin-top:10px" >
+					<div style=";font-size:11px;position:relative;top:-5px" class="hint_text">
+
+						<div class="button1" 
+							style="float:left;width:23px;height:23px;position:relative;top:1px;" 
+							on="mouseover then l:action.hint[hint=Find projects] or mouseout then l:action.hint[hint='']">
+							<div class="button2" style="height:21px" 
+								on="click then l:project.search">
+								<img src="images/magnifier.png" style="position:relative;top:3px;left:1px"/>
+							</div>
+						</div>
+						<div class="button1" 
+							style="float:left;width:23px;height:23px;position:relative;top:1px;" 
+							on="mouseover then l:action.hint[hint=Create project] 
+							or mouseout then l:action.hint[hint='']">
+							<div class="button2" style="height:21px" 
+								on="click then l:create.project">
+								<img src="images/add.png" style="position:relative;top:3px;left:1px"/>
+							</div>
+						</div>
+						<div class="button1" 
+							style="float:left;width:23px;height:23px;position:relative;top:1px;" 
+							on="mouseover then l:action.hint[hint=Import existing project] 
+							or mouseout then l:action.hint[hint='']">
+							<div class="button2" style="height:21px" 
+								on="click then l:import.project">
+								<img src="images/folder_add.png" style="position:relative;top:3px;left:1px"/>
+							</div>
+						</div>
+						<div style="float:left;margin-left;margin-top:6px" class="hint_text"
+							on="l:action.hint then value[hint]">
+						</div>
+						<div style="clear:both"></div>
 						<div style="display:none;margin-top:5px;margin-bottom:5px" 
 							on="l:project.search then effect[slideToggle]">
-							<input type="text"  validator="required" value="type and hit enter"
+							<input type="text"  validator="required" value="search by name"
 							 	on="click then clear or keyup then l:project.search.request after 100ms"
 								fieldset="project_search" id="search_value"/> 
 						</div>
@@ -299,11 +211,12 @@
 					<div control="iterator[property=rows]" 
 						on="l:project.list.response then render or l:project.search.response then render">
 						<div class="project_row"
-							on="mouseover then l:row.selected[id=#{id},name=#{name},date=#{date}] 
+							on="click then 
+							l:row.selected[id=#{id},name=#{name},date=#{date},pub=#{publisher},url=#{url},image=#{image}] 
 							and add[class=row_selected] and show[id=action_#{iterator_index}] 
 							and hide[id=view_#{iterator_index}]
-							or mouseout then remove[class=row_selected] and hide[id=action_#{iterator_index}] 
-							and show[id=view_#{iterator_index}]">
+							or l:row.selected[id!=#{id}] then remove[class=row_selected] 
+							and hide[id=action_#{iterator_index}] and show[id=view_#{iterator_index}]">
 							<div id="view_#{iterator_index}">
 								<div class="project_name">#{name}</div>
 								<div class="project_date" >
@@ -333,16 +246,16 @@
 						<div class="content">
 							<table>
 								<tr>
-									<td style="font-size:11px" width="90px" class="hint_text">Project Name:</td>
-									<td style="font-size:11px" on="l:row.selected then value[name]"></td>
+									<td style="font-size:12px" width="90px" class="hint_text">Project Name:</td>
+									<td style="font-size:12px" on="l:row.selected then value[name]"></td>
 								</tr>
 								<tr>
-									<td style="font-size:11px" width="90px" class="hint_text">Date Created:</td>
-									<td style="font-size:11px"  on="l:row.selected then value[date]"></td>
+									<td style="font-size:12px" width="90px" class="hint_text">Date Created:</td>
+									<td style="font-size:12px"  on="l:row.selected then value[date]"></td>
 								</tr>
 								<tr>
-									<td style="font-size:11px" width="90px" class="hint_text">Location:</td>
-									<td  width="220px" style="font-size:11px;">
+									<td style="font-size:12px" width="90px" class="hint_text">Location:</td>
+									<td  width="220px" style="font-size:12px;">
 										<a style="color:#fff;text-decoration:underline;cursor:pointer;display:none" 
 											id="project_detail_dir_a"
 											on="l:row.selected then script[TiDeveloper.formatDirectory(this.data.id)]
@@ -353,6 +266,20 @@
 										</span>
 
 									</td>
+								</tr>
+								<tr>
+									<td style="font-size:12px" width="90px" class="hint_text">Publisher:</td>
+									<td style="font-size:12px"  on="l:row.selected then value[pub]"></td>
+								</tr>
+								<tr>
+									<td style="font-size:12px" width="90px" class="hint_text">Publisher URL:</td>
+									<td style="font-size:12px"  
+										on="l:row.selected then value[url]"></td>
+								</tr>
+								<tr>
+									<td style="font-size:12px" width="90px" class="hint_text">App Icon:</td>
+									<td style="font-size:12px"  
+										on="l:row.selected then value[image]"></td>
 								</tr>
 
 							</table>
@@ -384,17 +311,135 @@
 				<!-- INFO MESSAGE -->
 				<div class="infobox manage_right" style="margin-left:50px" 
 					on="l:row.selected then hide or l:menu[val=manage] then show">
-					<div class="content" style="height:58px">
+					<div class="content" style="height:45px">
 						<div style="float:left;width:20px">
 							<img src="images/information.png" style="position:relative;top:-1px"/>
 						</div>
-						<div style="float:left;width:290px">
+						<div style="float:left;width:90%">
 							Manage Projects currently allows you to package and remove existing projects.
 							We will be adding more features in the near future.  We welcome your feedback.
 						</div>
 					</div>
 				</div>
 				
+			</div>
+
+			<!-- CREATE A NEW PROJECT -->
+			<div style="display:none;margin-top:-10px"
+				on="l:create.project then effect[fadeIn] after 500ms 
+					or l:project.list.response[totalRecords=0] then show
+					or l:create.project.response[result=success] then effect[slideUp] after 1s
+					or l:cancel[val=project] then effect[slideUp]">
+
+				<!-- VARIOUS CREATE PROJECT MESSAGES: HINT, ERROR, SUCCESS, PROGRESS -->
+				<div style="height:18px;line-height:18px;margin-bottom:30px" >
+					<div class="section hint_text" 
+						on="l:create.project.request then hide or l:create.project then show">
+						<img src="images/folder-new.png"/>
+						<span style="position:relative;top:-10px;margin-left:10px">
+							<span style="color:#fff;font-size:16px;margin-right:10px">
+								Create Project
+							</span>
+							Enter the following project details. 
+							Your project will be created using this initial information.
+						</span>
+					</div>
+					<div class="section action_text" style="display:none" 
+					on="(l:menu[val=create] or l:create.project.response) then hide 
+						or l:create.project.request then show">
+						<img src="images/lightning.png"/>
+						<span style="position:relative;top:-4px">Creating project...</span>
+					</div>
+					<div class="section success_text" style="display:none" 
+					on="(l:menu[val=create] or l:create.project.request) then hide 
+						or l:create.project.response[result=success] then show
+						or l:create.project.response[result=success] then effect[fadeOut] after 700ms">
+						<img src="images/accept.png"/>
+						<span style="position:relative;top:-4px">Project created!</span>
+					</div>
+					<div class="section error_text" style="display:none" 
+					on="(l:menu[val=create] or l:create.project.request) then hide 
+						or l:create.project.response[result=error] then show">
+						<img src="images/error.png"/>
+						<span style="position:relative;top:-4px">
+							<span>Create project failed with message: </span>
+							<span on="l:create.project.response then value[msg]"></span>
+						</span>
+					</div>
+
+				</div>
+
+				<!-- PROJECT NAME -->
+				<div class="section text">
+					<div>Project Name:</div>
+					<div style="margin-top:3px;margin-bottom:10px">
+						<input type="text" id="project_name" validator="required" fieldset="new_project"
+							on="(l:create.project.response[result=success] or l:menu[val=create]) then reset"/>
+					</div>
+					<div>Publisher Name:</div>
+					<div style="margin-top:3px;margin-bottom:10px">
+						<input type="text" id="publisher_name" name="publisher" 
+							validator="required" fieldset="new_project"
+							on="(l:create.project.response[result=success] or l:menu[val=create]) then reset"/>
+					</div>
+					<div>Publisher URL:</div>
+					<div style="margin-top:3px;margin-bottom:10px">
+						<input type="text" id="app_url" name="url" validator="required" 
+							fieldset="new_project"
+							on="(l:create.project.response[result=success] or l:menu[val=create]) then reset"/>
+					</div>
+					<div>Application Image:</div>
+					<div style="margin-top:3px;margin-bottom:10px">
+						<input type="text" id="project_image" name="image" 
+							style="width:450px;float:left;" validator="required" fieldset="new_project" 
+							on="l:file.selected[for=project_image] then value[value]
+							or (l:create.project.response[result=success] or l:menu[val=create]) then reset"/>
+						<div class="button1" 
+							style="float:left;width:23px;height:23px;position:relative;top:1px;margin-left:10px" >
+							<div class="button2" style="height:21px" 
+								on="click then l:show.filedialog[for=project_image]">
+								<img src="images/folder_go.png" style="position:relative;top:3px;left:1px"/>
+							</div>
+						</div>
+					</div>
+					<div style="clear:both"></div>
+					<div >Project Location:</div>
+					<div style="margin-top:3px;margin-bottom:10px">
+						<input type="text" id="project_location" style="width:450px;float:left;" 
+							validator="required" fieldset="new_project" 
+							on="l:file.selected[for=project_location] then value[value]
+							or (l:create.project.response[result=success] or l:menu[val=create]) then reset"/>
+					 
+						<div class="button1" 
+							style="float:left;width:23px;height:23px;position:relative;top:1px;margin-left:10px" >
+							<div class="button2" style="height:21px" 
+								on="click then l:show.filedialog[for=project_location]">
+								<img src="images/folder_go.png" style="position:relative;top:3px;left:1px"/>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div style="clear:both"></div>
+
+				<!-- CREATE PROJECT BUTTONS -->
+				<div class="section text">
+					<div class="button1" style="float:left;margin-right:10px" >
+						<div class="button2" id="create_project_button"
+						on="click then l:create.project.request 
+						if expr[$('#create_project_button').attr('disabled')!=true]" 
+						activators="project_location,project_name,project_location,project_image,app_url, publisher_name"  
+						fieldset="new_project">
+							Create
+						</div>
+					</div>
+					<div class="button1" style="float:left;"  on="click then l:cancel[val=project]">
+						<div class="button2">
+							Cancel
+						</div>
+					</div>
+
+				</div>
+
 			</div>
 
 			<!-- PACKAGE PROJECT -->
@@ -406,10 +451,12 @@
 					<div style="position:absolute;left:0px">
 						<img src="images/package_large.png">
 						<span style="position:relative;top:-10px;margin-left:5px"/>
-							<span id="package_project_name" on="l:package.project.request then value[name]"></span>
-							<span class="hint_text" style="margin-left:10px">
-							Select the modules to be included with your application.
-							</span> 
+							<span style="color:#fff;font-size:16px;">
+								Package Project
+							</span>
+							
+							<span class="hint_text"  id="package_project_name" style="margin-left:10px"
+								on="l:package.project.request then value[name]"></span>
 							
 						</span>
 					</div>
