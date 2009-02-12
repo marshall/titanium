@@ -14,7 +14,7 @@
 
 namespace ti
 {
-	Win32UIBinding::Win32UIBinding() : UIBinding()
+	Win32UIBinding::Win32UIBinding(Host *host) : UIBinding(host)
 	{
 	}
 
@@ -58,7 +58,8 @@ namespace ti
 		return NULL;
 	}
 
-	std::vector<std::string> Win32UIBinding::OpenFiles(
+	void Win32UIBinding::OpenFiles(
+		SharedBoundMethod callback,
 		bool multiple,
 		bool files,
 		bool directories,
@@ -70,10 +71,27 @@ namespace ti
 		//  desktop implementation, but as of right now
 		// the windows implementation allows the user to
 		// browse/select for file OR a directory, but not both
+		SharedBoundList results;
 		if(directories) {
-			return SelectDirectory(multiple, path, file);
+			results = SelectDirectory(multiple, path, file);
+		}
+		else
+		{
+			results = SelectFile(callback, multiple, path, file, types);
 		}
 
+		ValueList args;
+		args.push_back(Value::NewList(results));
+		callback->Call(args);
+	}
+
+	SharedBoundList Win32UIBinding::SelectFile(
+		SharedBoundMethod callback,
+		bool multiple,
+		std::string& path,
+		std::string& file,
+		std::vector<std::string>& types)
+	{
 		//std::string filterName = props->GetString("typesDescription", "Filtered Files");
 		std::string filterName = "Filtered Files";
 		std::string filter;
@@ -131,7 +149,7 @@ namespace ti
 
 		if(multiple) ofn.Flags |= OFN_ALLOWMULTISELECT;
 
-		std::vector<std::string> results;
+		SharedBoundList results = new StaticBoundList();
 		// display the open dialog box
 		if(GetOpenFileName(&ofn) == TRUE)
 		{
@@ -143,8 +161,7 @@ namespace ti
 
 			if(tokens.size() == 1)
 			{
-				std::string n(tokens.at(0));
-				results.push_back(n);
+				results->Append(Value::NewString(tokens.at(0)));
 			}
 			else if(tokens.size() > 1)
 			{
@@ -155,14 +172,36 @@ namespace ti
 					n.append(directory.c_str());
 					n.append("\\");
 					n.append(tokens.at(i).c_str());
-					results.push_back(n);
+					results->Append(Value::NewString(n));
 				}
 			}
 		}
-
 		return results;
 	}
 
+	SharedBoundList Win32UIBinding::SelectDirectory(
+		bool multiple,
+		std::string& path,
+		std::string& file)
+	{
+		SharedBoundList results = new StaticBoundList();
+
+		BROWSEINFO bi = { 0 };
+		//std::string title("Select a directory");
+		//bi.lpszTitle = title.c_str();
+		LPITEMIDLIST pidl = SHBrowseForFolder(&bi);
+
+		if(pidl != 0)
+		{
+			// get folder name
+			TCHAR in_path[MAX_PATH];
+			if(SHGetPathFromIDList(pidl, in_path))
+			{
+				results->Append(Value::NewString(std::string(in_path)));
+			}
+		}
+		return results;
+	}
 
 	long Win32UIBinding::GetSystemIdleTime()
 	{
@@ -176,31 +215,6 @@ namespace ti
 		long idleTicks = currentTickCount - lii.dwTime;
 
 		return (int)idleTicks;
-	}
-
-	std::vector<std::string> Win32UIBinding::SelectDirectory(
-		bool multiple,
-		std::string& path,
-		std::string& file)
-	{
-		std::vector<std::string> results;
-
-		BROWSEINFO bi = { 0 };
-		//std::string title("Select a directory");
-		//bi.lpszTitle = title.c_str();
-		LPITEMIDLIST pidl = SHBrowseForFolder(&bi);
-
-		if(pidl != 0)
-		{
-			// get folder name
-			TCHAR in_path[MAX_PATH];
-			if(SHGetPathFromIDList(pidl, in_path))
-			{
-				results.push_back(std::string(in_path));
-			}
-		}
-
-		return results;
 	}
 
 	void Win32UIBinding::ParseStringNullSeparated(const char *s, std::vector<std::string> &tokens)

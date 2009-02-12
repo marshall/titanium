@@ -1,5 +1,5 @@
 /**
- * Appcelerator Titanium - licensed under the Apache Public License 2
+ g* Appcelerator Titanium - licensed under the Apache Public License 2
  * see LICENSE in the root folder for details on the license.
  * Copyright (c) 2009 Appcelerator, Inc. All Rights Reserved.
  */
@@ -18,10 +18,12 @@ namespace ti
 		friend class SharedPtr<BoundObject>;
 
 	public:
-		UIBinding();
+		UIBinding(Host *host);
+
 
 	protected:
 		virtual ~UIBinding();
+		Host* host;
 
 	private:
 		void _CreateMenu(const ValueList& args, SharedValue result);
@@ -52,14 +54,14 @@ namespace ti
 		virtual void SetDockMenu(SharedPtr<MenuItem>) {} 
 		virtual void SetBadge(SharedString badge_path) {}
 
-		virtual std::vector<std::string> OpenFiles(
+		virtual void OpenFiles(
+			SharedBoundMethod callback,
 			bool multiple,
 			bool files,
 			bool directories,
 			std::string& path,
 			std::string& file,
 			std::vector<std::string>& types) = 0;
-
 		virtual long GetSystemIdleTime() = 0;
 
 	};

@@ -95,6 +95,13 @@ Titanium.AppCreator = {
 		var appExecutable = TFS.getFile(appDir, name + '.exe');
 		kboot.copy(appExecutable);
 		
+		// in win32 because of COM manifest crap, we gotta put
+		// the WebKit.dll in the app folder
+		var localRuntime = TFS.getFile(appDir,'runtime');
+		localRuntime.createDirectory();
+		var webkitDll = TFS.getFile(runtime,'WebKit.dll');
+		webkitDll.copy(localRuntime);
+		
 		// set our marker file
 		var marker = TFS.getFile(appDir,'.installed');
 		if (!install)

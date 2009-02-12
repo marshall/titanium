@@ -85,6 +85,10 @@ namespace ti
 		{
 			result->SetBool(false);
 		}
+		catch (Poco::PathNotFoundException &fnf)
+		{
+			result->SetBool(false);
+		}
 		catch (Poco::Exception& exc)
 		{
 			throw ValueException::FromString(exc.displayText());
@@ -99,6 +103,10 @@ namespace ti
 			result->SetBool(isDir);
 		}
 		catch (Poco::FileNotFoundException &fnf)
+		{
+			result->SetBool(false);
+		}
+		catch (Poco::PathNotFoundException &fnf)
 		{
 			result->SetBool(false);
 		}
@@ -119,6 +127,10 @@ namespace ti
 		{
 			result->SetBool(false);
 		}
+		catch (Poco::PathNotFoundException &fnf)
+		{
+			result->SetBool(false);
+		}
 		catch (Poco::Exception& exc)
 		{
 			throw ValueException::FromString(exc.displayText());
@@ -133,6 +145,10 @@ namespace ti
 			result->SetBool(isLink);
 		}
 		catch (Poco::FileNotFoundException &fnf)
+		{
+			result->SetBool(false);
+		}
+		catch (Poco::PathNotFoundException &fnf)
 		{
 			result->SetBool(false);
 		}
@@ -152,6 +168,10 @@ namespace ti
 		{
 			result->SetBool(false);
 		}
+		catch (Poco::PathNotFoundException &fnf)
+		{
+			result->SetBool(false);
+		}
 		catch (Poco::Exception& exc)
 		{
 			throw ValueException::FromString(exc.displayText());
@@ -168,6 +188,10 @@ namespace ti
 		{
 			result->SetBool(false);
 		}
+		catch (Poco::PathNotFoundException &fnf)
+		{
+			result->SetBool(false);
+		}
 		catch (Poco::Exception& exc)
 		{
 			throw ValueException::FromString(exc.displayText());
@@ -181,6 +205,10 @@ namespace ti
 			result->SetBool(file.canWrite());
 		}
 		catch (Poco::FileNotFoundException &fnf)
+		{
+			result->SetBool(false);
+		}
+		catch (Poco::PathNotFoundException &fnf)
 		{
 			result->SetBool(false);
 		}
@@ -639,7 +667,7 @@ namespace ti
 				originalPath = [originalPath stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"%@/",p] withString:@""];
 			}
 		}
-		
+
 		int rc = symlink([originalPath UTF8String],[destPath UTF8String]);
 		BOOL worked = rc >= 0;
 #ifdef DEBUG
@@ -712,6 +740,10 @@ namespace ti
 		{
 			result->SetBool(false);
 		}
+		catch (Poco::PathNotFoundException &fnf)
+		{
+			result->SetBool(false);
+		}
 		catch (Poco::Exception& exc)
 		{
 			throw ValueException::FromString(exc.displayText());
@@ -729,6 +761,10 @@ namespace ti
 		{
 			result->SetBool(false);
 		}
+		catch (Poco::PathNotFoundException &fnf)
+		{
+			result->SetBool(false);
+		}
 		catch (Poco::Exception& exc)
 		{
 			throw ValueException::FromString(exc.displayText());
@@ -743,6 +779,10 @@ namespace ti
 			result->SetBool(true);
 		}
 		catch (Poco::FileNotFoundException &fnf)
+		{
+			result->SetBool(false);
+		}
+		catch (Poco::PathNotFoundException &fnf)
 		{
 			result->SetBool(false);
 		}

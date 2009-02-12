@@ -4,142 +4,96 @@
 
 For details on Titanium, please see <http://titaniumapp.com>.
 
-
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-WARNING: these instructions are now in flux based on development of PR2 and will be 
-updated soon.
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-
 ---------------------
  Build Prerequisites
 ---------------------
 
 To build Titanium from source, you will need the following prerequisites:
 
-  - Ruby 1.8.6 or greater <http://www.ruby-lang.org/en/downloads/>
-  - RubyGems with the following gems: rake, rubyzip
+  - Python (see platform specific notes below)
+  - Scons package - <http://www.scons.org/>
+  - Platform compiler (see below for each platform)
 
-To build Titanium, you will need to first checkout the Appcelerator SDK
-from <http://github.com/jhaynie/appcelerator_sdk/tree/master>. The Titanium build
-uses the build and release tools from the SDK to build Titanium.
+Python and SCons are used to build Titanium but not required for end-development
+or runtime.
 
-After checkout, set the environment variable 'APPC_SDK' to the root of the SDK directory.
-You can also check out the SDK into the directory just above the parent of the Titanium
-directory (such that Titanium and the Appcelerator SDK) are at the same level.
+To build Titanium, you will need to first checkout the Titanium source code
+from <http://github.com/marshall/titanium/tree/master>. 
 
-To build Titanium, you will need to checkout a special fork of the Google Gears branch 
-from <http://github.com/marshall/gears-titanium/tree/master>. This should be checked 
-into the root of the titanium folder using the directory name 'gears-titanium' or into 
-another folder with a symlink with this name in the titanium folder.
+Currently, we are building Titanium for 32-bit architectures but intend to support 64-bit
+very soon. If you have patches or would like to assist, please contact us (see below for
+IRC or email information).
 
-Once you have setup your build environment, test it with the following command:
+-------
+ Setup
+-------
 
-	> rake -T
+You will first need to update the kroll submodule that is checked in to Titanium before
+you can succesfully build.  You can run the following command from the root source 
+directory to update the submodule:
 
-This should give you a list of all the available build targets that are available. 
-If you see a number of titanium: tasks such as titanium:runtime:osx, your environment
-if setup.
+> git submodule update --init
 
-Now, you can build the Titanium SDK.  The Titanium SDK and the Appcelerator SDK are 
-the same.  The only major diference is that the Titanium SDK has Titanium-specific
-branding.  Additionally, Titanium provides some additional distribution files for
-packaging a Titanium application.  These are split into 2 main categories:
+This will pull the contents of the submodule into your local kroll folder.
 
-	- Titanium project packaging component: titanium-project-X.X.X.zip
-	- Titanium runtime components: titanium-<OS>-X.X.X.zip
+----------
+ Building
+----------
 
-The project packaging component is used for constructing and applying Titanium 
-specific files that are generic for all Titanium projects.  The Titanium runtime
-components are the OS-specific bundles and scripts that will turn your project
-into a Titanium executable package.  For more information, see below.
+Titanium uses SCons for building.  You can run scons by typing:
 
+> scons
 
-------------------------
- Quick Developer Builds
-------------------------
+To enable a debug build, use the debug flag:
 
-You can do a developer build + install by running the following developer build 
-task:
+> scons debug=1
 
-	> rake titanium:dev
+To build the packaged bundles, use package flag:
 
-This will build the Gears-Titanium bundle, the Titanium Project bundle and the 
-Titanium OS distribution bundle and install them locally using the app command.
+> scons package=1
 
-Once you have run this command successfully, you can quickly re-package your 
-project to pick up the new changes.
+The output of the build will be in a folder named build\<osname> such as 
+build/osx for OSX.
 
 
+---------------
+ Platform Info 
+---------------
 
---------------------
- General Build Info
---------------------
-
-The Titanium build will create Appcelerator compatible distribution files which are
-released (or installed) by the Appcelerator CLI.  The distribution files will be built
-into the $APPC/stage directory.  Each file will start with titanium-.  For example, the
-0.1.0 version of Titanium is named titanium-osx-0.1.0.zip.  
-
-Once built, this file can be locally installed for testing by using the following 
-command to install in a command prompt:
-
-	> app install:titanium <file>
-
-For example:
-
-	> app install:titanium $APPC/stage/titanium-osx-0.1.0.zip
-
-* NOTE: You will need to have first installed either the Titanium SDK or the Appcelerator
-SDK before attempting to install.  Make sure that you have the appcelerator CLI binary
-on your path (should be automatically placed on your path during installation).
-
-You will need to install both a titanium-project and titanium-<os> distribution to 
-create and bundle titanium projects. (See below for Titanium project instructions).
-
-Once you have both installed, you can run the following command to create a titanium
-project:
-
-	> app create:project . test titanium
-
-The period (.) is the path to create the project.  The 3rd argument (test) is the name 
-of the project to create.  Set this to the name of your application.
-
-If everything worked, you should get a number of files in the directory named test.
-
-To test bundling, run the following command (replace with your OS) in your project
-directory:
-
-	> app package:project osx
-
-If everything worked, you should have a directory named stage in your project directory
-and inside that directory, you should have a folder with your distribution files.
-For OSX, the folder will be named test.app (or test will be replaced with whatever you
-named your project).
-
------------------
- Platform Builds
------------------
-
-Titanium requires platform-specific builds.  Currently, Titanium builds on Win32 and
-Mac OSX.  Linux build is in progress.
+Titanium requires platform-specific builds.  Currently, Titanium builds on Win32, Linux 
+and Mac OSX 10.5.4+.
 
 Win32
 ------
 
-You will need Microsoft Visual Studio 2005 + Service Packs to build Titanium.  This
-requirement is for building Chromium.  It *will not* work with any other compiler
-version, sorry.  Please first follow setting up your environment to build
-chromium by following instructions (to precise detail) at
-<http://dev.chromium.org/developers/how-tos/build-instructions-windows> 
+You will need Microsoft Visual Studio 2005 + Service Packs to build Titanium. We have
+not tested building Titanium on Visual Studio 2008.  You will need to obtain the 
+Microsoft Visual Studio Service Pack 1 to compile Titanium.
 
-In the future, we will support building Titanium with a binary release of chromium.
+Win32 Python Notes
+==================
 
-To build the Win32 distribution, type the following in a command prompt:
+You will need to set the environment variable PYTHONHOME to the location of your 
+installed python.
 
-	> rake titanium:runtime:win32
+You will need to have Python 2.5 installed to build Win32. Later versions currently
+are not supported. You can download Python at <http://www.python.org/download/releases/2.5.2>
 
 
+Win32 Ruby Notes
+================
+
+To build Ruby module support you will need to first install Ruby 1.8+ and make sure
+it's own your path.  There is a problem with the included Ruby header file named
+config.h (under $RUBY\lib\ruby\1.8\i386-mswin32\) that requires you to hand edit
+the file to comment out the check.  If you receive the following warning:
+
+fatal error C1189: #error : MSC version unmatch
+
+Then you have experienced this error.  Hand edit the file and comment out the top
+of the header file that checks the version and re-compile.
+
+ 
 OSX
 ----
 
@@ -149,55 +103,22 @@ is only supported on Leopard (or later).
 If you have xcode installed, you should be able to build Titanium with no additional
 dependencies.
 
-To build the OSX distribution, type the following in a command prompt:
-
-	> rake titanium:runtime:osx
-
 Linux
 ------
 
-More details coming soon.... Linux is currently in progress and we're working to finish
-porting our Google Gears branch to Linux + NPAPI.
+Each distribution varies slightly for building Titanium on a Linux distribution.
 
-To build the Linux distribution, type the following in a command prompt:
+Ubuntu 8.10 32bit
+=================
 
-	> rake titanium:runtime:linux
+1. Install the required libraries:
 
+sudo apt-get install build-essential ruby rubygems libzip-ruby scons libxml2-dev libgtk2.0-dev python-dev ruby-dev
 
------------------
- Project Support
------------------
+2. Install Git:
 
-Titanium has an additional distribution that is required to be built and distributed.
-This file is used by the Appcelerator CLI to create Titanium projects or to add
-Titanium support to existing Appcelerator projects.  To build this distribution file,
-type the following in a command prompt:
+sudo apt-get install git-core
 
-	> rake titanium:project
-
-
--------------------
- Automated Testing
--------------------
-
-We're using TestMonkey for automated testing of the Titanium API.  The apivalidator
-is located under runtime/tests/apivalidator and is a normal titanium app with 
-Test Monkey tests.  You can run the test by going into this directory and
-packaging the test suite:
-
-	> app package:project <os>
-
-Then, you can run them like a normal application.  For debug output on OSX, you can
-run with command console:
-	
-	> ./stage/apivalidator.app/Contents/MacOS/apivalidator
-
-This will run the application and print out debugging messages to the console.
-
-
-You can find out more information or obtain Test Monkey by visiting:
-
-<http://github.com/jhaynie/testmonkey/tree/master>
 
 
 --------------------
@@ -229,18 +150,22 @@ Titanium was made possible by a number of awesome contributors:
 - Martin Robinson, Linux
 - Nolan Wright, Apps + Testing
 - Paolo F, Apps + Testing
+- Mark Obcena, Documentation + Testing (and moral support)
+- Will Robertson, Build + Testing on various Linux distros
+
+Special thanks to all those who continually stop by the IRC channel to
+offer assistance, bug reports and moral support.  We love you!
 
 If you are interested in becoming a community developer and contributing to
 Titanium, please contact us at <info@appcelerator.org>.
-
 
 -------------
  Legal Stuff
 -------------
 
-Copyright (C) 2008 by Appcelerator, Inc. All Rights Reserved.
+Copyright (C) 2008-2009 by Appcelerator, Inc. All Rights Reserved.
 For more information, please visit <http://license.appcelerator.org>.
-Appcelerator, Titanium and logos are trademark of Appcelerator, Inc.
+Appcelerator, Titanium and logos are trademarks of Appcelerator, Inc.
 
 Please see the file named COPYING for the full license.
 
