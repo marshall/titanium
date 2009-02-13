@@ -19,11 +19,11 @@ namespace ti
 	class Process : public StaticBoundObject
 	{
 	public:
-		Process(SharedPtr<ProcessBinding> parent, std::string& command, std::vector<std::string>& args);
+		Process(ProcessBinding* parent, std::string& command, std::vector<std::string>& args);
 	protected:
 		virtual ~Process();
 	private:
-		SharedPtr<ProcessBinding> parent;
+		ProcessBinding* parent;
 		Poco::ProcessHandle *process;
 		bool running;
 		Pipe *in;
