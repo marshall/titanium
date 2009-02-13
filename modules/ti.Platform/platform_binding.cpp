@@ -17,10 +17,10 @@ namespace ti
 {
 	PlatformBinding::PlatformBinding(SharedBoundObject global) : global(global)
 	{
-		const char *os_name = Poco::Environment::osName().c_str();
-		const char *os_version = Poco::Environment::osVersion().c_str();
-		const char *arch = Poco::Environment::osArchitecture().c_str();
-		const char *address = Poco::Environment::nodeName().c_str();
+		std::string os_name = Poco::Environment::osName();
+		std::string os_version = Poco::Environment::osVersion();
+		std::string arch = Poco::Environment::osArchitecture();
+		std::string address = Poco::Environment::nodeName();
 
 
 #if defined(OS_OSX)
@@ -35,10 +35,10 @@ namespace ti
 		int num_proc = 1;
 #endif
 
-		char *nodeId = (char*)"";
+		std::string nodeId = "";
 		try
 		{
-			nodeId = (char*)Poco::Environment::nodeId().c_str();
+			nodeId = Poco::Environment::nodeId();
 		}
 		catch (...) { }
 
@@ -50,7 +50,7 @@ namespace ti
 		this->Set("processorCount", Value::NewInt(num_proc));
 		this->Set("username", Value::NewString(kroll::FileUtils::GetUsername()));
 
-		}
+	}
 
 	PlatformBinding::~PlatformBinding()
 	{

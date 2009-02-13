@@ -13,13 +13,14 @@
 
 namespace ti
 {
+	class Process;
 	class ProcessBinding : public StaticBoundObject
 	{
 	public:
 		ProcessBinding(SharedBoundObject);
 		virtual ~ProcessBinding();
 		
-		void Terminated(SharedBoundObject p);
+		void Terminated(Process* p);
 		
 	private:
 		SharedBoundObject global;
