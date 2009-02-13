@@ -149,5 +149,6 @@ app_src = path.join(top_dir, 'build')
 app_src = path.join(app_src, 'testapp')
 dir_util.copy_tree(app_src, app_dir, preserve_symlinks=True)
 
-if len(sys.argv) > 1 and sys.argv[1] is '--run':
-    os.execl(exe_path, [])
+if len(sys.argv) > 1 and sys.argv[1] == '--run':
+    print "exec: " + exe_path
+    os.system(exe_path)
