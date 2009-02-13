@@ -22,6 +22,7 @@ if build.is_osx():
 	env.Append(CCFLAGS=OSX_UNIV_COMPILER)
 	env.Append(LDFLAGS=OSX_UNIV_LINKER)
 	env.Append(LIBS = ['dl'])
+	sources += Glob(build.os + '/*.mm')
 	sources += Glob('%s/*.cpp' % build.os)
 
 elif build.is_win32():

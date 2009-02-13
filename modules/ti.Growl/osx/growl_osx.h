@@ -10,9 +10,13 @@
 #include <kroll/kroll.h>
 #include <string>
 #include "../growl_binding.h"
+#include "growl_delegate.h"
 
 namespace ti {
 	class GrowlOSX : public GrowlBinding {
+	protected:
+		TiGrowlDelegate *delegate;
+
 	public:
 		GrowlOSX(SharedBoundObject global);
 		virtual ~GrowlOSX();

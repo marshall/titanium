@@ -16,11 +16,13 @@ namespace ti
 
 	void GrowlBinding::ShowNotification(const ValueList& args, SharedValue result)
 	{
+		std::string title, description, iconURL = "";
+		int notification_timeout = 3;
+		SharedBoundMethod callback;
+
 		if (args.size() >= 2) {
-			std::string title = args.at(0)->ToString();
-			std::string description = args.at(1)->ToString();
-			std::string iconURL = "";
-			int notification_timeout = 3;
+			title = args.at(0)->ToString();
+			description = args.at(1)->ToString();
 
 			if (args.size() >= 3 && args.at(2)->IsString()) {
 				iconURL = args.at(2)->ToString();
@@ -30,6 +32,42 @@ namespace ti
 			}
 
 			SharedBoundMethod callback;
+			if (args.size() >= 5 && args.at(4)->IsMethod()) {
+				callback = args.at(4)->ToMethod();
+			}
+
+			ShowNotification(title, description, iconURL, notification_timeout, callback);
+		}
+		else if (args.size() == 1  && args.at(0)->IsObject()) {
+			SharedBoundObject options = args.at(0)->ToObject();
+
+			SharedValue value = options->Get("title");
+			if (value->IsUndefined()) {
+				throw ValueException::FromString("Notification title was not set");
+			}
+			title = value->ToString();
+
+			value = options->Get("description");
+			if (value->IsUndefined()) {
+				throw ValueException::FromString("Notification description was not set");
+			}
+			description = value->ToString();
+
+			value = options->Get("iconURL");
+			if (!value->IsUndefined()) {
+				iconURL = value->ToString();
+			}
+
+			value = options->Get("timeout");
+			if (!value->IsUndefined()) {
+				notification_timeout = value->ToInt();
+			}
+
+			value = options->Get("callback");
+			if (!value->IsUndefined()) {
+				callback = value->ToMethod();
+			}
+
 			ShowNotification(title, description, iconURL, notification_timeout, callback);
 		}
 	}

@@ -55,7 +55,7 @@ input[type=text], select
 	outline:none;
 	font-size:12px;
 	padding:3px;
-	color:#eee;
+	color:#000;
 	width:220px;
 }
 input:focus
@@ -282,6 +282,7 @@ input:focus
 	float:left;
 	margin-right:5px;
 	text-align:center;
+	cursor:pointer;
 }
 .module_row .name
 {
@@ -291,15 +292,24 @@ input:focus
 }
 .module_row .exclude
 {
-	background-color:red;
+	border:none;
+	background:url(../images/x_pink.png) no-repeat;
+	height:12px;
+	width:10px;
 }
 .module_row .network
 {
-	background-color:blue;
+	border:none;
+	background:url(../images/check_white.png) no-repeat;
+	height:10px;
+	width:12px;
 }
 .module_row .bundled
 {
-	background-color:green;
+	border:none;
+	background:url(../images/check_white.png) no-repeat;
+	height:10px;
+	width:12px;
 }
 .message_indicator
 {
@@ -319,7 +329,7 @@ input:focus
 .manage_right
 {
 	float:left;
-	width:335px;
+	width:60%;
 }
 .social_row
 {

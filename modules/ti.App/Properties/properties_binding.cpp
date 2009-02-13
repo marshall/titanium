@@ -10,16 +10,11 @@
 
 using namespace kroll;
 
-namespace ti 
+namespace ti
 {
-	PropertiesBinding::PropertiesBinding(kroll::Host *host) 
+	PropertiesBinding::PropertiesBinding(std::string& file_path)
 	{
-		std::string appid = AppConfig::Instance()->GetAppID();
-		file_path = kroll::FileUtils::GetApplicationDataDirectory(appid);
-		file_path += KR_PATH_SEP;
-		file_path += "application.properties";
-
-#ifdef DEBUG		
+#ifdef DEBUG
 		std::cout << "Application properties path=" << file_path << std::endl;
 #endif
 
