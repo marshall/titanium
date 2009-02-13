@@ -24,6 +24,7 @@ namespace ti
 		}
 
 		config = new Poco::Util::PropertyFileConfiguration(file_path);
+		this->file_path = strdup(file_path.c_str());
 
 		SetMethod("getBool", &PropertiesBinding::GetBool);
 		SetMethod("getDouble", &PropertiesBinding::GetDouble);
