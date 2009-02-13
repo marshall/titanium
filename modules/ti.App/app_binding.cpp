@@ -25,13 +25,7 @@ namespace ti
 		global->Set("version", version);
 
 		// platform
-#if defined(OS_LINUX)
-		SharedValue platform = Value::NewString("linux");
-#elif defined(OS_OSX)
-		SharedValue platform = Value::NewString("osx");
-#elif defined(OS_WIN32)
-		SharedValue platform = Value::NewString("win32");
-#endif
+		SharedValue platform = Value::NewString(Host::Platform);
 		global->Set("platform",platform);
 
 		SharedBoundList argList = new StaticBoundList();

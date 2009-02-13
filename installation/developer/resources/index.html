@@ -217,12 +217,14 @@
 							and hide[id=view_#{iterator_index}]
 							or l:row.selected[id!=#{id}] then remove[class=row_selected] 
 							and hide[id=action_#{iterator_index}] and show[id=view_#{iterator_index}]">
+
 							<div id="view_#{iterator_index}">
 								<div class="project_name">#{name}</div>
 								<div class="project_date" >
 									#{date}
 								</div>
 							</div>
+
 							<div id="action_#{iterator_index}" style="display:none">
 								<div class="project_name">#{name}</div>
 								<div class="project_controls">
@@ -244,7 +246,7 @@
 					on="l:row.selected then show or l:menu[val=manage] then hide">
 					<div class="infobox">
 						<div class="content">
-							<table>
+							<table cellspacing="15px">
 								<tr>
 									<td style="font-size:12px" width="90px" class="hint_text">Project Name:</td>
 									<td style="font-size:12px" on="l:row.selected then value[name]"></td>
@@ -268,19 +270,26 @@
 									</td>
 								</tr>
 								<tr>
-									<td style="font-size:12px" width="90px" class="hint_text">Publisher:</td>
-									<td style="font-size:12px"  on="l:row.selected then value[pub]"></td>
+									<td style="font-size:12px" width="90px" class="hint_text">*Publisher:</td>
+									<td style="font-size:12px" class="edit" on="l:row.selected then value[pub]"></td>
 								</tr>
 								<tr>
-									<td style="font-size:12px" width="90px" class="hint_text">Publisher URL:</td>
-									<td style="font-size:12px"  
+									<td style="font-size:12px" width="90px" class="hint_text">*Publisher URL:</td>
+									<td style="font-size:12px"  class="edit"
 										on="l:row.selected then value[url]"></td>
 								</tr>
 								<tr>
-									<td style="font-size:12px" width="90px" class="hint_text">App Icon:</td>
-									<td style="font-size:12px"  
+									<td style="font-size:12px" width="90px" class="hint_text">*App Icon:</td>
+									<td style="font-size:12px"  class="edit"
 										on="l:row.selected then value[image]"></td>
 								</tr>
+								<tr>
+									<td></td>
+									<td style="font-size:11px" class="hint_text">
+										*click fields to edit - hit return to save or ESC to cancel
+									</td>
+								</tr>
+										
 
 							</table>
 							<!-- MODAL FOR DISPLAYING LONG LOCATION NAMES -->
