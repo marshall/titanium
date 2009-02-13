@@ -48,10 +48,7 @@ for m in modules.keys():
 		mlib = p.join(module_dir, '%smodule.py' % m)
 	if not p.exists(mlib):
 		mlib = p.join(module_dir, '%smodule.rb' % m)
-	
-	out_dir = '%s/%s' % (modules_dir, m)
-	os.makedirs(out_dir)
-	
+		
 	if p.exists(mlib):
 		shutil.copy(mlib, out_dir)
 	
