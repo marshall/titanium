@@ -133,7 +133,7 @@ Win32UserWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 }
 
 Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config)
-	: UserWindow(host, config), script_evaluator(host)
+	: UserWindow(host, config), script_evaluator(host), menuBar(NULL)
 {
 	static bool initialized = false;
 	win32_host = static_cast<kroll::Win32Host*>(host);
@@ -547,6 +547,7 @@ void Win32UserWindow::RemoveMenu()
 	// and the window is initialized.
 	if (this->window_handle != NULL && !this->menuInUse.isNull())
 	{
+		this->menuInUse->ClearRealization(this->menuBar);
 		::SetMenu(this->window_handle, NULL);
 	}
 
@@ -572,7 +573,8 @@ void Win32UserWindow::SetupMenu()
 
 	if (!menu.isNull() && this->window_handle)
 	{
-		::SetMenu(this->window_handle, menu->GetMenuHandle());
+		this->menuBar = menu->GetMenuBar();
+		::SetMenu(this->window_handle, menuBar);
 		DrawMenuBar(this->window_handle);
 	}
 

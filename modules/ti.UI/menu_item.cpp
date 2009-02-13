@@ -177,7 +177,7 @@ namespace ti
 		this->RawSet("callback", Value::Undefined);
 	}
 
-	SharedValue MenuItem::AppendItem(MenuItem* item)
+	SharedValue MenuItem::CreateSharedObject(MenuItem* item)
 	{
 		SharedBoundObject so = SharedBoundObject(item);
 		SharedValue v = Value::NewObject(so);

@@ -62,6 +62,8 @@ protected:
 	 */
 	SharedPtr<Win32MenuItemImpl> menuInUse;
 
+	HMENU menuBar;
+
 	void RemoveMenu();
 	void ReloadTiWindowConfig();
 

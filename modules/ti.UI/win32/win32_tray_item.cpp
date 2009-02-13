@@ -50,14 +50,16 @@ void Win32TrayItem::SetMenu(SharedBoundList menu)
 		return;	// nothing to change since it's the same menu
 
 	/*
+	TODO need to delete the menu instance
 	if (!this->trayMenu->isNull())
 	{
-		//TODO do we ned to delete the current menu in win?
-		this->menu->ClearRealization();
+		this->trayMenu->ClearRealization(trayMenuHandle);
 	}
 	*/
 
+	// create menu handle
 	this->trayMenu = menuToUse;
+	this->trayMenuHandle = this->trayMenu->GetMenu();
 }
 void Win32TrayItem::SetHint(SharedString hint)
 {
@@ -101,7 +103,7 @@ bool Win32TrayItem::ShowTrayMenu(int trayIconID)
 			// handle the tray menu
 			POINT pt;
 			GetCursorPos(&pt);
-			TrackPopupMenu(item->trayMenu->GetMenuHandle(),
+			TrackPopupMenu(item->trayMenuHandle,
 				TPM_BOTTOMALIGN,
 				pt.x, pt.y, 0,
 				item->trayIconData->hWnd, NULL);
