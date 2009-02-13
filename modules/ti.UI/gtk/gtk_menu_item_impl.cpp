@@ -54,7 +54,7 @@ namespace ti {
 	{
 		item->SetParent(this);
 		this->children.push_back(item);
-		return MenuItem::AppendItem(item);
+		return MenuItem::CreateSharedObject(item);
 	}
 
 	GtkWidget* GtkMenuItemImpl::GetMenu()
@@ -207,7 +207,7 @@ namespace ti {
 
 			g_signal_connect_swapped(
 				G_OBJECT (pieces.item), "activate",
-				G_CALLBACK(menu_callback), 
+				G_CALLBACK(menu_callback),
 				(gpointer) cb);
 		}
 
@@ -255,7 +255,7 @@ namespace ti {
 			if (w != NULL)
 			{
 				GtkWidget *menu_label = gtk_bin_get_child(GTK_BIN(w));
-				gtk_label_set_text(GTK_LABEL(menu_label), label.c_str()); 
+				gtk_label_set_text(GTK_LABEL(menu_label), label.c_str());
 			}
 			i++;
 		}
