@@ -65,7 +65,7 @@ namespace ti {
 			i++;
 		}
 
-		return MenuItem::AppendItem(item);
+		return MenuItem::AddToListModel(item);
 	}
 
 	GtkWidget* GtkMenuItemImpl::GetMenu()
