@@ -43,7 +43,7 @@ namespace ti
 		item->MakeSeparator();
 		this->children.push_back(item);
 
-		return MenuItem::CreateSharedObject(item);
+		return MenuItem::AddToListModel(item);
 	}
 	SharedValue Win32MenuItemImpl::AddItem(SharedValue label,
 						SharedValue callback,
@@ -53,7 +53,7 @@ namespace ti
 		item->MakeItem(label, callback, icon_url);
 		this->children.push_back(item);
 
-		return MenuItem::CreateSharedObject(item);
+		return MenuItem::AddToListModel(item);
 	}
 	SharedValue Win32MenuItemImpl::AddSubMenu(SharedValue label,
 						   SharedValue icon_url)
@@ -62,7 +62,7 @@ namespace ti
 		item->MakeSubMenu(label, icon_url);
 		this->children.push_back(item);
 
-		return MenuItem::CreateSharedObject(item);
+		return MenuItem::AddToListModel(item);
 	}
 
 	HMENU Win32MenuItemImpl::GetMenu()

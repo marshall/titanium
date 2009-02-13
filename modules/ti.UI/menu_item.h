@@ -42,7 +42,7 @@ namespace ti
 		void _AddItem(const ValueList& args, SharedValue result);
 		void _AddSubMenu(const ValueList& args, SharedValue result);
 
-		SharedValue CreateSharedObject(MenuItem* item);
+		SharedValue AddToListModel(MenuItem* item);
 
 		void MakeSeparator();
 		void MakeItem(SharedValue label,
