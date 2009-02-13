@@ -3,3 +3,4 @@ Debug
 *.ncb
 *.user
 *.suo
+*.obj
