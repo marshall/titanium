@@ -434,7 +434,15 @@ void UserWindow::_SetMenu(const kroll::ValueList& args, kroll::SharedValue resul
 
 void UserWindow::_GetMenu(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	result->SetObject(this->GetMenu());
+	SharedBoundList menu = this->GetMenu();
+	if (menu.get() != NULL)
+	{
+		result->SetList(menu);
+	}
+	else
+	{
+		result->SetUndefined();
+	}
 }
 
 void UserWindow::_SetContextMenu(const kroll::ValueList& args, kroll::SharedValue result)
@@ -449,7 +457,15 @@ void UserWindow::_SetContextMenu(const kroll::ValueList& args, kroll::SharedValu
 
 void UserWindow::_GetContextMenu(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	result->SetObject(this->GetContextMenu());
+	SharedBoundList menu = this->GetContextMenu();
+	if (menu.get() != NULL)
+	{
+		result->SetList(menu);
+	}
+	else
+	{
+		result->SetUndefined();
+	}
 }
 
 void UserWindow::_SetIcon(const kroll::ValueList& args, kroll::SharedValue result)
@@ -470,7 +486,7 @@ void UserWindow::_GetIcon(const kroll::ValueList& args, kroll::SharedValue resul
 
 void UserWindow::_GetParent(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	if (this->parent==NULL)
+	if (this->parent == NULL)
 	{
 		result->SetNull();
 		return;

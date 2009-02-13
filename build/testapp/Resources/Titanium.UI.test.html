@@ -8,8 +8,8 @@
 			div.output { border: 1px solid #c3c3c3; padding: 5px; margin: 8px 0 px 0; background-color: black; color: white; height: 350px; overflow: scroll; }
 		</style>
 		<script>
-			var appEditMenu;
-			var appFileOpenMenu;
+			var appEditMenu = false;
+			var appFileOpenMenu = false;
 			function preBakedMenu(ident, trayMenu)
 			{
 				var menu = null;
@@ -32,12 +32,12 @@
 				file.addItem("Close", function () {alert("close called"); });
 				file.addItem("Exit", function () {alert("exit called"); });
 
-
-				if("App Menu" == ident) {
+				if ("App Menu" == ident)
+				{
 					appEditMenu = edit;
 					appFileOpenMenu = open;
 				}
-				
+
 				return menu;
 			}
 			function setAppMenu()
@@ -47,7 +47,8 @@
 			}
 			function setAppEditMenuLabel()
 			{
-				if(! appEditMenu) {
+				if (!appEditMenu)
+				{
 					alert("app edit menu not created");
 					return;
 				}
@@ -56,12 +57,28 @@
 			}
 			function setAppFileOpenMenuLabel()
 			{
-				if(! appFileOpenMenu) {
+				if (!appFileOpenMenu) {
 					alert("app file open menu not created");
 					return;
 				}
-				
+
 				appFileOpenMenu.setLabel('Open ' + timestamp());
+			}
+			function addItemToAppMenu()
+			{
+				var menu = Titanium.UI.getMenu();
+				if (menu)
+				{
+					menu.addItem("NewItem!");
+				}
+			}
+			function addItemToAppContextMenu()
+			{
+				var menu = Titanium.UI.getContextMenu();
+				if (menu)
+				{
+					menu.addItem("NewItem!");
+				}
 			}
 			function unsetAppMenu()
 			{
@@ -196,17 +213,18 @@
 			</td>
 		</tr>
 		<tr>
-			<td><button onclick="setAppEditMenuLabel()">Set App Edit Menu label</button></td>
-			<td>&nbsp;</td>
+			<td><button onclick="setAppEditMenuLabel()">Modify label 1 (AppMenu)</button></td>
+			<td><button onclick="setAppFileOpenMenuLabel()">Modify label 2 (AppMenu)</button></td>
 		</tr>
 		<tr>
-			<td><button onclick="setAppFileOpenMenuLabel()">Set App File Open Menu label</button></td>
+			<td><button onclick="addItemToAppMenu()">AddItem on AppMenu</button></td>
+			<td><button onclick="addItemToAppContextMenu()">AddItem on AppContextMenu</button></td>
 			<td>&nbsp;</td>
 		</tr>
 		</table>
 		</div>
 
-		<div>Menus:<br/>
+		<div>Context Menus:<br/>
 		<table>
 		<tr>
 			<td> <button onclick="setAppContextMenu()">App Context Menu</button></td>
