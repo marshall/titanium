@@ -139,6 +139,39 @@ TiDeveloper.stopIRCTrack = function()
 	$('#irc_message_count').html('');
 	
 };
+$MQL('l:row.selected',function()
+{
+	$('.edit').click(function()
+	{
+		if ($(this).attr('edit_mode') != 'true')
+		{
+			var el = $(this).get(0);
+			var value = el.innerHTML;
+			el.setAttribute('edit_mode','true');
+			
+			// create input and focus
+			$(this).html('<input id="'+el.id+'_input" value="'+value+'" type="text" style="width:350px"/>');
+			$('#'+el.id+'_input').focus();
+			
+			// listen for enter
+			$('#'+el.id+'_input').keyup(function(e)
+			{
+				if (e.keyCode==13)
+				{
+					el.innerHTML = $('#'+el.id+'_input').val() 
+					el.removeAttribute('edit_mode');
+				}
+				else if (e.keyCode==27)
+				{
+					el.innerHTML = value; 
+					el.removeAttribute('edit_mode');
+				}
+			});
+
+		}
+	})
+	
+})
 
 function createRecord(options,callback)
 {
@@ -219,19 +252,28 @@ function loadProjects()
 	});	
 }
 
-db.transaction(function(tx) 
+
+//
+//  Initial project load
+//
+$MQL('l:app.compiled',function()
 {
-   tx.executeSql("SELECT COUNT(*) FROM Projects", [], function(result) 
-   {
-       loadProjects();
-   }, function(tx, error) 
-   {
-       tx.executeSql("CREATE TABLE Projects (id REAL UNIQUE, timestamp REAL, name TEXT, directory TEXT, appid TEXT, publisher TEXT, url TEXT, image TEXT)", [], function(result) 
-	   { 
-          loadProjects(); 
-       });
-   });
+	db.transaction(function(tx) 
+	{
+	   tx.executeSql("SELECT COUNT(*) FROM Projects", [], function(result) 
+	   {
+	       loadProjects();
+	   }, function(tx, error) 
+	   {
+	       tx.executeSql("CREATE TABLE Projects (id REAL UNIQUE, timestamp REAL, name TEXT, directory TEXT, appid TEXT, publisher TEXT, url TEXT, image TEXT)", [], function(result) 
+		   { 
+	          loadProjects(); 
+	       });
+	   });
+	});
+	
 });
+
 
 //
 //  create.project service
