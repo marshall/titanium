@@ -67,30 +67,11 @@ for tp in third_party:
 		shutil.copy(d, runtime)
 
 # Gather all module libs
-for m in modules.keys():
-	
-	module_dir = p.join(build.titanium_source_dir, 'modules', modules[m])
-	if not p.exists(module_dir):
-		module_dir = p.join(build.kroll_source_dir, 'modules', modules[m])
-	
+for m in modules:
 	mlib = p.join('%s/lib%smodule.dylib' % (build.dir, m))
-	## we'll have to make this pluggable at some point
-	if not p.exists(mlib):
-		mlib = p.join(module_dir, '%smodule.js' % m)
-	if not p.exists(mlib):
-		mlib = p.join(module_dir, '%smodule.py' % m)
-	if not p.exists(mlib):
-		mlib = p.join(module_dir, '%smodule.rb' % m)
-	
 	out_dir = '%s/%s' % (modules_dir, m)
 	os.makedirs(out_dir)
-	
-	if p.exists(mlib):
-		shutil.copy(mlib, out_dir)
-	
-	app_resources = p.join(module_dir, 'AppResources')
-	if p.exists(app_resources):
-		dir_util.copy_tree(app_resources, p.join(modules_dir, m, 'AppResources'))
+	shutil.copy(mlib, out_dir)
 
 menu_nib = p.join(build.dir, 'modules', 'ti.UI', 'MainMenu.nib')
 shutil.copy(menu_nib, bundle.lproj)
@@ -159,8 +140,8 @@ if not ARGUMENTS.get('skipdmg', 0):
 	invoke("bless --folder /Volumes/Titanium --openfolder /Volumes/Titanium")
 	shutil.move("/Volumes/Titanium/titanium_runtime.app","/Volumes/Titanium/Install Titanium.app")
 	invoke("strip -u -r \"/Volumes/Titanium/Install Titanium.app/Contents/MacOS/titanium_runtime\"")
-	invoke("ditto %s/installation/runtime/installer_DS_Store /Volumes/Titanium/.DS_Store" % build.titanium_source_dir)
-	invoke("ditto %s/installation/runtime/background.jpg /Volumes/Titanium/background.jpg" % build.titanium_source_dir)
+	invoke("ditto %s/installation/runtime/osx/installer_DS_Store /Volumes/Titanium/.DS_Store" % build.titanium_source_dir)
+	invoke("ditto %s/installation/runtime/osx/background.jpg /Volumes/Titanium/background.jpg" % build.titanium_source_dir)
 	invoke("ditto %s/support/osx/titanium.icns /Volumes/Titanium/.VolumeIcon.icns" % build.titanium_source_dir)
 	invoke("/Developer/Tools/SetFile -a C /Volumes/Titanium")
 	invoke("/Developer/Tools/SetFile -a V /Volumes/Titanium/background.jpg")
