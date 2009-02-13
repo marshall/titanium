@@ -210,6 +210,7 @@ function loadProjects()
 			TiDeveloper.currentPage = 1;
 			var data = TiDeveloper.getProjectPage(10,TiDeveloper.currentPage);
 			var count = formatCountMessage(TiDeveloper.ProjectArray.length,'project');
+			$('#project_count_hidden').val(TiDeveloper.ProjectArray.length)
 			$MQ('l:project.list.response',{count:count,page:TiDeveloper.currentPage,totalRecords:TiDeveloper.ProjectArray.length,'rows':data})
         }, function(tx, error) {
             alert('Failed to retrieve projects from database - ' + error.message);
@@ -286,6 +287,7 @@ $MQL('l:page.data.request',function(msg)
 	
 	$MQ('l:project.list.response',{count:count,page:page,totalRecords:TiDeveloper.ProjectArray.length,'rows':data})
 });
+
 
 TiDeveloper.formatDirectory =function(id,truncate)
 {
@@ -548,11 +550,10 @@ $MQL('l:project.search.request',function(msg)
 	{
 		try
 		{
-	        tx.executeSql("SELECT id, timestamp, name, directory FROM Projects where name LIKE '%' || ? || '%'", [q], function(tx, result) 
+	        tx.executeSql("SELECT id, timestamp, appid, publisher, url, image, name, directory FROM Projects where name LIKE '%' || ? || '%'", [q], function(tx, result) 
 			{
 				try
 				{
-					var results = [];
 					TiDeveloper.ProjectArray = [];
 		            for (var i = 0; i < result.rows.length; ++i) 
 					{
@@ -604,11 +605,14 @@ $MQL('l:show.filedialog',function(msg)
 		props.files = false;
 	}
 	
-	var files = Titanium.UI.openFiles(props);
-	if (files.length)
+	Titanium.UI.openFiles(function(f)
 	{
-		$MQ('l:file.selected',{'for':el,'value':files[0]});
-	}
+		if (f.length)
+		{
+			$MQ('l:file.selected',{'for':el,'value':f[0]});
+		}
+	},
+	props);
 });
 
 var irc_count = 0;
@@ -621,7 +625,7 @@ setTimeout(function()
 		var myName = Titanium.Platform.username+'1';
 		var myNameStr = Titanium.Platform.username+'1';
 
-		$('#irc').append('<div style="color:#aaa">you are joining the room. one moment...</div>');
+		$('#irc').append('<div style="color:#aaa">you are joining the <span style="color:#42C0FB">Titnamium Developer</span> chat room. one moment...</div>');
 		
 		var irc = Titanium.Network.createIRCClient();
 		irc.connect("irc.freenode.net",6667,myNick,myName,myNameStr,String(new Date().getTime()),function(cmd,channel,data,nick)
@@ -649,11 +653,11 @@ setTimeout(function()
 					{
 						if (users[i].operator == true)
 						{
-							$('#irc_users').append('<div class="'+users[i].name+'" style="color:#457db3">'+users[i].name+'(op)</div>');
+							$('#irc_users').append('<div class="'+users[i].name+'" style="color:#42C0FB">'+users[i].name+'(op)</div>');
 						}
 						else if (users[i].voice==true)
 						{
-							$('#irc_users').append('<div class="'+users[i].name+'" style="color:#457db3">'+users[i].name+'(v)</div>');
+							$('#irc_users').append('<div class="'+users[i].name+'" style="color:#42C0FB">'+users[i].name+'(v)</div>');
 						}
 						else
 						{
