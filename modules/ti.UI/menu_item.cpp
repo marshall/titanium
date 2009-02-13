@@ -177,10 +177,10 @@ namespace ti
 		this->RawSet("callback", Value::Undefined);
 	}
 
-	SharedValue MenuItem::AppendItem(MenuItem* item)
+	SharedValue MenuItem::AddToListModel(MenuItem* item)
 	{
-		SharedBoundObject so = SharedBoundObject(item);
-		SharedValue v = Value::NewObject(so);
+		SharedBoundList so = SharedBoundList(item);
+		SharedValue v = Value::NewList(so);
 		this->Append(v);
 		return v;
 	}

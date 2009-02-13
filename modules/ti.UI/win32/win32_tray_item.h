@@ -34,6 +34,7 @@ public:
 private:
 	SharedBoundMethod callback;
 	SharedPtr<Win32MenuItemImpl> trayMenu;
+	HMENU trayMenuHandle;
 
 	NOTIFYICONDATA* trayIconData;
 	void CreateTrayIcon(std::string &iconPath, std::string &caption);

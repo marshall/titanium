@@ -25,7 +25,7 @@ namespace ti
 
 	SharedPtr<MenuItem> Win32UIBinding::CreateMenu(bool trayMenu)
 	{
-		SharedPtr<MenuItem> menu = new Win32MenuItemImpl(NULL, trayMenu);
+		SharedPtr<MenuItem> menu = new Win32MenuItemImpl(NULL);
 		return menu;
 	}
 

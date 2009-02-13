@@ -18,7 +18,7 @@ namespace ti
 	class Win32MenuItemImpl : public MenuItem
 	{
 	public:
-		Win32MenuItemImpl(Win32MenuItemImpl* _parent = NULL, bool trayMenu = false);
+		Win32MenuItemImpl(Win32MenuItemImpl* _parent = NULL);
 		virtual ~Win32MenuItemImpl();
 
 		void SetParent(Win32MenuItemImpl* parent);
@@ -38,24 +38,38 @@ namespace ti
 		void SetLabel(std::string label);
 		void SetIcon(std::string icon_path);
 
+		HMENU GetMenu();
+		HMENU GetMenuBar();
+		void ClearRealization(HMENU parent_menu);
+
+		struct NativeMenuItem
+		{
+			NativeMenuItem()
+				 : menuItemID(0),
+				   menu(NULL),
+				   callback(NULL),
+				   parent_menu(NULL) { }
+			int menuItemID; // This item's widget
+			HMENU menu; // This item's submenu
+			SharedBoundMethod callback; // This item's callback
+			HMENU parent_menu; // This item's parent's widget
+		};
+
 		static int nextMenuUID() {
 			return currentUID++;
 		}
-
-		HMENU GetMenuHandle() { return this->hMenu; }
-		int GetMenuItemID() { return this->menuItemID; }
 
 		static bool invokeCallback(int menuItemUID);
 		static LRESULT CALLBACK handleMenuClick(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 	private:
 		Win32MenuItemImpl *parent;
-		HMENU hMenu;
-		int menuItemID;
+		std::vector<Win32MenuItemImpl*> children;
+		std::vector<NativeMenuItem*> instances;
 
-		SharedBoundMethod callback;
-
-		static void MakeAndAddWidget(Win32MenuItemImpl* item);
+		NativeMenuItem* Realize(NativeMenuItem* parent_menu_item, bool is_menu_bar);
+		NativeMenuItem* MakeNativeMenuItem(NativeMenuItem* parent_menu_item, bool is_menu_bar);
+		void SetLabel(std::string label, NativeMenuItem* menu_item);
 
 		static int currentUID;
 	};
