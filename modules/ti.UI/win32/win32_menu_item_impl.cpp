@@ -216,23 +216,36 @@ namespace ti
 
 	void Win32MenuItemImpl::SetLabel(std::string label)
 	{
-		/*
-		if(this->parent)
+		if(! this->parent || this->IsSeparator())
 		{
-			// parent must not be null in order to change the menu label
-			// TODO after modifying the menu, we need to call DrawMenuBar() on the window that contains this menu
-			if(this->hMenu)
-			{
-				// this is a sub menu
-				ModifyMenu(this->parent->hMenu, (UINT_PTR) this->hMenu, MF_POPUP | MF_STRING, (UINT_PTR) this->hMenu, label.c_str());
-			}
-			else
-			{
-				// this is a menu item
-				ModifyMenu(this->parent->hMenu, this->menuItemID, MF_BYCOMMAND | MF_STRING, this->menuItemID, label.c_str());
-			}
+			// top level menu doesn't have a label
+			return;
 		}
-		*/
+		std::vector<NativeMenuItem*>::iterator i = this->instances.begin();
+		while (i != this->instances.end())
+		{
+			NativeMenuItem* menu_item = (*i);
+
+			if (menu_item != NULL)
+			{
+				this->SetLabel(label, menu_item);
+			}
+			i++;
+		}
+	}
+	void Win32MenuItemImpl::SetLabel(std::string label, NativeMenuItem* menu_item)
+	{
+		// TODO after modifying the menu, we need to call DrawMenuBar() on the window that contains this menu
+		if(menu_item->menu)
+		{
+			// this is a sub menu
+			ModifyMenu(menu_item->parent_menu, (UINT_PTR) menu_item->menu, MF_POPUP | MF_STRING, (UINT_PTR) menu_item->menu, label.c_str());
+		}
+		else
+		{
+			// this is a menu item
+			ModifyMenu(menu_item->parent_menu, menu_item->menuItemID, MF_BYCOMMAND | MF_STRING, menu_item->menuItemID, label.c_str());
+		}
 	}
 
 	void Win32MenuItemImpl::SetIcon(std::string icon_path)

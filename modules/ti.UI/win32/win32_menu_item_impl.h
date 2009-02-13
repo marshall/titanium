@@ -69,6 +69,7 @@ namespace ti
 
 		NativeMenuItem* Realize(NativeMenuItem* parent_menu_item, bool is_menu_bar);
 		NativeMenuItem* MakeNativeMenuItem(NativeMenuItem* parent_menu_item, bool is_menu_bar);
+		void SetLabel(std::string label, NativeMenuItem* menu_item);
 
 		static int currentUID;
 	};
