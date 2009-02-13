@@ -68,7 +68,6 @@ for tp in third_party:
 
 # Gather all module libs
 for m in modules.keys():
-	
 	module_dir = p.join(build.titanium_source_dir, 'modules', modules[m])
 	if not p.exists(module_dir):
 		module_dir = p.join(build.kroll_source_dir, 'modules', modules[m])

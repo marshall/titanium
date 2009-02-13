@@ -29,11 +29,29 @@ for tp in third_party:
 		shutil.copy(d, runtime)
 
 # Gather all module libs
-for m in modules:
+for m in modules.keys():
+	module_dir = p.join(build.titanium_source_dir, 'modules', modules[m])
+	if not p.exists(module_dir):
+		module_dir = p.join(build.kroll_source_dir, 'modules', modules[m])
+	
 	mlib = p.join('%s/lib%smodule.so' % (build.dir, m))
+	## we'll have to make this pluggable at some point
+	if not p.exists(mlib):
+		mlib = p.join(module_dir, '%smodule.js' % m)
+	if not p.exists(mlib):
+		mlib = p.join(module_dir, '%smodule.py' % m)
+	if not p.exists(mlib):
+		mlib = p.join(module_dir, '%smodule.rb' % m)
+	
 	out_dir = '%s/%s' % (modules_dir, m)
 	os.makedirs(out_dir)
-	shutil.copy(mlib, out_dir)
+	
+	if p.exists(mlib):
+		shutil.copy(mlib, out_dir)
+	
+	app_resources = p.join(module_dir, 'AppResources')
+	if p.exists(app_resources):
+		dir_util.copy_tree(app_resources, p.join(modules_dir, m, 'AppResources'))
 
 shutil.copy(kboot, p.join(app_dir, name))
 dir_util.copy_tree("Resources", p.join(app_dir, "Resources"), preserve_symlinks=True)
