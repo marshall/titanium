@@ -68,8 +68,15 @@ namespace ti
 	void UIBinding::_GetMenu(const ValueList& args, SharedValue result)
 	{
 		SharedPtr<MenuItem> menu = UIModule::GetMenu();
-		SharedBoundList list = menu;
-		result->SetList(list);
+		if (menu.get() != NULL)
+		{
+			SharedBoundList list = menu;
+			result->SetList(list);
+		}
+		else
+		{
+			result->SetUndefined();
+		}
 	}
 
 	void UIBinding::_SetContextMenu(const ValueList& args, SharedValue result)
@@ -87,8 +94,15 @@ namespace ti
 	void UIBinding::_GetContextMenu(const ValueList& args, SharedValue result)
 	{
 		SharedPtr<MenuItem> menu = UIModule::GetContextMenu();
-		SharedBoundList list = menu;
-		result->SetList(list);
+		if (menu.get() != NULL)
+		{
+			SharedBoundList list = menu;
+			result->SetList(list);
+		}
+		else
+		{
+			result->SetUndefined();
+		}
 	}
 
 

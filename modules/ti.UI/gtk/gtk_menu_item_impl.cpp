@@ -54,7 +54,18 @@ namespace ti {
 	{
 		item->SetParent(this);
 		this->children.push_back(item);
-		return MenuItem::CreateSharedObject(item);
+
+		/* Realize the new item and add it to all existing instances */
+		std::vector<MenuPieces*>::iterator i = this->instances.begin();
+		while (i != this->instances.end())
+		{
+			MenuPieces *pieces = item->Realize(false);
+			gtk_menu_shell_append(GTK_MENU_SHELL((*i)->menu), pieces->item);
+			gtk_widget_show(pieces->item);
+			i++;
+		}
+
+		return MenuItem::AppendItem(item);
 	}
 
 	GtkWidget* GtkMenuItemImpl::GetMenu()
