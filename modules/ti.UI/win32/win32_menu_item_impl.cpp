@@ -136,8 +136,6 @@ namespace ti
 			{
 				NativeMenuItem* child_menu_item = (*i)->Realize(menu_item, false);
 
-				// TODO gtx adds the menu here??
-
 				i++;
 			}
 		}
@@ -191,8 +189,7 @@ namespace ti
 		}
 		else
 		{
-			std::cerr << "Unknown menu item type requested" << std::endl;
-			// TODO throw exception?
+			throw ValueException::FromString("Unknown menu item type requested");
 		}
 
 		return menu_item;
