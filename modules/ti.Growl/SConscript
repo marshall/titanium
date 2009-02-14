@@ -7,21 +7,19 @@ Import('build')
 env = build.env.Clone();
 env.Append(CPPDEFINES = ('TITANIUM_GROWL_API_EXPORT', 1))
 env.Append(CPPPATH = ['#kroll'])
-build.add_thirdparty(env, 'poco')
+
+if build.is_osx():
+	build.add_thirdparty(env, 'poco', True)
+else:
+	build.add_thirdparty(env, 'poco')
 
 sources = Glob('*.cpp')
 
 if build.is_osx():
-	OSX_SDK = '/Developer/SDKs/MacOSX10.4u.sdk'
-	OSX_UNIV_COMPILER = '-isysroot '+OSX_SDK+' -arch ppc -arch i386'
-	OSX_UNIV_LINKER = '-isysroot '+OSX_SDK+' -syslibroot,'+OSX_SDK
 	env.Append(FRAMEWORKPATH = [build.third_party+'/growl'])
 	env.Append(CPPPATH = [build.third_party+'/growl/Growl.framework/Headers', build.third_party +'/poco/headers'])
 	env.Append(FRAMEWORKS = ['Cocoa', 'Growl'])
-	env.Append(CCFLAGS = ['-x', 'objective-c++'])
-	env.Append(CCFLAGS=OSX_UNIV_COMPILER)
-	env.Append(LDFLAGS=OSX_UNIV_LINKER)
-	env.Append(LIBS = ['dl'])
+	env.Append(LIBS = ['kroll','dl'])
 	sources += Glob(build.os + '/*.mm')
 	sources += Glob('%s/*.cpp' % build.os)
 

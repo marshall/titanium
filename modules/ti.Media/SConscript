@@ -8,10 +8,16 @@ env = tiBuild.env.Clone();
 env.Append(CPPDEFINES = ('TITANIUM_API_EXPORT', 1))
 env.Append(CPPPATH = ['#kroll'])
 
+if tiBuild.is_osx():
+	tiBuild.add_thirdparty(env, 'poco', True)
+	env.Append(LIBS=['kroll'])
+	env.Append(FRAMEWORKS = ['Cocoa'])
+else:
+	tiBuild.add_thirdparty(env, 'poco')
+
 sources = Glob('*.cpp')
 
 if tiBuild.is_osx():
-	env.Append(FRAMEWORKS = ['Cocoa'])
 	sources+=Glob('osx/*.cpp') + Glob('osx/*.mm')
 elif tiBuild.is_win32():
 	env.Append(LIBS = ['user32'])
