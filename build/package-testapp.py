@@ -122,9 +122,11 @@ exe_dir = app_dir
 if osname is 'osx':
     exe_dir = path.join(app_dir, 'MacOS')
     os.makedirs(exe_dir)
-
 exe_path = path.join(exe_dir, app_name + exe_ext)
 shutil.copy(kboot_file, exe_path)
+
+runtime_manifest_file = path.join(third_party_dir, "manifest")
+shutil.copy(runtime_manifest_file, runtime_dir)
 
 if osname is 'osx':
     plist = open(path.join('..', 'support', 'osx', 'Info.plist')).read()

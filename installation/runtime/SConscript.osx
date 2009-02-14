@@ -1,5 +1,6 @@
 import os.path as p, shutil, os
 import glob, distutils.dir_util as dir_util
+
 Import('vars')
 Import(vars)
 
@@ -62,17 +63,24 @@ for tp in third_party:
 	for d in glob.glob(pattern):
 		dest = runtime + '/' + p.basename(d)
 		shutil.copytree(d, dest, symlinks=True)
-	pattern = '%s/%s/lib/*' % (build.third_party, tp)
-	for d in glob.glob(pattern):
-		shutil.copy(d, runtime)
-
+	cwd = os.getcwd()
+	pattern = '%s/%s/lib' % (build.third_party, tp)
+	os.chdir(runtime)
+	if p.exists(pattern):
+		os.system('cp -Rv '+pattern+'/* . >/dev/null')
+	os.chdir(cwd)
+	
 # Gather all module libs
 for m in modules.keys():
 	module_dir = p.join(build.titanium_source_dir, 'modules', modules[m])
 	if not p.exists(module_dir):
 		module_dir = p.join(build.kroll_source_dir, 'modules', modules[m])
-	
 	mlib = p.join('%s/lib%smodule.dylib' % (build.dir, m))
+	out_dir = '%s/%s' % (modules_dir, m)
+	if p.exists(mlib):
+		out_dir = '%s/%s' % (modules_dir, m)
+		os.makedirs(out_dir)
+		shutil.copy(mlib, out_dir)
 	## we'll have to make this pluggable at some point
 	if not p.exists(mlib):
 		mlib = p.join(module_dir, '%smodule.js' % m)
@@ -80,16 +88,14 @@ for m in modules.keys():
 		mlib = p.join(module_dir, '%smodule.py' % m)
 	if not p.exists(mlib):
 		mlib = p.join(module_dir, '%smodule.rb' % m)
-	
-	out_dir = '%s/%s' % (modules_dir, m)
-	os.makedirs(out_dir)
-	
-	if p.exists(mlib):
+		
+	if p.exists(mlib) and not p.join(out_dir,m):
 		shutil.copy(mlib, out_dir)
 	
 	app_resources = p.join(module_dir, 'AppResources')
 	if p.exists(app_resources):
 		dir_util.copy_tree(app_resources, p.join(modules_dir, m, 'AppResources'))
+
 
 menu_nib = p.join(build.dir, 'modules', 'ti.UI', 'MainMenu.nib')
 shutil.copy(menu_nib, bundle.lproj)
@@ -133,7 +139,6 @@ for i in [developer,appinstaller,bundle.contents]:
 	out_file = open(p.join(i, '.installed'), 'w')
 	out_file.close()
 
-
 def invoke(cmd):
 	print cmd
 	os.system(cmd)
@@ -147,6 +152,9 @@ srcfolder=p.join(build.dir,name+'.app')
 tdmgname='_'+name
 dmgname=name
 
+shutil.copy(p.join(build.kroll_third_party,'manifest'),p.join(runtime,'manifest'))
+
+
 for d in [tdmgname,dmgname]:
 	n = d+'.dmg'
 	if p.isfile(n):
@@ -158,8 +166,8 @@ if not ARGUMENTS.get('skipdmg', 0):
 	invoke("bless --folder /Volumes/Titanium --openfolder /Volumes/Titanium")
 	shutil.move("/Volumes/Titanium/titanium_runtime.app","/Volumes/Titanium/Install Titanium.app")
 	invoke("strip -u -r \"/Volumes/Titanium/Install Titanium.app/Contents/MacOS/titanium_runtime\"")
-	invoke("ditto %s/installation/runtime/installer_DS_Store /Volumes/Titanium/.DS_Store" % build.titanium_source_dir)
-	invoke("ditto %s/installation/runtime/background.jpg /Volumes/Titanium/background.jpg" % build.titanium_source_dir)
+	invoke("ditto %s/installation/runtime/osx/installer_DS_Store /Volumes/Titanium/.DS_Store" % build.titanium_source_dir)
+	invoke("ditto %s/installation/runtime/osx/background.jpg /Volumes/Titanium/background.jpg" % build.titanium_source_dir)
 	invoke("ditto %s/support/osx/titanium.icns /Volumes/Titanium/.VolumeIcon.icns" % build.titanium_source_dir)
 	invoke("/Developer/Tools/SetFile -a C /Volumes/Titanium")
 	invoke("/Developer/Tools/SetFile -a V /Volumes/Titanium/background.jpg")

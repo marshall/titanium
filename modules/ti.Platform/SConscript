@@ -4,11 +4,15 @@ import os
 Import("tiBuild")
 Import('build')
 
-tiBuild.add_thirdparty(build.env, 'poco')
-
 env = tiBuild.env.Clone();
 env.Append(CPPDEFINES = ('TITANIUM_PLATFORM_API_EXPORT', 1))
 env.Append(CPPPATH = ['#kroll'])
+
+if tiBuild.is_osx():
+	tiBuild.add_thirdparty(env, 'poco', True)
+	env.Append(LIBS=['kroll'])
+else:
+	tiBuild.add_thirdparty(env, 'poco')
 
 if tiBuild.is_win32():
     env.Append(CCFLAGS=['/MD'])

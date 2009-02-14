@@ -1,17 +1,21 @@
-# :q/usr/bin/env python
+#!/usr/bin/env python
 import os, os.path as path
 
 Import('build')
 
-build.add_thirdparty(build.env, 'poco')
-
 env = build.env.Clone()
 env.Append(LIBPATH=[path.join(build.dir, 'modules', 'ti.App')])
-env.Append(LIBS=['kroll', 'tiappmodule','javascriptmodule'])
 env.Append(CPPPATH = [
 	build.kroll_include_dir,
 	'%s/modules/javascript' % build.kroll_source_dir,
 	'%s/modules/ti.App' % build.titanium_source_dir])
+
+if build.is_osx():
+	build.add_thirdparty(env, 'poco', True)
+	env.Append(LIBS=['kroll','tiappmodule','javascriptmodule'])
+	env.Append(FRAMEWORKS = ['Cocoa'])
+else:
+	build.add_thirdparty(env, 'poco')
 
 sources = Glob('*.cpp')
 webkit_tp = path.join(build.third_party, 'webkit')
