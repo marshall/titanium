@@ -69,6 +69,7 @@
       //  $("#content").css("opacity", "1");
       //  $("body").css("opacity", "1");
       //}
+      
       function $(id) { return document.getElementById(id); }
       
       function queryString(uri,params)
@@ -98,8 +99,9 @@
         if (qs.icon)
         {
           $("content").style.left = '';
-          $("notification_icon").src = qs.icon;
+          var img = $('notification_icon');
           
+          img.src = qs.icon;
           img.style.visibility = 'visible';
           img.style.display = '';
         }
