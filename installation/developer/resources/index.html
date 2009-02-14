@@ -133,7 +133,7 @@
 				<div class="infobox">
 					<div class="content" style="height:20px;position:relative">
 						<div style="position:absolute;top:7px;left:5px">
-							<img src="images/information.png" style="position:relative;top:-1px"/>
+							<img src="images/info.png" style="position:relative;top:-1px"/>
 						</div>
 						<div style="position:absolute;top:7px;left:30px">
 							You haven't created any projects yet!  Get started by creating one now!
@@ -157,7 +157,7 @@
 							on="mouseover then l:action.hint[hint=Find projects] or mouseout then l:action.hint[hint='']">
 							<div class="button2" style="height:21px" 
 								on="click then l:project.search">
-								<img src="images/magnifier.png" style="position:relative;top:3px;left:1px"/>
+								<img src="images/search.png" style="position:relative;top:2px;left:1px"/>
 							</div>
 						</div>
 						<div class="button1" 
@@ -166,7 +166,7 @@
 							or mouseout then l:action.hint[hint='']">
 							<div class="button2" style="height:21px" 
 								on="click then l:create.project">
-								<img src="images/add.png" style="position:relative;top:3px;left:1px"/>
+								<img src="images/16x16_new.png" style="position:relative;top:2px;left:1px"/>
 							</div>
 						</div>
 						<div class="button1" 
@@ -175,7 +175,7 @@
 							or mouseout then l:action.hint[hint='']">
 							<div class="button2" style="height:21px" 
 								on="click then l:import.project">
-								<img src="images/folder_add.png" style="position:relative;top:3px;left:1px"/>
+								<img src="images/import_proj.png" style="position:relative;top:2px;left:1px"/>
 							</div>
 						</div>
 						<div style="float:left;margin-left;margin-top:6px" class="hint_text"
@@ -230,9 +230,9 @@
 							<div id="action_#{iterator_index}" style="display:none">
 								<div class="project_name">#{name}</div>
 								<div class="project_controls">
-									<img src="images/delete.png" style="margin-right:2px"
+									<img src="images/delete.png" style="margin-right:2px" title="delete project"
 										on="click then l:delete.project.request[id=#{id},name=#{name}]"/>
-									<img src="images/package_go.png"
+									<img src="images/package.png" title="package, run or install project"
 										on="click then l:package.project.request[id=#{id},name=#{name}]"/>
 								</div>
 							</div>
@@ -250,15 +250,15 @@
 						<div class="content">
 							<table cellspacing="15px">
 								<tr>
-									<td style="font-size:12px" width="90px" class="hint_text">Project Name:</td>
-									<td style="font-size:12px" on="l:row.selected then value[name]"></td>
+									<td style="font-size:12px;height:30px" width="90px" class="hint_text">Project Name:</td>
+									<td style="font-size:12px;height:30px" on="l:row.selected then value[name]"></td>
 								</tr>
 								<tr>
-									<td style="font-size:12px" width="90px" class="hint_text">Date Created:</td>
-									<td style="font-size:12px"  on="l:row.selected then value[date]"></td>
+									<td style="font-size:12px;height:30px" width="90px" class="hint_text">Date Created:</td>
+									<td style="font-size:12px;height:30px"  on="l:row.selected then value[date]"></td>
 								</tr>
 								<tr>
-									<td style="font-size:12px" width="90px" class="hint_text">Location:</td>
+									<td style="font-size:12px;height:30px" width="90px" class="hint_text">Location:</td>
 									<td  width="220px" style="font-size:12px;">
 										<a style="color:#fff;text-decoration:underline;cursor:pointer;display:none" 
 											id="project_detail_dir_a"
@@ -272,18 +272,23 @@
 									</td>
 								</tr>
 								<tr>
-									<td style="font-size:12px" width="90px" class="hint_text">*Publisher:</td>
-									<td style="font-size:12px" class="edit" on="l:row.selected then value[pub]"></td>
+									<td style="font-size:12px;height:30px" width="90px" class="hint_text">*Publisher:</td>
+									<td style="font-size:12px;height:30px">
+										<div class="edit" on="l:row.selected then value[pub]"></div>
+									</td>
 								</tr>
 								<tr>
-									<td style="font-size:12px" width="90px" class="hint_text">*Publisher URL:</td>
-									<td style="font-size:12px"  class="edit"
-										on="l:row.selected then value[url]"></td>
+									<td style="font-size:12px;height:30px" width="90px" class="hint_text">*Publisher URL:</td>
+									<td style="font-size:12px;height:30px">
+										<div class="edit" on="l:row.selected then value[url]"></div>
+									</td>
 								</tr>
 								<tr>
-									<td style="font-size:12px" width="90px" class="hint_text">*App Icon:</td>
-									<td style="font-size:12px"  class="edit"
-										on="l:row.selected then value[image]"></td>
+									<td style="font-size:12px;height:30px" width="90px" class="hint_text">*App Icon:</td>
+									<td style="font-size:12px;height:30px">
+										<div class="edit"
+											on="l:row.selected then value[image]"></div>
+									</td>
 								</tr>
 								<tr>
 									<td></td>
@@ -324,7 +329,7 @@
 					on="l:row.selected then hide or l:menu[val=manage] then show">
 					<div class="content" style="height:45px">
 						<div style="float:left;width:20px">
-							<img src="images/information.png" style="position:relative;top:-1px"/>
+							<img src="images/info.png" style="position:relative;top:-1px"/>
 						</div>
 						<div style="float:left;width:90%">
 							Manage Projects currently allows you to package and remove existing projects.

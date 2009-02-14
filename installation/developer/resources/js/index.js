@@ -145,6 +145,19 @@ $MQL('l:row.selected',function()
 	{
 		if ($(this).attr('edit_mode') != 'true')
 		{
+			// only one active edit field at a time
+			var activeFiles = $('div[edit_mode=true]');
+			if (activeFiles)
+			{
+				for (var i=0;i<activeFiles.length;i++)
+				{
+					var id = $(activeFiles[i]).attr('id');
+					$(activeFiles[i]).html($('#'+id+'_input').val())
+					$(activeFiles[i]).get(0).removeAttribute('edit_mode');
+				}
+			}
+			
+			// process click
 			var el = $(this).get(0);
 			var value = el.innerHTML;
 			el.setAttribute('edit_mode','true');
