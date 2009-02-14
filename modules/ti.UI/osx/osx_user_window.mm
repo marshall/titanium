@@ -130,27 +130,30 @@ namespace ti
 	}
 	double OSXUserWindow::GetX()
 	{
-		//FIXME
-		return 0;
+		return this->config->GetX();
 	}
+	
 	void OSXUserWindow::SetX(double x)
 	{
+		NSRect mainFrame = [[NSScreen mainScreen] frame];
+		
 		NSPoint p;
 		p.x = x;
-		p.y = this->GetY();
+		p.y = mainFrame.size.height - this->GetY();
 		config->SetX(x);
 		[window setFrameTopLeftPoint:p];
 	}
 	double OSXUserWindow::GetY()
 	{
-		//FIXME
-		return 0;
+		return this->config->GetY();
 	}
 	void OSXUserWindow::SetY(double y)
 	{
+		NSRect mainFrame = [[NSScreen mainScreen] frame];
+		
 		NSPoint p;
 		p.x = this->GetX();
-		p.y = y;
+		p.y = mainFrame.size.height - y;
 		config->SetY(y);
 		[window setFrameTopLeftPoint:p];
 	}

@@ -36,6 +36,10 @@
 	  	{
 	    	urlString = [NSString stringWithFormat:@"app://%@/%@",appID,[urlString stringByStandardizingPath]];
 	  	}
+	  	if ([nsurl query] != nil) {
+	  		urlString = [NSString stringWithFormat:@"%@?%@",urlString,[nsurl query]];
+	  	}
+	  	
 		nsurl = [NSURL URLWithString:urlString];
 	}
 	NSLog(@"LOADING URL => %@",nsurl);

@@ -9,9 +9,15 @@
 		<script>
 			function showNotification()
 			{
-				Titanium.Growl.showNotification("title","description here", "app://images/logo_large.png", 3, function() {
-					alert("notification was clicked");
+				var notification = Titanium.Notification.createNotification(window);
+				notification.setTitle("title");
+				notification.setMessage("this is a message");
+				notification.setIcon("app://logo_large.png");
+				notification.setDelay(5000);
+				notification.setCallback(function () {
+					alert("i've been clicked");
 				});
+				notification.show();
 			}
 		</script>
 	</head>

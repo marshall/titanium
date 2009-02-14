@@ -4,7 +4,7 @@
 #include <kroll/kroll.h>
 
 @interface TiGrowlDelegate : NSObject <GrowlApplicationBridgeDelegate> {
-	BOOL growlReady;
+	BOOL ready;
 };
 
 -(id)init;

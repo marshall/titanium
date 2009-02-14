@@ -53,7 +53,7 @@ namespace ti {
 
 	bool GrowlOSX::IsRunning()
 	{
-		return [delegate growlReady];
+		return [GrowlApplicationBridge isGrowlRunning];
 	}
 
 	void GrowlOSX::CopyToApp(kroll::Host *host, kroll::Module *module)

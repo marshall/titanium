@@ -22,18 +22,20 @@
 }
 
 -(BOOL) growlReady {
-	return growlReady;
+	return ready;
 }
 
 //// GrowlDelegate callbacks
 
 -(void) growlIsReady
 {
-	growlReady = TRUE;
+	NSLog(@">>>>>>>>>>> Growl is ready");
+	ready = TRUE;
 }
 
 -(void) growlNotificationWasClicked:(id)clickContext
 {
+	NSLog(@">>>>>>>>>>>>>>> Growl notification clicked");
 	if (clickContext != nil)
 	{
 		MethodWrapper *methodWrapper = (MethodWrapper*)clickContext;

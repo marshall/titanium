@@ -357,6 +357,7 @@
 	TRACE(@"inject called");
 	
 	JSContextGroupRef group = JSContextGetGroup(context);
+	JSObjectRef global_object = JSContextGetGlobalObject(context);
 	KJSUtil::RegisterGlobalContext(group, context);
 
 	// Produce a delegating object to represent the top-level
@@ -365,17 +366,18 @@
 	SharedBoundObject global_tibo = host->GetGlobalObject();
 	BoundObject* ti_object = new DelegateStaticBoundObject(global_tibo);
 	SharedBoundObject shared_ti_obj = SharedBoundObject(ti_object);
-
+	
+	SharedBoundObject shared_user_window = [window userWindow];
+	SharedValue user_window_val = Value::NewObject(shared_user_window);
+	
 	SharedValue ui_api_value = ti_object->Get("UI");
 	if (ui_api_value->IsObject())
 	{
 		// Create a delegate object for the UI API.
 		SharedBoundObject ui_api = ui_api_value->ToObject();
 		BoundObject* delegate_ui_api = new DelegateStaticBoundObject(ui_api);
-
+		
 		// Place currentWindow in the delegate.
-		SharedBoundObject shared_user_window = [window userWindow];
-		SharedValue user_window_val = Value::NewObject(shared_user_window);
 		delegate_ui_api->Set("currentWindow", user_window_val);
 
 		// Place currentWindow.createWindow in the delegate.
@@ -390,7 +392,6 @@
 	}
 
 	// Place the Titanium object into the window's global object
-	JSObjectRef global_object = JSContextGetGlobalObject(context);
 	BoundObject *global_bound_object = new KJSBoundObject(context, global_object);
 	SharedValue ti_object_value = Value::NewObject(shared_ti_obj);
 	global_bound_object->Set(GLOBAL_NS_VARNAME, ti_object_value);
@@ -399,6 +400,9 @@
 	SharedBoundObject shared_global_bound_object = global_bound_object;
 	SharedValue win_object_value = Value::NewObject(shared_global_bound_object);
 	ti_object->Set("window",win_object_value);
+	
+	// also place it on the window object itself, so this is accesible to private-context modules
+	shared_user_window->Set("window", win_object_value);
 	
 	SharedValue doc_value = global_bound_object->Get("document");
 	ti_object->Set("document",doc_value);
