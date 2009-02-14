@@ -63,6 +63,13 @@ input:focus
 	border:1px solid #777;
 	background-color:#444;
 }
+#social_content
+{
+	height:100%;min-height:50px;font-family:courier;
+	background-color:#111;color:yellow;font-size:11px;overflow:auto;
+	padding:3px;
+}
+
 #irc
 {
 	height:100%;min-height:50px;font-family:courier;
@@ -223,7 +230,7 @@ input:focus
 .row_selected
 {
 	background-color:#444;
-	color:#457db3;
+	color:#809eb3;
 	-webkit-border-bottom-right-radius: 5px;
 	-webkit-border-bottom-left-radius: 5px;
 	-webkit-border-top-right-radius: 5px;
@@ -353,4 +360,9 @@ div.formhint
 {
 	font-size:10px;
 	color:#000;
+}
+.selected_os
+{
+	background-color:#555;
+	border:1px solid #646464 !important;
 }
