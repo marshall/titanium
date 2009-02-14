@@ -449,7 +449,7 @@ $MQL('l:create.package.request',function(msg)
 		// project name
 		var project_name = $('#package_project_name').html();
 
-		var launch = msg.payload.launch;
+		var launch = (msg.payload.launch == 'no')?false:true;
 		var install = typeof(msg.payload.install)=='undefined' ? false : msg.payload.install;
 
 		var project = findProject(project_name);
@@ -657,6 +657,22 @@ $MQL('l:show.filedialog',function(msg)
 	props);
 });
 
+TiDeveloper.getCurrentTime = function()
+{
+	var curDateTime = new Date()
+  	var curHour = curDateTime.getHours()
+  	var curMin = curDateTime.getMinutes()
+  	var curAMPM = "am"
+  	var curTime = ""
+  	if (curHour >= 12){
+    	curHour -= 12
+    	curAMPM = "pm"
+    }
+  	if (curHour == 0) curHour = 12
+  	curTime = curHour + ":" + ((curMin < 10) ? "0" : "") + curMin + curAMPM;
+  	return curTime;
+	
+};
 var irc_count = 0;
 
 setTimeout(function()
@@ -672,6 +688,9 @@ setTimeout(function()
 		var irc = Titanium.Network.createIRCClient();
 		irc.connect("irc.freenode.net",6667,myNick,myName,myNameStr,String(new Date().getTime()),function(cmd,channel,data,nick)
 		{
+			
+			var time = TiDeveloper.getCurrentTime();
+
 			// switch on command
 			switch(cmd)
 			{
@@ -682,7 +701,7 @@ setTimeout(function()
 					{
 						if (TiDeveloper.currentState != 'interact') TiDeveloper.ircMessageCount ++;
 						$('#irc_message_count').html(TiDeveloper.ircMessageCount);
-						$('#irc').append('<div style="color:yellow">' + nick + ': ' + channel.substring(1,channel.length) + '</div>');
+						$('#irc').append('<div style="color:yellow;float:left">' + nick + ': ' + channel.substring(1,channel.length) + '</div><div style="float:right;color:#ccc;font-size:11px">'+time+'</div><div style="clear:both"></div>');
 					}
 					break;
 				}
@@ -745,8 +764,9 @@ setTimeout(function()
 		irc.join("#titanium_dev");
 		$MQL('l:send.irc.msg',function()
 		{
+			var time = TiDeveloper.getCurrentTime();
 			irc.send('#titanium_dev',$('#irc_msg').val());
-			$('#irc').append('<div style="color:#fff">'+myNick + ': ' + $('#irc_msg').val() + '</div>');
+			$('#irc').append('<div style="color:#fff;float:left">' + myNick + ': ' + $('#irc_msg').val() + '</div><div style="float:right;color:#ccc;font-size:11px">'+time+'</div><div style="clear:both"></div>');
 			$('#irc_msg').val('');
 			$('#irc').get(0).scrollTop = $('#irc').get(0).scrollHeight;
 
