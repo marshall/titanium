@@ -7,7 +7,6 @@ build.add_thirdparty(build.env, 'poco')
 
 env = build.env.Clone()
 env.Append(LIBPATH=[path.join(build.dir, 'modules', 'ti.App')])
-env.Append(LIBS=['kroll', 'tiappmodule','javascriptmodule'])
 env.Append(CPPPATH = [
 	build.kroll_include_dir,
 	'%s/modules/javascript' % build.kroll_source_dir,
