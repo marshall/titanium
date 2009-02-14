@@ -76,7 +76,7 @@ if build.is_osx():
 	OSX_UNIV_LINKER = '-isysroot '+OSX_SDK+' -syslibroot,'+OSX_SDK+' -arch i386 -mmacosx-version-min=10.5 -lstdc++'
 	build.env.Append(CXXFLAGS=['-isysroot',OSX_SDK,'-arch','i386','-mmacosx-version-min=10.5','-x','objective-c++'])
 	build.env.Append(CPPFLAGS=['-isysroot',OSX_SDK,'-arch','i386','-mmacosx-version-min=10.5','-x','objective-c++'])
-	build.env.Append(LINKFLAGS=OSX_UNIV_LINKER)
+	build.env.Append(LINKFLAGS=OSX_UNIV_LINKER+' -flat_namespace -bind_at_load -undefined suppress')
 	build.env.Append(FRAMEWORKS=['Foundation'])
 
 
