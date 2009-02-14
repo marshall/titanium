@@ -9,7 +9,7 @@
 
 namespace ti
 {
-	Process::Process(SharedPtr<ProcessBinding> parent, std::string& cmd, std::vector<std::string>& args) : process(0), running(true)
+	Process::Process(ProcessBinding* parent, std::string& cmd, std::vector<std::string>& args) : process(0), running(true)
 	{
 		this->parent = parent;
 		this->errp = new Poco::Pipe();
@@ -98,8 +98,7 @@ namespace ti
 			Poco::Process::kill(this->process->id());
 			running = false;
 			this->Set("running",Value::NewBool(false));
-			SharedBoundObject p = this;
-			this->parent->Terminated(p);
+			this->parent->Terminated(this);
 		}
 	}
 }
