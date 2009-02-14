@@ -94,6 +94,5 @@ else:
 	SConscript('installation/SConscript')
 
 	# Kroll library is now built (hopefully)
-	build.env.Append(LIBS=['kroll']) 
 	SConscript('modules/SConscript')
 
