@@ -45,11 +45,14 @@
 #define INVALID_SOCKET -1
 #endif
 
+#include <iostream>
+
 IRC::IRC()
 {
 	hooks=0;
 	chan_users=0;
 	connected=false;
+	connecting=false;
 	sentnick=false;
 	sentpass=false;
 	sentuser=false;
@@ -162,17 +165,18 @@ int IRC::start(char* server, int port, char* nick, char* user, char* name, char*
 	rem.sin_family=AF_INET;
 	rem.sin_port=htons(port);
 
+	connecting = true;
+	
 	if (connect(irc_socket, (const sockaddr*)&rem, sizeof(rem))==SOCKET_ERROR)
 	{
-		#ifdef WIN32
-		printf("Failed to connect: %d\n", WSAGetLastError());
-		#endif
+#ifdef WIN32
+		std::cerr << "Failed to connect: "<< WSAGetLastError() << std::endl;
+#endif
+		connecting = false;
 		closesocket(irc_socket);
 		return 1;
 	}
 
-	connected=true;
-	
 	cur_nick=new char[strlen(nick)+1];
 	strcpy(cur_nick, nick);
 
@@ -180,6 +184,9 @@ int IRC::start(char* server, int port, char* nick, char* user, char* name, char*
 	send("NICK %s\r\n", cur_nick);
 	send("USER %s * 0 :%s\r\n", user, name);
 
+	connected=true;
+	connecting=false;
+	
 	return 0;
 }
 
@@ -212,26 +219,54 @@ int IRC::quit(const char* quit_message)
 
 int IRC::message_loop()
 {
-	char buffer[1024];
+	char buffer[4096];
 	int ret_len;
+	
+#ifdef DEBUG
+	std::cout << "ENTER IRC::message_loop()"<< std::endl;
+#endif	
 
 	if (!connected)
 	{
-		return 1;
+		while (!connected && connecting)
+		{
+#ifdef WIN32
+			Sleep(1);
+#else
+			sleep(1);
+#endif
+		}
 	}
 
-	while (1)
+	int rc = 0;
+	
+	while (connected)
 	{
-		ret_len=recv(irc_socket, buffer, 1023, 0);
+		ret_len=recv(irc_socket, buffer, 4095, 0);
 		if (ret_len==SOCKET_ERROR || !ret_len)
 		{
-			return 1;
+			rc = 1;
+			break;
 		}
 		buffer[ret_len]='\0';
-		split_to_replies(buffer);
+		try
+		{
+			split_to_replies(buffer);
+		}
+		catch(std::exception &e)
+		{
+			std::cerr << "ERROR DISPATCHING IRC RECEIVE BUFFER. Error=" << e.what() << std::endl;
+		}
+		catch(...)
+		{
+			std::cerr << "UNKNOWN EXCEPTION IN IRC RECEIVE THREAD..." << std::endl;
+		}
 	}
 
-	return 0;
+#ifdef DEBUG
+	std::cout << "EXIT IRC::message_loop() => " << rc << std::endl;
+#endif	
+	return rc;
 }
 
 void IRC::split_to_replies(char* data)
@@ -300,7 +335,7 @@ void IRC::parse_irc_reply(char* data)
 	hostd_tmp.target=0;
 
 #ifdef DEBUG
-	printf("INCOMING: %s\n", data);
+	std::cout << "IRC INCOMING: " << data << std::endl;
 #endif
 
 	if (data[0]==':')

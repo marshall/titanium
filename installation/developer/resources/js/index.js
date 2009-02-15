@@ -733,43 +733,123 @@ TiDeveloper.getCurrentTime = function()
 	
 };
 var irc_count = 0;
+var irc = null;
+var username = null;
+var myNick = null;
 
-//FIXME - this is temporary until i can figure out IRC crashes in Win32 /JGH
-//if (Titanium.platform != 'win32')
-//{
-	setTimeout(function()
+setTimeout(function()
+{
+	try
+	{
+		username = Titanium.Platform.username;
+		username = username.replace(' ','_');
+	
+		myNick = username+'1';
+		var myName = username+'1';
+		var myNameStr = username+'1';
+
+		$('#irc').append('<div style="color:#aaa">you are joining the <span style="color:#42C0FB">Titanium Developer</span> chat room. one moment...</div>');
+
+		irc = Titanium.Network.createIRCClient();
+		
+		irc.connect("irc.freenode.net",6667,myNick,myName,myNameStr,String(new Date().getTime()),function(cmd,channel,data,nick)
+		{
+			var time = TiDeveloper.getCurrentTime();
+			
+			// switch on command
+			switch(cmd)
+			{
+				case 'NOTICE':
+				case 'PRIVMSG':
+				{
+					if (nick && nick!='NickServ')
+					{
+						if (TiDeveloper.currentState != 'interact') TiDeveloper.ircMessageCount ++;
+						$('#irc_message_count').html(TiDeveloper.ircMessageCount);
+						$('#irc').append('<div style="color:yellow;float:left">' + nick + ': ' + channel.substring(1,channel.length) + '</div><div style="float:right;color:#ccc;font-size:11px">'+time+'</div><div style="clear:both"></div>');
+					}
+					break;
+				}
+				case '366':
+				{					
+					var users = irc.getUsers('#titanium_dev');
+					$MQ('l:online.count',{count:users.length});
+					irc_count = users.length;
+					for (var i=0;i<users.length;i++)
+					{
+						if (users[i].operator == true)
+						{
+							$('#irc_users').append('<div class="'+users[i].name+'" style="color:#42C0FB">'+users[i].name+'(op)</div>');
+						}
+						else if (users[i].voice==true)
+						{
+							$('#irc_users').append('<div class="'+users[i].name+'" style="color:#42C0FB">'+users[i].name+'(v)</div>');
+						}
+						else
+						{
+							$('#irc_users').append('<div class="'+users[i].name+'">'+users[i].name+'</div>');
+						}
+					}
+				}
+				case 'JOIN':
+				{
+					if (nick.indexOf('freenode.net') != -1)
+					{
+						continue;
+					}
+					
+					if (nick == myNick)
+					{
+						$('#irc').append('<div style="color:#aaa"> you are now in the room. </div>');
+						break
+					}
+					else
+					{
+						irc_count++;
+					}
+					$('#irc').append('<div style="color:#aaa">' + nick + ' has joined the room </div>');
+					$('#irc_users').append('<div class="'+nick+'" style="color:#457db3">'+nick+'</div>');
+					$MQ('l:online.count',{count:irc_count});
+					break;
+					
+				}
+				case 'QUIT':
+				case 'PART':
+				{
+					$('#irc').append('<div style="color:#aaa">' + nick + ' has left the room </div>');
+					$('.'+nick).html('');
+					irc_count--;
+					$MQ('l:online.count',{count:irc_count});
+					break;
+				}
+			}
+			$('#irc').get(0).scrollTop = $('#irc').get(0).scrollHeight;
+		});
+
+		irc.join("#titanium_dev");
+	}
+	catch(E)
+	{
+		alert("Exception: "+E);
+	}
+},1000);
+	
+$MQL('l:send.irc.msg',function()
+{
+	if (irc)
 	{
 		try
 		{
-			var username = Titanium.Platform.username;
-			username = username.replace(' ','_');
-		
-			var myNick = username+'1';
-			var myName = username+'1';
-			var myNameStr = username+'1';
-
-			$('#irc').append('<div style="color:#aaa">you are joining the <span style="color:#42C0FB">Titanium Developer</span> chat room. one moment...</div>');
-			
-			alert("before create = "+username);
-			var irc = Titanium.Network.createIRCClient();
-			alert('irc = '+irc+', username='+username);			
+			var time = TiDeveloper.getCurrentTime();
+			irc.send('#titanium_dev',$('#irc_msg').val());
+			$('#irc').append('<div style="color:#fff;float:left">' + myNick + ': ' + $('#irc_msg').val() + '</div><div style="float:right;color:#ccc;font-size:11px">'+time+'</div><div style="clear:both"></div>');
+			$('#irc_msg').val('');
+			$('#irc').get(0).scrollTop = $('#irc').get(0).scrollHeight;
 		}
-		catch(E)
+		catch(e)
 		{
-			alert("Exception: "+E);
+			alert("Exception sending message: "+e);
 		}
-	},10000);
-	
-/*
-	$MQL('l:send.irc.msg',function()
-	{
-		var time = TiDeveloper.getCurrentTime();
-		irc.send('#titanium_dev',$('#irc_msg').val());
-		$('#irc').append('<div style="color:#fff;float:left">' + myNick + ': ' + $('#irc_msg').val() + '</div><div style="float:right;color:#ccc;font-size:11px">'+time+'</div><div style="clear:both"></div>');
-		$('#irc_msg').val('');
-		$('#irc').get(0).scrollTop = $('#irc').get(0).scrollHeight;
-
-	});			
-*/
-//}
+	}
+});			
 

@@ -19,8 +19,6 @@
 
 using namespace ti;
 
-bool Win32UserWindow::ole_initialized = false;
-
 static void* SetWindowUserData(HWND hwnd, void* user_data) {
 	return
 		reinterpret_cast<void*>(SetWindowLongPtr(hwnd, GWLP_USERDATA,
@@ -88,7 +86,7 @@ Win32UserWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	Win32UserWindow *window = Win32UserWindow::FromWindow(hWnd);
 
-	if (window && window->messageHandlers.find(message) != window->messageHandlers.end())
+	if (window && (window->messageHandlers.size() > 0) && (window->messageHandlers.find(message) != window->messageHandlers.end()))
 	{
 		SharedBoundMethod handler = window->messageHandlers[message];
 		ValueList args;
@@ -166,12 +164,6 @@ Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config)
 
 	this->ReloadTiWindowConfig();
 
-	if (!initialized) {
-		HRESULT r = OleInitialize(NULL);
-		std::cout << "OleInitialize Result: " << r << std::endl;
-		initialized = true;
-	}
-
 	SetWindowUserData(window_handle, this);
 
 	Bounds b;
@@ -219,6 +211,10 @@ Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config)
 
 	std::cout << "resize subviews" << std::endl;
 	ResizeSubViews();
+
+	// ensure we have valid restore values
+	restore_bounds = GetBounds();
+	restore_styles = GetWindowLong(window_handle, GWL_STYLE);
 }
 
 Win32UserWindow::~Win32UserWindow()
@@ -269,7 +265,7 @@ void Win32UserWindow::Open() {
 }
 
 void Win32UserWindow::Close() {
-	CloseWindow(window_handle);
+	DestroyWindow(window_handle);
 
 	UserWindow::Close(this);
 }

@@ -52,7 +52,6 @@ namespace ti
 #ifdef DEBUG
 		std::cout << "Received: " << param << std::endl;
 #endif
-
 		IRCClientBinding *binding = (IRCClientBinding*)pd;
 		if (!binding->callback.isNull())
 		{
@@ -71,7 +70,6 @@ namespace ti
 				std::cerr << "Caught exception dispatching IRC callback: " << irc_command << ", Error: " << e.what() << std::endl;
 			}
 		}
-		
 		return 0;
 	}
 	void IRCClientBinding::Run (void* p)

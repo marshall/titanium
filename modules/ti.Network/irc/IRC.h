@@ -93,6 +93,7 @@ private:
 	void send(const char *buf, ...);
 	int irc_socket;
 	bool connected;
+	bool connecting;
 	bool sentnick;
 	bool sentpass;
 	bool sentuser;
