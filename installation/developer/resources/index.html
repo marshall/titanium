@@ -213,11 +213,10 @@
 					<div control="iterator[property=rows]" 
 						on="l:project.list.response then render or l:project.search.response then render">
 						<div class="project_row"
-							on="click then 
-							l:row.selected[id=#{id},name=#{name},date=#{date},pub=#{publisher},url=#{url},image=#{image}] 
+							on="click then l:row.selected[project_id=#{id}] 
 							and add[class=row_selected] and show[id=action_#{iterator_index}] 
 							and hide[id=view_#{iterator_index}]
-							or l:row.selected[id!=#{id}] then remove[class=row_selected] 
+							or l:row.selected[project_id!=#{id}] then remove[class=row_selected] 
 							and hide[id=action_#{iterator_index}] and show[id=view_#{iterator_index}]">
 
 							<div id="view_#{iterator_index}">
@@ -250,44 +249,59 @@
 						<div class="content">
 							<table cellspacing="15px">
 								<tr>
-									<td style="font-size:12px;height:30px" width="90px" class="hint_text">Project Name:</td>
-									<td style="font-size:12px;height:30px" on="l:row.selected then value[name]"></td>
+									<td style="font-size:12px;height:30px" width="90px" class="hint_text">
+										Project Name:
+									</td>
+									<td style="font-size:12px;height:30px" id="project_name_value"
+										on="l:project.detail.data then value[name]">
+									</td>
 								</tr>
 								<tr>
-									<td style="font-size:12px;height:30px" width="90px" class="hint_text">Date Created:</td>
-									<td style="font-size:12px;height:30px"  on="l:row.selected then value[date]"></td>
+									<td style="font-size:12px;height:30px" width="90px" class="hint_text">
+										Date Created:
+									</td>
+									<td style="font-size:12px;height:30px" 
+										on="l:project.detail.data then value[date]"></td>
 								</tr>
 								<tr>
 									<td style="font-size:12px;height:30px" width="90px" class="hint_text">Location:</td>
 									<td  width="220px" style="font-size:12px;">
 										<a style="color:#fff;text-decoration:underline;cursor:pointer;display:none" 
 											id="project_detail_dir_a"
-											on="l:row.selected then script[TiDeveloper.formatDirectory(this.data.id)]
+											on="l:project.detail.data then value[location]
 											or click then l:show.project.modal">
 										</a>
 										<span id="project_detail_dir_span" style="display:none"
-											on="l:row.selected then script[TiDeveloper.formatDirectory(this.data.id)]">
+											on="l:project.detail.data then value[location]">
 										</span>
-
+										<span style="display:none" id="project_dir_value"
+										on="l:project.detail.data then value[fullLocation]">
+										</span>
+										<input type="hidden" id="project_id_value" 
+											on="l:row.selected then value[project_id]"/>
 									</td>
 								</tr>
 								<tr>
 									<td style="font-size:12px;height:30px" width="90px" class="hint_text">*Publisher:</td>
 									<td style="font-size:12px;height:30px">
-										<div class="edit" on="l:row.selected then value[pub]"></div>
+										<div class="edit" 
+										on="l:project.detail.data then value[pub]" id="project_pub_value"></div>
 									</td>
 								</tr>
 								<tr>
-									<td style="font-size:12px;height:30px" width="90px" class="hint_text">*Publisher URL:</td>
+									<td style="font-size:12px;height:30px" width="90px" class="hint_text">
+										*Publisher URL:
+									</td>
 									<td style="font-size:12px;height:30px">
-										<div class="edit" on="l:row.selected then value[url]"></div>
+										<div class="edit" on="l:project.detail.data then value[url]" 
+											id="project_pub_url_value"></div>
 									</td>
 								</tr>
 								<tr>
 									<td style="font-size:12px;height:30px" width="90px" class="hint_text">*App Icon:</td>
 									<td style="font-size:12px;height:30px">
 										<div class="edit"
-											on="l:row.selected then value[image]"></div>
+											on="l:project.detail.data then value[image]" id="project_pub_image_value"></div>
 									</td>
 								</tr>
 								<tr>
@@ -308,7 +322,7 @@
 								<div class="infobox" >
 									<div class="content" style="padding:10px">
 										<div 
-										on="l:row.selected then value[TiDeveloper.formatDirectory(this.data.id,false)]" 
+										on="l:row.selected then value[TiDeveloper.formatDirectory(this.data.project_id,false)]" 
 											style="padding:10px;color:#fff;font-size:11px">
 										</div>
 										<div class="button1" style="margin:auto;float:none"  
