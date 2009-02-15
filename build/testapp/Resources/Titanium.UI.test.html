@@ -25,7 +25,7 @@
 				file.addItem("Open As...", function () {alert("open as called"); });
 				file.addSeparator();
 				file.addItem("Close", function () {alert("close called"); });
-				file.addItem("Exit", function () {alert("exit called"); });
+				file.addItem("Exit - forreal", function () { Titanium.App.exit(); });
 
 				if ("App Menu" == ident)
 				{

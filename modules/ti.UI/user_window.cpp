@@ -144,14 +144,7 @@ void UserWindow::Close(UserWindow *window)
 	// when we have no more windows, we exit ...
 	if (windows.size()==0)
 	{
-#if defined(OS_OSX)
-		[NSApp terminate:nil];
-#elif defined(OS_WIN32)
-		ExitProcess(0);
-#else
-		//TODO: in Win32, do we exit some other way??
-		exit(0);
-#endif
+		window->host->Exit(0);
 	}
 }
 
