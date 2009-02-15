@@ -16,6 +16,7 @@
 namespace ti
 {
 	HMENU Win32UIBinding::contextMenuInUseHandle = NULL;
+	SharedPtr<TrayItem> Win32UIBinding::trayItem = NULL;
 
 	Win32UIBinding::Win32UIBinding(Host *host) : UIBinding(host)
 	{
@@ -80,8 +81,13 @@ namespace ti
 		SharedString icon_path,
 		SharedBoundMethod cb)
 	{
-		SharedPtr<TrayItem> item = new Win32TrayItem(icon_path, cb);
-		return item;
+		if(trayItem)
+		{
+			return trayItem;
+		}
+
+		trayItem = new Win32TrayItem(icon_path, cb);
+		return trayItem;
 	}
 
 	void Win32UIBinding::OpenFiles(

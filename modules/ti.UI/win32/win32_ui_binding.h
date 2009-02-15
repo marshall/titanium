@@ -42,6 +42,7 @@ namespace ti
 	private:
 		SharedPtr<Win32MenuItemImpl> contextMenuInUse;
 		static HMENU contextMenuInUseHandle;
+		static SharedPtr<TrayItem> trayItem;
 		static SharedBoundList SelectDirectory(
 			bool multiple,
 			std::string& path,
