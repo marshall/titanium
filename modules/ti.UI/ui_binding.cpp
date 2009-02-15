@@ -26,6 +26,7 @@ namespace ti
 		this->SetMethod("getContextMenu", &UIBinding::_GetContextMenu);
 		this->SetMethod("setIcon", &UIBinding::_SetIcon);
 		this->SetMethod("addTray", &UIBinding::_AddTray);
+		this->SetMethod("removeTray", &UIBinding::_RemoveTray);
 
 		this->SetMethod("setDockIcon", &UIBinding::_SetDockIcon);
 		this->SetMethod("setDockMenu", &UIBinding::_SetDockMenu);
@@ -131,6 +132,11 @@ namespace ti
 
 		SharedPtr<TrayItem> tray = this->AddTray(icon_path, cb);
 		result->SetObject(tray);
+	}
+
+	void UIBinding::_RemoveTray(const ValueList& args, SharedValue result)
+	{
+		this->RemoveTray();
 	}
 
 	void UIBinding::_SetDockIcon(const ValueList& args, SharedValue result)

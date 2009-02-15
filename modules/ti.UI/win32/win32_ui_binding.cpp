@@ -90,6 +90,14 @@ namespace ti
 		return trayItem;
 	}
 
+	void Win32UIBinding::RemoveTray()
+	{
+		if(trayItem)
+		{
+			trayItem->Remove();
+		}
+	}
+
 	void Win32UIBinding::OpenFiles(
 		SharedBoundMethod callback,
 		bool multiple,

@@ -25,6 +25,7 @@ namespace ti
 		void SetIcon(SharedString icon_path);
 		SharedPtr<TrayItem> AddTray(SharedString icon_path,
 		                            SharedBoundMethod cb);
+		void RemoveTray();
 
 		void OpenFiles(
 			SharedBoundMethod callback,
