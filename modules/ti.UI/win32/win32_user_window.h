@@ -33,8 +33,6 @@ class Win32WebKitUIDelegate;
 class Win32UserWindow : public UserWindow {
 
 protected:
-	static bool ole_initialized;
-
 	kroll::Win32Host *win32_host;
 	Win32WebKitFrameLoadDelegate *frameLoadDelegate;
 	Win32WebKitUIDelegate *uiDelegate;

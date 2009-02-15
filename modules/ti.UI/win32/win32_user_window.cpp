@@ -19,8 +19,6 @@
 
 using namespace ti;
 
-bool Win32UserWindow::ole_initialized = false;
-
 static void* SetWindowUserData(HWND hwnd, void* user_data) {
 	return
 		reinterpret_cast<void*>(SetWindowLongPtr(hwnd, GWLP_USERDATA,
@@ -165,12 +163,6 @@ Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config)
 	this->SetMethod("addMessageHandler", &Win32UserWindow::AddMessageHandler);
 
 	this->ReloadTiWindowConfig();
-
-	if (!initialized) {
-		HRESULT r = OleInitialize(NULL);
-		std::cout << "OleInitialize Result: " << r << std::endl;
-		initialized = true;
-	}
 
 	SetWindowUserData(window_handle, this);
 

@@ -96,13 +96,18 @@ Titanium.AppCreator = {
 		kboot.copy(appExecutable);
 		
 		// in win32 because of COM manifest crap, we gotta put
-		// the WebKit.dll in the app folder
+		// the WebKit.dll and it's cohorts in the app folder
 		var localRuntime = TFS.getFile(appDir,'runtime');
 		localRuntime.createDirectory();
-		var webkitDll = TFS.getFile(runtime,'WebKit.dll');
-		webkitDll.copy(localRuntime);
-		var sqlDll = TFS.getFile(runtime,'SQLite3.dll');
-		sqlDll.copy(localRuntime);
+		var dlls = runtime.getDirectoryListing();
+		for (var c=0;c<dlls.length;c++)
+		{
+			var dll = dlls[c];
+			if (dll.extension()=="dll" || dll.name()=="manifest")
+			{
+				dll.copy(localRuntime);
+			}
+		}
 		
 		// set our marker file
 		var marker = TFS.getFile(appDir,'.installed');

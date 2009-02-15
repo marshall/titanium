@@ -5,6 +5,7 @@
  */
 #import "preinclude.h"
 #import <WebKit/WebKit.h>
+#import "../menu_item.h"
 #import "../user_window.h"
 #import "native_window.h"
 #import "osx_menu_wrapper.h"
