@@ -17,11 +17,8 @@ namespace ti
 {
 	void AppModule::Initialize()
 	{
-		const char *home = getenv("KR_HOME");
-
-
-		std::string config(home);
-		config+="/"CONFIG_FILENAME;
+		std::string home = host->GetApplicationHome();
+		std::string config = FileUtils::Join(home.c_str(),CONFIG_FILENAME,NULL);
 
 		std::cout << "+++home = " << home << std::endl;
 		std::cout << "+++config = " << config << std::endl;
@@ -31,7 +28,7 @@ namespace ti
 			//FIXME: in this scenario we need a cleaner way of stopping the
 			//boot
 			std::cerr << "can't load " CONFIG_FILENAME " from: " << config << std::endl;
-			return;
+			//return;
 		}
 
 		// initialize our application config
