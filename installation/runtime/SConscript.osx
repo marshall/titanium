@@ -1,5 +1,6 @@
 import os.path as p, shutil, os
-import glob, distutils.dir_util as dir_util
+import glob, distutils.dir_util as dir_util, time
+from datetime import date
 
 Import('vars')
 Import(vars)
@@ -133,10 +134,15 @@ bundle = Bundler('Installer App',installer,None,None,None)
 shutil.copy(p.join(netinstaller,'Info.plist'),bundle.basedir)
 shutil.copy(p.join(netinstaller,'MainMenu.nib'),bundle.basedir)
 
-for i in [developer,appinstaller,bundle.contents]:
+srcfolder=p.join(build.dir,name+'.app')
+tdmgname='_'+name
+dmgname=name
+
+for i in [developer,appinstaller,bundle.contents,p.join(srcfolder,'Contents')]:
 	# create a flag file on the netinstaller bundle so we don't
 	# attempt to re-run the application installer	
 	out_file = open(p.join(i, '.installed'), 'w')
+	out_file.write(str(date.today()))
 	out_file.close()
 
 def invoke(cmd):
@@ -148,12 +154,7 @@ try:
 except OSError:
     print ''
 
-srcfolder=p.join(build.dir,name+'.app')
-tdmgname='_'+name
-dmgname=name
-
 shutil.copy(p.join(build.kroll_third_party,'manifest'),p.join(runtime,'manifest'))
-
 
 for d in [tdmgname,dmgname]:
 	n = d+'.dmg'

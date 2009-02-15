@@ -49,7 +49,7 @@ AppConfig::AppConfig(std::string& xmlfile)
 	instance_ = this;
 	error = NULL;
 	xmlParserCtxtPtr context = xmlNewParserCtxt();
-
+	
 	xmlDocPtr document = xmlCtxtReadFile(context, xmlfile.c_str(), NULL, 0);
 	if (document != NULL) {
 

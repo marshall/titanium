@@ -696,7 +696,7 @@ setTimeout(function()
 		var myName = Titanium.Platform.username+'1';
 		var myNameStr = Titanium.Platform.username+'1';
 
-		$('#irc').append('<div style="color:#aaa">you are joining the <span style="color:#42C0FB">Titnamium Developer</span> chat room. one moment...</div>');
+		$('#irc').append('<div style="color:#aaa">you are joining the <span style="color:#42C0FB">Titanium Developer</span> chat room. one moment...</div>');
 		
 		var irc = Titanium.Network.createIRCClient();
 		irc.connect("irc.freenode.net",6667,myNick,myName,myNameStr,String(new Date().getTime()),function(cmd,channel,data,nick)
