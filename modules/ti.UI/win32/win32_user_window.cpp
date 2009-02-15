@@ -88,7 +88,6 @@ Win32UserWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	Win32UserWindow *window = Win32UserWindow::FromWindow(hWnd);
 
-	/*
 	if (window && window->messageHandlers.find(message) != window->messageHandlers.end())
 	{
 		SharedBoundMethod handler = window->messageHandlers[message];
@@ -97,7 +96,6 @@ Win32UserWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 		return 0;
 	}
-	*/
 
 	switch (message)
 	{
