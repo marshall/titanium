@@ -8,6 +8,7 @@
 #define _WIN32_UI_BINDING_H_
 
 #include "../ui_module.h"
+#include "win32_menu_item_impl.h"
 
 namespace ti
 {
@@ -36,7 +37,12 @@ namespace ti
 
 		long GetSystemIdleTime();
 
+		static HMENU getContextMenuInUseHandle() { return contextMenuInUseHandle; }
+
 	private:
+		SharedPtr<Win32MenuItemImpl> contextMenuInUse;
+		static HMENU contextMenuInUseHandle;
+		static SharedPtr<TrayItem> trayItem;
 		static SharedBoundList SelectDirectory(
 			bool multiple,
 			std::string& path,
