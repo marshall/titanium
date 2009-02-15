@@ -221,7 +221,11 @@ Win32WebKitUIDelegate::trackCustomPopupMenu(
 	/* [in] */ OLE_HANDLE menu,
 	/* [in] */ LPPOINT point)
 {
-	HMENU contextMenu = Win32UIBinding::getContextMenuInUseHandle();
+	HMENU contextMenu = this->window->GetContextMenuHandle();
+	if(! contextMenu)
+	{
+		contextMenu = Win32UIBinding::getContextMenuInUseHandle();
+	}
 	if(contextMenu)
 	{
 		TrackPopupMenu(contextMenu,

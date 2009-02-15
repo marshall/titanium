@@ -133,7 +133,7 @@ Win32UserWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 }
 
 Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config)
-	: UserWindow(host, config), script_evaluator(host), menuBarHandle(NULL), menuInUse(NULL), menu(NULL)
+	: UserWindow(host, config), script_evaluator(host), menuBarHandle(NULL), menuInUse(NULL), menu(NULL), contextMenuHandle(NULL)
 {
 	static bool initialized = false;
 	win32_host = static_cast<kroll::Win32Host*>(host);
@@ -506,15 +506,33 @@ SharedBoundList Win32UserWindow::GetMenu()
 	return NULL;
 }
 
-void Win32UserWindow::SetContextMenu(SharedBoundList value)
+void Win32UserWindow::SetContextMenu(SharedPtr<MenuItem> menu)
 {
-	STUB();
+	SharedPtr<Win32MenuItemImpl> menu_new = menu.cast<Win32MenuItemImpl>();
+
+	// if it's the same menu, don't do anything
+	if((menu_new.isNull() && this->contextMenu.isNull()) || (menu_new == this->contextMenu))
+	{
+		return;
+	}
+
+	// remove old menu if needed
+	if(! this->contextMenu.isNull())
+	{
+		this->contextMenu->ClearRealization(contextMenuHandle);
+		this->contextMenuHandle = NULL;
+	}
+
+	this->contextMenu = menu_new;
+	if(! this->contextMenu.isNull())
+	{
+		this->contextMenuHandle = this->contextMenu->GetMenu();
+	}
 }
 
-SharedBoundList Win32UserWindow::GetContextMenu()
+SharedPtr<MenuItem> Win32UserWindow::GetContextMenu()
 {
-	STUB();
-	return NULL;
+	return this->contextMenu;
 }
 
 void Win32UserWindow::SetIcon(SharedString icon_path)
