@@ -10,6 +10,9 @@ if tiBuild.is_osx():
 	tiBuild.add_thirdparty(env, 'poco', True)
 	env.Append(LIBS=['kroll','tiappmodule'])
 	env.Append(FRAMEWORKS = ['Cocoa'])
+elif tiBuild.is_win32():
+	tiBuild.add_thirdparty(env, 'poco', True)
+	env.Append(LIBS=['kroll','tiappmodule'])
 else:
 	tiBuild.add_thirdparty(env, 'poco')
 

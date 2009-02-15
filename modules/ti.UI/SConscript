@@ -10,10 +10,11 @@ env.Append(CPPPATH = [
 	'%s/modules/javascript' % build.kroll_source_dir,
 	'%s/modules/ti.App' % build.titanium_source_dir])
 
-if build.is_osx():
+if not build.is_linux():
 	build.add_thirdparty(env, 'poco', True)
 	env.Append(LIBS=['kroll','tiappmodule','javascriptmodule'])
-	env.Append(FRAMEWORKS = ['Cocoa'])
+	if build.is_osx():
+		env.Append(FRAMEWORKS = ['Cocoa'])
 else:
 	build.add_thirdparty(env, 'poco')
 
