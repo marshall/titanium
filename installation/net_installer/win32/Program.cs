@@ -27,7 +27,6 @@ namespace Titanium
                 return;
             }
 
-
             string appname = args[1];
             string title = args[2];
             string message = args[3];

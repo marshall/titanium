@@ -12,6 +12,7 @@
 namespace ti {
 	LibNotifyBinding::LibNotifyBinding(SharedBoundObject global) : GrowlBinding(global)
 	{
+		notify_init(LibNotifyBinding::GetAppName().c_str());
 	}
 
 	LibNotifyBinding::~LibNotifyBinding()
@@ -20,7 +21,7 @@ namespace ti {
 
 	bool LibNotifyBinding::IsRunning()
 	{
-		return true;
+		return notify_is_initted();
 	}
 
 	void LibNotifyBinding::ShowNotification(
@@ -30,8 +31,6 @@ namespace ti {
 		int notification_timeout,
 		SharedBoundMethod callback)
 	{
-		if (!notify_is_initted())
-			notify_init(LibNotifyBinding::GetAppName().c_str());
 
 		const char *icon_path = NULL;
 		SharedString icon_path_str;

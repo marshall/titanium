@@ -116,7 +116,6 @@ void Installer::Run()
 	gint r = gtk_dialog_run(GTK_DIALOG(dialog));
 	gtk_widget_destroy(dialog);
 
-	sleep(30);
 	if (r == GTK_RESPONSE_YES)
 	{
 	

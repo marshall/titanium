@@ -77,7 +77,7 @@ for walk in os.walk(app_dir):
 			os.remove(p.join(app_dir, walk[0], file))
 
 out = open(app_dir + '.bin', 'wb')
-extractor = open('self_extracting.sh', 'r').read()
+extractor = open('linux/self_extracting.sh', 'r').read()
 extractor = extractor.replace('APPNAME', name)
 out.write(extractor)
 

@@ -93,7 +93,9 @@ else:
 	# Kroll *must not be required* for installation
 	SConscript('installation/SConscript')
 
+	if not build.is_linux():
+		build.env.Append(LIBS=['kroll']) 
+
 	# Kroll library is now built (hopefully)
-	build.env.Append(LIBS=['kroll']) 
 	SConscript('modules/SConscript')
 
