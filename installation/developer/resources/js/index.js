@@ -734,106 +734,111 @@ TiDeveloper.getCurrentTime = function()
 };
 var irc_count = 0;
 
-setTimeout(function()
+//FIXME - this is temporary until i can figure out IRC crashes in Win32 /JGH
+if (Titanium.platform != 'win32')
 {
-	try
+	setTimeout(function()
 	{
-		var myNick = Titanium.Platform.username+'1';
-		var myName = Titanium.Platform.username+'1';
-		var myNameStr = Titanium.Platform.username+'1';
-
-		$('#irc').append('<div style="color:#aaa">you are joining the <span style="color:#42C0FB">Titanium Developer</span> chat room. one moment...</div>');
-		
-		var irc = Titanium.Network.createIRCClient();
-		irc.connect("irc.freenode.net",6667,myNick,myName,myNameStr,String(new Date().getTime()),function(cmd,channel,data,nick)
+		try
 		{
-			
-			var time = TiDeveloper.getCurrentTime();
+			var myNick = Titanium.Platform.username+'1';
+			var myName = Titanium.Platform.username+'1';
+			var myNameStr = Titanium.Platform.username+'1';
 
-			// switch on command
-			switch(cmd)
+			$('#irc').append('<div style="color:#aaa">you are joining the <span style="color:#42C0FB">Titanium Developer</span> chat room. one moment...</div>');
+			
+			var irc = Titanium.Network.createIRCClient();
+			irc.connect("irc.freenode.net",6667,myNick,myName,myNameStr,String(new Date().getTime()),function(cmd,channel,data,nick)
 			{
-				case 'NOTICE':
-				case 'PRIVMSG':
+				
+				var time = TiDeveloper.getCurrentTime();
+
+				// switch on command
+				switch(cmd)
 				{
-					if (nick && nick!='NickServ')
+					case 'NOTICE':
+					case 'PRIVMSG':
 					{
-						if (TiDeveloper.currentState != 'interact') TiDeveloper.ircMessageCount ++;
-						$('#irc_message_count').html(TiDeveloper.ircMessageCount);
-						$('#irc').append('<div style="color:yellow;float:left">' + nick + ': ' + channel.substring(1,channel.length) + '</div><div style="float:right;color:#ccc;font-size:11px">'+time+'</div><div style="clear:both"></div>');
-					}
-					break;
-				}
-				case '366':
-				{					
-					var users = irc.getUsers('#titanium_dev');
-					$MQ('l:online.count',{count:users.length});
-					irc_count = users.length;
-					for (var i=0;i<users.length;i++)
-					{
-						if (users[i].operator == true)
+						if (nick && nick!='NickServ')
 						{
-							$('#irc_users').append('<div class="'+users[i].name+'" style="color:#42C0FB">'+users[i].name+'(op)</div>');
+							if (TiDeveloper.currentState != 'interact') TiDeveloper.ircMessageCount ++;
+							$('#irc_message_count').html(TiDeveloper.ircMessageCount);
+							$('#irc').append('<div style="color:yellow;float:left">' + nick + ': ' + channel.substring(1,channel.length) + '</div><div style="float:right;color:#ccc;font-size:11px">'+time+'</div><div style="clear:both"></div>');
 						}
-						else if (users[i].voice==true)
+						break;
+					}
+					case '366':
+					{					
+						var users = irc.getUsers('#titanium_dev');
+						$MQ('l:online.count',{count:users.length});
+						irc_count = users.length;
+						for (var i=0;i<users.length;i++)
 						{
-							$('#irc_users').append('<div class="'+users[i].name+'" style="color:#42C0FB">'+users[i].name+'(v)</div>');
+							if (users[i].operator == true)
+							{
+								$('#irc_users').append('<div class="'+users[i].name+'" style="color:#42C0FB">'+users[i].name+'(op)</div>');
+							}
+							else if (users[i].voice==true)
+							{
+								$('#irc_users').append('<div class="'+users[i].name+'" style="color:#42C0FB">'+users[i].name+'(v)</div>');
+							}
+							else
+							{
+								$('#irc_users').append('<div class="'+users[i].name+'">'+users[i].name+'</div>');
+							}
+						}
+					}
+					case 'JOIN':
+					{
+						if (nick.indexOf('freenode.net') != -1)
+						{
+							continue;
+						}
+						
+						if (nick == myNick)
+						{
+							$('#irc').append('<div style="color:#aaa"> you are now in the room. </div>');
+							break
 						}
 						else
 						{
-							$('#irc_users').append('<div class="'+users[i].name+'">'+users[i].name+'</div>');
+							irc_count++;
 						}
+						$('#irc').append('<div style="color:#aaa">' + nick + ' has joined the room </div>');
+						$('#irc_users').append('<div class="'+nick+'" style="color:#457db3">'+nick+'</div>');
+						$MQ('l:online.count',{count:irc_count});
+						break;
+						
+					}
+					case 'QUIT':
+					case 'PART':
+					{
+						$('#irc').append('<div style="color:#aaa">' + nick + ' has left the room </div>');
+						$('.'+nick).html('');
+						irc_count--;
+						$MQ('l:online.count',{count:irc_count});
+						break;
 					}
 				}
-				case 'JOIN':
-				{
-					if (nick.indexOf('freenode.net') != -1)
-					{
-						continue;
-					}
-					
-					if (nick == myNick)
-					{
-						$('#irc').append('<div style="color:#aaa"> you are now in the room. </div>');
-						break
-					}
-					else
-					{
-						irc_count++;
-					}
-					$('#irc').append('<div style="color:#aaa">' + nick + ' has joined the room </div>');
-					$('#irc_users').append('<div class="'+nick+'" style="color:#457db3">'+nick+'</div>');
-					$MQ('l:online.count',{count:irc_count});
-					break;
-					
-				}
-				case 'QUIT':
-				case 'PART':
-				{
-					$('#irc').append('<div style="color:#aaa">' + nick + ' has left the room </div>');
-					$('.'+nick).html('');
-					irc_count--;
-					$MQ('l:online.count',{count:irc_count});
-					break;
-				}
-			}
-			$('#irc').get(0).scrollTop = $('#irc').get(0).scrollHeight;
-		});
+				$('#irc').get(0).scrollTop = $('#irc').get(0).scrollHeight;
+			});
 
-		irc.join("#titanium_dev");
-		$MQL('l:send.irc.msg',function()
+			irc.join("#titanium_dev");
+			$MQL('l:send.irc.msg',function()
+			{
+				var time = TiDeveloper.getCurrentTime();
+				irc.send('#titanium_dev',$('#irc_msg').val());
+				$('#irc').append('<div style="color:#fff;float:left">' + myNick + ': ' + $('#irc_msg').val() + '</div><div style="float:right;color:#ccc;font-size:11px">'+time+'</div><div style="clear:both"></div>');
+				$('#irc_msg').val('');
+				$('#irc').get(0).scrollTop = $('#irc').get(0).scrollHeight;
+
+			})
+		}
+		catch(E)
 		{
-			var time = TiDeveloper.getCurrentTime();
-			irc.send('#titanium_dev',$('#irc_msg').val());
-			$('#irc').append('<div style="color:#fff;float:left">' + myNick + ': ' + $('#irc_msg').val() + '</div><div style="float:right;color:#ccc;font-size:11px">'+time+'</div><div style="clear:both"></div>');
-			$('#irc_msg').val('');
-			$('#irc').get(0).scrollTop = $('#irc').get(0).scrollHeight;
+			alert("Exception: "+E);
+		}
+	},1000);
 
-		})
-	}
-	catch(E)
-	{
-		alert("Exception: "+E);
-	}
-},1000);
+}
 
