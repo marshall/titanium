@@ -15,6 +15,8 @@
 
 namespace ti
 {
+	HMENU Win32UIBinding::contextMenuInUseHandle = NULL;
+
 	Win32UIBinding::Win32UIBinding(Host *host) : UIBinding(host)
 	{
 	}
@@ -44,8 +46,30 @@ namespace ti
 		}
 	}
 
-	void Win32UIBinding::SetContextMenu(SharedPtr<MenuItem>)
+	void Win32UIBinding::SetContextMenu(SharedPtr<MenuItem> menu)
 	{
+		SharedPtr<Win32MenuItemImpl> menu_new = menu.cast<Win32MenuItemImpl>();
+
+		// if same menu, just return
+		if ((menu.isNull() && contextMenuInUse.isNull()) || (menu_new == contextMenuInUse))
+		{
+			return;
+		}
+
+		// delete old menu if available
+		if(! contextMenuInUse.isNull())
+		{
+			contextMenuInUse->ClearRealization(contextMenuInUseHandle);
+			contextMenuInUseHandle = NULL;
+		}
+
+		contextMenuInUse = menu_new;
+
+		// create new menu if needed
+		if(! contextMenuInUse.isNull())
+		{
+			contextMenuInUseHandle = contextMenuInUse->GetMenu();
+		}
 	}
 
 	void Win32UIBinding::SetIcon(SharedString icon_path)
