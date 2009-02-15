@@ -9,7 +9,7 @@
 namespace ti
 {
 
-	TrayItem::TrayItem() : StaticBoundObject() 
+	TrayItem::TrayItem() : StaticBoundObject()
 	{
 		this->SetMethod("setIcon", &TrayItem::_SetIcon);
 		this->SetMethod("setMenu", &TrayItem::_SetMenu);
@@ -58,6 +58,7 @@ namespace ti
 	void TrayItem::_Remove(const ValueList& args, SharedValue result)
 	{
 		this->Remove();
+		UIBinding::RemoveTray(this);
 	}
 
 }
