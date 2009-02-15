@@ -219,6 +219,10 @@ Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config)
 
 	std::cout << "resize subviews" << std::endl;
 	ResizeSubViews();
+
+	// ensure we have valid restore values
+	restore_bounds = GetBounds();
+	restore_styles = GetWindowLong(window_handle, GWL_STYLE);
 }
 
 Win32UserWindow::~Win32UserWindow()

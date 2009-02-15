@@ -138,7 +138,22 @@
 					trayIcon.setIcon("app://tray2.ico");
 				}
 			}
-			function openWindowA()
+			function openWindowNormal()
+			{
+				var w = Titanium.UI.createWindow();
+				try
+				{
+					w.setTitle("hello world from fullscreen");
+					w.setURL("app://fullscreen.html");
+					w.setUsingChrome(true);
+					w.open();
+				}
+				catch(e)
+				{
+					alert("Exception: "+e);
+				}
+			}
+			function openWindowFullScreen()
 			{
 				var w = Titanium.UI.createWindow();
 				try
@@ -194,7 +209,10 @@
 	</head>
 	<body>
 		<h2>Titanium UI test app</h2>
-		<div><button onclick="openWindowA()">Open Window</button></div>
+		<div>
+			<button onclick="openWindowNormal()">Open Window</button>
+			<button onclick="openWindowFullScreen()">Open Window (fullscreen)</button>
+		</div>
 		<div>Delegate:<br/>
 			<button onclick="jsAlert()">alert</button>
 			<button onclick="jsConfirm()">confirm</button>
