@@ -58,12 +58,13 @@ function runInstaller()
 
 	var src = Titanium.Process.getEnv('KR_HOME');
 	var dest = Titanium.Process.getEnv('KR_RUNTIME_HOME');
+	
 	var runtimeDir = TFS.getFile(dest);
 	if (!runtimeDir.isDirectory())
 	{
 		runtimeDir.createDirectory(true);
 	}
-	var manifest = TFS.getFile(src,'manifest');
+	var manifest = TFS.getFile(src,'install');
 	if (!manifest.isFile())
 	{
 		alert("Invalid runtime installer. Couldn't find manifest!");
