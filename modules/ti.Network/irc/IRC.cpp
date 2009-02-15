@@ -40,6 +40,7 @@
 #include <sys/types.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
+#include <cstdio>
 #define closesocket(s) close(s)
 #define SOCKET_ERROR -1
 #define INVALID_SOCKET -1
@@ -128,7 +129,11 @@ void IRC::send(const char *fmt, ...)
 	va_list args; 
 	va_start(args, fmt);
 	char szBuf[1024];
+#ifdef OS_WIN32
 	int size = vsprintf_s(szBuf, 1024, fmt, args);
+#else
+	int size = vsprintf(szBuf, fmt, args);
+#endif
 	if (size > 0)
 	{
 	#ifdef DEBUG
@@ -818,7 +823,11 @@ int IRC::notice(char* fmt, ...)
 	va_start(argp, fmt);
 	char szBuf[1024];
 	send("NOTICE %s :", fmt);
+#ifdef OS_WIN32
 	int count = vsprintf_s(szBuf, va_arg(argp,char*), argp);
+#else
+	int count = vsprintf(szBuf, va_arg(argp,char*), argp);
+#endif
 	if (count>0) send(szBuf);
 	va_end(argp);
 	send("\r\n");
@@ -842,7 +851,11 @@ int IRC::privmsg(char* fmt, ...)
 	va_start(argp, fmt);
 	send("PRIVMSG %s :", fmt);
 	char szBuf[1024];
+#ifdef OS_WIN32
 	int count = vsprintf_s(szBuf, va_arg(argp,char*), argp);
+#else
+	int count = vsprintf(szBuf, va_arg(argp,char*), argp);
+#endif
 	if (count>0) send(szBuf);
 	va_end(argp);
 	send("\r\n");
