@@ -1,6 +1,6 @@
 /**
  * Appcelerator Titanium - licensed under the Apache Public License 2
- * see LICENSE in the root folder for details on the license. 
+ * see LICENSE in the root folder for details on the license.
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
 #ifndef _GTK_USER_WINDOW_H_
@@ -21,7 +21,7 @@ namespace ti
 		void SetupMenu();
 		void SetupIcon();
 		void AppMenuChanged();
-		void AppIconChanged(); 
+		void AppIconChanged();
 		void RemoveOldMenu();
 
 		UserWindow* WindowFactory(Host *, WindowConfig*);
@@ -76,8 +76,8 @@ namespace ti
 		void SetMenu(SharedBoundList menu);
 		SharedBoundList GetMenu();
 
-		void SetContextMenu(SharedBoundList menu);
-		SharedBoundList GetContextMenu();
+		void SetContextMenu(SharedPtr<MenuItem> menu);
+		SharedPtr<MenuItem> GetContextMenu();
 
 		void SetIcon(SharedString icon_path);
 		SharedString GetIcon();

@@ -160,8 +160,8 @@ class UserWindow : public kroll::StaticBoundObject {
 		virtual void SetUsingChrome(bool chrome) = 0;
 		virtual void SetMenu(SharedBoundList menu) = 0;
 		virtual SharedBoundList GetMenu() = 0;
-		virtual void SetContextMenu(SharedBoundList menu) = 0;
-		virtual SharedBoundList GetContextMenu() = 0;
+		virtual void SetContextMenu(SharedPtr<MenuItem> menu) = 0;
+		virtual SharedPtr<MenuItem> GetContextMenu() = 0;
 		virtual void SetIcon(SharedString icon_path) = 0;
 		virtual SharedString GetIcon() = 0;
 

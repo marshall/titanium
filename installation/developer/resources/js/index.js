@@ -139,8 +139,62 @@ TiDeveloper.stopIRCTrack = function()
 	$('#irc_message_count').html('');
 	
 };
-$MQL('l:row.selected',function()
+TiDeveloper.updateAppData = function()
 {
+	// write manifest
+	var values = {};
+	values.name = $('#project_name_value').html();
+	values.publisher = $('#project_pub_value').html();
+	values.dir = $('#project_dir_value').html();
+	values.image = $('#project_pub_image_value').html();
+	values.url = $('#project_pub_url_value').html();
+	Titanium.Project.updateManifest(values)
+
+	var id = $('#project_id_value').get(0).value;
+
+	// update database
+    db.transaction(function (tx) 
+    {
+        tx.executeSql("UPDATE Projects set name = ?, directory = ?, publisher = ?, url = ?, image = ? WHERE id = ?", 
+		[values.name,values.dir,values.publisher,values.url,values.image, id]);
+    });
+	
+	// update array
+	for (var i=0;i<TiDeveloper.ProjectArray.length;i++)
+	{
+		if (TiDeveloper.ProjectArray[i].id == id)
+		{
+			TiDeveloper.ProjectArray[i].name = values.name
+			TiDeveloper.ProjectArray[i].dir = values.dir
+			TiDeveloper.ProjectArray[i].publisher = values.publisher
+			TiDeveloper.ProjectArray[i].url = values.url
+			TiDeveloper.ProjectArray[i].image = values.image
+		}
+	}
+};
+
+$MQL('l:row.selected',function(msg)
+{
+	var msgObj = {}
+	// fire data message for project detail
+	for (var i=0;i<TiDeveloper.ProjectArray.length;i++)
+	{
+		if (TiDeveloper.ProjectArray[i].id == msg.payload.project_id)
+		{
+			msgObj.date = TiDeveloper.ProjectArray[i].date;
+			msgObj.name = TiDeveloper.ProjectArray[i].name;
+			msgObj.location = TiDeveloper.formatDirectory(TiDeveloper.ProjectArray[i].dir);
+			msgObj.fullLocation = TiDeveloper.ProjectArray[i].dir;
+			msgObj.pub = TiDeveloper.ProjectArray[i].publisher
+			msgObj.url = TiDeveloper.ProjectArray[i].url;
+			msgObj.image = TiDeveloper.ProjectArray[i].image;
+			$MQ('l:project.detail.data',msgObj)
+			break;
+
+		}
+	}
+	
+	// setup editable fields
 	$('.edit').click(function()
 	{
 		if ($(this).attr('edit_mode') != 'true')
@@ -153,6 +207,7 @@ $MQL('l:row.selected',function()
 				{
 					var id = $(activeFiles[i]).attr('id');
 					$(activeFiles[i]).html($('#'+id+'_input').val())
+					TiDeveloper.updateAppData();
 					$(activeFiles[i]).get(0).removeAttribute('edit_mode');
 				}
 			}
@@ -173,6 +228,7 @@ $MQL('l:row.selected',function()
 				{
 					el.innerHTML = $('#'+el.id+'_input').val() 
 					el.removeAttribute('edit_mode');
+					TiDeveloper.updateAppData();
 				}
 				else if (e.keyCode==27)
 				{
@@ -192,7 +248,7 @@ function createRecord(options,callback)
 	var dateStr = (date.getMonth()+1)+"/"+date.getDate()+"/"+date.getFullYear();
 	var record = {
 		name: options.name,
-		dir: options.dir,
+		dir: String(options.dir),
 		id: ++highestId,
 		appid: options.appid,
 		date: dateStr,
@@ -220,7 +276,7 @@ function loadProjects()
 
 	db.transaction(function(tx) 
 	{
-        tx.executeSql("SELECT id, timestamp, name, directory, appid, publisher, url, image FROM Projects", [], function(tx, result) 
+        tx.executeSql("SELECT id, timestamp, name, directory, appid, publisher, url, image FROM Projects order by timestamp", [], function(tx, result) 
 		{
 			TiDeveloper.ProjectArray = [];
             for (var i = 0; i < result.rows.length; ++i) {
@@ -344,17 +400,8 @@ $MQL('l:page.data.request',function(msg)
 });
 
 
-TiDeveloper.formatDirectory =function(id,truncate)
+TiDeveloper.formatDirectory =function(dir,truncate)
 {
-	var dir = null
-	for (var i=0;i<TiDeveloper.ProjectArray.length;i++)
-	{
-		if (TiDeveloper.ProjectArray[i].id == id)
-		{
-			dir = TiDeveloper.ProjectArray[i].dir;
-			break;
-		}
-	}
 	// return whole dir
 	if (truncate == false)return dir;
 	
@@ -366,15 +413,14 @@ TiDeveloper.formatDirectory =function(id,truncate)
 			dirStr = dir.substring(0,40) + '...';
 			$('#project_detail_dir_a').css('display','block');
 			$('#project_detail_dir_span').css('display','none');
-			$('#project_detail_dir_a').get(0).innerHTML = dirStr;
 		}
 		else
 		{
 			$('#project_detail_dir_span').css('display','block');
 			$('#project_detail_dir_a').css('display','none');
-			$('#project_detail_dir_span').get(0).innerHTML = dirStr;
 		}
 	}
+	return dirStr;
 }
 //
 // Get a page of data
@@ -688,106 +734,111 @@ TiDeveloper.getCurrentTime = function()
 };
 var irc_count = 0;
 
-setTimeout(function()
+//FIXME - this is temporary until i can figure out IRC crashes in Win32 /JGH
+if (Titanium.platform != 'win32')
 {
-	try
+	setTimeout(function()
 	{
-		var myNick = Titanium.Platform.username+'1';
-		var myName = Titanium.Platform.username+'1';
-		var myNameStr = Titanium.Platform.username+'1';
-
-		$('#irc').append('<div style="color:#aaa">you are joining the <span style="color:#42C0FB">Titanium Developer</span> chat room. one moment...</div>');
-		
-		var irc = Titanium.Network.createIRCClient();
-		irc.connect("irc.freenode.net",6667,myNick,myName,myNameStr,String(new Date().getTime()),function(cmd,channel,data,nick)
+		try
 		{
-			
-			var time = TiDeveloper.getCurrentTime();
+			var myNick = Titanium.Platform.username+'1';
+			var myName = Titanium.Platform.username+'1';
+			var myNameStr = Titanium.Platform.username+'1';
 
-			// switch on command
-			switch(cmd)
+			$('#irc').append('<div style="color:#aaa">you are joining the <span style="color:#42C0FB">Titanium Developer</span> chat room. one moment...</div>');
+			
+			var irc = Titanium.Network.createIRCClient();
+			irc.connect("irc.freenode.net",6667,myNick,myName,myNameStr,String(new Date().getTime()),function(cmd,channel,data,nick)
 			{
-				case 'NOTICE':
-				case 'PRIVMSG':
+				
+				var time = TiDeveloper.getCurrentTime();
+
+				// switch on command
+				switch(cmd)
 				{
-					if (nick && nick!='NickServ')
+					case 'NOTICE':
+					case 'PRIVMSG':
 					{
-						if (TiDeveloper.currentState != 'interact') TiDeveloper.ircMessageCount ++;
-						$('#irc_message_count').html(TiDeveloper.ircMessageCount);
-						$('#irc').append('<div style="color:yellow;float:left">' + nick + ': ' + channel.substring(1,channel.length) + '</div><div style="float:right;color:#ccc;font-size:11px">'+time+'</div><div style="clear:both"></div>');
-					}
-					break;
-				}
-				case '366':
-				{					
-					var users = irc.getUsers('#titanium_dev');
-					$MQ('l:online.count',{count:users.length});
-					irc_count = users.length;
-					for (var i=0;i<users.length;i++)
-					{
-						if (users[i].operator == true)
+						if (nick && nick!='NickServ')
 						{
-							$('#irc_users').append('<div class="'+users[i].name+'" style="color:#42C0FB">'+users[i].name+'(op)</div>');
+							if (TiDeveloper.currentState != 'interact') TiDeveloper.ircMessageCount ++;
+							$('#irc_message_count').html(TiDeveloper.ircMessageCount);
+							$('#irc').append('<div style="color:yellow;float:left">' + nick + ': ' + channel.substring(1,channel.length) + '</div><div style="float:right;color:#ccc;font-size:11px">'+time+'</div><div style="clear:both"></div>');
 						}
-						else if (users[i].voice==true)
+						break;
+					}
+					case '366':
+					{					
+						var users = irc.getUsers('#titanium_dev');
+						$MQ('l:online.count',{count:users.length});
+						irc_count = users.length;
+						for (var i=0;i<users.length;i++)
 						{
-							$('#irc_users').append('<div class="'+users[i].name+'" style="color:#42C0FB">'+users[i].name+'(v)</div>');
+							if (users[i].operator == true)
+							{
+								$('#irc_users').append('<div class="'+users[i].name+'" style="color:#42C0FB">'+users[i].name+'(op)</div>');
+							}
+							else if (users[i].voice==true)
+							{
+								$('#irc_users').append('<div class="'+users[i].name+'" style="color:#42C0FB">'+users[i].name+'(v)</div>');
+							}
+							else
+							{
+								$('#irc_users').append('<div class="'+users[i].name+'">'+users[i].name+'</div>');
+							}
+						}
+					}
+					case 'JOIN':
+					{
+						if (nick.indexOf('freenode.net') != -1)
+						{
+							continue;
+						}
+						
+						if (nick == myNick)
+						{
+							$('#irc').append('<div style="color:#aaa"> you are now in the room. </div>');
+							break
 						}
 						else
 						{
-							$('#irc_users').append('<div class="'+users[i].name+'">'+users[i].name+'</div>');
+							irc_count++;
 						}
+						$('#irc').append('<div style="color:#aaa">' + nick + ' has joined the room </div>');
+						$('#irc_users').append('<div class="'+nick+'" style="color:#457db3">'+nick+'</div>');
+						$MQ('l:online.count',{count:irc_count});
+						break;
+						
+					}
+					case 'QUIT':
+					case 'PART':
+					{
+						$('#irc').append('<div style="color:#aaa">' + nick + ' has left the room </div>');
+						$('.'+nick).html('');
+						irc_count--;
+						$MQ('l:online.count',{count:irc_count});
+						break;
 					}
 				}
-				case 'JOIN':
-				{
-					if (nick.indexOf('freenode.net') != -1)
-					{
-						continue;
-					}
-					
-					if (nick == myNick)
-					{
-						$('#irc').append('<div style="color:#aaa"> you are now in the room. </div>');
-						break
-					}
-					else
-					{
-						irc_count++;
-					}
-					$('#irc').append('<div style="color:#aaa">' + nick + ' has joined the room </div>');
-					$('#irc_users').append('<div class="'+nick+'" style="color:#457db3">'+nick+'</div>');
-					$MQ('l:online.count',{count:irc_count});
-					break;
-					
-				}
-				case 'QUIT':
-				case 'PART':
-				{
-					$('#irc').append('<div style="color:#aaa">' + nick + ' has left the room </div>');
-					$('.'+nick).html('');
-					irc_count--;
-					$MQ('l:online.count',{count:irc_count});
-					break;
-				}
-			}
-			$('#irc').get(0).scrollTop = $('#irc').get(0).scrollHeight;
-		});
+				$('#irc').get(0).scrollTop = $('#irc').get(0).scrollHeight;
+			});
 
-		irc.join("#titanium_dev");
-		$MQL('l:send.irc.msg',function()
+			irc.join("#titanium_dev");
+			$MQL('l:send.irc.msg',function()
+			{
+				var time = TiDeveloper.getCurrentTime();
+				irc.send('#titanium_dev',$('#irc_msg').val());
+				$('#irc').append('<div style="color:#fff;float:left">' + myNick + ': ' + $('#irc_msg').val() + '</div><div style="float:right;color:#ccc;font-size:11px">'+time+'</div><div style="clear:both"></div>');
+				$('#irc_msg').val('');
+				$('#irc').get(0).scrollTop = $('#irc').get(0).scrollHeight;
+
+			})
+		}
+		catch(E)
 		{
-			var time = TiDeveloper.getCurrentTime();
-			irc.send('#titanium_dev',$('#irc_msg').val());
-			$('#irc').append('<div style="color:#fff;float:left">' + myNick + ': ' + $('#irc_msg').val() + '</div><div style="float:right;color:#ccc;font-size:11px">'+time+'</div><div style="clear:both"></div>');
-			$('#irc_msg').val('');
-			$('#irc').get(0).scrollTop = $('#irc').get(0).scrollHeight;
+			alert("Exception: "+E);
+		}
+	},1000);
 
-		})
-	}
-	catch(E)
-	{
-		alert("Exception: "+E);
-	}
-},1000);
+}
 

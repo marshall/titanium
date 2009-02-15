@@ -64,6 +64,9 @@ protected:
 
 	HMENU menuBarHandle;
 
+	SharedPtr<Win32MenuItemImpl> contextMenu;
+	HMENU contextMenuHandle;
+
 	void RemoveMenu();
 	void ReloadTiWindowConfig();
 
@@ -129,8 +132,9 @@ public:
 	void SetUsingChrome(bool chrome);
 	void SetMenu(SharedBoundList menu);
 	SharedBoundList GetMenu();
-	void SetContextMenu(SharedBoundList menu);
-	SharedBoundList GetContextMenu();
+	void SetContextMenu(SharedPtr<MenuItem> menu);
+	SharedPtr<MenuItem> GetContextMenu();
+	HMENU GetContextMenuHandle() { return this->contextMenuHandle; }
 	void SetIcon(SharedString icon_path);
 	SharedString GetIcon();
 

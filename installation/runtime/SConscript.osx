@@ -155,6 +155,8 @@ except OSError:
     print ''
 
 shutil.copy(p.join(build.kroll_third_party,'manifest'),p.join(runtime,'manifest'))
+shutil.copy(p.join(build.titanium_source_dir,'installation','runtime','manifest'), p.join(app_dir,'manifest'))
+shutil.copy(p.join(build.titanium_source_dir,'installation','runtime','install'), p.join(app_dir,'install'))
 
 for d in [tdmgname,dmgname]:
 	n = d+'.dmg'

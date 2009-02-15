@@ -49,13 +49,10 @@ void Win32TrayItem::SetMenu(SharedBoundList menu)
 	if (menuToUse == this->trayMenu)
 		return;	// nothing to change since it's the same menu
 
-	/*
-	TODO need to delete the menu instance
-	if (!this->trayMenu->isNull())
+	if (!this->trayMenu.isNull())
 	{
 		this->trayMenu->ClearRealization(trayMenuHandle);
 	}
-	*/
 
 	// create menu handle
 	this->trayMenu = menuToUse;

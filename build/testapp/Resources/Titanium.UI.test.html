@@ -25,7 +25,7 @@
 				file.addItem("Open As...", function () {alert("open as called"); });
 				file.addSeparator();
 				file.addItem("Close", function () {alert("close called"); });
-				file.addItem("Exit", function () {alert("exit called"); });
+				file.addItem("Exit - forreal", function () { Titanium.App.exit(); });
 
 				if ("App Menu" == ident)
 				{
@@ -115,8 +115,18 @@
 				}
 				trayIcon = Titanium.UI.addTray("app://tray.ico", cb);
 				trayIcon.setHint("Hinty McHints");
-				var menu = preBakedMenu("TrayMenu");
-				trayIcon.setMenu(menu);
+				addTrayIconMenu();
+			}
+			function addTrayIconMenu() {
+				if(trayIcon) {
+					var menu = preBakedMenu("TrayMenu " + timestamp());
+					trayIcon.setMenu(menu);
+				}
+			}
+			function removeTrayIconMenu() {
+				if(trayIcon) {
+					trayIcon.setMenu(null);
+				}
 			}
 			function removeTrayIcon() {
 				if(trayIcon) {
@@ -128,7 +138,22 @@
 					trayIcon.setIcon("app://tray2.ico");
 				}
 			}
-			function openWindowA()
+			function openWindowNormal()
+			{
+				var w = Titanium.UI.createWindow();
+				try
+				{
+					w.setTitle("hello world from fullscreen");
+					w.setURL("app://fullscreen.html");
+					w.setUsingChrome(true);
+					w.open();
+				}
+				catch(e)
+				{
+					alert("Exception: "+e);
+				}
+			}
+			function openWindowFullScreen()
 			{
 				var w = Titanium.UI.createWindow();
 				try
@@ -184,7 +209,10 @@
 	</head>
 	<body>
 		<h2>Titanium UI test app</h2>
-		<div><button onclick="openWindowA()">Open Window</button></div>
+		<div>
+			<button onclick="openWindowNormal()">Open Window</button>
+			<button onclick="openWindowFullScreen()">Open Window (fullscreen)</button>
+		</div>
 		<div>Delegate:<br/>
 			<button onclick="jsAlert()">alert</button>
 			<button onclick="jsConfirm()">confirm</button>
@@ -227,10 +255,10 @@
 				<span style="font-size: 10px;">(should override app menu)</span>
 			</td>
 		</tr><tr>
-			<td> <button onclick="unsetWindowContextMenu()">Remove Window Menu</button><br/>
+			<td> <button onclick="unsetWindowContextMenu()">Remove Window Context Menu</button><br/>
 				<span style="font-size: 10px;">(should revert to app menu)</span>
 			</td>
-			<td><button onclick="unsetAppContextMenu()">Remove App Menu</button><br/>
+			<td><button onclick="unsetAppContextMenu()">Remove App Context Menu</button><br/>
 				<span style="font-size: 10px;">(no more menus)</span>
 			</td>
 		</tr>
@@ -258,6 +286,8 @@
 			Tray Icon: <button onclick="addTrayIcon();">Add Tray Icon</button>
 			<button onclick="removeTrayIcon();">Remove Tray Icon</button>
 			<button onclick="setTrayIcon();">Change Tray Icon</button>
+			<button onclick="removeTrayIconMenu();">Remove Tray Icon Menu</button>
+			<button onclick="addTrayIconMenu();">Add Tray Icon Menu</button>
 		</div>
 
 		<div class='output log'><code id="log"></code></div>
