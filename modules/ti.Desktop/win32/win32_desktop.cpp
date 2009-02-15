@@ -24,7 +24,13 @@ namespace ti
 	bool Win32Desktop::OpenApplication(std::string &name)
 	{
 		// this can actually open applications or documents (wordpad, notepad, file-test.txt, etc.)
-		long response = (long)ShellExecuteA(NULL, "open", name.c_str(), NULL, NULL, SW_SHOWNORMAL);
+		char *dir = NULL;
+		if (FileUtils::IsFile(name))
+		{
+			// start with the current working directory as the directory of the program
+			dir = (char*)FileUtils::GetDirectory(name);
+		}
+		long response = (long)ShellExecuteA(NULL, "open", name.c_str(), NULL, dir, SW_SHOWNORMAL);
 		return (response > 32);
 	}
 

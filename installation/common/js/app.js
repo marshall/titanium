@@ -101,6 +101,8 @@ Titanium.AppCreator = {
 		localRuntime.createDirectory();
 		var webkitDll = TFS.getFile(runtime,'WebKit.dll');
 		webkitDll.copy(localRuntime);
+		var sqlDll = TFS.getFile(runtime,'SQLite3.dll');
+		sqlDll.copy(localRuntime);
 		
 		// set our marker file
 		var marker = TFS.getFile(appDir,'.installed');
