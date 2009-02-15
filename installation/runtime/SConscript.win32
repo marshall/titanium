@@ -59,7 +59,9 @@ for m in modules.keys():
 appexe =  p.join(build.dir, name + ".exe")
 shutil.copy(self_extractor, appexe)
 shutil.copy("tiapp.xml", app_dir)
-dir_util.copy_tree("win32", app_dir, preserve_symlinks=True)
+
+if p.exists("win32"):
+	dir_util.copy_tree("win32", app_dir, preserve_symlinks=True)
 dir_util.copy_tree("Resources", resources_dir, preserve_symlinks=True)
 
 

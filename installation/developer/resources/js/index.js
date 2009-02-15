@@ -139,8 +139,62 @@ TiDeveloper.stopIRCTrack = function()
 	$('#irc_message_count').html('');
 	
 };
-$MQL('l:row.selected',function()
+TiDeveloper.updateAppData = function()
 {
+	// write manifest
+	var values = {};
+	values.name = $('#project_name_value').html();
+	values.publisher = $('#project_pub_value').html();
+	values.dir = $('#project_dir_value').html();
+	values.image = $('#project_pub_image_value').html();
+	values.url = $('#project_pub_url_value').html();
+	Titanium.Project.updateManifest(values)
+
+	var id = $('#project_id_value').get(0).value;
+
+	// update database
+    db.transaction(function (tx) 
+    {
+        tx.executeSql("UPDATE Projects set name = ?, directory = ?, publisher = ?, url = ?, image = ? WHERE id = ?", 
+		[values.name,values.dir,values.publisher,values.url,values.image, id]);
+    });
+	
+	// update array
+	for (var i=0;i<TiDeveloper.ProjectArray.length;i++)
+	{
+		if (TiDeveloper.ProjectArray[i].id == id)
+		{
+			TiDeveloper.ProjectArray[i].name = values.name
+			TiDeveloper.ProjectArray[i].dir = values.dir
+			TiDeveloper.ProjectArray[i].publisher = values.publisher
+			TiDeveloper.ProjectArray[i].url = values.url
+			TiDeveloper.ProjectArray[i].image = values.image
+		}
+	}
+};
+
+$MQL('l:row.selected',function(msg)
+{
+	var msgObj = {}
+	// fire data message for project detail
+	for (var i=0;i<TiDeveloper.ProjectArray.length;i++)
+	{
+		if (TiDeveloper.ProjectArray[i].id == msg.payload.project_id)
+		{
+			msgObj.date = TiDeveloper.ProjectArray[i].date;
+			msgObj.name = TiDeveloper.ProjectArray[i].name;
+			msgObj.location = TiDeveloper.formatDirectory(TiDeveloper.ProjectArray[i].dir);
+			msgObj.fullLocation = TiDeveloper.ProjectArray[i].dir;
+			msgObj.pub = TiDeveloper.ProjectArray[i].publisher
+			msgObj.url = TiDeveloper.ProjectArray[i].url;
+			msgObj.image = TiDeveloper.ProjectArray[i].image;
+			$MQ('l:project.detail.data',msgObj)
+			break;
+
+		}
+	}
+	
+	// setup editable fields
 	$('.edit').click(function()
 	{
 		if ($(this).attr('edit_mode') != 'true')
@@ -153,6 +207,7 @@ $MQL('l:row.selected',function()
 				{
 					var id = $(activeFiles[i]).attr('id');
 					$(activeFiles[i]).html($('#'+id+'_input').val())
+					TiDeveloper.updateAppData();
 					$(activeFiles[i]).get(0).removeAttribute('edit_mode');
 				}
 			}
@@ -173,6 +228,7 @@ $MQL('l:row.selected',function()
 				{
 					el.innerHTML = $('#'+el.id+'_input').val() 
 					el.removeAttribute('edit_mode');
+					TiDeveloper.updateAppData();
 				}
 				else if (e.keyCode==27)
 				{
@@ -192,7 +248,7 @@ function createRecord(options,callback)
 	var dateStr = (date.getMonth()+1)+"/"+date.getDate()+"/"+date.getFullYear();
 	var record = {
 		name: options.name,
-		dir: options.dir,
+		dir: String(options.dir),
 		id: ++highestId,
 		appid: options.appid,
 		date: dateStr,
@@ -220,7 +276,7 @@ function loadProjects()
 
 	db.transaction(function(tx) 
 	{
-        tx.executeSql("SELECT id, timestamp, name, directory, appid, publisher, url, image FROM Projects", [], function(tx, result) 
+        tx.executeSql("SELECT id, timestamp, name, directory, appid, publisher, url, image FROM Projects order by timestamp", [], function(tx, result) 
 		{
 			TiDeveloper.ProjectArray = [];
             for (var i = 0; i < result.rows.length; ++i) {
@@ -344,17 +400,8 @@ $MQL('l:page.data.request',function(msg)
 });
 
 
-TiDeveloper.formatDirectory =function(id,truncate)
+TiDeveloper.formatDirectory =function(dir,truncate)
 {
-	var dir = null
-	for (var i=0;i<TiDeveloper.ProjectArray.length;i++)
-	{
-		if (TiDeveloper.ProjectArray[i].id == id)
-		{
-			dir = TiDeveloper.ProjectArray[i].dir;
-			break;
-		}
-	}
 	// return whole dir
 	if (truncate == false)return dir;
 	
@@ -366,15 +413,14 @@ TiDeveloper.formatDirectory =function(id,truncate)
 			dirStr = dir.substring(0,40) + '...';
 			$('#project_detail_dir_a').css('display','block');
 			$('#project_detail_dir_span').css('display','none');
-			$('#project_detail_dir_a').get(0).innerHTML = dirStr;
 		}
 		else
 		{
 			$('#project_detail_dir_span').css('display','block');
 			$('#project_detail_dir_a').css('display','none');
-			$('#project_detail_dir_span').get(0).innerHTML = dirStr;
 		}
 	}
+	return dirStr;
 }
 //
 // Get a page of data
@@ -696,7 +742,7 @@ setTimeout(function()
 		var myName = Titanium.Platform.username+'1';
 		var myNameStr = Titanium.Platform.username+'1';
 
-		$('#irc').append('<div style="color:#aaa">you are joining the <span style="color:#42C0FB">Titnamium Developer</span> chat room. one moment...</div>');
+		$('#irc').append('<div style="color:#aaa">you are joining the <span style="color:#42C0FB">Titanium Developer</span> chat room. one moment...</div>');
 		
 		var irc = Titanium.Network.createIRCClient();
 		irc.connect("irc.freenode.net",6667,myNick,myName,myNameStr,String(new Date().getTime()),function(cmd,channel,data,nick)
