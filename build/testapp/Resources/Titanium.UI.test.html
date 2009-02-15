@@ -115,8 +115,18 @@
 				}
 				trayIcon = Titanium.UI.addTray("app://tray.ico", cb);
 				trayIcon.setHint("Hinty McHints");
-				var menu = preBakedMenu("TrayMenu");
-				trayIcon.setMenu(menu);
+				addTrayIconMenu();
+			}
+			function addTrayIconMenu() {
+				if(trayIcon) {
+					var menu = preBakedMenu("TrayMenu " + timestamp());
+					trayIcon.setMenu(menu);
+				}
+			}
+			function removeTrayIconMenu() {
+				if(trayIcon) {
+					trayIcon.setMenu(null);
+				}
 			}
 			function removeTrayIcon() {
 				if(trayIcon) {
@@ -258,6 +268,8 @@
 			Tray Icon: <button onclick="addTrayIcon();">Add Tray Icon</button>
 			<button onclick="removeTrayIcon();">Remove Tray Icon</button>
 			<button onclick="setTrayIcon();">Change Tray Icon</button>
+			<button onclick="removeTrayIconMenu();">Remove Tray Icon Menu</button>
+			<button onclick="addTrayIconMenu();">Add Tray Icon Menu</button>
 		</div>
 
 		<div class='output log'><code id="log"></code></div>

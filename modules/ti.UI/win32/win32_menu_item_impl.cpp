@@ -99,6 +99,12 @@ namespace ti
 
 	void Win32MenuItemImpl::ClearRealization(HMENU parent_menu)
 	{
+		if(parent_menu == NULL)
+		{
+			// nothing to do
+			return;
+		}
+
 		std::vector<NativeMenuItem*>::iterator i;
 
 		// Find the instance which is contained in parent_menu or,
