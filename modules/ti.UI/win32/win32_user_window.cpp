@@ -533,7 +533,23 @@ SharedPtr<MenuItem> Win32UserWindow::GetContextMenu()
 
 void Win32UserWindow::SetIcon(SharedString icon_path)
 {
-	STUB();
+	printf("set icon: %s\n", icon_path->c_str());
+
+	if (icon_path.isNull() && !UIModule::GetIcon().isNull())
+		icon_path = UIModule::GetIcon();
+
+	if (!icon_path.isNull())
+	{
+		std::string ext = icon_path->substr(icon_path->length()-4,4);
+		if (ext == ".ico")
+		{
+			HANDLE icon = LoadImageA(win32_host->GetInstanceHandle(),
+				icon_path->c_str(), IMAGE_ICON,
+				32, 32,
+				LR_LOADFROMFILE);
+			SendMessageA(window_handle, (UINT)WM_SETICON, ICON_BIG, (LPARAM)icon);
+		}
+	}
 }
 
 SharedString Win32UserWindow::GetIcon()
