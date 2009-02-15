@@ -52,6 +52,7 @@ namespace ti
 #ifdef DEBUG
 		std::cout << "Received: " << param << std::endl;
 #endif
+
 		IRCClientBinding *binding = (IRCClientBinding*)pd;
 		if (!binding->callback.isNull())
 		{
@@ -60,8 +61,17 @@ namespace ti
 			args.push_back(param ? Value::NewString(param) : Value::Null);
 			args.push_back(data->target ? Value::NewString(data->target): Value::Null);
 			args.push_back(data->nick ? Value::NewString(data->nick): Value::Null);
-			binding->host->InvokeMethodOnMainThread(binding->callback,args);
+
+			try
+			{
+				binding->host->InvokeMethodOnMainThread(binding->callback,args);
+			}
+			catch(std::exception &e)
+			{
+				std::cerr << "Caught exception dispatching IRC callback: " << irc_command << ", Error: " << e.what() << std::endl;
+			}
 		}
+		
 		return 0;
 	}
 	void IRCClientBinding::Run (void* p)
@@ -170,9 +180,6 @@ namespace ti
 			std::cout << "JOIN " << channel << std::endl;
 #endif
 			this->irc.join((char*)channel);
-			char msg[255];
-			sprintf(msg,"NAMES %s",channel);
-//			this->irc.raw(msg);
 		}
 	}
 	void IRCClientBinding::Unjoin(const ValueList& args, SharedValue result)

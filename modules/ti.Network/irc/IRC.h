@@ -90,6 +90,7 @@ private:
 	void split_to_replies(char* data);
 	void insert_irc_command_hook(irc_command_hook* hook, char* cmd_name, int (*function_ptr)(char*, char*, irc_reply_data*, void*, void*), void*);
 	void delete_irc_command_hook(irc_command_hook* cmd_hook);
+	void send(const char *buf, ...);
 	int irc_socket;
 	bool connected;
 	bool sentnick;
