@@ -563,5 +563,6 @@ void UserWindow::RemoveChild(UserWindow *parent, UserWindow *child)
 	if (iter != children.end()) {
 		children.erase(iter);
 	}
+	windowsMap[parent] = children;
 }
 
