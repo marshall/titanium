@@ -44,7 +44,11 @@ namespace ti
 		this->SetMethod("getSeparator",&FilesystemBinding::GetSeparator);
 		this->SetMethod("getRootDirectories",&FilesystemBinding::GetRootDirectories);
 		this->SetMethod("asyncCopy",&FilesystemBinding::ExecuteAsyncCopy);
-	} 
+
+		this->Set("FILESTREAM_MODE_READ", Value::NewString(FileStream::MODE_READ));
+		this->Set("FILESTREAM_MODE_WRITE", Value::NewString(FileStream::MODE_WRITE));
+		this->Set("FILESTREAM_MODE_APPEND", Value::NewString(FileStream::MODE_APPEND));
+	}
 	FilesystemBinding::~FilesystemBinding()
 	{
 		if (this->timer!=NULL)
@@ -101,7 +105,7 @@ namespace ti
 		}
 		else
 		{
-			// you can pass in vararg of strings which acts like 
+			// you can pass in vararg of strings which acts like
 			// a join
 			for (size_t c=0;c<args.size();c++)
 			{
@@ -155,11 +159,11 @@ namespace ti
 		std::string dir = [fullPath UTF8String];
 #elif OS_LINUX
 		std::string dir = "/usr/local/bin"; //TODO: this might need to be configurable
-#endif		
+#endif
 		ti::File* file = new ti::File(dir);
 		result->SetObject(file);
 	}
-	
+
 	void FilesystemBinding::GetDesktopDirectory(const ValueList& args, SharedValue result)
 	{
 		std::string dir;

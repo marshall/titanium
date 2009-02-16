@@ -128,17 +128,36 @@ TiDeveloper.ircMessageCount = 0;
 TiDeveloper.startIRCTrack = function()
 {
 	TiDeveloper.ircMessageCount = 0;
-	$('#irc_message_count').html('');
-	$('#irc_message_count').css('display','inline');
+//	$('#irc_message_count').html('');
+//	$('#irc_message_count').css('display','inline');
 	
 };
 TiDeveloper.stopIRCTrack = function()
 {
 	TiDeveloper.ircMessageCount = 0;
-	$('#irc_message_count').css('display','none');
-	$('#irc_message_count').html('');
+//	$('#irc_message_count').css('display','none');
+//	$('#irc_message_count').html('');
+	Titanium.UI.setBadge('');
 	
 };
+
+// track focus events for when to send notifications
+TiDeveloper.windowFocused = false
+Titanium.UI.currentWindow.addEventListener(function(event)
+{
+	if (event == "unfocused")
+	{
+		TiDeveloper.ircMessageCount = 0;
+		TiDeveloper.windowFocused = false;
+	}
+	else if (event == "focused")
+	{
+		TiDeveloper.ircMessageCount = 0;
+		TiDeveloper.windowFocused = true;
+		Titanium.UI.setBadge('');
+	}
+});
+
 TiDeveloper.updateAppData = function()
 {
 	// write manifest
@@ -299,6 +318,13 @@ function loadProjects()
 			TiDeveloper.currentPage = 1;
 			var data = TiDeveloper.getProjectPage(10,TiDeveloper.currentPage);
 			var count = formatCountMessage(TiDeveloper.ProjectArray.length,'project');
+			
+			// show create project if none
+			if (TiDeveloper.ProjectArray.length == 0)
+			{
+				$MQ('l:menu',{val:'manage'})
+			}
+			
 			$('#project_count_hidden').val(TiDeveloper.ProjectArray.length)
 			$MQ('l:project.list.response',{count:count,page:TiDeveloper.currentPage,totalRecords:TiDeveloper.ProjectArray.length,'rows':data})
         }, function(tx, error) {
@@ -739,7 +765,20 @@ function format_nickname(name)
 {
 	return name.replace(' ','_');
 }
-
+TiDeveloper.online = false;
+Titanium.Network.addConnectivityListener(function(online)
+{
+	if (online == false)
+	{
+		TiDeveloper.online = false;
+		$MQ('l:online.count',{count:'offline'});
+	}
+	else
+	{
+		TiDeveloper.online = true;
+		
+	}
+});
 setTimeout(function()
 {
 	try
@@ -769,13 +808,27 @@ setTimeout(function()
 				{
 					if (nick && nick!='NickServ')
 					{
-						if (TiDeveloper.currentState != 'interact') TiDeveloper.ircMessageCount ++;
+						if ((TiDeveloper.currentState != 'interact') ||
+						    (TiDeveloper.windowFocused == false))
+						{
+							TiDeveloper.ircMessageCount ++;
+							Titanium.UI.setBadge(String(TiDeveloper.ircMessageCount));
+						}
 						$('#irc_message_count').html(TiDeveloper.ircMessageCount);						
 						var rawMsg = String(channel.substring(1,channel.length));
 						var urlMsg = TiDeveloper.formatURIs(rawMsg);
 						var str = username + ":";
 						var msg = urlMsg.replace(username +":","<span style='color:#42C0FB'>" + username + ": </span>");
-						$('#irc').append('<div style="color:yellow;float:left">' + nick + ': <span style="color:white">' + msg + '</span></div><div style="float:right;color:#ccc;font-size:11px">'+time+'</div><div style="clear:both"></div>');
+						if (TiDeveloper.windowFocused == false && msg.indexOf(str) != -1)
+						{
+							var notification = Titanium.Notification.createNotification(window);
+							notification.setTitle("New Message");
+							notification.setMessage(msg);
+							notification.setIcon("app://images/information.png");
+							notification.show();
+							
+						}
+						$('#irc').append('<div style="color:yellow;float:left;margin-bottom:3px;width:90%">' + nick + ': <span style="color:white">' + msg + '</span></div><div style="float:right;color:#ccc;font-size:11px;width:10%;text-align:right">'+time+'</div><div style="clear:both"></div>');
 					}
 					break;
 				}
@@ -838,11 +891,14 @@ setTimeout(function()
 		irc.join("#titanium_dev");
 		$MQL('l:send.irc.msg',function()
 		{
-			var time = TiDeveloper.getCurrentTime();
-			irc.send('#titanium_dev',$('#irc_msg').val());
-			$('#irc').append('<div style="color:yellow;float:left">' + username + ': <span style="color:white">' + $('#irc_msg').val() + '</span></div><div style="float:right;color:#ccc;font-size:11px">'+time+'</div><div style="clear:both"></div>');
-			$('#irc_msg').val('');
-			$('#irc').get(0).scrollTop = $('#irc').get(0).scrollHeight;
+			if (TiDeveloper.online == true)
+			{
+				var time = TiDeveloper.getCurrentTime();
+				irc.send('#titanium_dev',$('#irc_msg').val());
+				$('#irc').append('<div style="color:yellow;float:left;margin-bottom:3px;width:90%">' + username + ': <span style="color:white">' + $('#irc_msg').val() + '</span></div><div style="float:right;color:#ccc;font-size:11px;width:10%;text-align:right">'+time+'</div><div style="clear:both"></div>');
+				$('#irc_msg').val('');
+				$('#irc').get(0).scrollTop = $('#irc').get(0).scrollHeight;
+			}
 		});
 	}
 	catch(E)
@@ -857,7 +913,12 @@ TiDeveloper.formatURIs = function(str)
 	
 	return $.gsub(str,URI_REGEX,function(m)
 	{
-		return '<a target="ti:systembrowser" href="' + m[0] + '">' + m[0] + '</a>';
+		var x = m[0]
+		if (x.indexOf('http://') == -1)
+		{
+			x = "http://" + x;
+		}
+		return '<a target="ti:systembrowser" href="' + x + '">' +x + '</a>';
 	})
 	
 };

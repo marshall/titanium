@@ -62,6 +62,7 @@ Titanium.Project =
 				result.properties[entry.key]=entry.value;
 			else
 				result.map[entry.key]=entry.value;
+		
 		}
 	},
 	getManifest:function(mf)
@@ -85,7 +86,7 @@ Titanium.Project =
 		while (true)
 		{
 			line = manifest.readLine();
-			if(line==null) break;
+			if(!line || line==null) break;
 			Titanium.Project.addEntry(line,result);
 		}
 		return result;
@@ -188,7 +189,6 @@ Titanium.Project =
 		var normalized_name = values.name.replace(' ','_').toLowerCase();
 		var normalized_publisher = values.publisher.replace(' ','_').toLowerCase();
 		var id = 'com.'+normalized_publisher+'.'+normalized_name;
-
 		var newManifest = ''
 		var line = manifest.readLine(true);
 		var entry = Titanium.Project.parseEntry(line);
@@ -197,9 +197,9 @@ Titanium.Project =
 			if (entry == null)
 			{
 				line = manifest.readLine();
+				if (!line || line == null)break;
 				entry = Titanium.Project.parseEntry(line);
 			}
-			if(line==null) break;
 			if (entry.key.indexOf('appname') != -1)
 			{
 				newManifest += '#appname:'+values.name+"\n";

@@ -1,7 +1,7 @@
 #appname:titanium_runtime
 #appid:com.titaniumapp.runtime
 
-runtime: 0.2
+runtime:0.2
 javascript: 0.1
 tiapp: 0.1
 tiui: 0.1

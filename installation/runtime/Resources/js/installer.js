@@ -77,6 +77,7 @@ function runInstaller()
 		return false;
 	}
 	var runtime = results.map['runtime'];
+	
 	if (!runtime)
 	{
 		alert("Invalid runtime installer. Couldn't find runtime in manifest!");
