@@ -34,16 +34,11 @@ namespace ti
 	}
 	TCPSocketBinding::~TCPSocketBinding()
 	{
-		KR_DUMP_LOCATION
-		
 		if (this->opened)
 		{
-			std::cout << "before ~TCPSocketBinding reactor.stop" << std::endl;
 			this->reactor.stop();
-			std::cout << "before ~TCPSocketBinding socket.close" << std::endl;
 			this->socket.close();
 		}
-		std::cout << "exiting ~TCPSocketBinding" << std::endl;
 	}
 	void TCPSocketBinding::SetOnRead(const ValueList& args, SharedValue result)
 	{
