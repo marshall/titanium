@@ -7,7 +7,7 @@ foo: 0.1
 tiplatform: 0.1
 tiapp: 0.1
 tiui: 0.1
-#tinetwork: 0.1
+tinetwork: 0.1
 tifilesystem: 0.1
 tigrowl: 0.1
 timedia: 0.1

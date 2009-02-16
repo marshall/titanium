@@ -11,26 +11,33 @@
 #include "host_binding.h"
 #include "irc/irc_client_binding.h"
 
-
 namespace ti
 {
 	NetworkBinding::NetworkBinding(Host* host) : host(host), global(host->GetGlobalObject())
 	{
-		// TODO: this state change needs to be implemented
 		SharedValue online = Value::NewBool(true);
 		this->Set("online",online);
 
 		// methods that are available on Titanium.Network
-		this->SetMethod("onConnectivityChange",&NetworkBinding::OnConnectivityChange);
 		this->SetMethod("createTCPSocket",&NetworkBinding::CreateTCPSocket);
 		this->SetMethod("createIRCClient",&NetworkBinding::CreateIRCClient);
 		this->SetMethod("createIPAddress",&NetworkBinding::CreateIPAddress);
 		this->SetMethod("getHostByName",&NetworkBinding::GetHostByName);
 		this->SetMethod("getHostByAddress",&NetworkBinding::GetHostByAddress);
+
+		this->SetMethod("addConnectivityListener",&NetworkBinding::AddConnectivityListener);
+		this->SetMethod("removeConnectivityListener",&NetworkBinding::RemoveConnectivityListener);
+
+
+		// NOTE: this is only used internally and shouldn't be published
+		this->SetMethod("FireOnlineStatusChange",&NetworkBinding::FireOnlineStatusChange);
 	}
 	NetworkBinding::~NetworkBinding()
 	{
-		KR_DUMP_LOCATION
+#ifdef OS_OSX
+		[networkDelegate release];
+		networkDelegate=nil;
+#endif			
 	}
 	void NetworkBinding::_GetByHost(std::string hostname, SharedValue result)
 	{
@@ -106,8 +113,75 @@ namespace ti
 		SharedPtr<IRCClientBinding> irc = new IRCClientBinding(host);
 		result->SetObject(irc);
 	}
-	void NetworkBinding::OnConnectivityChange(const ValueList& args, SharedValue result)
+	void NetworkBinding::AddConnectivityListener(const ValueList& args, SharedValue result)
 	{
-		//TODO: implement
+		if (args.size()!=1 || !args.at(0)->IsMethod())
+		{
+			throw ValueException::FromString("invalid argument");
+		}
+		SharedBoundMethod target = args.at(0)->ToMethod();
+		this->listeners.push_back(target);
+
+		// lazy add the network connectivity listener
+		if (this->listeners.size()==1)
+		{
+#ifdef OS_OSX
+			SharedBoundMethod delegate = this->Get("FireOnlineStatusChange")->ToMethod();
+			networkDelegate = [[NetworkReachability alloc] initWithDelegate:delegate];
+#endif			
+		}
+	}
+	void NetworkBinding::RemoveConnectivityListener(const ValueList& args, SharedValue result)
+	{
+		if (args.size()!=1 || !args.at(0)->IsMethod())
+		{
+			throw ValueException::FromString("invalid argument");
+		}
+		SharedBoundMethod target = args.at(0)->ToMethod();
+		std::vector<SharedBoundMethod>::iterator it = this->listeners.begin();
+		while(it!=this->listeners.end())
+		{
+			SharedBoundMethod m = (*it);
+			if (m == target)
+			{
+				this->listeners.erase(it);
+				result->SetBool(true);
+				
+				// once there are no more listeners, shut it down
+				if (this->listeners.size()==0)
+				{
+		#ifdef OS_OSX
+					[networkDelegate release];
+					networkDelegate=nil;
+		#endif			
+				}
+				return;
+			}
+			it++;
+		}
+		result->SetBool(false);
+	}
+	void NetworkBinding::FireOnlineStatusChange(const ValueList& args, SharedValue result)
+	{
+		SharedValue o = args.at(0);
+		this->Set("online",o);
+#ifdef DEBUG
+		std::cout << "ONLINE STATUS CHANGED: " << o->ToBool() << std::endl;
+#endif
+		// optimize by returning if no listeners
+		if (this->listeners.size()==0) return;
+		std::vector<SharedBoundMethod>::iterator it = this->listeners.begin();
+		while(it!=this->listeners.end())
+		{
+			SharedBoundMethod callback = (*it++);
+			try
+			{
+				host->InvokeMethodOnMainThread(callback,args);
+			}
+			catch(std::exception &e)
+			{
+				std::cerr << "Caught exception dispatching network event callback for online status, Error: " << e.what() << std::endl;
+			}
+		}
 	}
 }

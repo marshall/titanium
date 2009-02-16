@@ -125,7 +125,6 @@ namespace ti
 	{
 		std::string appid = AppConfig::Instance()->GetAppID();
 		std::string dir = FileUtils::GetApplicationDataDirectory(appid);
-		std::cout << "APPID=" << appid << ", dir="<<dir<<std::endl;
 		ti::File* file = new ti::File(dir);
 		result->SetObject(file);
 	}
