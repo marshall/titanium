@@ -20,13 +20,13 @@ namespace ti
 	public:
 		FilesystemBinding(Host*,SharedBoundObject);
 		virtual ~FilesystemBinding();
-		
+
 	private:
 		Host *host;
 		SharedBoundObject global;
 		std::vector< SharedBoundObject > asyncOperations;
 		Poco::Timer *timer;
-		
+
 		void OnAsyncOperationTimer(Poco::Timer &timer);
 
 		/**
@@ -60,6 +60,17 @@ namespace ti
 		 *   a new File object
 		 */
 		void GetFile(const ValueList& args, SharedValue result);
+		/**
+		 * Function: GetFileStream
+		 *   creates a new FileStream object for a given filename
+		 *
+		 * Params:
+		 *   filename - the name of the file to create the FileStream object for
+		 *
+		 * Returns:
+		 *   a new FileStream object
+		 */
+		void GetFileStream(const ValueList& args, SharedValue result);
 		/**
 		 * Function: GetApplicationDirectory
 		 *   returns a path to the application directory
@@ -100,7 +111,7 @@ namespace ti
 		 *   path to the Resources folder
 		 */
 		void GetResourcesDirectory(const ValueList& args, SharedValue result);
-		
+
 		/**
 		 * Function: GetProgramsDirectory
 		 *   return the path to the user's programs directory in a platform specific way
