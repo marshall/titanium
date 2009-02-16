@@ -66,12 +66,16 @@ namespace ti {
 		static SharedPtr<MenuItem> GetContextMenu();
 		static void SetIcon(SharedString icon_path);
 		static SharedString GetIcon();
+		static void AddTrayItem(SharedPtr<TrayItem>);
+		static void ClearTrayItems();
+		static void UnregisterTrayItem(TrayItem* item);
 
 		protected:
 		static SharedBoundObject global;
 		static SharedPtr<MenuItem> app_menu;
 		static SharedPtr<MenuItem> app_context_menu;
 		static SharedString icon_path;
+		static std::vector<SharedPtr<TrayItem> > tray_items;
 
 		DISALLOW_EVIL_CONSTRUCTORS(UIModule);
 

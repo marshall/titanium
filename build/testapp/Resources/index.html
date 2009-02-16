@@ -37,7 +37,7 @@
 			Titanium.UI.setIcon("app://open.png");
 			setTimeout(function()
 			{
-				var ts = Titanium.UI.getSystemIdleTime();
+				var ts = Titanium.UI.getIdleTime();
 				document.getElementById("ts").innerHTML = "idle time: "  + ts;
 			},10000);
 		</script>

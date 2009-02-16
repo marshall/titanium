@@ -80,7 +80,32 @@ Titanium.AppCreator = {
 
 	linux: function(runtime,destination,name,appid,install)
 	{
+		var appDir = TFS.getFile(destination,name);
+		appDir.createDirectory(true);
+		var resources = TFS.getFile(appDir,'Resources');
+		resources.createDirectory(true);
 
+		var templates = TFS.getFile(runtime,'template');
+		var kboot = TFS.getFile(templates,'kboot');
+		var appExecutable = TFS.getFile(appDir, name);
+		kboot.copy(appExecutable);
+
+		// set our marker file
+		var marker = TFS.getFile(appDir,'.installed');
+		if (!install)
+		{
+			marker.write(String(new Date()));
+		}
+		else
+		{
+			marker.deleteFile();
+		}
+
+		return {
+			resources:resources,
+			base:appDir,
+			executable:appExecutable
+		};
 	},
 
 	win32: function(runtime,destination,name,appid,install)

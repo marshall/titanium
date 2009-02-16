@@ -168,15 +168,20 @@ function runInstaller()
 					target.setExecutable(true);
 					break;
 			}
-			
+
 			current+=moveby;
 			updateProgressValue(current);
-			
+
 			// developer product
 			var devDest = TFS.getProgramsDirectory();
+			if (Titanium.platform == 'linux')
+			{
+				devDest = TFS.getFile(TFS.getRuntimeBaseDirectory().nativePath(), "apps");
+				devDest.createDirectory(true);
+			}
 			var developer = Titanium.createApp(runtimeDir,devDest,'Titanium Developer','com.titaniumapp.developer',false);
 			var devsrc = TFS.getFile(src,'developer');
-			var devresources = TFS.getFile(devsrc,'resources');
+			var devresources = TFS.getFile(devsrc,'Resources');
 			var devtiapp = TFS.getFile(devsrc,'tiapp.xml');
 			devtiapp.copy(developer.base);
 			var devmanifest = TFS.getFile(devsrc,'manifest');
