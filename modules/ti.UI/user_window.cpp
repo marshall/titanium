@@ -109,18 +109,18 @@ void UserWindow::Open(UserWindow *window)
 	windows.push_back(window);
 }
 
-void UserWindow::Close(UserWindow *window)
+void UserWindow::Close()
 {
 	// check to see if we have a parent, and if so,
 	// remove us from the parent list
-	UserWindow *parent = window->GetParent();
-	if (parent!=NULL)
+	UserWindow *parent = this->GetParent();
+	if (parent != NULL)
 	{
-		UserWindow::RemoveChild(parent, window);
+		UserWindow::RemoveChild(parent, this);
 	}
 
 	// see if we have any open child windows
-	std::vector<UserWindow*> children = windowsMap[window];
+	std::vector<UserWindow*> children = windowsMap[this];
 	std::vector<UserWindow*>::iterator iter;
 	for (iter = children.begin(); iter != children.end(); iter++)
 	{
@@ -128,26 +128,22 @@ void UserWindow::Close(UserWindow *window)
 		child->Close();
 	}
 	children.clear();
-	windowsMap.erase(window);
-
+	windowsMap.erase(this);
 
 	// delete from vector
-	for (iter = windows.begin(); iter != windows.end(); iter++)
+	iter = windows.begin();
+	while (iter != windows.end())
 	{
-		if ((*iter) == window)
-		{
-			break;
-		}
-	}
-	if (iter != windows.end())
-	{
-		windows.erase(iter);
+		if ((*iter) == this)
+			iter = windows.erase(iter);
+		else
+			iter++;
 	}
 
 	// when we have no more windows, we exit ...
-	if (windows.size()==0)
+	if (windows.size() == 0)
 	{
-		window->host->Exit(0);
+		this->host->Exit(0);
 	}
 }
 

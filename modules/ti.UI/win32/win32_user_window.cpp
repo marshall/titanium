@@ -365,7 +365,7 @@ void Win32UserWindow::Open() {
 void Win32UserWindow::Close() {
 	DestroyWindow(window_handle);
 
-	UserWindow::Close(this);
+	UserWindow::Close();
 }
 
 double Win32UserWindow::GetX() {
