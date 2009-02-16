@@ -12,6 +12,7 @@
 #include "../url/app_url.h"
 #include <math.h>
 #include <shellapi.h>
+#include <comutil.h>
 
 #define STUB() printf("Method is still a stub, %s:%i\n", __FILE__, __LINE__)
 #define SetFlag(x,flag,b) ((b) ? x |= flag : x &= ~flag)
@@ -173,8 +174,6 @@ Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config)
 	b.height = config->GetHeight();
 	SetBounds(b);
 
-	ShowWindow(window_handle, SW_SHOW);
-
 	//web_view = WebView::createInstance();
 	HRESULT hr = CoCreateInstance(CLSID_WebView, 0, CLSCTX_ALL, IID_IWebView, (void**)&web_view);
 	if (FAILED(hr)) {
@@ -188,6 +187,64 @@ Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config)
 		else fprintf(stderr, "Unknown Error? %x\n", hr);
 	}
 
+	// set the custom user agent for Titanium
+	double version = host->GetGlobalObject()->Get("version")->ToDouble();
+	char userAgent[128];
+	sprintf(userAgent,"%s/%0.2f",PRODUCT_NAME,version);
+	_bstr_t ua(userAgent);
+	web_view->setApplicationNameForUserAgent(ua.copy());
+	
+#ifdef PLEASE_MAKE_THIS_WORK_MARSHALL
+	AppConfig *appConfig = AppConfig::Instance();
+	std::string appid = appConfig->GetAppID();
+
+	IWebPreferences *prefs = NULL;
+	hr = CoCreateInstance(CLSID_WebPreferences, 0, CLSCTX_ALL, IID_IWebPreferences, (void**)&prefs);
+	if (FAILED(hr) || prefs == NULL) 
+	{
+		std::cerr << "Couldn't create the preferences object" << std::endl;
+	}
+	else
+	{
+		_bstr_t pi(appid.c_str());
+		prefs->initWithIdentifier(pi.copy(),&prefs);
+	
+		prefs->setCacheModel(WebCacheModelDocumentBrowser);
+		prefs->setPlugInsEnabled(true);
+		prefs->setJavaEnabled(false);
+		prefs->setJavaScriptEnabled(true);
+		prefs->setDOMPasteAllowed(true);
+	
+		IWebPreferencesPrivate* privatePrefs = NULL;
+		hr = prefs->QueryInterface(IID_IWebPreferencesPrivate, (void**)&privatePrefs);
+		if (FAILED(hr))
+		{
+			std::cerr << "Failed to get private preferences" << std::endl;
+		}
+		else
+		{
+			privatePrefs->setDeveloperExtrasEnabled(host->IsDebugMode());
+			privatePrefs->setDatabasesEnabled(true);
+			privatePrefs->setLocalStorageEnabled(true);
+			privatePrefs->setOfflineWebApplicationCacheEnabled(true);
+			
+			_bstr_t db_path(FileUtils::GetApplicationDataDirectory(appid).c_str());
+			privatePrefs->setLocalStorageDatabasePath(db_path.copy());
+			privatePrefs->Release();
+		}
+		
+		web_view->setPreferences(prefs);
+		//prefs->Release(); <--- crashes
+	}
+	
+	// allow app:// and ti:// to run with local permissions (cross-domain ajax,etc)
+	_bstr_t app_proto("app");
+	web_view->registerURLSchemeAsLocal(app_proto.copy());
+
+	_bstr_t ti_proto("ti");
+	web_view->registerURLSchemeAsLocal(ti_proto.copy());
+#endif
+	
 	std::cout << "create frame load delegate " << std::endl;
 	frameLoadDelegate = new Win32WebKitFrameLoadDelegate(this);
 	uiDelegate = new Win32WebKitUIDelegate(this);
@@ -215,6 +272,11 @@ Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config)
 	// ensure we have valid restore values
 	restore_bounds = GetBounds();
 	restore_styles = GetWindowLong(window_handle, GWL_STYLE);
+
+	// set this flag to indicate that when the frame is loaded 
+	// we want to show the window - we do this to prevent white screen
+	// while the URL is being fetched
+	this->requires_display = true;
 }
 
 Win32UserWindow::~Win32UserWindow()
@@ -252,8 +314,7 @@ void Win32UserWindow::Show() {
 
 void Win32UserWindow::Open() {
 	std::cout << "Opening window_handle=" << (int)window_handle << ", view_window_handle="<<(int)view_window_handle<<std::endl;
-	ShowWindow(window_handle, SW_SHOW);
-	ShowWindow(view_window_handle, SW_SHOW);
+
 	UpdateWindow(window_handle);
 	UpdateWindow(view_window_handle);
 
@@ -261,7 +322,11 @@ void Win32UserWindow::Open() {
 
 	UserWindow::Open(this);
 	SetURL(this->config->GetURL());
-
+	if (!this->requires_display)
+	{
+		ShowWindow(window_handle, SW_SHOW);
+		ShowWindow(view_window_handle, SW_SHOW);
+	}
 }
 
 void Win32UserWindow::Close() {
@@ -638,3 +703,14 @@ void Win32UserWindow::ReloadTiWindowConfig()
 	SetLayeredWindowAttributes(hWnd, transparencyColor, 0, LWA_COLORKEY);
 	*/
 }
+
+	// called by frame load delegate to let the window know it's loaded
+void Win32UserWindow::FrameLoaded()
+{
+	if (this->requires_display)
+	{
+		this->requires_display = false;
+		ShowWindow(window_handle, SW_SHOW);
+	}
+}
+

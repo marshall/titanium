@@ -17,6 +17,13 @@ Win32WebKitFrameLoadDelegate::Win32WebKitFrameLoadDelegate(Win32UserWindow *wind
 
 }
 
+HRESULT STDMETHODCALLTYPE 
+Win32WebKitFrameLoadDelegate::didFinishLoadForFrame(IWebView *webView, IWebFrame *frame)
+{
+	window->FrameLoaded();
+	return S_OK;
+}
+
 HRESULT STDMETHODCALLTYPE
 Win32WebKitFrameLoadDelegate::windowScriptObjectAvailable (
 		IWebView *webView, JSContextRef context, JSObjectRef windowScriptObject)
