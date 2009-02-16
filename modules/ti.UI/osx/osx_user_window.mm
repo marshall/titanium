@@ -72,7 +72,7 @@ namespace ti
 		
 		if (!closed)
 		{
-			UserWindow::Close(this);
+			UserWindow::Close();
 		}
 	}
 	UserWindow* OSXUserWindow::WindowFactory(Host* host, WindowConfig* config)
@@ -127,7 +127,7 @@ namespace ti
 			opened = false;
 			closed = true;
 			[window close];
-			UserWindow::Close(this);
+			UserWindow::Close();
 		}
 	}
 	double OSXUserWindow::GetX()
