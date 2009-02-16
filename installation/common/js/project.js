@@ -62,6 +62,7 @@ Titanium.Project =
 				result.properties[entry.key]=entry.value;
 			else
 				result.map[entry.key]=entry.value;
+		
 		}
 	},
 	getManifest:function(mf)
