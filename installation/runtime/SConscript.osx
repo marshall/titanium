@@ -73,6 +73,7 @@ for tp in third_party:
 	
 # Gather all module libs
 for m in modules.keys():
+	#FIXME: this needs some work, we need to use our install file
 	module_dir = p.join(build.titanium_source_dir, 'modules', modules[m])
 	if not p.exists(module_dir):
 		module_dir = p.join(build.kroll_source_dir, 'modules', modules[m])
@@ -96,6 +97,11 @@ for m in modules.keys():
 	app_resources = p.join(module_dir, 'AppResources')
 	if p.exists(app_resources):
 		dir_util.copy_tree(app_resources, p.join(modules_dir, m, 'AppResources'))
+
+
+#FIXME - quick hack since i'm tired
+notf_dir = p.join(modules_dir,'tinotification')
+dir_util.copy_tree(p.join(build.titanium_source_dir, 'modules','ti.Notification'), notf_dir)
 
 
 menu_nib = p.join(build.dir, 'modules', 'ti.UI', 'MainMenu.nib')

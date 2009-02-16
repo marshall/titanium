@@ -70,6 +70,8 @@ namespace ti
 	static const char *kAppURLPrefix = "Resources";
 	void AppBinding::AppURLToPath(const ValueList& args, SharedValue result)
 	{
+		//FIXME - use FileUtils for this... so we can a common implementation
+		
 		result->SetString("");
 
 		if (args.size() < 0 || !args.at(0)->IsString())

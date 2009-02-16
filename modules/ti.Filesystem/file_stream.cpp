@@ -12,7 +12,20 @@ std::string FileStream::MODE_READ = "read";
 std::string FileStream::MODE_APPEND = "append";
 std::string FileStream::MODE_WRITE = "write";
 
-FileStream::FileStream(std::string filename_) : filename(filename_), stream(NULL) {
+FileStream::FileStream(std::string filename_) : stream(NULL) {
+#ifdef OS_OSX
+		// in OSX, we need to expand ~ in paths to their absolute path value
+		// we do that with a nifty helper method in NSString
+		this->filename = [[[NSString stringWithCString:filename_.c_str()] stringByExpandingTildeInPath] fileSystemRepresentation];
+#else
+		this->filename = filename_;
+#endif
+
+		this->SetMethod("open",&FileStream::Open);
+		this->SetMethod("close",&FileStream::Close);
+		this->SetMethod("read",&FileStream::Read);
+		this->SetMethod("readLine",&FileStream::ReadLine);
+		this->SetMethod("write",&FileStream::Write);
 }
 
 FileStream::~FileStream() {
@@ -140,7 +153,9 @@ void FileStream::ReadLine(const ValueList& args, SharedValue result)
 	{
 		std::string line;
 
-		if(this->stream->eof())
+		Poco::FileInputStream* fis = dynamic_cast<Poco::FileInputStream*>(this->stream);
+
+		if(fis->eof())
 		{
 			// close the file
 			result->SetNull();
@@ -148,7 +163,6 @@ void FileStream::ReadLine(const ValueList& args, SharedValue result)
 		else
 		{
 			std::string line;
-			Poco::FileInputStream* fis = dynamic_cast<Poco::FileInputStream*>(this->stream);
 			std::getline(*fis, line);
 			if (line.empty())
 			{

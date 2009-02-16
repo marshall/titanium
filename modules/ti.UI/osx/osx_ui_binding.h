@@ -28,7 +28,8 @@ namespace ti
 
 		virtual void SetDockIcon(SharedString icon_path);
 		virtual void SetDockMenu(SharedPtr<MenuItem>);
-		virtual void SetBadge(SharedString badge_path);
+		virtual void SetBadge(SharedString badge_label);
+		virtual void SetBadgeImage(SharedString badge_path);
 
 		void OpenFiles(
 			SharedBoundMethod callback,

@@ -49,9 +49,9 @@ namespace ti
 	{
 	}
 
-	void OSXUIBinding::SetBadge(SharedString badge_path)
+	void OSXUIBinding::SetBadge(SharedString badge_label)
 	{
-		std::string value = *badge_path;
+		std::string value = *badge_label;
 		NSString *label = nil;
 		if (!value.empty())
 		{
@@ -60,6 +60,35 @@ namespace ti
 		NSDockTile *tile = [[NSApplication sharedApplication] dockTile];
 		[tile setBadgeLabel:label];
 		[tile setShowsApplicationBadge:(label == nil ? NO : YES)];
+	}
+	void OSXUIBinding::SetBadgeImage(SharedString badge_path)
+	{
+		NSDockTile *dockTile = [NSApp dockTile];
+		std::string value = *badge_path;
+		NSString *path = nil;
+		if (!value.empty())
+		{
+			path = [NSString stringWithCString:value.c_str()];
+		}
+		if (path)
+		{
+		   	// setup our image view for the dock tile
+		   	NSRect frame = NSMakeRect(0, 0, dockTile.size.width, dockTile.size.height);
+		   	NSImageView *dockImageView = [[NSImageView alloc] initWithFrame: frame];
+
+			//TODO: improve this to take either a file path or URL
+			NSImage *image = [[NSImage alloc] initWithContentsOfFile:path];
+		   	[dockImageView setImage:image];
+			[image release];
+
+		   	// by default, add it to the NSDockTile
+		   	[dockTile setContentView: dockImageView];
+		}
+		else
+		{
+		   	[dockTile setContentView:nil];
+		}
+	   	[dockTile display];
 	}
 
 	void OSXUIBinding::SetIcon(SharedString icon_path)
