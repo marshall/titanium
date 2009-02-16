@@ -103,7 +103,6 @@ namespace ti
 	}
 	void NetworkBinding::CreateIRCClient(const ValueList& args, SharedValue result)
 	{
-		
 		SharedPtr<IRCClientBinding> irc = new IRCClientBinding(host);
 		result->SetObject(irc);
 	}

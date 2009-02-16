@@ -8,7 +8,7 @@
       <title>Titanium Developer</title>
       <url>app://index.html</url>
       <width>900</width>
-      <height>110</height>
+      <height>500</height>
 	  <fullscreen>false</fullscreen>
 	  <maximizable>true</maximizable>
 	  <minimizable>true</minimizable>

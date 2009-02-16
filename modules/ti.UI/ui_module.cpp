@@ -99,6 +99,14 @@ namespace ti
 
 	void UIModule::Stop()
 	{
+		// remove tray icon if there is one
+		SharedValue uiBindingSharedValue = host->GetGlobalObject()->Get("UI");
+		SharedPtr<UIBinding> uiBindingPtr = uiBindingSharedValue->ToObject().cast<UIBinding>();
+		SharedBoundMethod m = uiBindingPtr->Get("removeTray")->ToMethod();
+		ValueList args;
+		m->Call(args);
+
+
 		// Only one copy of the UI module loaded hopefully,
 		// otherwise we need to count instances and free
 		// this variable when the last instance disappears

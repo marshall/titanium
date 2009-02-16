@@ -168,7 +168,7 @@ void GtkUserWindow::SetupTransparency()
 		GValue val = {0,};
 		g_value_init(&val, G_TYPE_BOOLEAN);
 		g_value_set_boolean(&val, 1);
-		g_object_set_property(G_OBJECT (this->web_view), "transparent", &val); 
+		g_object_set_property(G_OBJECT (this->web_view), "transparent", &val);
 
 		GdkScreen* screen = gtk_widget_get_screen(GTK_WIDGET(this->gtk_window));
 		GdkColormap* colormap = gdk_screen_get_rgba_colormap(screen);
@@ -233,7 +233,7 @@ void GtkUserWindow::SetupSize()
 {
 	if (this->gtk_window != NULL)
 	{
-		gtk_window_resize(this->gtk_window, 
+		gtk_window_resize(this->gtk_window,
 		                  (int) this->GetWidth(),
 		                  (int) this->GetHeight());
 	}
@@ -606,13 +606,13 @@ SharedBoundList GtkUserWindow::GetMenu()
 	return this->menu;
 }
 
-void GtkUserWindow::SetContextMenu(SharedBoundList value)
+void GtkUserWindow::SetContextMenu(SharedPtr<MenuItem> value)
 {
 	SharedPtr<GtkMenuItemImpl> menu = value.cast<GtkMenuItemImpl>();
 	this->context_menu = menu;
 }
 
-SharedBoundList GtkUserWindow::GetContextMenu()
+SharedPtr<MenuItem> GtkUserWindow::GetContextMenu()
 {
 	return this->context_menu;
 }

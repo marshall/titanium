@@ -30,8 +30,7 @@
 #include "IRC.h"
 #ifdef OS_WIN32
 #include <windows.h>
-#include <winsock2.h>
-#include <ws2tcpip.h>
+#include <winsock.h>
 #else
 #include <stdlib.h>
 #include <unistd.h>
@@ -41,16 +40,20 @@
 #include <sys/types.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
+#include <cstdio>
 #define closesocket(s) close(s)
 #define SOCKET_ERROR -1
 #define INVALID_SOCKET -1
 #endif
+
+#include <iostream>
 
 IRC::IRC()
 {
 	hooks=0;
 	chan_users=0;
 	connected=false;
+	connecting=false;
 	sentnick=false;
 	sentpass=false;
 	sentuser=false;
@@ -61,6 +64,9 @@ IRC::~IRC()
 {
 	if (hooks)
 		delete_irc_command_hook(hooks);
+	if (cur_nick)
+		delete [] cur_nick;
+	cur_nick = 0;
 }
 
 void IRC::insert_irc_command_hook(irc_command_hook* hook, char* cmd_name, int (*function_ptr)(char *, char*, irc_reply_data*, void*, void*), void *pd)
@@ -118,6 +124,25 @@ void IRC::delete_irc_command_hook(irc_command_hook* cmd_hook)
 	delete cmd_hook;
 }
 
+void IRC::send(const char *fmt, ...)
+{
+	va_list args; 
+	va_start(args, fmt);
+	char szBuf[1024];
+#ifdef OS_WIN32
+	int size = vsprintf_s(szBuf, 1024, fmt, args);
+#else
+	int size = vsprintf(szBuf, fmt, args);
+#endif
+	if (size > 0)
+	{
+	#ifdef DEBUG
+		printf("IRC sending[%d] => %s\n",size,szBuf);
+	#endif	
+		::send(irc_socket,(const char*)szBuf,size,0);
+	}
+}
+
 int IRC::start(char* server, int port, char* nick, char* user, char* name, char* pass)
 {
 	#ifdef WIN32
@@ -145,35 +170,28 @@ int IRC::start(char* server, int port, char* nick, char* user, char* name, char*
 	rem.sin_family=AF_INET;
 	rem.sin_port=htons(port);
 
+	connecting = true;
+	
 	if (connect(irc_socket, (const sockaddr*)&rem, sizeof(rem))==SOCKET_ERROR)
 	{
-		#ifdef WIN32
-		printf("Failed to connect: %d\n", WSAGetLastError());
-		#endif
+#ifdef WIN32
+		std::cerr << "Failed to connect: "<< WSAGetLastError() << std::endl;
+#endif
+		connecting = false;
 		closesocket(irc_socket);
 		return 1;
 	}
 
-	dataout=fdopen(irc_socket, "w");
-	//datain=fdopen(irc_socket, "r");
-	
-	if (!dataout /*|| !datain*/)
-	{
-		printf("Failed to open streams!\n");
-		closesocket(irc_socket);
-		return 1;
-	}
-	
-	connected=true;
-	
 	cur_nick=new char[strlen(nick)+1];
 	strcpy(cur_nick, nick);
 
-	fprintf(dataout, "PASS %s\r\n", pass);
-	fprintf(dataout, "NICK %s\r\n", nick);
-	fprintf(dataout, "USER %s * 0 :%s\r\n", user, name);
-	fflush(dataout);		
+	send("PASS %s\r\n", pass);
+	send("NICK %s\r\n", cur_nick);
+	send("USER %s * 0 :%s\r\n", user, name);
 
+	connected=true;
+	connecting=false;
+	
 	return 0;
 }
 
@@ -181,7 +199,6 @@ void IRC::disconnect()
 {
 	if (connected)
 	{
-		fclose(dataout);
 		printf("Disconnected from server.\n");
 		connected=false;
 		quit("Leaving");
@@ -197,38 +214,64 @@ int IRC::quit(const char* quit_message)
 	if (connected)
 	{
 		if (quit_message)
-			fprintf(dataout, "QUIT %s\r\n", quit_message);
+			send("QUIT %s\r\n", quit_message);
 		else
-			fprintf(dataout, "QUIT\r\n");
-		if (fflush(dataout))
-			return 1;
+			send("QUIT\r\n");
+		return 0;
 	}
 	return 0;
 }
 
 int IRC::message_loop()
 {
-	char buffer[1024];
+	char buffer[4096];
 	int ret_len;
+	
+#ifdef DEBUG
+	std::cout << "ENTER IRC::message_loop()"<< std::endl;
+#endif	
 
 	if (!connected)
 	{
-		printf("Not connected!\n");
-		return 1;
+		while (!connected && connecting)
+		{
+#ifdef WIN32
+			Sleep(1);
+#else
+			sleep(1);
+#endif
+		}
 	}
 
-	while (1)
+	int rc = 0;
+	
+	while (connected)
 	{
-		ret_len=recv(irc_socket, buffer, 1023, 0);
+		ret_len=recv(irc_socket, buffer, 4095, 0);
 		if (ret_len==SOCKET_ERROR || !ret_len)
 		{
-			return 1;
+			rc = 1;
+			break;
 		}
 		buffer[ret_len]='\0';
-		split_to_replies(buffer);
+		try
+		{
+			split_to_replies(buffer);
+		}
+		catch(std::exception &e)
+		{
+			std::cerr << "ERROR DISPATCHING IRC RECEIVE BUFFER. Error=" << e.what() << std::endl;
+		}
+		catch(...)
+		{
+			std::cerr << "UNKNOWN EXCEPTION IN IRC RECEIVE THREAD..." << std::endl;
+		}
 	}
 
-	return 0;
+#ifdef DEBUG
+	std::cout << "EXIT IRC::message_loop() => " << rc << std::endl;
+#endif	
+	return rc;
 }
 
 void IRC::split_to_replies(char* data)
@@ -297,7 +340,7 @@ void IRC::parse_irc_reply(char* data)
 	hostd_tmp.target=0;
 
 #ifdef DEBUG
-	printf("INCOMING: %s\n", data);
+	std::cout << "IRC INCOMING: " << data << std::endl;
 #endif
 
 	if (data[0]==':')
@@ -720,11 +763,10 @@ void IRC::parse_irc_reply(char* data)
 		{
 			if (!params)
 				return;
-			fprintf(dataout, "PONG %s\r\n", &params[1]);
+			send("PONG %s\r\n", &params[1]);
 			#ifdef __IRC_DEBUG__
 			printf("Ping received, pong sent.\n");
 			#endif
-			fflush(dataout);
 		}
 		else
 		{
@@ -735,6 +777,9 @@ void IRC::parse_irc_reply(char* data)
 			call_hook(cmd, params, &hostd_tmp);
 		}
 	}
+#ifdef DEBUG
+	printf("EXITING IRC RECEIVE\n");
+#endif
 }
 
 void IRC::call_hook(char* irc_command, char* params, irc_reply_data* hostd)
@@ -765,46 +810,56 @@ int IRC::notice(char* target, char* message)
 {
 	if (!connected)
 		return 1;
-	fprintf(dataout, "NOTICE %s :%s\r\n", target, message);
-	return fflush(dataout);
+	send("NOTICE %s :%s\r\n", target, message);
+	return 0;
 }
 
 int IRC::notice(char* fmt, ...)
 {
 	va_list argp;
-//	char* target;
 	
 	if (!connected)
 		return 1;
 	va_start(argp, fmt);
-	fprintf(dataout, "NOTICE %s :", fmt);
-	vfprintf(dataout, va_arg(argp, char*), argp);
+	char szBuf[1024];
+	send("NOTICE %s :", fmt);
+#ifdef OS_WIN32
+	int count = vsprintf_s(szBuf, va_arg(argp,char*), argp);
+#else
+	int count = vsprintf(szBuf, va_arg(argp,char*), argp);
+#endif
+	if (count>0) send(szBuf);
 	va_end(argp);
-	fprintf(dataout, "\r\n");
-	return fflush(dataout);
+	send("\r\n");
+	return 0;
 }
 
 int IRC::privmsg(char* target, char* message)
 {
 	if (!connected)
 		return 1;
-	fprintf(dataout, "PRIVMSG %s :%s\r\n", target, message);
-	return fflush(dataout);
+	send("PRIVMSG %s :%s\r\n", target, message);
+	return 0;
 }
 
 int IRC::privmsg(char* fmt, ...)
 {
 	va_list argp;
-//	char* target;
-	
+
 	if (!connected)
 		return 1;
 	va_start(argp, fmt);
-	fprintf(dataout, "PRIVMSG %s :", fmt);
-	vfprintf(dataout, va_arg(argp, char*), argp);
+	send("PRIVMSG %s :", fmt);
+	char szBuf[1024];
+#ifdef OS_WIN32
+	int count = vsprintf_s(szBuf, va_arg(argp,char*), argp);
+#else
+	int count = vsprintf(szBuf, va_arg(argp,char*), argp);
+#endif
+	if (count>0) send(szBuf);
 	va_end(argp);
-	fprintf(dataout, "\r\n");
-	return fflush(dataout);
+	send("\r\n");
+	return 0;
 }
 
 
@@ -812,40 +867,40 @@ int IRC::join(char* channel)
 {
 	if (!connected)
 		return 1;
-	fprintf(dataout, "JOIN %s\r\n", channel);
-	return fflush(dataout);
+	send("JOIN %s\r\n", channel);
+	return 0;
 }
 
 int IRC::part(char* channel)
 {
 	if (!connected)
 		return 1;
-	fprintf(dataout, "PART %s\r\n", channel);
-	return fflush(dataout);
+	send("PART %s\r\n", channel);
+	return 0;
 }
 
 int IRC::kick(char* channel, char* nick)
 {
 	if (!connected)
 		return 1;
-	fprintf(dataout, "KICK %s %s\r\n", channel, nick);
-	return fflush(dataout);
+	send("KICK %s %s\r\n", channel, nick);
+	return 0;
 }
 
 int IRC::raw(char* data)
 {
 	if (!connected)
 		return 1;
-	fprintf(dataout, "%s\r\n", data);
-	return fflush(dataout);
+	send("%s\r\n", data);
+	return 0;
 }
 
 int IRC::kick(char* channel, char* nick, char* message)
 {
 	if (!connected)
 		return 1;
-	fprintf(dataout, "KICK %s %s :%s\r\n", channel, nick, message);
-	return fflush(dataout);
+	send("KICK %s %s :%s\r\n", channel, nick, message);
+	return 0;
 }
 
 int IRC::mode(char* channel, char* modes, char* targets)
@@ -853,10 +908,10 @@ int IRC::mode(char* channel, char* modes, char* targets)
 	if (!connected)
 		return 1;
 	if (!targets)
-		fprintf(dataout, "MODE %s %s\r\n", channel, modes);
+		send("MODE %s %s\r\n", channel, modes);
 	else
-		fprintf(dataout, "MODE %s %s %s\r\n", channel, modes, targets);
-	return fflush(dataout);
+		send("MODE %s %s %s\r\n", channel, modes, targets);
+	return 0;
 }
 
 int IRC::mode(char* modes)
@@ -871,8 +926,8 @@ int IRC::nick(char* newnick)
 {
 	if (!connected)
 		return 1;
-	fprintf(dataout, "NICK %s\r\n", newnick);
-	return fflush(dataout);
+	send("NICK %s\r\n", newnick);
+	return 0;
 }
 
 char* IRC::current_nick()

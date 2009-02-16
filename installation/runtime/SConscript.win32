@@ -66,6 +66,7 @@ dir_util.copy_tree("Resources", resources_dir, preserve_symlinks=True)
 
 
 shutil.copy(p.join(build.titanium_source_dir,'installation','runtime','manifest'), p.join(app_dir,'manifest'))
+shutil.copy(p.join(build.titanium_source_dir,'installation','runtime','install'), p.join(app_dir,'install'))
 
 # Remove un-needed files
 to_remove = []

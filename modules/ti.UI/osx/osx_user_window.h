@@ -5,13 +5,14 @@
  */
 #import "preinclude.h"
 #import <WebKit/WebKit.h>
+#import "../menu_item.h"
 #import "../user_window.h"
 #import "native_window.h"
 #import "osx_menu_wrapper.h"
 
 namespace ti
 {
-	class OSXUserWindow : public UserWindow 
+	class OSXUserWindow : public UserWindow
 	{
 		public:
 			OSXUserWindow(Host *host, WindowConfig *config);
@@ -66,8 +67,8 @@ namespace ti
 
 			void SetMenu(SharedBoundList menu);
 			SharedBoundList GetMenu();
-			void SetContextMenu(SharedBoundList menu);
-			SharedBoundList GetContextMenu();
+			void SetContextMenu(SharedPtr<MenuItem> menu);
+			SharedPtr<MenuItem> GetContextMenu();
 			void SetIcon(SharedString icon_path);
 			SharedString GetIcon();
 
@@ -78,7 +79,7 @@ namespace ti
 			bool opened;
 			bool closed;
 			OSXMenuWrapper *menu_wrapper;
-			
+
 			DISALLOW_EVIL_CONSTRUCTORS(OSXUserWindow);
 	};
 }

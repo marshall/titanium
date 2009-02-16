@@ -12,14 +12,13 @@
 #include "../url/app_url.h"
 #include <math.h>
 #include <shellapi.h>
+#include <comutil.h>
 
 #define STUB() printf("Method is still a stub, %s:%i\n", __FILE__, __LINE__)
 #define SetFlag(x,flag,b) ((b) ? x |= flag : x &= ~flag)
 #define UnsetFlag(x,flag) (x &= ~flag)=
 
 using namespace ti;
-
-bool Win32UserWindow::ole_initialized = false;
 
 static void* SetWindowUserData(HWND hwnd, void* user_data) {
 	return
@@ -88,7 +87,7 @@ Win32UserWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	Win32UserWindow *window = Win32UserWindow::FromWindow(hWnd);
 
-	if (window && window->messageHandlers.find(message) != window->messageHandlers.end())
+	if (window && (window->messageHandlers.size() > 0) && (window->messageHandlers.find(message) != window->messageHandlers.end()))
 	{
 		SharedBoundMethod handler = window->messageHandlers[message];
 		ValueList args;
@@ -133,7 +132,7 @@ Win32UserWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 }
 
 Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config)
-	: UserWindow(host, config), script_evaluator(host), menuBarHandle(NULL), menuInUse(NULL), menu(NULL)
+	: UserWindow(host, config), script_evaluator(host), menuBarHandle(NULL), menuInUse(NULL), menu(NULL), contextMenuHandle(NULL)
 {
 	static bool initialized = false;
 	win32_host = static_cast<kroll::Win32Host*>(host);
@@ -166,12 +165,6 @@ Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config)
 
 	this->ReloadTiWindowConfig();
 
-	if (!initialized) {
-		HRESULT r = OleInitialize(NULL);
-		std::cout << "OleInitialize Result: " << r << std::endl;
-		initialized = true;
-	}
-
 	SetWindowUserData(window_handle, this);
 
 	Bounds b;
@@ -180,8 +173,6 @@ Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config)
 	b.width = config->GetWidth();
 	b.height = config->GetHeight();
 	SetBounds(b);
-
-	ShowWindow(window_handle, SW_SHOW);
 
 	//web_view = WebView::createInstance();
 	HRESULT hr = CoCreateInstance(CLSID_WebView, 0, CLSCTX_ALL, IID_IWebView, (void**)&web_view);
@@ -195,6 +186,13 @@ Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config)
 		else if (hr == E_INVALIDARG) std::cerr << "E_INVALIDARG" << std::endl;
 		else fprintf(stderr, "Unknown Error? %x\n", hr);
 	}
+
+	// set the custom user agent for Titanium
+	double version = host->GetGlobalObject()->Get("version")->ToDouble();
+	char userAgent[128];
+	sprintf(userAgent,"%s/%0.2f",PRODUCT_NAME,version);
+	_bstr_t ua(userAgent);
+	web_view->setApplicationNameForUserAgent(ua.copy());
 
 	std::cout << "create frame load delegate " << std::endl;
 	frameLoadDelegate = new Win32WebKitFrameLoadDelegate(this);
@@ -210,6 +208,55 @@ Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config)
 	GetClientRect(window_handle, &client_rect);
 	hr = web_view->initWithFrame(client_rect, 0, 0);
 
+	AppConfig *appConfig = AppConfig::Instance();
+	std::string appid = appConfig->GetAppID();
+
+	IWebPreferences *prefs = NULL;
+	hr = CoCreateInstance(CLSID_WebPreferences, 0, CLSCTX_ALL, IID_IWebPreferences, (void**)&prefs);
+	if (FAILED(hr) || prefs == NULL)
+	{
+		std::cerr << "Couldn't create the preferences object" << std::endl;
+	}
+	else
+	{
+		_bstr_t pi(appid.c_str());
+		prefs->initWithIdentifier(pi.copy(),&prefs);
+
+		prefs->setCacheModel(WebCacheModelDocumentBrowser);
+		prefs->setPlugInsEnabled(true);
+		prefs->setJavaEnabled(false);
+		prefs->setJavaScriptEnabled(true);
+		prefs->setDOMPasteAllowed(true);
+
+		IWebPreferencesPrivate* privatePrefs = NULL;
+		hr = prefs->QueryInterface(IID_IWebPreferencesPrivate, (void**)&privatePrefs);
+		if (FAILED(hr))
+		{
+			std::cerr << "Failed to get private preferences" << std::endl;
+		}
+		else
+		{
+			privatePrefs->setDeveloperExtrasEnabled(host->IsDebugMode());
+			privatePrefs->setDatabasesEnabled(true);
+			privatePrefs->setLocalStorageEnabled(true);
+			privatePrefs->setOfflineWebApplicationCacheEnabled(true);
+
+			_bstr_t db_path(FileUtils::GetApplicationDataDirectory(appid).c_str());
+			privatePrefs->setLocalStorageDatabasePath(db_path.copy());
+			privatePrefs->Release();
+		}
+
+		web_view->setPreferences(prefs);
+		prefs->Release();
+	}
+
+	// allow app:// and ti:// to run with local permissions (cross-domain ajax,etc)
+	_bstr_t app_proto("app");
+	web_view->registerURLSchemeAsLocal(app_proto.copy());
+
+	_bstr_t ti_proto("ti");
+	web_view->registerURLSchemeAsLocal(ti_proto.copy());
+
 	IWebViewPrivate *web_view_private;
 	hr = web_view->QueryInterface(IID_IWebViewPrivate, (void**)&web_view_private);
 	hr = web_view_private->viewWindow((OLE_HANDLE*) &view_window_handle);
@@ -219,6 +266,15 @@ Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config)
 
 	std::cout << "resize subviews" << std::endl;
 	ResizeSubViews();
+
+	// ensure we have valid restore values
+	restore_bounds = GetBounds();
+	restore_styles = GetWindowLong(window_handle, GWL_STYLE);
+
+	// set this flag to indicate that when the frame is loaded
+	// we want to show the window - we do this to prevent white screen
+	// while the URL is being fetched
+	this->requires_display = true;
 }
 
 Win32UserWindow::~Win32UserWindow()
@@ -256,8 +312,7 @@ void Win32UserWindow::Show() {
 
 void Win32UserWindow::Open() {
 	std::cout << "Opening window_handle=" << (int)window_handle << ", view_window_handle="<<(int)view_window_handle<<std::endl;
-	ShowWindow(window_handle, SW_SHOW);
-	ShowWindow(view_window_handle, SW_SHOW);
+
 	UpdateWindow(window_handle);
 	UpdateWindow(view_window_handle);
 
@@ -265,11 +320,15 @@ void Win32UserWindow::Open() {
 
 	UserWindow::Open(this);
 	SetURL(this->config->GetURL());
-
+	if (!this->requires_display)
+	{
+		ShowWindow(window_handle, SW_SHOW);
+		ShowWindow(view_window_handle, SW_SHOW);
+	}
 }
 
 void Win32UserWindow::Close() {
-	CloseWindow(window_handle);
+	DestroyWindow(window_handle);
 
 	UserWindow::Close(this);
 }
@@ -506,20 +565,67 @@ SharedBoundList Win32UserWindow::GetMenu()
 	return NULL;
 }
 
-void Win32UserWindow::SetContextMenu(SharedBoundList value)
+void Win32UserWindow::SetContextMenu(SharedPtr<MenuItem> menu)
 {
-	STUB();
+	SharedPtr<Win32MenuItemImpl> menu_new = menu.cast<Win32MenuItemImpl>();
+
+	// if it's the same menu, don't do anything
+	if((menu_new.isNull() && this->contextMenu.isNull()) || (menu_new == this->contextMenu))
+	{
+		return;
+	}
+
+	// remove old menu if needed
+	if(! this->contextMenu.isNull())
+	{
+		this->contextMenu->ClearRealization(contextMenuHandle);
+		this->contextMenuHandle = NULL;
+	}
+
+	this->contextMenu = menu_new;
+	if(! this->contextMenu.isNull())
+	{
+		this->contextMenuHandle = this->contextMenu->GetMenu();
+	}
 }
 
-SharedBoundList Win32UserWindow::GetContextMenu()
+SharedPtr<MenuItem> Win32UserWindow::GetContextMenu()
 {
-	STUB();
-	return NULL;
+	return this->contextMenu;
 }
 
 void Win32UserWindow::SetIcon(SharedString icon_path)
 {
-	STUB();
+	this->icon_path = icon_path;
+	this->SetupIcon();
+}
+
+void Win32UserWindow::SetupIcon()
+{
+	if(! icon_path.isNull()) printf("set icon: %s\n", icon_path->c_str());
+
+	SharedString icon_path = this->icon_path;
+
+	if (icon_path.isNull() && !UIModule::GetIcon().isNull())
+		icon_path = UIModule::GetIcon();
+
+	if (icon_path.isNull())
+	{
+		// need to remove the icon
+		SendMessageA(window_handle, (UINT)WM_SETICON, ICON_BIG, (LPARAM)0);
+	}
+	else
+	{
+		std::string ext = icon_path->substr(icon_path->length()-4,4);
+		if (ext == ".ico")
+		{
+			HANDLE icon = LoadImageA(win32_host->GetInstanceHandle(),
+				icon_path->c_str(), IMAGE_ICON,
+				32, 32,
+				LR_LOADFROMFILE);
+			SendMessageA(window_handle, (UINT)WM_SETICON, ICON_BIG, (LPARAM)icon);
+		}
+	}
 }
 
 SharedString Win32UserWindow::GetIcon()
@@ -538,6 +644,14 @@ void Win32UserWindow::AppMenuChanged()
 	if (this->menu.isNull())
 	{
 		this->SetupMenu();
+	}
+}
+
+void Win32UserWindow::AppIconChanged()
+{
+	if (this->icon_path.isNull())
+	{
+		this->SetupIcon();
 	}
 }
 
@@ -608,3 +722,14 @@ void Win32UserWindow::ReloadTiWindowConfig()
 	SetLayeredWindowAttributes(hWnd, transparencyColor, 0, LWA_COLORKEY);
 	*/
 }
+
+	// called by frame load delegate to let the window know it's loaded
+void Win32UserWindow::FrameLoaded()
+{
+	if (this->requires_display)
+	{
+		this->requires_display = false;
+		ShowWindow(window_handle, SW_SHOW);
+	}
+}
+

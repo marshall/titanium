@@ -365,12 +365,12 @@ namespace ti
 		return NULL;
 	}
 
-	void OSXUserWindow::SetContextMenu(SharedBoundList value)
+	void OSXUserWindow::SetContextMenu(SharedPtr<MenuItem> value)
 	{
 		STUB();
 	}
 
-	SharedBoundList OSXUserWindow::GetContextMenu()
+	SharedPtr<MenuItem> OSXUserWindow::GetContextMenu()
 	{
 		STUB();
 		return NULL;

@@ -33,8 +33,6 @@ class Win32WebKitUIDelegate;
 class Win32UserWindow : public UserWindow {
 
 protected:
-	static bool ole_initialized;
-
 	kroll::Win32Host *win32_host;
 	Win32WebKitFrameLoadDelegate *frameLoadDelegate;
 	Win32WebKitUIDelegate *uiDelegate;
@@ -50,6 +48,7 @@ protected:
 		resizable, using_chrome, minimizable, maximizable, closeable;
 	double transparency;
 	std::map<long, SharedBoundMethod> messageHandlers;
+	bool requires_display;
 
 	/*
 	 * The window-specific menu.
@@ -63,6 +62,11 @@ protected:
 	SharedPtr<Win32MenuItemImpl> menuInUse;
 
 	HMENU menuBarHandle;
+
+	SharedPtr<Win32MenuItemImpl> contextMenu;
+	HMENU contextMenuHandle;
+
+	SharedString icon_path;
 
 	void RemoveMenu();
 	void ReloadTiWindowConfig();
@@ -81,6 +85,7 @@ public:
 	void ResizeSubViews();
 
 	void AppMenuChanged();
+	void AppIconChanged();
 
 	HWND GetWindowHandle();
 	void Hide();
@@ -129,12 +134,17 @@ public:
 	void SetUsingChrome(bool chrome);
 	void SetMenu(SharedBoundList menu);
 	SharedBoundList GetMenu();
-	void SetContextMenu(SharedBoundList menu);
-	SharedBoundList GetContextMenu();
+	void SetContextMenu(SharedPtr<MenuItem> menu);
+	SharedPtr<MenuItem> GetContextMenu();
+	HMENU GetContextMenuHandle() { return this->contextMenuHandle; }
 	void SetIcon(SharedString icon_path);
 	SharedString GetIcon();
 
 	void SetupMenu();
+	void SetupIcon();
+	
+	// called by frame load delegate to let the window know it's loaded
+	void FrameLoaded(); 
 
 };
 

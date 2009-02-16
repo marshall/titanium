@@ -7,6 +7,7 @@
 
 #include <comdef.h>
 #include "win32_user_window.h"
+#include "win32_ui_binding.h"
 
 using namespace ti;
 
@@ -210,8 +211,8 @@ HRESULT STDMETHODCALLTYPE
 Win32WebKitUIDelegate::hasCustomMenuImplementation(
 	/* [retval][out] */ BOOL *hasCustomMenus)
 {
-	std::cout << "&&&&&&&&&&&&&&  hasCustomMenuImplementation() called" << std::endl;
-	return E_NOTIMPL;
+	*hasCustomMenus = TRUE;
+	return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE
@@ -220,8 +221,20 @@ Win32WebKitUIDelegate::trackCustomPopupMenu(
 	/* [in] */ OLE_HANDLE menu,
 	/* [in] */ LPPOINT point)
 {
-	std::cout << "&&&&&&&&&&&&&&  trackCustomPopupMenu() called" << std::endl;
-	return E_NOTIMPL;
+	HMENU contextMenu = this->window->GetContextMenuHandle();
+	if(! contextMenu)
+	{
+		contextMenu = Win32UIBinding::getContextMenuInUseHandle();
+	}
+	if(contextMenu)
+	{
+		TrackPopupMenu(contextMenu,
+			TPM_BOTTOMALIGN,
+			point->x, point->y, 0,
+			this->window->GetWindowHandle(), NULL);
+	}
+
+	return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE

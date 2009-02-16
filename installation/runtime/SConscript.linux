@@ -57,9 +57,9 @@ shutil.copy(kboot, p.join(app_dir, name))
 dir_util.copy_tree("Resources", p.join(app_dir, "Resources"), preserve_symlinks=True)
 shutil.copy("tiapp.xml", p.join(app_dir, "tiapp.xml"))
 
-out_file = open(p.join(app_dir, 'manifest'), 'w')
-out_file.write(manifest_text)
-out_file.close()
+shutil.copy(p.join(build.titanium_source_dir,'installation','runtime','manifest'), p.join(app_dir,'manifest'))
+shutil.copy(p.join(build.titanium_source_dir,'installation','runtime','install'), p.join(app_dir,'install'))
+
 
 # Copy support files
 developer = p.join(build.titanium_source_dir, "installation", "developer")

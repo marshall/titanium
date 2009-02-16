@@ -6,11 +6,11 @@
 		try
 		{
 			var cw = Titanium.UI.currentWindow;
-			Titanium.api.log("currentWindow="+cw);
-			Titanium.api.log("window="+cw);
+			Titanium.API.log("currentWindow="+cw);
+			Titanium.API.log("window="+cw);
 			var fs = cw.isFullScreen();
-			Titanium.api.log("fullscreen = "+fs);
-			Titanium.api.debug("fullscreen = "+fs);
+			Titanium.API.log("fullscreen = "+fs);
+			Titanium.API.debug("fullscreen = "+fs);
 			cw.setFullScreen(!fs);
 		}
 		catch(e)

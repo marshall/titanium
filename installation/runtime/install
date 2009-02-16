@@ -1,6 +1,8 @@
 #appname:titanium_runtime
 #appid:com.titaniumapp.runtime
 
+# these are the modules to install as part of the runtime installation
+
 runtime: 0.2
 javascript: 0.1
 tiapp: 0.1
@@ -10,3 +12,9 @@ tiplatform: 0.1
 tiprocess: 0.1
 tidesktop: 0.1
 api: 0.1
+ruby: 0.1
+python: 0.1
+tinetwork: 0.1
+tigrowl: 0.1
+tinotification: 0.1
+timedia: 0.1

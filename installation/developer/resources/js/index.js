@@ -734,23 +734,29 @@ TiDeveloper.getCurrentTime = function()
 	
 };
 var irc_count = 0;
+var irc = null;
+var username = null;
+var myNick = null;
 
 setTimeout(function()
 {
 	try
 	{
-		var myNick = Titanium.Platform.username+'1';
-		var myName = Titanium.Platform.username+'1';
-		var myNameStr = Titanium.Platform.username+'1';
+		username = Titanium.Platform.username;
+		username = username.replace(' ','_');
+	
+		myNick = username+'1';
+		var myName = username+'1';
+		var myNameStr = username+'1';
 
 		$('#irc').append('<div style="color:#aaa">you are joining the <span style="color:#42C0FB">Titanium Developer</span> chat room. one moment...</div>');
+
+		irc = Titanium.Network.createIRCClient();
 		
-		var irc = Titanium.Network.createIRCClient();
 		irc.connect("irc.freenode.net",6667,myNick,myName,myNameStr,String(new Date().getTime()),function(cmd,channel,data,nick)
 		{
-			
 			var time = TiDeveloper.getCurrentTime();
-
+			
 			// switch on command
 			switch(cmd)
 			{
@@ -826,21 +832,31 @@ setTimeout(function()
 		});
 
 		irc.join("#titanium_dev");
-		$MQL('l:send.irc.msg',function()
-		{
-			var time = TiDeveloper.getCurrentTime();
-			irc.send('#titanium_dev',$('#irc_msg').val());
-			$('#irc').append('<div style="color:yellow;float:left">' + myNick + ': <span style="color:white">' + $('#irc_msg').val() + '</span></div><div style="float:right;color:#ccc;font-size:11px">'+time+'</div><div style="clear:both"></div>');
-			$('#irc_msg').val('');
-			$('#irc').get(0).scrollTop = $('#irc').get(0).scrollHeight;
-
-		})
 	}
 	catch(E)
 	{
 		alert("Exception: "+E);
 	}
 },1000);
+	
+$MQL('l:send.irc.msg',function()
+{
+	if (irc)
+	{
+		try
+		{
+			var time = TiDeveloper.getCurrentTime();
+			irc.send('#titanium_dev',$('#irc_msg').val());
+			$('#irc').append('<div style="color:yellow;float:left">' + myNick + ': <span style="color:white">' + $('#irc_msg').val() + '</span></div><div style="float:right;color:#ccc;font-size:11px">'+time+'</div><div style="clear:both"></div>');
+			$('#irc_msg').val('');
+			$('#irc').get(0).scrollTop = $('#irc').get(0).scrollHeight;
+		}
+		catch(e)
+		{
+			alert("Exception sending message: "+e);
+		}
+	}
+});			
 
 TiDeveloper.formatURIs = function(str)
 {

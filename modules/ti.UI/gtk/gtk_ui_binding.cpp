@@ -72,7 +72,6 @@ namespace ti
 		return item;
 	}
 
-
 	struct OpenFilesJob
 	{
 		Host *host;

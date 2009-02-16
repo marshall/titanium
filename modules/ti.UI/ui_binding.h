@@ -19,13 +19,14 @@ namespace ti
 
 	public:
 		UIBinding(Host *host);
-
+		virtual ~UIBinding();
+		static void RemoveTray(TrayItem* trayItem);
 
 	protected:
-		virtual ~UIBinding();
 		Host* host;
 
 	private:
+		static SharedPtr<TrayItem> trayItem;	// only one tray item per application
 		void _CreateMenu(const ValueList& args, SharedValue result);
 		void _CreateTrayMenu(const ValueList& args, SharedValue result);
 		void _SetMenu(const ValueList& args, SharedValue result);
@@ -34,6 +35,7 @@ namespace ti
 		void _GetContextMenu(const ValueList& args, SharedValue result);
 		void _SetIcon(const ValueList& args, SharedValue result);
 		void _AddTray(const ValueList& args, SharedValue result);
+		void _RemoveTray(const ValueList& args, SharedValue result);
 
 		virtual SharedPtr<MenuItem> CreateMenu(bool trayMenu) = 0;
 		virtual void SetMenu(SharedPtr<MenuItem>) = 0;

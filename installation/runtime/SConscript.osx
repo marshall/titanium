@@ -138,7 +138,9 @@ srcfolder=p.join(build.dir,name+'.app')
 tdmgname='_'+name
 dmgname=name
 
-for i in [developer,appinstaller,bundle.contents,p.join(srcfolder,'Contents')]:
+app_dir = p.join(srcfolder,'Contents')
+
+for i in [developer,appinstaller,bundle.contents,app_dir]:
 	# create a flag file on the netinstaller bundle so we don't
 	# attempt to re-run the application installer	
 	out_file = open(p.join(i, '.installed'), 'w')
@@ -155,6 +157,8 @@ except OSError:
     print ''
 
 shutil.copy(p.join(build.kroll_third_party,'manifest'),p.join(runtime,'manifest'))
+shutil.copy(p.join(build.titanium_source_dir,'installation','runtime','manifest'), p.join(app_dir,'manifest'))
+shutil.copy(p.join(build.titanium_source_dir,'installation','runtime','install'), p.join(app_dir,'install'))
 
 for d in [tdmgname,dmgname]:
 	n = d+'.dmg'
