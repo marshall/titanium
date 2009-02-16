@@ -247,7 +247,7 @@ Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config)
 		}
 
 		web_view->setPreferences(prefs);
-		//prefs->Release(); <--- crashes
+		prefs->Release();
 	}
 
 	// allow app:// and ti:// to run with local permissions (cross-domain ajax,etc)
