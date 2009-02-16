@@ -8,8 +8,10 @@
 #define _NETWORK_BINDING_H_
 
 #include <kroll/kroll.h>
-#ifdef OS_OSX
+#if defined(OS_OSX)
 #include "osx/network_status.h"
+#elif defined(OS_WIN32)
+#include "win32/win32_wmi_network_status.h"
 #endif
 
 namespace ti
@@ -19,20 +21,22 @@ namespace ti
 	public:
 		NetworkBinding(Host*);
 		virtual ~NetworkBinding();
-		
+
 	private:
 		Host* host;
 		SharedBoundObject global;
 		std::vector<SharedBoundMethod> listeners;
 
-#ifdef OS_OSX
+#if defined(OS_OSX)
 		NetworkReachability *networkDelegate;
+#elif defined(OS_WIN32)
+		Win32WMINetworkStatus *networkStatus;
 #endif
-		
+
 		void CreateIPAddress(const ValueList& args, SharedValue result);
 		void CreateTCPSocket(const ValueList& args, SharedValue result);
 		void CreateIRCClient(const ValueList& args, SharedValue result);
-		
+
 		void _GetByHost(std::string host, SharedValue result);
 		void GetHostByName(const ValueList& args, SharedValue result);
 		void GetHostByAddress(const ValueList& args, SharedValue result);
