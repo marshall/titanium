@@ -12,7 +12,7 @@ body
 {
 	border-top:none;
 	padding:20px;
-	font-family:Georgia;
+	font-family:"Helvetica Neue", Georgia, sans-serif;
 	color:white;
 	overflow:hidden;
 	position:relative;
@@ -98,7 +98,7 @@ body
 }
 .text
 {
-	font-family:'Lucida Grande', Georgia;
+	font-family: "Lucida Grande", arial, sans-serif;
 	font-size:12px;
 }
 .section
