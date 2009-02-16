@@ -12,7 +12,7 @@ env.Append(CPPPATH = [
 
 if not build.is_linux():
 	build.add_thirdparty(env, 'poco', True)
-	env.Append(LIBS=['kroll','javascriptmodule'])
+	env.Append(LIBS=['kroll','tiappmodule','javascriptmodule'])
 	if build.is_osx():
 		env.Append(FRAMEWORKS = ['Cocoa'])
 else:
