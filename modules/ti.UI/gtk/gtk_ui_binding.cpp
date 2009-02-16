@@ -72,12 +72,6 @@ namespace ti
 		return item;
 	}
 
-	void GtkUIBinding::RemoveTray()
-	{
-		// TODO
-	}
-
-
 	struct OpenFilesJob
 	{
 		Host *host;

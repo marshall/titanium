@@ -25,7 +25,6 @@ namespace ti
 		void SetIcon(SharedString icon_path);
 		SharedPtr<TrayItem> AddTray(SharedString icon_path,
 		                            SharedBoundMethod cb);
-		void RemoveTray();
 
 		void OpenFiles(
 			SharedBoundMethod callback,
@@ -43,7 +42,6 @@ namespace ti
 	private:
 		SharedPtr<Win32MenuItemImpl> contextMenuInUse;
 		static HMENU contextMenuInUseHandle;
-		static SharedPtr<TrayItem> trayItem;
 		static SharedBoundList SelectDirectory(
 			bool multiple,
 			std::string& path,

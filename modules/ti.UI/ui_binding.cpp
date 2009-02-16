@@ -16,6 +16,8 @@
 
 namespace ti
 {
+	SharedPtr<TrayItem> UIBinding::trayItem = NULL;
+
 	UIBinding::UIBinding(Host *host) : host(host)
 	{
 		this->SetMethod("createMenu", &UIBinding::_CreateMenu);
@@ -121,22 +123,36 @@ namespace ti
 
 	void UIBinding::_AddTray(const ValueList& args, SharedValue result)
 	{
-		const char *icon_url;
-		GET_ARG_OR_RETURN(0, String, icon_url);
-		SharedString icon_path = UIModule::GetResourcePath(icon_url);
-		if (icon_path.isNull())
-			return;
+		if(! trayItem)
+		{
+			const char *icon_url;
+			GET_ARG_OR_RETURN(0, String, icon_url);
+			SharedString icon_path = UIModule::GetResourcePath(icon_url);
+			if (icon_path.isNull())
+				return;
 
-		SharedBoundMethod cb = SharedBoundMethod(NULL);
-		GET_ARG(1, Method, cb);
+			SharedBoundMethod cb = SharedBoundMethod(NULL);
+			GET_ARG(1, Method, cb);
 
-		SharedPtr<TrayItem> tray = this->AddTray(icon_path, cb);
-		result->SetObject(tray);
+			trayItem = this->AddTray(icon_path, cb);
+		}
+
+		result->SetObject(trayItem);
 	}
 
 	void UIBinding::_RemoveTray(const ValueList& args, SharedValue result)
 	{
-		this->RemoveTray();
+		if(trayItem)
+		{
+			trayItem->Remove();
+		}
+	}
+
+	/*static*/
+	void UIBinding::RemoveTray(TrayItem* trayItem)
+	{
+		// since we only have one tray item per application, if a remove was called on a tray item, the the app's tray item is gone
+		UIBinding::trayItem = NULL;
 	}
 
 	void UIBinding::_SetDockIcon(const ValueList& args, SharedValue result)

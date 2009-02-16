@@ -65,11 +65,6 @@ namespace ti
 		return item;
 	}
 
-	void OSXUIBinding::RemoveTray()
-	{
-		// TODO
-	}
-
 	void OSXUIBinding::OpenFiles(
 		SharedBoundMethod callback,
 		bool multiple,
