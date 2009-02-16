@@ -128,17 +128,33 @@ TiDeveloper.ircMessageCount = 0;
 TiDeveloper.startIRCTrack = function()
 {
 	TiDeveloper.ircMessageCount = 0;
-	$('#irc_message_count').html('');
-	$('#irc_message_count').css('display','inline');
+//	$('#irc_message_count').html('');
+//	$('#irc_message_count').css('display','inline');
 	
 };
 TiDeveloper.stopIRCTrack = function()
 {
 	TiDeveloper.ircMessageCount = 0;
-	$('#irc_message_count').css('display','none');
-	$('#irc_message_count').html('');
+//	$('#irc_message_count').css('display','none');
+//	$('#irc_message_count').html('');
+	Titanium.UI.setBadge('');
 	
 };
+
+// track focus events for when to send notifications
+TiDeveloper.windowFocused = false
+Titanium.UI.currentWindow.addEventListener(function(event)
+{
+	if (event == "unfocused")
+	{
+		TiDeveloper.windowFocused = false;
+	}
+	else if (event == "focused")
+	{
+		TiDeveloper.windowFocused = true;
+	}
+});
+
 TiDeveloper.updateAppData = function()
 {
 	// write manifest
@@ -779,13 +795,23 @@ setTimeout(function()
 						if (TiDeveloper.currentState != 'interact') 
 						{
 							TiDeveloper.ircMessageCount ++;
-							Titanium.UI.setBadge(TiDeveloper.ircMessageCount);
+							Titanium.UI.setBadge(String(TiDeveloper.ircMessageCount));
 						}
 						$('#irc_message_count').html(TiDeveloper.ircMessageCount);						
 						var rawMsg = String(channel.substring(1,channel.length));
 						var urlMsg = TiDeveloper.formatURIs(rawMsg);
 						var str = username + ":";
 						var msg = urlMsg.replace(username +":","<span style='color:#42C0FB'>" + username + ": </span>");
+						
+						if (TiDeveloper.windowFocused == false && msg.indexOf(str) != -1)
+						{
+							var notification = Titanium.Notification.createNotification(window);
+							notification.setTitle("New Message");
+							notification.setMessage(msg);
+							notification.setIcon("app://images/information.png");
+							notification.show();
+							
+						}
 						$('#irc').append('<div style="color:yellow;float:left;margin-bottom:3px;width:90%">' + nick + ': <span style="color:white">' + msg + '</span></div><div style="float:right;color:#ccc;font-size:11px;width:10%;text-align:right">'+time+'</div><div style="clear:both"></div>');
 					}
 					break;

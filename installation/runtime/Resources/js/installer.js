@@ -5,17 +5,6 @@ if (Titanium.platform=='osx')
 	Titanium.UI.currentWindow.setHeight(500);
 }
 
-Titanium.UI.currentWindow.addEventListener(function(event)
-{
-	if (event == "unfocused")
-	{
-		Titanium.UI.setBadge("unfocused");
-	}
-	else if (event == "focused")
-	{
-		Titanium.UI.setBadge("focused");
-	}
-});
 
 function updateProgressMessage(msg)
 {

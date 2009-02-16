@@ -2,7 +2,7 @@ var notification_windows = 2;
 
 function TitaniumNotification(window)
 {
-  var width = 300, height = 60, notificationDelay = 3000;
+  var width = 300, height = 80, notificationDelay = 3000;
   if (Titanium.platform == "win32") {
     height = 80;  
   }
@@ -61,7 +61,7 @@ function TitaniumNotification(window)
     autohide = (autohide==null) ? true : autohide;
     mywindow.setX(window.screen.availWidth-width-20);
     if (Titanium.platform == "osx" || Titanium.platform == 'linux') {
-      mywindow.setY(10);
+      mywindow.setY(25);
     } else if (Titanium.platform == "win32") {
       mywindow.setY(window.screen.availHeight-height-10);  
     }
