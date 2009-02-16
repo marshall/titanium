@@ -155,7 +155,6 @@ Titanium.UI.currentWindow.addEventListener(function(event)
 		TiDeveloper.ircMessageCount = 0;
 		TiDeveloper.windowFocused = true;
 		Titanium.UI.setBadge('');
-
 	}
 });
 
@@ -820,7 +819,6 @@ setTimeout(function()
 						var urlMsg = TiDeveloper.formatURIs(rawMsg);
 						var str = username + ":";
 						var msg = urlMsg.replace(username +":","<span style='color:#42C0FB'>" + username + ": </span>");
-						
 						if (TiDeveloper.windowFocused == false && msg.indexOf(str) != -1)
 						{
 							var notification = Titanium.Notification.createNotification(window);
@@ -915,7 +913,12 @@ TiDeveloper.formatURIs = function(str)
 	
 	return $.gsub(str,URI_REGEX,function(m)
 	{
-		return '<a target="ti:systembrowser" href="' + m[0] + '">' + m[0] + '</a>';
+		var x = m[0]
+		if (x.indexOf('http://') == -1)
+		{
+			x = "http://" + x;
+		}
+		return '<a target="ti:systembrowser" href="' + x + '">' +x + '</a>';
 	})
 	
 };
