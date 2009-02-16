@@ -12,6 +12,8 @@
 #include <vector>
 #include "../sound.h"
 
+#include <dshow.h>
+
 using namespace kroll;
 
 namespace ti
@@ -21,7 +23,7 @@ namespace ti
 	public:
 		Win32Sound(std::string& url);
 		virtual ~Win32Sound();
-		
+
 		virtual void Play();
 		virtual void Pause();
 		virtual void Resume();
@@ -34,9 +36,16 @@ namespace ti
 		virtual bool IsPlaying();
 		virtual bool IsPaused();
 		virtual void OnComplete(SharedBoundMethod callback);
-		
+
+		void GraphCallback(const ValueList& args, SharedValue result);
 	private:
+		IGraphBuilder *graph_builder;
+		IMediaControl *media_control;
+		IMediaEventEx *media_event_ex;
+		IMediaSeeking *media_seeking;
 		SharedBoundMethod* callback;
+
+		void InitGraphBuilder();
 	};
 }
 

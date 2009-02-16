@@ -44,7 +44,7 @@ namespace ti
 		{
 			throw ValueException::FromString("Sounds is currently playing");
 		}
-		this->Pause();
+		this->Resume();
 	}
 	void Sound::Stop(const ValueList& args, SharedValue result)
 	{
