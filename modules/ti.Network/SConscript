@@ -4,6 +4,7 @@ import os, os.path as path
 Import("tiBuild")
 Import('build')
 
+sources = Glob('*.cpp')+Glob('irc/*.cpp')
 
 env = tiBuild.env.Clone();
 env.Append(CPPDEFINES = ('TITANIUM_NETWORK_API_EXPORT', 1))
@@ -11,6 +12,8 @@ env.Append(CPPDEFINES = ('TITANIUM_NETWORK_API_EXPORT', 1))
 if tiBuild.is_osx():
 	tiBuild.add_thirdparty(env, 'poco', True)
 	env.Append(LIBS=['kroll'])
+	env.Append(FRAMEWORKS=['SystemConfiguration'])
+	sources+=Glob('osx/*.mm')
 else:
 	tiBuild.add_thirdparty(env, 'poco')
 
@@ -19,6 +22,6 @@ if tiBuild.is_win32():
     env.Append(LIBS=['wsock32','ws2_32'])
     env.Append(CPPDEFINES = ('WIN32_LEAN_AND_MEAN',1))
 
-s = env.SharedLibrary(target = tiBuild.dir + '/tinetworkmodule', source = Glob('*.cpp')+Glob('irc/*.cpp'))
+s = env.SharedLibrary(target = tiBuild.dir + '/tinetworkmodule', source = sources)
 
 

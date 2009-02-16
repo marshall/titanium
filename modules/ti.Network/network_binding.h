@@ -8,6 +8,9 @@
 #define _NETWORK_BINDING_H_
 
 #include <kroll/kroll.h>
+#ifdef OS_OSX
+#include "osx/network_status.h"
+#endif
 
 namespace ti
 {
@@ -15,11 +18,16 @@ namespace ti
 	{
 	public:
 		NetworkBinding(Host*);
-	protected:
 		virtual ~NetworkBinding();
+		
 	private:
 		Host* host;
 		SharedBoundObject global;
+		std::vector<SharedBoundMethod> listeners;
+
+#ifdef OS_OSX
+		NetworkReachability *networkDelegate;
+#endif
 		
 		void CreateIPAddress(const ValueList& args, SharedValue result);
 		void CreateTCPSocket(const ValueList& args, SharedValue result);
@@ -28,7 +36,9 @@ namespace ti
 		void _GetByHost(std::string host, SharedValue result);
 		void GetHostByName(const ValueList& args, SharedValue result);
 		void GetHostByAddress(const ValueList& args, SharedValue result);
-		void OnConnectivityChange(const ValueList& args, SharedValue result);
+		void AddConnectivityListener(const ValueList& args, SharedValue result);
+		void RemoveConnectivityListener(const ValueList& args, SharedValue result);
+		void FireOnlineStatusChange(const ValueList& args, SharedValue result);
 	};
 }
 
