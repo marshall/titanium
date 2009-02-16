@@ -533,7 +533,15 @@ SharedPtr<MenuItem> Win32UserWindow::GetContextMenu()
 
 void Win32UserWindow::SetIcon(SharedString icon_path)
 {
-	printf("set icon: %s\n", icon_path->c_str());
+	this->icon_path = icon_path;
+	this->SetupIcon();
+}
+
+void Win32UserWindow::SetupIcon()
+{
+	if(! icon_path.isNull()) printf("set icon: %s\n", icon_path->c_str());
+
+	SharedString icon_path = this->icon_path;
 
 	if (icon_path.isNull() && !UIModule::GetIcon().isNull())
 		icon_path = UIModule::GetIcon();
@@ -568,6 +576,14 @@ void Win32UserWindow::AppMenuChanged()
 	if (this->menu.isNull())
 	{
 		this->SetupMenu();
+	}
+}
+
+void Win32UserWindow::AppIconChanged()
+{
+	if (this->icon_path.isNull())
+	{
+		this->SetupIcon();
 	}
 }
 
