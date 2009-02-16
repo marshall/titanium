@@ -776,7 +776,11 @@ setTimeout(function()
 				{
 					if (nick && nick!='NickServ')
 					{
-						if (TiDeveloper.currentState != 'interact') TiDeveloper.ircMessageCount ++;
+						if (TiDeveloper.currentState != 'interact') 
+						{
+							TiDeveloper.ircMessageCount ++;
+							Titanium.UI.setBadge(TiDeveloper.ircMessageCount);
+						}
 						$('#irc_message_count').html(TiDeveloper.ircMessageCount);						
 						var rawMsg = String(channel.substring(1,channel.length));
 						var urlMsg = TiDeveloper.formatURIs(rawMsg);
