@@ -34,10 +34,12 @@ namespace ti
 	}
 	NetworkBinding::~NetworkBinding()
 	{
-#ifdef OS_OSX
+#if defined(OS_OSX)
 		[networkDelegate release];
 		networkDelegate=nil;
-#endif			
+#elif defined(OS_WIN32)
+		delete networkStatus;
+#endif
 	}
 	void NetworkBinding::_GetByHost(std::string hostname, SharedValue result)
 	{
@@ -84,7 +86,7 @@ namespace ti
 		}
 		else if (args.at(0)->IsString())
 		{
-			// in this case, they just passed in a string so resolve as 
+			// in this case, they just passed in a string so resolve as
 			// normal
 			this->_GetByHost(args.at(0)->ToString(),result);
 		}
@@ -125,10 +127,12 @@ namespace ti
 		// lazy add the network connectivity listener
 		if (this->listeners.size()==1)
 		{
-#ifdef OS_OSX
 			SharedBoundMethod delegate = this->Get("FireOnlineStatusChange")->ToMethod();
+#if defined(OS_OSX)
 			networkDelegate = [[NetworkReachability alloc] initWithDelegate:delegate];
-#endif			
+#elif defined(OS_WIN32)
+			networkStatus = new Win32WMINetworkStatus(delegate);
+#endif
 		}
 	}
 	void NetworkBinding::RemoveConnectivityListener(const ValueList& args, SharedValue result)
@@ -146,14 +150,16 @@ namespace ti
 			{
 				this->listeners.erase(it);
 				result->SetBool(true);
-				
+
 				// once there are no more listeners, shut it down
 				if (this->listeners.size()==0)
 				{
-		#ifdef OS_OSX
+		#if defined(OS_OSX)
 					[networkDelegate release];
 					networkDelegate=nil;
-		#endif			
+		#elif defined(OS_WIN32)
+					delete networkStatus;
+		#endif
 				}
 				return;
 			}
