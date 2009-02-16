@@ -37,6 +37,7 @@ using namespace ti;
 - (SharedBoundObject)userWindow;
 - (void)setInitialWindow:(BOOL)yn;
 - (void)showInspector;
+- (void)fireWindowEvent:(UserWindowEvent)event;
 @end
 
 #endif

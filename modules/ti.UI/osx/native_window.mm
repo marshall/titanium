@@ -110,7 +110,7 @@
 		double maxWidth = config->GetMaxWidth();
 		double minHeight = config->GetMinHeight();
 		double maxHeight = config->GetMaxHeight();
-		
+
 		if (newSize.width >= minWidth && newSize.width <= maxWidth && 
 			newSize.height >= minHeight && newSize.height <= maxHeight)
 		{
@@ -128,11 +128,29 @@
 }
 - (void)windowDidResize:(NSNotification*)notification
 {
+	[self fireWindowEvent:RESIZED];
 	[self updateConfig];
 }
 - (void)windowDidMove:(NSNotification*)notification
 {
+	[self fireWindowEvent:MOVED];
 	[self updateConfig];
+}
+- (void)windowDidBecomeKey:(NSNotification*)notification
+{
+	[self fireWindowEvent:FOCUSED];
+}
+- (void)windowDidResignKey:(NSNotification*)notification
+{
+	[self fireWindowEvent:UNFOCUSED];
+}
+- (void)windowDidMiniaturize:(NSNotification*)notification
+{
+	[self fireWindowEvent:MINIMIZED];
+}
+- (void)windowDidDeminiaturize:(NSNotification*)notification
+{
+	[self fireWindowEvent:MAXIMIZED];
 }
 - (void)setTransparency:(double)transparency
 {
@@ -187,6 +205,7 @@
 		// figure out which screen to display on
 		NSScreen *screen = [self activeScreen];
 		[webView enterFullScreenMode:screen withOptions:options];
+		[self fireWindowEvent:FULLSCREENED];
 	}
 	else
 	{
@@ -194,6 +213,7 @@
 		// on the window will actually refresh correctly
 		[self orderOut:nil];
 		[webView exitFullScreenModeWithOptions:options];
+		[self fireWindowEvent:WINDOWED];
 	}
 	[self makeKeyAndOrderFront:self];	
  	[self makeFirstResponder:webView];
@@ -219,6 +239,7 @@
 	}
 	NSURL *url = [TiApplication normalizeURL:[NSString stringWithCString:config->GetURL().c_str()]];
     [[webView mainFrame] loadRequest:[NSURLRequest requestWithURL:url]];
+	[self fireWindowEvent:OPENED];
 }
 - (void)close
 {
@@ -226,6 +247,7 @@
 	if (!closed)
 	{
 		closed = YES;
+		[self fireWindowEvent:CLOSED];
 		[webView close];
 		[super close];
 		SharedPtr<UserWindow> uw = userWindow->cast<UserWindow>();
@@ -255,4 +277,10 @@
 		}
 	}
 }
+- (void)fireWindowEvent:(UserWindowEvent)event
+{
+	SharedPtr<UserWindow> uw = userWindow->cast<UserWindow>();
+	uw->FireEvent(event);
+}
+
 @end
