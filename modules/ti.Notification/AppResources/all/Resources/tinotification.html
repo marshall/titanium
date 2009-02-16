@@ -54,8 +54,16 @@
       left:12px;
     }
   </style>
+  <script>
+	function runCallback ()
+	{
+		if (Titanium.UI.currentWindow.callback) {
+			Titanium.UI.currentWindow.callback();
+		}
+	}
+  </script>
 </head>
-<body>
+<body onclick="runCallback()">
   <div id="body">
     <div id="image"><img id="notification_icon" src=""/></div>
     <div id="content">
@@ -101,7 +109,8 @@
         {
           $("content").style.left = '';
           var img = $('notification_icon');
-          
+
+          //alert("img.src="+qs.icon);
           img.src = qs.icon;
           img.style.visibility = 'visible';
           img.style.display = '';

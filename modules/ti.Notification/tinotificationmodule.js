@@ -67,6 +67,7 @@ function TitaniumNotification(window)
     }
     
     mywindow.setTransparency(.99);
+    mywindow.callback = callback;
     mywindow.setURL('app://tinotification.html?title='+encodeURIComponent(title)+'&message='+encodeURIComponent(message)+'&icon='+encodeURIComponent(icon));
     mywindow.show();
     if (autohide)
