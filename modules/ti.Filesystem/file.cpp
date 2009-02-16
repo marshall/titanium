@@ -327,10 +327,18 @@ namespace ti
 					this->readLineFS = NULL;
 					result->SetNull();
 				}
-				else {
+				else 
+				{
 					std::string line;
 					std::getline(*(this->readLineFS), line);
-					result->SetString(line.c_str());
+					if (line.empty())
+					{
+						result->SetString("");
+					}
+					else
+					{
+						result->SetString(line.c_str());
+					}
 				}
 			}
 		}

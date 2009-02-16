@@ -742,25 +742,35 @@ TiDeveloper.getCurrentTime = function()
 };
 var irc_count = 0;
 
+function format_nickname(name)
+{
+	return name.replace(' ','_');
+}
+
 setTimeout(function()
 {
 	try
 	{
-		var myNick = Titanium.Platform.username+'1';
-		var myName = Titanium.Platform.username+'1';
-		var myNameStr = Titanium.Platform.username+'1';
+		var username = format_nickname(Titanium.Platform.username + 1);
+		var nick_counter = 1;
 
 		$('#irc').append('<div style="color:#aaa">you are joining the <span style="color:#42C0FB">Titanium Developer</span> chat room. one moment...</div>');
 		
 		var irc = Titanium.Network.createIRCClient();
-		irc.connect("irc.freenode.net",6667,myNick,myName,myNameStr,String(new Date().getTime()),function(cmd,channel,data,nick)
+		irc.connect("irc.freenode.net",6667,username,username,username,String(new Date().getTime()),function(cmd,channel,data,nick)
 		{
-			
 			var time = TiDeveloper.getCurrentTime();
 
 			// switch on command
 			switch(cmd)
-			{
+			{	
+				case '433':
+				{
+					// try again with a new nick
+					username = format_nickname(Titanium.Platform.username + (++nick_counter));
+					irc.setNick(username);
+					break;
+				}
 				case 'NOTICE':
 				case 'PRIVMSG':
 				{
@@ -770,23 +780,8 @@ setTimeout(function()
 						$('#irc_message_count').html(TiDeveloper.ircMessageCount);						
 						var rawMsg = String(channel.substring(1,channel.length));
 						var urlMsg = TiDeveloper.formatURIs(rawMsg);
-						var str = myNick + ":";
-						
-						var msg = urlMsg.replace(myNick +":","<span style='color:#42C0FB'>" + myNick + ": </span>");
-
-						// show notification for your messages
-						if (msg.indexOf(str)!= -1)
-						{
-							// alert('show notification ');
-							// var notification = TitaniumNotification(window);
-							// alert('notification ' + notification)
-							// notification.setTitle("New Message");
-							// notification.setMessage(msg);
-							// //notification.setIcon("app://logo_large.png");
-							// notification.show();
-							
-						}
-
+						var str = username + ":";
+						var msg = urlMsg.replace(username +":","<span style='color:#42C0FB'>" + username + ": </span>");
 						$('#irc').append('<div style="color:yellow;float:left;margin-bottom:3px;width:90%">' + nick + ': <span style="color:white">' + msg + '</span></div><div style="float:right;color:#ccc;font-size:11px;width:10%;text-align:right">'+time+'</div><div style="clear:both"></div>');
 					}
 					break;
@@ -819,9 +814,9 @@ setTimeout(function()
 						continue;
 					}
 					
-					if (nick == myNick)
+					if (nick == username)
 					{
-						$('#irc').append('<div style="color:#aaa;margin-bottom:20px"> you are now in the room. your handle is: <span style="color:#42C0FB">'+myNick+'</span> </div>');
+						$('#irc').append('<div style="color:#aaa;margin-bottom:20px"> you are now in the room. your handle is: <span style="color:#42C0FB">'+username+'</span> </div>');
 						break
 					}
 					else
@@ -852,11 +847,10 @@ setTimeout(function()
 		{
 			var time = TiDeveloper.getCurrentTime();
 			irc.send('#titanium_dev',$('#irc_msg').val());
-			$('#irc').append('<div style="color:yellow;float:left;margin-bottom:3px;width:90%">' + myNick + ': <span style="color:white">' + $('#irc_msg').val() + '</span></div><div style="float:right;color:#ccc;font-size:11px;width:10%;text-align:right">'+time+'</div><div style="clear:both"></div>');
+			$('#irc').append('<div style="color:yellow;float:left;margin-bottom:3px;width:90%">' + username + ': <span style="color:white">' + $('#irc_msg').val() + '</span></div><div style="float:right;color:#ccc;font-size:11px;width:10%;text-align:right">'+time+'</div><div style="clear:both"></div>');
 			$('#irc_msg').val('');
 			$('#irc').get(0).scrollTop = $('#irc').get(0).scrollHeight;
-
-		})
+		});
 	}
 	catch(E)
 	{

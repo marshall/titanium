@@ -178,11 +178,13 @@ namespace ti
 
 	void UIBinding::_SetBadge(const ValueList& args, SharedValue result)
 	{
+		// badges are just labels right now
+		// we might want to support custom images too
 		SharedString badge_path = NULL; // a NULL value is an unset
 		if (args.size() > 0 && args.at(0)->IsString())
 		{
 			const char *badge_url = args.at(0)->ToString();
-			badge_path = UIModule::GetResourcePath(badge_url);
+			badge_path = SharedString(new std::string(badge_url));
 		}
 		this->SetBadge(badge_path);
 	}
