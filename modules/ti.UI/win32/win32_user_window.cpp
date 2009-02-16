@@ -546,7 +546,12 @@ void Win32UserWindow::SetupIcon()
 	if (icon_path.isNull() && !UIModule::GetIcon().isNull())
 		icon_path = UIModule::GetIcon();
 
-	if (!icon_path.isNull())
+	if (icon_path.isNull())
+	{
+		// need to remove the icon
+		SendMessageA(window_handle, (UINT)WM_SETICON, ICON_BIG, (LPARAM)0);
+	}
+	else
 	{
 		std::string ext = icon_path->substr(icon_path->length()-4,4);
 		if (ext == ".ico")
