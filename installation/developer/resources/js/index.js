@@ -299,6 +299,13 @@ function loadProjects()
 			TiDeveloper.currentPage = 1;
 			var data = TiDeveloper.getProjectPage(10,TiDeveloper.currentPage);
 			var count = formatCountMessage(TiDeveloper.ProjectArray.length,'project');
+			
+			// show create project if none
+			if (TiDeveloper.ProjectArray.length == 0)
+			{
+				$MQ('l:menu',{val:'manage'})
+			}
+			
 			$('#project_count_hidden').val(TiDeveloper.ProjectArray.length)
 			$MQ('l:project.list.response',{count:count,page:TiDeveloper.currentPage,totalRecords:TiDeveloper.ProjectArray.length,'rows':data})
         }, function(tx, error) {
@@ -764,7 +771,22 @@ setTimeout(function()
 						var rawMsg = String(channel.substring(1,channel.length));
 						var urlMsg = TiDeveloper.formatURIs(rawMsg);
 						var str = myNick + ":";
+						
 						var msg = urlMsg.replace(myNick +":","<span style='color:#42C0FB'>" + myNick + ": </span>");
+
+						// show notification for your messages
+						if (msg.indexOf(str)!= -1)
+						{
+							// alert('show notification ');
+							// var notification = TitaniumNotification(window);
+							// alert('notification ' + notification)
+							// notification.setTitle("New Message");
+							// notification.setMessage(msg);
+							// //notification.setIcon("app://logo_large.png");
+							// notification.show();
+							
+						}
+
 						$('#irc').append('<div style="color:yellow;float:left;margin-bottom:3px;width:90%">' + nick + ': <span style="color:white">' + msg + '</span></div><div style="float:right;color:#ccc;font-size:11px;width:10%;text-align:right">'+time+'</div><div style="clear:both"></div>');
 					}
 					break;

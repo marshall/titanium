@@ -60,10 +60,39 @@
 		<!-- CONTENT FILES -->
 		<!-- ************* -->
 		
+		<!-- DOC -->
+		<div style="display:none;margin-bottom:20px;min-height:90%"
+			on="l:menu[val=api] then effect[fadeIn] else hide">
+			<!-- INFO MESSAGE -->
+			<div class="infobox" style="width:120px">
+				<div class="content" style="height:20px;position:relative">
+					<div style="position:absolute;top:7px;left:5px">
+						<img src="images/info.png" style="position:relative;top:-1px"/>
+					</div>
+					<div style="position:absolute;top:7px;left:30px">
+						Coming soon!
+					</div>
+				</div>
+			</div>
+
+		</div>
+		
 		<!-- SOCIAL TYPE STUFF -->
 		<div style="display:none;margin-bottom:20px;min-height:90%"
 			on="l:menu[val=social] then effect[fadeIn] else hide">
 			
+			<!-- INFO MESSAGE -->
+			<div class="infobox" style="width:120px">
+				<div class="content" style="height:20px;position:relative">
+					<div style="position:absolute;top:7px;left:5px">
+						<img src="images/info.png" style="position:relative;top:-1px"/>
+					</div>
+					<div style="position:absolute;top:7px;left:30px">
+						Coming soon!
+					</div>
+				</div>
+			</div>
+<!--		
 			 <div id="ytapiplayer" style="float:left;width:60%;display:none" on="l:play.video then effect[fadeIn]">
 		      You need Flash player 8+ and JavaScript enabled to view this video.
 		    </div>
@@ -93,7 +122,7 @@
 					</div>
 				</div>
 			</div>
-
+-->
 		</div>
 		
 		<!-- IRC -->
@@ -440,7 +469,8 @@
 							Create
 						</div>
 					</div>
-					<div class="button1" style="float:left;"  on="click then l:cancel[val=project]">
+					<div class="button1" style="float:left;"  on="click then l:cancel[val=project]
+						or l:project.list.response[totalRecords=0]  then hide else show">
 						<div class="button2">
 							Cancel
 						</div>
