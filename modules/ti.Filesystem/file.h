@@ -20,8 +20,8 @@
 
 #include <api/binding/binding.h>
 #include <api/binding/static_bound_list.h>
+#include "file_stream.h"		// TODO remove this include when read/write methods are removed from File class
 #include <string>
-#include <Poco/FileStream.h>
 
 namespace ti
 {
@@ -34,7 +34,7 @@ namespace ti
 
 		private:
 			std::string filename;
-			Poco::FileInputStream* readLineFS;
+			ti::FileStream* readLineFS;
 
 
 			/**
@@ -130,44 +130,17 @@ namespace ti
 			void Resolve(const ValueList& args, SharedValue result);
 			/**
 			 * Function: Write
-			 *   writes a string of text to a file
-			 *
-			 * Parameters:
-			 *   text = text to write to file
-			 *   append - boolean flag that indicates if the text should be appended to the file (if the file exists)
-			 *
-			 * Returns:
-			 *   true if the text was written successfully; false otherwise
+			 *   @deprecated - should use FileStream object
 			 */
 			void Write(const ValueList& args, SharedValue result);
 			/**
 			 * Function: Read
-			 *   Reads the contents of this File
-			 *
-			 * Parameters:
-			 *
-			 * Returns:
-			 *   the text file contents as a string
+			 *   @deprecated - should use FileStream object
 			 */
 			void Read(const ValueList& args, SharedValue result);
 			/**
 			 * Function: ReadLine
-			 *   Reads the next line of this File.
-			 *   The file must be open for reading the first time this method is called.
-			 *
-			 *   Typical usage is:
-			 *     var file = Titanium.Filesystem.getFile(filename);
-			 *     var line = file.readLine(true);
-			 *     while(line != null) {
-			 *       // do something with the line
-			 *       line = file.readLine();
-			 *     }
-			 *
-			 * Parameters:
-			 *   openFile - if this is true, start reading at the beginning of the file again
-			 *
-			 * Returns:
-			 *   a string representing the next line of text in the file.
+			 *   @deprecated - should use FileStream object
 			 */
 			void ReadLine(const ValueList& args, SharedValue result);
 			/**

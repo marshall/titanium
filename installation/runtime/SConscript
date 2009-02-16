@@ -9,35 +9,22 @@ appid ='com.titaniumapp.installer.runtime'
 runtime_libs = ['kroll', 'khost']
 third_party = ['webkit', 'poco']
 module_dirs = [
-	'api', 'javascript', 'foo',  'ruby', 'python',
-	'ti.Platform', 'ti.App', 'ti.UI', 'ti.Network', 'ti.Filesystem',
-	'ti.Media', 'ti.Desktop', 'ti.Process', 'ti.Notification'
+	'api', 'javascript', 'foo',  'ruby', 'python', 'ti.Platform',
+	'ti.App', 'ti.UI', 'ti.Network', 'ti.Filesystem', 'ti.Media',
+	'ti.Desktop', 'ti.Process', 'ti.Notification', 'ti.Growl'
 ]
-
-def moduleID(dir):
-	id = dir.lower()
-	id = id.replace('.', '')
-	return id
-
-if not build.is_linux():
-	module_dirs.append('ti.Growl')
-
-
 modules = {}
 for dir in module_dirs:
-	id = moduleID(dir)
-	modules[id] = dir
+	 modules[dir.lower().replace('.','')] = '0.1'
 
 manifest_text="""
 #appname: %s
 #appid: %s
 runtime: %s
-"""
+""" % (name, appid, version)
 
-
-manifest_text = manifest_text % (name, appid, version)
-for module in modules.keys():
-	manifest_text += "%s: 0.1\n" % module
+for pair in modules.items():
+	manifest_text += "%s: %s\n" % pair
 
 vars = 'vars build name version runtime_libs '
 vars += ' third_party modules appid manifest_text'

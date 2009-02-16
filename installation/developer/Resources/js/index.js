@@ -147,11 +147,15 @@ Titanium.UI.currentWindow.addEventListener(function(event)
 {
 	if (event == "unfocused")
 	{
+		TiDeveloper.ircMessageCount = 0;
 		TiDeveloper.windowFocused = false;
 	}
 	else if (event == "focused")
 	{
+		TiDeveloper.ircMessageCount = 0;
 		TiDeveloper.windowFocused = true;
+		Titanium.UI.setBadge('');
+
 	}
 });
 
