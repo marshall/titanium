@@ -20,8 +20,8 @@ namespace ti
 		std::string home = host->GetApplicationHome();
 		std::string config = FileUtils::Join(home.c_str(),CONFIG_FILENAME,NULL);
 
-		std::cout << "+++home = " << home << std::endl;
-		std::cout << "+++config = " << config << std::endl;
+		PRINTD("+++home = " << home);
+		PRINTD("+++config = " << config);
 
 		if (!FileUtils::IsFile(config))
 		{

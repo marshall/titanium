@@ -181,7 +181,7 @@ namespace ti
 		g_thread_create(&open_files_thread, job, false, NULL);
 	}
 
-	long GtkUIBinding::GetSystemIdleTime()
+	long GtkUIBinding::GetIdleTime()
 	{
 		Display *display = gdk_x11_get_default_xdisplay();
 		if (display == NULL)

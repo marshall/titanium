@@ -81,6 +81,16 @@ namespace ti
 		 */
 		void GetApplicationDataDirectory(const ValueList& args, SharedValue result);
 		/**
+		 * Function: GetRuntimeBaseDirectory
+		 *   returns a path to the runtime base directory
+		 *
+		 * Params:
+		 *
+		 * Returns:
+		 *   path to the Titanium runtime base folder
+		 */
+		void GetRuntimeBaseDirectory(const ValueList& args, SharedValue result);
+		/**
 		 * Function: GetResourcesDirectory
 		 *   returns a path to the application's Resource directory
 		 *
