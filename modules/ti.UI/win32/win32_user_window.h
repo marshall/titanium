@@ -48,6 +48,7 @@ protected:
 		resizable, using_chrome, minimizable, maximizable, closeable;
 	double transparency;
 	std::map<long, SharedBoundMethod> messageHandlers;
+	bool requires_display;
 
 	/*
 	 * The window-specific menu.
@@ -141,6 +142,9 @@ public:
 
 	void SetupMenu();
 	void SetupIcon();
+	
+	// called by frame load delegate to let the window know it's loaded
+	void FrameLoaded(); 
 
 };
 
