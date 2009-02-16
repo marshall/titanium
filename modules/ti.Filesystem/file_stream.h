@@ -10,10 +10,6 @@
 
 #ifdef OS_WIN32
 #include <api/base.h>
-#include <windows.h>
-#include <commdlg.h>
-#include <shellapi.h>
-#include <shlobj.h>
 #include <string>
 #elif OS_OSX
 #import <Foundation/Foundation.h>

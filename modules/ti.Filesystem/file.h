@@ -22,7 +22,6 @@
 #include <api/binding/static_bound_list.h>
 #include "file_stream.h"		// TODO remove this include when read/write methods are removed from File class
 #include <string>
-#include <Poco/FileStream.h>
 
 namespace ti
 {
