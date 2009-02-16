@@ -51,6 +51,15 @@ namespace ti
 
 	void OSXUIBinding::SetBadge(SharedString badge_path)
 	{
+		std::string value = *badge_path;
+		NSString *label = nil;
+		if (!value.empty())
+		{
+			label = [NSString stringWithCString:value.c_str()];
+		}
+		NSDockTile *tile = [[NSApplication sharedApplication] dockTile];
+		[tile setBadgeLabel:label];
+		[tile setShowsApplicationBadge:(label == nil ? NO : YES)];
 	}
 
 	void OSXUIBinding::SetIcon(SharedString icon_path)

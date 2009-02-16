@@ -132,7 +132,7 @@ Win32UserWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 }
 
 Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config)
-	: UserWindow(host, config), script_evaluator(host), menuBarHandle(NULL), menuInUse(NULL), menu(NULL), contextMenuHandle(NULL)
+	: UserWindow(host, config), script_evaluator(host), menuBarHandle(NULL), menuInUse(NULL), menu(NULL), contextMenuHandle(NULL), initial_icon(NULL)
 {
 	static bool initialized = false;
 	win32_host = static_cast<kroll::Win32Host*>(host);
@@ -275,6 +275,15 @@ Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config)
 	// we want to show the window - we do this to prevent white screen
 	// while the URL is being fetched
 	this->requires_display = true;
+
+	// set initial window icon to icon associated with exe file
+	char exePath[MAX_PATH];
+	GetModuleFileNameA(GetModuleHandle(NULL), exePath, MAX_PATH);
+	initial_icon = ExtractIcon(win32_host->GetInstanceHandle(), exePath, 0);
+	if(initial_icon)
+	{
+		SendMessageA(window_handle, (UINT)WM_SETICON, ICON_BIG, (LPARAM)initial_icon);
+	}
 }
 
 Win32UserWindow::~Win32UserWindow()
@@ -602,8 +611,6 @@ void Win32UserWindow::SetIcon(SharedString icon_path)
 
 void Win32UserWindow::SetupIcon()
 {
-	if(! icon_path.isNull()) printf("set icon: %s\n", icon_path->c_str());
-
 	SharedString icon_path = this->icon_path;
 
 	if (icon_path.isNull() && !UIModule::GetIcon().isNull())
@@ -612,7 +619,7 @@ void Win32UserWindow::SetupIcon()
 	if (icon_path.isNull())
 	{
 		// need to remove the icon
-		SendMessageA(window_handle, (UINT)WM_SETICON, ICON_BIG, (LPARAM)0);
+		SendMessageA(window_handle, (UINT)WM_SETICON, ICON_BIG, (LPARAM)initial_icon);
 	}
 	else
 	{
@@ -630,8 +637,7 @@ void Win32UserWindow::SetupIcon()
 
 SharedString Win32UserWindow::GetIcon()
 {
-	STUB();
-	return NULL;
+	return icon_path;
 }
 
 void Win32UserWindow::SetUsingChrome(bool chrome) {
