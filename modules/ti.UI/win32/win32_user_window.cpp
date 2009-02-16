@@ -602,8 +602,6 @@ void Win32UserWindow::SetIcon(SharedString icon_path)
 
 void Win32UserWindow::SetupIcon()
 {
-	if(! icon_path.isNull()) printf("set icon: %s\n", icon_path->c_str());
-
 	SharedString icon_path = this->icon_path;
 
 	if (icon_path.isNull() && !UIModule::GetIcon().isNull())
@@ -630,8 +628,7 @@ void Win32UserWindow::SetupIcon()
 
 SharedString Win32UserWindow::GetIcon()
 {
-	STUB();
-	return NULL;
+	return icon_path;
 }
 
 void Win32UserWindow::SetUsingChrome(bool chrome) {
