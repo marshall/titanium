@@ -229,7 +229,7 @@ namespace ti
 		return results;
 	}
 
-	long Win32UIBinding::GetSystemIdleTime()
+	long Win32UIBinding::GetIdleTime()
 	{
 		LASTINPUTINFO lii;
 		memset(&lii, 0, sizeof(lii));

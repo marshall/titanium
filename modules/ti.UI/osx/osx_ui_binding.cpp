@@ -120,7 +120,7 @@ namespace ti
 		callback->Call(args);
 	}
 
-	long OSXUIBinding::GetSystemIdleTime()
+	long OSXUIBinding::GetIdleTime()
 	{
 		// some of the code for this was from:
 		// http://ryanhomer.com/blog/2007/05/31/detecting-when-your-cocoa-application-is-idle/

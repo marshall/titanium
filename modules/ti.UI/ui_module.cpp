@@ -48,6 +48,7 @@ namespace ti
 	SharedPtr<MenuItem> UIModule::app_menu = SharedPtr<MenuItem>(NULL);
 	SharedPtr<MenuItem> UIModule::app_context_menu = SharedPtr<MenuItem>(NULL);
 	SharedString UIModule::icon_path = SharedString(NULL);
+	std::vector<SharedPtr<TrayItem> > UIModule::tray_items;
 
 	void UIModule::Initialize()
 	{
@@ -99,13 +100,8 @@ namespace ti
 
 	void UIModule::Stop()
 	{
-		// remove tray icon if there is one
-		SharedValue uiBindingSharedValue = host->GetGlobalObject()->Get("UI");
-		SharedPtr<UIBinding> uiBindingPtr = uiBindingSharedValue->ToObject().cast<UIBinding>();
-		SharedBoundMethod m = uiBindingPtr->Get("removeTray")->ToMethod();
-		ValueList args;
-		m->Call(args);
-
+		// Remove app tray icons
+		UIModule::ClearTrayItems();
 
 		// Only one copy of the UI module loaded hopefully,
 		// otherwise we need to count instances and free
@@ -167,5 +163,37 @@ namespace ti
 		return UIModule::icon_path;
 	}
 
+	void UIModule::AddTrayItem(SharedPtr<TrayItem> item)
+	{
+		// One tray item at a time
+		UIModule::ClearTrayItems();
+		UIModule::tray_items.push_back(item);
+	}
 
+	void UIModule::ClearTrayItems()
+	{
+		std::vector<SharedPtr<TrayItem> >::iterator i = UIModule::tray_items.begin();
+		while (i != UIModule::tray_items.end())
+		{
+			(*i++)->Remove();
+		}
+		UIModule::tray_items.clear();
+	}
+
+	void UIModule::UnregisterTrayItem(TrayItem* item)
+	{
+		std::vector<SharedPtr<TrayItem> >::iterator i = UIModule::tray_items.begin();
+		while (i != UIModule::tray_items.end())
+		{
+			SharedPtr<TrayItem> c = *i;
+			if (c.get() == item)
+			{
+				i = UIModule::tray_items.erase(i);
+			}
+			else
+			{
+				i++;
+			}
+		}
+	}
 }
