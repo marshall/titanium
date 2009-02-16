@@ -25,7 +25,7 @@ namespace ti
 		global->Set("version", version);
 
 		// platform
-		SharedValue platform = Value::NewString(Host::Platform);
+		SharedValue platform = Value::NewString(host->GetPlatform());
 		global->Set("platform",platform);
 
 		SharedBoundList argList = new StaticBoundList();

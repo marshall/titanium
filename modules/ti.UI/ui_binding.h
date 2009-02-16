@@ -20,13 +20,11 @@ namespace ti
 	public:
 		UIBinding(Host *host);
 		virtual ~UIBinding();
-		static void RemoveTray(TrayItem* trayItem);
 
 	protected:
 		Host* host;
 
 	private:
-		static SharedPtr<TrayItem> trayItem;	// only one tray item per application
 		void _CreateMenu(const ValueList& args, SharedValue result);
 		void _CreateTrayMenu(const ValueList& args, SharedValue result);
 		void _SetMenu(const ValueList& args, SharedValue result);
@@ -35,7 +33,7 @@ namespace ti
 		void _GetContextMenu(const ValueList& args, SharedValue result);
 		void _SetIcon(const ValueList& args, SharedValue result);
 		void _AddTray(const ValueList& args, SharedValue result);
-		void _RemoveTray(const ValueList& args, SharedValue result);
+		void _ClearTray(const ValueList& args, SharedValue result);
 
 		virtual SharedPtr<MenuItem> CreateMenu(bool trayMenu) = 0;
 		virtual void SetMenu(SharedPtr<MenuItem>) = 0;
@@ -45,7 +43,7 @@ namespace ti
 		                                    SharedBoundMethod cb) = 0;
 
 		void _OpenFiles(const ValueList& args, SharedValue result);
-		void _GetSystemIdleTime(const ValueList& args, SharedValue result);
+		void _GetIdleTime(const ValueList& args, SharedValue result);
 
 		/* OS X specific callbacks */
 		void _SetDockIcon(const ValueList& args, SharedValue result);
@@ -65,7 +63,7 @@ namespace ti
 			std::string& path,
 			std::string& file,
 			std::vector<std::string>& types) = 0;
-		virtual long GetSystemIdleTime() = 0;
+		virtual long GetIdleTime() = 0;
 
 	};
 }

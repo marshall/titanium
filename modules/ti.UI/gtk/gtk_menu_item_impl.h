@@ -17,7 +17,6 @@ namespace ti
 	public:
 		GtkMenuItemImpl();
 
-		void DeleteWidget(GtkWidget*);
 		void SetParent(GtkMenuItemImpl* parent);
 		GtkMenuItemImpl* GetParent();
 

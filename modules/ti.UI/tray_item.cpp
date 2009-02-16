@@ -58,7 +58,7 @@ namespace ti
 	void TrayItem::_Remove(const ValueList& args, SharedValue result)
 	{
 		this->Remove();
-		UIBinding::RemoveTray(this);
+		UIModule::UnregisterTrayItem(this);
 	}
 
 }

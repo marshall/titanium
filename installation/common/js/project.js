@@ -85,7 +85,7 @@ Titanium.Project =
 		while (true)
 		{
 			line = manifest.readLine();
-			if(!line) break;
+			if(line==null) break;
 			Titanium.Project.addEntry(line,result);
 		}
 		return result;
@@ -199,7 +199,7 @@ Titanium.Project =
 				line = manifest.readLine();
 				entry = Titanium.Project.parseEntry(line);
 			}
-			if(!line) break;
+			if(line==null) break;
 			if (entry.key.indexOf('appname') != -1)
 			{
 				newManifest += '#appname:'+values.name+"\n";

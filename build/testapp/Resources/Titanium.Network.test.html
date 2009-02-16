@@ -33,6 +33,18 @@
 					alert("Error: "+e);
 				}
 			}
+			
+			function updateOnlineStatus(online)
+			{
+				document.getElementById("online").innerHTML = online ? "online" : "offline";
+			}
+			
+			Titanium.Network.addConnectivityListener(function(online)
+			{
+				updateOnlineStatus(online);
+			});
+			
+			updateOnlineStatus(Titanium.Network.online);
 		</script>
 	</head>
 	<body>
@@ -40,6 +52,7 @@
 		<div>
 			<button onclick="fetchLocalhost()">Fetch localhost</button>
 		</div>
+		<div id="online">retrieving..</div>
 		<div>
 			<script>
 				var ip = Titanium.Network.createIPAddress("127.0.0.1");

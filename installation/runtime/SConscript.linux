@@ -9,13 +9,15 @@ kboot = p.join(build.dir, 'kboot')
 app_dir = p.join(build.dir, name)
 runtime = p.join(app_dir, 'runtime');
 modules_dir = p.join(app_dir, 'modules');
+installer_dir = p.join(app_dir, 'installer');
+jsfiles = p.join(build.titanium_source_dir, 'installation', 'common', 'js')
 
 third_party += ['libcurl', 'libicu']
 
 if p.isdir(app_dir):
 	dir_util.remove_tree(app_dir)
 
-for d in [app_dir, runtime, modules_dir]:
+for d in [app_dir, runtime, modules_dir, installer_dir]:
 	os.makedirs(d)
 
 # Gather all runtime third-party libraries
@@ -53,27 +55,41 @@ for m in modules.keys():
 	if p.exists(app_resources):
 		dir_util.copy_tree(app_resources, p.join(modules_dir, m, 'AppResources'))
 
+# prevent the app installer from running
+f = open(p.join(app_dir, '.installed'), 'w')
+f.write('installed\n')
+f.close()
+
 shutil.copy(kboot, p.join(app_dir, name))
 dir_util.copy_tree("Resources", p.join(app_dir, "Resources"), preserve_symlinks=True)
 shutil.copy("tiapp.xml", p.join(app_dir, "tiapp.xml"))
 
 shutil.copy(p.join(build.titanium_source_dir,'installation','runtime','manifest'), p.join(app_dir,'manifest'))
 shutil.copy(p.join(build.titanium_source_dir,'installation','runtime','install'), p.join(app_dir,'install'))
+dir_util.copy_tree(jsfiles, p.join(app_dir,'Resources','js'), preserve_symlinks=True)
 
-
-# Copy support files
+# Copy developer application
 developer = p.join(build.titanium_source_dir, "installation", "developer")
 dest = p.join(app_dir, "developer")
 dir_util.copy_tree(developer, dest, preserve_symlinks=True)
+dir_util.copy_tree(jsfiles, p.join(dest,'Resources','js'), preserve_symlinks=True)
+
+# copy the app installer application
+appinstaller = p.join(build.titanium_source_dir, "installation", "app_installer")
+dest = p.join(app_dir, 'appinstaller')
+dir_util.copy_tree(appinstaller, dest, preserve_symlinks=True)
+dir_util.copy_tree(jsfiles, p.join(dest,'Resources','js'), preserve_symlinks=True)
+
+# copy the package installer application
+net_installer = p.join(build.dir, 'net_installer', 'net_installer')
+shutil.copy(net_installer, installer_dir)
 
 # Remove uneeded files
 to_remove = []
 files = os.walk(app_dir)
 for walk in os.walk(app_dir):
 	for file in walk[2]:
-		if (file.endswith('.h')
-		  or file.endswith('.defs')
-		  or file.startswith('.')):
+		if (file.endswith('.h') or file.endswith('.defs')):
 			os.remove(p.join(app_dir, walk[0], file))
 
 out = open(app_dir + '.bin', 'wb')
