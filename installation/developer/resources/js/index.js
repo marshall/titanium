@@ -765,7 +765,7 @@ setTimeout(function()
 						var urlMsg = TiDeveloper.formatURIs(rawMsg);
 						var str = myNick + ":";
 						var msg = urlMsg.replace(myNick +":","<span style='color:#42C0FB'>" + myNick + ": </span>");
-						$('#irc').append('<div style="color:yellow;float:left">' + nick + ': <span style="color:white">' + msg + '</span></div><div style="float:right;color:#ccc;font-size:11px">'+time+'</div><div style="clear:both"></div>');
+						$('#irc').append('<div style="color:yellow;float:left;margin-bottom:3px;width:90%">' + nick + ': <span style="color:white">' + msg + '</span></div><div style="float:right;color:#ccc;font-size:11px;width:10%;text-align:right">'+time+'</div><div style="clear:both"></div>');
 					}
 					break;
 				}
@@ -830,7 +830,7 @@ setTimeout(function()
 		{
 			var time = TiDeveloper.getCurrentTime();
 			irc.send('#titanium_dev',$('#irc_msg').val());
-			$('#irc').append('<div style="color:yellow;float:left">' + myNick + ': <span style="color:white">' + $('#irc_msg').val() + '</span></div><div style="float:right;color:#ccc;font-size:11px">'+time+'</div><div style="clear:both"></div>');
+			$('#irc').append('<div style="color:yellow;float:left;margin-bottom:3px;width:90%">' + myNick + ': <span style="color:white">' + $('#irc_msg').val() + '</span></div><div style="float:right;color:#ccc;font-size:11px;width:10%;text-align:right">'+time+'</div><div style="clear:both"></div>');
 			$('#irc_msg').val('');
 			$('#irc').get(0).scrollTop = $('#irc').get(0).scrollHeight;
 
