@@ -159,40 +159,27 @@ TiDeveloper.updateAppData = function()
 		[values.name,values.dir,values.publisher,values.url,values.image, id]);
     });
 	
-	// update array
-	for (var i=0;i<TiDeveloper.ProjectArray.length;i++)
-	{
-		if (TiDeveloper.ProjectArray[i].id == id)
-		{
-			TiDeveloper.ProjectArray[i].name = values.name
-			TiDeveloper.ProjectArray[i].dir = values.dir
-			TiDeveloper.ProjectArray[i].publisher = values.publisher
-			TiDeveloper.ProjectArray[i].url = values.url
-			TiDeveloper.ProjectArray[i].image = values.image
-		}
-	}
+	var project = findProjectById(id)
+	project.name = values.name
+	project.dir = values.dir
+	project.publisher = values.publisher
+	project.url = values.url
+	project.image = values.image
+	
 };
 
 $MQL('l:row.selected',function(msg)
 {
 	var msgObj = {}
-	// fire data message for project detail
-	for (var i=0;i<TiDeveloper.ProjectArray.length;i++)
-	{
-		if (TiDeveloper.ProjectArray[i].id == msg.payload.project_id)
-		{
-			msgObj.date = TiDeveloper.ProjectArray[i].date;
-			msgObj.name = TiDeveloper.ProjectArray[i].name;
-			msgObj.location = TiDeveloper.formatDirectory(TiDeveloper.ProjectArray[i].dir);
-			msgObj.fullLocation = TiDeveloper.ProjectArray[i].dir;
-			msgObj.pub = TiDeveloper.ProjectArray[i].publisher
-			msgObj.url = TiDeveloper.ProjectArray[i].url;
-			msgObj.image = TiDeveloper.ProjectArray[i].image;
-			$MQ('l:project.detail.data',msgObj)
-			break;
-
-		}
-	}
+	var project = findProjectById(msg.payload.project_id);
+	msgObj.date = project.date;
+	msgObj.name = project.name;
+	msgObj.location = TiDeveloper.formatDirectory(project.dir);
+	msgObj.fullLocation = project.dir;
+	msgObj.pub = project.publisher
+	msgObj.url = project.url;
+	msgObj.image = project.image;
+	$MQ('l:project.detail.data',msgObj)
 	
 	// setup editable fields
 	$('.edit').click(function()
@@ -481,6 +468,17 @@ function findProject(name)
 	return null;
 }
 
+function findProjectById(id)
+{
+	for (var i=0;i<TiDeveloper.ProjectArray.length;i++)
+	{
+		if (TiDeveloper.ProjectArray[i].id == id)
+		{
+			return TiDeveloper.ProjectArray[i];
+		}
+	}
+	return null;
+}
 //
 // Create Package Request
 //
@@ -630,15 +628,18 @@ $MQL('l:create.package.request',function(msg)
 $MQL('l:delete.project.request',function(msg)
 {
 	var name = msg.payload.name;
-	var id = msg.payload.id
-	if (confirm('Are you sure you want to delete project: ' + name + '?')==true)
-	{
-		db.transaction(function (tx) 
-	    {
-	        tx.executeSql("DELETE FROM Projects where id = ?", [id]);
-			loadProjects();
-	    });
-	}
+	var id = msg.payload.project_id
+	var project = findProjectById(id);
+	var file = Titanium.Filesystem.getFile(project.dir);
+	alert(id + ' ' + project + ' ' + file)
+
+	file.deleteDirectory(true);
+	
+	db.transaction(function (tx) 
+    {
+        tx.executeSql("DELETE FROM Projects where id = ?", [id]);
+		loadProjects();
+    });
 });
 
 //
@@ -759,8 +760,12 @@ setTimeout(function()
 					if (nick && nick!='NickServ')
 					{
 						if (TiDeveloper.currentState != 'interact') TiDeveloper.ircMessageCount ++;
-						$('#irc_message_count').html(TiDeveloper.ircMessageCount);
-						$('#irc').append('<div style="color:yellow;float:left">' + nick + ': ' + channel.substring(1,channel.length) + '</div><div style="float:right;color:#ccc;font-size:11px">'+time+'</div><div style="clear:both"></div>');
+						$('#irc_message_count').html(TiDeveloper.ircMessageCount);						
+						var rawMsg = String(channel.substring(1,channel.length));
+						var urlMsg = TiDeveloper.formatURIs(rawMsg);
+						var str = myNick + ":";
+						var msg = urlMsg.replace(myNick +":","<span style='color:#42C0FB'>" + myNick + ": </span>");
+						$('#irc').append('<div style="color:yellow;float:left">' + nick + ': <span style="color:white">' + msg + '</span></div><div style="float:right;color:#ccc;font-size:11px">'+time+'</div><div style="clear:both"></div>');
 					}
 					break;
 				}
@@ -794,7 +799,7 @@ setTimeout(function()
 					
 					if (nick == myNick)
 					{
-						$('#irc').append('<div style="color:#aaa"> you are now in the room. </div>');
+						$('#irc').append('<div style="color:#aaa"> you are now in the room. your handle is: <span style="color:#42C0FB">'+myNick+'</span> </div>');
 						break
 					}
 					else
@@ -825,7 +830,7 @@ setTimeout(function()
 		{
 			var time = TiDeveloper.getCurrentTime();
 			irc.send('#titanium_dev',$('#irc_msg').val());
-			$('#irc').append('<div style="color:#fff;float:left">' + myNick + ': ' + $('#irc_msg').val() + '</div><div style="float:right;color:#ccc;font-size:11px">'+time+'</div><div style="clear:both"></div>');
+			$('#irc').append('<div style="color:yellow;float:left">' + myNick + ': <span style="color:white">' + $('#irc_msg').val() + '</span></div><div style="float:right;color:#ccc;font-size:11px">'+time+'</div><div style="clear:both"></div>');
 			$('#irc_msg').val('');
 			$('#irc').get(0).scrollTop = $('#irc').get(0).scrollHeight;
 
@@ -837,3 +842,39 @@ setTimeout(function()
 	}
 },1000);
 
+TiDeveloper.formatURIs = function(str)
+{
+	var URI_REGEX = /((([hH][tT][tT][pP][sS]?|[fF][tT][pP])\:\/\/)?([\w\.\-]+(\:[\w\.\&%\$\-]+)*@)?((([^\s\(\)\<\>\\\"\.\[\]\,@;:]+)(\.[^\s\(\)\<\>\\\"\.\[\]\,@;:]+)*(\.[a-zA-Z]{2,4}))|((([01]?\d{1,2}|2[0-4]\d|25[0-5])\.){3}([01]?\d{1,2}|2[0-4]\d|25[0-5])))(\b\:(6553[0-5]|655[0-2]\d|65[0-4]\d{2}|6[0-4]\d{3}|[1-5]\d{4}|[1-9]\d{0,3}|0)\b)?((\/[^\/][\w\.\,\?\'\\\/\+&%\$#\=~_\-@]*)*[^\.\,\?\"\'\(\)\[\]!;<>{}\s\x7F-\xFF])?)/;
+	
+	return $.gsub(str,URI_REGEX,function(m)
+	{
+		return '<a target="ti:systembrowser" href="' + m[0] + '">' + m[0] + '</a>';
+	})
+	
+};
+
+$.extend(
+{
+	gsub:function(source,pattern,replacement)
+	{
+		if (typeof(replacement)=='string')
+		{
+			var r = String(replacement);
+			replacement = function()
+			{
+				return r;
+			}
+		}
+	 	var result = '', match;
+	    while (source.length > 0) {
+	      if (match = source.match(pattern)) {
+			result += source.slice(0, match.index);
+	        result += String(replacement(match));
+	        source  = source.slice(match.index + match[0].length);
+	      } else {
+	        result += source, source = '';
+	      }
+	    }
+		return result;
+	}
+});

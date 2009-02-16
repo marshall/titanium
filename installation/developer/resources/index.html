@@ -230,7 +230,7 @@
 								<div class="project_name">#{name}</div>
 								<div class="project_controls">
 									<img src="images/delete.png" style="margin-right:2px" title="delete project"
-										on="click then l:delete.project.request[id=#{id},name=#{name}]"/>
+										on="click then l:delete.project.prompt[project_id=#{id},name=#{name}]"/>
 									<img src="images/package.png" title="package, run or install project"
 										on="click then l:package.project.request[id=#{id},name=#{name}]"/>
 								</div>
@@ -250,9 +250,9 @@
 							<table cellspacing="15px">
 								<tr>
 									<td style="font-size:12px;height:30px" width="90px" class="hint_text">
-										Project Name:
+										*Project Name:
 									</td>
-									<td style="font-size:12px;height:30px" id="project_name_value"
+									<td style="font-size:12px;height:30px" class="edit" id="project_name_value"
 										on="l:project.detail.data then value[name]">
 									</td>
 								</tr>
@@ -313,28 +313,6 @@
 										
 
 							</table>
-							<!-- MODAL FOR DISPLAYING LONG LOCATION NAMES -->
-							<div behavior="modal[opacity=0.9,showEffect=fadeIn,hideEffect=fadeOut]" 
-								on="l:show.project.modal then show or l:hide.project.modal then hide">
-								<div class="black_gradient" style="padding:5px;font-size:11px;margin:0px">
-									Project Location
-								</div>
-								<div class="infobox" >
-									<div class="content" style="padding:10px">
-										<div 
-										on="l:row.selected then value[TiDeveloper.formatDirectory(this.data.project_id,false)]" 
-											style="padding:10px;color:#fff;font-size:11px">
-										</div>
-										<div class="button1" style="margin:auto;float:none"  
-											on="click then l:hide.project.modal">
-											<div class="button2">
-												Close
-											</div>
-										</div>
-										
-									</div>
-								</div>
-							</div>
 						</div>
 					</div>
 				</div>				
@@ -665,5 +643,66 @@
 			</div>
 		</div>
 	</div>
+	<!-- MODAL FOR DISPLAYING LONG LOCATION NAMES -->
+	<div behavior="modal[opacity=0.9,showEffect=fadeIn,hideEffect=fadeOut]" 
+		on="l:show.project.modal then show or l:hide.project.modal then hide">
+		<div class="black_gradient" style="padding:5px;font-size:11px;margin:0px">
+			Project Location
+		</div>
+		<div class="infobox" >
+			<div class="content" style="padding:10px">
+				<div 
+				on="l:row.selected then value[fullLocation]" 
+					style="padding:10px;color:#fff;font-size:11px">
+				</div>
+				<div class="button1" style="margin:auto;float:none"  
+					on="click then l:hide.project.modal">
+					<div class="button2">
+						Close
+					</div>
+				</div>
+				
+			</div>
+		</div>
+	</div>
+	<!-- MODAL FOR DELETING PROJECTS -->
+	<div behavior="modal[opacity=0.9,showEffect=fadeIn,hideEffect=fadeOut]" 
+		on="l:delete.project.prompt then show or (l:delete.project.request or l:cancel.delete.project) then hide">
+		<div class="black_gradient" style="padding:5px;font-size:11px;margin:0px">
+			Delete Project
+		</div>
+		<div class="infobox" >
+			<div class="content" style="padding:10px;color:#fff;font-size:11px">
+				Are you sure you want to delete the project: 		
+				<span on="l:delete.project.prompt then value[name]" 
+					style="padding:5px;color:#fff;font-size:11px">
+				</span>
+				<input type="hidden" id="delete_project_id" on="l:delete.project.prompt then value[project_id]">
+				<table align="center" style="margin-top:10px;position:relative;top:5px">
+					<tr>
+						<td align="center">
+							<div class="button1" style="float:none;margin-right:10px"  
+								on="click then l:delete.project.request[project_id=$delete_project_id]">
+								<div class="button2">
+									Delete
+								</div>
+							</div>
+						</td>
+						<td align="center">
+							<div class="button1" style="float:none"  
+								on="click then l:cancel.delete.project">
+								<div class="button2">
+									Cancel
+								</div>
+							</div>
+						</td>
+						</tr>
+					</tr>
+				</table>
+
+			</div>
+		</div>
+	</div>
+	
 </body>
 </html>
