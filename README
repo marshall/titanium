@@ -70,12 +70,23 @@ You will need Microsoft Visual Studio 2005 + Service Packs to build Titanium. We
 not tested building Titanium on Visual Studio 2008.  You will need to obtain the 
 Microsoft Visual Studio Service Pack 1 to compile Titanium.
 
+Needed service packs from Microsoft:
+
+- VS 2005 Team Suite SP1 <http://www.microsoft.com/downloads/details.aspx?familyid=BB4A75AB-E2D4-4C96-B39D-37BAF6B5B1DC&displaylang=en>
+- MS Visual Studio 2005 SP1
+- Windows Server 2003 SDK
+
 Win32 Python Notes
 ==================
 
 You will need to set the environment variable PYTHONHOME to the location of your 
 installed python.
 
+Set PYTHONHOME environment (Windows only):
+
+> set PYTHONHOME=c:\Python25
+
+(Suggest you open Control Panel and set it in your permanent environment)
 You will need to have Python 2.5 installed to build Win32. Later versions currently
 are not supported. You can download Python at <http://www.python.org/download/releases/2.5.2>
 
@@ -118,6 +129,16 @@ sudo apt-get install build-essential ruby rubygems libzip-ruby scons libxml2-dev
 2. Install Git:
 
 sudo apt-get install git-core
+
+
+
+--------------------------------------
+ One Time GIT Setup (Committers only)
+--------------------------------------
+
+Configure git to handle newlines properly:
+
+> git config --global core.autocrlf tru
 
 
 
