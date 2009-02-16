@@ -5,7 +5,6 @@ if (Titanium.platform=='osx')
 	Titanium.UI.currentWindow.setHeight(500);
 }
 
-
 function updateProgressMessage(msg)
 {
 	$('#statusbar').html(msg);
