@@ -104,7 +104,7 @@ Win32UserWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			break;
 		case WM_CLOSE:
 			window->FireEvent(CLOSED);
-			break;
+			return DefWindowProc(hWnd, message, wParam, lParam);
 		case WM_SIZE:
 			if (!window->web_view) break;
 			window->ResizeSubViews();
@@ -118,16 +118,17 @@ Win32UserWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			break;
 		case WM_SETFOCUS:
 			window->FireEvent(FOCUSED);
-			break;
+			return DefWindowProc(hWnd, message, wParam, lParam);
 		case WM_KILLFOCUS:
 			window->FireEvent(UNFOCUSED);
-			break;
+			return DefWindowProc(hWnd, message, wParam, lParam);
 		case WM_MOVE:
 			window->FireEvent(MOVED);
-			break;
+			return DefWindowProc(hWnd, message, wParam, lParam);
 		case WM_SHOWWINDOW:
 			window->FireEvent(((BOOL)wParam) ? SHOWN : HIDDEN);
-			break;
+			return DefWindowProc(hWnd, message, wParam, lParam);
+
 
 		case TI_TRAY_CLICKED:
 			{
