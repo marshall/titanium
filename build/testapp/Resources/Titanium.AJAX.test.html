@@ -7,6 +7,7 @@
 			}
 			div.output { border: 1px solid #c3c3c3; padding: 5px; margin: 8px 0 px 0; background-color: black; color: white; height: 350px; overflow: scroll; }
 		</style>
+		<script type="text/javascript" src="mootools-1.2.1.js">
 	</head>
 	<body>
 		<h2>Titanium AJAX test app</h2>
@@ -14,7 +15,13 @@
 		<h1>Testing cross-domain AJAX</h1>
 
 		<script>
-		
+			var myJSONRemote = new Request.JSON({
+				url:"http://twitter.com/statuses/public_timeline.json",
+				onComplete:function(result)
+				{
+					alert("result="+ JSON.encode(result) );
+				}
+			});
 		</script>
 		
 		<div class='output log'><code id="log"></code></div>
