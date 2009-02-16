@@ -34,7 +34,7 @@ namespace ti
 	}
 	NetworkBinding::~NetworkBinding()
 	{
-#ifdef OS_OSX
+#if defined(OS_OSX)
 		[networkDelegate release];
 		networkDelegate=nil;
 #elif defined(OS_WIN32)
@@ -128,7 +128,7 @@ namespace ti
 		if (this->listeners.size()==1)
 		{
 			SharedBoundMethod delegate = this->Get("FireOnlineStatusChange")->ToMethod();
-#ifdef OS_OSX
+#if defined(OS_OSX)
 			networkDelegate = [[NetworkReachability alloc] initWithDelegate:delegate];
 #elif defined(OS_WIN32)
 			networkStatus = new Win32WMINetworkStatus(delegate);
@@ -154,7 +154,7 @@ namespace ti
 				// once there are no more listeners, shut it down
 				if (this->listeners.size()==0)
 				{
-		#ifdef OS_OSX
+		#if defined(OS_OSX)
 					[networkDelegate release];
 					networkDelegate=nil;
 		#elif defined(OS_WIN32)

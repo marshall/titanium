@@ -8,7 +8,7 @@
 #define _NETWORK_BINDING_H_
 
 #include <kroll/kroll.h>
-#ifdef OS_OSX
+#if defined(OS_OSX)
 #include "osx/network_status.h"
 #elif defined(OS_WIN32)
 #include "win32/win32_wmi_network_status.h"
@@ -27,7 +27,7 @@ namespace ti
 		SharedBoundObject global;
 		std::vector<SharedBoundMethod> listeners;
 
-#ifdef OS_OSX
+#if defined(OS_OSX)
 		NetworkReachability *networkDelegate;
 #elif defined(OS_WIN32)
 		Win32WMINetworkStatus *networkStatus;
