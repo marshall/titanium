@@ -97,6 +97,9 @@ UserWindow::UserWindow(kroll::Host *host, WindowConfig *config) :
 
 	this->SetMethod("createWindow", &UserWindow::_CreateWindow);
 	this->SetMethod("getParent", &UserWindow::_GetParent);
+
+	this->SetMethod("addEventListener", &UserWindow::_AddEventListener);
+	this->SetMethod("removeEventListener", &UserWindow::_RemoveEventListener);
 }
 
 void UserWindow::Open(UserWindow *window)
@@ -509,6 +512,125 @@ SharedBoundObject UserWindow::CreateWindow(SharedBoundObject properties)
 	window->SetParent(this);
 	return window;
 
+}
+
+void UserWindow::_AddEventListener(const ValueList& args, SharedValue result)
+{
+	if (args.size()!=1 || !args.at(0)->IsMethod())
+	{
+		throw ValueException::FromString("invalid argument");
+	}
+	SharedBoundMethod target = args.at(0)->ToMethod();
+	this->listeners.push_back(target);
+}
+
+void UserWindow::_RemoveEventListener(const ValueList& args, SharedValue result)
+{
+	if (args.size()!=1 || !args.at(0)->IsMethod())
+	{
+		throw ValueException::FromString("invalid argument");
+	}
+	SharedBoundMethod target = args.at(0)->ToMethod();
+	std::vector<SharedBoundMethod>::iterator it = this->listeners.begin();
+	while(it!=this->listeners.end())
+	{
+		SharedBoundMethod m = (*it);
+		if (m == target)
+		{
+			this->listeners.erase(it);
+			result->SetBool(true);
+			return;
+		}
+		it++;
+	}
+	result->SetBool(false);
+}
+
+void UserWindow::FireEvent(UserWindowEvent event)
+{
+	// optimize
+	if (this->listeners.size()==0) return;
+	
+	std::string name;
+	
+	switch(event)
+	{
+		case FOCUSED:
+		{
+			name = "focused";
+			break;
+		}
+		case UNFOCUSED:
+		{
+			name = "unfocused";
+			break;
+		}
+		case OPENED:
+		{
+			name = "opened";
+			break;
+		}
+		case CLOSED:
+		{
+			name = "closed";
+			break;
+		}
+		case HIDDEN:
+		{
+			name = "hidden";
+			break;
+		}
+		case SHOWN:
+		{
+			name = "shown";
+			break;
+		}
+		case FULLSCREENED:
+		{
+			name = "fullscreened";
+			break;
+		}
+		case WINDOWED:
+		{
+			name = "windowed";
+			break;
+		}
+		case MAXIMIZED:
+		{
+			name = "maximized";
+			break;
+		}
+		case MINIMIZED:
+		{
+			name = "minimized";
+			break;
+		}
+		case RESIZED:
+		{
+			name = "resized";
+			break;
+		}
+		case MOVED:
+		{
+			name = "moved";
+			break;
+		}
+	}
+	ValueList args;
+	args.push_back(Value::NewString(name));
+	std::vector<SharedBoundMethod>::iterator it = this->listeners.begin();
+	while(it!=this->listeners.end())
+	{
+		SharedBoundMethod callback = (*it++);
+		try
+		{
+			host->InvokeMethodOnMainThread(callback,args);
+		}
+		catch(std::exception &e)
+		{
+			std::cerr << "Caught exception dispatching window event callback: " << event << ", Error: " << e.what() << std::endl;
+		}
+	}
 }
 
 std::vector<UserWindow*>& UserWindow::GetWindows()

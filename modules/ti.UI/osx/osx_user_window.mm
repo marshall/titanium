@@ -85,6 +85,7 @@ namespace ti
 		if (opened)
 		{
 			[window orderOut:nil];
+			[window fireWindowEvent:HIDDEN];
 		}
 	}
 	void OSXUserWindow::Show()
@@ -93,6 +94,7 @@ namespace ti
 		if (opened)
 		{
 		    [window makeKeyAndOrderFront:nil];	
+			[window fireWindowEvent:SHOWN];
 		}
 	}
 	bool OSXUserWindow::IsUsingChrome()
