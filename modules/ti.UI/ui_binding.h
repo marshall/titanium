@@ -49,11 +49,13 @@ namespace ti
 		void _SetDockIcon(const ValueList& args, SharedValue result);
 		void _SetDockMenu(const ValueList& args, SharedValue result);
 		void _SetBadge(const ValueList& args, SharedValue result);
+		void _SetBadgeImage(const ValueList& args, SharedValue result);
 
 		/* These have empty impls, because are OS X-only for now */
 		virtual void SetDockIcon(SharedString icon_path) {}
 		virtual void SetDockMenu(SharedPtr<MenuItem>) {}
-		virtual void SetBadge(SharedString badge_path) {}
+		virtual void SetBadge(SharedString badge_label) {}
+		virtual void SetBadgeImage(SharedString badge_path) {}
 
 		virtual void OpenFiles(
 			SharedBoundMethod callback,

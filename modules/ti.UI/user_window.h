@@ -139,7 +139,7 @@ class UserWindow : public kroll::StaticBoundObject {
 		virtual bool IsFullScreen() = 0;
 		virtual std::string GetId() = 0;
 		virtual void Open() = 0;
-		virtual void Close() = 0;
+		virtual void Close();
 
 		virtual double GetX() = 0;
 		virtual void SetX(double x) = 0;
@@ -203,7 +203,6 @@ class UserWindow : public kroll::StaticBoundObject {
 		static std::map<UserWindow*, std::vector<UserWindow*> > windowsMap;
 
 		static void Open(UserWindow *);
-		static void Close(UserWindow *);
 		static void AddChild(UserWindow *parent, UserWindow *child);
 		static void RemoveChild(UserWindow *parent, UserWindow *child);
 
