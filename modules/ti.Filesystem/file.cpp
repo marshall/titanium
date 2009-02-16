@@ -236,115 +236,56 @@ namespace ti
 	}
 	void File::Write(const ValueList& args, SharedValue result)
 	{
-		try
+		std::string mode = FileStream::MODE_WRITE;
+
+		if(args.size() > 1)
 		{
-			std::string text = args.at(0)->ToString();
-			bool append = false;
-
-			if(args.size() > 1)
+			if(args.at(1)->ToBool())
 			{
-				append = args.at(1)->ToBool();
+				mode = FileStream::MODE_APPEND;
 			}
-
-			std::ios_base::openmode mode;
-			if(append)
-			{
-				mode = std::ios_base::out | std::ios_base::app;
-			}
-			else
-			{
-				mode = std::ios_base::out | std::ios_base::trunc;
-			}
-
-			Poco::FileOutputStream fos(this->filename, mode);
-			fos.write(text.c_str(), text.size());
-			fos.close();
-
-			result->SetBool(true);
 		}
-		catch (Poco::Exception& exc)
-		{
-			throw ValueException::FromString(exc.displayText());
-		}
+
+		ti::FileStream fs(this->filename);
+		fs.Open(mode);
+		fs.Write(args, result);
+		fs.Close();
 	}
 	void File::Read(const ValueList& args, SharedValue result)
 	{
-		try
-		{
-			Poco::FileInputStream fis(this->filename);
-
-			std::string contents;
-
-			while(! fis.eof())
-			{
-				std::string s;
-				std::getline(fis, s);
-
-				contents.append(s);
-			}
-
-			result->SetString(contents.c_str());
-		}
-		catch (Poco::Exception& exc)
-		{
-			throw ValueException::FromString(exc.displayText());
-		}
+		FileStream fs(this->filename);
+		fs.Open(FileStream::MODE_READ);
+		fs.Read(args, result);
+		fs.Close();
 	}
 	void File::ReadLine(const ValueList& args, SharedValue result)
 	{
-		try
+		bool openFile = false;
+		if(args.size() > 0)
 		{
-			bool openFile = false;
-			if(args.size() > 0)
-			{
-				openFile = args.at(0)->ToBool();
-			}
-
-			if(openFile)
-			{
-				// close file if it's already open
-				if(this->readLineFS)
-				{
-					this->readLineFS->close();
-				}
-
-				// now open the file
-				this->readLineFS = new Poco::FileInputStream(this->filename);
-			}
-
-			if(this->readLineFS == NULL)
-			{
-				result->SetNull();
-			}
-			else
-			{
-				std::string line;
-
-				if(this->readLineFS->eof())
-				{
-					// close the file
-					this->readLineFS->close();
-					this->readLineFS = NULL;
-					result->SetNull();
-				}
-				else 
-				{
-					std::string line;
-					std::getline(*(this->readLineFS), line);
-					if (line.empty())
-					{
-						result->SetString("");
-					}
-					else
-					{
-						result->SetString(line.c_str());
-					}
-				}
-			}
+			openFile = args.at(0)->ToBool();
 		}
-		catch (Poco::Exception& exc)
+
+		if(openFile)
 		{
-			throw ValueException::FromString(exc.displayText());
+			// close file if it's already open
+			if(this->readLineFS)
+			{
+				this->readLineFS->Close();
+			}
+
+			// now open the file
+			this->readLineFS = new ti::FileStream(this->filename);
+			this->readLineFS->Open(FileStream::MODE_READ);
+		}
+
+		if(this->readLineFS == NULL)
+		{
+			result->SetNull();
+		}
+		else
+		{
+			this->readLineFS->ReadLine(args, result);
 		}
 	}
 	void File::Copy(const ValueList& args, SharedValue result)
