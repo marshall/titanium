@@ -27,6 +27,22 @@ typedef struct {
 	double width;
 } Bounds;
 
+enum UserWindowEvent
+{
+	FOCUSED,
+	UNFOCUSED,
+	OPENED,
+	CLOSED,
+	HIDDEN,
+	SHOWN,
+	FULLSCREENED,
+	WINDOWED, // opposite of fullscreen?
+	MAXIMIZED,
+	MINIMIZED,
+	RESIZED,
+	MOVED
+};
+
 class UserWindow : public kroll::StaticBoundObject {
 	public:
 		UserWindow(kroll::Host *host, WindowConfig *config);
@@ -107,6 +123,12 @@ class UserWindow : public kroll::StaticBoundObject {
 		void _GetParent(const kroll::ValueList&, kroll::SharedValue);
 		void _CreateWindow(const kroll::ValueList&, kroll::SharedValue);
 
+		void _AddEventListener(const kroll::ValueList&, kroll::SharedValue);
+		void _RemoveEventListener(const kroll::ValueList&, kroll::SharedValue);
+
+		std::vector<SharedBoundMethod> listeners;
+		
+		
 	public:
 		virtual UserWindow* WindowFactory(Host*, WindowConfig*) = 0;
 
@@ -165,6 +187,8 @@ class UserWindow : public kroll::StaticBoundObject {
 		virtual void SetIcon(SharedString icon_path) = 0;
 		virtual SharedString GetIcon() = 0;
 
+		virtual void FireEvent(UserWindowEvent event);
+		
 	protected:
 		kroll::Host *host;
 		WindowConfig *config;
