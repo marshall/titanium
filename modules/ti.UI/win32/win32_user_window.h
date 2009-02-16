@@ -67,6 +67,7 @@ protected:
 	HMENU contextMenuHandle;
 
 	SharedString icon_path;
+	HICON initial_icon;
 
 	void RemoveMenu();
 	void ReloadTiWindowConfig();
@@ -142,9 +143,9 @@ public:
 
 	void SetupMenu();
 	void SetupIcon();
-	
+
 	// called by frame load delegate to let the window know it's loaded
-	void FrameLoaded(); 
+	void FrameLoaded();
 
 };
 
