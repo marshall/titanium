@@ -193,58 +193,7 @@ Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config)
 	sprintf(userAgent,"%s/%0.2f",PRODUCT_NAME,version);
 	_bstr_t ua(userAgent);
 	web_view->setApplicationNameForUserAgent(ua.copy());
-	
-#ifdef PLEASE_MAKE_THIS_WORK_MARSHALL
-	AppConfig *appConfig = AppConfig::Instance();
-	std::string appid = appConfig->GetAppID();
 
-	IWebPreferences *prefs = NULL;
-	hr = CoCreateInstance(CLSID_WebPreferences, 0, CLSCTX_ALL, IID_IWebPreferences, (void**)&prefs);
-	if (FAILED(hr) || prefs == NULL) 
-	{
-		std::cerr << "Couldn't create the preferences object" << std::endl;
-	}
-	else
-	{
-		_bstr_t pi(appid.c_str());
-		prefs->initWithIdentifier(pi.copy(),&prefs);
-	
-		prefs->setCacheModel(WebCacheModelDocumentBrowser);
-		prefs->setPlugInsEnabled(true);
-		prefs->setJavaEnabled(false);
-		prefs->setJavaScriptEnabled(true);
-		prefs->setDOMPasteAllowed(true);
-	
-		IWebPreferencesPrivate* privatePrefs = NULL;
-		hr = prefs->QueryInterface(IID_IWebPreferencesPrivate, (void**)&privatePrefs);
-		if (FAILED(hr))
-		{
-			std::cerr << "Failed to get private preferences" << std::endl;
-		}
-		else
-		{
-			privatePrefs->setDeveloperExtrasEnabled(host->IsDebugMode());
-			privatePrefs->setDatabasesEnabled(true);
-			privatePrefs->setLocalStorageEnabled(true);
-			privatePrefs->setOfflineWebApplicationCacheEnabled(true);
-			
-			_bstr_t db_path(FileUtils::GetApplicationDataDirectory(appid).c_str());
-			privatePrefs->setLocalStorageDatabasePath(db_path.copy());
-			privatePrefs->Release();
-		}
-		
-		web_view->setPreferences(prefs);
-		//prefs->Release(); <--- crashes
-	}
-	
-	// allow app:// and ti:// to run with local permissions (cross-domain ajax,etc)
-	_bstr_t app_proto("app");
-	web_view->registerURLSchemeAsLocal(app_proto.copy());
-
-	_bstr_t ti_proto("ti");
-	web_view->registerURLSchemeAsLocal(ti_proto.copy());
-#endif
-	
 	std::cout << "create frame load delegate " << std::endl;
 	frameLoadDelegate = new Win32WebKitFrameLoadDelegate(this);
 	uiDelegate = new Win32WebKitUIDelegate(this);
@@ -258,6 +207,55 @@ Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config)
 	RECT client_rect;
 	GetClientRect(window_handle, &client_rect);
 	hr = web_view->initWithFrame(client_rect, 0, 0);
+
+	AppConfig *appConfig = AppConfig::Instance();
+	std::string appid = appConfig->GetAppID();
+
+	IWebPreferences *prefs = NULL;
+	hr = CoCreateInstance(CLSID_WebPreferences, 0, CLSCTX_ALL, IID_IWebPreferences, (void**)&prefs);
+	if (FAILED(hr) || prefs == NULL)
+	{
+		std::cerr << "Couldn't create the preferences object" << std::endl;
+	}
+	else
+	{
+		_bstr_t pi(appid.c_str());
+		prefs->initWithIdentifier(pi.copy(),&prefs);
+
+		prefs->setCacheModel(WebCacheModelDocumentBrowser);
+		prefs->setPlugInsEnabled(true);
+		prefs->setJavaEnabled(false);
+		prefs->setJavaScriptEnabled(true);
+		prefs->setDOMPasteAllowed(true);
+
+		IWebPreferencesPrivate* privatePrefs = NULL;
+		hr = prefs->QueryInterface(IID_IWebPreferencesPrivate, (void**)&privatePrefs);
+		if (FAILED(hr))
+		{
+			std::cerr << "Failed to get private preferences" << std::endl;
+		}
+		else
+		{
+			privatePrefs->setDeveloperExtrasEnabled(host->IsDebugMode());
+			privatePrefs->setDatabasesEnabled(true);
+			privatePrefs->setLocalStorageEnabled(true);
+			privatePrefs->setOfflineWebApplicationCacheEnabled(true);
+
+			_bstr_t db_path(FileUtils::GetApplicationDataDirectory(appid).c_str());
+			privatePrefs->setLocalStorageDatabasePath(db_path.copy());
+			privatePrefs->Release();
+		}
+
+		web_view->setPreferences(prefs);
+		prefs->Release();
+	}
+
+	// allow app:// and ti:// to run with local permissions (cross-domain ajax,etc)
+	_bstr_t app_proto("app");
+	web_view->registerURLSchemeAsLocal(app_proto.copy());
+
+	_bstr_t ti_proto("ti");
+	web_view->registerURLSchemeAsLocal(ti_proto.copy());
 
 	IWebViewPrivate *web_view_private;
 	hr = web_view->QueryInterface(IID_IWebViewPrivate, (void**)&web_view_private);
@@ -273,7 +271,7 @@ Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config)
 	restore_bounds = GetBounds();
 	restore_styles = GetWindowLong(window_handle, GWL_STYLE);
 
-	// set this flag to indicate that when the frame is loaded 
+	// set this flag to indicate that when the frame is loaded
 	// we want to show the window - we do this to prevent white screen
 	// while the URL is being fetched
 	this->requires_display = true;
@@ -598,12 +596,25 @@ SharedPtr<MenuItem> Win32UserWindow::GetContextMenu()
 
 void Win32UserWindow::SetIcon(SharedString icon_path)
 {
-	printf("set icon: %s\n", icon_path->c_str());
+	this->icon_path = icon_path;
+	this->SetupIcon();
+}
+
+void Win32UserWindow::SetupIcon()
+{
+	if(! icon_path.isNull()) printf("set icon: %s\n", icon_path->c_str());
+
+	SharedString icon_path = this->icon_path;
 
 	if (icon_path.isNull() && !UIModule::GetIcon().isNull())
 		icon_path = UIModule::GetIcon();
 
-	if (!icon_path.isNull())
+	if (icon_path.isNull())
+	{
+		// need to remove the icon
+		SendMessageA(window_handle, (UINT)WM_SETICON, ICON_BIG, (LPARAM)0);
+	}
+	else
 	{
 		std::string ext = icon_path->substr(icon_path->length()-4,4);
 		if (ext == ".ico")
@@ -633,6 +644,14 @@ void Win32UserWindow::AppMenuChanged()
 	if (this->menu.isNull())
 	{
 		this->SetupMenu();
+	}
+}
+
+void Win32UserWindow::AppIconChanged()
+{
+	if (this->icon_path.isNull())
+	{
+		this->SetupIcon();
 	}
 }
 

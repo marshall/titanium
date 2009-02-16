@@ -66,6 +66,8 @@ protected:
 	SharedPtr<Win32MenuItemImpl> contextMenu;
 	HMENU contextMenuHandle;
 
+	SharedString icon_path;
+
 	void RemoveMenu();
 	void ReloadTiWindowConfig();
 
@@ -83,6 +85,7 @@ public:
 	void ResizeSubViews();
 
 	void AppMenuChanged();
+	void AppIconChanged();
 
 	HWND GetWindowHandle();
 	void Hide();
@@ -138,6 +141,7 @@ public:
 	SharedString GetIcon();
 
 	void SetupMenu();
+	void SetupIcon();
 	
 	// called by frame load delegate to let the window know it's loaded
 	void FrameLoaded(); 

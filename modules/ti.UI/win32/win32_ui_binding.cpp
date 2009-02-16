@@ -74,6 +74,18 @@ namespace ti
 
 	void Win32UIBinding::SetIcon(SharedString icon_path)
 	{
+		// Notify all windows that the app icon has changed
+		// TODO this kind of notification should really be placed in UIBinding..
+		std::vector<UserWindow*>& windows = UserWindow::GetWindows();
+		std::vector<UserWindow*>::iterator i = windows.begin();
+		while (i != windows.end())
+		{
+			Win32UserWindow* wuw = dynamic_cast<Win32UserWindow*>(*i);
+			if (wuw != NULL)
+				wuw->AppIconChanged();
+
+			i++;
+		}
 	}
 
 	SharedPtr<TrayItem> Win32UIBinding::AddTray(
