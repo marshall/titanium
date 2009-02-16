@@ -55,7 +55,9 @@ for m in modules.keys():
 		dir_util.copy_tree(app_resources, p.join(modules_dir, m, 'AppResources'))
 
 # prevent the app installer from running
-open(p.join(app_dir, '.installed'), 'w').close()
+f = open(p.join(app_dir, '.installed'), 'w')
+f.write('installed')
+f.close()
 
 shutil.copy(kboot, p.join(app_dir, name))
 dir_util.copy_tree("Resources", p.join(app_dir, "Resources"), preserve_symlinks=True)
