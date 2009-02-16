@@ -35,6 +35,7 @@ namespace ti
 		this->SetMethod("getProgramsDirectory",&FilesystemBinding::GetProgramsDirectory);
 		this->SetMethod("getApplicationDirectory",&FilesystemBinding::GetApplicationDirectory);
 		this->SetMethod("getApplicationDataDirectory",&FilesystemBinding::GetApplicationDataDirectory);
+		this->SetMethod("getRuntimeBaseDirectory",&FilesystemBinding::GetRuntimeBaseDirectory);
 		this->SetMethod("getResourcesDirectory",&FilesystemBinding::GetResourcesDirectory);
 		this->SetMethod("getDesktopDirectory",&FilesystemBinding::GetDesktopDirectory);
 		this->SetMethod("getDocumentsDirectory",&FilesystemBinding::GetDocumentsDirectory);
@@ -128,6 +129,12 @@ namespace ti
 		ti::File* file = new ti::File(dir);
 		result->SetObject(file);
 	}
+	void FilesystemBinding::GetRuntimeBaseDirectory(const ValueList& args, SharedValue result)
+	{
+		std::string dir = FileUtils::GetRuntimeBaseDirectory();
+		ti::File* file = new ti::File(dir);
+		result->SetObject(file);
+	}
 	void FilesystemBinding::GetResourcesDirectory(const ValueList& args, SharedValue result)
 	{
 		std::string dir = FileUtils::GetResourcesDirectory();
@@ -169,11 +176,7 @@ namespace ti
 #elif OS_LINUX
 		// TODO
 #endif
-		if(dir.size() == 0)
-		{
-			result->SetNull();
-		}
-		else
+		if (!dir.empty())
 		{
 			ti::File* file = new ti::File(dir);
 			result->SetObject(file);
@@ -195,11 +198,7 @@ namespace ti
 #elif OS_LINUX
 		// TODO
 #endif
-		if(dir.size() == 0)
-		{
-			result->SetNull();
-		}
-		else
+		if (dir.empty())
 		{
 			ti::File* file = new ti::File(dir);
 			result->SetObject(file);
@@ -309,13 +308,13 @@ namespace ti
 		if (timer==NULL)
 		{
 			this->SetMethod("_invoke",&FilesystemBinding::DeletePendingOperations);
-			timer = new Poco::Timer(1000,1000);
+			timer = new Poco::Timer(100,100);
 			Poco::TimerCallback<FilesystemBinding> cb(*this, &FilesystemBinding::OnAsyncOperationTimer);
 			timer->start(cb);
 		}
 		else
 		{
-			this->timer->restart(1000);
+			this->timer->restart(100);
 		}
 	}
 	void FilesystemBinding::DeletePendingOperations(const ValueList& args, SharedValue result)

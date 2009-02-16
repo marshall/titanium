@@ -15,29 +15,30 @@ namespace ti
 	GtkTrayItem::GtkTrayItem(SharedString icon_path, SharedBoundMethod cb)
 		 : TrayItem()
 	{
-		this->widget = gtk_status_icon_new();
+		this->item = gtk_status_icon_new();
 		this->menu = NULL;
 		this->menu_widget = NULL;
+		this->active = true;
 
 		if (!cb.isNull())
 		{
 			this->callback = cb;
 			g_signal_connect(
-				G_OBJECT(this->widget),
+				G_OBJECT(this->item),
 				"activate", 
 				G_CALLBACK(tray_click_callback),
 				cb.get());
 		}
 
 		g_signal_connect(
-			G_OBJECT(this->widget), 
+			G_OBJECT(this->item), 
 			"popup-menu",
 			G_CALLBACK(tray_menu_callback),
 			this);
 
 		this->SetIcon(icon_path);
 
-		gtk_status_icon_set_visible(this->widget, TRUE);
+		gtk_status_icon_set_visible(this->item, TRUE);
 	}
 
 	GtkTrayItem::~GtkTrayItem()
@@ -46,20 +47,24 @@ namespace ti
 
 	void GtkTrayItem::SetIcon(SharedString icon_path)
 	{
+		if (!active) return;
+
 		if (icon_path.isNull())
 		{
-			gtk_status_icon_set_from_file(this->widget, NULL);
+			gtk_status_icon_set_from_file(this->item, NULL);
 		}
 		else
 		{
 			gtk_status_icon_set_from_file(
-				this->widget,
+				this->item,
 				icon_path->c_str());
 		}
 	}
 
 	void GtkTrayItem::SetMenu(SharedBoundList menu)
 	{
+		if (!active) return;
+
 		SharedPtr<GtkMenuItemImpl> gtk_menu = menu.cast<GtkMenuItemImpl>();
 		if (gtk_menu == this->menu)
 			return;
@@ -70,37 +75,54 @@ namespace ti
 		}
 
 		this->menu = gtk_menu;
-		this->menu_widget = gtk_menu->GetMenu();
+		if (!gtk_menu.isNull())
+		{
+			this->menu_widget = gtk_menu->GetMenu();
+		}
 	}
 
 	void GtkTrayItem::SetHint(SharedString hint)
 	{
-		gtk_status_icon_set_tooltip(this->widget, hint->c_str());
+		if (!active) return;
+
+		gtk_status_icon_set_tooltip(this->item, hint->c_str());
 	}
 
 	void GtkTrayItem::Remove()
 	{
+		if (!active) return;
+
+		this->active = false;
 		if (!this->menu.isNull() && this->menu_widget != NULL)
 		{
-			this->menu->DeleteWidget(this->menu_widget);
+			this->menu->ClearRealization(this->menu_widget);
 		}
 
-		gtk_widget_destroy(GTK_WIDGET(this->widget));
+		g_object_unref(this->item);
 	}
 
 	GtkStatusIcon* GtkTrayItem::GetWidget()
 	{
-		return this->widget;
+		if (active)
+			return this->item;
+		else
+			return NULL;
 	}
 
 	GtkWidget* GtkTrayItem::GetMenuWidget()
 	{
-		return this->menu_widget;
+		if (active)
+			return this->menu_widget;
+		else
+			return NULL;
 	}
 
 	SharedPtr<GtkMenuItemImpl> GtkTrayItem::GetMenu()
 	{
-		return this->menu;
+		if (active)
+			return this->menu;
+		else
+			return NULL;
 	}
 
 	void tray_click_callback(GtkStatusIcon *status_icon, gpointer data)

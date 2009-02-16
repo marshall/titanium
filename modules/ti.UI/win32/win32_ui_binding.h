@@ -35,7 +35,7 @@ namespace ti
 			std::string& file,
 			std::vector<std::string>& types);
 
-		long GetSystemIdleTime();
+		long GetIdleTime();
 
 		static HMENU getContextMenuInUseHandle() { return contextMenuInUseHandle; }
 

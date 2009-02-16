@@ -28,11 +28,11 @@ namespace ti
 		SharedPtr<GtkMenuItemImpl> GetMenu();
 
 	protected:
-		GtkStatusIcon* widget;
+		GtkStatusIcon* item;
 		SharedPtr<GtkMenuItemImpl> menu;
 		GtkWidget* menu_widget;
 		SharedBoundMethod callback;
-
+		bool active;
 	};
 }
 
