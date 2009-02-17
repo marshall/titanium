@@ -126,15 +126,18 @@ Win32WebKitUIDelegate::runJavaScriptAlertPanelWithMessage(
 	/* [in] */ BSTR message)
 {
 	HWND handle = window->GetWindowHandle();
-	std::string msg;
 	std::string title(window->GetTitle());
+	std::string msg;
 
 	if(message)
 	{
-		msg.append(_bstr_t(message));
+		msg.append(bstr_t(message));
 	}
 
-	MessageBox(handle, (LPCTSTR) msg.c_str(), (LPCTSTR) title.c_str(), MB_OK | MB_ICONEXCLAMATION);
+	Win32PopupDialog popupDialog(handle);
+	popupDialog.SetTitle(title);
+	popupDialog.SetMessage(msg);
+	int r = popupDialog.Show();
 
 	return S_OK;
 }
@@ -154,7 +157,12 @@ Win32WebKitUIDelegate::runJavaScriptConfirmPanelWithMessage(
 		msg.append(bstr_t(message));
 	}
 
-	int r = MessageBox(handle, (LPCTSTR) msg.c_str(), (LPCTSTR) title.c_str(), MB_YESNO | MB_ICONQUESTION);
+	Win32PopupDialog popupDialog(handle);
+	popupDialog.SetTitle(title);
+	popupDialog.SetMessage(msg);
+	popupDialog.SetShowCancelButton(true);
+	int r = popupDialog.Show();
+
 	*result = (r == IDYES);
 
 	return S_OK;
@@ -176,8 +184,6 @@ Win32WebKitUIDelegate::runJavaScriptTextInputPanelWithPrompt(
 	{
 		def.append(_bstr_t(defaultText));
 	}
-
-	std::cout << "runJavaScriptTextInputPanelWithPrompt() called '" << msg << "' , '" << def << "'" << std::endl;
 
 	Win32PopupDialog popupDialog(handle);
 	popupDialog.SetTitle(title);
