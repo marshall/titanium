@@ -11,8 +11,7 @@
 #define ID_INPUT_FIELD 101
 
 namespace ti {
-	char Win32PopupDialog::textEntered[MAX_INPUT_LENGTH];
-	int Win32PopupDialog::result = 0;
+	std::map<DWORD, Win32PopupDialog*> Win32PopupDialog::popups;
 
 	// TODO there must be a better way to do this
 	std::wstring s2ws(const std::string& s)
@@ -62,9 +61,12 @@ namespace ti {
 			std::vector<BYTE> v;
 	};
 
-	Win32PopupDialog::Win32PopupDialog(HWND _windowHandle) : windowHandle(_windowHandle)
+	Win32PopupDialog::Win32PopupDialog(HWND _windowHandle) :
+		windowHandle(_windowHandle),
+		showInputText(false),
+		showCancelButton(false),
+		result(IDNO)
 	{
-		this->showInputText = false;
 	}
 
 	Win32PopupDialog::~Win32PopupDialog()
@@ -73,15 +75,32 @@ namespace ti {
 
 	int Win32PopupDialog::Show()
 	{
-		textEntered[0] = '\0';
+		popups[GetCurrentThreadId()] = this;
 		ShowMessageBox(windowHandle);
-
-		this->inputText.clear();
-		this->inputText.append(textEntered);
 
 		return result;
 	}
 
+	/*static*/
+	void Win32PopupDialog::HandleOKClick(HWND hDlg)
+	{
+		char textEntered[MAX_INPUT_LENGTH];
+		GetDlgItemText(hDlg, ID_INPUT_FIELD, textEntered, MAX_INPUT_LENGTH);
+
+		Win32PopupDialog* popupDialog = popups[GetCurrentThreadId()];
+		if(popupDialog)
+		{
+			popupDialog->inputText.clear();
+			popupDialog->inputText.append(textEntered);
+			popupDialog->result = IDYES;
+		}
+		else
+		{
+			std::cerr << "unable to find popup dialog for current thread" << std::endl;
+		}
+	}
+
+	/*static*/
 	INT_PTR CALLBACK Win32PopupDialog::Callback(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam)
 	{
 		switch (iMsg)
@@ -90,14 +109,11 @@ namespace ti {
 			case WM_COMMAND:
 				if(GET_WM_COMMAND_ID(wParam, lParam) == IDOK)
 				{
-					GetDlgItemText(hDlg, ID_INPUT_FIELD, textEntered, MAX_INPUT_LENGTH);
-					result = IDYES;
+					Win32PopupDialog::HandleOKClick(hDlg);
 					EndDialog(hDlg, 0);
 				}
 				else if(GET_WM_COMMAND_ID(wParam, lParam) == IDCANCEL)
 				{
-					textEntered[0] = '\0';
-					result = IDNO;
 					EndDialog(hDlg, 0);
 				}
 				break;

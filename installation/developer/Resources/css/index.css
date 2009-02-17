@@ -62,7 +62,7 @@ ID STYLES
 /*********************
 ELEMENT STYLES 
 **********************/
-textarea, input[type=text], select
+input[type=password], textarea, input[type=text], select
 {
 	-webkit-border-bottom-right-radius: 3px;
 	-webkit-border-bottom-left-radius: 3px;
