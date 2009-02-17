@@ -9,7 +9,8 @@
 @implementation OSXMenuDelegate
 -(id)initWithMenu:(ti::OSXMenuItem*)item
 {
-	self = [super initWithTitle:@"" action:@selector(invoke:) keyEquivalent:@""];
+	NSString *title = [NSString stringWithCString:item->GetLabel()];
+	self = [super initWithTitle:title action:@selector(invoke:) keyEquivalent:@""];
 	if (self)
 	{
 		[self setTarget:self];

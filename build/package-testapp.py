@@ -85,7 +85,8 @@ for tp in third_party:
             shutil.copytree(d, dest, symlinks=True)
 
     lib_files_dir = path.join(third_party_dir, tp, lib_dir)
-    dir_util.copy_tree(lib_files_dir, runtime_dir, preserve_symlinks=1)
+    if path.exists(lib_files_dir):
+    	dir_util.copy_tree(lib_files_dir, runtime_dir, preserve_symlinks=1)
 
 # Gather all module libs
 for m in modules.keys():
