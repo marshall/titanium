@@ -550,6 +550,22 @@ WindowConfig* UserWindow::GetWindowConfigByURL(std::string url)
 	return winConfig;
 }
 
+void UserWindow::UpdateWindowForURL(std::string url)
+{
+	WindowConfig *winConfig = GetWindowConfigByURL(url);
+
+	if(winConfig)
+	{
+		Bounds b;
+		b.x = winConfig->GetX();
+		b.y = winConfig->GetY();
+		b.width = winConfig->GetWidth();
+		b.height = winConfig->GetHeight();
+
+		this->SetBounds(b);
+	}
+}
+
 SharedBoundObject UserWindow::CreateWindow(WindowConfig *config)
 {
 	UserWindow* window = this->WindowFactory(this->host, config);

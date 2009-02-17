@@ -16,8 +16,8 @@
       <id>smallscreen</id>
       <title>Titanium Smallscreen Window</title>
       <urlRegex>app://small.*.html</urlRegex>
-      <width>300</width>
-      <height>125</height>
+      <width>400</width>
+      <height>275</height>
       <fullscreen>false</fullscreen>
       <chrome>true</chrome>
    </window>

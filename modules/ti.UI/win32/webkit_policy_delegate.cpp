@@ -6,6 +6,7 @@
  */
 
 #include "webkit_policy_delegate.h"
+#include "win32_user_window.h"
 
 #include <string>
 
@@ -51,8 +52,6 @@ namespace ti {
 		/*[in]*/ IWebFrame* frame,
 		/*[in]*/ IWebPolicyDecisionListener* listener)
 	{
-		std::cout << "ppppppppppppp  decidePolicyForNavigationAction() called" << std::endl;
-
 		/*
 		BSTR url;
 		request->URL(&url);
@@ -99,7 +98,21 @@ namespace ti {
 
 		return S_OK;
 		*/
-		return E_NOTIMPL;
+
+		BSTR u;
+		request->URL(&u);
+		std::wstring u2(u);
+		std::string url;
+		url.assign(u2.begin(), u2.end());
+
+		// if url matches a window config, then modify window as needed
+		this->window->UpdateWindowForURL(url);
+
+		SysFreeString(u);
+
+		listener->use();
+
+		return S_OK;
 	}
 
     HRESULT STDMETHODCALLTYPE Win32WebKitPolicyDelegate::decidePolicyForNewWindowAction(
@@ -120,6 +133,8 @@ namespace ti {
 
 			ShellExecuteW(NULL, L"open", url.c_str(), NULL, NULL, SW_SHOWNORMAL);
 			listener->ignore();
+
+			SysFreeString(u);
 		}
 		else
 		{
