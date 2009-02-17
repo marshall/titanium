@@ -30,46 +30,19 @@ namespace ti
 
 		SharedValue AppendItem(OSXMenuItem* item);
 
-		NSMenu* GetMenu();
-		NSMenu* GetMenuBar();
-
-		/* This is used for transient menus, and the widgets
-		 * are not recorded in the instances list */
-		void AddChildrenTo(NSMenu* menu);
-
-		void ClearRealization(NSMenu *parent_menu);
-
 		void Enable();
 		void Disable();
 		void SetLabel(std::string label);
 		void SetIcon(std::string icon_path);
 
-		struct MenuPieces
-		{
-			MenuPieces()
-				 : item(NULL),
-				   menu(NULL),
-				   callback(NULL),
-				   parent_menu(NULL) { }
-			NSMenuItem* item; // This item's widget
-			NSMenu* menu; // This item's submenu
-			SharedBoundMethod callback; // This item's callback
-			NSMenu* parent_menu; // This item's parent's widget
-		};
-		
 		NSMenuItem* CreateNative();
-		void Invoke() {}
+		void Invoke();
+		int GetChildCount();
+		OSXMenuItem* GetChild(int c);
 
 	private:
 		OSXMenuItem *parent; // NULL parent means this is top-level menu.
 		std::vector<OSXMenuItem*> children;
-		std::vector<MenuPieces*> instances;
-		//std::vector<GtkWidget*> widget_menus;
-
-		MenuPieces* Realize(bool is_menu_bar);
-		void MakeMenuPieces(MenuPieces& pieces);
-
-
 	};
 
 }

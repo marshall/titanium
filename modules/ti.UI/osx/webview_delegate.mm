@@ -711,6 +711,7 @@
 	SharedBoundObject bo = [window userWindow];
 	SharedPtr<UserWindow> uw = bo.cast<UserWindow>();
 	SharedPtr<MenuItem> menu = uw->GetContextMenu();
+	
 	NSMutableArray *array = [[[NSMutableArray alloc] init] autorelease];
 	if (!menu.isNull())
 	{
@@ -718,8 +719,7 @@
 		{
 			SharedBoundObject item = menu->At(c)->ToObject();
 			SharedPtr<OSXMenuItem> osx_menu = item.cast<OSXMenuItem>();
-			NSString *title = [NSString stringWithCString:osx_menu->GetLabel()];
-			NSMenuItem *native = [[NSMenuItem alloc] initWithTitle:title action:@selector(menuAction:) keyEquivalent:@""];
+			NSMenuItem *native = osx_menu->CreateNative();
 			[array addObject:native]; 
 			[native release];
 		}
