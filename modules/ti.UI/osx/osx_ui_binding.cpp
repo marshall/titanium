@@ -28,7 +28,7 @@ namespace ti
 
 	SharedPtr<MenuItem> OSXUIBinding::CreateMenu(bool trayMenu)
 	{
-		return new OSXMenuItem(trayMenu ? Tray : Item);
+		return new OSXMenuItem();
 	}
 
 	void OSXUIBinding::SetMenu(SharedPtr<MenuItem>)
