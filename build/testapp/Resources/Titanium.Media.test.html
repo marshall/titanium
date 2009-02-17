@@ -8,7 +8,22 @@
 		</style>
 		<script>
 			window.sound = null;
-			
+
+			function createSound()
+			{
+				if (window.sound)
+				{
+					window.sound.stop();
+					window.sound = null;
+				}
+				var url = prompt("which url to play?");
+				window.sound = Titanium.Media.createSound(url);
+				window.sound.onComplete(function(finished)
+				{
+					alert("sound has finished playing " + finished);
+					window.sound = null;
+				})
+			}
 			function systemBeep()
 			{
 				Titanium.Media.beep();
@@ -21,31 +36,14 @@
 			{
 				window.sound.pause();
 			}
-			function resumeSound()
+			function reloadSound()
 			{
-				window.sound.resume();
-			}
-			function resetSound()
-			{
-				window.sound.reset();
+				window.sound.reload();
 			}
 			function playSound()
 			{
-				if (window.sound)
-				{
-					window.sound.stop();
-					window.sound = null;
-				}
-				
-				var url = prompt("which url to play?");
-				window.sound = Titanium.Media.createSound(url);
 				try
 				{
-					window.sound.onComplete(function(finished)
-					{
-						alert("sound has finished playing " + finished);
-						window.sound = null;
-					})
 					window.sound.play();
 				}
 				catch(e)
@@ -61,12 +59,12 @@
 			<button onclick="systemBeep()">Do a system beep</button>
 		</div>
 		<div>
-			<button onclick="playSound()">Play a media file</button>
+			<button onclick="createSound()">Create a sound object</button>
 			<div>
+				<button onclick="playSound()">Play</button>
 				<button onclick="pauseSound()">Pause</button>
-				<button onclick="resumeSound()">Resume</button>
 				<button onclick="stopSound()">Stop</button>
-				<button onclick="resetSound()">Reset</button>
+				<button onclick="reloadSound()">Reload</button>
 			</div>
 		</div>
 	</body>

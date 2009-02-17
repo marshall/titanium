@@ -171,14 +171,14 @@ $MQL('l:send.tweet.request',function(msg)
 	var username = String(msg.payload['twitter_username']);
 	var password = String(msg.payload['twitter_password']);
 	var notification = Titanium.Notification.createNotification(window)
-	if (tweet.indexOf('D ') != 0)
+	if (tweet.charAt(0)!='D') //D is direct message if first position
 	{
 		$.ajax(
 		{
 			'username':username,
 			'password':password,
 			'type':'POST', 
-			'url':'http://twitter.com/statuses/update.json',
+			'url':'https://twitter.com/statuses/update.json',
 			'data':{'status':tweet, 'source':'titanium developer'},
 			success:function(resp,textStatus)
 			{

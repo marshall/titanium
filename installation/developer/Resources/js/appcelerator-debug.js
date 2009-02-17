@@ -3280,6 +3280,7 @@ jQuery.extend({
 	lastModified: {},
 
 	ajax: function( s ) {
+		
 		// Extend the settings, but re-extend 's' so that it can be
 		// checked again later (in the test suite, specifically)
 		s = jQuery.extend(true, s, jQuery.extend(true, {}, jQuery.ajaxSettings, s));
@@ -3390,7 +3391,7 @@ jQuery.extend({
 
 		// Create the request object
 		var xhr = s.xhr();
-
+		
 		// Open the socket
 		// Passing null username, generates a login popup on Opera (#2865)
 		if( s.username )

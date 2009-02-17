@@ -8,7 +8,6 @@
 #import "../menu_item.h"
 #import "../user_window.h"
 #import "native_window.h"
-#import "osx_menu_wrapper.h"
 
 namespace ti
 {
@@ -67,8 +66,8 @@ namespace ti
 			bool IsTopMost();
 			void SetTopMost(bool topmost);
 
-			void SetMenu(SharedBoundList menu);
-			SharedBoundList GetMenu();
+			void SetMenu(SharedPtr<MenuItem> menu);
+			SharedPtr<MenuItem> GetMenu();
 			void SetContextMenu(SharedPtr<MenuItem> menu);
 			SharedPtr<MenuItem> GetContextMenu();
 			void SetIcon(SharedString icon_path);
@@ -81,7 +80,8 @@ namespace ti
 			bool opened;
 			bool closed;
 			bool topmost;
-			OSXMenuWrapper *menu_wrapper;
+			SharedPtr<MenuItem> menu;
+			SharedPtr<MenuItem> context_menu;
 
 			DISALLOW_EVIL_CONSTRUCTORS(OSXUserWindow);
 	};

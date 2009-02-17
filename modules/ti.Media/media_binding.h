@@ -21,10 +21,14 @@ namespace ti
 		MediaBinding(SharedBoundObject);
 	protected:
 		virtual ~MediaBinding();
+		std::string GetResourcePath(const char *URL);
 	private:
 		SharedBoundObject global;
-		void CreateSound(const ValueList& args, SharedValue result);
-		void Beep(const ValueList& args, SharedValue result);
+		void _CreateSound(const ValueList& args, SharedValue result);
+		void _Beep(const ValueList& args, SharedValue result);
+
+		virtual SharedBoundObject CreateSound(std::string& url) = 0;
+		virtual void Beep() = 0;
 	};
 }
 

@@ -76,8 +76,8 @@ namespace ti
 		bool IsTopMost();
 		void SetTopMost(bool topmost);
 
-		void SetMenu(SharedBoundList menu);
-		SharedBoundList GetMenu();
+		void SetMenu(SharedPtr<MenuItem> menu);
+		SharedPtr<MenuItem> GetMenu();
 
 		void SetContextMenu(SharedPtr<MenuItem> menu);
 		SharedPtr<MenuItem> GetContextMenu();
