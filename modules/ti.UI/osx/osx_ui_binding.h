@@ -34,17 +34,15 @@ namespace ti
 		
 		SharedPtr<MenuItem> GetMenu();
 		SharedPtr<MenuItem> GetContextMenu();
-		SharedString GetIcon();
-		SharedString GetDockIcon();
 		SharedPtr<MenuItem> GetDockMenu();
 
 		long GetIdleTime();
+		NSImage* MakeImage(std::string);
+		
 	private:
 		NSView *savedDockView;
 		SharedPtr<MenuItem> menu;
-		SharedString icon;
 		SharedPtr<MenuItem> contextMenu;
-		SharedString dockIcon;
 		SharedPtr<MenuItem> dockMenu;
 		NSMenu *appDockMenu;
 	};

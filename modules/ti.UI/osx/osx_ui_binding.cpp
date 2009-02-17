@@ -9,13 +9,6 @@
 
 namespace ti
 {
-
-	/*
-	* NOTES:
-	* Dynamic Setting Dock Menu / Image on OSX
-	* http://developer.apple.com/samplecode/DeskPictAppDockMenu/index.html
-	*/
-
 	OSXUIBinding::OSXUIBinding(Host *host) : UIBinding(host)
 	{
 		[TiProtocol registerSpecialProtocol];
@@ -47,9 +40,55 @@ namespace ti
 		this->contextMenu = menu;
 	}
 
-	void OSXUIBinding::SetDockIcon(SharedString icon_path)
+	void OSXUIBinding::SetDockIcon(SharedString badge_path)
 	{
-		this->dockIcon = icon_path;
+		NSDockTile *dockTile = [NSApp dockTile];
+		std::string value = *badge_path;
+		if (!value.empty())
+		{
+			// remember the old one
+			if (!savedDockView)
+			{
+				savedDockView = [dockTile contentView];
+				[savedDockView retain];
+			}
+		   	// setup our image view for the dock tile
+		   	NSRect frame = NSMakeRect(0, 0, dockTile.size.width, dockTile.size.height);
+		   	NSImageView *dockImageView = [[NSImageView alloc] initWithFrame: frame];
+
+			NSImage *image = MakeImage(value);
+		   	[dockImageView setImage:image];
+			[image release];
+			
+		   	// by default, add it to the NSDockTile
+		   	[dockTile setContentView: dockImageView];
+		}
+		else if (savedDockView)
+		{
+		   	[dockTile setContentView:savedDockView];
+			[savedDockView release];
+			savedDockView = nil;
+		}
+		else
+		{
+		   	[dockTile setContentView:nil];
+		}
+	   	[dockTile display];
+	}
+	
+	NSImage* OSXUIBinding::MakeImage(std::string value)
+	{
+		if (ti::UIModule::IsResourceLocalFile(value))
+		{
+			SharedString file = ti::UIModule::GetResourcePath(value.c_str());
+			NSString *path = [NSString stringWithCString:((*file).c_str())];
+			return [[NSImage alloc] initWithContentsOfFile:path];
+		}
+		else
+		{
+			NSURL *url = [NSURL URLWithString:[NSString stringWithCString:value.c_str()]];
+			return [[NSImage alloc] initWithContentsOfURL:url];
+		}
 	}
 
 	void OSXUIBinding::SetDockMenu(SharedPtr<MenuItem> menu)
@@ -68,56 +107,25 @@ namespace ti
 		NSDockTile *tile = [[NSApplication sharedApplication] dockTile];
 		[tile setBadgeLabel:label];
 	}
+	
 	void OSXUIBinding::SetBadgeImage(SharedString badge_path)
 	{
-		NSDockTile *dockTile = [NSApp dockTile];
-		std::string value = *badge_path;
-		NSString *path = nil;
-		if (!value.empty())
-		{
-			path = [NSString stringWithCString:value.c_str()];
-		}
-		if (path)
-		{
-			// remember the old one
-			if (!savedDockView)
-			{
-				savedDockView = [dockTile contentView];
-				[savedDockView retain];
-			}
-		   	// setup our image view for the dock tile
-		   	NSRect frame = NSMakeRect(0, 0, dockTile.size.width, dockTile.size.height);
-		   	NSImageView *dockImageView = [[NSImageView alloc] initWithFrame: frame];
+		//TODO: need to support allowing custom badge images
+	}
 
-			//TODO: improve this to take either a file path or URL
-			NSImage *image = [[NSImage alloc] initWithContentsOfFile:path];
-		   	[dockImageView setImage:image];
-			[image release];
-
-		   	// by default, add it to the NSDockTile
-		   	[dockTile setContentView: dockImageView];
-		}
-		else if (savedDockView)
+	void OSXUIBinding::SetIcon(SharedString path)
+	{
+		std::string icon_path = *path;
+		if (icon_path.empty())
 		{
-		   	[dockTile setContentView:savedDockView];
-			[savedDockView release];
-			savedDockView = nil;
+			[[NSApplication sharedApplication] setApplicationIconImage:nil];
 		}
 		else
 		{
-		   	[dockTile setContentView:nil];
+			NSImage *image = MakeImage(icon_path);
+			[[NSApplication sharedApplication] setApplicationIconImage:image];
+			[image release];
 		}
-	   	[dockTile display];
-	}
-
-	void OSXUIBinding::SetIcon(SharedString icon_path)
-	{
-		this->icon = icon_path;
-	}
-	
-	SharedString OSXUIBinding::GetDockIcon()
-	{
-		return this->dockIcon;
 	}
 	
 	SharedPtr<MenuItem> OSXUIBinding::GetDockMenu()
@@ -135,11 +143,6 @@ namespace ti
 		return this->contextMenu;
 	}
 	
-	SharedString OSXUIBinding::GetIcon()
-	{
-		return this->icon;
-	}
-
 	SharedPtr<TrayItem> OSXUIBinding::AddTray(
 		SharedString icon_path,
 		SharedBoundMethod cb)
