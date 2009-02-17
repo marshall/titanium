@@ -34,6 +34,48 @@
 		}
 	}
 
+	function toggleMax()
+	{
+		try
+		{
+			var cw = Titanium.UI.currentWindow;
+			var f = cw.isMaximizable();
+			cw.setMaximizable(! f);
+		}
+		catch(e)
+		{
+			alert("exception: "+e);
+		}
+	}
+
+	function toggleMin()
+	{
+		try
+		{
+			var cw = Titanium.UI.currentWindow;
+			var f = cw.isMinimizable();
+			cw.setMinimizable(! f);
+		}
+		catch(e)
+		{
+			alert("exception: "+e);
+		}
+	}
+
+	function toggleClose()
+	{
+		try
+		{
+			var cw = Titanium.UI.currentWindow;
+			var f = cw.isCloseable();
+			cw.setCloseable(! f);
+		}
+		catch(e)
+		{
+			alert("exception: "+e);
+		}
+	}
+
 	function closeMe()
 	{
 		Titanium.UI.currentWindow.close();
@@ -42,8 +84,15 @@
 </script>
 </head>
 <body>
+	<div>
 	<button onclick="toggleFullscreen()">Toggle Fullscreen</button>
 	<button onclick="toggleChrome()">Toggle Chrome</button>
 	<button onclick="closeMe()">Bye</button>
+	</div>
+	<button onclick="toggleMin()">Toggle minimizable</button>
+	<button onclick="toggleMax()">Toggle maximizable</button>
+	<button onclick="toggleClose()">Toggle closeable</button>
+	<div>
+	</div>
 </body>
 </html>
