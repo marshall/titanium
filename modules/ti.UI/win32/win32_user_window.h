@@ -49,6 +49,7 @@ protected:
 	double transparency;
 	std::map<long, SharedBoundMethod> messageHandlers;
 	bool requires_display;
+	bool topmost;
 
 	/*
 	 * The window-specific menu.
@@ -140,6 +141,8 @@ public:
 	HMENU GetContextMenuHandle() { return this->contextMenuHandle; }
 	void SetIcon(SharedString icon_path);
 	SharedString GetIcon();
+	bool IsTopMost();
+	void SetTopMost(bool topmost);
 
 	void SetupMenu();
 	void SetupIcon();

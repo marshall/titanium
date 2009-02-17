@@ -36,7 +36,7 @@ enum UserWindowEvent
 	HIDDEN,
 	SHOWN,
 	FULLSCREENED,
-	WINDOWED, // opposite of fullscreen?
+	UNFULLSCREENED,
 	MAXIMIZED,
 	MINIMIZED,
 	RESIZED,
@@ -126,6 +126,9 @@ class UserWindow : public kroll::StaticBoundObject {
 		void _AddEventListener(const kroll::ValueList&, kroll::SharedValue);
 		void _RemoveEventListener(const kroll::ValueList&, kroll::SharedValue);
 
+		void _IsTopMost(const kroll::ValueList&, kroll::SharedValue);
+		void _SetTopMost(const kroll::ValueList&, kroll::SharedValue);
+
 		std::vector<SharedBoundMethod> listeners;
 		
 		
@@ -186,6 +189,8 @@ class UserWindow : public kroll::StaticBoundObject {
 		virtual SharedPtr<MenuItem> GetContextMenu() = 0;
 		virtual void SetIcon(SharedString icon_path) = 0;
 		virtual SharedString GetIcon() = 0;
+		virtual bool IsTopMost() = 0;
+		virtual void SetTopMost(bool topmost) = 0;
 
 		virtual void FireEvent(UserWindowEvent event);
 		
