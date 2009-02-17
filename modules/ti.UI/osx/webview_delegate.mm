@@ -387,6 +387,10 @@
 		// Place currentWindow.createWindow in the delegate.
 		SharedValue create_window_value = shared_user_window->Get("createWindow");
 		delegate_ui_api->Set("createWindow", create_window_value);
+		
+		// Place currentWindow.openFiles in the delegate.
+		SharedValue open_files_value = shared_user_window->Get("openFiles");
+		delegate_ui_api->Set("openFiles", open_files_value);
 
 		ti_object->Set("UI", Value::NewObject(delegate_ui_api));
 	}
@@ -711,14 +715,22 @@
 	SharedBoundObject bo = [window userWindow];
 	SharedPtr<UserWindow> uw = bo.cast<UserWindow>();
 	SharedPtr<MenuItem> menu = uw->GetContextMenu();
-	NSMutableArray *array = [[NSMutableArray alloc] init];
+	NSMutableArray *array = [[[NSMutableArray alloc] init] autorelease];
+	// window takes precedent - try him first
+	if (menu.isNull())
+	{
+		// if no window, try the app context
+		menu = UIModule::GetContextMenu();
+	}
 	if (!menu.isNull())
 	{
 		for (int c=0;c<menu->Size();c++)
 		{
 			SharedBoundObject item = menu->At(c)->ToObject();
 			SharedPtr<OSXMenuItem> osx_menu = item.cast<OSXMenuItem>();
-			[array addObject:osx_menu->GetNative()]; 
+			NSMenuItem *native = osx_menu->CreateNative();
+			[array addObject:native]; 
+			[native release];
 		}
 	}
 	return array;
@@ -827,8 +839,6 @@ std::string GetModuleName(NSString *typeStr)
 	SharedBoundObject global = host->GetGlobalObject();
 	SharedValue moduleValue = global->Get(moduleName.c_str());
 
-	std::cout << "MATCHES MIME = " << moduleName << ", moduleValue = " << moduleValue->ToTypeString() << std::endl;
-
 	if (!moduleValue->IsNull() && moduleValue->IsObject()) {
 		if (!moduleValue->ToObject()->Get("evaluate")->IsNull()
 			&& !moduleValue->ToObject()->Get("evaluate")->IsUndefined()
@@ -846,8 +856,6 @@ std::string GetModuleName(NSString *typeStr)
 	
 	std::string type = [mimeType UTF8String];
 	std::string moduleName = GetModuleName(mimeType);
-	
-	std::cout << "++ evaluate type="<<type<<",module="<<moduleName<<std::endl;
 	
 	JSContextRef contextRef = reinterpret_cast<JSContextRef>(context);
 

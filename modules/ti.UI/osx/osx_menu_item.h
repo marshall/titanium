@@ -3,28 +3,20 @@
  * see LICENSE in the root folder for details on the license.
  * Copyright (c) 2009 Appcelerator, Inc. All Rights Reserved.
  */
-#ifndef _OSX_MENU_ITEM_H_
-#define _OSX_MENU_ITEM_H_
+#ifndef _OSX_MENU_ITEM_IMPL_H_
+#define _OSX_MENU_ITEM_IMPL_H_
 
+#include <Cocoa/Cocoa.h>
 #include "../menu_item.h"
 
 namespace ti
 {
-	enum OSXMenuItemType
-	{
-		Separator,
-		Tray,
-		Item
-	};
-	
-	//FIXME Type
-	
+
 	class OSXMenuItem : public MenuItem
 	{
 
 	public:
-		OSXMenuItem(OSXMenuItemType type = Item);
-		virtual ~OSXMenuItem();
+		OSXMenuItem();
 
 		void SetParent(OSXMenuItem* parent);
 		OSXMenuItem* GetParent();
@@ -42,16 +34,15 @@ namespace ti
 		void Disable();
 		void SetLabel(std::string label);
 		void SetIcon(std::string icon_path);
-		
+
+		NSMenuItem* CreateNative();
 		void Invoke();
-		
-		NSMenuItem* GetNative() { return native; }
-		
+		int GetChildCount();
+		OSXMenuItem* GetChild(int c);
+
 	private:
 		OSXMenuItem *parent; // NULL parent means this is top-level menu.
 		std::vector<OSXMenuItem*> children;
-		NSMenuItem *native;
-		
 	};
 
 }

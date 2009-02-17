@@ -33,8 +33,6 @@ namespace ti
 		this->SetMethod("setBadge", &UIBinding::_SetBadge);
 		this->SetMethod("setBadgeImage", &UIBinding::_SetBadgeImage);
 
-		this->SetMethod("openFiles", &UIBinding::_OpenFiles);
-
 		this->SetMethod("getIdleTime", &UIBinding::_GetIdleTime);
 	}
 
@@ -187,61 +185,8 @@ namespace ti
 				image_path = UIModule::GetResourcePath(image_url);
 			}
 		}
- 
+
 		this->SetBadgeImage(image_path);
-	}
-
-	void UIBinding::_OpenFiles(const ValueList& args, SharedValue result)
-	{
-		// pass in a set of properties with each key being
-		// the name of the property and a boolean for its setting
-		// example:
-		//
-		// var selected = Titanium.Desktop.openFiles({
-		//    multiple:true,
-		//    files:false,
-		//    directories:true,
-		//    types:['js','html']
-		// });
-		//
-		//
-		SharedBoundMethod callback;
-		if (args.size() < 1 || !args.at(0)->IsMethod())
-		{
-			throw ValueException::FromString("openFiles expects first argument to be a callback");
-		}
-		callback = args.at(0)->ToMethod();
-
-		SharedBoundObject props;
-		if (args.size() < 2 || !args.at(1)->IsObject())
-		{
-			props = new StaticBoundObject();
-		}
-		else
-		{
-			props = args.at(1)->ToObject();
-		}
-
-		bool files = props->GetBool("files", true);
-		bool multiple = props->GetBool("multiple", false);
-		bool directories = props->GetBool("directories", false);
-		std::string path = props->GetString("path", "");
-		std::string file = props->GetString("file", "");
-
-		std::vector<std::string> types;
-		if (props->Get("types")->IsList())
-		{
-			SharedBoundList l = props->Get("types")->ToList();
-			for (int i = 0; i < l->Size(); i++)
-			{
-				if (l->At(i)->IsString())
-				{
-					types.push_back(l->At(i)->ToString());
-				}
-			}
-		}
-
-		this->OpenFiles(callback, multiple, files, directories, path, file, types);
 	}
 
 	void UIBinding::_GetIdleTime(
