@@ -21,6 +21,7 @@ namespace ti
 		MediaBinding(SharedBoundObject);
 	protected:
 		virtual ~MediaBinding();
+		std::string GetResourcePath(const char *URL);
 	private:
 		SharedBoundObject global;
 		void _CreateSound(const ValueList& args, SharedValue result);

@@ -10,7 +10,7 @@ namespace ti
 {
 	gboolean gst_bus_cb(GstBus *bus, GstMessage *message, gpointer data);
 
-	GstSound::GstSound(std::string &url) : Sound(url),
+	GstSound::GstSound(std::string &path) : Sound(path),
 		callback(NULL),
 		pipeline(NULL)
 	{
@@ -20,11 +20,16 @@ namespace ti
 
 	void GstSound::Load()
 	{
-		this->state = STOPPED;
+		// Clean up old stream, if around
+		if (pipeline != NULL)
+		{
+			gst_element_set_state(this->pipeline, GST_STATE_NULL);
+			gst_object_unref(GST_OBJECT(this->pipeline));
+		}
 
+		this->state = STOPPED;
 		this->pipeline = gst_element_factory_make("playbin", NULL);
-		g_object_set(G_OBJECT(pipeline), "uri",
-			"file:///home/martin/music/belly-sweet_ride/01-Spaceman.mp3", NULL);
+		g_object_set(G_OBJECT(pipeline), "uri", url.c_str(), NULL);
 
 		// Add a callback to listen for GST bus messages
 		GstBus* bus = gst_pipeline_get_bus(GST_PIPELINE(pipeline));
