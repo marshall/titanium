@@ -151,7 +151,7 @@ namespace ti {
 				tmp.Write<WORD>(0xFFFF); // extended dialog template
 				tmp.Write<DWORD>(0); // help ID
 				tmp.Write<DWORD>(0); // extended style
-				tmp.Write<DWORD>(WS_CAPTION | WS_SYSMENU | DS_SETFONT | DS_MODALFRAME);
+				tmp.Write<DWORD>(WS_CAPTION | DS_FIXEDSYS | DS_SETFONT | DS_MODALFRAME);	// DS_FIXEDSYS removes the close decoration
 				tmp.Write<WORD>(controlCount); // number of controls
 				tmp.Write<WORD>(32); // X
 				tmp.Write<WORD>(32); // Y
