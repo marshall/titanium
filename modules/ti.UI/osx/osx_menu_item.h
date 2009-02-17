@@ -39,10 +39,12 @@ namespace ti
 		void Invoke();
 		int GetChildCount();
 		OSXMenuItem* GetChild(int c);
+		bool IsEnabled();
 
 	private:
 		OSXMenuItem *parent; // NULL parent means this is top-level menu.
 		std::vector<OSXMenuItem*> children;
+		bool enabled;
 	};
 
 }
