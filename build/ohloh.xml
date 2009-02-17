@@ -2,7 +2,7 @@
 <packages>
   <package name="Titanium">
     <releases>
-      <release name="PR2 RC1">
+      <release name="PR2 RC2">
         <files>
           <file name="titanium_runtime.exe"/>
           <file name="titanium_runtime.dmg"/>

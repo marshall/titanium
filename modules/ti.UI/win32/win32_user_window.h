@@ -29,6 +29,7 @@ namespace ti {
 
 class Win32WebKitFrameLoadDelegate;
 class Win32WebKitUIDelegate;
+class Win32WebKitPolicyDelegate;
 
 class Win32UserWindow : public UserWindow {
 
@@ -36,6 +37,7 @@ protected:
 	kroll::Win32Host *win32_host;
 	Win32WebKitFrameLoadDelegate *frameLoadDelegate;
 	Win32WebKitUIDelegate *uiDelegate;
+	Win32WebKitPolicyDelegate *policyDelegate;
 	Bounds restore_bounds;
 	long restore_styles;
 	ScriptEvaluator script_evaluator;
@@ -134,8 +136,8 @@ public:
 	void SetTransparency(double transparency);
 	void SetFullScreen(bool fullscreen);
 	void SetUsingChrome(bool chrome);
-	void SetMenu(SharedBoundList menu);
-	SharedBoundList GetMenu();
+	void SetMenu(SharedPtr<MenuItem> menu);
+	SharedPtr<MenuItem> GetMenu();
 	void SetContextMenu(SharedPtr<MenuItem> menu);
 	SharedPtr<MenuItem> GetContextMenu();
 	HMENU GetContextMenuHandle() { return this->contextMenuHandle; }

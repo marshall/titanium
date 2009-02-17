@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+#
 # this script creates build/<os>/titanium_testapp folder
 # after running this script, you can execute the test app with <os>/titanium_testapp/titanium_testapp
 
@@ -13,7 +13,7 @@ version = '0.2'
 runtime_libs = ['kroll', 'khost']
 third_party = ['webkit', 'poco']
 module_dirs = [
-    'api', 'javascript', 'foo', # 'ruby', 'python'
+    'api', 'javascript', 'foo', 'ruby', 'python',
     'ti.Platform', 'ti.App', 'ti.UI', 'tinetwork',
     'ti.Growl', 'ti.Filesystem', 'ti.Media', 'ti.Desktop', 'ti.Process',
     'ti.Notification'
@@ -83,13 +83,10 @@ for tp in third_party:
         for d in glob.glob(pattern):
             dest = path.join(runtime_dir, path.basename(d))
             shutil.copytree(d, dest, symlinks=True)
-    
-    lib_files_dir = path.join(third_party_dir, tp)
-    lib_files_dir = path.join(lib_files_dir, lib_dir)
-    lib_files_dir = path.join(lib_files_dir, '*')
-    for d in glob.glob(lib_files_dir):
-        shutil.copy(d, runtime_dir)
-        
+
+    lib_files_dir = path.join(third_party_dir, tp, lib_dir)
+    dir_util.copy_tree(lib_files_dir, runtime_dir, preserve_symlinks=1)
+
 # Gather all module libs
 for m in modules.keys():
     module_dir = path.join(top_dir, 'modules', modules[m])
@@ -130,7 +127,7 @@ shutil.copy(runtime_manifest_file, runtime_dir)
 
 if osname is 'osx':
     plist = open(path.join('..', 'support', 'osx', 'Info.plist')).read()
-    plist = plist.replace('APPNAME', 'testapp')
+    plist = plist.replace('APPNAME', 'titanium_testapp')
     plist = plist.replace('APPICON', 'titanium.icns')
     plist = plist.replace('APPID', 'com.titaniumapp.testapp')
     plist = plist.replace('APPNIB', 'MainMenu')
@@ -141,8 +138,8 @@ if osname is 'osx':
     #out_file = open(path.join(app_dir, 'manifest'), 'w')
     #out_file.write(manifest_text)
     #out_file.close()
-    menu_nib = path.join('osx', 'modules', 'ti.UI', 'MainMenu.nib')
-    lproj = path.join(app_dir, 'English.lproj')
+    menu_nib = path.join(build_dir, 'modules', 'ti.UI', 'MainMenu.nib')
+    lproj = path.join(app_dir, 'Resources', 'English.lproj')
     os.makedirs(lproj)
     shutil.copy(menu_nib, lproj)
     

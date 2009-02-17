@@ -63,7 +63,6 @@ namespace ti
 		}
 		UIModule::SetMenu(menu);
 		this->SetMenu(menu);
-
 	}
 
 	void UIBinding::_GetMenu(const ValueList& args, SharedValue result)
@@ -89,7 +88,6 @@ namespace ti
 		}
 		UIModule::SetContextMenu(menu);
 		this->SetContextMenu(menu);
-
 	}
 
 	void UIBinding::_GetContextMenu(const ValueList& args, SharedValue result)
@@ -105,7 +103,6 @@ namespace ti
 			result->SetUndefined();
 		}
 	}
-
 
 	void UIBinding::_SetIcon(const ValueList& args, SharedValue result)
 	{
@@ -244,10 +241,8 @@ namespace ti
 			}
 		}
 
-
 		this->OpenFiles(callback, multiple, files, directories, path, file, types);
 	}
-
 
 	void UIBinding::_GetIdleTime(
 		const ValueList& args,

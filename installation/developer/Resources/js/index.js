@@ -24,166 +24,225 @@ TiDeveloper.convertDate = function(str)
 	}
 	return hour + ":" + minutes + ampm;
 }
-$.ajax({
-	type:"GET",
-	url: 'http://search.twitter.com/search.rss?q=+%22Appcelerator+Titanium%22+OR+%23titanium+OR+%23appcelerator&rpp=100',		
-	success: function(data)
+
+
+
+TiDeveloper.twitterUsername = null;
+TiDeveloper.twitterPassword = null;
+TiDeveloper.saveTwitterCreds = function(username,password)
+{
+	// only update if different
+	// we only store one twitter account
+	if (username != TiDeveloper.twitterUsername || 
+		password  != TiDeveloper.twitterPassword)
 	{
-		var root = data.getElementsByTagName('rss')[0];
-		var channels = root.getElementsByTagName("channel");
-		var items = channels[0].getElementsByTagName("item");
-		for (var i=0;i<items.length;i++)
+		$('#twitter_username').val(username);
+		$('#twitter_password').val(password);
+		swiss('#twitter_username').fire('revalidate')
+		swiss('#twitter_password').fire('revalidate')
+
+		//add
+		if (TiDeveloper.twitterUsername == null)
 		{
-			var children = items[i].childNodes;
-			var date = null;
-			var desc = null;
-			var image = null;
-			var author = null
-			var html = []
+			// update database
+		    db.transaction(function (tx) 
+		    {
+		        tx.executeSql("INSERT into Twitter (id,username,password) values(?,?,?)", 
+				[1,username,password]);
+		    });
 
-
-			for(var j=0;j<children.length;j++)
+		}
+		//update
+		else
+		{
+			// update database
+		    db.transaction(function (tx) 
+		    {
+		        tx.executeSql("UPDATE Twitter set username = ?, password = ? WHERE id = ?", 
+				[1,username,password]);
+		    });
+		}
+	}
+}
+TiDeveloper.loadTwitter = function()
+{
+	// clear
+	$('#twitter_content').empty();
+	
+	// set page size
+	var rpp = $('#twitter_page_size').val();
+	if (!rpp)rpp=50;
+	// get data
+	$('#twitter_content').append('<img src="images/information.png" style="position:relative;top:3px"/> Loading twitter data... One moment.')
+	$('#twitter_content').attr('loading','true');
+	$.ajax({
+		type:"GET",
+		url: 'http://search.twitter.com/search.rss?q=+%22Appcelerator+Titanium%22+OR+%23titanium+OR+%23appcelerator&rpp=' +rpp ,		
+		success: function(data)
+		{
+			$('#twitter_content').attr('loading','false');
+			$('#twitter_content').empty();
+			
+			var root = data.getElementsByTagName('rss')[0];
+			var channels = root.getElementsByTagName("channel");
+			var items = channels[0].getElementsByTagName("item");
+			for (var i=0;i<items.length;i++)
 			{
-				if (children[j].nodeType==1)
-				{
-					switch(children[j].nodeName.toLowerCase())
-					{
-						case 'author':
-						{
-							author = children[j].textContent;
-							var parts = author.split('(');
-							author = parts[1].substring(0,parts[1].length-1)
-							break;
-						}
-						case 'google:image_link':
-						{
-							image = children[j].textContent.trim();							
-							break;
-						}
+				var children = items[i].childNodes;
+				var date = null;
+				var desc = null;
+				var image = null;
+				var author = null;
+				var html = [];
 
-						case 'description':
+
+				for(var j=0;j<children.length;j++)
+				{
+					if (children[j].nodeType==1)
+					{
+						switch(children[j].nodeName.toLowerCase())
 						{
-							desc = children[j].textContent
-							desc = desc.replace(/href/g,'target="ti:systembrowser" href');
-							desc = desc.replace(/href="\/search/g,'href="http://search.twitter.com/search');
-							break;
-						}
-						case 'pubdate':
-						{
-							date = children[j].textContent
-							var parts = date.split(' ');
-							date = parts[2] + ' ' + parts[1] + ' ' + parts[3] + ' ' + TiDeveloper.convertDate(parts[4].substring(0,5));
-							
+							case 'author':
+							{
+								author = children[j].textContent;
+								var parts = author.split('(');
+								author = parts[1].substring(0,parts[1].length-1)
+								break;
+							}
+							case 'google:image_link':
+							{
+								image = children[j].textContent.trim();							
+								break;
+							}
+
+							case 'description':
+							{
+								desc = children[j].textContent
+								desc = desc.replace(/href/g,'target="ti:systembrowser" href');
+								desc = desc.replace(/href="\/search/g,'href="http://search.twitter.com/search');
+								break;
+							}
+							case 'pubdate':
+							{
+								date = children[j].textContent
+								var parts = date.split(' ');
+								date = parts[2] + ' ' + parts[1] + ' ' + parts[3] + ' ' + TiDeveloper.convertDate(parts[4].substring(0,5));
+
+							}
 						}
 					}
 				}
+				html.push('<div style="height:80px;margin-bottom:10px">');
+				html.push('		<div style="float:left;text-align:center;min-width:60px;max-width:60px;"><img style="border:2px solid #4b4b4b;background-color:#4b4b4b;position:relative;top:14px" height="48px" width="48px" src="'+image+'"/></div>');
+				html.push('		<div style="float:right;min-width:86%;max-width:86%;height:80px;position:relative;-webkit-border-radius:6px;background-color:#414141">');
+				html.push('			<img style="position:absolute;left:-24px;top:25px" src="images/triangle.png"/>');
+				html.push('			<div style="color:#42C0FB;position:absolute;left:10px;top:8px;">' + author + ' <span style="color:#a4a4a4">says:</span></div>');
+				html.push('			<div style="color:#a4a4a4;font-size:11px;position:absolute;right:10px;top:10px">' + date + '</div>');
+				html.push('			<div style="position:absolute;left:10px;top:30px;color:#fff;">'+desc +'</div>')
+				html.push('		</div>');
+				html.push('</div>');
+				$('#twitter_content').append(html.join(''));
+				var d = new Date();	
+				$('#twitter_last_update').html(d.toLocaleString())
+				
 			}
-			html.push('<div style="height:80px;margin-bottom:10px">');
-			html.push('		<div style="float:left;text-align:center;min-width:60px;max-width:60px;"><img style="border:2px solid #4b4b4b;background-color:#4b4b4b;position:relative;top:14px" height="48px" width="48px" src="'+image+'"/></div>');
-			html.push('		<div style="float:right;min-width:86%;max-width:86%;height:80px;position:relative;-webkit-border-radius:6px;background-color:#414141">');
-			html.push('			<img style="position:absolute;left:-24px;top:25px" src="images/triangle.png"/>');
-			html.push('			<div style="color:#42C0FB;position:absolute;left:10px;top:8px;">' + author + ' <span style="color:#a4a4a4">says:</span></div>');
-			html.push('			<div style="color:#a4a4a4;font-size:11px;position:absolute;right:10px;top:10px">' + date + '</div>');
-			html.push('			<div style="position:absolute;left:10px;top:30px;color:#fff;">'+desc +'</div>')
-			html.push('		</div>');
-			html.push('</div>');
-			$('#twitter_content').append(html.join(''));
-
 		}
+	});
+	if ($('#twitter_content').attr('loading') == 'true')
+	{
+		$('#twitter_content').html('<img src="images/information.png" style="position:relative;top:3px"/> You (or Twitter) is offline...  Try again later.')
 	}
+}
+
+// auto update twitter feed
+// 5 minutes
+setInterval(function()
+{
+	TiDeveloper.loadTwitter();
+	
+},300000)
+
+//
+// Twitter messages
+//
+$MQL('l:send.tweet.request',function(msg)
+{
+	var tweet = String(msg.payload['twitter_message']);
+	var username = String(msg.payload['twitter_username']);
+	var password = String(msg.payload['twitter_password']);
+	var notification = Titanium.Notification.createNotification(window)
+	if (tweet.charAt(0)!='D') //D is direct message if first position
+	{
+		$.ajax(
+		{
+			'username':username,
+			'password':password,
+			'type':'POST', 
+			'url':'https://twitter.com/statuses/update.json',
+			'data':{'status':tweet, 'source':'titanium developer'},
+			success:function(resp,textStatus)
+			{
+				TiDeveloper.saveTwitterCreds(username,password)
+				notification.setTitle('Success');
+				notification.setMessage('Your message was sent!');
+				notification.setIcon('app://images/information.png');
+				notification.show();
+				$MQ('l:send.tweet.response',{result:'success'})
+			},
+			error:function(XMLHttpRequest, textStatus, errorThrown)
+			{
+				alert('textStatus='+textStatus+',error='+errorThrown);
+				notification.setTitle('Error');
+				notification.setMessage('Sorry there was an error from Twitter!');
+				notification.setIcon('app://images/error.png');
+				notification.show();
+				$MQ('l:send.tweet.response',{result:'error'})
+
+			}
+		});
+	}
+	// DIRECT MESSAGE
+	else
+	{
+		var user = tweet.split(' ')[1]
+		$.ajax(
+		{
+			'username':username,
+			'password':password,
+			'type':'POST', 
+			'url':'http://twitter.com/direct_messages/new.json',
+			'data':{'text':tweet, 'user':user, 'source': 'titanium developer'},
+			success:function(resp,textStatus)
+			{
+				TiDeveloper.saveTwitterCreds(username,password)
+				notification.setTitle('Direct Message');
+				notification.setMessage('Your message has been sent');
+				notification.setIcon('app://images/information.png');
+				notification.show();
+				$MQ('l:send.tweet.response',{result:'success'})
+				
+				
+			},
+			error:function(XMLHttpRequest, textStatus, errorThrown)
+			{
+				notification.setTitle('Direct Message');
+				notification.setMessage('Sorry there was an error from Twitter!');
+				notification.setIcon('app://images/error.png');
+				notification.show();
+				$MQ('l:send.tweet.response',{result:'error'})
+				
+			}
+		});
+	}
+	
 });
 
-       
 
-// YOU TUBE STUFF - COME BACK TO LATER
-//TiDeveloper.yk ='AI39si6YKvME9BMIerJYsJEAmM46e829Ovs_LMaR_jW1u0-4xHN7ehjW49EUqNgnZaNoK3aY_fUhs62mTw_0_x4EQ3f7uaaW6w';
-//TiDeveloper.yc ='ytapi-Appcelerator-TitaniumDevelope-utomjlgd-0';
-//
-// YouTube Setup
-//
-// window.onYouTubePlayerReady = function(playerId)
-// {
-// 	ytplayer = document.getElementById("myytplayer");
-// 	$('#ytapiplayer').css('display','none')
-// 
-// };
-// var params = { allowScriptAccess: "always" };
-// var atts = { id: "myytplayer" };
-// swfobject.embedSWF("http://www.youtube.com/apiplayer?enablejsapi=1&amp;playerapiid=ytplayer", 
-//                  "ytapiplayer", "400px", "300px", "8", null, null, params, atts);
-// 
-// //
-// // Authenticate youtube user
-// // 
-// $.ajax({
-// 	type: "POST",
-//    	url: "https://www.google.com/youtube/accounts/ClientLogin",
-//    	data: "Email=titaniumdev&Passwd=timetrac&service=youtube&source=titanium_developer",
-//    	success: function(resp)
-// 	{
-//      	TiDeveloper.ytAuthToken = resp;
-// 		TiDeveloper.loadVids()
-//    	},
-//    	error: function(resp)
-// 	{
-// 		if (resp.responseText == 'BadAuthentication')
-// 		{
-// 			// login failed
-// 		}
-// 	}
-// });
-
-// TiDeveloper.loadVids = function()
-// {
-// 	$.ajax({
-// 		type:"GET",
-// 		url:"http://gdata.youtube.com/feeds/api/videos/-/music", 
-// 		data:'alt=json',
-// 		success: function(data)
-// 		{
-// 			
-// 			var videoData = eval("(" + data + ")");
-// 			var count = 0;
-// 			$.each(videoData.feed.entry,function() // Protoplasim
-// 			{
-// 				var html = "<div class='social_row' id='video_"+count+"' videoid='"+this.link[0].href.substr(this.link[0].href.lastIndexOf("=") + 1, this.link[0].href.length)+"'>"
-// 				html += "<div style='text-align:center'><img src='"+this.media$group.media$thumbnail[0].url+"' /></div>";
-// 				html += "<div style='font-size:11px;color;#fff;text-align:center;margin-top:10px'>";
-// 				html +=  this.media$group.media$title.$t
-// 				html += "</div>";
-// 
-// 				html += "</div>";
-// 				
-// 				$('#youtube_feed').append(html);
-// 				$('#video_'+ count).click(function()
-// 				{
-// 					var id = $(this).attr('videoid')
-// 					if(ytplayer)
-// 					{
-// 						ytplayer.loadVideoById(id, 0);
-// 					}
-// 				})
-// 
-// 				count++
-// 				// html += "<div style='float:left;width:50%;margin-left:10px'>"+ this.media$group.media$title.$t + "</span></div>";
-// 				// 
-// 				// var href = this.link[0].href;
-// 				// var title = '';
-// 				// var desc = this.media$group.media$description.$t;
-// 				// var thumbnail = this.media$group.media$thumbnail[2].url;
-// 			});
-// 		},
-// 		error: function(resp)
-// 		{
-// 			alert(resp);
-// 		}
-// 	});
-// 	
-// }
 		
 // holder var for all projects
 TiDeveloper.ProjectArray = [];
 var db = openDatabase("TiDeveloper","1.0");
+
 var highestId = 0;
 
 // generic count format function
@@ -442,6 +501,29 @@ $MQL('l:app.compiled',function()
 	   });
 	});
 	
+	db.transaction(function(tx) 
+	{
+	   tx.executeSql("SELECT username,password FROM Twitter", [], function(tx,result) 
+	   {
+		   for (var i = 0; i < result.rows.length; ++i) 
+		   {
+                var row = result.rows.item(i);
+				TiDeveloper.twitterUsername = row['username'];
+				TiDeveloper.twitterPassword = row['password'];
+				$('#twitter_username').val(TiDeveloper.twitterUsername);
+				$('#twitter_password').val(TiDeveloper.twitterPassword);
+				swiss('#twitter_username').fire('revalidate')
+				swiss('#twitter_password').fire('revalidate')
+
+				break;
+			}
+	   }, function(tx, error) 
+	   {
+	       tx.executeSql("CREATE TABLE Twitter (id REAL UNIQUE, username TEXT, password TEXT)")
+	   });
+	});
+	
+	TiDeveloper.loadTwitter();
 });
 
 

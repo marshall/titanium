@@ -28,8 +28,9 @@ namespace ti
 		KROLL_MODULE_CLASS(MediaModule)
 
 	private:
-		kroll::BoundObject *variables;
+		SharedBoundObject binding;
 	};
 
 }
+
 #endif

@@ -35,10 +35,13 @@ namespace ti {
 		std::string message;
 		std::string inputText;
 		bool showCancelButton;
-		static char textEntered[MAX_INPUT_LENGTH];
-		static int result;
+		int result;
 
 		BOOL ShowMessageBox(HWND hwnd);
+
+		static std::map<DWORD, Win32PopupDialog*> popups;
+
+		static void HandleOKClick(HWND hDlg);
 		static INT_PTR CALLBACK CALLBACK Callback(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam);
 	};
 

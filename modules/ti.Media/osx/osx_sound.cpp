@@ -63,7 +63,11 @@ namespace ti
 	}
 	void OSXSound::Play()
 	{
-		[sound play];
+		if (paused)
+			[sound resume];
+		else
+			[sound play];
+
 		playing = true;
 		paused = false;
 	}
@@ -72,12 +76,6 @@ namespace ti
 		[sound pause];
 		paused = true;
 		playing = false;
-	}
-	void OSXSound::Resume()
-	{
-		[sound resume];
-		paused = false;
-		playing = true;
 	}
 	void OSXSound::Stop()
 	{
@@ -88,7 +86,7 @@ namespace ti
 		paused = false;
 		playing = false;
 	}
-	void OSXSound::Reset()
+	void OSXSound::Reload()
 	{
 		this->Load();
 	}

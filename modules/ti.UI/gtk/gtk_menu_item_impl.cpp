@@ -302,7 +302,7 @@ namespace ti {
 		}
 		catch(...)
 		{
-			std::cout << "Menu callback failed" << std::endl;
+			std::cerr << "Menu callback failed" << std::endl;
 		}
 
 	}

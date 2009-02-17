@@ -88,7 +88,7 @@ UserWindow::UserWindow(kroll::Host *host, WindowConfig *config) :
 	this->SetMethod("setVisible", &UserWindow::_SetVisible);
 	this->SetMethod("getTransparency", &UserWindow::_GetTransparency);
 	this->SetMethod("setTransparency", &UserWindow::_SetTransparency);
-	this->SetMethod("setMenu", &UserWindow::_SetMenu);
+	this->SetMethod("setMenu", &UserWindow::_SetTransparency);
 	this->SetMethod("getMenu", &UserWindow::_GetMenu);
 	this->SetMethod("setContextMenu", &UserWindow::_SetContextMenu);
 	this->SetMethod("getContextMenu", &UserWindow::_GetContextMenu);

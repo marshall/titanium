@@ -60,17 +60,13 @@ namespace ti
 			HRESULT hr = media_control->GetState(500, (OAFilterState*)&fs);
 		}
 	}
-	void Win32Sound::Resume()
-	{
-		media_control->Run();
-	}
 	void Win32Sound::Stop()
 	{
 		media_control->Stop();
 		//REFERENCE_TIME rt;
 		//media_seeking->SetPositions(&rt, AM_SEEKING_AbsolutePositioning, NULL, AM_SEEKING_NoPositioning);
 	}
-	void Win32Sound::Reset()
+	void Win32Sound::Reload()
 	{
 	}
 	void Win32Sound::SetVolume(double volume)

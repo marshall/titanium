@@ -38,7 +38,7 @@ namespace ti
 		return mask;
 	}
 
-	OSXUserWindow::OSXUserWindow(Host *host, WindowConfig *config) : UserWindow(host,config), window(NULL), opened(false), closed(false), menu_wrapper(NULL)
+	OSXUserWindow::OSXUserWindow(Host *host, WindowConfig *config) : UserWindow(host,config), window(NULL), opened(false), closed(false)
 	{
 		[NSApplication sharedApplication];
 
@@ -63,12 +63,6 @@ namespace ti
 		KR_DUMP_LOCATION
 		
 		window = nil; // don't release
-		
-		if (this->menu_wrapper)
-		{
-			delete this->menu_wrapper;
-			this->menu_wrapper = NULL;
-		}
 		
 		if (!closed)
 		{
@@ -346,36 +340,29 @@ namespace ti
 		this->config->SetUsingChrome(chrome);
 	}
 
-	void OSXUserWindow::SetMenu(SharedBoundList menu)
+	void OSXUserWindow::SetMenu(SharedPtr<MenuItem> menu)
 	{	
-		if (this->menu_wrapper != NULL)
-		{
-			delete this->menu_wrapper;
-		}
-		
 		// NOTE: we probably have to toggle this based on when
 		// the window is focused or not
+		this->menu = menu;
 
-		this->menu_wrapper = new OSXMenuWrapper(menu,this->GetHost()->GetGlobalObject());
-		NSMenu *nsmenu = this->menu_wrapper->getNSMenu();
-		[NSApp setMainMenu:nsmenu];
+//		NSMenu *nsmenu = this->menu_wrapper->getNSMenu();
+//		[NSApp setMainMenu:nsmenu];
 	}
 
-	SharedBoundList OSXUserWindow::GetMenu()
+	SharedPtr<MenuItem> OSXUserWindow::GetMenu()
 	{
-		STUB();
-		return NULL;
+		return this->menu;
 	}
 
 	void OSXUserWindow::SetContextMenu(SharedPtr<MenuItem> value)
 	{
-		STUB();
+		this->context_menu = value;
 	}
 
 	SharedPtr<MenuItem> OSXUserWindow::GetContextMenu()
 	{
-		STUB();
-		return NULL;
+		return this->context_menu;
 	}
 
 	void OSXUserWindow::SetIcon(SharedString icon_path)
@@ -409,3 +396,4 @@ namespace ti
 	}
 
 }
+    
