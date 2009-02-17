@@ -56,12 +56,17 @@ namespace ti
 #ifndef OS_WIN32
 			if (from.isLink())
 			{
+				char linkPath[PATH_MAX];
+				ssize_t length = readlink(from.path().c_str(), linkPath, PATH_MAX);
+				linkPath[length] = '\0';
 #ifdef OS_OSX
-				NSString* originalPath = [NSString stringWithCString:src.toString().c_str()];
+
+				NSString* linkToPath = [NSString stringWithCString:linkPath];
 				NSString* destPath = [NSString stringWithCString:dest.toString().c_str()];
-				BOOL worked = [[NSFileManager defaultManager] createSymbolicLinkAtPath:destPath pathContent:originalPath];
+				BOOL worked = [[NSFileManager defaultManager] createSymbolicLinkAtPath:destPath pathContent:linkToPath];
+				NSLog(@"Worked=%d", worked);
 #ifdef DEBUG
-				NSLog(@"SYMLINK:%@=>%@ (%d)",originalPath,destPath,worked);
+				NSLog(@"SYMLINK:%@=>%@ (%d)",linkToPath,destPath,worked);
 #else
 				KR_UNUSED(worked);
 #endif
@@ -77,13 +82,13 @@ namespace ti
 			}
 			else
 			{
-#endif			
+#endif
 				// in this case it's a regular file
 				Poco::File s(src.toString());
 				s.copyTo(dest.toString().c_str());
 #ifndef OS_WIN32
 			}
-#endif			
+#endif
 		}
 	}
 	void AsyncCopy::Run(void* data)
