@@ -674,8 +674,8 @@ SharedString Win32UserWindow::GetIcon()
 }
 
 void Win32UserWindow::SetUsingChrome(bool chrome) {
-	STUB();
-	//TODO: implement
+	this->config->SetUsingChrome(chrome);
+	this->ReloadTiWindowConfig();
 }
 
 void Win32UserWindow::AppMenuChanged()

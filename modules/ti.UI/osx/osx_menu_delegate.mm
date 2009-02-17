@@ -10,7 +10,8 @@
 @implementation OSXMenuDelegate
 -(id)initWithMenu:(ti::OSXMenuItem*)item
 {
-	NSString *title = [NSString stringWithCString:item->GetLabel()];
+	const char *label = item->GetLabel();
+	NSString *title = label!=NULL ? [NSString stringWithCString:label] : @"";
 	self = [super initWithTitle:title action:@selector(invoke:) keyEquivalent:@""];
 	if (self!=nil)
 	{
@@ -42,11 +43,22 @@
 			for (int c=0;c<count;c++)
 			{
 				OSXMenuItem *i = item->GetChild(c);
-				NSMenuItem *mi = i->CreateNative();
-				[submenu addItem:mi];
+				if (i->IsEnabled())
+				{
+					NSMenuItem *mi = i->CreateNative();
+					[submenu addItem:mi];
+				}
 			}
-			[self setSubmenu:submenu];
-			// don't release this or items 
+			if ([submenu numberOfItems] == 0)
+			{
+				// this happens if they're all disabled
+				[submenu release];
+			}
+			else
+			{
+				[self setSubmenu:submenu];
+				// don't release this or items 
+			}
 		}
 	}
 	return self;

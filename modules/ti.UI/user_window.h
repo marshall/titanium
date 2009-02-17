@@ -48,8 +48,10 @@ class UserWindow : public kroll::StaticBoundObject {
 		UserWindow(kroll::Host *host, WindowConfig *config);
 		~UserWindow(){};
 		kroll::Host* GetHost() { return this->host; }
-		SharedBoundObject CreateWindow(SharedBoundObject properties);
+		SharedBoundObject CreateWindow(WindowConfig *config);
 		static std::vector<UserWindow*>& GetWindows();
+		static WindowConfig* GetWindowConfigByURL(std::string url);
+		void UpdateWindowForURL(std::string url);
 
 	private:
 		void _Hide(const kroll::ValueList&, kroll::SharedValue);

@@ -18,11 +18,17 @@ namespace ti
 
 	OSXUIBinding::OSXUIBinding(Host *host) : UIBinding(host)
 	{
-
+		[TiProtocol registerSpecialProtocol];
+		[AppProtocol registerSpecialProtocol];
+		TiApplication *app = [[[TiApplication alloc] initWithBinding:this] autorelease];
+		NSApplication *nsapp = [NSApplication sharedApplication];
+		[nsapp setDelegate:app];
+		[NSBundle loadNibNamed:@"MainMenu" owner:nsapp];
 	}
 
 	OSXUIBinding::~OSXUIBinding()
 	{
+		[appDockMenu release];
 		[savedDockView release];
 	}
 
@@ -139,6 +145,10 @@ namespace ti
 		SharedBoundMethod cb)
 	{
 		SharedPtr<TrayItem> item = NULL;
+		// NSStatusBar *statusBar = [NSStatusBar systemStatusBar];
+		// NSStatusItem *statusItem = [statusBar statusItemWithLength:NSVariableStatusItemLength];
+		// NSString *title = [NSString stringWithCString:menu->GetLabel()];
+		// [statusItem setTitle:title];
 		return item;
 	}
 

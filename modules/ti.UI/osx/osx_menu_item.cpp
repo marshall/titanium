@@ -11,7 +11,7 @@
 namespace ti {
 
 	OSXMenuItem::OSXMenuItem()
-		 : parent(NULL)
+		 : parent(NULL), enabled(true)
 	{
 	}
 
@@ -65,14 +65,22 @@ namespace ti {
 	{
 		return this->children.at(c);
 	}
+	
+	bool OSXMenuItem::IsEnabled()
+	{
+		return this->enabled;
+	}
+	
 
 	/* Crazy mutations below */
 	void OSXMenuItem::Enable()
 	{
+		this->enabled = true;
 	}
 
 	void OSXMenuItem::Disable()
 	{
+		this->enabled = false;
 	}
 
 	void OSXMenuItem::SetLabel(std::string label)

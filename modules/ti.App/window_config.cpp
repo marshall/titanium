@@ -1,6 +1,6 @@
 /**
  * Appcelerator Titanium - licensed under the Apache Public License 2
- * see LICENSE in the root folder for details on the license. 
+ * see LICENSE in the root folder for details on the license.
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
 
@@ -110,6 +110,7 @@ void WindowConfig::UseProperties(SharedBoundObject properties)
 
 	SET_STRING(id, winid)
 	SET_STRING(url, url);
+	SET_STRING(urlRegex, urlRegex);
 	SET_STRING(title, title);
 	SET_INT(x, x);
 	SET_INT(y, y);
@@ -146,6 +147,9 @@ WindowConfig::WindowConfig(void* data)
 		}
 		else if (nodeNameEquals(child, "url")) {
 			url = nodeValue(child);
+		}
+		else if (nodeNameEquals(child, "urlRegex")) {
+			urlRegex = nodeValue(child);
 		}
 		else if (nodeNameEquals(child, "maximizable")) {
 			maximizable = boolValue(child);
