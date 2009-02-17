@@ -64,6 +64,8 @@ $.ajax({
 						case 'description':
 						{
 							desc = children[j].textContent
+							desc = desc.replace(/href/g,'target="ti:systembrowser" href');
+							desc = desc.replace(/href="\/search/g,'href="http://search.twitter.com/search');
 							break;
 						}
 						case 'pubdate':
