@@ -72,6 +72,8 @@ namespace ti
 		double GetTransparency();
 		void SetTransparency(double transparency);
 		void SetFullScreen(bool fullscreen);
+		bool IsTopMost();
+		void SetTopMost(bool topmost);
 
 		void SetMenu(SharedBoundList menu);
 		SharedBoundList GetMenu();
@@ -86,6 +88,7 @@ namespace ti
 		GtkWindow* gtk_window;
 		GtkWidget* vbox;
 		WebKitWebView* web_view;
+		bool topmost;
 
 		/*
 		 * The window-specific menu.

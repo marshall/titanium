@@ -27,6 +27,7 @@ GtkUserWindow::GtkUserWindow(Host *host, WindowConfig* config) : UserWindow(host
 	this->web_view = NULL;
 	this->menu = NULL;
 	this->menu_bar = NULL;
+	this->topmost = false;
 }
 
 GtkUserWindow::~GtkUserWindow()
@@ -665,5 +666,24 @@ void GtkUserWindow::AppIconChanged()
 	if (this->icon_path.isNull())
 	{
 		this->SetupIcon();
+	}
+}
+
+bool GtkUserWindow::IsTopMost()
+{
+	return this->topmost;
+}
+
+void GtkUserWindow::SetTopMost(bool topmost)
+{
+	if (topmost)
+	{
+		gtk_window_set_keep_above(this->gtk_window,1);
+		this->topmost = true;
+	}
+	else
+	{
+		gtk_window_set_keep_above(this->gtk_window,0);
+		this->topmost = false;
 	}
 }

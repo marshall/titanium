@@ -39,6 +39,7 @@ private:
 	bool fullscreen;
 	bool usingChrome;
 	bool usingScrollbars;
+	bool topMost;
 
 	void SetDefaults();
 
@@ -95,6 +96,8 @@ public:
 	void SetUsingChrome(bool usingChrome_) { usingChrome = usingChrome_; }
 	bool IsUsingScrollbars() { return usingScrollbars; }
 	void SetUsingScrollbars(bool usingScrollbars_) { usingScrollbars = usingScrollbars_; }
+	bool IsTopMost() { return topMost; }
+	void SetTopMost(bool topmost_) { topMost = topmost_; }
 };
 
 }

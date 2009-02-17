@@ -213,7 +213,7 @@
 		// on the window will actually refresh correctly
 		[self orderOut:nil];
 		[webView exitFullScreenModeWithOptions:options];
-		[self fireWindowEvent:WINDOWED];
+		[self fireWindowEvent:UNFULLSCREENED];
 	}
 	[self makeKeyAndOrderFront:self];	
  	[self makeFirstResponder:webView];
