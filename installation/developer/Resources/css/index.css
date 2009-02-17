@@ -44,10 +44,25 @@ ID STYLES
 	bottom:5px;
 	right:10px;
 }
+#twitter_console
+{
+	background-color:#111;
+	height:0;
+	-webkit-border-top-right-radius: 6px;
+	-webkit-border-top-left-radius: 6px;
+	position:absolute;
+	bottom:0px;
+	left:0px;
+	width:350px;
+}
+#twitter_length
+{
+	position:absolute;right:12px;top:-7px;font-size:20px;font-style:italic;
+}
 /*********************
 ELEMENT STYLES 
 **********************/
-input[type=text], select
+textarea, input[type=text], select
 {
 	-webkit-border-bottom-right-radius: 3px;
 	-webkit-border-bottom-left-radius: 3px;
@@ -58,10 +73,11 @@ input[type=text], select
 	outline:none;
 	font-size:12px;
 	padding:3px;
-	color:#000;
+	color:#ddd;
 	width:220px;
 }
-input:focus
+
+textarea:focus, input:focus
 {
 	border:1px solid #777;
 	background-color:#444;
