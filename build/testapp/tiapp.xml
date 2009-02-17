@@ -7,7 +7,7 @@
       <id>initial</id>
       <title>Titanium Test Application</title>
       <url>app://index.html</url>
-      <width>700</width>
+      <width>750</width>
       <height>850</height>
       <fullscreen>false</fullscreen>
       <chrome>true</chrome>

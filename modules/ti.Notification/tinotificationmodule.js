@@ -17,6 +17,7 @@ function TitaniumNotification(window)
       usingChrome:false,
       id:myid,
       visible:false,
+	  topMost:true,
       url:'app://blank'
   });
   var self = this;

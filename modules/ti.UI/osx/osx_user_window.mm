@@ -389,4 +389,23 @@ namespace ti
 		return NULL;
 	}
 
+	bool OSXUserWindow::IsTopMost()
+	{
+		return this->topmost;
+	}
+	
+	void OSXUserWindow::SetTopMost(bool topmost)
+	{
+		if (topmost)
+		{
+			[window setLevel:NSPopUpMenuWindowLevel];
+			this->topmost = true;
+		}
+		else
+		{
+			[window setLevel:NSNormalWindowLevel];
+			this->topmost = false;
+		}
+	}
+
 }

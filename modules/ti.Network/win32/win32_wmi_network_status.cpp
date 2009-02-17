@@ -11,7 +11,7 @@ namespace ti
 {
 	Win32WMINetworkStatus::Win32WMINetworkStatus(SharedBoundMethod callback) : ref_count(1)
 	{
-		this->callback = new SharedBoundMethod(callback);
+		/*this->callback = new SharedBoundMethod(callback);
 
 		IWbemLocator* locator;
 		HRESULT hr = CoCreateInstance( CLSID_WbemAdministrativeLocator, NULL,
@@ -23,7 +23,7 @@ namespace ti
 		                             WBEM_FLAG_CONNECT_USE_MAX_WAIT, NULL, NULL, &service );
 
 		hr = service->ExecNotificationQueryAsync(L"WQL", L"SELECT * FROM MSNdis_StatusMediaConnect", 0, 0, this);
-		hr = service->ExecNotificationQueryAsync(L"WQL", L"SELECT * FROM MSNdis_StatusMediaDisconnect", 0, 0, this);
+		hr = service->ExecNotificationQueryAsync(L"WQL", L"SELECT * FROM MSNdis_StatusMediaDisconnect", 0, 0, this);*/
 	}
 
 	//// IWbemObjectSink

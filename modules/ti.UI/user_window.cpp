@@ -94,6 +94,8 @@ UserWindow::UserWindow(kroll::Host *host, WindowConfig *config) :
 	this->SetMethod("getContextMenu", &UserWindow::_GetContextMenu);
 	this->SetMethod("setIcon", &UserWindow::_SetIcon);
 	this->SetMethod("getIcon", &UserWindow::_GetIcon);
+	this->SetMethod("setTopMost", &UserWindow::_SetTopMost);
+	this->SetMethod("isTopMost", &UserWindow::_IsTopMost);
 
 	this->SetMethod("createWindow", &UserWindow::_CreateWindow);
 	this->SetMethod("getParent", &UserWindow::_GetParent);
@@ -161,6 +163,16 @@ void UserWindow::_Show(const kroll::ValueList& args, kroll::SharedValue result)
 void UserWindow::_IsUsingChrome(const kroll::ValueList& args, kroll::SharedValue result)
 {
 	result->SetBool(this->IsUsingChrome());
+}
+
+void UserWindow::_SetTopMost(const kroll::ValueList& args, kroll::SharedValue result)
+{
+	TI_SET_BOOL(SetTopMost, 0);
+}
+
+void UserWindow::_IsTopMost(const kroll::ValueList& args, kroll::SharedValue result)
+{
+	result->SetBool(this->IsTopMost());
 }
 
 void UserWindow::_SetUsingChrome(const kroll::ValueList& args, kroll::SharedValue result)
@@ -504,6 +516,8 @@ SharedBoundObject UserWindow::CreateWindow(SharedBoundObject properties)
 
 	UserWindow* window = this->WindowFactory(this->host, config);
 
+	window->SetTopMost(config->IsTopMost());
+
 	// Track parent/child relationship.
 	window->SetParent(this);
 	return window;
@@ -586,9 +600,9 @@ void UserWindow::FireEvent(UserWindowEvent event)
 			name = "fullscreened";
 			break;
 		}
-		case WINDOWED:
+		case UNFULLSCREENED:
 		{
-			name = "windowed";
+			name = "unfullscreened";
 			break;
 		}
 		case MAXIMIZED:
