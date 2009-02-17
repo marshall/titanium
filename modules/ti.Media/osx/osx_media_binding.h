@@ -24,7 +24,7 @@ namespace ti
 		~OSXMediaBinding();
 
 		protected:
-		static void Beep();
+		void Beep();
 		SharedBoundObject CreateSound(std::string&);
 	};
 }

@@ -25,7 +25,7 @@ namespace ti
 		~Win32MediaBinding();
 
 		protected:
-		static void Beep();
+		void Beep();
 		SharedBoundObject CreateSound(std::string&);
 	};
 }

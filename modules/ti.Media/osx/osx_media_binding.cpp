@@ -7,7 +7,7 @@
 
 namespace ti
 {
-	OSXMediaBinding::OSXMediaBinding()
+	OSXMediaBinding::OSXMediaBinding(SharedBoundObject global) : MediaBinding(global)
 	{
 	}
 	OSXMediaBinding::~OSXMediaBinding()

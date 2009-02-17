@@ -7,7 +7,7 @@
 
 namespace ti
 {
-	Win32MediaBinding::Win32MediaBinding()
+	Win32MediaBinding::Win32MediaBinding(SharedBoundObject global) : MediaBinding(global)
 	{
 	}
 	Win32MediaBinding::~Win32MediaBinding()
