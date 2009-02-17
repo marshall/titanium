@@ -502,19 +502,56 @@ void UserWindow::_GetParent(const kroll::ValueList& args, kroll::SharedValue res
 
 void UserWindow::_CreateWindow(const ValueList& args, SharedValue result)
 {
-	SharedBoundObject props = SharedBoundObject(new StaticBoundObject());
-	if (args.size() > 0 && args.at(0)->IsObject())
-		props = args.at(0)->ToObject();
+	//TODO: wrap in sharedptr
+	WindowConfig *config = NULL;
 
-	result->SetObject(this->CreateWindow(props));
+	if (args.size() > 0 && args.at(0)->IsObject())
+	{
+		SharedBoundObject props = SharedBoundObject(new StaticBoundObject());
+		config = new WindowConfig();
+		props = args.at(0)->ToObject();
+		config->UseProperties(props);
+	}
+	else if (args.size() > 0 && args.at(0)->IsString())
+	{
+		// string is the url
+		std::string url = args.at(0)->ToString();
+		config = this->GetWindowConfigByURL(url);
+
+		if(config)
+		{
+			config = new WindowConfig(*config); // copy global config object
+		}
+		else
+		{
+			config = new WindowConfig();
+		}
+
+		config->SetURL(url);
+	}
+	else
+	{
+		config = new WindowConfig();
+	}
+
+	result->SetObject(this->CreateWindow(config));
 }
 
-SharedBoundObject UserWindow::CreateWindow(SharedBoundObject properties)
+/*static*/
+WindowConfig* UserWindow::GetWindowConfigByURL(std::string url)
 {
-	//TODO: wrap in sharedptr
-	WindowConfig *config = new WindowConfig();
-	config->UseProperties(properties);
+	WindowConfig *winConfig = NULL;
+	AppConfig *appConfig = AppConfig::Instance();
+	if (appConfig)
+	{
+		winConfig = appConfig->GetWindowByURL(url);
+	}
 
+	return winConfig;
+}
+
+SharedBoundObject UserWindow::CreateWindow(WindowConfig *config)
+{
 	UserWindow* window = this->WindowFactory(this->host, config);
 
 	window->SetTopMost(config->IsTopMost());
