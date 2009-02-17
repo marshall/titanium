@@ -31,20 +31,24 @@ namespace ti
 		return new OSXMenuItem();
 	}
 
-	void OSXUIBinding::SetMenu(SharedPtr<MenuItem>)
+	void OSXUIBinding::SetMenu(SharedPtr<MenuItem> menu)
 	{
+		this->menu = menu;
 	}
 
-	void OSXUIBinding::SetContextMenu(SharedPtr<MenuItem>)
+	void OSXUIBinding::SetContextMenu(SharedPtr<MenuItem> menu)
 	{
+		this->contextMenu = menu;
 	}
 
 	void OSXUIBinding::SetDockIcon(SharedString icon_path)
 	{
+		this->dockIcon = icon_path;
 	}
 
-	void OSXUIBinding::SetDockMenu(SharedPtr<MenuItem>)
+	void OSXUIBinding::SetDockMenu(SharedPtr<MenuItem> menu)
 	{
+		this->dockMenu = menu;
 	}
 
 	void OSXUIBinding::SetBadge(SharedString badge_label)
@@ -102,6 +106,32 @@ namespace ti
 
 	void OSXUIBinding::SetIcon(SharedString icon_path)
 	{
+		this->icon = icon_path;
+	}
+	
+	SharedString OSXUIBinding::GetDockIcon()
+	{
+		return this->dockIcon;
+	}
+	
+	SharedPtr<MenuItem> OSXUIBinding::GetDockMenu()
+	{
+		return this->dockMenu;
+	}
+	
+	SharedPtr<MenuItem> OSXUIBinding::GetMenu()
+	{
+		return this->menu;
+	}
+
+	SharedPtr<MenuItem> OSXUIBinding::GetContextMenu()
+	{
+		return this->contextMenu;
+	}
+	
+	SharedString OSXUIBinding::GetIcon()
+	{
+		return this->icon;
 	}
 
 	SharedPtr<TrayItem> OSXUIBinding::AddTray(
