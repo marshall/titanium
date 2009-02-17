@@ -25,12 +25,14 @@ namespace ti
 
 	SharedBoundObject GstMediaBinding::CreateSound(std::string& url)
 	{
+		//This is a path so, turn it into a file:// URL
 		std::string url_or_path = this->GetResourcePath(url.c_str());
-		// This is a path so, turn it into a file:// URL
 		if (url_or_path.find(':') == std::string::npos)
 		{
 			url_or_path = std::string("file://") + url_or_path;
 		}
-		return new GstSound(url_or_path);
+		SharedGstSound sound = new GstSound(url_or_path);
+		GstSound::RegisterSound(sound);
+		return sound;
 	}
 }
