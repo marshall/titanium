@@ -110,6 +110,7 @@ namespace ti {
         /* [in] */ IWebPolicyDecisionListener *listener)
     {
 		std::wstring frame(frameName);
+		transform(frame.begin(), frame.end(), frame.begin(), tolower);
 
 		if(frame == L"ti::systembrowser")
 		{
