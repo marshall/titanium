@@ -35,7 +35,6 @@ namespace ti
 		void Connect(const ValueList& args, SharedValue result);
 		void Disconnect(const ValueList& args, SharedValue result);
 		void Send(const ValueList& args, SharedValue result);
-		void SendPrivate(const ValueList& args, SharedValue result);
 		void SetNick(const ValueList& args, SharedValue result);
 		void GetNick(const ValueList& args, SharedValue result);
 		void Join(const ValueList& args, SharedValue result);

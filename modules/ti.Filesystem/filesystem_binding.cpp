@@ -32,6 +32,7 @@ namespace ti
 		this->SetMethod("createTempFile",&FilesystemBinding::CreateTempFile);
 		this->SetMethod("createTempDirectory",&FilesystemBinding::CreateTempDirectory);
 		this->SetMethod("getFile",&FilesystemBinding::GetFile);
+		this->SetMethod("getFileStream",&FilesystemBinding::GetFileStream);
 		this->SetMethod("getProgramsDirectory",&FilesystemBinding::GetProgramsDirectory);
 		this->SetMethod("getApplicationDirectory",&FilesystemBinding::GetApplicationDirectory);
 		this->SetMethod("getApplicationDataDirectory",&FilesystemBinding::GetApplicationDataDirectory);
@@ -119,6 +120,36 @@ namespace ti
 		}
 		ti::File* file = new ti::File(filename);
 		result->SetObject(file);
+	}
+	void FilesystemBinding::GetFileStream(const ValueList& args, SharedValue result)
+	{
+		std::string filename;
+		if (args.at(0)->IsList())
+		{
+			// you can pass in an array of parts to join
+			SharedBoundList list = args.at(0)->ToList();
+			for (int c=0;c<list->Size();c++)
+			{
+				std::string arg = list->At(c)->ToString();
+				filename = kroll::FileUtils::Join(filename.c_str(),arg.c_str(),NULL);
+			}
+		}
+		else
+		{
+			// you can pass in vararg of strings which acts like
+			// a join
+			for (size_t c=0;c<args.size();c++)
+			{
+				std::string arg = FileSystemUtils::GetFileName(args.at(c));
+				filename = kroll::FileUtils::Join(filename.c_str(),arg.c_str(),NULL);
+			}
+		}
+		if (filename.empty())
+		{
+			throw ValueException::FromString("invalid file type");
+		}
+		ti::FileStream* fs = new ti::FileStream(filename);
+		result->SetObject(fs);
 	}
 	void FilesystemBinding::GetApplicationDirectory(const ValueList& args, SharedValue result)
 	{

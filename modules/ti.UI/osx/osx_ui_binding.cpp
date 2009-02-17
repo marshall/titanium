@@ -22,7 +22,7 @@ namespace ti
 
 	OSXUIBinding::~OSXUIBinding()
 	{
-
+		[savedDockView release];
 	}
 
 	SharedPtr<MenuItem> OSXUIBinding::CreateMenu(bool trayMenu)
@@ -49,17 +49,57 @@ namespace ti
 	{
 	}
 
-	void OSXUIBinding::SetBadge(SharedString badge_path)
+	void OSXUIBinding::SetBadge(SharedString badge_label)
 	{
-		std::string value = *badge_path;
-		NSString *label = nil;
+		std::string value = *badge_label;
+		NSString *label = @"";
 		if (!value.empty())
 		{
 			label = [NSString stringWithCString:value.c_str()];
 		}
 		NSDockTile *tile = [[NSApplication sharedApplication] dockTile];
 		[tile setBadgeLabel:label];
-		[tile setShowsApplicationBadge:(label == nil ? NO : YES)];
+	}
+	void OSXUIBinding::SetBadgeImage(SharedString badge_path)
+	{
+		NSDockTile *dockTile = [NSApp dockTile];
+		std::string value = *badge_path;
+		NSString *path = nil;
+		if (!value.empty())
+		{
+			path = [NSString stringWithCString:value.c_str()];
+		}
+		if (path)
+		{
+			// remember the old one
+			if (!savedDockView)
+			{
+				savedDockView = [dockTile contentView];
+				[savedDockView retain];
+			}
+		   	// setup our image view for the dock tile
+		   	NSRect frame = NSMakeRect(0, 0, dockTile.size.width, dockTile.size.height);
+		   	NSImageView *dockImageView = [[NSImageView alloc] initWithFrame: frame];
+
+			//TODO: improve this to take either a file path or URL
+			NSImage *image = [[NSImage alloc] initWithContentsOfFile:path];
+		   	[dockImageView setImage:image];
+			[image release];
+
+		   	// by default, add it to the NSDockTile
+		   	[dockTile setContentView: dockImageView];
+		}
+		else if (savedDockView)
+		{
+		   	[dockTile setContentView:savedDockView];
+			[savedDockView release];
+			savedDockView = nil;
+		}
+		else
+		{
+		   	[dockTile setContentView:nil];
+		}
+	   	[dockTile display];
 	}
 
 	void OSXUIBinding::SetIcon(SharedString icon_path)

@@ -31,6 +31,7 @@ namespace ti
 		this->SetMethod("setDockIcon", &UIBinding::_SetDockIcon);
 		this->SetMethod("setDockMenu", &UIBinding::_SetDockMenu);
 		this->SetMethod("setBadge", &UIBinding::_SetBadge);
+		this->SetMethod("setBadgeImage", &UIBinding::_SetBadgeImage);
 
 		this->SetMethod("openFiles", &UIBinding::_OpenFiles);
 
@@ -170,9 +171,27 @@ namespace ti
 		if (args.size() > 0 && args.at(0)->IsString())
 		{
 			const char *badge_url = args.at(0)->ToString();
-			badge_path = SharedString(new std::string(badge_url));
+			if (badge_url!=NULL)
+			{
+				badge_path = SharedString(new std::string(badge_url));
+			}
 		}
 		this->SetBadge(badge_path);
+	}
+
+	void UIBinding::_SetBadgeImage(const ValueList& args, SharedValue result)
+	{
+		SharedString image_path = NULL; // a NULL value is an unset
+		if (args.size() > 0 && args.at(0)->IsString())
+		{
+			const char *image_url = args.at(0)->ToString();
+			if (image_url!=NULL)
+			{
+				image_path = UIModule::GetResourcePath(image_url);
+			}
+		}
+ 
+		this->SetBadgeImage(image_path);
 	}
 
 	void UIBinding::_OpenFiles(const ValueList& args, SharedValue result)

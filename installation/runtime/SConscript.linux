@@ -26,9 +26,8 @@ for lib in runtime_libs:
 	shutil.copy(path, runtime)
 
 for tp in third_party:
-	pattern = '%s/%s/lib/*' % (build.third_party, tp)
-	for d in glob.glob(pattern):
-		shutil.copy(d, runtime)
+	source = '%s/%s/lib' % (build.third_party, tp)
+	dir_util.copy_tree(source, runtime, preserve_symlinks=True)
 
 # Gather all module libs
 for m in modules.keys():

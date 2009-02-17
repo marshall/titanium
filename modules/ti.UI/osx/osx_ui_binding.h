@@ -28,7 +28,8 @@ namespace ti
 
 		virtual void SetDockIcon(SharedString icon_path);
 		virtual void SetDockMenu(SharedPtr<MenuItem>);
-		virtual void SetBadge(SharedString badge_path);
+		virtual void SetBadge(SharedString badge_label);
+		virtual void SetBadgeImage(SharedString badge_path);
 
 		void OpenFiles(
 			SharedBoundMethod callback,
@@ -40,6 +41,8 @@ namespace ti
 			std::vector<std::string>& types);
 
 		long GetIdleTime();
+	private:
+		NSView *savedDockView;
 	};
 }
 

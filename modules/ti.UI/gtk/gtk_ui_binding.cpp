@@ -21,6 +21,12 @@ namespace ti
 		/* Register the script evaluator */
 		evaluator = new ScriptEvaluator();
 		addScriptEvaluator(evaluator);
+
+		double ver = host->GetGlobalObject()->Get("version")->ToDouble();
+		char buf[256];
+		snprintf(buf, 256, "%s/%0.2f", PRODUCT_NAME, ver);
+		g_set_prgname(buf);
+
 	}
 
 	SharedPtr<MenuItem> GtkUIBinding::CreateMenu(bool trayMenu)

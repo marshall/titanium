@@ -85,7 +85,7 @@ void GtkUserWindow::Open() {
 		gtk_widget_set_name(window, this->config->GetTitle().c_str());
 
 		g_signal_connect(G_OBJECT (window), "destroy",
-		                 G_CALLBACK (destroy_cb), NULL);
+		                 G_CALLBACK (destroy_cb), this);
 		gtk_container_add(GTK_CONTAINER (window), vbox);
 
 		this->gtk_window = GTK_WINDOW(window);
@@ -132,7 +132,7 @@ void GtkUserWindow::Close()
 		this->web_view = NULL;
 	}
 
-	UserWindow::Close(this);
+	UserWindow::Close();
 }
 
 void GtkUserWindow::SetupTransparency()
@@ -241,6 +241,8 @@ void GtkUserWindow::SetupIcon()
 }
 
 static void destroy_cb (GtkWidget* widget, gpointer data) {
+	GtkUserWindow* user_window = (GtkUserWindow*) data;
+	user_window->Close();
 }
 
 static void window_object_cleared_cb (WebKitWebView* web_view,
