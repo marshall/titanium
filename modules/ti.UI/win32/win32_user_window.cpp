@@ -7,6 +7,7 @@
 #include "win32_user_window.h"
 #include "webkit_frame_load_delegate.h"
 #include "webkit_ui_delegate.h"
+#include "webkit_policy_delegate.h"
 #include "win32_tray_item.h"
 #include "string_util.h"
 #include "../url/app_url.h"
@@ -221,10 +222,12 @@ Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config)
 	std::cout << "create frame load delegate " << std::endl;
 	frameLoadDelegate = new Win32WebKitFrameLoadDelegate(this);
 	uiDelegate = new Win32WebKitUIDelegate(this);
+	policyDelegate = new Win32WebKitPolicyDelegate(this);
 
 	std::cout << "set delegates, set host window, webview=" << (int)web_view  << std::endl;
 	hr = web_view->setFrameLoadDelegate(frameLoadDelegate);
 	hr = web_view->setUIDelegate(uiDelegate);
+	hr = web_view->setPolicyDelegate(policyDelegate);
 	hr = web_view->setHostWindow((OLE_HANDLE)window_handle);
 
 

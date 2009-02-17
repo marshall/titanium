@@ -29,6 +29,7 @@ namespace ti {
 
 class Win32WebKitFrameLoadDelegate;
 class Win32WebKitUIDelegate;
+class Win32WebKitPolicyDelegate;
 
 class Win32UserWindow : public UserWindow {
 
@@ -36,6 +37,7 @@ protected:
 	kroll::Win32Host *win32_host;
 	Win32WebKitFrameLoadDelegate *frameLoadDelegate;
 	Win32WebKitUIDelegate *uiDelegate;
+	Win32WebKitPolicyDelegate *policyDelegate;
 	Bounds restore_bounds;
 	long restore_styles;
 	ScriptEvaluator script_evaluator;
