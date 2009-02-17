@@ -1,11 +1,76 @@
 <html>
 	<head>
 		<style>
-			body { font-family: sans, sans-serif; }
+			body { font-family: sans, sans-serif; padding: 0px; }
+			#navbar {
+				font-family: 'Lucida Grande', Georgia;
+				background-color: #3e3e3e;
+				color: #fff;
+				margin: 0px;
+				padding: 5px;
+			}
+			
+			#title {
+				font-weight: bold;
+				color: #b5bdc9;
+				margin-right: 50px;
+			}
+			
+			#title img {
+				margin-right: 5px;
+				text-align: center;
+				vertical-align: middle;
+				
+			}
+			
+			#tests {
+				font-family: 'Lucida Grande', Georgia;
+				background-color: #3e3e3e;
+				color: #fff;
+			}
+			
+			#testframe {
+				border-width: 0px;
+				width: 100%;
+				height: 800px;
+				padding: 5px;
+			}
 		</style>
+		<script>
+			function $(id) { return document.getElementById(id); }
+			function openTest() {
+				var test = $('tests').options[$('tests').selectedIndex].value;
+				$('testframe').src = test;
+			}
+		</script>
 	</head>
-	<body>
-		<h2>Titanium test app</h2>
+	<body onload="openTest()">
+		<div id="navbar">
+			<span id="title"><img src="images/logo_small.png"/>Titanium Test App</span>
+			Select a Test:
+			<select id="tests" onchange="openTest();">
+				<option selected="selected">app://Titanium.BaseTests.html</option>
+				<option>app://Titanium.App.test.html</option>
+				<option>app://Titanium.Filesystem.test.html</option>
+				<option>app://Titanium.Desktop.test.html</option>
+				<option>app://Titanium.Notification.test.html</option>
+				<option>app://Titanium.Media.test.html</option>
+				<option>app://Titanium.UI.test.html</option>
+				<option>app://Titanium.UI-2.test.html</option>
+				<option>app://Titanium.Network.test.html</option>
+				<option>app://Titanium.Platform.test.html</option>
+				<option>app://Titanium.Process.test.html</option>
+				<option>app://Titanium.Script.test.html</option>
+				<option>app://Titanium.Database.test.html</option>
+				<option>app://Titanium.AJAX.test.html</option>
+				<option>http://demos.mootools.net/</option>
+				<option>http://cappuccino.org/learn/demos/</option>
+				<option>http://www.google.com/mail</option>
+			</select>
+		</div>
+		<iframe id="testframe"></iframe>
+		
+		<!--  h2>Titanium test app</h2>
 		<div id="ts">idle time will go here in ~10 seconds</div>
 		<div>Titanium = <script>document.write(Titanium);</script></div>
 		<div id="ua"><script>document.write(navigator.userAgent);</script></div>
@@ -42,6 +107,6 @@
 				var ts = Titanium.UI.getIdleTime();
 				document.getElementById("ts").innerHTML = "idle time: "  + ts;
 			},10000);
-		</script>
+		</script-->
 	</body>
 </html>
