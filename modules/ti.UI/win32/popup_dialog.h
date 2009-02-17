@@ -10,6 +10,8 @@
 #include <windows.h>
 #include <string>
 
+#define MAX_INPUT_LENGTH 1024
+
 namespace ti {
 
 	class Win32PopupDialog {
@@ -33,8 +35,11 @@ namespace ti {
 		std::string message;
 		std::string inputText;
 		bool showCancelButton;
+		static char textEntered[MAX_INPUT_LENGTH];
+		static int result;
 
-		BOOL CALLBACK Callback(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam);
+		BOOL ShowMessageBox(HWND hwnd);
+		static INT_PTR CALLBACK CALLBACK Callback(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam);
 	};
 
 }

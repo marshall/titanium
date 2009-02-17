@@ -30,14 +30,14 @@ static void populate_popup_cb(
 
 GtkUserWindow::GtkUserWindow(Host *host, WindowConfig* config) : UserWindow(host, config)
 {
-	gtk_window = NULL;
-	web_view = NULL,
-	menu = NULL;
-	menu_bar = NULL;
-	gdk_width = -1;
-	gdk_height = -1;
-	gdk_x = -1;
-	gdk_y = -1;
+	this->gtk_window = NULL;
+	this->web_view = NULL,
+	this->menu = NULL;
+	this->menu_bar = NULL;
+	this->gdk_width = -1;
+	this->gdk_height = -1;
+	this->gdk_x = -1;
+	this->gdk_y = -1;
 
 }
 
@@ -61,9 +61,11 @@ void GtkUserWindow::Open()
 		                 G_CALLBACK (window_object_cleared_cb),
 		                 this);
 
-		g_signal_connect(G_OBJECT (web_view), "populate-popup",
-		                 G_CALLBACK (populate_popup_cb),
-		                 this);
+		g_signal_connect(
+			G_OBJECT (web_view),
+			"populate-popup",
+			G_CALLBACK (populate_popup_cb),
+			this);
 
 		GtkWidget* view_container = NULL;
 		if (this->IsUsingScrollbars())
@@ -97,6 +99,8 @@ void GtkUserWindow::Open()
 
 		g_signal_connect(G_OBJECT(window), "destroy",
 		                 G_CALLBACK(destroy_cb), this);
+		g_signal_connect(G_OBJECT(window), "frame-event",
+		                 G_CALLBACK(frame_event_cb), this);
 		gtk_container_add(GTK_CONTAINER (window), vbox);
 
 		this->gtk_window = GTK_WINDOW(window);
@@ -262,60 +266,63 @@ static void destroy_cb(
 }
 
 static void frame_event_cb(
-	GtkWindow *window,
+	GtkWindow *w,
 	GdkEvent *event,
-	gpointer user_data)
+	gpointer data)
 {
-	switch(event->type)
+	GtkUserWindow* window = (GtkUserWindow*) data;
+	if (event->type == GDK_FOCUS_CHANGE)
 	{
-	case GDK_FOCUS_CHANGE:
-		GdkEventFocus* f = (GdkEventFocus) event;
+		GdkEventFocus* f = (GdkEventFocus*) event;
 		if (f->in)
-			this->FireEvent(FOCUSED);
+			window->FireEvent(FOCUSED);
 		else
-			this->FireEvent(UNFOCUSED);
-	case GDK_WINDOW_STATE:
-		GdkEventWindowState* f = (GdkEventWindowState) event;
+			window->FireEvent(UNFOCUSED);
+	}
+	else if (event->type == GDK_WINDOW_STATE)
+	{
+		GdkEventWindowState* f = (GdkEventWindowState*) event;
 		if ((f->changed_mask & GDK_WINDOW_STATE_WITHDRAWN)
 			&& (f->new_window_state & GDK_WINDOW_STATE_WITHDRAWN))
 		{
-			 this->FireEvent(HIDDEN);
+			window->FireEvent(HIDDEN);
 		}
 		else if ((f->changed_mask & GDK_WINDOW_STATE_ICONIFIED)
 			&& (f->new_window_state & GDK_WINDOW_STATE_ICONIFIED))
 		{
-			 this->FireEvent(MINIMIZED);
+			window->FireEvent(MINIMIZED);
 		}
 		else if (((f->changed_mask & GDK_WINDOW_STATE_FULLSCREEN)
 			&& (f->new_window_state & GDK_WINDOW_STATE_FULLSCREEN)))
 		{
-			 this->FireEvent(FULLSCREENED);
+			window->FireEvent(FULLSCREENED);
 		}
 		else if (f->changed_mask & GDK_WINDOW_STATE_FULLSCREEN)
 		{
-			 this->FireEvent(UNFULLSCREENED);
+			window->FireEvent(UNFULLSCREENED);
 		}
 		else if (((f->changed_mask & GDK_WINDOW_STATE_MAXIMIZED)
 			&& (f->new_window_state & GDK_WINDOW_STATE_MAXIMIZED)))
 		{
-			 this->FireEvent(MAXIMIZED);
+			window->FireEvent(MAXIMIZED);
 		}
-	case GDK_WINDOW_CONFIGURE:
-		GdkEventConfigure* c = (GdkEventConfigure) event;
-		if (c->x != this->gdk_x || c->y != this->gdk_y)
+	}
+	else if (event->type == GDK_CONFIGURE)
+	{
+		GdkEventConfigure* c = (GdkEventConfigure*) event;
+		if (c->x != window->gdk_x || c->y != window->gdk_y)
 		{
-			this->gdk_x = c->x;
-			this->gdk_y = c->y;
-			this->FireEvent(RESIZED);
+			window->gdk_x = c->x;
+			window->gdk_y = c->y;
+			window->FireEvent(RESIZED);
 		}
 
-		if (c->width != this->gdk_width || c->height != this->gdk_height)
+		if (c->width != window->gdk_width || c->height != window->gdk_height)
 		{
-			this->gdk_height = c->height;
-			this->gdk_width = c->width;
-			this->FireEvent(MOVED);
+			window->gdk_height = c->height;
+			window->gdk_width = c->width;
+			window->FireEvent(MOVED);
 		}
-	case default:
 	}
 }
 
@@ -645,6 +652,22 @@ void GtkUserWindow::SetTransparency(double alpha)
 		gtk_window_set_opacity(this->gtk_window, alpha);
 }
 
+bool GtkUserWindow::IsTopMost()
+{
+	return this->config->IsTopMost();
+}
+
+void GtkUserWindow::SetTopMost(bool topmost)
+{
+	this->config->SetTopMost(topmost);
+
+	if (this->gtk_window != NULL)
+	{
+		guint topmost_i = topmost ? TRUE : FALSE;
+		gtk_window_set_keep_above(this->gtk_window, topmost_i);
+	}
+}
+
 void GtkUserWindow::SetMenu(SharedBoundList value)
 {
 	SharedPtr<GtkMenuItemImpl> menu = value.cast<GtkMenuItemImpl>();
@@ -742,3 +765,4 @@ void GtkUserWindow::AppIconChanged()
 		this->SetupIcon();
 	}
 }
+

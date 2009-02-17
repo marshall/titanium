@@ -8,9 +8,10 @@
 
 namespace ti
 {
-	class GtkUserWindow : public UserWindow {
-	public:
-	void _FileDialog(const kroll::ValueList& args, kroll::SharedValue result);
+	class GtkUserWindow : public UserWindow
+	{
+
+		public:
 		GtkUserWindow(Host *host, ti::WindowConfig *config);
 		~GtkUserWindow();
 		void SetupDecorations();
@@ -72,6 +73,8 @@ namespace ti
 		double GetTransparency();
 		void SetTransparency(double transparency);
 		void SetFullScreen(bool fullscreen);
+		bool IsTopMost();
+		void SetTopMost(bool topmost);
 
 		void SetMenu(SharedBoundList menu);
 		SharedBoundList GetMenu();
@@ -82,11 +85,13 @@ namespace ti
 		void SetIcon(SharedString icon_path);
 		SharedString GetIcon();
 
+		int gdk_height, gdk_width, gdk_x, gdk_y;
+
 	protected:
 		GtkWindow* gtk_window;
 		GtkWidget* vbox;
 		WebKitWebView* web_view;
-		int gdk_height, gdk_width, gdk_x, gdk_y;
+		bool topmost;
 
 		/*
 		 * The window-specific menu.

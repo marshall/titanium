@@ -86,6 +86,7 @@ void WindowConfig::SetDefaults ()
 	this->usingScrollbars = true;
 	this->fullscreen = false;
 	this->visible = true;
+	this->topMost = false;
 
 	this->transparency = 1.0;
 	this->width = 800;
@@ -126,6 +127,7 @@ void WindowConfig::UseProperties(SharedBoundObject properties)
 	SET_BOOL(fullscreen, fullscreen);
 	SET_BOOL(usingChrome, usingChrome);
 	SET_BOOL(usingScrollbars, usingScrollbars);
+	SET_BOOL(topMost, topMost);
 	SET_DOUBLE(transparency, transparency);
 }
 

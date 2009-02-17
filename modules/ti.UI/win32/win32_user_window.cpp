@@ -156,7 +156,7 @@ Win32UserWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 }
 
 Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config)
-	: UserWindow(host, config), script_evaluator(host), menuBarHandle(NULL), menuInUse(NULL), menu(NULL), contextMenuHandle(NULL), initial_icon(NULL)
+	: UserWindow(host, config), script_evaluator(host), menuBarHandle(NULL), menuInUse(NULL), menu(NULL), contextMenuHandle(NULL), initial_icon(NULL), topmost(false)
 {
 	static bool initialized = false;
 	win32_host = static_cast<kroll::Win32Host*>(host);
@@ -226,6 +226,7 @@ Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config)
 	hr = web_view->setFrameLoadDelegate(frameLoadDelegate);
 	hr = web_view->setUIDelegate(uiDelegate);
 	hr = web_view->setHostWindow((OLE_HANDLE)window_handle);
+
 
 	std::cout << "init with frame" << std::endl;
 	RECT client_rect;
@@ -585,7 +586,7 @@ void Win32UserWindow::SetFullScreen(bool fullscreen) {
 	} else {
 		SetWindowLong(window_handle, GWL_STYLE, restore_styles);
 		SetBounds(restore_bounds);
-		FireEvent(WINDOWED);
+		FireEvent(UNFULLSCREENED);
 	}
 }
 
@@ -767,3 +768,21 @@ void Win32UserWindow::FrameLoaded()
 	}
 }
 
+bool Win32UserWindow::IsTopMost()
+{
+	return topmost;
+}
+
+void Win32UserWindow::SetTopMost(bool topmost)
+{
+	if (topmost)
+	{
+		SetWindowPos(window_handle,HWND_TOPMOST,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE);
+		this->topmost = true;
+	}
+	else
+	{
+		SetWindowPos(window_handle,HWND_NOTOPMOST,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE);
+		this->topmost = false;
+	}
+}

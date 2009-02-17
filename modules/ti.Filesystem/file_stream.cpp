@@ -106,6 +106,11 @@ void FileStream::Write(const ValueList& args, SharedValue result)
 		std::string text = args.at(0)->ToString();
 
 		Poco::FileOutputStream* fos = dynamic_cast<Poco::FileOutputStream*>(this->stream);
+		if(! fos)
+		{
+			throw ValueException::FromString("FileStream must be opened for writing before calling write");
+		}
+
 		fos->write(text.c_str(), text.size());
 
 		result->SetBool(true);
@@ -127,6 +132,11 @@ void FileStream::Read(const ValueList& args, SharedValue result)
 		std::string contents;
 
 		Poco::FileInputStream* fis = dynamic_cast<Poco::FileInputStream*>(this->stream);
+		if(! fis)
+		{
+			throw ValueException::FromString("FileStream must be opened for reading before calling read");
+		}
+
 		while(! fis->eof())
 		{
 			std::string s;
@@ -154,6 +164,10 @@ void FileStream::ReadLine(const ValueList& args, SharedValue result)
 		std::string line;
 
 		Poco::FileInputStream* fis = dynamic_cast<Poco::FileInputStream*>(this->stream);
+		if(! fis)
+		{
+			throw ValueException::FromString("FileStream must be opened for reading before calling readLine");
+		}
 
 		if(fis->eof())
 		{

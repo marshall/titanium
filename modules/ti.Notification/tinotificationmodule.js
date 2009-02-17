@@ -17,6 +17,7 @@ function TitaniumNotification(window)
       usingChrome:false,
       id:myid,
       visible:false,
+	  topMost:true,
       url:'app://blank'
   });
   var self = this;
@@ -66,7 +67,15 @@ function TitaniumNotification(window)
       mywindow.setY(window.screen.availHeight-height-10);  
     }
     
+    var notificationClicked = function ()
+    {
+    	if (callback)
+    		callback();
+    	self.hide();
+    };
+    
     mywindow.setTransparency(.99);
+    mywindow.callback = notificationClicked;
     mywindow.setURL('app://tinotification.html?title='+encodeURIComponent(title)+'&message='+encodeURIComponent(message)+'&icon='+encodeURIComponent(icon));
     mywindow.show();
     if (autohide)
