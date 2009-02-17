@@ -45,10 +45,6 @@ protected:
 	HWND window_handle, view_window_handle;
 	IWebView* web_view;
 	IWebFrame *main_frame;
-	std::string title, id;
-	bool showing, full_screen, using_scrollbars,
-		resizable, using_chrome, minimizable, maximizable, closeable;
-	double transparency;
 	std::map<long, SharedBoundMethod> messageHandlers;
 	bool requires_display;
 	bool topmost;

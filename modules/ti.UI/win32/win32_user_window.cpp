@@ -480,7 +480,7 @@ void Win32UserWindow::SetBounds(Bounds bounds) {
 }
 
 void Win32UserWindow::SetTitle(std::string& title) {
-	this->title = std::string(title);
+	this->config->SetTitle(std::string(title));
 	SetWindowText(window_handle, title.c_str());
 }
 
@@ -539,22 +539,23 @@ SetFlag(window_style, flag, b);\
 SetWindowLong(wnd, GWL_STYLE, window_style);
 
 void Win32UserWindow::SetResizable(bool resizable) {
-	this->resizable = resizable;
-	SetGWLFlag(window_handle, WS_OVERLAPPEDWINDOW, using_chrome && !resizable);
+	this->config->SetResizable(resizable);
+	SetGWLFlag(window_handle, WS_OVERLAPPEDWINDOW, this->config->IsUsingChrome() && !resizable);
 }
 
 void Win32UserWindow::SetMaximizable(bool maximizable) {
-	this->maximizable = maximizable;
+	this->config->SetMaximizable(maximizable);
 	SetGWLFlag(window_handle, WS_MAXIMIZEBOX, maximizable);
 }
 
 void Win32UserWindow::SetMinimizable(bool minimizable) {
-	this->minimizable = minimizable;
+	this->config->SetMinimizable(minimizable);
 	SetGWLFlag(window_handle, WS_MINIMIZEBOX, minimizable);
 }
 
 void Win32UserWindow::SetCloseable(bool closeable) {
-	this->closeable = closeable;
+	this->config->SetCloseable(closeable);
+	// TODO
 }
 
 bool Win32UserWindow::IsVisible() {
@@ -566,12 +567,12 @@ bool Win32UserWindow::IsVisible() {
 }
 
 void Win32UserWindow::SetVisible(bool visible) {
-	this->showing = visible;
+	this->config->SetVisible(visible);
 	ShowWindow(window_handle, visible ? SW_SHOW : SW_HIDE);
 }
 
 void Win32UserWindow::SetTransparency(double transparency) {
-	this->transparency = transparency;
+	this->config->SetTransparency(transparency);
 	SetLayeredWindowAttributes(window_handle, 0, (BYTE)floor(transparency*255), LWA_ALPHA);
 }
 
