@@ -7,6 +7,94 @@ TiDeveloper.currentPage = 1;
 TiDeveloper.init = false;
 TiDeveloper.ytAuthToken = null;
 
+TiDeveloper.convertDate = function(str)
+{
+	var parts = str.split(':');
+	var hour = parseInt(parts[0]);
+	var minutes = parts[1];
+	var ampm = 'am';
+	if (hour > 12)
+	{
+		hour = hour - 12
+		ampm = 'pm';
+	}
+	else if (hour == 0)
+	{
+		hour = 12;
+	}
+	return hour + ":" + minutes + ampm;
+}
+$.ajax({
+	type:"GET",
+	url: 'http://search.twitter.com/search.rss?q=+%22Appcelerator+Titanium%22+OR+%23titanium+OR+%23appcelerator&rpp=100',		
+	success: function(data)
+	{
+		var root = data.getElementsByTagName('rss')[0];
+		var channels = root.getElementsByTagName("channel");
+		var items = channels[0].getElementsByTagName("item");
+		for (var i=0;i<items.length;i++)
+		{
+			var children = items[i].childNodes;
+			var date = null;
+			var desc = null;
+			var image = null;
+			var author = null
+			var html = []
+
+
+			for(var j=0;j<children.length;j++)
+			{
+				if (children[j].nodeType==1)
+				{
+					switch(children[j].nodeName.toLowerCase())
+					{
+						case 'author':
+						{
+							author = children[j].textContent;
+							var parts = author.split('(');
+							author = parts[1].substring(0,parts[1].length-1)
+							break;
+						}
+						case 'google:image_link':
+						{
+							image = children[j].textContent.trim();							
+							break;
+						}
+
+						case 'description':
+						{
+							desc = children[j].textContent
+							desc = desc.replace(/href/g,'target="ti:systembrowser" href');
+							desc = desc.replace(/href="\/search/g,'href="http://search.twitter.com/search');
+							break;
+						}
+						case 'pubdate':
+						{
+							date = children[j].textContent
+							var parts = date.split(' ');
+							date = parts[2] + ' ' + parts[1] + ' ' + parts[3] + ' ' + TiDeveloper.convertDate(parts[4].substring(0,5));
+							
+						}
+					}
+				}
+			}
+			html.push('<div style="height:80px;margin-bottom:10px">');
+			html.push('		<div style="float:left;text-align:center;min-width:60px;max-width:60px;"><img style="border:2px solid #4b4b4b;background-color:#4b4b4b;position:relative;top:14px" height="48px" width="48px" src="'+image+'"/></div>');
+			html.push('		<div style="float:right;min-width:86%;max-width:86%;height:80px;position:relative;-webkit-border-radius:6px;background-color:#414141">');
+			html.push('			<img style="position:absolute;left:-24px;top:25px" src="images/triangle.png"/>');
+			html.push('			<div style="color:#42C0FB;position:absolute;left:10px;top:8px;">' + author + ' <span style="color:#a4a4a4">says:</span></div>');
+			html.push('			<div style="color:#a4a4a4;font-size:11px;position:absolute;right:10px;top:10px">' + date + '</div>');
+			html.push('			<div style="position:absolute;left:10px;top:30px;color:#fff;">'+desc +'</div>')
+			html.push('		</div>');
+			html.push('</div>');
+			$('#twitter_content').append(html.join(''));
+
+		}
+	}
+});
+
+       
+
 // YOU TUBE STUFF - COME BACK TO LATER
 //TiDeveloper.yk ='AI39si6YKvME9BMIerJYsJEAmM46e829Ovs_LMaR_jW1u0-4xHN7ehjW49EUqNgnZaNoK3aY_fUhs62mTw_0_x4EQ3f7uaaW6w';
 //TiDeveloper.yc ='ytapi-Appcelerator-TitaniumDevelope-utomjlgd-0';
@@ -512,6 +600,11 @@ $MQL('l:create.package.request',function(msg)
 {
 	try
 	{
+		var launch = (msg.payload.launch == 'no')?false:true;
+		var install = typeof(msg.payload.install)=='undefined' ? false : msg.payload.install;
+		var pkg = (msg.payload.launch == true)?true:false;
+		
+		
 		// elements that are included for network bundle
 		var networkEl = $("div[state='network']");
 
@@ -523,6 +616,10 @@ $MQL('l:create.package.request',function(msg)
 		
 		var excluded = {};
 		
+		var buildMac = ($('#platform_mac').hasClass('selected_os'))?true:false;
+		var buildWin = ($('#platform_windows').hasClass('selected_os'))?true:false;
+		var buildLinux = ($('#platform_linux').hasClass('selected_os'))?true:false;
+		
 		$.each(excludedEl,function()
 		{
 			var key = $.trim($(this).html());
@@ -532,8 +629,6 @@ $MQL('l:create.package.request',function(msg)
 		// project name
 		var project_name = $('#package_project_name').html();
 
-		var launch = (msg.payload.launch == 'no')?false:true;
-		var install = typeof(msg.payload.install)=='undefined' ? false : msg.payload.install;
 
 		var project = findProject(project_name);
 		var resources = TFS.getFile(project.dir,'resources');
