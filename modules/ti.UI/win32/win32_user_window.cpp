@@ -593,17 +593,16 @@ void Win32UserWindow::SetFullScreen(bool fullscreen) {
 	}
 }
 
-void Win32UserWindow::SetMenu(SharedBoundList value)
+void Win32UserWindow::SetMenu(SharedPtr<MenuItem> value)
 {
 	SharedPtr<Win32MenuItemImpl> menu = value.cast<Win32MenuItemImpl>();
 	this->menu = menu;
 	this->SetupMenu();
 }
 
-SharedBoundList Win32UserWindow::GetMenu()
+SharedPtr<MenuItem> Win32UserWindow::GetMenu()
 {
-	STUB();
-	return NULL;
+	return this->menu;
 }
 
 void Win32UserWindow::SetContextMenu(SharedPtr<MenuItem> menu)

@@ -668,14 +668,14 @@ void GtkUserWindow::SetTopMost(bool topmost)
 	}
 }
 
-void GtkUserWindow::SetMenu(SharedBoundList value)
+void GtkUserWindow::SetMenu(SharedPtr<MenuItem> value)
 {
 	SharedPtr<GtkMenuItemImpl> menu = value.cast<GtkMenuItemImpl>();
 	this->menu = menu;
 	this->SetupMenu();
 }
 
-SharedBoundList GtkUserWindow::GetMenu()
+SharedPtr<MenuItem> GtkUserWindow::GetMenu()
 {
 	return this->menu;
 }

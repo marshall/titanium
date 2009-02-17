@@ -10,18 +10,23 @@
 #include <api/module.h>
 #include <api/binding/binding.h>
 #include <windows.h>
+#include "../sound.h"
+#include "../media_binding.h"
+#include "win32_sound.h"
 
 using namespace kroll;
 
 namespace ti
 {
-	class Win32Media
+	class Win32MediaBinding : public MediaBinding
 	{
-	public:
-		static void Beep();
-	private:
-		Win32Media();
-		~Win32Media();
+		public:
+		Win32MediaBinding(SharedBoundObject);
+		~Win32MediaBinding();
+
+		protected:
+		void Beep();
+		SharedBoundObject CreateSound(std::string&);
 	};
 }
 

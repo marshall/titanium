@@ -5,6 +5,7 @@
  */
 #include "../ui_module.h"
 #include "WebScriptElement.h"
+#include "osx_menu_item.h"
 
 #define TRACE  NSLog
 
@@ -231,6 +232,8 @@
 
 - (void)webView:(WebView *)sender decidePolicyForNewWindowAction:(NSDictionary *)actionInformation request:(NSURLRequest *)request newFrameName:(NSString *)frameName decisionListener:(id < WebPolicyDecisionListener >)listener
 {
+	KR_DUMP_LOCATION
+	
 	if (NO == [self newWindowAction:actionInformation request:request listener:listener])
 	{
 		return;
@@ -240,6 +243,8 @@
 
 - (void)webView:(WebView *)sender decidePolicyForNavigationAction:(NSDictionary*) actionInformation request:(NSURLRequest*) request frame:(WebFrame*)frame decisionListener:(id <WebPolicyDecisionListener>)listener
 {
+	KR_DUMP_LOCATION
+
 	int type = [[actionInformation objectForKey:WebActionNavigationTypeKey] intValue];
 	
 	switch (type)
@@ -442,6 +447,8 @@
 
 - (void)webView:(WebView *)sender didFailProvisionalLoadWithError:(NSError *)error forFrame:(WebFrame *)frame
 {
+	KR_DUMP_LOCATION
+
     // Only report feedback for the main frame.
     if (frame == [sender mainFrame]) 
 	{
@@ -701,22 +708,20 @@
 
 - (NSArray *)webView:(WebView *)sender contextMenuItemsForElement:(NSDictionary *)element defaultMenuItems:(NSArray *)defaultMenuItems
 {
-	//TODO: finish implementation of menu
-	
-	if (!host->IsDebugMode())
+	SharedBoundObject bo = [window userWindow];
+	SharedPtr<UserWindow> uw = bo.cast<UserWindow>();
+	SharedPtr<MenuItem> menu = uw->GetContextMenu();
+	NSMutableArray *array = [[NSMutableArray alloc] init];
+	if (!menu.isNull())
 	{
-		for (int c=0;c<(int)[defaultMenuItems count];c++)
+		for (int c=0;c<menu->Size();c++)
 		{
-			NSMenuItem *item = [defaultMenuItems objectAtIndex:c];
-			// in non-DEBUG mode, we remove by default the Reload menu action
-			if ([item tag] == 12 && [[item title] isEqualToString:@"Reload"])
-			{
-				[item setHidden:YES];
-				break;
-			}
+			SharedBoundObject item = menu->At(c)->ToObject();
+			SharedPtr<OSXMenuItem> osx_menu = item.cast<OSXMenuItem>();
+			[array addObject:osx_menu->GetNative()]; 
 		}
 	}
-	return defaultMenuItems;
+	return array;
 }
 
 #pragma mark -
@@ -821,6 +826,9 @@ std::string GetModuleName(NSString *typeStr)
 	std::string moduleName = GetModuleName(mimeType);
 	SharedBoundObject global = host->GetGlobalObject();
 	SharedValue moduleValue = global->Get(moduleName.c_str());
+
+	std::cout << "MATCHES MIME = " << moduleName << ", moduleValue = " << moduleValue->ToTypeString() << std::endl;
+
 	if (!moduleValue->IsNull() && moduleValue->IsObject()) {
 		if (!moduleValue->ToObject()->Get("evaluate")->IsNull()
 			&& !moduleValue->ToObject()->Get("evaluate")->IsUndefined()
@@ -838,6 +846,9 @@ std::string GetModuleName(NSString *typeStr)
 	
 	std::string type = [mimeType UTF8String];
 	std::string moduleName = GetModuleName(mimeType);
+	
+	std::cout << "++ evaluate type="<<type<<",module="<<moduleName<<std::endl;
+	
 	JSContextRef contextRef = reinterpret_cast<JSContextRef>(context);
 
 	SharedBoundObject global = host->GetGlobalObject();
@@ -858,6 +869,10 @@ std::string GetModuleName(NSString *typeStr)
 			
 			evalValue->ToMethod()->Call(args);
 		}
+	}
+	else
+	{
+		std::cerr << "Couldn't find script type bound object for " << type << std::endl;
 	}
 }
 

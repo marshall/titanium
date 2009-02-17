@@ -53,12 +53,22 @@ namespace ti {
 		 * Function: GetResourcePath
 		 * Get the real path to a resource given an app:// URL. This
 		 * will access the appropriate function in the global object.
+		 * This will also just return the URL if the URL passed is
+		 * not app://
+		 *
 		 * Arguments:
-		 *  url - the app:// URL to resolve
+		 *  url - the app:// URL to resolve (can also be http://, etc)
 		 * Returns: The path to the resource on this system or a
 		 *          NULL SharedString on failure.
 		 */
 		static SharedString GetResourcePath(const char *URL);
+		
+		/**
+		 * can be called to determine if the URI passed is a local file
+		 * URI vs remote scheme (such as HTTP).
+		 *
+		 */
+		static bool IsResourceLocalFile(std::string string);
 
 		static void SetMenu(SharedPtr<MenuItem> menu);
 		static SharedPtr<MenuItem> GetMenu();

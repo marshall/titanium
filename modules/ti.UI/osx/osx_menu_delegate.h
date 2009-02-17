@@ -3,25 +3,15 @@
  * see LICENSE in the root folder for details on the license.
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
-
-#ifndef _MEDIA_OSX_H_
-#define _MEDIA_OSX_H_
-
-#include <api/binding/binding.h>
 #import <Cocoa/Cocoa.h>
+#import <kroll/kroll.h>
+#import "osx_menu_item.h"
 
-using namespace kroll;
 
-namespace ti
+@interface OSXMenuDelegate : NSMenuItem
 {
-	class OSXMedia
-	{
-	public:
-		static void Beep();
-	private:
-		OSXMedia();
-		~OSXMedia();
-	};
+	ti::OSXMenuItem *delegate;
 }
-
-#endif
+-(id)initWithMenu:(ti::OSXMenuItem*)item;
+-(void)invoke:(id)data;
+@end
