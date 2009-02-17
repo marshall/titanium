@@ -586,7 +586,7 @@ void UserWindow::FireEvent(UserWindowEvent event)
 			name = "fullscreened";
 			break;
 		}
-		case WINDOWED:
+		case UNFULLSCREENED:
 		{
 			name = "windowed";
 			break;

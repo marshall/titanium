@@ -11,22 +11,34 @@ using namespace ti;
 
 #define STUB() printf("Method is still a stub, %s:%i\n", __FILE__, __LINE__)
 
-static void destroy_cb (GtkWidget* widget, gpointer data);
-static void window_object_cleared_cb (WebKitWebView*,
-                                      WebKitWebFrame*,
-                                      JSGlobalContextRef,
-                                      JSObjectRef, gpointer);
-static void destroy_cb (GtkWidget* widget, gpointer data);
-static void populate_popup_cb(WebKitWebView *web_view,
-                                GtkMenu *menu,
-                                gpointer data);
+static void destroy_cb(
+	GtkWidget* widget,
+	gpointer data);
+static void frame_event_cb(
+	GtkWindow *window,
+	GdkEvent *event,
+	gpointer user_data);
+static void window_object_cleared_cb(
+	WebKitWebView*,
+	WebKitWebFrame*,
+	JSGlobalContextRef,
+	JSObjectRef, gpointer);
+static void populate_popup_cb(
+	WebKitWebView *web_view,
+	GtkMenu *menu,
+	gpointer data);
 
 GtkUserWindow::GtkUserWindow(Host *host, WindowConfig* config) : UserWindow(host, config)
 {
-	this->gtk_window = NULL;
-	this->web_view = NULL;
-	this->menu = NULL;
-	this->menu_bar = NULL;
+	gtk_window = NULL;
+	web_view = NULL,
+	menu = NULL;
+	menu_bar = NULL;
+	gdk_width = -1;
+	gdk_height = -1;
+	gdk_x = -1;
+	gdk_y = -1;
+
 }
 
 GtkUserWindow::~GtkUserWindow()
@@ -39,9 +51,8 @@ UserWindow* GtkUserWindow::WindowFactory(Host *host, WindowConfig* config)
 	return new GtkUserWindow(host, config);
 }
 
-void GtkUserWindow::Open() {
-
-
+void GtkUserWindow::Open()
+{
 	if (this->gtk_window == NULL)
 	{
 		/* web view */
@@ -59,7 +70,7 @@ void GtkUserWindow::Open() {
 		{
 			/* web view scroller */
 			GtkWidget* scrolled_window = gtk_scrolled_window_new (NULL, NULL);
-			gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW (scrolled_window),
+			gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window),
 			                               GTK_POLICY_AUTOMATIC,
 			                               GTK_POLICY_AUTOMATIC);
 			gtk_container_add(GTK_CONTAINER (scrolled_window),
@@ -84,8 +95,8 @@ void GtkUserWindow::Open() {
 		                            this->config->GetHeight());
 		gtk_widget_set_name(window, this->config->GetTitle().c_str());
 
-		g_signal_connect(G_OBJECT (window), "destroy",
-		                 G_CALLBACK (destroy_cb), this);
+		g_signal_connect(G_OBJECT(window), "destroy",
+		                 G_CALLBACK(destroy_cb), this);
 		gtk_container_add(GTK_CONTAINER (window), vbox);
 
 		this->gtk_window = GTK_WINDOW(window);
@@ -115,6 +126,7 @@ void GtkUserWindow::Open() {
 		}
 
 		UserWindow::Open(this);
+		this->FireEvent(OPENED);
 	}
 	else
 	{
@@ -126,6 +138,7 @@ void GtkUserWindow::Close()
 {
 	if (this->gtk_window != NULL)
 	{
+		this->FireEvent(CLOSED);
 		this->RemoveOldMenu();
 		gtk_widget_destroy(GTK_WIDGET(gtk_window));
 		this->gtk_window = NULL;
@@ -240,17 +253,79 @@ void GtkUserWindow::SetupIcon()
 	gtk_window_set_icon(this->gtk_window, icon);
 }
 
-static void destroy_cb (GtkWidget* widget, gpointer data) {
+static void destroy_cb(
+	GtkWidget* widget,
+	gpointer data)
+{
 	GtkUserWindow* user_window = (GtkUserWindow*) data;
 	user_window->Close();
 }
 
-static void window_object_cleared_cb (WebKitWebView* web_view,
-                                      WebKitWebFrame* web_frame,
-                                      JSGlobalContextRef context,
-                                      JSObjectRef window_object,
-                                      gpointer data) {
+static void frame_event_cb(
+	GtkWindow *window,
+	GdkEvent *event,
+	gpointer user_data)
+{
+	switch(event->type)
+	{
+	case GDK_FOCUS_CHANGE:
+		GdkEventFocus* f = (GdkEventFocus) event;
+		if (f->in)
+			this->FireEvent(FOCUSED);
+		else
+			this->FireEvent(UNFOCUSED);
+	case GDK_WINDOW_STATE:
+		GdkEventWindowState* f = (GdkEventWindowState) event;
+		if ((f->changed_mask & GDK_WINDOW_STATE_WITHDRAWN)
+			&& (f->new_window_state & GDK_WINDOW_STATE_WITHDRAWN))
+		{
+			 this->FireEvent(HIDDEN);
+		}
+		else if ((f->changed_mask & GDK_WINDOW_STATE_ICONIFIED)
+			&& (f->new_window_state & GDK_WINDOW_STATE_ICONIFIED))
+		{
+			 this->FireEvent(MINIMIZED);
+		}
+		else if (((f->changed_mask & GDK_WINDOW_STATE_FULLSCREEN)
+			&& (f->new_window_state & GDK_WINDOW_STATE_FULLSCREEN)))
+		{
+			 this->FireEvent(FULLSCREENED);
+		}
+		else if (f->changed_mask & GDK_WINDOW_STATE_FULLSCREEN)
+		{
+			 this->FireEvent(UNFULLSCREENED);
+		}
+		else if (((f->changed_mask & GDK_WINDOW_STATE_MAXIMIZED)
+			&& (f->new_window_state & GDK_WINDOW_STATE_MAXIMIZED)))
+		{
+			 this->FireEvent(MAXIMIZED);
+		}
+	case GDK_WINDOW_CONFIGURE:
+		GdkEventConfigure* c = (GdkEventConfigure) event;
+		if (c->x != this->gdk_x || c->y != this->gdk_y)
+		{
+			this->gdk_x = c->x;
+			this->gdk_y = c->y;
+			this->FireEvent(RESIZED);
+		}
 
+		if (c->width != this->gdk_width || c->height != this->gdk_height)
+		{
+			this->gdk_height = c->height;
+			this->gdk_width = c->width;
+			this->FireEvent(MOVED);
+		}
+	case default:
+	}
+}
+
+static void window_object_cleared_cb(
+	WebKitWebView* web_view,
+	WebKitWebFrame* web_frame,
+	JSGlobalContextRef context,
+	JSObjectRef window_object,
+	gpointer data)
+{
 	JSContextGroupRef group = JSContextGetGroup(context);
 	KJSUtil::RegisterGlobalContext(group, context);
 

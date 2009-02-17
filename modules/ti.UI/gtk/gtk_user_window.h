@@ -86,6 +86,7 @@ namespace ti
 		GtkWindow* gtk_window;
 		GtkWidget* vbox;
 		WebKitWebView* web_view;
+		int gdk_height, gdk_width, gdk_x, gdk_y;
 
 		/*
 		 * The window-specific menu.

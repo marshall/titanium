@@ -36,7 +36,7 @@ enum UserWindowEvent
 	HIDDEN,
 	SHOWN,
 	FULLSCREENED,
-	WINDOWED, // opposite of fullscreen?
+	UNFULLSCREENED,
 	MAXIMIZED,
 	MINIMIZED,
 	RESIZED,
