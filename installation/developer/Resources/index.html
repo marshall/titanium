@@ -80,13 +80,9 @@
 
 		</div>
 		<!-- SOCIAL TYPE STUFF -->
-		<div style="margin-top:10px"
+		<div style="margin-top:10px;"
 			on="l:menu[val=social] then effect[fadeIn] else hide">
 			
-			 <div id="ytapiplayer" style="float:left;width:60%;display:none" on="l:play.video then effect[fadeIn]">
-		      You need Flash player 8+ and JavaScript enabled to view this video.
-		    </div>
-		
 			<div style="min-width:210px;max-width:210px;float:left;">
 				<div class="button1" style="width:180px;height:45px;float:none;position:relative">
 					<div class="button2 active" style="height:43px"  
@@ -119,14 +115,61 @@
 						</span>
 					</div>
 				</div>
-				
 			</div>
 			<div style="float:left;min-width:75%;max-width:75%;">
 				<div class="infobox">
-					<div class="content">
-						<div id="twitter_content" 
-							style="background-color:#2b2b2b;max-height:90%;overflow:auto;padding:10px"
+					<div class="content" style="position:relative">
+						<div style="background-color:#2b2b2b;min-height:90%;max-height:90%;overflow:auto;padding:10px;"
 							on="l:db[val=twitter] then show else hide">
+							<div id="twitter_content"></div>
+							<div id="twitter_console" on="l:show.tweet then effect[animate,height=250px]
+							and l:twitter_console[val=show]
+							if expr[$('#twitter_console').height() == '0'] 
+							or l:show.tweet then effect[animate,height=0px] and l:twitter_console[val=hide]
+							if expr[$('#twitter_console').height() == '250'] ">
+								<div style="display:none;padding:20px" 
+									on="l:twitter_console[val=show] then show else effect[fadeOut]">
+									<div>Username:</div>
+									<div style="margin-top:2px;margin-bottom:5px">
+										<input type="text" id="twitter_username" validator="required" fieldset="twitter"/>
+									</div>
+									<div>Password:</div>
+									<div style="margin-top:2px;margin-bottom:5px">
+										<input type="text" id="twitter_password" validator="required" fieldset="twitter"/>
+									</div>
+									<div style="position:relative">
+										<span>Tweet:</span>
+										<span id="twitter_length" on="l:tweetlength then value[l]">
+											140
+										</span>
+									</div>
+									<div style="margin-top:2px;margin-bottom:5px">
+										<textarea id="twitter_message" validator="required" fieldset="twitter" rows="4" 
+										style="width:300px;" 
+										on="keyup then l:tweetlength[l=expr(140 - $('#twitter_message').val().length)]
+										or l:tweetlength[l<=0] then script[$('#twitter_message').val($('#twitter_message').val().substring(0,139))] 
+										and script[$('#twitter_length').html('0')]"></textarea>
+									</div>
+									<div style="height:30px">
+										<div class="button1" on="click then l:send.tweet.request" 
+											style="float:left;margin-right:10px">
+											<div class="button2" id="send_tweet_button"	on="click then l:send.tweet.request 
+											if expr[$('#send_tweet_button').attr('disabled')!=true]" 
+											activators="twitter_username,twitter_password,twitter_message"  
+											fieldset="twitter">				
+												Send
+											</div>
+										</div>
+										<div class="button1" on="click then l:show.tweet" style="float:left">
+											<div class="button2">
+												Hide
+											</div>
+										</div>
+									</div>
+								</div>
+							
+							</div>
+
 						</div>
 						<div id="news_content" style="display:none" 
 							on="l:db[val=news] then show else hide">
@@ -137,6 +180,27 @@
 
 					</div>
 				</div>
+				<div style="margin-top:10px;position:relative">
+					<div class="button1" on="click then l:show.tweet">
+						<div class="button2">
+								Tweet
+						</div>
+					</div>
+
+					<div class="button1" on="click then script[TiDeveloper.loadTwitter()]">
+						<div class="button2">
+								Refresh
+						</div>
+					</div>
+					<span style="margin-left:10px;margin-right:5px;font-size:11px;color:#666">Showing last:</span>
+					<input type="text" id="twitter_page_size" style="width:35px" value="50"/>
+					
+					<div style="position:absolute;right:3px;top:0px;color:#fff;font-size:11px">
+						<span style="color:#666">Last updated on:</span>
+						<span id="twitter_last_update"></span>
+					</div>
+				</div>
+
 			</div>
 		</div>
 		
@@ -719,6 +783,9 @@
 			</div>
 		</div>
 	</div>
+
+
+
 	<!-- MODAL FOR DELETING PROJECTS -->
 	<div behavior="modal[opacity=0.9,showEffect=fadeIn,hideEffect=fadeOut]" 
 		on="l:delete.project.prompt then show or (l:delete.project.request or l:cancel.delete.project) then hide">
