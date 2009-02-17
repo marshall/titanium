@@ -2,6 +2,7 @@
 <head>
 
 	<script type="text/javascript" charset="utf-8" src="js/appcelerator-debug.js"></script>
+
 	<script type="text/javascript" charset="utf-8" src="common/js/yahoo-min.js"></script>
 	<script type="text/javascript" charset="utf-8" src="common/js/paginator-min.js"></script>
 
@@ -39,7 +40,7 @@
 		<!-- MAJOR ACTION BUTTONS -->
 		<div class="button1" style="display:inline-block;width:150px" 
 			on="click then l:menu[val=social] and add[class=active] or l:menu[val!=social] then remove[class=active]">
-			<div class="button2">Ti Social</div>
+			<div class="button2">Dashboard</div>
 		</div>
 		
 		<div class="button1" style="display:inline-block;width:150px" 
@@ -48,7 +49,7 @@
 		</div>
 		<div class="button1" style="display:inline-block;width:150px" 
 			on="click then l:menu[val=api] and add[class=active] or l:menu[val!=api] then remove[class=active]">
-			<div class="button2">API Documentation</div>
+			<div class="button2">Documentation</div>
 		</div>
 		<div class="button1" style="display:inline-block;width:150px" 
 			on="click then l:menu[val=interact] and add[class=active] or l:menu[val!=interact] then remove[class=active]">
@@ -79,51 +80,64 @@
 
 		</div>
 		<!-- SOCIAL TYPE STUFF -->
-		<div style="display:none;margin-bottom:20px;min-height:90%"
+		<div style="margin-top:10px"
 			on="l:menu[val=social] then effect[fadeIn] else hide">
 			
-			<!-- INFO MESSAGE -->
-			<div class="infobox" style="width:120px">
-				<div class="content" style="height:20px;position:relative">
-					<div style="position:absolute;top:7px;left:5px">
-						<img src="images/info.png" style="position:relative;top:-1px"/>
-					</div>
-					<div style="position:absolute;top:7px;left:30px">
-						Coming soon!
-					</div>
-				</div>
-			</div>
-<!--		
 			 <div id="ytapiplayer" style="float:left;width:60%;display:none" on="l:play.video then effect[fadeIn]">
 		      You need Flash player 8+ and JavaScript enabled to view this video.
 		    </div>
 		
-			<div style="width:20%;float:left;">
-				<div class="button1">
-					<div class="button2"> 
-						Titanium Newws
+			<div style="min-width:210px;max-width:210px;float:left;">
+				<div class="button1" style="width:180px;height:45px;float:none;position:relative">
+					<div class="button2 active" style="height:43px"  
+						on="click then l:db[val=twitter] and add[class=active] 
+							or l:db[val!=twitter] then remove[class=active]">
+						<img src="images/twitter.png" style="position:relative;top:7px;left:-10px"/>
+						<span style="margin-left:10px;position:relative;top:-6px;left:-17px">
+							Titanium on Twitter
+						</span>
 					</div>
 				</div>
-				<div class="button1">
-					<div class="button2"> 
-						Titanium on Twitter
+
+				<div class="button1" style="width:180px;height:45px;float:none;position:relative">
+					<div class="button2" style="height:43px;" 
+						on="click then l:db[val=news] and add[class=active] 
+							or l:db[val!=news] then remove[class=active]">
+						<img src="images/news.png" style="position:relative;top:7px;left:-18px"/>
+						<span style="margin-left:10px;position:relative;top:-6px;left:-28px">
+							Titanium News
+						</span>
 					</div>
 				</div>
-				<div class="button1">
-					<div class="button2"> 
-						Screencasts/Videos
+				<div class="button1" style="width:180px;height:45px;float:none;position:relative">
+					<div class="button2" style="height:43px"  
+							on="click then l:db[val=videos] and add[class=active] 
+								or l:db[val!=videos] then remove[class=active]">
+						<img src="images/video.png" style="position:relative;top:7px;left:-10px"/>
+						<span style="margin-left:10px;position:relative;top:-6px;left:-17px">
+							Videos/Screencasts
+						</span>
 					</div>
 				</div>
 				
 			</div>
-			<div style="float:left;width:73%">
+			<div style="float:left;min-width:75%;max-width:75%;">
 				<div class="infobox">
 					<div class="content">
-						<div id="social_content" ></div>
+						<div id="twitter_content" 
+							style="background-color:#2b2b2b;max-height:90%;overflow:auto;padding:10px"
+							on="l:db[val=twitter] then show else hide">
+						</div>
+						<div id="news_content" style="display:none" 
+							on="l:db[val=news] then show else hide">
+						</div>
+						<div id="video_content" style="display:none" 
+							on="l:db[val=video] then show else hide">
+						</div>
+
 					</div>
 				</div>
 			</div>
--->
 		</div>
 		
 		<!-- IRC -->
@@ -147,7 +161,8 @@
 				<div style="margin-top:10px;">
 					<input type="text" value="type message and hit enter" id="irc_msg" 
 						style="float:left;margin-right:10px;width:100%"
-						on="click then clear or keyup[enter] then l:send.irc.msg"/>
+						on="click then clear if expr[$('#irc_msg').val() == 'type message and hit enter']
+							or keyup[enter] then l:send.irc.msg"/>
 				</div>
 			</div>
 		</div>
@@ -157,7 +172,7 @@
 			on="l:menu[val=manage] then effect[fadeIn] else hide or l:cancel[val=manage] then effect[fadeOut]">
 
 			<!-- NO PROJECTS CREATED MESSAGE -->
-			<div style="margin-top:10px;width:450px" 
+			<div style="margin-top:10px;width:500px" 
 				on="l:project.list.response[totalRecords!=0] then hide else effect[fadeIn,speed=3000]">
 				<!-- INFO MESSAGE -->
 				<div class="infobox">
@@ -505,17 +520,21 @@
 							on="click then l:show.package.project">
 							<div class="button2" style="height:43px;max-width:200px;">
 								<img src="images/pack_distro.png" style="position:relative;top:5px"/>
-								<span style="margin-left:10px;position:relative;top:-6px">Package for distribution			
+								<span style="margin-left:10px;position:relative;top:-6px">
+									Package for distribution
+								</span>			
 							</div>
 							<div  style="position:absolute;left:230px;top:15px;">
 								Create installation distributions for Mac, Windows and/or Linux
 							</div>
 						</div>
 						<div class="button1" style="width:800px;height:45px;float:none;position:relative"
-å							on="click then l:create.package.request[launch=true]">
+							on="click then l:create.package.request[launch=true]">
 							<div class="button2" style="height:43px;max-width:200px">
 								<img src="images/launch.png" style="position:relative;top:7px;left:-25px"/>
-								<span style="margin-left:10px;position:relative;top:-6px;left:-25px">Launch project
+								<span style="margin-left:10px;position:relative;top:-6px;left:-25px">
+									Launch project
+								</span>
 							</div>
 							<div style="position:absolute;left:230px;top:15px;">
 								Launch and test your application now!
@@ -525,7 +544,9 @@
 							on="click then l:create.package.request[launch=true,install=true]">
 							<div class="button2" style="height:43px;max-width:200px">
 								<img src="images/install_launch.png" style="position:relative;top:5px"/>
-								<span style="margin-left:10px;position:relative;top:-6px">Install and launch project
+								<span style="margin-left:10px;position:relative;top:-6px">
+									Install and launch project
+								</span>
 							</div>
 							<div style="position:absolute;left:230px;top:15px">
 								Run the application installer then launch.
@@ -536,7 +557,9 @@
 							on="click then l:cancel[val=package]">
 							<div class="button2" style="height:43px">
 								<img src="images/back.png" style="position:relative;top:7px;left:-16px"/>
-								<span style="margin-left:10px;position:relative;top:-6px;left:-16px">Back to project list
+								<span style="margin-left:10px;position:relative;top:-6px;left:-16px">
+									Back to project list
+								</span>
 							</div>
 						</div>
 					</div>
@@ -651,7 +674,7 @@
 									</div>
 									<div style="position:relative;top:20px;left:-5px">
 										<div class="button1" style="float:left;"  
-											on="click then l:create.package.request[launch=no]"
+											on="click then l:create.package.request[package=true,launch=no]"
 											<div class="button2">
 												Package
 											</div>

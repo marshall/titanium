@@ -21,7 +21,6 @@ namespace ti
 		this->SetMethod("connect",&IRCClientBinding::Connect);
 		this->SetMethod("disconnect",&IRCClientBinding::Disconnect);
 		this->SetMethod("send",&IRCClientBinding::Send);
-		this->SetMethod("sendPrivate",&IRCClientBinding::SendPrivate);
 		this->SetMethod("setNick",&IRCClientBinding::SetNick);
 		this->SetMethod("getNick",&IRCClientBinding::GetNick);
 		this->SetMethod("getUsers",&IRCClientBinding::GetUsers);
@@ -145,16 +144,6 @@ namespace ti
 #ifdef DEBUG
 			std::cout << "sending IRC: " << channel << " => " << msg << std::endl;
 #endif
-			this->irc.notice((char*)channel,(char*)msg);
-		}
-	}
-	void IRCClientBinding::SendPrivate(const ValueList& args, SharedValue result)
-	{
-		bool connected = this->Get("connected")->ToBool();
-		if (connected)
-		{
-			const char *channel = args.at(0)->ToString();
-			const char *msg = args.at(1)->ToString();
 			this->irc.privmsg((char*)channel,(char*)msg);
 		}
 	}

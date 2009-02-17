@@ -41,6 +41,8 @@ namespace ti
 			std::vector<std::string>& types);
 
 		long GetIdleTime();
+	private:
+		NSView *savedDockView;
 	};
 }
 
