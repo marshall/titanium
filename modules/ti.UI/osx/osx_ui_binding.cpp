@@ -22,7 +22,7 @@ namespace ti
 
 	OSXUIBinding::~OSXUIBinding()
 	{
-
+		[savedDockView release];
 	}
 
 	SharedPtr<MenuItem> OSXUIBinding::CreateMenu(bool trayMenu)
@@ -52,7 +52,7 @@ namespace ti
 	void OSXUIBinding::SetBadge(SharedString badge_label)
 	{
 		std::string value = *badge_label;
-		NSString *label = nil;
+		NSString *label = @"";
 		if (!value.empty())
 		{
 			label = [NSString stringWithCString:value.c_str()];
@@ -71,6 +71,12 @@ namespace ti
 		}
 		if (path)
 		{
+			// remember the old one
+			if (!savedDockView)
+			{
+				savedDockView = [dockTile contentView];
+				[savedDockView retain];
+			}
 		   	// setup our image view for the dock tile
 		   	NSRect frame = NSMakeRect(0, 0, dockTile.size.width, dockTile.size.height);
 		   	NSImageView *dockImageView = [[NSImageView alloc] initWithFrame: frame];
@@ -82,6 +88,12 @@ namespace ti
 
 		   	// by default, add it to the NSDockTile
 		   	[dockTile setContentView: dockImageView];
+		}
+		else if (savedDockView)
+		{
+		   	[dockTile setContentView:savedDockView];
+			[savedDockView release];
+			savedDockView = nil;
 		}
 		else
 		{
