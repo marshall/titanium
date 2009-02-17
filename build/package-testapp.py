@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+#
 # this script creates build/<os>/titanium_testapp folder
 # after running this script, you can execute the test app with <os>/titanium_testapp/titanium_testapp
 
@@ -130,7 +130,7 @@ shutil.copy(runtime_manifest_file, runtime_dir)
 
 if osname is 'osx':
     plist = open(path.join('..', 'support', 'osx', 'Info.plist')).read()
-    plist = plist.replace('APPNAME', 'testapp')
+    plist = plist.replace('APPNAME', 'titanium_testapp')
     plist = plist.replace('APPICON', 'titanium.icns')
     plist = plist.replace('APPID', 'com.titaniumapp.testapp')
     plist = plist.replace('APPNIB', 'MainMenu')
@@ -141,8 +141,8 @@ if osname is 'osx':
     #out_file = open(path.join(app_dir, 'manifest'), 'w')
     #out_file.write(manifest_text)
     #out_file.close()
-    menu_nib = path.join('osx', 'modules', 'ti.UI', 'MainMenu.nib')
-    lproj = path.join(app_dir, 'English.lproj')
+    menu_nib = path.join(build_dir, 'modules', 'ti.UI', 'MainMenu.nib')
+    lproj = path.join(app_dir, 'Resources', 'English.lproj')
     os.makedirs(lproj)
     shutil.copy(menu_nib, lproj)
     

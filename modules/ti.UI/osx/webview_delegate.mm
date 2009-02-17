@@ -232,6 +232,8 @@
 
 - (void)webView:(WebView *)sender decidePolicyForNewWindowAction:(NSDictionary *)actionInformation request:(NSURLRequest *)request newFrameName:(NSString *)frameName decisionListener:(id < WebPolicyDecisionListener >)listener
 {
+	KR_DUMP_LOCATION
+	
 	if (NO == [self newWindowAction:actionInformation request:request listener:listener])
 	{
 		return;
@@ -241,6 +243,8 @@
 
 - (void)webView:(WebView *)sender decidePolicyForNavigationAction:(NSDictionary*) actionInformation request:(NSURLRequest*) request frame:(WebFrame*)frame decisionListener:(id <WebPolicyDecisionListener>)listener
 {
+	KR_DUMP_LOCATION
+
 	int type = [[actionInformation objectForKey:WebActionNavigationTypeKey] intValue];
 	
 	switch (type)
@@ -443,6 +447,8 @@
 
 - (void)webView:(WebView *)sender didFailProvisionalLoadWithError:(NSError *)error forFrame:(WebFrame *)frame
 {
+	KR_DUMP_LOCATION
+
     // Only report feedback for the main frame.
     if (frame == [sender mainFrame]) 
 	{
