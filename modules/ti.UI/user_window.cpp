@@ -43,6 +43,7 @@ UserWindow::UserWindow(kroll::Host *host, WindowConfig *config) :
 
 	this->host = host;
 	this->config = config;
+	this->next_listener_id = 0;
 
 	/* this object is accessed by Titanium.Window.currentWindow */
 	this->SetMethod("hide", &UserWindow::_Hide);
@@ -585,21 +586,27 @@ void UserWindow::_AddEventListener(const ValueList& args, SharedValue result)
 		throw ValueException::FromString("invalid argument");
 	}
 	SharedBoundMethod target = args.at(0)->ToMethod();
-	this->listeners.push_back(target);
+
+	Listener listener = Listener();
+	listener.id = this->next_listener_id++;
+	listener.callback = target;
+	this->listeners.push_back(listener);
+
+	result->SetInt(listener.id);
 }
 
 void UserWindow::_RemoveEventListener(const ValueList& args, SharedValue result)
 {
-	if (args.size()!=1 || !args.at(0)->IsMethod())
+	if (args.size() != 1 || !args.at(0)->IsNumber())
 	{
 		throw ValueException::FromString("invalid argument");
 	}
-	SharedBoundMethod target = args.at(0)->ToMethod();
-	std::vector<SharedBoundMethod>::iterator it = this->listeners.begin();
-	while(it!=this->listeners.end())
+	int id = args.at(0)->ToInt();
+
+	std::vector<Listener>::iterator it = this->listeners.begin();
+	while (it != this->listeners.end())
 	{
-		SharedBoundMethod m = (*it);
-		if (m == target)
+		if ((*it).id == id)
 		{
 			this->listeners.erase(it);
 			result->SetBool(true);
@@ -682,10 +689,10 @@ void UserWindow::FireEvent(UserWindowEvent event)
 	}
 	ValueList args;
 	args.push_back(Value::NewString(name));
-	std::vector<SharedBoundMethod>::iterator it = this->listeners.begin();
-	while(it!=this->listeners.end())
+	std::vector<Listener>::iterator it = this->listeners.begin();
+	while (it != this->listeners.end())
 	{
-		SharedBoundMethod callback = (*it++);
+		SharedBoundMethod callback = (*it).callback;
 		try
 		{
 			host->InvokeMethodOnMainThread(callback,args);
@@ -694,6 +701,7 @@ void UserWindow::FireEvent(UserWindowEvent event)
 		{
 			std::cerr << "Caught exception dispatching window event callback: " << event << ", Error: " << e.what() << std::endl;
 		}
+		it++;
 	}
 }
 

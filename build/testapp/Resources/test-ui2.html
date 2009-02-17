@@ -8,9 +8,12 @@
 		</style>
 		<script>
 			var alertEvent = false;
-			Titanium.UI.currentWindow.addEventListener(function(event) {
+			function event_function(event)
+			{
 				Titanium.API.debug(event);
-			});
+			}
+			var id = Titanium.UI.currentWindow.addEventListener(event_function);
+			Titanium.UI.currentWindow.removeEventListener(id);
 
 			function selectFilesCallback(result)
 			{

@@ -130,8 +130,12 @@ class UserWindow : public kroll::StaticBoundObject {
 		void _IsTopMost(const kroll::ValueList&, kroll::SharedValue);
 		void _SetTopMost(const kroll::ValueList&, kroll::SharedValue);
 
-		std::vector<SharedBoundMethod> listeners;
-
+		struct Listener {
+			SharedBoundMethod callback;
+			long id;
+		};
+		std::vector<Listener> listeners;
+		long next_listener_id;
 
 	public:
 		virtual UserWindow* WindowFactory(Host*, WindowConfig*) = 0;
