@@ -854,7 +854,6 @@ SharedBoundList Win32UserWindow::SelectFile(
 
 	OPENFILENAME ofn;
 	char filen[255];
-	HWND hWindow;		// NEED to get handle to main or current titanium user window
 
 	ZeroMemory(&filen, sizeof(filen));
 
@@ -870,7 +869,7 @@ SharedBoundList Win32UserWindow::SelectFile(
 	// init OPENFILE
 	ZeroMemory(&ofn, sizeof(ofn));
 	ofn.lStructSize = sizeof(ofn);
-	ofn.hwndOwner = NULL;
+	ofn.hwndOwner = this->window_handle;
 	ofn.lpstrFile = filen;
 	ofn.nMaxFile = sizeof(filen);
 	ofn.lpstrFilter = (filter.length() == 0 ? NULL : filter.c_str());
@@ -922,6 +921,7 @@ SharedBoundList Win32UserWindow::SelectDirectory(
 	BROWSEINFO bi = { 0 };
 	//std::string title("Select a directory");
 	//bi.lpszTitle = title.c_str();
+	bi.hwndOwner = this->window_handle;
 	LPITEMIDLIST pidl = SHBrowseForFolder(&bi);
 
 	if(pidl != 0)

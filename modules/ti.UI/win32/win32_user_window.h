@@ -162,12 +162,12 @@ public:
 	void FrameLoaded();
 
 private:
-	static SharedBoundList SelectDirectory(
+	SharedBoundList SelectDirectory(
 		bool multiple,
 		std::string& path,
 		std::string& file);
 
-	static SharedBoundList SelectFile(
+	SharedBoundList SelectFile(
 		SharedBoundMethod callback,
 		bool multiple,
 		std::string& path,
