@@ -31,15 +31,6 @@ namespace ti
 		virtual void SetBadge(SharedString badge_label);
 		virtual void SetBadgeImage(SharedString badge_path);
 
-		void OpenFiles(
-			SharedBoundMethod callback,
-			bool multiple,
-			bool files,
-			bool directories,
-			std::string& path,
-			std::string& file,
-			std::vector<std::string>& types);
-
 		long GetIdleTime();
 	private:
 		NSView *savedDockView;

@@ -17,7 +17,7 @@ Win32WebKitFrameLoadDelegate::Win32WebKitFrameLoadDelegate(Win32UserWindow *wind
 
 }
 
-HRESULT STDMETHODCALLTYPE 
+HRESULT STDMETHODCALLTYPE
 Win32WebKitFrameLoadDelegate::didFinishLoadForFrame(IWebView *webView, IWebFrame *frame)
 {
 	window->FrameLoaded();
@@ -57,6 +57,10 @@ Win32WebKitFrameLoadDelegate::windowScriptObjectAvailable (
 		// Place currentWindow.createWindow in the delegate.
 		SharedValue create_window_value = user_window->Get("createWindow");
 		delegate_ui_api->Set("createWindow", create_window_value);
+
+		// Place currentWindow.openFiles in the delegate.
+		SharedValue open_files_value = user_window->Get("openFiles");
+		delegate_ui_api->Set("openFiles", open_files_value);
 
 		ti_object->Set("UI", Value::NewObject(delegate_ui_api));
 	}

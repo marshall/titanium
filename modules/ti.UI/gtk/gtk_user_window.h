@@ -26,6 +26,16 @@ namespace ti
 		void RemoveOldMenu();
 
 		UserWindow* WindowFactory(Host *, WindowConfig*);
+
+		void OpenFiles(
+			SharedBoundMethod callback,
+			bool multiple,
+			bool files,
+			bool directories,
+			std::string& path,
+			std::string& file,
+			std::vector<std::string>& types);
+
 		void Hide();
 		void Show();
 		bool IsUsingChrome();

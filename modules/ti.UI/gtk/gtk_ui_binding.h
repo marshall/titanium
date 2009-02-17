@@ -25,15 +25,6 @@ namespace ti
 		SharedPtr<TrayItem> AddTray(SharedString icon_path,
 		                            SharedBoundMethod cb);
 
-		void OpenFiles(
-			SharedBoundMethod callback,
-			bool multiple,
-			bool files,
-			bool directories,
-			std::string& path,
-			std::string& file,
-			std::vector<std::string>& types);
-
 		long GetIdleTime();
 
 		private:

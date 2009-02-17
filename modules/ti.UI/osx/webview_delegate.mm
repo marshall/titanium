@@ -387,6 +387,10 @@
 		// Place currentWindow.createWindow in the delegate.
 		SharedValue create_window_value = shared_user_window->Get("createWindow");
 		delegate_ui_api->Set("createWindow", create_window_value);
+		
+		// Place currentWindow.openFiles in the delegate.
+		SharedValue open_files_value = shared_user_window->Get("openFiles");
+		delegate_ui_api->Set("openFiles", open_files_value);
 
 		ti_object->Set("UI", Value::NewObject(delegate_ui_api));
 	}
