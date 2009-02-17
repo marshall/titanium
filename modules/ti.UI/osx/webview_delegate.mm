@@ -826,6 +826,9 @@ std::string GetModuleName(NSString *typeStr)
 	std::string moduleName = GetModuleName(mimeType);
 	SharedBoundObject global = host->GetGlobalObject();
 	SharedValue moduleValue = global->Get(moduleName.c_str());
+
+	std::cout << "MATCHES MIME = " << moduleName << ", moduleValue = " << moduleValue->ToTypeString() << std::endl;
+
 	if (!moduleValue->IsNull() && moduleValue->IsObject()) {
 		if (!moduleValue->ToObject()->Get("evaluate")->IsNull()
 			&& !moduleValue->ToObject()->Get("evaluate")->IsUndefined()
@@ -843,6 +846,9 @@ std::string GetModuleName(NSString *typeStr)
 	
 	std::string type = [mimeType UTF8String];
 	std::string moduleName = GetModuleName(mimeType);
+	
+	std::cout << "++ evaluate type="<<type<<",module="<<moduleName<<std::endl;
+	
 	JSContextRef contextRef = reinterpret_cast<JSContextRef>(context);
 
 	SharedBoundObject global = host->GetGlobalObject();
@@ -863,6 +869,10 @@ std::string GetModuleName(NSString *typeStr)
 			
 			evalValue->ToMethod()->Call(args);
 		}
+	}
+	else
+	{
+		std::cerr << "Couldn't find script type bound object for " << type << std::endl;
 	}
 }
 

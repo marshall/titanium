@@ -13,7 +13,7 @@ version = '0.2'
 runtime_libs = ['kroll', 'khost']
 third_party = ['webkit', 'poco']
 module_dirs = [
-    'api', 'javascript', 'foo', # 'ruby', 'python'
+    'api', 'javascript', 'foo', 'ruby', 'python',
     'ti.Platform', 'ti.App', 'ti.UI', 'tinetwork',
     'ti.Growl', 'ti.Filesystem', 'ti.Media', 'ti.Desktop', 'ti.Process',
     'ti.Notification'
