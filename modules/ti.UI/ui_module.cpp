@@ -5,6 +5,7 @@
  */
 
 #include "ui_module.h"
+#include <Poco/URI.h>
 
 #ifdef OS_OSX
   #define TI_FATAL_ERROR(msg) \
@@ -109,27 +110,44 @@ namespace ti
 		UIModule::global = SharedBoundObject(NULL);
 	}
 
+	bool UIModule::IsResourceLocalFile(std::string string)
+	{
+		Poco::URI uri(string.c_str());
+		std::string scheme = uri.getScheme();
+		return (scheme == "app" || scheme == "ti" || scheme == "file");
+	}
+	
 	SharedString UIModule::GetResourcePath(const char *URL)
 	{
 		if (URL == NULL || !strcmp(URL, ""))
 			return SharedString(NULL);
-
-		SharedValue meth_val = UIModule::global->GetNS("App.appURLToPath");
-		if (!meth_val->IsMethod())
-			return SharedString(NULL);
-
-		SharedBoundMethod meth = meth_val->ToMethod();
-		ValueList args;
-		args.push_back(Value::NewString(URL));
-		SharedValue out_val = meth->Call(args);
-
-		if (out_val->IsString())
+		
+		Poco::URI uri(URL);
+		std::string scheme = uri.getScheme();
+		
+		if (scheme == "app" || scheme == "ti")
 		{
-			return SharedString(new std::string(out_val->ToString()));
+			SharedValue meth_val = UIModule::global->GetNS("App.appURLToPath");
+			if (!meth_val->IsMethod())
+				return SharedString(NULL);
+
+			SharedBoundMethod meth = meth_val->ToMethod();
+			ValueList args;
+			args.push_back(Value::NewString(URL));
+			SharedValue out_val = meth->Call(args);
+
+			if (out_val->IsString())
+			{
+				return SharedString(new std::string(out_val->ToString()));
+			}
+			else
+			{
+				return SharedString(NULL);
+			}
 		}
 		else
 		{
-			return SharedString(NULL);
+			return SharedString(new std::string(URL));
 		}
 	}
 

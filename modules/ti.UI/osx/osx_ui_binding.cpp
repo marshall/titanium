@@ -5,6 +5,7 @@
  */
 
 #include "../ui_module.h"
+#include "osx_menu_item.h"
 
 namespace ti
 {
@@ -27,9 +28,7 @@ namespace ti
 
 	SharedPtr<MenuItem> OSXUIBinding::CreateMenu(bool trayMenu)
 	{
-		//SharedPtr<MenuItem> menu = new OSXMenuItem(true);
-		SharedPtr<MenuItem> menu = NULL;
-		return menu;
+		return new OSXMenuItem(trayMenu ? Tray : Item);
 	}
 
 	void OSXUIBinding::SetMenu(SharedPtr<MenuItem>)
@@ -42,7 +41,6 @@ namespace ti
 
 	void OSXUIBinding::SetDockIcon(SharedString icon_path)
 	{
-
 	}
 
 	void OSXUIBinding::SetDockMenu(SharedPtr<MenuItem>)

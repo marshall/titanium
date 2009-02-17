@@ -5,6 +5,7 @@
  */
 #include "../ui_module.h"
 #include "WebScriptElement.h"
+#include "osx_menu_item.h"
 
 #define TRACE  NSLog
 
@@ -701,22 +702,20 @@
 
 - (NSArray *)webView:(WebView *)sender contextMenuItemsForElement:(NSDictionary *)element defaultMenuItems:(NSArray *)defaultMenuItems
 {
-	//TODO: finish implementation of menu
-	
-	if (!host->IsDebugMode())
+	SharedBoundObject bo = [window userWindow];
+	SharedPtr<UserWindow> uw = bo.cast<UserWindow>();
+	SharedPtr<MenuItem> menu = uw->GetContextMenu();
+	NSMutableArray *array = [[NSMutableArray alloc] init];
+	if (!menu.isNull())
 	{
-		for (int c=0;c<(int)[defaultMenuItems count];c++)
+		for (int c=0;c<menu->Size();c++)
 		{
-			NSMenuItem *item = [defaultMenuItems objectAtIndex:c];
-			// in non-DEBUG mode, we remove by default the Reload menu action
-			if ([item tag] == 12 && [[item title] isEqualToString:@"Reload"])
-			{
-				[item setHidden:YES];
-				break;
-			}
+			SharedBoundObject item = menu->At(c)->ToObject();
+			SharedPtr<OSXMenuItem> osx_menu = item.cast<OSXMenuItem>();
+			[array addObject:osx_menu->GetNative()]; 
 		}
 	}
-	return defaultMenuItems;
+	return array;
 }
 
 #pragma mark -

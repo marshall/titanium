@@ -134,8 +134,8 @@ public:
 	void SetTransparency(double transparency);
 	void SetFullScreen(bool fullscreen);
 	void SetUsingChrome(bool chrome);
-	void SetMenu(SharedBoundList menu);
-	SharedBoundList GetMenu();
+	void SetMenu(SharedPtr<MenuItem> menu);
+	SharedPtr<MenuItem> GetMenu();
 	void SetContextMenu(SharedPtr<MenuItem> menu);
 	SharedPtr<MenuItem> GetContextMenu();
 	HMENU GetContextMenuHandle() { return this->contextMenuHandle; }
