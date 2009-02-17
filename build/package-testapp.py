@@ -83,13 +83,10 @@ for tp in third_party:
         for d in glob.glob(pattern):
             dest = path.join(runtime_dir, path.basename(d))
             shutil.copytree(d, dest, symlinks=True)
-    
-    lib_files_dir = path.join(third_party_dir, tp)
-    lib_files_dir = path.join(lib_files_dir, lib_dir)
-    lib_files_dir = path.join(lib_files_dir, '*')
-    for d in glob.glob(lib_files_dir):
-        shutil.copy(d, runtime_dir)
-        
+
+    lib_files_dir = path.join(third_party_dir, tp, lib_dir)
+    dir_util.copy_tree(lib_files_dir, runtime_dir, preserve_symlinks=1)
+
 # Gather all module libs
 for m in modules.keys():
     module_dir = path.join(top_dir, 'modules', modules[m])

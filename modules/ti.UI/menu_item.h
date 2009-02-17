@@ -44,7 +44,7 @@ namespace ti
 
 		SharedValue AddToListModel(MenuItem* item);
 
-		virtual void MakeSeparator();
+		void MakeSeparator();
 		void MakeItem(SharedValue label,
 		              SharedValue callback,
 		              SharedValue icon_url);

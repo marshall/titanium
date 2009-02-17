@@ -4,39 +4,47 @@
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
 
-#ifndef _MEDIA_LINUX_SOUND_H_
-#define _MEDIA_LINUX_SOUND_H_
+#ifndef _TI_MEDIA_GST_SOUND_H_
+#define _TI_MEDIA_GST_SOUND_H_
 
 #include <api/module.h>
 #include <api/binding/binding.h>
 #include <vector>
-#include "../sound.h"
 
 using namespace kroll;
 
 namespace ti
 {
-	class LinuxSound : public Sound
+	class GstSound : public Sound
 	{
 	public:
-		LinuxSound(std::string& url);
-		virtual ~LinuxSound();
+		GstSound(std::string& url);
+		virtual ~GstSound();
 		
 		virtual void Play();
+		virtual void Load();
 		virtual void Pause();
-		virtual void Resume();
 		virtual void Stop();
-		virtual void Reset();
+		virtual void Reload();
 		virtual void SetVolume(double volume);
 		virtual double GetVolume();
-		virtual void SetLooping(bool loop);
+		virtual void SetLooping(bool looping);
 		virtual bool IsLooping();
 		virtual bool IsPlaying();
 		virtual bool IsPaused();
 		virtual void OnComplete(SharedBoundMethod callback);
-		
+
 	private:
-		SharedBoundMethod* callback;
+		SharedBoundMethod callback;
+		GstElement *pipeline;
+		bool looping;
+
+		enum PlayState {
+			PLAYING,
+			STOPPED,
+			PAUSED
+		} state;
+
 	};
 }
 

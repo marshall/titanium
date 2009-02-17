@@ -124,7 +124,7 @@ namespace ti
 		
 		Poco::URI uri(URL);
 		std::string scheme = uri.getScheme();
-		
+
 		if (scheme == "app" || scheme == "ti")
 		{
 			SharedValue meth_val = UIModule::global->GetNS("App.appURLToPath");

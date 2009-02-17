@@ -26,9 +26,8 @@ namespace ti
 
 		virtual void Play();
 		virtual void Pause();
-		virtual void Resume();
 		virtual void Stop();
-		virtual void Reset();
+		virtual void Reload();
 		virtual void SetVolume(double volume);
 		virtual double GetVolume();
 		virtual void SetLooping(bool loop);

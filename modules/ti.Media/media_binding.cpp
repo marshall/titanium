@@ -5,52 +5,66 @@
  */
 #include "media_binding.h"
 #include <kroll/kroll.h>
-
-#ifdef OS_OSX
-#include "osx/osx_media.h"
-#include "osx/osx_sound.h"
-#elif defined(OS_WIN32)
-#include "win32/win32_media.h"
-#include "win32/win32_sound.h"
-#elif defined(OS_LINUX)
-#include "linux/linux_media.h"
-#include "linux/linux_sound.h"
-#endif
-
-#if defined(OS_OSX)
-	#define TI_MEDIA OSXMedia
-	#define TI_SOUND OSXSound
-#elif defined(OS_WIN32)
-	#define TI_MEDIA Win32Media
-	#define TI_SOUND Win32Sound
-#elif defined(OS_LINUX)
-	#define TI_MEDIA LinuxMedia
-	#define TI_SOUND LinuxSound
-#endif
-
+#include <cstring>
+#include <Poco/URI.h>
 
 namespace ti
 {
 	MediaBinding::MediaBinding(SharedBoundObject global) : global(global)
 	{
-		this->SetMethod("createSound",&MediaBinding::CreateSound);
-		this->SetMethod("beep",&MediaBinding::Beep);
+		this->SetMethod("createSound", &MediaBinding::_CreateSound);
+		this->SetMethod("beep", &MediaBinding::_Beep);
 	}
+
 	MediaBinding::~MediaBinding()
 	{
 	}
-	void MediaBinding::CreateSound(const ValueList& args, SharedValue result)
+
+	void MediaBinding::_CreateSound(const ValueList& args, SharedValue result)
 	{
 		if (args.size()!=1)
-		{
 			throw ValueException::FromString("createSound takes 1 parameter");
-		}
+
 		std::string path(args.at(0)->ToString());
-		SharedBoundObject sound = new TI_SOUND(path);
-		result->SetObject(sound);
+		result->SetObject(this->CreateSound(path));
 	}
-	void MediaBinding::Beep(const ValueList& args, SharedValue result)
+
+	void MediaBinding::_Beep(const ValueList& args, SharedValue result)
 	{
-		TI_MEDIA::Beep();
+		this->Beep();
+	}
+
+	std::string MediaBinding::GetResourcePath(const char *URL)
+	{
+		if (URL == NULL || !strcmp(URL, ""))
+			return std::string();
+		
+		Poco::URI uri(URL);
+		std::string scheme = uri.getScheme();
+
+		if (scheme == "app" || scheme == "ti")
+		{
+			SharedValue meth_val = this->global->GetNS("App.appURLToPath");
+			if (!meth_val->IsMethod())
+				return std::string();
+
+			SharedBoundMethod meth = meth_val->ToMethod();
+			ValueList args;
+			args.push_back(Value::NewString(URL));
+			SharedValue out_val = meth->Call(args);
+
+			if (out_val->IsString())
+			{
+				return std::string(out_val->ToString());
+			}
+			else
+			{
+				return std::string();
+			}
+		}
+		else
+		{
+			return std::string(URL);
+		}
 	}
 }
