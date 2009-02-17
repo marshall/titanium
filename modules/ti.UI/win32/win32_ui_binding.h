@@ -26,15 +26,6 @@ namespace ti
 		SharedPtr<TrayItem> AddTray(SharedString icon_path,
 		                            SharedBoundMethod cb);
 
-		void OpenFiles(
-			SharedBoundMethod callback,
-			bool multiple,
-			bool files,
-			bool directories,
-			std::string& path,
-			std::string& file,
-			std::vector<std::string>& types);
-
 		long GetIdleTime();
 
 		static HMENU getContextMenuInUseHandle() { return contextMenuInUseHandle; }
@@ -42,19 +33,6 @@ namespace ti
 	private:
 		SharedPtr<Win32MenuItemImpl> contextMenuInUse;
 		static HMENU contextMenuInUseHandle;
-		static SharedBoundList SelectDirectory(
-			bool multiple,
-			std::string& path,
-			std::string& file);
-
-		static SharedBoundList SelectFile(
-			SharedBoundMethod callback,
-			bool multiple,
-			std::string& path,
-			std::string& file,
-			std::vector<std::string>& types);
-
-		static void ParseStringNullSeparated(const char *s, std::vector<std::string> &tokens);
 	};
 }
 

@@ -98,6 +98,7 @@ UserWindow::UserWindow(kroll::Host *host, WindowConfig *config) :
 	this->SetMethod("isTopMost", &UserWindow::_IsTopMost);
 
 	this->SetMethod("createWindow", &UserWindow::_CreateWindow);
+	this->SetMethod("openFiles", &UserWindow::_OpenFiles);
 	this->SetMethod("getParent", &UserWindow::_GetParent);
 
 	this->SetMethod("addEventListener", &UserWindow::_AddEventListener);
@@ -524,6 +525,59 @@ SharedBoundObject UserWindow::CreateWindow(SharedBoundObject properties)
 
 }
 
+void UserWindow::_OpenFiles(const ValueList& args, SharedValue result)
+{
+	// pass in a set of properties with each key being
+	// the name of the property and a boolean for its setting
+	// example:
+	//
+	// var selected = Titanium.Desktop.openFiles({
+	//    multiple:true,
+	//    files:false,
+	//    directories:true,
+	//    types:['js','html']
+	// });
+	//
+	//
+	SharedBoundMethod callback;
+	if (args.size() < 1 || !args.at(0)->IsMethod())
+	{
+		throw ValueException::FromString("openFiles expects first argument to be a callback");
+	}
+	callback = args.at(0)->ToMethod();
+
+	SharedBoundObject props;
+	if (args.size() < 2 || !args.at(1)->IsObject())
+	{
+		props = new StaticBoundObject();
+	}
+	else
+	{
+		props = args.at(1)->ToObject();
+	}
+
+	bool files = props->GetBool("files", true);
+	bool multiple = props->GetBool("multiple", false);
+	bool directories = props->GetBool("directories", false);
+	std::string path = props->GetString("path", "");
+	std::string file = props->GetString("file", "");
+
+	std::vector<std::string> types;
+	if (props->Get("types")->IsList())
+	{
+		SharedBoundList l = props->Get("types")->ToList();
+		for (int i = 0; i < l->Size(); i++)
+		{
+			if (l->At(i)->IsString())
+			{
+				types.push_back(l->At(i)->ToString());
+			}
+		}
+	}
+
+	this->OpenFiles(callback, multiple, files, directories, path, file, types);
+}
+
 void UserWindow::_AddEventListener(const ValueList& args, SharedValue result)
 {
 	if (args.size()!=1 || !args.at(0)->IsMethod())
@@ -560,9 +614,9 @@ void UserWindow::FireEvent(UserWindowEvent event)
 {
 	// optimize
 	if (this->listeners.size()==0) return;
-	
+
 	std::string name;
-	
+
 	switch(event)
 	{
 		case FOCUSED:
