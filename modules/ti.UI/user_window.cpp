@@ -563,6 +563,10 @@ void UserWindow::UpdateWindowForURL(std::string url)
 		b.height = winConfig->GetHeight();
 
 		this->SetBounds(b);
+
+		this->SetMinimizable(winConfig->IsMinimizable());
+		this->SetMaximizable(winConfig->IsMaximizable());
+		this->SetCloseable(winConfig->IsCloseable());
 	}
 }
 

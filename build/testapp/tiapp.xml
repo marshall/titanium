@@ -18,6 +18,8 @@
       <urlRegex>app://small.*.html</urlRegex>
       <width>400</width>
       <height>275</height>
+      <minimizable>false</minimizable>
+      <maximizable>false</maximizable>
       <fullscreen>false</fullscreen>
       <chrome>true</chrome>
    </window>
