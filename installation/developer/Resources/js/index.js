@@ -131,8 +131,8 @@ $MQL('l:send.tweet.request',function(msg)
 			'username':username,
 			'password':password,
 			'type':'POST', 
-			'url':'http://twitter.com/statuses/update.json',
-			'data':{'status':tweet, 'source':'tweetanium'},
+			'url':'https://twitter.com/statuses/update.json',
+			'data':{'status':tweet, 'source':'titanium developer'},
 			success:function(resp,textStatus)
 			{
 				notification.setTitle('Success');
