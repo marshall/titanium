@@ -59,7 +59,6 @@ namespace ti
 		}
 		NSDockTile *tile = [[NSApplication sharedApplication] dockTile];
 		[tile setBadgeLabel:label];
-		[tile setShowsApplicationBadge:(label == nil ? NO : YES)];
 	}
 	void OSXUIBinding::SetBadgeImage(SharedString badge_path)
 	{
