@@ -126,16 +126,17 @@
 							and l:twitter_console[val=show]
 							if expr[$('#twitter_console').height() == '0'] 
 							or l:show.tweet then effect[animate,height=0px] and l:twitter_console[val=hide]
-							if expr[$('#twitter_console').height() == '250'] ">
+							if expr[$('#twitter_console').height() == '250'] or l:send.tweet.response[result=success]
+							then effect[animate,height=0px] and l:twitter_console[val=hide]">
 								<div style="display:none;padding:20px" 
 									on="l:twitter_console[val=show] then show else effect[fadeOut]">
-									<div>Username:</div>
+									<div>Twitter Username:</div>
 									<div style="margin-top:2px;margin-bottom:5px">
 										<input type="text" id="twitter_username" validator="required" fieldset="twitter"/>
 									</div>
-									<div>Password:</div>
+									<div>Twitter Password:</div>
 									<div style="margin-top:2px;margin-bottom:5px">
-										<input type="text" id="twitter_password" validator="required" fieldset="twitter"/>
+										<input type="password" id="twitter_password" validator="required" fieldset="twitter"/>
 									</div>
 									<div style="position:relative">
 										<span>Tweet:</span>
@@ -148,11 +149,10 @@
 										style="width:300px;" 
 										on="keyup then l:tweetlength[l=expr(140 - $('#twitter_message').val().length)]
 										or l:tweetlength[l<=0] then script[$('#twitter_message').val($('#twitter_message').val().substring(0,139))] 
-										and script[$('#twitter_length').html('0')]"></textarea>
+										and script[$('#twitter_length').html('0')] or l:show.tweet then reset"></textarea>
 									</div>
 									<div style="height:30px">
-										<div class="button1" on="click then l:send.tweet.request" 
-											style="float:left;margin-right:10px">
+										<div class="button1" style="float:left;margin-right:10px">
 											<div class="button2" id="send_tweet_button"	on="click then l:send.tweet.request 
 											if expr[$('#send_tweet_button').attr('disabled')!=true]" 
 											activators="twitter_username,twitter_password,twitter_message"  

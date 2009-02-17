@@ -25,6 +25,45 @@ TiDeveloper.convertDate = function(str)
 	return hour + ":" + minutes + ampm;
 }
 
+
+
+TiDeveloper.twitterUsername = null;
+TiDeveloper.twitterPassword = null;
+TiDeveloper.saveTwitterCreds = function(username,password)
+{
+	// only update if different
+	// we only store one twitter account
+	if (username != TiDeveloper.twitterUsername || 
+		password  != TiDeveloper.twitterPassword)
+	{
+		$('#twitter_username').val(username);
+		$('#twitter_password').val(password);
+		swiss('#twitter_username').fire('revalidate')
+		swiss('#twitter_password').fire('revalidate')
+
+		//add
+		if (TiDeveloper.twitterUsername == null)
+		{
+			// update database
+		    db.transaction(function (tx) 
+		    {
+		        tx.executeSql("INSERT into Twitter (id,username,password) values(?,?,?)", 
+				[1,username,password]);
+		    });
+
+		}
+		//update
+		else
+		{
+			// update database
+		    db.transaction(function (tx) 
+		    {
+		        tx.executeSql("UPDATE Twitter set username = ?, password = ? WHERE id = ?", 
+				[1,username,password]);
+		    });
+		}
+	}
+}
 TiDeveloper.loadTwitter = function()
 {
 	// clear
@@ -33,13 +72,17 @@ TiDeveloper.loadTwitter = function()
 	// set page size
 	var rpp = $('#twitter_page_size').val();
 	if (!rpp)rpp=50;
-	
 	// get data
+	$('#twitter_content').append('<img src="images/information.png" style="position:relative;top:3px"/> Loading twitter data... One moment.')
+	$('#twitter_content').attr('loading','true');
 	$.ajax({
 		type:"GET",
 		url: 'http://search.twitter.com/search.rss?q=+%22Appcelerator+Titanium%22+OR+%23titanium+OR+%23appcelerator&rpp=' +rpp ,		
 		success: function(data)
 		{
+			$('#twitter_content').attr('loading','false');
+			$('#twitter_content').empty();
+			
 			var root = data.getElementsByTagName('rss')[0];
 			var channels = root.getElementsByTagName("channel");
 			var items = channels[0].getElementsByTagName("item");
@@ -101,10 +144,14 @@ TiDeveloper.loadTwitter = function()
 				$('#twitter_content').append(html.join(''));
 				var d = new Date();	
 				$('#twitter_last_update').html(d.toLocaleString())
+				
 			}
 		}
 	});
-	
+	if ($('#twitter_content').attr('loading') == 'true')
+	{
+		$('#twitter_content').html('<img src="images/information.png" style="position:relative;top:3px"/> You (or Twitter) is offline...  Try again later.')
+	}
 }
 
 // auto update twitter feed
@@ -135,10 +182,12 @@ $MQL('l:send.tweet.request',function(msg)
 			'data':{'status':tweet, 'source':'titanium developer'},
 			success:function(resp,textStatus)
 			{
+				TiDeveloper.saveTwitterCreds(username,password)
 				notification.setTitle('Success');
 				notification.setMessage('Your message was sent!');
 				notification.setIcon('app://images/information.png');
 				notification.show();
+				$MQ('l:send.tweet.response',{result:'success'})
 			},
 			error:function(XMLHttpRequest, textStatus, errorThrown)
 			{
@@ -147,6 +196,8 @@ $MQL('l:send.tweet.request',function(msg)
 				notification.setMessage('Sorry there was an error from Twitter!');
 				notification.setIcon('app://images/error.png');
 				notification.show();
+				$MQ('l:send.tweet.response',{result:'error'})
+
 			}
 		});
 	}
@@ -163,10 +214,13 @@ $MQL('l:send.tweet.request',function(msg)
 			'data':{'text':tweet, 'user':user, 'source': 'titanium developer'},
 			success:function(resp,textStatus)
 			{
+				TiDeveloper.saveTwitterCreds(username,password)
 				notification.setTitle('Direct Message');
 				notification.setMessage('Your message has been sent');
 				notification.setIcon('app://images/information.png');
 				notification.show();
+				$MQ('l:send.tweet.response',{result:'success'})
+				
 				
 			},
 			error:function(XMLHttpRequest, textStatus, errorThrown)
@@ -175,6 +229,8 @@ $MQL('l:send.tweet.request',function(msg)
 				notification.setMessage('Sorry there was an error from Twitter!');
 				notification.setIcon('app://images/error.png');
 				notification.show();
+				$MQ('l:send.tweet.response',{result:'error'})
+				
 			}
 		});
 	}
@@ -186,6 +242,7 @@ $MQL('l:send.tweet.request',function(msg)
 // holder var for all projects
 TiDeveloper.ProjectArray = [];
 var db = openDatabase("TiDeveloper","1.0");
+
 var highestId = 0;
 
 // generic count format function
@@ -443,6 +500,29 @@ $MQL('l:app.compiled',function()
 	       });
 	   });
 	});
+	
+	db.transaction(function(tx) 
+	{
+	   tx.executeSql("SELECT username,password FROM Twitter", [], function(tx,result) 
+	   {
+		   for (var i = 0; i < result.rows.length; ++i) 
+		   {
+                var row = result.rows.item(i);
+				TiDeveloper.twitterUsername = row['username'];
+				TiDeveloper.twitterPassword = row['password'];
+				$('#twitter_username').val(TiDeveloper.twitterUsername);
+				$('#twitter_password').val(TiDeveloper.twitterPassword);
+				swiss('#twitter_username').fire('revalidate')
+				swiss('#twitter_password').fire('revalidate')
+
+				break;
+			}
+	   }, function(tx, error) 
+	   {
+	       tx.executeSql("CREATE TABLE Twitter (id REAL UNIQUE, username TEXT, password TEXT)")
+	   });
+	});
+	
 	TiDeveloper.loadTwitter();
 });
 
