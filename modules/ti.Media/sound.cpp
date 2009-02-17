@@ -11,9 +11,8 @@ namespace ti
 	{
 		this->SetMethod("play",&Sound::Play);
 		this->SetMethod("pause",&Sound::Pause);
-		this->SetMethod("resume",&Sound::Resume);
 		this->SetMethod("stop",&Sound::Stop);
-		this->SetMethod("reset",&Sound::Reset);
+		this->SetMethod("reload",&Sound::Reload);
 		this->SetMethod("setVolume",&Sound::SetVolume);
 		this->SetMethod("getVolume",&Sound::GetVolume);
 		this->SetMethod("setLooping",&Sound::SetLooping);
@@ -27,7 +26,6 @@ namespace ti
 	}
 	void Sound::Play(const ValueList& args, SharedValue result)
 	{
-		this->Stop();
 		this->Play();
 	}
 	void Sound::Pause(const ValueList& args, SharedValue result)
@@ -38,25 +36,17 @@ namespace ti
 		}
 		this->Pause();
 	}
-	void Sound::Resume(const ValueList& args, SharedValue result)
-	{
-		if (this->IsPlaying())
-		{
-			throw ValueException::FromString("Sounds is currently playing");
-		}
-		this->Resume();
-	}
 	void Sound::Stop(const ValueList& args, SharedValue result)
 	{
-		if (!this->IsPlaying())
+		if (!this->IsPlaying() && !this->IsPaused())
 		{
 			return;
 		}
 		this->Stop();
 	}
-	void Sound::Reset(const ValueList& args, SharedValue result)
+	void Sound::Reload(const ValueList& args, SharedValue result)
 	{
-		this->Reset();
+		this->Reload();
 	}
 	void Sound::SetVolume(const ValueList& args, SharedValue result)
 	{
