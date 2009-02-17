@@ -10,7 +10,10 @@ body
 	overflow:hidden;
 
 }
-
+a
+{
+	color:#809eb3;
+}
 /*********************
 ID STYLES 
 **********************/
