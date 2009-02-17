@@ -35,6 +35,15 @@
 
 				return menu;
 			}
+			function setDockMenu()
+			{
+				var menu = preBakedMenu("Dock Menu");
+				Titanium.UI.setDockMenu(menu);
+			}
+			function removeDockMenu()
+			{
+				Titanium.UI.setDockMenu(null);
+			}
 			function setAppMenu()
 			{
 				var menu = preBakedMenu("App Menu");
@@ -274,6 +283,18 @@
 			</td>
 			<td><button onclick="unsetAppContextMenu()">Remove App Context Menu</button><br/>
 				<span style="font-size: 10px;">(no more menus)</span>
+			</td>
+		</tr>
+		</table>
+		</div>
+
+		<div>Dock Menus:<br/>
+		<table>
+		<tr>
+			<td> 
+				<button onclick="setDockMenu()">Set Dock Menu</button></td>
+			<td>
+				<button onclick="removeDockMenu()">Remove Dock Menu</button></td>
 			</td>
 		</tr>
 		</table>

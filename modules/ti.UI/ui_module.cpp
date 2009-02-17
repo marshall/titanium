@@ -54,10 +54,6 @@ namespace ti
 	void UIModule::Initialize()
 	{
 
-#ifdef OS_OSX
-		OSXInitialize();
-#endif
-
 		AppConfig *config = AppConfig::Instance();
 		if (config == NULL)
 		{

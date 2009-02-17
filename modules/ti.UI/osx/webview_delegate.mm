@@ -716,14 +716,19 @@
 	SharedPtr<UserWindow> uw = bo.cast<UserWindow>();
 	SharedPtr<MenuItem> menu = uw->GetContextMenu();
 	NSMutableArray *array = [[[NSMutableArray alloc] init] autorelease];
+	// window takes precedent - try him first
+	if (menu.isNull())
+	{
+		// if no window, try the app context
+		menu = UIModule::GetContextMenu();
+	}
 	if (!menu.isNull())
 	{
 		for (int c=0;c<menu->Size();c++)
 		{
 			SharedBoundObject item = menu->At(c)->ToObject();
 			SharedPtr<OSXMenuItem> osx_menu = item.cast<OSXMenuItem>();
-			NSString *title = [NSString stringWithCString:osx_menu->GetLabel()];
-			NSMenuItem *native = [[NSMenuItem alloc] initWithTitle:title action:@selector(menuAction:) keyEquivalent:@""];
+			NSMenuItem *native = osx_menu->CreateNative();
 			[array addObject:native]; 
 			[native release];
 		}
@@ -834,8 +839,6 @@ std::string GetModuleName(NSString *typeStr)
 	SharedBoundObject global = host->GetGlobalObject();
 	SharedValue moduleValue = global->Get(moduleName.c_str());
 
-	std::cout << "MATCHES MIME = " << moduleName << ", moduleValue = " << moduleValue->ToTypeString() << std::endl;
-
 	if (!moduleValue->IsNull() && moduleValue->IsObject()) {
 		if (!moduleValue->ToObject()->Get("evaluate")->IsNull()
 			&& !moduleValue->ToObject()->Get("evaluate")->IsUndefined()
@@ -853,8 +856,6 @@ std::string GetModuleName(NSString *typeStr)
 	
 	std::string type = [mimeType UTF8String];
 	std::string moduleName = GetModuleName(mimeType);
-	
-	std::cout << "++ evaluate type="<<type<<",module="<<moduleName<<std::endl;
 	
 	JSContextRef contextRef = reinterpret_cast<JSContextRef>(context);
 
