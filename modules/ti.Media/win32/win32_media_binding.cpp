@@ -7,14 +7,18 @@
 
 namespace ti
 {
-	Win32Media::Win32Media()
+	Win32MediaBinding::Win32MediaBinding()
 	{
 	}
-	Win32Media::~Win32Media()
+	Win32MediaBinding::~Win32MediaBinding()
 	{
 	}
-	void Win32Media::Beep()
+	void Win32MediaBinding::Beep()
 	{
 		MessageBeep(MB_OK);
+	}
+	SharedBoundObject Win32MediaBinding::CreateSound(std::string& url)
+	{
+		return new Win32Sound(url);
 	}
 }

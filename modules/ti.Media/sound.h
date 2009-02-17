@@ -19,14 +19,12 @@ namespace ti
 	public:
 		Sound(std::string& url);
 		virtual ~Sound();
-		
-		// bound object API
 
+		// bound object API
 		void Play(const ValueList& args, SharedValue result);
 		void Pause(const ValueList& args, SharedValue result);
-		void Resume(const ValueList& args, SharedValue result);
 		void Stop(const ValueList& args, SharedValue result);
-		void Reset(const ValueList& args, SharedValue result);
+		void Reload(const ValueList& args, SharedValue result);
 		void SetVolume(const ValueList& args, SharedValue result);
 		void GetVolume(const ValueList& args, SharedValue result);
 		void SetLooping(const ValueList& args, SharedValue result);
@@ -34,14 +32,12 @@ namespace ti
 		void IsPlaying(const ValueList& args, SharedValue result);
 		void IsPaused(const ValueList& args, SharedValue result);
 		void OnComplete(const ValueList& args, SharedValue result);
-		
-		
+
 		// main API
 		virtual void Play() = 0;
 		virtual void Pause() = 0;
-		virtual void Resume() = 0;
 		virtual void Stop() = 0;
-		virtual void Reset() = 0;
+		virtual void Reload() = 0;
 		virtual void SetVolume(double volume) = 0;
 		virtual double GetVolume() = 0;
 		virtual void SetLooping(bool loop) = 0;

@@ -3,18 +3,22 @@
  * see LICENSE in the root folder for details on the license.
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
-#include "osx_media.h"
+#include "osx_media_binding.h"
 
 namespace ti
 {
-	OSXMedia::OSXMedia()
+	OSXMediaBinding::OSXMediaBinding()
 	{
 	}
-	OSXMedia::~OSXMedia()
+	OSXMediaBinding::~OSXMediaBinding()
 	{
 	}
-	void OSXMedia::Beep()
+	void OSXMediaBinding::Beep()
 	{
 		NSBeep();
+	}
+	SharedBoundObject OSXMediaBinding::CreateSound(std::string& url)
+	{
+		return new OSXSound(url);
 	}
 }
