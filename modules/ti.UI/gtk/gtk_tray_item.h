@@ -19,7 +19,7 @@ namespace ti
 		~GtkTrayItem();
 
 		void SetIcon(SharedString icon_path);
-		void SetMenu(SharedBoundList menu);
+		void SetMenu(SharedPtr<MenuItem> menu);
 		void SetHint(SharedString hint);
 		void Remove();
 

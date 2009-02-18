@@ -6,6 +6,7 @@
 
 #include "../ui_module.h"
 #include "osx_menu_item.h"
+#include "osx_tray_item.h"
 
 namespace ti
 {
@@ -13,14 +14,15 @@ namespace ti
 	{
 		[TiProtocol registerSpecialProtocol];
 		[AppProtocol registerSpecialProtocol];
-		TiApplication *app = [[[TiApplication alloc] initWithBinding:this] autorelease];
+		application = [[TiApplication alloc] initWithBinding:this];
 		NSApplication *nsapp = [NSApplication sharedApplication];
-		[nsapp setDelegate:app];
+		[nsapp setDelegate:application];
 		[NSBundle loadNibNamed:@"MainMenu" owner:nsapp];
 	}
 
 	OSXUIBinding::~OSXUIBinding()
 	{
+		[application release];
 		[appDockMenu release];
 		[savedDockView release];
 	}
@@ -78,7 +80,7 @@ namespace ti
 	
 	NSImage* OSXUIBinding::MakeImage(std::string value)
 	{
-		if (ti::UIModule::IsResourceLocalFile(value))
+		if (ti::UIModule::IsResourceLocalFile(value) || FileUtils::IsFile(value))
 		{
 			SharedString file = ti::UIModule::GetResourcePath(value.c_str());
 			NSString *path = [NSString stringWithCString:((*file).c_str())];
@@ -147,12 +149,7 @@ namespace ti
 		SharedString icon_path,
 		SharedBoundMethod cb)
 	{
-		SharedPtr<TrayItem> item = NULL;
-		// NSStatusBar *statusBar = [NSStatusBar systemStatusBar];
-		// NSStatusItem *statusItem = [statusBar statusItemWithLength:NSVariableStatusItemLength];
-		// NSString *title = [NSString stringWithCString:menu->GetLabel()];
-		// [statusItem setTitle:title];
-		return item;
+		return new OSXTrayItem(icon_path,cb);
 	}
 
 	long OSXUIBinding::GetIdleTime()

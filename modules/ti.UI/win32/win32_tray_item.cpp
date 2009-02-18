@@ -43,7 +43,7 @@ void Win32TrayItem::SetIcon(SharedString iconPath)
 
 	Shell_NotifyIcon(NIM_MODIFY, this->trayIconData);
 }
-void Win32TrayItem::SetMenu(SharedBoundList menu)
+void Win32TrayItem::SetMenu(SharedPtr<MenuItem> menu)
 {
 	SharedPtr<Win32MenuItemImpl> menuToUse = menu.cast<Win32MenuItemImpl>();
 	if (menuToUse == this->trayMenu)

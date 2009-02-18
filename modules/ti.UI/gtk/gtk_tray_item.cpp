@@ -61,7 +61,7 @@ namespace ti
 		}
 	}
 
-	void GtkTrayItem::SetMenu(SharedBoundList menu)
+	void GtkTrayItem::SetMenu(SharedPtr<MenuItem> menu)
 	{
 		if (!active) return;
 

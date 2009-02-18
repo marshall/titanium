@@ -122,7 +122,14 @@
 				{
 					alert("What...you think you can just click any old jaz disk you see?");
 				}
-				trayIcon = Titanium.UI.addTray("app://tray.ico", cb);
+				if (Titanium.platform == 'win32')
+				{
+					trayIcon = Titanium.UI.addTray("app://tray.ico", cb);
+				}
+				else
+				{
+					trayIcon = Titanium.UI.addTray("app://tray.png", cb);
+				}
 				trayIcon.setHint("Hinty McHints");
 				addTrayIconMenu();
 			}
