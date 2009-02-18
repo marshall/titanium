@@ -48,8 +48,10 @@ class UserWindow : public kroll::StaticBoundObject {
 		UserWindow(kroll::Host *host, WindowConfig *config);
 		~UserWindow(){};
 		kroll::Host* GetHost() { return this->host; }
-		SharedBoundObject CreateWindow(SharedBoundObject properties);
+		SharedBoundObject CreateWindow(WindowConfig *config);
 		static std::vector<UserWindow*>& GetWindows();
+		static WindowConfig* GetWindowConfigByURL(std::string url);
+		void UpdateWindowForURL(std::string url);
 
 	private:
 		void _Hide(const kroll::ValueList&, kroll::SharedValue);
@@ -130,8 +132,12 @@ class UserWindow : public kroll::StaticBoundObject {
 		void _IsTopMost(const kroll::ValueList&, kroll::SharedValue);
 		void _SetTopMost(const kroll::ValueList&, kroll::SharedValue);
 
-		std::vector<SharedBoundMethod> listeners;
-
+		struct Listener {
+			SharedBoundMethod callback;
+			long id;
+		};
+		std::vector<Listener> listeners;
+		long next_listener_id;
 
 	public:
 		virtual UserWindow* WindowFactory(Host*, WindowConfig*) = 0;

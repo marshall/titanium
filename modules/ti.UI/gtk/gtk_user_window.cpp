@@ -14,9 +14,9 @@ using namespace ti;
 static void destroy_cb(
 	GtkWidget* widget,
 	gpointer data);
-static void frame_event_cb(
-	GtkWindow *window,
-	GdkEvent *event,
+static gboolean event_cb(
+	GtkWidget* window,
+	GdkEvent* event,
 	gpointer user_data);
 static void window_object_cleared_cb(
 	WebKitWebView*,
@@ -99,8 +99,9 @@ void GtkUserWindow::Open()
 
 		g_signal_connect(G_OBJECT(window), "destroy",
 		                 G_CALLBACK(destroy_cb), this);
-		g_signal_connect(G_OBJECT(window), "frame-event",
-		                 G_CALLBACK(frame_event_cb), this);
+		g_signal_connect(G_OBJECT(window), "event",
+		                 G_CALLBACK(event_cb), this);
+
 		gtk_container_add(GTK_CONTAINER (window), vbox);
 
 		this->gtk_window = GTK_WINDOW(window);
@@ -265,8 +266,8 @@ static void destroy_cb(
 	user_window->Close();
 }
 
-static void frame_event_cb(
-	GtkWindow *w,
+static gboolean event_cb(
+	GtkWidget *w,
 	GdkEvent *event,
 	gpointer data)
 {
@@ -314,16 +315,18 @@ static void frame_event_cb(
 		{
 			window->gdk_x = c->x;
 			window->gdk_y = c->y;
-			window->FireEvent(RESIZED);
+			window->FireEvent(MOVED);
 		}
 
 		if (c->width != window->gdk_width || c->height != window->gdk_height)
 		{
 			window->gdk_height = c->height;
 			window->gdk_width = c->width;
-			window->FireEvent(MOVED);
+			window->FireEvent(RESIZED);
 		}
 	}
+
+	return FALSE;
 }
 
 static void window_object_cleared_cb(
@@ -374,8 +377,16 @@ static void window_object_cleared_cb(
 		std::cerr << "Could not find UI API point!" << std::endl;
 	}
 
-	// Place the Titanium object into the window's global object
+	// Get the global object into a KJSBoundObject
 	BoundObject *global_bound_object = new KJSBoundObject(context, global_object);
+
+	// Copy the document and window properties to the Titanium object
+	SharedValue doc_value = global_bound_object->Get("document");
+	ti_object->Set("document", doc_value);
+	SharedValue window_value = global_bound_object->Get("window");
+
+	ti_object->Set("window", window_value);
+	// Place the Titanium object into the window's global object
 	SharedValue ti_object_value = Value::NewObject(shared_ti_obj);
 	global_bound_object->Set(GLOBAL_NS_VARNAME, ti_object_value);
 
@@ -773,6 +784,7 @@ void GtkUserWindow::AppIconChanged()
 struct OpenFilesJob
 {
 	Host *host;
+	GtkWindow* window;
 	SharedBoundMethod callback;
 	bool multiple;
 	bool files;
@@ -801,7 +813,7 @@ void* open_files_thread(gpointer data)
 
 	GtkWidget* chooser = gtk_file_chooser_dialog_new(
 		text.c_str(),
-		NULL,
+		job->window,
 		a,
 		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 		GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
@@ -867,6 +879,7 @@ void GtkUserWindow::OpenFiles(
 	std::vector<std::string>& types)
 {
 	OpenFilesJob* job = new OpenFilesJob;
+	job->window = this->gtk_window;
 	job->callback = callback;
 	job->host = host;
 	job->multiple = multiple;

@@ -19,6 +19,21 @@
 		}
 	}
 
+	function toggleChrome()
+	{
+		try
+		{
+			var cw = Titanium.UI.currentWindow;
+			var c = cw.isUsingChrome();
+			Titanium.API.log("usingChrome = "+c);
+			cw.setUsingChrome(!c);
+		}
+		catch(e)
+		{
+			alert("exception: "+e);
+		}
+	}
+
 	function closeMe()
 	{
 		Titanium.UI.currentWindow.close();
@@ -28,6 +43,7 @@
 </head>
 <body>
 	<button onclick="toggleFullscreen()">Toggle Fullscreen</button>
+	<button onclick="toggleChrome()">Toggle Chrome</button>
 	<button onclick="closeMe()">Bye</button>
 </body>
 </html>

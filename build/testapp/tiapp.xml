@@ -12,4 +12,13 @@
       <fullscreen>false</fullscreen>
       <chrome>true</chrome>
    </window>
+   <window>
+      <id>smallscreen</id>
+      <title>Titanium Smallscreen Window</title>
+      <urlRegex>app://small.*.html</urlRegex>
+      <width>400</width>
+      <height>275</height>
+      <fullscreen>false</fullscreen>
+      <chrome>true</chrome>
+   </window>
 </ti:app>
