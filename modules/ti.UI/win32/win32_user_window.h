@@ -157,6 +157,7 @@ public:
 private:
 	void SetupPosition();
 	void SetupSize();
+	void SetupDecorations();
 	void SetupMenu();
 	void SetupIcon();
 

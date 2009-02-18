@@ -40,12 +40,12 @@
 		<!-- MAJOR ACTION BUTTONS -->
 		<div class="button1" style="display:inline-block;width:150px" 
 			on="click then l:menu[val=social] and add[class=active] or l:menu[val!=social] then remove[class=active]">
-			<div class="button2">Dashboard</div>
+			<div class="button2">Feeds</div>
 		</div>
 		
 		<div class="button1" style="display:inline-block;width:150px" 
 			on="click then l:menu[val=manage] and add[class=active] or l:menu[val!=manage] then remove[class=active]">
-			<div class="button2">Manage Projects</div>
+			<div class="button2">Projects</div>
 		</div>
 		<div class="button1" style="display:inline-block;width:150px" 
 			on="click then l:menu[val=api] and add[class=active] or l:menu[val!=api] then remove[class=active]">
@@ -82,7 +82,6 @@
 		<!-- SOCIAL TYPE STUFF -->
 		<div style="margin-top:10px;"
 			on="l:menu[val=social] then effect[fadeIn] else hide">
-			
 			<div style="min-width:210px;max-width:210px;float:left;">
 				<div class="button1" style="width:180px;height:45px;float:none;position:relative">
 					<div class="button2 active" style="height:43px"  
@@ -99,29 +98,20 @@
 					<div class="button2" style="height:43px;" 
 						on="click then l:db[val=news] and add[class=active] 
 							or l:db[val!=news] then remove[class=active]">
-						<img src="images/news.png" style="position:relative;top:7px;left:-18px"/>
-						<span style="margin-left:10px;position:relative;top:-6px;left:-28px">
-							Titanium News
-						</span>
-					</div>
-				</div>
-				<div class="button1" style="width:180px;height:45px;float:none;position:relative">
-					<div class="button2" style="height:43px"  
-							on="click then l:db[val=videos] and add[class=active] 
-								or l:db[val!=videos] then remove[class=active]">
-						<img src="images/video.png" style="position:relative;top:7px;left:-10px"/>
-						<span style="margin-left:10px;position:relative;top:-6px;left:-17px">
-							Videos/Screencasts
+						<img src="images/news.png" style="position:relative;top:7px;left:-10px"/>
+						<span style="margin-left:10px;position:relative;top:-6px;left:-18px">
+							Titanium FriendFeed
 						</span>
 					</div>
 				</div>
 			</div>
-			<div style="float:left;min-width:75%;max-width:75%;">
-				<div class="infobox">
-					<div class="content" style="position:relative">
+			<div style="float:left;min-width:75%;max-width:75%">
+				<div style="border-top:1px solid #666;border-bottom:1px solid #666">
+					<div  style="position:relative;border-top:1px solid #141414;border-bottom:1px solid #141414;padding-left:20px;padding-right:20px">
 						<div style="background-color:#2b2b2b;min-height:90%;max-height:90%;overflow:auto;padding:10px;"
 							on="l:db[val=twitter] then show else hide">
 							<div id="twitter_content"></div>
+							
 							<div id="twitter_console" on="l:show.tweet then effect[animate,height=250px]
 							and l:twitter_console[val=show]
 							if expr[$('#twitter_console').height() == '0'] 
@@ -140,7 +130,8 @@
 									</div>
 									<div style="position:relative">
 										<span>Tweet:</span>
-										<span id="twitter_length" on="l:tweetlength then value[l]">
+										<span id="twitter_length" 
+											on="l:tweetlength then value[l] or l:show.tweet then value[140]">
 											140
 										</span>
 									</div>
@@ -171,30 +162,32 @@
 							</div>
 
 						</div>
-						<div id="news_content" style="display:none" 
+						<div id="news_content" 																style="display:none;background-color:#2b2b2b;min-height:90%;max-height:90%;overflow:auto;padding:10px;"
 							on="l:db[val=news] then show else hide">
 						</div>
-						<div id="video_content" style="display:none" 
-							on="l:db[val=video] then show else hide">
+						<div id="video_content" style="display:none" 							
+							on="l:db[val=videos] then show else hide">
+	
 						</div>
 
 					</div>
 				</div>
 				<div style="margin-top:10px;position:relative">
-					<div class="button1" on="click then l:show.tweet">
-						<div class="button2">
-								Tweet
+					<div on="l:db[val=twitter] then show else hide">
+						<div class="button1" on="click then l:show.tweet">
+							<div class="button2">
+									Tweet
+							</div>
 						</div>
-					</div>
 
-					<div class="button1" on="click then script[TiDeveloper.loadTwitter()]">
-						<div class="button2">
-								Refresh
+						<div class="button1" on="click then script[TiDeveloper.loadTwitter()]">
+							<div class="button2">
+									Refresh
+							</div>
 						</div>
+						<span style="margin-left:10px;margin-right:5px;font-size:11px;color:#666">Showing last:</span>
+						<input type="text" id="twitter_page_size" style="width:35px" value="50"/>
 					</div>
-					<span style="margin-left:10px;margin-right:5px;font-size:11px;color:#666">Showing last:</span>
-					<input type="text" id="twitter_page_size" style="width:35px" value="50"/>
-					
 					<div style="position:absolute;right:3px;top:0px;color:#fff;font-size:11px">
 						<span style="color:#666">Last updated on:</span>
 						<span id="twitter_last_update"></span>
@@ -207,7 +200,7 @@
 		<!-- IRC -->
 		<div style="display:none;margin-bottom:20px;min-height:90%"
 			on="l:menu[val=interact] then effect[fadeIn] else hide">
-			<div style="float:left;width:22%;margin-right:20px">
+			<div style="float:left;width:17%;margin-right:20px">
 				<div class="infobox">
 					<div class="content">
 						<div id="irc_users" ></div>
@@ -216,7 +209,7 @@
 				
 			</div>
 
-			<div style="float:left;width:73%">
+			<div style="float:left;width:80%">
 				<div class="infobox">
 					<div class="content">
 						<div id="irc" ></div>

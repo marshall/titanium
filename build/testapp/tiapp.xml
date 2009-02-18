@@ -18,9 +18,11 @@
       <urlRegex>app://small.*.html</urlRegex>
       <width>400</width>
       <height>275</height>
-      <minimizable>false</minimizable>
+      <minimizable>true</minimizable>
       <maximizable>false</maximizable>
+      <closeable>true</closeable>
       <fullscreen>false</fullscreen>
+      <resizable>false</resizable>
       <chrome>true</chrome>
    </window>
 </ti:app>

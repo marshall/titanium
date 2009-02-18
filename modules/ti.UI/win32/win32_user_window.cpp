@@ -541,12 +541,12 @@ void Win32UserWindow::SetResizable(bool resizable) {
 
 void Win32UserWindow::SetMaximizable(bool maximizable) {
 	this->config->SetMaximizable(maximizable);
-	SetGWLFlag(window_handle, WS_MAXIMIZEBOX, maximizable);
+	this->SetupDecorations();
 }
 
 void Win32UserWindow::SetMinimizable(bool minimizable) {
 	this->config->SetMinimizable(minimizable);
-	SetGWLFlag(window_handle, WS_MINIMIZEBOX, minimizable);
+	this->SetupDecorations();
 }
 
 void Win32UserWindow::SetCloseable(bool closeable) {
@@ -672,7 +672,24 @@ SharedString Win32UserWindow::GetIcon()
 
 void Win32UserWindow::SetUsingChrome(bool chrome) {
 	this->config->SetUsingChrome(chrome);
-	this->ReloadTiWindowConfig();
+	this->SetupDecorations();
+}
+
+void Win32UserWindow::SetupDecorations() {
+	long windowStyle = GetWindowLong(this->window_handle, GWL_STYLE);
+
+	SetFlag(windowStyle, WS_OVERLAPPED, config->IsUsingChrome());
+	SetFlag(windowStyle, WS_CAPTION, config->IsUsingChrome());
+	SetFlag(windowStyle, WS_SYSMENU, config->IsUsingChrome());
+	SetFlag(windowStyle, WS_BORDER, config->IsUsingChrome());
+
+	SetFlag(windowStyle, WS_MAXIMIZEBOX, config->IsMaximizable());
+	SetFlag(windowStyle, WS_MINIMIZEBOX, config->IsMinimizable());
+
+	SetWindowLong(this->window_handle, GWL_STYLE, windowStyle);
+
+	ShowWindow(window_handle, SW_HIDE);
+	ShowWindow(window_handle, SW_SHOW);
 }
 
 void Win32UserWindow::AppMenuChanged()
