@@ -92,6 +92,20 @@ button {
 		}
 	}
 
+	function toggleResizable()
+	{
+		try
+		{
+			var cw = Titanium.UI.currentWindow;
+			var f = cw.isResizable();
+			cw.setResizable(! f);
+		}
+		catch(e)
+		{
+			alert("exception: "+e);
+		}
+	}
+
 	function closeMe()
 	{
 		Titanium.UI.currentWindow.close();
@@ -108,6 +122,9 @@ button {
 	<button onclick="toggleMin()">Toggle minimizable</button>
 	<button onclick="toggleMax()">Toggle maximizable</button>
 	<button onclick="toggleClose()">Toggle closeable</button>
+	<div>
+	</div>
+	<button onclick="toggleResizable()">Toggle resizable</button>
 	<div>
 	</div>
 </body>
