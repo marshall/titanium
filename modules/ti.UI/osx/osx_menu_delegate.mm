@@ -5,6 +5,7 @@
  */
 #import "osx_menu_delegate.h"
 #import "osx_menu_item.h"
+#import "osx_ui_binding.h"
 #import "../ui_module.h"
 
 @implementation OSXMenuDelegate
@@ -39,16 +40,7 @@
 		int count = item->GetChildCount();
 		if (count > 0)
 		{
-			NSMenu *submenu = [[NSMenu alloc] initWithTitle:title];
-			for (int c=0;c<count;c++)
-			{
-				OSXMenuItem *i = item->GetChild(c);
-				if (i->IsEnabled())
-				{
-					NSMenuItem *mi = i->CreateNative();
-					[submenu addItem:mi];
-				}
-			}
+			NSMenu *submenu = ti::OSXUIBinding::MakeMenu(item);
 			if ([submenu numberOfItems] == 0)
 			{
 				// this happens if they're all disabled
