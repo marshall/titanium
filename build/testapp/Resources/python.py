@@ -1,2 +1,4 @@
+def pyalert2():
+	window.alert("I'm embedded!")
 
-print "hello, world from python"
+window.pyFunction2 = pyalert2
