@@ -517,7 +517,8 @@ void UserWindow::_CreateWindow(const ValueList& args, SharedValue result)
 	{
 		// String might match a url spec
 		std::string url = args.at(0)->ToString();
-		config = new WindowConfig(url);
+		WindowConfig* matchedConfig = AppConfig::Instance()->GetWindowByURL(url);
+		config = new WindowConfig(matchedConfig, url);
 	}
 	else
 	{
@@ -536,22 +537,19 @@ void UserWindow::UpdateWindowForURL(std::string url)
 		return;
 	}
 
-	WindowConfig *winConfig = new WindowConfig(url);
+	WindowConfig *winConfig = new WindowConfig(config, url);
 
-	if(winConfig)
-	{
-		Bounds b;
-		b.x = winConfig->GetX();
-		b.y = winConfig->GetY();
-		b.width = winConfig->GetWidth();
-		b.height = winConfig->GetHeight();
+	Bounds b;
+	b.x = winConfig->GetX();
+	b.y = winConfig->GetY();
+	b.width = winConfig->GetWidth();
+	b.height = winConfig->GetHeight();
 
-		this->SetBounds(b);
+	this->SetBounds(b);
 
-		this->SetMinimizable(winConfig->IsMinimizable());
-		this->SetMaximizable(winConfig->IsMaximizable());
-		this->SetCloseable(winConfig->IsCloseable());
-	}
+	this->SetMinimizable(winConfig->IsMinimizable());
+	this->SetMaximizable(winConfig->IsMaximizable());
+	this->SetCloseable(winConfig->IsCloseable());
 }
 
 SharedBoundObject UserWindow::CreateWindow(WindowConfig *config)
