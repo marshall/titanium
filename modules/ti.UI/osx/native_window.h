@@ -21,7 +21,7 @@ using namespace ti;
 	WebView* webView;
 	WebViewDelegate* delegate;
 	BOOL requiresDisplay;
-	SharedBoundObject* userWindow;
+	UserWindow* userWindow;
 	CGDisplayFadeReservationToken tok;  /** Fade out/in token */
 	WebInspector *inspector;
 	BOOL closed;
@@ -34,7 +34,7 @@ using namespace ti;
 - (void)frameLoaded;
 - (WebView*)webView;
 - (WindowConfig*)config;
-- (SharedBoundObject)userWindow;
+- (UserWindow*)userWindow;
 - (void)setInitialWindow:(BOOL)yn;
 - (void)showInspector;
 - (void)fireWindowEvent:(UserWindowEvent)event;

@@ -93,9 +93,8 @@ namespace ti
 		}
 	}
 	
-	NSMenu* OSXUIBinding::MakeMenu(SharedPtr<MenuItem> menu_item)
+	NSMenu* OSXUIBinding::MakeMenu(ti::OSXMenuItem* item)
 	{
-		SharedPtr<OSXMenuItem> item = menu_item.cast<OSXMenuItem>();
 		const char *label = item->GetLabel();
 		NSString *title = label == NULL ? @"" : [NSString stringWithCString:label];
 		NSMenu *menu = [[NSMenu alloc] initWithTitle:title];
@@ -107,6 +106,7 @@ namespace ti
 			{
 				NSMenuItem *mi = i->CreateNative();
 				[menu addItem:mi];
+				//FIXME: RELEASE??
 			}
 		}
 		return menu;

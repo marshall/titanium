@@ -136,7 +136,6 @@
 
 -(void)setURL:(NSURL*)newURL
 {
-	TRACE(@"setURL: %@ called for %x",newURL,self);
 	[url release];
 	url = [newURL copy];
 }
@@ -165,8 +164,6 @@
 #endif 
 	DOMNode *target = [elementDick objectForKey:WebElementDOMNodeKey];
 	DOMElement *anchor = [self findAnchor:target];
-	
-	TRACE(@"newWindowAction target=%@, anchor=%@",target,anchor);
 	
 	if (anchor)
 	{
@@ -275,7 +272,6 @@
 	NSURL *newURL = [request URL];
 	if ([newURL isEqual:url])
 	{
-		TRACE(@"Attempting to navigate to the same URL: %@",newURL);
 		[listener use];
 		return ;
 	}
@@ -358,8 +354,6 @@
 }
 - (void)inject:(WebScriptObject *)windowScriptObject context:(JSGlobalContextRef)context
 {
-	TRACE(@"inject called");
-	
 	JSContextGroupRef group = JSContextGetGroup(context);
 	JSObjectRef global_object = JSContextGetGlobalObject(context);
 	KJSUtil::RegisterGlobalContext(group, context);
@@ -371,8 +365,8 @@
 	BoundObject* ti_object = new DelegateStaticBoundObject(global_tibo);
 	SharedBoundObject shared_ti_obj = SharedBoundObject(ti_object);
 	
-	SharedBoundObject shared_user_window = [window userWindow];
-	SharedValue user_window_val = Value::NewObject(shared_user_window);
+	SharedBoundObject *shared_user_window = new SharedBoundObject([window userWindow]);
+	SharedValue user_window_val = Value::NewObject(*shared_user_window);
 	
 	SharedValue ui_api_value = ti_object->Get("UI");
 	if (ui_api_value->IsObject())
@@ -385,11 +379,11 @@
 		delegate_ui_api->Set("currentWindow", user_window_val);
 
 		// Place currentWindow.createWindow in the delegate.
-		SharedValue create_window_value = shared_user_window->Get("createWindow");
+		SharedValue create_window_value = (*shared_user_window)->Get("createWindow");
 		delegate_ui_api->Set("createWindow", create_window_value);
 		
 		// Place currentWindow.openFiles in the delegate.
-		SharedValue open_files_value = shared_user_window->Get("openFiles");
+		SharedValue open_files_value = (*shared_user_window)->Get("openFiles");
 		delegate_ui_api->Set("openFiles", open_files_value);
 
 		ti_object->Set("UI", Value::NewObject(delegate_ui_api));
@@ -709,8 +703,7 @@
 
 - (NSArray *)webView:(WebView *)sender contextMenuItemsForElement:(NSDictionary *)element defaultMenuItems:(NSArray *)defaultMenuItems
 {
-	SharedBoundObject bo = [window userWindow];
-	SharedPtr<UserWindow> uw = bo.cast<UserWindow>();
+	UserWindow *uw = [window userWindow];
 	SharedPtr<MenuItem> menu = uw->GetContextMenu();
 	NSMutableArray *array = [[[NSMutableArray alloc] init] autorelease];
 	// window takes precedent - try him first

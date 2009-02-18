@@ -151,4 +151,4 @@ dir_util.copy_tree(app_src, app_dir, preserve_symlinks=True)
 
 if len(sys.argv) > 1 and sys.argv[1] == '--run':
     print "exec: " + exe_path
-    os.system(exe_path)
+    os.system(exe_path+" --debug")

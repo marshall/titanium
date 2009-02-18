@@ -55,6 +55,11 @@
 	}
 	return self;
 }
+-(void)dealloc
+{
+	delegate = nil;
+	[super dealloc];
+}
 -(void)invoke:(id)sender
 {
 	delegate->Invoke();

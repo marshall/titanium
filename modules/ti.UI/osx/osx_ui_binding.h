@@ -10,6 +10,7 @@
 
 #include <kroll/kroll.h>
 #include "../ui_module.h"
+#include "osx_menu_item.h"
 
 namespace ti
 {
@@ -38,7 +39,7 @@ namespace ti
 
 		long GetIdleTime();
 		static NSImage* MakeImage(std::string);
-		static NSMenu* MakeMenu(SharedPtr<MenuItem>);
+		static NSMenu* MakeMenu(ti::OSXMenuItem*);
 		
 	private:
 		NSView *savedDockView;

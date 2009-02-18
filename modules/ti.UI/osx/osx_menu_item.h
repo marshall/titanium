@@ -17,6 +17,7 @@ namespace ti
 
 	public:
 		OSXMenuItem();
+		virtual ~OSXMenuItem();
 
 		void SetParent(OSXMenuItem* parent);
 		OSXMenuItem* GetParent();
