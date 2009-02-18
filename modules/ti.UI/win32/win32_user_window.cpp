@@ -672,7 +672,20 @@ SharedString Win32UserWindow::GetIcon()
 
 void Win32UserWindow::SetUsingChrome(bool chrome) {
 	this->config->SetUsingChrome(chrome);
-	this->ReloadTiWindowConfig();
+	this->SetupChrome();
+}
+
+void Win32UserWindow::SetupChrome() {
+	long windowStyle = GetWindowLong(this->window_handle, GWL_STYLE);
+
+	SetFlag(windowStyle, WS_OVERLAPPEDWINDOW, config->IsUsingChrome());
+	SetFlag(windowStyle, WS_CAPTION, config->IsUsingChrome());
+	SetFlag(windowStyle, WS_BORDER, config->IsUsingChrome());
+
+	SetWindowLong(this->window_handle, GWL_STYLE, windowStyle);
+
+	ShowWindow(window_handle, SW_HIDE);
+	ShowWindow(window_handle, SW_SHOW);
 }
 
 void Win32UserWindow::AppMenuChanged()

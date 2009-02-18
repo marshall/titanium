@@ -157,6 +157,7 @@ public:
 private:
 	void SetupPosition();
 	void SetupSize();
+	void SetupChrome();
 	void SetupMenu();
 	void SetupIcon();
 
