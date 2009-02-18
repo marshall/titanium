@@ -151,13 +151,15 @@ public:
 	bool IsTopMost();
 	void SetTopMost(bool topmost);
 
-	void SetupMenu();
-	void SetupIcon();
-
 	// called by frame load delegate to let the window know it's loaded
 	void FrameLoaded();
 
 private:
+	void SetupPosition();
+	void SetupSize();
+	void SetupMenu();
+	void SetupIcon();
+
 	SharedBoundList SelectDirectory(
 		bool multiple,
 		std::string& path,

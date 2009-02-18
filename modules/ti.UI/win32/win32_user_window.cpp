@@ -379,9 +379,8 @@ double Win32UserWindow::GetX() {
 }
 
 void Win32UserWindow::SetX(double x) {
-	Bounds b = GetBounds();
-	b.x = x;
-	SetBounds(b);
+	this->config->SetX(x);
+	this->SetupPosition();
 }
 
 double Win32UserWindow::GetY() {
@@ -389,9 +388,8 @@ double Win32UserWindow::GetY() {
 }
 
 void Win32UserWindow::SetY(double y) {
-	Bounds b = GetBounds();
-	b.y = y;
-	SetBounds(b);
+	this->config->SetY(y);
+	this->SetupPosition();
 }
 
 double Win32UserWindow::GetWidth() {
@@ -399,9 +397,8 @@ double Win32UserWindow::GetWidth() {
 }
 
 void Win32UserWindow::SetWidth(double width) {
-	Bounds b = GetBounds();
-	b.width = width;
-	SetBounds(b);
+	this->config->SetWidth(width);
+	this->SetupSize();
 }
 
 double Win32UserWindow::GetHeight() {
@@ -409,9 +406,8 @@ double Win32UserWindow::GetHeight() {
 }
 
 void Win32UserWindow::SetHeight(double height) {
-	Bounds b = GetBounds();
-	b.height = height;
-	SetBounds(b);
+	this->config->SetHeight(height);
+	this->SetupSize();
 }
 
 double Win32UserWindow::GetMaxWidth() {
@@ -792,6 +788,24 @@ void Win32UserWindow::SetTopMost(bool topmost)
 	}
 }
 
+void Win32UserWindow::SetupPosition()
+{
+	Bounds b = GetBounds();
+	b.x = this->config->GetX();
+	b.y = this->config->GetY();
+
+	this->SetBounds(b);
+}
+
+void Win32UserWindow::SetupSize()
+{
+	Bounds b = GetBounds();
+	b.width = this->config->GetWidth();
+	b.height = this->config->GetHeight();
+
+	this->SetBounds(b);
+}
+
 void Win32UserWindow::OpenFiles(
 	SharedBoundMethod callback,
 	bool multiple,
@@ -801,10 +815,6 @@ void Win32UserWindow::OpenFiles(
 	std::string& file,
 	std::vector<std::string>& types)
 {
-	// TODO this is not the logic followed by the osx
-	//  desktop implementation, but as of right now
-	// the windows implementation allows the user to
-	// browse/select for file OR a directory, but not both
 	SharedBoundList results;
 	if(directories) {
 		results = SelectDirectory(multiple, path, file);
