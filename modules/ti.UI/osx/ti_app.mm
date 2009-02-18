@@ -6,6 +6,8 @@
 #import <Cocoa/Cocoa.h>
 #import <AppKit/AppKit.h>
 #import "ti_app.h"
+#import "osx_ui_binding.h"
+#import "osx_menu_item.h"
 
 @implementation TiApplication
 +(NSString*)appID
@@ -45,14 +47,28 @@
 	NSLog(@"LOADING URL => %@",nsurl);
 	return nsurl;
 }
+- (NSMenu *)applicationDockMenu:(NSApplication *)sender
+{
+	OSXUIBinding *ui = static_cast<OSXUIBinding*>(binding);
+	SharedPtr<MenuItem> item = ui->GetDockMenu();
+	if (!item.isNull())
+	{
+		SharedPtr<ti::OSXMenuItem> osx_menu = item.cast<ti::OSXMenuItem>();
+		NSMenu *menu = ti::OSXUIBinding::MakeMenu(osx_menu);
+		[menu setAutoenablesItems:NO];
+		[menu autorelease];
+		return menu;
+	}
+	return nil;
+}
+- (id)initWithBinding:(ti::UIBinding*)b
+{
+	self = [super init];
+	if (self)
+	{
+		binding = b;
+	}
+	return self;
+}
 @end
 
-void OSXInitialize()
-{
-	[TiProtocol registerSpecialProtocol];
-	[AppProtocol registerSpecialProtocol];
-	TiApplication *app = [[[TiApplication alloc] init] autorelease];
-	NSApplication *nsapp = [NSApplication sharedApplication];
-	[nsapp setDelegate:app];
-	[NSBundle loadNibNamed:@"MainMenu" owner:nsapp];
-}

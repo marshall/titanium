@@ -1,6 +1,6 @@
 /**
  * Appcelerator Titanium - licensed under the Apache Public License 2
- * see LICENSE in the root folder for details on the license. 
+ * see LICENSE in the root folder for details on the license.
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
 
@@ -110,6 +110,7 @@ void WindowConfig::UseProperties(SharedBoundObject properties)
 
 	SET_STRING(id, winid)
 	SET_STRING(url, url);
+	SET_STRING(urlRegex, urlRegex);
 	SET_STRING(title, title);
 	SET_INT(x, x);
 	SET_INT(y, y);
@@ -131,6 +132,34 @@ void WindowConfig::UseProperties(SharedBoundObject properties)
 	SET_DOUBLE(transparency, transparency);
 }
 
+WindowConfig::WindowConfig(WindowConfig *config, std::string& url)
+{
+	this->SetDefaults();
+	this->url = url;
+
+	if (config == NULL) // Just use defaults if not found
+		return;
+
+	this->title = config->GetTitle();
+	this->x = config->GetX();
+	this->y = config->GetY();
+	this->width = config->GetWidth();
+	this->minWidth = config->GetMinWidth();
+	this->maxWidth = config->GetMaxWidth();
+	this->height = config->GetHeight();
+	this->minHeight = config->GetMinHeight();
+	this->maxHeight = config->GetMaxHeight();
+	this->visible = config->IsVisible();
+	this->maximizable = config->IsMaximizable();
+	this->minimizable = config->IsMinimizable();
+	this->resizable = config->IsResizable();
+	this->fullscreen = config->IsFullScreen();
+	this->usingChrome = config->IsUsingChrome();
+	this->usingScrollbars = config->IsUsingScrollbars();
+	this->topMost = config->IsTopMost();
+	this->transparency = config->GetTransparency();
+
+}
 WindowConfig::WindowConfig(void* data)
 {
 	xmlElementPtr element = (xmlElementPtr) data;
@@ -146,6 +175,9 @@ WindowConfig::WindowConfig(void* data)
 		}
 		else if (nodeNameEquals(child, "url")) {
 			url = nodeValue(child);
+		}
+		else if (nodeNameEquals(child, "urlRegex")) {
+			urlRegex = nodeValue(child);
 		}
 		else if (nodeNameEquals(child, "maximizable")) {
 			maximizable = boolValue(child);

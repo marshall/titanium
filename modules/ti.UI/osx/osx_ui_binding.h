@@ -8,7 +8,9 @@
 #ifndef _OSX_UI_BINDING_H_
 #define _OSX_UI_BINDING_H_
 
+#include <kroll/kroll.h>
 #include "../ui_module.h"
+#include "osx_menu_item.h"
 
 namespace ti
 {
@@ -30,19 +32,22 @@ namespace ti
 		virtual void SetDockMenu(SharedPtr<MenuItem>);
 		virtual void SetBadge(SharedString badge_label);
 		virtual void SetBadgeImage(SharedString badge_path);
-
-		void OpenFiles(
-			SharedBoundMethod callback,
-			bool multiple,
-			bool files,
-			bool directories,
-			std::string& path,
-			std::string& file,
-			std::vector<std::string>& types);
+		
+		SharedPtr<MenuItem> GetMenu();
+		SharedPtr<MenuItem> GetContextMenu();
+		SharedPtr<MenuItem> GetDockMenu();
 
 		long GetIdleTime();
+		static NSImage* MakeImage(std::string);
+		static NSMenu* MakeMenu(ti::OSXMenuItem*);
+		
 	private:
 		NSView *savedDockView;
+		SharedPtr<MenuItem> menu;
+		SharedPtr<MenuItem> contextMenu;
+		SharedPtr<MenuItem> dockMenu;
+		NSMenu* appDockMenu;
+		NSObject* application;
 	};
 }
 

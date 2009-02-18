@@ -1,6 +1,6 @@
 /**
  * Appcelerator Titanium - licensed under the Apache Public License 2
- * see LICENSE in the root folder for details on the license. 
+ * see LICENSE in the root folder for details on the license.
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
 
@@ -9,6 +9,7 @@
 #include <libxml/xpath.h>
 
 #include "app_config.h"
+#include "Poco/RegularExpression.h"
 
 using namespace ti;
 
@@ -36,6 +37,25 @@ WindowConfig* AppConfig::GetWindow(std::string& id)
 	return NULL;
 }
 
+WindowConfig* AppConfig::GetWindowByURL(std::string url)
+{
+	for (size_t i = 0; i < windows.size(); i++)
+	{
+		std::string urlRegex(windows[i]->GetURLRegex());
+
+		Poco::RegularExpression::Match match;
+		Poco::RegularExpression regex(urlRegex);
+
+		regex.match(url, match);
+
+		if(match.length != 0)
+		{
+			return windows[i];
+		}
+	}
+	return NULL;
+}
+
 WindowConfig* AppConfig::GetMainWindow()
 {
 	if (windows.size() > 0) {
@@ -49,7 +69,7 @@ AppConfig::AppConfig(std::string& xmlfile)
 	instance_ = this;
 	error = NULL;
 	xmlParserCtxtPtr context = xmlNewParserCtxt();
-	
+
 	xmlDocPtr document = xmlCtxtReadFile(context, xmlfile.c_str(), NULL, 0);
 	if (document != NULL) {
 

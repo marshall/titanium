@@ -60,7 +60,7 @@ namespace ti
 	}
 	OSXUserWindow::~OSXUserWindow()
 	{
-		KR_DUMP_LOCATION
+		[native_menu release];
 		
 		window = nil; // don't release
 		
@@ -342,21 +342,43 @@ namespace ti
 
 	void OSXUserWindow::SetMenu(SharedPtr<MenuItem> menu)
 	{	
-		// NOTE: we probably have to toggle this based on when
-		// the window is focused or not
-		this->menu = menu;
-
-//		NSMenu *nsmenu = this->menu_wrapper->getNSMenu();
-//		[NSApp setMainMenu:nsmenu];
+		this->menu = NULL;
+		if (this->native_menu)
+		{
+			[this->native_menu release];
+			this->native_menu = NULL;
+		}
+		if (!menu.isNull())
+		{
+			ti::OSXMenuItem *i = (ti::OSXMenuItem*)menu.get();
+			this->native_menu = ti::OSXUIBinding::MakeMenu(i);
+		}
 	}
 
 	SharedPtr<MenuItem> OSXUserWindow::GetMenu()
 	{
 		return this->menu;
 	}
+	
+	void OSXUserWindow::Focused()
+	{
+		if (this->native_menu)
+		{
+			[[NSApplication sharedApplication] setMainMenu:native_menu];
+		}
+	}
 
+	void OSXUserWindow::Unfocused()
+	{
+		// if (this->native_menu)
+		// {
+		// 	[[NSApplication sharedApplication] setMainMenu:nil];
+		// }
+	}
+	
 	void OSXUserWindow::SetContextMenu(SharedPtr<MenuItem> value)
 	{
+		std::cout << "SetContextMenu = " << value << std::endl;
 		this->context_menu = value;
 	}
 
@@ -393,6 +415,61 @@ namespace ti
 			[window setLevel:NSNormalWindowLevel];
 			this->topmost = false;
 		}
+	}
+	
+	void OSXUserWindow::OpenFiles(
+		SharedBoundMethod callback,
+		bool multiple,
+		bool files,
+		bool directories,
+		std::string& path,
+		std::string& file,
+		std::vector<std::string>& types)
+	{
+		SharedBoundList results = new StaticBoundList();
+
+		NSOpenPanel* openDlg = [NSOpenPanel openPanel];
+		[openDlg setCanChooseFiles:files];
+		[openDlg setCanChooseDirectories:directories];
+		[openDlg setAllowsMultipleSelection:multiple];
+		[openDlg setResolvesAliases:YES];
+
+		NSMutableArray *filetypes = nil;
+		NSString *begin = nil, *filename = nil;
+
+		if (file != "")
+		{
+			filename = [NSString stringWithCString:file.c_str()];
+		}
+		if (path != "")
+		{
+			begin = [NSString stringWithCString:path.c_str()];
+		}
+		if (types.size() > 0)
+		{
+			filetypes = [[NSMutableArray alloc] init];
+			for (size_t t = 0; t < types.size(); t++)
+			{
+				const char *s = types.at(t).c_str();
+				[filetypes addObject:[NSString stringWithCString:s]];
+			}
+		}
+
+		if ( [openDlg runModalForDirectory:begin file:filename types:filetypes] == NSOKButton )
+		{
+			NSArray* selected = [openDlg filenames];
+			for (int i = 0; i < (int)[selected count]; i++)
+			{
+				NSString* fileName = [selected objectAtIndex:i];
+				std::string fn = [fileName UTF8String];
+				results->Append(Value::NewString(fn));
+			}
+		}
+		[filetypes release];
+
+		ValueList args;
+		args.push_back(Value::NewList(results));
+		callback->Call(args);
 	}
 
 }

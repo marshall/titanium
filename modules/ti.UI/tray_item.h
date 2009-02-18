@@ -7,6 +7,7 @@
 #define _TRAY_ITEM_H_
 
 #include <kroll/kroll.h>
+#include "menu_item.h"
 
 namespace ti
 {
@@ -18,7 +19,7 @@ namespace ti
 		~TrayItem();
 
 		virtual void SetIcon(SharedString icon_path) = 0;
-		virtual void SetMenu(SharedBoundList menu) = 0;
+		virtual void SetMenu(SharedPtr<MenuItem> menu) = 0;
 		virtual void SetHint(SharedString hint) = 0;
 		virtual void Remove() = 0;
 

@@ -8,8 +8,8 @@
 
 namespace ti
 {
-	gboolean gst_bus_cb(GstBus *bus, GstMessage *message, gpointer data);
 
+	gboolean gst_bus_cb(GstBus *bus, GstMessage *message, gpointer data);
 	GstSound::GstSound(std::string &path) : Sound(path),
 		callback(NULL),
 		pipeline(NULL)
@@ -121,6 +121,63 @@ namespace ti
 		this->callback = callback;
 	}
 
+	void GstSound::Complete()
+	{
+		try
+		{
+			SharedGstSound shsound = GstSound::GetRegisteredSound(this);
+			this->callback->Call(Value::NewObject(shsound));
+		}
+		catch (ValueException& e)
+		{
+			SharedString s = e.GetValue()->DisplayString();
+			std::cout << "onComplete callback failed: " << *s << std::endl;
+		}
+	}
+
+	std::vector<SharedGstSound> GstSound::active;
+	Mutex GstSound::active_mutex;
+	void GstSound::RegisterSound(SharedGstSound sound)
+	{
+		ScopedLock sl(&GstSound::active_mutex);
+		std::vector<SharedGstSound>::iterator i = active.begin();
+		while (i != active.end())
+		{
+			// Don't register the same sound twice
+			if ((*i).get() == sound.get())
+				return;
+		}
+
+		active.push_back(sound);
+	}
+
+	void GstSound::UnregisterSound(GstSound* sound)
+	{
+		ScopedLock sl(&GstSound::active_mutex);
+		std::vector<SharedGstSound>::iterator i = active.begin();
+		while (i != active.end())
+		{
+			if ((*i).get() == sound)
+				i = active.erase(i);
+			else
+				i++;
+		}
+	}
+
+	SharedGstSound GstSound::GetRegisteredSound(GstSound* sound)
+	{
+		ScopedLock sl(&GstSound::active_mutex);
+		std::vector<SharedGstSound>::iterator i = active.begin();
+		while (i != active.end())
+		{
+			if ((*i).get() == sound)
+				return (*i);
+			else
+				i++;
+		}
+		return NULL;
+	}
+
 	gboolean gst_bus_cb(GstBus *bus, GstMessage *message, gpointer data)
 	{
 		GstSound* sound = (GstSound*) data;
@@ -131,10 +188,23 @@ namespace ti
 		else if (message->type == GST_MESSAGE_EOS)
 		{
 			sound->Stop();
+
+			// Run the callback before playing.
+			// The callback may want to halt looping.
+			sound->Complete();
+
 			if (sound->IsLooping())
+			{
 				sound->Play();
+			}
+			else
+			{
+				GstSound::UnregisterSound(sound);
+			}
 		}
 
 		return true;
 	}
+
+
 }

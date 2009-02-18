@@ -1,6 +1,6 @@
 /**
  * Appcelerator Titanium - licensed under the Apache Public License 2
- * see LICENSE in the root folder for details on the license. 
+ * see LICENSE in the root folder for details on the license.
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
 #ifndef TI_WINDOW_CONFIG_H_
@@ -18,6 +18,7 @@ class TITANIUM_APP_API WindowConfig
 private:
 	std::string winid;
 	std::string url;
+	std::string urlRegex;
 	std::string title;
 
 	int x;
@@ -49,6 +50,7 @@ public:
 
 	WindowConfig() { SetDefaults(); }
 	WindowConfig(void* data);
+	WindowConfig(WindowConfig *config, std::string& url);
 	void UseProperties(SharedBoundObject properties);
 
 	std::string ToString();
@@ -56,6 +58,8 @@ public:
 	// window accessors
 	std::string& GetURL() { return url; }
 	void SetURL(std::string& url_) { url = url_; }
+	std::string& GetURLRegex() { return urlRegex; }
+	void SetURLRegex(std::string& urlRegex_) { urlRegex = urlRegex_; }
 	std::string& GetTitle() { return title; }
 	void SetTitle(std::string& title_) { title = title_; }
 	std::string& GetID() { return winid; }

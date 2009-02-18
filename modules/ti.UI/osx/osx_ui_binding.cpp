@@ -6,68 +6,47 @@
 
 #include "../ui_module.h"
 #include "osx_menu_item.h"
+#include "osx_tray_item.h"
 
 namespace ti
 {
-
-	/*
-	* NOTES:
-	* Dynamic Setting Dock Menu / Image on OSX
-	* http://developer.apple.com/samplecode/DeskPictAppDockMenu/index.html
-	*/
-
 	OSXUIBinding::OSXUIBinding(Host *host) : UIBinding(host)
 	{
-
+		[TiProtocol registerSpecialProtocol];
+		[AppProtocol registerSpecialProtocol];
+		application = [[TiApplication alloc] initWithBinding:this];
+		NSApplication *nsapp = [NSApplication sharedApplication];
+		[nsapp setDelegate:application];
+		[NSBundle loadNibNamed:@"MainMenu" owner:nsapp];
 	}
 
 	OSXUIBinding::~OSXUIBinding()
 	{
+		[application release];
+		[appDockMenu release];
 		[savedDockView release];
 	}
 
 	SharedPtr<MenuItem> OSXUIBinding::CreateMenu(bool trayMenu)
 	{
-		return new OSXMenuItem(trayMenu ? Tray : Item);
+		return new OSXMenuItem();
 	}
 
-	void OSXUIBinding::SetMenu(SharedPtr<MenuItem>)
+	void OSXUIBinding::SetMenu(SharedPtr<MenuItem> menu)
 	{
+		this->menu = menu;
 	}
 
-	void OSXUIBinding::SetContextMenu(SharedPtr<MenuItem>)
+	void OSXUIBinding::SetContextMenu(SharedPtr<MenuItem> menu)
 	{
+		this->contextMenu = menu;
 	}
 
-	void OSXUIBinding::SetDockIcon(SharedString icon_path)
-	{
-	}
-
-	void OSXUIBinding::SetDockMenu(SharedPtr<MenuItem>)
-	{
-	}
-
-	void OSXUIBinding::SetBadge(SharedString badge_label)
-	{
-		std::string value = *badge_label;
-		NSString *label = @"";
-		if (!value.empty())
-		{
-			label = [NSString stringWithCString:value.c_str()];
-		}
-		NSDockTile *tile = [[NSApplication sharedApplication] dockTile];
-		[tile setBadgeLabel:label];
-	}
-	void OSXUIBinding::SetBadgeImage(SharedString badge_path)
+	void OSXUIBinding::SetDockIcon(SharedString badge_path)
 	{
 		NSDockTile *dockTile = [NSApp dockTile];
 		std::string value = *badge_path;
-		NSString *path = nil;
 		if (!value.empty())
-		{
-			path = [NSString stringWithCString:value.c_str()];
-		}
-		if (path)
 		{
 			// remember the old one
 			if (!savedDockView)
@@ -79,11 +58,10 @@ namespace ti
 		   	NSRect frame = NSMakeRect(0, 0, dockTile.size.width, dockTile.size.height);
 		   	NSImageView *dockImageView = [[NSImageView alloc] initWithFrame: frame];
 
-			//TODO: improve this to take either a file path or URL
-			NSImage *image = [[NSImage alloc] initWithContentsOfFile:path];
+			NSImage *image = MakeImage(value);
 		   	[dockImageView setImage:image];
 			[image release];
-
+			
 		   	// by default, add it to the NSDockTile
 		   	[dockTile setContentView: dockImageView];
 		}
@@ -99,72 +77,98 @@ namespace ti
 		}
 	   	[dockTile display];
 	}
-
-	void OSXUIBinding::SetIcon(SharedString icon_path)
+	
+	NSImage* OSXUIBinding::MakeImage(std::string value)
 	{
+		if (ti::UIModule::IsResourceLocalFile(value) || FileUtils::IsFile(value))
+		{
+			SharedString file = ti::UIModule::GetResourcePath(value.c_str());
+			NSString *path = [NSString stringWithCString:((*file).c_str())];
+			return [[NSImage alloc] initWithContentsOfFile:path];
+		}
+		else
+		{
+			NSURL *url = [NSURL URLWithString:[NSString stringWithCString:value.c_str()]];
+			return [[NSImage alloc] initWithContentsOfURL:url];
+		}
+	}
+	
+	NSMenu* OSXUIBinding::MakeMenu(ti::OSXMenuItem* item)
+	{
+		const char *label = item->GetLabel();
+		NSString *title = label == NULL ? @"" : [NSString stringWithCString:label];
+		NSMenu *menu = [[NSMenu alloc] initWithTitle:title];
+		int count = item->GetChildCount();
+		for (int c=0;c<count;c++)
+		{
+			OSXMenuItem *i = item->GetChild(c);
+			if (i->IsEnabled())
+			{
+				NSMenuItem *mi = i->CreateNative();
+				[menu addItem:mi];
+				//FIXME: RELEASE??
+			}
+		}
+		return menu;
 	}
 
+	void OSXUIBinding::SetDockMenu(SharedPtr<MenuItem> menu)
+	{
+		this->dockMenu = menu;
+	}
+
+	void OSXUIBinding::SetBadge(SharedString badge_label)
+	{
+		std::string value = *badge_label;
+		NSString *label = @"";
+		if (!value.empty())
+		{
+			label = [NSString stringWithCString:value.c_str()];
+		}
+		NSDockTile *tile = [[NSApplication sharedApplication] dockTile];
+		[tile setBadgeLabel:label];
+	}
+	
+	void OSXUIBinding::SetBadgeImage(SharedString badge_path)
+	{
+		//TODO: need to support allowing custom badge images
+	}
+
+	void OSXUIBinding::SetIcon(SharedString path)
+	{
+		std::string icon_path = *path;
+		if (icon_path.empty())
+		{
+			[[NSApplication sharedApplication] setApplicationIconImage:nil];
+		}
+		else
+		{
+			NSImage *image = MakeImage(icon_path);
+			[[NSApplication sharedApplication] setApplicationIconImage:image];
+			[image release];
+		}
+	}
+	
+	SharedPtr<MenuItem> OSXUIBinding::GetDockMenu()
+	{
+		return this->dockMenu;
+	}
+	
+	SharedPtr<MenuItem> OSXUIBinding::GetMenu()
+	{
+		return this->menu;
+	}
+
+	SharedPtr<MenuItem> OSXUIBinding::GetContextMenu()
+	{
+		return this->contextMenu;
+	}
+	
 	SharedPtr<TrayItem> OSXUIBinding::AddTray(
 		SharedString icon_path,
 		SharedBoundMethod cb)
 	{
-		SharedPtr<TrayItem> item = NULL;
-		return item;
-	}
-
-	void OSXUIBinding::OpenFiles(
-		SharedBoundMethod callback,
-		bool multiple,
-		bool files,
-		bool directories,
-		std::string& path,
-		std::string& file,
-		std::vector<std::string>& types)
-	{
-		SharedBoundList results = new StaticBoundList();
-
-		NSOpenPanel* openDlg = [NSOpenPanel openPanel];
-		[openDlg setCanChooseFiles:files];
-		[openDlg setCanChooseDirectories:directories];
-		[openDlg setAllowsMultipleSelection:multiple];
-		[openDlg setResolvesAliases:YES];
-
-		NSMutableArray *filetypes = nil;
-		NSString *begin = nil, *filename = nil;
-
-		if (file != "")
-		{
-			filename = [NSString stringWithCString:file.c_str()];
-		}
-		if (path != "")
-		{
-			begin = [NSString stringWithCString:path.c_str()];
-		}
-		if (types.size() > 0)
-		{
-			filetypes = [[NSMutableArray alloc] init];
-			for (size_t t = 0; t < types.size(); t++)
-			{
-				const char *s = types.at(t).c_str();
-				[filetypes addObject:[NSString stringWithCString:s]];
-			}
-		}
-
-		if ( [openDlg runModalForDirectory:begin file:filename types:filetypes] == NSOKButton )
-		{
-			NSArray* selected = [openDlg filenames];
-			for (int i = 0; i < (int)[selected count]; i++)
-			{
-				NSString* fileName = [selected objectAtIndex:i];
-				std::string fn = [fileName UTF8String];
-				results->Append(Value::NewString(fn));
-			}
-		}
-		[filetypes release];
-
-		ValueList args;
-		args.push_back(Value::NewList(results));
-		callback->Call(args);
+		return new OSXTrayItem(icon_path,cb);
 	}
 
 	long OSXUIBinding::GetIdleTime()

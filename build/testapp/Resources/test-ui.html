@@ -35,6 +35,15 @@
 
 				return menu;
 			}
+			function setDockMenu()
+			{
+				var menu = preBakedMenu("Dock Menu");
+				Titanium.UI.setDockMenu(menu);
+			}
+			function removeDockMenu()
+			{
+				Titanium.UI.setDockMenu(null);
+			}
 			function setAppMenu()
 			{
 				var menu = preBakedMenu("App Menu");
@@ -113,7 +122,14 @@
 				{
 					alert("What...you think you can just click any old jaz disk you see?");
 				}
-				trayIcon = Titanium.UI.addTray("app://tray.ico", cb);
+				if (Titanium.platform == 'win32')
+				{
+					trayIcon = Titanium.UI.addTray("app://tray.ico", cb);
+				}
+				else
+				{
+					trayIcon = Titanium.UI.addTray("app://tray.png", cb);
+				}
 				trayIcon.setHint("Hinty McHints");
 				addTrayIconMenu();
 			}
@@ -169,6 +185,18 @@
 					alert("Exception: "+e);
 				}
 			}
+			function openWindowSpecd()
+			{
+				try
+				{
+					var w = Titanium.UI.createWindow("app://smallscreen.html");
+					w.open();
+				}
+				catch(e)
+				{
+					alert("Exception: "+e);
+				}
+			}
 			function jsAlert()
 			{
 				var msg = 'This is a JavaScript alert';
@@ -212,6 +240,8 @@
 		<div>
 			<button onclick="openWindowNormal()">Open Window</button>
 			<button onclick="openWindowFullScreen()">Open Window (fullscreen)</button>
+			<button onclick="openWindowSpecd()">Open window (specd)</button>
+			<a href="app://smallscreen.html">small screen</a>
 		</div>
 		<div>Delegate:<br/>
 			<button onclick="jsAlert()">alert</button>
@@ -260,6 +290,18 @@
 			</td>
 			<td><button onclick="unsetAppContextMenu()">Remove App Context Menu</button><br/>
 				<span style="font-size: 10px;">(no more menus)</span>
+			</td>
+		</tr>
+		</table>
+		</div>
+
+		<div>Dock Menus:<br/>
+		<table>
+		<tr>
+			<td> 
+				<button onclick="setDockMenu()">Set Dock Menu</button></td>
+			<td>
+				<button onclick="removeDockMenu()">Remove Dock Menu</button></td>
 			</td>
 		</tr>
 		</table>

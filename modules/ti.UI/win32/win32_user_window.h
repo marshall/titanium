@@ -45,10 +45,6 @@ protected:
 	HWND window_handle, view_window_handle;
 	IWebView* web_view;
 	IWebFrame *main_frame;
-	std::string title, id;
-	bool showing, full_screen, using_scrollbars,
-		resizable, using_chrome, minimizable, maximizable, closeable;
-	double transparency;
 	std::map<long, SharedBoundMethod> messageHandlers;
 	bool requires_display;
 	bool topmost;
@@ -83,6 +79,15 @@ public:
 	Win32UserWindow(kroll::Host *host, WindowConfig *config);
 	virtual ~Win32UserWindow();
 	UserWindow* WindowFactory(Host*, WindowConfig*);
+
+	void OpenFiles(
+		SharedBoundMethod callback,
+		bool multiple,
+		bool files,
+		bool directories,
+		std::string& path,
+		std::string& file,
+		std::vector<std::string>& types);
 
 	void AddMessageHandler(const ValueList& args, SharedValue result);
 
@@ -146,12 +151,29 @@ public:
 	bool IsTopMost();
 	void SetTopMost(bool topmost);
 
-	void SetupMenu();
-	void SetupIcon();
-
 	// called by frame load delegate to let the window know it's loaded
 	void FrameLoaded();
 
+private:
+	void SetupPosition();
+	void SetupSize();
+	void SetupDecorations();
+	void SetupMenu();
+	void SetupIcon();
+
+	SharedBoundList SelectDirectory(
+		bool multiple,
+		std::string& path,
+		std::string& file);
+
+	SharedBoundList SelectFile(
+		SharedBoundMethod callback,
+		bool multiple,
+		std::string& path,
+		std::string& file,
+		std::vector<std::string>& types);
+
+	static void ParseStringNullSeparated(const char *s, std::vector<std::string> &tokens);
 };
 
 }

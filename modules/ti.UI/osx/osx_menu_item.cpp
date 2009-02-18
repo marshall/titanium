@@ -10,28 +10,99 @@
 
 namespace ti {
 
-	OSXMenuItem::OSXMenuItem(OSXMenuItemType type)
-		 : parent(NULL)
+	OSXMenuItem::OSXMenuItem()
+		 : parent(NULL), enabled(true)
 	{
-		if (type == Separator)
-		{
-			this->native = [NSMenuItem separatorItem];
-			[native retain];
-		}
-		else if (type == Tray)
-		{
-			//TODO:
-		}
-		else if (type == Item)
-		{
-			this->native = [[OSXMenuDelegate alloc] initWithMenu:this];
-		}
 	}
-	
 	OSXMenuItem::~OSXMenuItem()
 	{
-		[native release];
+		KR_DUMP_LOCATION
 	}
+
+	void OSXMenuItem::SetParent(OSXMenuItem* parent)
+	{
+		this->parent = parent;
+	}
+
+	OSXMenuItem* OSXMenuItem::GetParent()
+	{
+		return this->parent;
+	}
+
+	SharedValue OSXMenuItem::AddSeparator()
+	{
+		OSXMenuItem* item = new OSXMenuItem();
+		item->MakeSeparator();
+		return this->AppendItem(item);
+	}
+
+	SharedValue OSXMenuItem::AddItem(SharedValue label,
+	                              SharedValue callback,
+	                              SharedValue icon_url)
+	{
+		OSXMenuItem* item = new OSXMenuItem();
+		item->MakeItem(label, callback, icon_url);
+		return this->AppendItem(item);
+	}
+
+	SharedValue OSXMenuItem::AddSubMenu(SharedValue label,
+	                                        SharedValue icon_url)
+	{
+		OSXMenuItem* item = new OSXMenuItem();
+		item->MakeSubMenu(label, icon_url);
+		return this->AppendItem(item);
+	}
+
+	SharedValue OSXMenuItem::AppendItem(OSXMenuItem* item)
+	{
+		item->SetParent(this);
+		this->children.push_back(item);
+		return MenuItem::AddToListModel(item);
+	}
+	
+	int OSXMenuItem::GetChildCount()
+	{
+		return this->children.size();
+	}
+	
+	OSXMenuItem* OSXMenuItem::GetChild(int c)
+	{
+		return this->children.at(c);
+	}
+	
+	bool OSXMenuItem::IsEnabled()
+	{
+		return this->enabled;
+	}
+	
+
+	/* Crazy mutations below */
+	void OSXMenuItem::Enable()
+	{
+		this->enabled = true;
+	}
+
+	void OSXMenuItem::Disable()
+	{
+		this->enabled = false;
+	}
+
+	void OSXMenuItem::SetLabel(std::string label)
+	{
+	}
+
+	void OSXMenuItem::SetIcon(std::string icon_url)
+	{
+	}
+	
+	NSMenuItem* OSXMenuItem::CreateNative()
+	{
+		if (this->IsSeparator())
+		{
+			return [NSMenuItem separatorItem];
+		}
+		return [[OSXMenuDelegate alloc] initWithMenu:this]; 
+	}	
 	
 	void OSXMenuItem::Invoke()
 	{
@@ -52,95 +123,5 @@ namespace ti {
 		}
 	}
 
-	void OSXMenuItem::SetParent(OSXMenuItem* parent)
-	{
-		//TODO: review this ...
-		this->parent = parent;
-	}
-
-	OSXMenuItem* OSXMenuItem::GetParent()
-	{
-		return this->parent;
-	}
-
-	SharedValue OSXMenuItem::AddSeparator()
-	{
-		OSXMenuItem* item = new OSXMenuItem(Separator);
-		item->MakeSeparator();
-		return this->AppendItem(item);
-	}
-	
-	SharedValue OSXMenuItem::AddItem(SharedValue label,
-	                              SharedValue callback,
-	                              SharedValue icon_url)
-	{
-		OSXMenuItem* item = new OSXMenuItem(Item);
-		item->MakeItem(label, callback, icon_url);
-		return this->AppendItem(item);
-	}
-
-	SharedValue OSXMenuItem::AddSubMenu(SharedValue label,
-	                                        SharedValue icon_url)
-	{
-		OSXMenuItem* item = new OSXMenuItem(Item);
-		item->MakeSubMenu(label, icon_url);
-		return this->AppendItem(item);
-	}
-
-	SharedValue OSXMenuItem::AppendItem(OSXMenuItem* item)
-	{
-		item->SetParent(this);
-		this->children.push_back(item);
-
-
-		// /* Realize the new item and add it to all existing instances */
-		// std::vector<MenuPieces*>::iterator i = this->instances.begin();
-		// while (i != this->instances.end())
-		// {
-		// 	MenuPieces *pieces = item->Realize(false);
-		// 	gtk_menu_shell_append(GTK_MENU_SHELL((*i)->menu), pieces->item);
-		// 	gtk_widget_show(pieces->item);
-		// 	i++;
-		// }
-
-		return MenuItem::AddToListModel(item);
-	}
-
-
-	/* Crazy mutations below */
-	void OSXMenuItem::Enable()
-	{
-		[native setEnabled:YES];
-	}
-
-	void OSXMenuItem::Disable()
-	{
-		[native setEnabled:NO];
-	}
-
-	void OSXMenuItem::SetLabel(std::string label)
-	{
-		NSString *title = [NSString stringWithCString:label.c_str()];
-		[native setTitle:title];
-	}
-
-	void OSXMenuItem::SetIcon(std::string icon_url)
-	{
-		if (UIModule::IsResourceLocalFile(icon_url))
-		{
-			SharedString file = UIModule::GetResourcePath(icon_url.c_str());
-			NSString *path = [NSString stringWithCString:((*file).c_str())];
-			NSImage *image = [[NSImage alloc] initWithContentsOfFile:path];
-			[native setImage:image];
-			[image release];
-		}
-		else
-		{
-			NSURL *url = [NSURL URLWithString:[NSString stringWithCString:icon_url.c_str()]];
-			NSImage *image = [[NSImage alloc] initWithContentsOfURL:url];
-			[native setImage:image];
-			[image release];
-		}
-	}
 }
 

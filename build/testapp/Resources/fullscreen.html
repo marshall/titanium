@@ -1,5 +1,22 @@
 <html>
 <head>
+<style>
+body
+{
+	margin:5px;
+	background:-webkit-gradient(linear, left top, left bottom, from(#444), to(#1e1e1e));
+	font-family:"Helvetica Neue", Georgia, sans-serif;
+	color:white;
+	font-size:12px;
+	min-width:900px;
+	padding-bottom:200px;
+	overflow:hidden;
+}
+button {
+	padding: 10px;
+	margin: 4px;
+}
+</style>
 <script>
 	function toggleFullscreen()
 	{
@@ -19,6 +36,76 @@
 		}
 	}
 
+	function toggleChrome()
+	{
+		try
+		{
+			var cw = Titanium.UI.currentWindow;
+			var c = cw.isUsingChrome();
+			cw.setUsingChrome(!c);
+		}
+		catch(e)
+		{
+			alert("exception: "+e);
+		}
+	}
+
+	function toggleMax()
+	{
+		try
+		{
+			var cw = Titanium.UI.currentWindow;
+			var f = cw.isMaximizable();
+			cw.setMaximizable(! f);
+		}
+		catch(e)
+		{
+			alert("exception: "+e);
+		}
+	}
+
+	function toggleMin()
+	{
+		try
+		{
+			var cw = Titanium.UI.currentWindow;
+			var f = cw.isMinimizable();
+			cw.setMinimizable(! f);
+		}
+		catch(e)
+		{
+			alert("exception: "+e);
+		}
+	}
+
+	function toggleClose()
+	{
+		try
+		{
+			var cw = Titanium.UI.currentWindow;
+			var f = cw.isCloseable();
+			cw.setCloseable(! f);
+		}
+		catch(e)
+		{
+			alert("exception: "+e);
+		}
+	}
+
+	function toggleResizable()
+	{
+		try
+		{
+			var cw = Titanium.UI.currentWindow;
+			var f = cw.isResizable();
+			cw.setResizable(! f);
+		}
+		catch(e)
+		{
+			alert("exception: "+e);
+		}
+	}
+
 	function closeMe()
 	{
 		Titanium.UI.currentWindow.close();
@@ -27,7 +114,18 @@
 </script>
 </head>
 <body>
+	<div>
 	<button onclick="toggleFullscreen()">Toggle Fullscreen</button>
+	<button onclick="toggleChrome()">Toggle Chrome</button>
 	<button onclick="closeMe()">Bye</button>
+	</div>
+	<button onclick="toggleMin()">Toggle minimizable</button>
+	<button onclick="toggleMax()">Toggle maximizable</button>
+	<button onclick="toggleClose()">Toggle closeable</button>
+	<div>
+	</div>
+	<button onclick="toggleResizable()">Toggle resizable</button>
+	<div>
+	</div>
 </body>
 </html>

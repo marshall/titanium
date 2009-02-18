@@ -15,7 +15,7 @@ module_dirs = [
 ]
 modules = {}
 for dir in module_dirs:
-	 modules[dir.lower().replace('.','')] = '0.1'
+	 modules[dir.lower().replace('.','')] = dir
 
 manifest_text="""
 #appname: %s
@@ -23,8 +23,8 @@ manifest_text="""
 runtime: %s
 """ % (name, appid, version)
 
-for pair in modules.items():
-	manifest_text += "%s: %s\n" % pair
+for m in modules.keys():
+	manifest_text += "%s: %s\n" % (m, '0.1')
 
 vars = 'vars build name version runtime_libs '
 vars += ' third_party modules appid manifest_text'

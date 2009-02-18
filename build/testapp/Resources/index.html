@@ -23,6 +23,15 @@
 				
 			}
 			
+			a.bye {
+				margin-left: 20px;
+				padding: 3px 10px 3px 10px;
+				background-color: #e3e3e3;
+				font-size: 7.5pt;
+				color: #f33;
+				text-decoration: none;
+			}
+			
 			#tests {
 				font-family: 'Lucida Grande', Georgia;
 				background-color: #3e3e3e;
@@ -42,6 +51,7 @@
 				var test = $('tests').options[$('tests').selectedIndex].value;
 				$('testframe').src = test;
 			}
+			function bye() { Titanium.App.exit(); }
 		</script>
 	</head>
 	<body onload="openTest()">
@@ -49,26 +59,28 @@
 			<span id="title"><img src="images/logo_small.png"/>Titanium Test App</span>
 			Select a Test:
 			<select id="tests" onchange="openTest();">
-				<option selected="selected">app://Titanium.BaseTests.html</option>
-				<option>app://Titanium.App.test.html</option>
-				<option>app://Titanium.Filesystem.test.html</option>
-				<option>app://Titanium.Filesystem.FileStream.test.html</option>
-				<option>app://Titanium.Desktop.test.html</option>
-				<option>app://Titanium.Notification.test.html</option>
-				<option>app://Titanium.Media.test.html</option>
-				<option>app://Titanium.UI.test.html</option>
-				<option>app://Titanium.UI-2.test.html</option>
-				<option>app://Titanium.Dock.test.html</option>
-				<option>app://Titanium.Network.test.html</option>
-				<option>app://Titanium.Platform.test.html</option>
-				<option>app://Titanium.Process.test.html</option>
-				<option>app://Titanium.Script.test.html</option>
-				<option>app://Titanium.Database.test.html</option>
-				<option>app://Titanium.AJAX.test.html</option>
+				<option selected="selected">app://test-base.html</option>
+				<option>app://test-app.html</option>
+				<option>app://test-filesystem.html</option>
+				<option>app://test-filesystem-filestream.html</option>
+				<option>app://test-desktop.html</option>
+				<option>app://test-notification.html</option>
+				<option>app://test-media.html</option>
+				<option>app://test-ui.html</option>
+				<option>app://test-ui2.html</option>
+				<option>app://test-dock.html</option>
+				<option>app://test-network.html</option>
+				<option>app://test-platform.html</option>
+				<option>app://test-process.html</option>
+				<option>app://test-scripts.html</option>
+				<option>app://test-database.html</option>
+				<option>app://test-ajax.html</option>
+				<option>app://fullscreen.html</option>
 				<option>http://demos.mootools.net/</option>
 				<option>http://cappuccino.org/learn/demos/</option>
 				<option>http://www.google.com/mail</option>
 			</select>
+			<span><a class="bye" href="javascript:bye();">bye</a></span>
 		</div>
 		<iframe id="testframe"></iframe>
 		

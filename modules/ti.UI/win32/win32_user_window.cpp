@@ -14,6 +14,8 @@
 #include <math.h>
 #include <shellapi.h>
 #include <comutil.h>
+#include <commdlg.h>
+#include <shlobj.h>
 
 #define STUB() printf("Method is still a stub, %s:%i\n", __FILE__, __LINE__)
 #define SetFlag(x,flag,b) ((b) ? x |= flag : x &= ~flag)
@@ -377,9 +379,8 @@ double Win32UserWindow::GetX() {
 }
 
 void Win32UserWindow::SetX(double x) {
-	Bounds b = GetBounds();
-	b.x = x;
-	SetBounds(b);
+	this->config->SetX(x);
+	this->SetupPosition();
 }
 
 double Win32UserWindow::GetY() {
@@ -387,9 +388,8 @@ double Win32UserWindow::GetY() {
 }
 
 void Win32UserWindow::SetY(double y) {
-	Bounds b = GetBounds();
-	b.y = y;
-	SetBounds(b);
+	this->config->SetY(y);
+	this->SetupPosition();
 }
 
 double Win32UserWindow::GetWidth() {
@@ -397,9 +397,8 @@ double Win32UserWindow::GetWidth() {
 }
 
 void Win32UserWindow::SetWidth(double width) {
-	Bounds b = GetBounds();
-	b.width = width;
-	SetBounds(b);
+	this->config->SetWidth(width);
+	this->SetupSize();
 }
 
 double Win32UserWindow::GetHeight() {
@@ -407,9 +406,8 @@ double Win32UserWindow::GetHeight() {
 }
 
 void Win32UserWindow::SetHeight(double height) {
-	Bounds b = GetBounds();
-	b.height = height;
-	SetBounds(b);
+	this->config->SetHeight(height);
+	this->SetupSize();
 }
 
 double Win32UserWindow::GetMaxWidth() {
@@ -478,7 +476,7 @@ void Win32UserWindow::SetBounds(Bounds bounds) {
 }
 
 void Win32UserWindow::SetTitle(std::string& title) {
-	this->title = std::string(title);
+	this->config->SetTitle(std::string(title));
 	SetWindowText(window_handle, title.c_str());
 }
 
@@ -537,22 +535,23 @@ SetFlag(window_style, flag, b);\
 SetWindowLong(wnd, GWL_STYLE, window_style);
 
 void Win32UserWindow::SetResizable(bool resizable) {
-	this->resizable = resizable;
-	SetGWLFlag(window_handle, WS_OVERLAPPEDWINDOW, using_chrome && !resizable);
+	this->config->SetResizable(resizable);
+	SetGWLFlag(window_handle, WS_OVERLAPPEDWINDOW, this->config->IsUsingChrome() && !resizable);
 }
 
 void Win32UserWindow::SetMaximizable(bool maximizable) {
-	this->maximizable = maximizable;
-	SetGWLFlag(window_handle, WS_MAXIMIZEBOX, maximizable);
+	this->config->SetMaximizable(maximizable);
+	this->SetupDecorations();
 }
 
 void Win32UserWindow::SetMinimizable(bool minimizable) {
-	this->minimizable = minimizable;
-	SetGWLFlag(window_handle, WS_MINIMIZEBOX, minimizable);
+	this->config->SetMinimizable(minimizable);
+	this->SetupDecorations();
 }
 
 void Win32UserWindow::SetCloseable(bool closeable) {
-	this->closeable = closeable;
+	this->config->SetCloseable(closeable);
+	// TODO
 }
 
 bool Win32UserWindow::IsVisible() {
@@ -564,12 +563,12 @@ bool Win32UserWindow::IsVisible() {
 }
 
 void Win32UserWindow::SetVisible(bool visible) {
-	this->showing = visible;
+	this->config->SetVisible(visible);
 	ShowWindow(window_handle, visible ? SW_SHOW : SW_HIDE);
 }
 
 void Win32UserWindow::SetTransparency(double transparency) {
-	this->transparency = transparency;
+	this->config->SetTransparency(transparency);
 	SetLayeredWindowAttributes(window_handle, 0, (BYTE)floor(transparency*255), LWA_ALPHA);
 }
 
@@ -672,8 +671,25 @@ SharedString Win32UserWindow::GetIcon()
 }
 
 void Win32UserWindow::SetUsingChrome(bool chrome) {
-	STUB();
-	//TODO: implement
+	this->config->SetUsingChrome(chrome);
+	this->SetupDecorations();
+}
+
+void Win32UserWindow::SetupDecorations() {
+	long windowStyle = GetWindowLong(this->window_handle, GWL_STYLE);
+
+	SetFlag(windowStyle, WS_OVERLAPPED, config->IsUsingChrome());
+	SetFlag(windowStyle, WS_CAPTION, config->IsUsingChrome());
+	SetFlag(windowStyle, WS_SYSMENU, config->IsUsingChrome());
+	SetFlag(windowStyle, WS_BORDER, config->IsUsingChrome());
+
+	SetFlag(windowStyle, WS_MAXIMIZEBOX, config->IsMaximizable());
+	SetFlag(windowStyle, WS_MINIMIZEBOX, config->IsMinimizable());
+
+	SetWindowLong(this->window_handle, GWL_STYLE, windowStyle);
+
+	ShowWindow(window_handle, SW_HIDE);
+	ShowWindow(window_handle, SW_SHOW);
 }
 
 void Win32UserWindow::AppMenuChanged()
@@ -788,3 +804,198 @@ void Win32UserWindow::SetTopMost(bool topmost)
 		this->topmost = false;
 	}
 }
+
+void Win32UserWindow::SetupPosition()
+{
+	Bounds b = GetBounds();
+	b.x = this->config->GetX();
+	b.y = this->config->GetY();
+
+	this->SetBounds(b);
+}
+
+void Win32UserWindow::SetupSize()
+{
+	Bounds b = GetBounds();
+	b.width = this->config->GetWidth();
+	b.height = this->config->GetHeight();
+
+	this->SetBounds(b);
+}
+
+void Win32UserWindow::OpenFiles(
+	SharedBoundMethod callback,
+	bool multiple,
+	bool files,
+	bool directories,
+	std::string& path,
+	std::string& file,
+	std::vector<std::string>& types)
+{
+	SharedBoundList results;
+	if(directories) {
+		results = SelectDirectory(multiple, path, file);
+	}
+	else
+	{
+		results = SelectFile(callback, multiple, path, file, types);
+	}
+
+	ValueList args;
+	args.push_back(Value::NewList(results));
+	callback->Call(args);
+}
+
+SharedBoundList Win32UserWindow::SelectFile(
+	SharedBoundMethod callback,
+	bool multiple,
+	std::string& path,
+	std::string& file,
+	std::vector<std::string>& types)
+{
+	//std::string filterName = props->GetString("typesDescription", "Filtered Files");
+	std::string filterName = "Filtered Files";
+	std::string filter;
+
+	if(types.size() > 0)
+	{
+		//"All\0*.*\0Test\0*.TXT\0";
+		filter.append(filterName);
+		filter.push_back('\0');
+
+		for(int i = 0; i < types.size(); i++)
+		{
+			std::string type = types.at(i);
+
+			//multiple filters: "*.TXT;*.DOC;*.BAK"
+			size_t found = type.find("*.");
+			if(found != 0)
+			{
+				filter.append("*.");
+			}
+			filter.append(type);
+			filter.append(";");
+		}
+
+		filter.push_back('\0');
+	}
+
+	OPENFILENAME ofn;
+	char filen[255];
+
+	ZeroMemory(&filen, sizeof(filen));
+
+	if(file.size() == 0)
+	{
+		filen[0] = '\0';
+	}
+	else
+	{
+		strcpy(filen, file.c_str());
+	}
+
+	// init OPENFILE
+	ZeroMemory(&ofn, sizeof(ofn));
+	ofn.lStructSize = sizeof(ofn);
+	ofn.hwndOwner = this->window_handle;
+	ofn.lpstrFile = filen;
+	ofn.nMaxFile = sizeof(filen);
+	ofn.lpstrFilter = (filter.length() == 0 ? NULL : filter.c_str());
+	ofn.nFilterIndex = 1;
+	ofn.lpstrFileTitle = NULL;
+	ofn.nMaxFileTitle = 0;
+	ofn.lpstrInitialDir = (path.length() == 0 ? NULL : path.c_str());
+	ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_EXPLORER;
+
+	if(multiple) ofn.Flags |= OFN_ALLOWMULTISELECT;
+
+	SharedBoundList results = new StaticBoundList();
+	// display the open dialog box
+	if(GetOpenFileName(&ofn) == TRUE)
+	{
+		// if the user selected multiple files, ofn.lpstrFile is a NULL-separated list of filenames
+		// if the user only selected one file, ofn.lpstrFile is a normal string
+
+		std::vector<std::string> tokens;
+		ParseStringNullSeparated(ofn.lpstrFile, tokens);
+
+		if(tokens.size() == 1)
+		{
+			results->Append(Value::NewString(tokens.at(0)));
+		}
+		else if(tokens.size() > 1)
+		{
+			std::string directory(tokens.at(0));
+			for(int i = 1; i < tokens.size(); i++)
+			{
+				std::string n;
+				n.append(directory.c_str());
+				n.append("\\");
+				n.append(tokens.at(i).c_str());
+				results->Append(Value::NewString(n));
+			}
+		}
+	}
+	return results;
+}
+
+SharedBoundList Win32UserWindow::SelectDirectory(
+	bool multiple,
+	std::string& path,
+	std::string& file)
+{
+	SharedBoundList results = new StaticBoundList();
+
+	BROWSEINFO bi = { 0 };
+	//std::string title("Select a directory");
+	//bi.lpszTitle = title.c_str();
+	bi.hwndOwner = this->window_handle;
+	LPITEMIDLIST pidl = SHBrowseForFolder(&bi);
+
+	if(pidl != 0)
+	{
+		// get folder name
+		TCHAR in_path[MAX_PATH];
+		if(SHGetPathFromIDList(pidl, in_path))
+		{
+			results->Append(Value::NewString(std::string(in_path)));
+		}
+	}
+	return results;
+}
+
+void Win32UserWindow::ParseStringNullSeparated(const char *s, std::vector<std::string> &tokens)
+{
+	std::string token;
+
+	// input string is expected to be composed of single-NULL-separated tokens, and double-NULL terminated
+	int i = 0;
+	while(true)
+	{
+		char c;
+
+		c = s[i++];
+
+		if(c == '\0')
+		{
+			// finished reading a token, save it in tokens vectory
+			tokens.push_back(token);
+			token.clear();
+
+			c = s[i];		// don't increment index because next token loop needs to read this char again
+
+			// if next char is NULL, then break out of the while loop
+			if(c == '\0')
+			{
+				break;	// out of while loop
+			}
+			else
+			{
+				continue;	// read next token
+			}
+		}
+
+		token.push_back(c);
+	}
+}
+
