@@ -82,7 +82,7 @@ UserWindow::UserWindow(kroll::Host *host, WindowConfig *config) :
 	this->SetMethod("isMaximizable", &UserWindow::_IsMaximizable);
 	this->SetMethod("setMaximizable", &UserWindow::_SetMaximizable);
 	this->SetMethod("isMinimizable", &UserWindow::_IsMinimizable);
-	this->SetMethod("setMinizable", &UserWindow::_SetMinimizable);
+	this->SetMethod("setMinimizable", &UserWindow::_SetMinimizable);
 	this->SetMethod("isCloseable", &UserWindow::_IsCloseable);
 	this->SetMethod("setCloseable", &UserWindow::_SetCloseable);
 	this->SetMethod("isVisible", &UserWindow::_IsVisible);
@@ -518,7 +518,8 @@ void UserWindow::_CreateWindow(const ValueList& args, SharedValue result)
 	{
 		// String might match a url spec
 		std::string url = args.at(0)->ToString();
-		config = new WindowConfig(url);
+		WindowConfig* matchedConfig = AppConfig::Instance()->GetWindowByURL(url);
+		config = new WindowConfig(matchedConfig, url);
 	}
 	else
 	{
@@ -530,22 +531,26 @@ void UserWindow::_CreateWindow(const ValueList& args, SharedValue result)
 
 void UserWindow::UpdateWindowForURL(std::string url)
 {
-	WindowConfig *winConfig = new WindowConfig(url);
-
-	if(winConfig)
+	WindowConfig* config = AppConfig::Instance()->GetWindowByURL(url);
+	if(! config)
 	{
-		Bounds b;
-		b.x = winConfig->GetX();
-		b.y = winConfig->GetY();
-		b.width = winConfig->GetWidth();
-		b.height = winConfig->GetHeight();
-
-		this->SetBounds(b);
-
-		this->SetMinimizable(winConfig->IsMinimizable());
-		this->SetMaximizable(winConfig->IsMaximizable());
-		this->SetCloseable(winConfig->IsCloseable());
+		// no need to update window
+		return;
 	}
+
+	WindowConfig *winConfig = new WindowConfig(config, url);
+
+	Bounds b;
+	b.x = winConfig->GetX();
+	b.y = winConfig->GetY();
+	b.width = winConfig->GetWidth();
+	b.height = winConfig->GetHeight();
+
+	this->SetBounds(b);
+
+	this->SetMinimizable(winConfig->IsMinimizable());
+	this->SetMaximizable(winConfig->IsMaximizable());
+	this->SetCloseable(winConfig->IsCloseable());
 }
 
 SharedBoundObject UserWindow::CreateWindow(WindowConfig *config)

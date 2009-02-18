@@ -132,9 +132,8 @@ void WindowConfig::UseProperties(SharedBoundObject properties)
 	SET_DOUBLE(transparency, transparency);
 }
 
-WindowConfig::WindowConfig(std::string& url)
+WindowConfig::WindowConfig(WindowConfig *config, std::string& url)
 {
-	WindowConfig* config = AppConfig::Instance()->GetWindowByURL(url);
 	this->SetDefaults();
 	this->url = url;
 
