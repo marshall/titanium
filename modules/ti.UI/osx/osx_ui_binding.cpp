@@ -18,33 +18,43 @@ namespace ti
 
 	OSXUIBinding::OSXUIBinding(Host *host) : UIBinding(host)
 	{
-
+		[TiProtocol registerSpecialProtocol];
+		[AppProtocol registerSpecialProtocol];
+		TiApplication *app = [[[TiApplication alloc] initWithBinding:this] autorelease];
+		NSApplication *nsapp = [NSApplication sharedApplication];
+		[nsapp setDelegate:app];
+		[NSBundle loadNibNamed:@"MainMenu" owner:nsapp];
 	}
 
 	OSXUIBinding::~OSXUIBinding()
 	{
+		[appDockMenu release];
 		[savedDockView release];
 	}
 
 	SharedPtr<MenuItem> OSXUIBinding::CreateMenu(bool trayMenu)
 	{
-		return new OSXMenuItem(trayMenu ? Tray : Item);
+		return new OSXMenuItem();
 	}
 
-	void OSXUIBinding::SetMenu(SharedPtr<MenuItem>)
+	void OSXUIBinding::SetMenu(SharedPtr<MenuItem> menu)
 	{
+		this->menu = menu;
 	}
 
-	void OSXUIBinding::SetContextMenu(SharedPtr<MenuItem>)
+	void OSXUIBinding::SetContextMenu(SharedPtr<MenuItem> menu)
 	{
+		this->contextMenu = menu;
 	}
 
 	void OSXUIBinding::SetDockIcon(SharedString icon_path)
 	{
+		this->dockIcon = icon_path;
 	}
 
-	void OSXUIBinding::SetDockMenu(SharedPtr<MenuItem>)
+	void OSXUIBinding::SetDockMenu(SharedPtr<MenuItem> menu)
 	{
+		this->dockMenu = menu;
 	}
 
 	void OSXUIBinding::SetBadge(SharedString badge_label)
@@ -102,6 +112,32 @@ namespace ti
 
 	void OSXUIBinding::SetIcon(SharedString icon_path)
 	{
+		this->icon = icon_path;
+	}
+	
+	SharedString OSXUIBinding::GetDockIcon()
+	{
+		return this->dockIcon;
+	}
+	
+	SharedPtr<MenuItem> OSXUIBinding::GetDockMenu()
+	{
+		return this->dockMenu;
+	}
+	
+	SharedPtr<MenuItem> OSXUIBinding::GetMenu()
+	{
+		return this->menu;
+	}
+
+	SharedPtr<MenuItem> OSXUIBinding::GetContextMenu()
+	{
+		return this->contextMenu;
+	}
+	
+	SharedString OSXUIBinding::GetIcon()
+	{
+		return this->icon;
 	}
 
 	SharedPtr<TrayItem> OSXUIBinding::AddTray(
@@ -109,62 +145,11 @@ namespace ti
 		SharedBoundMethod cb)
 	{
 		SharedPtr<TrayItem> item = NULL;
+		// NSStatusBar *statusBar = [NSStatusBar systemStatusBar];
+		// NSStatusItem *statusItem = [statusBar statusItemWithLength:NSVariableStatusItemLength];
+		// NSString *title = [NSString stringWithCString:menu->GetLabel()];
+		// [statusItem setTitle:title];
 		return item;
-	}
-
-	void OSXUIBinding::OpenFiles(
-		SharedBoundMethod callback,
-		bool multiple,
-		bool files,
-		bool directories,
-		std::string& path,
-		std::string& file,
-		std::vector<std::string>& types)
-	{
-		SharedBoundList results = new StaticBoundList();
-
-		NSOpenPanel* openDlg = [NSOpenPanel openPanel];
-		[openDlg setCanChooseFiles:files];
-		[openDlg setCanChooseDirectories:directories];
-		[openDlg setAllowsMultipleSelection:multiple];
-		[openDlg setResolvesAliases:YES];
-
-		NSMutableArray *filetypes = nil;
-		NSString *begin = nil, *filename = nil;
-
-		if (file != "")
-		{
-			filename = [NSString stringWithCString:file.c_str()];
-		}
-		if (path != "")
-		{
-			begin = [NSString stringWithCString:path.c_str()];
-		}
-		if (types.size() > 0)
-		{
-			filetypes = [[NSMutableArray alloc] init];
-			for (size_t t = 0; t < types.size(); t++)
-			{
-				const char *s = types.at(t).c_str();
-				[filetypes addObject:[NSString stringWithCString:s]];
-			}
-		}
-
-		if ( [openDlg runModalForDirectory:begin file:filename types:filetypes] == NSOKButton )
-		{
-			NSArray* selected = [openDlg filenames];
-			for (int i = 0; i < (int)[selected count]; i++)
-			{
-				NSString* fileName = [selected objectAtIndex:i];
-				std::string fn = [fileName UTF8String];
-				results->Append(Value::NewString(fn));
-			}
-		}
-		[filetypes release];
-
-		ValueList args;
-		args.push_back(Value::NewList(results));
-		callback->Call(args);
 	}
 
 	long OSXUIBinding::GetIdleTime()

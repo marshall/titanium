@@ -9,6 +9,7 @@
 #define _OSX_UI_BINDING_H_
 
 #include "../ui_module.h"
+#include "ti_app.h"
 
 namespace ti
 {
@@ -30,19 +31,22 @@ namespace ti
 		virtual void SetDockMenu(SharedPtr<MenuItem>);
 		virtual void SetBadge(SharedString badge_label);
 		virtual void SetBadgeImage(SharedString badge_path);
-
-		void OpenFiles(
-			SharedBoundMethod callback,
-			bool multiple,
-			bool files,
-			bool directories,
-			std::string& path,
-			std::string& file,
-			std::vector<std::string>& types);
+		
+		SharedPtr<MenuItem> GetMenu();
+		SharedPtr<MenuItem> GetContextMenu();
+		SharedString GetIcon();
+		SharedString GetDockIcon();
+		SharedPtr<MenuItem> GetDockMenu();
 
 		long GetIdleTime();
 	private:
 		NSView *savedDockView;
+		SharedPtr<MenuItem> menu;
+		SharedString icon;
+		SharedPtr<MenuItem> contextMenu;
+		SharedString dockIcon;
+		SharedPtr<MenuItem> dockMenu;
+		NSMenu *appDockMenu;
 	};
 }
 

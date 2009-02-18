@@ -54,7 +54,8 @@ elif sys.platform == 'darwin':
 top_dir = path.abspath('./../')
 build_dir = path.join(top_dir, 'build')
 build_dir = path.join(build_dir, osname)
-third_party_dir = path.join(top_dir, 'kroll/thirdparty/' + osname);
+third_party_dir = path.join(top_dir, 'kroll','thirdparty', osname);
+support_dir = path.join(top_dir,'support',osname)
 
 app_dir = path.join(build_dir, app_name)
 if osname is 'osx':
@@ -85,7 +86,8 @@ for tp in third_party:
             shutil.copytree(d, dest, symlinks=True)
 
     lib_files_dir = path.join(third_party_dir, tp, lib_dir)
-    dir_util.copy_tree(lib_files_dir, runtime_dir, preserve_symlinks=1)
+    if path.exists(lib_files_dir):
+    	dir_util.copy_tree(lib_files_dir, runtime_dir, preserve_symlinks=1)
 
 # Gather all module libs
 for m in modules.keys():
@@ -135,13 +137,12 @@ if osname is 'osx':
     out_file = open(path.join(app_dir, 'Info.plist'), 'w')
     out_file.write(plist)
     out_file.close()
-    #out_file = open(path.join(app_dir, 'manifest'), 'w')
-    #out_file.write(manifest_text)
-    #out_file.close()
     menu_nib = path.join(build_dir, 'modules', 'ti.UI', 'MainMenu.nib')
     lproj = path.join(app_dir, 'Resources', 'English.lproj')
     os.makedirs(lproj)
     shutil.copy(menu_nib, lproj)
+    shutil.copy(path.join(support_dir,'titanium.icns'),path.join(app_dir,'Resources'))
+
     
 # copy test app resources
 app_src = path.join(top_dir, 'build')

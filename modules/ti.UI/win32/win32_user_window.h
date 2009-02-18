@@ -84,6 +84,15 @@ public:
 	virtual ~Win32UserWindow();
 	UserWindow* WindowFactory(Host*, WindowConfig*);
 
+	void OpenFiles(
+		SharedBoundMethod callback,
+		bool multiple,
+		bool files,
+		bool directories,
+		std::string& path,
+		std::string& file,
+		std::vector<std::string>& types);
+
 	void AddMessageHandler(const ValueList& args, SharedValue result);
 
 	void ResizeSubViews();
@@ -152,6 +161,20 @@ public:
 	// called by frame load delegate to let the window know it's loaded
 	void FrameLoaded();
 
+private:
+	SharedBoundList SelectDirectory(
+		bool multiple,
+		std::string& path,
+		std::string& file);
+
+	SharedBoundList SelectFile(
+		SharedBoundMethod callback,
+		bool multiple,
+		std::string& path,
+		std::string& file,
+		std::vector<std::string>& types);
+
+	static void ParseStringNullSeparated(const char *s, std::vector<std::string> &tokens);
 };
 
 }

@@ -387,6 +387,10 @@
 		// Place currentWindow.createWindow in the delegate.
 		SharedValue create_window_value = shared_user_window->Get("createWindow");
 		delegate_ui_api->Set("createWindow", create_window_value);
+		
+		// Place currentWindow.openFiles in the delegate.
+		SharedValue open_files_value = shared_user_window->Get("openFiles");
+		delegate_ui_api->Set("openFiles", open_files_value);
 
 		ti_object->Set("UI", Value::NewObject(delegate_ui_api));
 	}
@@ -395,22 +399,19 @@
 		std::cerr << "Could not find UI API point!" << std::endl;
 	}
 
-	// Place the Titanium object into the window's global object
+	// Get the global object into a KJSBoundObject
 	BoundObject *global_bound_object = new KJSBoundObject(context, global_object);
+
+	// Copy the document and window properties to the Titanium object
+	SharedValue doc_value = global_bound_object->Get("document");
+	ti_object->Set("document", doc_value);
+	SharedValue window_value = global_bound_object->Get("window");
+	ti_object->Set("window", window_value);
+
+	// Place the Titanium object into the window's global object
 	SharedValue ti_object_value = Value::NewObject(shared_ti_obj);
 	global_bound_object->Set(GLOBAL_NS_VARNAME, ti_object_value);
-	
-	// we need to place window and document into our shared global
-	SharedBoundObject shared_global_bound_object = global_bound_object;
-	SharedValue win_object_value = Value::NewObject(shared_global_bound_object);
-	ti_object->Set("window",win_object_value);
-	
-	// also place it on the window object itself, so this is accesible to private-context modules
-	shared_user_window->Set("window", win_object_value);
-	
-	SharedValue doc_value = global_bound_object->Get("document");
-	ti_object->Set("document",doc_value);
-	
+
 	scriptCleared = YES;
 }
 
@@ -711,14 +712,22 @@
 	SharedBoundObject bo = [window userWindow];
 	SharedPtr<UserWindow> uw = bo.cast<UserWindow>();
 	SharedPtr<MenuItem> menu = uw->GetContextMenu();
-	NSMutableArray *array = [[NSMutableArray alloc] init];
+	NSMutableArray *array = [[[NSMutableArray alloc] init] autorelease];
+	// window takes precedent - try him first
+	if (menu.isNull())
+	{
+		// if no window, try the app context
+		menu = UIModule::GetContextMenu();
+	}
 	if (!menu.isNull())
 	{
 		for (int c=0;c<menu->Size();c++)
 		{
 			SharedBoundObject item = menu->At(c)->ToObject();
 			SharedPtr<OSXMenuItem> osx_menu = item.cast<OSXMenuItem>();
-			[array addObject:osx_menu->GetNative()]; 
+			NSMenuItem *native = osx_menu->CreateNative();
+			[array addObject:native]; 
+			[native release];
 		}
 	}
 	return array;
@@ -827,8 +836,6 @@ std::string GetModuleName(NSString *typeStr)
 	SharedBoundObject global = host->GetGlobalObject();
 	SharedValue moduleValue = global->Get(moduleName.c_str());
 
-	std::cout << "MATCHES MIME = " << moduleName << ", moduleValue = " << moduleValue->ToTypeString() << std::endl;
-
 	if (!moduleValue->IsNull() && moduleValue->IsObject()) {
 		if (!moduleValue->ToObject()->Get("evaluate")->IsNull()
 			&& !moduleValue->ToObject()->Get("evaluate")->IsUndefined()
@@ -846,8 +853,6 @@ std::string GetModuleName(NSString *typeStr)
 	
 	std::string type = [mimeType UTF8String];
 	std::string moduleName = GetModuleName(mimeType);
-	
-	std::cout << "++ evaluate type="<<type<<",module="<<moduleName<<std::endl;
 	
 	JSContextRef contextRef = reinterpret_cast<JSContextRef>(context);
 

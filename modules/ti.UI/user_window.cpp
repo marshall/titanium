@@ -43,6 +43,7 @@ UserWindow::UserWindow(kroll::Host *host, WindowConfig *config) :
 
 	this->host = host;
 	this->config = config;
+	this->next_listener_id = 0;
 
 	/* this object is accessed by Titanium.Window.currentWindow */
 	this->SetMethod("hide", &UserWindow::_Hide);
@@ -98,6 +99,7 @@ UserWindow::UserWindow(kroll::Host *host, WindowConfig *config) :
 	this->SetMethod("isTopMost", &UserWindow::_IsTopMost);
 
 	this->SetMethod("createWindow", &UserWindow::_CreateWindow);
+	this->SetMethod("openFiles", &UserWindow::_OpenFiles);
 	this->SetMethod("getParent", &UserWindow::_GetParent);
 
 	this->SetMethod("addEventListener", &UserWindow::_AddEventListener);
@@ -501,19 +503,72 @@ void UserWindow::_GetParent(const kroll::ValueList& args, kroll::SharedValue res
 
 void UserWindow::_CreateWindow(const ValueList& args, SharedValue result)
 {
-	SharedBoundObject props = SharedBoundObject(new StaticBoundObject());
-	if (args.size() > 0 && args.at(0)->IsObject())
-		props = args.at(0)->ToObject();
+	//TODO: wrap in sharedptr
+	WindowConfig *config = NULL;
 
-	result->SetObject(this->CreateWindow(props));
+	if (args.size() > 0 && args.at(0)->IsObject())
+	{
+		SharedBoundObject props = SharedBoundObject(new StaticBoundObject());
+		config = new WindowConfig();
+		props = args.at(0)->ToObject();
+		config->UseProperties(props);
+	}
+	else if (args.size() > 0 && args.at(0)->IsString())
+	{
+		// string is the url
+		std::string url = args.at(0)->ToString();
+		config = this->GetWindowConfigByURL(url);
+
+		if(config)
+		{
+			config = new WindowConfig(*config); // copy global config object
+		}
+		else
+		{
+			config = new WindowConfig();
+		}
+
+		config->SetURL(url);
+	}
+	else
+	{
+		config = new WindowConfig();
+	}
+
+	result->SetObject(this->CreateWindow(config));
 }
 
-SharedBoundObject UserWindow::CreateWindow(SharedBoundObject properties)
+/*static*/
+WindowConfig* UserWindow::GetWindowConfigByURL(std::string url)
 {
-	//TODO: wrap in sharedptr
-	WindowConfig *config = new WindowConfig();
-	config->UseProperties(properties);
+	WindowConfig *winConfig = NULL;
+	AppConfig *appConfig = AppConfig::Instance();
+	if (appConfig)
+	{
+		winConfig = appConfig->GetWindowByURL(url);
+	}
 
+	return winConfig;
+}
+
+void UserWindow::UpdateWindowForURL(std::string url)
+{
+	WindowConfig *winConfig = GetWindowConfigByURL(url);
+
+	if(winConfig)
+	{
+		Bounds b;
+		b.x = winConfig->GetX();
+		b.y = winConfig->GetY();
+		b.width = winConfig->GetWidth();
+		b.height = winConfig->GetHeight();
+
+		this->SetBounds(b);
+	}
+}
+
+SharedBoundObject UserWindow::CreateWindow(WindowConfig *config)
+{
 	UserWindow* window = this->WindowFactory(this->host, config);
 
 	window->SetTopMost(config->IsTopMost());
@@ -524,6 +579,59 @@ SharedBoundObject UserWindow::CreateWindow(SharedBoundObject properties)
 
 }
 
+void UserWindow::_OpenFiles(const ValueList& args, SharedValue result)
+{
+	// pass in a set of properties with each key being
+	// the name of the property and a boolean for its setting
+	// example:
+	//
+	// var selected = Titanium.Desktop.openFiles({
+	//    multiple:true,
+	//    files:false,
+	//    directories:true,
+	//    types:['js','html']
+	// });
+	//
+	//
+	SharedBoundMethod callback;
+	if (args.size() < 1 || !args.at(0)->IsMethod())
+	{
+		throw ValueException::FromString("openFiles expects first argument to be a callback");
+	}
+	callback = args.at(0)->ToMethod();
+
+	SharedBoundObject props;
+	if (args.size() < 2 || !args.at(1)->IsObject())
+	{
+		props = new StaticBoundObject();
+	}
+	else
+	{
+		props = args.at(1)->ToObject();
+	}
+
+	bool files = props->GetBool("files", true);
+	bool multiple = props->GetBool("multiple", false);
+	bool directories = props->GetBool("directories", false);
+	std::string path = props->GetString("path", "");
+	std::string file = props->GetString("file", "");
+
+	std::vector<std::string> types;
+	if (props->Get("types")->IsList())
+	{
+		SharedBoundList l = props->Get("types")->ToList();
+		for (int i = 0; i < l->Size(); i++)
+		{
+			if (l->At(i)->IsString())
+			{
+				types.push_back(l->At(i)->ToString());
+			}
+		}
+	}
+
+	this->OpenFiles(callback, multiple, files, directories, path, file, types);
+}
+
 void UserWindow::_AddEventListener(const ValueList& args, SharedValue result)
 {
 	if (args.size()!=1 || !args.at(0)->IsMethod())
@@ -531,21 +639,27 @@ void UserWindow::_AddEventListener(const ValueList& args, SharedValue result)
 		throw ValueException::FromString("invalid argument");
 	}
 	SharedBoundMethod target = args.at(0)->ToMethod();
-	this->listeners.push_back(target);
+
+	Listener listener = Listener();
+	listener.id = this->next_listener_id++;
+	listener.callback = target;
+	this->listeners.push_back(listener);
+
+	result->SetInt(listener.id);
 }
 
 void UserWindow::_RemoveEventListener(const ValueList& args, SharedValue result)
 {
-	if (args.size()!=1 || !args.at(0)->IsMethod())
+	if (args.size() != 1 || !args.at(0)->IsNumber())
 	{
 		throw ValueException::FromString("invalid argument");
 	}
-	SharedBoundMethod target = args.at(0)->ToMethod();
-	std::vector<SharedBoundMethod>::iterator it = this->listeners.begin();
-	while(it!=this->listeners.end())
+	int id = args.at(0)->ToInt();
+
+	std::vector<Listener>::iterator it = this->listeners.begin();
+	while (it != this->listeners.end())
 	{
-		SharedBoundMethod m = (*it);
-		if (m == target)
+		if ((*it).id == id)
 		{
 			this->listeners.erase(it);
 			result->SetBool(true);
@@ -560,9 +674,9 @@ void UserWindow::FireEvent(UserWindowEvent event)
 {
 	// optimize
 	if (this->listeners.size()==0) return;
-	
+
 	std::string name;
-	
+
 	switch(event)
 	{
 		case FOCUSED:
@@ -628,10 +742,10 @@ void UserWindow::FireEvent(UserWindowEvent event)
 	}
 	ValueList args;
 	args.push_back(Value::NewString(name));
-	std::vector<SharedBoundMethod>::iterator it = this->listeners.begin();
-	while(it!=this->listeners.end())
+	std::vector<Listener>::iterator it = this->listeners.begin();
+	while (it != this->listeners.end())
 	{
-		SharedBoundMethod callback = (*it++);
+		SharedBoundMethod callback = (*it).callback;
 		try
 		{
 			host->InvokeMethodOnMainThread(callback,args);
@@ -640,6 +754,7 @@ void UserWindow::FireEvent(UserWindowEvent event)
 		{
 			std::cerr << "Caught exception dispatching window event callback: " << event << ", Error: " << e.what() << std::endl;
 		}
+		it++;
 	}
 }
 

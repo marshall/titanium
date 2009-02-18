@@ -394,6 +394,61 @@ namespace ti
 			this->topmost = false;
 		}
 	}
+	
+	void OSXUserWindow::OpenFiles(
+		SharedBoundMethod callback,
+		bool multiple,
+		bool files,
+		bool directories,
+		std::string& path,
+		std::string& file,
+		std::vector<std::string>& types)
+	{
+		SharedBoundList results = new StaticBoundList();
+
+		NSOpenPanel* openDlg = [NSOpenPanel openPanel];
+		[openDlg setCanChooseFiles:files];
+		[openDlg setCanChooseDirectories:directories];
+		[openDlg setAllowsMultipleSelection:multiple];
+		[openDlg setResolvesAliases:YES];
+
+		NSMutableArray *filetypes = nil;
+		NSString *begin = nil, *filename = nil;
+
+		if (file != "")
+		{
+			filename = [NSString stringWithCString:file.c_str()];
+		}
+		if (path != "")
+		{
+			begin = [NSString stringWithCString:path.c_str()];
+		}
+		if (types.size() > 0)
+		{
+			filetypes = [[NSMutableArray alloc] init];
+			for (size_t t = 0; t < types.size(); t++)
+			{
+				const char *s = types.at(t).c_str();
+				[filetypes addObject:[NSString stringWithCString:s]];
+			}
+		}
+
+		if ( [openDlg runModalForDirectory:begin file:filename types:filetypes] == NSOKButton )
+		{
+			NSArray* selected = [openDlg filenames];
+			for (int i = 0; i < (int)[selected count]; i++)
+			{
+				NSString* fileName = [selected objectAtIndex:i];
+				std::string fn = [fileName UTF8String];
+				results->Append(Value::NewString(fn));
+			}
+		}
+		[filetypes release];
+
+		ValueList args;
+		args.push_back(Value::NewList(results));
+		callback->Call(args);
+	}
 
 }
     

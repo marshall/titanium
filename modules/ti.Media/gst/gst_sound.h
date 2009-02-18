@@ -15,6 +15,9 @@ using namespace kroll;
 
 namespace ti
 {
+	class GstSound;
+	typedef SharedPtr<GstSound> SharedGstSound;
+
 	class GstSound : public Sound
 	{
 	public:
@@ -33,6 +36,11 @@ namespace ti
 		virtual bool IsPlaying();
 		virtual bool IsPaused();
 		virtual void OnComplete(SharedBoundMethod callback);
+		virtual void Complete();
+
+		static void RegisterSound(SharedGstSound);
+		static void UnregisterSound(GstSound*);
+		static SharedGstSound GetRegisteredSound(GstSound* sound);
 
 	private:
 		SharedBoundMethod callback;
@@ -44,6 +52,9 @@ namespace ti
 			STOPPED,
 			PAUSED
 		} state;
+
+		static std::vector<SharedGstSound> active;
+		static Mutex active_mutex;
 
 	};
 }

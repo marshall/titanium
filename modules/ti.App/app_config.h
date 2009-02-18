@@ -1,6 +1,6 @@
 /**
  * Appcelerator Titanium - licensed under the Apache Public License 2
- * see LICENSE in the root folder for details on the license. 
+ * see LICENSE in the root folder for details on the license.
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
 #ifndef TI_APP_CONFIG_H_
@@ -55,6 +55,7 @@ public:
 
 	WindowConfigList& GetWindows() { return windows; }
 	WindowConfig* GetWindow(std::string &id);
+	WindowConfig* GetWindowByURL(std::string url);
 	WindowConfig* GetMainWindow();
 
 	//icon accessors

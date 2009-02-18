@@ -42,7 +42,6 @@ namespace ti
 		virtual SharedPtr<TrayItem> AddTray(SharedString icon_path,
 		                                    SharedBoundMethod cb) = 0;
 
-		void _OpenFiles(const ValueList& args, SharedValue result);
 		void _GetIdleTime(const ValueList& args, SharedValue result);
 
 		/* OS X specific callbacks */
@@ -57,14 +56,6 @@ namespace ti
 		virtual void SetBadge(SharedString badge_label) {}
 		virtual void SetBadgeImage(SharedString badge_path) {}
 
-		virtual void OpenFiles(
-			SharedBoundMethod callback,
-			bool multiple,
-			bool files,
-			bool directories,
-			std::string& path,
-			std::string& file,
-			std::vector<std::string>& types) = 0;
 		virtual long GetIdleTime() = 0;
 
 	};
