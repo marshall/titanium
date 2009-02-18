@@ -38,6 +38,7 @@ namespace ti
 
 		long GetIdleTime();
 		static NSImage* MakeImage(std::string);
+		static NSMenu* MakeMenu(SharedPtr<MenuItem>);
 		
 	private:
 		NSView *savedDockView;

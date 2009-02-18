@@ -92,6 +92,25 @@ namespace ti
 			return [[NSImage alloc] initWithContentsOfURL:url];
 		}
 	}
+	
+	NSMenu* OSXUIBinding::MakeMenu(SharedPtr<MenuItem> menu_item)
+	{
+		SharedPtr<OSXMenuItem> item = menu_item.cast<OSXMenuItem>();
+		const char *label = item->GetLabel();
+		NSString *title = label == NULL ? @"" : [NSString stringWithCString:label];
+		NSMenu *menu = [[NSMenu alloc] initWithTitle:title];
+		int count = item->GetChildCount();
+		for (int c=0;c<count;c++)
+		{
+			OSXMenuItem *i = item->GetChild(c);
+			if (i->IsEnabled())
+			{
+				NSMenuItem *mi = i->CreateNative();
+				[menu addItem:mi];
+			}
+		}
+		return menu;
+	}
 
 	void OSXUIBinding::SetDockMenu(SharedPtr<MenuItem> menu)
 	{
