@@ -80,7 +80,7 @@ UserWindow::UserWindow(kroll::Host *host, WindowConfig *config) :
 	this->SetMethod("isResizable", &UserWindow::_IsResizable);
 	this->SetMethod("setResizable", &UserWindow::_SetResizable);
 	this->SetMethod("isMaximizable", &UserWindow::_IsMaximizable);
-	this->SetMethod("setMaimizable", &UserWindow::_SetMaximizable);
+	this->SetMethod("setMaximizable", &UserWindow::_SetMaximizable);
 	this->SetMethod("isMinimizable", &UserWindow::_IsMinimizable);
 	this->SetMethod("setMinizable", &UserWindow::_SetMinimizable);
 	this->SetMethod("isCloseable", &UserWindow::_IsCloseable);
@@ -89,7 +89,7 @@ UserWindow::UserWindow(kroll::Host *host, WindowConfig *config) :
 	this->SetMethod("setVisible", &UserWindow::_SetVisible);
 	this->SetMethod("getTransparency", &UserWindow::_GetTransparency);
 	this->SetMethod("setTransparency", &UserWindow::_SetTransparency);
-	this->SetMethod("setMenu", &UserWindow::_SetTransparency);
+	this->SetMethod("setMenu", &UserWindow::_SetMenu);
 	this->SetMethod("getMenu", &UserWindow::_GetMenu);
 	this->SetMethod("setContextMenu", &UserWindow::_SetContextMenu);
 	this->SetMethod("getContextMenu", &UserWindow::_GetContextMenu);
@@ -515,20 +515,9 @@ void UserWindow::_CreateWindow(const ValueList& args, SharedValue result)
 	}
 	else if (args.size() > 0 && args.at(0)->IsString())
 	{
-		// string is the url
+		// String might match a url spec
 		std::string url = args.at(0)->ToString();
-		config = this->GetWindowConfigByURL(url);
-
-		if(config)
-		{
-			config = new WindowConfig(*config); // copy global config object
-		}
-		else
-		{
-			config = new WindowConfig();
-		}
-
-		config->SetURL(url);
+		config = new WindowConfig(url);
 	}
 	else
 	{
@@ -536,19 +525,6 @@ void UserWindow::_CreateWindow(const ValueList& args, SharedValue result)
 	}
 
 	result->SetObject(this->CreateWindow(config));
-}
-
-/*static*/
-WindowConfig* UserWindow::GetWindowConfigByURL(std::string url)
-{
-	WindowConfig *winConfig = NULL;
-	AppConfig *appConfig = AppConfig::Instance();
-	if (appConfig)
-	{
-		winConfig = appConfig->GetWindowByURL(url);
-	}
-
-	return winConfig;
 }
 
 void UserWindow::UpdateWindowForURL(std::string url)
@@ -564,6 +540,10 @@ void UserWindow::UpdateWindowForURL(std::string url)
 		b.height = winConfig->GetHeight();
 
 		this->SetBounds(b);
+
+		this->SetMinimizable(winConfig->IsMinimizable());
+		this->SetMaximizable(winConfig->IsMaximizable());
+		this->SetCloseable(winConfig->IsCloseable());
 	}
 }
 
