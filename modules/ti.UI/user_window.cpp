@@ -529,7 +529,7 @@ void UserWindow::_CreateWindow(const ValueList& args, SharedValue result)
 
 void UserWindow::UpdateWindowForURL(std::string url)
 {
-	WindowConfig *winConfig = GetWindowConfigByURL(url);
+	WindowConfig *winConfig = new WindowConfig(url);
 
 	if(winConfig)
 	{
