@@ -64,6 +64,89 @@ TiDeveloper.saveTwitterCreds = function(username,password)
 		}
 	}
 }
+TiDeveloper.loadFriendFeed = function()
+{
+	$('#news_content').empty();
+	
+	$.ajax({
+		type:"GET",
+		url:"http://friendfeed.com/api/feed/user/titaniumapp?format=json&start=0&num=100",
+		success: function(data)
+		{
+			var json = swiss.evalJSON(data)
+			for (var i=0;i<json.entries.length;i++)
+			{
+				var row = json.entries[i];
+				var dateTimeParts = row.updated.split('T');
+				var date = dateTimeParts[0];
+				var time = dateTimeParts[1];
+				var dateParts = date.split('-');
+				var date = dateParts[1] + '/' + dateParts[2] + '/' + dateParts[0];
+				var time = TiDeveloper.convertDate(time);
+				date = date + ' ' + time
+				var serviceURL = row.service.profileUrl;
+				var title = row.title
+				var image = null;
+				var author = null;
+				var sourceImg = null;
+				var isTweet = false;
+				var url = row.link;
+				var html = []
+
+				// flickr search feed
+				if (serviceURL.indexOf('flickr')!=-1)
+				{
+					image = row.media[0].enclosures[0].url;
+					sourceImg = '<img src="images/flickr_small.png" style="position:relative;top:-2px"/> <span style="color:#a4a4a4;font-size:11px;position:relative;top:-5px"> Flickr Photo</span>';
+
+				}
+				// twitter search feed
+				else if (serviceURL.indexOf('twitter')!=-1)
+				{
+					// image = row.media[0].content[0].url;
+					// isTweet=true;
+					// sourceImg = '<img src="images/twitter_small.png"/>';
+					// //http://twitter.com/jmalonzo/statuses/1220569098
+					// author = '<a target="ti:systembrowser" href="'+row.link+'">'+row.link.substring(19).split('/')[0] + '</a>';
+					continue
+				}
+				// google blog feed
+				else if (serviceURL.indexOf('blogsearch.google') != -1)
+				{
+					image = "images/logo_small.png";
+					sourceImg = '<img src="images/news_small.png" style="position:relative;top:-2px"/> <span style="color:#a4a4a4;font-size:11px;position:relative;top:-5px"> Blog Article</span>';
+
+				}
+				// goggle news
+				else if (serviceURL.indexOf('news.google.com')!= -1)
+				{
+					image = "images/logo_small.png";
+					sourceImg = '<img src="images/google_small.png" style="position:relative;top:-2px"/> <span style="color:#a4a4a4;font-size:11px;position:relative;top:-5px">News Article</span>';
+
+				}
+				// vimeo
+				else if (serviceURL.indexOf('vimeo')!= -1)
+				{
+					image = row.media[0].thumbnails[0].url;
+					sourceImg = '<img src="images/vimeo_small.png" style="position:relative;top:-2px"/> <span style="color:#a4a4a4;font-size:11px;position:relative;top:-5px"> Video</span>';
+
+				}
+
+				html.push('<div style="height:80px;margin-bottom:10px">');
+				html.push('		<div style="float:left;text-align:center;min-width:60px;max-width:60px;"><a target="ti:systembrowser" href="'+url+'"><img style="border:2px solid #4b4b4b;background-color:#4b4b4b;position:relative;top:14px" height="48px" width="48px" src="'+image+'"/></a></div>');
+				html.push('		<div style="float:right;min-width:86%;max-width:86%;height:80px;position:relative;-webkit-border-radius:6px;background-color:#414141">');
+				html.push('			<img style="position:absolute;left:-24px;top:25px" src="images/triangle.png"/>');
+				html.push('			<div style="color:#42C0FB;position:absolute;left:10px;top:8px;">' + sourceImg+'</div>');
+				html.push('			<div style="color:#a4a4a4;font-size:11px;position:absolute;right:10px;top:10px">' + date + '</div>');
+				html.push('			<div style="position:absolute;left:10px;top:30px;color:#fff;">'+title +'</div>')
+				html.push('		</div>');
+				html.push('</div>');
+				$('#news_content').append(html.join(''));
+				
+			}
+		}
+	});
+}
 TiDeveloper.loadTwitter = function()
 {
 	// clear
@@ -72,17 +155,13 @@ TiDeveloper.loadTwitter = function()
 	// set page size
 	var rpp = $('#twitter_page_size').val();
 	if (!rpp)rpp=50;
-	// get data
-	$('#twitter_content').append('<img src="images/information.png" style="position:relative;top:3px"/> Loading twitter data... One moment.')
-	$('#twitter_content').attr('loading','true');
+
 	$.ajax({
 		type:"GET",
 		url: 'http://search.twitter.com/search.rss?q=+%22Appcelerator+Titanium%22+OR+%23titanium+OR+%23appcelerator&rpp=' +rpp ,		
 		success: function(data)
 		{
-			$('#twitter_content').attr('loading','false');
-			$('#twitter_content').empty();
-			
+	
 			var root = data.getElementsByTagName('rss')[0];
 			var channels = root.getElementsByTagName("channel");
 			var items = channels[0].getElementsByTagName("item");
@@ -146,21 +225,24 @@ TiDeveloper.loadTwitter = function()
 				$('#twitter_last_update').html(d.toLocaleString())
 				
 			}
+
+			// load after return - keep
+			// browser threads free
+			TiDeveloper.loadFriendFeed();
+
 		}
 	});
-	if ($('#twitter_content').attr('loading') == 'true')
-	{
-		$('#twitter_content').html('<img src="images/information.png" style="position:relative;top:3px"/> You (or Twitter) is offline...  Try again later.')
-	}
 }
 
-// auto update twitter feed
-// 5 minutes
+
+//auto update twitter feed
+//5 minutes
 setInterval(function()
 {
 	TiDeveloper.loadTwitter();
-	
+
 },300000)
+
 
 //
 // Twitter messages
@@ -524,6 +606,7 @@ $MQL('l:app.compiled',function()
 	});
 	
 	TiDeveloper.loadTwitter();
+//	TiDeveloper.loadFriendFeed();
 });
 
 
@@ -1016,18 +1099,18 @@ setTimeout(function()
 					irc_count = users.length;
 					for (var i=0;i<users.length;i++)
 					{
-						if (users[i].operator == true)
-						{
-							$('#irc_users').append('<div class="'+users[i].name+'" style="color:#42C0FB">'+users[i].name+'(op)</div>');
-						}
-						else if (users[i].voice==true)
-						{
-							$('#irc_users').append('<div class="'+users[i].name+'" style="color:#42C0FB">'+users[i].name+'(v)</div>');
-						}
-						else
-						{
+						// if (users[i].operator == true)
+						// {
+						// 	$('#irc_users').append('<div class="'+users[i].name+'" style="color:#42C0FB">'+users[i].name+'(op)</div>');
+						// }
+						// else if (users[i].voice==true)
+						// {
+						// 	$('#irc_users').append('<div class="'+users[i].name+'" style="color:#42C0FB">'+users[i].name+'(v)</div>');
+						// }
+						// else
+						// {
 							$('#irc_users').append('<div class="'+users[i].name+'">'+users[i].name+'</div>');
-						}
+						// }
 					}
 				}
 				case 'JOIN':
@@ -1071,8 +1154,9 @@ setTimeout(function()
 			if (TiDeveloper.online == true)
 			{
 				var time = TiDeveloper.getCurrentTime();
+				var urlMsg = TiDeveloper.formatURIs($('#irc_msg').val());
 				irc.send('#titanium_dev',$('#irc_msg').val());
-				$('#irc').append('<div style="color:yellow;float:left;margin-bottom:3px;width:90%">' + username + ': <span style="color:white">' + $('#irc_msg').val() + '</span></div><div style="float:right;color:#ccc;font-size:11px;width:10%;text-align:right">'+time+'</div><div style="clear:both"></div>');
+				$('#irc').append('<div style="color:yellow;float:left;margin-bottom:3px;width:90%">' + username + ': <span style="color:white">' + urlMsg + '</span></div><div style="float:right;color:#ccc;font-size:11px;width:10%;text-align:right">'+time+'</div><div style="clear:both"></div>');
 				$('#irc_msg').val('');
 				$('#irc').get(0).scrollTop = $('#irc').get(0).scrollHeight;
 			}
