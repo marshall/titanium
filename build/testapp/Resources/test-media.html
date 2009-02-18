@@ -16,11 +16,11 @@
 					window.sound.stop();
 					window.sound = null;
 				}
-				var url = prompt("which url to play?");
+				var url = document.getElementById('target_file').value;
 				window.sound = Titanium.Media.createSound(url);
 				window.sound.onComplete(function(finished)
 				{
-					alert("sound has finished playing " + finished);
+					Titanium.API.debug("sound has finished playing " + finished);
 					window.sound = null;
 				})
 			}
@@ -42,30 +42,42 @@
 			}
 			function playSound()
 			{
-				try
+				window.sound.play();
+			}
+			function createPlayAndForgetIt()
+			{
+				var url = document.getElementById('target_file').value;
+				var mysound = Titanium.Media.createSound(url);
+				mysound.play();
+				mysound.onComplete(function(finished)
 				{
-					window.sound.play();
-				}
-				catch(e)
-				{
-					alert(e);
-				}
+					Titanium.API.debug("Sound complete");
+				});
 			}
 		</script>
 	</head>
 	<body>
 		<h2>Titanium Media test app</h2>
-		<div>
-			<button onclick="systemBeep()">Do a system beep</button>
-		</div>
-		<div>
-			<button onclick="createSound()">Create a sound object</button>
+		<fieldset>
+			<legend>Titanium.Media</legend>
 			<div>
+				<button onclick="systemBeep()">Do a system beep</button>
+			</div>
+		</fieldset>
+		<fieldset>
+			<legend>Titanium.Media -- Sound</legend>
+			<div>
+				URL to play: <input id="target_file" value="app://sound.wav"></input>
+			</div>
+			<div>
+				<button onclick="createSound()">Create</button>
 				<button onclick="playSound()">Play</button>
 				<button onclick="pauseSound()">Pause</button>
 				<button onclick="stopSound()">Stop</button>
 				<button onclick="reloadSound()">Reload</button>
 			</div>
-		</div>
+			<div>
+			<button onclick="createPlayAndForgetIt()">Create, play and forget</button>(Garbage collection test)
+			</div>
 	</body>
 </html>
