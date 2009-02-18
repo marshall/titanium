@@ -80,7 +80,7 @@ UserWindow::UserWindow(kroll::Host *host, WindowConfig *config) :
 	this->SetMethod("isResizable", &UserWindow::_IsResizable);
 	this->SetMethod("setResizable", &UserWindow::_SetResizable);
 	this->SetMethod("isMaximizable", &UserWindow::_IsMaximizable);
-	this->SetMethod("setMaimizable", &UserWindow::_SetMaximizable);
+	this->SetMethod("setMaximizable", &UserWindow::_SetMaximizable);
 	this->SetMethod("isMinimizable", &UserWindow::_IsMinimizable);
 	this->SetMethod("setMinizable", &UserWindow::_SetMinimizable);
 	this->SetMethod("isCloseable", &UserWindow::_IsCloseable);
@@ -540,6 +540,10 @@ void UserWindow::UpdateWindowForURL(std::string url)
 		b.height = winConfig->GetHeight();
 
 		this->SetBounds(b);
+
+		this->SetMinimizable(winConfig->IsMinimizable());
+		this->SetMaximizable(winConfig->IsMaximizable());
+		this->SetCloseable(winConfig->IsCloseable());
 	}
 }
 

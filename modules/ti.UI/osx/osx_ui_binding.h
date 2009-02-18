@@ -8,8 +8,8 @@
 #ifndef _OSX_UI_BINDING_H_
 #define _OSX_UI_BINDING_H_
 
+#include <kroll/kroll.h>
 #include "../ui_module.h"
-#include "ti_app.h"
 
 namespace ti
 {
@@ -34,19 +34,18 @@ namespace ti
 		
 		SharedPtr<MenuItem> GetMenu();
 		SharedPtr<MenuItem> GetContextMenu();
-		SharedString GetIcon();
-		SharedString GetDockIcon();
 		SharedPtr<MenuItem> GetDockMenu();
 
 		long GetIdleTime();
+		static NSImage* MakeImage(std::string);
+		
 	private:
 		NSView *savedDockView;
 		SharedPtr<MenuItem> menu;
-		SharedString icon;
 		SharedPtr<MenuItem> contextMenu;
-		SharedString dockIcon;
 		SharedPtr<MenuItem> dockMenu;
-		NSMenu *appDockMenu;
+		NSMenu* appDockMenu;
+		NSObject* application;
 	};
 }
 
