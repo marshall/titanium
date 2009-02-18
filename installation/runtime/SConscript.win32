@@ -32,25 +32,27 @@ for tp in third_party:
 
 # Gather all module libs
 for m in modules.keys():
+	
 	module_dir = p.join(build.titanium_source_dir, 'modules', modules[m])
 	if not p.exists(module_dir):
 		module_dir = p.join(build.kroll_source_dir, 'modules', modules[m])
 	
 	mlib = p.join('%s/%smodule.dll' % (build.dir, m))
-	if p.exists(mlib):
-		out_dir = '%s/%s' % (modules_dir, m)
-		os.makedirs(out_dir)
-		shutil.copy(mlib, out_dir)
 	## we'll have to make this pluggable at some point
 	if not p.exists(mlib):
 		mlib = p.join(module_dir, '%smodule.js' % m)
+		print 'js mlib=%s' % mlib
 	if not p.exists(mlib):
 		mlib = p.join(module_dir, '%smodule.py' % m)
 	if not p.exists(mlib):
 		mlib = p.join(module_dir, '%smodule.rb' % m)
 		
 	if p.exists(mlib):
+		print "Found module: %s" % mlib
+		out_dir = '%s/%s' % (modules_dir, m)
+		os.makedirs(out_dir)
 		shutil.copy(mlib, out_dir)
+		
 	
 	app_resources = p.join(module_dir, 'AppResources')
 	if p.exists(app_resources):
@@ -112,13 +114,14 @@ shutil.copy(p.join(build.kroll_third_party,'manifest'),p.join(app_dir,'runtime',
 zff = p.join(build.dir,'titanium_runtime.zip')
 exe = p.join(build.dir,'titanium_runtime.exe')
 shutil.copy(kboot, p.join(app_dir,'titanium_runtime.exe'))
-zf = zipfile.ZipFile(exe,'a')
+zf = zipfile.ZipFile(exe,'a', zipfile.ZIP_DEFLATED)
 zf.write(p.join(build.dir,'kboot.exe'),'template/kboot.exe')
 files = os.walk(app_dir)
 for walk in os.walk(app_dir):
 	for file in walk[2]:
 		file = p.join(walk[0], file)
 		arcname = file.replace(app_dir + '\\', "")
+		#print "Writing %s into archive: %s" % (file, arcname)
 		zf.write(file, arcname)
 zf.close()
 
