@@ -377,8 +377,16 @@ static void window_object_cleared_cb(
 		std::cerr << "Could not find UI API point!" << std::endl;
 	}
 
-	// Place the Titanium object into the window's global object
+	// Get the global object into a KJSBoundObject
 	BoundObject *global_bound_object = new KJSBoundObject(context, global_object);
+
+	// Copy the document and window properties to the Titanium object
+	SharedValue doc_value = global_bound_object->Get("document");
+	ti_object->Set("document", doc_value);
+	SharedValue window_value = global_bound_object->Get("window");
+
+	ti_object->Set("window", window_value);
+	// Place the Titanium object into the window's global object
 	SharedValue ti_object_value = Value::NewObject(shared_ti_obj);
 	global_bound_object->Set(GLOBAL_NS_VARNAME, ti_object_value);
 
