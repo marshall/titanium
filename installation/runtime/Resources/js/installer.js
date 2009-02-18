@@ -156,6 +156,11 @@ function runInstaller()
 				case 'win32':
 					// copy titanium_runtime.exe to template/kboot.exe
 					var boot = TFS.getFile(src,appname+'.exe');
+					if(!boot.exists())
+					{
+						boot = TFS.getFile(src,'installer.exe');
+					}
+					
 					var target = TFS.getFile(template,'kboot.exe');
 					boot.copy(target);
 					break;
