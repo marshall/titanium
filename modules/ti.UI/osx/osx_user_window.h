@@ -3,6 +3,9 @@
  * see LICENSE in the root folder for details on the license.
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
+#ifndef OSX_USER_WINDOW_H
+#define OSX_USER_WINDOW_H
+
 #import "preinclude.h"
 #import <WebKit/WebKit.h>
 #import "../menu_item.h"
@@ -11,10 +14,13 @@
 
 namespace ti
 {
+	class OSXUIBinding;
+	class OSXMenuItem;
+	
 	class OSXUserWindow : public UserWindow
 	{
 		public:
-			OSXUserWindow(Host *host, WindowConfig *config);
+			OSXUserWindow(Host *host, WindowConfig *config, OSXUIBinding *binding);
 			~OSXUserWindow();
 		public:
 			UserWindow* WindowFactory(Host*, WindowConfig*);
@@ -90,10 +96,15 @@ namespace ti
 			bool opened;
 			bool closed;
 			bool topmost;
+			bool focused;
 			SharedPtr<MenuItem> menu;
 			SharedPtr<MenuItem> context_menu;
-			NSMenu *native_menu;
+			OSXUIBinding* binding;
 
+			void InstallMenu(OSXMenuItem *menu);
+			
 			DISALLOW_EVIL_CONSTRUCTORS(OSXUserWindow);
 	};
 }
+
+#endif

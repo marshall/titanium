@@ -37,6 +37,7 @@ namespace ti
 		void SetIcon(std::string icon_path);
 
 		NSMenuItem* CreateNative();
+		void AttachMenu(NSMenu *);
 		void Invoke();
 		int GetChildCount();
 		OSXMenuItem* GetChild(int c);

@@ -76,8 +76,9 @@ namespace ti
 		GtkUserWindow* window = new GtkUserWindow(this->host, main_window_config);
 
 #elif defined(OS_OSX)
-		SharedBoundObject ui_binding = new OSXUIBinding(this->host);
-		OSXUserWindow* window = new OSXUserWindow(this->host, main_window_config);
+		OSXUIBinding *binding = new OSXUIBinding(this->host);
+		SharedBoundObject ui_binding = binding;
+		OSXUserWindow* window = new OSXUserWindow(this->host, main_window_config, binding);
 		NativeWindow* nw = window->GetNative();
 		[nw setInitialWindow:YES];
 

@@ -9,7 +9,7 @@
 #import "../ui_module.h"
 
 @implementation OSXMenuDelegate
--(id)initWithMenu:(ti::OSXMenuItem*)item
+-(id)initWithMenu:(ti::OSXMenuItem*)item menu:(NSMenu*)submenu
 {
 	const char *label = item->GetLabel();
 	NSString *title = label!=NULL ? [NSString stringWithCString:label] : @"";
@@ -40,16 +40,29 @@
 		int count = item->GetChildCount();
 		if (count > 0)
 		{
-			NSMenu *submenu = ti::OSXUIBinding::MakeMenu(item);
-			if ([submenu numberOfItems] == 0)
+			if (submenu == nil)
 			{
-				// this happens if they're all disabled
-				[submenu release];
+				NSMenu *submenu = ti::OSXUIBinding::MakeMenu(item);
+				if ([submenu numberOfItems] == 0)
+				{
+					// this happens if they're all disabled
+					[submenu release];
+				}
+				else
+				{
+					[self setSubmenu:submenu];
+					// don't release this or items 
+				}
 			}
 			else
 			{
-				[self setSubmenu:submenu];
-				// don't release this or items 
+				for (int c=0;c<count;c++)
+				{
+					OSXMenuItem *child = item->GetChild(c);
+					NSMenuItem *i = child->CreateNative();
+					[submenu addItem:i];
+					[i release];
+				}
 			}
 		}
 	}

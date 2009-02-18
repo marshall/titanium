@@ -10,10 +10,10 @@
 
 #include <kroll/kroll.h>
 #include "../ui_module.h"
-#include "osx_menu_item.h"
 
 namespace ti
 {
+	class OSXMenuItem;
 	class OSXUIBinding : public UIBinding
 	{
 
@@ -40,6 +40,10 @@ namespace ti
 		long GetIdleTime();
 		static NSImage* MakeImage(std::string);
 		static NSMenu* MakeMenu(ti::OSXMenuItem*);
+		static void AttachMainMenu(NSMenu *mainMenu, ti::OSXMenuItem *item);
+		
+		void WindowFocused(UserWindow *window, OSXMenuItem *menu);
+		void WindowUnfocused(UserWindow *window, OSXMenuItem *menu);
 		
 	private:
 		NSView *savedDockView;
@@ -48,6 +52,9 @@ namespace ti
 		SharedPtr<MenuItem> dockMenu;
 		NSMenu* appDockMenu;
 		NSObject* application;
+		OSXMenuItem *activeMenu;
+
+		void InstallMenu (OSXMenuItem*);
 	};
 }
 

@@ -12,6 +12,6 @@
 {
 	ti::OSXMenuItem *delegate;
 }
--(id)initWithMenu:(ti::OSXMenuItem*)item;
+-(id)initWithMenu:(ti::OSXMenuItem*)item menu:(NSMenu*)menu;
 -(void)invoke:(id)sender;
 @end
