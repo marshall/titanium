@@ -529,6 +529,13 @@ void UserWindow::_CreateWindow(const ValueList& args, SharedValue result)
 
 void UserWindow::UpdateWindowForURL(std::string url)
 {
+	WindowConfig* config = AppConfig::Instance()->GetWindowByURL(url);
+	if(! config)
+	{
+		// no need to update window
+		return;
+	}
+
 	WindowConfig *winConfig = new WindowConfig(url);
 
 	if(winConfig)
