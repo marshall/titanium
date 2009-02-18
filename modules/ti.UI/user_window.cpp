@@ -515,20 +515,9 @@ void UserWindow::_CreateWindow(const ValueList& args, SharedValue result)
 	}
 	else if (args.size() > 0 && args.at(0)->IsString())
 	{
-		// string is the url
+		// String might match a url spec
 		std::string url = args.at(0)->ToString();
-		config = this->GetWindowConfigByURL(url);
-
-		if(config)
-		{
-			config = new WindowConfig(*config); // copy global config object
-		}
-		else
-		{
-			config = new WindowConfig();
-		}
-
-		config->SetURL(url);
+		config = new WindowConfig(url);
 	}
 	else
 	{
@@ -536,19 +525,6 @@ void UserWindow::_CreateWindow(const ValueList& args, SharedValue result)
 	}
 
 	result->SetObject(this->CreateWindow(config));
-}
-
-/*static*/
-WindowConfig* UserWindow::GetWindowConfigByURL(std::string url)
-{
-	WindowConfig *winConfig = NULL;
-	AppConfig *appConfig = AppConfig::Instance();
-	if (appConfig)
-	{
-		winConfig = appConfig->GetWindowByURL(url);
-	}
-
-	return winConfig;
 }
 
 void UserWindow::UpdateWindowForURL(std::string url)

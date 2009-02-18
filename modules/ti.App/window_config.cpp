@@ -132,6 +132,35 @@ void WindowConfig::UseProperties(SharedBoundObject properties)
 	SET_DOUBLE(transparency, transparency);
 }
 
+WindowConfig::WindowConfig(std::string& url)
+{
+	WindowConfig* config = AppConfig::Instance()->GetWindowByURL(url);
+	this->SetDefaults();
+	this->url = url;
+
+	if (config == NULL) // Just use defaults if not found
+		return;
+
+	this->title = config->GetTitle();
+	this->x = config->GetX();
+	this->y = config->GetY();
+	this->width = config->GetWidth();
+	this->minWidth = config->GetMinWidth();
+	this->maxWidth = config->GetMaxWidth();
+	this->height = config->GetHeight();
+	this->minHeight = config->GetMinHeight();
+	this->maxHeight = config->GetMaxHeight();
+	this->visible = config->IsVisible();
+	this->maximizable = config->IsMaximizable();
+	this->minimizable = config->IsMinimizable();
+	this->resizable = config->IsResizable();
+	this->fullscreen = config->IsFullScreen();
+	this->usingChrome = config->IsUsingChrome();
+	this->usingScrollbars = config->IsUsingScrollbars();
+	this->topMost = config->IsTopMost();
+	this->transparency = config->GetTransparency();
+
+}
 WindowConfig::WindowConfig(void* data)
 {
 	xmlElementPtr element = (xmlElementPtr) data;
