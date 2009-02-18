@@ -82,6 +82,8 @@ namespace ti
 			SharedString GetIcon();
 
 			NativeWindow* GetNative() { return window; }
+			void Focused();
+			void Unfocused();
 
 		private:
 			NativeWindow *window;
@@ -90,6 +92,7 @@ namespace ti
 			bool topmost;
 			SharedPtr<MenuItem> menu;
 			SharedPtr<MenuItem> context_menu;
+			NSMenu *native_menu;
 
 			DISALLOW_EVIL_CONSTRUCTORS(OSXUserWindow);
 	};

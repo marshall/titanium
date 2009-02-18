@@ -7,6 +7,7 @@
 #import "osx_tray_delegate.h"
 #import "osx_tray_item.h"
 #import "osx_menu_item.h"
+#import "osx_ui_binding.h"
 
 @implementation OSXTrayDelegate
 
@@ -64,18 +65,7 @@
 	SharedPtr<ti::OSXMenuItem> osx_menu = menu.cast<ti::OSXMenuItem>();
 	int count = osx_menu->GetChildCount();
 	if (count == 0) return ;
-	const char *label = menu->GetLabel();
-	NSString *title = label!=NULL ? [NSString stringWithCString:label] : @"";
-	submenu = [[NSMenu alloc] initWithTitle:title];
-	for (int c=0;c<count;c++)
-	{
-		ti::OSXMenuItem *i = osx_menu->GetChild(c);
-		if (i->IsEnabled())
-		{
-			NSMenuItem *mi = i->CreateNative();
-			[submenu addItem:mi];
-		}
-	}
+	submenu = ti::OSXUIBinding::MakeMenu(osx_menu);
 	if ([submenu numberOfItems] == 0)
 	{
 		// this happens if they're all disabled

@@ -54,17 +54,9 @@
 	if (!item.isNull())
 	{
 		SharedPtr<ti::OSXMenuItem> osx_menu = item.cast<ti::OSXMenuItem>();
-		const char *label = item->GetLabel();
-		NSString *title = label!=NULL ? [NSString stringWithCString:label] : @"";
-		NSMenu *menu=[[[NSMenu alloc] initWithTitle:title] autorelease];
-		for (int c=0;c<osx_menu->GetChildCount();c++)
-		{
-			OSXMenuItem *child = osx_menu->GetChild(c);
-			NSMenuItem *mi = child->CreateNative();
-			[menu addItem:mi];
-			[mi release];
-		}
+		NSMenu *menu = ti::OSXUIBinding::MakeMenu(osx_menu);
 		[menu setAutoenablesItems:NO];
+		[menu autorelease];
 		return menu;
 	}
 	return nil;

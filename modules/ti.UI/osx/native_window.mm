@@ -25,7 +25,7 @@
 		[self setFullScreen:YES];
 	}
 	
-	userWindow = new SharedBoundObject(uw);
+	userWindow = uw;
 
 	[self setTitle:[NSString stringWithCString:config->GetTitle().c_str()]];
 	[self setOpaque:false];
@@ -54,6 +54,8 @@
 	{
 	    [showInspector setEnabled:YES];
 	    [showInspector setAction:@selector(showInspector)];
+		[showInspector setKeyEquivalentModifierMask:NSCommandKeyMask|NSAlternateKeyMask];
+		[showInspector setKeyEquivalent:@"c"];
 	}
 	else
 	{
@@ -65,8 +67,6 @@
 }
 - (void)dealloc
 {
-	KR_DUMP_LOCATION
-	delete userWindow;
 	[inspector release];
 	[delegate release];
 	delegate = nil;
@@ -74,9 +74,9 @@
 	webView = nil;
 	[super dealloc];
 }
-- (SharedBoundObject)userWindow
+- (UserWindow*)userWindow
 {
-	return *userWindow;
+	return userWindow;
 }
 - (void)showInspector
 {
@@ -139,10 +139,14 @@
 - (void)windowDidBecomeKey:(NSNotification*)notification
 {
 	[self fireWindowEvent:FOCUSED];
+	OSXUserWindow* uw = static_cast<OSXUserWindow*>(userWindow);
+	uw->Focused();
 }
 - (void)windowDidResignKey:(NSNotification*)notification
 {
 	[self fireWindowEvent:UNFOCUSED];
+	OSXUserWindow* uw = static_cast<OSXUserWindow*>(userWindow);
+	uw->Unfocused();
 }
 - (void)windowDidMiniaturize:(NSNotification*)notification
 {
@@ -243,14 +247,13 @@
 }
 - (void)close
 {
-	KR_DUMP_LOCATION
 	if (!closed)
 	{
 		closed = YES;
 		[self fireWindowEvent:CLOSED];
 		[webView close];
 		[super close];
-		SharedPtr<UserWindow> uw = userWindow->cast<UserWindow>();
+		OSXUserWindow *uw = static_cast<OSXUserWindow*>(userWindow);
 		uw->Close();
 	}
 }
@@ -279,7 +282,7 @@
 }
 - (void)fireWindowEvent:(UserWindowEvent)event
 {
-	SharedPtr<UserWindow> uw = userWindow->cast<UserWindow>();
+	OSXUserWindow *uw = static_cast<OSXUserWindow*>(userWindow);
 	uw->FireEvent(event);
 }
 
