@@ -82,7 +82,7 @@ UserWindow::UserWindow(kroll::Host *host, WindowConfig *config) :
 	this->SetMethod("isMaximizable", &UserWindow::_IsMaximizable);
 	this->SetMethod("setMaximizable", &UserWindow::_SetMaximizable);
 	this->SetMethod("isMinimizable", &UserWindow::_IsMinimizable);
-	this->SetMethod("setMinizable", &UserWindow::_SetMinimizable);
+	this->SetMethod("setMinimizable", &UserWindow::_SetMinimizable);
 	this->SetMethod("isCloseable", &UserWindow::_IsCloseable);
 	this->SetMethod("setCloseable", &UserWindow::_SetCloseable);
 	this->SetMethod("isVisible", &UserWindow::_IsVisible);
