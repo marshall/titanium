@@ -1,5 +1,5 @@
 def rubyalert2
-	WINDOW.alert("hello from external ruby")
+	Window.alert("hello from external ruby")
 end
 
-WINDOW.rubyFunction2 = rubyalert2
+Window.rubyFunction2 = method(:rubyalert2)

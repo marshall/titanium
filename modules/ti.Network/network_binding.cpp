@@ -28,10 +28,10 @@ namespace ti
 		this->SetMethod("addConnectivityListener",&NetworkBinding::AddConnectivityListener);
 		this->SetMethod("removeConnectivityListener",&NetworkBinding::RemoveConnectivityListener);
 
-
 		// NOTE: this is only used internally and shouldn't be published
 		this->SetMethod("FireOnlineStatusChange",&NetworkBinding::FireOnlineStatusChange);
 	}
+
 	NetworkBinding::~NetworkBinding()
 	{
 #if defined(OS_OSX)
@@ -135,6 +135,35 @@ namespace ti
 #endif
 		}
 	}
+
+	bool NetworkBinding::HasOnlineStatusChangeListeners()
+	{
+		return this->listeners.size() > 0;
+	}
+
+	void NetworkBinding::OnlineStatusChange(bool online)
+	{
+		PRINTD("ti.Network: Online status ==> " << online);
+		this->Set("online", Value::NewBool(online));
+
+		ValueList args = ValueList();
+		args.push_back(Value::NewBool(online));
+		std::vector<SharedBoundMethod>::iterator it = this->listeners.begin();
+		while (it != this->listeners.end())
+		{
+			SharedBoundMethod callback = (*it++);
+			try
+			{
+				host->InvokeMethodOnMainThread(callback, args);
+			}
+			catch(ValueException& e)
+			{
+				SharedString ss = e.GetValue()->DisplayString();
+				std::cerr << "ti.Network.OnlineStatusChange callback failed: " << *ss << std::endl;
+			}
+		}
+	}
+
 	void NetworkBinding::RemoveConnectivityListener(const ValueList& args, SharedValue result)
 	{
 		if (args.size()!=1 || !args.at(0)->IsMethod())
@@ -167,27 +196,10 @@ namespace ti
 		}
 		result->SetBool(false);
 	}
+
 	void NetworkBinding::FireOnlineStatusChange(const ValueList& args, SharedValue result)
 	{
-		SharedValue o = args.at(0);
-		this->Set("online",o);
-#ifdef DEBUG
-		std::cout << "ONLINE STATUS CHANGED: " << o->ToBool() << std::endl;
-#endif
-		// optimize by returning if no listeners
-		if (this->listeners.size()==0) return;
-		std::vector<SharedBoundMethod>::iterator it = this->listeners.begin();
-		while(it!=this->listeners.end())
-		{
-			SharedBoundMethod callback = (*it++);
-			try
-			{
-				host->InvokeMethodOnMainThread(callback,args);
-			}
-			catch(std::exception &e)
-			{
-				std::cerr << "Caught exception dispatching network event callback for online status, Error: " << e.what() << std::endl;
-			}
-		}
+		if (args.at(0)->IsBool())
+			this->OnlineStatusChange(args.at(0)->ToBool());
 	}
 }

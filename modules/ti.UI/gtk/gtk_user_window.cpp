@@ -27,6 +27,10 @@ static void populate_popup_cb(
 	WebKitWebView *web_view,
 	GtkMenu *menu,
 	gpointer data);
+//static void navigation_requested_cb(
+//	WebKitWebFrame* web_frame,
+//	WebKitNetworkRequest* request,
+//	WebKitNetworkResponse* response);
 
 GtkUserWindow::GtkUserWindow(Host *host, WindowConfig* config) : UserWindow(host, config)
 {
@@ -103,6 +107,9 @@ void GtkUserWindow::Open()
 		                 G_CALLBACK(event_cb), this);
 
 		gtk_container_add(GTK_CONTAINER (window), vbox);
+
+		webkit_web_view_register_url_scheme_as_local("app");
+		webkit_web_view_register_url_scheme_as_local("ti");
 
 		this->gtk_window = GTK_WINDOW(window);
 		this->web_view = web_view;
@@ -328,6 +335,14 @@ static gboolean event_cb(
 
 	return FALSE;
 }
+
+//static void navigation_requested_cb(
+//	WebKitWebFrame* web_frame,
+//	WebKitNetworkRequest* request,
+//	WebKitNetworkResponse* response)
+//{
+//	std::cout << "navigation requested" << std::endl;
+//}
 
 static void window_object_cleared_cb(
 	WebKitWebView* web_view,
