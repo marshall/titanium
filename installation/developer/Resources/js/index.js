@@ -255,12 +255,12 @@ setInterval(function()
 //
 // Twitter messages
 //
+var notification = Titanium.Notification.createNotification(window)
 $MQL('l:send.tweet.request',function(msg)
 {
 	var tweet = String(msg.payload['twitter_message']);
 	var username = String(msg.payload['twitter_username']);
 	var password = String(msg.payload['twitter_password']);
-	var notification = Titanium.Notification.createNotification(window)
 	if (tweet.charAt(0)!='D') //D is direct message if first position
 	{
 		$.ajax(
@@ -616,8 +616,8 @@ $MQL('l:app.compiled',function()
 	
 	setTimeout(function()
 	{
-		var html = '<iframe src="http://titanium-js.appspot.com/" frameborder="0" height="80%" width="100%"></iframe>';
-		$('#documentation').html(html);
+		// var html = '<iframe src="http://titanium-js.appspot.com/" frameborder="0" height="80%" width="100%"></iframe>';
+		// $('#documentation').html(html);
 		
 	},800)
 });
