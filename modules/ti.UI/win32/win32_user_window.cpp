@@ -8,6 +8,7 @@
 #include "webkit_frame_load_delegate.h"
 #include "webkit_ui_delegate.h"
 #include "webkit_policy_delegate.h"
+#include "webkit_javascript_listener.h"
 #include "win32_tray_item.h"
 #include "string_util.h"
 #include "../url/app_url.h"
@@ -158,8 +159,16 @@ Win32UserWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	return 0;
 }
 
-Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config)
-	: UserWindow(host, config), script_evaluator(host), menuBarHandle(NULL), menuInUse(NULL), menu(NULL), contextMenuHandle(NULL), initial_icon(NULL), topmost(false)
+Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config) :
+	UserWindow(host, config),
+	script_evaluator(host),
+	menuBarHandle(NULL),
+	menuInUse(NULL),
+	menu(NULL),
+	contextMenuHandle(NULL),
+	initial_icon(NULL),
+	topmost(false),
+	web_inspector(NULL)
 {
 	static bool initialized = false;
 	win32_host = static_cast<kroll::Win32Host*>(host);
@@ -290,9 +299,17 @@ Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config)
 	IWebViewPrivate *web_view_private;
 	hr = web_view->QueryInterface(IID_IWebViewPrivate, (void**)&web_view_private);
 	hr = web_view_private->viewWindow((OLE_HANDLE*) &view_window_handle);
+
+	hr = web_view_private->inspector(&web_inspector);
+	if(FAILED(hr) || web_inspector == NULL)
+	{
+		std::cerr << "Couldn't retrieve the web inspector object" << std::endl;
+	}
+
 	web_view_private->Release();
 
 	hr = web_view->mainFrame(&main_frame);
+	//web_view->setShouldCloseWithWindow(TRUE);
 
 	std::cout << "resize subviews" << std::endl;
 	ResizeSubViews();
@@ -370,7 +387,6 @@ void Win32UserWindow::Open() {
 
 void Win32UserWindow::Close() {
 	DestroyWindow(window_handle);
-
 	UserWindow::Close();
 }
 
@@ -821,6 +837,27 @@ void Win32UserWindow::SetupSize()
 	b.height = this->config->GetHeight();
 
 	this->SetBounds(b);
+}
+
+void Win32UserWindow::ShowWebInspector()
+{
+	std::cout << "showWebInspector() .." << std::endl;
+
+	//WebInspectorClient *wic = new WebInspector(web_view);
+	//wic->showWindow();
+	//if(1 == 1) return;
+
+	if(this->web_inspector)
+	{
+		std::cout << "requesting flag .. " << std::endl;
+		BOOL debug;
+		this->web_inspector->isDebuggingJavaScript(&debug);
+		std::cout << "debug = " << debug << std::endl;
+		//std::cout << "attaching..." << std::endl;
+		//this->web_inspector->attach();
+		std::cout << "showing..." << std::endl;
+		this->web_inspector->show();
+	}
 }
 
 void Win32UserWindow::OpenFiles(
