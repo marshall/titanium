@@ -6,6 +6,7 @@
 #include "../ui_module.h"
 #include "WebScriptElement.h"
 #include "osx_menu_item.h"
+#include "WebFramePrivate.h"
 
 #define TRACE  NSLog
 
@@ -77,6 +78,7 @@
 		[window setShowsResizeIndicator:NO];
 	}
 	
+	[webView setBackgroundColor:[NSColor clearColor]];
 	[webView setAutoresizingMask:NSViewHeightSizable | NSViewWidthSizable];
 	[webView setShouldCloseWithWindow:NO];
 }
@@ -89,6 +91,7 @@
 		window = win;
 		host = h;
 		webView = [window webView];
+		frames = new std::map<WebFrame*,bool>();
 		[self setup];
 		[webView setFrameLoadDelegate:self];
 		[webView setUIDelegate:self];
@@ -108,11 +111,7 @@
 -(void)dealloc
 {
 	KR_DUMP_LOCATION
-	
-	// just for safety, remove our main JS key
-	NSString *tiKey = [NSString stringWithCString:GLOBAL_NS_VARNAME];
-	[windowJS removeWebScriptKey:tiKey];
-	
+	delete frames;
 	[url release];
 	[super dealloc];
 }
@@ -334,7 +333,7 @@
     // Only report feedback for the main frame.
     if (frame == [sender mainFrame]) 
 	{
-		scriptCleared = NO;
+		frames->insert(std::pair<WebFrame*,bool>(frame,false));
     }
 }
 
@@ -352,11 +351,11 @@
 		[window setTitle:title];
     }
 }
-- (void)inject:(WebScriptObject *)windowScriptObject context:(JSGlobalContextRef)context
+- (void)inject:(WebScriptObject *)windowScriptObject context:(JSGlobalContextRef)context frame:(WebFrame*)frame
 {
-	JSContextGroupRef group = JSContextGetGroup(context);
+//	JSContextGroupRef group = JSContextGetGroup(context);
 	JSObjectRef global_object = JSContextGetGlobalObject(context);
-	KJSUtil::RegisterGlobalContext(group, context);
+	KJSUtil::RegisterGlobalContext(global_object, context);
 
 	// Produce a delegating object to represent the top-level
 	// Titanium object. When a property isn't found in this object
@@ -406,24 +405,29 @@
 	SharedValue ti_object_value = Value::NewObject(shared_ti_obj);
 	global_bound_object->Set(GLOBAL_NS_VARNAME, ti_object_value);
 
-	scriptCleared = YES;
+	frames->insert(std::pair<WebFrame*,bool>(frame,true));
 }
 
 - (void)webView:(WebView *)sender didFinishLoadForFrame:(WebFrame *)frame
 {
+	// we need to inject even in child frames
+	std::map<WebFrame*,bool>::iterator iter = frames->find(frame);
+	std::pair<WebFrame*,bool> pair = (*iter);
+	bool scriptCleared = pair.second;
+	frames->erase(iter);
+	if (!scriptCleared)
+	{
+		TRACE(@"page loaded with no <script> tags, manually injecting Titanium runtime", scriptCleared);
+		JSGlobalContextRef context = [frame globalContext];
+		[self inject:[frame windowObject] context:context frame:frame];
+	}
+	
     // Only report feedback for the main frame.
     if (frame == [sender mainFrame]) 
 	{
 		NSURL *theurl =[[[frame dataSource] request] URL];
 		TRACE(@"webview_delegate::didFinishLoadForFrame: %x for url: %@",self,theurl);
 
-		if (!scriptCleared)
-		{
-			TRACE(@"page loaded with no <script> tags, manually injecting Titanium runtime", scriptCleared);
-			JSGlobalContextRef context = [frame globalContext];
-			[self inject:[frame windowObject] context:context];
-		}
-		
 		if (![theurl isEqual:url])
 		{
 			[self setURL:theurl];
@@ -467,7 +471,7 @@
 - (void)webView:(WebView *)sender didClearWindowObject:(WebScriptObject *)windowScriptObject forFrame:(WebFrame*)frame 
 {
 	JSGlobalContextRef context = [frame globalContext];
-	[self inject:windowScriptObject context:context];
+	[self inject:windowScriptObject context:context frame:frame];
 }
 
 // WebUIDelegate Methods
