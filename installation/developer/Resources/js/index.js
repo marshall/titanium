@@ -281,7 +281,6 @@ $MQL('l:send.tweet.request',function(msg)
 			},
 			error:function(XMLHttpRequest, textStatus, errorThrown)
 			{
-				alert('textStatus='+textStatus+',error='+errorThrown);
 				notification.setTitle('Error');
 				notification.setMessage('Sorry there was an error from Twitter!');
 				notification.setIcon('app://images/error.png');
@@ -931,7 +930,6 @@ $MQL('l:delete.project.request',function(msg)
 	var id = msg.payload.project_id
 	var project = findProjectById(id);
 	var file = Titanium.Filesystem.getFile(project.dir);
-	alert(id + ' ' + project + ' ' + file)
 
 	file.deleteDirectory(true);
 	
@@ -1064,7 +1062,6 @@ setTimeout(function()
 		var nick_counter = 1;
 
 		$('#irc').append('<div style="color:#aaa">you are joining the <span style="color:#42C0FB">Titanium Developer</span> chat room. one moment...</div>');
-		
 		var irc = Titanium.Network.createIRCClient();
 		irc.connect("irc.freenode.net",6667,username,username,username,String(new Date().getTime()),function(cmd,channel,data,nick)
 		{
@@ -1147,7 +1144,7 @@ setTimeout(function()
 						irc_count++;
 					}
 					$('#irc').append('<div style="color:#aaa">' + nick + ' has joined the room </div>');
-					$('#irc_users').append('<div class="'+nick+'" style="color:#457db3">'+nick+'</div>');
+					$('#irc_users').append('<div class="'+nick+'" >'+nick+'</div>');
 					$MQ('l:online.count',{count:irc_count});
 					break;
 					
