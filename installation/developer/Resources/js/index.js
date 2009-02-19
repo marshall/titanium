@@ -5,7 +5,7 @@ var TFS = Titanium.Filesystem;
 var TiDeveloper  = {};
 TiDeveloper.currentPage = 1;
 TiDeveloper.init = false;
-TiDeveloper.ytAuthToken = null;
+TiDeveloper.ircNick = null;
 
 TiDeveloper.convertDate = function(str)
 {
@@ -612,6 +612,24 @@ $MQL('l:app.compiled',function()
 	       tx.executeSql("CREATE TABLE Twitter (id REAL UNIQUE, username TEXT, password TEXT)")
 	   });
 	});
+
+	db.transaction(function(tx) 
+	{
+	   tx.executeSql("SELECT nick FROM IRC", [], function(tx,result) 
+	   {
+		   for (var i = 0; i < result.rows.length; ++i) 
+		   {
+                var row = result.rows.item(i);
+				TiDeveloper.ircNick = row['nick'];
+				break;
+			}
+	   }, function(tx, error) 
+	   {
+	       tx.executeSql("CREATE TABLE IRC (id REAL UNIQUE, nick TEXT)");
+		   tx.executeSql("INSERT INTO IRC (id, nick) values (?,?)",[1,Titanium.Platform.username])
+		   TiDeveloper.ircNick = Titanium.Platform.username;
+	   });
+	});
 	
 	TiDeveloper.loadTwitter();
 	
@@ -1054,15 +1072,15 @@ Titanium.Network.addConnectivityListener(function(online)
 });
 
 var IRC_CHANNEL = "#titanium_app";
-
 setTimeout(function()
 {
 	try
 	{
-		var username = format_nickname(Titanium.Platform.username + 1);
+		var username = format_nickname(TiDeveloper.ircNick);
 		var useSetNick = null;
 		var nick_counter = 1;
-
+		var setNicknameAttempted = false;
+		
 		$('#irc').append('<div style="color:#aaa">you are joining the <span style="color:#42C0FB">Titanium Developer</span> chat room. one moment...</div>');
 		var irc = Titanium.Network.createIRCClient();
 		irc.connect("irc.freenode.net",6667,username,username,username,String(new Date().getTime()),function(cmd,channel,data,nick)
@@ -1074,6 +1092,8 @@ setTimeout(function()
 			{	
 				case '433':
 				{
+					
+					// user is trying to set thier nickname
 					if (userSetNick != null)
 					{
 						if ($('.' + userSetNick).length == 0)
@@ -1082,6 +1102,13 @@ setTimeout(function()
 							$('.'+username).html('');
 							$('#irc_users').append('<div class="'+userSetNick+'" >'+userSetNick+'</div>');
 							username = userSetNick;
+						
+							// update database
+						    db.transaction(function (tx) 
+						    {
+						        tx.executeSql("UPDATE IRC set nick = ? WHERE id = 1", 
+								[username]);
+						    });
 						}
 						else
 						{
@@ -1089,9 +1116,18 @@ setTimeout(function()
 							return;
 						}
 					}
+					
+					// we tried to set the nick, but it's taken
+					// so increment
+					else if (setNicknameAttepted == true)
+					{
+						username = format_nickname(TiDeveloper.ircNick + (++nickCounter));
+					}
+					// initial attempt to set nickname
 					else
 					{
-						username = format_nickname(Titanium.Platform.username + (++nick_counter));
+						username = format_nickname(TiDeveloper.ircNick);
+						setNicknameAttempted = true;
 					}
 					// try again with a new nick
 					irc.setNick(username);
