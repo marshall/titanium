@@ -6,6 +6,7 @@
 
 #include "../ui_module.h"
 #include <iostream>
+#include <Poco/Process.h>
 
 using namespace ti;
 
@@ -27,10 +28,15 @@ static void populate_popup_cb(
 	WebKitWebView *web_view,
 	GtkMenu *menu,
 	gpointer data);
-//static void navigation_requested_cb(
-//	WebKitWebFrame* web_frame,
-//	WebKitNetworkRequest* request,
-//	WebKitNetworkResponse* response);
+static gint navigation_requested_cb(
+	WebKitWebView* web_view,
+	WebKitWebFrame* web_frame,
+	WebKitNetworkRequest* request);
+static gint new_window_navigation_requested_cb(
+	WebKitWebView* web_view,
+	WebKitWebFrame* web_frame,
+	WebKitNetworkRequest* request,
+	gchar* frame_name);
 
 GtkUserWindow::GtkUserWindow(Host *host, WindowConfig* config) : UserWindow(host, config)
 {
@@ -61,9 +67,13 @@ void GtkUserWindow::Open()
 	{
 		/* web view */
 		WebKitWebView* web_view = WEBKIT_WEB_VIEW (webkit_web_view_new ());
-		g_signal_connect(G_OBJECT (web_view), "window-object-cleared",
-		                 G_CALLBACK (window_object_cleared_cb),
+		g_signal_connect(G_OBJECT(web_view), "window-object-cleared",
+		                 G_CALLBACK(window_object_cleared_cb),
 		                 this);
+		g_signal_connect(G_OBJECT(web_view), "navigation-requested",
+		                 G_CALLBACK(navigation_requested_cb), this);
+		g_signal_connect(G_OBJECT(web_view), "new-window-navigation-requested",
+		                 G_CALLBACK(new_window_navigation_requested_cb), this);
 
 		g_signal_connect(
 			G_OBJECT (web_view),
@@ -336,13 +346,40 @@ static gboolean event_cb(
 	return FALSE;
 }
 
-//static void navigation_requested_cb(
-//	WebKitWebFrame* web_frame,
-//	WebKitNetworkRequest* request,
-//	WebKitNetworkResponse* response)
-//{
-//	std::cout << "navigation requested" << std::endl;
-//}
+static gint navigation_requested_cb(
+	WebKitWebView* web_view,
+	WebKitWebFrame* web_frame,
+	WebKitNetworkRequest* request)
+{
+	return WEBKIT_NAVIGATION_RESPONSE_ACCEPT;
+}
+
+static gint new_window_navigation_requested_cb(
+	WebKitWebView* web_view,
+	WebKitWebFrame* web_frame,
+	WebKitNetworkRequest* request,
+	gchar* frame_name)
+{
+	const char *sbrowser = "ti:systembrowser";
+	gchar* frame_name_case = g_utf8_casefold(frame_name, g_utf8_strlen(frame_name, -1));
+	gchar* system_browser = g_utf8_casefold(sbrowser, g_utf8_strlen(sbrowser, -1));
+
+	if (g_utf8_collate(frame_name_case, system_browser) == 0)
+	{
+		gchar* url = strdup(webkit_network_request_get_uri(request));
+		if (url[strlen(url)-1] == '/')
+			url[strlen(url)-1] = '\0';
+
+		std::vector<std::string> args;
+		args.push_back(std::string(url));
+		Poco::Process::launch("xdg-open", args);
+		return WEBKIT_NAVIGATION_RESPONSE_IGNORE;
+	}
+	else
+	{
+		return WEBKIT_NAVIGATION_RESPONSE_ACCEPT;
+	}
+}
 
 static void window_object_cleared_cb(
 	WebKitWebView* web_view,
