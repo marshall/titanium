@@ -330,11 +330,8 @@
 
 - (void)webView:(WebView *)sender didStartProvisionalLoadForFrame:(WebFrame *)frame
 {
-    // Only report feedback for the main frame.
-    if (frame == [sender mainFrame]) 
-	{
-		frames->insert(std::pair<WebFrame*,bool>(frame,false));
-    }
+	KR_DUMP_LOCATION
+	(*frames)[frame]=false;
 }
 
 - (void)webView:(WebView *)sender didReceiveTitle:(NSString *)title forFrame:(WebFrame *)frame
@@ -353,7 +350,7 @@
 }
 - (void)inject:(WebScriptObject *)windowScriptObject context:(JSGlobalContextRef)context frame:(WebFrame*)frame
 {
-//	JSContextGroupRef group = JSContextGetGroup(context);
+	KR_DUMP_LOCATION
 	JSObjectRef global_object = JSContextGetGlobalObject(context);
 	KJSUtil::RegisterGlobalContext(global_object, context);
 
@@ -405,16 +402,29 @@
 	SharedValue ti_object_value = Value::NewObject(shared_ti_obj);
 	global_bound_object->Set(GLOBAL_NS_VARNAME, ti_object_value);
 
-	frames->insert(std::pair<WebFrame*,bool>(frame,true));
+	// track that we've cleared this frame
+	(*frames)[frame]=true;
 }
 
 - (void)webView:(WebView *)sender didFinishLoadForFrame:(WebFrame *)frame
 {
+	KR_DUMP_LOCATION
+	
 	// we need to inject even in child frames
 	std::map<WebFrame*,bool>::iterator iter = frames->find(frame);
-	std::pair<WebFrame*,bool> pair = (*iter);
-	bool scriptCleared = pair.second;
-	frames->erase(iter);
+	bool scriptCleared = false;
+	if (iter!=frames->end())
+	{
+		std::pair<WebFrame*,bool> pair = (*iter);
+		scriptCleared = pair.second;
+		frames->erase(iter);
+	}
+	else
+	{
+#ifdef DEBUG
+		std::cout << "not found frame = " << frame << std::endl;
+#endif
+	}
 	if (!scriptCleared)
 	{
 		TRACE(@"page loaded with no <script> tags, manually injecting Titanium runtime", scriptCleared);
