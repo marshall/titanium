@@ -1,3 +1,8 @@
+body.linux, body.win32
+{
+	background: #282828 url(../images/bg_gradient_tall) repeat-x;
+	font-family: Arial;
+}
 body
 {
 	margin:0px;
@@ -187,6 +192,12 @@ textarea:focus, input:focus
 {
 	-webkit-box-shadow:none !important;	
 }
+
+body.linux.menu , body.win32.menu
+{
+	background:url(../images/bg_gradient_short.png) repeat-x;
+}
+
 .menu
 {
 	background:-webkit-gradient(linear, left top, left bottom, from(#222), to(#000));
@@ -285,11 +296,13 @@ textarea:focus, input:focus
 	-webkit-border-top-left-radius: 5px;
 	color:#ddd;
 }
+
 .black_gradient
 {
 	margin-bottom:5px;
 	height:15px;
-	background:-webkit-gradient(linear, left top, left bottom, from(#333), to(#111));
+/*	background:-webkit-gradient(linear, left top, left bottom, from(#333), to(#111)); */
+	background-color:#303030;
 	position:relative;
 	-webkit-border-bottom-right-radius: 5px;
 	-webkit-border-bottom-left-radius: 5px;

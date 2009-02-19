@@ -98,8 +98,9 @@ TiDeveloper.loadFriendFeed = function()
 				// flickr search feed
 				if (serviceURL.indexOf('flickr')!=-1)
 				{
-					image = row.media[0].enclosures[0].url;
-					sourceImg = '<img src="images/flickr_small.png" style="position:relative;top:-2px"/> <span style="color:#a4a4a4;font-size:11px;position:relative;top:-5px"> Flickr Photo</span>';
+					//image = row.media[0].enclosures[0].url;
+					// sourceImg = '<img src="images/flickr_small.png" style="position:relative;top:-2px"/> <span style="color:#a4a4a4;font-size:11px;position:relative;top:-5px"> Flickr Photo</span>';
+					continue;
 
 				}
 				// twitter search feed
@@ -110,7 +111,7 @@ TiDeveloper.loadFriendFeed = function()
 					// sourceImg = '<img src="images/twitter_small.png"/>';
 					// //http://twitter.com/jmalonzo/statuses/1220569098
 					// author = '<a target="ti:systembrowser" href="'+row.link+'">'+row.link.substring(19).split('/')[0] + '</a>';
-					continue
+					continue;
 				}
 				// google blog feed
 				else if (serviceURL.indexOf('blogsearch.google') != -1)
@@ -127,7 +128,7 @@ TiDeveloper.loadFriendFeed = function()
 
 				}
 				// vimeo
-				else if (serviceURL.indexOf('vimeo')!= -1)
+				else if (serviceURL.indexOf('vimeo')!= -1 || serviceURL.indexOf('youtube'))
 				{
 					image = row.media[0].thumbnails[0].url;
 					sourceImg = '<img src="images/video_small.png" style="position:relative;top:-2px"/> <span style="color:#a4a4a4;font-size:11px;position:relative;top:-5px"> Video</span>';
@@ -616,8 +617,8 @@ $MQL('l:app.compiled',function()
 	
 	setTimeout(function()
 	{
-		// var html = '<iframe src="http://titanium-js.appspot.com/" frameborder="0" height="80%" width="100%"></iframe>';
-		// $('#documentation').html(html);
+		var html = '<iframe src="http://titanium-js.appspot.com/" frameborder="0" height="80%" width="100%"></iframe>';
+		$('#documentation').html(html);
 		
 	},800)
 });
@@ -1059,6 +1060,7 @@ setTimeout(function()
 	try
 	{
 		var username = format_nickname(Titanium.Platform.username + 1);
+		var useSetNick = null;
 		var nick_counter = 1;
 
 		$('#irc').append('<div style="color:#aaa">you are joining the <span style="color:#42C0FB">Titanium Developer</span> chat room. one moment...</div>');
@@ -1072,8 +1074,26 @@ setTimeout(function()
 			{	
 				case '433':
 				{
+					if (userSetNick != null)
+					{
+						if ($('.' + userSetNick).length == 0)
+						{
+							$('#irc').append('<div style="color:#aaa">' + username + ' is now known as <span style"color:#42C0FB">'+userSetNick+'</span></div>');
+							$('.'+username).html('');
+							$('#irc_users').append('<div class="'+userSetNick+'" >'+userSetNick+'</div>');
+							username = userSetNick;
+						}
+						else
+						{
+							$('#irc').append('<div style="color:#aaa">' + userSetNick + ' is already taken. try again.</div>');
+							return;
+						}
+					}
+					else
+					{
+						username = format_nickname(Titanium.Platform.username + (++nick_counter));
+					}
 					// try again with a new nick
-					username = format_nickname(Titanium.Platform.username + (++nick_counter));
 					irc.setNick(username);
 					break;
 				}
@@ -1101,8 +1121,8 @@ setTimeout(function()
 							notification.setIcon("app://images/information.png");
 							notification.show();
 							
-						}
-						$('#irc').append('<div style="color:yellow;float:left;margin-bottom:3px;width:90%">' + nick + ': <span style="color:white">' + msg + '</span></div><div style="float:right;color:#ccc;font-size:11px;width:10%;text-align:right">'+time+'</div><div style="clear:both"></div>');
+						}	
+						$('#irc').append('<div style="color:#42C0FB;font-size:14px;float:left;margin-bottom:8px;width:90%">' + nick + ': <span style="color:white;font-family:Arial;font-size:12px">' + msg + '</span></div><div style="float:right;color:#ccc;font-size:11px;width:10%;text-align:right">'+time+'</div><div style="clear:both"></div>');
 					}
 					break;
 				}
@@ -1113,25 +1133,14 @@ setTimeout(function()
 					irc_count = users.length;
 					for (var i=0;i<users.length;i++)
 					{
-						// if (users[i].operator == true)
-						// {
-						// 	$('#irc_users').append('<div class="'+users[i].name+'" style="color:#42C0FB">'+users[i].name+'(op)</div>');
-						// }
-						// else if (users[i].voice==true)
-						// {
-						// 	$('#irc_users').append('<div class="'+users[i].name+'" style="color:#42C0FB">'+users[i].name+'(v)</div>');
-						// }
-						// else
-						// {
-							$('#irc_users').append('<div class="'+users[i].name+'">'+users[i].name+'</div>');
-						// }
+						$('#irc_users').append('<div class="'+users[i].name+'">'+users[i].name+'</div>');
 					}
 				}
 				case 'JOIN':
 				{
 					if (nick.indexOf('freenode.net') != -1)
 					{
-						continue;
+						return;
 					}
 					
 					if (nick == username)
@@ -1169,10 +1178,16 @@ setTimeout(function()
 			{
 				var time = TiDeveloper.getCurrentTime();
 				var urlMsg = TiDeveloper.formatURIs($('#irc_msg').val());
-				irc.send(IRC_CHANNEL,$('#irc_msg').val());
-				$('#irc').append('<div style="color:yellow;float:left;margin-bottom:3px;width:90%">' + username + ': <span style="color:white">' + urlMsg + '</span></div><div style="float:right;color:#ccc;font-size:11px;width:10%;text-align:right">'+time+'</div><div style="clear:both"></div>');
+				var rawMsg = $('#irc_msg').val()
+				if (rawMsg.indexOf('/nick') == 0)
+				{
+					userSetNick = rawMsg.split(' ')[1];
+				}
+				irc.send(IRC_CHANNEL,rawMsg);
+				$('#irc').append('<div style="color:#42C0FB;font-size:14px;float:left;margin-bottom:8px;width:90%">' + username + ': <span style="color:white;font-size:12px;font-family:Arial">' + urlMsg + '</span></div><div style="float:right;color:#ccc;font-size:11px;width:10%;text-align:right">'+time+'</div><div style="clear:both"></div>');
 				$('#irc_msg').val('');
 				$('#irc').get(0).scrollTop = $('#irc').get(0).scrollHeight;
+				
 			}
 		});
 	}
