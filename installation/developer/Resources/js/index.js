@@ -1081,7 +1081,7 @@ setTimeout(function()
 		var nick_counter = 1;
 		var setNicknameAttempted = false;
 		
-		$('#irc').append('<div style="color:#aaa">you are joining the <span style="color:#42C0FB">Titanium Developer</span> chat room. one moment...</div>');
+		$('#irc').append('<div style="color:#aaa">you are joining the <span style="color:#42C0FB">Titanium Developer</span> IRC channel <span style="color:#42C0FB">'+IRC_CHANNEL+'</span>. one moment...</div>');
 		var irc = Titanium.Network.createIRCClient();
 		irc.connect("irc.freenode.net",6667,username,username,username,String(new Date().getTime()),function(cmd,channel,data,nick)
 		{
@@ -1181,7 +1181,7 @@ setTimeout(function()
 					
 					if (nick == username)
 					{
-						$('#irc').append('<div style="color:#aaa;margin-bottom:20px"> you are now in the room. your handle is: <span style="color:#42C0FB">'+username+'</span> </div>');
+						$('#irc').append('<div style="color:#aaa;margin-bottom:20px"> you are now in the room. your handle is: <span style="color:#42C0FB">'+username+'</span>.  You can change your handle using: <span style="color:#42C0FB">/nick new_handle</span></div>');
 						break
 					}
 					else
