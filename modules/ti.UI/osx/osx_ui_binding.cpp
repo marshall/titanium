@@ -184,7 +184,7 @@ namespace ti
 		[NSApp setServicesMenu:servicesMenu];
 		
 		[aMenu addItem:[NSMenuItem separatorItem]];
-		
+
 		menuItem = [aMenu addItemWithTitle:[NSString stringWithFormat:@"%@ %@", NSLocalizedString(@"Hide", nil), applicationName]
 									action:@selector(hide:)
 							 keyEquivalent:@"h"];
@@ -207,6 +207,57 @@ namespace ti
 									action:@selector(terminate:)
 							 keyEquivalent:@"q"];
 		[menuItem setTarget:NSApp];
+		
+		// edit
+		menuItem = [mainMenu addItemWithTitle:@"Edit" action:NULL keyEquivalent:@""];
+		submenu = [[NSMenu alloc] initWithTitle:NSLocalizedString(@"Edit", @"The Edit menu")];
+		[mainMenu setSubmenu:submenu forItem:menuItem];
+		menuItem = [submenu addItemWithTitle:NSLocalizedString(@"Undo", nil)
+									action:@selector(undo:)
+							 keyEquivalent:@"z"];
+		
+		menuItem = [submenu addItemWithTitle:NSLocalizedString(@"Redo", nil)
+									action:@selector(redo:)
+							 keyEquivalent:@"Z"];
+		
+		[submenu addItem:[NSMenuItem separatorItem]];
+		
+		menuItem = [submenu addItemWithTitle:NSLocalizedString(@"Cut", nil)
+									action:@selector(cut:)
+							 keyEquivalent:@"x"];
+		
+		menuItem = [submenu addItemWithTitle:NSLocalizedString(@"Copy", nil)
+									action:@selector(copy:)
+							 keyEquivalent:@"c"];
+		
+		menuItem = [submenu addItemWithTitle:NSLocalizedString(@"Paste", nil)
+									action:@selector(paste:)
+							 keyEquivalent:@"v"];
+		
+		menuItem = [submenu addItemWithTitle:NSLocalizedString(@"Delete", nil)
+									action:@selector(delete:)
+							 keyEquivalent:@""];
+		
+
+		// window
+		menuItem = [mainMenu addItemWithTitle:@"Window" action:NULL keyEquivalent:@""];
+		submenu = [[NSMenu alloc] initWithTitle:NSLocalizedString(@"Window", @"The Window menu")];
+		[mainMenu setSubmenu:submenu forItem:menuItem];
+		menuItem = [submenu addItemWithTitle:NSLocalizedString(@"Minimize", nil)
+									action:@selector(performMinimize:)
+							 keyEquivalent:@"m"];
+		
+		menuItem = [submenu addItemWithTitle:NSLocalizedString(@"Zoom", nil)
+									action:@selector(performZoom:)
+							 keyEquivalent:@""];
+		
+		[submenu addItem:[NSMenuItem separatorItem]];
+		
+		menuItem = [submenu addItemWithTitle:NSLocalizedString(@"Bring All to Front", nil)
+									action:@selector(arrangeInFront:)
+							 keyEquivalent:@""];
+		
+		[NSApp setWindowsMenu:submenu];
 
 		if (menu)
 		{
