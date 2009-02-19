@@ -575,7 +575,7 @@ bool Win32UserWindow::IsVisible() {
 	placement.length = sizeof(WINDOWPLACEMENT);
 	GetWindowPlacement(window_handle, &placement);
 
-	return placement.showCmd == SW_SHOW;
+	return (placement.showCmd == SW_SHOWNORMAL || placement.showCmd == SW_SHOWMAXIMIZED);
 }
 
 void Win32UserWindow::SetVisible(bool visible) {
