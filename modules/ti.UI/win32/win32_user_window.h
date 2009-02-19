@@ -161,7 +161,7 @@ public:
 private:
 	void SetupPosition();
 	void SetupSize();
-	void SetupDecorations();
+	void SetupDecorations(bool showHide = true);
 	void SetupMenu();
 	void SetupIcon();
 

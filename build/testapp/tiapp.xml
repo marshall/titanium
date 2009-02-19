@@ -10,6 +10,9 @@
       <width>750</width>
       <height>850</height>
       <fullscreen>false</fullscreen>
+      <minimizable>true</minimizable>
+      <maximizable>true</maximizable>
+      <closeable>true</closeable>
       <chrome>true</chrome>
    </window>
    <window>

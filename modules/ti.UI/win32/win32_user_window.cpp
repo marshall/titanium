@@ -199,9 +199,10 @@ Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config) :
 	this->Set("windowHandle", windowHandle);
 	this->SetMethod("addMessageHandler", &Win32UserWindow::AddMessageHandler);
 
-	this->ReloadTiWindowConfig();
-
 	SetWindowUserData(window_handle, this);
+
+	this->ReloadTiWindowConfig();
+	this->SetupDecorations(false);
 
 	Bounds b;
 	b.x = config->GetX();
@@ -567,7 +568,7 @@ void Win32UserWindow::SetMinimizable(bool minimizable) {
 
 void Win32UserWindow::SetCloseable(bool closeable) {
 	this->config->SetCloseable(closeable);
-	// TODO
+	this->SetupDecorations();
 }
 
 bool Win32UserWindow::IsVisible() {
@@ -691,12 +692,12 @@ void Win32UserWindow::SetUsingChrome(bool chrome) {
 	this->SetupDecorations();
 }
 
-void Win32UserWindow::SetupDecorations() {
+void Win32UserWindow::SetupDecorations(bool showHide) {
 	long windowStyle = GetWindowLong(this->window_handle, GWL_STYLE);
 
 	SetFlag(windowStyle, WS_OVERLAPPED, config->IsUsingChrome());
 	SetFlag(windowStyle, WS_CAPTION, config->IsUsingChrome());
-	SetFlag(windowStyle, WS_SYSMENU, config->IsUsingChrome());
+	SetFlag(windowStyle, WS_SYSMENU, config->IsUsingChrome() && config->IsCloseable());
 	SetFlag(windowStyle, WS_BORDER, config->IsUsingChrome());
 
 	SetFlag(windowStyle, WS_MAXIMIZEBOX, config->IsMaximizable());
@@ -704,8 +705,11 @@ void Win32UserWindow::SetupDecorations() {
 
 	SetWindowLong(this->window_handle, GWL_STYLE, windowStyle);
 
-	ShowWindow(window_handle, SW_HIDE);
-	ShowWindow(window_handle, SW_SHOW);
+	if(showHide)
+	{
+		ShowWindow(window_handle, SW_HIDE);
+		ShowWindow(window_handle, SW_SHOW);
+	}
 }
 
 void Win32UserWindow::AppMenuChanged()
