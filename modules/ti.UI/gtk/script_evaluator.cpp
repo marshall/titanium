@@ -42,10 +42,11 @@ bool ScriptEvaluator::matchesMimeType(const gchar *mime_type)
 	return false;
 }
 
-void ScriptEvaluator::evaluate(const gchar *mime_type, const gchar *source_code)
+void ScriptEvaluator::evaluate(const gchar *mime_type, const gchar *source_code, void *context)
 {
 	std::string moduleName = GetModuleName(mime_type);
 	SharedBoundObject global = kroll::Host::GetInstance()->GetGlobalObject();
+	JSContextRef contextRef = reinterpret_cast<JSContextRef>(context);
 
 	SharedValue moduleValue = global->Get(moduleName.c_str());
 	if (!moduleValue->IsNull()) {
@@ -54,8 +55,12 @@ void ScriptEvaluator::evaluate(const gchar *mime_type, const gchar *source_code)
 			ValueList args;
 			SharedValue typeValue = Value::NewString(mime_type);
 			SharedValue sourceCodeValue = Value::NewString(source_code);
+			JSObjectRef globalObjectRef = JSContextGetGlobalObject(contextRef);
+			SharedBoundObject contextObject = new KJSBoundObject(contextRef, globalObjectRef);
+			SharedValue contextValue = Value::NewObject(contextObject);
 			args.push_back(typeValue);
 			args.push_back(sourceCodeValue);
+			args.push_back(contextValue);
 
 			evalValue->ToMethod()->Call(args);
 		}
