@@ -49,9 +49,20 @@
 	[self setInitialFirstResponder:webView];
 
 	NSMenu *windowMenu = [[[NSApp mainMenu] itemWithTitle:NSLocalizedString(@"Window",@"")] submenu];
+
+	NSLog(@"windowMenu = %@",windowMenu);
+	
 	NSMenuItem *showInspector = [windowMenu itemWithTitle:NSLocalizedString(@"Show Inspector", @"")];
+
+	NSLog(@"showInspector = %@",showInspector);
+
 	if (host->IsDebugMode())
 	{
+		if (!showInspector)
+		{
+			[windowMenu addItem:[NSMenuItem separatorItem]];
+			showInspector = [windowMenu addItemWithTitle:@"Show Inspector" action:NULL keyEquivalent:@""];
+		}
 	    [showInspector setEnabled:YES];
 	    [showInspector setAction:@selector(showInspector)];
 		[showInspector setKeyEquivalentModifierMask:NSCommandKeyMask|NSAlternateKeyMask];
