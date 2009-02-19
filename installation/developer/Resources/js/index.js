@@ -67,10 +67,12 @@ TiDeveloper.saveTwitterCreds = function(username,password)
 TiDeveloper.loadFriendFeed = function()
 {
 	$('#news_content').empty();
+	var url = "http://friendfeed.com/api/feed/user/titaniumapp?format=json&start=0&num=100";
+//	var url = "http://friendfeed.com/api/feed/user/titaniumapp?format=json";
 	
 	$.ajax({
 		type:"GET",
-		url:"http://friendfeed.com/api/feed/user/titaniumapp?format=json&start=0&num=100",
+		url:url,
 		success: function(data)
 		{
 			var json = swiss.evalJSON(data)
@@ -85,7 +87,7 @@ TiDeveloper.loadFriendFeed = function()
 				var time = TiDeveloper.convertDate(time);
 				date = date + ' ' + time
 				var serviceURL = row.service.profileUrl;
-				var title = row.title
+				var title = '<a target="ti:systembrowser" href="'+row.link+'">'+row.title+'</a>';
 				var image = null;
 				var author = null;
 				var sourceImg = null;
@@ -114,33 +116,36 @@ TiDeveloper.loadFriendFeed = function()
 				else if (serviceURL.indexOf('blogsearch.google') != -1)
 				{
 					image = "images/logo_small.png";
-					sourceImg = '<img src="images/news_small.png" style="position:relative;top:-2px"/> <span style="color:#a4a4a4;font-size:11px;position:relative;top:-5px"> Blog Article</span>';
+					sourceImg = '<img src="images/blog_small.png" style="position:relative;top:-2px"/> <span style="color:#a4a4a4;font-size:11px;position:relative;top:-5px"> Blog Article</span>';
 
 				}
 				// goggle news
 				else if (serviceURL.indexOf('news.google.com')!= -1)
 				{
 					image = "images/logo_small.png";
-					sourceImg = '<img src="images/google_small.png" style="position:relative;top:-2px"/> <span style="color:#a4a4a4;font-size:11px;position:relative;top:-5px">News Article</span>';
+					sourceImg = '<img src="images/news_small.png" style="position:relative;top:-2px"/> <span style="color:#a4a4a4;font-size:11px;position:relative;top:-5px">News Article</span>';
 
 				}
 				// vimeo
 				else if (serviceURL.indexOf('vimeo')!= -1)
 				{
 					image = row.media[0].thumbnails[0].url;
-					sourceImg = '<img src="images/vimeo_small.png" style="position:relative;top:-2px"/> <span style="color:#a4a4a4;font-size:11px;position:relative;top:-5px"> Video</span>';
+					sourceImg = '<img src="images/video_small.png" style="position:relative;top:-2px"/> <span style="color:#a4a4a4;font-size:11px;position:relative;top:-5px"> Video</span>';
 
 				}
 
 				html.push('<div style="height:80px;margin-bottom:10px">');
-				html.push('		<div style="float:left;text-align:center;min-width:60px;max-width:60px;"><a target="ti:systembrowser" href="'+url+'"><img style="border:2px solid #4b4b4b;background-color:#4b4b4b;position:relative;top:14px" height="48px" width="48px" src="'+image+'"/></a></div>');
-				html.push('		<div style="float:right;min-width:86%;max-width:86%;height:80px;position:relative;-webkit-border-radius:6px;background-color:#414141">');
+				html.push('		<table width="100%"><tr><td valign="middle" width="100px" align="center">')
+				html.push('		<div><a target="ti:systembrowser" href="'+url+'"><img style="border:2px solid #4b4b4b;background-color:#4b4b4b;position:relative;left:-7px" height="48px" width="48px" src="'+image+'"/></a></div>');
+				html.push('		</td><td valign="middle">')
+				html.push('		<div style="position:relative;height:80px;-webkit-border-radius:6px;background-color:#414141">');
 				html.push('			<img style="position:absolute;left:-24px;top:25px" src="images/triangle.png"/>');
 				html.push('			<div style="color:#42C0FB;position:absolute;left:10px;top:8px;">' + sourceImg+'</div>');
 				html.push('			<div style="color:#a4a4a4;font-size:11px;position:absolute;right:10px;top:10px">' + date + '</div>');
 				html.push('			<div style="position:absolute;left:10px;top:30px;color:#fff;">'+title +'</div>')
-				html.push('		</div>');
+				html.push('		</div></td></tr></table>');
 				html.push('</div>');
+
 				$('#news_content').append(html.join(''));
 				
 			}
@@ -212,14 +217,17 @@ TiDeveloper.loadTwitter = function()
 					}
 				}
 				html.push('<div style="height:80px;margin-bottom:10px">');
-				html.push('		<div style="float:left;text-align:center;min-width:60px;max-width:60px;"><img style="border:2px solid #4b4b4b;background-color:#4b4b4b;position:relative;top:14px" height="48px" width="48px" src="'+image+'"/></div>');
-				html.push('		<div style="float:right;min-width:86%;max-width:86%;height:80px;position:relative;-webkit-border-radius:6px;background-color:#414141">');
+				html.push(	'	<table width="100%"><tr><td valign="middle" align="center" width="100px">');
+				html.push('		<div><img style="border:2px solid #4b4b4b;background-color:#4b4b4b;position:relative;left:-7px" height="48px" width="48px" src="'+image+'"/></div>');
+				html.push('		</td><td valign="middle">')
+				html.push('		<div style="position:relative;height:80px;-webkit-border-radius:6px;background-color:#414141">');
 				html.push('			<img style="position:absolute;left:-24px;top:25px" src="images/triangle.png"/>');
 				html.push('			<div style="color:#42C0FB;position:absolute;left:10px;top:8px;">' + author + ' <span style="color:#a4a4a4">says:</span></div>');
 				html.push('			<div style="color:#a4a4a4;font-size:11px;position:absolute;right:10px;top:10px">' + date + '</div>');
 				html.push('			<div style="position:absolute;left:10px;top:30px;color:#fff;">'+desc +'</div>')
-				html.push('		</div>');
+				html.push('		</div></td></tr></table>');
 				html.push('</div>');
+
 				$('#twitter_content').append(html.join(''));
 				var d = new Date();	
 				$('#twitter_last_update').html(d.toLocaleString())
@@ -606,7 +614,13 @@ $MQL('l:app.compiled',function()
 	});
 	
 	TiDeveloper.loadTwitter();
-//	TiDeveloper.loadFriendFeed();
+	
+	setTimeout(function()
+	{
+		var html = '<iframe src="http://titanium-js.appspot.com/" frameborder="0" height="80%" width="100%"></iframe>';
+		$('#documentation').html(html);
+		
+	},800)
 });
 
 
