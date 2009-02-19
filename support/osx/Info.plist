@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleExecutable</key>
-	<string>APPNAME</string>
+	<string>APPEXE</string>
 	<key>CFBundleIconFile</key>
 	<string>APPICON</string>
 	<key>CFBundleIdentifier</key>

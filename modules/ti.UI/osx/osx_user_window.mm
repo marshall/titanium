@@ -4,6 +4,9 @@
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
 #import "osx_user_window.h"
+#import "osx_ui_binding.h"
+#import "osx_menu_item.h"
+
 #define STUB() printf("Method is still a stub, %s:%i\n", __FILE__, __LINE__)
 
 namespace ti
@@ -38,7 +41,7 @@ namespace ti
 		return mask;
 	}
 
-	OSXUserWindow::OSXUserWindow(Host *host, WindowConfig *config) : UserWindow(host,config), window(NULL), opened(false), closed(false)
+	OSXUserWindow::OSXUserWindow(Host *host, WindowConfig *config, OSXUIBinding *binding) : UserWindow(host,config), window(NULL), opened(false), closed(false), binding(binding)
 	{
 		[NSApplication sharedApplication];
 
@@ -60,8 +63,6 @@ namespace ti
 	}
 	OSXUserWindow::~OSXUserWindow()
 	{
-		[native_menu release];
-		
 		window = nil; // don't release
 		
 		if (!closed)
@@ -71,7 +72,7 @@ namespace ti
 	}
 	UserWindow* OSXUserWindow::WindowFactory(Host* host, WindowConfig* config)
 	{
-		return new OSXUserWindow(host, config);
+		return new OSXUserWindow(host, config, binding);
 	}
 	void OSXUserWindow::Hide()
 	{
@@ -342,18 +343,18 @@ namespace ti
 
 	void OSXUserWindow::SetMenu(SharedPtr<MenuItem> menu)
 	{	
-		this->menu = NULL;
-		if (this->native_menu)
+		if (menu == this->menu)
 		{
-			[this->native_menu release];
-			this->native_menu = NULL;
+			return;
 		}
-		if (!menu.isNull())
+		this->menu = menu;
+		if (focused)
 		{
-			ti::OSXMenuItem *i = (ti::OSXMenuItem*)menu.get();
-			this->native_menu = ti::OSXUIBinding::MakeMenu(i);
+			SharedPtr<OSXMenuItem> m = menu.cast<OSXMenuItem>();
+			this->binding->WindowFocused(this,m.get());
 		}
 	}
+	
 
 	SharedPtr<MenuItem> OSXUserWindow::GetMenu()
 	{
@@ -362,23 +363,26 @@ namespace ti
 	
 	void OSXUserWindow::Focused()
 	{
-		if (this->native_menu)
+		this->focused = true;
+		if (!menu.isNull())
 		{
-			[[NSApplication sharedApplication] setMainMenu:native_menu];
+			SharedPtr<OSXMenuItem> m = menu.cast<OSXMenuItem>();
+			this->binding->WindowFocused(this,m.get());
 		}
 	}
 
 	void OSXUserWindow::Unfocused()
 	{
-		// if (this->native_menu)
-		// {
-		// 	[[NSApplication sharedApplication] setMainMenu:nil];
-		// }
+		this->focused = false;
+		if (!menu.isNull())
+		{
+			SharedPtr<OSXMenuItem> m = menu.cast<OSXMenuItem>();
+			this->binding->WindowUnfocused(this,m.get());
+		}
 	}
 	
 	void OSXUserWindow::SetContextMenu(SharedPtr<MenuItem> value)
 	{
-		std::cout << "SetContextMenu = " << value << std::endl;
 		this->context_menu = value;
 	}
 

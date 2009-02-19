@@ -129,7 +129,8 @@ shutil.copy(runtime_manifest_file, runtime_dir)
 
 if osname is 'osx':
     plist = open(path.join('..', 'support', 'osx', 'Info.plist')).read()
-    plist = plist.replace('APPNAME', 'titanium_testapp')
+    plist = plist.replace('APPEXE', 'titanium_testapp')
+    plist = plist.replace('APPNAME', 'Titanium Test App')
     plist = plist.replace('APPICON', 'titanium.icns')
     plist = plist.replace('APPID', 'com.titaniumapp.testapp')
     plist = plist.replace('APPNIB', 'MainMenu')

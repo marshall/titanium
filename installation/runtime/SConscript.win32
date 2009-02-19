@@ -113,7 +113,8 @@ shutil.copy(p.join(build.kroll_third_party,'manifest'),p.join(app_dir,'runtime',
 # now for the fun part... build the self-extracting archive
 zff = p.join(build.dir,'titanium_runtime.zip')
 exe = p.join(build.dir,'titanium_runtime.exe')
-shutil.copy(kboot, p.join(app_dir,'titanium_runtime.exe'))
+#shutil.copy(kboot, p.join(app_dir,'titanium_runtime.exe'))
+shutil.copy(kboot, p.join(app_dir,'installer.exe'))
 zf = zipfile.ZipFile(exe,'a', zipfile.ZIP_DEFLATED)
 zf.write(p.join(build.dir,'kboot.exe'),'template/kboot.exe')
 files = os.walk(app_dir)

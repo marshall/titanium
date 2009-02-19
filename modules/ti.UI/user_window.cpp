@@ -458,7 +458,6 @@ void UserWindow::_SetContextMenu(const kroll::ValueList& args, kroll::SharedValu
 	{
 		menu = args.at(0)->ToList().cast<MenuItem>();
 	}
-	std::cout << "SetContextMenu==> " << menu << std::endl;
 	this->SetContextMenu(menu);
 }
 

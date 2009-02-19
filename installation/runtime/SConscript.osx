@@ -31,6 +31,7 @@ class Bundler(object):
 			dir_util.copy_tree(lprojs, self.lproj, preserve_symlinks=False)
 		plist = open(p.join(build.titanium_support_dir, 'Info.plist')).read()
 		plist = plist.replace('APPNAME', name)
+		plist = plist.replace('APPEXE', name)
 		plist = plist.replace('APPICON', 'titanium.icns')
 		plist = plist.replace('APPID', appid)
 		plist = plist.replace('APPNIB', 'MainMenu')

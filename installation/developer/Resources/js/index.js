@@ -1053,6 +1053,9 @@ Titanium.Network.addConnectivityListener(function(online)
 		
 	}
 });
+
+var IRC_CHANNEL = "#titanium_app";
+
 setTimeout(function()
 {
 	try
@@ -1108,7 +1111,7 @@ setTimeout(function()
 				}
 				case '366':
 				{					
-					var users = irc.getUsers('#titanium_dev');
+					var users = irc.getUsers(IRC_CHANNEL);
 					$MQ('l:online.count',{count:users.length});
 					irc_count = users.length;
 					for (var i=0;i<users.length;i++)
@@ -1162,14 +1165,14 @@ setTimeout(function()
 			$('#irc').get(0).scrollTop = $('#irc').get(0).scrollHeight;
 		});
 
-		irc.join("#titanium_dev");
+		irc.join(IRC_CHANNEL);
 		$MQL('l:send.irc.msg',function()
 		{
 			if (TiDeveloper.online == true)
 			{
 				var time = TiDeveloper.getCurrentTime();
 				var urlMsg = TiDeveloper.formatURIs($('#irc_msg').val());
-				irc.send('#titanium_dev',$('#irc_msg').val());
+				irc.send(IRC_CHANNEL,$('#irc_msg').val());
 				$('#irc').append('<div style="color:yellow;float:left;margin-bottom:3px;width:90%">' + username + ': <span style="color:white">' + urlMsg + '</span></div><div style="float:right;color:#ccc;font-size:11px;width:10%;text-align:right">'+time+'</div><div style="clear:both"></div>');
 				$('#irc_msg').val('');
 				$('#irc').get(0).scrollTop = $('#irc').get(0).scrollHeight;

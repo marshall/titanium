@@ -50,8 +50,14 @@
 
 	NSMenu *windowMenu = [[[NSApp mainMenu] itemWithTitle:NSLocalizedString(@"Window",@"")] submenu];
 	NSMenuItem *showInspector = [windowMenu itemWithTitle:NSLocalizedString(@"Show Inspector", @"")];
+
 	if (host->IsDebugMode())
 	{
+		if (!showInspector)
+		{
+			[windowMenu addItem:[NSMenuItem separatorItem]];
+			showInspector = [windowMenu addItemWithTitle:@"Show Inspector" action:NULL keyEquivalent:@""];
+		}
 	    [showInspector setEnabled:YES];
 	    [showInspector setAction:@selector(showInspector)];
 		[showInspector setKeyEquivalentModifierMask:NSCommandKeyMask|NSAlternateKeyMask];

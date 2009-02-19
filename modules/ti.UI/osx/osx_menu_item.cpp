@@ -101,9 +101,21 @@ namespace ti {
 		{
 			return [NSMenuItem separatorItem];
 		}
-		return [[OSXMenuDelegate alloc] initWithMenu:this]; 
+		return [[OSXMenuDelegate alloc] initWithMenu:this menu:nil]; 
 	}	
 	
+	void OSXMenuItem::AttachMenu(NSMenu *menu)
+	{
+		if (this->IsSeparator())
+		{
+			[menu addItem:[NSMenuItem separatorItem]];
+		}
+		else
+		{
+			[[[OSXMenuDelegate alloc] initWithMenu:this menu:menu] autorelease]; 
+		}
+	}
+		
 	void OSXMenuItem::Invoke()
 	{
 		//invoke callback

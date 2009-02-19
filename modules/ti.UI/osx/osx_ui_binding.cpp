@@ -7,6 +7,7 @@
 #include "../ui_module.h"
 #include "osx_menu_item.h"
 #include "osx_tray_item.h"
+#include "osx_user_window.h"
 
 namespace ti
 {
@@ -18,6 +19,7 @@ namespace ti
 		NSApplication *nsapp = [NSApplication sharedApplication];
 		[nsapp setDelegate:application];
 		[NSBundle loadNibNamed:@"MainMenu" owner:nsapp];
+		InstallMenu(NULL); // force default app menu
 	}
 
 	OSXUIBinding::~OSXUIBinding()
@@ -34,7 +36,19 @@ namespace ti
 
 	void OSXUIBinding::SetMenu(SharedPtr<MenuItem> menu)
 	{
+		if (!this->activeMenu)
+		{
+			SharedPtr<OSXMenuItem> osx_menu = menu.cast<OSXMenuItem>();
+			InstallMenu(osx_menu.get());
+		}
+		
+		if (menu.isNull() && (!this->activeMenu || this->activeMenu == this->menu.get()))
+		{
+			InstallMenu(NULL);
+		}
+		
 		this->menu = menu;
+		std::cout << "SetMenu => " << menu.get() << ", active=" << activeMenu << std::endl;
 	}
 
 	void OSXUIBinding::SetContextMenu(SharedPtr<MenuItem> menu)
@@ -93,6 +107,188 @@ namespace ti
 		}
 	}
 	
+	void OSXUIBinding::WindowFocused(UserWindow *window, OSXMenuItem *menu)
+	{
+		if (menu == this->activeMenu)
+		{
+			// if we focused but our active menu is already showing
+			// for this window, don't worry about it..
+			return;
+		}
+		// if we're setting the active window's menu to null and we 
+		// have a app menu, re-install the app menu, otherwise set 
+		// the incoming menu
+		if (menu==NULL && this->menu)
+		{
+			SharedPtr<OSXMenuItem> osx_item = this->menu.cast<OSXMenuItem>();
+			InstallMenu(osx_item.get());
+		}
+		else
+		{
+			InstallMenu(menu);
+		}
+	}
+
+	void OSXUIBinding::WindowUnfocused(UserWindow *window, OSXMenuItem *menu)
+	{
+		if (this->activeMenu!=this->menu)
+		{
+			InstallMenu(this->activeMenu);
+		}
+		else
+		{
+			SharedPtr<OSXMenuItem> osx_item = this->menu.cast<OSXMenuItem>();
+			InstallMenu(osx_item.get());
+		}
+	}
+	
+	void OSXUIBinding::InstallMenu(OSXMenuItem *menu)
+	{
+		this->activeMenu = menu;
+		
+		NSMenu * mainMenu = [[NSMenu alloc] initWithTitle:@"MainMenu"];
+		NSMenuItem * menuItem;
+		NSMenu * submenu;
+
+		// The titles of the menu items are for identification purposes only and shouldn't be localized.
+		// The strings in the menu bar come from the submenu titles,
+		// except for the application menu, whose title is ignored at runtime.
+		menuItem = [mainMenu addItemWithTitle:@"Apple" action:NULL keyEquivalent:@""];
+		submenu = [[NSMenu alloc] initWithTitle:@"Apple"];
+		[NSApp performSelector:@selector(setAppleMenu:) withObject:submenu];
+		[mainMenu setSubmenu:submenu forItem:menuItem];
+
+
+		std::string appName = AppConfig::Instance()->GetAppName();
+		NSString * applicationName = [NSString stringWithCString:appName.c_str()];
+		NSMenu *aMenu = submenu;
+
+		menuItem = [aMenu addItemWithTitle:[NSString stringWithFormat:@"%@ %@", NSLocalizedString(@"About", nil), applicationName]
+									action:@selector(orderFrontStandardAboutPanel:)
+							 keyEquivalent:@""];
+		[menuItem setTarget:NSApp];
+
+		// [aMenu addItem:[NSMenuItem separatorItem]];
+		// 
+		// menuItem = [aMenu addItemWithTitle:NSLocalizedString(@"Preferences...", nil)
+		// 							action:NULL
+		// 					 keyEquivalent:@","];
+		// 
+		[aMenu addItem:[NSMenuItem separatorItem]];
+
+		menuItem = [aMenu addItemWithTitle:NSLocalizedString(@"Services", nil)
+									action:NULL
+							 keyEquivalent:@""];
+		NSMenu * servicesMenu = [[NSMenu alloc] initWithTitle:@"Services"];
+		[aMenu setSubmenu:servicesMenu forItem:menuItem];
+		[NSApp setServicesMenu:servicesMenu];
+		
+		[aMenu addItem:[NSMenuItem separatorItem]];
+
+		menuItem = [aMenu addItemWithTitle:[NSString stringWithFormat:@"%@ %@", NSLocalizedString(@"Hide", nil), applicationName]
+									action:@selector(hide:)
+							 keyEquivalent:@"h"];
+		[menuItem setTarget:NSApp];
+		
+		menuItem = [aMenu addItemWithTitle:NSLocalizedString(@"Hide Others", nil)
+									action:@selector(hideOtherApplications:)
+							 keyEquivalent:@"h"];
+		[menuItem setKeyEquivalentModifierMask:NSCommandKeyMask | NSAlternateKeyMask];
+		[menuItem setTarget:NSApp];
+		
+		menuItem = [aMenu addItemWithTitle:NSLocalizedString(@"Show All", nil)
+									action:@selector(unhideAllApplications:)
+							 keyEquivalent:@""];
+		[menuItem setTarget:NSApp];
+		
+		[aMenu addItem:[NSMenuItem separatorItem]];
+		
+		menuItem = [aMenu addItemWithTitle:[NSString stringWithFormat:@"%@ %@", NSLocalizedString(@"Quit", nil), applicationName]
+									action:@selector(terminate:)
+							 keyEquivalent:@"q"];
+		[menuItem setTarget:NSApp];
+		
+		// edit
+		menuItem = [mainMenu addItemWithTitle:@"Edit" action:NULL keyEquivalent:@""];
+		submenu = [[NSMenu alloc] initWithTitle:NSLocalizedString(@"Edit", @"The Edit menu")];
+		[mainMenu setSubmenu:submenu forItem:menuItem];
+		menuItem = [submenu addItemWithTitle:NSLocalizedString(@"Undo", nil)
+									action:@selector(undo:)
+							 keyEquivalent:@"z"];
+		
+		menuItem = [submenu addItemWithTitle:NSLocalizedString(@"Redo", nil)
+									action:@selector(redo:)
+							 keyEquivalent:@"Z"];
+		
+		[submenu addItem:[NSMenuItem separatorItem]];
+		
+		menuItem = [submenu addItemWithTitle:NSLocalizedString(@"Cut", nil)
+									action:@selector(cut:)
+							 keyEquivalent:@"x"];
+		
+		menuItem = [submenu addItemWithTitle:NSLocalizedString(@"Copy", nil)
+									action:@selector(copy:)
+							 keyEquivalent:@"c"];
+		
+		menuItem = [submenu addItemWithTitle:NSLocalizedString(@"Paste", nil)
+									action:@selector(paste:)
+							 keyEquivalent:@"v"];
+		
+		menuItem = [submenu addItemWithTitle:NSLocalizedString(@"Delete", nil)
+									action:@selector(delete:)
+							 keyEquivalent:@""];
+		
+
+		// window
+		menuItem = [mainMenu addItemWithTitle:@"Window" action:NULL keyEquivalent:@""];
+		submenu = [[NSMenu alloc] initWithTitle:NSLocalizedString(@"Window", @"The Window menu")];
+		[mainMenu setSubmenu:submenu forItem:menuItem];
+		menuItem = [submenu addItemWithTitle:NSLocalizedString(@"Minimize", nil)
+									action:@selector(performMinimize:)
+							 keyEquivalent:@"m"];
+		
+		menuItem = [submenu addItemWithTitle:NSLocalizedString(@"Zoom", nil)
+									action:@selector(performZoom:)
+							 keyEquivalent:@""];
+		
+		[submenu addItem:[NSMenuItem separatorItem]];
+		
+		menuItem = [submenu addItemWithTitle:NSLocalizedString(@"Bring All to Front", nil)
+									action:@selector(arrangeInFront:)
+							 keyEquivalent:@""];
+		
+		[NSApp setWindowsMenu:submenu];
+
+		if (menu)
+		{
+			OSXUIBinding::AttachMainMenu(mainMenu,menu);
+		}
+		
+		[NSApp setMainMenu:mainMenu];
+		[mainMenu release];
+	}
+
+	void OSXUIBinding::AttachMainMenu (NSMenu *mainMenu, ti::OSXMenuItem *item)
+	{
+		int count = item->GetChildCount();
+		for (int c=0;c<count;c++)
+		{
+			OSXMenuItem *i = item->GetChild(c);
+			const char *label = i->GetLabel();
+			NSString *title = label==NULL ? @"" : [NSString stringWithCString:label];
+			NSMenuItem *menuItem = [mainMenu addItemWithTitle:title action:NULL keyEquivalent:@""];
+			NSMenu *submenu = [[NSMenu alloc] initWithTitle:title];
+			[mainMenu setSubmenu:submenu forItem:menuItem];
+
+			NSMenu *submenu2 = [[NSMenu alloc] initWithTitle:title];
+			i->AttachMenu(submenu2);
+			[menuItem setSubmenu:submenu2];
+
+			// [menuItem release];
+			// [submenu release];
+			// [mi release];
+		}
+	}
 	NSMenu* OSXUIBinding::MakeMenu(ti::OSXMenuItem* item)
 	{
 		const char *label = item->GetLabel();
@@ -102,12 +298,10 @@ namespace ti
 		for (int c=0;c<count;c++)
 		{
 			OSXMenuItem *i = item->GetChild(c);
-			if (i->IsEnabled())
-			{
-				NSMenuItem *mi = i->CreateNative();
-				[menu addItem:mi];
-				//FIXME: RELEASE??
-			}
+			NSMenuItem *mi = i->CreateNative();
+			[mi setEnabled:i->IsEnabled()];
+			[menu addItem:mi];
+			[mi release];
 		}
 		return menu;
 	}
