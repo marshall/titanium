@@ -351,10 +351,9 @@ static void window_object_cleared_cb(
 	JSObjectRef window_object,
 	gpointer data)
 {
-	JSContextGroupRef group = JSContextGetGroup(context);
-	KJSUtil::RegisterGlobalContext(group, context);
-
 	JSObjectRef global_object = JSContextGetGlobalObject(context);
+	KJSUtil::RegisterGlobalContext(global_object, context);
+
 	GtkUserWindow* user_window = (GtkUserWindow*) data;
 	Host* tihost = user_window->GetHost();
 
