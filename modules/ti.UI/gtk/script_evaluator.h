@@ -14,7 +14,7 @@ public:
 
 	// WebKitWebScriptEvaluator
 	virtual bool matchesMimeType(const gchar *mime_type);
-	virtual void evaluate(const gchar *mime_type, const gchar *source_code);
+	virtual void evaluate(const gchar *mime_type, const gchar *source_code, void*);
 
 protected:
 	std::string GetModuleName(std::string mimeType);
