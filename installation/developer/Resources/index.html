@@ -3,26 +3,27 @@
 
 	<script type="text/javascript" charset="utf-8" src="js/appcelerator-debug.js"></script>
 
+	<!-- yahoo pagintator -->
 	<script type="text/javascript" charset="utf-8" src="common/js/yahoo-min.js"></script>
 	<script type="text/javascript" charset="utf-8" src="common/js/paginator-min.js"></script>
 
-
-	<script type="text/javascript" charset="utf-8" src="js/swfobject.js"></script>
-
+	<!-- core TiDeveloper JS files -->
 	<script type="text/javascript" charset="utf-8" src="js/index.js"></script>
+	<script type="text/javascript" charset="utf-8" src="js/projects.js"></script>
+	<script type="text/javascript" charset="utf-8" src="js/irc.js"></script>
+	<script type="text/javascript" charset="utf-8" src="js/feeds.js"></script>
+
+
+	<!-- common JS Files -->
 	<script type="text/javascript" charset="utf-8" src="js/project.js"></script>
 	<script type="text/javascript" charset="utf-8" src="js/app.js"></script>
 
+	<!-- style sheet -->
 	<link rel="stylesheet" href="css/index.css" type="text/css" media="screen" charset="utf-8" />
 </head>
 
 <!-- ADJUST WINDOW HEIGHT BASED ON CURRENT STATE -->
-<body  on="l:menu[val=manage] then script[Titanium.UI.currentWindow.setHeight(580)] 
-				if expr[Titanium.UI.currentWindow.getHeight()< 580]  or
-		   l:menu[val=interact] then script[Titanium.UI.currentWindow.setHeight(650)]
-				if expr[Titanium.UI.currentWindow.getHeight()< 650]  or
-		   l:menu[val=social] then script[Titanium.UI.currentWindow.setHeight(650)]
-				if expr[Titanium.UI.currentWindow.getHeight()< 650] ">
+<body >
 		
 	<input type="hidden" id="project_count_hidden" />
 	
@@ -39,7 +40,7 @@
 		
 		<!-- MAJOR ACTION BUTTONS -->
 		<div class="button1" style="display:inline-block;width:150px" 
-			on="click then l:menu[val=social] and add[class=active] or l:menu[val!=social] then remove[class=active]">
+			on="click then l:menu[val=feeds] and add[class=active] or l:menu[val!=feeds] then remove[class=active]">
 			<div class="button2">Feeds</div>
 		</div>
 		
@@ -77,7 +78,7 @@
 		
 		<!-- SOCIAL TYPE STUFF -->
 		<div style="margin-top:10px;"
-			on="l:menu[val=social] then effect[fadeIn] else hide">
+			on="l:menu[val=feeds] then effect[fadeIn] else hide">
 			<div style="height:35px;position:relative;left:20px">
 				<div class="button1" style="width:50px;height:33px;border-bottom:none">
 					<div class="button2 tab active_tab" style="height:31px;text-align:center;border-bottom:none"  
@@ -158,7 +159,7 @@
 							</div>
 
 						</div>
-						<div id="news_content" 																style="display:none;background-color:#2b2b2b;min-height:90%;max-height:90%;overflow:auto;padding:10px;"
+						<div id="friend_feed_content" 																style="display:none;background-color:#2b2b2b;min-height:90%;max-height:90%;overflow:auto;padding:10px;"
 							on="l:db[val=news] then show else hide">
 						</div>
 
@@ -172,7 +173,7 @@
 						</div>
 					</div>
 
-					<div class="button1" on="click then script[TiDeveloper.loadTwitter()]">
+					<div class="button1" on="click then script[TiDeveloper.Feeds.loadTwitter()]">
 						<div class="button2">
 								Refresh
 						</div>
@@ -264,6 +265,7 @@
 								<img src="images/16x16_new.png" style="position:relative;top:2px;left:1px"/>
 							</div>
 						</div>
+						<!--
 						<div class="button1" 
 							style="float:left;width:23px;height:23px;position:relative;top:1px;" 
 							on="mouseover then l:action.hint[hint=Import existing project] 
@@ -273,6 +275,7 @@
 								<img src="images/import_proj.png" style="position:relative;top:2px;left:1px"/>
 							</div>
 						</div>
+						-->
 						<div style="float:left;margin-left;margin-top:6px" class="hint_text"
 							on="l:action.hint then value[hint]">
 						</div>
@@ -327,7 +330,7 @@
 									<img src="images/delete.png" style="margin-right:2px" title="delete project"
 										on="click then l:delete.project.prompt[project_id=#{id},name=#{name}]"/>
 									<img src="images/package.png" title="package, run or install project"
-										on="click then l:package.project.request[id=#{id},name=#{name}]"/>
+										on="click then l:package.project.request[id=#{id}]"/>
 								</div>
 							</div>
 							
@@ -559,7 +562,7 @@
 								Selected Project:
 							</span>
 							<span class="hint_text"  id="package_project_name" style="margin-left:10px;font-size:16px"
-								on="l:package.project.request then value[name]"></span>
+								on="l:package.project.request then script[$('#package_project_name').html(TiDeveloper.Projects.getProjectName(this.data.id))]"></span>
 						</span>
 					</div>
 				</div>
