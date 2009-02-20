@@ -8,6 +8,7 @@
 #include "webkit_frame_load_delegate.h"
 #include "webkit_ui_delegate.h"
 #include "webkit_policy_delegate.h"
+#include "webkit_javascript_listener.h"
 #include "win32_tray_item.h"
 #include "string_util.h"
 #include "../url/app_url.h"
@@ -158,8 +159,16 @@ Win32UserWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	return 0;
 }
 
-Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config)
-	: UserWindow(host, config), script_evaluator(host), menuBarHandle(NULL), menuInUse(NULL), menu(NULL), contextMenuHandle(NULL), initial_icon(NULL), topmost(false)
+Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config) :
+	UserWindow(host, config),
+	script_evaluator(host),
+	menuBarHandle(NULL),
+	menuInUse(NULL),
+	menu(NULL),
+	contextMenuHandle(NULL),
+	initial_icon(NULL),
+	topmost(false),
+	web_inspector(NULL)
 {
 	static bool initialized = false;
 	win32_host = static_cast<kroll::Win32Host*>(host);
@@ -190,9 +199,10 @@ Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config)
 	this->Set("windowHandle", windowHandle);
 	this->SetMethod("addMessageHandler", &Win32UserWindow::AddMessageHandler);
 
-	this->ReloadTiWindowConfig();
-
 	SetWindowUserData(window_handle, this);
+
+	this->ReloadTiWindowConfig();
+	this->SetupDecorations(false);
 
 	Bounds b;
 	b.x = config->GetX();
@@ -290,9 +300,17 @@ Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config)
 	IWebViewPrivate *web_view_private;
 	hr = web_view->QueryInterface(IID_IWebViewPrivate, (void**)&web_view_private);
 	hr = web_view_private->viewWindow((OLE_HANDLE*) &view_window_handle);
+
+	hr = web_view_private->inspector(&web_inspector);
+	if(FAILED(hr) || web_inspector == NULL)
+	{
+		std::cerr << "Couldn't retrieve the web inspector object" << std::endl;
+	}
+
 	web_view_private->Release();
 
 	hr = web_view->mainFrame(&main_frame);
+	//web_view->setShouldCloseWithWindow(TRUE);
 
 	std::cout << "resize subviews" << std::endl;
 	ResizeSubViews();
@@ -370,7 +388,6 @@ void Win32UserWindow::Open() {
 
 void Win32UserWindow::Close() {
 	DestroyWindow(window_handle);
-
 	UserWindow::Close();
 }
 
@@ -416,7 +433,7 @@ double Win32UserWindow::GetMaxWidth() {
 
 void Win32UserWindow::SetMaxWidth(double width) {
 	this->config->SetMaxWidth(width);
-	//STUB();
+	this->SetupSizeLimits();
 }
 
 double Win32UserWindow::GetMinWidth() {
@@ -425,7 +442,7 @@ double Win32UserWindow::GetMinWidth() {
 
 void Win32UserWindow::SetMinWidth(double width) {
 	this->config->SetMinWidth(width);
-	//STUB();
+	this->SetupSizeLimits();
 }
 
 double Win32UserWindow::GetMaxHeight() {
@@ -434,7 +451,7 @@ double Win32UserWindow::GetMaxHeight() {
 
 void Win32UserWindow::SetMaxHeight(double height) {
 	this->config->SetMaxHeight(height);
-	//STUB();
+	this->SetupSizeLimits();
 }
 
 double Win32UserWindow::GetMinHeight() {
@@ -443,7 +460,7 @@ double Win32UserWindow::GetMinHeight() {
 
 void Win32UserWindow::SetMinHeight(double height) {
 	this->config->SetMinHeight(height);
-	//STUB();
+	this->SetupSizeLimits();
 }
 
 Bounds Win32UserWindow::GetBounds() {
@@ -551,7 +568,7 @@ void Win32UserWindow::SetMinimizable(bool minimizable) {
 
 void Win32UserWindow::SetCloseable(bool closeable) {
 	this->config->SetCloseable(closeable);
-	// TODO
+	this->SetupDecorations();
 }
 
 bool Win32UserWindow::IsVisible() {
@@ -559,7 +576,7 @@ bool Win32UserWindow::IsVisible() {
 	placement.length = sizeof(WINDOWPLACEMENT);
 	GetWindowPlacement(window_handle, &placement);
 
-	return placement.showCmd == SW_SHOW;
+	return (placement.showCmd == SW_SHOWNORMAL || placement.showCmd == SW_SHOWMAXIMIZED);
 }
 
 void Win32UserWindow::SetVisible(bool visible) {
@@ -675,12 +692,12 @@ void Win32UserWindow::SetUsingChrome(bool chrome) {
 	this->SetupDecorations();
 }
 
-void Win32UserWindow::SetupDecorations() {
+void Win32UserWindow::SetupDecorations(bool showHide) {
 	long windowStyle = GetWindowLong(this->window_handle, GWL_STYLE);
 
 	SetFlag(windowStyle, WS_OVERLAPPED, config->IsUsingChrome());
 	SetFlag(windowStyle, WS_CAPTION, config->IsUsingChrome());
-	SetFlag(windowStyle, WS_SYSMENU, config->IsUsingChrome());
+	SetFlag(windowStyle, WS_SYSMENU, config->IsUsingChrome() && config->IsCloseable());
 	SetFlag(windowStyle, WS_BORDER, config->IsUsingChrome());
 
 	SetFlag(windowStyle, WS_MAXIMIZEBOX, config->IsMaximizable());
@@ -688,8 +705,11 @@ void Win32UserWindow::SetupDecorations() {
 
 	SetWindowLong(this->window_handle, GWL_STYLE, windowStyle);
 
-	ShowWindow(window_handle, SW_HIDE);
-	ShowWindow(window_handle, SW_SHOW);
+	if(showHide)
+	{
+		ShowWindow(window_handle, SW_HIDE);
+		ShowWindow(window_handle, SW_SHOW);
+	}
 }
 
 void Win32UserWindow::AppMenuChanged()
@@ -821,6 +841,32 @@ void Win32UserWindow::SetupSize()
 	b.height = this->config->GetHeight();
 
 	this->SetBounds(b);
+}
+
+void Win32UserWindow::SetupSizeLimits()
+{
+	// TODO
+}
+
+void Win32UserWindow::ShowWebInspector()
+{
+	std::cout << "showWebInspector() .." << std::endl;
+
+	//WebInspectorClient *wic = new WebInspector(web_view);
+	//wic->showWindow();
+	//if(1 == 1) return;
+
+	if(this->web_inspector)
+	{
+		std::cout << "requesting flag .. " << std::endl;
+		BOOL debug;
+		this->web_inspector->isDebuggingJavaScript(&debug);
+		std::cout << "debug = " << debug << std::endl;
+		//std::cout << "attaching..." << std::endl;
+		//this->web_inspector->attach();
+		std::cout << "showing..." << std::endl;
+		this->web_inspector->show();
+	}
 }
 
 void Win32UserWindow::OpenFiles(
