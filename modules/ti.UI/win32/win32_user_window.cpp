@@ -109,6 +109,19 @@ Win32UserWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case WM_CLOSE:
 			window->FireEvent(CLOSED);
 			return DefWindowProc(hWnd, message, wParam, lParam);
+		case WM_GETMINMAXINFO:
+			{
+				if(window)
+				{
+					MINMAXINFO *mmi = (MINMAXINFO*) lParam;
+					mmi->ptMaxTrackSize.x = window->GetMaxWidth();
+					mmi->ptMaxTrackSize.y = window->GetMaxHeight();
+
+					mmi->ptMinTrackSize.x = window->GetMinWidth();
+					mmi->ptMinTrackSize.y = window->GetMinHeight();
+				}
+			}
+			break;
 		case WM_SIZE:
 			if (!window->web_view) break;
 			window->ResizeSubViews();
@@ -433,7 +446,6 @@ double Win32UserWindow::GetMaxWidth() {
 
 void Win32UserWindow::SetMaxWidth(double width) {
 	this->config->SetMaxWidth(width);
-	this->SetupSizeLimits();
 }
 
 double Win32UserWindow::GetMinWidth() {
@@ -442,7 +454,6 @@ double Win32UserWindow::GetMinWidth() {
 
 void Win32UserWindow::SetMinWidth(double width) {
 	this->config->SetMinWidth(width);
-	this->SetupSizeLimits();
 }
 
 double Win32UserWindow::GetMaxHeight() {
@@ -451,7 +462,6 @@ double Win32UserWindow::GetMaxHeight() {
 
 void Win32UserWindow::SetMaxHeight(double height) {
 	this->config->SetMaxHeight(height);
-	this->SetupSizeLimits();
 }
 
 double Win32UserWindow::GetMinHeight() {
@@ -460,7 +470,6 @@ double Win32UserWindow::GetMinHeight() {
 
 void Win32UserWindow::SetMinHeight(double height) {
 	this->config->SetMinHeight(height);
-	this->SetupSizeLimits();
 }
 
 Bounds Win32UserWindow::GetBounds() {
@@ -841,11 +850,6 @@ void Win32UserWindow::SetupSize()
 	b.height = this->config->GetHeight();
 
 	this->SetBounds(b);
-}
-
-void Win32UserWindow::SetupSizeLimits()
-{
-	// TODO
 }
 
 void Win32UserWindow::ShowWebInspector()
