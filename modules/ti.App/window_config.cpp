@@ -210,6 +210,9 @@ WindowConfig::WindowConfig(void* data)
 		else if (nodeNameEquals(child, "height")) {
 			height = atoi(nodeValue(child));
 		}
+		else if (nodeNameEquals(child, "visible")) {
+			visible = boolValue(child);
+		}
 		else if (nodeNameEquals(child, "min-width")) {
 			minWidth = atoi(nodeValue(child));
 		}
