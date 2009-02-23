@@ -498,7 +498,11 @@ void Win32UserWindow::SetBounds(Bounds bounds) {
 		bounds.y = (desktopRect.bottom - bounds.height) / 2;
 	}
 
-	SetWindowPos(window_handle, NULL, bounds.x, bounds.y, bounds.width, bounds.height, SWP_SHOWWINDOW | SWP_NOZORDER);
+	UINT flags = SWP_SHOWWINDOW | SWP_NOZORDER;
+	if(! this->config->IsVisible()) {
+		flags = SWP_HIDEWINDOW;
+	}
+	SetWindowPos(window_handle, NULL, bounds.x, bounds.y, bounds.width, bounds.height, flags);
 }
 
 void Win32UserWindow::SetTitle(std::string& title) {
@@ -714,7 +718,7 @@ void Win32UserWindow::SetupDecorations(bool showHide) {
 
 	SetWindowLong(this->window_handle, GWL_STYLE, windowStyle);
 
-	if(showHide)
+	if(showHide && config->IsVisible())
 	{
 		ShowWindow(window_handle, SW_HIDE);
 		ShowWindow(window_handle, SW_SHOW);
@@ -808,7 +812,7 @@ void Win32UserWindow::ReloadTiWindowConfig()
 	// called by frame load delegate to let the window know it's loaded
 void Win32UserWindow::FrameLoaded()
 {
-	if (this->requires_display)
+	if (this->requires_display && this->config->IsVisible())
 	{
 		this->requires_display = false;
 		ShowWindow(window_handle, SW_SHOW);
