@@ -148,7 +148,7 @@ namespace ti
 			size_t pos = std::string::npos;
 			if ((pos = cmd.find("/nick "))==0)
 			{
-				this->irc.nick((char*)cmd.substr(pos+1).c_str());
+				this->irc.nick((char*)cmd.substr(7).c_str());
 			}
 			else
 			{
