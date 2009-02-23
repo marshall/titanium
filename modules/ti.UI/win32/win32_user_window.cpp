@@ -609,11 +609,15 @@ void Win32UserWindow::SetFullScreen(bool fullscreen) {
 		restore_bounds = GetBounds();
 		restore_styles = GetWindowLong(window_handle, GWL_STYLE);
 
-		RECT desktopRect;
-		if (SystemParametersInfoA(SPI_GETWORKAREA, 0, &desktopRect, NULL) == 1) {
+		HMONITOR hmon = MonitorFromWindow(this->window_handle, MONITOR_DEFAULTTONEAREST);
+		MONITORINFO mi;
+		mi.cbSize = sizeof(MONITORINFO);
+		if(GetMonitorInfo(hmon, &mi))
+		{
 			SetWindowLong(window_handle, GWL_STYLE, 0);
-			SetWindowPos(window_handle, NULL, 0, 0, desktopRect.right - desktopRect.left, desktopRect.bottom - desktopRect.top, SWP_SHOWWINDOW);
+			SetWindowPos(window_handle, NULL, 0, 0, mi.rcMonitor.right - mi.rcMonitor.left, mi.rcMonitor.bottom - mi.rcMonitor.top, SWP_SHOWWINDOW);
 		}
+
 		FireEvent(FULLSCREENED);
 	} else {
 		SetWindowLong(window_handle, GWL_STYLE, restore_styles);
