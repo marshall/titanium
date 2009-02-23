@@ -45,7 +45,7 @@
 		</div>
 		<div class="button1" style="display:inline-block;width:150px" 
 			on="click then l:menu[val=interact] and add[class=active] or l:menu[val!=interact] then remove[class=active]">
-			<div class="button2">Interact 
+			<div class="button2">Community 
 				<span id="irc_message_count" class="message_indicator" style="display:none"></span>
 			</div>
 		</div>
@@ -167,6 +167,24 @@
 					</div>
 				</div>
 				<div style="margin-top:10px;position:relative">
+					<div class="button1" style="display:none" id="follow_us_button"
+						on="click then script[TiDeveloper.Feeds.followUs()] and l:twitter.follow 
+							or l:twitter.follow then effect[fadeOut] after 2s">
+						<div class="button2">
+								<span on="l:twitter.follow then hide or l:twitter.follow then show after 3s">
+									Follow Us
+								</span>
+								<span  style="display:none;font-size:11px;color:#42C0FB"
+									on="l:twitter.follow then show or l:twitter.follow then hide after 1s">
+									One moment...
+								</span>
+								<span  style="display:none;font-size:11px;color:#42C0FB"
+									on="l:twitter.follow then show after 1s or l:twitter.follow then hide after 2s">
+									Success!
+								</span>
+
+						</div>
+					</div>
 					<div class="button1" on="click then l:show.tweet
 						or l:db[val=twitter] then show else hide">
 						<div class="button2">
