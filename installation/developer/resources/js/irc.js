@@ -28,6 +28,59 @@ $MQL('l:app.compiled',function()
 		   TiDeveloper.IRC.nick = Titanium.Platform.username;
 	   });
 	});
+
+	var currentSelectionIdx = -1;
+	var savedPossibilities = null;
+	var savedName = null;
+	
+	// this code supports using the tab to cycle
+	// through handles to find an existing user when
+	// entering in a handle in the text box
+	$('#irc_msg').keydown(function(e)
+	{
+		if (e.keyCode!=9)
+		{
+			currentSelectionIdx=-1;
+			savedPossibilities=null;
+			savedName=null;
+			return;
+		}
+		var prefix = $('#irc_msg').val();
+		if (prefix.length > 0 && savedName && savedName==prefix)
+		{
+			if (savedPossibilities && currentSelectionIdx!=-1)
+			{
+				if (currentSelectionIdx + 1 >= savedPossibilities.length)
+				{
+					currentSelectionIdx = -1;
+				}
+				var match = savedPossibilities[++currentSelectionIdx];
+				savedName = match + ': ';
+				$('#irc_msg').val(savedName);
+				return false;
+			}
+		}
+		var users = $('#irc_users div');
+		savedPossibilities = [];
+		savedName = null;
+		currentSelectionIdx = -1;
+		for (var c=0;c<users.length;c++)
+		{
+			var name = users.get(c).innerHTML;
+			var idx = name.indexOf(prefix);
+			if (idx==0)
+			{
+				savedPossibilities.push(name);
+			}
+		}
+		if (savedPossibilities.length > 0)
+		{
+			currentSelectionIdx = 0;
+			savedName = savedPossibilities[0] + ': ';
+			$('#irc_msg').val(savedName);
+			return false;
+		}
+	});
 });
 
 
@@ -74,6 +127,18 @@ $MQL('l:tideveloper.network',function(msg)
 	}
 });
 
+TiDeveloper.IRC.updateNickInDB = function(username)
+{
+	// update database
+    db.transaction(function (tx) 
+    {
+        tx.executeSql("UPDATE IRC set nick = ? WHERE id = 1", 
+		[username]);
+    });
+
+	TiDeveloper.IRC.nick = username;
+};
+
 //
 // Initialize Chat
 //
@@ -82,7 +147,7 @@ TiDeveloper.IRC.initialize = function()
 	try
 	{
 		var username = TiDeveloper.IRC.formatNick(TiDeveloper.IRC.nick);
-		var useSetNick = null;
+		var userSetNick = null;
 		var nick_counter = 1;
 		var setNicknameAttempted = false;
 		
@@ -92,13 +157,14 @@ TiDeveloper.IRC.initialize = function()
 		TiDeveloper.IRC.ircClient.connect("irc.freenode.net",6667,username,username,username,String(new Date().getTime()),function(cmd,channel,data,nick)
 		{
 			var time = TiDeveloper.getCurrentTime();
+			Titanium.API.debug('cmd='+cmd+',nick='+nick+',data='+data+',channel='+channel);
 
 			// switch on command
 			switch(cmd)
 			{	
 				case '433':
 				{
-					// user is trying to set thier nickname
+					// user is trying to set their nickname
 					if (userSetNick != null)
 					{
 						if ($('.' + userSetNick).length == 0)
@@ -109,11 +175,7 @@ TiDeveloper.IRC.initialize = function()
 							username = userSetNick;
 						
 							// update database
-						    db.transaction(function (tx) 
-						    {
-						        tx.executeSql("UPDATE IRC set nick = ? WHERE id = 1", 
-								[username]);
-						    });
+						    TiDeveloper.IRC.updateNickInDB(username);
 						}
 						else
 						{
@@ -126,7 +188,7 @@ TiDeveloper.IRC.initialize = function()
 					// so increment
 					else if (setNicknameAttepted == true)
 					{
-						username = TiDeveloper.IRC.formatNick(TiDeveloper.IRC.nick + (++nickCounter));
+						username = TiDeveloper.IRC.formatNick(TiDeveloper.IRC.nick + (++nick_counter));
 					}
 					// initial attempt to set nickname
 					else
@@ -136,6 +198,14 @@ TiDeveloper.IRC.initialize = function()
 					}
 					// try again with a new nick
 					TiDeveloper.IRC.ircClient.setNick(username);
+					break;
+				}
+				case 'NICK':
+				{
+					// this is good and indicates the NICK was accepted
+				    TiDeveloper.IRC.updateNickInDB(username);
+					$('.'+username).html('');
+					$('#irc_users').append('<div class="'+username+'" >'+username+'</div>');
 					break;
 				}
 				case 'NOTICE':
@@ -159,9 +229,16 @@ TiDeveloper.IRC.initialize = function()
 							notification.setMessage(msg);
 							notification.setIcon("app://images/information.png");
 							notification.show();
-							
 						}	
 						$('#irc').append('<div style="color:#42C0FB;font-size:14px;float:left;margin-bottom:8px;width:90%">' + nick + ': <span style="color:white;font-family:Arial;font-size:12px">' + msg + '</span></div><div style="float:right;color:#ccc;font-size:11px;width:10%;text-align:right">'+time+'</div><div style="clear:both"></div>');
+					}
+					else if (nick=='NickServ' && (channel.indexOf('This nickname is registered')>=0 || channel.indexOf('Invalid password for')>=0))
+					{
+						$('#irc').append('<div style="color:#aaa">' + data + ' is already taken. trying another variation...</div>');
+						username = TiDeveloper.IRC.formatNick(data + (++nick_counter));
+						setNicknameAttempted = true;
+						// try again with a new nick
+						TiDeveloper.IRC.ircClient.setNick(username);
 					}
 					break;
 				}
@@ -185,7 +262,7 @@ TiDeveloper.IRC.initialize = function()
 					if (nick == username)
 					{
 						$('#irc').append('<div style="color:#aaa;margin-bottom:20px"> you are now in the room. your handle is: <span style="color:#42C0FB">'+username+'</span>.  You can change your handle using: <span style="color:#42C0FB">/nick new_handle</span></div>');
-						break
+						break;
 					}
 					else
 					{
@@ -195,7 +272,6 @@ TiDeveloper.IRC.initialize = function()
 					$('#irc_users').append('<div class="'+nick+'" >'+nick+'</div>');
 					$MQ('l:online.count',{count:TiDeveloper.IRC.count});
 					break;
-					
 				}
 				case 'QUIT':
 				case 'PART':
@@ -223,6 +299,7 @@ $MQL('l:send.irc.msg',function()
 {
 	if (TiDeveloper.online == true)
 	{
+		TiDeveloper.IRC.currentSelection = null;
 		var time = TiDeveloper.getCurrentTime();
 		var urlMsg = TiDeveloper.formatURIs($('#irc_msg').val());
 		var rawMsg = $('#irc_msg').val()
