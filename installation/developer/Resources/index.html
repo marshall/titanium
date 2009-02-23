@@ -36,21 +36,12 @@
 	</div>
 	
 	<!-- CONTENT -->
-	<div id="content">
+	<div id="content" style="display:none" on="l:project.list.response[firstCall=true] then effect[fadeIn]">
 		
 		<!-- MAJOR ACTION BUTTONS -->
-		<div class="button1" style="display:inline-block;width:150px" 
-			on="click then l:menu[val=feeds] and add[class=active] or l:menu[val!=feeds] then remove[class=active]">
-			<div class="button2">Feeds</div>
-		</div>
-		
-		<div class="button1" style="display:inline-block;width:150px" 
+		<div class="button1 active" style="display:inline-block;width:150px" 
 			on="click then l:menu[val=manage] and add[class=active] or l:menu[val!=manage] then remove[class=active]">
 			<div class="button2">Projects</div>
-		</div>
-		<div class="button1" style="display:inline-block;width:150px" 
-			on="click then l:menu[val=api] and add[class=active] or l:menu[val!=api] then remove[class=active]">
-			<div class="button2">Documentation</div>
 		</div>
 		<div class="button1" style="display:inline-block;width:150px" 
 			on="click then l:menu[val=interact] and add[class=active] or l:menu[val!=interact] then remove[class=active]">
@@ -58,6 +49,16 @@
 				<span id="irc_message_count" class="message_indicator" style="display:none"></span>
 			</div>
 		</div>
+		<div class="button1" style="display:inline-block;width:150px" 
+			on="click then l:menu[val=feeds] and add[class=active] or l:menu[val!=feeds] then remove[class=active]">
+			<div class="button2">Feeds</div>
+		</div>
+		<div class="button1" style="display:inline-block;width:150px" 
+			on="click then l:menu[val=api] and add[class=active] or l:menu[val!=api] then remove[class=active]">
+			<div class="button2">Documentation</div>
+		</div>
+		
+
 		<div style="clear:both"></div>
 
 		<!-- ************* -->
@@ -77,7 +78,7 @@
 		</div>
 		
 		<!-- SOCIAL TYPE STUFF -->
-		<div style="margin-top:10px;"
+		<div style="margin-top:10px;display:none"
 			on="l:menu[val=feeds] then effect[fadeIn] else hide">
 			<div style="height:35px;position:relative;left:20px">
 				<div class="button1" style="width:50px;height:33px;border-bottom:none">
@@ -219,8 +220,7 @@
 		</div>
 
 		<!-- MANAGE PROJECT -->
-		<div style="display:none" 
-			on="l:menu[val=manage] then effect[fadeIn] else hide or l:cancel[val=manage] then effect[fadeOut]">
+		<div on="l:menu[val=manage] then effect[fadeIn] else hide or l:cancel[val=manage] then effect[fadeOut]">
 
 			<!-- NO PROJECTS CREATED MESSAGE -->
 			<div style="margin-top:10px;width:500px" 
@@ -232,7 +232,7 @@
 							<img src="images/info.png" style="position:relative;top:-1px"/>
 						</div>
 						<div style="position:absolute;top:7px;left:30px">
-							You haven't created any projects yet!  Get started by creating one now!
+							You don't have any projects!  Get started by creating one now!
 						</div>
 					</div>
 				</div>
@@ -342,7 +342,7 @@
 				
 				<!-- PROJECT DETAILS -->
 				<div class="manage_right" style="margin-left:50px;display:none;margin-top:7px" 
-					on="l:row.selected then show or l:menu[val=manage] then hide">
+					on="l:row.selected then show">
 					<div class="infobox">
 						<div class="content">
 							<table cellspacing="15px">
@@ -392,14 +392,18 @@
 									</td>
 									<td style="font-size:12px;height:30px">
 										<div class="edit" on="l:project.detail.data then value[url]" 
-											id="project_pub_url_value"></div>
+										id="project_pub_url_value">
+										</div>
 									</td>
 								</tr>
 								<tr>
 									<td style="font-size:12px;height:30px" width="90px" class="hint_text">*App Icon:</td>
 									<td style="font-size:12px;height:30px">
 										<div class="edit"
-											on="l:project.detail.data then value[image]" id="project_pub_image_value"></div>
+											on="l:project.detail.data then value[image]
+											or l:file.selected[for=project_image,target=project_pub_image_value] 
+											then value[value]" 
+											id="project_pub_image_value"></div>
 									</td>
 								</tr>
 								<tr>
@@ -416,7 +420,7 @@
 				</div>				
 				<!-- INFO MESSAGE -->
 				<div class="infobox manage_right" style="margin-left:50px;margin-top:7px" 
-					on="l:row.selected then hide or l:menu[val=manage] then show">
+					on="l:row.selected then hide">
 					<div class="content" style="height:45px">
 						<div style="float:left;width:20px">
 							<img src="images/info.png" style="position:relative;top:-1px"/>
@@ -484,7 +488,7 @@
 
 				<!-- STEP 1 PROJECT WIZARD -->
 				<div style="display:none" on="l:project.wizard[show=2] then effect[slideUp] else effect[fadeIn]
-					or l:create.project then effect[fadeIn]">
+					or (l:create.project or l:project.list.response[totalRecords=0]) then effect[fadeIn]">
 					<div style="float:left">
 						<div id="jquery_js" class="button1" style="float:none;width:160px;height:80px">
 							<div class="button2" style="height:78px"
@@ -547,7 +551,7 @@
 								or l:create.project then remove[class=selected_js]
 								and remove[id=dojo_js,class=selected_js]">
 								<img src="images/dojo.gif" width="152px" height="32px"
-									style="position:relative;top:20px"/>
+									style="position:relative;top:20px;left:5px"/>
 							</div>
 						</div>
 					</div>
@@ -577,8 +581,8 @@
 						</div>
 					</div>
 					<div style="clear:both;margin-top:20px;color:white;font-size:11px;margin-left:2px">
-						Click box to include or exclude a library.  If you don't see your library, you
-						can include it manually.
+						Click box to include a library or click again to exclude it.  
+						If you don't see your library, you can include it manually.
 					</div>
 					<!-- BUTTONS -->
 					<div class="section text">
@@ -588,7 +592,9 @@
 								Continue
 							</div>
 						</div>
-						<div class="button1" style="float:left;"  on="click then l:cancel[val=project]">
+						<div class="button1" style="float:left;"
+							on="click then l:cancel[val=project]
+								or l:project.list.response[totalRecords=0]  then hide else show">
 							<div class="button2">
 								Cancel
 							</div>
@@ -601,7 +607,7 @@
 				
 				<!-- STEP 2 PROJECT WIZARD -->
 				<div style="display:none" on="l:project.wizard[show=2] then effect[fadeIn] else effect[slideUp]
-					or l:create.project then hide">
+					or (l:create.project or l:project.list.response[totalRecords=0]) then hide">
 					
 					<!-- PROJECT NAME -->
 					<div class="section text">
@@ -644,12 +650,12 @@
 						<div style="margin-top:3px;">
 							<input type="text" id="project_image" name="image" 
 								style="width:450px;float:left;" validator="required" fieldset="new_project" 
-								on="l:file.selected[for=project_image] then value[value]
+								on="l:file.selected[for=project_image,target=project_image] then value[value]
 								or (l:create.project.response[result=success] or l:menu[val=create]) then reset"/>
 							<div class="button1" 
 								style="float:left;width:23px;height:23px;position:relative;top:1px;margin-left:10px" >
 								<div class="button2" style="height:21px" 
-									on="click then l:show.filedialog[for=project_image]">
+									on="click then l:show.filedialog[for=project_image,target=project_image]">
 									<img src="images/folder_go.png" style="position:relative;top:3px;left:1px"/>
 								</div>
 							</div>
@@ -922,7 +928,7 @@
 		<div class="infobox" >
 			<div class="content" style="padding:10px">
 				<div 
-				on="l:row.selected then value[fullLocation]" 
+				on="l:project.detail.data then value[fullLocation]" 
 					style="padding:10px;color:#fff;font-size:11px">
 				</div>
 				<div class="button1" style="margin:auto;float:none"  
