@@ -104,6 +104,24 @@ App.UI.registerUIComponent('behavior','tooltip',
 				{
 					startTimer(element);
 				});	
+				swiss('#'+options['id']).on('focus',{},function(e)
+				{	
+					cancelTimer();
+					if (options['position']=='relative')
+					{
+						element.style.position = "absolute";
+						element.style.zIndex = '1000';
+						element.style.top = (swiss.getMouseY(e)) + "px";
+						element.style.left = (swiss.getMouseX(e)) + "px";
+					}
+					show(element);
+					
+				})
+				swiss('#'+options['id']).on('blur',{},function(e)
+				{
+					startTimer(element);
+				});	
+
 				swiss('#'+element.id).on('mouseover',{},function(e)
 				{
 					cancelTimer();

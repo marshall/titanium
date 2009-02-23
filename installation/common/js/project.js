@@ -90,7 +90,7 @@ Titanium.Project =
 		}
 		return result;
 	},
-	create:function(name,dir,publisher,url,image)
+	create:function(name,dir,publisher,url,image,jsLibs)
 	{
 		var outdir = TFS.getFile(dir,name);
 		if (outdir.isDirectory())
@@ -136,7 +136,52 @@ Titanium.Project =
 		var resources = TFS.getFile(outdir,'resources');
 		resources.createDirectory();
 		var index = TFS.getFile(resources,'index.html');
-		index.write('<html>\n<head>\n</head>\n<body>\nHello,world\n</body>\n</html>');
+		
+		var jquery = '<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.1/jquery.min.js"></script>\n';
+		var jquery_ui = '<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.5.3/jquery-ui.min.js"></script>\n';
+		var prototype_js = '<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/prototype/1.6.0.3/prototype.js"></script>\n';
+		var scriptaculous = '<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/scriptaculous/1.8.2/scriptaculous.js"></script>\n';
+		var mootools = '<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/mootools/1.2.1/mootools-yui-compressed.js"></script>\n';
+		var yahoo = '<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/yui/2.6.0/build/yuiloader/yuiloader-min.js"></script>\n';
+		var swfobject = '<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/swfobject/2.1/swfobject.js"></script>\n';
+		var dojo = '<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/dojo/1.2.3/dojo/dojo.xd.js"></script>\n';
+
+		var head = '<head><style>body{background-color:#292929;color:white}</style>\n';
+		if (jsLibs.jquery)
+		{
+			head += jquery
+		}
+		if (jsLibs.jquery_ui)
+		{
+			head += jquery_ui;
+		}
+		if (jsLibs.prototype_js)
+		{
+			head+= prototype_js;
+		}
+		if (jsLibs.scriptaculous)
+		{
+			head+=scriptaculous;
+		}
+		if (jsLibs.mootools)
+		{
+			head+=mootools;
+		}
+		if(jsLibs.dojo)
+		{
+			head+=dojo;
+		}
+		if (jsLibs.swf)
+		{
+			head+=swfobject;
+		}
+		if (jsLibs.yahoo)
+		{
+			head+=yahoo;
+		}
+		head += '</head>';
+		
+		index.write('<html>\n'+head+'\n<body>\nWelcome to Titanium\n</body>\n</html>');
 		
 		var manifest = "#appname: "+name+"\n" +
 		"#publisher: "+publisher+"\n"+
