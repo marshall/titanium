@@ -94,6 +94,24 @@ $MQL('l:row.selected',function(msg)
 			
 			// process click
 			var el = $(this).get(0);
+
+			// if field requires file dialog - show
+			if (el.id == 'project_pub_image_value')
+			{
+				// show dialog
+				$MQ('l:show.filedialog',{'for':'project_image','target':'project_pub_image_value'});
+				
+				// listen for value selection
+				$MQL('l:file.selected',function(msg)
+				{
+					var target = msg.payload.target;
+					if (target=='project_pub_image_value')
+					{
+						el.removeAttribute('edit_mode');
+						TiDeveloper.Projects.updateAppData();
+					}
+				});
+			}
 			var value = el.innerHTML;
 			el.setAttribute('edit_mode','true');
 			
@@ -625,6 +643,7 @@ $MQL('l:project.search.request',function(msg)
 $MQL('l:show.filedialog',function(msg)
 {
 	var el = msg.payload['for'];
+	var target = msg.payload.target;
 	var props = {multiple:false};
 	if (el == 'project_image')
 	{
@@ -642,7 +661,7 @@ $MQL('l:show.filedialog',function(msg)
 	{
 		if (f.length)
 		{
-			$MQ('l:file.selected',{'for':el,'value':f[0]});
+			$MQ('l:file.selected',{'target':target,'for':el,'value':f[0]});
 		}
 	},
 	props);

@@ -44,10 +44,6 @@
 			<div class="button2">Projects</div>
 		</div>
 		<div class="button1" style="display:inline-block;width:150px" 
-			on="click then l:menu[val=api] and add[class=active] or l:menu[val!=api] then remove[class=active]">
-			<div class="button2">Documentation</div>
-		</div>
-		<div class="button1" style="display:inline-block;width:150px" 
 			on="click then l:menu[val=interact] and add[class=active] or l:menu[val!=interact] then remove[class=active]">
 			<div class="button2">Interact 
 				<span id="irc_message_count" class="message_indicator" style="display:none"></span>
@@ -56,6 +52,10 @@
 		<div class="button1" style="display:inline-block;width:150px" 
 			on="click then l:menu[val=feeds] and add[class=active] or l:menu[val!=feeds] then remove[class=active]">
 			<div class="button2">Feeds</div>
+		</div>
+		<div class="button1" style="display:inline-block;width:150px" 
+			on="click then l:menu[val=api] and add[class=active] or l:menu[val!=api] then remove[class=active]">
+			<div class="button2">Documentation</div>
 		</div>
 		
 
@@ -342,7 +342,7 @@
 				
 				<!-- PROJECT DETAILS -->
 				<div class="manage_right" style="margin-left:50px;display:none;margin-top:7px" 
-					on="l:row.selected then show or l:menu[val=manage] then hide">
+					on="l:row.selected then show">
 					<div class="infobox">
 						<div class="content">
 							<table cellspacing="15px">
@@ -392,14 +392,18 @@
 									</td>
 									<td style="font-size:12px;height:30px">
 										<div class="edit" on="l:project.detail.data then value[url]" 
-											id="project_pub_url_value"></div>
+										id="project_pub_url_value">
+										</div>
 									</td>
 								</tr>
 								<tr>
 									<td style="font-size:12px;height:30px" width="90px" class="hint_text">*App Icon:</td>
 									<td style="font-size:12px;height:30px">
 										<div class="edit"
-											on="l:project.detail.data then value[image]" id="project_pub_image_value"></div>
+											on="l:project.detail.data then value[image]
+											or l:file.selected[for=project_image,target=project_pub_image_value] 
+											then value[value]" 
+											id="project_pub_image_value"></div>
 									</td>
 								</tr>
 								<tr>
@@ -416,7 +420,7 @@
 				</div>				
 				<!-- INFO MESSAGE -->
 				<div class="infobox manage_right" style="margin-left:50px;margin-top:7px" 
-					on="l:row.selected then hide or l:menu[val=manage] then show">
+					on="l:row.selected then hide">
 					<div class="content" style="height:45px">
 						<div style="float:left;width:20px">
 							<img src="images/info.png" style="position:relative;top:-1px"/>
@@ -577,8 +581,8 @@
 						</div>
 					</div>
 					<div style="clear:both;margin-top:20px;color:white;font-size:11px;margin-left:2px">
-						Click box to include or exclude a library.  If you don't see your library, you
-						can include it manually.
+						Click box to include a library or click again to exclude it.  
+						If you don't see your library, you can include it manually.
 					</div>
 					<!-- BUTTONS -->
 					<div class="section text">
@@ -646,12 +650,12 @@
 						<div style="margin-top:3px;">
 							<input type="text" id="project_image" name="image" 
 								style="width:450px;float:left;" validator="required" fieldset="new_project" 
-								on="l:file.selected[for=project_image] then value[value]
+								on="l:file.selected[for=project_image,target=project_image] then value[value]
 								or (l:create.project.response[result=success] or l:menu[val=create]) then reset"/>
 							<div class="button1" 
 								style="float:left;width:23px;height:23px;position:relative;top:1px;margin-left:10px" >
 								<div class="button2" style="height:21px" 
-									on="click then l:show.filedialog[for=project_image]">
+									on="click then l:show.filedialog[for=project_image,target=project_image]">
 									<img src="images/folder_go.png" style="position:relative;top:3px;left:1px"/>
 								</div>
 							</div>
