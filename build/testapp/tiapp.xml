@@ -22,7 +22,7 @@
    <window>
       <id>smallscreen</id>
       <title>Titanium Smallscreen Window</title>
-      <urlRegex>app://small.*.html</urlRegex>
+      <url-regex>app://small.*.html</url-regex>
       <width>400</width>
       <height>275</height>
       <minimizable>true</minimizable>
@@ -31,5 +31,6 @@
       <fullscreen>false</fullscreen>
       <resizable>false</resizable>
       <chrome>true</chrome>
+      <visible>true</visible>
    </window>
 </ti:app>

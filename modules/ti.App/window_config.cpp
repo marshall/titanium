@@ -176,7 +176,7 @@ WindowConfig::WindowConfig(void* data)
 		else if (nodeNameEquals(child, "url")) {
 			url = nodeValue(child);
 		}
-		else if (nodeNameEquals(child, "urlRegex")) {
+		else if (nodeNameEquals(child, "url-regex")) {
 			urlRegex = nodeValue(child);
 		}
 		else if (nodeNameEquals(child, "maximizable")) {

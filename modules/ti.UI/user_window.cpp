@@ -537,19 +537,20 @@ void UserWindow::UpdateWindowForURL(std::string url)
 		return;
 	}
 
-	WindowConfig *winConfig = new WindowConfig(config, url);
+	// copy the config object
+	config = new WindowConfig(config, url);
 
 	Bounds b;
-	b.x = winConfig->GetX();
-	b.y = winConfig->GetY();
-	b.width = winConfig->GetWidth();
-	b.height = winConfig->GetHeight();
+	b.x = config->GetX();
+	b.y = config->GetY();
+	b.width = config->GetWidth();
+	b.height = config->GetHeight();
 
 	this->SetBounds(b);
 
-	this->SetMinimizable(winConfig->IsMinimizable());
-	this->SetMaximizable(winConfig->IsMaximizable());
-	this->SetCloseable(winConfig->IsCloseable());
+	this->SetMinimizable(config->IsMinimizable());
+	this->SetMaximizable(config->IsMaximizable());
+	this->SetCloseable(config->IsCloseable());
 }
 
 SharedBoundObject UserWindow::CreateWindow(WindowConfig *config)
