@@ -13,7 +13,7 @@ $MQL('l:app.compiled',function()
 	{
 	   tx.executeSql("SELECT COUNT(*) FROM Projects", [], function(result) 
 	   {
-	       TiDeveloper.Projects.loadProjects();
+	       TiDeveloper.Projects.loadProjects(true);
 	   }, function(tx, error) 
 	   {
 	       tx.executeSql("CREATE TABLE Projects (id REAL UNIQUE, timestamp REAL, name TEXT, directory TEXT, appid TEXT, publisher TEXT, url TEXT, image TEXT)", [], function(result) 
@@ -157,7 +157,7 @@ TiDeveloper.Projects.createRecord = function(options,callback)
 //
 // load projects from db and populate array cache
 //
-TiDeveloper.Projects.loadProjects = function()
+TiDeveloper.Projects.loadProjects = function(init)
 {
 	db.transaction(function(tx) 
 	{
@@ -205,7 +205,8 @@ TiDeveloper.Projects.loadProjects = function()
 			}
 			
 			$('#project_count_hidden').val(TiDeveloper.Projects.projectArray.length)
-			$MQ('l:project.list.response',{count:count,page:TiDeveloper.currentPage,totalRecords:TiDeveloper.Projects.projectArray.length,'rows':data})
+			var firstCall = (init)?true:false
+			$MQ('l:project.list.response',{firstCall:firstCall,count:count,page:TiDeveloper.currentPage,totalRecords:TiDeveloper.Projects.projectArray.length,'rows':data})
         });
 	});	
 }
