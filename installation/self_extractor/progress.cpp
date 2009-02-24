@@ -132,7 +132,19 @@ BOOL CALLBACK UnzipDialogProc(HWND hwnd,UINT msg,WPARAM,LPARAM)
 							&pi )           // Pointer to PROCESS_INFORMATION structure
 					)
 					{
-						MessageBox(NULL,"Application error running process.","Application Error",MB_OK|MB_SYSTEMMODAL|MB_ICONERROR);
+						LPVOID lpMsgBuf;
+						LPVOID lpDisplayBuf;
+						DWORD dw = GetLastError();
+
+						FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER
+							| FORMAT_MESSAGE_FROM_SYSTEM
+							| FORMAT_MESSAGE_IGNORE_INSERTS, NULL, dw,
+							MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+							(LPTSTR) &lpMsgBuf, 0, NULL );
+
+						char errorMessage[512];
+						sprintf(errorMessage, "Application error running process: %s %d: %s", ostr.str().c_str(), dw, lpMsgBuf);
+						MessageBox(NULL,errorMessage, "Application error running process.",MB_OK|MB_SYSTEMMODAL|MB_ICONERROR);
 					}
 					else
 					{
