@@ -380,6 +380,16 @@ void Win32UserWindow::Show() {
 	ShowWindow(window_handle, SW_SHOW);
 }
 
+void Win32UserWindow::Focus()
+{
+	SetFocus(window_handle);
+}
+
+void Win32UserWindow::Unfocus()
+{
+	//TODO: not sure exactly how to cause kill focus
+}
+
 void Win32UserWindow::Open() {
 	std::cout << "Opening window_handle=" << (int)window_handle << ", view_window_handle="<<(int)view_window_handle<<std::endl;
 
