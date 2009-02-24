@@ -1,8 +1,8 @@
 /**
- * Appcelerator Kroll - licensed under the Apache Public License 2
- * see LICENSE in the root folder for details on the license. 
+ * Appcelerator Titanium - licensed under the Apache Public License 2
+ * see LICENSE in the root folder for details on the license.
  * Copyright (c) 2009 Appcelerator, Inc. All Rights Reserved.
- */	
+ */
 #include <kroll/kroll.h>
 #include <Poco/Environment.h>
 #include <Poco/Process.h>
@@ -102,8 +102,8 @@ namespace ti
 	}
 	void ProcessBinding::SetEnv(const ValueList& args, SharedValue result)
 	{
-		std::string key(args.at(1)->ToString());
-		std::string value(args.at(2)->ToString());
+		std::string key(args.at(0)->ToString());
+		std::string value(args.at(1)->ToString());
 		Poco::Environment::set(key,value);
 	}
 }

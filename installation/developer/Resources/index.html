@@ -36,7 +36,7 @@
 	</div>
 	
 	<!-- CONTENT -->
-	<div id="content" style="display:none" on="l:project.list.response[firstCall=true] then effect[fadeIn]">
+	<div id="content" style="display:none" on="l:project.list.response[firstCall=1] then effect[fadeIn]">
 		
 		<!-- MAJOR ACTION BUTTONS -->
 		<div class="button1 active" style="display:inline-block;width:150px" 
@@ -45,7 +45,7 @@
 		</div>
 		<div class="button1" style="display:inline-block;width:150px" 
 			on="click then l:menu[val=interact] and add[class=active] or l:menu[val!=interact] then remove[class=active]">
-			<div class="button2">Interact 
+			<div class="button2">Community 
 				<span id="irc_message_count" class="message_indicator" style="display:none"></span>
 			</div>
 		</div>
@@ -143,7 +143,7 @@
 									<div style="height:30px">
 										<div class="button1" style="float:left;margin-right:10px">
 											<div class="button2" id="send_tweet_button"	on="click then l:send.tweet.request 
-											if expr[$('#send_tweet_button').attr('disabled')!=true]" 
+											if expr[$('#send_tweet_button').attr('disabled')!='true']" 
 											activators="twitter_username,twitter_password,twitter_message"  
 											fieldset="twitter">				
 												Send
@@ -167,6 +167,24 @@
 					</div>
 				</div>
 				<div style="margin-top:10px;position:relative">
+					<div class="button1" style="display:none" id="follow_us_button"
+						on="click then script[TiDeveloper.Feeds.followUs()] and l:twitter.follow 
+							or l:twitter.follow then effect[fadeOut] after 2s">
+						<div class="button2">
+								<span on="l:twitter.follow then hide or l:twitter.follow then show after 3s">
+									Follow Us
+								</span>
+								<span  style="display:none;font-size:11px;color:#42C0FB"
+									on="l:twitter.follow then show or l:twitter.follow then hide after 1s">
+									One moment...
+								</span>
+								<span  style="display:none;font-size:11px;color:#42C0FB"
+									on="l:twitter.follow then show after 1s or l:twitter.follow then hide after 2s">
+									Success!
+								</span>
+
+						</div>
+					</div>
 					<div class="button1" on="click then l:show.tweet
 						or l:db[val=twitter] then show else hide">
 						<div class="button2">
@@ -487,7 +505,8 @@
 				</div>
 
 				<!-- STEP 1 PROJECT WIZARD -->
-				<div style="display:none" on="l:project.wizard[show=2] then effect[slideUp] else effect[fadeIn]
+				<div style="display:none" on="l:project.wizard[show=2] then effect[slideUp]  
+					or l:project.wizard[show=1] then effect[fadeIn] after 500ms
 					or (l:create.project or l:project.list.response[totalRecords=0]) then effect[fadeIn]">
 					<div style="float:left">
 						<div id="jquery_js" class="button1" style="float:none;width:160px;height:80px">
@@ -705,6 +724,12 @@
 								Create
 							</div>
 						</div>
+						<div class="button1" style="float:left;"  on="click then l:project.wizard[show=1]">
+							<div class="button2">
+								Back
+							</div>
+						</div>
+
 						<div class="button1" style="float:left;"  on="click then l:cancel[val=project]
 							or l:project.list.response[totalRecords=0]  then hide else show">
 							<div class="button2">
@@ -826,8 +851,34 @@
 						</div>
 						<div style="float:left;width:80%">
 							<div style="margin-bottom:10px">
+								<div class="infobox" style="width:400px;float:left">
+									<div class="content">
+										<span style="color:#aaa;font-size:11px">
+											Select how Titanium Runtime will be packaged:
+											</span>
+										<input type="radio" name="required_module_load" id="required_modules_network" 
+											value="network" on="click then l:runtime.option[val=network]" checked/> 
+											Network
+										<input type="radio" name="required_module_load" value="bundled"
+											id="required_modules_bundled"
+											on="click then l:runtime.option[val=bundled]"/> Bundled										
+									</div>
+								</div>
+							<div style="float:left;margin-left:10px;color:#aaa;font-size:11px;position:relative;top:13px">
+									<span on="l:runtime.option[val=network] then effect[fadeIn] else hide">
+										Runtime will be installed from the network during installation
+									</span>
+									<span on="l:runtime.option[val=bundled] then effect[fadeIn] else hide" 
+										style="display:none">
+										Runtime will be bundled with your application installer
+									</span>
+								</div>
+								<div style="clear:both"></div>
+							</div>
+							<div style="margin-bottom:10px">
 								<span class="hint_text">
-									Select your required modules and how they are installed for your application
+									Optional Modules - modules can be excluded, bundled or loaded via the network 
+									at install time
 								</span>
 							</div>
 							<div class="infobox" >
@@ -838,13 +889,13 @@
 											on="click then l:package.all[val=exclude]">
 											<a title="exclude module from application">Exclude</a>
 										</div>
-										<div style="width:95px;float:left;margin-left:10px;text-decoration:underline;cursor:pointer"
+										<div style="width:65px;float:left;margin-left:30px;text-decoration:underline;cursor:pointer"
 										 	on="click then l:package.all[val=network]">
-											<a title="load module at installation time">Include (Network)</a>
+											<a title="load module at installation time">Network</a>
 										</div>
-										<div style="width:120px;float:left;margin-left:10px;text-decoration:underline;cursor:pointer"
+										<div style="width:95px;float:left;margin-left:10px;text-decoration:underline;cursor:pointer"
 											on="click then l:package.all[val=bundled]">
-											<a title="include module with distribution">Include (Bundled)</a>
+											<a title="include module with distribution">Bundled</a>
 										</div>
 										<div style="width:90px;float:left;margin-left:10px;" >Module</div>
 
@@ -863,7 +914,7 @@
 														or l:package.all[val=exclude] then add[class=exclude] else remove[class=exclude]">
 												</div>
 											</div>
-											<div style="width:95px;float:left;text-align:center">
+											<div style="width:65px;float:left;text-align:center">
 												<div class="include_box" style="position:relative;left:40px"
 													id="network_#{iterator_index}"
 													on="click then l:package.select[val=network,name=#{name}] and toggle[class=network]

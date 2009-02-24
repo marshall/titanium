@@ -101,6 +101,8 @@ public:
 	HWND GetWindowHandle();
 	void Hide();
 	void Show();
+	void Focus();
+	void Unfocus();
 	bool IsUsingChrome() { return config->IsUsingChrome(); }
 	bool IsUsingScrollbars() { return config->IsUsingScrollbars(); }
 	bool IsFullScreen() { return config->IsFullScreen(); }

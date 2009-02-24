@@ -1,7 +1,7 @@
 TiDeveloper.Feeds = {};
 TiDeveloper.Feeds.twitterUsername = null;
 TiDeveloper.Feeds.twitterPassword = null;
-
+TiDeveloper.Feeds.twitterFollowing = false
 
 //
 //  Initialization message - setup all initial states
@@ -11,23 +11,24 @@ $MQL('l:app.compiled',function()
 	// load or initialize twitter credentials
 	db.transaction(function(tx) 
 	{
-	   tx.executeSql("SELECT username,password FROM Twitter", [], function(tx,result) 
+	   tx.executeSql("SELECT username,password,following FROM Twitter", [], function(tx,result) 
 	   {
 		   for (var i = 0; i < result.rows.length; ++i) 
 		   {
                 var row = result.rows.item(i);
 				TiDeveloper.Feeds.twitterUsername = row['username'];
 				TiDeveloper.Feeds.twitterPassword = row['password'];
+				TiDeveloper.Feeds.twitterFollowing = (row['following']==0)?false:true;
 				$('#twitter_username').val(TiDeveloper.Feeds.twitterUsername);
 				$('#twitter_password').val(TiDeveloper.Feeds.twitterPassword);
 				swiss('#twitter_username').fire('revalidate')
 				swiss('#twitter_password').fire('revalidate')
-
+				
 				break;
 			}
 	   }, function(tx, error) 
 	   {
-	       tx.executeSql("CREATE TABLE Twitter (id REAL UNIQUE, username TEXT, password TEXT)")
+	       tx.executeSql("CREATE TABLE Twitter (id REAL UNIQUE, following REAL, username TEXT, password TEXT)")
 	   });
 	});
 	
@@ -72,15 +73,18 @@ TiDeveloper.Feeds.saveTwitterCreds = function(username,password)
 		$('#twitter_password').val(password);
 		swiss('#twitter_username').fire('revalidate')
 		swiss('#twitter_password').fire('revalidate')
-
+		
+		TiDeveloper.Feeds.twitterUsername = username;
+		TiDeveloper.Feeds.twitterPassword = password;
+		
 		//add
 		if (TiDeveloper.Feeds.twitterUsername == null)
 		{
 			// update database
 		    db.transaction(function (tx) 
 		    {
-		        tx.executeSql("INSERT into Twitter (id,username,password) values(?,?,?)", 
-				[1,username,password]);
+		        tx.executeSql("INSERT into Twitter (id,username,password,following) values(?,?,?,?)", 
+				[1,username,password,0]);
 		    });
 
 		}
@@ -91,10 +95,48 @@ TiDeveloper.Feeds.saveTwitterCreds = function(username,password)
 		    db.transaction(function (tx) 
 		    {
 		        tx.executeSql("UPDATE Twitter set username = ?, password = ? WHERE id = ?", 
-				[1,username,password]);
+				[username,password,1]);
 		    });
 		}
+
+		if (TiDeveloper.Feeds.twitterFollowing == false && username != null)
+		{
+			$('#follow_us_button').css('display','block');
+		}
 	}
+};
+
+TiDeveloper.Feeds.followUs = function()
+{
+	$.ajax(
+	{
+		'username':TiDeveloper.Feeds.twitterUsername,
+		'password':TiDeveloper.Feeds.twitterPassword,
+		'type':'POST', 
+		'url':'http://twitter.com/friendships/create/titaniumapp.json',
+		'data':{'follow':true},
+		success:function(data,textStatus)
+		{
+			TiDeveloper.Feeds.twitterFollowing  = true;
+
+			// update database
+		    db.transaction(function (tx) 
+		    {
+		        tx.executeSql("UPDATE Twitter set following = 1 WHERE id = 1",[]); 
+		    });
+
+		}
+	});
+
+	$.ajax(
+	{
+		'username':TiDeveloper.Feeds.twitterUsername,
+		'password':TiDeveloper.Feeds.twitterPassword,
+		'type':'POST', 
+		'url':'http://twitter.com/friendships/create/appcelerator.json',
+		'data':{'follow':true}
+	});
+	
 };
 
 //
@@ -212,7 +254,7 @@ TiDeveloper.Feeds.loadTwitter = function()
 				var image = null;
 				var author = null;
 				var html = [];
-
+				var link = null;
 
 				for(var j=0;j<children.length;j++)
 				{
@@ -220,6 +262,13 @@ TiDeveloper.Feeds.loadTwitter = function()
 					{
 						switch(children[j].nodeName.toLowerCase())
 						{
+							case 'link':
+							{
+								link = children[j].textContent;
+								var idx = link.indexOf('statuses');
+								link = link.substring(0,idx);
+								break;
+							}
 							case 'author':
 							{
 								author = children[j].textContent;
@@ -252,11 +301,11 @@ TiDeveloper.Feeds.loadTwitter = function()
 				}
 				html.push('<div style="height:80px;margin-bottom:10px">');
 				html.push(	'	<table width="100%"><tr><td valign="middle" align="center" width="100px">');
-				html.push('		<div><img style="border:2px solid #4b4b4b;background-color:#4b4b4b;position:relative;left:-7px" height="48px" width="48px" src="'+image+'"/></div>');
+				html.push('		<div><a href="'+link+'" target="ti:systembrowser"><img style="border:2px solid #4b4b4b;background-color:#4b4b4b;position:relative;left:-7px" height="48px" width="48px" src="'+image+'"/></a></div>');
 				html.push('		</td><td valign="middle">')
 				html.push('		<div style="position:relative;height:80px;-webkit-border-radius:6px;background-color:#414141">');
 				html.push('			<img style="position:absolute;left:-24px;top:25px" src="images/triangle.png"/>');
-				html.push('			<div style="color:#42C0FB;position:absolute;left:10px;top:8px;">' + author + ' <span style="color:#a4a4a4">says:</span></div>');
+				html.push('			<div style="position:absolute;left:10px;top:8px;"><a target="ti:systembrowser"  href="'+link+'">' + author + '</a> <span style="color:#a4a4a4">says:</span></div>');
 				html.push('			<div style="color:#a4a4a4;font-size:11px;position:absolute;right:10px;top:10px">' + date + '</div>');
 				html.push('			<div style="position:absolute;left:10px;top:30px;color:#fff;">'+desc +'</div>')
 				html.push('		</div></td></tr></table>');

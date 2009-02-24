@@ -8,7 +8,7 @@
 #include "webkit_frame_load_delegate.h"
 #include "webkit_ui_delegate.h"
 #include "webkit_policy_delegate.h"
-#include "webkit_javascript_listener.h"
+//#include "webkit_javascript_listener.h"
 #include "win32_tray_item.h"
 #include "string_util.h"
 #include "../url/app_url.h"
@@ -378,6 +378,16 @@ void Win32UserWindow::Hide() {
 
 void Win32UserWindow::Show() {
 	ShowWindow(window_handle, SW_SHOW);
+}
+
+void Win32UserWindow::Focus()
+{
+	SetFocus(window_handle);
+}
+
+void Win32UserWindow::Unfocus()
+{
+	//TODO: not sure exactly how to cause kill focus
 }
 
 void Win32UserWindow::Open() {

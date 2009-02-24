@@ -1,7 +1,7 @@
 /**
- * Appcelerator Kroll - licensed under the Apache Public License 2
+ * Appcelerator Titanium - licensed under the Apache Public License 2
  * see LICENSE in the root folder for details on the license.
- * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
+ * Copyright (c) 2009 Appcelerator, Inc. All Rights Reserved.
  */
 
 #ifndef _GST_MEDIA_BINDING_H_

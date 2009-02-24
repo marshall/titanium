@@ -48,6 +48,8 @@ UserWindow::UserWindow(kroll::Host *host, WindowConfig *config) :
 	/* this object is accessed by Titanium.Window.currentWindow */
 	this->SetMethod("hide", &UserWindow::_Hide);
 	this->SetMethod("show", &UserWindow::_Show);
+	this->SetMethod("focus", &UserWindow::_Focus);
+	this->SetMethod("unfocus", &UserWindow::_Unfocus);
 	this->SetMethod("isUsingChrome", &UserWindow::_IsUsingChrome);
 	this->SetMethod("setUsingChrome", &UserWindow::_SetUsingChrome);
 	this->SetMethod("isFullScreen", &UserWindow::_IsFullScreen);
@@ -121,6 +123,9 @@ void UserWindow::Close()
 	if (parent != NULL)
 	{
 		UserWindow::RemoveChild(parent, this);
+		
+		// after we close a child, focus it's parent
+		parent->Focus();
 	}
 
 	// see if we have any open child windows
@@ -149,6 +154,10 @@ void UserWindow::Close()
 	{
 		this->host->Exit(0);
 	}
+	else
+	{
+		windows.at(0)->Focus();
+	}
 }
 
 
@@ -160,6 +169,16 @@ void UserWindow::_Hide(const kroll::ValueList& args, kroll::SharedValue result)
 void UserWindow::_Show(const kroll::ValueList& args, kroll::SharedValue result)
 {
 	this->Show();
+}
+
+void UserWindow::_Focus(const kroll::ValueList& args, kroll::SharedValue result)
+{
+	this->Focus();
+}
+
+void UserWindow::_Unfocus(const kroll::ValueList& args, kroll::SharedValue result)
+{
+	this->Unfocus();
 }
 
 void UserWindow::_IsUsingChrome(const kroll::ValueList& args, kroll::SharedValue result)

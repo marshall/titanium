@@ -1,18 +1,31 @@
 /**
- * Appcelerator Kroll - licensed under the Apache Public License 2
+ * Appcelerator Titanium - licensed under the Apache Public License 2
  * see LICENSE in the root folder for details on the license.
  * Copyright (c) 2009 Appcelerator, Inc. All Rights Reserved.
  */
 #include "async_copy.h"
 #include "filesystem_binding.h"
-#ifdef OS_LINUX
+
+#ifndef OS_WIN32
 #include <unistd.h>
+#include <string.h>
+#include <errno.h>
 #endif
 
 namespace ti
 {
-	AsyncCopy::AsyncCopy(FilesystemBinding* parent,Host *host,std::vector<std::string> files, std::string destination, SharedBoundMethod callback) :
-		parent(parent), host(host), files(files), destination(destination), callback(callback), stopped(false)
+	AsyncCopy::AsyncCopy(
+		FilesystemBinding* parent, 
+		Host *host, 
+		std::vector<std::string> files, 
+		std::string destination, 
+		SharedBoundMethod callback)
+			: parent(parent),
+			  host(host),
+			  files(files),
+			  destination(destination),
+			  callback(callback),
+			  stopped(false)
 	{
 		this->Set("running",Value::NewBool(true));
 		this->thread = new Poco::Thread();
@@ -51,44 +64,39 @@ namespace ti
 				this->Copy(sp,dp);
 			}
 		}
+#ifndef OS_WIN32
+		else if (from.isLink())
+		{
+			char linkPath[PATH_MAX];
+			ssize_t length = readlink(from.path().c_str(), linkPath, PATH_MAX);
+			linkPath[length] = '\0';
+
+			std::string newPath (dest.toString());
+			const char *destPath = newPath.c_str();
+			// unlink it first, fails in some OS if already there
+			unlink(destPath);
+			int result = symlink(linkPath, destPath);
+#ifdef DEBUG
+			std::cout << "Result: " << result << " for file: " << destPath << std::endl;
+#endif
+			if (result == -1)
+			{
+				std::string err = "Copy failed: Could not make symlink (";
+				err.append(destPath);
+				err.append(") from ");
+				err.append(linkPath);
+				err.append(" : ");
+				err.append(strerror(errno));
+				throw kroll::ValueException::FromString(err);
+			}
+
+		}
+#endif
 		else
 		{
-#ifndef OS_WIN32
-			if (from.isLink())
-			{
-				char linkPath[PATH_MAX];
-				ssize_t length = readlink(from.path().c_str(), linkPath, PATH_MAX);
-				linkPath[length] = '\0';
-#ifdef OS_OSX
-
-				NSString* linkToPath = [NSString stringWithCString:linkPath];
-				NSString* destPath = [NSString stringWithCString:dest.toString().c_str()];
-				BOOL worked = [[NSFileManager defaultManager] createSymbolicLinkAtPath:destPath pathContent:linkToPath];
-				NSLog(@"Worked=%d", worked);
-#ifdef DEBUG
-				NSLog(@"SYMLINK:%@=>%@ (%d)",linkToPath,destPath,worked);
-#else
-				KR_UNUSED(worked);
-#endif
-#else
-				int result = link(src.toString().c_str(),dest.toString().c_str());
-				if (result != 0)
-				{
-					std::string err = "Copy failed: Could not make link (";
-					err += dest.toString() + ")";
-					throw kroll::ValueException::FromString(err);
-				}
-#endif
-			}
-			else
-			{
-#endif
-				// in this case it's a regular file
-				Poco::File s(src.toString());
-				s.copyTo(dest.toString().c_str());
-#ifndef OS_WIN32
-			}
-#endif
+			// in this case it's a regular file
+			Poco::File s(src.toString());
+			s.copyTo(dest.toString().c_str());
 		}
 	}
 	void AsyncCopy::Run(void* data)
@@ -136,6 +144,11 @@ namespace ti
 #ifdef DEBUG
 			std::cout << "after callback for async file: " << file << " (" << c << "/" << ac->files.size() << ")" << std::endl;
 #endif
+			}
+			catch (ValueException &ex)
+			{
+				SharedString ss = ex.DisplayString();
+				std::cerr << "Error running async file copy: " << *ss << std::endl;
 			}
 			catch (Poco::Exception &ex)
 			{

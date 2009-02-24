@@ -552,25 +552,21 @@
 	return [[wv window] firstResponder];
 }
 
-
 - (void)webView:(WebView *)wv makeFirstResponder:(NSResponder *)responder 
 {
 	[[wv window] makeFirstResponder:responder];
 }
-
 
 - (NSString *)webViewStatusText:(WebView *)wv 
 {
 	return nil;
 }
 
-
 - (BOOL)webViewIsResizable:(WebView *)wv 
 {
 	WindowConfig *config = [window config];
 	return config->IsResizable();
 }
-
 
 - (void)webView:(WebView *)wv setResizable:(BOOL)resizable; 
 {
@@ -640,6 +636,8 @@
 								 NSLocalizedString(@"OK", @""),			// default button
 								 nil,									// alt button
 								 nil);									// other button	
+
+	[window userWindow]->Show();
 }
 
 
@@ -650,6 +648,7 @@
 													NSLocalizedString(@"OK", @""),			// default button
 													NSLocalizedString(@"Cancel", @""),		// alt button
 													nil);
+	[window userWindow]->Show();
 	return NSAlertDefaultReturn == result;	
 }
 
@@ -663,12 +662,14 @@
 						modalDelegate:self
 					   didEndSelector:@selector(openPanelDidEnd:returnCode:contextInfo:) 
 						  contextInfo:resultListener];	
+	[window userWindow]->Show();
 }
 
 
 - (void)openPanelDidEnd:(NSSavePanel *)openPanel returnCode:(int)returnCode contextInfo:(void *)contextInfo 
 {
 	id <WebOpenPanelResultListener>resultListener = (id <WebOpenPanelResultListener>)contextInfo;
+	[window userWindow]->Show();
 	if (NSOKButton == returnCode) {
 		[resultListener chooseFilename:[openPanel filename]];
 	}
@@ -842,16 +843,7 @@ std::string GetModuleName(NSString *typeStr)
 	std::string moduleName = GetModuleName(mimeType);
 	SharedBoundObject global = host->GetGlobalObject();
 	SharedValue moduleValue = global->Get(moduleName.c_str());
-
-	if (!moduleValue->IsNull() && moduleValue->IsObject()) {
-		if (!moduleValue->ToObject()->Get("evaluate")->IsNull()
-			&& !moduleValue->ToObject()->Get("evaluate")->IsUndefined()
-			&& moduleValue->ToObject()->Get("evaluate")->IsMethod()) {
-			
-			return YES;
-		}
-	}
-	return NO;
+	return (moduleValue->IsObject() && moduleValue->ToObject()->Get("evaluate")->IsMethod());
 }
 
 -(void) evaluate:(NSString *)mimeType sourceCode:(NSString*)sourceCode
@@ -866,9 +858,11 @@ std::string GetModuleName(NSString *typeStr)
 	SharedBoundObject global = host->GetGlobalObject();
 	SharedValue moduleValue = global->Get(moduleName.c_str());
 
-	if (!moduleValue->IsNull()) {
+	if (!moduleValue->IsNull()) 
+	{
 		SharedValue evalValue = moduleValue->ToObject()->Get("evaluate");
-		if (!evalValue->IsNull() && evalValue->IsMethod()) {
+		if (evalValue->IsMethod()) 
+		{
 			ValueList args;
 			SharedValue typeValue = Value::NewString(type);
 			SharedValue sourceCodeValue = Value::NewString([sourceCode UTF8String]);
@@ -879,7 +873,24 @@ std::string GetModuleName(NSString *typeStr)
 			args.push_back(sourceCodeValue);
 			args.push_back(contextValue);
 			
-			evalValue->ToMethod()->Call(args);
+			//TODO: on error, should we call window.onerror function if found?
+			try
+			{
+				evalValue->ToMethod()->Call(args);
+			}
+			catch(ValueException &e)
+			{
+				SharedString s = e.GetValue()->DisplayString();
+				std::cerr << "Exception evaluating " << type << ". Error: " << *s << std::endl;
+			}
+			catch(std::exception &e)
+			{
+				std::cerr << "Exception evaluating " << type << ". Error: " << e.what() << std::endl;
+			}
+			catch(...)
+			{
+				std::cerr << "Exception evaluating " << type << ". Unknown Error." << std::endl;
+			}
 		}
 	}
 	else

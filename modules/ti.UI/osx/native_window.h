@@ -22,9 +22,10 @@ using namespace ti;
 	WebViewDelegate* delegate;
 	BOOL requiresDisplay;
 	UserWindow* userWindow;
-	CGDisplayFadeReservationToken tok;  /** Fade out/in token */
 	WebInspector *inspector;
 	BOOL closed;
+	BOOL fullscreen;
+	NSRect savedFrame;
 }
 - (void)setupDecorations:(WindowConfig*)config host:(Host*)h userwindow:(UserWindow*)uw;
 - (void)setTransparency:(double)transparency;

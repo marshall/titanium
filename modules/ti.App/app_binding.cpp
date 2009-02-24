@@ -21,7 +21,7 @@ namespace ti
 		this->SetMethod("appURLToPath", &AppBinding::AppURLToPath);
 
 		// FIXME: for now this version is hardcoded
-		SharedValue version = Value::NewDouble(0.2);
+		SharedValue version = Value::NewDouble(PRODUCT_VERSION);
 		global->Set("version", version);
 
 		// platform

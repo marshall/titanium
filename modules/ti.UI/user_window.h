@@ -55,6 +55,8 @@ class UserWindow : public kroll::StaticBoundObject {
 	private:
 		void _Hide(const kroll::ValueList&, kroll::SharedValue);
 		void _Show(const kroll::ValueList&, kroll::SharedValue);
+		void _Focus(const kroll::ValueList&, kroll::SharedValue);
+		void _Unfocus(const kroll::ValueList&, kroll::SharedValue);
 		void _IsUsingChrome(const kroll::ValueList&, kroll::SharedValue);
 		void _SetUsingChrome(const kroll::ValueList&, kroll::SharedValue);
 		void _IsUsingScrollbars(const kroll::ValueList&, kroll::SharedValue);
@@ -152,6 +154,8 @@ class UserWindow : public kroll::StaticBoundObject {
 
 		virtual void Hide() = 0;
 		virtual void Show() = 0;
+		virtual void Focus() = 0;
+		virtual void Unfocus() = 0;
 		virtual bool IsUsingChrome() = 0;
 		virtual bool IsUsingScrollbars() = 0;
 		virtual bool IsFullScreen() = 0;
