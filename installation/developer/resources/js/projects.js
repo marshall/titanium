@@ -503,6 +503,7 @@ $MQL('l:create.package.request',function(msg)
 		{
 			if (launch)
 			{
+				Titanium.Process.setEnv('KR_DEBUG','true');
 				Titanium.Desktop.openApplication(app.executable.nativePath());
 			}
 		};

@@ -142,12 +142,13 @@ TiDeveloper.IRC.updateNickInDB = function(username)
 //
 // Initialize Chat
 //
+var userSetNick = null;
+
 TiDeveloper.IRC.initialize = function()
 {
 	try
 	{
 		var username = TiDeveloper.IRC.formatNick(TiDeveloper.IRC.nick);
-		var userSetNick = null;
 		var nick_counter = 1;
 		var setNicknameAttempted = false;
 		
@@ -163,6 +164,7 @@ TiDeveloper.IRC.initialize = function()
 			{	
 				case '433':
 				{
+					alert(userSetNick)
 					// user is trying to set their nickname
 					if (userSetNick != null)
 					{
