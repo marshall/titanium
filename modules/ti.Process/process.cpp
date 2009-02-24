@@ -50,42 +50,6 @@ namespace ti
 	Process::~Process()
 	{
 		Terminate();
-		
-		if (this->err)
-		{
-			delete this->err;
-			this->err = NULL;
-		}
-		if (this->out)
-		{
-			delete this->out;
-			this->out = NULL;
-		}
-		if (this->in)
-		{
-			delete this->in;
-			this->in = NULL;
-		}
-		if (this->errp)
-		{
-			delete this->errp;
-			this->errp = NULL;
-		}
-		if (this->outp)
-		{
-			delete this->outp;
-			this->outp = NULL;
-		}
-		if (this->inp)
-		{
-			delete this->inp;
-			this->inp = NULL;
-		}
-		if (this->process)
-		{
-			delete this->process;
-			this->process = NULL;
-		}
 	}
 	void Process::Terminate(const ValueList& args, SharedValue result)
 	{
