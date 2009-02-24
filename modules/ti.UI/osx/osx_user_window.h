@@ -34,6 +34,8 @@ namespace ti
 				std::vector<std::string>& types);
 			void Hide();
 			void Show();
+			void Focus();
+			void Unfocus();
 			bool IsUsingChrome();
 			void SetUsingChrome(bool chrome);
 			bool IsUsingScrollbars();
