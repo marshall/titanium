@@ -18,7 +18,7 @@ $MQL('l:app.compiled',function()
 	   {
 	       tx.executeSql("CREATE TABLE Projects (id REAL UNIQUE, timestamp REAL, name TEXT, directory TEXT, appid TEXT, publisher TEXT, url TEXT, image TEXT)", [], function(result) 
 		   { 
-	          TiDeveloper.Projects.loadProjects(); 
+	          TiDeveloper.Projects.loadProjects(true); 
 	       });
 	   });
 	});
@@ -223,7 +223,7 @@ TiDeveloper.Projects.loadProjects = function(init)
 			}
 			
 			$('#project_count_hidden').val(TiDeveloper.Projects.projectArray.length)
-			var firstCall = (init)?true:false
+			var firstCall = (init)?1:0
 			$MQ('l:project.list.response',{firstCall:firstCall,count:count,page:TiDeveloper.currentPage,totalRecords:TiDeveloper.Projects.projectArray.length,'rows':data})
         });
 	});	

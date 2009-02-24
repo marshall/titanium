@@ -169,7 +169,7 @@ TiDeveloper.IRC.initialize = function()
 					{
 						if ($('.' + userSetNick).length == 0)
 						{
-							$('#irc').append('<div style="color:#aaa">' + username + ' is now known as <span style"color:#42C0FB">'+userSetNick+'</span></div>');
+							$('#irc').append('<div style="color:#aaa;margin-bottom:8px">' + username + ' is now known as <span style"color:#42C0FB">'+userSetNick+'</span></div>');
 							$('.'+username).html('');
 							$('#irc_users').append('<div class="'+userSetNick+'" >'+userSetNick+'</div>');
 							username = userSetNick;
@@ -179,7 +179,7 @@ TiDeveloper.IRC.initialize = function()
 						}
 						else
 						{
-							$('#irc').append('<div style="color:#aaa">' + userSetNick + ' is already taken. try again.</div>');
+							$('#irc').append('<div style="color:#aaa;margin-bottom:8px">' + userSetNick + ' is already taken. try again.</div>');
 							return;
 						}
 					}
@@ -234,7 +234,7 @@ TiDeveloper.IRC.initialize = function()
 					}
 					else if (nick=='NickServ' && (channel.indexOf('This nickname is registered')>=0 || channel.indexOf('Invalid password for')>=0))
 					{
-						$('#irc').append('<div style="color:#aaa">' + data + ' is already taken. trying another variation...</div>');
+						$('#irc').append('<div style="color:#aaa;margin-bottom:8px">' + data + ' is already taken. trying another variation...</div>');
 						username = TiDeveloper.IRC.formatNick(data + (++nick_counter));
 						setNicknameAttempted = true;
 						// try again with a new nick
@@ -268,7 +268,7 @@ TiDeveloper.IRC.initialize = function()
 					{
 						TiDeveloper.IRC.count++;
 					}
-					$('#irc').append('<div style="color:#aaa">' + nick + ' has joined the room </div>');
+					$('#irc').append('<div style="color:#aaa;margin-bottom:8px">' + nick + ' has joined the room </div>');
 					$('#irc_users').append('<div class="'+nick+'" >'+nick+'</div>');
 					$MQ('l:online.count',{count:TiDeveloper.IRC.count});
 					break;
@@ -276,7 +276,7 @@ TiDeveloper.IRC.initialize = function()
 				case 'QUIT':
 				case 'PART':
 				{
-					$('#irc').append('<div style="color:#aaa">' + nick + ' has left the room </div>');
+					$('#irc').append('<div style="color:#aaa;margin-bottom:8px">' + nick + ' has left the room </div>');
 					$('.'+nick).html('');
 					TiDeveloper.IRC.count--;
 					$MQ('l:online.count',{count:TiDeveloper.IRC.count});
@@ -308,7 +308,7 @@ $MQL('l:send.irc.msg',function()
 			userSetNick = rawMsg.split(' ')[1];
 		}
 		TiDeveloper.IRC.ircClient.send(TiDeveloper.IRC.channel,rawMsg);
-		$('#irc').append('<div style="color:#42C0FB;font-size:14px;float:left;margin-bottom:8px;width:90%">' + TiDeveloper.IRC.nick + ': <span style="color:white;font-size:12px;font-family:Arial">' + urlMsg + '</span></div><div style="float:right;color:#ccc;font-size:11px;width:10%;text-align:right">'+time+'</div><div style="clear:both"></div>');
+		$('#irc').append('<div style="color:#ff9900;font-size:14px;float:left;margin-bottom:8px;width:90%">' + TiDeveloper.IRC.nick + ': <span style="color:white;font-size:12px;font-family:Arial">' + urlMsg + '</span></div><div style="float:right;color:#ccc;font-size:11px;width:10%;text-align:right">'+time+'</div><div style="clear:both"></div>');
 		$('#irc_msg').val('');
 		$('#irc').get(0).scrollTop = $('#irc').get(0).scrollHeight;
 		

@@ -36,7 +36,7 @@
 	</div>
 	
 	<!-- CONTENT -->
-	<div id="content" style="display:none" on="l:project.list.response[firstCall=true] then effect[fadeIn]">
+	<div id="content" style="display:none" on="l:project.list.response[firstCall=1] then effect[fadeIn]">
 		
 		<!-- MAJOR ACTION BUTTONS -->
 		<div class="button1 active" style="display:inline-block;width:150px" 
@@ -143,7 +143,7 @@
 									<div style="height:30px">
 										<div class="button1" style="float:left;margin-right:10px">
 											<div class="button2" id="send_tweet_button"	on="click then l:send.tweet.request 
-											if expr[$('#send_tweet_button').attr('disabled')!=true]" 
+											if expr[$('#send_tweet_button').attr('disabled')!='true']" 
 											activators="twitter_username,twitter_password,twitter_message"  
 											fieldset="twitter">				
 												Send
