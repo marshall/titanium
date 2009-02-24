@@ -1,4 +1,4 @@
-var notification_windows = 2;
+var notification_windows = 1;
 
 function TitaniumNotification(window)
 {
@@ -96,6 +96,7 @@ function TitaniumNotification(window)
       hideTimer=null;
     }
     mywindow.hide(animate);
+	mywindow.getParent().focus();
   };
 };
 

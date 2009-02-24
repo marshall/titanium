@@ -485,6 +485,19 @@ void GtkUserWindow::Show() {
 	}
 }
 
+void GtkUserWindow::Focus() {
+	
+	//TODO: call
+	//        |
+	//        v
+	//gtk_window_activate_focus(GTK_WINDOW(win));
+	//gtk_widget_grab_focus(GTK_WIDGET(win));
+}
+
+void GtkUserWindow::Unfocus(){
+	
+}
+
 bool GtkUserWindow::IsUsingScrollbars() {
 	return this->config->IsUsingScrollbars();
 }

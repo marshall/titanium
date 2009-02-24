@@ -8,6 +8,7 @@ sys.path.append(path.abspath('.')+'/kroll')
 from build.common import BuildConfig
 
 build = BuildConfig(
+	PRODUCT_VERSION = '0.2',
 	INSTALL_PREFIX = '/usr/local',
 	PRODUCT_NAME = 'Titanium',
 	GLOBAL_NS_VARNAME = 'Titanium',

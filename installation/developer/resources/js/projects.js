@@ -459,7 +459,7 @@ $MQL('l:create.package.request',function(msg)
 		var buildMac = ($('#platform_mac').hasClass('selected_os'))?true:false;
 		var buildWin = ($('#platform_windows').hasClass('selected_os'))?true:false;
 		var buildLinux = ($('#platform_linux').hasClass('selected_os'))?true:false;
-
+		
 		$.each(excludedEl,function()
 		{
 			var key = $.trim($(this).html());
@@ -502,7 +502,7 @@ $MQL('l:create.package.request',function(msg)
 				manifest+=TiDeveloper.Projects.modules[c].name+':'+TiDeveloper.Projects.modules[c].versions[0]+'\n';
 			}
 		}
-		
+
 		var mf = TFS.getFile(project.dir,'manifest');
 		mf.write(manifest);
 		
@@ -526,7 +526,8 @@ $MQL('l:create.package.request',function(msg)
 		};
 		TFS.asyncCopy(resources,app.resources,function()
 		{
-			var module_dir = TFS.getFile(app.base,'modules');
+			//QUICK HACK until packaging done
+			var module_dir = TFS.getFile(app.base,'modules',Titanium.platform);
 			var runtime_dir = TFS.getFile(app.base,'runtime');
 			var modules_to_bundle = [];
 			$.each(bundledEl,function()
@@ -543,7 +544,8 @@ $MQL('l:create.package.request',function(msg)
 				{
 					module_dir.createDirectory();
 					var module = TiDeveloper.Projects.module_map[key];
-					target = TFS.getFile(module.dir,module.versions[0]);
+					//TEMP HACK until distro is done
+					target = TFS.getFile(module.dir,Titanium.platform,module.versions[0]);
 					dest = TFS.getFile(module_dir,module.dir.name());
 				}
 				modules_to_bundle.push({target:target,dest:dest});

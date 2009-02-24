@@ -1,9 +1,9 @@
-/*
- * web_kit_policy_delegate.h
- *
- *  Created on: Feb 16, 2009
- *      Author: jorge
+/**
+ * Appcelerator Titanium - licensed under the Apache Public License 2
+ * see LICENSE in the root folder for details on the license.
+ * Copyright (c) 2009 Appcelerator, Inc. All Rights Reserved.
  */
+
 
 #ifndef _TI_WEB_KIT_POLICY_DELEGATE_H_
 #define _TI_WEB_KIT_POLICY_DELEGATE_H_
