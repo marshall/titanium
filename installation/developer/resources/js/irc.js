@@ -164,6 +164,15 @@ TiDeveloper.IRC.initialize = function()
 			{	
 				case '433':
 				{
+					$('#irc').append('<div style="color:#aaa;margin-bottom:8px">' + username + ' is already taken. trying another variation...</div>');
+					username = TiDeveloper.IRC.formatNick(username + (++nick_counter));
+					setNicknameAttempted = true;
+					TiDeveloper.IRC.ircClient.setNick(username);
+					TiDeveloper.IRC.updateNickInDB(username);
+					break;
+				}
+				case 'NICK':
+				{
 					// user is trying to set their nickname
 					if (userSetNick != null)
 					{
@@ -179,16 +188,8 @@ TiDeveloper.IRC.initialize = function()
 						}
 						else
 						{
-							$('#irc').append('<div style="color:#aaa;margin-bottom:8px">' + userSetNick + ' is already taken. try again.</div>');
 							return;
 						}
-					}
-					
-					// we tried to set the nick, but it's taken
-					// so increment
-					else if (setNicknameAttepted == true)
-					{
-						username = TiDeveloper.IRC.formatNick(TiDeveloper.IRC.nick + (++nick_counter));
 					}
 					// initial attempt to set nickname
 					else
@@ -198,14 +199,8 @@ TiDeveloper.IRC.initialize = function()
 					}
 					// try again with a new nick
 					TiDeveloper.IRC.ircClient.setNick(username);
-					break;
-				}
-				case 'NICK':
-				{
-					// this is good and indicates the NICK was accepted
-				    TiDeveloper.IRC.updateNickInDB(username);
-					$('.'+username).html('');
-					$('#irc_users').append('<div class="'+username+'" >'+username+'</div>');
+					TiDeveloper.IRC.updateNickInDB(username);
+
 					break;
 				}
 				case 'NOTICE':
@@ -239,6 +234,7 @@ TiDeveloper.IRC.initialize = function()
 						setNicknameAttempted = true;
 						// try again with a new nick
 						TiDeveloper.IRC.ircClient.setNick(username);
+						
 					}
 					break;
 				}
