@@ -164,7 +164,6 @@ TiDeveloper.IRC.initialize = function()
 			{	
 				case '433':
 				{
-					alert(userSetNick)
 					// user is trying to set their nickname
 					if (userSetNick != null)
 					{

@@ -2,6 +2,10 @@ TiDeveloper.Projects = {};
 TiDeveloper.Projects.projectArray = [];
 TiDeveloper.Projects.modules = [];
 TiDeveloper.Projects.module_map = {};
+TiDeveloper.Projects.runtimeDir = null;
+TiDeveloper.Projects.runtimeVersion = null;
+TiDeveloper.Projects.requiredModuleMap = {};
+TiDeveloper.Projects.requiredModules = ['api','tiapp','tifilesystem','tiplatform','tiui']
 
 //
 //  Initialization message - setup all initial states
@@ -363,13 +367,21 @@ TiDeveloper.Projects.getProjectPage = function(pageSize,page)
 setTimeout(function()
 {
 	var result = Titanium.Project.getModulesAndRuntime();
-	TiDeveloper.Projects.modules.push({name:'Titanium Runtime',versions:result.runtime.versions,dir:result.runtime.dir});
+	TiDeveloper.Projects.runtimeDir = result.runtime.dir;
+	TiDeveloper.Projects.runtimeVersion = result.runtime.versions[0];
 	for (var c=0;c<result.modules.length;c++)
 	{
 		var name = result.modules[c].name;
-		TiDeveloper.Projects.module_map[name]=result.modules[c];
-		TiDeveloper.Projects.modules.push({name:name,versions:result.modules[c].versions,dir:result.modules[c].dir});
-	
+		if (TiDeveloper.Projects.requiredModules.indexOf(name) == -1)
+		{
+			TiDeveloper.Projects.module_map[name]=result.modules[c];
+			TiDeveloper.Projects.modules.push({name:name,versions:result.modules[c].versions,dir:result.modules[c].dir});
+		}
+		else
+		{
+			TiDeveloper.Projects.requiredModuleMap[name]=result.modules[c];
+			
+		}
 	}
 },500);
 
@@ -431,7 +443,8 @@ $MQL('l:create.package.request',function(msg)
 		var install = typeof(msg.payload.install)=='undefined' ? false : msg.payload.install;
 		var pkg = (msg.payload.launch == true)?true:false;
 		
-		
+		var networkRuntime = $('#required_modules_network').attr('checked');
+
 		// elements that are included for network bundle
 		var networkEl = $("div[state='network']");
 
@@ -446,7 +459,7 @@ $MQL('l:create.package.request',function(msg)
 		var buildMac = ($('#platform_mac').hasClass('selected_os'))?true:false;
 		var buildWin = ($('#platform_windows').hasClass('selected_os'))?true:false;
 		var buildLinux = ($('#platform_linux').hasClass('selected_os'))?true:false;
-		
+
 		$.each(excludedEl,function()
 		{
 			var key = $.trim($(this).html());
@@ -474,15 +487,20 @@ $MQL('l:create.package.request',function(msg)
 		}
 		
 		manifest+='#url:'+project.url+'\n';
-		manifest+='runtime:'+TiDeveloper.Projects.modules[0].versions[0]+'\n';
+		manifest+='runtime:'+TiDeveloper.Projects.runtimeVersion+'\n';
+
 		
-		// 0 is always runtime, skip it
-		for (var c=1;c<TiDeveloper.Projects.modules.length;c++)
+		for (var c=0;c<TiDeveloper.Projects.modules.length;c++)
 		{
 			if (!excluded[TiDeveloper.Projects.modules[c].name])
 			{
 				manifest+=TiDeveloper.Projects.modules[c].name+':'+TiDeveloper.Projects.modules[c].versions[0]+'\n';
 			}
+		}
+
+		for (var i=0;i<TiDeveloper.Projects.requiredModules.length;i++)
+		{
+			manifest+= TiDeveloper.Projects.requiredModules[i] +':'+ TiDeveloper.Projects.requiredModuleMap[TiDeveloper.Projects.requiredModules[i]].versions[0]+'\n';
 		}
 		
 		var mf = TFS.getFile(project.dir,'manifest');
@@ -491,8 +509,7 @@ $MQL('l:create.package.request',function(msg)
 		var dist = TFS.getFile(project.dir,'dist',Titanium.platform);
 		dist.createDirectory(true);
 		
-		var runtime = TFS.getFile(TiDeveloper.Projects.modules[0].dir,TiDeveloper.Projects.modules[0].versions[0]);
-		
+		var runtime = TFS.getFile(TiDeveloper.Projects.runtimeDir,TiDeveloper.Projects.runtimeVersion);
 		var app = Titanium.createApp(runtime,dist,project_name,project.appid,install);
 		var app_manifest = TFS.getFile(app.base,'manifest');
 		app_manifest.write(manifest);
@@ -519,7 +536,7 @@ $MQL('l:create.package.request',function(msg)
 				if (key == 'Titanium Runtime') //TODO: we need to make this defined
 				{
 					runtime_dir.createDirectory();
-					target = TFS.getFile(TiDeveloper.Projects.modules[0].dir,TiDeveloper.Projects.modules[0].versions[0]);
+					target = TFS.getFile(TiDeveloper.Projects.runtimeDir,TiDeveloper.Projects.runtimeVersion);
 					dest = runtime_dir;
 				}
 				else
