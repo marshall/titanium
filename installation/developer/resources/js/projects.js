@@ -489,18 +489,18 @@ $MQL('l:create.package.request',function(msg)
 		manifest+='#url:'+project.url+'\n';
 		manifest+='runtime:'+TiDeveloper.Projects.runtimeVersion+'\n';
 
-		
+		// write out required modules
+		for (var i=0;i<TiDeveloper.Projects.requiredModules.length;i++)
+		{
+			manifest+= TiDeveloper.Projects.requiredModules[i] +':'+ TiDeveloper.Projects.requiredModuleMap[TiDeveloper.Projects.requiredModules[i]].versions[0]+'\n';
+		}
+		// write out optional modules
 		for (var c=0;c<TiDeveloper.Projects.modules.length;c++)
 		{
 			if (!excluded[TiDeveloper.Projects.modules[c].name])
 			{
 				manifest+=TiDeveloper.Projects.modules[c].name+':'+TiDeveloper.Projects.modules[c].versions[0]+'\n';
 			}
-		}
-
-		for (var i=0;i<TiDeveloper.Projects.requiredModules.length;i++)
-		{
-			manifest+= TiDeveloper.Projects.requiredModules[i] +':'+ TiDeveloper.Projects.requiredModuleMap[TiDeveloper.Projects.requiredModules[i]].versions[0]+'\n';
 		}
 		
 		var mf = TFS.getFile(project.dir,'manifest');
