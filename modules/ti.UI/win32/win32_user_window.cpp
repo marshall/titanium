@@ -8,7 +8,7 @@
 #include "webkit_frame_load_delegate.h"
 #include "webkit_ui_delegate.h"
 #include "webkit_policy_delegate.h"
-#include "webkit_javascript_listener.h"
+//#include "webkit_javascript_listener.h"
 #include "win32_tray_item.h"
 #include "string_util.h"
 #include "../url/app_url.h"
