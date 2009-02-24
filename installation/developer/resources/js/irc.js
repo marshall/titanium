@@ -157,7 +157,6 @@ TiDeveloper.IRC.initialize = function()
 		TiDeveloper.IRC.ircClient.connect("irc.freenode.net",6667,username,username,username,String(new Date().getTime()),function(cmd,channel,data,nick)
 		{
 			var time = TiDeveloper.getCurrentTime();
-			Titanium.API.debug('cmd='+cmd+',nick='+nick+',data='+data+',channel='+channel);
 
 			// switch on command
 			switch(cmd)
