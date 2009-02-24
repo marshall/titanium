@@ -71,12 +71,17 @@ namespace ti
 			ssize_t length = readlink(from.path().c_str(), linkPath, PATH_MAX);
 			linkPath[length] = '\0';
 
-			// Do this symlink in the standard POSIX way so that
-			// we avoid cross-platform conditional code.
 			const char *newPath = dest.toString().c_str();
 			// unlink it first, fails in some OS if already there
 			unlink(newPath);
+#ifdef OS_OSX
+			NSString* linkToPath = [NSString stringWithCString:linkPath];
+			NSString* destPath = [NSString stringWithCString:newPath];
+			BOOL worked = [[NSFileManager defaultManager] createSymbolicLinkAtPath:destPath pathContent:linkToPath];
+			int result = worked ? 0 : -1;
+#else
 			int result = symlink(linkPath, newPath);
+#endif
 #ifdef DEBUG
 			std::cout << "Result: " << result << " for file: " << newPath << std::endl;
 #endif
