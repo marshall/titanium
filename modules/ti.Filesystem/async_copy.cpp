@@ -73,8 +73,13 @@ namespace ti
 
 			// Do this symlink in the standard POSIX way so that
 			// we avoid cross-platform conditional code.
-			int result = symlink(linkPath, dest.toString().c_str());
-			std::cout << "Result: " << result << std::endl;
+			const char *newPath = dest.toString().c_str();
+			// unlink it first, fails in some OS if already there
+			unlink(newPath);
+			int result = symlink(linkPath, newPath);
+#ifdef DEBUG
+			std::cout << "Result: " << result << " for file: " << newPath << std::endl;
+#endif
 			if (result == -1)
 			{
 				std::string err = "Copy failed: Could not make symlink (";
