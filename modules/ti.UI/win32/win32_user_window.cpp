@@ -8,6 +8,7 @@
 #include "webkit_frame_load_delegate.h"
 #include "webkit_ui_delegate.h"
 #include "webkit_policy_delegate.h"
+#include "webkit_javascript_listener.h"
 #include "win32_tray_item.h"
 #include "string_util.h"
 #include "../url/app_url.h"
@@ -108,6 +109,19 @@ Win32UserWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case WM_CLOSE:
 			window->FireEvent(CLOSED);
 			return DefWindowProc(hWnd, message, wParam, lParam);
+		case WM_GETMINMAXINFO:
+			{
+				if(window)
+				{
+					MINMAXINFO *mmi = (MINMAXINFO*) lParam;
+					mmi->ptMaxTrackSize.x = window->GetMaxWidth();
+					mmi->ptMaxTrackSize.y = window->GetMaxHeight();
+
+					mmi->ptMinTrackSize.x = window->GetMinWidth();
+					mmi->ptMinTrackSize.y = window->GetMinHeight();
+				}
+			}
+			break;
 		case WM_SIZE:
 			if (!window->web_view) break;
 			window->ResizeSubViews();
@@ -158,8 +172,16 @@ Win32UserWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	return 0;
 }
 
-Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config)
-	: UserWindow(host, config), script_evaluator(host), menuBarHandle(NULL), menuInUse(NULL), menu(NULL), contextMenuHandle(NULL), initial_icon(NULL), topmost(false)
+Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config) :
+	UserWindow(host, config),
+	script_evaluator(host),
+	menuBarHandle(NULL),
+	menuInUse(NULL),
+	menu(NULL),
+	contextMenuHandle(NULL),
+	initial_icon(NULL),
+	topmost(false),
+	web_inspector(NULL)
 {
 	static bool initialized = false;
 	win32_host = static_cast<kroll::Win32Host*>(host);
@@ -190,9 +212,10 @@ Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config)
 	this->Set("windowHandle", windowHandle);
 	this->SetMethod("addMessageHandler", &Win32UserWindow::AddMessageHandler);
 
-	this->ReloadTiWindowConfig();
-
 	SetWindowUserData(window_handle, this);
+
+	this->ReloadTiWindowConfig();
+	this->SetupDecorations(false);
 
 	Bounds b;
 	b.x = config->GetX();
@@ -290,9 +313,17 @@ Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config)
 	IWebViewPrivate *web_view_private;
 	hr = web_view->QueryInterface(IID_IWebViewPrivate, (void**)&web_view_private);
 	hr = web_view_private->viewWindow((OLE_HANDLE*) &view_window_handle);
+
+	hr = web_view_private->inspector(&web_inspector);
+	if(FAILED(hr) || web_inspector == NULL)
+	{
+		std::cerr << "Couldn't retrieve the web inspector object" << std::endl;
+	}
+
 	web_view_private->Release();
 
 	hr = web_view->mainFrame(&main_frame);
+	//web_view->setShouldCloseWithWindow(TRUE);
 
 	std::cout << "resize subviews" << std::endl;
 	ResizeSubViews();
@@ -370,7 +401,6 @@ void Win32UserWindow::Open() {
 
 void Win32UserWindow::Close() {
 	DestroyWindow(window_handle);
-
 	UserWindow::Close();
 }
 
@@ -416,7 +446,6 @@ double Win32UserWindow::GetMaxWidth() {
 
 void Win32UserWindow::SetMaxWidth(double width) {
 	this->config->SetMaxWidth(width);
-	//STUB();
 }
 
 double Win32UserWindow::GetMinWidth() {
@@ -425,7 +454,6 @@ double Win32UserWindow::GetMinWidth() {
 
 void Win32UserWindow::SetMinWidth(double width) {
 	this->config->SetMinWidth(width);
-	//STUB();
 }
 
 double Win32UserWindow::GetMaxHeight() {
@@ -434,7 +462,6 @@ double Win32UserWindow::GetMaxHeight() {
 
 void Win32UserWindow::SetMaxHeight(double height) {
 	this->config->SetMaxHeight(height);
-	//STUB();
 }
 
 double Win32UserWindow::GetMinHeight() {
@@ -443,7 +470,6 @@ double Win32UserWindow::GetMinHeight() {
 
 void Win32UserWindow::SetMinHeight(double height) {
 	this->config->SetMinHeight(height);
-	//STUB();
 }
 
 Bounds Win32UserWindow::GetBounds() {
@@ -472,7 +498,11 @@ void Win32UserWindow::SetBounds(Bounds bounds) {
 		bounds.y = (desktopRect.bottom - bounds.height) / 2;
 	}
 
-	SetWindowPos(window_handle, NULL, bounds.x, bounds.y, bounds.width, bounds.height, SWP_SHOWWINDOW | SWP_NOZORDER);
+	UINT flags = SWP_SHOWWINDOW | SWP_NOZORDER;
+	if(! this->config->IsVisible()) {
+		flags = SWP_HIDEWINDOW;
+	}
+	SetWindowPos(window_handle, NULL, bounds.x, bounds.y, bounds.width, bounds.height, flags);
 }
 
 void Win32UserWindow::SetTitle(std::string& title) {
@@ -551,7 +581,7 @@ void Win32UserWindow::SetMinimizable(bool minimizable) {
 
 void Win32UserWindow::SetCloseable(bool closeable) {
 	this->config->SetCloseable(closeable);
-	// TODO
+	this->SetupDecorations();
 }
 
 bool Win32UserWindow::IsVisible() {
@@ -559,7 +589,7 @@ bool Win32UserWindow::IsVisible() {
 	placement.length = sizeof(WINDOWPLACEMENT);
 	GetWindowPlacement(window_handle, &placement);
 
-	return placement.showCmd == SW_SHOW;
+	return (placement.showCmd == SW_SHOWNORMAL || placement.showCmd == SW_SHOWMAXIMIZED);
 }
 
 void Win32UserWindow::SetVisible(bool visible) {
@@ -579,11 +609,15 @@ void Win32UserWindow::SetFullScreen(bool fullscreen) {
 		restore_bounds = GetBounds();
 		restore_styles = GetWindowLong(window_handle, GWL_STYLE);
 
-		RECT desktopRect;
-		if (SystemParametersInfoA(SPI_GETWORKAREA, 0, &desktopRect, NULL) == 1) {
+		HMONITOR hmon = MonitorFromWindow(this->window_handle, MONITOR_DEFAULTTONEAREST);
+		MONITORINFO mi;
+		mi.cbSize = sizeof(MONITORINFO);
+		if(GetMonitorInfo(hmon, &mi))
+		{
 			SetWindowLong(window_handle, GWL_STYLE, 0);
-			SetWindowPos(window_handle, NULL, 0, 0, desktopRect.right - desktopRect.left, desktopRect.bottom - desktopRect.top, SWP_SHOWWINDOW);
+			SetWindowPos(window_handle, NULL, 0, 0, mi.rcMonitor.right - mi.rcMonitor.left, mi.rcMonitor.bottom - mi.rcMonitor.top, SWP_SHOWWINDOW);
 		}
+
 		FireEvent(FULLSCREENED);
 	} else {
 		SetWindowLong(window_handle, GWL_STYLE, restore_styles);
@@ -675,12 +709,12 @@ void Win32UserWindow::SetUsingChrome(bool chrome) {
 	this->SetupDecorations();
 }
 
-void Win32UserWindow::SetupDecorations() {
+void Win32UserWindow::SetupDecorations(bool showHide) {
 	long windowStyle = GetWindowLong(this->window_handle, GWL_STYLE);
 
 	SetFlag(windowStyle, WS_OVERLAPPED, config->IsUsingChrome());
 	SetFlag(windowStyle, WS_CAPTION, config->IsUsingChrome());
-	SetFlag(windowStyle, WS_SYSMENU, config->IsUsingChrome());
+	SetFlag(windowStyle, WS_SYSMENU, config->IsUsingChrome() && config->IsCloseable());
 	SetFlag(windowStyle, WS_BORDER, config->IsUsingChrome());
 
 	SetFlag(windowStyle, WS_MAXIMIZEBOX, config->IsMaximizable());
@@ -688,8 +722,11 @@ void Win32UserWindow::SetupDecorations() {
 
 	SetWindowLong(this->window_handle, GWL_STYLE, windowStyle);
 
-	ShowWindow(window_handle, SW_HIDE);
-	ShowWindow(window_handle, SW_SHOW);
+	if(showHide && config->IsVisible())
+	{
+		ShowWindow(window_handle, SW_HIDE);
+		ShowWindow(window_handle, SW_SHOW);
+	}
 }
 
 void Win32UserWindow::AppMenuChanged()
@@ -779,7 +816,7 @@ void Win32UserWindow::ReloadTiWindowConfig()
 	// called by frame load delegate to let the window know it's loaded
 void Win32UserWindow::FrameLoaded()
 {
-	if (this->requires_display)
+	if (this->requires_display && this->config->IsVisible())
 	{
 		this->requires_display = false;
 		ShowWindow(window_handle, SW_SHOW);
@@ -821,6 +858,27 @@ void Win32UserWindow::SetupSize()
 	b.height = this->config->GetHeight();
 
 	this->SetBounds(b);
+}
+
+void Win32UserWindow::ShowWebInspector()
+{
+	std::cout << "showWebInspector() .." << std::endl;
+
+	//WebInspectorClient *wic = new WebInspector(web_view);
+	//wic->showWindow();
+	//if(1 == 1) return;
+
+	if(this->web_inspector)
+	{
+		std::cout << "requesting flag .. " << std::endl;
+		BOOL debug;
+		this->web_inspector->isDebuggingJavaScript(&debug);
+		std::cout << "debug = " << debug << std::endl;
+		//std::cout << "attaching..." << std::endl;
+		//this->web_inspector->attach();
+		std::cout << "showing..." << std::endl;
+		this->web_inspector->show();
+	}
 }
 
 void Win32UserWindow::OpenFiles(

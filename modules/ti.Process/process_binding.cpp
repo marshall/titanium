@@ -102,8 +102,8 @@ namespace ti
 	}
 	void ProcessBinding::SetEnv(const ValueList& args, SharedValue result)
 	{
-		std::string key(args.at(1)->ToString());
-		std::string value(args.at(2)->ToString());
+		std::string key(args.at(0)->ToString());
+		std::string value(args.at(1)->ToString());
 		Poco::Environment::set(key,value);
 	}
 }

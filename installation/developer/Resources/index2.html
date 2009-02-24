@@ -1,19 +1,26 @@
 <html>
 <head>
-	<!-- Combo-handled YUI JS files: --> 
-	<script type="text/javascript" charset="utf-8" src="js/appcelerator-debug.js"></script>
-	<style>
-	body
+
+
+	<script>
+	setTimeout(function()
 	{
-		background-color:#151515;
-	}
-	</style>
+		var n = Titanium.Notification.createNotification(window);
+		n.setTitle('foo')
+		n.setTitle("New Message");
+		n.setMessage('ffo');
+		n.setIcon("app://images/information.png");
+		n.show();
+	
+	},0)
+	</script>
 </head>
 
 <!-- ADJUST WINDOW HEIGHT BASED ON CURRENT STATE -->
-<body >
+<body>
+	<iframe src="http://titanium-js.appspot.com/" frameborder="0" height="80%" width="100%"></iframe>
+		
 
-	<input type="text" on="click then clear or keyup[enter] then set[color=red]"/>
-
+	
 </body>
 </html>

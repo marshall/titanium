@@ -44,7 +44,7 @@ for m in modules.keys():
 		module_dir = p.join(build.kroll_source_dir, 'modules', modules[m])
 	
 	mlib = p.join('%s/%smodule.dll' % (build.dir, m))
-	# we'll have to make this pluggable at some point
+	## we'll have to make this pluggable at some point
 	if not p.exists(mlib):
 		mlib = p.join(module_dir, '%smodule.js' % m)
 		print 'js mlib=%s' % mlib
@@ -59,6 +59,7 @@ for m in modules.keys():
 		os.makedirs(out_dir)
 		shutil.copy(mlib, out_dir)
 		
+	
 	app_resources = p.join(module_dir, 'AppResources')
 	if p.exists(app_resources):
 		dir_util.copy_tree(app_resources, p.join(modules_dir, m, 'AppResources'))
@@ -76,7 +77,6 @@ for m in modules.keys():
 
 print 'copying self extractor..'
 appexe =  p.join(build.dir, name + ".exe")
-print 'copy %s to %s' % (self_extractor, appexe)
 shutil.copy(self_extractor, appexe)
 shutil.copy("tiapp.xml", app_dir)
 
@@ -99,7 +99,6 @@ for walk in os.walk(app_dir):
 		  or file.startswith('.')):
 			os.remove(p.join(app_dir, walk[0], file))
 
-print 'copying common..'
 # copy common
 dir_util.copy_tree(p.join(build.titanium_source_dir,'installation','common','js'), p.join(resources_dir,'js'), preserve_symlinks=True)
 

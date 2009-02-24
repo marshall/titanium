@@ -21,9 +21,8 @@
 	Host *host;
 	NSURL *url;
 	WebInspector *inspector;
-	BOOL scriptCleared;
 	BOOL initialDisplay;
-	WebScriptObject* windowJS;
+	std::map<WebFrame*,bool> *frames; // this is the frame to clear tracking
 }
 -(id)initWithWindow:(NativeWindow*)window host:(Host*)h;
 -(void)setURL:(NSURL*)url;

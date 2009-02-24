@@ -144,7 +144,18 @@ namespace ti
 #ifdef DEBUG
 			std::cout << "sending IRC: " << channel << " => " << msg << std::endl;
 #endif
-			this->irc.privmsg((char*)channel,(char*)msg);
+			std::string cmd(msg);
+			size_t pos = std::string::npos;
+			// this is a little raw, we need to probably refactor
+			// this to something more sane...
+			if ((pos = cmd.find("/nick "))==0)
+			{
+				this->irc.nick((char*)cmd.substr(6).c_str());
+			}
+			else
+			{
+				this->irc.privmsg((char*)channel,(char*)msg);
+			}
 		}
 	}
 	void IRCClientBinding::SetNick(const ValueList& args, SharedValue result)

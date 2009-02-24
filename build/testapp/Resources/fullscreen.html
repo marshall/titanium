@@ -119,13 +119,21 @@ button {
 	<button onclick="toggleChrome()">Toggle Chrome</button>
 	<button onclick="closeMe()">Bye</button>
 	</div>
+	<div>
 	<button onclick="toggleMin()">Toggle minimizable</button>
 	<button onclick="toggleMax()">Toggle maximizable</button>
 	<button onclick="toggleClose()">Toggle closeable</button>
-	<div>
 	</div>
-	<button onclick="toggleResizable()">Toggle resizable</button>
 	<div>
+	<button onclick="toggleResizable()">Toggle resizable</button>
+	</div>
+	<div>
+	<button onclick="alert(Titanium.UI.currentWindow.isMinimizable());">isMinimizable()</button>
+	<button onclick="alert(Titanium.UI.currentWindow.isMaximizable());">isMaximizable()</button>
+	<button onclick="alert(Titanium.UI.currentWindow.isCloseable());">isCloseable()</button>
+	</div>
+	<div>
+	<button onclick="alert(Titanium.UI.currentWindow.isVisible());">isVisible()</button>
 	</div>
 </body>
 </html>

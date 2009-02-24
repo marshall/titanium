@@ -1,9 +1,9 @@
 /**
  * Appcelerator Titanium - licensed under the Apache Public License 2
- * see LICENSE in the root folder for details on the license. 
+ * see LICENSE in the root folder for details on the license.
  * Copyright (c) 2009 Appcelerator, Inc. All Rights Reserved.
  */
- 
+
 /**
  CREDITS:
  The actual core source code for zipping and unzipping comes from
@@ -29,7 +29,7 @@ bool abort_p=false;
 
 
 int WINAPI WinMain(HINSTANCE hInstance,HINSTANCE,LPSTR,int)
-{ 
+{
 	InitCommonControls();
 #pragma pack(push,1)
 	struct TDlgItemTemplate {DWORD s,ex; short x,y,cx,cy; WORD id;};
@@ -69,16 +69,16 @@ BOOL CALLBACK UnzipDialogProc(HWND hwnd,UINT msg,WPARAM,LPARAM)
 	{
 		case WM_INITDIALOG:
 		{
-			SetWindowText(hwnd,"Extracting, one moment ..."); 
-			PostMessage(hwnd,WM_USER,0,0); 
+			SetWindowText(hwnd,"Extracting, one moment ...");
+			PostMessage(hwnd,WM_USER,0,0);
 			return TRUE;
 		}
-		case WM_COMMAND: 
+		case WM_COMMAND:
 		{
-			abort_p=true; 
+			abort_p=true;
 			return TRUE;
 		}
-		case WM_USER: 
+		case WM_USER:
 		{
 			TCHAR filename[MAX_PATH];
 			TCHAR tempdir[MAX_PATH];
@@ -98,8 +98,8 @@ BOOL CALLBACK UnzipDialogProc(HWND hwnd,UINT msg,WPARAM,LPARAM)
 			}
 			else
 			{
-				BOOL OK = UnzipWithProgress(filename,tempdir,GetDlgItem(hwnd,1)); 
-				EndDialog(hwnd,IDOK); 
+				BOOL OK = UnzipWithProgress(filename,tempdir,GetDlgItem(hwnd,1));
+				EndDialog(hwnd,IDOK);
 				if (!OK)
 				{
 					MessageBox(NULL,"Application packaging error. No application archive was found.","Application Error",MB_OK|MB_SYSTEMMODAL|MB_ICONERROR);
@@ -107,7 +107,7 @@ BOOL CALLBACK UnzipDialogProc(HWND hwnd,UINT msg,WPARAM,LPARAM)
 				else
 				{
 					//run the bundled file
-					std::string fn = filename;
+					std::string fn = "installer.exe";
 					size_t i = fn.rfind("\\");
 					if (i!=std::string::npos)
 					{
@@ -127,10 +127,10 @@ BOOL CALLBACK UnzipDialogProc(HWND hwnd,UINT msg,WPARAM,LPARAM)
 							FALSE,          // Set handle inheritance to FALSE
 							0,              // No creation flags
 							NULL,           // Use parent's environment block
-							(char*)tempdir,	// Use parent's starting directory 
+							(char*)tempdir,	// Use parent's starting directory
 							&si,            // Pointer to STARTUPINFO structure
 							&pi )           // Pointer to PROCESS_INFORMATION structure
-					) 
+					)
 					{
 						MessageBox(NULL,"Application error running process.","Application Error",MB_OK|MB_SYSTEMMODAL|MB_ICONERROR);
 					}
@@ -139,7 +139,7 @@ BOOL CALLBACK UnzipDialogProc(HWND hwnd,UINT msg,WPARAM,LPARAM)
 						// Wait until child process exits.
 						WaitForSingleObject( pi.hProcess, INFINITE );
 
-						// Close process and thread handles. 
+						// Close process and thread handles.
 						CloseHandle( pi.hProcess );
 						CloseHandle( pi.hThread );
 					}
@@ -153,23 +153,23 @@ BOOL CALLBACK UnzipDialogProc(HWND hwnd,UINT msg,WPARAM,LPARAM)
 }
 
 BOOL UnzipWithProgress(const TCHAR *zipfn, const TCHAR *dest, HWND hprog)
-{ 
+{
 	HZIP hz = OpenZip(zipfn,0);
-	ZIPENTRY ze; 
-	GetZipItem(hz,-1,&ze); 
+	ZIPENTRY ze;
+	GetZipItem(hz,-1,&ze);
 	int numentries=ze.index;
 	// first we retrieve the total size of all zip items
-	DWORD tot=0; for (int i=0; i<numentries; i++) 
+	DWORD tot=0; for (int i=0; i<numentries; i++)
 	{
-		GetZipItem(hz,i,&ze); 
+		GetZipItem(hz,i,&ze);
 		tot+=ze.unc_size;
 	}
 	DWORD countall=0; // this is our progress so far
 	for (int i=0; i<numentries && !abort_p; i++)
-	{ 
+	{
 		GetZipItem(hz,i,&ze);
 		// We'll unzip each file bit by bit, to a file on disk
-		char fn[1024]; 
+		char fn[1024];
 		wsprintf(fn,"%s\\%s",dest,ze.name);
 		std::string dir = GetDirectory(std::string(fn));
 		EnsureDirectory(0,dir.c_str());
@@ -177,17 +177,17 @@ BOOL UnzipWithProgress(const TCHAR *zipfn, const TCHAR *dest, HWND hprog)
 		char buf[16384]; // Each chunk will be 16k big. After each chunk, we show progress
 		DWORD countfile=0;
 		for (ZRESULT zr=ZR_MORE; zr==ZR_MORE && !abort_p; ) // nb. the global "abort_p" flag is set by the user clicking the Cancel button.
-		{ 
+		{
 			zr=UnzipItem(hz,i,buf,16384);
-			unsigned long bufsize=16384; 
+			unsigned long bufsize=16384;
 			if (zr==ZR_OK) bufsize=ze.unc_size-countfile; // bufsize is how much we got this time
-			DWORD writ; 
-			WriteFile(hf,buf,bufsize,&writ,0); 
+			DWORD writ;
+			WriteFile(hf,buf,bufsize,&writ,0);
 			countfile+=bufsize; // countfile counts how much of this file we've unzipped so far
 			countall+=bufsize; // countall counts how much total we've unzipped so far
 			// Now show progress, and let Windows catch up...
 			int i = (int)(100.0*((double)countall)/((double)tot));
-			SendMessage(hprog,PBM_SETPOS,i,0); 
+			SendMessage(hprog,PBM_SETPOS,i,0);
 			PumpMessages();
 		}
 		CloseHandle(hf);
@@ -199,12 +199,12 @@ BOOL UnzipWithProgress(const TCHAR *zipfn, const TCHAR *dest, HWND hprog)
 }
 
 void PumpMessages()
-{ 
+{
 	for (MSG msg;;)
-	{ 
+	{
 		BOOL res=PeekMessage(&msg,0,0,0,PM_REMOVE);
 		if (!res || msg.message==WM_QUIT) return;
-		TranslateMessage(&msg); 
+		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 	}
 }

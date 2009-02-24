@@ -8,14 +8,21 @@
       <title>Titanium Test Application</title>
       <url>app://index.html</url>
       <width>750</width>
-      <height>850</height>
+      <height>800</height>
       <fullscreen>false</fullscreen>
+      <minimizable>true</minimizable>
+      <maximizable>false</maximizable>
+      <max-width>900</max-width>
+      <max-height>800</max-height>
+      <min-width>400</min-width>
+      <min-height>300</min-height>
+      <closeable>true</closeable>
       <chrome>true</chrome>
    </window>
    <window>
       <id>smallscreen</id>
       <title>Titanium Smallscreen Window</title>
-      <urlRegex>app://small.*.html</urlRegex>
+      <url-regex>app://small.*.html</url-regex>
       <width>400</width>
       <height>275</height>
       <minimizable>true</minimizable>
@@ -24,5 +31,6 @@
       <fullscreen>false</fullscreen>
       <resizable>false</resizable>
       <chrome>true</chrome>
+      <visible>true</visible>
    </window>
 </ti:app>

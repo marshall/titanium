@@ -777,9 +777,6 @@ void IRC::parse_irc_reply(char* data)
 			call_hook(cmd, params, &hostd_tmp);
 		}
 	}
-#ifdef DEBUG
-	printf("EXITING IRC RECEIVE\n");
-#endif
 }
 
 void IRC::call_hook(char* irc_command, char* params, irc_reply_data* hostd)

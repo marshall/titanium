@@ -30,6 +30,7 @@ namespace ti {
 class Win32WebKitFrameLoadDelegate;
 class Win32WebKitUIDelegate;
 class Win32WebKitPolicyDelegate;
+class Win32WebKitJavascriptListener;
 
 class Win32UserWindow : public UserWindow {
 
@@ -45,6 +46,7 @@ protected:
 	HWND window_handle, view_window_handle;
 	IWebView* web_view;
 	IWebFrame *main_frame;
+	IWebInspector *web_inspector;
 	std::map<long, SharedBoundMethod> messageHandlers;
 	bool requires_display;
 	bool topmost;
@@ -154,10 +156,12 @@ public:
 	// called by frame load delegate to let the window know it's loaded
 	void FrameLoaded();
 
+	void ShowWebInspector();
+
 private:
 	void SetupPosition();
 	void SetupSize();
-	void SetupDecorations();
+	void SetupDecorations(bool showHide = true);
 	void SetupMenu();
 	void SetupIcon();
 

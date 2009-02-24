@@ -8,6 +8,12 @@
 #define _NETWORK_BINDING_H_
 
 #include <kroll/kroll.h>
+
+namespace ti
+{
+	class NetworkBinding;
+}
+
 #if defined(OS_OSX)
 #include "osx/network_status.h"
 #elif defined(OS_WIN32)
@@ -21,6 +27,9 @@ namespace ti
 	public:
 		NetworkBinding(Host*);
 		virtual ~NetworkBinding();
+
+		bool HasOnlineStatusChangeListeners();
+		void OnlineStatusChange(bool online);
 
 	private:
 		Host* host;
@@ -43,6 +52,7 @@ namespace ti
 		void AddConnectivityListener(const ValueList& args, SharedValue result);
 		void RemoveConnectivityListener(const ValueList& args, SharedValue result);
 		void FireOnlineStatusChange(const ValueList& args, SharedValue result);
+
 	};
 }
 

@@ -43,8 +43,6 @@ namespace ti
 
 	OSXUserWindow::OSXUserWindow(Host *host, WindowConfig *config, OSXUIBinding *binding) : UserWindow(host,config), window(NULL), opened(false), closed(false), binding(binding)
 	{
-		[NSApplication sharedApplication];
-
 		NSRect frame = NSMakeRect(config->GetX(), config->GetY(), config->GetWidth(), config->GetHeight());
 
 		NSUInteger mask = toWindowMask(config);

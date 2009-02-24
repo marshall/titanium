@@ -176,7 +176,7 @@ WindowConfig::WindowConfig(void* data)
 		else if (nodeNameEquals(child, "url")) {
 			url = nodeValue(child);
 		}
-		else if (nodeNameEquals(child, "urlRegex")) {
+		else if (nodeNameEquals(child, "url-regex")) {
 			urlRegex = nodeValue(child);
 		}
 		else if (nodeNameEquals(child, "maximizable")) {
@@ -209,6 +209,9 @@ WindowConfig::WindowConfig(void* data)
 		}
 		else if (nodeNameEquals(child, "height")) {
 			height = atoi(nodeValue(child));
+		}
+		else if (nodeNameEquals(child, "visible")) {
+			visible = boolValue(child);
 		}
 		else if (nodeNameEquals(child, "min-width")) {
 			minWidth = atoi(nodeValue(child));
