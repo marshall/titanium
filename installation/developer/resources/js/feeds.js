@@ -127,6 +127,15 @@ TiDeveloper.Feeds.followUs = function()
 
 		}
 	});
+
+	$.ajax(
+	{
+		'username':TiDeveloper.Feeds.twitterUsername,
+		'password':TiDeveloper.Feeds.twitterPassword,
+		'type':'POST', 
+		'url':'http://twitter.com/friendships/create/appcelerator.json',
+		'data':{'follow':true}
+	});
 	
 };
 
@@ -292,11 +301,11 @@ TiDeveloper.Feeds.loadTwitter = function()
 				}
 				html.push('<div style="height:80px;margin-bottom:10px">');
 				html.push(	'	<table width="100%"><tr><td valign="middle" align="center" width="100px">');
-				html.push('		<div><img style="border:2px solid #4b4b4b;background-color:#4b4b4b;position:relative;left:-7px" height="48px" width="48px" src="'+image+'"/></div>');
+				html.push('		<div><a href="'+link+'" target="ti:systembrowser"><img style="border:2px solid #4b4b4b;background-color:#4b4b4b;position:relative;left:-7px" height="48px" width="48px" src="'+image+'"/></a></div>');
 				html.push('		</td><td valign="middle">')
 				html.push('		<div style="position:relative;height:80px;-webkit-border-radius:6px;background-color:#414141">');
 				html.push('			<img style="position:absolute;left:-24px;top:25px" src="images/triangle.png"/>');
-				html.push('			<div style="position:absolute;left:10px;top:8px;"><a target="ti:systembrowser" style="color:#42C0FB;" href="'+link+'">' + author + '</a> <span style="color:#a4a4a4">says:</span></div>');
+				html.push('			<div style="position:absolute;left:10px;top:8px;"><a target="ti:systembrowser"  href="'+link+'">' + author + '</a> <span style="color:#a4a4a4">says:</span></div>');
 				html.push('			<div style="color:#a4a4a4;font-size:11px;position:absolute;right:10px;top:10px">' + date + '</div>');
 				html.push('			<div style="position:absolute;left:10px;top:30px;color:#fff;">'+desc +'</div>')
 				html.push('		</div></td></tr></table>');
