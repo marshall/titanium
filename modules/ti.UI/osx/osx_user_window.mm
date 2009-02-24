@@ -287,6 +287,7 @@ namespace ti
 	void OSXUserWindow::SetResizable(bool resizable)
 	{
 		this->config->SetResizable(resizable);
+		[window setShowsResizeIndicator:resizable];
 	}
 	bool OSXUserWindow::IsMaximizable()
 	{

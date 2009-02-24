@@ -552,25 +552,21 @@
 	return [[wv window] firstResponder];
 }
 
-
 - (void)webView:(WebView *)wv makeFirstResponder:(NSResponder *)responder 
 {
 	[[wv window] makeFirstResponder:responder];
 }
-
 
 - (NSString *)webViewStatusText:(WebView *)wv 
 {
 	return nil;
 }
 
-
 - (BOOL)webViewIsResizable:(WebView *)wv 
 {
 	WindowConfig *config = [window config];
 	return config->IsResizable();
 }
-
 
 - (void)webView:(WebView *)wv setResizable:(BOOL)resizable; 
 {

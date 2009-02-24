@@ -19,12 +19,6 @@
 - (void)setupDecorations:(WindowConfig*)cfg host:(Host*)host userwindow:(UserWindow*)uw
 {
 	config = cfg;
-
-	if (config->IsFullScreen())
-	{
-		[self setFullScreen:YES];
-	}
-	
 	userWindow = uw;
 
 	[self setTitle:[NSString stringWithCString:config->GetTitle().c_str()]];
@@ -47,6 +41,7 @@
     [self setDelegate:self];
 	[self setTransparency:config->GetTransparency()];
 	[self setInitialFirstResponder:webView];
+	[self setShowsResizeIndicator:config->IsResizable()];
 
 	NSMenu *windowMenu = [[[NSApp mainMenu] itemWithTitle:NSLocalizedString(@"Window",@"")] submenu];
 	NSMenuItem *showInspector = [windowMenu itemWithTitle:NSLocalizedString(@"Show Inspector", @"")];
@@ -192,43 +187,47 @@
 	
 	return [NSScreen mainScreen];
 }
-- (void)fadeOut
+- (NSRect)constrainFrameRect:(NSRect)frameRect toScreen:(NSScreen *)screen 
 {
-    CGAcquireDisplayFadeReservation(1.0, &tok);
-    CGDisplayFade(tok, 0.5, kCGDisplayBlendNormal, kCGDisplayBlendSolidColor, 0, 0, 0, TRUE);
+	if (fullscreen)
+	{
+		return frameRect;
+	}
+   	return [super constrainFrameRect:frameRect toScreen:screen];
 }
 
-- (void)fadeIn
-{
-    CGDisplayFade(tok, 1, kCGDisplayBlendSolidColor, kCGDisplayBlendNormal, 0, 0, 0, TRUE);
-    CGReleaseDisplayFadeReservation(tok);
-}
 - (void)setFullScreen:(BOOL)yn
 {
-	NSMutableDictionary *options = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-	                            [NSNumber numberWithBool:NO], NSFullScreenModeAllScreens, nil];
-	
-	[self fadeOut];
-	
 	if (yn)
 	{
-		// figure out which screen to display on
-		NSScreen *screen = [self activeScreen];
-		[webView enterFullScreenMode:screen withOptions:options];
-		[self fireWindowEvent:FULLSCREENED];
+		fullscreen = YES;
+		savedFrame = [self frame];
+		
+		// adjust to remove toolbar from view on window
+		NSView *toolbarView = [[self toolbar] valueForKey:@"toolbarView"];
+		float toolbarHeight = [toolbarView frame].size.height;
+		if (![[self toolbar] isVisible]) {
+			toolbarHeight = 0;
+		}
+		float windowBarHeight = [self frame].size.height - ([[self contentView] frame].size.height + toolbarHeight);
+		NSRect frame = [[NSScreen mainScreen] frame];
+		frame.size.height += windowBarHeight;
+
+		SetSystemUIMode(kUIModeAllHidden,kUIOptionAutoShowMenuBar);
+		[self setFrame:frame display:YES animate:YES];
+		[self fireWindowEvent:FULLSCREENED];		
+	    [self setShowsResizeIndicator:NO];
 	}
 	else
 	{
-		// we hide and then later rehide so that the shadow
-		// on the window will actually refresh correctly
-		[self orderOut:nil];
-		[webView exitFullScreenModeWithOptions:options];
+		fullscreen = NO;
+		[self setFrame:savedFrame display:YES animate:YES];
+		SetSystemUIMode(kUIModeNormal,0);
+		[self setShowsResizeIndicator:config->IsResizable()];
 		[self fireWindowEvent:UNFULLSCREENED];
 	}
-	[self makeKeyAndOrderFront:self];	
+	[self makeKeyAndOrderFront:nil];	
  	[self makeFirstResponder:webView];
-
-	[self fadeIn];
 }
 - (WebView*)webView
 {
