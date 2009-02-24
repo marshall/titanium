@@ -154,9 +154,10 @@
 					trayIcon.setIcon("app://tray2.ico");
 				}
 			}
+			var w = null;
 			function openWindowNormal()
 			{
-				var w = Titanium.UI.createWindow();
+				w = Titanium.UI.createWindow();
 				try
 				{
 					w.setTitle("hello world from fullscreen");
@@ -171,7 +172,7 @@
 			}
 			function openWindowFullScreen()
 			{
-				var w = Titanium.UI.createWindow();
+				w = Titanium.UI.createWindow();
 				try
 				{
 					w.setTitle("hello world from fullscreen");
@@ -189,12 +190,28 @@
 			{
 				try
 				{
-					var w = Titanium.UI.createWindow("app://smallscreen.html");
+					w = Titanium.UI.createWindow("app://smallscreen.html");
 					w.open();
 				}
 				catch(e)
 				{
 					alert("Exception: "+e);
+				}
+			}
+			function toggleVisibleForW() {
+				if(w) {
+					w.setVisible(! w.isVisible());
+				}
+				else {
+					alert("w not created yet");
+				}
+			}
+			function isVisibleForW() {
+				if(w) {
+					alert("w.isVisible = " + w.isVisible());
+				}
+				else {
+					alert("w not created yet");
 				}
 			}
 			function jsAlert()
@@ -242,6 +259,13 @@
 			<button onclick="openWindowFullScreen()">Open Window (fullscreen)</button>
 			<button onclick="openWindowSpecd()">Open window (specd)</button>
 			<a href="app://smallscreen.html">small screen</a>
+		</div>
+		<div>
+			<button onclick="isVisibleForW()">IsVisible</button>
+		</div>
+		<div>
+			
+			<button onclick="toggleVisibleForW()">Visible +/-</button>
 		</div>
 		<div>Delegate:<br/>
 			<button onclick="jsAlert()">alert</button>

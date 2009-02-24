@@ -595,11 +595,7 @@ void Win32UserWindow::SetCloseable(bool closeable) {
 }
 
 bool Win32UserWindow::IsVisible() {
-	WINDOWPLACEMENT placement;
-	placement.length = sizeof(WINDOWPLACEMENT);
-	GetWindowPlacement(window_handle, &placement);
-
-	return (placement.showCmd == SW_SHOWNORMAL || placement.showCmd == SW_SHOWMAXIMIZED);
+	return IsWindowVisible(window_handle);
 }
 
 void Win32UserWindow::SetVisible(bool visible) {
