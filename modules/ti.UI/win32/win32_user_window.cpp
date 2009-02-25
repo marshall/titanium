@@ -4,7 +4,6 @@
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
 
-#include <comdef.h>
 #include "win32_user_window.h"
 #include "webkit_frame_load_delegate.h"
 #include "webkit_ui_delegate.h"
@@ -18,6 +17,7 @@
 #include <comutil.h>
 #include <commdlg.h>
 #include <shlobj.h>
+#include <windows.h>
 
 #define STUB() printf("Method is still a stub, %s:%i\n", __FILE__, __LINE__)
 #define SetFlag(x,flag,b) ((b) ? x |= flag : x &= ~flag)
