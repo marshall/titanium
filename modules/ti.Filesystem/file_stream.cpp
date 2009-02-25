@@ -4,6 +4,7 @@
  * Copyright (c) 2009 Appcelerator, Inc. All Rights Reserved.
  */
 #include "file_stream.h"
+#include <cstring>
 
 namespace ti {
 std::string FileStream::MODE_READ = "read";
