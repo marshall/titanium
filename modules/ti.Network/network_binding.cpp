@@ -39,9 +39,6 @@ namespace ti
 
 #if defined(OS_LINUX)
 		this->net_status = new DBusNetworkStatus(this);
-#elif defined(OS_OSX)
-		SharedBoundMethod delegate = this->Get("FireOnlineStatusChange")->ToMethod();
-		networkDelegate = [[NetworkReachability alloc] initWithDelegate:delegate];
 #endif
 	}
 
@@ -166,6 +163,13 @@ namespace ti
 		listener.callback = target;
 		this->listeners.push_back(listener);
 		result->SetInt(listener.id);
+#if defined(OS_OSX)
+		if (networkDelegate==nil)
+		{
+//			SharedBoundMethod delegate = this->Get("FireOnlineStatusChange")->ToMethod();
+//			networkDelegate = [[NetworkReachability alloc] initWithDelegate:delegate];
+		}
+#endif
 	}
 
 	void NetworkBinding::RemoveConnectivityListener(
