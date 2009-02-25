@@ -471,7 +471,7 @@ $MQL('l:create.package.request',function(msg)
 
 
 		var project = TiDeveloper.Projects.findProject(project_name);
-		var resources = TFS.getFile(project.dir,'resources');
+		var resources = TFS.getFile(project.dir,'Resources');
 
 		// build the manifest
 		var manifest = '#appname:'+project_name+'\n';
@@ -513,7 +513,7 @@ $MQL('l:create.package.request',function(msg)
 		var app = Titanium.createApp(runtime,dist,project_name,project.appid,install);
 		var app_manifest = TFS.getFile(app.base,'manifest');
 		app_manifest.write(manifest);
-		var resources = TFS.getFile(project.dir,'resources');
+		var resources = TFS.getFile(project.dir,'Resources');
 		var tiapp = TFS.getFile(project.dir,'tiapp.xml');
 		tiapp.copy(app.base);
 		var launch_fn = function()

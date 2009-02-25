@@ -93,7 +93,7 @@ $(function(){
 	});
 	if (appimg)
 	{
-		appimg = 'file://' + TFS.getFile(src,'resources',appimg).nativePath();
+		appimg = 'file://' + TFS.getFile(src,'Resources',appimg).nativePath();
 		$('.appimg').attr('src',appimg);	
 	}
 	else
