@@ -7,12 +7,14 @@
 
 namespace ti
 {
-	NetworkStatus::NetworkStatus(NetworkBinding* binding) 
+	NetworkStatus::NetworkStatus(NetworkBinding* binding)
 	 : binding(binding),
 	   previous_status(false),
 	   running(true)
 	{
+#if defined(OS_LINUX)
 		g_type_init();
+#endif
 		this->Start();
 	}
 
@@ -47,8 +49,8 @@ namespace ti
 
 		// We want to wake up and detect if we are running more
 		// often than we want to test reachability, so we only
-		// test reachability when cont == 50 
-		int count = 0; 
+		// test reachability when cont == 50
+		int count = 0;
 		while (this->running)
 		{
 			// Only test reachability if someone is listening.
