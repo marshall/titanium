@@ -4,6 +4,7 @@
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
 
+#include <comdef.h>
 #include "win32_user_window.h"
 #include "webkit_frame_load_delegate.h"
 #include "webkit_ui_delegate.h"
@@ -12,7 +13,7 @@
 #include "win32_tray_item.h"
 #include "string_util.h"
 #include "../url/app_url.h"
-#include <math.h>
+#include <cmath>
 #include <shellapi.h>
 #include <comutil.h>
 #include <commdlg.h>
@@ -245,10 +246,12 @@ Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config) :
 	web_view->setApplicationNameForUserAgent(ua.copy());
 
 	// place our user agent string in the global so we can later use it
+	SharedBoundObject global = host->GetGlobalObject();
 	_bstr_t uaurl("http://titaniumapp.com");
-	_bstr_t uaresp;
-	web_view->userAgentForURL(uaurl.copy(),&uaresp);
-	global->Set("userAgent",Value::NewString((char*)uaresp));
+	BSTR uaresp;
+	web_view->userAgentForURL(uaurl.copy(), &uaresp);
+	std::string ua_str = _bstr_t(uaresp);
+	global->Set("userAgent", Value::NewString(ua_str.c_str()));
 
 	std::cout << "create frame load delegate " << std::endl;
 	frameLoadDelegate = new Win32WebKitFrameLoadDelegate(this);
