@@ -106,7 +106,6 @@ namespace ti
 			G_TYPE_VALUE, &nm_state_val,
 			G_TYPE_INVALID))
 		{
-			printf("3 %s\n", error->message);
 			g_error_free(error);
 		}
 		else if (g_value_get_uint(&nm_state_val) == 3)
@@ -126,7 +125,6 @@ namespace ti
 
 	bool DBusNetworkStatus::GetStatus()
 	{
-		PRINTD("Reachability test...");
 		if (this->bus == NULL)
 			return true;
 
@@ -134,7 +132,6 @@ namespace ti
 		bool online = this->GetStatusFromDBus();
 		gdk_threads_leave();
 
-		std::cout << "status: " << online << std::endl;
 		return online;
 	}
 }

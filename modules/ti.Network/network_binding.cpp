@@ -16,7 +16,7 @@ namespace ti
 	NetworkBinding::NetworkBinding(Host* host) : host(host), global(host->GetGlobalObject())
 	{
 		SharedValue online = Value::NewBool(true);
-		this->Set("online",online);
+		this->Set("online", online);
 
 		// methods that are available on Titanium.Network
 		this->SetMethod("createTCPSocket",&NetworkBinding::CreateTCPSocket);
@@ -143,7 +143,7 @@ namespace ti
 
 	void NetworkBinding::NetworkStatusChange(bool online)
 	{
-		PRINTD("ti.Network: Online status ==> " << online);
+		PRINTD("ti.Network: Online status changed ==> " << online);
 		this->Set("online", Value::NewBool(online));
 
 		ValueList args = ValueList();

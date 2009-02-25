@@ -9,7 +9,7 @@ namespace ti
 {
 	NetworkStatus::NetworkStatus(NetworkBinding* binding) 
 	 : binding(binding),
-	   previous_status(true),
+	   previous_status(false),
 	   running(true)
 	{
 		g_type_init();
@@ -43,7 +43,6 @@ namespace ti
 
 	void NetworkStatus::StatusLoop()
 	{
-		std::cout << "Testing reachability start" << std::endl;
 		this->InitializeLoop();
 
 		// We want to wake up and detect if we are running more
@@ -52,13 +51,13 @@ namespace ti
 		int count = 0; 
 		while (this->running)
 		{
-			std::cout << "Testing reachability " << count << std::endl;
 			// Only test reachability if someone is listening.
-			if (count == 25 && binding->HasNetworkStatusListeners())
+			if (count == 0 && binding->HasNetworkStatusListeners())
 			{
 				bool online = this->GetStatus();
 				if (online != this->previous_status)
 				{
+					this->previous_status = online;
 					binding->NetworkStatusChange(online);
 				}
 			}
