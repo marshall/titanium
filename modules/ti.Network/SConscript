@@ -17,6 +17,10 @@ if tiBuild.is_osx():
 else:
 	tiBuild.add_thirdparty(env, 'poco')
 
+if tiBuild.is_linux():
+	sources+=Glob('linux/*.cpp')
+	env.ParseConfig('pkg-config --libs --cflags gdk-2.0 dbus-glib-1')
+
 if tiBuild.is_win32():
     env.Append(CCFLAGS=['/MD'])
     env.Append(LIBS=['wsock32','ws2_32', 'ole32', 'comsuppw', 'wbemuuid'])

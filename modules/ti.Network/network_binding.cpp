@@ -30,6 +30,10 @@ namespace ti
 
 		// NOTE: this is only used internally and shouldn't be published
 		this->SetMethod("FireOnlineStatusChange",&NetworkBinding::FireOnlineStatusChange);
+
+#if defined(OS_LINUX)
+		this->net_status = new DBusNetworkStatus(this);
+#endif
 	}
 
 	NetworkBinding::~NetworkBinding()
@@ -37,8 +41,8 @@ namespace ti
 #if defined(OS_OSX)
 		[networkDelegate release];
 		networkDelegate=nil;
-#elif defined(OS_WIN32)
-		delete networkStatus;
+#else
+		delete this->net_status;
 #endif
 	}
 	void NetworkBinding::_GetByHost(std::string hostname, SharedValue result)
@@ -117,31 +121,27 @@ namespace ti
 	}
 	void NetworkBinding::AddConnectivityListener(const ValueList& args, SharedValue result)
 	{
-		if (args.size()!=1 || !args.at(0)->IsMethod())
-		{
-			throw ValueException::FromString("invalid argument");
-		}
+		ArgUtils::VerifyArgsException("addConnectivityListener", args, "m");
+
 		SharedBoundMethod target = args.at(0)->ToMethod();
 		this->listeners.push_back(target);
-
+#if defined(OS_OSX)
 		// lazy add the network connectivity listener
-		if (this->listeners.size()==1)
+		if (this->listeners.size() == 1)
 		{
 			SharedBoundMethod delegate = this->Get("FireOnlineStatusChange")->ToMethod();
-#if defined(OS_OSX)
 			networkDelegate = [[NetworkReachability alloc] initWithDelegate:delegate];
-#elif defined(OS_WIN32)
-			networkStatus = new Win32WMINetworkStatus(delegate);
-#endif
 		}
+#endif
+
 	}
 
-	bool NetworkBinding::HasOnlineStatusChangeListeners()
+	bool NetworkBinding::HasNetworkStatusListeners()
 	{
 		return this->listeners.size() > 0;
 	}
 
-	void NetworkBinding::OnlineStatusChange(bool online)
+	void NetworkBinding::NetworkStatusChange(bool online)
 	{
 		PRINTD("ti.Network: Online status ==> " << online);
 		this->Set("online", Value::NewBool(online));
@@ -159,7 +159,7 @@ namespace ti
 			catch(ValueException& e)
 			{
 				SharedString ss = e.GetValue()->DisplayString();
-				std::cerr << "ti.Network.OnlineStatusChange callback failed: " << *ss << std::endl;
+				std::cerr << "ti.Network.NetworkStatus callback failed: " << *ss << std::endl;
 			}
 		}
 	}
@@ -200,6 +200,6 @@ namespace ti
 	void NetworkBinding::FireOnlineStatusChange(const ValueList& args, SharedValue result)
 	{
 		if (args.at(0)->IsBool())
-			this->OnlineStatusChange(args.at(0)->ToBool());
+			this->NetworkStatusChange(args.at(0)->ToBool());
 	}
 }
