@@ -74,12 +74,12 @@ void GtkUserWindow::Open()
 		                 G_CALLBACK(navigation_requested_cb), this);
 		g_signal_connect(G_OBJECT(web_view), "new-window-navigation-requested",
 		                 G_CALLBACK(new_window_navigation_requested_cb), this);
+		g_signal_connect(G_OBJECT (web_view), "populate-popup",
+		                 G_CALLBACK (populate_popup_cb), this);
 
-		g_signal_connect(
-			G_OBJECT (web_view),
-			"populate-popup",
-			G_CALLBACK (populate_popup_cb),
-			this);
+		WebKitWebSettings* settings = webkit_web_settings_new();
+		g_object_set(G_OBJECT(settings), "enable-developer-extras", TRUE, NULL);
+		webkit_web_view_set_settings(WEBKIT_WEB_VIEW(web_view), settings);
 
 		GtkWidget* view_container = NULL;
 		if (this->IsUsingScrollbars())

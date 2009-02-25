@@ -14,9 +14,6 @@ namespace ti
 	   previous_status(false),
 	   running(true)
 	{
-#if defined(OS_LINUX)
-		g_type_init();
-#endif
 		this->Start();
 	}
 
