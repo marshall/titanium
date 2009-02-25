@@ -133,9 +133,8 @@ void GtkUserWindow::Open()
 		this->SetupMenu();
 		this->SetupIcon();
 
-		webkit_web_view_open(web_view, this->config->GetURL().c_str());
-
 		gtk_widget_grab_focus(GTK_WIDGET (web_view));
+		webkit_web_view_open(web_view, this->config->GetURL().c_str());
 
 		if (this->IsVisible())
 		{
@@ -486,16 +485,16 @@ void GtkUserWindow::Show() {
 }
 
 void GtkUserWindow::Focus() {
-	
-	//TODO: call
-	//        |
-	//        v
-	//gtk_window_activate_focus(GTK_WINDOW(win));
-	//gtk_widget_grab_focus(GTK_WIDGET(win));
+	gtk_window_present(this->gtk_window);
 }
 
 void GtkUserWindow::Unfocus(){
-	
+	if (gtk_window_has_toplevel_focus(this->gtk_window))
+	{
+		gdk_window_focus(
+			gdk_get_default_root_window(),
+			gtk_get_current_event_time());
+	}
 }
 
 bool GtkUserWindow::IsUsingScrollbars() {
