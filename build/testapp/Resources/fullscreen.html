@@ -106,6 +106,20 @@ button {
 		}
 	}
 
+	function toggleTopMost()
+	{
+		try
+		{
+			var cw = Titanium.UI.currentWindow;
+			var f = cw.isTopMost();
+			cw.setTopMost(! f);
+		}
+		catch(e)
+		{
+			alert("exception: "+e);
+		}
+	}
+
 	function closeMe()
 	{
 		Titanium.UI.currentWindow.close();
@@ -126,6 +140,7 @@ button {
 	</div>
 	<div>
 	<button onclick="toggleResizable()">Toggle resizable</button>
+	<button onclick="toggleTopMost()">Toggle topMost</button>
 	</div>
 	<div>
 	<button onclick="alert(Titanium.UI.currentWindow.isMinimizable());">isMinimizable()</button>

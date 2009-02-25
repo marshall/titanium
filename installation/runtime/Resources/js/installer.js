@@ -106,7 +106,7 @@ function runInstaller()
 		if (p == 'runtime') continue;
 		var moduleSrc = TFS.getFile(src,'modules',p);
 		if (!moduleSrc.exists()) continue;
-		var moduleDest = TFS.getFile(dest,'modules',p,results.map[p]);
+		var moduleDest = TFS.getFile(dest,'modules',Titanium.platform,p,results.map[p]);
 		moduleDest.createDirectory(true);
 		tasks.push({
 			dest:moduleDest,

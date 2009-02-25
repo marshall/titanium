@@ -134,6 +134,20 @@ Titanium.AppCreator = {
 			}
 		}
 		
+		// we also need to copy the MSVCRT for win xp
+		var localRuntimeMsvcrt = TFS.getFile(localRuntime, 'Microsoft.VC80.CRT');
+		var runtimeMsvcrt = TFS.getFile(runtime, 'Microsoft.VC80.CRT');
+		var localMsvcrt = TFS.getFile(appDir, 'Microsoft.VC80.CRT');
+		localMsvcrt.createDirectory(true);
+		localRuntimeMsvcrt.createDirectory(true);
+		var msvcrtResources = runtimeMsvcrt.getDirectoryListing();
+		for (var r=0;r<msvcrtResources.length;r++) {
+			//Titanium.API.debug("copying " + mresource.name() + " to " + localMsvcrt.path() + "...");
+			var mresource = msvcrtResources[r];
+			mresource.copy(localMsvcrt);
+			mresource.copy(localRuntimeMsvcrt);
+		}
+		
 		// set our marker file
 		var marker = TFS.getFile(appDir,'.installed');
 		if (!install)
