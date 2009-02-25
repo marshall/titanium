@@ -111,6 +111,14 @@ namespace ti
 #endif
 		std::vector<std::string>::iterator iter = ac->files.begin();
 		Poco::Path to(ac->destination);
+		Poco::File tof(to.toString());
+#ifdef DEBUG
+		std::cout << "ASYNC DEST: " << ac->destination << std::endl;
+#endif
+		if (!tof.exists())
+		{
+			tof.createDirectory();
+		}
 		int c = 0;
 		while(!ac->stopped && iter!=ac->files.end())
 		{
@@ -148,19 +156,19 @@ namespace ti
 			catch (ValueException &ex)
 			{
 				SharedString ss = ex.DisplayString();
-				std::cerr << "Error running async file copy: " << *ss << std::endl;
+				std::cerr << "Error running async file copy: " << *ss << " for file: " << file << std::endl;
 			}
 			catch (Poco::Exception &ex)
 			{
-				std::cerr << "Error running async file copy: " << ex.displayText() << std::endl;
+				std::cerr << "Error running async file copy: " << ex.displayText() << " for file: " << file << std::endl;
 			}
 			catch (std::exception &ex)
 			{
-				std::cerr << "Error running async file copy: " << ex.what() << std::endl;
+				std::cerr << "Error running async file copy: " << ex.what() << " for file: " << file << std::endl;
 			}
 			catch (...)
 			{
-				std::cerr << "Unknown error running async file copy" << std::endl;
+				std::cerr << "Unknown error running async file copy for file: " << file << std::endl;
 			}
 		}
 		ac->Set("running",Value::NewBool(false));

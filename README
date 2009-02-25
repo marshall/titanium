@@ -124,12 +124,16 @@ Ubuntu 8.10 32bit
 
 1. Install the required libraries:
 
-sudo apt-get install build-essential ruby rubygems libzip-ruby scons libxml2-dev libgtk2.0-dev python-dev ruby-dev
+sudo apt-get install build-essential ruby rubygems libzip-ruby scons libxml2-dev libgtk2.0-dev python-dev ruby-dev libdbus-glib-1-dev
+libnotify-dev libgstreamer0.10-dev libxss-dev libcurl4-openssl-dev
+
 
 2. Install Git:
 
 sudo apt-get install git-core
 
+
+You may need a later version of Scons for Linux if you get build errors.  (>=1.2.0)
 
 
 --------------------------------------
