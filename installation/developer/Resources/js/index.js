@@ -5,7 +5,7 @@ var TFS = Titanium.Filesystem;
 var TiDeveloper  = {};
 TiDeveloper.currentPage = 1;
 TiDeveloper.init = false;
-TiDeveloper.online = false;
+TiDeveloper.online = Titanium.Network.online;
 TiDeveloper.windowFocused = false
 TiDeveloper.highestId = 0;
 
