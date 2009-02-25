@@ -39,6 +39,9 @@ namespace ti
 
 #if defined(OS_LINUX)
 		this->net_status = new DBusNetworkStatus(this);
+#elif defined(OS_OSX)
+		SharedBoundMethod delegate = this->Get("FireOnlineStatusChange")->ToMethod();
+		networkDelegate = [[NetworkReachability alloc] initWithDelegate:delegate];
 #endif
 	}
 
@@ -201,7 +204,7 @@ namespace ti
 		std::vector<Listener>::iterator it = this->listeners.begin();
 		while (it != this->listeners.end())
 		{
-			SharedBoundMethod callback = (*it).callback;
+			SharedBoundMethod callback = (*it++).callback;
 			try
 			{
 				host->InvokeMethodOnMainThread(callback, args);
@@ -218,6 +221,8 @@ namespace ti
 	void NetworkBinding::FireOnlineStatusChange(const ValueList& args, SharedValue result)
 	{
 		if (args.at(0)->IsBool())
+		{
 			this->NetworkStatusChange(args.at(0)->ToBool());
+		}
 	}
 }

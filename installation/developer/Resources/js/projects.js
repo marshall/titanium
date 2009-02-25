@@ -573,7 +573,7 @@ $MQL('l:create.package.request',function(msg)
 			}
 			else
 			{
-				// no modules to bundle, installer the net installer
+				// no modules to bundle, install the net installer
 				var net_installer_src = TFS.getFile(runtime,'installer');
 				var net_installer_dest = TFS.getFile(app.base,'installer');
 				TFS.asyncCopy(net_installer_src,net_installer_dest,function(filename,c,total)

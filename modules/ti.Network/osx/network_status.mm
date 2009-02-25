@@ -34,31 +34,8 @@ static void TiReachabilityCallback(SCNetworkReachabilityRef  target,
 	if (self!=nil)
 	{	
 		delegate = new SharedBoundMethod(m);
-		
-		SCNetworkReachabilityRef thisTarget;
-		SCNetworkReachabilityContext thisContext;
 		online = NO;
-	    thisContext.version = 0;
-	    thisContext.info = (void *)self;
-	    thisContext.retain = NULL;
-	    thisContext.release = NULL;
-	    thisContext.copyDescription = NULL;
-
-	    // Create the target with the most reachable internet site in the world
-	    thisTarget = SCNetworkReachabilityCreateWithName(NULL, "google.com");
-
-	    // Set our callback and install on the runloop.
-	    if (thisTarget) 
-	    {
-	    	SCNetworkReachabilitySetCallback(thisTarget, TiReachabilityCallback, &thisContext);
-	      	SCNetworkReachabilityScheduleWithRunLoop(thisTarget, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
-	      	SCNetworkConnectionFlags flags;
-	      	if ( SCNetworkReachabilityGetFlags(thisTarget, &flags) ) 
-	      	{
-	        	BOOL yn = (flags & kSCNetworkFlagsReachable) && !(flags & kSCNetworkFlagsTransientConnection);
-	        	[self triggerChange:yn];
-	      	}
-	    }
+		[self start];
 	}
 	return self;
 }
@@ -67,6 +44,32 @@ static void TiReachabilityCallback(SCNetworkReachabilityRef  target,
 	KR_DUMP_LOCATION
 	delete delegate;
 	[super dealloc];
+}
+- (void)start
+{
+	SCNetworkReachabilityRef thisTarget;
+	SCNetworkReachabilityContext thisContext;
+    thisContext.version = 0;
+    thisContext.info = (void *)self;
+    thisContext.retain = NULL;
+    thisContext.release = NULL;
+    thisContext.copyDescription = NULL;
+
+    // Create the target with the most reachable internet site in the world
+    thisTarget = SCNetworkReachabilityCreateWithName(NULL, "google.com");
+
+    // Set our callback and install on the runloop.
+    if (thisTarget) 
+    {
+    	SCNetworkReachabilitySetCallback(thisTarget, TiReachabilityCallback, &thisContext);
+    	SCNetworkReachabilityScheduleWithRunLoop(thisTarget, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
+      	SCNetworkConnectionFlags flags;
+      	if ( SCNetworkReachabilityGetFlags(thisTarget, &flags) ) 
+      	{
+        	BOOL yn = (flags & kSCNetworkFlagsReachable) && !(flags & kSCNetworkFlagsTransientConnection);
+        	[self triggerChange:yn];
+      	}
+    }
 }
 - (void)triggerChange:(BOOL)yn
 {

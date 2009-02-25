@@ -134,7 +134,7 @@ Titanium.Project =
 		tiappxml+=this.XML_EPILOG;
 		var ti = TFS.getFile(outdir,'tiapp.xml');
 		ti.write(tiappxml);
-		var resources = TFS.getFile(outdir,'Resources');
+		var resources = TFS.getFile(outdir,'resources');
 		resources.createDirectory();
 		var index = TFS.getFile(resources,'index.html');
 		

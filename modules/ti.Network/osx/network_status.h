@@ -16,5 +16,6 @@
 }
 - (id)initWithDelegate:(SharedBoundMethod)delegate;
 - (void)triggerChange:(BOOL)yn;
+- (void)start;
 @end
 

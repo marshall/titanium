@@ -14,6 +14,7 @@ namespace ti
 	   wicd_wireless_proxy(NULL),
 	   nm_proxy(NULL)
 	{
+		g_type_init();
 	}
 
 	void DBusNetworkStatus::InitializeLoop()

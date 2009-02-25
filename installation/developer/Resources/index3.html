@@ -3,27 +3,26 @@
 
 	<script type="text/javascript" charset="utf-8" src="js/appcelerator-debug.js"></script>
 
-	<!-- yahoo pagintator -->
 	<script type="text/javascript" charset="utf-8" src="common/js/yahoo-min.js"></script>
 	<script type="text/javascript" charset="utf-8" src="common/js/paginator-min.js"></script>
 
-	<!-- core TiDeveloper JS files -->
+
+	<script type="text/javascript" charset="utf-8" src="js/swfobject.js"></script>
+
 	<script type="text/javascript" charset="utf-8" src="js/index.js"></script>
-	<script type="text/javascript" charset="utf-8" src="js/projects.js"></script>
-	<script type="text/javascript" charset="utf-8" src="js/irc.js"></script>
-	<script type="text/javascript" charset="utf-8" src="js/feeds.js"></script>
-
-
-	<!-- common JS Files -->
 	<script type="text/javascript" charset="utf-8" src="js/project.js"></script>
 	<script type="text/javascript" charset="utf-8" src="js/app.js"></script>
 
-	<!-- style sheet -->
 	<link rel="stylesheet" href="css/index.css" type="text/css" media="screen" charset="utf-8" />
 </head>
 
 <!-- ADJUST WINDOW HEIGHT BASED ON CURRENT STATE -->
-<body >
+<body  on="l:menu[val=manage] then script[Titanium.UI.currentWindow.setHeight(580)] 
+				if expr[Titanium.UI.currentWindow.getHeight()< 580]  or
+		   l:menu[val=interact] then script[Titanium.UI.currentWindow.setHeight(650)]
+				if expr[Titanium.UI.currentWindow.getHeight()< 650]  or
+		   l:menu[val=social] then script[Titanium.UI.currentWindow.setHeight(650)]
+				if expr[Titanium.UI.currentWindow.getHeight()< 650] ">
 		
 	<input type="hidden" id="project_count_hidden" />
 	
@@ -36,29 +35,28 @@
 	</div>
 	
 	<!-- CONTENT -->
-	<div id="content" style="display:none" on="l:project.list.response[firstCall=1] then effect[fadeIn]">
+	<div id="content">
 		
 		<!-- MAJOR ACTION BUTTONS -->
-		<div class="button1 active" style="display:inline-block;width:150px" 
+		<div class="button1" style="display:inline-block;width:150px" 
+			on="click then l:menu[val=social] and add[class=active] or l:menu[val!=social] then remove[class=active]">
+			<div class="button2">Feeds</div>
+		</div>
+		
+		<div class="button1" style="display:inline-block;width:150px" 
 			on="click then l:menu[val=manage] and add[class=active] or l:menu[val!=manage] then remove[class=active]">
 			<div class="button2">Projects</div>
-		</div>
-		<div class="button1" style="display:inline-block;width:150px" 
-			on="click then l:menu[val=interact] and add[class=active] or l:menu[val!=interact] then remove[class=active]">
-			<div class="button2">Community 
-				<span id="irc_message_count" class="message_indicator" style="display:none"></span>
-			</div>
-		</div>
-		<div class="button1" style="display:inline-block;width:150px" 
-			on="click then l:menu[val=feeds] and add[class=active] or l:menu[val!=feeds] then remove[class=active]">
-			<div class="button2">Feeds</div>
 		</div>
 		<div class="button1" style="display:inline-block;width:150px" 
 			on="click then l:menu[val=api] and add[class=active] or l:menu[val!=api] then remove[class=active]">
 			<div class="button2">Documentation</div>
 		</div>
-		
-
+		<div class="button1" style="display:inline-block;width:150px" 
+			on="click then l:menu[val=interact] and add[class=active] or l:menu[val!=interact] then remove[class=active]">
+			<div class="button2">Interact 
+				<span id="irc_message_count" class="message_indicator" style="display:none"></span>
+			</div>
+		</div>
 		<div style="clear:both"></div>
 
 		<!-- ************* -->
@@ -72,14 +70,15 @@
 				<div  style="position:relative;border-top:1px solid #141414;padding-left:20px;padding-right:20px">
 					<div id="documentation" 
 						style="background-color:#333;min-height:90%;max-height:90%;overflow:none;">
+						<iframe src="http://titanium-js.appspot.com/" frameborder="0" height="80%" width="100%"></iframe>
 					</div>
 				</div>
 			</div>
 		</div>
 		
 		<!-- SOCIAL TYPE STUFF -->
-		<div style="margin-top:10px;display:none"
-			on="l:menu[val=feeds] then effect[fadeIn] else hide">
+		<div style="margin-top:10px;"
+			on="l:menu[val=social] then effect[fadeIn] else hide">
 			<div style="height:35px;position:relative;left:20px">
 				<div class="button1" style="width:50px;height:33px;border-bottom:none">
 					<div class="button2 tab active_tab" style="height:31px;text-align:center;border-bottom:none"  
@@ -93,12 +92,12 @@
 					<div class="button2 tab" style="height:31px;text-align:center;border-bottom:none" 
 						on="click then l:db[val=news] and add[class=active_tab] 
 							or l:db[val!=news] then remove[class=active_tab]">
-						<img src="images/ff.png" height="30px" width="30px" style="position:relative;top:1px"/>
+						<img src="images/friend_feed.png" height="30px" width="30px"/>
 					</div>
 				</div>
 				<div class="hint_text" style="float:left;margin-left:10px;font-size:11px;position:relative;top:8px"
 					on="l:db[val=twitter] then value[showing titanium twitter feed] 
-					else value[showing titanium FriendFeed]">
+					else value[showing titanium content feed]">
 					showing titanium twitter feed
 				</div>
 			</div>
@@ -143,7 +142,7 @@
 									<div style="height:30px">
 										<div class="button1" style="float:left;margin-right:10px">
 											<div class="button2" id="send_tweet_button"	on="click then l:send.tweet.request 
-											if expr[$('#send_tweet_button').attr('disabled')!='true']" 
+											if expr[$('#send_tweet_button').attr('disabled')!=true]" 
 											activators="twitter_username,twitter_password,twitter_message"  
 											fieldset="twitter">				
 												Send
@@ -160,31 +159,13 @@
 							</div>
 
 						</div>
-						<div id="friend_feed_content" 																style="display:none;background-color:#2b2b2b;min-height:90%;max-height:90%;overflow:auto;padding:10px;"
+						<div id="news_content" 																style="display:none;background-color:#2b2b2b;min-height:90%;max-height:90%;overflow:auto;padding:10px;"
 							on="l:db[val=news] then show else hide">
 						</div>
 
 					</div>
 				</div>
 				<div style="margin-top:10px;position:relative">
-					<div class="button1" style="display:none" id="follow_us_button"
-						on="click then script[TiDeveloper.Feeds.followUs()] and l:twitter.follow 
-							or l:twitter.follow then effect[fadeOut] after 2s">
-						<div class="button2">
-								<span on="l:twitter.follow then hide or l:twitter.follow then show after 3s">
-									Follow Us
-								</span>
-								<span  style="display:none;font-size:11px;color:#42C0FB"
-									on="l:twitter.follow then show or l:twitter.follow then hide after 1s">
-									One moment...
-								</span>
-								<span  style="display:none;font-size:11px;color:#42C0FB"
-									on="l:twitter.follow then show after 1s or l:twitter.follow then hide after 2s">
-									Success!
-								</span>
-
-						</div>
-					</div>
 					<div class="button1" on="click then l:show.tweet
 						or l:db[val=twitter] then show else hide">
 						<div class="button2">
@@ -192,7 +173,7 @@
 						</div>
 					</div>
 
-					<div class="button1" on="click then script[TiDeveloper.Feeds.loadTwitter()]">
+					<div class="button1" on="click then script[TiDeveloper.loadTwitter()]">
 						<div class="button2">
 								Refresh
 						</div>
@@ -238,7 +219,8 @@
 		</div>
 
 		<!-- MANAGE PROJECT -->
-		<div on="l:menu[val=manage] then effect[fadeIn] else hide or l:cancel[val=manage] then effect[fadeOut]">
+		<div style="display:none" 
+			on="l:menu[val=manage] then effect[fadeIn] else hide or l:cancel[val=manage] then effect[fadeOut]">
 
 			<!-- NO PROJECTS CREATED MESSAGE -->
 			<div style="margin-top:10px;width:500px" 
@@ -250,7 +232,7 @@
 							<img src="images/info.png" style="position:relative;top:-1px"/>
 						</div>
 						<div style="position:absolute;top:7px;left:30px">
-							You don't have any projects!  Get started by creating one now!
+							You haven't created any projects yet!  Get started by creating one now!
 						</div>
 					</div>
 				</div>
@@ -281,6 +263,15 @@
 							<div class="button2" style="height:21px" 
 								on="click then l:create.project">
 								<img src="images/16x16_new.png" style="position:relative;top:2px;left:1px"/>
+							</div>
+						</div>
+						<div class="button1" 
+							style="float:left;width:23px;height:23px;position:relative;top:1px;" 
+							on="mouseover then l:action.hint[hint=Import existing project] 
+							or mouseout then l:action.hint[hint='']">
+							<div class="button2" style="height:21px" 
+								on="click then l:import.project">
+								<img src="images/import_proj.png" style="position:relative;top:2px;left:1px"/>
 							</div>
 						</div>
 						<div style="float:left;margin-left;margin-top:6px" class="hint_text"
@@ -337,7 +328,7 @@
 									<img src="images/delete.png" style="margin-right:2px" title="delete project"
 										on="click then l:delete.project.prompt[project_id=#{id},name=#{name}]"/>
 									<img src="images/package.png" title="package, run or install project"
-										on="click then l:package.project.request[id=#{id}]"/>
+										on="click then l:package.project.request[id=#{id},name=#{name}]"/>
 								</div>
 							</div>
 							
@@ -349,7 +340,7 @@
 				
 				<!-- PROJECT DETAILS -->
 				<div class="manage_right" style="margin-left:50px;display:none;margin-top:7px" 
-					on="l:row.selected then show">
+					on="l:row.selected then show or l:menu[val=manage] then hide">
 					<div class="infobox">
 						<div class="content">
 							<table cellspacing="15px">
@@ -399,18 +390,14 @@
 									</td>
 									<td style="font-size:12px;height:30px">
 										<div class="edit" on="l:project.detail.data then value[url]" 
-										id="project_pub_url_value">
-										</div>
+											id="project_pub_url_value"></div>
 									</td>
 								</tr>
 								<tr>
 									<td style="font-size:12px;height:30px" width="90px" class="hint_text">*App Icon:</td>
 									<td style="font-size:12px;height:30px">
 										<div class="edit"
-											on="l:project.detail.data then value[image]
-											or l:file.selected[for=project_image,target=project_pub_image_value] 
-											then value[value]" 
-											id="project_pub_image_value"></div>
+											on="l:project.detail.data then value[image]" id="project_pub_image_value"></div>
 									</td>
 								</tr>
 								<tr>
@@ -427,7 +414,7 @@
 				</div>				
 				<!-- INFO MESSAGE -->
 				<div class="infobox manage_right" style="margin-left:50px;margin-top:7px" 
-					on="l:row.selected then hide">
+					on="l:row.selected then hide or l:menu[val=manage] then show">
 					<div class="content" style="height:45px">
 						<div style="float:left;width:20px">
 							<img src="images/info.png" style="position:relative;top:-1px"/>
@@ -457,15 +444,8 @@
 							<span style="color:#fff;font-size:16px;margin-right:10px">
 								Create Project
 							</span>
-							<span on="l:create.project then set[display=inline] 
-							or l:project.wizard[show=1] then set[display=inline] else hide">
-							Step 1: Select Javascript libraries to include in your project.  
-							</span>
-							<span on="l:project.wizard[show=2] then set[display=inline] else hide
-								or l:create.project then hide" style="display:none">
-							Step 2: Enter the following details to finish creating your project.
-							</span>
-
+							Enter the following project details. 
+							Your project will be created using this initial information.
 						</span>
 					</div>
 					<div class="section action_text" style="display:none;position:relative;top:7px;" 
@@ -482,7 +462,7 @@
 						<span style="position:relative;top:-4px">Project created!</span>
 					</div>
 					<div class="section error_text" style="display:none;position:relative;top:7px;" 
-					on="(l:menu[val=create] or l:create.project.request or l:create.project) then hide 
+					on="(l:menu[val=create] or l:create.project.request) then hide 
 						or l:create.project.response[result=error] then show">
 						<img src="images/error.png"/>
 						<span style="position:relative;top:-4px">
@@ -493,243 +473,78 @@
 
 				</div>
 
-				<!-- STEP 1 PROJECT WIZARD -->
-				<div style="display:none" on="l:project.wizard[show=2] then effect[slideUp]  
-					or l:project.wizard[show=1] then effect[fadeIn] after 500ms
-					or (l:create.project or l:project.list.response[totalRecords=0]) then effect[fadeIn]">
-					<div style="float:left">
-						<div id="jquery_js" class="button1" style="float:none;width:160px;height:80px">
-							<div class="button2" style="height:78px"
-								on="click then toggle[class=selected_js] 
-								and toggle[id=jquery_js,class=selected_js]
-								or l:create.project then remove[class=selected_js]
-								and remove[id=jquery_js,class=selected_js]">
-								<img src="images/jquery.gif" width="136px" height="36px"
-									style="position:relative;top:20px"/>
-							</div>
-						</div>
-						<div id="jqueryui_js" class="button1" style="float:none;width:160px;height:80px">
-							<div class="button2" style="height:78px"
-								on="click then toggle[class=selected_js] 
-								and toggle[id=jqueryui_js,class=selected_js]
-								or l:create.project then remove[class=selected_js]
-								and remove[id=jqueryui_js,class=selected_js]">
-								<img src="images/jquery_ui.gif" width="136px" height="36px"
-									style="position:relative;top:25px"/>
-							</div>
-						</div>
+				<!-- PROJECT NAME -->
+				<div class="section text">
+					<div>Project Name:</div>
+					<div style="margin-top:3px;margin-bottom:10px">
+						<input type="text" id="project_name" validator="required" fieldset="new_project"
+							on="(l:create.project.response[result=success] or l:menu[val=create]) then reset"/>
 					</div>
-					<div style="float:left;margin-left:20px">
-						<div id="prototype_js" class="button1" style="float:none;width:160px;height:80px">
-							<div class="button2" style="height:78px"
-								on="click then toggle[class=selected_js] 
-								and toggle[id=prototype_js,class=selected_js]
-								or l:create.project then remove[class=selected_js]
-								and remove[id=prototype_js,class=selected_js]">
-								<img src="images/prototype.gif" width="127px" height="64px"
-									style="position:relative;top:10px"/>
-							</div>
-						</div>
-						<div id="scriptaculous_js" class="button1" style="float:none;width:160px;height:80px">
-							<div class="button2" style="height:78px"
-								on="click then toggle[class=selected_js] 
-								and toggle[id=scriptaculous_js,class=selected_js]
-								or l:create.project then remove[class=selected_js]
-								and remove[id=scriptaculous_js,class=selected_js]">
-								<img src="images/scriptaculous_logo.png" width="175px" height="64px"
-									style="position:relative;top:5px;left:-3px"/>
-							</div>
-						</div>
+					<div>Publisher Name:</div>
+					<div style="margin-top:3px;margin-bottom:10px">
+						<input type="text" id="publisher_name" name="publisher" 
+							validator="required" fieldset="new_project"
+							on="(l:create.project.response[result=success] or l:menu[val=create]) then reset"/>
 					</div>
-					<div  style="float:left;margin-left:20px">
-						<div id="mootools_js" class="button1" style="float:none;width:160px;height:80px">
-							<div class="button2" style="height:78px"
-								on="click then toggle[class=selected_js] 
-								and toggle[id=mootools_js,class=selected_js]
-								or l:create.project then remove[class=selected_js]
-								and remove[id=mootools_js,class=selected_js]">
-								<img src="images/mootools.png" width="127px" height="32px"
-									style="position:relative;top:20px"/>
-							</div>
-						</div>
-						<div id="dojo_js" class="button1" style="float:none;width:160px;height:80px">
-							<div class="button2" style="height:78px"
-								on="click then toggle[class=selected_js] 
-								and toggle[id=dojo_js,class=selected_js]
-								or l:create.project then remove[class=selected_js]
-								and remove[id=dojo_js,class=selected_js]">
-								<img src="images/dojo.gif" width="152px" height="32px"
-									style="position:relative;top:20px;left:5px"/>
-							</div>
-						</div>
+					<div>Publisher URL:</div>
+					<div style="margin-top:3px;margin-bottom:10px">
+						<input type="text" id="app_url" name="url" validator="required" 
+							fieldset="new_project"
+							on="(l:create.project.response[result=success] or l:menu[val=create]) then reset"/>
 					</div>
-					<div style="float:left;margin-left:20px">
-						<div id="yahoo_js" class="button1" style="float:none;width:160px;height:80px">
-							<div class="button2" style="height:78px"
-								on="click then toggle[class=selected_js] 
-								and toggle[id=yahoo_js,class=selected_js]
-								or l:create.project then remove[class=selected_js]
-								and remove[id=yahoo_js,class=selected_js]">
-								<img src="images/yahoo.gif" width="116px" height="22px"
-									style="position:relative;top:25px"/> 
-							</div>
-						</div>
-
-						<div id="swfobject_js" class="button1" style="float:none;width:160px;height:80px">
-							<div class="button2" style="height:78px"
-								on="click then toggle[class=selected_js] 
-								and toggle[id=swfobject_js,class=selected_js]
-								or l:create.project then remove[class=selected_js]
-								and remove[id=swfobject_js,class=selected_js]">
-								<div style="position:relative;top:20px">
-									<img src="images/flash.gif"/> 
-									<span style="position:relative;top:-14px;margin-left:5px">SWFObject</span>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div style="clear:both;margin-top:20px;color:white;font-size:11px;margin-left:2px">
-						Click box to include a library or click again to exclude it.  
-						If you don't see your library, you can include it manually.
-					</div>
-					<!-- BUTTONS -->
-					<div class="section text">
-						<div class="button1" style="float:left;margin-right:10px" 
-							on="click then l:project.wizard[show=2]">
-							<div class="button2">
-								Continue
-							</div>
-						</div>
-						<div class="button1" style="float:left;"
-							on="click then l:cancel[val=project]
-								or l:project.list.response[totalRecords=0]  then hide else show">
-							<div class="button2">
-								Cancel
-							</div>
-						</div>
-
-					</div>
-					
-				</div>
-				
-				
-				<!-- STEP 2 PROJECT WIZARD -->
-				<div style="display:none" on="l:project.wizard[show=2] then effect[fadeIn] else effect[slideUp]
-					or (l:create.project or l:project.list.response[totalRecords=0]) then hide">
-					
-					<!-- PROJECT NAME -->
-					<div class="section text">
-						<div>Project Name:</div>
-						<div style="margin-top:3px;">
-							<input type="text" id="project_name" validator="required" fieldset="new_project"
-								on="(l:create.project.response[result=success] or l:menu[val=create]) then reset"/>
-						</div>
-						<div class="hint_text" style="font-size:11px;font-style:italic;margin-bottom:10px;height:10px">
-							<div behavior="tooltip[position=fixed,id=project_name,showEffect=fadeIn,hideEffect=fadeOut]">
-								This is the name of your application and the name of the folder that will contain your 
-								new project
-							</div>
-						</div>
-						<div>Publisher Name:</div>
-						<div style="margin-top:3px;">
-							<input type="text" id="publisher_name" name="publisher" 
-								validator="required" fieldset="new_project"
-								on="(l:create.project.response[result=success] or l:menu[val=create]) then reset"/>
-						</div>
-						<div class="hint_text" style="font-size:11px;font-style:italic;margin-bottom:10px;height:10px">
-							<div behavior="tooltip[position=fixed,id=publisher_name,showEffect=fadeIn,hideEffect=fadeOut]">
-								The Publisher Name will be displayed to end-users when installing your application.  It 
-								indicates the person or company that created the application.
-							</div>
-						</div>
-						<div>Publisher URL:</div>
-						<div style="margin-top:3px;">
-							<input type="text" id="app_url" name="url" validator="required" 
-								fieldset="new_project"
-								on="(l:create.project.response[result=success] or l:menu[val=create]) then reset"/>
-						</div>
-						<div class="hint_text" style="font-size:11px;font-style:italic;margin-bottom:10px;height:10px">
-							<div behavior="tooltip[position=fixed,id=app_url,showEffect=fadeIn,hideEffect=fadeOut]">
-								The Publisher URL will be displayed to end-users when installing your application.  It should
-								be your company or personal URL. 
-							</div>
-						</div>
-						<div>Application Image:</div>
-						<div style="margin-top:3px;">
-							<input type="text" id="project_image" name="image" 
-								style="width:450px;float:left;" validator="required" fieldset="new_project" 
-								on="l:file.selected[for=project_image,target=project_image] then value[value]
-								or (l:create.project.response[result=success] or l:menu[val=create]) then reset"/>
-							<div class="button1" 
-								style="float:left;width:23px;height:23px;position:relative;top:1px;margin-left:10px" >
-								<div class="button2" style="height:21px" 
-									on="click then l:show.filedialog[for=project_image,target=project_image]">
-									<img src="images/folder_go.png" style="position:relative;top:3px;left:1px"/>
-								</div>
-							</div>
-							<div style="clear:both"></div>
-							<div class="hint_text" 
-								style="font-size:11px;font-style:italic;margin-bottom:10px;height:10px;margin-top:-7px">
-								<div behavior="tooltip[position=fixed,id=project_image,showEffect=fadeIn,hideEffect=fadeOut]">
-									The Application Image is the main icon for your application.  
-								</div>
-							</div>
-						</div>
-						<div style="clear:both"></div>
-
-						<div >Project Location:</div>
-						<div style="margin-top:3px;">
-							<input type="text" id="project_location" style="width:450px;float:left;" 
-								validator="required" fieldset="new_project" 
-								on="l:file.selected[for=project_location] then value[value]
-								or (l:create.project.response[result=success] or l:menu[val=create]) then reset"/>
-
-							<div class="button1" 
-								style="float:left;width:23px;height:23px;position:relative;top:1px;margin-left:10px" >
-								<div class="button2" style="height:21px" 
-									on="click then l:show.filedialog[for=project_location]">
-									<img src="images/folder_go.png" style="position:relative;top:3px;left:1px"/>
-								</div>
-							</div>
-						</div>
-						<div style="clear:both"></div>
-						<div class="hint_text" 
-							style="font-size:11px;font-style:italic;margin-bottom:10px;height:10px;margin-top:-7px">
-							<div behavior="tooltip[position=fixed,id=project_location,showEffect=fadeIn,hideEffect=fadeOut]">
-							  Newly created projects are placed in "Project Location/Project Name".
+					<div>Application Image:</div>
+					<div style="margin-top:3px;margin-bottom:10px">
+						<input type="text" id="project_image" name="image" 
+							style="width:450px;float:left;" validator="required" fieldset="new_project" 
+							on="l:file.selected[for=project_image] then value[value]
+							or (l:create.project.response[result=success] or l:menu[val=create]) then reset"/>
+						<div class="button1" 
+							style="float:left;width:23px;height:23px;position:relative;top:1px;margin-left:10px" >
+							<div class="button2" style="height:21px" 
+								on="click then l:show.filedialog[for=project_image]">
+								<img src="images/folder_go.png" style="position:relative;top:3px;left:1px"/>
 							</div>
 						</div>
 					</div>
 					<div style="clear:both"></div>
-
-					<!-- CREATE PROJECT BUTTONS -->
-					<div class="section text">
-						<div class="button1" style="float:left;margin-right:10px" >
-							<div class="button2" id="create_project_button"
-							on="click then l:create.project.request 
-							if expr[$('#create_project_button').attr('disabled')!='true']" 
-							activators="project_location,project_name,project_location,project_image,app_url, publisher_name"  
-							fieldset="new_project">
-								Create
+					<div >Project Location:</div>
+					<div style="margin-top:3px;margin-bottom:10px">
+						<input type="text" id="project_location" style="width:450px;float:left;" 
+							validator="required" fieldset="new_project" 
+							on="l:file.selected[for=project_location] then value[value]
+							or (l:create.project.response[result=success] or l:menu[val=create]) then reset"/>
+					 
+						<div class="button1" 
+							style="float:left;width:23px;height:23px;position:relative;top:1px;margin-left:10px" >
+							<div class="button2" style="height:21px" 
+								on="click then l:show.filedialog[for=project_location]">
+								<img src="images/folder_go.png" style="position:relative;top:3px;left:1px"/>
 							</div>
 						</div>
-						<div class="button1" style="float:left;"  on="click then l:project.wizard[show=1]">
-							<div class="button2">
-								Back
-							</div>
-						</div>
+					</div>
+				</div>
+				<div style="clear:both"></div>
 
-						<div class="button1" style="float:left;"  on="click then l:cancel[val=project]
-							or l:project.list.response[totalRecords=0]  then hide else show">
-							<div class="button2">
-								Cancel
-							</div>
+				<!-- CREATE PROJECT BUTTONS -->
+				<div class="section text">
+					<div class="button1" style="float:left;margin-right:10px" >
+						<div class="button2" id="create_project_button"
+						on="click then l:create.project.request 
+						if expr[$('#create_project_button').attr('disabled')!=true]" 
+						activators="project_location,project_name,project_location,project_image,app_url, publisher_name"  
+						fieldset="new_project">
+							Create
 						</div>
-
+					</div>
+					<div class="button1" style="float:left;"  on="click then l:cancel[val=project]
+						or l:project.list.response[totalRecords=0]  then hide else show">
+						<div class="button2">
+							Cancel
+						</div>
 					</div>
 
-
 				</div>
+
 			</div>
 
 			<!-- PACKAGE PROJECT -->
@@ -745,7 +560,7 @@
 								Selected Project:
 							</span>
 							<span class="hint_text"  id="package_project_name" style="margin-left:10px;font-size:16px"
-								on="l:package.project.request then script[$('#package_project_name').html(TiDeveloper.Projects.getProjectName(this.data.id))]"></span>
+								on="l:package.project.request then value[name]"></span>
 						</span>
 					</div>
 				</div>
@@ -840,34 +655,8 @@
 						</div>
 						<div style="float:left;width:80%">
 							<div style="margin-bottom:10px">
-								<div class="infobox" style="width:400px;float:left">
-									<div class="content">
-										<span style="color:#aaa;font-size:11px">
-											Select how Titanium Runtime will be packaged:
-											</span>
-										<input type="radio" name="required_module_load" id="required_modules_network" 
-											value="network" on="click then l:runtime.option[val=network]" checked/> 
-											Network
-										<input type="radio" name="required_module_load" value="bundled"
-											id="required_modules_bundled"
-											on="click then l:runtime.option[val=bundled]"/> Bundled										
-									</div>
-								</div>
-							<div style="float:left;margin-left:10px;color:#aaa;font-size:11px;position:relative;top:13px">
-									<span on="l:runtime.option[val=network] then effect[fadeIn] else hide">
-										Runtime will be installed from the network during installation
-									</span>
-									<span on="l:runtime.option[val=bundled] then effect[fadeIn] else hide" 
-										style="display:none">
-										Runtime will be bundled with your application installer
-									</span>
-								</div>
-								<div style="clear:both"></div>
-							</div>
-							<div style="margin-bottom:10px">
 								<span class="hint_text">
-									Optional Modules - modules can be excluded, bundled or loaded via the network 
-									at install time
+									Select your required modules and how they are installed for your application
 								</span>
 							</div>
 							<div class="infobox" >
@@ -878,13 +667,13 @@
 											on="click then l:package.all[val=exclude]">
 											<a title="exclude module from application">Exclude</a>
 										</div>
-										<div style="width:65px;float:left;margin-left:30px;text-decoration:underline;cursor:pointer"
-										 	on="click then l:package.all[val=network]">
-											<a title="load module at installation time">Network</a>
-										</div>
 										<div style="width:95px;float:left;margin-left:10px;text-decoration:underline;cursor:pointer"
+										 	on="click then l:package.all[val=network]">
+											<a title="load module at installation time">Include (Network)</a>
+										</div>
+										<div style="width:120px;float:left;margin-left:10px;text-decoration:underline;cursor:pointer"
 											on="click then l:package.all[val=bundled]">
-											<a title="include module with distribution">Bundled</a>
+											<a title="include module with distribution">Include (Bundled)</a>
 										</div>
 										<div style="width:90px;float:left;margin-left:10px;" >Module</div>
 
@@ -903,7 +692,7 @@
 														or l:package.all[val=exclude] then add[class=exclude] else remove[class=exclude]">
 												</div>
 											</div>
-											<div style="width:65px;float:left;text-align:center">
+											<div style="width:95px;float:left;text-align:center">
 												<div class="include_box" style="position:relative;left:40px"
 													id="network_#{iterator_index}"
 													on="click then l:package.select[val=network,name=#{name}] and toggle[class=network]
@@ -968,7 +757,7 @@
 		<div class="infobox" >
 			<div class="content" style="padding:10px">
 				<div 
-				on="l:project.detail.data then value[fullLocation]" 
+				on="l:row.selected then value[fullLocation]" 
 					style="padding:10px;color:#fff;font-size:11px">
 				</div>
 				<div class="button1" style="margin:auto;float:none"  
