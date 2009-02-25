@@ -9,10 +9,13 @@
 
 -(id)init;
 -(BOOL) growlReady;
+-(void) growlIsReady;
+-(void) growlNotificationWasClicked:(id)clickContext;
+
 @end
 
 @interface MethodWrapper : NSObject {
-	SharedBoundMethod *method;
+ 	SharedBoundMethod *method;
 };
 
 - (id) initWithMethod:(SharedBoundMethod*)m;
