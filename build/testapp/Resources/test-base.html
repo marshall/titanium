@@ -12,10 +12,6 @@
 		<div id="document">document set (should be true):<script>document.write(Titanium.document==document);</script></div>
 		
 		<script>
-			Titanium.Network.addConnectivityListener(function() {
-				Titanium.API.debug("hey");
-			});
-			Titanium.UI.setIcon("app://open.png");
 			setTimeout(function()
 			{
 				var ts = Titanium.UI.getIdleTime();
