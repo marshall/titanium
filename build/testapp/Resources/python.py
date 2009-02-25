@@ -1,3 +1,4 @@
+
 def pyalert2():
 	window.alert("I'm embedded!")
 

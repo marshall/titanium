@@ -77,8 +77,24 @@ namespace ti
 		this->config->SetVisible(false);
 		if (opened)
 		{
-			[window orderOut:nil];
+			this->Unfocus();
 			[window fireWindowEvent:HIDDEN];
+		}
+	}
+	void OSXUserWindow::Focus()
+	{
+		if (!focused)
+		{
+		    [window makeKeyAndOrderFront:nil];
+			this->Focused();	
+		}
+	}
+	void OSXUserWindow::Unfocus()
+	{
+		if (focused)
+		{
+			[window orderOut:nil];
+			this->Unfocused();
 		}
 	}
 	void OSXUserWindow::Show()
@@ -86,7 +102,7 @@ namespace ti
 		this->config->SetVisible(true);
 		if (opened)
 		{
-		    [window makeKeyAndOrderFront:nil];	
+			this->Focus();
 			[window fireWindowEvent:SHOWN];
 		}
 	}
@@ -271,6 +287,7 @@ namespace ti
 	void OSXUserWindow::SetResizable(bool resizable)
 	{
 		this->config->SetResizable(resizable);
+		[window setShowsResizeIndicator:resizable];
 	}
 	bool OSXUserWindow::IsMaximizable()
 	{
@@ -472,6 +489,7 @@ namespace ti
 		ValueList args;
 		args.push_back(Value::NewList(results));
 		callback->Call(args);
+		this->Show();
 	}
 
 }

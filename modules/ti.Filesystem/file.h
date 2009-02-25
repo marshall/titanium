@@ -1,5 +1,5 @@
 /**
- * Appcelerator Kroll - licensed under the Apache Public License 2
+ * Appcelerator Titanium - licensed under the Apache Public License 2
  * see LICENSE in the root folder for details on the license.
  * Copyright (c) 2009 Appcelerator, Inc. All Rights Reserved.
  */
@@ -364,6 +364,17 @@ namespace ti
 			 *   true if succeeded
 			 */
 			void SetWriteable(const ValueList& args, SharedValue result);
+			/**
+			 * Function: Unzip
+			 *   unzip this file to destination
+			 *
+			 * Parameters:
+			 *   dest - destination directory to unzip this file
+			 *
+			 * Returns:
+			 *   true if succeeded
+			 */
+			void Unzip(const ValueList& args, SharedValue result);
 	};
 }
 

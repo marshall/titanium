@@ -38,6 +38,8 @@ namespace ti
 
 		void Hide();
 		void Show();
+		void Focus();
+		void Unfocus();
 		bool IsUsingChrome();
 		void SetUsingChrome(bool chrome);
 		bool IsUsingScrollbars();
@@ -129,6 +131,7 @@ namespace ti
 		 */
 		SharedPtr<GtkMenuItemImpl> context_menu;
 
+		void _OpenFilesWork(const ValueList&, SharedValue);
 	};
 
 }

@@ -12,12 +12,16 @@
 		<div id="document">document set (should be true):<script>document.write(Titanium.document==document);</script></div>
 		
 		<script>
-			Titanium.UI.setIcon("app://open.png");
 			setTimeout(function()
 			{
 				var ts = Titanium.UI.getIdleTime();
 				document.getElementById("ts").innerHTML = "idle time: "  + ts;
 			},10000);
+			
+			window.onunload = function()
+			{
+				alert("bye bye from window.onunload");
+			}
 		</script>
 	</body>
 </html>

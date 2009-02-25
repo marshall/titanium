@@ -28,6 +28,8 @@ namespace ti
 		snprintf(buf, 256, "%s/%0.2f", PRODUCT_NAME, ver);
 		g_set_prgname(buf);
 
+		//FIXME: set userAgent property on the global object to the 
+		//value of the *full* user-agent string from webkit
 	}
 
 	SharedPtr<MenuItem> GtkUIBinding::CreateMenu(bool trayMenu)

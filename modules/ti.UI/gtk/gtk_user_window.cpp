@@ -49,6 +49,7 @@ GtkUserWindow::GtkUserWindow(Host *host, WindowConfig* config) : UserWindow(host
 	this->gdk_x = -1;
 	this->gdk_y = -1;
 
+	this->SetMethod("_OpenFilesWork", &GtkUserWindow::_OpenFilesWork);
 }
 
 GtkUserWindow::~GtkUserWindow()
@@ -74,12 +75,12 @@ void GtkUserWindow::Open()
 		                 G_CALLBACK(navigation_requested_cb), this);
 		g_signal_connect(G_OBJECT(web_view), "new-window-navigation-requested",
 		                 G_CALLBACK(new_window_navigation_requested_cb), this);
+		g_signal_connect(G_OBJECT (web_view), "populate-popup",
+		                 G_CALLBACK (populate_popup_cb), this);
 
-		g_signal_connect(
-			G_OBJECT (web_view),
-			"populate-popup",
-			G_CALLBACK (populate_popup_cb),
-			this);
+		WebKitWebSettings* settings = webkit_web_settings_new();
+		g_object_set(G_OBJECT(settings), "enable-developer-extras", TRUE, NULL);
+		webkit_web_view_set_settings(WEBKIT_WEB_VIEW(web_view), settings);
 
 		GtkWidget* view_container = NULL;
 		if (this->IsUsingScrollbars())
@@ -133,9 +134,8 @@ void GtkUserWindow::Open()
 		this->SetupMenu();
 		this->SetupIcon();
 
-		webkit_web_view_open(web_view, this->config->GetURL().c_str());
-
 		gtk_widget_grab_focus(GTK_WIDGET (web_view));
+		webkit_web_view_open(web_view, this->config->GetURL().c_str());
 
 		if (this->IsVisible())
 		{
@@ -482,6 +482,19 @@ void GtkUserWindow::Show() {
 	if (this->gtk_window != NULL)
 	{
 		gtk_widget_show_all(GTK_WIDGET(this->gtk_window));
+	}
+}
+
+void GtkUserWindow::Focus() {
+	gtk_window_present(this->gtk_window);
+}
+
+void GtkUserWindow::Unfocus(){
+	if (gtk_window_has_toplevel_focus(this->gtk_window))
+	{
+		gdk_window_focus(
+			gdk_get_default_root_window(),
+			gtk_get_current_event_time());
 	}
 }
 
@@ -845,14 +858,11 @@ struct OpenFilesJob
 	std::vector<std::string> types;
 };
 
-void* open_files_thread(gpointer data)
+void GtkUserWindow::_OpenFilesWork(const ValueList& args, SharedValue lresult)
 {
+	void* data = args.at(0)->ToVoidPtr();
 	OpenFilesJob* job = reinterpret_cast<OpenFilesJob*>(data);
 	SharedBoundList results = new StaticBoundList();
-
-	/* Must do this because we are running on a separate thread
-	 * from the GTK main loop */
-	gdk_threads_enter();
 
 	std::string text = "Select File";
 	GtkFileChooserAction a = GTK_FILE_CHOOSER_ACTION_OPEN;
@@ -902,22 +912,16 @@ void* open_files_thread(gpointer data)
 	}
 	gtk_widget_destroy(chooser);
 
-	/* Let gtk_main continue */
-	gdk_threads_leave();
-
-	ValueList args;
-	args.push_back(Value::NewList(results));
-
+	ValueList cargs;
+	cargs.push_back(Value::NewList(results));
 	try
 	{
-		job->host->InvokeMethodOnMainThread(job->callback, args);
+		job->callback->Call(cargs);
 	}
 	catch (ValueException &e)
 	{
 		std::cerr << "openFiles callback failed because of an exception" << std::endl;
 	}
-
-	return NULL;
 }
 
 void GtkUserWindow::OpenFiles(
@@ -940,6 +944,11 @@ void GtkUserWindow::OpenFiles(
 	job->file = file;
 	job->types = types;
 
-	g_thread_create(&open_files_thread, job, false, NULL);
+	// Call this on the main thread so we don't have to
+	// worry about glib threads.
+	SharedBoundMethod meth = this->Get("_OpenFilesWork")->ToMethod();
+	ValueList args;
+	args.push_back(Value::NewVoidPtr(job));
+	job->host->InvokeMethodOnMainThread(meth, args);
 }
 

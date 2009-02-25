@@ -23,8 +23,9 @@ namespace ti
 		SharedValue value = Value::NewObject(this->variables);
 		host->GetGlobalObject()->Set("Network", value);
 	}
-
-	void NetworkModule::Stop()
+	
+	void NetworkModule::Stop ()
 	{
 	}
+	
 }

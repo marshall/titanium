@@ -459,7 +459,7 @@ $MQL('l:create.package.request',function(msg)
 		var buildMac = ($('#platform_mac').hasClass('selected_os'))?true:false;
 		var buildWin = ($('#platform_windows').hasClass('selected_os'))?true:false;
 		var buildLinux = ($('#platform_linux').hasClass('selected_os'))?true:false;
-
+		
 		$.each(excludedEl,function()
 		{
 			var key = $.trim($(this).html());
@@ -471,7 +471,7 @@ $MQL('l:create.package.request',function(msg)
 
 
 		var project = TiDeveloper.Projects.findProject(project_name);
-		var resources = TFS.getFile(project.dir,'resources');
+		var resources = TFS.getFile(project.dir,'Resources');
 
 		// build the manifest
 		var manifest = '#appname:'+project_name+'\n';
@@ -489,7 +489,12 @@ $MQL('l:create.package.request',function(msg)
 		manifest+='#url:'+project.url+'\n';
 		manifest+='runtime:'+TiDeveloper.Projects.runtimeVersion+'\n';
 
-		
+		// write out required modules
+		for (var i=0;i<TiDeveloper.Projects.requiredModules.length;i++)
+		{
+			manifest+= TiDeveloper.Projects.requiredModules[i] +':'+ TiDeveloper.Projects.requiredModuleMap[TiDeveloper.Projects.requiredModules[i]].versions[0]+'\n';
+		}
+		// write out optional modules
 		for (var c=0;c<TiDeveloper.Projects.modules.length;c++)
 		{
 			if (!excluded[TiDeveloper.Projects.modules[c].name])
@@ -498,11 +503,6 @@ $MQL('l:create.package.request',function(msg)
 			}
 		}
 
-		for (var i=0;i<TiDeveloper.Projects.requiredModules.length;i++)
-		{
-			manifest+= TiDeveloper.Projects.requiredModules[i] +':'+ TiDeveloper.Projects.requiredModuleMap[TiDeveloper.Projects.requiredModules[i]].versions[0]+'\n';
-		}
-		
 		var mf = TFS.getFile(project.dir,'manifest');
 		mf.write(manifest);
 		
@@ -513,7 +513,7 @@ $MQL('l:create.package.request',function(msg)
 		var app = Titanium.createApp(runtime,dist,project_name,project.appid,install);
 		var app_manifest = TFS.getFile(app.base,'manifest');
 		app_manifest.write(manifest);
-		var resources = TFS.getFile(project.dir,'resources');
+		var resources = TFS.getFile(project.dir,'Resources');
 		var tiapp = TFS.getFile(project.dir,'tiapp.xml');
 		tiapp.copy(app.base);
 		var launch_fn = function()
@@ -526,7 +526,8 @@ $MQL('l:create.package.request',function(msg)
 		};
 		TFS.asyncCopy(resources,app.resources,function()
 		{
-			var module_dir = TFS.getFile(app.base,'modules');
+			//QUICK HACK until packaging done
+			var module_dir = TFS.getFile(app.base,'modules',Titanium.platform);
 			var runtime_dir = TFS.getFile(app.base,'runtime');
 			var modules_to_bundle = [];
 			$.each(bundledEl,function()
@@ -543,7 +544,8 @@ $MQL('l:create.package.request',function(msg)
 				{
 					module_dir.createDirectory();
 					var module = TiDeveloper.Projects.module_map[key];
-					target = TFS.getFile(module.dir,module.versions[0]);
+					//TEMP HACK until distro is done
+					target = TFS.getFile(module.dir,Titanium.platform,module.versions[0]);
 					dest = TFS.getFile(module_dir,module.dir.name());
 				}
 				modules_to_bundle.push({target:target,dest:dest});
@@ -571,7 +573,7 @@ $MQL('l:create.package.request',function(msg)
 			}
 			else
 			{
-				// no modules to bundle, installer the net installer
+				// no modules to bundle, install the net installer
 				var net_installer_src = TFS.getFile(runtime,'installer');
 				var net_installer_dest = TFS.getFile(app.base,'installer');
 				TFS.asyncCopy(net_installer_src,net_installer_dest,function(filename,c,total)

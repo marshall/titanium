@@ -1,9 +1,9 @@
-/*
- * web_wit_policy_delegate.cpp
- *
- *  Created on: Feb 16, 2009
- *      Author: jorge
+/**
+ * Appcelerator Titanium - licensed under the Apache Public License 2
+ * see LICENSE in the root folder for details on the license.
+ * Copyright (c) 2009 Appcelerator, Inc. All Rights Reserved.
  */
+
 
 #include "webkit_policy_delegate.h"
 #include "win32_user_window.h"
