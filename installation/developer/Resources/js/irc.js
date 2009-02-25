@@ -81,6 +81,14 @@ $MQL('l:app.compiled',function()
 			return false;
 		}
 	});
+	
+
+	setTimeout(function () {
+		if (Titanium.platform == "win32") {
+			TiDeveloper.online = true;
+			TiDeveloper.IRC.initialize();
+		}
+	}, 2000);
 });
 
 
@@ -310,5 +318,3 @@ $MQL('l:send.irc.msg',function()
 		
 	}
 });
-
-
