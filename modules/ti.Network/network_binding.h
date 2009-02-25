@@ -30,11 +30,14 @@ namespace ti
 
 		bool HasOnlineStatusChangeListeners();
 		void OnlineStatusChange(bool online);
+		
+		static void RemoveBinding(void* binding);
 
 	private:
 		Host* host;
 		SharedBoundObject global;
 		std::vector<SharedBoundMethod> listeners;
+		static std::vector<SharedBoundObject> bindings;
 
 #if defined(OS_OSX)
 		NetworkReachability *networkDelegate;
@@ -45,6 +48,7 @@ namespace ti
 		void CreateIPAddress(const ValueList& args, SharedValue result);
 		void CreateTCPSocket(const ValueList& args, SharedValue result);
 		void CreateIRCClient(const ValueList& args, SharedValue result);
+		void CreateHTTPClient(const ValueList& args, SharedValue result);
 
 		void _GetByHost(std::string host, SharedValue result);
 		void GetHostByName(const ValueList& args, SharedValue result);

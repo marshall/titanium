@@ -10,9 +10,11 @@
 #include "ipaddress_binding.h"
 #include "host_binding.h"
 #include "irc/irc_client_binding.h"
+#include "http/http_client_binding.h"
 
 namespace ti
 {
+	std::vector<SharedBoundObject> NetworkBinding::bindings;
 	NetworkBinding::NetworkBinding(Host* host) : host(host), global(host->GetGlobalObject())
 	{
 		SharedValue online = Value::NewBool(true);
@@ -22,6 +24,7 @@ namespace ti
 		this->SetMethod("createTCPSocket",&NetworkBinding::CreateTCPSocket);
 		this->SetMethod("createIRCClient",&NetworkBinding::CreateIRCClient);
 		this->SetMethod("createIPAddress",&NetworkBinding::CreateIPAddress);
+		this->SetMethod("createHTTPClient",&NetworkBinding::CreateHTTPClient);
 		this->SetMethod("getHostByName",&NetworkBinding::GetHostByName);
 		this->SetMethod("getHostByAddress",&NetworkBinding::GetHostByAddress);
 
@@ -114,6 +117,34 @@ namespace ti
 	{
 		SharedPtr<IRCClientBinding> irc = new IRCClientBinding(host);
 		result->SetObject(irc);
+	}
+	void NetworkBinding::RemoveBinding(void* binding)
+	{
+		std::vector<SharedBoundObject>::iterator i = bindings.begin();
+		while(i!=bindings.end())
+		{
+			SharedBoundObject b = (*i);
+			if (binding == b.get())
+			{
+				bindings.erase(i);
+				break;
+			}
+			i++;
+		}
+	}
+	void NetworkBinding::CreateHTTPClient(const ValueList& args, SharedValue result)
+	{
+		if (args.size()!=2)
+		{
+			throw ValueException::FromString("invalid arguments");
+		}
+		std::string url = args.at(0)->ToString();
+		SharedBoundMethod callback = args.at(1)->ToMethod();
+		SharedPtr<HTTPClientBinding> http = new HTTPClientBinding(host,url,callback);
+		// we hold the reference to this until we're done with it
+		// which happense when the binding impl calls remove
+		this->bindings.push_back(http);
+		result->SetObject(http);
 	}
 	void NetworkBinding::AddConnectivityListener(const ValueList& args, SharedValue result)
 	{

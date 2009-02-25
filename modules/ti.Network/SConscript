@@ -4,7 +4,7 @@ import os, os.path as path
 Import("tiBuild")
 Import('build')
 
-sources = Glob('*.cpp')+Glob('irc/*.cpp')
+sources = Glob('*.cpp')+Glob('irc/*.cpp')+Glob('http/*.cpp')
 
 env = tiBuild.env.Clone();
 env.Append(CPPDEFINES = ('TITANIUM_NETWORK_API_EXPORT', 1))
