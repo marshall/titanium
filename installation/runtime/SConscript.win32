@@ -61,13 +61,12 @@ for m in modules.keys():
 	if p.exists(app_resources):
 		dir_util.copy_tree(app_resources, p.join(modules_dir, m, 'AppResources'))
 
-	# ignore this for RC4	
-	#os_module_resources = p.join(module_dir, 'Resources', build.os)
-	#all_module_resources = p.join(module_dir, 'Resources', 'all')
-	#if p.exists(os_module_resources):
-	#	dir_util.copy_tree(os_module_resources, p.join(modules_dir, m))
-	#if p.exists(all_module_resources):
-	#	dir_util.copy_tree(all_module_resources, p.join(modules_dir, m))
+	os_module_resources = p.join(module_dir, 'Resources', build.os)
+	all_module_resources = p.join(module_dir, 'Resources', 'all')
+	if p.exists(os_module_resources):
+		dir_util.copy_tree(os_module_resources, p.join(modules_dir, m))
+	if p.exists(all_module_resources):
+		dir_util.copy_tree(all_module_resources, p.join(modules_dir, m))
 
 	module_manifest = p.join(module_dir, 'manifest')
 	if p.exists(module_manifest):
