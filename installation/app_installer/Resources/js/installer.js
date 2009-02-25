@@ -32,7 +32,7 @@ function installApp(dir)
 	// remember in case we launch
 	launch = result.executable;
 	
-	var files = TFS.getFile(src,'resources').getDirectoryListing();
+	var files = TFS.getFile(src,'Resources').getDirectoryListing();
 
 	var count = files.length + 2; // 2 files below
 	var increment = 100 / count;
