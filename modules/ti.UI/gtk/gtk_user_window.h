@@ -131,6 +131,7 @@ namespace ti
 		 */
 		SharedPtr<GtkMenuItemImpl> context_menu;
 
+		void _OpenFilesWork(const ValueList&, SharedValue);
 	};
 
 }

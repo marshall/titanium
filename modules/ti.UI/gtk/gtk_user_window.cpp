@@ -49,6 +49,7 @@ GtkUserWindow::GtkUserWindow(Host *host, WindowConfig* config) : UserWindow(host
 	this->gdk_x = -1;
 	this->gdk_y = -1;
 
+	this->SetMethod("_OpenFilesWork", &GtkUserWindow::_OpenFilesWork);
 }
 
 GtkUserWindow::~GtkUserWindow()
@@ -857,14 +858,11 @@ struct OpenFilesJob
 	std::vector<std::string> types;
 };
 
-void* open_files_thread(gpointer data)
+void GtkUserWindow::_OpenFilesWork(const ValueList& args, SharedValue lresult)
 {
+	void* data = args.at(0)->ToVoidPtr();
 	OpenFilesJob* job = reinterpret_cast<OpenFilesJob*>(data);
 	SharedBoundList results = new StaticBoundList();
-
-	/* Must do this because we are running on a separate thread
-	 * from the GTK main loop */
-	gdk_threads_enter();
 
 	std::string text = "Select File";
 	GtkFileChooserAction a = GTK_FILE_CHOOSER_ACTION_OPEN;
@@ -914,22 +912,16 @@ void* open_files_thread(gpointer data)
 	}
 	gtk_widget_destroy(chooser);
 
-	/* Let gtk_main continue */
-	gdk_threads_leave();
-
-	ValueList args;
-	args.push_back(Value::NewList(results));
-
+	ValueList cargs;
+	cargs.push_back(Value::NewList(results));
 	try
 	{
-		job->host->InvokeMethodOnMainThread(job->callback, args);
+		job->callback->Call(cargs);
 	}
 	catch (ValueException &e)
 	{
 		std::cerr << "openFiles callback failed because of an exception" << std::endl;
 	}
-
-	return NULL;
 }
 
 void GtkUserWindow::OpenFiles(
@@ -952,6 +944,11 @@ void GtkUserWindow::OpenFiles(
 	job->file = file;
 	job->types = types;
 
-	g_thread_create(&open_files_thread, job, false, NULL);
+	// Call this on the main thread so we don't have to
+	// worry about glib threads.
+	SharedBoundMethod meth = this->Get("_OpenFilesWork")->ToMethod();
+	ValueList args;
+	args.push_back(Value::NewVoidPtr(job));
+	job->host->InvokeMethodOnMainThread(meth, args);
 }
 
