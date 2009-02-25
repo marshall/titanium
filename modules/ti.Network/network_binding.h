@@ -42,7 +42,13 @@ namespace ti
 	private:
 		Host* host;
 		SharedBoundObject global;
-		std::vector<SharedBoundMethod> listeners;
+
+		struct Listener {
+			SharedBoundMethod callback;
+			long id;
+		};
+		std::vector<Listener> listeners;
+		long next_listener_id;
 
 #if defined(OS_OSX)
 		NetworkReachability *networkDelegate;

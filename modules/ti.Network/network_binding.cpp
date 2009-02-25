@@ -13,7 +13,10 @@
 
 namespace ti
 {
-	NetworkBinding::NetworkBinding(Host* host) : host(host), global(host->GetGlobalObject())
+	NetworkBinding::NetworkBinding(Host* host) :
+		 host(host),
+		 global(host->GetGlobalObject()),
+		 next_listener_id(0)
 	{
 		SharedValue online = Value::NewBool(true);
 		this->Set("online", online);
@@ -119,21 +122,38 @@ namespace ti
 		SharedPtr<IRCClientBinding> irc = new IRCClientBinding(host);
 		result->SetObject(irc);
 	}
+
 	void NetworkBinding::AddConnectivityListener(const ValueList& args, SharedValue result)
 	{
 		ArgUtils::VerifyArgsException("addConnectivityListener", args, "m");
-
 		SharedBoundMethod target = args.at(0)->ToMethod();
-		this->listeners.push_back(target);
-#if defined(OS_OSX)
-		// lazy add the network connectivity listener
-		if (this->listeners.size() == 1)
-		{
-			SharedBoundMethod delegate = this->Get("FireOnlineStatusChange")->ToMethod();
-			networkDelegate = [[NetworkReachability alloc] initWithDelegate:delegate];
-		}
-#endif
 
+		Listener listener = Listener();
+		listener.id = this->next_listener_id++;
+		listener.callback = target;
+		this->listeners.push_back(listener);
+		result->SetInt(listener.id);
+	}
+
+	void NetworkBinding::RemoveConnectivityListener(
+		const ValueList& args,
+		SharedValue result)
+	{
+		ArgUtils::VerifyArgsException("removeConnectivityListener", args, "n");
+		int id = args.at(0)->ToInt();
+
+		std::vector<Listener>::iterator it = this->listeners.begin();
+		while (it != this->listeners.end())
+		{
+			if ((*it).id == id)
+			{
+				this->listeners.erase(it);
+				result->SetBool(true);
+				return;
+			}
+			it++;
+		}
+		result->SetBool(false);
 	}
 
 	bool NetworkBinding::HasNetworkStatusListeners()
@@ -148,10 +168,10 @@ namespace ti
 
 		ValueList args = ValueList();
 		args.push_back(Value::NewBool(online));
-		std::vector<SharedBoundMethod>::iterator it = this->listeners.begin();
+		std::vector<Listener>::iterator it = this->listeners.begin();
 		while (it != this->listeners.end())
 		{
-			SharedBoundMethod callback = (*it++);
+			SharedBoundMethod callback = (*it).callback;
 			try
 			{
 				host->InvokeMethodOnMainThread(callback, args);
@@ -159,42 +179,10 @@ namespace ti
 			catch(ValueException& e)
 			{
 				SharedString ss = e.GetValue()->DisplayString();
-				std::cerr << "ti.Network.NetworkStatus callback failed: " << *ss << std::endl;
+				std::cerr << "ti.Network.NetworkStatusChange callback failed: "
+				          << *ss << std::endl;
 			}
 		}
-	}
-
-	void NetworkBinding::RemoveConnectivityListener(const ValueList& args, SharedValue result)
-	{
-		if (args.size()!=1 || !args.at(0)->IsMethod())
-		{
-			throw ValueException::FromString("invalid argument");
-		}
-		SharedBoundMethod target = args.at(0)->ToMethod();
-		std::vector<SharedBoundMethod>::iterator it = this->listeners.begin();
-		while(it!=this->listeners.end())
-		{
-			SharedBoundMethod m = (*it);
-			if (m == target)
-			{
-				this->listeners.erase(it);
-				result->SetBool(true);
-
-				// once there are no more listeners, shut it down
-				if (this->listeners.size()==0)
-				{
-		#if defined(OS_OSX)
-					[networkDelegate release];
-					networkDelegate=nil;
-		#elif defined(OS_WIN32)
-					delete networkStatus;
-		#endif
-				}
-				return;
-			}
-			it++;
-		}
-		result->SetBool(false);
 	}
 
 	void NetworkBinding::FireOnlineStatusChange(const ValueList& args, SharedValue result)
