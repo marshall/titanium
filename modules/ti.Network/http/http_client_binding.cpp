@@ -109,8 +109,8 @@ namespace ti
 						args.push_back(self); // reference to us
 						args.push_back(Value::NewInt(count)); // total count
 						args.push_back(totalValue); // total size
-						args.push_back(Value::NewString(buf)); // buffer
-						args.push_back(Value::NewInt(c)); // size of buffer
+						args.push_back(Value::NewObject(new Blob(buf,c))); // buffer
+						args.push_back(Value::NewInt(c)); // buffer length
 
 						binding->host->InvokeMethodOnMainThread(binding->callback,args);
 					}

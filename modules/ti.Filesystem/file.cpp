@@ -58,6 +58,8 @@ namespace ti
 		this->SetMethod("setReadonly",&File::SetReadonly);
 		this->SetMethod("setWriteable",&File::SetWriteable);
 
+		this->SetMethod("unzip",&File::Unzip);
+
 		this->readLineFS = NULL;
 	}
 
@@ -725,6 +727,52 @@ namespace ti
 		{
 			Poco::File file(this->filename);
 			file.setWriteable(args.at(0)->ToBool());
+			result->SetBool(true);
+		}
+		catch (Poco::FileNotFoundException &fnf)
+		{
+			result->SetBool(false);
+		}
+		catch (Poco::PathNotFoundException &fnf)
+		{
+			result->SetBool(false);
+		}
+		catch (Poco::Exception& exc)
+		{
+			throw ValueException::FromString(exc.displayText());
+		}
+	}
+	/**
+	 * Function: Unzip
+	 *   unzip this file to destination
+	 *
+	 * Parameters:
+	 *   dest - destination directory to unzip this file
+	 *
+	 * Returns:
+	 *   true if succeeded
+	 */
+	void File::Unzip(const ValueList& args, SharedValue result)
+	{
+		if (args.size()!=1)
+		{
+			throw ValueException::FromString("invalid arguments - expected destination");
+		}
+		try
+		{
+			Poco::File from(this->filename);
+			Poco::File to(FileSystemUtils::GetFileName(args.at(0)));
+			std::string from_s = from.path();
+			std::string to_s = to.path();
+			if (!to.exists())
+			{
+				to.createDirectory();
+			}
+			if (!to.isDirectory())
+			{
+				throw ValueException::FromString("destination must be a directory");
+			}
+			kroll::FileUtils::Unzip(from_s,to_s);
 			result->SetBool(true);
 		}
 		catch (Poco::FileNotFoundException &fnf)

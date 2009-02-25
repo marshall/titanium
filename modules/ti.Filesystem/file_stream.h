@@ -39,12 +39,14 @@ public:
 	 *
 	 * Parameters:
 	 *   mode - string describing abilities of the file stream (reading/writing/etc)
+	 *   binary - boolean to determine if the stream should be opened as binary file
+	 *   append - boolean to determine if the stream should be appended(true) or truncated(false)
 	 *
 	 * Returns:
 	 *   true if the file stream is opened successfully; false otherwise
 	 */
 	void Open(const ValueList& args, SharedValue result);
-	bool Open(std::string mode);
+	bool Open(std::string mode, bool binary = false, bool append = false);
 	/**
 	 * Function: Close
 	 *   Closes this file stream.  No further reads/writes can be performed on this file stream unless Open is called

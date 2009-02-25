@@ -56,14 +56,21 @@
 					var zip = false;
 					Titanium.Network.createHTTPClient(url,function(network,count,total,buf,len)
 					{
-						if (count == len)
+						try
 						{
-							textarea.value+="RECEIVED = "+network.status+"\n";
-							textarea.value+="Content-Type = "+network.getHeader('Content-Type')+"\n";
-							zip = network.getHeader('Content-Type').indexOf('/zip') > 0;
+							if (count == len)
+							{
+								textarea.value+="RECEIVED = "+network.status+"\n";
+								textarea.value+="Content-Type = "+network.getHeader('Content-Type')+"\n";
+								zip = network.getHeader('Content-Type').indexOf('/zip') > 0;
+							}
+							if (!zip) textarea.value+=buf+"\n";
+							textarea.value+="count="+count+",total="+total+",len="+len+",zip="+zip+"\n";
 						}
-						textarea.value+="count="+count+",total="+total+",len="+len+",zip="+zip+"\n";
-						if (!zip) textarea.value+=buf+"\n";
+						catch(E)
+						{
+							Titanium.API.error("Exception = "+E);
+						}
 					});
 				}
 				catch(E)
