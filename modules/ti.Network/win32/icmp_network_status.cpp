@@ -28,9 +28,6 @@ namespace ti
 
 	bool ICMPNetworkStatus::GetStatus()
 	{
-		if (this->bus == NULL)
-			return true;
-
 		for (int i = 0; i < this->hosts.size(); i++)
 		{
 			if (ICMPClient::pingIPv4(this->hosts.at(i)) > 0)

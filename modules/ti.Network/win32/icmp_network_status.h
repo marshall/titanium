@@ -9,10 +9,10 @@
 
 namespace ti
 {
-	class DBusNetworkStatus : public NetworkStatus
+	class ICMPNetworkStatus : public NetworkStatus
 	{
 		public:
-		DBusNetworkStatus(NetworkBinding* binding);
+		ICMPNetworkStatus(NetworkBinding* binding);
 
 		void Start();
 		void Shutdown(bool async=false);
@@ -23,6 +23,7 @@ namespace ti
 		virtual bool GetStatus();
 		virtual void CleanupLoop();
 		bool GetStatusFromDBus();
+		std::vector<std::string> hosts;
 	};
 }
 
