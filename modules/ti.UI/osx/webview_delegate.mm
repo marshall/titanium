@@ -104,6 +104,9 @@
 		double version = global->Get("version")->ToDouble();
 		NSString *useragent = [NSString stringWithFormat:@"%s/%0.2f",PRODUCT_NAME,version];
 		[webView setApplicationNameForUserAgent:useragent];
+		// place our user agent string in the global so we can later use it
+		const char *ua = [[webView userAgentForURL:[NSURL URLWithString:@"http://titaniumapp.com"]] UTF8String];
+		global->Set("userAgent",Value::NewString(ua));
 	}
 	return self;
 }

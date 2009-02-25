@@ -244,6 +244,12 @@ Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config) :
 	_bstr_t ua(userAgent);
 	web_view->setApplicationNameForUserAgent(ua.copy());
 
+	// place our user agent string in the global so we can later use it
+	_bstr_t uaurl("http://titaniumapp.com");
+	_bstr_t uaresp;
+	web_view->userAgentForURL(uaurl.copy(),&uaresp);
+	global->Set("userAgent",Value::NewString((char*)uaresp));
+
 	std::cout << "create frame load delegate " << std::endl;
 	frameLoadDelegate = new Win32WebKitFrameLoadDelegate(this);
 	uiDelegate = new Win32WebKitUIDelegate(this);

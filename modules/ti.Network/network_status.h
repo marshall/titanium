@@ -4,6 +4,8 @@
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
 
+#ifndef OS_OSX
+
 #ifndef _NETWORK_STATUS_H_
 #define _NETWORK_STATUS_H_
 
@@ -38,5 +40,7 @@ namespace ti
 		virtual void CleanupLoop() {};
 	};
 }
+
+#endif
 
 #endif

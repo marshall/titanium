@@ -364,6 +364,17 @@ namespace ti
 			 *   true if succeeded
 			 */
 			void SetWriteable(const ValueList& args, SharedValue result);
+			/**
+			 * Function: Unzip
+			 *   unzip this file to destination
+			 *
+			 * Parameters:
+			 *   dest - destination directory to unzip this file
+			 *
+			 * Returns:
+			 *   true if succeeded
+			 */
+			void Unzip(const ValueList& args, SharedValue result);
 	};
 }
 

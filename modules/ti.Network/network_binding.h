@@ -36,13 +36,14 @@ namespace ti
 		NetworkBinding(Host*);
 		virtual ~NetworkBinding();
 
+		static void RemoveBinding(void* binding);
 		bool HasNetworkStatusListeners();
 		void NetworkStatusChange(bool online);
 
 	private:
 		Host* host;
 		SharedBoundObject global;
-
+		static std::vector<SharedBoundObject> bindings;
 		struct Listener {
 			SharedBoundMethod callback;
 			long id;
@@ -59,6 +60,7 @@ namespace ti
 		void CreateIPAddress(const ValueList& args, SharedValue result);
 		void CreateTCPSocket(const ValueList& args, SharedValue result);
 		void CreateIRCClient(const ValueList& args, SharedValue result);
+		void CreateHTTPClient(const ValueList& args, SharedValue result);
 
 		void _GetByHost(std::string host, SharedValue result);
 		void GetHostByName(const ValueList& args, SharedValue result);

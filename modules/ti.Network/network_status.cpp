@@ -5,6 +5,8 @@
  */
 #include "network_binding.h"
 
+#ifndef OS_OSX
+
 namespace ti
 {
 	NetworkStatus::NetworkStatus(NetworkBinding* binding)
@@ -75,3 +77,5 @@ namespace ti
 		this->CleanupLoop();
 	}
 }
+
+#endif

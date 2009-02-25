@@ -45,12 +45,46 @@
 			});
 			
 			updateOnlineStatus(Titanium.Network.online);
+			
+			function fetchNetwork()
+			{
+				var textarea = document.getElementById("output");
+				var url = document.getElementById("url").value;
+				textarea.value = 'Fetching....'+url+"\n";
+				try
+				{
+					var zip = false;
+					Titanium.Network.createHTTPClient(url,function(network,count,total,buf,len)
+					{
+						try
+						{
+							if (count == len)
+							{
+								textarea.value+="RECEIVED = "+network.status+"\n";
+								textarea.value+="Content-Type = "+network.getHeader('Content-Type')+"\n";
+								zip = network.getHeader('Content-Type').indexOf('/zip') > 0;
+							}
+							if (!zip) textarea.value+=buf+"\n";
+							textarea.value+="count="+count+",total="+total+",len="+len+",zip="+zip+"\n";
+						}
+						catch(E)
+						{
+							Titanium.API.error("Exception = "+E);
+						}
+					});
+				}
+				catch(E)
+				{
+					alert("Error="+E);
+				}
+			}
 		</script>
 	</head>
 	<body>
 		<h2>Titanium Network test app</h2>
 		<div>
 			<button onclick="fetchLocalhost()">Fetch localhost</button>
+			<input type="text" value="http://downloads.sourceforge.net/appcelerator/titanium-src-0.1.zip?modtime=1228786050&big_mirror=0" id="url"/> <button onclick="fetchNetwork()">Fetch with network</button>
 		</div>
 		<div id="online">retrieving..</div>
 		<div>
