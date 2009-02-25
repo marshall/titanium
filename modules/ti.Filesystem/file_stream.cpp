@@ -48,15 +48,11 @@ bool FileStream::Open(std::string mode, bool binary, bool append)
 
 	try
 	{
-		std::ios::openmode flags;
+		std::ios::openmode flags = std::ios::in;
 		bool output = false;
 		if (binary)
 		{
 			flags|=std::ios::binary;
-		}
-		if (!append)
-		{
-			flags|=std::ios::trunc;
 		}
 		if(mode == FileStream::MODE_APPEND)
 		{
@@ -70,6 +66,10 @@ bool FileStream::Open(std::string mode, bool binary, bool append)
 		else if(mode == FileStream::MODE_READ)
 		{
 			flags|=std::ios::in;
+		}
+		if (!append && output)
+		{
+			flags|=std::ios::trunc;
 		}
 #ifdef DEBUG
 		std::cout << "FILE OPEN FLAGS = " << flags << ", binary=" << binary << ", mode = " << mode << ", append=" << append << std::endl;
@@ -166,7 +166,7 @@ void FileStream::Write(const ValueList& args, SharedValue result)
 }
 void FileStream::Read(const ValueList& args, SharedValue result)
 {
-	if(! this->stream)
+	if(!this->stream)
 	{
 		throw ValueException::FromString("FileStream must be opened before calling read");
 	}
@@ -176,12 +176,12 @@ void FileStream::Read(const ValueList& args, SharedValue result)
 		std::string contents;
 
 		Poco::FileInputStream* fis = dynamic_cast<Poco::FileInputStream*>(this->stream);
-		if(! fis)
+		if(!fis)
 		{
 			throw ValueException::FromString("FileStream must be opened for reading before calling read");
 		}
 
-		while(! fis->eof())
+		while(!fis->eof())
 		{
 			std::string s;
 			std::getline(*fis, s);
@@ -202,7 +202,7 @@ void FileStream::ReadLine(const ValueList& args, SharedValue result)
 	{
 		throw ValueException::FromString("FileStream must be opened before calling readLine");
 	}
-
+	
 	try
 	{
 		std::string line;
