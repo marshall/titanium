@@ -36,9 +36,10 @@ namespace ti {
 			}
 		}
 
-		id clickContext = nil;
+		NSMutableDictionary* clickContext = [[NSMutableDictionary alloc] initWithCapacity:10];
+
 		if (!callback.isNull()) {
-			clickContext = [[MethodWrapper alloc] initWithMethod:new SharedBoundMethod(callback)];
+			[clickContext setObject:[[MethodWrapper alloc] initWithMethod:new SharedBoundMethod(callback)] forKey:@"method_wrapper"];
 		}
 
 		[GrowlApplicationBridge

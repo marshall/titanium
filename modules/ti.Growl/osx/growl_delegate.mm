@@ -33,12 +33,14 @@
 	ready = TRUE;
 }
 
--(void) growlNotificationWasClicked:(id)clickContext
+- (void) growlNotificationWasClicked:(id)clickContext
 {
 	NSLog(@">>>>>>>>>>>>>>> Growl notification clicked");
 	if (clickContext != nil)
 	{
-		MethodWrapper *methodWrapper = (MethodWrapper*)clickContext;
+		NSDictionary *dictionary = (NSDictionary*)clickContext;
+		
+		MethodWrapper *methodWrapper = (MethodWrapper*)[dictionary objectForKey:@"method_wrapper"];
 		
 		SharedBoundMethod *boundMethod = [methodWrapper method];
 		ValueList args;
