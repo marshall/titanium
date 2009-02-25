@@ -23,13 +23,12 @@ $MQL('l:app.compiled',function()
 				$('#twitter_password').val(TiDeveloper.Feeds.twitterPassword);
 				swiss('#twitter_username').fire('revalidate')
 				swiss('#twitter_password').fire('revalidate')
-				
 				break;
 			}
 	   }, function(tx, error) 
 	   {
-	       tx.executeSql("CREATE TABLE Twitter (id REAL UNIQUE, following REAL, username TEXT, password TEXT)")
-	   });
+	       tx.executeSql("CREATE TABLE Twitter (id REAL UNIQUE, following INT, username TEXT, password TEXT)");
+	   })
 	});
 	
 	// load twitter feed
@@ -74,9 +73,6 @@ TiDeveloper.Feeds.saveTwitterCreds = function(username,password)
 		swiss('#twitter_username').fire('revalidate')
 		swiss('#twitter_password').fire('revalidate')
 		
-		TiDeveloper.Feeds.twitterUsername = username;
-		TiDeveloper.Feeds.twitterPassword = password;
-		
 		//add
 		if (TiDeveloper.Feeds.twitterUsername == null)
 		{
@@ -98,6 +94,9 @@ TiDeveloper.Feeds.saveTwitterCreds = function(username,password)
 				[username,password,1]);
 		    });
 		}
+
+		TiDeveloper.Feeds.twitterUsername = username;
+		TiDeveloper.Feeds.twitterPassword = password;
 
 		if (TiDeveloper.Feeds.twitterFollowing == false && username != null)
 		{
@@ -122,7 +121,7 @@ TiDeveloper.Feeds.followUs = function()
 			// update database
 		    db.transaction(function (tx) 
 		    {
-		        tx.executeSql("UPDATE Twitter set following = 1 WHERE id = 1",[]); 
+		        tx.executeSql("UPDATE Twitter set following = 1 WHERE id = 1");
 		    });
 
 		}

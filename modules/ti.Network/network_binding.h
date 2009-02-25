@@ -12,12 +12,17 @@
 namespace ti
 {
 	class NetworkBinding;
+	class NetworkStatus;
 }
 
 #if defined(OS_OSX)
 #include "osx/network_status.h"
+#elif defined(OS_LINUX)
+#include "network_status.h"
+#include "linux/dbus_network_status.h"
 #elif defined(OS_WIN32)
-#include "win32/win32_wmi_network_status.h"
+#include "network_status.h"
+#include "win32/icmp_network_status.h"
 #endif
 
 namespace ti
@@ -28,23 +33,31 @@ namespace ti
 		NetworkBinding(Host*);
 		virtual ~NetworkBinding();
 
-		bool HasOnlineStatusChangeListeners();
-		void OnlineStatusChange(bool online);
+		static void RemoveBinding(void* binding);
+		bool HasNetworkStatusListeners();
+		void NetworkStatusChange(bool online);
 
 	private:
 		Host* host;
 		SharedBoundObject global;
-		std::vector<SharedBoundMethod> listeners;
+		static std::vector<SharedBoundObject> bindings;
+		struct Listener {
+			SharedBoundMethod callback;
+			long id;
+		};
+		std::vector<Listener> listeners;
+		long next_listener_id;
 
 #if defined(OS_OSX)
 		NetworkReachability *networkDelegate;
-#elif defined(OS_WIN32)
-		Win32WMINetworkStatus *networkStatus;
+#else 
+		NetworkStatus *net_status;
 #endif
 
 		void CreateIPAddress(const ValueList& args, SharedValue result);
 		void CreateTCPSocket(const ValueList& args, SharedValue result);
 		void CreateIRCClient(const ValueList& args, SharedValue result);
+		void CreateHTTPClient(const ValueList& args, SharedValue result);
 
 		void _GetByHost(std::string host, SharedValue result);
 		void GetHostByName(const ValueList& args, SharedValue result);

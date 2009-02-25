@@ -32,35 +32,56 @@ FileStream::~FileStream() {
 
 void FileStream::Open(const ValueList& args, SharedValue result)
 {
-	std::string mode = args.at(0)->ToString();
-	bool opened = this->Open(mode);
-
+	std::string mode = FileStream::MODE_READ;
+	bool binary = false;
+	bool append = false;
+	if (args.size()>=1) mode = args.at(0)->ToString();
+	if (args.size()>=2) binary = args.at(1)->ToBool();
+	if (args.size()>=3) append = args.at(2)->ToBool();
+	bool opened = this->Open(mode,binary,append);
 	result->SetBool(opened);
 }
-bool FileStream::Open(std::string mode)
+bool FileStream::Open(std::string mode, bool binary, bool append)
 {
 	// close the prev stream if needed
 	this->Close();
 
 	try
 	{
-		if(mode == FileStream::MODE_READ)
+		std::ios::openmode flags = std::ios::in;
+		bool output = false;
+		if (binary)
 		{
-			this->stream = new Poco::FileInputStream(this->filename);
+			flags|=std::ios::binary;
 		}
-		else if(mode == FileStream::MODE_APPEND)
+		if(mode == FileStream::MODE_APPEND)
 		{
-			this->stream = new Poco::FileOutputStream(this->filename, std::ios_base::out | std::ios_base::app);
+			flags|=std::ios::app;
 		}
 		else if(mode == FileStream::MODE_WRITE)
 		{
-			this->stream = new Poco::FileOutputStream(this->filename, std::ios_base::out | std::ios_base::trunc);
+			flags|=std::ios::out;
+			output = true;
+		}
+		else if(mode == FileStream::MODE_READ)
+		{
+			flags|=std::ios::in;
+		}
+		if (!append && output)
+		{
+			flags|=std::ios::trunc;
+		}
+#ifdef DEBUG
+		std::cout << "FILE OPEN FLAGS = " << flags << ", binary=" << binary << ", mode = " << mode << ", append=" << append << std::endl;
+#endif
+		if (output)
+		{
+			this->stream = new Poco::FileOutputStream(this->filename,flags);
 		}
 		else
 		{
-			throw ValueException::FromString("Unknown file stream open mode given");
+			this->stream = new Poco::FileInputStream(this->filename,flags);
 		}
-
 		return true;
 	}
 	catch (Poco::Exception& exc)
@@ -71,7 +92,6 @@ bool FileStream::Open(std::string mode)
 void FileStream::Close(const ValueList& args, SharedValue result)
 {
 	bool closed = this->Close();
-
 	result->SetBool(closed);
 }
 bool FileStream::Close()
@@ -94,24 +114,50 @@ bool FileStream::Close()
 }
 void FileStream::Write(const ValueList& args, SharedValue result)
 {
-	if(! this->stream)
-	{
-		throw ValueException::FromString("FileStream must be opened before calling write");
-	}
-
 	try
 	{
-		std::string text = args.at(0)->ToString();
+		char *text = NULL;
+		int size = 0;
+		if (args.at(0)->IsObject())
+		{
+			SharedBoundObject b = args.at(0)->ToObject();
+			SharedPtr<Blob> blob = b.cast<Blob>();
+			if (!blob.isNull())
+			{
+				text = (char*)blob->Get();
+				size = (int)blob->Length();
+			}
+		}
+		else if (args.at(0)->IsString())
+		{
+			text = (char*)args.at(0)->ToString();
+		}
+		
+		if (size==0)
+		{
+			size = strlen(text);
+		}
+		
+		if (text == NULL)
+		{
+			throw ValueException::FromString("couldn't determine value");
+		}
+		if (size <= 0)
+		{
+			throw ValueException::FromString("couldn't determine size");
+		}
 
 		Poco::FileOutputStream* fos = dynamic_cast<Poco::FileOutputStream*>(this->stream);
-		if(! fos)
+		if(!fos)
 		{
 			throw ValueException::FromString("FileStream must be opened for writing before calling write");
 		}
 
-		fos->write(text.c_str(), text.size());
-
+		fos->write(text, size);
 		result->SetBool(true);
+#ifdef DEBUG
+		std::cout << "wrote: " << size << " bytes" << std::endl;
+#endif
 	}
 	catch (Poco::Exception& exc)
 	{
@@ -120,7 +166,7 @@ void FileStream::Write(const ValueList& args, SharedValue result)
 }
 void FileStream::Read(const ValueList& args, SharedValue result)
 {
-	if(! this->stream)
+	if(!this->stream)
 	{
 		throw ValueException::FromString("FileStream must be opened before calling read");
 	}
@@ -130,12 +176,12 @@ void FileStream::Read(const ValueList& args, SharedValue result)
 		std::string contents;
 
 		Poco::FileInputStream* fis = dynamic_cast<Poco::FileInputStream*>(this->stream);
-		if(! fis)
+		if(!fis)
 		{
 			throw ValueException::FromString("FileStream must be opened for reading before calling read");
 		}
 
-		while(! fis->eof())
+		while(!fis->eof())
 		{
 			std::string s;
 			std::getline(*fis, s);
@@ -156,7 +202,7 @@ void FileStream::ReadLine(const ValueList& args, SharedValue result)
 	{
 		throw ValueException::FromString("FileStream must be opened before calling readLine");
 	}
-
+	
 	try
 	{
 		std::string line;
