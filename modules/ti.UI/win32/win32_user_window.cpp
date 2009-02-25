@@ -12,11 +12,12 @@
 #include "win32_tray_item.h"
 #include "string_util.h"
 #include "../url/app_url.h"
-#include <math.h>
+#include <cmath>
 #include <shellapi.h>
 #include <comutil.h>
 #include <commdlg.h>
 #include <shlobj.h>
+#include <windows.h>
 
 #define STUB() printf("Method is still a stub, %s:%i\n", __FILE__, __LINE__)
 #define SetFlag(x,flag,b) ((b) ? x |= flag : x &= ~flag)
@@ -245,10 +246,12 @@ Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config) :
 	web_view->setApplicationNameForUserAgent(ua.copy());
 
 	// place our user agent string in the global so we can later use it
+	SharedBoundObject global = host->GetGlobalObject();
 	_bstr_t uaurl("http://titaniumapp.com");
-	_bstr_t uaresp;
-	web_view->userAgentForURL(uaurl.copy(),&uaresp);
-	global->Set("userAgent",Value::NewString((char*)uaresp));
+	BSTR uaresp;
+	web_view->userAgentForURL(uaurl.copy(), &uaresp);
+	std::string ua_str = _bstr_t(uaresp);
+	global->Set("userAgent", Value::NewString(ua_str.c_str()));
 
 	std::cout << "create frame load delegate " << std::endl;
 	frameLoadDelegate = new Win32WebKitFrameLoadDelegate(this);
@@ -526,11 +529,59 @@ void Win32UserWindow::SetTitle(std::string& title) {
 	SetWindowText(window_handle, title.c_str());
 }
 
+std::string Win32UserWindow::NormalizeURL(std::string originalURL)
+{
+	// append <appID> if needed to the url
+
+	bool appurl = true;
+
+	std::string url(originalURL);
+	std::transform(url.begin(), url.end(), url.begin(), ::tolower);
+	if(url.find("http://") == 0 || url.find("https://") == 0)
+	{
+		appurl = false;
+	}
+
+	if(appurl)
+	{
+		// url will end up as app://<appID>/path
+		std::string appID = AppConfig::Instance()->GetAppID();
+
+		std::string urlPrefix("app://");
+		urlPrefix.append(appID);
+
+		if(url.find(urlPrefix) == 0)
+		{
+			// all good - nothing to do
+			url = originalURL;
+		}
+		else if(url.find("app://") == 0)
+		{
+			// need to add the <appID> .. keep one of the / characters
+			url = urlPrefix + originalURL.substr(5);
+		}
+		else if(url.find("/") == 0)
+		{
+			// need to add app://<appID>
+			url = urlPrefix + originalURL;
+		}
+		else
+		{
+			// need to add app://<appID>
+			// TODO - how do we handle relative URLs??
+			url = urlPrefix + "/" + originalURL;
+		}
+	}
+
+	return url;
+}
+
 void Win32UserWindow::SetURL(std::string& url_) {
 	std::string url = url_;
 
 	this->config->SetURL(url);
 
+	url = this->NormalizeURL(url);
 	std::cout << "SetURL: " << url << std::endl;
 
 	IWebMutableURLRequest* request = 0;

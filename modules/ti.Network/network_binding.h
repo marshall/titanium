@@ -17,15 +17,12 @@ namespace ti
 
 #if defined(OS_OSX)
 #include "osx/network_status.h"
-
 #elif defined(OS_LINUX)
 #include "network_status.h"
 #include "linux/dbus_network_status.h"
-
 #elif defined(OS_WIN32)
 #include "network_status.h"
-//#include "win32/win32_network_status.h"
-
+#include "win32/icmp_network_status.h"
 #endif
 
 namespace ti
