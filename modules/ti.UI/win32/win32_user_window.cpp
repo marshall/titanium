@@ -341,6 +341,11 @@ Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config) :
 	restore_bounds = GetBounds();
 	restore_styles = GetWindowLong(window_handle, GWL_STYLE);
 
+	if(this->config->IsFullScreen())
+	{
+		this->SetFullScreen(true);
+	}
+
 	// set this flag to indicate that when the frame is loaded
 	// we want to show the window - we do this to prevent white screen
 	// while the URL is being fetched

@@ -172,13 +172,10 @@
 			}
 			function openWindowFullScreen()
 			{
-				w = Titanium.UI.createWindow();
+				w = Titanium.UI.createWindow("app://fullscreen.html");
 				try
 				{
 					w.setTitle("hello world from fullscreen");
-					w.setURL("app://fullscreen.html");
-					w.setUsingChrome(true);
-					w.setFullScreen(true);
 					w.open();
 				}
 				catch(e)
@@ -249,6 +246,11 @@
 				var d = new Date(); 
 				var s = (d.getHours()<10?'0'+d.getHours():d.getHours()) + ":" + (d.getMinutes()<10?'0'+d.getMinutes():d.getMinutes()) + ":" + (d.getSeconds()<10?'0'+d.getSeconds():d.getSeconds());
 				return s;
+			}
+
+			window.onunload = function()
+			{
+				alert("bye bye from window.onunload");
 			}
 		</script>
 	</head>

@@ -21,7 +21,7 @@
    </window>
    <window>
       <id>smallscreen</id>
-      <title>Titanium Smallscreen Window</title>
+      <title>Titanium Small Screen Window</title>
       <url-regex>app://small.*.html</url-regex>
       <width>400</width>
       <height>275</height>
@@ -29,6 +29,20 @@
       <maximizable>false</maximizable>
       <closeable>true</closeable>
       <fullscreen>false</fullscreen>
+      <resizable>false</resizable>
+      <chrome>true</chrome>
+      <visible>true</visible>
+   </window>
+   <window>
+      <id>fullscreen</id>
+      <title>Titanium Full Screen Window</title>
+      <url-regex>app://full.*.html</url-regex>
+      <width>600</width>
+      <height>400</height>
+      <minimizable>true</minimizable>
+      <maximizable>false</maximizable>
+      <closeable>true</closeable>
+      <fullscreen>true</fullscreen>
       <resizable>false</resizable>
       <chrome>true</chrome>
       <visible>true</visible>
