@@ -145,6 +145,10 @@ namespace ti {
 				int buttonHeight = 14;
 				int inputHeight = 14;
 
+				if(! this->showInputText)
+				{
+					height -= (inputHeight + margin);
+				}
 
 				// Write out the extended dialog template header
 				tmp.Write<WORD>(1); // dialog version
