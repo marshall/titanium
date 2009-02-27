@@ -454,11 +454,15 @@ static void populate_popup_cb(WebKitWebView *web_view,
 	if (m.isNull())
 		m = UIModule::GetContextMenu().cast<GtkMenuItemImpl>();
 
-	GList* children = gtk_container_get_children(GTK_CONTAINER(menu));
-	for (size_t i = 0; i < g_list_length(children); i++)
+	// If we are not in debug mode, remove the default WebKit menu items
+	if (!user_window->GetHost()->IsDebugMode())
 	{
-		GtkWidget* w = (GtkWidget*) g_list_nth_data(children, i);
-		gtk_container_remove(GTK_CONTAINER(menu), w);
+		GList* children = gtk_container_get_children(GTK_CONTAINER(menu));
+		for (size_t i = 0; i < g_list_length(children); i++)
+		{
+			GtkWidget* w = (GtkWidget*) g_list_nth_data(children, i);
+			gtk_container_remove(GTK_CONTAINER(menu), w);
+		}
 	}
 
 	if (m.isNull())
