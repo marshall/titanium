@@ -4,9 +4,7 @@
 import os, re, sys, inspect, os.path as path
 import subprocess
 
-sys.path.append(path.abspath('.')+'/kroll')
-from build.common import BuildConfig
-
+from kroll import BuildConfig
 build = BuildConfig(
 	PRODUCT_VERSION = '0.2',
 	INSTALL_PREFIX = '/usr/local',
@@ -62,13 +60,17 @@ if ARGUMENTS.get('debug_refcount', 0) == 1:
 
 
 if build.is_win32():
-	execfile('kroll/build/win32.py')
+	execfile('kroll/site_scons/win32.py')
 	build.env.Append(CCFLAGS=['/EHsc'])
 	if build.debug:
 		build.env.Append(CPPDEFINES=('WIN32_CONSOLE', 1))
 	build.env.Append(LINKFLAGS=['/DEBUG', '/PDB:${TARGET}.pdb'])
 
-if build.is_linux() or build.is_osx():
+if build.is_linux() and build.arch == '64':
+    build.env.Append(CPPFLAGS=['-m64', '-Wall', '-Werror','-fno-common','-fvisibility=hidden'])
+    build.env.Append(LINKFLAGS=['-m64'])
+
+elif build.is_linux() or build.is_osx():
     build.env.Append(CPPFLAGS=['-m32', '-Wall', '-Werror','-fno-common','-fvisibility=hidden'])
     build.env.Append(LINKFLAGS=['-m32'])
 
