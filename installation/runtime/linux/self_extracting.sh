@@ -4,10 +4,7 @@ export TMPDIR=`mktemp -d /tmp/kXXXXXX`
 ARCHIVE=`awk '/^__ARCHIVE_BELOW__/ {print NR + 1; exit 0; }' $0`
 tail -n+$ARCHIVE $0 | tar xz -C $TMPDIR
 
-CDIR=`pwd`
-cd $TMPDIR
-./titanium_runtime
-cd $CDIR
+$TMPDIR/titanium_runtime
 rm -rf $TMPDIR
 
 exit 0
