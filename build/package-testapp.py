@@ -54,7 +54,12 @@ elif sys.platform == 'darwin':
 top_dir = path.abspath('./../')
 build_dir = path.join(top_dir, 'build')
 build_dir = path.join(build_dir, osname)
-third_party_dir = path.join(top_dir, 'kroll','thirdparty', osname);
+
+if (osname == 'linux' and os.uname()[4] == 'x86_64'):
+ third_party_dir = path.join(top_dir, 'kroll','thirdparty', 'linux64');
+else:
+ third_party_dir = path.join(top_dir, 'kroll','thirdparty', osname); 
+
 support_dir = path.join(top_dir,'support',osname)
 
 app_dir = path.join(build_dir, app_name)
