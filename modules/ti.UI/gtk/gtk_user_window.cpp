@@ -194,7 +194,7 @@ void GtkUserWindow::SetupDecorations()
 {
 	if (this->gtk_window != NULL)
 	{
-		GdkWindow *gdk_window = gtk_widget_get_window(GTK_WIDGET(this->gtk_window));
+		GdkWindow* gdk_window = GTK_WIDGET(this->gtk_window)->window;
 		int d = 0;
 
 		if (this->config->IsUsingChrome())
