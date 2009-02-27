@@ -105,7 +105,38 @@ namespace ti {
 	{
 		switch (iMsg)
 		{
-			case WM_INITDIALOG: return TRUE;
+			case WM_INITDIALOG:
+			{
+				Win32PopupDialog* popupDialog = popups[GetCurrentThreadId()];
+				HWND hwndOwner = (popupDialog == NULL ? NULL : popupDialog->windowHandle);
+				if (hwndOwner == NULL)
+				{
+					hwndOwner = GetDesktopWindow();
+				}
+
+				RECT rcOwner;
+				RECT rcDlg;
+				RECT rc;
+				GetWindowRect(hwndOwner, &rcOwner);
+				GetWindowRect(hDlg, &rcDlg);
+				CopyRect(&rc, &rcOwner);
+
+				// Offset the owner and dialog box rectangles so that right and bottom
+				// values represent the width and height, and then offset the owner again
+				// to discard space taken up by the dialog box.
+				OffsetRect(&rcDlg, -rcDlg.left, -rcDlg.top);
+				OffsetRect(&rc, -rc.left, -rc.top);
+				OffsetRect(&rc, -rcDlg.right, -rcDlg.bottom);
+
+				SetWindowPos(hDlg,
+							HWND_TOP,
+							rcOwner.left + (rc.right / 2),
+							rcOwner.top + (rc.bottom / 2),
+							0, 0,							// Ignores size arguments.
+							SWP_NOSIZE);
+
+				return TRUE;
+			}
 			case WM_COMMAND:
 				if(GET_WM_COMMAND_ID(wParam, lParam) == IDOK)
 				{
