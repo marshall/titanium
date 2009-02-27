@@ -8,9 +8,11 @@
 #define APP_URL_H_
 
 #include <curl/curl.h>
+#include <string>
 
 namespace ti {
 	const char * AppURLGetAbsolutePath(const char *full_path);
+	std::string AppURLNormalizeURL(std::string originalURL, std::string appID);
 }
 
 extern struct Curl_local_handler Titanium_app_url_handler;
