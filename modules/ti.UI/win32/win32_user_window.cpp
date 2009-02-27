@@ -25,6 +25,9 @@
 
 using namespace ti;
 
+// slightly off white, there's probably a better way to do this
+COLORREF transparencyColor = RGB(0xF9, 0xF9, 0xF9);
+
 static void* SetWindowUserData(HWND hwnd, void* user_data) {
 	return
 		reinterpret_cast<void*>(SetWindowLongPtr(hwnd, GWLP_USERDATA,
@@ -870,15 +873,11 @@ void Win32UserWindow::ReloadTiWindowConfig()
 
 	//UINT flags = SWP_NOZORDER | SWP_FRAMECHANGED;
 
-	//sizeTo(tiWindowConfig->getX(), tiWindowConfig->getY(), tiWindowConfig->getWidth(), tiWindowConfig->getHeight(), flags);
-
 	//SetLayeredWindowAttributes(hWnd, 0, (BYTE)0, LWA_ALPHA);
-	/*
-	if (tiWindowConfig->getTransparency() < 1.0) {
-		SetLayeredWindowAttributes(hWnd, 0, (BYTE)floor(tiWindowConfig->getTransparency()*255), LWA_ALPHA);
+	if (config->GetTransparency() < 1.0) {
+		SetLayeredWindowAttributes(this->window_handle, 0, (BYTE)floor(config->GetTransparency() * 255), LWA_ALPHA);
 	}
-	SetLayeredWindowAttributes(hWnd, transparencyColor, 0, LWA_COLORKEY);
-	*/
+	SetLayeredWindowAttributes(this->window_handle, transparencyColor, 0, LWA_COLORKEY);
 }
 
 	// called by frame load delegate to let the window know it's loaded
