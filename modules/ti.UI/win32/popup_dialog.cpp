@@ -13,19 +13,6 @@
 namespace ti {
 	std::map<DWORD, Win32PopupDialog*> Win32PopupDialog::popups;
 
-	// TODO there must be a better way to do this
-	std::wstring s2ws(const std::string& s)
-	{
-		int len;
-		int slength = (int) s.length() + 1;
-		len = MultiByteToWideChar(CP_ACP, 0, s.c_str(), slength, 0, 0);
-		wchar_t* buf = new wchar_t[len];
-		MultiByteToWideChar(CP_ACP, 0, s.c_str(), slength, buf, len);
-		std::wstring r(buf);
-		delete[] buf;
-		return r;
-	}
-
 	class DialogTemplate {
 		public:
 			LPCDLGTEMPLATE Template()
@@ -163,6 +150,7 @@ namespace ti {
 			NONCLIENTMETRICSW ncm = { sizeof(ncm) };
 			if (SystemParametersInfoW(SPI_GETNONCLIENTMETRICS, 0, &ncm, 0)) {
 				DialogTemplate tmp;
+				std::wstring ws;
 
 				int controlCount = 2;	// at minimum, static label and OK button
 				if(this->showCancelButton) controlCount++;
@@ -195,7 +183,7 @@ namespace ti {
 				tmp.WriteString(L""); // no menu
 				tmp.WriteString(L""); // default dialog class
 				//tmp.WriteString(pszTitle); // title
-				tmp.WriteString(s2ws(this->title).c_str()); // title
+				tmp.WriteString(ws.assign(title.begin(), title.end()).c_str()); // title
 
 				// Next comes the font description.
 				// See text for discussion of fancy formula.
@@ -220,7 +208,7 @@ namespace ti {
 				tmp.Write<WORD>(labelHeight); // height
 				tmp.Write<DWORD>(-1); // control ID
 				tmp.Write<DWORD>(0x0082FFFF); // static
-				tmp.WriteString(s2ws(this->message).c_str()); // text
+				tmp.WriteString(ws.assign(message.begin(), message.end()).c_str()); // text
 				tmp.Write<WORD>(0); // no extra data
 
 				// Second control - the OK button.
@@ -267,7 +255,7 @@ namespace ti {
 					tmp.Write<WORD>(inputHeight); // height
 					tmp.Write<DWORD>(ID_INPUT_FIELD); // control ID
 					tmp.Write<DWORD>(0x0081FFFF); // edit class atom
-					tmp.WriteString(s2ws(this->inputText).c_str()); // text
+					tmp.WriteString(ws.assign(inputText.begin(), inputText.end()).c_str()); // text
 					tmp.Write<WORD>(0); // no extra data
 				}
 

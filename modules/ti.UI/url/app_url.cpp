@@ -8,8 +8,9 @@
 
 #include "app_url.h"
 #include <Poco/Environment.h>
-#include <string>
 #include <cstring>
+#include <algorithm>
+#include <cctype>
 
 struct Curl_local_handler Titanium_app_url_handler = {
 	"app",
@@ -25,5 +26,51 @@ namespace ti {
 		std::string path = Poco::Environment::get("KR_HOME", "");
 		path = path + kAppURLPrefix + "/" + url;
 		return strdup(path.c_str());
+	}
+
+	std::string AppURLNormalizeURL(std::string originalURL, std::string appID)
+	{
+		// append <appID> if needed to the url
+
+		bool appurl = true;
+
+		std::string url(originalURL);
+		std::transform(url.begin(), url.end(), url.begin(), ::tolower);
+		if(url.find("http://") == 0 || url.find("https://") == 0)
+		{
+			appurl = false;
+		}
+
+		if(appurl)
+		{
+			// url will end up as app://<appID>/path
+
+			std::string urlPrefix("app://");
+			urlPrefix.append(appID);
+
+			if(url.find(urlPrefix) == 0)
+			{
+				// all good - nothing to do
+				url = originalURL;
+			}
+			else if(url.find("app://") == 0)
+			{
+				// need to add the <appID> .. keep one of the / characters
+				url = urlPrefix + originalURL.substr(5);
+			}
+			else if(url.find("/") == 0)
+			{
+				// need to add app://<appID>
+				url = urlPrefix + originalURL;
+			}
+			else
+			{
+				// need to add app://<appID>
+				// TODO - how do we handle relative URLs??
+				url = urlPrefix + "/" + originalURL;
+			}
+		}
+
+		return url;
 	}
 }

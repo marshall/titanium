@@ -166,7 +166,6 @@ private:
 	void SetupDecorations(bool showHide = true);
 	void SetupMenu();
 	void SetupIcon();
-	std::string NormalizeURL(std::string url);
 
 	SharedBoundList SelectDirectory(
 		bool multiple,
