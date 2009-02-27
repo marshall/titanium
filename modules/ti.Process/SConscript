@@ -1,19 +1,18 @@
 #!/usr/bin/env python
 import os
 
-Import("tiBuild")
 Import('build')
 
-env = tiBuild.env.Clone();
+env = build.env.Clone();
 env.Append(CPPDEFINES = ('TITANIUM_PROCESS_API_EXPORT', 1))
 env.Append(CPPPATH = ['#kroll'])
 
-if tiBuild.is_osx():
-	tiBuild.add_thirdparty(env, 'poco', True)
+if build.is_osx():
+	build.add_thirdparty(env, 'poco', True)
 	env.Append(LIBS=['kroll'])
 else:
-	tiBuild.add_thirdparty(env, 'poco')
+	build.add_thirdparty(env, 'poco')
 
 
 
-s = env.SharedLibrary(target = tiBuild.dir + '/tiprocessmodule', source = Glob('*.cpp'))
+s = env.SharedLibrary(target = build.dir + '/tiprocessmodule', source = Glob('*.cpp'))

@@ -81,10 +81,6 @@ if build.is_osx():
 	build.env.Append(CPPFLAGS=['-isysroot',OSX_SDK,'-arch','i386','-mmacosx-version-min=10.5','-x','objective-c++'])
 	build.env.Append(LINKFLAGS=OSX_UNIV_LINKER)
 	build.env.Append(FRAMEWORKS=['Foundation'])
-
-
-tiBuild = build
-Export('tiBuild')
 Export('build')
 
 if ARGUMENTS.get('package',0):

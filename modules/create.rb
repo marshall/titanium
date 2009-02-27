@@ -218,16 +218,14 @@ sc = File.open(File.join(module_dir_name,"SConscript"),'w')
 sc.puts <<-END
 #!/usr/bin/env python
 import os
-
-Import("tiBuild")
 Import('build')
 
-env = tiBuild.env.Clone();
+env = build.env.Clone();
 env.Append(CPPDEFINES = ('TITANIUM_#{header_define}_API_EXPORT, 1))
 env.Append(CPPPATH = ['#kroll'])
 
 
-s = env.SharedLibrary(target = tiBuild.dir + '/ti#{name}module', source = Glob('*.cpp'))
+s = env.SharedLibrary(target = build.dir + '/ti#{name}module', source = Glob('*.cpp'))
 END
 sc.close
 
