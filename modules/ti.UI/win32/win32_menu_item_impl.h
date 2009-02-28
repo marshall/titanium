@@ -59,6 +59,7 @@ namespace ti
 			return currentUID++;
 		}
 
+		static HMENU GetDefaultContextMenu();
 		static bool invokeCallback(int menuItemUID);
 		static LRESULT CALLBACK handleMenuClick(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
@@ -68,10 +69,12 @@ namespace ti
 		std::vector<NativeMenuItem*> instances;
 
 		NativeMenuItem* Realize(NativeMenuItem* parent_menu_item, bool is_menu_bar);
+		static void RealizeWebInspectorMenuItem(HMENU hMenu);
 		NativeMenuItem* MakeNativeMenuItem(NativeMenuItem* parent_menu_item, bool is_menu_bar);
 		void SetLabel(std::string label, NativeMenuItem* menu_item);
 
 		static int currentUID;
+		static HMENU defaultContextMenu;
 	};
 
 }

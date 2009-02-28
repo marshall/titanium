@@ -232,6 +232,11 @@ Win32WebKitUIDelegate::trackCustomPopupMenu(
 	{
 		contextMenu = Win32UIBinding::getContextMenuInUseHandle();
 	}
+	if(! contextMenu)
+	{
+		contextMenu = Win32MenuItemImpl::GetDefaultContextMenu();
+	}
+
 	if(contextMenu)
 	{
 		TrackPopupMenu(contextMenu,
