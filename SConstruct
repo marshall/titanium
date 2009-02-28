@@ -83,18 +83,20 @@ if build.is_osx():
 	build.env.Append(FRAMEWORKS=['Foundation'])
 Export('build')
 
-if ARGUMENTS.get('package',0):
-	print "building packaging ..."
-	SConscript('installation/runtime/SConscript')	
-else:
-	SConscript('kroll/SConscript', exports='debug')
+# Linux can package and build at the same time now
+if not(ARGUMENTS.get('package',0)) or build.is_linux():
 
-	# Kroll *must not be required* for installation
+	## Kroll *must not be required* for installation
 	SConscript('installation/SConscript')
 
-	if not build.is_linux():
-		build.env.Append(LIBS=['kroll']) 
+	SConscript('kroll/SConscript', exports='debug')
 
 	# Kroll library is now built (hopefully)
+	if not build.is_linux():
+		build.env.Append(LIBS=['kroll']) 
 	SConscript('modules/SConscript')
+
+if ARGUMENTS.get('package',0):
+	print "building packaging ..."
+	SConscript('installation/runtime/SConscript')
 
