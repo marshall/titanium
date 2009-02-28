@@ -31,13 +31,6 @@ elif build.is_linux():
 	sources += Glob('libnotify/*.cpp')
 	env.ParseConfig('pkg-config --cflags --libs libnotify')
 
+m = build.add_module('tigrowl', '0.1')
+s = env.SharedLibrary(target = m.build_dir + '/tigrowlmodule', source=sources)
 s = env.SharedLibrary(target = build.dir + '/tigrowlmodule', source=sources)
-
-
-#dirutil.mkpath(build.dir+'/modules/ti.Growl/Resources')
-#cwd = path.dirname(inspect.currentframe().f_code.co_filename)
-
-#if build.is_osx():
-#	dirutil.mkpath(build.dir+'/modules.ti.Growl/Growl.framework')
-#	shutil.copy(cwd+'/Resources/osx/Growl Registration Ticket.growlRegDict', build.dir+'/modules/ti.Growl/Resources')
-#	dirutil.copy_tree(build.third_party+'/growl/Growl.framework', build.dir+'/modules/ti.Growl/Resources/Growl.framework', update=1)

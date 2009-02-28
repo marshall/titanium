@@ -23,5 +23,7 @@ else:
 	env.ParseConfig('pkg-config --cflags --libs libxml-2.0')
 
 
+m = build.add_module('tiapp', '0.1')
+s = env.SharedLibrary(target = m.build_dir + '/tiappmodule', source = Glob('*.cpp') + Glob('Properties/*.cpp'))
 s = env.SharedLibrary(target = build.dir + '/tiappmodule', source = Glob('*.cpp') + Glob('Properties/*.cpp'))
 

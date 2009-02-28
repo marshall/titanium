@@ -23,7 +23,7 @@ elif build.is_win32():
 	sources+=Glob('win32/*.cpp')
 elif build.is_linux():
 	sources+=Glob('linux/*.cpp')
-	
-	
-s = env.SharedLibrary(target = build.dir + '/tidesktopmodule', source = sources)
 
+m = build.add_module('tidesktop', '0.1')
+s = env.SharedLibrary(target = m.build_dir + '/tidesktopmodule', source=sources)
+s = env.SharedLibrary(target = build.dir + '/tidesktopmodule', source=sources)

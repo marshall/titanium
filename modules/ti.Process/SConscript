@@ -14,5 +14,6 @@ else:
 	build.add_thirdparty(env, 'poco')
 
 
-
+m = build.add_module('tiprocess', '0.1')
+s = env.SharedLibrary(target = m.build_dir + '/tiprocessmodule', source = Glob('*.cpp'))
 s = env.SharedLibrary(target = build.dir + '/tiprocessmodule', source = Glob('*.cpp'))
