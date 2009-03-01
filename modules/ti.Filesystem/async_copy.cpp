@@ -129,15 +129,22 @@ namespace ti
 #endif
 			try
 			{
+				printf("1\n");
 				Poco::Path from(file);
+				printf("2\n");
 				Poco::File f(file);
+				printf("3\n");
 				if (f.isDirectory())
 				{
+				printf("4\n");
 					ac->Copy(from,to);
+				printf("4a\n");
 				}
 				else
 				{
+				printf("5\n");
 					Poco::Path dest(to,from.getFileName());
+				printf("6\n");
 					ac->Copy(from,dest);
 				}
 #ifdef DEBUG
