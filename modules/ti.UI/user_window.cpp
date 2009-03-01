@@ -150,15 +150,18 @@ void UserWindow::Close()
 {
 	// remove the window from the list array
 	SharedValue window_list_value = this->uiBinding->Get("windows");
-	SharedBoundList window_list = window_list_value->ToList();
-	for (int c=0;c<window_list->Size();c++)
+	if (window_list_value->IsList())
 	{
-		SharedValue v = window_list->At(c);
-		SharedBoundObject bo = v->ToObject();
-		if (bo.get() == this)
+		SharedBoundList window_list = window_list_value->ToList();
+		for (int c=0;c<window_list->Size();c++)
 		{
-			window_list->Remove(c);
-			break;
+			SharedValue v = window_list->At(c);
+			SharedBoundObject bo = v->ToObject();
+			if (bo.get() == this)
+			{
+				window_list->Remove(c);
+				break;
+			}
 		}
 	}
 	

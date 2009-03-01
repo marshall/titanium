@@ -56,12 +56,15 @@ namespace ti
 
 		std::string appid = AppConfig::Instance()->GetAppID();
 		std::string app_properties = kroll::FileUtils::GetApplicationDataDirectory(appid);
-		app_properties += KR_PATH_SEP;
-		app_properties += "application.properties";
+		if (FileUtils::IsDirectory(app_properties))
+		{
+			app_properties += KR_PATH_SEP;
+			app_properties += "application.properties";
 
-		this->properties_binding = new PropertiesBinding(app_properties);
-		SharedValue properties_value = Value::NewObject(this->properties_binding);
-		this->app_binding->Set("Properties", properties_value);
+			this->properties_binding = new PropertiesBinding(app_properties);
+			SharedValue properties_value = Value::NewObject(this->properties_binding);
+			this->app_binding->Set("Properties", properties_value);
+		}
 	}
 
 	void AppModule::Stop()
