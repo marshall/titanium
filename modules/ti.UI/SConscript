@@ -61,7 +61,7 @@ s2 = env.SharedLibrary(target = build.dir + '/tiuimodule', source = sources)
 
 if build.is_osx():
 	if not(path.exists(build.dir + '/modules/ti.UI')):
-		os.mkdir(build.dir + '/modules/ti.UI')
+		os.makedirs(build.dir + '/modules/ti.UI')
 
 	for i in Glob('osx/*.xib'):
 		base = path.splitext(path.basename(str(i)))[0]
