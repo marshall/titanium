@@ -109,11 +109,12 @@ void GtkUserWindow::Open()
 		                   TRUE, TRUE, 0);
 
 		/* main window */
-		GtkWidget* window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-		gtk_window_set_default_size(GTK_WINDOW (window),
+		GtkWidget* window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+		gtk_window_set_default_size(GTK_WINDOW(window),
 		                            this->config->GetWidth(),
 		                            this->config->GetHeight());
 		gtk_widget_set_name(window, this->config->GetTitle().c_str());
+		gtk_window_set_title(GTK_WINDOW(window), this->config->GetTitle().c_str());
 
 		g_signal_connect(G_OBJECT(window), "destroy",
 		                 G_CALLBACK(destroy_cb), this);

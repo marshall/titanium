@@ -1,4 +1,6 @@
 import sys, os.path as path
 
-sys.path.append(path.abspath('.')+'/kroll/site_scons')
+kroll_dir = path.join(path.abspath('.'),'kroll','site_scons')
+sys.path.append(kroll_dir)
+
 import kroll

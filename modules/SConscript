@@ -7,7 +7,7 @@ modules = ['ti.App', 'ti.UI', 'ti.Network', 'ti.Growl',
            'ti.Platform', 'ti.Process', 'ti.Monkey']
 
 for module in modules:
-	module_dir = os.path.join(build.dir,'modules',module)
+	module_dir = os.path.join(build.dir,'objs', 'modules', module)
 	SConscript(os.path.join(module,'SConscript'), build_dir=module_dir, duplicate=0)
 	out_dir = os.path.join(build.dir, 'modules', module)
 	script = os.path.join(build.kroll_build_dir, 'module.py')

@@ -16,6 +16,9 @@
 namespace ti
 {
 	int Win32MenuItemImpl::currentUID = TI_MENU_ITEM_ID_BEGIN + 1;
+	HMENU Win32MenuItemImpl::defaultContextMenu = NULL;
+
+	static int webInspectorMenuItemID = 0;
 
 	std::vector<Win32MenuItemImpl::NativeMenuItem *> itemsWithCallbacks;
 
@@ -65,11 +68,29 @@ namespace ti
 		return MenuItem::AddToListModel(item);
 	}
 
+	HMENU Win32MenuItemImpl::GetDefaultContextMenu()
+	{
+		if(Host::GetInstance()->IsDebugMode() && defaultContextMenu == NULL)
+		{
+			defaultContextMenu = CreatePopupMenu();
+			RealizeWebInspectorMenuItem(defaultContextMenu);
+		}
+
+		return defaultContextMenu;
+	}
+
 	HMENU Win32MenuItemImpl::GetMenu()
 	{
 		if (this->parent == NULL) // top-level
 		{
 			NativeMenuItem* menu_item = this->Realize(NULL, false);
+
+			// add web inspector menu item if needed
+			if(Host::GetInstance()->IsDebugMode())
+			{
+				this->RealizeWebInspectorMenuItem(menu_item->menu);
+			}
+
 			return menu_item->menu;
 		}
 		else
@@ -148,6 +169,23 @@ namespace ti
 
 		this->instances.push_back(menu_item);
 		return menu_item;
+	}
+
+	/*static*/
+	void Win32MenuItemImpl::RealizeWebInspectorMenuItem(HMENU hMenu)
+	{
+		if(webInspectorMenuItemID == 0)
+		{
+			webInspectorMenuItemID = nextMenuUID();
+		}
+
+		if(GetMenuItemCount(hMenu) > 0)
+		{
+			AppendMenu(hMenu, MF_SEPARATOR, 1, "Separator");
+		}
+
+		std::string label("Web Inspector (broken atm)");
+		AppendMenu(hMenu, MF_STRING, webInspectorMenuItemID, (LPCTSTR) label.c_str());
 	}
 
 	// this method creates the native menu objects for *this* menu item
@@ -293,7 +331,24 @@ namespace ti
 		{
 			int wmId = LOWORD(wParam);
 
-			return invokeCallback(wmId);
+			if(wmId == webInspectorMenuItemID)
+			{
+				Win32UserWindow *wuw = Win32UserWindow::FromWindow(hWnd);
+
+				if(wuw)
+				{
+					wuw->ShowWebInspector();
+					return true;
+				}
+				else
+				{
+					return false;
+				}
+			}
+			else
+			{
+				return invokeCallback(wmId);
+			}
 		}
 
 		return FALSE;

@@ -225,6 +225,8 @@ env.Append(CPPDEFINES = ('TITANIUM_#{header_define}_API_EXPORT, 1))
 env.Append(CPPPATH = ['#kroll'])
 
 
+m = build.add_module('ti#{name}', '0.1')
+s = env.SharedLibrary(target = m.build.dir + '/ti#{name}module', source = Glob('*.cpp'))
 s = env.SharedLibrary(target = build.dir + '/ti#{name}module', source = Glob('*.cpp'))
 END
 sc.close

@@ -20,11 +20,13 @@ if build.is_linux():
 	env.ParseConfig('pkg-config --libs --cflags gdk-2.0 dbus-glib-1')
 
 if build.is_win32():
-    env.Append(CCFLAGS=['/MD'])
-    env.Append(LIBS=['wsock32','ws2_32', 'ole32', 'comsuppw', 'wbemuuid'])
-    env.Append(CPPDEFINES = ('WIN32_LEAN_AND_MEAN',1))
-    sources += Glob("win32/*.cpp")
+	env.Append(CCFLAGS=['/MD'])
+	env.Append(LIBS=['wsock32','ws2_32', 'ole32', 'comsuppw', 'wbemuuid'])
+	env.Append(CPPDEFINES = ('WIN32_LEAN_AND_MEAN',1))
+	sources += Glob("win32/*.cpp")
 
+m = build.add_module('tinetwork', '0.1')
+s = env.SharedLibrary(target = m.build_dir + '/tinetworkmodule', source = sources)
 s = env.SharedLibrary(target = build.dir + '/tinetworkmodule', source = sources)
 
 

@@ -4,7 +4,7 @@ import os, os.path as path
 Import('build')
 
 env = build.env.Clone()
-env.Append(LIBPATH=[path.join(build.dir, 'modules', 'ti.App')])
+env.Append(LIBPATH=[build.modules['tiapp'].build_dir])
 env.Append(CPPPATH = [
 	build.kroll_include_dir,
 	'%s/modules/javascript' % build.kroll_source_dir,
@@ -54,21 +54,27 @@ elif build.is_osx():
 	sources = sources + Glob('osx/*.mm') + Glob('osx/*.cpp')
 	env.Append(CCFLAGS=['-x', 'objective-c++'])
 	
-s = env.SharedLibrary(target = build.dir + '/tiuimodule',
-                        source = sources)
+
+m = build.add_module('tiui', '0.1')
+s1 = env.SharedLibrary(target = m.build_dir + '/tiuimodule', source = sources)
+s2 = env.SharedLibrary(target = build.dir + '/tiuimodule', source = sources)
 
 if build.is_osx():
+	if not(path.exists(build.dir + '/modules/ti.UI')):
+		os.mkdir(build.dir + '/modules/ti.UI')
+
 	for i in Glob('osx/*.xib'):
 		base = path.splitext(path.basename(str(i)))[0]
-		env.AddPostAction(s, 'ibtool --errors --warnings --notices --output-format human-readable-text --compile '+build.dir + '/modules/ti.UI/'+ base+'.nib '+str(i))
+		env.AddPostAction(s1, 'ibtool --errors --warnings --notices --output-format human-readable-text --compile %s/%s.nib %s' % (m.build_dir, base, i))
+		env.AddPostAction(s2, 'ibtool --errors --warnings --notices --output-format human-readable-text --compile '+build.dir + '/modules/ti.UI/'+ base+'.nib '+str(i))
 
 if build.is_win32():
-	manifest1 = os.path.join(build.dir, 'tiuimodule.embed.manifest')
-	manifest2 = os.path.join(build.dir, 'tiuimodule.dll.manifest')
-	common_controls_manifest = os.path.join(build.titanium_source_dir, 'modules', 'ti.UI', 'win32', 'common_controls.manifest')
-	env.AddPostAction(s, 'mt.exe /nologo /manifest "' + manifest2 + '" /tlb:"' + path.join(webkit_lib, 'WebKit.tlb') + '" /dll:runtime/WebKit /out:"'+manifest1+'"')
-	#env.AddPostAction(s, 'mt.exe /nologo /tlb:' + path.join(webkit_lib, 'WebKit.tlb') + ' /dll:WebKit /outputresource:'+build.dir+'/kboot.exe;1')
-	
-	env.AddPostAction(s, 'mt.exe -nologo -manifest "'+common_controls_manifest+'" "'+manifest1+'" -out:"' + build.dir+'/tiuimodule.merged.manifest"')
-	env.AddPostAction(s, 'mt.exe -nologo -manifest "'+build.dir+'/tiuimodule.merged.manifest" -outputresource:"'+build.dir+'/kboot.exe;1"')
-	#env.AddPostAction(s, 'mt.exe -nologo -manifest "'+manifest1+'" -outputresource:'+build.dir+'/tiuimodule.dll;2')
+	for out in [(s1, m.build_dir), (s2, build.dir)]:
+		manifest1 = os.path.join(out[1], 'tiuimodule.embed.manifest')
+		manifest2 = os.path.join(out[1], 'tiuimodule.dll.manifest')
+		common_controls_manifest = os.path.join(build.titanium_source_dir, 'modules', 'ti.UI', 'win32', 'common_controls.manifest')
+		env.AddPostAction(out[0], 'mt.exe /nologo /manifest "' + manifest2 + '" /tlb:"' + path.join(webkit_lib, 'WebKit.tlb') + '" /dll:runtime/WebKit /out:"'+manifest1+'"')
+		#env.AddPostAction(out[0], 'mt.exe /nologo /tlb:' + path.join(webkit_lib, 'WebKit.tlb') + ' /dll:WebKit /outputresource:'+m.build_dir+'/kboot.exe;1')
+		env.AddPostAction(out[0], 'mt.exe -nologo -manifest "'+common_controls_manifest+'" "'+manifest1+'" -out:"' + out[1]+'/tiuimodule.merged.manifest"')
+		env.AddPostAction(out[0], 'mt.exe -nologo -manifest "'+out[1]+'/tiuimodule.merged.manifest" -outputresource:"'+out[1]+'/kboot.exe;1"')
+		#env.AddPostAction(out[0], 'mt.exe -nologo -manifest "'+manifest1+'" -outputresource:'+m.build_dir+'/tiuimodule.dll;2')
