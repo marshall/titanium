@@ -41,7 +41,7 @@ namespace ti
 		return mask;
 	}
 
-	OSXUserWindow::OSXUserWindow(Host *host, WindowConfig *config, OSXUIBinding *binding) : UserWindow(host,config), window(NULL), opened(false), closed(false), binding(binding)
+	OSXUserWindow::OSXUserWindow(Host *host, WindowConfig *config, SharedPtr<OSXUIBinding> binding) : UserWindow(host,config), window(NULL), opened(false), closed(false), binding(binding)
 	{
 		NSRect frame = NSMakeRect(config->GetX(), config->GetY(), config->GetWidth(), config->GetHeight());
 
@@ -68,7 +68,7 @@ namespace ti
 			UserWindow::Close();
 		}
 	}
-	UserWindow* OSXUserWindow::WindowFactory(Host* host, WindowConfig* config)
+	UserWindow* OSXUserWindow::WindowFactory(Host* host, WindowConfig* config, SharedPtr<OSXUIBinding> binding)
 	{
 		return new OSXUserWindow(host, config, binding);
 	}

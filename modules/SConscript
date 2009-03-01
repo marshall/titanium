@@ -4,7 +4,7 @@ import os
 
 modules = ['ti.App', 'ti.UI', 'ti.Network', 'ti.Growl',
            'ti.Filesystem', 'ti.Media', 'ti.Desktop',
-           'ti.Platform', 'ti.Process']
+           'ti.Platform', 'ti.Process', 'ti.Monkey']
 
 for module in modules:
 	module_dir = os.path.join(build.dir,'modules',module)

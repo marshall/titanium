@@ -91,7 +91,7 @@
 		window = win;
 		host = h;
 		webView = [window webView];
-		frames = new std::map<WebFrame*,bool>();
+		frames = new std::map<WebFrame*,SharedBoundObject>();
 		[self setup];
 		[webView setFrameLoadDelegate:self];
 		[webView setUIDelegate:self];
@@ -124,11 +124,6 @@
 	WindowConfig *config = [window config];
 	config->SetVisible(true);
     [window makeKeyAndOrderFront:nil];	
-}
-
--(void)closePrecedent
-{
-	//TODO:
 }
 
 - (NSURL *)url
@@ -334,7 +329,7 @@
 - (void)webView:(WebView *)sender didStartProvisionalLoadForFrame:(WebFrame *)frame
 {
 	KR_DUMP_LOCATION
-	(*frames)[frame]=false;
+	(*frames)[frame]=SharedBoundObject(NULL);
 }
 
 - (void)webView:(WebView *)sender didReceiveTitle:(NSString *)title forFrame:(WebFrame *)frame
@@ -364,7 +359,8 @@
 	BoundObject* ti_object = new DelegateStaticBoundObject(global_tibo);
 	SharedBoundObject shared_ti_obj = SharedBoundObject(ti_object);
 	
-	SharedBoundObject *shared_user_window = new SharedBoundObject([window userWindow]);
+	UserWindow *user_window = [window userWindow];
+	SharedBoundObject *shared_user_window = new SharedBoundObject(user_window);
 	SharedValue user_window_val = Value::NewObject(*shared_user_window);
 	
 	SharedValue ui_api_value = ti_object->Get("UI");
@@ -406,7 +402,11 @@
 	global_bound_object->Set(GLOBAL_NS_VARNAME, ti_object_value);
 
 	// track that we've cleared this frame
-	(*frames)[frame]=true;
+	SharedBoundObject shared_global = global_bound_object;
+	(*frames)[frame]=shared_global;
+	
+	// fire context bound event
+	user_window->ContextBound(shared_global);
 }
 
 - (void)webView:(WebView *)sender didFinishLoadForFrame:(WebFrame *)frame
@@ -414,12 +414,14 @@
 	KR_DUMP_LOCATION
 	
 	// we need to inject even in child frames
-	std::map<WebFrame*,bool>::iterator iter = frames->find(frame);
+	std::map<WebFrame*,SharedBoundObject>::iterator iter = frames->find(frame);
 	bool scriptCleared = false;
+	SharedBoundObject global_object = SharedBoundObject(NULL);
 	if (iter!=frames->end())
 	{
-		std::pair<WebFrame*,bool> pair = (*iter);
-		scriptCleared = pair.second;
+		std::pair<WebFrame*,SharedBoundObject> pair = (*iter);
+		global_object = pair.second;
+		scriptCleared = global_object.get() != NULL;
 		frames->erase(iter);
 	}
 	else
@@ -434,19 +436,20 @@
 		JSGlobalContextRef context = [frame globalContext];
 		[self inject:[frame windowObject] context:context frame:frame];
 	}
+	NSURL *theurl =[[[frame dataSource] request] URL];
+	// fire load event
+	UserWindow *user_window = [window userWindow];
+	std::string url_str = [[theurl absoluteString] UTF8String];
+	user_window->PageLoaded(global_object,url_str);
 	
     // Only report feedback for the main frame.
     if (frame == [sender mainFrame]) 
 	{
-		NSURL *theurl =[[[frame dataSource] request] URL];
-		TRACE(@"webview_delegate::didFinishLoadForFrame: %x for url: %@",self,theurl);
-
 		if (![theurl isEqual:url])
 		{
 			[self setURL:theurl];
 		}
-		[self closePrecedent];
-		
+
 		if (initialDisplay==NO)
 		{
 			initialDisplay=YES;

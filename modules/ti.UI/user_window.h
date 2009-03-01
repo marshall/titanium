@@ -48,7 +48,7 @@ class UserWindow : public kroll::StaticBoundObject {
 		UserWindow(kroll::Host *host, WindowConfig *config);
 		~UserWindow(){};
 		kroll::Host* GetHost() { return this->host; }
-		SharedBoundObject CreateWindow(WindowConfig *config);
+		static SharedBoundObject CreateWindow(Host *host, UserWindow *parent, WindowConfig *config, bool initialWindow = false);
 		static std::vector<UserWindow*>& GetWindows();
 		void UpdateWindowForURL(std::string url);
 
@@ -141,7 +141,6 @@ class UserWindow : public kroll::StaticBoundObject {
 		long next_listener_id;
 
 	public:
-		virtual UserWindow* WindowFactory(Host*, WindowConfig*) = 0;
 
 		virtual void OpenFiles(
 			SharedBoundMethod callback,
@@ -212,6 +211,8 @@ class UserWindow : public kroll::StaticBoundObject {
 		virtual void SetTopMost(bool topmost) = 0;
 
 		virtual void FireEvent(UserWindowEvent event);
+		virtual void ContextBound(SharedBoundObject scope);
+		virtual void PageLoaded(SharedBoundObject scope,std::string &url);
 
 	protected:
 		kroll::Host *host;
@@ -225,6 +226,7 @@ class UserWindow : public kroll::StaticBoundObject {
 
 		static std::vector<UserWindow*> windows;
 		static std::map<UserWindow*, std::vector<UserWindow*> > windowsMap;
+		static std::map<UserWindow*, SharedBoundObject> boundWindows;
 
 		static void Open(UserWindow *);
 		static void AddChild(UserWindow *parent, UserWindow *child);
@@ -232,6 +234,8 @@ class UserWindow : public kroll::StaticBoundObject {
 
 	private:
 		DISALLOW_EVIL_CONSTRUCTORS(UserWindow);
+		SharedBoundMethod api;
+		static SharedBoundObject uiBinding;
 };
 
 }

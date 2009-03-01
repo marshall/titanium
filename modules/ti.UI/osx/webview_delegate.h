@@ -22,10 +22,9 @@
 	NSURL *url;
 	WebInspector *inspector;
 	BOOL initialDisplay;
-	std::map<WebFrame*,bool> *frames; // this is the frame to clear tracking
+	std::map<WebFrame*,SharedBoundObject> *frames; // this is the frame to clear tracking
 }
 -(id)initWithWindow:(NativeWindow*)window host:(Host*)h;
 -(void)setURL:(NSURL*)url;
--(void)closePrecedent;
 -(NSURL*)url;
 @end
