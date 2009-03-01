@@ -69,31 +69,9 @@ namespace ti
 		// that we should only ever have one copy of the UI module.
 		SharedBoundObject global = this->host->GetGlobalObject();
 		UIModule::global = global;
-
-		// Add the Titanium.UI binding and initialize the main window.
-#if defined(OS_LINUX)
-		SharedBoundObject ui_binding = new GtkUIBinding(this->host);
-		GtkUserWindow* window = new GtkUserWindow(this->host, main_window_config);
-
-#elif defined(OS_OSX)
-		OSXUIBinding *binding = new OSXUIBinding(this->host);
-		SharedBoundObject ui_binding = binding;
-		OSXUserWindow* window = new OSXUserWindow(this->host, main_window_config, binding);
-		NativeWindow* nw = window->GetNative();
-		[nw setInitialWindow:YES];
-
-#elif defined(OS_WIN32)
-		SharedBoundObject ui_binding = new Win32UIBinding(this->host);
-		Win32UserWindow* window = new Win32UserWindow(this->host, main_window_config);
-#endif
-
-		SharedValue ui_binding_val = Value::NewObject(ui_binding);
-		host->GetGlobalObject()->Set("UI", ui_binding_val);
-
-		SharedBoundObject main_window = window;
-		SharedValue main_window_val = Value::NewObject(main_window);
-		host->GetGlobalObject()->SetNS("UI.mainWindow", main_window_val);
-		window->Open();
+		
+		// create the main window
+		UserWindow::CreateWindow(host,NULL,main_window_config,true);
 	}
 
 	void UIModule::Stop()

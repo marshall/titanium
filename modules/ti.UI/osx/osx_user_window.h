@@ -20,10 +20,10 @@ namespace ti
 	class OSXUserWindow : public UserWindow
 	{
 		public:
-			OSXUserWindow(Host *host, WindowConfig *config, OSXUIBinding *binding);
+			OSXUserWindow(Host *host, WindowConfig *config, SharedPtr<OSXUIBinding> binding);
 			~OSXUserWindow();
 		public:
-			UserWindow* WindowFactory(Host*, WindowConfig*);
+			static UserWindow* WindowFactory(Host*, WindowConfig*, SharedPtr<OSXUIBinding>);
 			void OpenFiles(
 				SharedBoundMethod callback,
 				bool multiple,
@@ -101,7 +101,7 @@ namespace ti
 			bool focused;
 			SharedPtr<MenuItem> menu;
 			SharedPtr<MenuItem> context_menu;
-			OSXUIBinding* binding;
+			SharedPtr<OSXUIBinding> binding;
 
 			void InstallMenu(OSXMenuItem *menu);
 			

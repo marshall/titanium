@@ -37,6 +37,7 @@ static gint new_window_navigation_requested_cb(
 	WebKitWebFrame* web_frame,
 	WebKitNetworkRequest* request,
 	gchar* frame_name);
+static void load_done_cb(WebKitWebFrame *web_frame);
 
 GtkUserWindow::GtkUserWindow(Host *host, WindowConfig* config) : UserWindow(host, config)
 {
@@ -77,6 +78,8 @@ void GtkUserWindow::Open()
 		                 G_CALLBACK(new_window_navigation_requested_cb), this);
 		g_signal_connect(G_OBJECT (web_view), "populate-popup",
 		                 G_CALLBACK (populate_popup_cb), this);
+		g_signal_connect(G_OBJECT (web_view), "load-done",
+					                 G_CALLBACK (load_done_cb), this);
 
 		WebKitWebSettings* settings = webkit_web_settings_new();
 		g_object_set(G_OBJECT(settings), "enable-developer-extras", TRUE, NULL);
@@ -382,6 +385,11 @@ static gint new_window_navigation_requested_cb(
 	}
 }
 
+static void load_done_cb(WebKitWebFrame* web_frame)
+{
+	//FIXME: call this->PageLoaded(global_object,url_str);
+}
+
 static void window_object_cleared_cb(
 	WebKitWebView* web_view,
 	WebKitWebFrame* web_frame,
@@ -442,6 +450,7 @@ static void window_object_cleared_cb(
 	SharedValue ti_object_value = Value::NewObject(shared_ti_obj);
 	global_bound_object->Set(GLOBAL_NS_VARNAME, ti_object_value);
 
+	//FIXME: call this->ContextBound(global_object)
 }
 
 static void populate_popup_cb(WebKitWebView *web_view,

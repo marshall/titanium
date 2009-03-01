@@ -20,6 +20,7 @@ Win32WebKitFrameLoadDelegate::Win32WebKitFrameLoadDelegate(Win32UserWindow *wind
 HRESULT STDMETHODCALLTYPE
 Win32WebKitFrameLoadDelegate::didFinishLoadForFrame(IWebView *webView, IWebFrame *frame)
 {
+//TODO->	window->PageLoaded(global_object,url_str);
 	window->FrameLoaded();
 	return S_OK;
 }
@@ -81,6 +82,7 @@ Win32WebKitFrameLoadDelegate::windowScriptObjectAvailable (
 	SharedValue ti_object_value = Value::NewObject(shared_ti_obj);
 	global_bound_object->Set(GLOBAL_NS_VARNAME, ti_object_value);
 
+//TODO->	window->ContextBound(global_object,url_str);
 
 	/*
 
@@ -91,6 +93,7 @@ Win32WebKitFrameLoadDelegate::windowScriptObjectAvailable (
 	SharedBoundObject shared_current_window(current_window);
 	shared_current_window->Set("window", user_window_val);
 	*/
+
 
 	return S_OK;
 }
