@@ -80,7 +80,7 @@ public:
 
 	Win32UserWindow(kroll::Host *host, WindowConfig *config);
 	virtual ~Win32UserWindow();
-	UserWindow* WindowFactory(Host*, WindowConfig*);
+	static UserWindow* WindowFactory(Host*, WindowConfig*);
 
 	void OpenFiles(
 		SharedBoundMethod callback,

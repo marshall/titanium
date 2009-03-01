@@ -34,7 +34,7 @@ namespace ti
 				case '\0': 
 					return *str=='\0';
 				case '*':
-					return match(pat+1, str) || *str && match(pat, str+1);
+					return match(pat+1, str) || (*str && match(pat, str+1));
 				default: 
 					return *pat==*str && match(pat+1, str+1);
 			}

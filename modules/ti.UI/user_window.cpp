@@ -652,7 +652,7 @@ SharedBoundObject UserWindow::CreateWindow(Host *host, UserWindow *parent, Windo
 		[nw setInitialWindow:YES];
 	}
 #elif OS_LINUX
-	UserWindow* window = LinuxUserWindow::WindowFactory(host, config);
+	UserWindow* window = GtkUserWindow::WindowFactory(host, config);
 #endif
 
 	window->SetTopMost(config->IsTopMost());

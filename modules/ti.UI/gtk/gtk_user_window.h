@@ -25,7 +25,7 @@ namespace ti
 		void AppIconChanged();
 		void RemoveOldMenu();
 
-		UserWindow* WindowFactory(Host *, WindowConfig*);
+		static UserWindow* WindowFactory(Host *, WindowConfig*);
 
 		void OpenFiles(
 			SharedBoundMethod callback,
