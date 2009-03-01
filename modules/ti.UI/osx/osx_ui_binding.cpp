@@ -237,8 +237,10 @@ namespace ti
 		menuItem = [submenu addItemWithTitle:NSLocalizedString(@"Delete", nil)
 									action:@selector(delete:)
 							 keyEquivalent:@""];
-		
 
+		menuItem = [submenu addItemWithTitle: NSLocalizedString(@"Select All", nil)
+							  action: @selector(selectAll:)
+							  keyEquivalent: @"a"];
 		// window
 		menuItem = [mainMenu addItemWithTitle:@"Window" action:NULL keyEquivalent:@""];
 		submenu = [[NSMenu alloc] initWithTitle:NSLocalizedString(@"Window", @"The Window menu")];

@@ -63,8 +63,31 @@
 	}
 	return s;
 }
++(NSURL*)normalizeURL:(NSURL*)url
+{
+	NSString *path = [url path];
+	NSString *appid = [TiApplication appID];
+	if (!path || [path isEqual:@""])
+	{
+		NSString *newurlstr = [NSString stringWithFormat:@"app://%@/%@",appid,[url host]];
+		NSURL *newurl = [NSURL URLWithString:newurlstr];
+		return newurl;
+	}
+	else
+	{
+		NSString *host = [url host];
+		if (![host isEqualToString:appid])
+		{
+			NSString *newurlstr = [NSString stringWithFormat:@"app://%@%@",appid,path];
+			NSURL *newurl = [NSURL URLWithString:newurlstr];
+			return newurl;
+		}
+	}
+	return url;
+}
 
-+(NSURLRequest *)canonicalRequestForRequest:(NSURLRequest *)request {
++(NSURLRequest *)canonicalRequestForRequest:(NSURLRequest *)request 
+{
     return request;
 }
 
@@ -124,7 +147,7 @@
     id<NSURLProtocolClient> client = [self client];
     NSURLRequest *request = [self request];
 	
-	NSURL *url = [request URL];
+	NSURL *url = [AppProtocol normalizeURL:[request URL]];
 	NSString *s = [AppProtocol getPath:url];
 	NSString *basePath = [NSString stringWithFormat:@"%s/Resources",getenv("KR_HOME")];
 	NSString *resourcePath = [basePath stringByAppendingPathComponent:s];
@@ -141,23 +164,15 @@
 		return;
 	}
 		
-	// TiAppArguments *args = (TiAppArguments *)[[TiController instance] arguments];
-	// 
-	// if ([args devLaunch]) 
-	// {
-	// 	char *cwd = getcwd(NULL, 0);
-	// 	
-	// 	NSString *currentPath = [NSString stringWithCString:cwd length:strlen(cwd)];
-	// 	resourcePath = [currentPath stringByAppendingPathComponent:s];
-	// }
-	
-	NSError *error;
+	NSError *error = nil;
 	NSData *data = [NSData dataWithContentsOfFile:resourcePath options:0 error:&error];
 	
 	if (data == nil)
 	{
+		std::cerr << "File not found: " << [resourcePath UTF8String] << std::endl;
 		// File doesn't exist
-		[client URLProtocol:self didFailWithError:error];
+        int resultCode = NSURLErrorResourceUnavailable;
+        [client URLProtocol:self didFailWithError:[NSError errorWithDomain:NSURLErrorDomain code:resultCode userInfo:nil]];
 		[client URLProtocolDidFinishLoading:self];
 		return;
 	}
@@ -165,12 +180,11 @@
 	NSString *ext = [resourcePath pathExtension];
 	NSString *mime = [AppProtocol mimeTypeFromExtension:ext];
 	
-	NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:url MIMEType:mime expectedContentLength:[data length] textEncodingName:@"utf-8"];
-	
-	[client URLProtocol:self didReceiveResponse:response cacheStoragePolicy:NSURLCacheStorageAllowed];
+	NSURLResponse *response = [[NSURLResponse alloc] initWithURL:url MIMEType:mime expectedContentLength:[data length] textEncodingName:@"utf-8"];
+	[client URLProtocol:self didReceiveResponse:response cacheStoragePolicy:NSURLCacheStorageAllowedInMemoryOnly];
 	[client URLProtocol:self didLoadData:data];
 	[client URLProtocolDidFinishLoading:self];
-	
+
 	[response release];
 }
 

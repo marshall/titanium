@@ -409,6 +409,21 @@
 	user_window->ContextBound(shared_global);
 }
 
+- (void)applyJSPatches:(SharedBoundObject)g
+{
+	SharedBoundObject w = g->Get("window")->ToObject();
+	
+	// check to see if we have jQuery installed and if so, 
+	// we need to patch the AJAX return to understand our app:// urls
+	SharedValue jq = w->Get("jQuery");
+	if (!jq->IsUndefined())
+	{
+		// apply any patches as necessary
+		SharedBoundMethod m = w->Get("eval")->ToMethod();
+		m->Call(Value::NewString("(function(){var a=jQuery.httpSuccess;jQuery.extend({httpSuccess:function(r){if(location.protocol=='app:'&&r.status===0)return true;return a.call(this,r)}})})()"));
+	}
+}
+
 - (void)webView:(WebView *)sender didFinishLoadForFrame:(WebFrame *)frame
 {
 	KR_DUMP_LOCATION
@@ -436,6 +451,10 @@
 		JSGlobalContextRef context = [frame globalContext];
 		[self inject:[frame windowObject] context:context frame:frame];
 	}
+	
+	// apply patches
+	[self applyJSPatches:global_object];
+	
 	NSURL *theurl =[[[frame dataSource] request] URL];
 	// fire load event
 	UserWindow *user_window = [window userWindow];
