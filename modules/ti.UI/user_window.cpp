@@ -57,7 +57,7 @@ UserWindow::UserWindow(kroll::Host *host, WindowConfig *config) :
 	this->config = config;
 	this->next_listener_id = 0;
 	this->api = this->host->GetGlobalObject()->GetNS("API.fire")->ToMethod();
-	
+
 	/* this object is accessed by Titanium.Window.currentWindow */
 	this->SetMethod("hide", &UserWindow::_Hide);
 	this->SetMethod("show", &UserWindow::_Show);
@@ -126,12 +126,12 @@ void UserWindow::Open(UserWindow *window)
 	// Don't do any refcounting here,
 	// since we are holding onto our copy
 	windows.push_back(window);
-	
+
 	SharedBoundObject w = boundWindows[window];
 	SharedBoundObject event = new StaticBoundObject();
 	event->Set("window",Value::NewObject(w));
 	window->api->Call("ti.UI.window.open",Value::NewObject(event));
-	
+
 	SharedValue window_list_value = window->uiBinding->Get("windows");
 	if (!window_list_value->IsList())
 	{
@@ -164,24 +164,24 @@ void UserWindow::Close()
 			}
 		}
 	}
-	
+
 	// fire event
 	SharedBoundObject w = boundWindows[this];
 	SharedBoundObject event = new StaticBoundObject();
 	event->Set("window",Value::NewObject(w));
 	this->api->Call("ti.UI.window.close",Value::NewObject(event));
-	
+
 	// remove
 	std::map<UserWindow*,SharedBoundObject>::iterator bwi = boundWindows.find(this);
 	boundWindows.erase(bwi);
-	
+
 	// check to see if we have a parent, and if so,
 	// remove us from the parent list
 	UserWindow *parent = this->GetParent();
 	if (parent != NULL)
 	{
 		UserWindow::RemoveChild(parent, this);
-		
+
 		// after we close a child, focus it's parent
 		parent->Focus();
 	}
@@ -783,14 +783,14 @@ void UserWindow::_RemoveEventListener(const ValueList& args, SharedValue result)
 	result->SetBool(false);
 }
 
-void UserWindow::FireEvent(UserWindowEvent event)
+void UserWindow::FireEvent(UserWindowEvent windowEvent)
 {
 	// optimize
 	if (this->listeners.size()==0) return;
 
 	std::string name;
 
-	switch(event)
+	switch(windowEvent)
 	{
 		case FOCUSED:
 		{
