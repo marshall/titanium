@@ -6,7 +6,6 @@ Import('build')
 env = build.env.Clone();
 env.Append(CPPDEFINES = ('TITANIUM_APP_API_EXPORT', 1))
 env.Append(CPPPATH = ['#kroll'])
-env.Append(ENV = {'PATH' : os.environ['PATH']})
 
 if build.is_osx():
 	build.add_thirdparty(env, 'poco', True)
@@ -19,6 +18,7 @@ if build.is_win32():
 	env.Append(LIBPATH = ['#kroll/thirdparty/win32/webkit/lib'])
 	env.Append(LIBS=['libxml2', 'pthreadVC2'])
 else:
+	env.Append(ENV = {'PATH' : os.environ['PATH']})
 	if os.environ.has_key('PKG_CONFIG_PATH'):
 		env.AppendENVPath('PKG_CONFIG_PATH', os.environ['PKG_CONFIG_PATH'])
 	env.ParseConfig('pkg-config --cflags --libs libxml-2.0')
