@@ -6,6 +6,7 @@ Import('build')
 env = build.env.Clone();
 env.Append(CPPDEFINES = ('TITANIUM_APP_API_EXPORT', 1))
 env.Append(CPPPATH = ['#kroll'])
+env.Append(ENV = {'PATH' : os.environ['PATH']})
 
 if build.is_osx():
 	build.add_thirdparty(env, 'poco', True)
