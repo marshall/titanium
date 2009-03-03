@@ -199,6 +199,7 @@ namespace ti
 
 		//INTERNAL ONLY
 		void DeletePendingOperations(const ValueList& args, SharedValue result);
+		void ResolveFileName(const ValueList& args, std::string& filename);
 	};
 }
 
