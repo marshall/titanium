@@ -47,12 +47,12 @@ if build.is_osx():
 	build.utils.CopyToDir(p.join(build.titanium_support_dir, 'titanium.icns'), rsc_dir)
 
 	plist = path.join(app_dir, 'Info.plist')
-	p = build.utils.Copy(p.join(titanium_support_dir, 'Info.plist'), plist)
+	p = build.utils.Copy(p.join(build.titanium_support_dir, 'Info.plist'), plist)
 	build.utils.ReplaceVars(plist, {
 		'APPEXE': shortname,
 		'APPNAME': fullname,
 		'APPICON': 'titanium.icns',
 		'APPID': id,
-		'APPNHIB': 'MainMenu',
+		'APPNIB': 'MainMenu',
 		'APPVER': version})
 
