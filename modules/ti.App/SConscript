@@ -10,6 +10,7 @@ env.Append(CPPPATH = ['#kroll'])
 if build.is_osx():
 	build.add_thirdparty(env, 'poco', True)
 	env.Append(LIBS=['kroll'])
+#	env.AppendENVPath('PKG_CONFIG_PATH', '/usr/lib/pkgconfig')
 else:
 	build.add_thirdparty(env, 'poco')
 
@@ -21,7 +22,10 @@ else:
 	env.Append(ENV = {'PATH' : os.environ['PATH']})
 	if os.environ.has_key('PKG_CONFIG_PATH'):
 		env.AppendENVPath('PKG_CONFIG_PATH', os.environ['PKG_CONFIG_PATH'])
-	env.ParseConfig('pkg-config --cflags --libs libxml-2.0')
+	if build.is_osx():
+        	env.ParseConfig('echo -I/usr/include/libxml2  -L/usr/lib -lxml2 -lpthread -lm')
+	else:
+		env.ParseConfig('pkg-config --cflags --libs libxml-2.0')
 
 
 m = build.add_module('tiapp', '0.1')
