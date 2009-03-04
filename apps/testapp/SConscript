@@ -46,8 +46,8 @@ if build.is_osx():
 			p.join(rsc_dir, 'English.lproj'))
 	build.utils.CopyToDir(p.join(build.titanium_support_dir, 'titanium.icns'), rsc_dir)
 
-	plist = path.join(app_dir, 'Info.plist')
-	p = build.utils.Copy(p.join(build.titanium_support_dir, 'Info.plist'), plist)
+	plist = p.join(app_dir, 'Info.plist')
+	build.utils.Copy(p.join(build.titanium_support_dir, 'Info.plist'), plist)
 	build.utils.ReplaceVars(plist, {
 		'APPEXE': shortname,
 		'APPNAME': fullname,
