@@ -35,8 +35,9 @@ build.utils.CopyTree(build.dir + '/modules', modules_dir)
 build.utils.Touch(p.join(app_dir, '.installed')) # prevent appinstaller run
 build.utils.Copy(kboot, exe_path)
 
-for item in ['Resources', 'tiapp.xml', 'manifest']:
-	build.utils.CopyToDir(item, app_dir)
+build.utils.CopyToDir('Resources', app_dir)
+build.utils.CopyToDir('tiapp.xml', app_dir)
+build.utils.CopyToDir('manifest', app_dir)
 
 if build.is_osx():
 	if 'tiui' in build.modules:
@@ -46,7 +47,7 @@ if build.is_osx():
 	build.utils.CopyToDir(p.join(build.titanium_support_dir, 'titanium.icns'), rsc_dir)
 
 	plist = path.join(app_dir, 'Info.plist')
-	build.utils.Copy(p.join(titanium_support_dir, 'Info.plist'), plist)
+	p = build.utils.Copy(p.join(titanium_support_dir, 'Info.plist'), plist)
 	build.utils.ReplaceVars(plist, {
 		'APPEXE': shortname,
 		'APPNAME': fullname,
