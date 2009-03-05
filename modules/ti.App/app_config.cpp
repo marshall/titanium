@@ -26,44 +26,6 @@ bool AppConfig::StringToBool (const char * b) {
 	return false;
 }
 
-WindowConfig* AppConfig::GetWindow(std::string& id)
-{
-	for (size_t i = 0; i < windows.size(); i++)
-	{
-		if (windows[i]->GetID() == id) {
-			return windows[i];
-		}
-	}
-	return NULL;
-}
-
-WindowConfig* AppConfig::GetWindowByURL(std::string url)
-{
-	for (size_t i = 0; i < windows.size(); i++)
-	{
-		std::string urlRegex(windows[i]->GetURLRegex());
-
-		Poco::RegularExpression::Match match;
-		Poco::RegularExpression regex(urlRegex);
-
-		regex.match(url, match);
-
-		if(match.length != 0)
-		{
-			return windows[i];
-		}
-	}
-	return NULL;
-}
-
-WindowConfig* AppConfig::GetMainWindow()
-{
-	if (windows.size() > 0) {
-		return windows[0];
-	}
-	return NULL;
-}
-
 AppConfig::AppConfig(std::string& xmlfile)
 {
 	instance_ = this;
@@ -141,4 +103,56 @@ AppConfig::AppConfig(std::string& xmlfile)
 
 AppConfig::~AppConfig()
 {
+}
+
+WindowConfig* AppConfig::GetWindow(std::string& id)
+{
+	for (size_t i = 0; i < windows.size(); i++)
+	{
+		if (windows[i]->GetID() == id) {
+			return windows[i];
+		}
+	}
+	return NULL;
+}
+
+WindowConfig* AppConfig::GetWindowByURL(std::string url)
+{
+	for (size_t i = 0; i < windows.size(); i++)
+	{
+		std::string urlRegex(windows[i]->GetURLRegex());
+
+		Poco::RegularExpression::Match match;
+		Poco::RegularExpression regex(urlRegex);
+
+		regex.match(url, match);
+
+		if(match.length != 0)
+		{
+			return windows[i];
+		}
+	}
+	return NULL;
+}
+
+WindowConfig* AppConfig::GetMainWindow()
+{
+	if (windows.size() > 0) {
+		return windows[0];
+	}
+	return NULL;
+}
+
+std::string AppConfig::InsertAppIDIntoURL(std::string url)
+{
+	std::string appid = this->GetAppID();
+	std::transform(appid.begin(), appid.end(), appid.begin(), tolower);
+
+	std::string lcurl = url;
+	std::transform(lcurl.begin(), lcurl.end(), lcurl.begin(), tolower);
+	if (lcurl.find("app://") == 0 && lcurl.find(appid, 6) == std::string::npos)
+	{
+		url = std::string("app://") + appid + "/" + (url.c_str() + 6);
+	}
+	return url;
 }

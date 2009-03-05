@@ -22,7 +22,7 @@
    <window>
       <id>smallscreen</id>
       <title>Titanium Small Screen Window</title>
-      <url-regex>app://small.*.html</url-regex>
+      <url-regex>small.*.html</url-regex>
       <width>400</width>
       <height>275</height>
       <minimizable>true</minimizable>
@@ -36,7 +36,7 @@
    <window>
       <id>fullscreen</id>
       <title>Titanium Full Screen Window</title>
-      <url-regex>app://full.*.html</url-regex>
+      <url-regex>full.*.html</url-regex>
       <width>600</width>
       <height>400</height>
       <minimizable>true</minimizable>
