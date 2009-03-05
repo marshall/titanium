@@ -148,7 +148,7 @@ if osname is 'osx':
 
     
 # copy test app resources
-app_src = path.join(top_dir, 'build')
+app_src = path.join(top_dir, 'apps')
 app_src = path.join(app_src, 'testapp')
 dir_util.copy_tree(app_src, app_dir, preserve_symlinks=True)
 

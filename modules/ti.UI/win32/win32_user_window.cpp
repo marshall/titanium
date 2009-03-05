@@ -349,6 +349,11 @@ Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config) :
 		this->SetFullScreen(true);
 	}
 
+	if(this->config->IsTopMost() && this->config->IsVisible())
+	{
+		this->SetTopMost(true);
+	}
+
 	// set this flag to indicate that when the frame is loaded
 	// we want to show the window - we do this to prevent white screen
 	// while the URL is being fetched

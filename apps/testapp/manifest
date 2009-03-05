@@ -3,7 +3,6 @@
 runtime: 0.2
 api: 0.1
 javascript: 0.1
-foo: 0.1
 tiplatform: 0.1
 tiapp: 0.1
 timonkey: 0.1

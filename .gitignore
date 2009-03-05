@@ -4,3 +4,4 @@ build/win32
 .sconsign.dblite
 Debug
 .vimdir
+*.pyc

@@ -104,3 +104,7 @@ if ARGUMENTS.get('package',0):
 	print "building packaging ..."
 	SConscript('installation/runtime/SConscript')
 
+if ARGUMENTS.get('testapp',0):
+	print "building packaging ..."
+	SConscript('apps/testapp/SConscript')
+
