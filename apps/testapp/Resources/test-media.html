@@ -54,6 +54,30 @@
 					Titanium.API.debug("Sound complete");
 				});
 			}
+			function setVolume()
+			{
+				window.sound.setVolume(5);
+			}
+			function getVolume()
+			{
+				alert("volume = " + window.sound.getVolume());
+			}
+			function toggleLooping()
+			{
+				window.sound.setLooping(! window.sound.isLooping());
+			}
+			function isLooping()
+			{
+				alert("isLooping = " + window.sound.isLooping());
+			}
+			function isPlaying()
+			{
+				alert("isPlaying = " + window.sound.isPlaying());
+			}
+			function isPaused()
+			{
+				alert("isPaused = " + window.sound.isPaused());
+			}
 		</script>
 	</head>
 	<body>
@@ -75,6 +99,12 @@
 				<button onclick="pauseSound()">Pause</button>
 				<button onclick="stopSound()">Stop</button>
 				<button onclick="reloadSound()">Reload</button>
+				<button onclick="setVolume()">SetVolume</button>
+				<button onclick="getVolume()">GetVolume</button>
+				<button onclick="toggleLooping()">ToggleLooping</button>
+				<button onclick="isLooping()">IsLooping</button>
+				<button onclick="isPlaying()">IsPlaying</button>
+				<button onclick="isPaused()">IsPaused</button>
 			</div>
 			<div>
 			<button onclick="createPlayAndForgetIt()">Create, play and forget</button>(Garbage collection test)

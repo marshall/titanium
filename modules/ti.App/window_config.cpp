@@ -205,6 +205,12 @@ WindowConfig::WindowConfig(void* data)
 		else if (nodeNameEquals(child, "transparency")) {
 			transparency = (float)atof(nodeValue(child));
 		}
+		else if (nodeNameEquals(child, "x")) {
+			x = atoi(nodeValue(child));
+		}
+		else if (nodeNameEquals(child, "y")) {
+			y = atoi(nodeValue(child));
+		}
 		else if (nodeNameEquals(child, "width")) {
 			width = atoi(nodeValue(child));
 		}
@@ -225,6 +231,9 @@ WindowConfig::WindowConfig(void* data)
 		}
 		else if (nodeNameEquals(child, "max-height")) {
 			maxHeight = atoi(nodeValue(child));
+		}
+		else if (nodeNameEquals(child, "top-most")) {
+			topMost = boolValue(child);
 		}
 		child = child->next;
 	}
