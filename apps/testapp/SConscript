@@ -10,29 +10,26 @@ id = 'com.titaniumapp.testapp'
 version = '0.1'
 
 if build.is_linux():
-	app_dir = p.join(build.dir, shortname)
+	over_dir = app_dir = p.join(build.dir, shortname)
 	exe_path = p.join(app_dir, shortname)
 	kboot = p.join(build.dir, 'kboot')
 elif build.is_win32():
-	app_dir = p.join(build.dir, shortname)
+	over_dir = app_dir = p.join(build.dir, shortname)
 	exe_path = p.join(app_dir, shortname+'.exe')
 	kboot = p.join(build.dir, 'kboot.exe')
 elif build.is_osx():
-	app_dir = p.join(build.dir, shortname+'.app', 'Contents')
-	exe_path = p.join(build.dir, shortname+'.app', 'MacOS')
-	exe_path = p.join(app_dir, shortname+'.exe')
+	over_dir = p.join(build.dir, shortname+'.app')
+	app_dir = p.join(over_dir, 'Contents')
+	exe_path = p.join(app_dir, 'MacOS', shortname)
 	kboot = p.join(build.dir, 'kboot')
 else:
 	print "Sorry, the testapp builder does not support your environment yet."
 	Exit()
-
 runtime = p.join(app_dir, 'runtime');
 rsc_dir = p.join(app_dir, 'Resources');
 
-
-if p.isdir(app_dir):
-	dir_util.remove_tree(app_dir)
-
+if p.isdir(over_dir):
+	dir_util.remove_tree(over_dir)
 excludes = ['.dll.manifest', '.dll.pdb', '.exp', '.ilk']
 build.utils.CopyToDir(build.dir + '/runtime', app_dir, exclude=excludes)
 build.utils.CopyToDir(p.join(build.dir, 'modules'), app_dir, exclude=excludes)
