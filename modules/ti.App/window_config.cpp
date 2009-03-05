@@ -231,6 +231,9 @@ WindowConfig::WindowConfig(void* data)
 		else if (nodeNameEquals(child, "max-height")) {
 			maxHeight = atoi(nodeValue(child));
 		}
+		else if (nodeNameEquals(child, "top-most")) {
+			topMost = boolValue(child);
+		}
 		child = child->next;
 	}
 }
