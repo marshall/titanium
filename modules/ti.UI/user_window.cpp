@@ -153,7 +153,7 @@ void UserWindow::Close()
 	if (window_list_value->IsList())
 	{
 		SharedBoundList window_list = window_list_value->ToList();
-		for (int c=0;c<window_list->Size();c++)
+		for (unsigned int c=0; c< window_list->Size(); c++)
 		{
 			SharedValue v = window_list->At(c);
 			SharedBoundObject bo = v->ToObject();
@@ -437,8 +437,9 @@ void UserWindow::_GetURL(const kroll::ValueList& args, kroll::SharedValue result
 
 void UserWindow::_SetURL(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	if (args.size() > 0) {
+	if (args.size() > 0 && args.at(0)->IsString()) {
 		std::string url = args.at(0)->ToString();
+		url = AppConfig::Instance()->InsertAppIDIntoURL(url);
 		this->SetURL(url);
 	}
 }
@@ -595,6 +596,8 @@ void UserWindow::_CreateWindow(const ValueList& args, SharedValue result)
 		// String might match a url spec
 		std::string url = args.at(0)->ToString();
 		WindowConfig* matchedConfig = AppConfig::Instance()->GetWindowByURL(url);
+
+		url = AppConfig::Instance()->InsertAppIDIntoURL(url);
 		config = new WindowConfig(matchedConfig, url);
 	}
 	else
@@ -608,7 +611,7 @@ void UserWindow::_CreateWindow(const ValueList& args, SharedValue result)
 void UserWindow::UpdateWindowForURL(std::string url)
 {
 	WindowConfig* config = AppConfig::Instance()->GetWindowByURL(url);
-	if(! config)
+	if (!config)
 	{
 		// no need to update window
 		return;
@@ -733,7 +736,7 @@ void UserWindow::_OpenFiles(const ValueList& args, SharedValue result)
 	if (props->Get("types")->IsList())
 	{
 		SharedBoundList l = props->Get("types")->ToList();
-		for (int i = 0; i < l->Size(); i++)
+		for (unsigned int i = 0; i < l->Size(); i++)
 		{
 			if (l->At(i)->IsString())
 			{
@@ -939,7 +942,7 @@ void UserWindow::ContextBound(SharedBoundObject global_bound_object)
 	this->api->Call("ti.UI.window.page.init",Value::NewObject(event));
 }
 
-void UserWindow::PageLoaded(SharedBoundObject global_bound_object,std::string &url)
+void UserWindow::PageLoaded(SharedBoundObject global_bound_object, std::string &url)
 {
 	SharedBoundObject w = boundWindows[this];
 	SharedBoundObject event = new StaticBoundObject();

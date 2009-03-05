@@ -100,7 +100,7 @@ void WindowConfig::SetDefaults ()
 	this->maxWidth = 9000;
 	this->maxHeight = 9000;
 
-	this->url = "app://" + AppConfig::Instance()->GetAppID() + "/index.html";
+	this->url = AppConfig::Instance()->InsertAppIDIntoURL("app://index.html");
 	this->title = "Titanium Application";
 }
 
@@ -175,6 +175,7 @@ WindowConfig::WindowConfig(void* data)
 		}
 		else if (nodeNameEquals(child, "url")) {
 			url = nodeValue(child);
+			url = AppConfig::Instance()->InsertAppIDIntoURL(url);
 		}
 		else if (nodeNameEquals(child, "url-regex")) {
 			urlRegex = nodeValue(child);
@@ -183,7 +184,7 @@ WindowConfig::WindowConfig(void* data)
 			maximizable = boolValue(child);
 		}
 		else if (nodeNameEquals(child, "minimizable")) {
-			minimizable =	 boolValue(child);
+			minimizable = boolValue(child);
 		}
 		else if (nodeNameEquals(child, "closeable")) {
 			closeable = boolValue(child);

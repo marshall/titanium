@@ -24,7 +24,6 @@ namespace ti {
 #include <iostream>
 #include "window_config.h"
 #include "user_window.h"
-#include "window.h"
 #include "menu_item.h"
 #include "tray_item.h"
 #include "ui_binding.h"

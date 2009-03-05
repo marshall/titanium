@@ -97,7 +97,7 @@ namespace ti
 		{
 			// you can pass in an array of parts to join
 			SharedBoundList list = args.at(0)->ToList();
-			for (int c=0;c<list->Size();c++)
+			for (unsigned int c=0; c < list->Size(); c++)
 			{
 				std::string arg = list->At(c)->ToString();
 				filename = kroll::FileUtils::Join(filename.c_str(),arg.c_str(),NULL);
@@ -297,7 +297,7 @@ namespace ti
 		else if (args.at(0)->IsList())
 		{
 			SharedBoundList list = args.at(0)->ToList();
-			for (int c=0;c<list->Size();c++)
+			for (unsigned int c = 0; c < list->Size(); c++)
 			{
 				SharedValue v = list->At(c);
 				std::string s(FileSystemUtils::GetFileName(v));
