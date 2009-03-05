@@ -153,7 +153,7 @@ void UserWindow::Close()
 	if (window_list_value->IsList())
 	{
 		SharedBoundList window_list = window_list_value->ToList();
-		for (int c=0;c<window_list->Size();c++)
+		for (unsigned int c=0; c< window_list->Size(); c++)
 		{
 			SharedValue v = window_list->At(c);
 			SharedBoundObject bo = v->ToObject();
@@ -736,7 +736,7 @@ void UserWindow::_OpenFiles(const ValueList& args, SharedValue result)
 	if (props->Get("types")->IsList())
 	{
 		SharedBoundList l = props->Get("types")->ToList();
-		for (int i = 0; i < l->Size(); i++)
+		for (unsigned int i = 0; i < l->Size(); i++)
 		{
 			if (l->At(i)->IsString())
 			{

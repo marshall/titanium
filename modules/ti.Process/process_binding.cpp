@@ -48,7 +48,7 @@ namespace ti
 			else if (args.at(1)->IsList())
 			{
 				SharedBoundList list = args.at(1)->ToList();
-				for (int c=0;c<list->Size();c++)
+				for (unsigned int c = 0; c < list->Size(); c++)
 				{
 					SharedValue value = list->At(c);
 					arguments.push_back(value->ToString());
