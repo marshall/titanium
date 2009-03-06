@@ -16,7 +16,7 @@ using Poco::RunnableAdapter;
 
 namespace ti
 {
-	class NetworkStatus
+	class NetworkStatus : public StaticBoundObject
 	{
 		public:
 		NetworkStatus(NetworkBinding* binding);
@@ -25,6 +25,7 @@ namespace ti
 		void Start();
 		void Shutdown(bool async=false);
 		void CheckStatus();
+		void StatusLoop();
 
 		protected:
 		NetworkBinding* binding;
@@ -34,7 +35,6 @@ namespace ti
 		RunnableAdapter<NetworkStatus>* adapter;
 		Poco::Thread *thread;
 
-		void StatusLoop();
 		virtual void InitializeLoop() {};
 		virtual bool GetStatus() = 0;
 		virtual void CleanupLoop() {};
