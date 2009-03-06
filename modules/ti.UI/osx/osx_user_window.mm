@@ -276,8 +276,9 @@ namespace ti
 		this->config->SetURL(url);
 		if (opened)
 		{
-			NSURL *nsurl = [TiApplication normalizeURL:[NSString stringWithCString:url.c_str()]];
-			[[[window webView] mainFrame] loadRequest:[NSURLRequest requestWithURL:nsurl]];
+			std::string url_str = AppConfig::Instance()->InsertAppIDIntoURL(config->GetURL());
+			NSURL* url = [NSURL URLWithString: [NSString stringWithCString:url_str.c_str()]];
+			[[[window webView] mainFrame] loadRequest:[NSURLRequest requestWithURL:url]];
 		}
 	}
 	bool OSXUserWindow::IsResizable()

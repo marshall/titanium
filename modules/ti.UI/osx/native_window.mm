@@ -246,8 +246,9 @@
 		// will cause the window to be shown once the url is loaded
 		requiresDisplay = YES;
 	}
-	NSURL *url = [TiApplication normalizeURL:[NSString stringWithCString:config->GetURL().c_str()]];
-    [[webView mainFrame] loadRequest:[NSURLRequest requestWithURL:url]];
+	std::string url_str = AppConfig::Instance()->InsertAppIDIntoURL(config->GetURL());
+	NSURL* url = [NSURL URLWithString: [NSString stringWithCString:url_str.c_str()]];
+	[[webView mainFrame] loadRequest:[NSURLRequest requestWithURL:url]];
 	[self fireWindowEvent:OPENED];
 }
 - (void)close
