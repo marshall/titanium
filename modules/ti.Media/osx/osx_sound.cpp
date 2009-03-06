@@ -7,6 +7,14 @@
 #import "osx_sound.h"
 #import "sound_delegate.h"
 
+@interface NSSound (MakeTheErrorsGoAway)
+//These all are in 10.5, but building for 10.4 produces warnings unless I mention them here.
+- (void)setVolume:(float)volume;
+- (float)volume;
+- (BOOL)loops;
+- (void)setLoops:(BOOL)loops;
+@end
+
 namespace ti
 {
 	OSXSound::OSXSound(std::string &url) : 
@@ -92,19 +100,29 @@ namespace ti
 	}
 	void OSXSound::SetVolume(double volume)
 	{
-		[sound setVolume:volume];
+		if ([sound respondsToSelector:@selector(setVolume:)]){
+			[sound setVolume:volume];
+		}	//TODO: 10.4 doesn't have setVolume on NSSound.
 	}
 	double OSXSound::GetVolume()
 	{
-		return [sound volume];
+		if ([sound respondsToSelector:@selector(volume)]){
+			return [sound volume];
+		}	//TODO: 10.4 doesn't have volume on NSSound.
+		return 0.0;
 	}
 	void OSXSound::SetLooping(bool loop)
 	{
-		[sound setLoops:loop];
+		if ([sound respondsToSelector:@selector(setLoops:)]){
+			[sound setLoops:loop];
+		}	//TODO: 10.4 doesn't have setLoops on NSSound.
 	}
 	bool OSXSound::IsLooping()
 	{
-		return [sound loops];
+		if ([sound respondsToSelector:@selector(loops)]){
+			return [sound loops];
+		}	//TODO: 10.4 doesn't have loops on NSSound.
+		return false;
 	}
 	bool OSXSound::IsPlaying()
 	{

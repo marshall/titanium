@@ -22,7 +22,8 @@ namespace ti
 		// unset any KR_ environment variables and the library path
 		// so it doesn't interfere with process we're launching 
 		// (reset below)
-		for (id key in dictionary)
+		NSEnumerator * ourDictionaryKeyEnumerator = [dictionary keyEnumerator];
+		while (id key = [ourDictionaryKeyEnumerator nextObject])
 		{
 			if ([key hasPrefix:@"KR_"])
 			{
@@ -38,7 +39,8 @@ namespace ti
 #endif
 		BOOL result = [ws launchApplication:name];
 
-		for (id key in remember)
+		NSEnumerator * ourRememberKeyEnumerator = [remember keyEnumerator];
+		while (id key = [ourRememberKeyEnumerator nextObject])
 		{
 			id value = [remember objectForKey:key];
 			setenv([key UTF8String],[value UTF8String],1);
