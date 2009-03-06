@@ -55,7 +55,6 @@ namespace ti
 			if (count == 0)
 			{
 				bool online = this->GetStatus();
-				std::cout << "online: " << online << "   " << this->previous_status << std::endl;
 				if (online != this->previous_status)
 				{
 					this->previous_status = online;

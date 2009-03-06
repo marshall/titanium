@@ -12,7 +12,7 @@
 	<script type="text/javascript" charset="utf-8" src="js/projects.js"></script>
 	<script type="text/javascript" charset="utf-8" src="js/irc.js"></script>
 	<script type="text/javascript" charset="utf-8" src="js/feeds.js"></script>
-
+	<script type="text/javascript" charset="utf-8" src="js/apps.js"></script>
 
 	<!-- common JS Files -->
 	<script type="text/javascript" charset="utf-8" src="js/project.js"></script>
@@ -20,6 +20,8 @@
 
 	<!-- style sheet -->
 	<link rel="stylesheet" href="css/index.css" type="text/css" media="screen" charset="utf-8" />
+
+	
 </head>
 
 <!-- ADJUST WINDOW HEIGHT BASED ON CURRENT STATE -->
@@ -44,6 +46,10 @@
 			<div class="button2">Projects</div>
 		</div>
 		<div class="button1" style="display:inline-block;width:150px" 
+			on="click then l:menu[val=apps] and add[class=active] or l:menu[val!=apps] then remove[class=active]">
+			<div class="button2">Apps</div>
+		</div>
+		<div class="button1" style="display:inline-block;width:150px" 
 			on="click then l:menu[val=interact] and add[class=active] or l:menu[val!=interact] then remove[class=active]">
 			<div class="button2">Community 
 				<span id="irc_message_count" class="message_indicator" style="display:none"></span>
@@ -64,7 +70,57 @@
 		<!-- ************* -->
 		<!-- CONTENT FILES -->
 		<!-- ************* -->
-		
+
+		<!-- APPS -->
+		<div style="display:none;margin-bottom:20px;min-height:90%"
+			on="l:menu[val=apps] then effect[fadeIn] else hide">
+			<div style="border-top:1px solid #666">
+				<div  style="position:relative;border-top:1px solid #141414;padding-left:20px;padding-right:20px">
+					<div style="margin-top:10px">
+						<div control="iterator[property=rows]" on="l:applist then execute" 
+							style="height:100%;overflow:auto">
+							<div class="infobox appitem">
+								<div class="content" style="position:relative;height:163px">
+									<div class="app_image"><img src="#{image}" height="78px" width="78px"/></div>
+									<div class="app_title">#{title}</div>
+									<div class="app_downloads">#{downloads} downloads </div>
+									<div class="app_rating" id="rating_#{id}">
+										<img appid="#{id}" star="1" id="rating_#{id}_1" 
+										  class="rating" src="images/star.png"/>
+										<img appid="#{id}" star="2" id="rating_#{id}_2"
+											class="rating" src="images/star.png"/>
+										<img appid="#{id}" star="3" id="rating_#{id}_3" 
+											class="rating" src="images/star.png"/>
+										<img appid="#{id}" star="4" id="rating_#{id}_4" 
+											class="rating" src="images/star.png"/>
+										<img appid="#{id}" star="5" id="rating_#{id}_5" 
+											class="rating" 	src="images/star.png"/>
+									</div>
+									<div class="rating_detail">
+										<span class="rating_string" id="rating_string_#{id}" votes="#{votes}"
+											rating="#{value}" hasVoted="#{hasVoted}">
+											#{value} rating from #{votes} votes
+										</span>
+										<span class="rating_string" id="already_voted_#{id}" style="display:none">
+											You have already voted!
+										</span>
+										<span class="rating_string" id="voted_success_#{id}"  
+											style="display:none;font-size:11x;color:#809eb3">
+											Thanks for your vote!
+										</span>
+
+									</div>
+									<div class="app_pubinfo">published by #{author} on #{pubdate}</div>
+									<div class="app_url"><a target="ti:systembrowser" href="#{url}">#{url}</a></div>
+
+									<div class="app_description">#{desc}</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
 		<!-- DOC -->
 		<div style="display:none;margin-bottom:20px;min-height:90%"
 			on="l:menu[val=api] then effect[fadeIn] else hide">

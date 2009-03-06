@@ -407,3 +407,93 @@ div.formhint
 	background-color:#555;
 	border:1px solid #646464 !important;
 }
+
+.appitem
+{
+	width:300px;
+	float:left;
+	margin-right:10px;
+	margin-bottom:20px;
+	height:175px;
+}
+.app_image
+{
+	position:absolute;
+	top:10px;
+	left:10px;
+}
+.app_title
+{
+	position:absolute;
+	top:10px;
+	left:100px;
+	font-size:18px;
+	color:white;
+	background-color:#22;
+}
+
+.app_pubinfo
+{
+	position:absolute;
+	top:90px;
+	left:10px;
+	font-size:11px;
+	font-style:italic;
+	color:#809eb3;
+	
+}
+
+.app_url
+{
+	position:absolute;
+	top:105px;
+	left:10px;
+	font-size:11px;
+}
+.app_url a
+{
+	color:#42C0FB !important;
+}
+.app_downloads
+{
+	position:absolute;
+	top:35px;
+	left:100px;
+	font-size:11px;
+	color:#aaa;
+}
+.app_rating
+{
+	position:absolute;
+	top:50px;
+	left:100px;
+	height:20px;
+	width:250px;
+}
+.rating_detail
+{
+	position:absolute;
+	top:70px;
+	left:100px;
+	
+}
+.rating
+{
+	cursor:pointer;
+}
+.rating_off
+{
+	opacity:0.1;
+}
+.rating_string
+{
+	color:#aaa;font-size:11px;font-style:italic;
+}
+.app_description
+{
+	position:absolute;
+	top:122px;
+	left:10px;
+	font-size:12px;
+	color:#fff;
+}
