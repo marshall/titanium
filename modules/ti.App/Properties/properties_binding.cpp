@@ -162,7 +162,7 @@ namespace ti
 			SharedBoundList list = args.at(1)->ToList();
 
 			std::string value = "";
-			for (int i = 0; i < list->Size(); i++) {
+			for (unsigned int i = 0; i < list->Size(); i++) {
 				SharedValue arg = list->At(i);
 				if (arg->IsString())
 				{

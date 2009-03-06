@@ -100,7 +100,7 @@ void WindowConfig::SetDefaults ()
 	this->maxWidth = 9000;
 	this->maxHeight = 9000;
 
-	this->url = "app://" + AppConfig::Instance()->GetAppID() + "/index.html";
+	this->url = AppConfig::Instance()->InsertAppIDIntoURL("app://index.html");
 	this->title = "Titanium Application";
 }
 
@@ -175,6 +175,7 @@ WindowConfig::WindowConfig(void* data)
 		}
 		else if (nodeNameEquals(child, "url")) {
 			url = nodeValue(child);
+			url = AppConfig::Instance()->InsertAppIDIntoURL(url);
 		}
 		else if (nodeNameEquals(child, "url-regex")) {
 			urlRegex = nodeValue(child);
@@ -183,7 +184,7 @@ WindowConfig::WindowConfig(void* data)
 			maximizable = boolValue(child);
 		}
 		else if (nodeNameEquals(child, "minimizable")) {
-			minimizable =	 boolValue(child);
+			minimizable = boolValue(child);
 		}
 		else if (nodeNameEquals(child, "closeable")) {
 			closeable = boolValue(child);
@@ -203,6 +204,12 @@ WindowConfig::WindowConfig(void* data)
 		}
 		else if (nodeNameEquals(child, "transparency")) {
 			transparency = (float)atof(nodeValue(child));
+		}
+		else if (nodeNameEquals(child, "x")) {
+			x = atoi(nodeValue(child));
+		}
+		else if (nodeNameEquals(child, "y")) {
+			y = atoi(nodeValue(child));
 		}
 		else if (nodeNameEquals(child, "width")) {
 			width = atoi(nodeValue(child));
@@ -224,6 +231,9 @@ WindowConfig::WindowConfig(void* data)
 		}
 		else if (nodeNameEquals(child, "max-height")) {
 			maxHeight = atoi(nodeValue(child));
+		}
+		else if (nodeNameEquals(child, "top-most")) {
+			topMost = boolValue(child);
 		}
 		child = child->next;
 	}

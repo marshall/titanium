@@ -11,7 +11,6 @@
 #import "WebScriptDebugDelegate.h"
 #import "WebScriptObject.h"
 #import "WebPreferencesPrivate.h"
-#import "../window.h"
 
 @class NativeWindow;
 
