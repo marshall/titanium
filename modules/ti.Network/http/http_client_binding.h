@@ -15,25 +15,46 @@
 #include <Poco/URI.h>
 #include <Poco/Exception.h>
 #include <Poco/Thread.h>
+#include <Poco/FileStream.h>
 
 namespace ti
 {
 	class HTTPClientBinding : public StaticBoundObject
 	{
 	public:
-		HTTPClientBinding(Host* host, std::string &url, SharedBoundMethod callback);
+		HTTPClientBinding(Host* host);
 		virtual ~HTTPClientBinding();
+		
+		SharedValue GetSelf() { return self;}
+		
 	private:
 		Host* host;
 		SharedBoundObject global;
-		SharedBoundMethod callback;
 		Poco::Thread *thread;
 		std::string url;
 		Poco::Net::HTTPResponse* response;
+		std::map<std::string,std::string> headers;
+		std::string method;
+		bool async;
+		std::string user;
+		std::string password;
+		SharedValue self;
+		Poco::FileInputStream *filestream;
+		std::string filename;
+		std::string datastream;
+		std::string dirstream;
 		
 		static void Run(void*);
-		void Cancel(const ValueList& args, SharedValue result);
-		void GetHeader(const ValueList& args, SharedValue result);
+		
+		DECLAREBOUNDMETHOD(Abort)
+		DECLAREBOUNDMETHOD(Open)
+		DECLAREBOUNDMETHOD(SetRequestHeader)
+		DECLAREBOUNDMETHOD(Send)
+		DECLAREBOUNDMETHOD(SendFile)
+		DECLAREBOUNDMETHOD(SendDir)
+		DECLAREBOUNDMETHOD(GetResponseHeader)
+		
+		void ChangeState(int readyState);
 	};
 }
 
