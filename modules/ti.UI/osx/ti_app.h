@@ -17,7 +17,6 @@
 	NSString *appid;
 	ti::UIBinding *binding;
 }
-+(NSURL*)normalizeURL:(NSString *)url;
 +(NSString*)appID;
 -(id)initWithBinding:(ti::UIBinding*)binding;
 @end

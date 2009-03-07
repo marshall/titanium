@@ -91,14 +91,13 @@ namespace ti
 			throw ValueException::FromString(exc.displayText());
 		}
 	}
-	void FilesystemBinding::GetFile(const ValueList& args, SharedValue result)
+	void FilesystemBinding::ResolveFileName(const ValueList& args, std::string& filename)
 	{
-		std::string filename;
 		if (args.at(0)->IsList())
 		{
 			// you can pass in an array of parts to join
 			SharedBoundList list = args.at(0)->ToList();
-			for (int c=0;c<list->Size();c++)
+			for (unsigned int c=0; c < list->Size(); c++)
 			{
 				std::string arg = list->At(c)->ToString();
 				filename = kroll::FileUtils::Join(filename.c_str(),arg.c_str(),NULL);
@@ -118,36 +117,18 @@ namespace ti
 		{
 			throw ValueException::FromString("invalid file type");
 		}
+	}
+	void FilesystemBinding::GetFile(const ValueList& args, SharedValue result)
+	{
+		std::string filename;
+		this->ResolveFileName(args, filename);
 		ti::File* file = new ti::File(filename);
 		result->SetObject(file);
 	}
 	void FilesystemBinding::GetFileStream(const ValueList& args, SharedValue result)
 	{
 		std::string filename;
-		if (args.at(0)->IsList())
-		{
-			// you can pass in an array of parts to join
-			SharedBoundList list = args.at(0)->ToList();
-			for (int c=0;c<list->Size();c++)
-			{
-				std::string arg = list->At(c)->ToString();
-				filename = kroll::FileUtils::Join(filename.c_str(),arg.c_str(),NULL);
-			}
-		}
-		else
-		{
-			// you can pass in vararg of strings which acts like
-			// a join
-			for (size_t c=0;c<args.size();c++)
-			{
-				std::string arg = FileSystemUtils::GetFileName(args.at(c));
-				filename = kroll::FileUtils::Join(filename.c_str(),arg.c_str(),NULL);
-			}
-		}
-		if (filename.empty())
-		{
-			throw ValueException::FromString("invalid file type");
-		}
+		this->ResolveFileName(args, filename);
 		ti::FileStream* fs = new ti::FileStream(filename);
 		result->SetObject(fs);
 	}
@@ -316,7 +297,7 @@ namespace ti
 		else if (args.at(0)->IsList())
 		{
 			SharedBoundList list = args.at(0)->ToList();
-			for (int c=0;c<list->Size();c++)
+			for (unsigned int c = 0; c < list->Size(); c++)
 			{
 				SharedValue v = list->At(c);
 				std::string s(FileSystemUtils::GetFileName(v));

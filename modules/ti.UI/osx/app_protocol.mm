@@ -65,25 +65,9 @@
 }
 +(NSURL*)normalizeURL:(NSURL*)url
 {
-	NSString *path = [url path];
-	NSString *appid = [TiApplication appID];
-	if (!path || [path isEqual:@""])
-	{
-		NSString *newurlstr = [NSString stringWithFormat:@"app://%@/%@",appid,[url host]];
-		NSURL *newurl = [NSURL URLWithString:newurlstr];
-		return newurl;
-	}
-	else
-	{
-		NSString *host = [url host];
-		if (![host isEqualToString:appid])
-		{
-			NSString *newurlstr = [NSString stringWithFormat:@"app://%@%@",appid,path];
-			NSURL *newurl = [NSURL URLWithString:newurlstr];
-			return newurl;
-		}
-	}
-	return url;
+	std::string url_str([[url absoluteString] cStringUsingEncoding:NSUTF8StringEncoding]);
+	url_str = AppConfig::Instance()->InsertAppIDIntoURL(url_str);
+	return [NSURL URLWithString: [NSString stringWithCString:url_str.c_str()]];
 }
 
 +(NSURLRequest *)canonicalRequestForRequest:(NSURLRequest *)request 

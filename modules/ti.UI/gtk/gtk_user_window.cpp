@@ -37,7 +37,10 @@ static gint new_window_navigation_requested_cb(
 	WebKitWebFrame* web_frame,
 	WebKitNetworkRequest* request,
 	gchar* frame_name);
-static void load_done_cb(WebKitWebFrame *web_frame);
+static void load_finished_cb(
+	WebKitWebView* view,
+	WebKitWebFrame* frame,
+	gpointer *data);
 
 GtkUserWindow::GtkUserWindow(Host *host, WindowConfig* config) : UserWindow(host, config)
 {
@@ -67,19 +70,31 @@ void GtkUserWindow::Open()
 {
 	if (this->gtk_window == NULL)
 	{
-		/* web view */
 		WebKitWebView* web_view = WEBKIT_WEB_VIEW (webkit_web_view_new ());
-		g_signal_connect(G_OBJECT(web_view), "window-object-cleared",
-		                 G_CALLBACK(window_object_cleared_cb),
-		                 this);
-		g_signal_connect(G_OBJECT(web_view), "navigation-requested",
-		                 G_CALLBACK(navigation_requested_cb), this);
-		g_signal_connect(G_OBJECT(web_view), "new-window-navigation-requested",
-		                 G_CALLBACK(new_window_navigation_requested_cb), this);
-		g_signal_connect(G_OBJECT (web_view), "populate-popup",
-		                 G_CALLBACK (populate_popup_cb), this);
-		g_signal_connect(G_OBJECT (web_view), "load-done",
-					                 G_CALLBACK (load_done_cb), this);
+
+		g_signal_connect(
+			G_OBJECT(web_view), "window-object-cleared",
+			G_CALLBACK(window_object_cleared_cb), this);
+		g_signal_connect(
+			G_OBJECT(web_view), "navigation-requested",
+			G_CALLBACK(navigation_requested_cb), this);
+		g_signal_connect(
+			G_OBJECT(web_view), "new-window-navigation-requested",
+			G_CALLBACK(new_window_navigation_requested_cb), this);
+		g_signal_connect(
+			G_OBJECT(web_view), "populate-popup",
+			G_CALLBACK(populate_popup_cb), this);
+		g_signal_connect(
+			G_OBJECT(web_view), "load-finished",
+			G_CALLBACK(load_finished_cb), this);
+
+		// Tell Titanium what Webkit is using for a user-agent
+		SharedBoundObject global = host->GetGlobalObject();
+		if (global->Get("userAgent")->IsUndefined())
+		{
+			const gchar* user_agent = webkit_web_view_get_user_agent(G_OBJECT(web_view));
+			global->Set("userAgent", Value::NewString(user_agent));
+		}
 
 		WebKitWebSettings* settings = webkit_web_settings_new();
 		g_object_set(G_OBJECT(settings), "enable-developer-extras", TRUE, NULL);
@@ -90,11 +105,11 @@ void GtkUserWindow::Open()
 		{
 			/* web view scroller */
 			GtkWidget* scrolled_window = gtk_scrolled_window_new (NULL, NULL);
-			gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window),
-			                               GTK_POLICY_AUTOMATIC,
-			                               GTK_POLICY_AUTOMATIC);
-			gtk_container_add(GTK_CONTAINER (scrolled_window),
-			                  GTK_WIDGET (web_view));
+			gtk_scrolled_window_set_policy(
+				GTK_SCROLLED_WINDOW(scrolled_window),
+				GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+			gtk_container_add(
+				GTK_CONTAINER (scrolled_window), GTK_WIDGET (web_view));
 			view_container = scrolled_window;
 		}
 		else // No scrollin' fer ya.
@@ -110,9 +125,10 @@ void GtkUserWindow::Open()
 
 		/* main window */
 		GtkWidget* window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-		gtk_window_set_default_size(GTK_WINDOW(window),
-		                            this->config->GetWidth(),
-		                            this->config->GetHeight());
+		gtk_window_set_default_size(
+			GTK_WINDOW(window),
+			this->config->GetWidth(),
+			this->config->GetHeight());
 		gtk_widget_set_name(window, this->config->GetTitle().c_str());
 		gtk_window_set_title(GTK_WINDOW(window), this->config->GetTitle().c_str());
 
@@ -355,6 +371,9 @@ static gint navigation_requested_cb(
 	WebKitWebFrame* web_frame,
 	WebKitNetworkRequest* request)
 {
+	const gchar* uri = webkit_network_request_get_uri(request);
+	std::string new_uri = AppConfig::Instance()->InsertAppIDIntoURL(uri);
+	webkit_network_request_set_uri(request, new_uri.c_str());
 	return WEBKIT_NAVIGATION_RESPONSE_ACCEPT;
 }
 
@@ -385,9 +404,19 @@ static gint new_window_navigation_requested_cb(
 	}
 }
 
-static void load_done_cb(WebKitWebFrame* web_frame)
+static void load_finished_cb(
+	WebKitWebView* view,
+	WebKitWebFrame* frame,
+	gpointer *data)
 {
-	//FIXME: call this->PageLoaded(global_object,url_str);
+	JSGlobalContextRef context = webkit_web_frame_get_global_context(frame);
+	JSObjectRef global_object = JSContextGetGlobalObject(context);
+	SharedBoundObject frame_global =
+		new KJSBoundObject(context, global_object);
+	std::string uri = webkit_web_frame_get_uri(frame);
+
+	GtkUserWindow* user_window = (GtkUserWindow*) data;
+	user_window->PageLoaded(frame_global, uri);
 }
 
 static void window_object_cleared_cb(
@@ -438,19 +467,20 @@ static void window_object_cleared_cb(
 	}
 
 	// Get the global object into a KJSBoundObject
-	BoundObject *global_bound_object = new KJSBoundObject(context, global_object);
+	SharedBoundObject frame_global =
+		new KJSBoundObject(context, global_object);
 
 	// Copy the document and window properties to the Titanium object
-	SharedValue doc_value = global_bound_object->Get("document");
+	SharedValue doc_value = frame_global->Get("document");
 	ti_object->Set("document", doc_value);
-	SharedValue window_value = global_bound_object->Get("window");
-
+	SharedValue window_value = frame_global->Get("window");
 	ti_object->Set("window", window_value);
+
 	// Place the Titanium object into the window's global object
 	SharedValue ti_object_value = Value::NewObject(shared_ti_obj);
-	global_bound_object->Set(GLOBAL_NS_VARNAME, ti_object_value);
+	frame_global->Set(GLOBAL_NS_VARNAME, ti_object_value);
 
-	//FIXME: call this->ContextBound(global_object)
+	user_window->ContextBound(frame_global);
 }
 
 static void populate_popup_cb(WebKitWebView *web_view,

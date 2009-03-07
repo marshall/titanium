@@ -7,19 +7,21 @@
 
 namespace ti
 {
-	DBusNetworkStatus::DBusNetworkStatus(NetworkBinding* binding) 
-	 : NetworkStatus(binding),
+	DBusNetworkStatus::DBusNetworkStatus(ti::NetworkBinding* binding) :
+	   NetworkStatus(binding),
 	   bus(NULL),
 	   wicd_wired_proxy(NULL),
 	   wicd_wireless_proxy(NULL),
 	   nm_proxy(NULL)
 	{
-		g_type_init();
+		this->SetMethod("_DBusStatus", &DBusNetworkStatus::_DBusStatus);
 	}
 
 	void DBusNetworkStatus::InitializeLoop()
 	{
-		gdk_threads_enter();
+		g_type_init();
+		dbus_threads_init_default();
+
 		GError *error = NULL;
 		this->bus = dbus_g_bus_get(DBUS_BUS_SYSTEM, &error);
 
@@ -28,34 +30,11 @@ namespace ti
 			std::cerr << "Could not connect to DBUS: "
 			          << error->message << std::endl;
 		}
-		else
-		{
-			this->wicd_wired_proxy = dbus_g_proxy_new_for_name(
-				this->bus,
-				"org.wicd.daemon",
-				"/org/wicd/daemon",
-				"org.wicd.daemon.wired");
-
-			this->wicd_wireless_proxy = dbus_g_proxy_new_for_name(
-				this->bus,
-				"org.wicd.daemon",
-				"/org/wicd/daemon",
-				"org.wicd.daemon.wireless");
-
-			this->nm_proxy = dbus_g_proxy_new_for_name(
-				this->bus,
-				"org.freedesktop.NetworkManager",
-				"/org/freedesktop/NetworkManager",
-				"org.freedesktop.DBus.Properties");
-
-		}
-		gdk_threads_leave();
 	}
 
 	void DBusNetworkStatus::CleanupLoop()
 	{
-		if (this->nm_proxy != NULL)
-			g_object_unref(this->nm_proxy);
+		dbus_shutdown();
 
 		if (this->wicd_wireless_proxy != NULL)
 			g_object_unref(this->wicd_wireless_proxy);
@@ -64,14 +43,22 @@ namespace ti
 			g_object_unref(this->wicd_wired_proxy);
 	}
 
-	bool DBusNetworkStatus::GetStatusFromDBus()
+	void DBusNetworkStatus::_DBusStatus(const ValueList& args, SharedValue lresult)
 	{
 		GError *error = NULL;
 		gchar* result = NULL;
 		bool found_nm = false;
 
-		if (!dbus_g_proxy_call(wicd_wired_proxy, "GetWiredIP", &error, G_TYPE_INVALID,
-			                   G_TYPE_STRING, &result, G_TYPE_INVALID))
+		this->wicd_wired_proxy = dbus_g_proxy_new_for_name(
+			this->bus,
+			"org.wicd.daemon",
+			"/org/wicd/daemon",
+			"org.wicd.daemon.wired");
+		if (!dbus_g_proxy_call(
+			wicd_wired_proxy, "GetWiredIP", &error,
+			G_TYPE_INVALID,
+			G_TYPE_STRING, &result,
+			G_TYPE_INVALID))
 		{
 			// 16 == interface not up
 			if (error->code == 16)
@@ -80,9 +67,17 @@ namespace ti
 		}
 		else if (result != NULL)
 		{
-			return true;
+			lresult->SetBool(true);
+			return;
 		}
+		if (this->wicd_wired_proxy != NULL)
+			g_object_unref(this->wicd_wired_proxy);
 
+		this->wicd_wireless_proxy = dbus_g_proxy_new_for_name(
+			this->bus,
+			"org.wicd.daemon",
+			"/org/wicd/daemon",
+			"org.wicd.daemon.wireless");
 		error = NULL;
 		if (!dbus_g_proxy_call(wicd_wireless_proxy, "GetWirelessIP", &error, G_TYPE_INVALID,
 			                   G_TYPE_STRING, &result, G_TYPE_INVALID))
@@ -94,9 +89,17 @@ namespace ti
 		}
 		else if (result != NULL)
 		{
-			return true;
+			lresult->SetBool(true);
+			return;
 		}
+		if (this->wicd_wireless_proxy != NULL)
+			g_object_unref(this->wicd_wireless_proxy);
 
+		this->nm_proxy = dbus_g_proxy_new_for_name(
+			this->bus,
+			"org.freedesktop.NetworkManager",
+			"/org/freedesktop/NetworkManager",
+			"org.freedesktop.DBus.Properties");
 		error = NULL;
 		GValue nm_state_val = {0, };
 		if (!dbus_g_proxy_call(
@@ -111,17 +114,21 @@ namespace ti
 		}
 		else if (g_value_get_uint(&nm_state_val) == 3)
 		{
-			return true;
+			lresult->SetBool(true);
+			return;
 		}
 		else
 		{
 			found_nm = true;
 		}
+		if (this->nm_proxy != NULL)
+			g_object_unref(this->nm_proxy);
 
 		if (!found_nm)
-			return true;
+			lresult->SetBool(true);
 		else
-			return false;
+			lresult->SetBool(false);
+
 	}
 
 	bool DBusNetworkStatus::GetStatus()
@@ -129,10 +136,8 @@ namespace ti
 		if (this->bus == NULL)
 			return true;
 
-		gdk_threads_enter();
-		bool online = this->GetStatusFromDBus();
-		gdk_threads_leave();
-
-		return online;
+		SharedBoundMethod meth = this->Get("_DBusStatus")->ToMethod();
+		SharedValue r = binding->GetHost()->InvokeMethodOnMainThread(meth, ValueList());
+		return r->ToBool();
 	}
 }

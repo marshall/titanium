@@ -53,10 +53,13 @@ public:
 	std::string& GetVersion() { return version; }
 	std::string& GetUpdateSite() { return updateSite; }
 
+	std::string InsertAppIDIntoURL(std::string url);
+
 	WindowConfigList& GetWindows() { return windows; }
 	WindowConfig* GetWindow(std::string &id);
 	WindowConfig* GetWindowByURL(std::string url);
 	WindowConfig* GetMainWindow();
+
 
 	//icon accessors
 	std::string& GetIcon16() { return icon16; }

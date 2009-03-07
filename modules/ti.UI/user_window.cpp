@@ -57,7 +57,7 @@ UserWindow::UserWindow(kroll::Host *host, WindowConfig *config) :
 	this->config = config;
 	this->next_listener_id = 0;
 	this->api = this->host->GetGlobalObject()->GetNS("API.fire")->ToMethod();
-	
+
 	/* this object is accessed by Titanium.Window.currentWindow */
 	this->SetMethod("hide", &UserWindow::_Hide);
 	this->SetMethod("show", &UserWindow::_Show);
@@ -126,12 +126,12 @@ void UserWindow::Open(UserWindow *window)
 	// Don't do any refcounting here,
 	// since we are holding onto our copy
 	windows.push_back(window);
-	
+
 	SharedBoundObject w = boundWindows[window];
 	SharedBoundObject event = new StaticBoundObject();
 	event->Set("window",Value::NewObject(w));
 	window->api->Call("ti.UI.window.open",Value::NewObject(event));
-	
+
 	SharedValue window_list_value = window->uiBinding->Get("windows");
 	if (!window_list_value->IsList())
 	{
@@ -153,7 +153,7 @@ void UserWindow::Close()
 	if (window_list_value->IsList())
 	{
 		SharedBoundList window_list = window_list_value->ToList();
-		for (int c=0;c<window_list->Size();c++)
+		for (unsigned int c=0; c< window_list->Size(); c++)
 		{
 			SharedValue v = window_list->At(c);
 			SharedBoundObject bo = v->ToObject();
@@ -164,24 +164,24 @@ void UserWindow::Close()
 			}
 		}
 	}
-	
+
 	// fire event
 	SharedBoundObject w = boundWindows[this];
 	SharedBoundObject event = new StaticBoundObject();
 	event->Set("window",Value::NewObject(w));
 	this->api->Call("ti.UI.window.close",Value::NewObject(event));
-	
+
 	// remove
 	std::map<UserWindow*,SharedBoundObject>::iterator bwi = boundWindows.find(this);
 	boundWindows.erase(bwi);
-	
+
 	// check to see if we have a parent, and if so,
 	// remove us from the parent list
 	UserWindow *parent = this->GetParent();
 	if (parent != NULL)
 	{
 		UserWindow::RemoveChild(parent, this);
-		
+
 		// after we close a child, focus it's parent
 		parent->Focus();
 	}
@@ -437,8 +437,9 @@ void UserWindow::_GetURL(const kroll::ValueList& args, kroll::SharedValue result
 
 void UserWindow::_SetURL(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	if (args.size() > 0) {
+	if (args.size() > 0 && args.at(0)->IsString()) {
 		std::string url = args.at(0)->ToString();
+		url = AppConfig::Instance()->InsertAppIDIntoURL(url);
 		this->SetURL(url);
 	}
 }
@@ -595,6 +596,8 @@ void UserWindow::_CreateWindow(const ValueList& args, SharedValue result)
 		// String might match a url spec
 		std::string url = args.at(0)->ToString();
 		WindowConfig* matchedConfig = AppConfig::Instance()->GetWindowByURL(url);
+
+		url = AppConfig::Instance()->InsertAppIDIntoURL(url);
 		config = new WindowConfig(matchedConfig, url);
 	}
 	else
@@ -608,7 +611,7 @@ void UserWindow::_CreateWindow(const ValueList& args, SharedValue result)
 void UserWindow::UpdateWindowForURL(std::string url)
 {
 	WindowConfig* config = AppConfig::Instance()->GetWindowByURL(url);
-	if(! config)
+	if (!config)
 	{
 		// no need to update window
 		return;
@@ -733,7 +736,7 @@ void UserWindow::_OpenFiles(const ValueList& args, SharedValue result)
 	if (props->Get("types")->IsList())
 	{
 		SharedBoundList l = props->Get("types")->ToList();
-		for (int i = 0; i < l->Size(); i++)
+		for (unsigned int i = 0; i < l->Size(); i++)
 		{
 			if (l->At(i)->IsString())
 			{
@@ -783,14 +786,14 @@ void UserWindow::_RemoveEventListener(const ValueList& args, SharedValue result)
 	result->SetBool(false);
 }
 
-void UserWindow::FireEvent(UserWindowEvent event)
+void UserWindow::FireEvent(UserWindowEvent windowEvent)
 {
 	// optimize
 	if (this->listeners.size()==0) return;
 
 	std::string name;
 
-	switch(event)
+	switch(windowEvent)
 	{
 		case FOCUSED:
 		{
@@ -939,7 +942,7 @@ void UserWindow::ContextBound(SharedBoundObject global_bound_object)
 	this->api->Call("ti.UI.window.page.init",Value::NewObject(event));
 }
 
-void UserWindow::PageLoaded(SharedBoundObject global_bound_object,std::string &url)
+void UserWindow::PageLoaded(SharedBoundObject global_bound_object, std::string &url)
 {
 	SharedBoundObject w = boundWindows[this];
 	SharedBoundObject event = new StaticBoundObject();

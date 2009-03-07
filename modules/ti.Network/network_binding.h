@@ -36,6 +36,7 @@ namespace ti
 		static void RemoveBinding(void* binding);
 		bool HasNetworkStatusListeners();
 		void NetworkStatusChange(bool online);
+		Host* GetHost();
 
 	private:
 		Host* host;

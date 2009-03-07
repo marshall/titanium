@@ -9,6 +9,7 @@ Titanium.Project =
 	{
 		var entry = {name:dir.name(), versions:[], dir:dir};
 		var versions = dir.getDirectoryListing();
+		if (!versions)return null;
 		for (var v=0;v<versions.length;v++)
 		{
 			entry.versions.push(versions[v].name());
@@ -24,6 +25,9 @@ Titanium.Project =
 		var result = [];
 		for (var c=0;c<dirs.length;c++)
 		{
+			if (this.getVersions(dirs[c]) == null)
+				continue;
+			
 			result.push(this.getVersions(dirs[c]));
 		}
 		var runtime = TFS.getFile(dir,'runtime',os);

@@ -69,12 +69,13 @@ if build.is_osx():
 		env.AddPostAction(s2, 'ibtool --errors --warnings --notices --output-format human-readable-text --compile '+build.dir + '/modules/ti.UI/'+ base+'.nib '+str(i))
 
 if build.is_win32():
-	for out in [(s1, m.build_dir), (s2, build.dir)]:
-		manifest1 = os.path.join(out[1], 'tiuimodule.embed.manifest')
-		manifest2 = os.path.join(out[1], 'tiuimodule.dll.manifest')
-		common_controls_manifest = os.path.join(build.titanium_source_dir, 'modules', 'ti.UI', 'win32', 'common_controls.manifest')
-		env.AddPostAction(out[0], 'mt.exe /nologo /manifest "' + manifest2 + '" /tlb:"' + path.join(webkit_lib, 'WebKit.tlb') + '" /dll:runtime/WebKit /out:"'+manifest1+'"')
-		#env.AddPostAction(out[0], 'mt.exe /nologo /tlb:' + path.join(webkit_lib, 'WebKit.tlb') + ' /dll:WebKit /outputresource:'+m.build_dir+'/kboot.exe;1')
-		env.AddPostAction(out[0], 'mt.exe -nologo -manifest "'+common_controls_manifest+'" "'+manifest1+'" -out:"' + out[1]+'/tiuimodule.merged.manifest"')
-		env.AddPostAction(out[0], 'mt.exe -nologo -manifest "'+out[1]+'/tiuimodule.merged.manifest" -outputresource:"'+out[1]+'/kboot.exe;1"')
-		#env.AddPostAction(out[0], 'mt.exe -nologo -manifest "'+manifest1+'" -outputresource:'+m.build_dir+'/tiuimodule.dll;2')
+	#for out in [(s1, m.build_dir), (s2, build.dir)]:
+	embed_manifest = os.path.join(build.dir, 'tiuimodule.embed.manifest')
+	dll_manifest = os.path.join(build.dir, 'tiuimodule.dll.manifest')
+	common_controls_manifest = os.path.join(build.titanium_source_dir, 'modules', 'ti.UI', 'win32', 'common_controls.manifest')
+	merged_manifest = os.path.join(build.dir, 'tiuimodule.merged.manifest')
+	kboot_exe = os.path.join(build.dir, 'kboot.exe')
+
+	env.AddPostAction(s2, 'mt.exe /nologo /manifest "' + dll_manifest + '" /tlb:"' + path.join(webkit_lib, 'WebKit.tlb') + '" /dll:runtime/WebKit /out:"'+embed_manifest+'"')
+	env.AddPostAction(s2, 'mt.exe -nologo -manifest "'+common_controls_manifest+'" "'+embed_manifest+'" -out:"' + merged_manifest +'"')
+	env.AddPostAction(s2, 'mt.exe -nologo -manifest "' + merged_manifest + '" -outputresource:"'+kboot_exe+';1"')
