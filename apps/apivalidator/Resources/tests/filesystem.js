@@ -1,5 +1,5 @@
 testSuite("Titanium.Filesystem API tests", "dummy.html", {
-	var stageDir = "c:\temp\";
+	var stageDir = "c:\\temp\\";
 	var fileNormal = stageDir + "file-normal.txt";
 	var fileDir = stageDir + "normalDir";
 	var fileHidden = stageDir + "file-hidden.txt";

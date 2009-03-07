@@ -24,6 +24,7 @@ window.TestMonkey = {};
 	 */
 	TestMonkey.installTestRunnerPlugin = function(callback)
 	{
+		Titanium.API.debug("installing testrunner plugin:" + callback);
 		testRunnerPlugins.push(callback);
 	};
 	
@@ -165,6 +166,8 @@ window.TestMonkey = {};
 	TestMonkey.fireEvent = function()
 	{
 		var name = arguments[0], args = arguments.length > 1 ? $.makeArray(arguments).slice(1) : [];
+		Titanium.API.debug("fireEvent: " + name + ", plugins="+testRunnerPlugins);
+		
 		$.each(testRunnerPlugins, function()
 		{
 			var testRunnerPlugin = this;
@@ -583,7 +586,7 @@ window.TestMonkey = {};
 			"})(window.jQuery,parent.window.testMonkeyScope);\n";
 
 			// inject our library
-			var code = "<script id=\"__testMonkeySDK\" type=\"text/javascript\" src=\"" + AppC.sdkJS + "\"></script>\n";
+			var code = "<script id=\"__testMonkeySDK\" type=\"text/javascript\" src=\"jquery.js\"></script>\n";
 
 			// now inject our test execution environment
 			code += "<script id=\"__testMonkeyJS\" type=\"text/javascript\">" + setupCode + "</script>\n";
@@ -654,7 +657,7 @@ window.TestMonkey = {};
 	function loadTestFrame(url,fn)
 	{
 		var id = '__testdriver_content_'+(testFrameId++);
-		url = URI.absolutizeURI(url,AppC.docRoot+'tests/');
+		url = "app://" + Titanium.App.getID() + "/tests/" + url;
 		
 		return jQuery.ajax({
 			type: "GET",
@@ -783,6 +786,7 @@ window.TestMonkey = {};
 	
 	scope.testSuite = function(name,html,descriptor)
 	{
+		Titanium.API.debug("add testsuite: " + name);
 		if (typeof(html)!='string')
 		{
 			descriptor = html;
@@ -792,6 +796,8 @@ window.TestMonkey = {};
 		descriptor.html=html;
 		scope.testSuiteNames.push(name);
 		scope.testSuites[name]=descriptor;
+		
+		Titanium.API.debug("firing addTestSuite");
 		
 		TestMonkey.fireEvent("addTestSuite",name,descriptor,html);
 		

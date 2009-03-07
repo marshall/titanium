@@ -1,18 +1,17 @@
-testSuite("ti.Window API tests", "dummy.html",
+testSuite("Titanium.Window API tests", "dummy.html",
 {
 
 	run: function()
 	{
 		test("runtime accessor", function()
 		{
-			assert(tiRuntime == null);
-			assert(ti != null);
-			assert(ti.Window != null);
+			assert(Titanium != null);
+			assert(Titanium.Window != null);
 		});
 
 		test("toplevel window API", function()
 		{
-			var w = ti.Window;
+			var w = Titanium.Window;
 
 			assert(w != null);
 			assert(w.mainWindow != null);
@@ -22,7 +21,7 @@ testSuite("ti.Window API tests", "dummy.html",
 
 		test("window object API", function()
 		{
-			var w = ti.Window;
+			var w = Titanium.Window;
 			assert(w != null);
 
 			var m = w.mainWindow;
@@ -67,7 +66,7 @@ testSuite("ti.Window API tests", "dummy.html",
 
 		test("assert correct data", function()
 		{
-			var w = ti.Window;
+			var w = Titanium.Window;
 			assert(w != null);
 
 			var m = w.mainWindow;

@@ -5,10 +5,12 @@
 
 // A simple plugin that automatically runs all test suites on page load
 $(document).ready(function() {
-
+	Titanium.API.debug("install autorunner plugin..");
+	
 	TestMonkey.installTestRunnerPlugin({
 		onManifestLoaded: function ()
 		{
+			Titanium.API.debug("autorunning: " + testSuiteNames);
 			testRunner(testSuiteNames);
 		}
 	});

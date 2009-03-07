@@ -5,20 +5,20 @@ testSuite("Gears binding tests", "dummy.html", {
 		test("top level Gears modules", function() {
 			var ti = parent.ti;
 			assert(ti != null);
-			assert(ti.Desktop != null);
-			assert(ti.Database != null);
-			assert(ti.Filesystem != null);
+			assert(Titanium.Desktop != null);
+			assert(Titanium.Database != null);
+			assert(Titanium.Filesystem != null);
 		});
 
 		test("Desktop API", function() {
 			var ti = parent.ti;
-			assert(ti.Desktop.openFiles != null);
-			assert(ti.Desktop.createShortcut != null);
+			assert(Titanium.Desktop.openFiles != null);
+			assert(Titanium.Desktop.createShortcut != null);
 		});
 
 		test("Database API", function() {
 			var ti = parent.ti;
-			var db = new ti.Database();
+			var db = new Titanium.Database();
 			assert(db.open != null);
 			assert(db.execute != null);
 			assert(db.close != null);

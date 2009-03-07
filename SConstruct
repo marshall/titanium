@@ -104,3 +104,6 @@ if ARGUMENTS.get('testapp',0):
 	print "building packaging ..."
 	SConscript('apps/testapp/SConscript')
 
+if ARGUMENTS.get('testsuite',0):
+	print 'running testsuite...'
+	SConscript('apps/apivalidator/SConscript')

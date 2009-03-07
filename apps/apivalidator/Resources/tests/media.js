@@ -1,19 +1,19 @@
-testSuite("ti.Media API tests", "dummy.html",
+testSuite("Titanium.Media API tests", "dummy.html",
 {
 	run: function ()
 	{
 		test("top level API", function() {
 			assert(ti != null);
-			assert(ti.Media != null);
-			assert(ti.Media.createSound != null);
-			assert(ti.Media.beep != null);
+			assert(Titanium.Media != null);
+			assert(Titanium.Media.createSound != null);
+			assert(Titanium.Media.beep != null);
 		});
 
 		test("sound object API", function() {
 			assert(ti != null);
-			assert(ti.Media != null);
+			assert(Titanium.Media != null);
 
-			var sound = ti.Media.createSound("app://tests/sound.wav");
+			var sound = Titanium.Media.createSound("app://tests/sound.wav");
 			assert(sound != null);
 			assert(sound.play != null);
 			assert(sound.pause != null);
