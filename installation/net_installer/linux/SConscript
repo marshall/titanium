@@ -10,5 +10,5 @@ Env.Append(CPPFLAGS=['-Wno-error']) # turn off warnings, CURLHandle has a lot
 Env.Append(CPPPATH=[build.kroll_source_dir + '/api'])
 
 sources = Glob('*.cpp')
-sources.append(build.dir + '/api/file_utils.os')
+sources.append(build.kroll_source_dir + '/api/file_utils.cpp')
 s = Env.Program('net_installer', sources)

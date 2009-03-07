@@ -9,12 +9,12 @@
 
 namespace ti
 {
-	NetworkStatus::NetworkStatus(NetworkBinding* binding)
-	 : binding(binding),
-	   previous_status(false),
-	   running(true)
+	NetworkStatus::NetworkStatus(NetworkBinding* binding) : 
+		StaticBoundObject(),
+		binding(binding),
+		previous_status(false),
+		running(true)
 	{
-		this->Start();
 	}
 
 	NetworkStatus::~NetworkStatus()
@@ -48,12 +48,11 @@ namespace ti
 
 		// We want to wake up and detect if we are running more
 		// often than we want to test reachability, so we only
-		// test reachability when cont == 50
+		// test reachability every 25 * .2s
 		int count = 0;
 		while (this->running)
 		{
-			// Only test reachability if someone is listening.
-			if (count == 0 && binding->HasNetworkStatusListeners())
+			if (count == 0)
 			{
 				bool online = this->GetStatus();
 				if (online != this->previous_status)

@@ -39,6 +39,7 @@ namespace ti
 
 #if defined(OS_LINUX)
 		this->net_status = new DBusNetworkStatus(this);
+		this->net_status->Start();
 #elif defined(OS_OSX)
 		SharedBoundMethod delegate = this->Get("FireOnlineStatusChange")->ToMethod();
 		networkDelegate = [[NetworkReachability alloc] initWithDelegate:delegate];
@@ -224,5 +225,10 @@ namespace ti
 		{
 			this->NetworkStatusChange(args.at(0)->ToBool());
 		}
+	}
+
+	Host* NetworkBinding::GetHost()
+	{
+		return this->host;
 	}
 }
