@@ -145,17 +145,12 @@ namespace ti
 	}
 	void NetworkBinding::CreateHTTPClient(const ValueList& args, SharedValue result)
 	{
-		if (args.size()!=2)
-		{
-			throw ValueException::FromString("invalid arguments");
-		}
-		std::string url = args.at(0)->ToString();
-		SharedBoundMethod callback = args.at(1)->ToMethod();
-		SharedPtr<HTTPClientBinding> http = new HTTPClientBinding(host,url,callback);
+		HTTPClientBinding* http = new HTTPClientBinding(host);
+		SharedBoundObject obj = http->GetSelf()->ToObject();
 		// we hold the reference to this until we're done with it
 		// which happense when the binding impl calls remove
-		this->bindings.push_back(http);
-		result->SetObject(http);
+		this->bindings.push_back(obj);
+		result->SetObject(obj);
 	}
 	void NetworkBinding::AddConnectivityListener(const ValueList& args, SharedValue result)
 	{
