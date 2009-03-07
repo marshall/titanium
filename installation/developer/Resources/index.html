@@ -496,80 +496,124 @@
 
 					</div>
 					<div style="clear:both"></div>
+					<!-- PROJECT STUFF - INFO, STATS AND DOWNLOAD LINK -->
 					<div style="margin-top:-13px;position:relative;z-index:2">
 						<div style="border-top:1px solid #666;border-bottom:1px solid #666">
 							<div  style="position:relative;border-top:1px solid #141414;border-bottom:1px solid #141414;background-color:#333">
-								<table cellspacing="15px">
-									<tr>
-										<td style="font-size:12px;height:30px" width="90px" class="hint_text">
-											*Project Name:
-										</td>
-										<td style="font-size:12px;height:30px" class="edit" id="project_name_value"
-											on="l:project.detail.data then value[name]">
-										</td>
-									</tr>
-									<tr>
-										<td style="font-size:12px;height:30px" width="90px" class="hint_text">
-											Date Created:
-										</td>
-										<td style="font-size:12px;height:30px" 
-											on="l:project.detail.data then value[date]"></td>
-									</tr>
-									<tr>
-										<td style="font-size:12px;height:30px" width="90px" class="hint_text">Location:</td>
-										<td  width="220px" style="font-size:12px;">
-											<a style="color:#fff;text-decoration:underline;cursor:pointer;display:none" 
-												id="project_detail_dir_a"
-												on="l:project.detail.data then value[location]
-												or click then l:show.project.modal">
-											</a>
-											<span id="project_detail_dir_span" style="display:none"
-												on="l:project.detail.data then value[location]">
-											</span>
-											<span style="display:none" id="project_dir_value"
-											on="l:project.detail.data then value[fullLocation]">
-											</span>
-											<input type="hidden" id="project_id_value" 
-												on="l:row.selected then value[project_id]"/>
-										</td>
-									</tr>
-									<tr>
-										<td style="font-size:12px;height:30px" width="90px" class="hint_text">*Publisher:</td>
-										<td style="font-size:12px;height:30px">
-											<div class="edit" 
-											on="l:project.detail.data then value[pub]" id="project_pub_value"></div>
-										</td>
-									</tr>
-									<tr>
-										<td style="font-size:12px;height:30px" width="90px" class="hint_text">
-											*Publisher URL:
-										</td>
-										<td style="font-size:12px;height:30px">
-											<div class="edit" on="l:project.detail.data then value[url]" 
-											id="project_pub_url_value">
-											</div>
-										</td>
-									</tr>
-									<tr>
-										<td style="font-size:12px;height:30px" width="90px" class="hint_text">*App Icon:</td>
-										<td style="font-size:12px;height:30px">
-											<div class="edit"
-												on="l:project.detail.data then value[image]
-												or l:file.selected[for=project_image,target=project_pub_image_value] 
-												then value[value]" 
-												id="project_pub_image_value"></div>
-										</td>
-									</tr>
-									<tr>
-										<td></td>
-										<td style="font-size:11px" class="hint_text">
-											*click fields to edit - hit return to save or ESC to cancel
-										</td>
-									</tr>
+								
+								<!-- PROJECT INFO -->
+								<div on="l:proj_data[val=info] then effect[fadeIn] else hide">
+									<table cellspacing="15px">
+										<tr>
+											<td style="font-size:12px;height:30px" width="90px" class="hint_text">
+												*Project Name:
+											</td>
+											<td style="font-size:12px;height:30px" class="edit" id="project_name_value"
+												on="l:project.detail.data then value[name]">
+											</td>
+										</tr>
+										<tr>
+											<td style="font-size:12px;height:30px" width="90px" class="hint_text">
+												Date Created:
+											</td>
+											<td style="font-size:12px;height:30px" 
+												on="l:project.detail.data then value[date]"></td>
+										</tr>
+										<tr>
+											<td style="font-size:12px;height:30px" width="90px" class="hint_text">Location:</td>
+											<td  width="220px" style="font-size:12px;">
+												<a style="color:#fff;text-decoration:underline;cursor:pointer;display:none" 
+													id="project_detail_dir_a"
+													on="l:project.detail.data then value[location]
+													or click then l:show.project.modal">
+												</a>
+												<span id="project_detail_dir_span" style="display:none"
+													on="l:project.detail.data then value[location]">
+												</span>
+												<span style="display:none" id="project_dir_value"
+												on="l:project.detail.data then value[fullLocation]">
+												</span>
+												<input type="hidden" id="project_id_value" 
+													on="l:row.selected then value[project_id]"/>
+											</td>
+										</tr>
+										<tr>
+											<td style="font-size:12px;height:30px" width="90px" class="hint_text">*Publisher:</td>
+											<td style="font-size:12px;height:30px">
+												<div class="edit" 
+												on="l:project.detail.data then value[pub]" id="project_pub_value"></div>
+											</td>
+										</tr>
+										<tr>
+											<td style="font-size:12px;height:30px" width="90px" class="hint_text">
+												*Publisher URL:
+											</td>
+											<td style="font-size:12px;height:30px">
+												<div class="edit" on="l:project.detail.data then value[url]" 
+												id="project_pub_url_value">
+												</div>
+											</td>
+										</tr>
+										<tr>
+											<td style="font-size:12px;height:30px" width="90px" class="hint_text">*App Icon:</td>
+											<td style="font-size:12px;height:30px">
+												<div class="edit"
+													on="l:project.detail.data then value[image]
+													or l:file.selected[for=project_image,target=project_pub_image_value] 
+													then value[value]" 
+													id="project_pub_image_value"></div>
+											</td>
+										</tr>
+										<tr>
+											<td></td>
+											<td style="font-size:11px" class="hint_text">
+												*click fields to edit - hit return to save or ESC to cancel
+											</td>
+										</tr>
 
 
-								</table>
+									</table>
+
+								</div>
+								
+								<div on="l:proj_data[val=download] then effect[fadeIn] else hide"
+									style="display:none;height:400px">
+									<div class="black_gradient" 
+										style="margin:10px;background-color:#222;font-size:11px">
+										<span style="position:relative;left:5px;top:1px">
+											Install Packages by Operating System
+										</span>
+										<span 
+									style="float:right;margin-right:15px; position:relative; left:5px; color:#ccc; 
+											font-style:italic">
+											last build on <span on="l:package_links then value[date]"></span>
+										</span>
 							
+									</div>
+									<div control="iterator[property=rows]" on="l:package_links then execute"
+										style="margin-left:50px;margin-right:50px">
+										<div class="project_row" style="height:40px;line-height:40px;font-size:11px">
+											<img src="images/#{family}_small.png" height="20px" width="20px"
+												style="position:relative;top:5px"/>
+											<span style="color:#fff;font-size:12px;margin-left:10px">#{platform}</span>
+											<span style="float:right;color:#ccc;">
+												<img src="images/download.png" style="position:relative;top:5px"/>
+												<a href="#">Download</a>
+											</span>
+											<div style="height:1px;border-bottom:1px solid #222;margin-bottom:1px"></div>
+										</div>
+									</div>
+								</div>
+
+								<div on="l:proj_data[val=stats] then effect[fadeIn] else hide"
+									style="display:none;height:400px">
+									<div align="center" style="margin-top:20px">Total Downloads By Operating System</div>
+									<div align="center" control="chart[property=rows, type=bar, background-color=#333333, 
+										textColor=#ffffff, lineColor=#111111]" 
+										on="l:downloads[type=OS] then render">
+									</div>
+								</div>
+
 							</div>
 						</div>
 					</div>
