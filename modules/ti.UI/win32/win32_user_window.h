@@ -49,7 +49,6 @@ protected:
 	IWebInspector *web_inspector;
 	std::map<long, SharedBoundMethod> messageHandlers;
 	bool requires_display;
-	bool topmost;
 
 	/*
 	 * The window-specific menu.

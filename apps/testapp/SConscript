@@ -28,8 +28,8 @@ else:
 runtime = p.join(app_dir, 'runtime');
 rsc_dir = p.join(app_dir, 'Resources');
 
-if p.isdir(over_dir):
-	dir_util.remove_tree(over_dir)
+#if p.isdir(over_dir):
+#	dir_util.remove_tree(over_dir)
 excludes = ['.dll.manifest', '.dll.pdb', '.exp', '.ilk']
 build.utils.CopyToDir(build.dir + '/runtime', app_dir, exclude=excludes)
 build.utils.CopyToDir(p.join(build.dir, 'modules'), app_dir, exclude=excludes)

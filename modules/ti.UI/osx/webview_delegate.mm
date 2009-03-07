@@ -759,7 +759,7 @@
 	}
 	if (!menu.isNull())
 	{
-		for (int c=0;c<menu->Size();c++)
+		for (unsigned int c=0;c<menu->Size();c++)
 		{
 			SharedBoundObject item = menu->At(c)->ToObject();
 			SharedPtr<OSXMenuItem> osx_menu = item.cast<OSXMenuItem>();

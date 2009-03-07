@@ -24,6 +24,10 @@ App.UI.registerUIComponent('control','jquery_slider',
 		{
 			return 1.0;
 		}
+		this.getControlCSS = function() 
+		{
+		  return ['../../../common/css/jquery-themes/ui.all.css']
+		};
 
 		this.getAttributes = function()
 		{
@@ -125,6 +129,13 @@ App.UI.registerUIComponent('control','jquery_slider',
 			this.options = options;
 			this.id = element.id;
 			
+			for (v in options)
+			{
+				if (!isNaN(parseInt(options[v])))
+				{
+					options[v] = parseInt(options[v]);
+				}
+			}
 	        jQuery("#" + element.id).slider(options);			
 		}
 	}

@@ -9,8 +9,8 @@ Env.Append(LIBS=['curl'])
 Env.Append(CPPFLAGS=['-Wno-error']) #turn off warnings, CURLHandle has a lot
 Env.Append(CPPPATH=[build.kroll_source_dir+'/api'])
 
-sources = Glob('*.m')
-sources.append(build.dir + '/api/file_utils.os')
+sources = Glob('*.m') + Glob('*.mm')
+sources.append(path.join(build.kroll_source_dir,'api','file_utils.cpp'))
 s = Env.Program('net_installer', sources)
 
 # TODO: is there some way to read the incomming build_dir?

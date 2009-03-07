@@ -184,7 +184,6 @@ Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config) :
 	menu(NULL),
 	contextMenuHandle(NULL),
 	initial_icon(NULL),
-	topmost(false),
 	web_inspector(NULL)
 {
 	static bool initialized = false;
@@ -347,6 +346,11 @@ Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config) :
 	if(this->config->IsFullScreen())
 	{
 		this->SetFullScreen(true);
+	}
+
+	if(this->config->IsTopMost() && this->config->IsVisible())
+	{
+		this->SetTopMost(true);
 	}
 
 	// set this flag to indicate that when the frame is loaded
@@ -845,20 +849,20 @@ void Win32UserWindow::FrameLoaded()
 
 bool Win32UserWindow::IsTopMost()
 {
-	return topmost;
+	return this->config->IsTopMost();
 }
 
 void Win32UserWindow::SetTopMost(bool topmost)
 {
+	this->config->SetTopMost(topmost);
+
 	if (topmost)
 	{
 		SetWindowPos(window_handle,HWND_TOPMOST,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE);
-		this->topmost = true;
 	}
 	else
 	{
 		SetWindowPos(window_handle,HWND_NOTOPMOST,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE);
-		this->topmost = false;
 	}
 }
 

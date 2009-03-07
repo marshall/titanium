@@ -259,8 +259,23 @@
 				return line;
 			}
 
+			tests.getProgramsDirectory = function(params) {
+				var dir = Titanium.Filesystem.getProgramsDirectory();
+				return dir;
+			}
+
 			tests.getApplicationDirectory = function(params) {
 				var dir = Titanium.Filesystem.getApplicationDirectory();
+				return dir;
+			}
+
+			tests.getRuntimeBaseDirectory = function(params) {
+				var dir = Titanium.Filesystem.getRuntimeBaseDirectory();
+				return dir;
+			}
+
+			tests.getApplicationDataDirectory = function(params) {
+				var dir = Titanium.Filesystem.getApplicationDataDirectory();
 				return dir;
 			}
 
@@ -455,7 +470,10 @@
 				<option value="write">write</option>
 				<option value="read">read</option>
 				<option value="readLine">readLine</option>
+				<option value="getProgramsDirectory">getProgramsDirectory</option>
 				<option value="getApplicationDirectory">getApplicationDirectory</option>
+				<option value="getRuntimeBaseDirectory">getRuntimeBaseDirectory</option>
+				<option value="getApplicationDataDirectory">getApplicationDataDirectory</option>
 				<option value="getResourcesDirectory">getResourcesDirectory</option>
 				<option value="getDesktopDirectory">getDesktopDirectory</option>
 				<option value="getDocumentsDirectory">getDocumentsDirectory</option>
@@ -729,9 +747,24 @@
 				</table>
 			</div>
 		</div>
+		<div id="test_getProgramsDirectory" class="test">
+			<div class="memberInfo">
+				string Filesystem.getProgramsDirectory()
+			</div>
+		</div>
 		<div id="test_getApplicationDirectory" class="test">
 			<div class="memberInfo">
 				string Filesystem.getApplicationDirectory()
+			</div>
+		</div>
+		<div id="test_getRuntimeBaseDirectory" class="test">
+			<div class="memberInfo">
+				string Filesystem.getRuntimeBaseDirectory()
+			</div>
+		</div>
+		<div id="test_getApplicationDataDirectory" class="test">
+			<div class="memberInfo">
+				string Filesystem.getApplicationDataDirectory()
 			</div>
 		</div>
 		<div id="test_getResourcesDirectory" class="test">

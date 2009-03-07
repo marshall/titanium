@@ -595,8 +595,8 @@ namespace ti
 		std::string from = this->filename;
 		std::string to = args.at(0)->IsString() ? args.at(0)->ToString() : FileSystemUtils::GetFileName(args.at(0));
 
-#ifdef OS_OSX
-		NSString* originalPath = [NSString stringWithCString:from.c_str()];
+#ifdef OS_OSX	//TODO: My spidey sense tells me that Cocoa might have a better way for this. --BTH
+		NSMutableString* originalPath = [NSMutableString stringWithCString:from.c_str()];
 		NSString* destPath = [NSString stringWithCString:to.c_str()];
 		NSString* cwd = nil;
 		NSFileManager* fm = [NSFileManager defaultManager];
@@ -615,7 +615,10 @@ namespace ti
 					p = [p stringByDeletingLastPathComponent];
 				}
 				[fm changeCurrentDirectoryPath:p];
-				originalPath = [originalPath stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"%@/",p] withString:@""];
+				
+				NSString * doomedString = [p stringByAppendingString: @"/"];
+				[originalPath replaceOccurrencesOfString:doomedString withString: @"" options: NSLiteralSearch range:NSMakeRange(0,[originalPath length])];
+//				originalPath = [originalPath stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"%@/",p] withString:@""];
 			}
 		}
 

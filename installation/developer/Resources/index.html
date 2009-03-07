@@ -12,7 +12,7 @@
 	<script type="text/javascript" charset="utf-8" src="js/projects.js"></script>
 	<script type="text/javascript" charset="utf-8" src="js/irc.js"></script>
 	<script type="text/javascript" charset="utf-8" src="js/feeds.js"></script>
-
+	<script type="text/javascript" charset="utf-8" src="js/apps.js"></script>
 
 	<!-- common JS Files -->
 	<script type="text/javascript" charset="utf-8" src="js/project.js"></script>
@@ -20,10 +20,12 @@
 
 	<!-- style sheet -->
 	<link rel="stylesheet" href="css/index.css" type="text/css" media="screen" charset="utf-8" />
+
+	
 </head>
 
 <!-- ADJUST WINDOW HEIGHT BASED ON CURRENT STATE -->
-<body >
+<body>
 		
 	<input type="hidden" id="project_count_hidden" />
 	
@@ -35,13 +37,49 @@
 		</div>
 	</div>
 	
+	<div style="margin-auto">
+		<div class="nav1 nav_active" style="display:inline-block;" 
+			on="click then l:menu[val=manage] and add[class=nav_active] 
+				or l:menu[val!=manage] then remove[class=nav_active]">
+			<div class="nav2">Projects</div>
+		</div>
+		<div class="nav1" style="display:inline-block;" 
+			on="click then l:menu[val=apps] and add[class=nav_active] or l:menu[val!=apps] then remove[class=nav_active]">
+			<div>Apps</div>
+		</div>
+		<div class="nav1" style="display:inline-block;" 
+			on="click then l:menu[val=interact] and add[class=nav_active] 
+				or l:menu[val!=interact] then remove[class=nav_active]">
+			<div>Community 
+				<span id="irc_message_count" class="message_indicator" style="display:none"></span>
+			</div>
+		</div>
+		<div class="nav1" style="display:inline-block;" 
+			on="click then l:menu[val=feeds] and add[class=nav_active] 
+				or l:menu[val!=feeds] then remove[class=nav_active]">
+			<div >Feeds</div>
+		</div>
+		<div class="nav1" style="display:inline-block;" 
+			on="click then l:menu[val=api] and add[class=nav_active] 
+				or l:menu[val!=api] then remove[class=nav_active]">
+			<div >Documentation</div>
+		</div>
+		
+	</div>
+
+	<div style="clear:both"></div>
+
 	<!-- CONTENT -->
 	<div id="content" style="display:none" on="l:project.list.response[firstCall=1] then effect[fadeIn]">
 		
-		<!-- MAJOR ACTION BUTTONS -->
+		<!-- MAJOR ACTION BUTTONS 
 		<div class="button1 active" style="display:inline-block;width:150px" 
 			on="click then l:menu[val=manage] and add[class=active] or l:menu[val!=manage] then remove[class=active]">
 			<div class="button2">Projects</div>
+		</div>
+		<div class="button1" style="display:inline-block;width:150px" 
+			on="click then l:menu[val=apps] and add[class=active] or l:menu[val!=apps] then remove[class=active]">
+			<div class="button2">Apps</div>
 		</div>
 		<div class="button1" style="display:inline-block;width:150px" 
 			on="click then l:menu[val=interact] and add[class=active] or l:menu[val!=interact] then remove[class=active]">
@@ -57,18 +95,97 @@
 			on="click then l:menu[val=api] and add[class=active] or l:menu[val!=api] then remove[class=active]">
 			<div class="button2">Documentation</div>
 		</div>
-		
+		-->
 
-		<div style="clear:both"></div>
 
 		<!-- ************* -->
 		<!-- CONTENT FILES -->
 		<!-- ************* -->
-		
+
+		<!-- APPS -->
+		<div style="display:none;margin-bottom:20px;min-height:90%"
+			on="l:menu[val=apps] then effect[fadeIn] else hide">
+			<div style="margin-top:10px">
+				<div style="margin-top:10px;margin-bottom:10px">
+					<input type="text" value="search for apps" style="float:left"/>
+					<div class="button1" style="margin-left:10px">
+						<div class="button2">Search</div>
+					</div>
+					<div class="button1" style="width:172px;float:right;margin-right:0px">
+						<div class="button2" style="width:170px">
+							<img src="images/star.png" style="position:relative;top:3px"/>
+							Show Most Popular
+						</div>
+					</div>
+					<div class="button1" style="width:172px;float:right;">
+						<div class="button2" style="width:170px">
+							<img src="images/download.png" style="position:relative;top:4px"/>
+							Show Most Downloaded
+						</div>
+					</div>
+					
+				</div>
+				<div style="clear:both"></div>
+				<div style="border-top:1px solid #666">
+					<div  style="border-top:1px solid #141414;margin-bottom:10px">
+						<div 
+							style="font-size:11px;color:#fff;margin-top:10px;margin-bottom:10px;font-style:italic">
+							Showing Most Popular
+						</div>
+						<div control="iterator[property=rows]" on="l:applist then execute" 
+							style="height:100%;overflow:auto">
+							<div class="infobox appitem">
+								<div class="content" style="position:relative;height:163px">
+									<div class="app_image"><img src="#{image}" height="78px" width="78px"/></div>
+									<div class="app_title">
+										<img src="images/download.png" style="position:relative;top:3px"/>
+										<span style="text-decoration:underline">#{title}</span> 
+									</div>
+									<div class="app_downloads">#{downloads} downloads </div>
+									<div class="app_rating" id="rating_#{id}">
+										<img appid="#{id}" star="1" id="rating_#{id}_1" 
+										  class="rating" src="images/star.png"/>
+										<img appid="#{id}" star="2" id="rating_#{id}_2"
+											class="rating" src="images/star.png"/>
+										<img appid="#{id}" star="3" id="rating_#{id}_3" 
+											class="rating" src="images/star.png"/>
+										<img appid="#{id}" star="4" id="rating_#{id}_4" 
+											class="rating" src="images/star.png"/>
+										<img appid="#{id}" star="5" id="rating_#{id}_5" 
+											class="rating" 	src="images/star.png"/>
+									</div>
+									<div class="rating_detail">
+										<span class="rating_string" id="rating_string_#{id}" votes="#{votes}"
+											rating="#{value}" hasVoted="#{hasVoted}">
+											#{value} rating from #{votes} votes
+										</span>
+										<span class="rating_string" id="already_voted_#{id}" style="display:none">
+											You have already voted!
+										</span>
+										<span class="rating_string" id="voted_success_#{id}"  
+											style="display:none;font-size:11x;color:#809eb3">
+											Thanks for your vote!
+										</span>
+
+									</div>
+									<div class="app_pubinfo">published by #{author} on #{pubdate}</div>
+									<div class="app_url"><a target="ti:systembrowser" href="#{url}">#{url}</a></div>
+
+									<div class="app_description">#{desc}</div>
+								</div>
+							</div>
+						</div>
+
+					
+					</div>
+				</div>
+			</div>
+
+		</div>
 		<!-- DOC -->
 		<div style="display:none;margin-bottom:20px;min-height:90%"
 			on="l:menu[val=api] then effect[fadeIn] else hide">
-			<div style="border-top:1px solid #666">
+			<div style="border-top:1px solid #666;margin-top:10px">
 				<div  style="position:relative;border-top:1px solid #141414;padding-left:20px;padding-right:20px">
 					<div id="documentation" 
 						style="background-color:#333;min-height:90%;max-height:90%;overflow:none;">
@@ -211,7 +328,7 @@
 		</div>
 		
 		<!-- IRC -->
-		<div style="display:none;margin-bottom:20px;min-height:90%"
+		<div style="display:none;margin-bottom:20px;min-height:90%;margin-top:10px"
 			on="l:menu[val=interact] then effect[fadeIn] else hide">
 			<div style="float:left;width:17%;margin-right:20px">
 				<div class="infobox">
@@ -350,78 +467,110 @@
 				<!-- PROJECT DETAILS -->
 				<div class="manage_right" style="margin-left:50px;display:none;margin-top:7px" 
 					on="l:row.selected then show">
-					<div class="infobox">
-						<div class="content">
-							<table cellspacing="15px">
-								<tr>
-									<td style="font-size:12px;height:30px" width="90px" class="hint_text">
-										*Project Name:
-									</td>
-									<td style="font-size:12px;height:30px" class="edit" id="project_name_value"
-										on="l:project.detail.data then value[name]">
-									</td>
-								</tr>
-								<tr>
-									<td style="font-size:12px;height:30px" width="90px" class="hint_text">
-										Date Created:
-									</td>
-									<td style="font-size:12px;height:30px" 
-										on="l:project.detail.data then value[date]"></td>
-								</tr>
-								<tr>
-									<td style="font-size:12px;height:30px" width="90px" class="hint_text">Location:</td>
-									<td  width="220px" style="font-size:12px;">
-										<a style="color:#fff;text-decoration:underline;cursor:pointer;display:none" 
-											id="project_detail_dir_a"
-											on="l:project.detail.data then value[location]
-											or click then l:show.project.modal">
-										</a>
-										<span id="project_detail_dir_span" style="display:none"
-											on="l:project.detail.data then value[location]">
-										</span>
-										<span style="display:none" id="project_dir_value"
-										on="l:project.detail.data then value[fullLocation]">
-										</span>
-										<input type="hidden" id="project_id_value" 
-											on="l:row.selected then value[project_id]"/>
-									</td>
-								</tr>
-								<tr>
-									<td style="font-size:12px;height:30px" width="90px" class="hint_text">*Publisher:</td>
-									<td style="font-size:12px;height:30px">
-										<div class="edit" 
-										on="l:project.detail.data then value[pub]" id="project_pub_value"></div>
-									</td>
-								</tr>
-								<tr>
-									<td style="font-size:12px;height:30px" width="90px" class="hint_text">
-										*Publisher URL:
-									</td>
-									<td style="font-size:12px;height:30px">
-										<div class="edit" on="l:project.detail.data then value[url]" 
-										id="project_pub_url_value">
-										</div>
-									</td>
-								</tr>
-								<tr>
-									<td style="font-size:12px;height:30px" width="90px" class="hint_text">*App Icon:</td>
-									<td style="font-size:12px;height:30px">
-										<div class="edit"
-											on="l:project.detail.data then value[image]
-											or l:file.selected[for=project_image,target=project_pub_image_value] 
-											then value[value]" 
-											id="project_pub_image_value"></div>
-									</td>
-								</tr>
-								<tr>
-									<td></td>
-									<td style="font-size:11px" class="hint_text">
-										*click fields to edit - hit return to save or ESC to cancel
-									</td>
-								</tr>
-										
+					<div style="height:35px;position:relative;left:20px">
+						<div class="button1" style="width:50px;height:33px;border-bottom:none">
+							<div class="button2 tab active_tab" style="height:31px;text-align:center;border-bottom:none"  
+								on="click then l:proj_data[val=info] and add[class=active_tab] 
+									or l:proj_data[val!=info] then remove[class=active_tab]">
+								<img height="25px" width="25px" src="images/ICON_info.png" 
+									style="position:relative;top:3px"/>
+							</div>
+						</div>
 
-							</table>
+						<div class="button1" style="width:50px;height:33px;border-bottom:none">
+							<div class="button2 tab" style="height:31px;text-align:center;border-bottom:none" 
+								on="click then l:proj_data[val=download] and add[class=active_tab] 
+									or l:proj_data[val!=download] then remove[class=active_tab]">
+								<img src="images/ICON_dload.png" 
+									height="25px" width="25px" style="position:relative;top:3px"/>
+							</div>
+						</div>
+						<div class="button1" style="width:50px;height:33px;border-bottom:none">
+							<div class="button2 tab" style="height:31px;text-align:center;border-bottom:none" 
+								on="click then l:proj_data[val=stats] and add[class=active_tab] 
+									or l:proj_data[val!=stats] then remove[class=active_tab]">
+								<img src="images/ICON_stats.png" 
+									height="25px" width="25px" style="position:relative;top:3px"/>
+							</div>
+						</div>
+
+					</div>
+					<div style="clear:both"></div>
+					<div style="margin-top:-13px;position:relative;z-index:2">
+						<div style="border-top:1px solid #666;border-bottom:1px solid #666">
+							<div  style="position:relative;border-top:1px solid #141414;border-bottom:1px solid #141414;background-color:#333">
+								<table cellspacing="15px">
+									<tr>
+										<td style="font-size:12px;height:30px" width="90px" class="hint_text">
+											*Project Name:
+										</td>
+										<td style="font-size:12px;height:30px" class="edit" id="project_name_value"
+											on="l:project.detail.data then value[name]">
+										</td>
+									</tr>
+									<tr>
+										<td style="font-size:12px;height:30px" width="90px" class="hint_text">
+											Date Created:
+										</td>
+										<td style="font-size:12px;height:30px" 
+											on="l:project.detail.data then value[date]"></td>
+									</tr>
+									<tr>
+										<td style="font-size:12px;height:30px" width="90px" class="hint_text">Location:</td>
+										<td  width="220px" style="font-size:12px;">
+											<a style="color:#fff;text-decoration:underline;cursor:pointer;display:none" 
+												id="project_detail_dir_a"
+												on="l:project.detail.data then value[location]
+												or click then l:show.project.modal">
+											</a>
+											<span id="project_detail_dir_span" style="display:none"
+												on="l:project.detail.data then value[location]">
+											</span>
+											<span style="display:none" id="project_dir_value"
+											on="l:project.detail.data then value[fullLocation]">
+											</span>
+											<input type="hidden" id="project_id_value" 
+												on="l:row.selected then value[project_id]"/>
+										</td>
+									</tr>
+									<tr>
+										<td style="font-size:12px;height:30px" width="90px" class="hint_text">*Publisher:</td>
+										<td style="font-size:12px;height:30px">
+											<div class="edit" 
+											on="l:project.detail.data then value[pub]" id="project_pub_value"></div>
+										</td>
+									</tr>
+									<tr>
+										<td style="font-size:12px;height:30px" width="90px" class="hint_text">
+											*Publisher URL:
+										</td>
+										<td style="font-size:12px;height:30px">
+											<div class="edit" on="l:project.detail.data then value[url]" 
+											id="project_pub_url_value">
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<td style="font-size:12px;height:30px" width="90px" class="hint_text">*App Icon:</td>
+										<td style="font-size:12px;height:30px">
+											<div class="edit"
+												on="l:project.detail.data then value[image]
+												or l:file.selected[for=project_image,target=project_pub_image_value] 
+												then value[value]" 
+												id="project_pub_image_value"></div>
+										</td>
+									</tr>
+									<tr>
+										<td></td>
+										<td style="font-size:11px" class="hint_text">
+											*click fields to edit - hit return to save or ESC to cancel
+										</td>
+									</tr>
+
+
+								</table>
+							
+							</div>
 						</div>
 					</div>
 				</div>				
@@ -752,28 +901,16 @@
 				<div style="margin-top:10px">
 					<div on="l:show.package.project then effect[slideUp] 
 						or l:cancel.package.project then effect[fadeIn] after 700ms">
-						<div  class="button1" style="width:800px;height:45px;float:none;position:relative"
-							on="click then l:show.package.project">
-							<div class="button2" style="height:43px;max-width:200px;">
-								<img src="images/pack_distro.png" style="position:relative;top:5px"/>
-								<span style="margin-left:10px;position:relative;top:-6px">
-									Package for distribution
-								</span>			
-							</div>
-							<div  style="position:absolute;left:230px;top:15px;">
-								Create installation distributions for Mac, Windows and/or Linux
-							</div>
-						</div>
 						<div class="button1" style="width:800px;height:45px;float:none;position:relative"
 							on="click then l:create.package.request[launch=true]">
 							<div class="button2" style="height:43px;max-width:200px">
-								<img src="images/launch.png" style="position:relative;top:7px;left:-25px"/>
-								<span style="margin-left:10px;position:relative;top:-6px;left:-25px">
-									Launch project
+								<img src="images/launch.png" style="position:relative;top:7px;left:-10px"/>
+								<span style="margin-left:10px;position:relative;top:-6px;left:-10px">
+									Package and Launch
 								</span>
 							</div>
 							<div style="position:absolute;left:230px;top:15px;">
-								Launch and test your application now!
+								Package and launch your application in your native platform.
 							</div>
 						</div>
 						<div class="button1" style="width:800px;height:45px;float:none;position:relative"
@@ -781,14 +918,26 @@
 							<div class="button2" style="height:43px;max-width:200px">
 								<img src="images/install_launch.png" style="position:relative;top:5px"/>
 								<span style="margin-left:10px;position:relative;top:-6px">
-									Install and launch project
+									Run Application Installer
 								</span>
 							</div>
 							<div style="position:absolute;left:230px;top:15px">
-								Run the application installer then launch.
+								Test installation process and launch your application.
 							</div>
-
 						</div>
+						<div  class="button1" style="width:800px;height:45px;float:none;position:relative"
+							on="click then l:show.package.project">
+							<div class="button2" style="height:43px;max-width:200px;">
+								<img src="images/pack_distro.png" style="position:relative;top:5px"/>
+								<span style="margin-left:10px;position:relative;top:-6px">
+									Package for Distribution
+								</span>			
+							</div>
+							<div  style="position:absolute;left:230px;top:15px;">
+								Create installation distributions for Mac, Windows and/or Linux
+							</div>
+						</div>
+
 						<div class="button1" style="width:200px;height:45px;float:none"
 							on="click then l:cancel[val=package]">
 							<div class="button2" style="height:43px">
@@ -804,8 +953,8 @@
 						
 						<div style="margin-bottom:10px;float:left;margin-right:40px;width:10%">
 							<div style="margin-bottom:10px" class="hint_text">
-								<span style="position:relative;left:15px">
-									Platforms 
+								<span style="position:relative;left:-2px">
+									Select Platforms 
 								</span>
 							</div>
 
@@ -935,10 +1084,9 @@
 										<div style="clear:both;margin-bottom:5px"></div>
 									</div>
 									<div style="position:relative;top:20px;left:-5px">
-										<div class="button1" style="float:left;">
-										<!--	on="click then l:create.package.request[package=true,launch=no]"
-										-->
-											<div class="button2" disabled="true">
+										<div class="button1" style="float:left;"
+											on="click then l:create.package.request[package=true,launch=no]"
+											<div class="button2">
 												Package
 											</div>
 										</div>
@@ -948,9 +1096,11 @@
 												Cancel
 											</div>
 										</div>
-										<div class="hint_text" 
-											style="font-size:11px;float:left;margin-left:10px;position:relative;top:7px">
-											* This page is a preview of our upcoming packaging features.
+										<div style="float:left;position:relative;top:4px">
+											<input type="checkbox" checked="true">
+											<span class="hint_text" style="font-size:11px">
+												Make app public (it can be downloaded by other developers)
+											</span>
 										</div>
 									</div>
 									
