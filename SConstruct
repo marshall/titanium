@@ -75,12 +75,18 @@ elif build.is_linux() or build.is_osx():
     build.env.Append(LINKFLAGS=['-m32'])
 
 if build.is_osx():
-	OSX_SDK = '/Developer/SDKs/MacOSX10.5.sdk'
-#	OSX_SDK = '/Developer/SDKs/MacOSX10.4u.sdk'
-#	OSX_UNIV_LINKER = '-isysroot '+OSX_SDK+' -syslibroot,'+OSX_SDK+' -arch i386 -mmacosx-version-min=10.4 -lstdc++'
-	OSX_UNIV_LINKER = '-isysroot '+OSX_SDK+' -syslibroot,'+OSX_SDK+' -arch i386 -arch ppc -mmacosx-version-min=10.4 -lstdc++'
-	build.env.Append(CXXFLAGS=['-isysroot',OSX_SDK,'-arch','i386','-mmacosx-version-min=10.5','-x','objective-c++'])
-#	build.env.Append(CPPFLAGS=['-isysroot',OSX_SDK,'-mmacosx-version-min=10.4','-x','objective-c++'])
+	is10_4 = 1
+	if is10_4:
+		OSX_SDK = '/Developer/SDKs/MacOSX10.4u.sdk'
+		OSX_MINVERS = '-mmacosx-version-min=10.4'
+		build.env['GCC_VERSION'] = '4.0'
+		build.env['MACOSX_DEPLOYMENT_TARGET'] = '10.4'
+	else:
+		OSX_SDK = '/Developer/SDKs/MacOSX10.5.sdk'
+		OSX_MINVERS = '-mmacosx-version-min=10.4'
+
+	OSX_UNIV_LINKER = '-isysroot '+OSX_SDK+' -syslibroot,'+OSX_SDK+' -arch i386 -arch ppc -lstdc++ ' + OSX_MINVERS
+	build.env.Append(CXXFLAGS=['-isysroot',OSX_SDK,'-arch','i386',OSX_MINVERS,'-x','objective-c++'])
 	build.env.Append(CPPFLAGS=['-arch','i386'])
 	build.env.Append(CPPFLAGS=['-arch','ppc'])
 	build.env.Append(LINKFLAGS=OSX_UNIV_LINKER)

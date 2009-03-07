@@ -11,9 +11,9 @@
 
 namespace ti
 {
-	static NSUInteger toWindowMask(WindowConfig *config)
+	static unsigned int toWindowMask(WindowConfig *config)
 	{
-		NSUInteger mask = 0;
+		unsigned int mask = 0;
 		if (!config->IsUsingChrome() || config->IsFullScreen())
 		{
 			mask = NSBorderlessWindowMask;
@@ -45,7 +45,7 @@ namespace ti
 	{
 		NSRect frame = NSMakeRect(config->GetX(), config->GetY(), config->GetWidth(), config->GetHeight());
 
-		NSUInteger mask = toWindowMask(config);
+		unsigned int mask = toWindowMask(config);
 
 		if (config->IsFullScreen())
 		{
