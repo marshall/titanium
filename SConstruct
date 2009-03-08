@@ -71,7 +71,7 @@ if build.is_linux() and build.arch == '64':
     build.env.Append(LINKFLAGS=['-m64'])
 
 elif build.is_linux() or build.is_osx():
-    build.env.Append(CPPFLAGS=['-m32', '-Wall', '-Werror','-fno-common','-fvisibility=hidden'])
+    build.env.Append(CPPFLAGS=['-m32', '-Wall', '-fno-common','-fvisibility=hidden'])
     build.env.Append(LINKFLAGS=['-m32'])
 
 if build.is_osx():
