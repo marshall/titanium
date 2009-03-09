@@ -254,13 +254,10 @@
 			}
 
 			function doMoveTo() {
-				var f = Titanium.Filesystem.getFile("c:/tmp");
-				log("f = " + f);
 				var x = $('x').value;
 				var y = $('y').value;
-				log("moveTo = " + moveTo);
-				log('moving to ' + x + ',' + y);
-				window.moveTo(x,y);
+				
+				top.window.moveTo(x,y);
 			}
 		</script>
 	</head>
