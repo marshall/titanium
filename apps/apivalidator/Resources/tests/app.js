@@ -11,12 +11,17 @@ testSuite("Titanium.App API tests", "dummy.html",
 		test("toplevel App API", function()
 		{
 			assert(Titanium.App != null);
-			assert(Titanium.App.include != null);
-			assert(Titanium.App.debug != null);
-			assert(Titanium.App.hide != null);
-			assert(Titanium.App.show != null);
-			assert(Titanium.App.activate != null);
-			assert(Titanium.App.quit != null);	
+			assert(Titanium.App.getID != null);
+			assert(Titanium.App.getName != null);
+			assert(Titanium.App.getVersion != null);
+			assert(Titanium.App.getUpdateURL != null);
+			assert(Titanium.App.getGUID != null);
+			assert(Titanium.App.appURLToPath != null);
+			assert(Titanium.App.arguments != null);
+			assert(Titanium.App.exit != null);
+			assert(Titanium.App.loadProperties != null);
+			assert(Titanium.version != null);
+			assert(Titanium.platform != null);	
 		});
 	}
 });

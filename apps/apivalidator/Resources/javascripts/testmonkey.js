@@ -13,6 +13,74 @@ window.TestMonkey = {};
 		// turn off report stats so it doesn't throw off tests
 		AppC.config.report_stats=false;
 	}
+	
+	$.extend({
+		gsub:function(source,pattern,replacement)
+		{
+			if (typeof(replacement)=='string')
+			{
+				var r = String(replacement);
+				replacement = function()
+				{
+					return r;
+				}
+			}
+		 	var result = '', match;
+		    while (source.length > 0) {
+		      if (match = source.match(pattern)) {
+		        result += source.slice(0, match.index);
+		        result += this.string(replacement(match));
+		        source  = source.slice(match.index + match[0].length);
+		      } else {
+		        result += source, source = '';
+		      }
+		    }
+			return result;
+		},
+		string: function(value)
+		{
+			return value == null ? '' : String(value);
+		},
+		escapeHTML: function(value)
+		{
+			// idea from prototype
+			var div = document.createElement('div');
+			var text = document.createTextNode(value);
+			div.appendChild(text);
+			return div.innerHTML;
+		},
+		info:function()
+		{
+			var log = $.makeArray(arguments).join(' ');
+			Titanium.API.info(log);
+			/*if (hasConsole)
+			{
+				if ($.isFunction(console.info))
+				{
+					console.info(log);
+				}
+				else if ($.isFunction(console.log))
+				{
+					console.log(log);
+				}
+			}*/
+		},
+		makeArray: function(array) {
+			var ret = [];
+	
+			if( array != null ){
+				var i = array.length;
+				//the window, strings and functions also have 'length'
+				if( i == null || array.split || array.setInterval || array.call )
+					ret[0] = array;
+				else
+					while( i )
+						ret[--i] = array[i];
+			}
+	
+			return ret;
+		},
+	});
 		
 	var testRunnerPlugins = [];
 	
@@ -24,7 +92,6 @@ window.TestMonkey = {};
 	 */
 	TestMonkey.installTestRunnerPlugin = function(callback)
 	{
-		Titanium.API.debug("installing testrunner plugin:" + callback);
 		testRunnerPlugins.push(callback);
 	};
 	
@@ -586,7 +653,7 @@ window.TestMonkey = {};
 			"})(window.jQuery,parent.window.testMonkeyScope);\n";
 
 			// inject our library
-			var code = "<script id=\"__testMonkeySDK\" type=\"text/javascript\" src=\"jquery.js\"></script>\n";
+			var code = "<script id=\"__testMonkeySDK\" type=\"text/javascript\" src=\"javascripts/jquery.js\"></script>\n";
 
 			// now inject our test execution environment
 			code += "<script id=\"__testMonkeyJS\" type=\"text/javascript\">" + setupCode + "</script>\n";
@@ -731,7 +798,8 @@ window.TestMonkey = {};
 			_asserts.push(m[0]); 
 			var prefix = m[1] ? '"' + escapeString(m[1]) + '"' : 'null';
 			var params = m[2] || 'null';
-			return 'assertTestCase(' + (_asserts.length-1) + ','+prefix+','+params+')';
+			var r = 'assertTestCase(' + (_asserts.length-1) + ','+prefix+','+params+')';
+			return r;
 		});
 		var asserts = [];
 		$.each(_asserts,function()
@@ -786,7 +854,6 @@ window.TestMonkey = {};
 	
 	scope.testSuite = function(name,html,descriptor)
 	{
-		Titanium.API.debug("add testsuite: " + name);
 		if (typeof(html)!='string')
 		{
 			descriptor = html;
@@ -796,8 +863,6 @@ window.TestMonkey = {};
 		descriptor.html=html;
 		scope.testSuiteNames.push(name);
 		scope.testSuites[name]=descriptor;
-		
-		Titanium.API.debug("firing addTestSuite");
 		
 		TestMonkey.fireEvent("addTestSuite",name,descriptor,html);
 		

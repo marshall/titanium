@@ -72,7 +72,6 @@ $(document).ready(function()
 	{
 		$.each(json.suites,function(i)
 		{
-			Titanium.API.debug("suite: app://" + Titanium.App.getID() + '/tests/'+this);
 			$.getScript('app://' + Titanium.App.getID() + '/tests/'+this, function() {
 					if (i == json.suites.length - 1) {
 						TestMonkey.fireEventAsync('manifestLoaded');
@@ -117,7 +116,6 @@ $(document).ready(function()
 		return spacing;
 	}
 	
-	Titanium.API.debug("install driver");
 	var idCounter = 1;
 	TestMonkey.installTestRunnerPlugin({
 		onAddTestSuite: function(suitename) {
@@ -133,8 +131,6 @@ $(document).ready(function()
 		
 		onAfterAssertionCount: function(assertionCount)
 		{
-			Titanium.API.debug("on after assertion count: " + assertionCount);
-			
 			// set assertion count total
 			$('#assert_count').html(assertionCount)
 			
