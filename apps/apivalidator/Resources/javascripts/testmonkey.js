@@ -41,6 +41,16 @@ window.TestMonkey = {};
 		{
 			return value == null ? '' : String(value);
 		},
+		startsWith: function(str, substr)
+		{
+			if (substr.length > str.length) return false;
+			return str.indexOf(substr) == 0;
+		},
+		endsWith: function(str, substr)
+		{
+			if (substr.length > str.length) return false;
+			return str.indexOf(substr) == (str.length - substr.length);
+		},
 		escapeHTML: function(value)
 		{
 			// idea from prototype
@@ -112,6 +122,25 @@ window.TestMonkey = {};
 	TestMonkey.installAssertionType('',function(win,frame,testcase,assertion,args)
 	{
 		return runAssertion(args[0]);
+	});
+	
+	TestMonkey.installAssertionType('Equals', function(win,frame,testcase,assertion,args)
+	{
+		var equals = args[0] == args[1];
+		if (!equals) {
+			return [false, args[0] + " != " + args[1]];
+		}
+		return [true, args[0] + " == " + args[1]]
+	});
+	
+	TestMonkey.installAssertionType('Null', function(win,frame,testcase,assertion,args)
+	{
+		return [args[0] == null, args[0]];
+	});
+	
+	TestMonkey.installAssertionType("NotNull", function(win,frame,testcase,assertion,args)
+	{
+		return [args[0] != null, args[0]];
 	});
 	
 	TestMonkey.installAssertionType('Visible',function(win,frame,testcase,assertion,args)
