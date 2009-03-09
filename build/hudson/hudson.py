@@ -145,6 +145,14 @@ class HudsonConfig:
 	def get_runtime_binary(self):
 		return "titanium_runtime_%s.%s" % (self.get_version(), self.get_runtime_extension())
 	
+	def get_app_binary(self, basedir, appname):
+		if self.platform.is_linux():
+			return os.path.join(basedir, appname, appname)
+		elif self.platform.is_win32():
+			return os.path.join(basedir, appname, appname+".exe")
+		elif self.platform.is_osx():
+			return os.path.join(basedir, appname+".app", "Contents", "MacOS", appname)
+	
 	def get_sha1(self, path):
 		file = open(path, "rb")
 		# read in chunks so we don't overfill memory

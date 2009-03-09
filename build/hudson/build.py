@@ -29,12 +29,7 @@ titanium_runtime = "titanium_runtime.%s" % hudson_config.get_runtime_extension()
 runtime_target = hudson_config.get_runtime_binary()
 shutil.copy(os.path.join(hudson_config.build_dir, titanium_runtime), os.path.join(hudson_config.package_dir, runtime_target))
 
-# TODO: enable testsuite
-#os.system(build_testsuite_command)
-#
-#if hudson_config.platform.is_linux():
-#	os.system(os.path.join(build_dir, "titanium_testsuite", "titanium_testsuite"))
-#elif hudson_config.platform.is_win32():
-#	os.system(os.path.join(build_dir, "titanium_testsuite", "titanium_testsuite.exe"))
-#elif hudson_config.platform.is_osx():
-#	os.system(os.path.join(build_dir, "titanium_testsuite", "Contents", "MacOS", "titanium_testsuite"))
+hudson_config.call(build_testsuite_command)
+
+apivalidator = hudson_config.get_app_binary(hudson_config.build_dir, "apivalidator")
+hudson_config.call(apivalidator)
