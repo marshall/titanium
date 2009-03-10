@@ -8,6 +8,7 @@
 #include "win32_user_window.h"
 #include "../ui_module.h"
 #include "../../../kroll/modules/javascript/javascript_module.h"
+#include <comutil.h>
 
 using namespace ti;
 using namespace kroll;
@@ -77,6 +78,15 @@ Win32WebKitFrameLoadDelegate::windowScriptObjectAvailable (
 	ti_object->Set("document", doc_value);
 	SharedValue window_value = global_bound_object->Get("window");
 	ti_object->Set("window", window_value);
+
+	// set background color if transparency is enabled
+	if(window->GetTransparency() < 1)
+	{
+		std::string jsString("document.body.style.background='#f9f9f9';");
+		BSTR js = _bstr_t(jsString.c_str());
+		BSTR result;
+		webView->stringByEvaluatingJavaScriptFromString(js, &result);
+	}
 
 	// Place the Titanium object into the window's global object
 	SharedValue ti_object_value = Value::NewObject(shared_ti_obj);
