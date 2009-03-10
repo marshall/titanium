@@ -2,26 +2,36 @@ testSuite("Titanium.App API tests", "dummy.html",
 {
 	run: function()
 	{
-		test("runtime accessor", function()
+		test("Titanium.App exists", function()
 		{
-			assert(Titanium != null);
-			assert(Titanium.App != null);	
+			assertNotNull(Titanium);
+			assertNotNull(Titanium.App);	
 		});
 
-		test("toplevel App API", function()
+		test("Titanium.App top-level API", function()
 		{
-			assert(Titanium.App != null);
-			assert(Titanium.App.getID != null);
-			assert(Titanium.App.getName != null);
-			assert(Titanium.App.getVersion != null);
-			assert(Titanium.App.getUpdateURL != null);
-			assert(Titanium.App.getGUID != null);
-			assert(Titanium.App.appURLToPath != null);
-			assert(Titanium.App.arguments != null);
-			assert(Titanium.App.exit != null);
-			assert(Titanium.App.loadProperties != null);
-			assert(Titanium.version != null);
-			assert(Titanium.platform != null);	
+			assertNotNull(Titanium.App);
+			assertNotNull(Titanium.App.getID);
+			assertNotNull(Titanium.App.getName);
+			assertNotNull(Titanium.App.getVersion);
+			assertNotNull(Titanium.App.getUpdateURL);
+			assertNotNull(Titanium.App.getGUID);
+			assertNotNull(Titanium.App.appURLToPath);
+			assertNotNull(Titanium.App.arguments);
+			assertNotNull(Titanium.App.exit);
+			assertNotNull(Titanium.App.loadProperties);
+			assertNotNull(Titanium.version);
+			assertNotNull(Titanium.platform);
+		});
+		
+		test("Titanium.App top-level data", function()
+		{
+			assertEquals(Titanium.App.getID(), "com.titaniumapp.apivalidator");
+			assertEquals(Titanium.App.getName(), "apivalidator");
+			assertEquals(Titanium.App.getVersion(), "0.1");
+			assertEquals(Titanium.App.getUpdateURL(), "http://updatesite.titaniumapp.com");
+			assert(Titanium.App.arguments.length >= 1);
+			assert(Titanium.platform in {'win32':1, 'osx':1, 'linux':1});
 		});
 	}
 });

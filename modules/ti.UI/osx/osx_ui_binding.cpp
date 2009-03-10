@@ -81,7 +81,7 @@ namespace ti
 			return;
 		}
 		
-		DockTileStandin *dockTile = [NSApp dockTile];
+		DockTileStandin *dockTile = (DockTileStandin *)[NSApp dockTile];
 		std::string value = *badge_path;
 		if (!value.empty())
 		{
@@ -349,7 +349,7 @@ namespace ti
 		{
 			label = [NSString stringWithCString:value.c_str()];
 		}
-		DockTileStandin *tile = [[NSApplication sharedApplication] dockTile];
+		DockTileStandin *tile = (DockTileStandin *)[[NSApplication sharedApplication] dockTile];
 		[tile setBadgeLabel:label];
 	}
 	
