@@ -6,6 +6,13 @@
 #import "Controller.h"
 #import <string>
 #import "file_utils.h"
+#import <zlib.h>
+
+#if !USEURLREQUEST
+#import "CURLHandle.h"
+#import "CURLHandle+extras.h"
+#endif
+
 
 @implementation Controller
 
@@ -213,13 +220,17 @@
 
 - (void) applicationDidFinishLaunching:(NSNotification *) notif
 {
+#if !USEURLREQUEST
 	[CURLHandle curlHelloSignature:@"XxXx" acceptAll:YES];	// to get CURLHandle registered for handling URLs
+#endif
 	[NSThread detachNewThreadSelector:@selector(download:) toTarget:self withObject:self];
 }
 
+#if !USEURLREQUEST
 - (void) applicationWillTerminate:(NSNotification *) notif
 {
 	[CURLHandle curlGoodbye];	// to clean up
 }
+#endif
 
 @end
