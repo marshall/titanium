@@ -383,6 +383,16 @@ UserWindow* Win32UserWindow::WindowFactory(Host *host, WindowConfig* config)
 	return new Win32UserWindow(host, config);
 }
 
+std::string Win32UserWindow::GetTransparencyColorString()
+{
+	char hexColor[7];
+	sprintf(hexColor, "%2x%2x%2x", (int)GetRValue(transparencyColor), (int)GetGValue(transparencyColor), (int)GetBValue(transparencyColor));
+
+	std::string color(hexColor);
+
+	return color;
+}
+
 void Win32UserWindow::ResizeSubViews()
 {
 	RECT rcClient;

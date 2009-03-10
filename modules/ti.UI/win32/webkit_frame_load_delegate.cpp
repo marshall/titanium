@@ -82,7 +82,12 @@ Win32WebKitFrameLoadDelegate::windowScriptObjectAvailable (
 	// set background color if transparency is enabled
 	if(window->GetTransparency() < 1)
 	{
-		std::string jsString("document.body.style.background='#f9f9f9';");
+		std::string color = window->GetTransparencyColorString();
+		std::string jsString;
+		jsString.append("document.body.style.background='#");
+		jsString.append(color);
+		jsString.append("';");
+
 		BSTR js = _bstr_t(jsString.c_str());
 		BSTR result;
 		webView->stringByEvaluatingJavaScriptFromString(js, &result);

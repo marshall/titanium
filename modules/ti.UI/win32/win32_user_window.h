@@ -159,6 +159,8 @@ public:
 
 	void ShowWebInspector();
 
+	std::string GetTransparencyColorString();
+
 private:
 	void SetupPosition();
 	void SetupSize();
