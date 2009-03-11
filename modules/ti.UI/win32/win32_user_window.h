@@ -142,6 +142,7 @@ public:
 	void SetVisible(bool visible);
 	double GetTransparency() { return config->GetTransparency(); }
 	void SetTransparency(double transparency);
+	std::string GetTransparencyColor();
 	void SetFullScreen(bool fullscreen);
 	void SetUsingChrome(bool chrome);
 	void SetMenu(SharedPtr<MenuItem> menu);
@@ -158,8 +159,6 @@ public:
 	void FrameLoaded();
 
 	void ShowWebInspector();
-
-	std::string GetTransparencyColorString();
 
 private:
 	void SetupPosition();

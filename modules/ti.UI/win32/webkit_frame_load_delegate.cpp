@@ -82,20 +82,6 @@ Win32WebKitFrameLoadDelegate::windowScriptObjectAvailable (
 	SharedValue window_value = global_bound_object->Get("window");
 	ti_object->Set("window", window_value);
 
-	// set background color if transparency is enabled
-	if(window->GetTransparency() < 1)
-	{
-		std::string color = window->GetTransparencyColorString();
-		std::string jsString;
-		jsString.append("document.body.style.background='#");
-		jsString.append(color);
-		jsString.append("';");
-
-		BSTR js = _bstr_t(jsString.c_str());
-		BSTR result;
-		webView->stringByEvaluatingJavaScriptFromString(js, &result);
-	}
-
 	// Place the Titanium object into the window's global object
 	SharedValue ti_object_value = Value::NewObject(shared_ti_obj);
 	global_bound_object->Set(GLOBAL_NS_VARNAME, ti_object_value);

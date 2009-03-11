@@ -114,6 +114,8 @@ class UserWindow : public kroll::StaticBoundObject {
 		void _GetTransparency(const kroll::ValueList&, kroll::SharedValue);
 		void _SetTransparency(const kroll::ValueList&, kroll::SharedValue);
 
+		void _GetTransparencyColor(const kroll::ValueList&, kroll::SharedValue);
+
 		void _GetMenu(const kroll::ValueList&, kroll::SharedValue);
 		void _SetMenu(const kroll::ValueList&, kroll::SharedValue);
 
@@ -199,6 +201,7 @@ class UserWindow : public kroll::StaticBoundObject {
 		virtual void SetVisible(bool visible) = 0;
 		virtual double GetTransparency() = 0;
 		virtual void SetTransparency(double transparency) = 0;
+		virtual std::string GetTransparencyColor() { return ""; }
 		virtual void SetFullScreen(bool fullscreen) = 0;
 		virtual void SetUsingChrome(bool chrome) = 0;
 		virtual void SetMenu(SharedPtr<MenuItem> menu) = 0;

@@ -104,6 +104,7 @@ UserWindow::UserWindow(kroll::Host *host, WindowConfig *config) :
 	this->SetMethod("setVisible", &UserWindow::_SetVisible);
 	this->SetMethod("getTransparency", &UserWindow::_GetTransparency);
 	this->SetMethod("setTransparency", &UserWindow::_SetTransparency);
+	this->SetMethod("getTransparencyColor", &UserWindow::_GetTransparencyColor);
 	this->SetMethod("setMenu", &UserWindow::_SetMenu);
 	this->SetMethod("getMenu", &UserWindow::_GetMenu);
 	this->SetMethod("setContextMenu", &UserWindow::_SetContextMenu);
@@ -498,6 +499,11 @@ void UserWindow::_SetTransparency(const kroll::ValueList& args, kroll::SharedVal
 	if (args.size() > 0) {
 		this->SetTransparency(args.at(0)->ToDouble());
 	}
+}
+
+void UserWindow::_GetTransparencyColor(const kroll::ValueList& args, kroll::SharedValue result)
+{
+	result->SetString(this->GetTransparencyColor());
 }
 
 void UserWindow::_SetMenu(const kroll::ValueList& args, kroll::SharedValue result)

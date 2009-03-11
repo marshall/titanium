@@ -17,3 +17,13 @@ if ('jQuery' in window) {
 		}
 	}); 
  }
+
+// adjust background transparency for window if needed
+if(Titanium) {
+	if(Titanium.platform == "win32") {
+		if(Titanium.UI.currentWindow.getTransparency() < 1) {
+			var c = Titanium.UI.currentWindow.getTransparencyColor();
+			document.body.style.background='#' + c;
+		}
+	}
+}
