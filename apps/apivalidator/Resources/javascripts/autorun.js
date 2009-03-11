@@ -6,7 +6,7 @@
 // A simple plugin that automatically runs all test suites on page load
 $(document).ready(function() {
 	Titanium.API.debug("install autorunner plugin..");
-	var autoclose = true;
+	var autoclose = false;
 	
 	TestMonkey.installTestRunnerPlugin({
 		onManifestLoaded: function ()

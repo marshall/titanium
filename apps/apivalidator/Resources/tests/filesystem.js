@@ -1,19 +1,19 @@
 testSuite("Titanium.Filesystem API tests", "dummy.html", {
-	var stageDir = "c:\\temp\\";
-	var fileNormal = stageDir + "file-normal.txt";
-	var fileDir = stageDir + "normalDir";
-	var fileHidden = stageDir + "file-hidden.txt";
-	var fileLink = stageDir + "file-link.txt";
-	var fileMissing = stageDir + "file-doesnt-exist.txt";
-	var fileCopyName = stageDir + "file-normal-copy.txt";
-	var fileMoveName = stageDir + "file-normal-moved.txt";
-	var dirCreateName = stageDir + "dir-created";
-	var dirCreatedWithContentsName = stageDir + "dir-created-with-contents";
-	var subDirCreatedName = dirCreateWithConentsName + "\"" + "sub-dir-created";
-	var fileWriteName = stageDir + "file-written.txt";
-	
 	run: function () {
-		test("top level API", function() {
+		var stageDir = Titanium.App.appURLToPath("app://tests/filetests");
+		var fileNormal = stageDir + "file-normal.txt";
+		var fileDir = stageDir + "normalDir";
+		var fileHidden = stageDir + "file-hidden.txt";
+		var fileLink = stageDir + "file-link.txt";
+		var fileMissing = stageDir + "file-doesnt-exist.txt";
+		var fileCopyName = stageDir + "file-normal-copy.txt";
+		var fileMoveName = stageDir + "file-normal-moved.txt";
+		var dirCreateName = stageDir + "dir-created";
+		var dirCreatedWithContentsName = stageDir + "dir-created-with-contents";
+		var subDirCreatedName = dirCreatedWithContentsName + "\"" + "sub-dir-created";
+		var fileWriteName = stageDir + "file-written.txt";
+
+		test("Titanium.Filesystem top level API", function() {
 			assert(Titanium != null);
 			assert(Titanium.Filesystem != null);
 			assert(Titanium.Filesystem.getFile != null);
@@ -35,8 +35,8 @@ testSuite("Titanium.Filesystem API tests", "dummy.html", {
 			assert(Titanium.Filesystem.createTempDirectory() != null);
 			assert(Titanium.Filesystem.createTempFile() != null);	
 		});
-
-		test("file object API - file types", function() {
+		
+		test("Titanium.Filesystem file object API - file types", function() {
 			assert(Titanium != null);
 			assert(Titanium.Filesystem != null);
 
@@ -125,7 +125,9 @@ testSuite("Titanium.Filesystem API tests", "dummy.html", {
 			file = Titanium.Filesystem.getFile(fileNormal);
 			assert(file != null);
 			
-			assert(file.read() != null);
+			var contents = file.read();
+			assertEquals(contents, "some contents");
+			file.close();
 		});
 		
 		test("file object API - copy / delete file", function() {
@@ -146,6 +148,7 @@ testSuite("Titanium.Filesystem API tests", "dummy.html", {
 			
 			var deleted = file.deleteFile();
 			assert(deleted == true);
+			assert(!file.exists());
 		});
 		
 		test("file object API - move file", function() {
@@ -185,7 +188,7 @@ testSuite("Titanium.Filesystem API tests", "dummy.html", {
 			assert(deleted == true);
 		});
 		
-		test("file object API - create dir / should not delete dir with contents", function() {
+		test("Titanium.Filesystem file object API - create dir / should not delete dir with contents", function() {
 			assert(Titanium != null);
 			assert(Titanium.Filesystem != null);
 
@@ -217,7 +220,7 @@ testSuite("Titanium.Filesystem API tests", "dummy.html", {
 			assert(deleted == true);
 		});
 		
-		test("file object API - dir listing", function() {
+		test("Titanium.Filesystem file object API - dir listing", function() {
 			assert(Titanium != null);
 			assert(Titanium.Filesystem != null);
 
@@ -231,7 +234,7 @@ testSuite("Titanium.Filesystem API tests", "dummy.html", {
 			assert(files != null);
 		});
 		
-		test("file object API - file write", function() {
+		test("Titanium.Filesystem file object API - file write", function() {
 			assert(Titanium != null);
 			assert(Titanium.Filesystem != null);
 

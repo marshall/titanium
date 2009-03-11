@@ -5,18 +5,30 @@
  */
 
 #import <Cocoa/Cocoa.h>
-#import "CURLHandle.h"
+#define USEURLREQUEST 1
 
+@class CURLHandle;
 
+#if USEURLREQUEST
+@interface Downloader :  NSObject {
+#else
 @interface Downloader :  NSObject<NSURLHandleClient> {
+#endif
+
 	CURLHandle *handle;
+	
+	NSURLConnection * downloadConnection;
 	NSProgressIndicator *progress;
 	int bytesRetrievedSoFar;
+	long long expectedBytes;
 	BOOL completed;
-	NSData *data;
+	NSMutableData *data;
 }
 -(id)initWithURL:(NSURL*)url progress:(NSProgressIndicator*)p;
 -(BOOL)isDownloadComplete;
+
+- (BOOL)completed;
+- (void)setCompleted:(BOOL)value;
+
 -(NSData*)data;
--(NSString*)contentType;
 @end

@@ -951,4 +951,3 @@ void UserWindow::PageLoaded(SharedBoundObject global_bound_object, std::string &
 	event->Set("url",Value::NewString(url.c_str()));
 	this->api->Call("ti.UI.window.page.load",Value::NewObject(event));
 }
-
