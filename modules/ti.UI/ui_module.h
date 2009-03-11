@@ -36,6 +36,7 @@ namespace ti {
 #include "osx/ui_module_osx.h"
 
 #elif defined(OS_WIN32)
+#include "javascript_module.h"
 #include "win32/win32_ui_binding.h"
 #endif
 

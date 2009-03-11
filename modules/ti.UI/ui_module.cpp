@@ -40,7 +40,6 @@
   }
 #endif
 
-
 namespace ti
 {
 	KROLL_MODULE(UIModule)
