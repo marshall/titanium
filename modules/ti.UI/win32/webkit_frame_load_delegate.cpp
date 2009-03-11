@@ -21,6 +21,9 @@ Win32WebKitFrameLoadDelegate::Win32WebKitFrameLoadDelegate(Win32UserWindow *wind
 HRESULT STDMETHODCALLTYPE
 Win32WebKitFrameLoadDelegate::didFinishLoadForFrame(IWebView *webView, IWebFrame *frame)
 {
+	JSGlobalContextRef context = frame->globalContext();
+	UIModule::GetInstance()->LoadUIJavascript(context);
+
 //TODO->	window->PageLoaded(global_object,url_str);
 	window->FrameLoaded();
 	return S_OK;

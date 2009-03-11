@@ -45,7 +45,7 @@ protected:
 
 	HWND window_handle, view_window_handle;
 	IWebView* web_view;
-	IWebFrame *main_frame;
+	IWebFrame *web_frame;
 	IWebInspector *web_inspector;
 	std::map<long, SharedBoundMethod> messageHandlers;
 	bool requires_display;

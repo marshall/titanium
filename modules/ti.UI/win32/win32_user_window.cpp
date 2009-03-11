@@ -334,7 +334,7 @@ Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config) :
 
 	web_view_private->Release();
 
-	hr = web_view->mainFrame(&main_frame);
+	hr = web_view->mainFrame(&web_frame);
 	//web_view->setShouldCloseWithWindow(TRUE);
 
 	std::cout << "resize subviews" << std::endl;
@@ -374,8 +374,8 @@ Win32UserWindow::~Win32UserWindow()
 	if (web_view)
 		web_view->Release();
 
-	if (main_frame)
-		main_frame->Release();
+	if (web_frame)
+		web_frame->Release();
 }
 
 UserWindow* Win32UserWindow::WindowFactory(Host *host, WindowConfig* config)
@@ -587,7 +587,7 @@ void Win32UserWindow::SetURL(std::string& url_) {
 		goto exit;
 
 	std::cout << "load request" << std::endl;
-	hr = main_frame->loadRequest(request);
+	hr = web_frame->loadRequest(request);
 	if (FAILED(hr))
 		goto exit;
 
