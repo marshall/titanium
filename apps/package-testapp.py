@@ -152,6 +152,11 @@ app_src = path.join(top_dir, 'apps')
 app_src = path.join(app_src, 'testapp')
 dir_util.copy_tree(app_src, app_dir, preserve_symlinks=True)
 
+# copy UI resources
+ui_js = path.join(build_dir, 'modules', 'tiui', 'Resources', 'all', 'ui.js')
+tiui_module_dir = path.join(app_dir, 'modules', 'tiui')
+shutil.copy(ui_js, tiui_module_dir)
+
 if len(sys.argv) > 1 and sys.argv[1] == '--run':
     print "exec: " + exe_path
     os.system(exe_path+" --debug")
