@@ -458,7 +458,8 @@
 	}
 	
 	// apply patches
-	[self applyJSPatches:global_object];
+	UIModule::GetInstance()->LoadUIJavascript([frame globalContext]);
+	//[self applyJSPatches:global_object];
 	
 	NSURL *theurl =[[[frame dataSource] request] URL];
 	// fire load event
