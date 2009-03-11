@@ -40,7 +40,7 @@ static gint new_window_navigation_requested_cb(
 static void load_finished_cb(
 	WebKitWebView* view,
 	WebKitWebFrame* frame,
-	gpointer *data);
+	gpointer data);
 
 GtkUserWindow::GtkUserWindow(Host *host, WindowConfig* config) : UserWindow(host, config)
 {
@@ -407,16 +407,17 @@ static gint new_window_navigation_requested_cb(
 static void load_finished_cb(
 	WebKitWebView* view,
 	WebKitWebFrame* frame,
-	gpointer *data)
+	gpointer data)
 {
 	JSGlobalContextRef context = webkit_web_frame_get_global_context(frame);
 	JSObjectRef global_object = JSContextGetGlobalObject(context);
-	SharedBoundObject frame_global =
-		new KJSBoundObject(context, global_object);
+	SharedBoundObject frame_global = new KJSBoundObject(context, global_object);
 	std::string uri = webkit_web_frame_get_uri(frame);
 
-	GtkUserWindow* user_window = (GtkUserWindow*) data;
+	GtkUserWindow* user_window = static_cast<GtkUserWindow*>(data);
 	user_window->PageLoaded(frame_global, uri);
+
+	UIModule::GetInstance()->LoadUIJavascript(context);
 }
 
 static void window_object_cleared_cb(
@@ -483,9 +484,10 @@ static void window_object_cleared_cb(
 	user_window->ContextBound(frame_global);
 }
 
-static void populate_popup_cb(WebKitWebView *web_view,
-                               GtkMenu *menu,
-                               gpointer data)
+static void populate_popup_cb(
+	WebKitWebView *web_view,
+	GtkMenu *menu,
+	gpointer data)
 {
 	GtkUserWindow* user_window = (GtkUserWindow*) data;
 	SharedPtr<GtkMenuItemImpl> m =

@@ -401,18 +401,12 @@ void UserWindow::_SetBounds(const kroll::ValueList& args, kroll::SharedValue res
 	if (args.size() > 0 && args.at(0)->IsObject())
 	{
 		Bounds bounds;
+
 		kroll::BoundObject* o = args[0]->ToObject();
-
-		kroll::Value* x = o->Get("x");
-		kroll::Value* y = o->Get("y");
-		kroll::Value* width = o->Get("width");
-		kroll::Value* height = o->Get("height");
-
-		bounds.x = x->ToInt();
-		bounds.y = y->ToInt();
-		bounds.width = width->ToInt();
-		bounds.height = height->ToInt();
-
+		bounds.x = o->Get("x")->ToInt();
+		bounds.y = o->Get("y")->ToInt();
+		bounds.width = o->Get("width")->ToInt();
+		bounds.height = o->Get("height")->ToInt();
 		this->SetBounds(bounds);
 	}
 }
