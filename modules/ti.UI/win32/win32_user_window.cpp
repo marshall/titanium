@@ -65,7 +65,8 @@ void Win32UserWindow::RegisterWindowClass (HINSTANCE hInstance)
 		wcex.hIcon			= 0;
 		wcex.hIconSm		= 0;
 		wcex.hCursor		= LoadCursor(hInstance, IDC_ARROW);
-		wcex.hbrBackground	= (HBRUSH)(COLOR_BACKGROUND+1);
+		//wcex.hbrBackground	= (HBRUSH)(COLOR_BACKGROUND+1);
+		wcex.hbrBackground	= CreateSolidBrush(transparencyColor);
 		wcex.lpszMenuName	= "";
 		wcex.lpszClassName	= windowClassName;
 
@@ -200,7 +201,7 @@ Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config) :
 	}
 
 	Win32UserWindow::RegisterWindowClass(win32_host->GetInstanceHandle());
-	window_handle = CreateWindowA(windowClassName, config->GetTitle().c_str(),
+	window_handle = CreateWindowEx(WS_EX_LAYERED, windowClassName, config->GetTitle().c_str(),
 			WS_CLIPCHILDREN,
 			CW_USEDEFAULT, 0, CW_USEDEFAULT, 0,
 			NULL, NULL, win32_host->GetInstanceHandle(), NULL);
@@ -380,6 +381,16 @@ Win32UserWindow::~Win32UserWindow()
 UserWindow* Win32UserWindow::WindowFactory(Host *host, WindowConfig* config)
 {
 	return new Win32UserWindow(host, config);
+}
+
+std::string Win32UserWindow::GetTransparencyColorString()
+{
+	char hexColor[7];
+	sprintf(hexColor, "%2x%2x%2x", (int)GetRValue(transparencyColor), (int)GetGValue(transparencyColor), (int)GetBValue(transparencyColor));
+
+	std::string color(hexColor);
+
+	return color;
 }
 
 void Win32UserWindow::ResizeSubViews()

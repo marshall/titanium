@@ -6,6 +6,9 @@
 
 #import "Downloader.h"
 
+#if !USEURLREQUEST
+#import "CURLHandle.h"
+#endif
 
 @implementation Downloader
 
@@ -15,8 +18,21 @@
 	if (self)
 	{
 		progress = p;
-		completed = NO;
-		bytesRetrievedSoFar = 0;
+		[progress startAnimation:self];
+
+#if USEURLREQUEST
+		NSMutableURLRequest * downloadRequest = [[NSMutableURLRequest alloc] initWithURL:url];
+		[downloadRequest setTimeoutInterval:4.0];
+		[downloadRequest setValue:@"Mozilla/5.0 (compatible; Titanium_Downloader/0.3; Mac)" 
+			   forHTTPHeaderField:@"User-Agent"];
+		
+		data = [[NSMutableData alloc] init];
+		downloadConnection = [[NSURLConnection alloc] initWithRequest:downloadRequest delegate:self];
+		[downloadRequest release];
+		[downloadConnection start];
+		[self setCompleted:NO];
+
+#else
 		handle = (CURLHandle *)[url URLHandleUsingCache:NO];
 		[handle retain];
 		[handle setFailsOnError:YES];	
@@ -25,14 +41,13 @@
 		[handle setUserAgent:@"Mozilla/5.0 (compatible; Titanium_Downloader/0.2; Mac)"];
 		[handle addClient:self];
 		[handle setProgressIndicator:progress];
-		[progress startAnimation:self];
 		// directly call up the results
 		[self URLHandleResourceDidFinishLoading:handle];
 //		if (NSURLHandleLoadFailed == [handle status])
 //		{
 //			[oResultCode setStringValue:[mURLHandle failureReason]];
 //		}
-		
+#endif
 	}
 	return self;
 }
@@ -45,13 +60,65 @@
 
 -(NSData*)data
 {
-	return data;
+	return [[data retain] autorelease];
+}
+
+- (BOOL)completed;
+{
+	return completed;
+}
+
+- (void)setCompleted:(BOOL)value;
+{
+	completed = value;
+	if (completed) {
+		[progress stopAnimation:self];
+#if !USEURLREQUEST
+		[handle removeClient:self];
+#endif
+	} else {
+		[progress startAnimation:self];
+	}
 }
 
 -(BOOL)isDownloadComplete
 {
-	return completed;
+	return [self completed];
 }
+
+#pragma mark NSURLConnection delegate methods
+
+- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
+{
+	[data setLength:0];
+	expectedBytes = [response expectedContentLength];
+}
+
+
+- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)newData
+{
+	[data appendData:newData];
+	if (expectedBytes != 0) {
+		[progress setIndeterminate:NO];
+		[progress setMaxValue:(double)expectedBytes];
+		[progress setDoubleValue:(double)[data length]];
+	}
+}
+
+- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
+{
+	[progress setIndeterminate:YES];
+	[self setCompleted:YES];
+}
+
+
+- (void)connectionDidFinishLoading:(NSURLConnection *)connection;
+{
+	[self setCompleted:YES];
+}
+
+
+#if	!USEURLREQUEST
 
 - (void)URLHandle:(NSURLHandle *)sender resourceDataDidBecomeAvailable:(NSData *)newBytes
 {
@@ -69,33 +136,27 @@
 
 - (void)URLHandleResourceDidBeginLoading:(NSURLHandle *)sender
 {
-	completed = NO;
-	[progress startAnimation:self];
+	[self setCompleted:NO];
 }
 
 - (void)URLHandleResourceDidFinishLoading:(NSURLHandle *)sender
 {
 	data = [handle resourceData];
 	[data retain];
-	[progress stopAnimation:self];
-	[handle removeClient:self];
-	completed = YES;
+	[self setCompleted:YES];
 }
 
 - (void)URLHandleResourceDidCancelLoading:(NSURLHandle *)sender
 {
 	[progress setIndeterminate:YES];
-	[handle removeClient:self];	
-	[progress stopAnimation:self];
-	completed = YES;
+	[self setCompleted:YES];
 }
 
 - (void)URLHandle:(NSURLHandle *)sender resourceDidFailLoadingWithReason:(NSString *)reason
 {
 	[progress setIndeterminate:YES];
-	[handle removeClient:self];
-	[progress stopAnimation:self];
-	completed = YES;
+	[self setCompleted:YES];
 }
+#endif
 
 @end
