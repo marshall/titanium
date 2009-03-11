@@ -22,6 +22,9 @@ using kroll::StaticBoundList;
 #include <webkit/webkit.h>
 #include <webkit/webkitwebscriptevaluator.h>
 
+// X11 defines this again for some reason
+#undef DisplayString
+
 #include "../url/app_url.h"
 #include "script_evaluator.h"
 #include "javascript_module.h"

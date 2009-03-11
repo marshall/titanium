@@ -23,8 +23,8 @@ namespace ti {
 typedef struct {
 	double x;
 	double y;
-	double height;
 	double width;
+	double height;
 } Bounds;
 
 enum UserWindowEvent

@@ -6,15 +6,8 @@
  // A collection of JS patches for various UI functionality in Titanium
  
 // Add app:// support to jquery's http success function
-Titanium.API.debug("HI!");
-Titanium.API.debug("this="+this);
-Titanium.API.debug("window="+window);
-
-
 if ('jQuery' in window) {
- 	Titanium.API.debug("jQuery in window");
- 	Titanium.API.debug("Extending HTTP success..");
-	var originalHttpSuccess = jQuery.httpSuccess;
+ 	var originalHttpSuccess = jQuery.httpSuccess;
 	jQuery.extend({
 		httpSuccess: function(r){
 			if (location.protocol == 'app:' && r.status === 0) {
@@ -22,6 +15,5 @@ if ('jQuery' in window) {
 			}
 			return originalHttpSuccess.call(this,r);
 		}
-	});
-	Titanium.API.debug("Extended."); 
+	}); 
  }
