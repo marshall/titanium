@@ -503,7 +503,8 @@ void UserWindow::_SetTransparency(const kroll::ValueList& args, kroll::SharedVal
 
 void UserWindow::_GetTransparencyColor(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	result->SetString(this->GetTransparencyColor());
+	std::string color = this->GetTransparencyColor();
+	result->SetString(color);
 }
 
 void UserWindow::_SetMenu(const kroll::ValueList& args, kroll::SharedValue result)

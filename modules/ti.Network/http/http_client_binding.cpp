@@ -12,6 +12,7 @@
 #include <cstring>
 #include <iostream>
 #include <sstream>
+#include <fstream>
 #include "../network_binding.h"
 #include "Poco/StreamCopier.h"
 #include "Poco/Net/MultipartWriter.h"
@@ -20,6 +21,7 @@
 #include "Poco/File.h"
 #include "Poco/Net/HTMLForm.h"
 #include "Poco/Zip/Compress.h"
+#include "Poco/Zip/ZipCommon.h"
 
 namespace ti
 {
@@ -94,7 +96,6 @@ namespace ti
 			if (!binding->dirstream.empty())
 			{
 				method = Poco::Net::HTTPRequest::HTTP_POST;
-//				binding->headers["Content-Type"]="multipart/form-data; boundary=TitaniumRocks";
 				binding->headers["Content-Type"]="application/zip";
 			}
 
@@ -128,19 +129,30 @@ namespace ti
 			}
 			
 			std::string data;
-			int content_len = 0;
+			int content_len;
+			bool deletefile = false;
 
 			if (!binding->dirstream.empty())
 			{
-				std::ostringstream ostr;
-				Poco::Zip::Compress compressor(ostr,false);
+				std::string tmpdir = FileUtils::GetTempDirectory();
+				std::ostringstream tmpfilename;
+				tmpfilename << "ti";
+				tmpfilename << rand();
+				tmpfilename << ".zip";
+				std::string fn(FileUtils::Join(tmpdir.c_str(),tmpfilename.str().c_str(),NULL));
+				std::ofstream outfile(fn.c_str(), std::ios::binary|std::ios::out|std::ios::trunc);
+				Poco::Zip::Compress compressor(outfile,true);
 				Poco::Path path(binding->dirstream);
+				path.makeDirectory();
 				compressor.addRecursive(path);
 				compressor.close();
-				data = ostr.str();
-				content_len = data.length();
+				outfile.close();
+				deletefile = true;
+				binding->filename = std::string(fn.c_str());
+				binding->filestream = new Poco::FileInputStream(binding->filename);
 			}
-			else if (binding->datastream.empty())
+			
+			if (!binding->datastream.empty())
 			{
 				data = binding->datastream;
 				content_len = data.length();
@@ -149,7 +161,7 @@ namespace ti
 			// determine the content length
 			if (!data.empty())
 			{
-				std::ostringstream l;
+				std::ostringstream l(std::stringstream::binary|std::stringstream::out);
 				l << content_len;
 				req.set("Content-Length",l.str().c_str());
 			}
@@ -173,7 +185,13 @@ namespace ti
 			{
 				Poco::StreamCopier::copyStream(*binding->filestream,out);
 			}
-
+			
+			if (deletefile)
+			{
+				Poco::File f(binding->filename);
+				f.remove();
+			}
+			
 			Poco::Net::HTTPResponse res;
 			std::istream& rs = session.receiveResponse(res);
 			int total = res.getContentLength();
