@@ -104,6 +104,7 @@ UserWindow::UserWindow(kroll::Host *host, WindowConfig *config) :
 	this->SetMethod("setVisible", &UserWindow::_SetVisible);
 	this->SetMethod("getTransparency", &UserWindow::_GetTransparency);
 	this->SetMethod("setTransparency", &UserWindow::_SetTransparency);
+	this->SetMethod("getTransparencyColor", &UserWindow::_GetTransparencyColor);
 	this->SetMethod("setMenu", &UserWindow::_SetMenu);
 	this->SetMethod("getMenu", &UserWindow::_GetMenu);
 	this->SetMethod("setContextMenu", &UserWindow::_SetContextMenu);
@@ -401,18 +402,12 @@ void UserWindow::_SetBounds(const kroll::ValueList& args, kroll::SharedValue res
 	if (args.size() > 0 && args.at(0)->IsObject())
 	{
 		Bounds bounds;
+
 		kroll::BoundObject* o = args[0]->ToObject();
-
-		kroll::Value* x = o->Get("x");
-		kroll::Value* y = o->Get("y");
-		kroll::Value* width = o->Get("width");
-		kroll::Value* height = o->Get("height");
-
-		bounds.x = x->ToInt();
-		bounds.y = y->ToInt();
-		bounds.width = width->ToInt();
-		bounds.height = height->ToInt();
-
+		bounds.x = o->Get("x")->ToInt();
+		bounds.y = o->Get("y")->ToInt();
+		bounds.width = o->Get("width")->ToInt();
+		bounds.height = o->Get("height")->ToInt();
 		this->SetBounds(bounds);
 	}
 }
@@ -504,6 +499,12 @@ void UserWindow::_SetTransparency(const kroll::ValueList& args, kroll::SharedVal
 	if (args.size() > 0) {
 		this->SetTransparency(args.at(0)->ToDouble());
 	}
+}
+
+void UserWindow::_GetTransparencyColor(const kroll::ValueList& args, kroll::SharedValue result)
+{
+	std::string color = this->GetTransparencyColor();
+	result->SetString(color);
 }
 
 void UserWindow::_SetMenu(const kroll::ValueList& args, kroll::SharedValue result)
@@ -951,4 +952,3 @@ void UserWindow::PageLoaded(SharedBoundObject global_bound_object, std::string &
 	event->Set("url",Value::NewString(url.c_str()));
 	this->api->Call("ti.UI.window.page.load",Value::NewObject(event));
 }
-

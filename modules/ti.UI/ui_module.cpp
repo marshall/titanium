@@ -40,7 +40,6 @@
   }
 #endif
 
-
 namespace ti
 {
 	KROLL_MODULE(UIModule)
@@ -50,6 +49,7 @@ namespace ti
 	SharedPtr<MenuItem> UIModule::app_context_menu = SharedPtr<MenuItem>(NULL);
 	SharedString UIModule::icon_path = SharedString(NULL);
 	std::vector<SharedPtr<TrayItem> > UIModule::tray_items;
+	UIModule* UIModule::instance_;
 
 	void UIModule::Initialize()
 	{
@@ -69,9 +69,30 @@ namespace ti
 		// that we should only ever have one copy of the UI module.
 		SharedBoundObject global = this->host->GetGlobalObject();
 		UIModule::global = global;
-		
+		UIModule::instance_ = this;
+
 		// create the main window
 		UserWindow::CreateWindow(host,NULL,main_window_config,true);
+	}
+
+	void UIModule::LoadUIJavascript(JSContextRef context)
+	{
+		std::string module_path = GetPath();
+		std::string js_path = FileUtils::Join(module_path.c_str(), "ui.js", NULL);
+		PRINTD("Loading: " << js_path);
+		try
+		{
+			KJSUtil::EvaluateFile(context, (char*) js_path.c_str());
+		}
+		catch (kroll::ValueException &e)
+		{
+			SharedString ss = e.DisplayString();
+			std::cerr << "Error: " << *ss << std::endl;
+		}
+		catch (...)
+		{
+			std::cerr << "WARNING: Unable to load " << js_path << std::endl;
+		}
 	}
 
 	void UIModule::Stop()
@@ -91,12 +112,12 @@ namespace ti
 		std::string scheme = uri.getScheme();
 		return (scheme == "app" || scheme == "ti" || scheme == "file");
 	}
-	
+
 	SharedString UIModule::GetResourcePath(const char *URL)
 	{
 		if (URL == NULL || !strcmp(URL, ""))
 			return SharedString(NULL);
-		
+
 		Poco::URI uri(URL);
 		std::string scheme = uri.getScheme();
 

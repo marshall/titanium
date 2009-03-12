@@ -36,6 +36,7 @@ namespace ti {
 #include "osx/ui_module_osx.h"
 
 #elif defined(OS_WIN32)
+#include "javascript_module.h"
 #include "win32/win32_ui_binding.h"
 #endif
 
@@ -61,13 +62,17 @@ namespace ti {
 		 *          NULL SharedString on failure.
 		 */
 		static SharedString GetResourcePath(const char *URL);
-		
+
 		/**
 		 * can be called to determine if the URI passed is a local file
 		 * URI vs remote scheme (such as HTTP).
 		 *
 		 */
 		static bool IsResourceLocalFile(std::string string);
+
+		static UIModule* GetInstance() { return instance_; }
+
+		void LoadUIJavascript(JSContextRef context);
 
 		static void SetMenu(SharedPtr<MenuItem> menu);
 		static SharedPtr<MenuItem> GetMenu();
@@ -85,6 +90,7 @@ namespace ti {
 		static SharedPtr<MenuItem> app_context_menu;
 		static SharedString icon_path;
 		static std::vector<SharedPtr<TrayItem> > tray_items;
+		static UIModule* instance_;
 
 		DISALLOW_EVIL_CONSTRUCTORS(UIModule);
 

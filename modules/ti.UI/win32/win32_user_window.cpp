@@ -65,7 +65,8 @@ void Win32UserWindow::RegisterWindowClass (HINSTANCE hInstance)
 		wcex.hIcon			= 0;
 		wcex.hIconSm		= 0;
 		wcex.hCursor		= LoadCursor(hInstance, IDC_ARROW);
-		wcex.hbrBackground	= (HBRUSH)(COLOR_BACKGROUND+1);
+		//wcex.hbrBackground	= (HBRUSH)(COLOR_BACKGROUND+1);
+		wcex.hbrBackground	= CreateSolidBrush(transparencyColor);
 		wcex.lpszMenuName	= "";
 		wcex.lpszClassName	= windowClassName;
 
@@ -200,7 +201,7 @@ Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config) :
 	}
 
 	Win32UserWindow::RegisterWindowClass(win32_host->GetInstanceHandle());
-	window_handle = CreateWindowA(windowClassName, config->GetTitle().c_str(),
+	window_handle = CreateWindowEx(WS_EX_LAYERED, windowClassName, config->GetTitle().c_str(),
 			WS_CLIPCHILDREN,
 			CW_USEDEFAULT, 0, CW_USEDEFAULT, 0,
 			NULL, NULL, win32_host->GetInstanceHandle(), NULL);
@@ -333,7 +334,7 @@ Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config) :
 
 	web_view_private->Release();
 
-	hr = web_view->mainFrame(&main_frame);
+	hr = web_view->mainFrame(&web_frame);
 	//web_view->setShouldCloseWithWindow(TRUE);
 
 	std::cout << "resize subviews" << std::endl;
@@ -373,13 +374,23 @@ Win32UserWindow::~Win32UserWindow()
 	if (web_view)
 		web_view->Release();
 
-	if (main_frame)
-		main_frame->Release();
+	if (web_frame)
+		web_frame->Release();
 }
 
 UserWindow* Win32UserWindow::WindowFactory(Host *host, WindowConfig* config)
 {
 	return new Win32UserWindow(host, config);
+}
+
+std::string Win32UserWindow::GetTransparencyColor()
+{
+	char hexColor[7];
+	sprintf(hexColor, "%2x%2x%2x", (int)GetRValue(transparencyColor), (int)GetGValue(transparencyColor), (int)GetBValue(transparencyColor));
+
+	std::string color(hexColor);
+
+	return color;
 }
 
 void Win32UserWindow::ResizeSubViews()
@@ -576,7 +587,7 @@ void Win32UserWindow::SetURL(std::string& url_) {
 		goto exit;
 
 	std::cout << "load request" << std::endl;
-	hr = main_frame->loadRequest(request);
+	hr = web_frame->loadRequest(request);
 	if (FAILED(hr))
 		goto exit;
 

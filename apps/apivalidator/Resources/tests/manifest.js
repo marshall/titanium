@@ -1,10 +1,10 @@
 {
 	"suites": [
+		"app.js",
 		"ui.js",
-		"app.js"
-		/*"menu.js",
-		"media.js",
-		"dock.js",
-		"filesystem.js"*/
+		"window.js",
+		"menu.js",
+		"desktop.js",
+		"filesystem.js"
 	]
 }

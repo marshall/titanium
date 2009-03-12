@@ -107,8 +107,14 @@ Win32WebKitUIDelegate::setFrame(
 	/* [in] */ IWebView *sender,
 	/* [in] */ RECT *frame)
 {
-	std::cout << "&&&&&&&&&&&&&&  setFrame() called" << std::endl;
-	return E_NOTIMPL;
+	Bounds b;
+	b.x = frame->left;
+	b.y = frame->top;
+	b.width = frame->right - frame->left;
+	b.height = frame->bottom - frame->top;
+	window->SetBounds(b);
+
+	return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE
@@ -116,8 +122,12 @@ Win32WebKitUIDelegate::webViewFrame(
 	/* [in] */ IWebView *sender,
 	/* [retval][out] */ RECT *frame)
 {
-	std::cout << "&&&&&&&&&&&&&&  webViewFrame() called" << std::endl;
-	return E_NOTIMPL;
+	frame->left = window->GetX();
+	frame->top = window->GetY();
+	frame->right = window->GetX() + window->GetWidth();
+	frame->bottom = window->GetY() + window->GetHeight();
+
+	return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE
