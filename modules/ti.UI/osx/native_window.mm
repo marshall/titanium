@@ -59,10 +59,10 @@
 		[showInspector setKeyEquivalent:@"c"];
 	}
 	else
-	{
-	    [showInspector setHidden:YES];
+	{	//While 10.5 allows for setHidden, 10.4 doesn't have such. And why hide when removing works?
+		if (showInspector != nil) [windowMenu removeItem:showInspector];
 	    NSMenuItem *showInspectorSep = [windowMenu itemWithTitle:@"Show Inspector Separator"];
-	    [showInspectorSep setHidden:YES];
+		if (showInspectorSep != nil) [windowMenu removeItem:showInspectorSep];
 	}
 	closed = NO;
 }

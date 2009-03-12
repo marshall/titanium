@@ -7,6 +7,13 @@ TiDeveloper.Projects.runtimeVersion = null;
 TiDeveloper.Projects.requiredModuleMap = {};
 TiDeveloper.Projects.requiredModules = ['api','tiapp','tifilesystem','tiplatform','tiui']
 
+
+$MQL('l:app.compiled',function()
+{
+	$MQ('l:package_links',{date:'04/10/09',rows:[{'family':'win','platform':'Windows XP SP2',date:'04/10/09'},{'family':'win','platform':'Windows Vista',date:'04/10/09'},{'family':'mac','platform':'Mac OSX 10.5',date:'04/10/09'},{'family':'mac','platform':'Mac OSX 10.4',date:'04/10/09'},{'family':'linux','platform':'Linux Ubuntu',date:'04/10/09'}]})
+	$MQ('l:downloads',{'type':'OS','rows':[{name:'Mac',value:2500},{name:'Windows',value:5000},{name:'Linux',value:320}]});
+});
+
 //
 //  Initialization message - setup all initial states
 //
@@ -686,3 +693,4 @@ $MQL('l:show.filedialog',function(msg)
 	},
 	props);
 });
+

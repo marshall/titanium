@@ -458,7 +458,8 @@
 	}
 	
 	// apply patches
-	[self applyJSPatches:global_object];
+	UIModule::GetInstance()->LoadUIJavascript([frame globalContext]);
+	//[self applyJSPatches:global_object];
 	
 	NSURL *theurl =[[[frame dataSource] request] URL];
 	// fire load event
@@ -673,7 +674,7 @@
 
 - (BOOL)webView:(WebView *)wv runJavaScriptConfirmPanelWithMessage:(NSString *)message initiatedByFrame:(WebFrame *)frame 
 {
-	NSInteger result = NSRunInformationalAlertPanel([window title],	// title
+	int result = NSRunInformationalAlertPanel([window title],	// title
 													message,								// message
 													NSLocalizedString(@"OK", @""),			// default button
 													NSLocalizedString(@"Cancel", @""),		// alt button
@@ -725,8 +726,8 @@
 	return YES;
 }
 
-
-- (NSUInteger)webView:(WebView *)wv dragDestinationActionMaskForDraggingInfo:(id <NSDraggingInfo>)draggingInfo 
+//TODO: in 10.5, this becomes an NSUInteger
+- (unsigned int)webView:(WebView *)wv dragDestinationActionMaskForDraggingInfo:(id <NSDraggingInfo>)draggingInfo 
 {
 	NSLog(@"dragDestinationActionMaskForDraggingInfo");
 	return WebDragDestinationActionAny;
@@ -741,7 +742,8 @@
 }
 
 
-- (NSUInteger)webView:(WebView *)wv dragSourceActionMaskForPoint:(NSPoint)point
+//TODO: in 10.5, this becomes an NSUInteger
+- (unsigned int)webView:(WebView *)wv dragSourceActionMaskForPoint:(NSPoint)point
 {
 	return WebDragSourceActionAny;
 }
@@ -776,7 +778,7 @@
 
 // some source was parsed, establishing a "source ID" (>= 0) for future reference
 - (void)webView:(WebView *)webView       didParseSource:(NSString *)source
- baseLineNumber:(NSUInteger)lineNumber
+ baseLineNumber:(unsigned int)lineNumber
 		fromURL:(NSURL *)aurl
 	   sourceId:(int)sid
 	forWebFrame:(WebFrame *)webFrame
@@ -790,7 +792,7 @@
 
 // some source failed to parse
 - (void)webView:(WebView *)webView  failedToParseSource:(NSString *)source
- baseLineNumber:(NSUInteger)lineNumber
+ baseLineNumber:(unsigned int)lineNumber
 		fromURL:(NSURL *)theurl
 	  withError:(NSError *)error
 	forWebFrame:(WebFrame *)webFrame

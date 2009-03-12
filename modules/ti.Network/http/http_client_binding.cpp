@@ -3,6 +3,10 @@
  * see LICENSE in the root folder for details on the license.
  * Copyright (c) 2009 Appcelerator, Inc. All Rights Reserved.
  */
+#ifdef OS_OSX	//For some reason, 10.5 was fine with Cocoa headers being last, but 10.4 balks.
+#import <Cocoa/Cocoa.h>
+#endif
+
 #include <kroll/kroll.h>
 #include "http_client_binding.h"
 #include <cstring>
@@ -18,10 +22,6 @@
 #include "Poco/Net/HTMLForm.h"
 #include "Poco/Zip/Compress.h"
 #include "Poco/Zip/ZipCommon.h"
-
-#ifdef OS_OSX
-#import <Cocoa/Cocoa.h>
-#endif
 
 namespace ti
 {

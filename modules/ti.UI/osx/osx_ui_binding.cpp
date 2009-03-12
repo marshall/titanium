@@ -9,6 +9,24 @@
 #include "osx_tray_item.h"
 #include "osx_user_window.h"
 
+@interface NSApplication (LegacyWarningSurpression)
+- (id) dockTile;
+@end
+
+@interface DockTileStandin: NSObject{
+	
+}
+- (NSSize)size;
+- (void)setContentView:(NSView *)view;
+- (NSView *)contentView;
+- (void)display;
+- (void)setShowsApplicationBadge:(BOOL)flag;
+- (BOOL)showsApplicationBadge;
+- (void)setBadgeLabel:(NSString *)string;
+- (NSString *)badgeLabel;
+- (id)owner;
+@end
+
 namespace ti
 {
 	OSXUIBinding::OSXUIBinding(Host *host) : UIBinding(host)
@@ -58,7 +76,12 @@ namespace ti
 
 	void OSXUIBinding::SetDockIcon(SharedString badge_path)
 	{
-		NSDockTile *dockTile = [NSApp dockTile];
+		//TODO: Put Dock Icon support back in for 10.4.
+		if (![NSApp respondsToSelector:@selector(dockTile)]){
+			return;
+		}
+		
+		DockTileStandin *dockTile = (DockTileStandin *)[NSApp dockTile];
 		std::string value = *badge_path;
 		if (!value.empty())
 		{
@@ -315,13 +338,18 @@ namespace ti
 
 	void OSXUIBinding::SetBadge(SharedString badge_label)
 	{
+		//TODO: Put Dock Icon support back in for 10.4.
+		if (![NSApp respondsToSelector:@selector(dockTile)]){
+			return;
+		}
+
 		std::string value = *badge_label;
 		NSString *label = @"";
 		if (!value.empty())
 		{
 			label = [NSString stringWithCString:value.c_str()];
 		}
-		NSDockTile *tile = [[NSApplication sharedApplication] dockTile];
+		DockTileStandin *tile = (DockTileStandin *)[[NSApplication sharedApplication] dockTile];
 		[tile setBadgeLabel:label];
 	}
 	

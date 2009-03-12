@@ -5,3 +5,4 @@ build/win32
 Debug
 .vimdir
 *.pyc
+distribution

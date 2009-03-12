@@ -45,7 +45,7 @@ protected:
 
 	HWND window_handle, view_window_handle;
 	IWebView* web_view;
-	IWebFrame *main_frame;
+	IWebFrame *web_frame;
 	IWebInspector *web_inspector;
 	std::map<long, SharedBoundMethod> messageHandlers;
 	bool requires_display;
@@ -142,6 +142,7 @@ public:
 	void SetVisible(bool visible);
 	double GetTransparency() { return config->GetTransparency(); }
 	void SetTransparency(double transparency);
+	std::string GetTransparencyColor();
 	void SetFullScreen(bool fullscreen);
 	void SetUsingChrome(bool chrome);
 	void SetMenu(SharedPtr<MenuItem> menu);

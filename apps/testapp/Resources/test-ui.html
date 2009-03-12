@@ -252,6 +252,13 @@
 			{
 				alert("bye bye from window.onunload");
 			}
+
+			function doMoveTo() {
+				var x = $('x').value;
+				var y = $('y').value;
+				
+				top.window.moveTo(x,y);
+			}
 		</script>
 	</head>
 	<body>
@@ -275,7 +282,12 @@
 			<button onclick="jsPrompt()">prompt</button>
 			<button onclick="jsPromptWithDefault()">prompt (def)</button>
 		</div>
-
+		<div>
+			x: <input id="x" type="text" value="10"/>
+			y: <input id="y" type="text" value="50"/>
+			<button onclick="doMoveTo()">moveTo</button>
+		</div>
+		<div><input type="file" id="filename" name="filename" /></div>
 		<div>Menus:<br/>
 		<table>
 		<tr>

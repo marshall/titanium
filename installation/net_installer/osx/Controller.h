@@ -7,8 +7,6 @@
 
 #import <Cocoa/Cocoa.h>
 #import "Downloader.h"
-#import "CURLHandle.h"
-#import "CURLHandle+extras.h"
 
 
 @interface Controller : NSObject {

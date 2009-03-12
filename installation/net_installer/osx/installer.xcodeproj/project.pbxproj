@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		1DDD58160DA1D0A300B32029 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1DDD58140DA1D0A300B32029 /* MainMenu.xib */; };
 		24291A370F318D7A00DCB70A /* titanium.icns in Resources */ = {isa = PBXBuildFile; fileRef = 24291A360F318D7A00DCB70A /* titanium.icns */; };
-		24BEA3820F312E6B00DFDA8B /* Controller.m in Sources */ = {isa = PBXBuildFile; fileRef = 24BEA3810F312E6B00DFDA8B /* Controller.m */; };
+		24BEA3820F312E6B00DFDA8B /* Controller.mm in Sources */ = {isa = PBXBuildFile; fileRef = 24BEA3810F312E6B00DFDA8B /* Controller.mm */; };
 		24BEA3A90F3140F200DFDA8B /* Downloader.m in Sources */ = {isa = PBXBuildFile; fileRef = 24BEA3A80F3140F200DFDA8B /* Downloader.m */; };
 		24BEA3C40F3145A000DFDA8B /* CURLHandle+extras.m in Sources */ = {isa = PBXBuildFile; fileRef = 24BEA3BE0F3145A000DFDA8B /* CURLHandle+extras.m */; };
 		24BEA3C50F3145A000DFDA8B /* CURLHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 24BEA3C00F3145A000DFDA8B /* CURLHandle.m */; };
@@ -27,7 +27,7 @@
 		1DDD58150DA1D0A300B32029 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		24291A360F318D7A00DCB70A /* titanium.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = titanium.icns; sourceTree = "<group>"; };
 		24BEA3800F312E6B00DFDA8B /* Controller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Controller.h; sourceTree = "<group>"; };
-		24BEA3810F312E6B00DFDA8B /* Controller.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Controller.m; sourceTree = "<group>"; };
+		24BEA3810F312E6B00DFDA8B /* Controller.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Controller.mm; sourceTree = "<group>"; };
 		24BEA3A70F3140F200DFDA8B /* Downloader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Downloader.h; sourceTree = "<group>"; };
 		24BEA3A80F3140F200DFDA8B /* Downloader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Downloader.m; sourceTree = "<group>"; };
 		24BEA3BD0F3145A000DFDA8B /* CURLHandle+extras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CURLHandle+extras.h"; sourceTree = "<group>"; };
@@ -62,7 +62,7 @@
 			isa = PBXGroup;
 			children = (
 				24BEA3800F312E6B00DFDA8B /* Controller.h */,
-				24BEA3810F312E6B00DFDA8B /* Controller.m */,
+				24BEA3810F312E6B00DFDA8B /* Controller.mm */,
 				24BEA3A70F3140F200DFDA8B /* Downloader.h */,
 				24BEA3A80F3140F200DFDA8B /* Downloader.m */,
 			);
@@ -207,7 +207,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8D11072D0486CEB800E47090 /* main.m in Sources */,
-				24BEA3820F312E6B00DFDA8B /* Controller.m in Sources */,
+				24BEA3820F312E6B00DFDA8B /* Controller.mm in Sources */,
 				24BEA3A90F3140F200DFDA8B /* Downloader.m in Sources */,
 				24BEA3C40F3145A000DFDA8B /* CURLHandle+extras.m in Sources */,
 				24BEA3C50F3145A000DFDA8B /* CURLHandle.m in Sources */,
@@ -276,9 +276,11 @@
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = "";
 				ONLY_ACTIVE_ARCH = YES;
 				PREBINDING = NO;
 				SDKROOT = macosx10.5;
+				USER_HEADER_SEARCH_PATHS = ../../../kroll/api/;
 			};
 			name = Debug;
 		};

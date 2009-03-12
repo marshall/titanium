@@ -6,6 +6,8 @@
 #include "file_stream.h"
 #include <cstring>
 
+#include <Poco/LineEndingConverter.h>
+
 namespace ti {
 std::string FileStream::MODE_READ = "read";
 std::string FileStream::MODE_APPEND = "append";
@@ -133,12 +135,12 @@ void FileStream::Write(const ValueList& args, SharedValue result)
 		{
 			text = (char*)args.at(0)->ToString();
 		}
-		
+
 		if (size==0)
 		{
 			size = strlen(text);
 		}
-		
+
 		if (text == NULL)
 		{
 			throw ValueException::FromString("couldn't determine value");
@@ -188,6 +190,7 @@ void FileStream::Read(const ValueList& args, SharedValue result)
 			std::getline(*fis, s);
 
 			contents.append(s);
+			contents.append(Poco::LineEnding::NEWLINE_DEFAULT);
 		}
 
 		result->SetString(contents.c_str());
@@ -203,7 +206,7 @@ void FileStream::ReadLine(const ValueList& args, SharedValue result)
 	{
 		throw ValueException::FromString("FileStream must be opened before calling readLine");
 	}
-	
+
 	try
 	{
 		std::string line;

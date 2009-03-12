@@ -14,6 +14,14 @@
 #include <windows.h>
 #endif
 
+#if defined(OS_OSX)
+@interface NSProcessInfo (LegacyWarningSurpression)
+- (unsigned int) processorCount;
+//TODO: do the smart thing and test for it being NSUinteger
+@end
+#endif
+
+
 namespace ti
 {
 	PlatformBinding::PlatformBinding(SharedBoundObject global) : global(global)
@@ -25,7 +33,10 @@ namespace ti
 
 
 #if defined(OS_OSX)
-		int num_proc = [[NSProcessInfo processInfo] processorCount];
+		int num_proc = 1;
+		if ([NSProcessInfo instancesRespondToSelector:@selector(processorCount)]){
+			num_proc = 	[[NSProcessInfo processInfo] processorCount];
+		}
 #elif defined(OS_WIN32)
 		SYSTEM_INFO SysInfo ;
 		GetSystemInfo (&SysInfo) ;
