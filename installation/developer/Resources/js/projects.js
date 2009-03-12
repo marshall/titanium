@@ -6,7 +6,6 @@ TiDeveloper.Projects.runtimeDir = null;
 TiDeveloper.Projects.runtimeVersion = null;
 TiDeveloper.Projects.requiredModuleMap = {};
 TiDeveloper.Projects.requiredModules = ['api','tiapp','tifilesystem','tiplatform','tiui']
-TiDeveloper.Projects.packagingPollInterval = null;
 
 
 $MQL('l:app.compiled',function()
@@ -372,7 +371,7 @@ TiDeveloper.Projects.getProjectPage = function(pageSize,page)
 };
 
 
-setTimeout(function()
+TiDeveloper.Projects.getModules = function()
 {
 	var result = Titanium.Project.getModulesAndRuntime();
 	TiDeveloper.Projects.runtimeDir = result.runtime.dir;
@@ -391,7 +390,7 @@ setTimeout(function()
 			
 		}
 	}
-},500);
+};
 
 //
 //  Project Package Request - get details about modules, etc
@@ -442,12 +441,14 @@ TiDeveloper.Projects.getProjectName = function(id)
 }
 
 //
-// Temp for now - need to reorg functions
+// Launch or launch and install project locally
 //
 TiDeveloper.Projects.launchProject = function(project, install)
 {
 	try
 	{
+		// load modules
+		TiDeveloper.Projects.getModules();
 		
 		var resources = TFS.getFile(project.dir,'Resources');
 
@@ -490,69 +491,18 @@ TiDeveloper.Projects.launchProject = function(project, install)
 		var resources = TFS.getFile(project.dir,'Resources');
 		var tiapp = TFS.getFile(project.dir,'tiapp.xml');
 		tiapp.copy(app.base);
-
-			Titanium.Process.setEnv('KR_DEBUG','true');
-			Titanium.Desktop.openApplication(app.executable.nativePath());
+		
 		TFS.asyncCopy(resources,app.resources,function()
 		{
-			//QUICK HACK until packaging done
-			var module_dir = TFS.getFile(app.base,'modules',Titanium.platform);
-			var runtime_dir = TFS.getFile(app.base,'runtime');
-			var modules_to_bundle = [];
-			$.each(bundledEl,function()
+			// no modules to bundle, install the net installer
+			var net_installer_src = TFS.getFile(runtime,'installer');
+			var net_installer_dest = TFS.getFile(app.base,'installer');
+			TFS.asyncCopy(net_installer_src,net_installer_dest,function(filename,c,total)
 			{
-				var key = $.trim($(this).html());
-				var target, dest;
-				if (key == 'Titanium Runtime') //TODO: we need to make this defined
-				{
-					runtime_dir.createDirectory();
-					target = TFS.getFile(TiDeveloper.Projects.runtimeDir,TiDeveloper.Projects.runtimeVersion);
-					dest = runtime_dir;
-				}
-				else
-				{
-					module_dir.createDirectory();
-					var module = TiDeveloper.Projects.module_map[key];
-					//TEMP HACK until distro is done
-					target = TFS.getFile(module.dir,Titanium.platform,module.versions[0]);
-					dest = TFS.getFile(module_dir,module.dir.name());
-				}
-				modules_to_bundle.push({target:target,dest:dest});
+				Titanium.Process.setEnv('KR_DEBUG','true');
+				Titanium.Desktop.openApplication(app.executable.nativePath());
 			});
-		
-			if (modules_to_bundle.length > 0)
-			{
-				var count = 0;
-				for (var c=0;c<modules_to_bundle.length;c++)
-				{
-					var e = modules_to_bundle[c];
-					TFS.asyncCopy(e.target,e.dest,function(filename,c,total)
-					{
-						if (++count==modules_to_bundle.length)
-						{
-							// link libraries if runtime included
-							if (e.dest == runtime_dir)
-							{
-								Titanium.linkLibraries(e.dest);
-							}
-							launch_fn();
-						}
-					});
-				}
-			}
-			else
-			{
-				// no modules to bundle, install the net installer
-				var net_installer_src = TFS.getFile(runtime,'installer');
-				var net_installer_dest = TFS.getFile(app.base,'installer');
-				TFS.asyncCopy(net_installer_src,net_installer_dest,function(filename,c,total)
-				{
-					launch_fn();
-				});
-			}
-		
 		});
-		
 	}
 	catch(e)
 	{
@@ -560,6 +510,14 @@ TiDeveloper.Projects.launchProject = function(project, install)
 	}
 	
 }
+
+$MQL('l:launch.project.request',function(msg)
+{
+	var project_name = $('#package_project_name').html();
+	var project = TiDeveloper.Projects.findProject(project_name);
+	TiDeveloper.Projects.launchProject(project,false);
+});
+
 //
 // Create Package Request
 //
@@ -567,6 +525,9 @@ $MQL('l:create.package.request',function(msg)
 {
 	try
 	{
+		// load modules
+		TiDeveloper.Projects.getModules();
+
 		// project name
 		var project_name = $('#package_project_name').html();
 		var project = TiDeveloper.Projects.findProject(project_name);
@@ -615,9 +576,8 @@ $MQL('l:create.package.request',function(msg)
 		
 		timanifest += '"runtime":{"version":"0.2","package":"'+networkRuntime+'"},\n';
 		
-		// TODO: need to generate GUID
-//		timanifest += '"guid":"'+ Titanium.Platform.createUUID()+'",\n';
-		timanifest += '"guid":"'+ new Date().getTime()+'",\n';
+		timanifest += '"guid":"'+ Titanium.Platform.createUUID()+'",\n';
+//		timanifest += '"guid":"'+ new Date().getTime()+'",\n';
 		
 		var modules = '"modules":[';
 		
@@ -662,7 +622,7 @@ $MQL('l:create.package.request',function(msg)
 				var key = $.trim($(this).html());
 				if (key == module)
 				{
-					modules+='{"name":"'+module+'","version":'+'"'+TiDeveloper.Projects.modules[c].versions[0]+'","package":"bundle"}';
+					modules+='{"name":"'+module+'","version":'+'"'+TiDeveloper.Projects.modules[c].versions[0]+'","package":"include"}';
 				}
 			});
 			$.each(networkEl,function()

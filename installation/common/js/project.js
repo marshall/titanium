@@ -151,7 +151,17 @@ Titanium.Project =
 		var swfobject = '<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/swfobject/2.1/swfobject.js"></script>\n';
 		var dojo = '<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/dojo/1.2.3/dojo/dojo.xd.js"></script>\n';
 
-		var head = '<head><style>body{background-color:#292929;color:white}</style>\n';
+		var head = '';
+		
+		if (html)
+		{
+			head+='<head>\n';		
+		}
+		else
+		{
+			head+='<head><style>body{background-color:#292929;color:white}</style>\n';
+		}
+		
 		if (jsLibs.jquery)
 		{
 			head += jquery
@@ -188,7 +198,7 @@ Titanium.Project =
 		
 		if (html)
 		{
-			index.write('<html>\n<body>\n' + html + '\n</body>\n</html>')
+			index.write('<html>\n'+head+'\n<body>\n' + html + '\n</body>\n</html>')
 		}
 		else
 		{
