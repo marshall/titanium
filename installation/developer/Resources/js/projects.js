@@ -373,6 +373,11 @@ TiDeveloper.Projects.getProjectPage = function(pageSize,page)
 
 TiDeveloper.Projects.getModules = function()
 {
+	// reset vars
+	TiDeveloper.Projects.module_map = {};
+	TiDeveloper.Projects.requiredModuleMap = {};
+	TiDeveloper.Projects.modules = [];
+
 	var result = Titanium.Project.getModulesAndRuntime();
 	TiDeveloper.Projects.runtimeDir = result.runtime.dir;
 	TiDeveloper.Projects.runtimeVersion = result.runtime.versions[0];
@@ -449,6 +454,8 @@ TiDeveloper.Projects.launchProject = function(project, install)
 {
 	try
 	{
+		TiDeveloper.Projects.getModules();
+
 		var resources = TFS.getFile(project.dir,'Resources');
 
 		// build the manifest
@@ -524,12 +531,12 @@ $MQL('l:create.package.request',function(msg)
 {
 	try
 	{
-		// load modules
-		TiDeveloper.Projects.getModules();
-
-		// project name
+		// project name and project
 		var project_name = $('#package_project_name').html();
 		var project = TiDeveloper.Projects.findProject(project_name);
+
+		// load modules
+		TiDeveloper.Projects.getModules(project.dir);
 		
 		// manifest files to write out
 		var manifest = '';
@@ -554,7 +561,56 @@ $MQL('l:create.package.request',function(msg)
 		
 		var excluded = {};
 		
-		// timanifest file
+
+		//
+		// Write out Manifest
+		//
+		
+		// capture excluded modules
+		$.each(excludedEl,function()
+		{
+			var key = $.trim($(this).html());
+			excluded[key]=true;
+		});
+		
+		var resources = TFS.getFile(project.dir,'Resources');
+		
+		// build the manifest
+		manifest = '#appname:'+project_name+'\n';
+		manifest+='#appid:'+project.appid+'\n';
+		manifest+='#publisher:'+project.publisher+'\n';
+		
+		if (project.image)
+		{
+			var image = TFS.getFile(project.image);
+			var image_dest = TFS.getFile(resources,image.name());
+			image.copy(image_dest);
+			manifest+='#image:'+image.name()+'\n';
+		}
+		
+		manifest+='#url:'+project.url+'\n';
+		manifest+='runtime:'+TiDeveloper.Projects.runtimeVersion+'\n';
+		
+		// write out required modules
+		for (var i=0;i<TiDeveloper.Projects.requiredModules.length;i++)
+		{
+			manifest+= TiDeveloper.Projects.requiredModules[i] +':'+ TiDeveloper.Projects.requiredModuleMap[TiDeveloper.Projects.requiredModules[i]].versions[0]+'\n';
+		}
+		// write out optional modules
+		for (var c=0;c<TiDeveloper.Projects.modules.length;c++)
+		{
+			if (!excluded[TiDeveloper.Projects.modules[c].name])
+			{
+				manifest+=TiDeveloper.Projects.modules[c].name+':'+TiDeveloper.Projects.modules[c].versions[0]+'\n';
+			}
+		}
+		
+		var mf = TFS.getFile(project.dir,'manifest');
+		mf.write(manifest);
+
+		//
+		// Write out TIMANIFEST
+		//
 		timanifest += '"appname":"'+project_name+'",\n';
 		timanifest += '"appid":"'+project.appid+'",\n';
 		timanifest += '"appversion":"1.0",\n';
@@ -576,7 +632,6 @@ $MQL('l:create.package.request',function(msg)
 		timanifest += '"runtime":{"version":"0.2","package":"'+networkRuntime+'"},\n';
 		
 		timanifest += '"guid":"'+ Titanium.Platform.createUUID()+'",\n';
-//		timanifest += '"guid":"'+ new Date().getTime()+'",\n';
 		
 		var modules = '"modules":[';
 		
@@ -664,90 +719,6 @@ $MQL('l:create.package.request',function(msg)
 		} ;
 		xhr.open("POST",'http://publisher.titaniumapp.com/api/publish');
 		xhr.sendDir(project.dir);    
-
-		// write out required modules
-		// for (var i=0;i<TiDeveloper.Projects.requiredModules.length;i++)
-		// {
-		// 	manifest+= TiDeveloper.Projects.requiredModules[i] +':'+ TiDeveloper.Projects.requiredModuleMap[TiDeveloper.Projects.requiredModules[i]].versions[0]+'\n';
-		// }
-		// write out optional modules
-		// for (var c=0;c<TiDeveloper.Projects.modules.length;c++)
-		// {
-		// 	if (!excluded[TiDeveloper.Projects.modules[c].name])
-		// 	{
-		// 		manifest+=TiDeveloper.Projects.modules[c].name+':'+TiDeveloper.Projects.modules[c].versions[0]+'\n';
-		// 	}
-		// }
-
-		
-		
-		// $.each(excludedEl,function()
-		// {
-		// 	var key = $.trim($(this).html());
-		// 	excluded[key]=true;
-		// });
-		// 
-		// var resources = TFS.getFile(project.dir,'Resources');
-		// 
-		// // build the manifest
-		// manifest = '#appname:'+project_name+'\n';
-		// manifest+='#appid:'+project.appid+'\n';
-		// manifest+='#publisher:'+project.publisher+'\n';
-		// 
-		// if (project.image)
-		// {
-		// 	var image = TFS.getFile(project.image);
-		// 	var image_dest = TFS.getFile(resources,image.name());
-		// 	image.copy(image_dest);
-		// 	manifest+='#image:'+image.name()+'\n';
-		// }
-		// 
-		// manifest+='#url:'+project.url+'\n';
-		// manifest+='runtime:'+TiDeveloper.Projects.runtimeVersion+'\n';
-		// 
-		// // write out required modules
-		// for (var i=0;i<TiDeveloper.Projects.requiredModules.length;i++)
-		// {
-		// 	manifest+= TiDeveloper.Projects.requiredModules[i] +':'+ TiDeveloper.Projects.requiredModuleMap[TiDeveloper.Projects.requiredModules[i]].versions[0]+'\n';
-		// }
-		// // write out optional modules
-		// for (var c=0;c<TiDeveloper.Projects.modules.length;c++)
-		// {
-		// 	if (!excluded[TiDeveloper.Projects.modules[c].name])
-		// 	{
-		// 		manifest+=TiDeveloper.Projects.modules[c].name+':'+TiDeveloper.Projects.modules[c].versions[0]+'\n';
-		// 	}
-		// }
-		// 
-		// var mf = TFS.getFile(project.dir,'manifest');
-		// mf.write(manifest);
-		// 
-		// var dist = TFS.getFile(project.dir,'dist',Titanium.platform);
-		// dist.createDirectory(true);
-		// 
-		// var runtime = TFS.getFile(TiDeveloper.Projects.runtimeDir,TiDeveloper.Projects.runtimeVersion);
-		// var app = Titanium.createApp(runtime,dist,project_name,project.appid,install);
-		// var app_manifest = TFS.getFile(app.base,'manifest');
-		// app_manifest.write(manifest);
-		// var resources = TFS.getFile(project.dir,'Resources');
-		// var tiapp = TFS.getFile(project.dir,'tiapp.xml');
-		// tiapp.copy(app.base);
-
-		// 1. get data from UI
-		// 2. create temp dir with timanifest + tiapp.xml + Resources;
-		// 3. call service
-		// 4. get ticket and start poll with ticket (store ticket for later use + guid + status (app table))
-		// Titanium.Filesystem.createTempDirectory() = returns file object
-		// Titanium.Filesystem.createTempFile(); = returns file object
-		// TODO: DO SEPARATE LAUNCH FUNCTION
-		// var launch_fn = function()
-		// {
-		// 	if (launch)
-		// 	{
-		// 		Titanium.Process.setEnv('KR_DEBUG','true');
-		// 		Titanium.Desktop.openApplication(app.executable.nativePath());
-		// 	}
-		// };
 	}
 	catch(E)
 	{
