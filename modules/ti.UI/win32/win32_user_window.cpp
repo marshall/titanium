@@ -108,10 +108,9 @@ Win32UserWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	switch (message)
 	{
 		case WM_DESTROY:
-			PostQuitMessage(0);
-			window->Close();
-			break;
+			return DefWindowProc(hWnd, message, wParam, lParam);
 		case WM_CLOSE:
+			window->Close();
 			window->FireEvent(CLOSED);
 			return DefWindowProc(hWnd, message, wParam, lParam);
 		case WM_GETMINMAXINFO:
