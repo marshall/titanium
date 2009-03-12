@@ -10,13 +10,9 @@
 #ifdef OS_OSX
   #define TI_FATAL_ERROR(msg) \
   { \
-	NSAlert *alert = [[NSAlert alloc] init]; \
-	[alert addButtonWithTitle:@"OK"]; \
-	[alert setMessageText:@"Application Error"]; \
-	[alert setInformativeText:[NSString stringWithCString:msg]]; \
-	[alert setAlertStyle:NSCriticalAlertStyle]; \
-	[alert runModal]; \
-	[alert release]; \
+	NSApplicationLoad();	\
+	if (msg) NSRunCriticalAlertPanel (@"Application Error",	\
+				[NSString stringWithUTF8String:msg],nil,nil,nil);	\
 	[NSApp terminate:nil]; \
 	 \
   }
