@@ -439,6 +439,126 @@ TiDeveloper.Projects.getProjectName = function(id)
 	var p =  TiDeveloper.Projects.findProjectById(id);
 	return (p)?p.name:'Project Not Found';
 }
+
+//
+// Temp for now - need to reorg functions
+//
+TiDeveloper.Projects.launchProject = function(project, install)
+{
+	try
+	{
+		
+		var resources = TFS.getFile(project.dir,'Resources');
+
+		// build the manifest
+		var manifest = '#appname:'+project.name+'\n';
+		manifest+='#appid:'+project.appid+'\n';
+		manifest+='#publisher:'+project.publisher+'\n';
+
+		if (project.image)
+		{
+			var image = TFS.getFile(project.image);
+			var image_dest = TFS.getFile(resources,image.name());
+			image.copy(image_dest);
+			manifest+='#image:'+image.name()+'\n';
+		}
+
+		manifest+='#url:'+project.url+'\n';
+		manifest+='runtime:'+TiDeveloper.Projects.runtimeVersion+'\n';
+
+		// write out required modules
+		for (var i=0;i<TiDeveloper.Projects.requiredModules.length;i++)
+		{
+			manifest+= TiDeveloper.Projects.requiredModules[i] +':'+ TiDeveloper.Projects.requiredModuleMap[TiDeveloper.Projects.requiredModules[i]].versions[0]+'\n';
+		}
+		// write out optional modules
+		for (var c=0;c<TiDeveloper.Projects.modules.length;c++)
+		{
+			manifest+=TiDeveloper.Projects.modules[c].name+':'+TiDeveloper.Projects.modules[c].versions[0]+'\n';
+		}
+
+		var mf = TFS.getFile(project.dir,'manifest');
+		mf.write(manifest);
+		var dist = TFS.getFile(project.dir,'dist',Titanium.platform);
+		dist.createDirectory(true);
+
+		var runtime = TFS.getFile(TiDeveloper.Projects.runtimeDir,TiDeveloper.Projects.runtimeVersion);
+		var app = Titanium.createApp(runtime,dist,project.name,project.appid,install);
+		var app_manifest = TFS.getFile(app.base,'manifest');
+		app_manifest.write(manifest);
+		var resources = TFS.getFile(project.dir,'Resources');
+		var tiapp = TFS.getFile(project.dir,'tiapp.xml');
+		tiapp.copy(app.base);
+
+			Titanium.Process.setEnv('KR_DEBUG','true');
+			Titanium.Desktop.openApplication(app.executable.nativePath());
+		TFS.asyncCopy(resources,app.resources,function()
+		{
+			//QUICK HACK until packaging done
+			var module_dir = TFS.getFile(app.base,'modules',Titanium.platform);
+			var runtime_dir = TFS.getFile(app.base,'runtime');
+			var modules_to_bundle = [];
+			$.each(bundledEl,function()
+			{
+				var key = $.trim($(this).html());
+				var target, dest;
+				if (key == 'Titanium Runtime') //TODO: we need to make this defined
+				{
+					runtime_dir.createDirectory();
+					target = TFS.getFile(TiDeveloper.Projects.runtimeDir,TiDeveloper.Projects.runtimeVersion);
+					dest = runtime_dir;
+				}
+				else
+				{
+					module_dir.createDirectory();
+					var module = TiDeveloper.Projects.module_map[key];
+					//TEMP HACK until distro is done
+					target = TFS.getFile(module.dir,Titanium.platform,module.versions[0]);
+					dest = TFS.getFile(module_dir,module.dir.name());
+				}
+				modules_to_bundle.push({target:target,dest:dest});
+			});
+		
+			if (modules_to_bundle.length > 0)
+			{
+				var count = 0;
+				for (var c=0;c<modules_to_bundle.length;c++)
+				{
+					var e = modules_to_bundle[c];
+					TFS.asyncCopy(e.target,e.dest,function(filename,c,total)
+					{
+						if (++count==modules_to_bundle.length)
+						{
+							// link libraries if runtime included
+							if (e.dest == runtime_dir)
+							{
+								Titanium.linkLibraries(e.dest);
+							}
+							launch_fn();
+						}
+					});
+				}
+			}
+			else
+			{
+				// no modules to bundle, install the net installer
+				var net_installer_src = TFS.getFile(runtime,'installer');
+				var net_installer_dest = TFS.getFile(app.base,'installer');
+				TFS.asyncCopy(net_installer_src,net_installer_dest,function(filename,c,total)
+				{
+					launch_fn();
+				});
+			}
+		
+		});
+		
+	}
+	catch(e)
+	{
+		alert('Error launching app ' + e);
+	}
+	
+}
 //
 // Create Package Request
 //

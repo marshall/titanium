@@ -95,7 +95,7 @@ Titanium.Project =
 		}
 		return result;
 	},
-	create:function(name,dir,publisher,url,image,jsLibs)
+	create:function(name,dir,publisher,url,image,jsLibs, html)
 	{
 		var outdir = TFS.getFile(dir,name);
 		if (outdir.isDirectory())
@@ -186,7 +186,14 @@ Titanium.Project =
 		}
 		head += '</head>';
 		
-		index.write('<html>\n'+head+'\n<body>\nWelcome to Titanium\n</body>\n</html>');
+		if (html)
+		{
+			index.write('<html>\n<body>\n' + html + '\n</body>\n</html>')
+		}
+		else
+		{
+			index.write('<html>\n'+head+'\n<body>\nWelcome to Titanium\n</body>\n</html>');
+		}
 		
 		var manifest = "#appname: "+name+"\n" +
 		"#publisher: "+publisher+"\n"+
