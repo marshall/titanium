@@ -7,19 +7,31 @@
 	<script type="text/javascript" charset="utf-8" src="common/js/yahoo-min.js"></script>
 	<script type="text/javascript" charset="utf-8" src="common/js/paginator-min.js"></script>
 
+
+	<!-- markItUp! -->
+	<script type="text/javascript" src="markitup/jquery.markitup.pack.js"></script>
+	<!-- markItUp! toolbar settings -->
+	<script type="text/javascript" src="markitup/sets/default/set.js"></script>
+	<!-- markItUp! skin -->
+	<link rel="stylesheet" type="text/css" href="markitup/skins/markitup/style.css" />
+	<!--  markItUp! toolbar skin -->
+	<link rel="stylesheet" type="text/css" href="markitup/sets/default/style.css" />
+
+	<!-- style sheet -->
+	<link rel="stylesheet" href="css/index.css" type="text/css" media="screen" charset="utf-8" />
+
 	<!-- core TiDeveloper JS files -->
 	<script type="text/javascript" charset="utf-8" src="js/index.js"></script>
 	<script type="text/javascript" charset="utf-8" src="js/projects.js"></script>
 	<script type="text/javascript" charset="utf-8" src="js/irc.js"></script>
 	<script type="text/javascript" charset="utf-8" src="js/feeds.js"></script>
 	<script type="text/javascript" charset="utf-8" src="js/apps.js"></script>
+	<script type="text/javascript" charset="utf-8" src="js/sandbox.js"></script>
 
 	<!-- common JS Files -->
 	<script type="text/javascript" charset="utf-8" src="js/project.js"></script>
 	<script type="text/javascript" charset="utf-8" src="js/app.js"></script>
 
-	<!-- style sheet -->
-	<link rel="stylesheet" href="css/index.css" type="text/css" media="screen" charset="utf-8" />
 
 	
 </head>
@@ -43,6 +55,12 @@
 				or l:menu[val!=manage] then remove[class=nav_active]">
 			<div class="nav2">Projects</div>
 		</div>
+		<div class="nav1" style="display:inline-block;" 
+			on="click then l:menu[val=sandbox] and add[class=nav_active] 
+				or l:menu[val!=sandbox] then remove[class=nav_active]">
+			<div>Sandbox</div>
+		</div>
+
 		<div class="nav1" style="display:inline-block;" 
 			on="click then l:menu[val=apps] and add[class=nav_active] or l:menu[val!=apps] then remove[class=nav_active]">
 			<div>Apps</div>
@@ -102,6 +120,27 @@
 		<!-- CONTENT FILES -->
 		<!-- ************* -->
 
+		<!-- SANDBOX -->
+		<div style="display:none;min-height:90%;margin-top:10px" on="l:menu[val=sandbox] then effect[fadeIn] else hide">
+			<div style="margin-bottom:10px;width:80%" class="hint_text">
+				<select>
+					<option value=''>Select an API Sample</option>
+				</select>
+			</div>
+			<textarea  id="text_editor"  ></textarea>
+			<div class="button1">
+				<div class="button2" on="click then l:launch.sandbox">
+					Launch
+				</div>
+			</div>
+			<div class="button1">
+				<div class="button2" on="click then reset[id=text_editor]">
+					Clear
+				</div>
+			</div>
+			
+		</div>
+		
 		<!-- APPS -->
 		<div style="display:none;margin-bottom:20px;min-height:90%"
 			on="l:menu[val=apps] then effect[fadeIn] else hide">
@@ -592,9 +631,9 @@
 									</div>
 									<div control="iterator[property=rows]" on="l:package_links then execute"
 										style="margin-left:50px;margin-right:50px">
-										<div class="project_row" style="height:40px;line-height:40px;font-size:11px">
+										<div class="project_row" style="height:35px;line-height:35px;font-size:11px">
 											<img src="images/#{family}_small.png" height="20px" width="20px"
-												style="position:relative;top:5px"/>
+												style="position:relative;top:6px"/>
 											<span style="color:#fff;font-size:12px;margin-left:10px">#{platform}</span>
 											<span style="float:right;color:#ccc;">
 												<img src="images/download.png" style="position:relative;top:5px"/>
