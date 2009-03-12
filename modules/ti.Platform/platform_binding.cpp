@@ -6,6 +6,7 @@
 
 #include <kroll/kroll.h>
 #include <Poco/Environment.h>
+#include <Poco/UUIDGenerator.h>
 #include "platform_binding.h"
 
 #ifdef OS_OSX
@@ -62,9 +63,18 @@ namespace ti
 		this->Set("processorCount", Value::NewInt(num_proc));
 		std::string username = kroll::FileUtils::GetUsername();
 		this->Set("username", Value::NewString(username));
+
+		// UUID create function for the platform
+		this->SetMethod("createUUID",&PlatformBinding::CreateUUID);
 	}
 
 	PlatformBinding::~PlatformBinding()
 	{
+	}
+	
+	void PlatformBinding::CreateUUID(const ValueList& args, SharedValue result)
+	{
+		Poco::UUID uuid = Poco::UUIDGenerator::defaultGenerator().createOne();
+		result->SetString(uuid.toString().c_str());
 	}
 }
