@@ -124,9 +124,9 @@
 		<div style="display:none;min-height:90%;margin-top:10px" on="l:menu[val=sandbox] then effect[fadeIn] else hide">
 			<div style="margin-bottom:10px;width:80%" class="hint_text">
 			</div>
-			<div>
+			<div style="position:relative">
 				<div style="margin-bottom:10px;font-size:14px">Select Javasacript Libraries</div>
-				<div style="float:left;width:40%;margin-right:20px">
+				<div style="position:absolute;top:25px;left:0px">
 					<div id="jquery_js_sandbox" class="button1" 
 						style="float:left;width:160px;height:80px; margin-right:10px">
 						<div class="button2" style="height:78px"
@@ -218,22 +218,30 @@
 						</div>
 					</div>
 				</div>
-				<div style="float:left;width:58%">
-					<textarea style="position:relative;top:-10px;left:-90px"  id="text_editor"  ></textarea>
+				<div style="font-size:14px;position:absolute;top:0px;left:348px">
+						Write code and/or select an API:
+						<select>
+							<option>select api</select>
+						</select>
+				</div>
+				<div style="position:absolute;top:15px;left:342px">
+					<textarea style="width:680px"  
+						id="text_editor"  ></textarea>
 				</div>
 			</div>
 			<div style="clear:both"></div>
-			<div class="button1">
-				<div class="button2" on="click then l:launch.sandbox">
-					Launch
+			<div style="position:relative;left:0px;top:370px">
+				<div class="button1">
+					<div class="button2" on="click then l:launch.sandbox">
+						Launch
+					</div>
+				</div>
+				<div class="button1">
+					<div class="button2" on="click then reset[id=text_editor]">
+						Clear
+					</div>
 				</div>
 			</div>
-			<div class="button1">
-				<div class="button2" on="click then reset[id=text_editor]">
-					Clear
-				</div>
-			</div>
-			
 		</div>
 		
 		<!-- APPS -->
