@@ -397,8 +397,10 @@ TiDeveloper.Projects.getModules = function()
 //
 $MQL('l:package.project.request',function(msg)
 {
+	TiDeveloper.Projects.getModules();
 	$MQ('l:package.project.data',{rows:TiDeveloper.Projects.modules});
  	$MQ('l:package.all',{val:'network'});
+
 });
 
 //
@@ -447,9 +449,6 @@ TiDeveloper.Projects.launchProject = function(project, install)
 {
 	try
 	{
-		// load modules
-		TiDeveloper.Projects.getModules();
-		
 		var resources = TFS.getFile(project.dir,'Resources');
 
 		// build the manifest
