@@ -6,7 +6,7 @@ import subprocess
 
 from kroll import BuildConfig
 build = BuildConfig(
-	PRODUCT_VERSION = '0.2',
+	PRODUCT_VERSION = '0.3',
 	INSTALL_PREFIX = '/usr/local',
 	PRODUCT_NAME = 'Titanium',
 	GLOBAL_NS_VARNAME = 'Titanium',
