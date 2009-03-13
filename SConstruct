@@ -2,6 +2,7 @@
 
 # common SConscripts
 import os, re, sys, inspect, os.path as path
+from sets import Set
 import subprocess, distutils.dir_util as dir_util
 
 from kroll import BuildConfig
@@ -66,6 +67,7 @@ if build.is_win32():
 		build.env.Append(CPPDEFINES=('WIN32_CONSOLE', 1))
 	build.env.Append(LINKFLAGS=['/DEBUG', '/PDB:${TARGET}.pdb'])
 
+	
 Export('build')
 
 targets = COMMAND_LINE_TARGETS
@@ -78,6 +80,7 @@ if clean:
 	print "Obliterating your build directory: %s" % build.dir
 	if path.exists(build.dir):
 		dir_util.remove_tree(build.dir)
+	os.system("scons -c")
 	Exit(0)
 
 # Linux can package and build at the same time now

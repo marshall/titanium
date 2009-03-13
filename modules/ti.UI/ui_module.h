@@ -72,6 +72,7 @@ namespace ti {
 
 		static UIModule* GetInstance() { return instance_; }
 
+		void Start();
 		void LoadUIJavascript(JSContextRef context);
 
 		static void SetMenu(SharedPtr<MenuItem> menu);
@@ -83,6 +84,7 @@ namespace ti {
 		static void AddTrayItem(SharedPtr<TrayItem>);
 		static void ClearTrayItems();
 		static void UnregisterTrayItem(TrayItem* item);
+		
 
 		protected:
 		static SharedBoundObject global;

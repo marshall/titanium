@@ -272,8 +272,8 @@ void GtkUserWindow::SetupSize()
 	if (this->gtk_window != NULL)
 	{
 		gtk_window_resize(this->gtk_window,
-		                  (int) this->GetWidth(),
-		                  (int) this->GetHeight());
+			(int) this->GetWidth(),
+			(int) this->GetHeight());
 	}
 }
 
@@ -298,9 +298,7 @@ void GtkUserWindow::SetupIcon()
 			          << error->message << std::endl;
 			g_error_free(error);
 		}
-
 	}
-
 	gtk_window_set_icon(this->gtk_window, icon);
 }
 
