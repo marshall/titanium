@@ -74,8 +74,8 @@ for tp in third_party:
 	
 dir_util.copy_tree(p.join(build.dir, 'modules'), modules_dir, preserve_symlinks=True)
 
-#menu_nib = p.join(build.dir, 'modules', 'ti.UI', 'MainMenu.nib')
-#shutil.copy(menu_nib, bundle.lproj)
+menu_nib = p.join(build.dir, 'modules', 'tiui', 'MainMenu.nib')
+shutil.copy(menu_nib, bundle.lproj)
 
 # Remove uneeded files
 files = os.walk(bundle.basedir)
