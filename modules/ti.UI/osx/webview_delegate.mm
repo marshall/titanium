@@ -31,7 +31,7 @@
 	[webPrefs setCacheModel:WebCacheModelDocumentBrowser];
 	[webPrefs setDeveloperExtrasEnabled:host->IsDebugMode()];
 	[webPrefs setPlugInsEnabled:YES]; 
-	[webPrefs setJavaEnabled:NO]; // ?? this disallows Java Craplets
+	[webPrefs setJavaEnabled:YES];
 	[webPrefs setJavaScriptEnabled:YES];
 	if ([webPrefs respondsToSelector:@selector(setDatabasesEnabled:)])
 	{

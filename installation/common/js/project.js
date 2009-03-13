@@ -19,6 +19,8 @@ Titanium.Project =
 	getModulesAndRuntime:function(os)
 	{
 		os = typeof(os)=='undefined' ? Titanium.platform : os;
+
+		// get core runtime modules
 		var dir = Titanium.Process.getEnv('KR_RUNTIME_HOME');
 		var modules = TFS.getFile(dir,'modules',os);
 		var dirs = modules.getDirectoryListing();
@@ -30,6 +32,18 @@ Titanium.Project =
 			
 			result.push(this.getVersions(dirs[c]));
 		}
+		
+		// get app modules
+		// var appModules = TFS.getFile(dir,'modules');
+		// var appDirs = appModules.getDirectoryListing();
+		// for (var c=0;c<appDirs.length;c++)
+		// {
+		// 	if (this.getVersions(appDirs[c]) == null)
+		// 		continue;
+		// 	
+		// 	result.push(this.getVersions(appDirs[c]));
+		// 	
+		// }
 		var runtime = TFS.getFile(dir,'runtime',os);
 		return {
 			modules: result,
@@ -151,7 +165,17 @@ Titanium.Project =
 		var swfobject = '<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/swfobject/2.1/swfobject.js"></script>\n';
 		var dojo = '<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/dojo/1.2.3/dojo/dojo.xd.js"></script>\n';
 
-		var head = '<head><style>body{background-color:#292929;color:white}</style>\n';
+		var head = '';
+		
+		if (html)
+		{
+			head+='<head>\n';		
+		}
+		else
+		{
+			head+='<head><style>body{background-color:#292929;color:white}</style>\n';
+		}
+		
 		if (jsLibs.jquery)
 		{
 			head += jquery
@@ -188,7 +212,7 @@ Titanium.Project =
 		
 		if (html)
 		{
-			index.write('<html>\n<body>\n' + html + '\n</body>\n</html>')
+			index.write('<html>\n'+head+'\n<body>\n' + html + '\n</body>\n</html>')
 		}
 		else
 		{
