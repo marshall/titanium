@@ -80,7 +80,6 @@ for dir in possible_dirs:
 build.modules = {}
 for dir in module_dirs:
 	 build.modules[path.basename(dir.lower().replace('.',''))] = dir
-
 	
 Export('build')
 
