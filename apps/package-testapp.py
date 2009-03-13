@@ -8,7 +8,7 @@ import distutils.dir_util as dir_util
 import sys
 
 app_name = 'titanium_testapp'
-version = '0.2'
+version = build.version
 
 runtime_libs = ['kroll', 'khost']
 third_party = ['webkit', 'poco']
@@ -24,10 +24,10 @@ def moduleID(dir):
     id = id.replace('.', '')
     return id
 
-modules = {}
-for dir in module_dirs:
-    id = moduleID(dir)
-    modules[id] = dir
+modules = build.modules
+for name in modules:
+    mid = moduleID(name)
+    modules[mid] = name
 
 lib_prefix = ''
 
@@ -55,7 +55,7 @@ top_dir = path.abspath('./../')
 build_dir = path.join(top_dir, 'build')
 build_dir = path.join(build_dir, osname)
 
-if (osname == 'linux' and os.uname()[4] == 'x86_64'):
+if (osname == 'linux' and build.x64):
  third_party_dir = path.join(top_dir, 'kroll','thirdparty', 'linux64');
 else:
  third_party_dir = path.join(top_dir, 'kroll','thirdparty', osname); 

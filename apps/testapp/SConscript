@@ -38,7 +38,6 @@ build.utils.Copy(kboot, exe_path)
 
 build.utils.CopyToDir('Resources', app_dir)
 build.utils.CopyToDir('tiapp.xml', app_dir)
-build.utils.CopyToDir('manifest', app_dir)
 
 if build.is_osx():
 	if 'tiui' in build.modules:
@@ -60,3 +59,24 @@ if build.is_osx():
 if build.is_win32():
 	mscrt = p.join(build.third_party, 'microsoft', 'Microsoft.VC80.CRT')
 	build.utils.CopyToDir(mscrt, app_dir)
+
+manifest = """
+#appname: %s 
+#appid: %s
+#guid: D36DD8BA-D092-4F20-9073-EB613BFB8F46
+runtime: %s
+""" % (fullname,id,build.version)
+
+for module in build.modules:
+	manifest+="%s:%s\n" % (p.basename(module),build.version)
+
+tfd = p.join(build.dir,'testapp')
+if p.exists(tfd)==False:
+	os.makedirs(tfd)
+tf = p.join(tfd,'manifest')
+f = open(tf,'w+')
+f.write(manifest)
+f.close
+
+build.utils.CopyToDir(tf,app_dir)
+

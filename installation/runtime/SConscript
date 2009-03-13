@@ -3,19 +3,13 @@ Import('build')
 import os.path as p
 
 name = 'titanium_runtime'
-version = '0.2'
+version = build.version
 appid ='com.titaniumapp.installer.runtime'
 
 runtime_libs = ['kroll', 'khost']
 third_party = ['webkit', 'poco']
-module_dirs = [
-	'api', 'javascript', 'ruby', 'python', 'ti.Platform',
-	'ti.App', 'ti.UI', 'ti.Network', 'ti.Filesystem', 'ti.Media',
-	'ti.Desktop', 'ti.Process', 'ti.Notification', 'ti.Growl'
-]
-modules = {}
-for dir in module_dirs:
-	 modules[dir.lower().replace('.','')] = dir
+
+modules = build.modules
 
 manifest_text="""
 #appname: %s
@@ -24,7 +18,7 @@ runtime: %s
 """ % (name, appid, version)
 
 for m in modules.keys():
-	manifest_text += "%s: %s\n" % (m, '0.1')
+	manifest_text += "%s: %s\n" % (m, build.version)
 
 vars = 'vars build name version runtime_libs '
 vars += ' third_party modules appid manifest_text'

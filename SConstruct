@@ -3,6 +3,7 @@
 # common SConscripts
 import os, re, sys, inspect, os.path as path
 import subprocess
+from sets import Set
 
 from kroll import BuildConfig
 build = BuildConfig(
@@ -65,6 +66,20 @@ if build.is_win32():
 	if build.debug:
 		build.env.Append(CPPDEFINES=('WIN32_CONSOLE', 1))
 	build.env.Append(LINKFLAGS=['/DEBUG', '/PDB:${TARGET}.pdb'])
+
+
+# dynamically pull in all kroll and titanium modules
+modules_to_exclude = Set(['foo','foojs','foopy','foorb'])
+possible_dirs = Glob(path.join(build.kroll_source_dir, 'modules','*')) + Glob(path.join(build.titanium_source_dir,'modules','*'))
+module_dirs = []
+for dir in possible_dirs:
+	dirname = str(dir)
+	pname = path.basename(dirname)
+	if path.exists(dirname) and path.isdir(dirname) and pname not in modules_to_exclude:
+		module_dirs.append(dirname)
+build.modules = {}
+for dir in module_dirs:
+	 build.modules[path.basename(dir.lower().replace('.',''))] = dir
 
 	
 Export('build')

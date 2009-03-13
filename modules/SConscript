@@ -2,11 +2,8 @@
 Import('build')
 import os
 
-modules = ['ti.App', 'ti.UI', 'ti.Network', 'ti.Growl',
-           'ti.Filesystem', 'ti.Media', 'ti.Desktop',
-           'ti.Platform', 'ti.Process', 'ti.Notification', 'ti.Monkey']
-
-for module in modules:
+for moduled in Glob('ti.*'):
+	module = str(moduled)
 	module_dir = os.path.join(build.dir,'objs', 'modules', module)
 	SConscript(os.path.join(module,'SConscript'), build_dir=module_dir, duplicate=0)
 	out_dir = os.path.join(build.dir, 'modules', module)
