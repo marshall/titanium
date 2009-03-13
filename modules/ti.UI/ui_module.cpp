@@ -10,13 +10,9 @@
 #ifdef OS_OSX
   #define TI_FATAL_ERROR(msg) \
   { \
-	NSAlert *alert = [[NSAlert alloc] init]; \
-	[alert addButtonWithTitle:@"OK"]; \
-	[alert setMessageText:@"Application Error"]; \
-	[alert setInformativeText:[NSString stringWithCString:msg]]; \
-	[alert setAlertStyle:NSCriticalAlertStyle]; \
-	[alert runModal]; \
-	[alert release]; \
+	NSApplicationLoad();	\
+	if (msg) NSRunCriticalAlertPanel (@"Application Error",	\
+				[NSString stringWithUTF8String:msg],nil,nil,nil);	\
 	[NSApp terminate:nil]; \
 	 \
   }
@@ -75,21 +71,22 @@ namespace ti
 		UserWindow::CreateWindow(host,NULL,main_window_config,true);
 	}
 
-	void UIModule::LoadUIJavascript (JSContextRef context)
+	void UIModule::LoadUIJavascript(JSContextRef context)
 	{
 		std::string module_path = GetPath();
 		std::string js_path = FileUtils::Join(module_path.c_str(), "ui.js", NULL);
-		std::cout << "Loading: " << js_path << std::endl;
-
-		try {
-			KJSUtil::EvaluateFile(context, (char*)js_path.c_str());
-		} catch (SharedValue &exc) {
-			if (exc->IsObject()) {
-				ValueList args;
-				SharedValue value = exc->ToObject()->CallNS("toString", args);
-				std::cerr << "Error: " << value->ToString() << std::endl;
-			}
-		} catch (...) {
+		PRINTD("Loading: " << js_path);
+		try
+		{
+			KJSUtil::EvaluateFile(context, (char*) js_path.c_str());
+		}
+		catch (kroll::ValueException &e)
+		{
+			SharedString ss = e.DisplayString();
+			std::cerr << "Error: " << *ss << std::endl;
+		}
+		catch (...)
+		{
 			std::cerr << "WARNING: Unable to load " << js_path << std::endl;
 		}
 	}

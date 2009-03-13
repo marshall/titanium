@@ -7,19 +7,31 @@
 	<script type="text/javascript" charset="utf-8" src="common/js/yahoo-min.js"></script>
 	<script type="text/javascript" charset="utf-8" src="common/js/paginator-min.js"></script>
 
+
+	<!-- markItUp! -->
+	<script type="text/javascript" src="markitup/jquery.markitup.pack.js"></script>
+	<!-- markItUp! toolbar settings -->
+	<script type="text/javascript" src="markitup/sets/default/set.js"></script>
+	<!-- markItUp! skin -->
+	<link rel="stylesheet" type="text/css" href="markitup/skins/markitup/style.css" />
+	<!--  markItUp! toolbar skin -->
+	<link rel="stylesheet" type="text/css" href="markitup/sets/default/style.css" />
+
+	<!-- style sheet -->
+	<link rel="stylesheet" href="css/index.css" type="text/css" media="screen" charset="utf-8" />
+
 	<!-- core TiDeveloper JS files -->
 	<script type="text/javascript" charset="utf-8" src="js/index.js"></script>
 	<script type="text/javascript" charset="utf-8" src="js/projects.js"></script>
 	<script type="text/javascript" charset="utf-8" src="js/irc.js"></script>
 	<script type="text/javascript" charset="utf-8" src="js/feeds.js"></script>
 	<script type="text/javascript" charset="utf-8" src="js/apps.js"></script>
+	<script type="text/javascript" charset="utf-8" src="js/sandbox.js"></script>
 
 	<!-- common JS Files -->
 	<script type="text/javascript" charset="utf-8" src="js/project.js"></script>
 	<script type="text/javascript" charset="utf-8" src="js/app.js"></script>
 
-	<!-- style sheet -->
-	<link rel="stylesheet" href="css/index.css" type="text/css" media="screen" charset="utf-8" />
 
 	
 </head>
@@ -43,6 +55,12 @@
 				or l:menu[val!=manage] then remove[class=nav_active]">
 			<div class="nav2">Projects</div>
 		</div>
+		<div class="nav1" style="display:inline-block;" 
+			on="click then l:menu[val=sandbox] and add[class=nav_active] 
+				or l:menu[val!=sandbox] then remove[class=nav_active]">
+			<div>Sandbox</div>
+		</div>
+
 		<div class="nav1" style="display:inline-block;" 
 			on="click then l:menu[val=apps] and add[class=nav_active] or l:menu[val!=apps] then remove[class=nav_active]">
 			<div>Apps</div>
@@ -102,6 +120,130 @@
 		<!-- CONTENT FILES -->
 		<!-- ************* -->
 
+		<!-- SANDBOX -->
+		<div style="display:none;min-height:90%;margin-top:10px" on="l:menu[val=sandbox] then effect[fadeIn] else hide">
+			<div style="margin-bottom:10px;width:80%" class="hint_text">
+			</div>
+			<div style="position:relative">
+				<div style="margin-bottom:10px;font-size:14px">Select Javasacript Libraries</div>
+				<div style="position:absolute;top:25px;left:0px">
+					<div id="jquery_js_sandbox" class="button1" 
+						style="float:left;width:160px;height:80px; margin-right:10px">
+						<div class="button2" style="height:78px"
+							on="click then toggle[class=selected_js] 
+							and toggle[id=jquery_js,class=selected_js]
+							or l:create.project then remove[class=selected_js]
+							and remove[id=jquery_js,class=selected_js]">
+							<img src="images/jquery.gif" width="136px" height="36px"
+								style="position:relative;top:20px"/>
+						</div>
+					</div>
+					<div id="jqueryui_js_sandbox" class="button1" style="float:left;width:160px;height:80px">
+						<div class="button2" style="height:78px"
+							on="click then toggle[class=selected_js] 
+							and toggle[id=jqueryui_js,class=selected_js]
+							or l:create.project then remove[class=selected_js]
+							and remove[id=jqueryui_js,class=selected_js]">
+							<img src="images/jquery_ui.gif" width="136px" height="36px"
+								style="position:relative;top:25px"/>
+						</div>
+					</div>
+					<div style="clear:both;margin-top:10px"></div>
+					<div id="prototype_js_sandbox" class="button1" 
+						style="float:left;width:160px;height:80px;margin-right:10px">
+						<div class="button2" style="height:78px"
+							on="click then toggle[class=selected_js] 
+							and toggle[id=prototype_js,class=selected_js]
+							or l:create.project then remove[class=selected_js]
+							and remove[id=prototype_js,class=selected_js]">
+							<img src="images/prototype.gif" width="127px" height="64px"
+								style="position:relative;top:10px"/>
+						</div>
+					</div>
+					<div id="scriptaculous_js_sandbox" class="button1" 
+						style="float:left;width:160px;height:80px;margin-right:10px">
+						<div class="button2" style="height:78px"
+							on="click then toggle[class=selected_js] 
+							and toggle[id=scriptaculous_js,class=selected_js]
+							or l:create.project then remove[class=selected_js]
+							and remove[id=scriptaculous_js,class=selected_js]">
+							<img src="images/scriptaculous_logo.png" width="175px" height="64px"
+								style="position:relative;top:5px;left:-3px"/>
+						</div>
+					</div>
+					<div style="clear:both;margin-top:10px"></div>
+					<div id="mootools_js_sandbox" class="button1" style="float:left;width:160px;height:80px">
+						<div class="button2" style="height:78px"
+							on="click then toggle[class=selected_js] 
+							and toggle[id=mootools_js,class=selected_js]
+							or l:create.project then remove[class=selected_js]
+							and remove[id=mootools_js,class=selected_js]">
+							<img src="images/mootools.png" width="127px" height="32px"
+								style="position:relative;top:20px"/>
+						</div>	
+					</div>
+					<div id="dojo_js_sandbox" class="button1" style="float:left;width:160px;height:80px">
+						<div class="button2" style="height:78px"
+							on="click then toggle[class=selected_js] 
+							and toggle[id=dojo_js,class=selected_js]
+							or l:create.project then remove[class=selected_js]
+							and remove[id=dojo_js,class=selected_js]">
+							<img src="images/dojo.gif" width="152px" height="32px"
+								style="position:relative;top:20px;left:5px"/>
+						</div>
+					</div>
+					<div style="clear:both;margin-top:10px"></div>
+					<div id="yahoo_js_sandbox" class="button1" 
+						style="float:left;width:160px;height:80px;margin-right:10px">
+						<div class="button2" style="height:78px"
+							on="click then toggle[class=selected_js] 
+							and toggle[id=yahoo_js,class=selected_js]
+							or l:create.project then remove[class=selected_js]
+							and remove[id=yahoo_js,class=selected_js]">
+							<img src="images/yahoo.gif" width="116px" height="22px"
+								style="position:relative;top:25px"/> 
+						</div>
+					</div>
+
+					<div id="swfobject_js_sandbox" class="button1" style="float:left;width:160px;height:80px">
+						<div class="button2" style="height:78px"
+							on="click then toggle[class=selected_js] 
+							and toggle[id=swfobject_js,class=selected_js]
+							or l:create.project then remove[class=selected_js]
+							and remove[id=swfobject_js,class=selected_js]">
+							<div style="position:relative;top:20px">
+								<img src="images/flash.gif"/> 
+								<span style="position:relative;top:-14px;margin-left:5px">SWFObject</span>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div style="font-size:14px;position:absolute;top:0px;left:348px">
+						Write code and/or select an API:
+						<select>
+							<option>select api</select>
+						</select>
+				</div>
+				<div style="position:absolute;top:15px;left:342px">
+					<textarea style="width:680px"  
+						id="text_editor"  ></textarea>
+				</div>
+			</div>
+			<div style="clear:both"></div>
+			<div style="position:relative;left:0px;top:370px">
+				<div class="button1">
+					<div class="button2" on="click then l:launch.sandbox">
+						Launch
+					</div>
+				</div>
+				<div class="button1">
+					<div class="button2" on="click then reset[id=text_editor]">
+						Clear
+					</div>
+				</div>
+			</div>
+		</div>
+		
 		<!-- APPS -->
 		<div style="display:none;margin-bottom:20px;min-height:90%"
 			on="l:menu[val=apps] then effect[fadeIn] else hide">
@@ -592,9 +734,9 @@
 									</div>
 									<div control="iterator[property=rows]" on="l:package_links then execute"
 										style="margin-left:50px;margin-right:50px">
-										<div class="project_row" style="height:40px;line-height:40px;font-size:11px">
+										<div class="project_row" style="height:35px;line-height:35px;font-size:11px">
 											<img src="images/#{family}_small.png" height="20px" width="20px"
-												style="position:relative;top:5px"/>
+												style="position:relative;top:6px"/>
 											<span style="color:#fff;font-size:12px;margin-left:10px">#{platform}</span>
 											<span style="float:right;color:#ccc;">
 												<img src="images/download.png" style="position:relative;top:5px"/>
@@ -946,7 +1088,7 @@
 					<div on="l:show.package.project then effect[slideUp] 
 						or l:cancel.package.project then effect[fadeIn] after 700ms">
 						<div class="button1" style="width:800px;height:45px;float:none;position:relative"
-							on="click then l:create.package.request[launch=true]">
+							on="click then l:launch.project.request[launch=true]">
 							<div class="button2" style="height:43px;max-width:200px">
 								<img src="images/launch.png" style="position:relative;top:7px;left:-10px"/>
 								<span style="margin-left:10px;position:relative;top:-6px;left:-10px">

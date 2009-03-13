@@ -20,6 +20,8 @@ namespace ti
 		virtual ~PlatformBinding();
 	private:
 		SharedBoundObject global;
+		
+		DECLAREBOUNDMETHOD(CreateUUID);
 	};
 }
 

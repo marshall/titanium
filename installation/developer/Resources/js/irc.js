@@ -307,12 +307,25 @@ $MQL('l:send.irc.msg',function()
 		var time = TiDeveloper.getCurrentTime();
 		var urlMsg = TiDeveloper.formatURIs($('#irc_msg').val());
 		var rawMsg = $('#irc_msg').val()
+
+		// no scripts or html
+		if (rawMsg.indexOf('</') != -1 || rawMsg.indexOf('<script') != -1)
+		{
+			$('#irc').append('<div style="color:#aaa;margin-bottom:20px">No scripts or HTML.  Use <a href="http://www.pastie.org" target="ti:systembrowser">http://www.pastie.org</a> </div>');
+			$('#irc_msg').val('');
+			$('#irc').get(0).scrollTop = $('#irc').get(0).scrollHeight;
+			return;
+		}
+
 		if (rawMsg.indexOf('/nick') == 0)
 		{
 			userSetNick = rawMsg.split(' ')[1];
 		}
-		TiDeveloper.IRC.ircClient.send(TiDeveloper.IRC.channel,rawMsg);
-		$('#irc').append('<div style="color:#ff9900;font-size:14px;float:left;margin-bottom:8px;width:90%">' + TiDeveloper.IRC.nick + ': <span style="color:white;font-size:12px;font-family:Arial">' + urlMsg + '</span></div><div style="float:right;color:#ccc;font-size:11px;width:10%;text-align:right">'+time+'</div><div style="clear:both"></div>');
+		else
+		{
+			TiDeveloper.IRC.ircClient.send(TiDeveloper.IRC.channel,rawMsg);
+			$('#irc').append('<div style="color:#ff9900;font-size:14px;float:left;margin-bottom:8px;width:90%">' + TiDeveloper.IRC.nick + ': <span style="color:white;font-size:12px;font-family:Arial">' + urlMsg + '</span></div><div style="float:right;color:#ccc;font-size:11px;width:10%;text-align:right">'+time+'</div><div style="clear:both"></div>');
+		}
 		$('#irc_msg').val('');
 		$('#irc').get(0).scrollTop = $('#irc').get(0).scrollHeight;
 		

@@ -168,6 +168,7 @@
 	{
 		[webView setBackgroundColor:[NSColor whiteColor]];
 	}
+	[self invalidateShadow];
 }
 - (NSScreen *)activeScreen
 {
@@ -285,6 +286,7 @@
 			[self setFullScreen:YES];
 		}
 	}
+	[self invalidateShadow];
 }
 - (void)fireWindowEvent:(UserWindowEvent)event
 {

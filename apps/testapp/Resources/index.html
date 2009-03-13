@@ -49,9 +49,20 @@
 			function $(id) { return document.getElementById(id); }
 			function openTest() {
 				var test = $('tests').options[$('tests').selectedIndex].value;
-				$('testframe').src = test;
+
+				if(test.indexOf("http") == 0) {
+					window.location = test;
+				}
+				else {
+					$('testframe').src = test;
+				}
 			}
 			function bye() { Titanium.App.exit(); }
+
+			window.onunload = function()
+			{
+				Titanium.API.debug("bye bye from window.onunload from index.html");
+			}
 		</script>
 	</head>
 	<body onload="openTest()">

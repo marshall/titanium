@@ -1,6 +1,6 @@
 /**
  * Appcelerator Titanium - licensed under the Apache Public License 2
- * see LICENSE in the root folder for details on the license.
+ * SEE LICENSE in the root folder for details on the license.
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
 
@@ -109,12 +109,11 @@ Win32UserWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	switch (message)
 	{
 		case WM_DESTROY:
-		PostQuitMessage(0);
-		window->Close();
-		break;
+			return DefWindowProc(hWnd, message, wParam, lParam);
 		case WM_CLOSE:
-		window->FireEvent(CLOSED);
-		return DefWindowProc(hWnd, message, wParam, lParam);
+			window->Close();
+			window->FireEvent(CLOSED);
+			return DefWindowProc(hWnd, message, wParam, lParam);
 		case WM_GETMINMAXINFO:
 		{
 			if(window)
@@ -380,7 +379,8 @@ UserWindow* Win32UserWindow::WindowFactory(Host *host, WindowConfig* config) {
 	return new Win32UserWindow(host, config);
 }
 
-std::string Win32UserWindow::GetTransparencyColorString() {
+std::string Win32UserWindow::GetTransparencyColor()
+{
 	char hexColor[7];
 	sprintf(hexColor, "%2x%2x%2x", (int) GetRValue(transparencyColor),
 			(int) GetGValue(transparencyColor), (int) GetBValue(

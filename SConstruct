@@ -6,7 +6,7 @@ import subprocess
 
 from kroll import BuildConfig
 build = BuildConfig(
-	PRODUCT_VERSION = '0.2',
+	PRODUCT_VERSION = '0.3',
 	INSTALL_PREFIX = '/usr/local',
 	PRODUCT_NAME = 'Titanium',
 	GLOBAL_NS_VARNAME = 'Titanium',
@@ -66,31 +66,7 @@ if build.is_win32():
 		build.env.Append(CPPDEFINES=('WIN32_CONSOLE', 1))
 	build.env.Append(LINKFLAGS=['/DEBUG', '/PDB:${TARGET}.pdb'])
 
-if build.is_linux() and build.arch == '64':
-    build.env.Append(CPPFLAGS=['-m64', '-Wall', '-Werror','-fno-common','-fvisibility=hidden'])
-    build.env.Append(LINKFLAGS=['-m64'])
-
-elif build.is_linux() or build.is_osx():
-    build.env.Append(CPPFLAGS=['-m32', '-Wall', '-fno-common','-fvisibility=hidden'])
-    build.env.Append(LINKFLAGS=['-m32'])
-
-if build.is_osx():
-	is10_4 = 0
-	if is10_4:
-		OSX_SDK = '/Developer/SDKs/MacOSX10.4u.sdk'
-		OSX_MINVERS = '-mmacosx-version-min=10.4'
-		build.env['GCC_VERSION'] = '4.0'
-		build.env['MACOSX_DEPLOYMENT_TARGET'] = '10.4'
-	else:
-		OSX_SDK = '/Developer/SDKs/MacOSX10.5.sdk'
-		OSX_MINVERS = '-mmacosx-version-min=10.5'
-
-	OSX_UNIV_LINKER = '-isysroot '+OSX_SDK+' -syslibroot,'+OSX_SDK+' -arch i386 -arch ppc -lstdc++ ' + OSX_MINVERS
-	build.env.Append(CXXFLAGS=['-isysroot',OSX_SDK,'-arch','i386',OSX_MINVERS,'-x','objective-c++'])
-	build.env.Append(CPPFLAGS=['-arch','i386'])
-	build.env.Append(CPPFLAGS=['-arch','ppc'])
-	build.env.Append(LINKFLAGS=OSX_UNIV_LINKER)
-	build.env.Append(FRAMEWORKS=['Foundation'])
+	
 Export('build')
 
 # Linux can package and build at the same time now

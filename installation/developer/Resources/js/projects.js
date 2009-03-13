@@ -371,8 +371,13 @@ TiDeveloper.Projects.getProjectPage = function(pageSize,page)
 };
 
 
-setTimeout(function()
+TiDeveloper.Projects.getModules = function()
 {
+	// reset vars
+	TiDeveloper.Projects.module_map = {};
+	TiDeveloper.Projects.requiredModuleMap = {};
+	TiDeveloper.Projects.modules = [];
+
 	var result = Titanium.Project.getModulesAndRuntime();
 	TiDeveloper.Projects.runtimeDir = result.runtime.dir;
 	TiDeveloper.Projects.runtimeVersion = result.runtime.versions[0];
@@ -390,15 +395,17 @@ setTimeout(function()
 			
 		}
 	}
-},500);
+};
 
 //
 //  Project Package Request - get details about modules, etc
 //
 $MQL('l:package.project.request',function(msg)
 {
+	TiDeveloper.Projects.getModules();
 	$MQ('l:package.project.data',{rows:TiDeveloper.Projects.modules});
  	$MQ('l:package.all',{val:'network'});
+
 });
 
 //
@@ -439,6 +446,84 @@ TiDeveloper.Projects.getProjectName = function(id)
 	var p =  TiDeveloper.Projects.findProjectById(id);
 	return (p)?p.name:'Project Not Found';
 }
+
+//
+// Launch or launch and install project locally
+//
+TiDeveloper.Projects.launchProject = function(project, install)
+{
+	try
+	{
+		TiDeveloper.Projects.getModules();
+
+		var resources = TFS.getFile(project.dir,'Resources');
+
+		// build the manifest
+		var manifest = '#appname:'+project.name+'\n';
+		manifest+='#appid:'+project.appid+'\n';
+		manifest+='#publisher:'+project.publisher+'\n';
+
+		if (project.image)
+		{
+			var image = TFS.getFile(project.image);
+			var image_dest = TFS.getFile(resources,image.name());
+			image.copy(image_dest);
+			manifest+='#image:'+image.name()+'\n';
+		}
+
+		manifest+='#url:'+project.url+'\n';
+		manifest+='runtime:'+TiDeveloper.Projects.runtimeVersion+'\n';
+
+		// write out required modules
+		for (var i=0;i<TiDeveloper.Projects.requiredModules.length;i++)
+		{
+			manifest+= TiDeveloper.Projects.requiredModules[i] +':'+ TiDeveloper.Projects.requiredModuleMap[TiDeveloper.Projects.requiredModules[i]].versions[0]+'\n';
+		}
+		// write out optional modules
+		for (var c=0;c<TiDeveloper.Projects.modules.length;c++)
+		{
+			manifest+=TiDeveloper.Projects.modules[c].name+':'+TiDeveloper.Projects.modules[c].versions[0]+'\n';
+		}
+
+		var mf = TFS.getFile(project.dir,'manifest');
+		mf.write(manifest);
+		var dist = TFS.getFile(project.dir,'dist',Titanium.platform);
+		dist.createDirectory(true);
+
+		var runtime = TFS.getFile(TiDeveloper.Projects.runtimeDir,TiDeveloper.Projects.runtimeVersion);
+		var app = Titanium.createApp(runtime,dist,project.name,project.appid,install);
+		var app_manifest = TFS.getFile(app.base,'manifest');
+		app_manifest.write(manifest);
+		var resources = TFS.getFile(project.dir,'Resources');
+		var tiapp = TFS.getFile(project.dir,'tiapp.xml');
+		tiapp.copy(app.base);
+		
+		TFS.asyncCopy(resources,app.resources,function()
+		{
+			// no modules to bundle, install the net installer
+			var net_installer_src = TFS.getFile(runtime,'installer');
+			var net_installer_dest = TFS.getFile(app.base,'installer');
+			TFS.asyncCopy(net_installer_src,net_installer_dest,function(filename,c,total)
+			{
+				Titanium.Process.setEnv('KR_DEBUG','true');
+				Titanium.Desktop.openApplication(app.executable.nativePath());
+			});
+		});
+	}
+	catch(e)
+	{
+		alert('Error launching app ' + e);
+	}
+	
+}
+
+$MQL('l:launch.project.request',function(msg)
+{
+	var project_name = $('#package_project_name').html();
+	var project = TiDeveloper.Projects.findProject(project_name);
+	TiDeveloper.Projects.launchProject(project,false);
+});
+
 //
 // Create Package Request
 //
@@ -446,11 +531,24 @@ $MQL('l:create.package.request',function(msg)
 {
 	try
 	{
-		var launch = (msg.payload.launch == 'no')?false:true;
-		var install = typeof(msg.payload.install)=='undefined' ? false : msg.payload.install;
-		var pkg = (msg.payload.launch == true)?true:false;
+		// project name and project
+		var project_name = $('#package_project_name').html();
+		var project = TiDeveloper.Projects.findProject(project_name);
+
+		// load modules
+		TiDeveloper.Projects.getModules(project.dir);
 		
-		var networkRuntime = $('#required_modules_network').attr('checked');
+		// manifest files to write out
+		var manifest = '';
+		var timanifest = "{\n";
+
+		// OS options
+		var buildMac = ($('#platform_mac').hasClass('selected_os'))?true:false;
+		var buildWin = ($('#platform_windows').hasClass('selected_os'))?true:false;
+		var buildLinux = ($('#platform_linux').hasClass('selected_os'))?true:false;
+
+		// base runtime option
+		var networkRuntime = ($('#required_modules_network').attr('checked') ==true)?'network':'include';
 
 		// elements that are included for network bundle
 		var networkEl = $("div[state='network']");
@@ -463,28 +561,25 @@ $MQL('l:create.package.request',function(msg)
 		
 		var excluded = {};
 		
-		var buildMac = ($('#platform_mac').hasClass('selected_os'))?true:false;
-		var buildWin = ($('#platform_windows').hasClass('selected_os'))?true:false;
-		var buildLinux = ($('#platform_linux').hasClass('selected_os'))?true:false;
+
+		//
+		// Write out Manifest
+		//
 		
+		// capture excluded modules
 		$.each(excludedEl,function()
 		{
 			var key = $.trim($(this).html());
 			excluded[key]=true;
 		});
 		
-		// project name
-		var project_name = $('#package_project_name').html();
-
-
-		var project = TiDeveloper.Projects.findProject(project_name);
 		var resources = TFS.getFile(project.dir,'Resources');
-
+		
 		// build the manifest
-		var manifest = '#appname:'+project_name+'\n';
+		manifest = '#appname:'+project_name+'\n';
 		manifest+='#appid:'+project.appid+'\n';
 		manifest+='#publisher:'+project.publisher+'\n';
-
+		
 		if (project.image)
 		{
 			var image = TFS.getFile(project.image);
@@ -495,7 +590,7 @@ $MQL('l:create.package.request',function(msg)
 		
 		manifest+='#url:'+project.url+'\n';
 		manifest+='runtime:'+TiDeveloper.Projects.runtimeVersion+'\n';
-
+		
 		// write out required modules
 		for (var i=0;i<TiDeveloper.Projects.requiredModules.length;i++)
 		{
@@ -509,87 +604,121 @@ $MQL('l:create.package.request',function(msg)
 				manifest+=TiDeveloper.Projects.modules[c].name+':'+TiDeveloper.Projects.modules[c].versions[0]+'\n';
 			}
 		}
-
+		
 		var mf = TFS.getFile(project.dir,'manifest');
 		mf.write(manifest);
+
+		//
+		// Write out TIMANIFEST
+		//
+		timanifest += '"appname":"'+project_name+'",\n';
+		timanifest += '"appid":"'+project.appid+'",\n';
+		timanifest += '"appversion":"1.0",\n';
+		timanifest += '"mid":"'+Titanium.Platform.id+'",\n';
+		timanifest += '"publisher":"'+project.publisher+'",\n';
+		timanifest += '"url":"'+project.url+'",\n';
+	    timanifest += '"visibility":"public",\n';
 		
-		var dist = TFS.getFile(project.dir,'dist',Titanium.platform);
-		dist.createDirectory(true);
+		var platforms = '"platforms":[';
+		if (buildMac) platforms += '"osx"'
+		if (buildMac && (buildWin || buildLinux)) platforms += ',';
+		if (buildWin) platforms += '"win32"';
+		if (buildLinux) platforms += ','
+		if (buildLinux) platforms +='"linux"';
+		platforms+= '],\n';
 		
-		var runtime = TFS.getFile(TiDeveloper.Projects.runtimeDir,TiDeveloper.Projects.runtimeVersion);
-		var app = Titanium.createApp(runtime,dist,project_name,project.appid,install);
-		var app_manifest = TFS.getFile(app.base,'manifest');
-		app_manifest.write(manifest);
-		var resources = TFS.getFile(project.dir,'Resources');
-		var tiapp = TFS.getFile(project.dir,'tiapp.xml');
-		tiapp.copy(app.base);
-		var launch_fn = function()
+		timanifest += platforms;
+		
+		timanifest += '"runtime":{"version":"0.2","package":"'+networkRuntime+'"},\n';
+		
+		timanifest += '"guid":"'+ Titanium.Platform.createUUID()+'",\n';
+		
+		var modules = '"modules":[';
+		
+		// required modules
+		if (networkRuntime ==true)
 		{
-			if (launch)
+			for (var i=0;i<TiDeveloper.Projects.requiredModules.length;i++)
 			{
-				Titanium.Process.setEnv('KR_DEBUG','true');
-				Titanium.Desktop.openApplication(app.executable.nativePath());
+				modules+='{"name":'+'"'+TiDeveloper.Projects.requiredModules[i]+'","version":'+'"'+TiDeveloper.Projects.requiredModuleMap[TiDeveloper.Projects.requiredModules[i]].versions[0]+'"'+',"package":"network"}';
+				if (i<(TiDeveloper.Projects.requiredModules.length))
+				{
+					modules+= ',\n';
+				}
 			}
-		};
-		TFS.asyncCopy(resources,app.resources,function()
+		}
+		else
 		{
-			//QUICK HACK until packaging done
-			var module_dir = TFS.getFile(app.base,'modules',Titanium.platform);
-			var runtime_dir = TFS.getFile(app.base,'runtime');
-			var modules_to_bundle = [];
+			for (var i=0;i<TiDeveloper.Projects.requiredModules.length;i++)
+			{
+				modules+='{"name":'+'"'+TiDeveloper.Projects.requiredModules[i]+'","version":'+'"'+TiDeveloper.Projects.requiredModuleMap[TiDeveloper.Projects.requiredModules[i]].versions[0]+'"'+',"package":"include"}';
+				if (i<(TiDeveloper.Projects.requiredModules.length))
+				{
+					modules+= ',\n';
+				}
+			}
+		}
+
+		// write out optional modules
+		for (var c=0;c<TiDeveloper.Projects.modules.length;c++)
+		{
+			var module = TiDeveloper.Projects.modules[c].name;
+			$.each(excludedEl,function()
+			{
+				var key = $.trim($(this).html());
+				if (key == module)
+				{
+					modules+='{"name":"'+module+'","version":'+'"'+TiDeveloper.Projects.modules[c].versions[0]+'","package":"exclude"}';
+				}
+			});
 			$.each(bundledEl,function()
 			{
 				var key = $.trim($(this).html());
-				var target, dest;
-				if (key == 'Titanium Runtime') //TODO: we need to make this defined
+				if (key == module)
 				{
-					runtime_dir.createDirectory();
-					target = TFS.getFile(TiDeveloper.Projects.runtimeDir,TiDeveloper.Projects.runtimeVersion);
-					dest = runtime_dir;
+					modules+='{"name":"'+module+'","version":'+'"'+TiDeveloper.Projects.modules[c].versions[0]+'","package":"include"}';
+				}
+			});
+			$.each(networkEl,function()
+			{
+				var key = $.trim($(this).html());
+				if (key == module)
+				{
+					modules+='{"name":"'+module+'","version":'+'"'+TiDeveloper.Projects.modules[c].versions[0]+'","package":"network"}';
+				}
+			});
+			if (c<(TiDeveloper.Projects.modules.length-1))
+			{
+				modules+= ',\n';
+			}
+			
+		}
+		timanifest+= modules + ']}\n';
+		var timanifestFile = TFS.getFile(project.dir,'timanifest');
+		timanifestFile.write(timanifest);
+		
+		var xhr = Titanium.Network.createHTTPClient();
+		var ticket = null
+		xhr.onreadystatechange = function()
+		{
+			// 4 means that the POST has completed
+			if (this.readyState == 4)
+			{
+				if (this.status == 200)
+				{
+				    var json = swiss.evalJSON(this.responseText);
+					alert('got 200 ticket= ' + json.ticket);
+					TiDeveloper.Projects.pollPackagingRequest(json.ticket);
 				}
 				else
 				{
-					module_dir.createDirectory();
-					var module = TiDeveloper.Projects.module_map[key];
-					//TEMP HACK until distro is done
-					target = TFS.getFile(module.dir,Titanium.platform,module.versions[0]);
-					dest = TFS.getFile(module_dir,module.dir.name());
-				}
-				modules_to_bundle.push({target:target,dest:dest});
-			});
-			
-			if (modules_to_bundle.length > 0)
-			{
-				var count = 0;
-				for (var c=0;c<modules_to_bundle.length;c++)
-				{
-					var e = modules_to_bundle[c];
-					TFS.asyncCopy(e.target,e.dest,function(filename,c,total)
-					{
-						if (++count==modules_to_bundle.length)
-						{
-							// link libraries if runtime included
-							if (e.dest == runtime_dir)
-							{
-								Titanium.linkLibraries(e.dest);
-							}
-							launch_fn();
-						}
-					});
+					alert('upload error')
+					TiDeveloper.Projects.handlePackagingError('upload');
 				}
 			}
-			else
-			{
-				// no modules to bundle, install the net installer
-				var net_installer_src = TFS.getFile(runtime,'installer');
-				var net_installer_dest = TFS.getFile(app.base,'installer');
-				TFS.asyncCopy(net_installer_src,net_installer_dest,function(filename,c,total)
-				{
-					launch_fn();
-				});
-			}
-			
-		});
+		} ;
+		xhr.open("POST",'http://publisher.titaniumapp.com/api/publish');
+		xhr.sendDir(project.dir);    
 	}
 	catch(E)
 	{
@@ -597,7 +726,33 @@ $MQL('l:create.package.request',function(msg)
 	}
 })
 
+//
+// error function for failed packaging request
+//
+TiDeveloper.Projects.handlePackagingError = function(type)
+{
+	alert('Error during ' + type)
+}
 
+TiDeveloper.Projects.pollPackagingRequest = function(ticket)
+{          
+	$.get('http://d.titaniumapp.com/publish-status?ticket='+ticket,function(result)
+	{
+		var r = swiss.evalJSON(result)
+	   	if (r.status == 'complete')
+	   	{
+    		alert('done ' + swiss.toJSON(r));
+	   	}
+	   	else if (r.status != 'working')
+	   	{
+	      	TiDeveloper.Projects.handlePackagingError('packaging')
+	   	}
+		else
+		{
+			setTimeout(TiDeveloper.Projects.pollPackagingRequest(ticket),2000);
+		}
+	});
+};
 //
 //  Delete a project
 //	
