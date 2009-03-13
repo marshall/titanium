@@ -49,10 +49,10 @@ namespace ti
 		NSRect frame = mainFrame;
 		if (!config->IsFullScreen())
 		{
-			int x = config->GetX();
-			int y = config->GetY();
-			int width = config->GetWidth();
-			int height = config->GetHeight();
+			double x = config->GetX();
+			double y = config->GetY();
+			double width = config->GetWidth();
+			double height = config->GetHeight();
 			if (x == UserWindow::CENTERED)
 			{
 				x = (frame.size.width - width) / 2;
@@ -66,8 +66,8 @@ namespace ti
 
 			// Compensate for mainScreen origin and
 			// flip the y value for cartesian coordinates
-			int realX = x + mainFrame.origin.x; 
-			int realY = mainFrame.origin.y + frame.size.height - y;
+			double realX = x + mainFrame.origin.x; 
+			double realY = mainFrame.origin.y + frame.size.height - y;
 			frame = NSMakeRect(realX, realY, width, height);
 		}
 
@@ -168,14 +168,14 @@ namespace ti
 		NSRect winFrame = [window frame];
 		if (x == UserWindow::CENTERED)
 		{
-			int width = config->GetWidth();
+			double width = config->GetWidth();
 			x = (winFrame.size.width - width) / 2;
 		}
 		config->SetX(x);
 
 		// Flip for cartesian coordinates and adjust for origin
 		x = x + winFrame.origin.x;
-		int y = winFrame.origin.y + winFrame.size.height - config->GetY();
+		double y = winFrame.origin.y + winFrame.size.height - config->GetY();
 		NSPoint p = NSMakePoint(x, y);
 		[window setFrameTopLeftPoint:p];
 	}
@@ -188,13 +188,13 @@ namespace ti
 		NSRect winFrame = [window frame];
 		if (y == UserWindow::CENTERED)
 		{
-			int height = config->GetHeight();
+			double height = config->GetHeight();
 			y = (winFrame.size.height - height) / 2;
 		}
 		config->SetY(y);
 
 		// Flip for cartesian coordinates
-		int x = config->GetX() + winFrame.origin.x;
+		double x = config->GetX() + winFrame.origin.x;
 		y = winFrame.origin.y + winFrame.size.height - y;
 		NSPoint p = NSMakePoint(x, y);
 		[window setFrameTopLeftPoint:p];
