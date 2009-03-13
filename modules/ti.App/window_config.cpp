@@ -66,7 +66,7 @@
 
 using namespace ti;
 
-int WindowConfig::DEFAULT_POSITION = -1;
+int WindowConfig::DEFAULT_POSITION = -404404404;
 int WindowConfig::window_count = 0;
 
 void WindowConfig::SetDefaults ()
