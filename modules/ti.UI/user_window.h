@@ -235,6 +235,10 @@ class UserWindow : public kroll::StaticBoundObject {
 		static void AddChild(UserWindow *parent, UserWindow *child);
 		static void RemoveChild(UserWindow *parent, UserWindow *child);
 
+		// These are constants which will eventually
+		// be exposed to the API.
+		static int CENTERED;
+
 	private:
 		DISALLOW_EVIL_CONSTRUCTORS(UserWindow);
 		SharedBoundMethod api;

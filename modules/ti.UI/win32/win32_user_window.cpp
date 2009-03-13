@@ -532,10 +532,10 @@ void Win32UserWindow::SetBounds(Bounds bounds) {
 	RECT desktopRect;
 	GetWindowRect(desktop, &desktopRect);
 
-	if (bounds.x == WindowConfig::DEFAULT_POSITION) {
+	if (bounds.x == UserWindow::CENTERED) {
 		bounds.x = (desktopRect.right - bounds.width) / 2;
 	}
-	if (bounds.y == WindowConfig::DEFAULT_POSITION) {
+	if (bounds.y == UserWindow::CENTERED) {
 		bounds.y = (desktopRect.bottom - bounds.height) / 2;
 	}
 

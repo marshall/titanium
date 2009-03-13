@@ -8,6 +8,7 @@ shortname = 'apivalidator'
 fullname = 'Titanium API Validator'
 id = 'com.titaniumapp.apivalidator'
 version = '0.1'
+guid = "F28A8274-1000-11DE-AE9B-587656D89593"
 
 if build.is_linux():
 	over_dir = app_dir = p.join(build.dir, shortname)
@@ -39,7 +40,9 @@ build.utils.Copy(kboot, exe_path)
 
 build.utils.CopyToDir('Resources', app_dir)
 build.utils.CopyToDir('tiapp.xml', app_dir)
-build.utils.CopyToDir('manifest', app_dir)
+
+manifest = build.generate_manifest(fullname, id, guid)
+build.utils.WriteStrings(p.join(app_dir, 'manifest'), manifest)
 
 if build.is_osx():
 	if 'tiui' in build.modules:
