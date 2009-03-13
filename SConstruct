@@ -75,12 +75,13 @@ package = 'package' in targets or ARGUMENTS.get('package', 0)
 testapp = 'testapp' in targets or ARGUMENTS.get('testapp', 0)
 testsuite = 'testsuite' in targets or ARGUMENTS.get('testsuite', 0)
 clean = 'clean' in targets or ARGUMENTS.get('clean', 0)
+qclean = 'qclean' in targets or ARGUMENTS.get('qclean', 0)
 
-if clean:
+if clean or qclean:
 	print "Obliterating your build directory: %s" % build.dir
 	if path.exists(build.dir):
 		dir_util.remove_tree(build.dir)
-	os.system("scons -c")
+	if not qclean: os.system('scons -c')
 	Exit(0)
 
 # Linux can package and build at the same time now
