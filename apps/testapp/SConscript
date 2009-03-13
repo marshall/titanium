@@ -68,7 +68,7 @@ runtime: %s
 """ % (fullname,id,build.version)
 
 for module in build.modules:
-	manifest+="%s:%s\n" % (p.basename(module),build.version)
+	manifest+="%s:%s\n" % (module.name,build.version)
 
 tfd = p.join(build.dir,'testapp')
 if p.exists(tfd)==False:

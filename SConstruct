@@ -67,18 +67,6 @@ if build.is_win32():
 		build.env.Append(CPPDEFINES=('WIN32_CONSOLE', 1))
 	build.env.Append(LINKFLAGS=['/DEBUG', '/PDB:${TARGET}.pdb'])
 
-# dynamically pull in all kroll and titanium modules
-modules_to_exclude = Set(['foo','foojs','foopy','foorb'])
-possible_dirs = Glob(path.join(build.kroll_source_dir, 'modules','*')) + Glob(path.join(build.titanium_source_dir,'modules','*'))
-module_dirs = []
-for dir in possible_dirs:
-	dirname = str(dir)
-	pname = path.basename(dirname)
-	if path.exists(dirname) and path.isdir(dirname) and pname not in modules_to_exclude:
-		module_dirs.append(dirname)
-build.modules = {}
-for dir in module_dirs:
-	 build.modules[path.basename(dir.lower().replace('.',''))] = dir
 	
 Export('build')
 
@@ -92,6 +80,7 @@ if clean:
 	print "Obliterating your build directory: %s" % build.dir
 	if path.exists(build.dir):
 		dir_util.remove_tree(build.dir)
+	os.system("scons -c")
 	Exit(0)
 
 # Linux can package and build at the same time now

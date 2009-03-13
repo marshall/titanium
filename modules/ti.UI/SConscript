@@ -4,7 +4,7 @@ import os, os.path as path
 Import('build')
 
 env = build.env.Clone()
-env.Append(LIBPATH=[build.modules['tiapp'].build_dir])
+env.Append(LIBPATH=[build.get_module('tiapp').build_dir])
 env.Append(CPPPATH = [
 	build.kroll_include_dir,
 	'%s/modules/javascript' % build.kroll_source_dir,
