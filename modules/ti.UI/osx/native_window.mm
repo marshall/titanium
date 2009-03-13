@@ -29,12 +29,6 @@
 	// turn on/off zoom button to control app maximize behavior
 	[[self standardWindowButton:NSWindowZoomButton] setHidden:!config->IsMaximizable()];
 
-	// only center if we haven't provided coordinates in setup
-	if (config->GetX() < 0 || config->GetY() < 0)
-	{
-		[self center];
-	}
-
 	webView = [[WebView alloc] init];
 	delegate = [[WebViewDelegate alloc] initWithWindow:self host:host];
 	[self setContentView:webView];
