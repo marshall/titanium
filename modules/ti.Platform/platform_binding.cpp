@@ -20,6 +20,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <linux/if.h>
+#include <sstream>
 #endif
 
 #if defined(OS_OSX)
@@ -56,8 +57,9 @@ namespace ti
 #endif
 
 #if defined(OS_LINUX)
-		std::string nodeId = "";
-		struct ifreq *IFR;
+	    std::string nodeId = "";
+	    struct ifreq ifr;
+	    struct ifreq *IFR;
 	    struct ifconf ifc;
 	    char buf[1024];
 	    int s, i;
@@ -84,15 +86,20 @@ namespace ti
 		    }
 
 		    close(s);
+
 		    if (ok) 
 			{
+				std::ostringstream ostr;
 				for (i = 0; i < IFHWADDRLEN; i++)
 				{
-					char ch[8];
-					sprintf(ch,"%2.2x:",ifr.ifr_hwaddr.sa_data[i]);
-					nodeId += ch;
+					char ch[10];
+					sprintf(ch,"%2.2x",ifr.ifr_hwaddr.sa_data[i]);
+					ostr << ch;
+					if (i+1 < IFHWADDRLEN) ostr << ":";
 				}
+				nodeId = ostr.str();
 		    }
+
 	    }
 #else
 		std::string nodeId = "";

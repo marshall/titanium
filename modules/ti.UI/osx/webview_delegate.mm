@@ -152,14 +152,16 @@
 
 -(BOOL)newWindowAction:(NSDictionary*)actionInformation request:(NSURLRequest*)request listener:(id < WebPolicyDecisionListener >)listener
 {
-	NSDictionary* elementDick = [actionInformation objectForKey:WebActionElementKey];
-#ifdef DEBUG	
-	for (id key in elementDick)
+	NSDictionary* elementDict = [actionInformation objectForKey:WebActionElementKey];
+#ifdef DEBUG
+	NSEnumerator * keyEnum = [elementDict keyEnumerator];
+	id key;
+	while ((key = [keyEnum nextObject]))
 	{
 		NSLog(@"window action - key = %@",key);
 	}
 #endif 
-	DOMNode *target = [elementDick objectForKey:WebElementDOMNodeKey];
+	DOMNode *target = [elementDict objectForKey:WebElementDOMNodeKey];
 	DOMElement *anchor = [self findAnchor:target];
 	
 	if (anchor)
