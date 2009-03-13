@@ -4,5 +4,4 @@ import os, os.path as path
 Import('build')
 
 m = build.add_module('ti.Notification')
-m.copy_resources()
 build.utils.CopyTree(Glob('*.js'), m.build_dir)

@@ -56,7 +56,6 @@ elif build.is_osx():
 	
 
 m = build.add_module('ti.UI')
-m.copy_resources()
 s1 = env.SharedLibrary(target = m.build_dir + '/tiuimodule', source = sources)
 s2 = env.SharedLibrary(target = build.dir + '/tiuimodule', source = sources)
 
