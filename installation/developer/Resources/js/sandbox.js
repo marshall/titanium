@@ -69,6 +69,7 @@ $MQL('l:launch.sandbox',function(msg)
 	{
 		outdir.deleteDirectory(true);
 	}
-	Titanium.Project.create(project.name,project.rootdir,project.publisher,project.url,null,jsLibs, $('#text_editor').val());
+	var guid = Titanium.Platform.createUUID();
+	Titanium.Project.create(project.name,guid,project.rootdir,project.publisher,project.url,null,jsLibs, $('#text_editor').val());
 	TiDeveloper.Projects.launchProject(project,false)
 })
