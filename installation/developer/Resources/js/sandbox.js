@@ -1,5 +1,5 @@
 TiDeveloper.Sandbox = {};
-
+TiDeveloper.Sandbox.lastTempDir = null;
 TiDeveloper.Sandbox.apiSamples = [
 {key:'select something',code:''},
 {	key:'Titanium.App variables',
@@ -65,10 +65,15 @@ $MQL('l:launch.sandbox',function(msg)
 	}
 
 	var outdir = TFS.getFile(project.rootdir,project.name);
-	if (outdir.isDirectory())
+
+	// remove last sandbox temp dir
+	if (TiDeveloper.Sandbox.lastTempDir != null)
 	{
-		outdir.deleteDirectory(true);
+		TiDeveloper.Sandbox.lastTempDir.deleteDirectory(true);
 	}
+	// record this temp dir for deletion next time
+	TiDeveloper.Sandbox.lastTempDir = outdir;
+
 	var guid = Titanium.Platform.createUUID();
 	Titanium.Project.create(project.name,guid,project.rootdir,project.publisher,project.url,null,jsLibs, $('#text_editor').val());
 	TiDeveloper.Projects.launchProject(project,false)

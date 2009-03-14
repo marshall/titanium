@@ -1283,7 +1283,8 @@
 									<div style="position:relative;top:20px;left:-5px">
 										<div class="button1" style="float:left;"
 											on="click then l:create.package.request[package=true,launch=no]
-											and l:cancel.package.project and l:cancel[val=package]"
+											or l:create.package.response[result=0] then l:cancel.package.project 
+											and l:cancel[val=package]"
 											<div class="button2">
 												Package
 											</div>

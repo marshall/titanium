@@ -688,6 +688,20 @@ $MQL('l:create.package.request',function(msg)
 		var project_name = $('#package_project_name').html();
 		var project = TiDeveloper.Projects.findProject(project_name);
 
+		// make sure required files/dirs are present
+		var resources = TFS.getFile(project.dir,'Resources');
+		if (!resources.exists())
+		{
+			alert('Your project is missing the Resources directory.  This directory is required for packaging.');
+			return;
+		}
+		var tiapp = TFS.getFile(project.dir,'tiapp.xml');
+		if (!tiapp.exists())
+		{
+			alert('Your tiapp.xml file is missing.  This file is required for packaging.');
+			return;
+		}
+
 		// load modules
 		TiDeveloper.Projects.getModules(project.dir);
 		
@@ -726,7 +740,6 @@ $MQL('l:create.package.request',function(msg)
 			excluded[key]=true;
 		});
 		
-		var resources = TFS.getFile(project.dir,'Resources');
 		
 		// build the manifest
 		manifest = '#appname:'+project_name+'\n';
@@ -851,9 +864,37 @@ $MQL('l:create.package.request',function(msg)
 		timanifest+= modules + ']}\n';
 		var timanifestFile = TFS.getFile(project.dir,'timanifest');
 		timanifestFile.write(timanifest);
+				
+		//
+		// NOW CREATE TEMP DIR AND MOVE CONTENTS FOR PACKAGING
+		//
 		
+		var destDir = Titanium.Filesystem.createTempDirectory();
+		alert(destDir)
+		var modules = TFS.getFile(project.dir,'modules');
+		var timanifest = TFS.getFile(project.dir,'timanifest');
+		var manifest = TFS.getFile(project.dir,'manifest');
+		
+		// copy files to temp dir
+		var resDir = TFS.getFile(destDir,'Resources');
+		resDir.createDirectory();
+		TFS.asyncCopy(resources, resDir,function(){});		
+		TFS.asyncCopy(tiapp, destDir,function(){});		
+		TFS.asyncCopy(timanifest, destDir,function(){});		
+		TFS.asyncCopy(manifest, destDir,function(){});		
+		
+		// if project has modules, copy
+		if (modules.exists())
+		{
+			// create resources dir
+			var resDir = TFS.getFile(destDir,'modules');
+			resDir.createDirectory();
+			TFS.asyncCopy(modules, resDir,function(){});
+		}
+
+		// packaging request
 		var xhr = Titanium.Network.createHTTPClient();
-		var ticket = null
+		var ticket = null;
 		xhr.onreadystatechange = function()
 		{
 			// 4 means that the POST has completed
@@ -864,16 +905,22 @@ $MQL('l:create.package.request',function(msg)
 				    var json = swiss.evalJSON(this.responseText);
 					alert('got 200 ticket= ' + json.ticket);
 					TiDeveloper.Projects.pollPackagingRequest(json.ticket);
+					destDir.deleteDirectory(true)
 				}
 				else
 				{
+					destDir.deleteDirectory(true)
 					alert('upload error')
 					TiDeveloper.Projects.handlePackagingError('upload');
+
 				}
 			}
 		} ;
+
 		xhr.open("POST",'http://publisher.titaniumapp.com/api/publish');
 		xhr.sendDir(project.dir);    
+		$MQ('l:create.package.response',{result:0})
+		
 	}
 	catch(E)
 	{
