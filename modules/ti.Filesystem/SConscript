@@ -25,6 +25,6 @@ if build.is_win32():
 	env.Append(CPPDEFINES = ('WIN32_LEAN_AND_MEAN',1))
 
 
-m = build.add_module('tifilesystem', '0.1')
+m = build.add_module('ti.Filesystem')
 s = env.SharedLibrary(target = m.build_dir + '/tifilesystemmodule', source = Glob('*.cpp'))
 s = env.SharedLibrary(target = build.dir + '/tifilesystemmodule', source = Glob('*.cpp'))

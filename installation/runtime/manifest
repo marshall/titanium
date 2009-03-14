@@ -1,12 +1,12 @@
 #appname:titanium_runtime
 #appid:com.titaniumapp.runtime
-
-runtime:0.2
-javascript: 0.1
-tiapp: 0.1
-tifilesystem: 0.1
-tiplatform: 0.1
-tiprocess: 0.1
-tidesktop: 0.1
-api: 0.1
-tiui: 0.1
+#guid:7F7FA377-E695-4280-9F1F-96126F3D2C2A
+runtime:0.3
+javascript: 0.3
+tiapp: 0.3
+tifilesystem: 0.3
+tiplatform: 0.3
+tiprocess: 0.3
+tidesktop: 0.3
+api: 0.3
+tiui: 0.3

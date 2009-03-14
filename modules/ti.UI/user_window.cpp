@@ -4,6 +4,8 @@
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
 
+/* This object is that represents Titanium.UI.currentWindow */
+
 #include "ui_module.h"
 #include <stdlib.h>
 
@@ -16,9 +18,7 @@
 #endif
 
 
-
 using namespace ti;
-
 #define TI_SET_BOOL(method, index) \
 { \
 	SharedValue arg = args.at(index);\
@@ -49,16 +49,19 @@ std::map<UserWindow*, std::vector<UserWindow*> > UserWindow::windowsMap;
 std::map<UserWindow*, SharedBoundObject> UserWindow::boundWindows;
 SharedBoundObject UserWindow::uiBinding = SharedBoundObject(NULL);
 
+// Initialize our constants here
+int UserWindow::CENTERED = WindowConfig::DEFAULT_POSITION;
+
 UserWindow::UserWindow(kroll::Host *host, WindowConfig *config) :
 	kroll::StaticBoundObject(), parent(NULL)
 {
-
 	this->host = host;
 	this->config = config;
 	this->next_listener_id = 0;
 	this->api = this->host->GetGlobalObject()->GetNS("API.fire")->ToMethod();
 
-	/* this object is accessed by Titanium.Window.currentWindow */
+	this->Set("CENTERED", Value::NewInt(UserWindow::CENTERED));
+
 	this->SetMethod("hide", &UserWindow::_Hide);
 	this->SetMethod("show", &UserWindow::_Show);
 	this->SetMethod("focus", &UserWindow::_Focus);

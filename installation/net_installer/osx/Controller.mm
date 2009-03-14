@@ -95,7 +95,7 @@
 		Downloader *downloader = [[Downloader alloc] initWithURL:url progress:progressBar];
 		while ([downloader isDownloadComplete] == NO)
 		{
-			[NSThread sleepForTimeInterval:0.2]; // this could be more elegant, but it works
+			[NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.2]]; // this could be more elegant, but it works
 		}
 		NSString *filename = [[url path] lastPathComponent];
 		NSData *data = [downloader data];

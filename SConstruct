@@ -2,7 +2,8 @@
 
 # common SConscripts
 import os, re, sys, inspect, os.path as path
-import subprocess
+from sets import Set
+import subprocess, distutils.dir_util as dir_util
 
 from kroll import BuildConfig
 build = BuildConfig(
@@ -66,35 +67,25 @@ if build.is_win32():
 		build.env.Append(CPPDEFINES=('WIN32_CONSOLE', 1))
 	build.env.Append(LINKFLAGS=['/DEBUG', '/PDB:${TARGET}.pdb'])
 
-if build.is_linux() and build.arch == '64':
-    build.env.Append(CPPFLAGS=['-m64', '-Wall', '-Werror','-fno-common','-fvisibility=hidden'])
-    build.env.Append(LINKFLAGS=['-m64'])
-
-elif build.is_linux() or build.is_osx():
-    build.env.Append(CPPFLAGS=['-m32', '-Wall', '-fno-common','-fvisibility=hidden'])
-    build.env.Append(LINKFLAGS=['-m32'])
-
-if build.is_osx():
-	is10_4 = 0
-	if is10_4:
-		OSX_SDK = '/Developer/SDKs/MacOSX10.4u.sdk'
-		OSX_MINVERS = '-mmacosx-version-min=10.4'
-		build.env['GCC_VERSION'] = '4.0'
-		build.env['MACOSX_DEPLOYMENT_TARGET'] = '10.4'
-	else:
-		OSX_SDK = '/Developer/SDKs/MacOSX10.5.sdk'
-		OSX_MINVERS = '-mmacosx-version-min=10.5'
-
-	OSX_UNIV_LINKER = '-isysroot '+OSX_SDK+' -syslibroot,'+OSX_SDK+' -arch i386 -arch ppc -lstdc++ ' + OSX_MINVERS
-	build.env.Append(CXXFLAGS=['-isysroot',OSX_SDK,'-arch','i386',OSX_MINVERS,'-x','objective-c++'])
-	build.env.Append(CPPFLAGS=['-arch','i386'])
-	build.env.Append(CPPFLAGS=['-arch','ppc'])
-	build.env.Append(LINKFLAGS=OSX_UNIV_LINKER)
-	build.env.Append(FRAMEWORKS=['Foundation'])
+	
 Export('build')
 
+targets = COMMAND_LINE_TARGETS
+package = 'package' in targets or ARGUMENTS.get('package', 0)
+testapp = 'testapp' in targets or ARGUMENTS.get('testapp', 0)
+testsuite = 'testsuite' in targets or ARGUMENTS.get('testsuite', 0)
+clean = 'clean' in targets or ARGUMENTS.get('clean', 0)
+qclean = 'qclean' in targets or ARGUMENTS.get('qclean', 0)
+
+if clean or qclean:
+	print "Obliterating your build directory: %s" % build.dir
+	if path.exists(build.dir):
+		dir_util.remove_tree(build.dir)
+	if not qclean: os.system('scons -c')
+	Exit(0)
+
 # Linux can package and build at the same time now
-if not(ARGUMENTS.get('package',0)) or build.is_linux():
+if not(package) or build.is_linux():
 
 	## Kroll *must not be required* for installation
 	SConscript('installation/SConscript')
@@ -106,14 +97,16 @@ if not(ARGUMENTS.get('package',0)) or build.is_linux():
 		build.env.Append(LIBS=['kroll']) 
 	SConscript('modules/SConscript')
 
-if ARGUMENTS.get('package',0):
+if package:
 	print "building packaging ..."
 	SConscript('installation/runtime/SConscript')
 
-if ARGUMENTS.get('testapp',0):
+if testapp:
 	print "building packaging ..."
 	SConscript('apps/testapp/SConscript')
 
-if ARGUMENTS.get('testsuite',0):
+if testsuite:
 	print 'running testsuite...'
 	SConscript('apps/apivalidator/SConscript')
+  
+

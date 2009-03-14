@@ -49,7 +49,15 @@ namespace ti
 
 	void UIModule::Initialize()
 	{
-
+		// We are keeping this object in a static variable, which means
+		// that we should only ever have one copy of the UI module.
+		SharedBoundObject global = this->host->GetGlobalObject();
+		UIModule::global = global;
+		UIModule::instance_ = this;
+	}
+	
+	void UIModule::Start()
+	{
 		AppConfig *config = AppConfig::Instance();
 		if (config == NULL)
 		{
@@ -61,12 +69,6 @@ namespace ti
 			TI_FATAL_ERROR("Error loading tiapp.xml. Your application window is not properly configured or packaged.");
 		}
 
-		// We are keeping this object in a static variable, which means
-		// that we should only ever have one copy of the UI module.
-		SharedBoundObject global = this->host->GetGlobalObject();
-		UIModule::global = global;
-		UIModule::instance_ = this;
-
 		// create the main window
 		UserWindow::CreateWindow(host,NULL,main_window_config,true);
 	}
@@ -75,7 +77,6 @@ namespace ti
 	{
 		std::string module_path = GetPath();
 		std::string js_path = FileUtils::Join(module_path.c_str(), "ui.js", NULL);
-		PRINTD("Loading: " << js_path);
 		try
 		{
 			KJSUtil::EvaluateFile(context, (char*) js_path.c_str());
