@@ -159,7 +159,7 @@ $MQL('l:import.project',function()
 			}
 			else if (entry.key.indexOf('image') != -1)
 			{
-				options.image = dir + '/resources/' + entry.value;
+				options.image = dir + '/Resources/' + entry.value;
 			}
 			else if (entry.key.indexOf('appid') != -1)
 			{
