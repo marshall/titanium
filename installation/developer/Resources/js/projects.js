@@ -21,13 +21,29 @@ $MQL('l:app.compiled',function()
 {
 	// load or initialize project table
 	db.transaction(function(tx) 
-	{
-	   tx.executeSql("SELECT COUNT(*) FROM Projects", [], function(result) 
-	   {
-	       TiDeveloper.Projects.loadProjects(true);
-	   }, function(tx, error) 
-	   {
-	       tx.executeSql("CREATE TABLE Projects (id REAL UNIQUE, timestamp REAL, name TEXT, directory TEXT, appid TEXT, publisher TEXT, url TEXT, image TEXT)", [], function(result) 
+	{   
+		
+		// see if project table exists
+	   	tx.executeSql("SELECT COUNT(*) FROM Projects", [], function(result) 
+	   	{
+			// see if we need to run db migration
+	        tx.executeSql("SELECT name,completed FROM Migrations", [], function(tx, result) 
+			{
+				// nope, we're good
+	          	TiDeveloper.Projects.loadProjects(true); 
+			},
+			// create record an run it
+			function(tx, error)
+			{
+				// run migration
+				tx.executeSql('CREATE TABLE Migrations (name TEXT, completed REAL)');
+				tx.executeSql('INSERT INTO Migrations values("PR3",1)');
+				TiDeveloper.Projects.runGUIDMigration();
+			});
+
+	   	}, function(tx, error) 
+	   	{
+	       tx.executeSql("CREATE TABLE Projects (id REAL UNIQUE, guid TEXT, timestamp REAL, name TEXT, directory TEXT, appid TEXT, publisher TEXT, url TEXT, image TEXT)", [], function(result) 
 		   { 
 	          TiDeveloper.Projects.loadProjects(true); 
 	       });
@@ -35,6 +51,139 @@ $MQL('l:app.compiled',function()
 	});
 	
 });
+
+//
+// Add GUID to all projects 
+//
+TiDeveloper.Projects.runGUIDMigration = function()
+{
+	// dump all data and generate GUIDs
+	db.transaction(function(tx) 
+	{
+        tx.executeSql("SELECT id, timestamp, name, directory, appid, publisher, url, image FROM Projects order by timestamp", [], function(tx, result) 
+		{
+			var a = [];
+            for (var i = 0; i < result.rows.length; ++i) {
+                var row = result.rows.item(i);
+				var guid = Titanium.Platform.createUUID();
+				var projRow = {}
+				projRow['timestamp'] = row['timestamp'];
+				projRow['id'] = row['id']
+				projRow['guid'] = guid;
+				projRow['name'] = row['name'];
+				projRow['directory'] = row['directory'];
+				projRow['appid'] = row['appid'];
+				projRow['publisher'] = row['publisher'];
+				projRow['url'] = row['url'];
+				projRow['image'] = row['image'];
+				a.push(projRow);
+            
+			}
+			if (a.length == 0)
+			{
+				TiDeveloper.Projects.loadProjects(true)
+			}
+			// delete and re-add rows
+			tx.executeSql('DROP TABLE Projects',[],function(tx,result)
+			{
+				// re-create table
+				tx.executeSql("CREATE TABLE Projects (id REAL UNIQUE, guid TEXT, timestamp REAL, name TEXT, directory TEXT, appid TEXT, publisher TEXT, url TEXT, image TEXT)",[],
+					function()
+					{
+						// re-add rows
+						var rowCount =0
+						for (var i=0;i<a.length;i++)
+						{
+							tx.executeSql('INSERT into Projects (id,guid,timestamp,name,directory,appid,publisher,url,image) values (?,?,?,?,?,?,?,?,?)',
+							[a[i]['id'], a[i]['guid'],a[i]['timestamp'],a[i]['name'],a[i]['directory'],a[i]['appid'],a[i]['publisher'],a[i]['url'],a[i]['image']],
+							function()
+							{
+								rowCount++
+								// if we're done, reload projects
+								if (rowCount == a.length)
+								{
+									TiDeveloper.Projects.loadProjects(true)
+								}
+							});
+						}
+					});
+
+			})
+
+        });
+	});	
+}
+
+//
+// Import an existing project to Developer
+//
+$MQL('l:import.project',function()
+{
+	$MQ('l:show.filedialog');
+	$MQL('l:file.selected',function(msg)
+	{
+		var dir = msg.payload.value;
+		var file = TFS.getFile(dir,'manifest');
+		if (file.exists() == false)
+		{
+			alert('This directory does not contain valid Titanium project.  Please try again.');
+			return;
+		}
+		
+		// create object for DB record
+		var options = {}
+		options.dir = dir;
+		
+		// read manifest values to create new db record
+		var line = file.readLine(true);
+		var entry = Titanium.Project.parseEntry(line);
+		for (var i=0;i<1000;i++)
+		{
+			if (entry == null)
+			{
+				line = file.readLine();
+				if (!line || line == null)break;
+				entry = Titanium.Project.parseEntry(line);
+			}
+			if (entry.key.indexOf('appname') != -1)
+			{
+				options.name = entry.value;
+			}
+			else if (entry.key.indexOf('publisher') != -1)
+			{
+				options.publisher = entry.value;
+			}
+			else if (entry.key.indexOf('url') != -1)
+			{
+				options.url = entry.value;
+			}
+			else if (entry.key.indexOf('image') != -1)
+			{
+				options.image = dir + '/resources/' + entry.value;
+			}
+			else if (entry.key.indexOf('appid') != -1)
+			{
+				options.appid = entry.value;
+			}
+			else if (entry.key.indexOf('guid') != -1)
+			{
+				options.guid = entry.value;
+			}
+			entry = null;
+		}
+		
+		// if no guid, create
+		if (!options.guid)
+		{
+			options.guid = Titanium.Platform.createUUID();
+			Titanium.Project.updateManifest(options,true);
+		}
+		TiDeveloper.Projects.createRecord(options,function(obj)
+		{
+			TiDeveloper.Projects.loadProjects();
+		})
+	})
+})
 
 //
 // Update project manifest data - can be edited via developer UI
@@ -166,14 +315,16 @@ TiDeveloper.Projects.createRecord = function(options,callback)
 		date: dateStr,
 		publisher:options.publisher,
 		url:options.url,
-		image:options.image
+		image:options.image,
+		guid:options.guid
 	};
     db.transaction(function (tx) 
     {
-        tx.executeSql("INSERT INTO Projects (id, timestamp, name, directory, appid, publisher, url, image) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", [record.id,date.getTime(),record.name,record.dir,record.appid,record.publisher,record.url,record.image]);
+        tx.executeSql("INSERT INTO Projects (id, guid, timestamp, name, directory, appid, publisher, url, image) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", [record.id,record.guid,date.getTime(),record.name,record.dir,record.appid,record.publisher,record.url,record.image]);
     },
 	function(error)
 	{
+		alert('error insert ' + error)
 		callback({code:1,id:error.id,msg:error.message})
 	},
 	function()
@@ -190,7 +341,7 @@ TiDeveloper.Projects.loadProjects = function(init)
 {
 	db.transaction(function(tx) 
 	{
-        tx.executeSql("SELECT id, timestamp, name, directory, appid, publisher, url, image FROM Projects order by timestamp", [], function(tx, result) 
+        tx.executeSql("SELECT id, guid, timestamp, name, directory, appid, publisher, url, image FROM Projects order by timestamp", [], function(tx, result) 
 		{
 			TiDeveloper.Projects.projectArray = [];
             for (var i = 0; i < result.rows.length; ++i) {
@@ -215,7 +366,8 @@ TiDeveloper.Projects.loadProjects = function(init)
 						appid: row['appid'],
 						publisher: row['publisher'],
 						url: row['url'],
-						image: row['image']
+						image: row['image'],
+						guid: row['guid']
 					});
 					if (TiDeveloper.highestId < row['id'])
 					{
@@ -280,11 +432,12 @@ $MQL('l:create.project.request',function(msg)
 		{
 			jsLibs.yahoo = true;
 		}
-		
-		var result = Titanium.Project.create(msg.payload.project_name,msg.payload.project_location,msg.payload.publisher,msg.payload.url,msg.payload.image,jsLibs);
+
+		var guid = Titanium.Platform.createUUID();
+		var result = Titanium.Project.create(msg.payload.project_name,guid,msg.payload.project_location,msg.payload.publisher,msg.payload.url,msg.payload.image,jsLibs);
 		if (result.success)
 		{
-			var options = {name:result.name, dir:result.basedir,appid:result.id,publisher:msg.payload.publisher,url:msg.payload.url,image:msg.payload.image}
+			var options = {name:result.name, guid:guid,dir:result.basedir,appid:result.id,publisher:msg.payload.publisher,url:msg.payload.url,image:msg.payload.image}
 			var r = TiDeveloper.Projects.createRecord(options,function(obj)
 			{
 				if (obj.code == 0)
@@ -371,7 +524,7 @@ TiDeveloper.Projects.getProjectPage = function(pageSize,page)
 };
 
 
-TiDeveloper.Projects.getModules = function()
+TiDeveloper.Projects.getModules = function(appDir)
 {
 	// reset vars
 	TiDeveloper.Projects.module_map = {};
@@ -454,7 +607,7 @@ TiDeveloper.Projects.launchProject = function(project, install)
 {
 	try
 	{
-		TiDeveloper.Projects.getModules();
+		TiDeveloper.Projects.getModules(project.dir);
 
 		var resources = TFS.getFile(project.dir,'Resources');
 
@@ -589,6 +742,7 @@ $MQL('l:create.package.request',function(msg)
 		}
 		
 		manifest+='#url:'+project.url+'\n';
+		manifest+='#guid:'+project.guid +'\n';
 		manifest+='runtime:'+TiDeveloper.Projects.runtimeVersion+'\n';
 		
 		// write out required modules
@@ -617,7 +771,8 @@ $MQL('l:create.package.request',function(msg)
 		timanifest += '"mid":"'+Titanium.Platform.id+'",\n';
 		timanifest += '"publisher":"'+project.publisher+'",\n';
 		timanifest += '"url":"'+project.url+'",\n';
-	    timanifest += '"visibility":"public",\n';
+		var visibility = ($('#package_public').attr('checked')==true)?'public':'private';
+	    timanifest += '"visibility":"'+visibility+'",\n';
 		
 		var platforms = '"platforms":[';
 		if (buildMac) platforms += '"osx"'
@@ -631,7 +786,7 @@ $MQL('l:create.package.request',function(msg)
 		
 		timanifest += '"runtime":{"version":"0.2","package":"'+networkRuntime+'"},\n';
 		
-		timanifest += '"guid":"'+ Titanium.Platform.createUUID()+'",\n';
+		timanifest += '"guid":"'+ project.guid+'",\n';
 		
 		var modules = '"modules":[';
 		

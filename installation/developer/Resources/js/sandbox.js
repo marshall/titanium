@@ -1,8 +1,24 @@
+TiDeveloper.Sandbox = {};
+
+TiDeveloper.Sandbox.apiSamples = [
+{key:'select something',code:''},
+{	key:'Titanium.App variables',
+	code:"&lt;div&gt;Titanium.App.getID() = &lt;script&gt;document.write(Titanium.App.getID());&lt;/script&gt;\n&lt;/div&gt;\n\n"+
+	"&lt;div&gt;Titanium.App.getName() = &lt;script&gt;document.write(Titanium.App.getName());&lt;/script&gt;\n&lt;/div&gt;\n\n"+
+	"&lt;div&gt;Titanium.App.getVersion() = &lt;script&gt;document.write(Titanium.App.getVersion());&lt;/script&gt;\n&lt;/div&gt;\n\n"+
+	"&lt;div&gt;Titanium.App.appURLToPath() = &lt;script&gt;document.write(Titanium.App.appURLToPath('app://index.html'));&lt;/script&gt;\n&lt;/div&gt;\n\n"	
+}
+];
 $(document).ready(function()	
 {
 	$('#text_editor').markItUp(mySettings);
+	$MQ('l:populate.api.selector',{rows:TiDeveloper.Sandbox.apiSamples})
 });
 
+TiDeveloper.Sandbox.setAPI = function()
+{
+	$('#text_editor').append($('select#api_selector option:selected').val()) 
+}
 
 $MQL('l:launch.sandbox',function(msg)
 {

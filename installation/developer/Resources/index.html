@@ -43,12 +43,11 @@
 	
 	<!-- HEADER MENU -->
 	<div class="menu">
-		<div id="logo"><img src="images/titanium_developer.png"/> </div>
+		<div id="logo"><img src="images/titanium_developer.png" on="click then l:foo"/> </div>
 		<div id="online_count"> developers on-line: 
 			<span style="color:#42C0FB" on="l:online.count then value[count]">loading...</span>  
 		</div>
 	</div>
-	
 	<div style="margin-auto">
 		<div class="nav1 nav_active" style="display:inline-block;" 
 			on="click then l:menu[val=manage] and add[class=nav_active] 
@@ -77,12 +76,13 @@
 				or l:menu[val!=feeds] then remove[class=nav_active]">
 			<div >Feeds</div>
 		</div>
+<!--
 		<div class="nav1" style="display:inline-block;" 
 			on="click then l:menu[val=api] and add[class=nav_active] 
 				or l:menu[val!=api] then remove[class=nav_active]">
 			<div >Documentation</div>
 		</div>
-		
+-->	
 	</div>
 
 	<div style="clear:both"></div>
@@ -145,7 +145,7 @@
 							or l:create.project then remove[class=selected_js]
 							and remove[id=jqueryui_js,class=selected_js]">
 							<img src="images/jquery_ui.gif" width="136px" height="36px"
-								style="position:relative;top:25px"/>
+								style="position:relative;top:21px"/>
 						</div>
 					</div>
 					<div style="clear:both;margin-top:10px"></div>
@@ -220,17 +220,18 @@
 				</div>
 				<div style="font-size:14px;position:absolute;top:0px;left:348px">
 						Write code and/or select an API:
-						<select>
+						<select id="api_selector" on="change then l:api.selector.change
+							or l:populate.api.selector then value[property=rows,value=code,text=key]">
 							<option>select api</select>
 						</select>
 				</div>
-				<div style="position:absolute;top:15px;left:342px">
-					<textarea style="width:680px"  
+				<div style="position:absolute;top:15px;left:342px;width:65%">
+					<textarea style="width:100%" on="l:api.selector.change then script[TiDeveloper.Sandbox.setAPI()]" 
 						id="text_editor"  ></textarea>
 				</div>
 			</div>
 			<div style="clear:both"></div>
-			<div style="position:relative;left:0px;top:370px">
+			<div style="position:relative;left:348px;top:370px">
 				<div class="button1">
 					<div class="button2" on="click then l:launch.sandbox">
 						Launch
@@ -535,6 +536,15 @@
 						</div>
 						<div class="button1" 
 							style="float:left;width:23px;height:23px;position:relative;top:1px;" 
+							on="mouseover then l:action.hint[hint=Add existing project] 
+							or mouseout then l:action.hint[hint='']">
+							<div class="button2" style="height:21px" 
+								on="click then l:import.project">
+								<img src="images/folder_go.png" style="position:relative;top:2px;left:1px"/>
+							</div>
+						</div>
+						<div class="button1" 
+							style="float:left;width:23px;height:23px;position:relative;top:1px;" 
 							on="mouseover then l:action.hint[hint=Create project] 
 							or mouseout then l:action.hint[hint='']">
 							<div class="button2" style="height:21px" 
@@ -542,6 +552,7 @@
 								<img src="images/16x16_new.png" style="position:relative;top:2px;left:1px"/>
 							</div>
 						</div>
+
 						<div style="float:left;margin-left;margin-top:6px" class="hint_text"
 							on="l:action.hint then value[hint]">
 						</div>
@@ -1271,7 +1282,8 @@
 									</div>
 									<div style="position:relative;top:20px;left:-5px">
 										<div class="button1" style="float:left;"
-											on="click then l:create.package.request[package=true,launch=no]"
+											on="click then l:create.package.request[package=true,launch=no]
+											and l:cancel.package.project and l:cancel[val=package]"
 											<div class="button2">
 												Package
 											</div>
@@ -1283,7 +1295,7 @@
 											</div>
 										</div>
 										<div style="float:left;position:relative;top:4px">
-											<input type="checkbox" checked="true">
+											<input type="checkbox" checked="true" id="package_public">
 											<span class="hint_text" style="font-size:11px">
 												Make app public (it can be downloaded by other developers)
 											</span>

@@ -109,7 +109,7 @@ Titanium.Project =
 		}
 		return result;
 	},
-	create:function(name,dir,publisher,url,image,jsLibs, html)
+	create:function(name,guid,dir,publisher,url,image,jsLibs, html)
 	{
 		var outdir = TFS.getFile(dir,name);
 		if (outdir.isDirectory())
@@ -223,7 +223,8 @@ Titanium.Project =
 		"#publisher: "+publisher+"\n"+
 		"#url: "+url+"\n"+
 		"#image: "+image+"\n"+
-		"#appid: "+id+"\n";
+		"#appid: "+id+"\n"+
+		"#guid: " +  guid + "\n";
 		
 		var mf = TFS.getFile(outdir,'manifest');
 		mf.write(manifest);
@@ -263,13 +264,20 @@ Titanium.Project =
 		return str;
 	},
 	
-	updateManifest: function(values)
+	updateManifest: function(values,addGuid)
 	{
 		var manifest = TFS.getFile(values.dir,"manifest");
 		var normalized_name = values.name.replace(' ','_').toLowerCase();
 		var normalized_publisher = values.publisher.replace(' ','_').toLowerCase();
 		var id = 'com.'+normalized_publisher+'.'+normalized_name;
 		var newManifest = ''
+
+		// add guid if not exists
+		if (addGuid ==true)
+		{
+			newManifest = '#guid:'+values.guid+"\n";
+		}
+
 		var line = manifest.readLine(true);
 		var entry = Titanium.Project.parseEntry(line);
 		for (var i=0;i<1000;i++)
@@ -299,6 +307,10 @@ Titanium.Project =
 			else if (entry.key.indexOf('appid') != -1)
 			{
 				newManifest += '#appid:'+id+"\n";
+			}
+			else if (entry.key.indexOf('guid') != -1)
+			{
+				newManifest += '#guid:'+values.id+"\n";
 			}
 			else
 			{
