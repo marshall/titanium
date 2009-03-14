@@ -24,6 +24,7 @@ $MQL('l:launch.sandbox',function(msg)
 {
 	var project = {};
 	project.name = "sandbox";
+	project.guid = '0000';
 	project.url = "http://www.titaniumapp.com";
 	project.rootdir = Titanium.Filesystem.createTempDirectory().toString();
 	project.dir = project.rootdir +'/'+ project.name;
@@ -69,6 +70,6 @@ $MQL('l:launch.sandbox',function(msg)
 	{
 		outdir.deleteDirectory(true);
 	}
-	Titanium.Project.create(project.name,project.rootdir,project.publisher,project.url,null,jsLibs, $('#text_editor').val());
+	Titanium.Project.create(project.name,project.guid,project.rootdir,project.publisher,project.url,null,jsLibs, $('#text_editor').val());
 	TiDeveloper.Projects.launchProject(project,false)
 })

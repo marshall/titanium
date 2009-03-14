@@ -43,7 +43,7 @@ class Bundler(object):
 		out_file.write(manifest_text)
 		out_file.close()		
 
-bundle = Bundler(name,build.dir,'tiapp.xml','resources',None)
+bundle = Bundler(name,build.dir,'tiapp.xml','Resources',None)
 runtime = p.join(bundle.contents, 'runtime');
 modules_dir = p.join(bundle.contents, 'modules');
 for d in [runtime,modules_dir]:
@@ -94,13 +94,13 @@ for walk in os.walk(bundle.basedir):
 developer = p.join(bundle.contents,'developer')
 os.makedirs(developer)
 dir_util.copy_tree(p.join(build.titanium_source_dir,'installation','developer'), developer, preserve_symlinks=True)
-dir_util.copy_tree(p.join(build.titanium_source_dir,'installation','common','js'), p.join(developer,'resources','js'), preserve_symlinks=True)
+dir_util.copy_tree(p.join(build.titanium_source_dir,'installation','common','js'), p.join(developer,'Resources','js'), preserve_symlinks=True)
 
 # copy the app installer product
 appinstaller = p.join(bundle.contents,'appinstaller')
 os.makedirs(appinstaller)
 dir_util.copy_tree(p.join(build.titanium_source_dir,'installation','app_installer'), appinstaller, preserve_symlinks=True)
-dir_util.copy_tree(p.join(build.titanium_source_dir,'installation','common','js'), p.join(appinstaller,'resources','js'), preserve_symlinks=True)
+dir_util.copy_tree(p.join(build.titanium_source_dir,'installation','common','js'), p.join(appinstaller,'Resources','js'), preserve_symlinks=True)
 
 # copy the network installer
 installer = p.join(bundle.contents,'installer')
