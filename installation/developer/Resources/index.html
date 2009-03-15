@@ -633,7 +633,8 @@
 						<div class="button1" style="width:50px;height:33px;border-bottom:none">
 							<div class="button2 tab" style="height:31px;text-align:center;border-bottom:none" 
 								on="click then l:proj_data[val=download] and add[class=active_tab] 
-									or l:proj_data[val!=download] then remove[class=active_tab]">
+									or l:proj_data[val!=download] 
+									then remove[class=active_tab] else add[class=active_tab]">
 								<img src="images/ICON_dload.png" 
 									height="25px" width="25px" style="position:relative;top:3px"/>
 							</div>
@@ -652,9 +653,9 @@
 					<!-- PROJECT STUFF - INFO, STATS AND DOWNLOAD LINK -->
 					<div style="margin-top:-13px;position:relative;z-index:2">
 						<div style="border-top:1px solid #666;border-bottom:1px solid #666">
-							<div  style="position:relative;border-top:1px solid #141414;border-bottom:1px solid #141414;background-color:#333">
+							<div  style="position:relative; border-top:1px solid #141414; border-bottom:1px solid #141414; background-color:#333">
 								
-								<!-- PROJECT INFO -->
+								<!-- PROJECT INFO  TAB-->
 								<div on="l:proj_data[val=info] then effect[fadeIn] else hide">
 									<table cellspacing="15px">
 										<tr>
@@ -729,41 +730,113 @@
 
 								</div>
 								
+								<!-- PROJECT PACKAGING TAB -->
 								<div on="l:proj_data[val=download] then effect[fadeIn] else hide"
 									style="display:none;height:400px">
-									<div class="black_gradient" 
-										style="margin:10px;background-color:#222;font-size:11px">
-										<span style="position:relative;left:5px;top:1px">
-											Install Packages by Operating System
-										</span>
-										<span 
-									style="float:right;margin-right:15px; position:relative; left:5px; color:#ccc; 
-											font-style:italic">
-											last build on <span on="l:package_links then value[date]"></span>
-										</span>
-							
-									</div>
-									<div control="iterator[property=rows]" on="l:package_links then execute"
-										style="margin-left:50px;margin-right:50px">
-										<div class="project_row" style="height:35px;line-height:35px;font-size:11px">
-											<img src="images/#{family}_small.png" height="20px" width="20px"
-												style="position:relative;top:6px"/>
-											<span style="color:#fff;font-size:12px;margin-left:10px">#{platform}</span>
-											<span style="float:right;color:#ccc;">
-												<img src="images/download.png" style="position:relative;top:5px"/>
-												<a href="#">Download</a>
-											</span>
-											<div style="height:1px;border-bottom:1px solid #222;margin-bottom:1px"></div>
+									<!-- NO DOWNLOADS -->
+									<div style="display:none" id="packaging_none">
+										<!-- INFO MESSAGE -->
+										<div class="infobox" style="margin:20px;width:300px">
+											<div class="content" style="height:20px;position:relative">
+												<div style="position:absolute;top:7px;left:5px">
+													<img src="images/info.png" style="position:relative;top:-1px"/>
+												</div>
+												<div style="position:absolute;top:7px;left:30px">
+													You haven't packaged this project yet.
+												</div>
+											</div>
 										</div>
+										
+									</div>
+									<!-- PACKAGING IN PROGRESS -->
+									<div style="display:none" id="packaging_in_progress">
+										<div style="margin:20px">
+											<img src="images/progress_bar.gif"/>
+										</div>
+										
+									</div>
+									<!-- PACKAGING ERROR -->
+									<div style="display:none" id="packaging_error">
+										<div class="infobox" style="margin:20px;width:400px">
+											<div class="content" style="height:20px;position:relative">
+												<div style="position:absolute;top:7px;left:5px">
+													<img src="images/error.png" style="position:relative;top:-1px"/>
+												</div>
+												<div style="position:absolute;top:7px;left:30px;color:orange">
+													There was an error during packaging.  Make sure you are on-line.
+												</div>
+											</div>
+										</div>
+									</div>
+									
+									<!-- PACKAGE LISTING -->
+									<div style="display:none" id="packaging_listing">
+										<div class="black_gradient" 
+											style="margin:10px;background-color:#222;font-size:11px">
+											<span style="position:relative;left:5px;top:1px">
+												Install Packages by Operating System
+											</span>
+											<span 
+										style="float:right;margin-right:15px; position:relative; left:5px; color:#ccc; 
+												font-style:italic">
+												last build on <span on="l:package_links then value[date]"></span>
+											</span>
+
+										</div>
+										<div control="iterator[property=rows]" on="l:package_links then execute"
+											style="margin-left:50px;margin-right:50px">
+											<div class="project_row" style="height:35px;line-height:35px;font-size:11px">
+												<img src="images/#{platform_short}_small.png" height="20px" width="20px"
+													style="position:relative;top:6px"/>
+												<span 
+													style="color:#fff;font-size:12px;margin-left:10px">#{platform}</span>
+												<span style="float:right;color:#ccc;">
+													<img src="images/download.png" style="position:relative;top:5px"/>
+													<a href="#{url}" target="ti:systembrowser" >#{url}</a>
+												</span>
+												<div 
+												style="height:1px;border-bottom:1px solid #222;margin-bottom:1px"></div>
+											</div>
+										</div>
+										
 									</div>
 								</div>
 
 								<div on="l:proj_data[val=stats] then effect[fadeIn] else hide"
 									style="display:none;height:400px">
-									<div align="center" style="margin-top:20px">Total Downloads By Operating System</div>
-									<div align="center" control="chart[property=rows, type=bar, background-color=#333333, 
-										textColor=#ffffff, lineColor=#111111]" 
-										on="l:downloads[type=OS] then render">
+									<!-- NO STATS -->
+									<div id="download_stats_none" style="display:none">
+										<!-- INFO MESSAGE -->
+										<div class="infobox" style="margin:20px;width:300px">
+											<div class="content" style="height:20px;position:relative">
+												<div style="position:absolute;top:7px;left:5px">
+													<img src="images/info.png" style="position:relative;top:-1px"/>
+												</div>
+												<div style="position:absolute;top:7px;left:30px">
+													This project has no download stats.
+												</div>
+											</div>
+										</div>
+
+									</div>
+									<!-- LOADING STATS -->
+									<div style="display:none" id="download_stats_loading">
+										<div style="margin:20px">
+											<img src="images/progress_bar.gif"/>
+										</div>
+									</div>
+									
+									<!-- DOWNLOAD STATS GRAPH -->
+									<div style="display:none" id="download_stats">
+										<div align="center" style="margin-top:20px">
+											Total Downloads By Operating System
+										</div>
+										<div align="center" 
+											control="chart[property=rows, type=bar, background-color=#333333, 
+											textColor=#ffffff, lineColor=#111111]" 
+											on="l:package_download_stats then render">
+										</div>
+										
 									</div>
 								</div>
 
@@ -1284,7 +1357,7 @@
 										<div class="button1" style="float:left;"
 											on="click then l:create.package.request[package=true,launch=no]
 											or l:create.package.response[result=0] then l:cancel.package.project 
-											and l:cancel[val=package]"
+											and l:cancel[val=package] and l:proj_data[val=download]"
 											<div class="button2">
 												Package
 											</div>
