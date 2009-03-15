@@ -32,9 +32,9 @@ function installApp(dir)
 	// remember in case we launch
 	launch = result.executable;
 	
-	var resourceDir = TFS.getFile(src,'Resources');
+	var files = TFS.getFile(src,'Resources');
 
-	var count = files.length + 2; // 2 files below
+	var count = files.getDirectoryListing().length + 2; // 2 files below
 	var increment = 100 / count;
 	var value = 0;
 	
@@ -46,7 +46,7 @@ function installApp(dir)
 	value+=increment;
 	$('#progressbar_install').progressbar('value',value)
 	
-	TFS.asyncCopy(resourceDir,result.resources,function(fn,count,total)
+	TFS.asyncCopy(files,result.resources,function(fn,count,total)
 	{
 		value+=increment;
 		$('#progressbar_install').progressbar('value',value)

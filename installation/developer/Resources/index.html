@@ -1199,7 +1199,7 @@
 					<div on="l:show.package.project then effect[slideUp] 
 						or l:cancel.package.project then effect[fadeIn] after 700ms">
 						<div class="button1" style="width:800px;height:45px;float:none;position:relative"
-							on="click then l:launch.project.request[launch=true]">
+							on="click then l:launch.project.request">
 							<div class="button2" style="height:43px;max-width:200px">
 								<img src="images/launch.png" style="position:relative;top:7px;left:-10px"/>
 								<span style="margin-left:10px;position:relative;top:-6px;left:-10px">
@@ -1211,7 +1211,7 @@
 							</div>
 						</div>
 						<div class="button1" style="width:800px;height:45px;float:none;position:relative"
-							on="click then l:create.package.request[launch=true,install=true]">
+							on="click then l:launch.project.installer.request">
 							<div class="button2" style="height:43px;max-width:200px">
 								<img src="images/install_launch.png" style="position:relative;top:5px"/>
 								<span style="margin-left:10px;position:relative;top:-6px">

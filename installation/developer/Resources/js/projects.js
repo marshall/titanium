@@ -830,6 +830,14 @@ $MQL('l:launch.project.request',function(msg)
 	TiDeveloper.Projects.launchProject(project,false);
 });
 
+$MQL('l:launch.project.installer.request',function(msg)
+{
+	var project_name = $('#package_project_name').html();
+	var project = TiDeveloper.Projects.findProject(project_name);
+	TiDeveloper.Projects.launchProject(project,true);
+	
+});
+
 //
 // Create Package Request
 //
@@ -1109,7 +1117,8 @@ TiDeveloper.Projects.pollPackagingRequest = function(ticket)
 	   	}
 		else
 		{
-			setTimeout(TiDeveloper.Projects.pollPackagingRequest(ticket),2000);
+			// poll every 10 seconds
+			setTimeout(TiDeveloper.Projects.pollPackagingRequest(ticket),10000);
 		}
 	});
 };
