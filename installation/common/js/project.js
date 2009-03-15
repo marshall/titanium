@@ -311,7 +311,7 @@ Titanium.Project =
 			}
 			else if (entry.key.indexOf('guid') != -1)
 			{
-				newManifest += '#guid:'+values.id+"\n";
+				newManifest += '#guid:'+values.guid+"\n";
 			}
 			else if (entry.key.indexOf('description') != -1)
 			{

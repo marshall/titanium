@@ -110,88 +110,87 @@ TiDeveloper.Projects.runGUIDMigration = function()
 }
 
 //
-// Import an existing project to Developer
+// Import a project
+//
+TiDeveloper.Projects.importProject = function(f)
+{
+	var dir = f;
+	var file = TFS.getFile(dir,'manifest');
+	if (file.exists() == false)
+	{
+		alert('This directory does not contain valid Titanium project.  Please try again.');
+		return;
+	}
+	
+	// create object for DB record
+	var options = {}
+	options.dir = dir;
+	
+	// read manifest values to create new db record
+	var line = file.readLine(true);
+	var entry = Titanium.Project.parseEntry(line);
+	for (var i=0;i<1000;i++)
+	{
+		if (entry == null)
+		{
+			line = file.readLine();
+			if (!line || line == null)break;
+			entry = Titanium.Project.parseEntry(line);
+		}
+		if (entry.key.indexOf('appname') != -1)
+		{
+			options.name = entry.value;
+		}
+		else if (entry.key.indexOf('publisher') != -1)
+		{
+			options.publisher = entry.value;
+		}
+		else if (entry.key.indexOf('url') != -1)
+		{
+			options.url = entry.value;
+		}
+		else if (entry.key.indexOf('image') != -1)
+		{
+			options.image = entry.value;
+		}
+		else if (entry.key.indexOf('appid') != -1)
+		{
+			options.appid = entry.value;
+		}
+		else if (entry.key.indexOf('guid') != -1)
+		{
+			options.guid = entry.value;
+		}
+		else if (entry.key.indexOf('desc') != -1)
+		{
+			options.description = entry.desc;
+		}
+
+		entry = null;
+	}
+	
+	if (!options.description)
+	{
+		options.description = options.name + ' is a cool new app created by ' + options.publisher;
+	}
+	// if no guid, create
+	if (!options.guid)
+	{
+		options.guid = Titanium.Platform.createUUID();
+	}
+	
+	TiDeveloper.Projects.createRecord(options,function(obj)
+	{
+		TiDeveloper.Projects.loadProjects();
+	})
+	
+};
+//
+// Listener for Import project
 //
 $MQL('l:import.project',function()
 {
-	$MQ('l:show.filedialog');
-	$MQL('l:file.selected',function(msg)
-	{
-		var dir = msg.payload.value;
-		var file = TFS.getFile(dir,'manifest');
-		if (file.exists() == false)
-		{
-			alert('This directory does not contain valid Titanium project.  Please try again.');
-			return;
-		}
-		
-		// create object for DB record
-		var options = {}
-		options.dir = dir;
-		
-		// read manifest values to create new db record
-		var line = file.readLine(true);
-		var entry = Titanium.Project.parseEntry(line);
-		for (var i=0;i<1000;i++)
-		{
-			if (entry == null)
-			{
-				line = file.readLine();
-				if (!line || line == null)break;
-				entry = Titanium.Project.parseEntry(line);
-			}
-			if (entry.key.indexOf('appname') != -1)
-			{
-				options.name = entry.value;
-			}
-			else if (entry.key.indexOf('publisher') != -1)
-			{
-				options.publisher = entry.value;
-			}
-			else if (entry.key.indexOf('url') != -1)
-			{
-				options.url = entry.value;
-			}
-			else if (entry.key.indexOf('image') != -1)
-			{
-				options.image = dir + '/Resources/' + entry.value;
-			}
-			else if (entry.key.indexOf('appid') != -1)
-			{
-				options.appid = entry.value;
-			}
-			else if (entry.key.indexOf('guid') != -1)
-			{
-				options.guid = entry.value;
-			}
-			else if (entry.key.indexOf('desc') != -1)
-			{
-				options.description = entry.desc;
-			}
-
-			entry = null;
-		}
-		
-		if (!options.description)
-		{
-			options.description = options.name + ' is a cool new app created by ' + options.publisher;
-		}
-		// if no guid, create
-		if (!options.guid)
-		{
-			options.guid = Titanium.Platform.createUUID();
-			Titanium.Project.updateManifest(options,true);
-		}
-		else
-		{
-			Titanium.Project.updateManifest(options);
-		}
-		
-		TiDeveloper.Projects.createRecord(options,function(obj)
-		{
-			TiDeveloper.Projects.loadProjects();
-		})
-	})
+	$MQ('l:show.filedialog',{callback:TiDeveloper.Projects.importProject});
 })
 
 //
@@ -207,7 +206,6 @@ TiDeveloper.Projects.updateAppData = function()
 	values.image = $('#project_pub_image_value').html();
 	values.url = $('#project_pub_url_value').html();
 	values.description = $('#project_desc_value').html();
-	Titanium.Project.updateManifest(values)
 
 	var id = $('#project_id_value').get(0).value;
 
@@ -1208,6 +1206,10 @@ $MQL('l:show.filedialog',function(msg)
 		if (f.length)
 		{
 			$MQ('l:file.selected',{'target':target,'for':el,'value':f[0]});
+			if (msg.payload.callback)
+			{
+				msg.payload.callback(f[0]);
+			}
 		}
 	},
 	props);
