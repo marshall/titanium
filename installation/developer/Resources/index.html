@@ -668,6 +668,15 @@
 										</tr>
 										<tr>
 											<td style="font-size:12px;height:30px" width="90px" class="hint_text">
+												*Description:
+											</td>
+											<td style="font-size:12px;height:30px" class="edit" id="project_desc_value"
+												on="l:project.detail.data then value[description]">
+											</td>
+										</tr>
+
+										<tr>
+											<td style="font-size:12px;height:30px" width="90px" class="hint_text">
 												Date Created:
 											</td>
 											<td style="font-size:12px;height:30px" 
@@ -830,6 +839,12 @@
 									<div style="display:none" id="download_stats">
 										<div align="center" style="margin-top:20px">
 											Total Downloads By Operating System
+											<div style="margin-top:10px;cursor:pointer">
+												<a href="#" style="cursor:pointer" 
+													on="click then l:refresh_downlaod_stats">
+													Refresh Stats
+												</a>
+											</div>
 										</div>
 										<div align="center" 
 											control="chart[property=rows, type=bar, background-color=#333333, 
@@ -1049,6 +1064,18 @@
 								new project
 							</div>
 						</div>
+						<div>Project Description:</div>
+						<div style="margin-top:3px;">
+							<input type="text" id="description" maxlength="150" style="width:500px"
+								validator="required" fieldset="new_project"
+								on="(l:create.project.response[result=success] or l:menu[val=create]) then reset"/>
+						</div>
+						<div class="hint_text" style="font-size:11px;font-style:italic;margin-bottom:10px;height:10px">
+							<div behavior="tooltip[position=fixed,id=description,showEffect=fadeIn,hideEffect=fadeOut]">
+								This is a short description of your project that will be displayed when distributed.
+							</div>
+						</div>
+
 						<div>Publisher Name:</div>
 						<div style="margin-top:3px;">
 							<input type="text" id="publisher_name" name="publisher" 

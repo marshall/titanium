@@ -109,7 +109,7 @@ Titanium.Project =
 		}
 		return result;
 	},
-	create:function(name,guid,dir,publisher,url,image,jsLibs, html)
+	create:function(name,guid,desc,dir,publisher,url,image,jsLibs, html)
 	{
 		var outdir = TFS.getFile(dir,name);
 		if (outdir.isDirectory())
@@ -224,6 +224,7 @@ Titanium.Project =
 		"#url: "+url+"\n"+
 		"#image: "+image+"\n"+
 		"#appid: "+id+"\n"+
+		"#desc: "+desc+"\n"+
 		"#guid: " +  guid + "\n";
 		
 		var mf = TFS.getFile(outdir,'manifest');
@@ -312,6 +313,11 @@ Titanium.Project =
 			{
 				newManifest += '#guid:'+values.id+"\n";
 			}
+			else if (entry.key.indexOf('description') != -1)
+			{
+				newManifest += '#desc:'+values.description+"\n";
+			}
+
 			else
 			{
 				newManifest += entry.key + ":"  + entry.value + "\n";
