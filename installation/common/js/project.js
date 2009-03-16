@@ -12,13 +12,14 @@ Titanium.Project =
 		if (!versions)return null;
 		for (var v=0;v<versions.length;v++)
 		{
-			entry.versions.push(versions[v].name());
+			if (TFS.getFile(dir,versions[v].name()).isDirectory()==true)
+				entry.versions.push(versions[v].name());
 		}
 		return entry;
 	},
-	getModulesAndRuntime:function(os)
+	getModulesAndRuntime:function(appDir)
 	{
-		os = typeof(os)=='undefined' ? Titanium.platform : os;
+		os = Titanium.platform ;
 
 		// get core runtime modules
 		var dir = Titanium.Process.getEnv('KR_RUNTIME_HOME');
@@ -34,16 +35,18 @@ Titanium.Project =
 		}
 		
 		// get app modules
-		// var appModules = TFS.getFile(dir,'modules');
-		// var appDirs = appModules.getDirectoryListing();
-		// for (var c=0;c<appDirs.length;c++)
-		// {
-		// 	if (this.getVersions(appDirs[c]) == null)
-		// 		continue;
-		// 	
-		// 	result.push(this.getVersions(appDirs[c]));
-		// 	
-		// }
+		var appModules = TFS.getFile(appDir,'modules');
+		if (appModules.exists())
+		{
+			var appDirs = appModules.getDirectoryListing();
+			for (var c=0;c<appDirs.length;c++)
+			{
+				if (this.getVersions(appDirs[c]) == null)
+					continue;
+
+				result.push(this.getVersions(appDirs[c]));
+			}
+		}
 		var runtime = TFS.getFile(dir,'runtime',os);
 		return {
 			modules: result,

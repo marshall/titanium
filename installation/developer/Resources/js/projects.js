@@ -636,17 +636,15 @@ $MQL('l:page.data.request',function(msg)
 //
 // Format directory string for display purposes
 //
-TiDeveloper.Projects.formatDirectory =function(dir,truncate)
+TiDeveloper.Projects.formatDirectory =function(dir)
 {
-	// return whole dir
-	if (truncate == false)return dir;
 	
 	if (dir != null)
 	{
 		var dirStr = dir
-		if (dir.length > 40)
+		if (dir.length > 70)
 		{
-			dirStr = dir.substring(0,40) + '...';
+			dirStr = dir.substring(0,70) + '...';
 			$('#project_detail_dir_a').css('display','block');
 			$('#project_detail_dir_span').css('display','none');
 		}
@@ -681,7 +679,7 @@ TiDeveloper.Projects.getModules = function(appDir)
 	TiDeveloper.Projects.requiredModuleMap = {};
 	TiDeveloper.Projects.modules = [];
 
-	var result = Titanium.Project.getModulesAndRuntime();
+	var result = Titanium.Project.getModulesAndRuntime(appDir);
 	TiDeveloper.Projects.runtimeDir = result.runtime.dir;
 	TiDeveloper.Projects.runtimeVersion = result.runtime.versions[0];
 	for (var c=0;c<result.modules.length;c++)
@@ -705,7 +703,8 @@ TiDeveloper.Projects.getModules = function(appDir)
 //
 $MQL('l:package.project.request',function(msg)
 {
-	TiDeveloper.Projects.getModules();
+	var project = TiDeveloper.Projects.findProjectById(msg.payload.id);
+	TiDeveloper.Projects.getModules(project.dir);
 	$MQ('l:package.project.data',{rows:TiDeveloper.Projects.modules});
  	$MQ('l:package.all',{val:'network'});
 
@@ -770,7 +769,10 @@ TiDeveloper.Projects.launchProject = function(project, install)
 		{
 			var image = TFS.getFile(project.image);
 			var image_dest = TFS.getFile(resources,image.name());
-			image.copy(image_dest);
+			if (image.exists())
+			{
+				image.copy(image_dest);
+			}
 			manifest+='#image:'+image.name()+'\n';
 		}
 
@@ -803,7 +805,6 @@ TiDeveloper.Projects.launchProject = function(project, install)
 		var resources = TFS.getFile(project.dir,'Resources');
 		var tiapp = TFS.getFile(project.dir,'tiapp.xml');
 		tiapp.copy(app.base);
-		
 		TFS.asyncCopy(resources,app.resources,function()
 		{
 			// no modules to bundle, install the net installer
@@ -811,8 +812,21 @@ TiDeveloper.Projects.launchProject = function(project, install)
 			var net_installer_dest = TFS.getFile(app.base,'installer');
 			TFS.asyncCopy(net_installer_src,net_installer_dest,function(filename,c,total)
 			{
-				Titanium.Process.setEnv('KR_DEBUG','true');
-				Titanium.Desktop.openApplication(app.executable.nativePath());
+				var appModules = TFS.getFile(project.dir,"modules");
+				if (appModules.exists())
+				{
+					var moduleDest = TFS.getFile(app.base,"modules");
+					TFS.asyncCopy(appModules,moduleDest, function()
+					{
+						Titanium.Process.setEnv('KR_DEBUG','true');
+						Titanium.Desktop.openApplication(app.executable.nativePath());
+					})
+				}
+				else
+				{
+					Titanium.Process.setEnv('KR_DEBUG','true');
+					Titanium.Desktop.openApplication(app.executable.nativePath());
+				}
 			});
 		});
 	}
@@ -835,7 +849,6 @@ $MQL('l:launch.project.installer.request',function(msg)
 	var project_name = $('#package_project_name').html();
 	var project = TiDeveloper.Projects.findProject(project_name);
 	TiDeveloper.Projects.launchProject(project,true);
-	
 });
 
 //
@@ -1105,6 +1118,7 @@ TiDeveloper.Projects.pollPackagingRequest = function(ticket)
 	   	{
     		alert('done ' + swiss.toJSON(r));
 			// INSERT DATA INTO DB AND SHOW DATA
+			// SEND MESSAGE TO POPULATE TABLE
 			$('#packaging_none').css('display','none')
 			$('#packaging_error').css('display','none')
 			$('#packaging_listing').css('display','block');
