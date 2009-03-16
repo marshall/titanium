@@ -867,14 +867,17 @@ void Win32UserWindow::SetupSize() {
 void Win32UserWindow::ShowWebInspector() {
 
 	std::string path = FileUtils::GetApplicationDirectory();
-	path += "\\WebKit.resources\\";
+	CFStringRef cfPath = CFStringCreateWithCString(kCFAllocatorDefault, path.c_str(), kCFStringEncodingUTF8);
+	CFURLRef urlRef = CFURLCreateWithFileSystemPath(kCFAllocatorDefault, cfPath, kCFURLWindowsPathStyle, true);
+	CFBundleCreateBundlesFromDirectory(kCFAllocatorDefault, urlRef, NULL);
+	/*path += "\\WebKit.resources\\";
 
 	CFStringRef cfPath = CFStringCreateWithCString(kCFAllocatorDefault, path.c_str(), kCFStringEncodingUTF8);
 	CFURLRef inspectorResourcesURL = CFURLCreateWithFileSystemPath(kCFAllocatorDefault, cfPath, kCFURLWindowsPathStyle, true);
 	char rep[260];
 	CFURLGetFileSystemRepresentation(inspectorResourcesURL, true, (uint8_t *) rep, 260);
 	std::cout << "url->path = " << (char*)rep << std::endl;
-	CFBundleRef bundle = CFBundleCreate(kCFAllocatorDefault, inspectorResourcesURL);
+	CFBundleRef bundle = CFBundleCreate(kCFAllocatorDefault, inspectorResourcesURL);*/
 
 	std::cout << "showWebInspector() .." << std::endl;
 
