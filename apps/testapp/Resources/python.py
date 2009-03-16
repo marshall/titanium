@@ -1,5 +1,2 @@
-
-def pyalert2():
-	window.alert("I'm embedded!")
-
-window.pyFunction2 = pyalert2
+def pyfun_external():
+	alert("External embedded python checking in");
