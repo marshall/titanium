@@ -1,34 +1,29 @@
 <html>
 	<body>
 
-		<button onclick="window.pyFunction()">call embedded py</button>
-		<button onclick="window.pyFunction2()">call external py</button>
-		<button onclick="window.pyToRuby()">call pyToRuby</button>
+		<button onclick="pyfun()">javascript -&gt; python</button>
+		<button onclick="rbfun()">javascript -&gt; ruby</button>
+		<button onclick="pyfun_ruby()">javascript -&gt; python -&gt; ruby</button>
 		<br/>
+		<button onclick="pyfun_external()">javascript -&gt; external python</button>
+		<button onclick="rbfun_external()">javascript -&gt; external ruby</button>
 
-		<button onclick="window.rubyFunction()">call embedded ruby</button>
-		<button onclick="window.rubyFunction2()">call external ruby</button>
-
-
-<script type="text/python">
-def pyalert():
-	window.alert('hello from python: '+window.Titanium.platform)
-
-def pytorubyalert():
-	window.rubyFunction()
-
-window.pyFunction = pyalert
-window.pyToRuby = pytorubyalert
-</script>
-<script type="text/python" src="/python.py"></script>
 
 <script type="text/ruby">
-def rubyalert
-	Window.alert('Hello from ruby: ' + Titanium.platform)
+def rbfun
+	window.alert('Hello from ruby: ' + Titanium.platform)
 end
-
-Window.rubyFunction = method(:rubyalert)
 </script>
+
+<script type="text/python">
+def pyfun():
+	alert('hello from python: '+window.Titanium.platform)
+
+def pyfun_ruby():
+	rbfun()
+</script>
+
+<script type="text/python" src="/python.py"></script>
 <script type="text/ruby" src="/ruby.rb"></script>
 
 

@@ -1,5 +1,3 @@
-def rubyalert2
-	Window.alert("hello from external ruby")
+def rbfun_external
+	window alert "External embedded ruby checking in"
 end
-
-Window.rubyFunction2 = method(:rubyalert2)
