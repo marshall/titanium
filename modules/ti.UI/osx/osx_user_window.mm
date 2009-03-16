@@ -47,35 +47,27 @@ namespace ti
 
 		NSRect mainFrame = [[NSScreen mainScreen] frame];
 		NSRect frame = mainFrame;
-		if (!config->IsFullScreen())
-		{
-			double x = config->GetX();
-			double y = config->GetY();
-			double width = config->GetWidth();
-			double height = config->GetHeight();
-			if (x == UserWindow::CENTERED)
-			{
-				x = (frame.size.width - width) / 2;
-				config->SetX(x);
-			}
-			if (y == UserWindow::CENTERED)
-			{
-				y = (frame.size.height - height) / 2;
-				config->SetY(y);
-			}
 
-			// Compensate for mainScreen origin and
-			// flip the y value for cartesian coordinates
-			double realX = x + mainFrame.origin.x; 
-			double realY = mainFrame.origin.y + frame.size.height - y;
-			frame = NSMakeRect(realX, realY, width, height);
-		}
+		// Set up the size and position of the
+		// window using our Set<...> methods so
+		// we avoid duplicating the logic here.
+		if (!config->IsFullScreen())
+			frame = NSMakeRect(0, 0, 10, 10);
 
 		window = [[NativeWindow alloc]
-		        initWithContentRect:frame
-		                  styleMask:mask
-		                    backing:NSBackingStoreBuffered
-		                      defer:false];
+		           initWithContentRect: frame
+		           styleMask: mask
+		           backing: NSBackingStoreBuffered
+		           defer: false];
+
+		if (!config->IsFullScreen())
+		{
+			this->SetX(config->GetX());
+			this->SetY(config->GetY());
+			this->SetHeight(config->GetHeight());
+			this->SetWidth(config->GetWidth());
+		}
+
 		[window setupDecorations:config host:host userwindow:this];
 	}
 	OSXUserWindow::~OSXUserWindow()
@@ -165,7 +157,7 @@ namespace ti
 	
 	void OSXUserWindow::SetX(double x)
 	{
-		NSRect winFrame = [window frame];
+		NSRect winFrame = [[window screen] frame];
 		if (x == UserWindow::CENTERED)
 		{
 			double width = config->GetWidth();
@@ -185,7 +177,7 @@ namespace ti
 	}
 	void OSXUserWindow::SetY(double y)
 	{
-		NSRect winFrame = [window frame];
+		NSRect winFrame = [[window screen] frame];
 		if (y == UserWindow::CENTERED)
 		{
 			double height = config->GetHeight();
@@ -209,6 +201,8 @@ namespace ti
 		config->SetWidth(width);
 		// Compensate for frame size
 		NSRect frame = [window frame];
+		int diff = frame.size.width - [[window contentView] frame].size.width;
+		printf("width diff %i\n", diff);
 		width += frame.size.width - [[window contentView] frame].size.width;
 		BOOL display = config->IsVisible();
 		frame.size.width = width;
@@ -224,6 +218,8 @@ namespace ti
 
 		// Compensate for frame size
 		NSRect frame = [window frame];
+		int diff = frame.size.height - [[window contentView] frame].size.height;
+		printf("height diff %i\n", diff);
 		height += frame.size.height - [[window contentView] frame].size.height;
 		BOOL display = config->IsVisible();
 		double originalHeight = NSHeight(frame);
