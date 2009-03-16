@@ -254,7 +254,16 @@ void GtkUserWindow::SetupPosition()
 {
 	if (this->gtk_window != NULL)
 	{
-		gtk_window_move(this->gtk_window, this->GetX(), this->GetY());
+		int x = this->GetX();
+		int y = this->GetY();
+
+		GdkScreen* screen = gdk_screen_get_default();
+		if (x == UserWindow::CENTERED)
+			x = (gdk_screen_get_width(screen) - this->GetWidth()) / 2;
+		if (y == UserWindow::CENTERED)
+			y = (gdk_screen_get_height(screen) - this->GetHeight()) / 2;
+
+		gtk_window_move(this->gtk_window, x, y);
 	}
 }
 
@@ -263,8 +272,8 @@ void GtkUserWindow::SetupSize()
 	if (this->gtk_window != NULL)
 	{
 		gtk_window_resize(this->gtk_window,
-		                  (int) this->GetWidth(),
-		                  (int) this->GetHeight());
+			(int) this->GetWidth(),
+			(int) this->GetHeight());
 	}
 }
 
@@ -289,9 +298,7 @@ void GtkUserWindow::SetupIcon()
 			          << error->message << std::endl;
 			g_error_free(error);
 		}
-
 	}
-
 	gtk_window_set_icon(this->gtk_window, icon);
 }
 

@@ -83,17 +83,15 @@ input[type=password], textarea, input[type=text]
 	width:220px;
 }
 
-textarea
+#text_editor
 {
 	font-family:"Monaco";
 	font-size:16px;
 	color:yellow;
 	width:100%;
-	height:auto;
-	width:auto;
 	background-color:#111;
 }
- input:focus
+textarea, input:focus
 {
 	border:1px solid #777;
 	background-color:#444;
@@ -531,4 +529,22 @@ div.formhint
 	left:10px;
 	font-size:12px;
 	color:#fff;
+}
+
+.info_blind
+{
+	background-color:#336699;
+	height:0px;
+	left:100px;
+	right:100px;
+	top:40px;
+	color:white;
+	padding:10px;
+	position:absolute;
+	z-index:20;
+	font-size:17px;
+	font-family:"Monaco";
+	-webkit-border-bottom-right-radius: 6px;
+	-webkit-border-bottom-left-radius: 6px;
+	
 }

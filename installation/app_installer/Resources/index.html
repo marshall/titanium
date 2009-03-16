@@ -156,6 +156,24 @@
 		// run the installer
 		installApp($('#install_location').val());
 	});
+	
+	$('#file_browse').click(function()
+	{
+		var props = {multiple:false};
+		props.directories = true;
+		props.files = false;
+
+		Titanium.UI.openFiles(function(f)
+		{
+			if (f.length)
+			{
+				$('#install_location').val(f[0]);
+			}
+		},
+		props);	
+	});
+	
+	
 	</script>
 </body>
 </html>

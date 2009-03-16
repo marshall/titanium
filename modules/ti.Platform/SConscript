@@ -17,6 +17,6 @@ if build.is_win32():
     env.Append(LIBS=['Advapi32'])
     env.Append(CPPDEFINES = ('WIN32_LEAN_AND_MEAN',1))
 
-m = build.add_module('tiplatform', '0.1')
+m = build.add_module('ti.Platform')
 s = env.SharedLibrary(target = m.build_dir + '/tiplatformmodule', source = Glob('*.cpp'))
 s = env.SharedLibrary(target = build.dir + '/tiplatformmodule', source = Glob('*.cpp'))

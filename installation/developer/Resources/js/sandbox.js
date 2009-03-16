@@ -1,8 +1,24 @@
+TiDeveloper.Sandbox = {};
+TiDeveloper.Sandbox.lastTempDir = null;
+TiDeveloper.Sandbox.apiSamples = [
+{key:'select something',code:''},
+{	key:'Titanium.App variables',
+	code:"&lt;div&gt;Titanium.App.getID() = &lt;script&gt;document.write(Titanium.App.getID());&lt;/script&gt;\n&lt;/div&gt;\n\n"+
+	"&lt;div&gt;Titanium.App.getName() = &lt;script&gt;document.write(Titanium.App.getName());&lt;/script&gt;\n&lt;/div&gt;\n\n"+
+	"&lt;div&gt;Titanium.App.getVersion() = &lt;script&gt;document.write(Titanium.App.getVersion());&lt;/script&gt;\n&lt;/div&gt;\n\n"+
+	"&lt;div&gt;Titanium.App.appURLToPath() = &lt;script&gt;document.write(Titanium.App.appURLToPath('app://index.html'));&lt;/script&gt;\n&lt;/div&gt;\n\n"	
+}
+];
 $(document).ready(function()	
 {
 	$('#text_editor').markItUp(mySettings);
+	$MQ('l:populate.api.selector',{rows:TiDeveloper.Sandbox.apiSamples})
 });
 
+TiDeveloper.Sandbox.setAPI = function()
+{
+	$('#text_editor').append($('select#api_selector option:selected').val()) 
+}
 
 $MQL('l:launch.sandbox',function(msg)
 {
@@ -49,10 +65,16 @@ $MQL('l:launch.sandbox',function(msg)
 	}
 
 	var outdir = TFS.getFile(project.rootdir,project.name);
-	if (outdir.isDirectory())
+
+	// remove last sandbox temp dir
+	if (TiDeveloper.Sandbox.lastTempDir != null)
 	{
-		outdir.deleteDirectory(true);
+		TiDeveloper.Sandbox.lastTempDir.deleteDirectory(true);
 	}
-	Titanium.Project.create(project.name,project.rootdir,project.publisher,project.url,null,jsLibs, $('#text_editor').val());
+	// record this temp dir for deletion next time
+	TiDeveloper.Sandbox.lastTempDir = outdir;
+
+	var guid = Titanium.Platform.createUUID();
+	Titanium.Project.create(project.name,guid,'sandbox app',project.rootdir,project.publisher,project.url,null,jsLibs, $('#text_editor').val());
 	TiDeveloper.Projects.launchProject(project,false)
 })

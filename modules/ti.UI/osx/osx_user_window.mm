@@ -43,13 +43,32 @@ namespace ti
 
 	OSXUserWindow::OSXUserWindow(Host *host, WindowConfig *config, SharedPtr<OSXUIBinding> binding) : UserWindow(host,config), window(NULL), opened(false), closed(false), binding(binding)
 	{
-		NSRect frame = NSMakeRect(config->GetX(), config->GetY(), config->GetWidth(), config->GetHeight());
-
 		unsigned int mask = toWindowMask(config);
 
-		if (config->IsFullScreen())
+		NSRect mainFrame = [[NSScreen mainScreen] frame];
+		NSRect frame = mainFrame;
+		if (!config->IsFullScreen())
 		{
-			frame = [[NSScreen mainScreen] frame];
+			double x = config->GetX();
+			double y = config->GetY();
+			double width = config->GetWidth();
+			double height = config->GetHeight();
+			if (x == UserWindow::CENTERED)
+			{
+				x = (frame.size.width - width) / 2;
+				config->SetX(x);
+			}
+			if (y == UserWindow::CENTERED)
+			{
+				y = (frame.size.height - height) / 2;
+				config->SetY(y);
+			}
+
+			// Compensate for mainScreen origin and
+			// flip the y value for cartesian coordinates
+			double realX = x + mainFrame.origin.x; 
+			double realY = mainFrame.origin.y + frame.size.height - y;
+			frame = NSMakeRect(realX, realY, width, height);
 		}
 
 		window = [[NativeWindow alloc]
@@ -146,12 +165,18 @@ namespace ti
 	
 	void OSXUserWindow::SetX(double x)
 	{
-		NSRect mainFrame = [[NSScreen mainScreen] frame];
-		
-		NSPoint p;
-		p.x = x;
-		p.y = mainFrame.size.height - this->GetY();
+		NSRect winFrame = [window frame];
+		if (x == UserWindow::CENTERED)
+		{
+			double width = config->GetWidth();
+			x = (winFrame.size.width - width) / 2;
+		}
 		config->SetX(x);
+
+		// Flip for cartesian coordinates and adjust for origin
+		x = x + winFrame.origin.x;
+		double y = winFrame.origin.y + winFrame.size.height - config->GetY();
+		NSPoint p = NSMakePoint(x, y);
 		[window setFrameTopLeftPoint:p];
 	}
 	double OSXUserWindow::GetY()
@@ -160,40 +185,52 @@ namespace ti
 	}
 	void OSXUserWindow::SetY(double y)
 	{
-		NSRect mainFrame = [[NSScreen mainScreen] frame];
-		
-		NSPoint p;
-		p.x = this->GetX();
-		p.y = mainFrame.size.height - y;
+		NSRect winFrame = [window frame];
+		if (y == UserWindow::CENTERED)
+		{
+			double height = config->GetHeight();
+			y = (winFrame.size.height - height) / 2;
+		}
 		config->SetY(y);
+
+		// Flip for cartesian coordinates
+		double x = config->GetX() + winFrame.origin.x;
+		y = winFrame.origin.y + winFrame.size.height - y;
+		NSPoint p = NSMakePoint(x, y);
 		[window setFrameTopLeftPoint:p];
+
 	}
 	double OSXUserWindow::GetWidth()
 	{
-		return [window frame].size.width;
+		return [[window contentView] frame].size.width;
 	}
 	void OSXUserWindow::SetWidth(double width)
 	{
+		config->SetWidth(width);
+		// Compensate for frame size
 		NSRect frame = [window frame];
+		width += frame.size.width - [[window contentView] frame].size.width;
 		BOOL display = config->IsVisible();
 		frame.size.width = width;
-		config->SetWidth(width);
 		[window setFrame:frame display:display animate:display];
 	}
 	double OSXUserWindow::GetHeight()
 	{
-		return [window frame].size.height;
+		return [[window contentView] frame].size.height;
 	}
 	void OSXUserWindow::SetHeight(double height)
 	{
+		config->SetHeight(height);
+
+		// Compensate for frame size
 		NSRect frame = [window frame];
+		height += frame.size.height - [[window contentView] frame].size.height;
 		BOOL display = config->IsVisible();
 		double originalHeight = NSHeight(frame);
 		frame.size.height = height;
-		config->SetHeight(height);
-	    NSPoint origin = frame.origin;
-	    origin.y += (originalHeight - height);
-	    [window setFrame: NSMakeRect(origin.x, origin.y, frame.size.width, height) display:display animate:YES];
+		NSPoint origin = frame.origin;
+		origin.y += (originalHeight - height);
+		[window setFrame: NSMakeRect(origin.x, origin.y, frame.size.width, height) display:display animate:YES];
 	}
 	double OSXUserWindow::GetMaxWidth() {
 		return this->config->GetMaxWidth();

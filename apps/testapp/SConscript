@@ -8,6 +8,7 @@ shortname = 'titanium_testapp'
 fullname = 'Titanium Test App'
 id = 'com.titaniumapp.testapp'
 version = '0.1'
+guid = "D36DD8BA-D092-4F20-9073-EB613BFB8F46"
 
 if build.is_linux():
 	over_dir = app_dir = p.join(build.dir, shortname)
@@ -38,7 +39,9 @@ build.utils.Copy(kboot, exe_path)
 
 build.utils.CopyToDir('Resources', app_dir)
 build.utils.CopyToDir('tiapp.xml', app_dir)
-build.utils.CopyToDir('manifest', app_dir)
+
+manifest = build.generate_manifest(fullname, id, guid)
+build.utils.WriteStrings(p.join(app_dir, 'manifest'), manifest)
 
 if build.is_osx():
 	if 'tiui' in build.modules:
@@ -60,3 +63,4 @@ if build.is_osx():
 if build.is_win32():
 	mscrt = p.join(build.third_party, 'microsoft', 'Microsoft.VC80.CRT')
 	build.utils.CopyToDir(mscrt, app_dir)
+

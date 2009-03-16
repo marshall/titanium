@@ -2,7 +2,8 @@
 
 # common SConscripts
 import os, re, sys, inspect, os.path as path
-import subprocess
+from sets import Set
+import subprocess, distutils.dir_util as dir_util
 
 from kroll import BuildConfig
 build = BuildConfig(
@@ -69,8 +70,22 @@ if build.is_win32():
 	
 Export('build')
 
+targets = COMMAND_LINE_TARGETS
+package = 'package' in targets or ARGUMENTS.get('package', 0)
+testapp = 'testapp' in targets or ARGUMENTS.get('testapp', 0)
+testsuite = 'testsuite' in targets or ARGUMENTS.get('testsuite', 0)
+clean = 'clean' in targets or ARGUMENTS.get('clean', 0)
+qclean = 'qclean' in targets or ARGUMENTS.get('qclean', 0)
+
+if clean or qclean:
+	print "Obliterating your build directory: %s" % build.dir
+	if path.exists(build.dir):
+		dir_util.remove_tree(build.dir)
+	if not qclean: os.system('scons -c')
+	Exit(0)
+
 # Linux can package and build at the same time now
-if not(ARGUMENTS.get('package',0)) or build.is_linux():
+if not(package) or build.is_linux():
 
 	## Kroll *must not be required* for installation
 	SConscript('installation/SConscript')
@@ -82,14 +97,16 @@ if not(ARGUMENTS.get('package',0)) or build.is_linux():
 		build.env.Append(LIBS=['kroll']) 
 	SConscript('modules/SConscript')
 
-if ARGUMENTS.get('package',0):
+if package:
 	print "building packaging ..."
 	SConscript('installation/runtime/SConscript')
 
-if ARGUMENTS.get('testapp',0):
+if testapp:
 	print "building packaging ..."
 	SConscript('apps/testapp/SConscript')
 
-if ARGUMENTS.get('testsuite',0):
+if testsuite:
 	print 'running testsuite...'
 	SConscript('apps/apivalidator/SConscript')
+  
+

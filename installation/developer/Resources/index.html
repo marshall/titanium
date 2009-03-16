@@ -43,12 +43,11 @@
 	
 	<!-- HEADER MENU -->
 	<div class="menu">
-		<div id="logo"><img src="images/titanium_developer.png"/> </div>
+		<div id="logo"><img src="images/titanium_developer.png" on="click then l:foo"/> </div>
 		<div id="online_count"> developers on-line: 
 			<span style="color:#42C0FB" on="l:online.count then value[count]">loading...</span>  
 		</div>
 	</div>
-	
 	<div style="margin-auto">
 		<div class="nav1 nav_active" style="display:inline-block;" 
 			on="click then l:menu[val=manage] and add[class=nav_active] 
@@ -77,12 +76,13 @@
 				or l:menu[val!=feeds] then remove[class=nav_active]">
 			<div >Feeds</div>
 		</div>
+<!--
 		<div class="nav1" style="display:inline-block;" 
 			on="click then l:menu[val=api] and add[class=nav_active] 
 				or l:menu[val!=api] then remove[class=nav_active]">
 			<div >Documentation</div>
 		</div>
-		
+-->	
 	</div>
 
 	<div style="clear:both"></div>
@@ -145,7 +145,7 @@
 							or l:create.project then remove[class=selected_js]
 							and remove[id=jqueryui_js,class=selected_js]">
 							<img src="images/jquery_ui.gif" width="136px" height="36px"
-								style="position:relative;top:25px"/>
+								style="position:relative;top:21px"/>
 						</div>
 					</div>
 					<div style="clear:both;margin-top:10px"></div>
@@ -220,17 +220,18 @@
 				</div>
 				<div style="font-size:14px;position:absolute;top:0px;left:348px">
 						Write code and/or select an API:
-						<select>
+						<select id="api_selector" on="change then l:api.selector.change
+							or l:populate.api.selector then value[property=rows,value=code,text=key]">
 							<option>select api</select>
 						</select>
 				</div>
-				<div style="position:absolute;top:15px;left:342px">
-					<textarea style="width:680px"  
+				<div style="position:absolute;top:15px;left:342px;width:65%">
+					<textarea style="width:100%" on="l:api.selector.change then script[TiDeveloper.Sandbox.setAPI()]" 
 						id="text_editor"  ></textarea>
 				</div>
 			</div>
 			<div style="clear:both"></div>
-			<div style="position:relative;left:0px;top:370px">
+			<div style="position:relative;left:348px;top:370px">
 				<div class="button1">
 					<div class="button2" on="click then l:launch.sandbox">
 						Launch
@@ -535,6 +536,15 @@
 						</div>
 						<div class="button1" 
 							style="float:left;width:23px;height:23px;position:relative;top:1px;" 
+							on="mouseover then l:action.hint[hint=Add existing project] 
+							or mouseout then l:action.hint[hint='']">
+							<div class="button2" style="height:21px" 
+								on="click then l:import.project">
+								<img src="images/folder_go.png" style="position:relative;top:2px;left:1px"/>
+							</div>
+						</div>
+						<div class="button1" 
+							style="float:left;width:23px;height:23px;position:relative;top:1px;" 
 							on="mouseover then l:action.hint[hint=Create project] 
 							or mouseout then l:action.hint[hint='']">
 							<div class="button2" style="height:21px" 
@@ -542,6 +552,7 @@
 								<img src="images/16x16_new.png" style="position:relative;top:2px;left:1px"/>
 							</div>
 						</div>
+
 						<div style="float:left;margin-left;margin-top:6px" class="hint_text"
 							on="l:action.hint then value[hint]">
 						</div>
@@ -622,7 +633,8 @@
 						<div class="button1" style="width:50px;height:33px;border-bottom:none">
 							<div class="button2 tab" style="height:31px;text-align:center;border-bottom:none" 
 								on="click then l:proj_data[val=download] and add[class=active_tab] 
-									or l:proj_data[val!=download] then remove[class=active_tab]">
+									or l:proj_data[val!=download] 
+									then remove[class=active_tab] else add[class=active_tab]">
 								<img src="images/ICON_dload.png" 
 									height="25px" width="25px" style="position:relative;top:3px"/>
 							</div>
@@ -641,9 +653,9 @@
 					<!-- PROJECT STUFF - INFO, STATS AND DOWNLOAD LINK -->
 					<div style="margin-top:-13px;position:relative;z-index:2">
 						<div style="border-top:1px solid #666;border-bottom:1px solid #666">
-							<div  style="position:relative;border-top:1px solid #141414;border-bottom:1px solid #141414;background-color:#333">
+							<div  style="position:relative; border-top:1px solid #141414; border-bottom:1px solid #141414; background-color:#333">
 								
-								<!-- PROJECT INFO -->
+								<!-- PROJECT INFO  TAB-->
 								<div on="l:proj_data[val=info] then effect[fadeIn] else hide">
 									<table cellspacing="15px">
 										<tr>
@@ -654,6 +666,15 @@
 												on="l:project.detail.data then value[name]">
 											</td>
 										</tr>
+										<tr>
+											<td style="font-size:12px;height:30px" width="90px" class="hint_text">
+												*Description:
+											</td>
+											<td style="font-size:12px;height:30px" class="edit" id="project_desc_value"
+												on="l:project.detail.data then value[description]">
+											</td>
+										</tr>
+
 										<tr>
 											<td style="font-size:12px;height:30px" width="90px" class="hint_text">
 												Date Created:
@@ -718,41 +739,119 @@
 
 								</div>
 								
+								<!-- PROJECT PACKAGING TAB -->
 								<div on="l:proj_data[val=download] then effect[fadeIn] else hide"
 									style="display:none;height:400px">
-									<div class="black_gradient" 
-										style="margin:10px;background-color:#222;font-size:11px">
-										<span style="position:relative;left:5px;top:1px">
-											Install Packages by Operating System
-										</span>
-										<span 
-									style="float:right;margin-right:15px; position:relative; left:5px; color:#ccc; 
-											font-style:italic">
-											last build on <span on="l:package_links then value[date]"></span>
-										</span>
-							
-									</div>
-									<div control="iterator[property=rows]" on="l:package_links then execute"
-										style="margin-left:50px;margin-right:50px">
-										<div class="project_row" style="height:35px;line-height:35px;font-size:11px">
-											<img src="images/#{family}_small.png" height="20px" width="20px"
-												style="position:relative;top:6px"/>
-											<span style="color:#fff;font-size:12px;margin-left:10px">#{platform}</span>
-											<span style="float:right;color:#ccc;">
-												<img src="images/download.png" style="position:relative;top:5px"/>
-												<a href="#">Download</a>
-											</span>
-											<div style="height:1px;border-bottom:1px solid #222;margin-bottom:1px"></div>
+									<!-- NO DOWNLOADS -->
+									<div style="display:none" id="packaging_none">
+										<!-- INFO MESSAGE -->
+										<div class="infobox" style="margin:20px;width:300px">
+											<div class="content" style="height:20px;position:relative">
+												<div style="position:absolute;top:7px;left:5px">
+													<img src="images/info.png" style="position:relative;top:-1px"/>
+												</div>
+												<div style="position:absolute;top:7px;left:30px">
+													You haven't packaged this project yet.
+												</div>
+											</div>
 										</div>
+										
+									</div>
+									<!-- PACKAGING IN PROGRESS -->
+									<div style="display:none" id="packaging_in_progress">
+										<div style="margin:20px">
+											<img src="images/progress_bar.gif"/>
+										</div>
+										
+									</div>
+									<!-- PACKAGING ERROR -->
+									<div style="display:none" id="packaging_error">
+										<div class="infobox" style="margin:20px;width:400px">
+											<div class="content" style="height:20px;position:relative">
+												<div style="position:absolute;top:7px;left:5px">
+													<img src="images/error.png" style="position:relative;top:-1px"/>
+												</div>
+												<div style="position:absolute;top:7px;left:30px;color:orange">
+													There was an error during packaging.  Make sure you are on-line.
+												</div>
+											</div>
+										</div>
+									</div>
+									
+									<!-- PACKAGE LISTING -->
+									<div style="display:none" id="packaging_listing">
+										<div class="black_gradient" 
+											style="margin:10px;background-color:#222;font-size:11px">
+											<span style="position:relative;left:5px;top:1px">
+												Install Packages by Operating System
+											</span>
+											<span 
+										style="float:right;margin-right:15px; position:relative; left:5px; color:#ccc; 
+												font-style:italic">
+												last build on <span on="l:package_links then value[date]"></span>
+											</span>
+
+										</div>
+										<div control="iterator[property=rows]" on="l:package_links then execute"
+											style="margin-left:50px;margin-right:50px">
+											<div class="project_row" style="height:35px;line-height:35px;font-size:11px">
+												<img src="images/#{platform_short}_small.png" height="20px" width="20px"
+													style="position:relative;top:6px"/>
+												<span 
+													style="color:#fff;font-size:12px;margin-left:10px">#{platform}</span>
+												<span style="float:right;color:#ccc;">
+													<img src="images/download.png" style="position:relative;top:5px"/>
+													<a href="#{url}" target="ti:systembrowser" >#{url}</a>
+												</span>
+												<div 
+												style="height:1px;border-bottom:1px solid #222;margin-bottom:1px"></div>
+											</div>
+										</div>
+										
 									</div>
 								</div>
 
 								<div on="l:proj_data[val=stats] then effect[fadeIn] else hide"
 									style="display:none;height:400px">
-									<div align="center" style="margin-top:20px">Total Downloads By Operating System</div>
-									<div align="center" control="chart[property=rows, type=bar, background-color=#333333, 
-										textColor=#ffffff, lineColor=#111111]" 
-										on="l:downloads[type=OS] then render">
+									<!-- NO STATS -->
+									<div id="download_stats_none" style="display:none">
+										<!-- INFO MESSAGE -->
+										<div class="infobox" style="margin:20px;width:300px">
+											<div class="content" style="height:20px;position:relative">
+												<div style="position:absolute;top:7px;left:5px">
+													<img src="images/info.png" style="position:relative;top:-1px"/>
+												</div>
+												<div style="position:absolute;top:7px;left:30px">
+													This project has no download stats.
+												</div>
+											</div>
+										</div>
+
+									</div>
+									<!-- LOADING STATS -->
+									<div style="display:none" id="download_stats_loading">
+										<div style="margin:20px">
+											<img src="images/progress_bar.gif"/>
+										</div>
+									</div>
+									
+									<!-- DOWNLOAD STATS GRAPH -->
+									<div style="display:none" id="download_stats">
+										<div align="center" style="margin-top:20px">
+											Total Downloads By Operating System
+											<div style="margin-top:10px;cursor:pointer">
+												<a href="#" style="cursor:pointer" 
+													on="click then l:refresh_downlaod_stats">
+													Refresh Stats
+												</a>
+											</div>
+										</div>
+										<div align="center" 
+											control="chart[property=rows, type=bar, background-color=#333333, 
+											textColor=#ffffff, lineColor=#111111]" 
+											on="l:package_download_stats then render">
+										</div>
+										
 									</div>
 								</div>
 
@@ -965,6 +1064,18 @@
 								new project
 							</div>
 						</div>
+						<div>Project Description:</div>
+						<div style="margin-top:3px;">
+							<input type="text" id="description" maxlength="150" style="width:500px"
+								validator="required" fieldset="new_project"
+								on="(l:create.project.response[result=success] or l:menu[val=create]) then reset"/>
+						</div>
+						<div class="hint_text" style="font-size:11px;font-style:italic;margin-bottom:10px;height:10px">
+							<div behavior="tooltip[position=fixed,id=description,showEffect=fadeIn,hideEffect=fadeOut]">
+								This is a short description of your project that will be displayed when distributed.
+							</div>
+						</div>
+
 						<div>Publisher Name:</div>
 						<div style="margin-top:3px;">
 							<input type="text" id="publisher_name" name="publisher" 
@@ -1088,7 +1199,7 @@
 					<div on="l:show.package.project then effect[slideUp] 
 						or l:cancel.package.project then effect[fadeIn] after 700ms">
 						<div class="button1" style="width:800px;height:45px;float:none;position:relative"
-							on="click then l:launch.project.request[launch=true]">
+							on="click then l:launch.project.request">
 							<div class="button2" style="height:43px;max-width:200px">
 								<img src="images/launch.png" style="position:relative;top:7px;left:-10px"/>
 								<span style="margin-left:10px;position:relative;top:-6px;left:-10px">
@@ -1100,7 +1211,7 @@
 							</div>
 						</div>
 						<div class="button1" style="width:800px;height:45px;float:none;position:relative"
-							on="click then l:create.package.request[launch=true,install=true]">
+							on="click then l:launch.project.installer.request">
 							<div class="button2" style="height:43px;max-width:200px">
 								<img src="images/install_launch.png" style="position:relative;top:5px"/>
 								<span style="margin-left:10px;position:relative;top:-6px">
@@ -1271,7 +1382,9 @@
 									</div>
 									<div style="position:relative;top:20px;left:-5px">
 										<div class="button1" style="float:left;"
-											on="click then l:create.package.request[package=true,launch=no]"
+											on="click then l:create.package.request[package=true,launch=no]
+											or l:create.package.response[result=0] then l:cancel.package.project 
+											and l:cancel[val=package] and l:proj_data[val=download]"
 											<div class="button2">
 												Package
 											</div>
@@ -1283,7 +1396,7 @@
 											</div>
 										</div>
 										<div style="float:left;position:relative;top:4px">
-											<input type="checkbox" checked="true">
+											<input type="checkbox" checked="true" id="package_public">
 											<span class="hint_text" style="font-size:11px">
 												Make app public (it can be downloaded by other developers)
 											</span>
