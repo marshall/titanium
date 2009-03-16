@@ -919,12 +919,15 @@ $MQL('l:create.package.request',function(msg)
 		manifest = '#appname:'+project_name+'\n';
 		manifest+='#appid:'+project.appid+'\n';
 		manifest+='#publisher:'+project.publisher+'\n';
-		
+
 		if (project.image)
 		{
 			var image = TFS.getFile(project.image);
 			var image_dest = TFS.getFile(resources,image.name());
-			image.copy(image_dest);
+			if (image.exists())
+			{
+				image.copy(image_dest);
+			}
 			manifest+='#image:'+image.name()+'\n';
 		}
 		
