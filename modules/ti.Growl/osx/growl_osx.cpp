@@ -32,7 +32,10 @@ namespace ti {
 			SharedValue iconPathValue = global->CallNS("App.appURLToPath", Value::NewString(iconURL));
 			if (iconPathValue->IsString()) {
 				std::string iconPath = iconPathValue->ToString();
-				iconData = [NSData dataWithContentsOfFile:[NSString stringWithCString:iconPath.c_str()]];
+				const char * iconPathCString = iconPath.c_str();
+				if (iconPathCString != NULL) {
+					iconData = [NSData dataWithContentsOfFile:[NSString stringWithUTF8String:iconPathCString]];
+				}
 			}
 		}
 
@@ -42,9 +45,22 @@ namespace ti {
 			[clickContext setObject:[[MethodWrapper alloc] initWithMethod:new SharedBoundMethod(callback)] forKey:@"method_wrapper"];
 		}
 
+		const char * titleCString = title.c_str();
+		NSString * titleString = nil;
+		if (titleCString != NULL) {
+			titleString = [NSString stringWithUTF8String:titleCString];
+		}
+		
+		const char * descriptionCString = description.c_str();
+		NSString * descriptionString = nil;
+		if (descriptionCString != NULL) {
+			descriptionString = [NSString stringWithUTF8String:descriptionCString];
+		}
+		
+
 		[GrowlApplicationBridge
-			 notifyWithTitle:[NSString stringWithCString:title.c_str()]
-			 description:[NSString stringWithCString:description.c_str()]
+			 notifyWithTitle:titleString
+			 description:descriptionString
 			 notificationName:@"tiNotification"
 			 iconData:iconData
 			 priority:0
