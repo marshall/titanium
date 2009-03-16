@@ -418,7 +418,7 @@ static void load_finished_cb(
 {
 	JSGlobalContextRef context = webkit_web_frame_get_global_context(frame);
 	JSObjectRef global_object = JSContextGetGlobalObject(context);
-	SharedBoundObject frame_global = new KJSBoundObject(context, global_object);
+	SharedBoundObject frame_global = new KJSKObject(context, global_object);
 	std::string uri = webkit_web_frame_get_uri(frame);
 
 	GtkUserWindow* user_window = static_cast<GtkUserWindow*>(data);
@@ -474,9 +474,8 @@ static void window_object_cleared_cb(
 		std::cerr << "Could not find UI API point!" << std::endl;
 	}
 
-	// Get the global object into a KJSBoundObject
-	SharedBoundObject frame_global =
-		new KJSBoundObject(context, global_object);
+	// Get the global object into a KJSKObject
+	SharedBoundObject frame_global = new KJSKObject(context, global_object);
 
 	// Copy the document and window properties to the Titanium object
 	SharedValue doc_value = frame_global->Get("document");

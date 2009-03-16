@@ -56,7 +56,7 @@ void ScriptEvaluator::evaluate(const gchar *mime_type, const gchar *source_code,
 			SharedValue typeValue = Value::NewString(mime_type);
 			SharedValue sourceCodeValue = Value::NewString(source_code);
 			JSObjectRef globalObjectRef = JSContextGetGlobalObject(contextRef);
-			SharedBoundObject contextObject = new KJSBoundObject(contextRef, globalObjectRef);
+			SharedBoundObject contextObject = new KJSKObject(contextRef, globalObjectRef);
 			SharedValue contextValue = Value::NewObject(contextObject);
 			args.push_back(typeValue);
 			args.push_back(sourceCodeValue);
