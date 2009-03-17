@@ -73,8 +73,8 @@ Win32WebKitFrameLoadDelegate::windowScriptObjectAvailable (
 		std::cerr << "Could not find UI API point!" << std::endl;
 	}
 
-	// Get the global object into a KJSBoundObject
-	BoundObject *global_bound_object = new KJSBoundObject(context, global_object);
+	// Get the global object into a KJSKObject
+	BoundObject *global_bound_object = new KJSKObject(context, global_object);
 
 	// Copy the document and window properties to the Titanium object
 	SharedValue doc_value = global_bound_object->Get("document");
