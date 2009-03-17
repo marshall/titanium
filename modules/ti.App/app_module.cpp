@@ -7,6 +7,7 @@
 #include "app_config.h"
 #include "app_binding.h"
 #include "Properties/properties_binding.h"
+#include <Poco/File.h>
 
 using namespace kroll;
 using namespace ti;
@@ -56,15 +57,18 @@ namespace ti
 
 		std::string appid = AppConfig::Instance()->GetAppID();
 		std::string app_properties = kroll::FileUtils::GetApplicationDataDirectory(appid);
-		if (FileUtils::IsDirectory(app_properties))
-		{
-			app_properties += KR_PATH_SEP;
-			app_properties += "application.properties";
 
-			this->properties_binding = new PropertiesBinding(app_properties);
-			SharedValue properties_value = Value::NewObject(this->properties_binding);
-			this->app_binding->Set("Properties", properties_value);
+		Poco::File app_properties_dir(app_properties);
+		if (!app_properties_dir.exists()) {
+			app_properties_dir.createDirectories();
 		}
+
+		app_properties += KR_PATH_SEP;
+		app_properties += "application.properties";
+
+		this->properties_binding = new PropertiesBinding(app_properties);
+		SharedValue properties_value = Value::NewObject(this->properties_binding);
+		this->app_binding->Set("Properties", properties_value);
 	}
 
 	void AppModule::Stop()
