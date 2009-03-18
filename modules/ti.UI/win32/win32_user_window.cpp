@@ -6,9 +6,8 @@
 
 #define _WINSOCKAPI_
 #include <kroll/base.h>
-#include <CoreFoundation/CFURL.h>
-#include <CoreFoundation/CFBundle.h>
 
+#include <winsock2.h>
 #include "win32_user_window.h"
 #include "webkit_frame_load_delegate.h"
 #include "webkit_ui_delegate.h"
