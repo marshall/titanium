@@ -17,7 +17,6 @@
 #include "win32_tray_item.h"
 #include "string_util.h"
 #include "../url/app_url.h"
-#include "../url/ti_url.h"
 #include <cmath>
 #include <shellapi.h>
 #include <comutil.h>
@@ -191,7 +190,6 @@ Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config) :
 		InitCommonControlsEx(&InitCtrlEx);
 
 		curl_register_local_handler(&Titanium_app_url_handler);
-		curl_register_local_handler(&Titanium_ti_url_handler);
 		addScriptEvaluator(&script_evaluator);
 	}
 
@@ -301,7 +299,7 @@ Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config) :
 		if (FAILED(hr)) {
 			std::cerr << "Failed to get private preferences" << std::endl;
 		} else {
-			privatePrefs->setDeveloperExtrasEnabled(host->IsDebugMode());
+			privatePrefs->setDeveloperExtrasEnabled(true);
 			//privatePrefs->setDeveloperExtrasEnabled(host->IsDebugMode());
 			privatePrefs->setDatabasesEnabled(true);
 			privatePrefs->setLocalStorageEnabled(true);
@@ -335,11 +333,6 @@ Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config) :
 	}
 
 	web_view_private->Release();
-
-	_bstr_t inspector_url("ti://com.titaniumapp/runtime/inspector/inspector.html");
-	_bstr_t localized_strings_url("ti://com.titaniumapp/runtime/inspector/localizedStrings.js");
-	web_inspector->setInspectorURL(inspector_url.copy());
-	web_inspector->setLocalizedStringsURL(localized_strings_url.copy());
 
 	hr = web_view->mainFrame(&web_frame);
 	//web_view->setShouldCloseWithWindow(TRUE);
@@ -872,14 +865,52 @@ void Win32UserWindow::SetupSize() {
 }
 
 void Win32UserWindow::ShowWebInspector() {
-	if (this->web_inspector) {
-		BOOL debug;
-		this->web_inspector->isDebuggingJavaScript(&debug);
-		if (!debug) {
-			web_inspector->toggleDebuggingJavaScript();
-		}
-		this->web_inspector->show();
-	}
+
+	std::string path = FileUtils::GetApplicationDirectory();
+	CFStringRef cfPath = CFStringCreateWithCString(kCFAllocatorDefault, path.c_str(), kCFStringEncodingUTF8);
+	CFURLRef urlRef = CFURLCreateWithFileSystemPath(kCFAllocatorDefault, cfPath, kCFURLWindowsPathStyle, true);
+	CFBundleCreateBundlesFromDirectory(kCFAllocatorDefault, urlRef, NULL);
+	/*path += "\\WebKit.resources\\";
+
+	CFStringRef cfPath = CFStringCreateWithCString(kCFAllocatorDefault, path.c_str(), kCFStringEncodingUTF8);
+	CFURLRef inspectorResourcesURL = CFURLCreateWithFileSystemPath(kCFAllocatorDefault, cfPath, kCFURLWindowsPathStyle, true);
+	char rep[260];
+	CFURLGetFileSystemRepresentation(inspectorResourcesURL, true, (uint8_t *) rep, 260);
+	std::cout << "url->path = " << (char*)rep << std::endl;
+	CFBundleRef bundle = CFBundleCreate(kCFAllocatorDefault, inspectorResourcesURL);*/
+
+	std::cout << "showWebInspector() .." << std::endl;
+
+	//WebInspectorClient *wic = new WebInspector(web_view);
+	//wic->showWindow();
+	//if(1 == 1) return;
+/*
+	WindowConfig *config = new WindowConfig();
+	std::string url = "app://front-end/inspector.html";
+	config->SetURL(url);
+	config->SetX(GetX() + 15);
+	config->SetY(GetY() + 15);
+	config->SetWidth(640);
+	config->SetHeight(480);
+	config->SetUsingChrome(true);
+	std::string title = "Titanium: Web Inspector";
+	config->SetTitle(title);
+	config->SetVisible(true);
+
+	UserWindow *inspector_window = WindowFactory(GetHost(), config);
+	inspector_window->Open();*/
+
+	if(this->web_inspector)
+	 {
+	 std::cout << "requesting flag .. " << std::endl;
+	 BOOL debug;
+	 this->web_inspector->isDebuggingJavaScript(&debug);
+	 std::cout << "debug = " << debug << std::endl;
+	 //std::cout << "attaching..." << std::endl;
+	 //this->web_inspector->attach();
+	 std::cout << "showing..." << std::endl;
+	 this->web_inspector->show();
+	 }
 }
 
 void Win32UserWindow::OpenFiles(SharedBoundMethod callback, bool multiple,
