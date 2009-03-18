@@ -553,7 +553,7 @@
 							</div>
 						</div>
 
-						<div style="float:left;margin-left;margin-top:6px" class="hint_text"
+						<div style="float:left;margin-left;margin-top:6px;font-size:11px" class="hint_text"
 							on="l:action.hint then value[hint]">
 						</div>
 						<div style="clear:both"></div>
@@ -623,7 +623,7 @@
 					<div style="height:35px;position:relative;left:20px">
 						<div class="button1" style="width:50px;height:33px;border-bottom:none">
 							<div class="button2 tab active_tab" style="height:31px;text-align:center;border-bottom:none"  
-								on="click then l:proj_data[val=info] and add[class=active_tab] 
+								on="click then l:proj_data[val=info,hint=Basic project info] and add[class=active_tab] 
 									or l:proj_data[val!=info] then remove[class=active_tab]">
 								<img height="25px" width="25px" src="images/ICON_info.png" 
 									style="position:relative;top:3px"/>
@@ -632,7 +632,7 @@
 
 						<div class="button1" style="width:50px;height:33px;border-bottom:none">
 							<div class="button2 tab" style="height:31px;text-align:center;border-bottom:none" 
-								on="click then l:proj_data[val=download] and add[class=active_tab] 
+								on="click then l:proj_data[val=download,hint=Links to your packaged application by operating system] and add[class=active_tab] 
 									or l:proj_data[val!=download] 
 									then remove[class=active_tab] else add[class=active_tab]">
 								<img src="images/ICON_dload.png" 
@@ -641,11 +641,14 @@
 						</div>
 						<div class="button1" style="width:50px;height:33px;border-bottom:none">
 							<div class="button2 tab" style="height:31px;text-align:center;border-bottom:none" 
-								on="click then l:proj_data[val=stats] and add[class=active_tab] 
+								on="click then l:proj_data[val=stats,hint=Statistics about your app] and add[class=active_tab] 
 									or l:proj_data[val!=stats] then remove[class=active_tab]">
 								<img src="images/ICON_stats.png" 
 									height="25px" width="25px" style="position:relative;top:3px"/>
 							</div>
+						</div>
+						<div style="float:left;margin-left;margin-top:9px;font-size:11px" class="hint_text"
+							on="l:proj_data then value[hint]">
 						</div>
 
 					</div>
@@ -743,38 +746,38 @@
 								<div on="l:proj_data[val=download] then effect[fadeIn] else hide"
 									style="display:none;height:400px">
 									<!-- NO DOWNLOADS -->
-									<div style="display:none" id="packaging_none">
-										<!-- INFO MESSAGE -->
-										<div class="infobox" style="margin:20px;width:300px">
-											<div class="content" style="height:20px;position:relative">
-												<div style="position:absolute;top:7px;left:5px">
-													<img src="images/info.png" style="position:relative;top:-1px"/>
-												</div>
-												<div style="position:absolute;top:7px;left:30px">
-													You haven't packaged this project yet.
-												</div>
+									<div style="display:none;" id="packaging_none">
+										<div align="center" style="margin-top:40px">
+											<img src="images/ti_nopackage.png"/>
+											<div style="font-size:40px;color:#fff;margin-left:40px;margin-right:40px">
+											Links not available. 
+											<div style="font-size:28px">This app has not been packaged yet.</div>
 											</div>
 										</div>
-										
 									</div>
 									<!-- PACKAGING IN PROGRESS -->
-									<div style="display:none" id="packaging_in_progress">
-										<div style="margin:20px">
-											<img src="images/progress_bar.gif"/>
+									<div style="display:none;background-color:#424242" id="packaging_in_progress">
+										<div align="center">
+											<img src="images/ti_package.gif" style="height:350px"/>
+											<div align="center" style="margin-top:10px">
+												<img style="position:relative;top:-15px;"
+												src="images/ti_package_magic.gif"/>
+											</div>
 										</div>
 										
 									</div>
 									<!-- PACKAGING ERROR -->
 									<div style="display:none" id="packaging_error">
-										<div class="infobox" style="margin:20px;width:400px">
-											<div class="content" style="height:20px;position:relative">
-												<div style="position:absolute;top:7px;left:5px">
-													<img src="images/error.png" style="position:relative;top:-1px"/>
-												</div>
-												<div style="position:absolute;top:7px;left:30px;color:orange">
-													There was an error during packaging.  Make sure you are on-line.
-												</div>
+										<div align="center" style="margin-top:20px">
+											<img src="images/ti_warn.png"/>
+											<div style="font-size:40px;color:#fff;margin-left:40px;margin-right:40px">
+											Packaging Error. 
+											<div style="font-size:28px">Make sure you are online.</div>
 											</div>
+										</div>
+
+										<div align="center" style="line-height:auto">
+											<img src="images/ti_warn.png" style="position:relative;top:-1px"/>
 										</div>
 									</div>
 									
@@ -815,23 +818,22 @@
 									style="display:none;height:400px">
 									<!-- NO STATS -->
 									<div id="download_stats_none" style="display:none">
-										<!-- INFO MESSAGE -->
-										<div class="infobox" style="margin:20px;width:300px">
-											<div class="content" style="height:20px;position:relative">
-												<div style="position:absolute;top:7px;left:5px">
-													<img src="images/info.png" style="position:relative;top:-1px"/>
-												</div>
-												<div style="position:absolute;top:7px;left:30px">
-													This project has no download stats.
-												</div>
+										<div align="center" style="margin-top:40px">
+											<img src="images/ti_nostats.png"/>
+											<div style="font-size:40px; color:#fff; margin-left:40px; margin-right:40px;">
+											Stats not available. 
+											<div style="font-size:28px">This app has not been downloaded yet.</div>
 											</div>
 										</div>
-
 									</div>
 									<!-- LOADING STATS -->
-									<div style="display:none" id="download_stats_loading">
-										<div style="margin:20px">
-											<img src="images/progress_bar.gif"/>
+									<div style="display:none;" id="download_stats_loading">
+										<div align="center" style="padding-top:20px;background-color:#424242;
+											height:400px	">
+											<img src="images/ti_progress.gif"/>
+											<div style="font-size:40px;color:#fff;">
+										 	Loading...
+											</div>
 										</div>
 									</div>
 									
@@ -1384,7 +1386,7 @@
 										<div class="button1" style="float:left;"
 											on="click then l:create.package.request[package=true,launch=no]
 											or l:create.package.response[result=0] then l:cancel.package.project 
-											and l:cancel[val=package] and l:proj_data[val=download]"
+											and l:cancel[val=package] and l:proj_data[val=download,hint=Links to your packaged application by operating system]"
 											<div class="button2">
 												Package
 											</div>
