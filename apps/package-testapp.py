@@ -16,7 +16,7 @@ module_dirs = [
     'api', 'javascript', 'foo', 'ruby', 'python',
     'ti.Platform', 'ti.App', 'ti.UI', 'tinetwork',
     'ti.Growl', 'ti.Filesystem', 'ti.Media', 'ti.Desktop', 'ti.Process',
-    'ti.Notification', 'ti.Monkey'
+    'ti.Notification', 'ti.Monkey', 'ti.Analytics'
 ]
 
 def moduleID(dir):

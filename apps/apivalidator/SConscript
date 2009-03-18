@@ -3,6 +3,7 @@
 import os.path as p, os 
 import glob, distutils.dir_util as dir_util
 Import('build')
+Import('run')
 
 shortname = 'apivalidator'
 fullname = 'Titanium API Validator'
@@ -65,3 +66,5 @@ if build.is_win32():
 	mscrt = p.join(build.third_party, 'microsoft', 'Microsoft.VC80.CRT')
 	build.utils.CopyToDir(mscrt, app_dir)
 
+if run:
+	build.utils.Execute(exe_path)
