@@ -64,6 +64,14 @@ function runInstaller()
 	{
 		runtimeDir.createDirectory(true);
 	}
+	
+	// generate machine id file if it doesn't exist
+	var midf = TFS.getFile(dest,'.titanium');
+	if (!midf.exists())
+	{
+		midf.write(Titanium.Platform.createUUID());
+	}
+	
 	var manifest = TFS.getFile(src,'install');
 	if (!manifest.isFile())
 	{
@@ -209,12 +217,12 @@ function runInstaller()
 					{
 						current+=moveby;
 						updateProgressValue(current);
+						Titanium.Analytics.addEvent('ti.install');
 						finishInstall(developer.executable);
 					});
 				});
 			});
 					
-
 		}
 		catch(E)
 		{

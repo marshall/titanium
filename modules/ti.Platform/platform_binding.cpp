@@ -7,6 +7,8 @@
 #include <kroll/kroll.h>
 #include <Poco/Environment.h>
 #include <Poco/UUIDGenerator.h>
+#include <Poco/Net/NetworkInterface.h>
+#include <Poco/Net/IPAddress.h>
 #include "platform_binding.h"
 
 #ifdef OS_OSX
@@ -38,7 +40,37 @@ namespace ti
 		std::string os_name = Poco::Environment::osName();
 		std::string os_version = Poco::Environment::osVersion();
 		std::string arch = Poco::Environment::osArchitecture();
-		std::string address = Poco::Environment::nodeName();
+		std::string address = "127.0.0.1";
+
+		std::vector<Poco::Net::NetworkInterface> list = Poco::Net::NetworkInterface::list();
+		std::vector<Poco::Net::NetworkInterface>::iterator i = list.begin();
+		SharedBoundList interfaces = new StaticBoundList();
+		int c = 0;
+		while (i!=list.end())
+		{
+			Poco::Net::NetworkInterface nitf = (*i++);
+			if (nitf.supportsIPv4())
+			{
+				const Poco::Net::IPAddress ip = nitf.address();
+				if (ip.isLoopback() || !ip.isIPv4Compatible())
+				{
+					continue;
+				}
+				c++;
+				// just get the first one and bail
+				if (c==1) address = ip.toString();
+				// add each interface
+				SharedBoundObject obj = new StaticBoundObject();
+				std::string ip_addr = ip.toString();
+				std::string display_name = nitf.displayName();
+				std::string name = nitf.name();
+				obj->Set("address",Value::NewString(ip_addr));
+				obj->Set("name",Value::NewString(name));
+				obj->Set("displayName",Value::NewString(display_name));
+				interfaces->Append(Value::NewObject(obj));
+			}
+		}
+		this->Set("interfaces", Value::NewList(interfaces));
 
 
 #if defined(OS_OSX)
@@ -56,59 +88,65 @@ namespace ti
 		int num_proc = 1;
 #endif
 
-#if defined(OS_LINUX)
-	    std::string nodeId = "";
-	    struct ifreq ifr;
-	    struct ifreq *IFR;
-	    struct ifconf ifc;
-	    char buf[1024];
-	    int s, i;
-	    int ok = 0;
-	    s = socket(AF_INET, SOCK_DGRAM, 0);
-	    if (s!=-1) 
+		std::string machineid = FileUtils::GetMachineId();
+#ifdef OS_OSX
+		// for OSX this returns the mac address, can we just use this
+		// for the other OS too??? -JGH
+		std::string macid = Poco::Environment::nodeId();
+#elif defined(OS_WIN32)
+		IP_ADAPTER_INFO adapter;
+		DWORD dwBufLen = sizeof(adapter);
+		DWORD dwStatus = GetAdaptersInfo(&adapter,&dwBufLen);
+		if (dwStatus != ERROR_SUCCESS) return std::string();
+		BYTE *MACData = adapter.Address;
+		char buf[MAX_PATH];
+		sprintf_s(buf,MAX_PATH,"%02X:%02X:%02X:%02X:%02X:%02X", MACData[0], MACData[1], MACData[2], MACData[3], MACData[4], MACData[5]);
+		std::string macid = std::string(buf);
+#elif defined(OS_LINUX)
+		//Based on code from:
+		//http://adywicaksono.wordpress.com/2007/11/08/detecting-mac-address-using-c-application/
+		std::string macid = "00:00:00:00:00:00";
+		struct ifreq ifr;
+		struct ifconf ifc;
+		char buf[1024];
+		u_char addr[6] = {'\0','\0','\0','\0','\0','\0'};
+		int s, i;
+
+		s = socket(AF_INET, SOCK_DGRAM, 0);
+		if (s != -1)
 		{
-		    ifc.ifc_len = sizeof(buf);
-		    ifc.ifc_buf = buf;
-		    ioctl(s, SIOCGIFCONF, &ifc);
-
-		    IFR = ifc.ifc_req;
-		    for (i = ifc.ifc_len / sizeof(struct ifreq); --i >= 0; IFR++) {
-
-		        strcpy(ifr.ifr_name, IFR->ifr_name);
-		        if (ioctl(s, SIOCGIFFLAGS, &ifr) == 0) {
-		            if (! (ifr.ifr_flags & IFF_LOOPBACK)) {
-		                if (ioctl(s, SIOCGIFHWADDR, &ifr) == 0) {
-		                    ok = 1;
-		                    break;
-		                }
-		            }
-		        }
-		    }
-
-		    close(s);
-
-		    if (ok) 
-			{
-				std::ostringstream ostr;
-				for (i = 0; i < IFHWADDRLEN; i++)
+			ifc.ifc_len = sizeof(buf);
+			ifc.ifc_buf = buf;
+			ioctl(s, SIOCGIFCONF, &ifc);
+			struct ifreq* IFR = ifc.ifc_req;
+			bool success = false;
+			for (i = ifc.ifc_len / sizeof(struct ifreq); --i >= 0; IFR++) {
+				strcpy(ifr.ifr_name, IFR->ifr_name);
+				if (ioctl(s, SIOCGIFFLAGS, &ifr) == 0
+					 && (!(ifr.ifr_flags & IFF_LOOPBACK))
+					 && (ioctl(s, SIOCGIFHWADDR, &ifr) == 0))
 				{
-					char ch[10];
-					sprintf(ch,"%2.2x",ifr.ifr_hwaddr.sa_data[i]);
-					ostr << ch;
-					if (i+1 < IFHWADDRLEN) ostr << ":";
+					success = true;
+					bcopy(ifr.ifr_hwaddr.sa_data, addr, 6);
+					break;
 				}
-				nodeId = ostr.str();
-		    }
+			}
+			close(s);
 
-	    }
-#else
-		std::string nodeId = "";
-		try
-		{
-			nodeId = Poco::Environment::nodeId();
+			if (success)
+			{
+				char mac_buf[36];
+				std::ostringstream mac;
+				snprintf(mac_buf, 36,
+					"%2.2x:%2.2x:%2.2x:%2.2x:%2.2x:%2.2x",
+					addr[0], addr[1],
+					addr[2], addr[3],
+					addr[4], addr[5]);
+				macid = std::string(mac_buf);
+			}
 		}
-		catch (...) { }
 #endif
+
 
 //NOTE: for now we determine this at compile time -- in the future
 //we might want to actually programmatically determine if running on
@@ -122,7 +160,8 @@ namespace ti
 		this->Set("version", Value::NewString(os_version));
 		this->Set("architecture", Value::NewString(arch));
 		this->Set("address", Value::NewString(address));
-		this->Set("id", Value::NewString(nodeId));
+		this->Set("id", Value::NewString(machineid));
+		this->Set("macaddress", Value::NewString(macid));
 		this->Set("processorCount", Value::NewInt(num_proc));
 		std::string username = kroll::FileUtils::GetUsername();
 		this->Set("username", Value::NewString(username));
