@@ -59,14 +59,16 @@ namespace ti
 		void CreateTCPSocket(const ValueList& args, SharedValue result);
 		void CreateIRCClient(const ValueList& args, SharedValue result);
 		void CreateHTTPClient(const ValueList& args, SharedValue result);
-
+		void EncodeURIComponent(const ValueList &args, SharedValue result);
+		void DecodeURIComponent(const ValueList &args, SharedValue result);
+		
 		void _GetByHost(std::string host, SharedValue result);
 		void GetHostByName(const ValueList& args, SharedValue result);
 		void GetHostByAddress(const ValueList& args, SharedValue result);
 		void AddConnectivityListener(const ValueList& args, SharedValue result);
 		void RemoveConnectivityListener(const ValueList& args, SharedValue result);
 		void FireOnlineStatusChange(const ValueList& args, SharedValue result);
-
+		
 	};
 }
 

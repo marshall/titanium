@@ -781,7 +781,6 @@ TiDeveloper.Projects.launchProject = function(project, install)
 		manifest+='#desc:'+project.description+'\n';
 
 		manifest+='runtime:'+TiDeveloper.Projects.runtimeVersion+'\n';
-
 		// write out required modules
 		for (var i=0;i<TiDeveloper.Projects.requiredModules.length;i++)
 		{
@@ -790,14 +789,14 @@ TiDeveloper.Projects.launchProject = function(project, install)
 		// write out optional modules
 		for (var c=0;c<TiDeveloper.Projects.modules.length;c++)
 		{
-			manifest+=TiDeveloper.Projects.modules[c].name+':'+TiDeveloper.Projects.modules[c].versions[0]+'\n';
+			var version = (TiDeveloper.Projects.modules[c].versions)?TiDeveloper.Projects.modules[c].versions[0]:'0.1';
+			manifest+=TiDeveloper.Projects.modules[c].name+':'+version+'\n';
 		}
 
 		var mf = TFS.getFile(project.dir,'manifest');
 		mf.write(manifest);
 		var dist = TFS.getFile(project.dir,'dist',Titanium.platform);
 		dist.createDirectory(true);
-
 		var runtime = TFS.getFile(TiDeveloper.Projects.runtimeDir,TiDeveloper.Projects.runtimeVersion);
 		var app = Titanium.createApp(runtime,dist,project.name,project.appid,install);
 		var app_manifest = TFS.getFile(app.base,'manifest');
@@ -946,7 +945,8 @@ $MQL('l:create.package.request',function(msg)
 		{
 			if (!excluded[TiDeveloper.Projects.modules[c].name])
 			{
-				manifest+=TiDeveloper.Projects.modules[c].name+':'+TiDeveloper.Projects.modules[c].versions[0]+'\n';
+				var version = (TiDeveloper.Projects.modules[c].versions)?TiDeveloper.Projects.modules[c].versions[0]:'1.0';
+				manifest+=TiDeveloper.Projects.modules[c].name+':'+version+'\n';
 			}
 		}
 		
@@ -1010,12 +1010,14 @@ $MQL('l:create.package.request',function(msg)
 		for (var c=0;c<TiDeveloper.Projects.modules.length;c++)
 		{
 			var module = TiDeveloper.Projects.modules[c].name;
+			var version = (TiDeveloper.Projects.modules[c].versions)?TiDeveloper.Projects.modules[c].versions[0]:'1.0';
+			
 			$.each(excludedEl,function()
 			{
 				var key = $.trim($(this).html());
 				if (key == module)
 				{
-					modules+='{"name":"'+module+'","version":'+'"'+TiDeveloper.Projects.modules[c].versions[0]+'","package":"exclude"}';
+					modules+='{"name":"'+module+'","version":'+'"'+version+'","package":"exclude"}';
 				}
 			});
 			$.each(bundledEl,function()
@@ -1023,7 +1025,7 @@ $MQL('l:create.package.request',function(msg)
 				var key = $.trim($(this).html());
 				if (key == module)
 				{
-					modules+='{"name":"'+module+'","version":'+'"'+TiDeveloper.Projects.modules[c].versions[0]+'","package":"include"}';
+					modules+='{"name":"'+module+'","version":'+'"'+version+'","package":"include"}';
 				}
 			});
 			$.each(networkEl,function()
@@ -1031,7 +1033,7 @@ $MQL('l:create.package.request',function(msg)
 				var key = $.trim($(this).html());
 				if (key == module)
 				{
-					modules+='{"name":"'+module+'","version":'+'"'+TiDeveloper.Projects.modules[c].versions[0]+'","package":"network"}';
+					modules+='{"name":"'+module+'","version":'+'"'+version+'","package":"network"}';
 				}
 			});
 			if (c<(TiDeveloper.Projects.modules.length-1))

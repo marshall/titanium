@@ -72,7 +72,7 @@ ScriptEvaluator::evaluate(BSTR mimeType, BSTR sourceCode, int *context)
 			SharedValue typeValue = Value::NewString(type);
 			SharedValue sourceCodeValue = Value::NewString(BSTRToString(sourceCode));
 			JSObjectRef globalObjectRef = JSContextGetGlobalObject(contextRef);
-			SharedBoundObject contextObject = new KJSBoundObject(contextRef, globalObjectRef);
+			SharedBoundObject contextObject = new KJSKObject(contextRef, globalObjectRef);
 			SharedValue contextValue = Value::NewObject(contextObject);
 			args.push_back(typeValue);
 			args.push_back(sourceCodeValue);

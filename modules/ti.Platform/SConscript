@@ -14,7 +14,7 @@ else:
 
 if build.is_win32():
     env.Append(CCFLAGS=['/MD'])
-    env.Append(LIBS=['Advapi32'])
+    env.Append(LIBS=['Advapi32', 'Iphlpapi'])
     env.Append(CPPDEFINES = ('WIN32_LEAN_AND_MEAN',1))
 
 m = build.add_module('ti.Platform')
