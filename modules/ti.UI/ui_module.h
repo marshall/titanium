@@ -72,6 +72,7 @@ namespace ti {
 
 		static UIModule* GetInstance() { return instance_; }
 
+		void Exiting(int exitcode);
 		void Start();
 		void LoadUIJavascript(JSContextRef context);
 

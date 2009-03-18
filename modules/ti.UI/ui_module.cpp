@@ -69,6 +69,9 @@ namespace ti
 			TI_FATAL_ERROR("Error loading tiapp.xml. Your application window is not properly configured or packaged.");
 		}
 
+		SharedBoundMethod api = this->host->GetGlobalObject()->GetNS("API.fire")->ToMethod();
+		api->Call("ti.UI.start",Value::Undefined);
+
 		// create the main window
 		UserWindow::CreateWindow(host,NULL,main_window_config,true);
 	}
@@ -90,6 +93,15 @@ namespace ti
 		{
 			std::cerr << "WARNING: Unable to load " << js_path << std::endl;
 		}
+	}
+
+	void UIModule::Exiting(int exitcode)
+	{
+		// send a stop notification - we need to do this before 
+		// stop is called given that the API module is registered (and unregistered)
+		// before our module and it will then be too late
+		SharedBoundMethod api = this->host->GetGlobalObject()->GetNS("API.fire")->ToMethod();
+		api->Call("ti.UI.stop",Value::Undefined);
 	}
 
 	void UIModule::Stop()
