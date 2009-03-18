@@ -16,6 +16,7 @@ namespace ti {
 	class GrowlOSX : public GrowlBinding {
 	protected:
 		TiGrowlDelegate *delegate;
+		void * URLWithAppCString(const char * inputCString);
 
 	public:
 		GrowlOSX(SharedBoundObject global);

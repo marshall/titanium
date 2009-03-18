@@ -17,25 +17,55 @@ using namespace ti;
 namespace ti {
 	GrowlOSX::GrowlOSX(SharedBoundObject global) : GrowlBinding(global) {
 		delegate = [[TiGrowlDelegate alloc] init];
-		[delegate retain];
+		//Delegate will have a retain count of one from the alloc init.
 	}
 
 	GrowlOSX::~GrowlOSX() {
 		[delegate release];
 	}
 
+
+	void * GrowlOSX::URLWithAppCString(const char * inputCString)
+	{
+		if (inputCString == NULL) return nil;
+		NSString * inputString = [NSString stringWithUTF8String:inputCString];
+		NSURL * result = [NSURL URLWithString:inputString];
+		NSString * scheme = [result scheme];
+		
+		BOOL isAppPath = [scheme isEqualToString:@"app"] || [scheme isEqualToString:@"ti"];
+		if ((scheme != nil) && !isAppPath) return result;
+		
+		NSString * resourceSpecifier = [result resourceSpecifier];
+		if (isAppPath || [resourceSpecifier hasPrefix:@"//"]){
+			resourceSpecifier = [resourceSpecifier substringFromIndex:2];
+		}
+		
+		SharedValue iconPathValue = global->CallNS("App.appURLToPath", Value::NewString([resourceSpecifier UTF8String]));
+		if (!(iconPathValue->IsString())) return nil;
+		
+		std::string iconPath = iconPathValue->ToString();
+		const char * iconPathCString = iconPath.c_str();
+		
+		if (iconPathCString == NULL) return nil;
+		return [NSURL fileURLWithPath:[NSString stringWithUTF8String:iconPathCString]];
+	}
+	
+
 	void GrowlOSX::ShowNotification(std::string& title, std::string& description, std::string& iconURL, int notification_delay, SharedBoundMethod callback)
 	{
-		NSData *iconData = [NSData data];
+		NSData *iconData = nil;
 
 		if (iconURL.size() > 0) {
-			SharedValue iconPathValue = global->CallNS("App.appURLToPath", Value::NewString(iconURL));
-			if (iconPathValue->IsString()) {
-				std::string iconPath = iconPathValue->ToString();
-				const char * iconPathCString = iconPath.c_str();
-				if (iconPathCString != NULL) {
-					iconData = [NSData dataWithContentsOfFile:[NSString stringWithUTF8String:iconPathCString]];
-				}
+			const char * iconURLCString = iconURL.c_str();
+			//TODO: This should be more generalized and using centralized methods, but for now,
+
+			NSURL * iconNSURL = (NSURL *)URLWithAppCString(iconURLCString);
+
+			if ([iconNSURL isFileURL]){
+				iconData = [NSData dataWithContentsOfURL:iconNSURL];
+			} else if (iconNSURL != nil){
+				iconData = [NSData dataWithContentsOfURL:iconNSURL];
+				//TODO: Delayed load and fire.
 			}
 		}
 
