@@ -15,6 +15,8 @@
 #include <Foundation/Foundation.h>
 #elif defined(OS_WIN32)
 #include <windows.h>
+#include <Iptypes.h>
+#include <Iphlpapi.h>
 #elif defined(OS_LINUX)
 #include <unistd.h>
 #include <sys/ioctl.h>
@@ -97,7 +99,7 @@ namespace ti
 		IP_ADAPTER_INFO adapter;
 		DWORD dwBufLen = sizeof(adapter);
 		DWORD dwStatus = GetAdaptersInfo(&adapter,&dwBufLen);
-		if (dwStatus != ERROR_SUCCESS) return std::string();
+		if (dwStatus != ERROR_SUCCESS) return;
 		BYTE *MACData = adapter.Address;
 		char buf[MAX_PATH];
 		sprintf_s(buf,MAX_PATH,"%02X:%02X:%02X:%02X:%02X:%02X", MACData[0], MACData[1], MACData[2], MACData[3], MACData[4], MACData[5]);
@@ -151,7 +153,7 @@ namespace ti
 //NOTE: for now we determine this at compile time -- in the future
 //we might want to actually programmatically determine if running on
 //64-bit processor or not...
-#ifdef OS_32	
+#ifdef OS_32
 		this->Set("ostype", Value::NewString("32bit"));
 #else
 		this->Set("ostype", Value::NewString("64bit"));
@@ -173,7 +175,7 @@ namespace ti
 	PlatformBinding::~PlatformBinding()
 	{
 	}
-	
+
 	void PlatformBinding::CreateUUID(const ValueList& args, SharedValue result)
 	{
 		Poco::UUID uuid = Poco::UUIDGenerator::defaultGenerator().createOne();
