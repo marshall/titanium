@@ -29,11 +29,13 @@ namespace ti
 		void AddToOpenWindows(SharedUserWindow);
 		void RemoveFromOpenWindows(SharedUserWindow);
 
+		static UIBinding* GetInstance() { return instance; }
 
 	protected:
 		Host* host;
 
 	private:
+		static UIBinding* instance;
 		std::vector<SharedUserWindow> open_windows;
 		std::vector<SharedUserWindow> all_windows;
 		SharedKList open_window_list;

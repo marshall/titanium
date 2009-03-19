@@ -17,8 +17,12 @@
 
 namespace ti
 {
+	UIBinding* UIBinding::instance = NULL;
+
 	UIBinding::UIBinding(Host *host) : host(host)
 	{
+		instance = this;
+
 		this->SetMethod("createMenu", &UIBinding::_CreateMenu);
 		this->SetMethod("createTrayMenu", &UIBinding::_CreateTrayMenu);
 		this->SetMethod("setMenu", &UIBinding::_SetMenu);

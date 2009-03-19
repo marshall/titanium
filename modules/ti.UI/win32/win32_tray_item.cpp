@@ -115,7 +115,7 @@ void Win32TrayItem::CreateTrayIcon(std::string &iconPath, std::string &caption)
 {
 	SharedUserWindow uw = NULL;
 
-	std::vector<SharedUserWindow>& windows = this->GetOpenWindows();
+	std::vector<SharedUserWindow>& windows = UIBinding::GetInstance()->GetOpenWindows();
 	std::vector<SharedUserWindow>::iterator i = windows.begin();
 	if (i != windows.end())
 	{
