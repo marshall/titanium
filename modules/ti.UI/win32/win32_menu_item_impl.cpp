@@ -184,7 +184,7 @@ namespace ti
 			AppendMenu(hMenu, MF_SEPARATOR, 1, "Separator");
 		}
 
-		std::string label("Web Inspector (broken atm)");
+		std::string label("Show Inspector");
 		AppendMenu(hMenu, MF_STRING, webInspectorMenuItemID, (LPCTSTR) label.c_str());
 	}
 
