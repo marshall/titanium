@@ -58,7 +58,6 @@ namespace ti
 		KR_DUMP_LOCATION
 		if (this->thread!=NULL)
 		{
-			this->thread->tryJoin(100);
 			delete this->thread;
 			this->thread = NULL;
 		}
@@ -324,10 +323,11 @@ namespace ti
 		}
 		this->thread = new Poco::Thread();
 		this->thread->start(&HTTPClientBinding::Run,(void*)this);
-		if (!this->async)
-		{
-			this->thread->tryJoin(1000);
-		}
+		//FIXME: this will lock up UI thread ... need a better mechanism
+		// if (!this->async)
+		// {
+		// 	this->thread->join();
+		// }
 	}
 	void HTTPClientBinding::SendFile(const ValueList& args, SharedValue result)
 	{
@@ -366,10 +366,11 @@ namespace ti
 		}
 		this->thread = new Poco::Thread();
 		this->thread->start(&HTTPClientBinding::Run,(void*)this);
-		if (!this->async)
-		{
-			this->thread->join();
-		}
+		//FIXME: this will lock up UI thread ... need a better mechanism
+		// if (!this->async)
+		// {
+		// 	this->thread->join();
+		// }
 	}
 	void HTTPClientBinding::SendDir(const ValueList& args, SharedValue result)
 	{
@@ -405,10 +406,11 @@ namespace ti
 		}
 		this->thread = new Poco::Thread();
 		this->thread->start(&HTTPClientBinding::Run,(void*)this);
-		if (!this->async)
-		{
-			this->thread->join();
-		}
+		//FIXME: this will lock up UI thread ... need a better mechanism
+		// if (!this->async)
+		// {
+		// 	this->thread->join();
+		// }
 	}
 	void HTTPClientBinding::Abort(const ValueList& args, SharedValue result)
 	{
