@@ -1094,6 +1094,14 @@ $MQL('l:create.package.request',function(msg)
 		var ticket = null;
 		xhr.onreadystatechange = function()
 		{
+			try
+			{
+				
+			}
+			catch(e)
+			{
+				alert('exception caught on request ' + e)
+			}
 			// 4 means that the POST has completed
 			if (this.readyState == 4)
 			{
@@ -1105,29 +1113,25 @@ $MQL('l:create.package.request',function(msg)
 				}
 				else
 				{
+					setTimeout(function()
+					{
+						$('#packaging_none').css('display','none')
+						$('#packaging_listing').css('display','none');
+						$('#packaging_error').css('display','block');		
+						$('#packaging_in_progress').css('display','none');
+						
+					},500);
+					
+					TiDeveloper.Projects.packagingInProgress[project.guid] = false;
 					destDir.deleteDirectory(true)
-					$('#packaging_none').css('display','none')
-					$('#packaging_listing').css('display','none');
-					$('#packaging_error').css('display','block');		
-					$('#packaging_in_progress').css('display','none');
 		
 				}
 			}
 		} ;
 		
 		xhr.open("POST",'http://publisher.titaniumapp.com/api/publish');
-		xhr.sendDir(project.dir);    
+		xhr.sendDir(destDir);    
 
-		//TODO REMOVE
-		// setTimeout(function()
-		// {
-		// 	$('#packaging_none').css('display','none')
-		// 	$('#packaging_listing').css('display','block');
-		// 	$('#packaging_error').css('display','none');		
-		// 	$('#packaging_in_progress').css('display','none');
-		// 	
-		// },10000)
-		
 		TiDeveloper.Projects.packagingInProgress[project.guid] = true;
 		$('#packaging_none').css('display','none')
 		$('#packaging_listing').css('display','none');
