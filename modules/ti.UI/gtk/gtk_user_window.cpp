@@ -459,8 +459,7 @@ static void window_object_cleared_cb(
 		BoundObject* delegate_ui_api = new DelegateStaticBoundObject(ui_api);
 
 		// Place currentWindow in the delegate.
-		SharedBoundObject* shared_user_window = new SharedBoundObject(user_window);
-		SharedValue user_window_val = Value::NewObject(*shared_user_window);
+		SharedValue user_window_val = Value::NewObject(user_window->GetSharedPtr());
 		delegate_ui_api->Set("currentWindow", user_window_val);
 
 		// Place currentWindow.createWindow in the delegate.

@@ -206,11 +206,14 @@ namespace ti
 	}
 	void OSXUserWindow::SetWidth(double width)
 	{
+		if (width > config->GetMaxWidth())
+			width = config->GetMaxWidth();
+		if (width < config->GetMinWidth())
+			width = config->GetMinWidth();
 		config->SetWidth(width);
+
 		// Compensate for frame size
 		NSRect frame = [window frame];
-		int diff = frame.size.width - [[window contentView] frame].size.width;
-		printf("width diff %i\n", diff);
 		width += frame.size.width - [[window contentView] frame].size.width;
 		BOOL display = config->IsVisible();
 		frame.size.width = width;
@@ -222,12 +225,14 @@ namespace ti
 	}
 	void OSXUserWindow::SetHeight(double height)
 	{
+		if (height > config->GetMaxHeight())
+			height = config->GetMaxHeight();
+		if (height < config->GetMinHeight())
+			height = config->GetMinHeight();
 		config->SetHeight(height);
 
 		// Compensate for frame size
 		NSRect frame = [window frame];
-		int diff = frame.size.height - [[window contentView] frame].size.height;
-		printf("height diff %i\n", diff);
 		height += frame.size.height - [[window contentView] frame].size.height;
 		BOOL display = config->IsVisible();
 		double originalHeight = NSHeight(frame);
