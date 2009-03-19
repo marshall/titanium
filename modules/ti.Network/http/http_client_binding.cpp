@@ -55,8 +55,10 @@ namespace ti
 	}
 	HTTPClientBinding::~HTTPClientBinding()
 	{
+		KR_DUMP_LOCATION
 		if (this->thread!=NULL)
 		{
+			this->thread->tryJoin(100);
 			delete this->thread;
 			this->thread = NULL;
 		}
@@ -78,6 +80,7 @@ namespace ti
 #endif
 		std::ostringstream ostr;
 		int max_redirects = 5;
+		int status;
 		std::string url = binding->url;
 		for (int x=0;x<max_redirects;x++)
 		{
@@ -195,14 +198,15 @@ namespace ti
 			Poco::Net::HTTPResponse res;
 			std::istream& rs = session.receiveResponse(res);
 			int total = res.getContentLength();
+			status = res.getStatus();
 #ifdef DEBUG
 			std::cout << "HTTPClientBinding:: response length received = " << total << " - ";
-			std::cout << res.getStatus() << " " << res.getReason() << std::endl;
+			std::cout << status << " " << res.getReason() << std::endl;
 #endif
-			binding->Set("status",Value::NewInt(res.getStatus()));
+			binding->Set("status",Value::NewInt(status));
 			binding->Set("statusText",Value::NewString(res.getReason().c_str()));
 
-			if (res.getStatus() == 301 || res.getStatus() == 302)
+			if (status == 301 || status == 302)
 			{
 				if (!res.has("Location"))
 				{
@@ -229,6 +233,8 @@ namespace ti
 				streamer = sv->ToMethod()->Get("apply")->ToMethod();
 			}
 			
+			std::cout << "connected = " << binding->Get("connected")->ToBool() << std::endl;
+			
 			while(!rs.eof() && binding->Get("connected")->ToBool())
 			{
 				try
@@ -252,7 +258,7 @@ namespace ti
 							list->Append(Value::NewObject(new Blob(buf,c))); // buffer
 							list->Append(Value::NewInt(c)); // buffer length
 						
-							binding->host->InvokeMethodOnMainThread(streamer,args);
+							binding->host->InvokeMethodOnMainThread(streamer,args,false);
 						}
 						else
 						{
@@ -276,6 +282,12 @@ namespace ti
 		std::string data = ostr.str();
 		if (!data.empty())
 		{
+#ifdef DEBUG
+			if (status > 200)
+			{
+				std::cout << "RECEIVED = " << data << std::endl;
+			}
+#endif
 			binding->Set("responseText",Value::NewString(data.c_str()));
 		}
 		binding->Set("connected",Value::NewBool(false));
@@ -314,7 +326,7 @@ namespace ti
 		this->thread->start(&HTTPClientBinding::Run,(void*)this);
 		if (!this->async)
 		{
-			this->thread->join();
+			this->thread->tryJoin(1000);
 		}
 	}
 	void HTTPClientBinding::SendFile(const ValueList& args, SharedValue result)
@@ -456,7 +468,7 @@ namespace ti
 				SharedBoundMethod m = v->ToMethod()->Get("call")->ToMethod();
 				ValueList args;
 				args.push_back(this->self);
-				this->host->InvokeMethodOnMainThread(m,args);
+				this->host->InvokeMethodOnMainThread(m,args,false);
 			}
 			catch (std::exception &ex)
 			{

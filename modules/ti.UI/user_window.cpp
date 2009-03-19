@@ -876,7 +876,7 @@ void UserWindow::FireEvent(UserWindowEvent windowEvent)
 		SharedBoundMethod callback = (*it).callback;
 		try
 		{
-			host->InvokeMethodOnMainThread(callback,args);
+			host->InvokeMethodOnMainThread(callback,args,false);
 		}
 		catch(std::exception &e)
 		{

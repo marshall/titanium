@@ -62,7 +62,7 @@ namespace ti
 
 			try
 			{
-				binding->host->InvokeMethodOnMainThread(binding->callback,args);
+				binding->host->InvokeMethodOnMainThread(binding->callback,args,false);
 			}
 			catch(std::exception &e)
 			{

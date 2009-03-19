@@ -60,7 +60,17 @@ namespace ti
 	}
 	void AppBinding::GetGUID(const ValueList& args, SharedValue result)
 	{
-		//FIXME: implement this
+		std::string name = "KR_APP_GUID";
+		
+		if (Poco::Environment::has(name))
+		{
+			std::string value = Poco::Environment::get(name);
+			result->SetString(value);
+		}
+		else
+		{
+			result->SetNull();
+		}
 	}
 	void AppBinding::Exit(const ValueList& args, SharedValue result)
 	{

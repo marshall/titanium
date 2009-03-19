@@ -5,7 +5,7 @@
 {
 	var url = "http://localhost/~jhaynie/dist/services/app-track";
 	var sid = Titanium.Platform.createUUID();
-	var appid = Titanium.App.getID();
+	var guid = Titanium.App.getGUID();
 	
 	function send(qsv,async)
 	{
@@ -14,14 +14,24 @@
 			async = (typeof async=='undefined') ? true : async;
 			qsv.mid = Titanium.Platform.id;
 			qsv.sid = sid;
-			qsv.guid = appid;
+			qsv.guid = guid;
+			
 			var qs = '';
 			for (var p in qsv)
 			{
 				qs+=p+'='+Titanium.Network.encodeURIComponent(String(qsv[p]))+'&';
 			}
+			Titanium.API.debug(qs);
 			// this is asynchronous
 			var xhr = Titanium.Network.createHTTPClient();
+			xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+			xhr.onreadystatechange = function()
+			{
+				if (this.readyState==4)
+				{
+					Titanium.API.debug(this.responseText);
+				}
+			}
 			xhr.open('POST',url,async);
 			xhr.send(qs);
 		}
@@ -38,7 +48,7 @@
 	
 	Titanium.API.register("ti.UI.stop",function(name)
 	{
-		send({'event':'ti.event'},false);
+		send({'event':'ti.end'},false);
 	});
 	
 	Titanium.API.register("ti.UI.window.page.init",function(name,event)
@@ -48,7 +58,6 @@
 			var user_window = event.window;
 			if (user_window.track_registered===true)
 			{
-				Titanium.API.debug("Already registered track");
 				return;
 			}
 			user_window.track_registered = true;
