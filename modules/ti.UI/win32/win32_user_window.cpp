@@ -6,9 +6,8 @@
 
 #define _WINSOCKAPI_
 #include <kroll/base.h>
-#include <CoreFoundation/CFURL.h>
-#include <CoreFoundation/CFBundle.h>
 
+#include <winsock2.h>
 #include "win32_user_window.h"
 #include "webkit_frame_load_delegate.h"
 #include "webkit_ui_delegate.h"
@@ -177,12 +176,18 @@ Win32UserWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	return 0;
 }
 
-Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config) :
-	UserWindow(host, config), script_evaluator(host), menuBarHandle(NULL),
-			menuInUse(NULL), menu(NULL), contextMenuHandle(NULL), initial_icon(
-					NULL), web_inspector(NULL) {
+Win32UserWindow::Win32UserWindow(SharedUIBinding binding, WindowConfig* config, SharedUserWindow parent) :
+	UserWindow(binding, config, parent),
+	script_evaluator(binding->GetHost()),
+	menuBarHandle(NULL),
+	menuInUse(NULL),
+	menu(NULL),
+	contextMenuHandle(NULL),
+	initial_icon(NULL),
+	web_inspector(NULL)
+{
 	static bool initialized = false;
-	win32_host = static_cast<kroll::Win32Host*> (host);
+	win32_host = static_cast<kroll::Win32Host*>(binding->GetHost());
 	if (!initialized) {
 		INITCOMMONCONTROLSEX InitCtrlEx;
 
@@ -382,10 +387,6 @@ Win32UserWindow::~Win32UserWindow() {
 		web_frame->Release();
 }
 
-UserWindow* Win32UserWindow::WindowFactory(Host *host, WindowConfig* config) {
-	return new Win32UserWindow(host, config);
-}
-
 std::string Win32UserWindow::GetTransparencyColor()
 {
 	char hexColor[7];
@@ -433,7 +434,7 @@ void Win32UserWindow::Open() {
 
 	ResizeSubViews();
 
-	UserWindow::Open(this);
+	UserWindow::Open();
 	SetURL(this->config->GetURL());
 	if (!this->requires_display) {
 		ShowWindow(window_handle, SW_SHOW);

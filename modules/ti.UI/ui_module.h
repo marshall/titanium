@@ -13,6 +13,10 @@ namespace ti {
 	class WindowBinding;
 	class MenuItem;
 	class TrayItem;
+	class UserWindow;
+
+	typedef SharedPtr<UserWindow> SharedUserWindow;
+	typedef SharedPtr<UIBinding> SharedUIBinding;
 }
 
 #ifdef OS_WIN32
@@ -98,6 +102,6 @@ namespace ti {
 		DISALLOW_EVIL_CONSTRUCTORS(UIModule);
 
 	};
-
 }
+
 #endif

@@ -44,24 +44,20 @@ using namespace ti;
 	} \
 }
 
-std::vector<UserWindow *> UserWindow::windows;
-std::map<UserWindow*, std::vector<UserWindow*> > UserWindow::windowsMap;
-std::map<UserWindow*, SharedBoundObject> UserWindow::boundWindows;
-SharedBoundObject UserWindow::uiBinding = SharedBoundObject(NULL);
-
 // Initialize our constants here
 int UserWindow::CENTERED = WindowConfig::DEFAULT_POSITION;
 
-UserWindow::UserWindow(kroll::Host *host, WindowConfig *config) :
-	kroll::StaticBoundObject(), parent(NULL)
+UserWindow::UserWindow(SharedUIBinding binding, WindowConfig *config, SharedUserWindow parent) :
+	kroll::StaticBoundObject(),
+	binding(binding),
+	host(binding->GetHost()),
+	config(config),
+	parent(parent),
+	next_listener_id(0)
 {
-	this->host = host;
-	this->config = config;
-	this->next_listener_id = 0;
-	this->api = this->host->GetGlobalObject()->GetNS("API.fire")->ToMethod();
+	this->shared_this = this;
 
 	this->Set("CENTERED", Value::NewInt(UserWindow::CENTERED));
-
 	this->SetMethod("hide", &UserWindow::_Hide);
 	this->SetMethod("show", &UserWindow::_Show);
 	this->SetMethod("focus", &UserWindow::_Focus);
@@ -116,110 +112,80 @@ UserWindow::UserWindow(kroll::Host *host, WindowConfig *config) :
 	this->SetMethod("getIcon", &UserWindow::_GetIcon);
 	this->SetMethod("setTopMost", &UserWindow::_SetTopMost);
 	this->SetMethod("isTopMost", &UserWindow::_IsTopMost);
-
 	this->SetMethod("createWindow", &UserWindow::_CreateWindow);
 	this->SetMethod("openFiles", &UserWindow::_OpenFiles);
 	this->SetMethod("getParent", &UserWindow::_GetParent);
-
 	this->SetMethod("addEventListener", &UserWindow::_AddEventListener);
 	this->SetMethod("removeEventListener", &UserWindow::_RemoveEventListener);
+
+	this->api = host->GetGlobalObject()->GetNS("API.fire")->ToMethod();
+	this->FireEvent(CREATE);
 }
 
-void UserWindow::Open(UserWindow *window)
+UserWindow::~UserWindow()
 {
-	// Don't do any refcounting here,
-	// since we are holding onto our copy
-	windows.push_back(window);
+}
 
-	SharedBoundObject w = boundWindows[window];
-	SharedBoundObject event = new StaticBoundObject();
-	event->Set("window",Value::NewObject(w));
-	window->api->Call("ti.UI.window.open",Value::NewObject(event));
+SharedUserWindow UserWindow::GetSharedPtr()
+{
+	return this->shared_this;
+}
 
-	SharedValue window_list_value = window->uiBinding->Get("windows");
-	if (!window_list_value->IsList())
-	{
-		SharedBoundList list = new StaticBoundList();
-		list->Append(Value::NewObject(w));
-		window->uiBinding->Set("windows",Value::NewObject(list));
-	}
-	else
-	{
-		SharedBoundList list = window_list_value->ToList();
-		list->Append(Value::NewObject(w));
-	}
+Host* UserWindow::GetHost()
+{
+	return this->host;
+}
+
+SharedUIBinding UserWindow::GetBinding()
+{
+	return this->binding;
+}
+
+void UserWindow::Open()
+{
+	this->FireEvent(OPEN);
+
+	// We are now in the UI binding's open window list
+	this->binding->AddToOpenWindows(this->shared_this);
+
+	// Tell the parent window that we are open for business
+	if (!parent.isNull())
+		parent->AddChild(this->shared_this);
 }
 
 void UserWindow::Close()
 {
-	// remove the window from the list array
-	SharedValue window_list_value = this->uiBinding->Get("windows");
-	if (window_list_value->IsList())
+	SharedUserWindow shthis = this->shared_this;
+	this->FireEvent(CLOSE);
+
+	// Close all children and cleanup
+	std::vector<SharedUserWindow>::iterator iter;
+	for (iter = this->children.begin(); iter != this->children.end(); iter++)
 	{
-		SharedBoundList window_list = window_list_value->ToList();
-		for (unsigned int c=0; c< window_list->Size(); c++)
-		{
-			SharedValue v = window_list->At(c);
-			SharedBoundObject bo = v->ToObject();
-			if (bo.get() == this)
-			{
-				window_list->Remove(c);
-				break;
-			}
-		}
-	}
-
-	// fire event
-	SharedBoundObject w = boundWindows[this];
-	SharedBoundObject event = new StaticBoundObject();
-	event->Set("window",Value::NewObject(w));
-	this->api->Call("ti.UI.window.close",Value::NewObject(event));
-
-	// remove
-	std::map<UserWindow*,SharedBoundObject>::iterator bwi = boundWindows.find(this);
-	boundWindows.erase(bwi);
-
-	// check to see if we have a parent, and if so,
-	// remove us from the parent list
-	UserWindow *parent = this->GetParent();
-	if (parent != NULL)
-	{
-		UserWindow::RemoveChild(parent, this);
-
-		// after we close a child, focus it's parent
-		parent->Focus();
-	}
-
-	// see if we have any open child windows
-	std::vector<UserWindow*> children = windowsMap[this];
-	std::vector<UserWindow*>::iterator iter;
-	for (iter = children.begin(); iter != children.end(); iter++)
-	{
-		UserWindow *child = (*iter);
-		child->Close();
+		(*iter)->Close();
 	}
 	children.clear();
-	windowsMap.erase(this);
 
-	// delete from vector
-	iter = windows.begin();
-	while (iter != windows.end())
+	// Tell our parent that we are now closed
+	if (!this->parent.isNull())
 	{
-		if ((*iter) == this)
-			iter = windows.erase(iter);
-		else
-			iter++;
+		this->parent->RemoveChild(this->shared_this);
+		parent->Focus(); // Focus the parent
 	}
 
-	// when we have no more windows, we exit ...
+	// Tell the UIBinding that we are closed
+	this->binding->RemoveFromOpenWindows(shthis);
+
+	// This should be the last reference to this window
+	// after all external references are destroyed.
+	this->shared_this = NULL;
+
+	// When we have no more open windows, we exit...
+	std::vector<SharedUserWindow> windows = this->binding->GetOpenWindows();
 	if (windows.size() == 0)
-	{
 		this->host->Exit(0);
-	}
 	else
-	{
 		windows.at(0)->Focus();
-	}
 }
 
 
@@ -523,7 +489,7 @@ void UserWindow::_SetMenu(const kroll::ValueList& args, kroll::SharedValue resul
 void UserWindow::_GetMenu(const kroll::ValueList& args, kroll::SharedValue result)
 {
 	SharedBoundList menu = this->GetMenu();
-	if (menu.get() != NULL)
+	if (!menu.isNull())
 	{
 		result->SetList(menu);
 	}
@@ -546,7 +512,7 @@ void UserWindow::_SetContextMenu(const kroll::ValueList& args, kroll::SharedValu
 void UserWindow::_GetContextMenu(const kroll::ValueList& args, kroll::SharedValue result)
 {
 	SharedBoundList menu = this->GetContextMenu();
-	if (menu.get() != NULL)
+	if (!menu.isNull())
 	{
 		result->SetList(menu);
 	}
@@ -574,13 +540,14 @@ void UserWindow::_GetIcon(const kroll::ValueList& args, kroll::SharedValue resul
 
 void UserWindow::_GetParent(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	if (this->parent == NULL)
+	if (this->parent.isNull())
 	{
 		result->SetNull();
-		return;
 	}
-	SharedBoundObject o = this->GetParent();
-	result->SetObject(o);
+	else
+	{
+		result->SetObject(this->parent);
+	}
 }
 
 void UserWindow::_CreateWindow(const ValueList& args, SharedValue result)
@@ -609,7 +576,8 @@ void UserWindow::_CreateWindow(const ValueList& args, SharedValue result)
 		config = new WindowConfig();
 	}
 
-	result->SetObject(UserWindow::CreateWindow(host,this,config));
+	SharedUserWindow new_window = this->binding->CreateWindow(config, shared_this);
+	result->SetObject(new_window);
 }
 
 void UserWindow::UpdateWindowForURL(std::string url)
@@ -635,68 +603,6 @@ void UserWindow::UpdateWindowForURL(std::string url)
 	this->SetMinimizable(config->IsMinimizable());
 	this->SetMaximizable(config->IsMaximizable());
 	this->SetCloseable(config->IsCloseable());
-}
-
-SharedBoundObject UserWindow::CreateWindow(Host *host, UserWindow *parent, WindowConfig *config, bool initial)
-{
-	if (initial)
-	{
-#ifdef OS_WIN32
-		UserWindow::uiBinding = new Win32UIBinding(host);
-#elif OS_OSX
-		UserWindow::uiBinding = new OSXUIBinding(host);
-#elif OS_LINUX
-		UserWindow::uiBinding = new GtkUIBinding(host);
-#endif
-	}
-
-#ifdef OS_WIN32
-	UserWindow* window = Win32UserWindow::WindowFactory(host, config);
-#elif OS_OSX
-	SharedPtr<OSXUIBinding> binding = uiBinding.cast<OSXUIBinding>();
-	UserWindow* window = OSXUserWindow::WindowFactory(host, config, binding);
-	if (initial)
-	{
-		OSXUserWindow* osx_window = (OSXUserWindow*)window;
-		NativeWindow* nw = osx_window->GetNative();
-		[nw setInitialWindow:YES];
-	}
-#elif OS_LINUX
-	UserWindow* window = GtkUserWindow::WindowFactory(host, config);
-#endif
-
-	window->SetTopMost(config->IsTopMost());
-
-	// Track parent/child relationship.
-	window->SetParent(parent);
-
-	// track the bound references
-	SharedBoundObject bound_window = window;
-	boundWindows[window] = bound_window;
-
-	// set the main scope variables
-	if (initial)
-	{
-		SharedBoundObject global = host->GetGlobalObject();
-		SharedValue ui_binding_val = Value::NewObject(uiBinding);
-		global->Set("UI", ui_binding_val);
-
-		SharedValue main_window_val = Value::NewObject(bound_window);
-		global->SetNS("UI.mainWindow", main_window_val);
-	}
-
-	// fire the event
-	SharedBoundObject event = new StaticBoundObject();
-	event->Set("window",Value::NewObject(bound_window));
-	window->api->Call("ti.UI.window.create",Value::NewObject(event));
-
-	// do this after create event
-	if (initial)
-	{
-		window->Open();
-	}
-
-	return bound_window;
 }
 
 void UserWindow::_OpenFiles(const ValueList& args, SharedValue result)
@@ -754,12 +660,9 @@ void UserWindow::_OpenFiles(const ValueList& args, SharedValue result)
 
 void UserWindow::_AddEventListener(const ValueList& args, SharedValue result)
 {
-	if (args.size()!=1 || !args.at(0)->IsMethod())
-	{
-		throw ValueException::FromString("invalid argument");
-	}
-	SharedBoundMethod target = args.at(0)->ToMethod();
+	ArgUtils::VerifyArgsException("addEventListener", args, "m");
 
+	SharedBoundMethod target = args.at(0)->ToMethod();
 	Listener listener = Listener();
 	listener.id = this->next_listener_id++;
 	listener.callback = target;
@@ -790,14 +693,10 @@ void UserWindow::_RemoveEventListener(const ValueList& args, SharedValue result)
 	result->SetBool(false);
 }
 
-void UserWindow::FireEvent(UserWindowEvent windowEvent)
+void UserWindow::FireEvent(UserWindowEvent event_type, SharedKObject event)
 {
-	// optimize
-	if (this->listeners.size()==0) return;
-
 	std::string name;
-
-	switch(windowEvent)
+	switch (event_type)
 	{
 		case FOCUSED:
 		{
@@ -809,9 +708,19 @@ void UserWindow::FireEvent(UserWindowEvent windowEvent)
 			name = "unfocused";
 			break;
 		}
+		case OPEN:
+		{
+			name = "open";
+			break;
+		}
 		case OPENED:
 		{
 			name = "opened";
+			break;
+		}
+		case CLOSE:
+		{
+			name = "close";
 			break;
 		}
 		case CLOSED:
@@ -859,14 +768,35 @@ void UserWindow::FireEvent(UserWindowEvent windowEvent)
 			name = "moved";
 			break;
 		}
+		case INIT:
+		{
+			name = "page.init";
+			break;
+		}
+		case LOAD:
+		{
+			name = "page.load";
+			break;
+		}
+		case CREATE:
+		{
+			name = "window.create";
+			break;
+		}
 	}
 
 	std::string en("ti.UI.window.");
 	en+=name;
-	SharedBoundObject bound_window = boundWindows[this];
-	SharedBoundObject event = new StaticBoundObject();
-	event->Set("window",Value::NewObject(bound_window));
-	this->api->Call(en.c_str(),Value::NewObject(event));
+
+	if (event.isNull())
+		event = new StaticBoundObject();
+
+	event->Set("window", Value::NewObject(this->shared_this));
+	this->api->Call(en.c_str(), Value::NewObject(event));
+
+	// If we don't have listeners here, we can just bail.
+	if (this->listeners.size() == 0)
+		return;
 
 	ValueList args;
 	args.push_back(Value::NewString(name));
@@ -876,7 +806,7 @@ void UserWindow::FireEvent(UserWindowEvent windowEvent)
 		SharedBoundMethod callback = (*it).callback;
 		try
 		{
-			host->InvokeMethodOnMainThread(callback,args);
+			this->host->InvokeMethodOnMainThread(callback,args);
 		}
 		catch(std::exception &e)
 		{
@@ -886,72 +816,39 @@ void UserWindow::FireEvent(UserWindowEvent windowEvent)
 	}
 }
 
-std::vector<UserWindow*>& UserWindow::GetWindows()
-{
-	return UserWindow::windows;
-}
-
-void UserWindow::SetParent(UserWindow *parent)
-{
-	this->parent = parent;
-	if (parent)
-	{
-		parent->AddChild(this);
-	}
-}
-
-UserWindow* UserWindow::GetParent()
+SharedUserWindow UserWindow::GetParent()
 {
 	return this->parent;
 }
 
-void UserWindow::AddChild(UserWindow *window)
+void UserWindow::AddChild(SharedUserWindow child)
 {
-	UserWindow::AddChild(this, window);
+	this->children.push_back(child);
 }
 
-void UserWindow::RemoveChild(UserWindow *window)
+void UserWindow::RemoveChild(SharedUserWindow child)
 {
-	UserWindow::RemoveChild(this,window);
-}
-
-void UserWindow::AddChild(UserWindow *parent, UserWindow *child)
-{
-	std::vector<UserWindow*> children = windowsMap[parent];
-	children.push_back(child);
-	windowsMap[parent]=children;
-}
-
-void UserWindow::RemoveChild(UserWindow *parent, UserWindow *child)
-{
-	std::vector<UserWindow*> children = windowsMap[parent];
-	std::vector<UserWindow*>::iterator iter;
-	for (iter = children.begin(); iter != children.end(); iter++) {
-		if ((*iter) == child) {
-			break;
-		}
+	std::vector<SharedUserWindow>::iterator iter = this->children.begin();
+	while (iter != this->children.end())
+	{
+		if ((*iter).get() == child.get())
+			iter = children.erase(iter);
+		else
+			iter++;
 	}
-	if (iter != children.end()) {
-		children.erase(iter);
-	}
-	windowsMap[parent] = children;
 }
 
 void UserWindow::ContextBound(SharedBoundObject global_bound_object)
 {
-	SharedBoundObject w = boundWindows[this];
 	SharedBoundObject event = new StaticBoundObject();
-	event->Set("window",Value::NewObject(w));
-	event->Set("scope",Value::NewObject(global_bound_object));
-	this->api->Call("ti.UI.window.page.init",Value::NewObject(event));
+	event->Set("scope", Value::NewObject(global_bound_object));
+	this->FireEvent(INIT, event);
 }
 
 void UserWindow::PageLoaded(SharedBoundObject global_bound_object, std::string &url)
 {
-	SharedBoundObject w = boundWindows[this];
 	SharedBoundObject event = new StaticBoundObject();
-	event->Set("window",Value::NewObject(w));
-	event->Set("scope",Value::NewObject(global_bound_object));
-	event->Set("url",Value::NewString(url.c_str()));
-	this->api->Call("ti.UI.window.page.load",Value::NewObject(event));
+	event->Set("scope", Value::NewObject(global_bound_object));
+	event->Set("url", Value::NewString(url.c_str()));
+	this->FireEvent(LOAD, event);
 }

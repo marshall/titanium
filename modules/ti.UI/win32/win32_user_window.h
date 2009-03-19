@@ -78,9 +78,8 @@ public:
 	static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 	static Win32UserWindow* FromWindow(HWND hWnd);
 
-	Win32UserWindow(kroll::Host *host, WindowConfig *config);
+	Win32UserWindow(SharedUIBinding binding, WindowConfig* config, SharedUserWindow parent);
 	virtual ~Win32UserWindow();
-	static UserWindow* WindowFactory(Host*, WindowConfig*);
 
 	void OpenFiles(
 		SharedBoundMethod callback,

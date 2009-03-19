@@ -23,7 +23,6 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
-#include <linux/if.h>
 #include <sstream>
 #endif
 
@@ -112,7 +111,7 @@ namespace ti
 		struct ifconf ifc;
 		char buf[1024];
 		u_char addr[6] = {'\0','\0','\0','\0','\0','\0'};
-		int s, i;
+		int s,a;
 
 		s = socket(AF_INET, SOCK_DGRAM, 0);
 		if (s != -1)
@@ -122,7 +121,7 @@ namespace ti
 			ioctl(s, SIOCGIFCONF, &ifc);
 			struct ifreq* IFR = ifc.ifc_req;
 			bool success = false;
-			for (i = ifc.ifc_len / sizeof(struct ifreq); --i >= 0; IFR++) {
+			for (a = ifc.ifc_len / sizeof(struct ifreq); --a >= 0; IFR++) {
 				strcpy(ifr.ifr_name, IFR->ifr_name);
 				if (ioctl(s, SIOCGIFFLAGS, &ifr) == 0
 					 && (!(ifr.ifr_flags & IFF_LOOPBACK))
