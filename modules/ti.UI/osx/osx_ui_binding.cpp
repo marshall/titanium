@@ -47,6 +47,22 @@ namespace ti
 		[savedDockView release];
 	}
 
+	SharedUserWindow OSXUIBinding::CreateWindow(
+		WindowConfig* config,
+		SharedUserWindow parent)
+	{
+		UserWindow* w = new OSXUserWindow(this, config, parent);
+		return w->GetSharedPtr();
+	}
+
+	void OSXUIBinding::ErrorDialog(std::string msg)
+	{
+		NSApplicationLoad();
+		if (!msg.empty())
+			 NSRunCriticalAlertPanel (@"Application Error", [NSString stringWithUTF8String:msg.c_str()],nil,nil,nil);
+		UIBinding::ErrorDialog(msg);
+	}
+
 	SharedPtr<MenuItem> OSXUIBinding::CreateMenu(bool trayMenu)
 	{
 		return new OSXMenuItem();

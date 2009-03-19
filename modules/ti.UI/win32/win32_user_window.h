@@ -18,6 +18,7 @@
 
 #include "../ui_module.h"
 #include <kroll/kroll.h>
+#include <kroll/file_utils.h>
 #include "../../../kroll/host/win32/host.h"
 #include "../user_window.h"
 #include "script_evaluator.h"
@@ -77,9 +78,8 @@ public:
 	static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 	static Win32UserWindow* FromWindow(HWND hWnd);
 
-	Win32UserWindow(kroll::Host *host, WindowConfig *config);
+	Win32UserWindow(SharedUIBinding binding, WindowConfig* config, SharedUserWindow parent);
 	virtual ~Win32UserWindow();
-	static UserWindow* WindowFactory(Host*, WindowConfig*);
 
 	void OpenFiles(
 		SharedBoundMethod callback,

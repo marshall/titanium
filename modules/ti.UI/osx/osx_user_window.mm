@@ -1,16 +1,15 @@
-/**
- * Appcelerator Titanium - licensed under the Apache Public License 2
+/** * Appcelerator Titanium - licensed under the Apache Public License 2
  * see LICENSE in the root folder for details on the license.
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
-#import "osx_user_window.h"
-#import "osx_ui_binding.h"
+#import "../ui_module.h"
 #import "osx_menu_item.h"
 
 #define STUB() printf("Method is still a stub, %s:%i\n", __FILE__, __LINE__)
 
 namespace ti
 {
+	bool OSXUserWindow::initial = false;
 	static unsigned int toWindowMask(WindowConfig *config)
 	{
 		unsigned int mask = 0;
@@ -41,7 +40,12 @@ namespace ti
 		return mask;
 	}
 
-	OSXUserWindow::OSXUserWindow(Host *host, WindowConfig *config, SharedPtr<OSXUIBinding> binding) : UserWindow(host,config), window(NULL), opened(false), closed(false), binding(binding)
+	OSXUserWindow::OSXUserWindow(SharedUIBinding binding, WindowConfig* config, SharedUserWindow parent) :
+		UserWindow(binding, config, parent),
+		window(NULL),
+		opened(false),
+		closed(false),
+		osx_binding(binding.cast<OSXUIBinding>())
 	{
 		unsigned int mask = toWindowMask(config);
 
@@ -68,7 +72,15 @@ namespace ti
 			this->SetWidth(config->GetWidth());
 		}
 
-		[window setupDecorations:config host:host userwindow:this];
+		[window setupDecorations:config host:binding->GetHost() userwindow:this];
+		if (OSXUserWindow::initial)
+		{
+			OSXUserWindow::initial = false;
+			[window setInitialWindow:YES];
+		}
+
+		this->SetTopMost(config->IsTopMost());
+
 	}
 	OSXUserWindow::~OSXUserWindow()
 	{
@@ -78,10 +90,6 @@ namespace ti
 		{
 			UserWindow::Close();
 		}
-	}
-	UserWindow* OSXUserWindow::WindowFactory(Host* host, WindowConfig* config, SharedPtr<OSXUIBinding> binding)
-	{
-		return new OSXUserWindow(host, config, binding);
 	}
 	void OSXUserWindow::Hide()
 	{
@@ -137,7 +145,7 @@ namespace ti
 	{
 		opened = true;
 		[window open];
-		UserWindow::Open(this);
+		UserWindow::Open();
 	}
 	void OSXUserWindow::Close()
 	{
@@ -198,11 +206,14 @@ namespace ti
 	}
 	void OSXUserWindow::SetWidth(double width)
 	{
+		if (width > config->GetMaxWidth())
+			width = config->GetMaxWidth();
+		if (width < config->GetMinWidth())
+			width = config->GetMinWidth();
 		config->SetWidth(width);
+
 		// Compensate for frame size
 		NSRect frame = [window frame];
-		int diff = frame.size.width - [[window contentView] frame].size.width;
-		printf("width diff %i\n", diff);
 		width += frame.size.width - [[window contentView] frame].size.width;
 		BOOL display = config->IsVisible();
 		frame.size.width = width;
@@ -214,12 +225,14 @@ namespace ti
 	}
 	void OSXUserWindow::SetHeight(double height)
 	{
+		if (height > config->GetMaxHeight())
+			height = config->GetMaxHeight();
+		if (height < config->GetMinHeight())
+			height = config->GetMinHeight();
 		config->SetHeight(height);
 
 		// Compensate for frame size
 		NSRect frame = [window frame];
-		int diff = frame.size.height - [[window contentView] frame].size.height;
-		printf("height diff %i\n", diff);
 		height += frame.size.height - [[window contentView] frame].size.height;
 		BOOL display = config->IsVisible();
 		double originalHeight = NSHeight(frame);
@@ -400,7 +413,7 @@ namespace ti
 		if (focused)
 		{
 			SharedPtr<OSXMenuItem> m = menu.cast<OSXMenuItem>();
-			this->binding->WindowFocused(this,m.get());
+			this->osx_binding->WindowFocused(this,m.get());
 		}
 	}
 	
@@ -416,7 +429,7 @@ namespace ti
 		if (!menu.isNull())
 		{
 			SharedPtr<OSXMenuItem> m = menu.cast<OSXMenuItem>();
-			this->binding->WindowFocused(this,m.get());
+			this->osx_binding->WindowFocused(this,m.get());
 		}
 	}
 
@@ -426,7 +439,7 @@ namespace ti
 		if (!menu.isNull())
 		{
 			SharedPtr<OSXMenuItem> m = menu.cast<OSXMenuItem>();
-			this->binding->WindowUnfocused(this,m.get());
+			this->osx_binding->WindowUnfocused(this,m.get());
 		}
 	}
 	

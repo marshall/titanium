@@ -360,11 +360,10 @@
 	SharedBoundObject global_tibo = host->GetGlobalObject();
 	BoundObject* ti_object = new DelegateStaticBoundObject(global_tibo);
 	SharedBoundObject shared_ti_obj = SharedBoundObject(ti_object);
-	
-	UserWindow *user_window = [window userWindow];
-	SharedBoundObject *shared_user_window = new SharedBoundObject(user_window);
-	SharedValue user_window_val = Value::NewObject(*shared_user_window);
-	
+
+	SharedUserWindow shared_user_window = [window userWindow]->GetSharedPtr();
+	SharedValue user_window_val = Value::NewObject(shared_user_window);
+
 	SharedValue ui_api_value = ti_object->Get("UI");
 	if (ui_api_value->IsObject())
 	{
@@ -376,11 +375,11 @@
 		delegate_ui_api->Set("currentWindow", user_window_val);
 
 		// Place currentWindow.createWindow in the delegate.
-		SharedValue create_window_value = (*shared_user_window)->Get("createWindow");
+		SharedValue create_window_value = shared_user_window->Get("createWindow");
 		delegate_ui_api->Set("createWindow", create_window_value);
 		
 		// Place currentWindow.openFiles in the delegate.
-		SharedValue open_files_value = (*shared_user_window)->Get("openFiles");
+		SharedValue open_files_value = shared_user_window->Get("openFiles");
 		delegate_ui_api->Set("openFiles", open_files_value);
 
 		ti_object->Set("UI", Value::NewObject(delegate_ui_api));
@@ -408,7 +407,7 @@
 	(*frames)[frame]=shared_global;
 	
 	// fire context bound event
-	user_window->ContextBound(shared_global);
+	shared_user_window->ContextBound(shared_global);
 }
 
 - (void)webView:(WebView *)sender didFinishLoadForFrame:(WebFrame *)frame

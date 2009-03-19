@@ -113,16 +113,16 @@ bool Win32TrayItem::ShowTrayMenu(int trayIconID)
 }
 void Win32TrayItem::CreateTrayIcon(std::string &iconPath, std::string &caption)
 {
-	UserWindow* uw = NULL;
+	SharedUserWindow uw = NULL;
 
-	std::vector<UserWindow*>& windows = UserWindow::GetWindows();
-	std::vector<UserWindow*>::iterator i = windows.begin();
+	std::vector<SharedUserWindow>& windows = UIBinding::GetInstance()->GetOpenWindows();
+	std::vector<SharedUserWindow>::iterator i = windows.begin();
 	if (i != windows.end())
 	{
 		uw = *i;
 	}
 
-	Win32UserWindow* wuw = dynamic_cast<Win32UserWindow*> (uw);
+	SharedPtr<Win32UserWindow> wuw = (*i).cast<Win32UserWindow>();
 
 	NOTIFYICONDATA* notifyIconData = new NOTIFYICONDATA;
 	notifyIconData->cbSize = sizeof(NOTIFYICONDATA);

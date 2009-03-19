@@ -4,6 +4,7 @@
  * Copyright (c) 2009 Appcelerator, Inc. All Rights Reserved.
  */
 #include "ui_module.h"
+#include <string>
 
 #define GET_ARG_OR_RETURN(INDEX, TYPE, VAR) \
 	if ((int) args.size() < INDEX - 1 || !args.at(INDEX)->Is##TYPE()) \
@@ -16,8 +17,12 @@
 
 namespace ti
 {
+	UIBinding* UIBinding::instance = NULL;
+
 	UIBinding::UIBinding(Host *host) : host(host)
 	{
+		instance = this;
+
 		this->SetMethod("createMenu", &UIBinding::_CreateMenu);
 		this->SetMethod("createTrayMenu", &UIBinding::_CreateTrayMenu);
 		this->SetMethod("setMenu", &UIBinding::_SetMenu);
@@ -34,10 +39,71 @@ namespace ti
 		this->SetMethod("setBadgeImage", &UIBinding::_SetBadgeImage);
 
 		this->SetMethod("getIdleTime", &UIBinding::_GetIdleTime);
+
+		this->open_window_list = new StaticBoundList();
+		this->Set("windows", Value::NewList(this->open_window_list));
+
+		SharedBoundObject global = host->GetGlobalObject();
+		SharedValue ui_binding_val = Value::NewObject(this);
+		global->Set("UI", ui_binding_val);
+
+	}
+
+	void UIBinding::CreateMainWindow(WindowConfig* config)
+	{
+		SharedUserWindow main_window = this->CreateWindow(config, NULL);
+
+		SharedBoundObject global = host->GetGlobalObject();
+		global->SetNS("UI.mainWindow", Value::NewObject(main_window));
+
+		main_window->Open();
+	}
+
+	void UIBinding::ErrorDialog(std::string msg)
+	{
+		std::cerr << msg << std::endl;
 	}
 
 	UIBinding::~UIBinding()
 	{
+	}
+
+	Host* UIBinding::GetHost()
+	{
+		return host;
+	}
+
+	std::vector<SharedUserWindow>& UIBinding::GetOpenWindows()
+	{
+		return this->open_windows;
+	}
+
+	void UIBinding::AddToOpenWindows(SharedUserWindow window)
+	{
+		this->open_window_list->Append(Value::NewObject(window));
+		this->open_windows.push_back(window);
+	}
+
+	void UIBinding::RemoveFromOpenWindows(SharedUserWindow window)
+	{
+		//for (unsigned int i = 0; i < open_window_list->Size(); i++)
+		//{
+		//	SharedBoundObject cand = open_window_list->At(i)->ToObject();
+		//	if (cand.get() == window.get())
+		//	{
+		//		open_window_list->Remove(i);
+		//		break;
+		//	}
+		//}
+
+		std::vector<SharedUserWindow>::iterator w = open_windows.begin();
+		while (w != open_windows.end())
+		{
+			if ((*w).get() == window.get())
+				w = this->open_windows.erase(w);
+			else
+				w++;
+		}
 	}
 
 	void UIBinding::_CreateMenu(const ValueList& args, SharedValue result)
@@ -135,7 +201,6 @@ namespace ti
 	{
 		UIModule::ClearTrayItems();
 	}
-
 
 	void UIBinding::_SetDockIcon(const ValueList& args, SharedValue result)
 	{

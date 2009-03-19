@@ -132,7 +132,7 @@ namespace ti
 			}
 			
 			std::string data;
-			int content_len;
+			int content_len = 0;
 			bool deletefile = false;
 
 			if (!binding->dirstream.empty())

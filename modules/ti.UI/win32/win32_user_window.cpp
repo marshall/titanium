@@ -1,9 +1,13 @@
 /**
  * Appcelerator Titanium - licensed under the Apache Public License 2
- * see LICENSE in the root folder for details on the license.
+ * SEE LICENSE in the root folder for details on the license.
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
 
+#define _WINSOCKAPI_
+#include <kroll/base.h>
+
+#include <winsock2.h>
 #include "win32_user_window.h"
 #include "webkit_frame_load_delegate.h"
 #include "webkit_ui_delegate.h"
@@ -12,12 +16,12 @@
 #include "win32_tray_item.h"
 #include "string_util.h"
 #include "../url/app_url.h"
+#include "../url/ti_url.h"
 #include <cmath>
 #include <shellapi.h>
 #include <comutil.h>
 #include <commdlg.h>
 #include <shlobj.h>
-#include <windows.h>
 
 #define STUB() printf("Method is still a stub, %s:%i\n", __FILE__, __LINE__)
 #define SetFlag(x,flag,b) ((b) ? x |= flag : x &= ~flag)
@@ -29,27 +33,23 @@ using namespace ti;
 COLORREF transparencyColor = RGB(0xF9, 0xF9, 0xF9);
 
 static void* SetWindowUserData(HWND hwnd, void* user_data) {
-	return
-		reinterpret_cast<void*>(SetWindowLongPtr(hwnd, GWLP_USERDATA,
-			reinterpret_cast<LONG_PTR>(user_data)));
+	return reinterpret_cast<void*> (SetWindowLongPtr(hwnd, GWLP_USERDATA,
+			reinterpret_cast<LONG_PTR> (user_data)));
 }
 
 static void* GetWindowUserData(HWND hwnd) {
-	return reinterpret_cast<void*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
+	return reinterpret_cast<void*> (GetWindowLongPtr(hwnd, GWLP_USERDATA));
 }
 
 /*static*/
-Win32UserWindow* Win32UserWindow::FromWindow(HWND hWnd)
-{
-	return reinterpret_cast<Win32UserWindow*>(GetWindowUserData(hWnd));
+Win32UserWindow* Win32UserWindow::FromWindow(HWND hWnd) {
+	return reinterpret_cast<Win32UserWindow*> (GetWindowUserData(hWnd));
 }
-
 
 const TCHAR *windowClassName = "Win32UserWindow";
 
 /*static*/
-void Win32UserWindow::RegisterWindowClass (HINSTANCE hInstance)
-{
+void Win32UserWindow::RegisterWindowClass(HINSTANCE hInstance) {
 	static bool class_initialized = false;
 	if (!class_initialized) {
 		//LoadString(hInstance, IDC_TIUSERWINDOW, windowClassName, 100);
@@ -57,34 +57,35 @@ void Win32UserWindow::RegisterWindowClass (HINSTANCE hInstance)
 		WNDCLASSEX wcex;
 		wcex.cbSize = sizeof(WNDCLASSEX);
 
-		wcex.style			= CS_HREDRAW | CS_VREDRAW;
-		wcex.lpfnWndProc	= Win32UserWindow::WndProc;
-		wcex.cbClsExtra		= 0;
-		wcex.cbWndExtra		= 0;
-		wcex.hInstance		= hInstance;
-		wcex.hIcon			= 0;
-		wcex.hIconSm		= 0;
-		wcex.hCursor		= LoadCursor(hInstance, IDC_ARROW);
+		wcex.style = CS_HREDRAW | CS_VREDRAW;
+		wcex.lpfnWndProc = Win32UserWindow::WndProc;
+		wcex.cbClsExtra = 0;
+		wcex.cbWndExtra = 0;
+		wcex.hInstance = hInstance;
+		wcex.hIcon = 0;
+		wcex.hIconSm = 0;
+		wcex.hCursor = LoadCursor(hInstance, IDC_ARROW);
 		//wcex.hbrBackground	= (HBRUSH)(COLOR_BACKGROUND+1);
-		wcex.hbrBackground	= CreateSolidBrush(transparencyColor);
-		wcex.lpszMenuName	= "";
-		wcex.lpszClassName	= windowClassName;
+		wcex.hbrBackground = CreateSolidBrush(transparencyColor);
+		wcex.lpszMenuName = "";
+		wcex.lpszClassName = windowClassName;
 
 		ATOM result = RegisterClassEx(&wcex);
 		if (result == NULL) {
-			std::cout << "Error Registering Window Class: " << GetLastError() << std::endl;
+			std::cout << "Error Registering Window Class: " << GetLastError()
+					<< std::endl;
 		}
 
 		class_initialized = true;
 	}
 }
 
-void Win32UserWindow::AddMessageHandler(const ValueList& args, SharedValue result)
-{
+void Win32UserWindow::AddMessageHandler(const ValueList& args,
+		SharedValue result) {
 	if (args.size() < 2 || !args.at(0)->IsNumber() || !args.at(1)->IsMethod())
 		return;
 
-	long messageCode = (long)args.at(0)->ToDouble();
+	long messageCode = (long) args.at(0)->ToDouble();
 	SharedBoundMethod callback = args.at(1)->ToMethod();
 
 	messageHandlers[messageCode] = callback;
@@ -114,71 +115,70 @@ Win32UserWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			window->FireEvent(CLOSED);
 			return DefWindowProc(hWnd, message, wParam, lParam);
 		case WM_GETMINMAXINFO:
+		{
+			if(window)
 			{
-				if(window)
-				{
-					MINMAXINFO *mmi = (MINMAXINFO*) lParam;
-					mmi->ptMaxTrackSize.x = window->GetMaxWidth();
-					mmi->ptMaxTrackSize.y = window->GetMaxHeight();
+				MINMAXINFO *mmi = (MINMAXINFO*) lParam;
+				mmi->ptMaxTrackSize.x = window->GetMaxWidth();
+				mmi->ptMaxTrackSize.y = window->GetMaxHeight();
 
-					mmi->ptMinTrackSize.x = window->GetMinWidth();
-					mmi->ptMinTrackSize.y = window->GetMinHeight();
-				}
+				mmi->ptMinTrackSize.x = window->GetMinWidth();
+				mmi->ptMinTrackSize.y = window->GetMinHeight();
 			}
-			break;
+		}
+		break;
 		case WM_SIZE:
-			if (!window->web_view) break;
-			window->ResizeSubViews();
-			if (wParam == SIZE_MAXIMIZED) {
-				window->FireEvent(MAXIMIZED);
-			} else if (wParam == SIZE_MINIMIZED) {
-				window->FireEvent(MINIMIZED);
-			} else if (wParam == SIZE_RESTORED) {
-				window->FireEvent(RESIZED);
-			}
-			break;
+		if (!window->web_view) break;
+		window->ResizeSubViews();
+		if (wParam == SIZE_MAXIMIZED) {
+			window->FireEvent(MAXIMIZED);
+		} else if (wParam == SIZE_MINIMIZED) {
+			window->FireEvent(MINIMIZED);
+		} else if (wParam == SIZE_RESTORED) {
+			window->FireEvent(RESIZED);
+		}
+		break;
 		case WM_SETFOCUS:
-			window->FireEvent(FOCUSED);
-			return DefWindowProc(hWnd, message, wParam, lParam);
+		window->FireEvent(FOCUSED);
+		return DefWindowProc(hWnd, message, wParam, lParam);
 		case WM_KILLFOCUS:
-			window->FireEvent(UNFOCUSED);
-			return DefWindowProc(hWnd, message, wParam, lParam);
+		window->FireEvent(UNFOCUSED);
+		return DefWindowProc(hWnd, message, wParam, lParam);
 		case WM_MOVE:
-			window->FireEvent(MOVED);
-			return DefWindowProc(hWnd, message, wParam, lParam);
+		window->FireEvent(MOVED);
+		return DefWindowProc(hWnd, message, wParam, lParam);
 		case WM_SHOWWINDOW:
-			window->FireEvent(((BOOL)wParam) ? SHOWN : HIDDEN);
-			return DefWindowProc(hWnd, message, wParam, lParam);
-
+		window->FireEvent(((BOOL)wParam) ? SHOWN : HIDDEN);
+		return DefWindowProc(hWnd, message, wParam, lParam);
 
 		case TI_TRAY_CLICKED:
+		{
+			UINT uMouseMsg = (UINT) lParam;
+			if(uMouseMsg == WM_LBUTTONDOWN)
 			{
-				UINT uMouseMsg = (UINT) lParam;
-				if(uMouseMsg == WM_LBUTTONDOWN)
-				{
-					Win32TrayItem::InvokeLeftClickCallback(hWnd, message, wParam, lParam);
-				}
-				else if (uMouseMsg == WM_RBUTTONDOWN)
-				{
-					Win32TrayItem::ShowTrayMenu(hWnd, message, wParam, lParam);
-				}
+				Win32TrayItem::InvokeLeftClickCallback(hWnd, message, wParam, lParam);
 			}
-			break;
+			else if (uMouseMsg == WM_RBUTTONDOWN)
+			{
+				Win32TrayItem::ShowTrayMenu(hWnd, message, wParam, lParam);
+			}
+		}
+		break;
 		default:
-			LRESULT handled = Win32MenuItemImpl::handleMenuClick(hWnd, message, wParam, lParam);
+		LRESULT handled = Win32MenuItemImpl::handleMenuClick(hWnd, message, wParam, lParam);
 
-			if(! handled)
-			{
-				return DefWindowProc(hWnd, message, wParam, lParam);
-			}
+		if(! handled)
+		{
+			return DefWindowProc(hWnd, message, wParam, lParam);
+		}
 	}
 
 	return 0;
 }
 
-Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config) :
-	UserWindow(host, config),
-	script_evaluator(host),
+Win32UserWindow::Win32UserWindow(SharedUIBinding binding, WindowConfig* config, SharedUserWindow parent) :
+	UserWindow(binding, config, parent),
+	script_evaluator(binding->GetHost()),
 	menuBarHandle(NULL),
 	menuInUse(NULL),
 	menu(NULL),
@@ -187,31 +187,33 @@ Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config) :
 	web_inspector(NULL)
 {
 	static bool initialized = false;
-	win32_host = static_cast<kroll::Win32Host*>(host);
+	win32_host = static_cast<kroll::Win32Host*>(binding->GetHost());
 	if (!initialized) {
 		INITCOMMONCONTROLSEX InitCtrlEx;
 
 		InitCtrlEx.dwSize = sizeof(INITCOMMONCONTROLSEX);
-		InitCtrlEx.dwICC  = 0x00004000; //ICC_STANDARD_CLASSES;
+		InitCtrlEx.dwICC = 0x00004000; //ICC_STANDARD_CLASSES;
 		InitCommonControlsEx(&InitCtrlEx);
 
 		curl_register_local_handler(&Titanium_app_url_handler);
+		curl_register_local_handler(&Titanium_ti_url_handler);
 		addScriptEvaluator(&script_evaluator);
 	}
 
 	Win32UserWindow::RegisterWindowClass(win32_host->GetInstanceHandle());
-	window_handle = CreateWindowEx(WS_EX_LAYERED, windowClassName, config->GetTitle().c_str(),
-			WS_CLIPCHILDREN,
-			CW_USEDEFAULT, 0, CW_USEDEFAULT, 0,
-			NULL, NULL, win32_host->GetInstanceHandle(), NULL);
+	window_handle
+			= CreateWindowEx(WS_EX_LAYERED, windowClassName,
+					config->GetTitle().c_str(), WS_CLIPCHILDREN, CW_USEDEFAULT,
+					0, CW_USEDEFAULT, 0, NULL, NULL,
+					win32_host->GetInstanceHandle(), NULL);
 
 	if (window_handle == NULL) {
 		std::cout << "Error Creating Window: " << GetLastError() << std::endl;
 	}
-	std::cout << "window_handle = " << (int)window_handle << std::endl;
+	std::cout << "window_handle = " << (int) window_handle << std::endl;
 
 	// make our HWND available to 3rd party devs without needing our headers
-	SharedValue windowHandle = Value::NewVoidPtr((void*)window_handle);
+	SharedValue windowHandle = Value::NewVoidPtr((void*) window_handle);
 	this->Set("windowHandle", windowHandle);
 	this->SetMethod("addMessageHandler", &Win32UserWindow::AddMessageHandler);
 
@@ -228,22 +230,30 @@ Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config) :
 	SetBounds(b);
 
 	//web_view = WebView::createInstance();
-	HRESULT hr = CoCreateInstance(CLSID_WebView, 0, CLSCTX_ALL, IID_IWebView, (void**)&web_view);
+	HRESULT hr = CoCreateInstance(CLSID_WebView, 0, CLSCTX_ALL, IID_IWebView,
+			(void**) &web_view);
 	if (FAILED(hr)) {
 		std::cerr << "Error Creating WebView: ";
-		if (hr == REGDB_E_CLASSNOTREG) std::cerr << "REGDB_E_CLASSNOTREG" << std::endl;
-		else if (hr == CLASS_E_NOAGGREGATION) std::cerr << "CLASS_E_NOAGGREGATION" << std::endl;
-		else if (hr == E_NOINTERFACE) std::cerr << "E_NOINTERFACE" << std::endl;
-		else if (hr == E_UNEXPECTED) std::cerr << "E_UNEXPECTED" << std::endl;
-		else if (hr == E_OUTOFMEMORY) std::cerr << "E_OUTOFMEMORY" << std::endl;
-		else if (hr == E_INVALIDARG) std::cerr << "E_INVALIDARG" << std::endl;
-		else fprintf(stderr, "Unknown Error? %x\n", hr);
+		if (hr == REGDB_E_CLASSNOTREG)
+			std::cerr << "REGDB_E_CLASSNOTREG" << std::endl;
+		else if (hr == CLASS_E_NOAGGREGATION)
+			std::cerr << "CLASS_E_NOAGGREGATION" << std::endl;
+		else if (hr == E_NOINTERFACE)
+			std::cerr << "E_NOINTERFACE" << std::endl;
+		else if (hr == E_UNEXPECTED)
+			std::cerr << "E_UNEXPECTED" << std::endl;
+		else if (hr == E_OUTOFMEMORY)
+			std::cerr << "E_OUTOFMEMORY" << std::endl;
+		else if (hr == E_INVALIDARG)
+			std::cerr << "E_INVALIDARG" << std::endl;
+		else
+			fprintf(stderr, "Unknown Error? %x\n", hr);
 	}
 
 	// set the custom user agent for Titanium
 	double version = host->GetGlobalObject()->Get("version")->ToDouble();
 	char userAgent[128];
-	sprintf(userAgent,"%s/%0.2f",PRODUCT_NAME,version);
+	sprintf(userAgent, "%s/%0.2f", PRODUCT_NAME, version);
 	_bstr_t ua(userAgent);
 	web_view->setApplicationNameForUserAgent(ua.copy());
 
@@ -260,12 +270,12 @@ Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config) :
 	uiDelegate = new Win32WebKitUIDelegate(this);
 	policyDelegate = new Win32WebKitPolicyDelegate(this);
 
-	std::cout << "set delegates, set host window, webview=" << (int)web_view  << std::endl;
+	std::cout << "set delegates, set host window, webview=" << (int) web_view
+			<< std::endl;
 	hr = web_view->setFrameLoadDelegate(frameLoadDelegate);
 	hr = web_view->setUIDelegate(uiDelegate);
 	hr = web_view->setPolicyDelegate(policyDelegate);
-	hr = web_view->setHostWindow((OLE_HANDLE)window_handle);
-
+	hr = web_view->setHostWindow((OLE_HANDLE) window_handle);
 
 	std::cout << "init with frame" << std::endl;
 	RECT client_rect;
@@ -276,36 +286,34 @@ Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config) :
 	std::string appid = appConfig->GetAppID();
 
 	IWebPreferences *prefs = NULL;
-	hr = CoCreateInstance(CLSID_WebPreferences, 0, CLSCTX_ALL, IID_IWebPreferences, (void**)&prefs);
-	if (FAILED(hr) || prefs == NULL)
-	{
+	hr = CoCreateInstance(CLSID_WebPreferences, 0, CLSCTX_ALL,
+			IID_IWebPreferences, (void**) &prefs);
+	if (FAILED(hr) || prefs == NULL) {
 		std::cerr << "Couldn't create the preferences object" << std::endl;
-	}
-	else
-	{
+	} else {
 		_bstr_t pi(appid.c_str());
-		prefs->initWithIdentifier(pi.copy(),&prefs);
+		prefs->initWithIdentifier(pi.copy(), &prefs);
 
 		prefs->setCacheModel(WebCacheModelDocumentBrowser);
 		prefs->setPlugInsEnabled(true);
-		prefs->setJavaEnabled(false);
+		prefs->setJavaEnabled(true);
 		prefs->setJavaScriptEnabled(true);
 		prefs->setDOMPasteAllowed(true);
 
 		IWebPreferencesPrivate* privatePrefs = NULL;
-		hr = prefs->QueryInterface(IID_IWebPreferencesPrivate, (void**)&privatePrefs);
-		if (FAILED(hr))
-		{
+		hr = prefs->QueryInterface(IID_IWebPreferencesPrivate,
+				(void**) &privatePrefs);
+		if (FAILED(hr)) {
 			std::cerr << "Failed to get private preferences" << std::endl;
-		}
-		else
-		{
+		} else {
 			privatePrefs->setDeveloperExtrasEnabled(host->IsDebugMode());
+			//privatePrefs->setDeveloperExtrasEnabled(host->IsDebugMode());
 			privatePrefs->setDatabasesEnabled(true);
 			privatePrefs->setLocalStorageEnabled(true);
 			privatePrefs->setOfflineWebApplicationCacheEnabled(true);
 
-			_bstr_t db_path(FileUtils::GetApplicationDataDirectory(appid).c_str());
+			_bstr_t db_path(
+					FileUtils::GetApplicationDataDirectory(appid).c_str());
 			privatePrefs->setLocalStorageDatabasePath(db_path.copy());
 			privatePrefs->Release();
 		}
@@ -322,16 +330,21 @@ Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config) :
 	web_view->registerURLSchemeAsLocal(ti_proto.copy());
 
 	IWebViewPrivate *web_view_private;
-	hr = web_view->QueryInterface(IID_IWebViewPrivate, (void**)&web_view_private);
+	hr = web_view->QueryInterface(IID_IWebViewPrivate,
+			(void**) &web_view_private);
 	hr = web_view_private->viewWindow((OLE_HANDLE*) &view_window_handle);
 
 	hr = web_view_private->inspector(&web_inspector);
-	if(FAILED(hr) || web_inspector == NULL)
-	{
+	if (FAILED(hr) || web_inspector == NULL) {
 		std::cerr << "Couldn't retrieve the web inspector object" << std::endl;
 	}
 
 	web_view_private->Release();
+
+	_bstr_t inspector_url("ti://com.titaniumapp/runtime/inspector/inspector.html");
+	_bstr_t localized_strings_url("ti://com.titaniumapp/runtime/inspector/localizedStrings.js");
+	web_inspector->setInspectorURL(inspector_url.copy());
+	web_inspector->setLocalizedStringsURL(localized_strings_url.copy());
 
 	hr = web_view->mainFrame(&web_frame);
 	//web_view->setShouldCloseWithWindow(TRUE);
@@ -343,13 +356,11 @@ Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config) :
 	restore_bounds = GetBounds();
 	restore_styles = GetWindowLong(window_handle, GWL_STYLE);
 
-	if(this->config->IsFullScreen())
-	{
+	if (this->config->IsFullScreen()) {
 		this->SetFullScreen(true);
 	}
 
-	if(this->config->IsTopMost() && this->config->IsVisible())
-	{
+	if (this->config->IsTopMost() && this->config->IsVisible()) {
 		this->SetTopMost(true);
 	}
 
@@ -362,14 +373,13 @@ Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config) :
 	char exePath[MAX_PATH];
 	GetModuleFileNameA(GetModuleHandle(NULL), exePath, MAX_PATH);
 	initial_icon = ExtractIcon(win32_host->GetInstanceHandle(), exePath, 0);
-	if(initial_icon)
-	{
-		SendMessageA(window_handle, (UINT)WM_SETICON, ICON_BIG, (LPARAM)initial_icon);
+	if (initial_icon) {
+		SendMessageA(window_handle, (UINT) WM_SETICON, ICON_BIG,
+				(LPARAM) initial_icon);
 	}
 }
 
-Win32UserWindow::~Win32UserWindow()
-{
+Win32UserWindow::~Win32UserWindow() {
 	if (web_view)
 		web_view->Release();
 
@@ -377,23 +387,19 @@ Win32UserWindow::~Win32UserWindow()
 		web_frame->Release();
 }
 
-UserWindow* Win32UserWindow::WindowFactory(Host *host, WindowConfig* config)
-{
-	return new Win32UserWindow(host, config);
-}
-
 std::string Win32UserWindow::GetTransparencyColor()
 {
 	char hexColor[7];
-	sprintf(hexColor, "%2x%2x%2x", (int)GetRValue(transparencyColor), (int)GetGValue(transparencyColor), (int)GetBValue(transparencyColor));
+	sprintf(hexColor, "%2x%2x%2x", (int) GetRValue(transparencyColor),
+			(int) GetGValue(transparencyColor), (int) GetBValue(
+					transparencyColor));
 
 	std::string color(hexColor);
 
 	return color;
 }
 
-void Win32UserWindow::ResizeSubViews()
-{
+void Win32UserWindow::ResizeSubViews() {
 	RECT rcClient;
 	GetClientRect(window_handle, &rcClient);
 	MoveWindow(view_window_handle, 0, 0, rcClient.right, rcClient.bottom, TRUE);
@@ -411,28 +417,26 @@ void Win32UserWindow::Show() {
 	ShowWindow(window_handle, SW_SHOW);
 }
 
-void Win32UserWindow::Focus()
-{
+void Win32UserWindow::Focus() {
 	SetFocus(window_handle);
 }
 
-void Win32UserWindow::Unfocus()
-{
+void Win32UserWindow::Unfocus() {
 	//TODO: not sure exactly how to cause kill focus
 }
 
 void Win32UserWindow::Open() {
-	std::cout << "Opening window_handle=" << (int)window_handle << ", view_window_handle="<<(int)view_window_handle<<std::endl;
+	std::cout << "Opening window_handle=" << (int) window_handle
+			<< ", view_window_handle=" << (int) view_window_handle << std::endl;
 
 	UpdateWindow(window_handle);
 	UpdateWindow(view_window_handle);
 
 	ResizeSubViews();
 
-	UserWindow::Open(this);
+	UserWindow::Open();
 	SetURL(this->config->GetURL());
-	if (!this->requires_display)
-	{
+	if (!this->requires_display) {
 		ShowWindow(window_handle, SW_SHOW);
 		ShowWindow(view_window_handle, SW_SHOW);
 	}
@@ -540,10 +544,11 @@ void Win32UserWindow::SetBounds(Bounds bounds) {
 	}
 
 	UINT flags = SWP_SHOWWINDOW | SWP_NOZORDER;
-	if(! this->config->IsVisible()) {
+	if (!this->config->IsVisible()) {
 		flags = SWP_HIDEWINDOW;
 	}
-	SetWindowPos(window_handle, NULL, bounds.x, bounds.y, bounds.width, bounds.height, flags);
+	SetWindowPos(window_handle, NULL, bounds.x, bounds.y, bounds.width,
+			bounds.height, flags);
 }
 
 void Win32UserWindow::SetTitle(std::string& title) {
@@ -560,7 +565,7 @@ void Win32UserWindow::SetURL(std::string& url_) {
 	std::cout << "SetURL: " << url << std::endl;
 
 	IWebMutableURLRequest* request = 0;
-	std::wstring method = L"GET";
+	std::wstring method =L"GET" ;
 
 	if (url.length() > 0 && (PathFileExists(url.c_str()) || PathIsUNC(url.c_str()))) {
 		TCHAR fileURL[INTERNET_MAX_URL_LENGTH];
@@ -597,7 +602,6 @@ exit:
 	if (request)
 		request->Release();
 }
-
 
 #define SetFlag(x,flag,b) ((b) ? x |= flag : x &= ~flag)
 #define UnsetFlag(x,flag) (x &= ~flag)=
@@ -637,7 +641,8 @@ void Win32UserWindow::SetVisible(bool visible) {
 
 void Win32UserWindow::SetTransparency(double transparency) {
 	this->config->SetTransparency(transparency);
-	SetLayeredWindowAttributes(window_handle, 0, (BYTE)floor(transparency*255), LWA_ALPHA);
+	SetLayeredWindowAttributes(window_handle, 0, (BYTE) floor(transparency
+			* 255), LWA_ALPHA);
 }
 
 void Win32UserWindow::SetFullScreen(bool fullscreen) {
@@ -647,13 +652,15 @@ void Win32UserWindow::SetFullScreen(bool fullscreen) {
 		restore_bounds = GetBounds();
 		restore_styles = GetWindowLong(window_handle, GWL_STYLE);
 
-		HMONITOR hmon = MonitorFromWindow(this->window_handle, MONITOR_DEFAULTTONEAREST);
+		HMONITOR hmon = MonitorFromWindow(this->window_handle,
+				MONITOR_DEFAULTTONEAREST);
 		MONITORINFO mi;
 		mi.cbSize = sizeof(MONITORINFO);
-		if(GetMonitorInfo(hmon, &mi))
-		{
+		if (GetMonitorInfo(hmon, &mi)) {
 			SetWindowLong(window_handle, GWL_STYLE, 0);
-			SetWindowPos(window_handle, NULL, 0, 0, mi.rcMonitor.right - mi.rcMonitor.left, mi.rcMonitor.bottom - mi.rcMonitor.top, SWP_SHOWWINDOW);
+			SetWindowPos(window_handle, NULL, 0, 0, mi.rcMonitor.right
+					- mi.rcMonitor.left,
+					mi.rcMonitor.bottom - mi.rcMonitor.top, SWP_SHOWWINDOW);
 		}
 
 		FireEvent(FULLSCREENED);
@@ -664,81 +671,68 @@ void Win32UserWindow::SetFullScreen(bool fullscreen) {
 	}
 }
 
-void Win32UserWindow::SetMenu(SharedPtr<MenuItem> value)
-{
-	SharedPtr<Win32MenuItemImpl> menu = value.cast<Win32MenuItemImpl>();
+void Win32UserWindow::SetMenu(SharedPtr<MenuItem> value) {
+	SharedPtr<Win32MenuItemImpl> menu = value.cast<Win32MenuItemImpl> ();
 	this->menu = menu;
 	this->SetupMenu();
 }
 
-SharedPtr<MenuItem> Win32UserWindow::GetMenu()
-{
+SharedPtr<MenuItem> Win32UserWindow::GetMenu() {
 	return this->menu;
 }
 
-void Win32UserWindow::SetContextMenu(SharedPtr<MenuItem> menu)
-{
-	SharedPtr<Win32MenuItemImpl> menu_new = menu.cast<Win32MenuItemImpl>();
+void Win32UserWindow::SetContextMenu(SharedPtr<MenuItem> menu) {
+	SharedPtr<Win32MenuItemImpl> menu_new = menu.cast<Win32MenuItemImpl> ();
 
 	// if it's the same menu, don't do anything
-	if((menu_new.isNull() && this->contextMenu.isNull()) || (menu_new == this->contextMenu))
-	{
+	if ((menu_new.isNull() && this->contextMenu.isNull()) || (menu_new
+			== this->contextMenu)) {
 		return;
 	}
 
 	// remove old menu if needed
-	if(! this->contextMenu.isNull())
-	{
+	if (!this->contextMenu.isNull()) {
 		this->contextMenu->ClearRealization(contextMenuHandle);
 		this->contextMenuHandle = NULL;
 	}
 
 	this->contextMenu = menu_new;
-	if(! this->contextMenu.isNull())
-	{
+	if (!this->contextMenu.isNull()) {
 		this->contextMenuHandle = this->contextMenu->GetMenu();
 	}
 }
 
-SharedPtr<MenuItem> Win32UserWindow::GetContextMenu()
-{
+SharedPtr<MenuItem> Win32UserWindow::GetContextMenu() {
 	return this->contextMenu;
 }
 
-void Win32UserWindow::SetIcon(SharedString icon_path)
-{
+void Win32UserWindow::SetIcon(SharedString icon_path) {
 	this->icon_path = icon_path;
 	this->SetupIcon();
 }
 
-void Win32UserWindow::SetupIcon()
-{
+void Win32UserWindow::SetupIcon() {
 	SharedString icon_path = this->icon_path;
 
 	if (icon_path.isNull() && !UIModule::GetIcon().isNull())
 		icon_path = UIModule::GetIcon();
 
-	if (icon_path.isNull())
-	{
+	if (icon_path.isNull()) {
 		// need to remove the icon
-		SendMessageA(window_handle, (UINT)WM_SETICON, ICON_BIG, (LPARAM)initial_icon);
-	}
-	else
-	{
-		std::string ext = icon_path->substr(icon_path->length()-4,4);
-		if (ext == ".ico")
-		{
+		SendMessageA(window_handle, (UINT) WM_SETICON, ICON_BIG,
+				(LPARAM) initial_icon);
+	} else {
+		std::string ext = icon_path->substr(icon_path->length() - 4, 4);
+		if (ext == ".ico") {
 			HANDLE icon = LoadImageA(win32_host->GetInstanceHandle(),
-				icon_path->c_str(), IMAGE_ICON,
-				32, 32,
-				LR_LOADFROMFILE);
-			SendMessageA(window_handle, (UINT)WM_SETICON, ICON_BIG, (LPARAM)icon);
+					icon_path->c_str(), IMAGE_ICON, 32, 32, LR_LOADFROMFILE);
+			SendMessageA(window_handle, (UINT) WM_SETICON, ICON_BIG,
+					(LPARAM) icon);
 		}
 	}
 }
 
-SharedString Win32UserWindow::GetIcon()
-{
+SharedString Win32UserWindow::GetIcon() {
 	return icon_path;
 }
 
@@ -760,35 +754,28 @@ void Win32UserWindow::SetupDecorations(bool showHide) {
 
 	SetWindowLong(this->window_handle, GWL_STYLE, windowStyle);
 
-	if(showHide && config->IsVisible())
-	{
+	if (showHide && config->IsVisible()) {
 		ShowWindow(window_handle, SW_HIDE);
 		ShowWindow(window_handle, SW_SHOW);
 	}
 }
 
-void Win32UserWindow::AppMenuChanged()
-{
-	if (this->menu.isNull())
-	{
+void Win32UserWindow::AppMenuChanged() {
+	if (this->menu.isNull()) {
 		this->SetupMenu();
 	}
 }
 
-void Win32UserWindow::AppIconChanged()
-{
-	if (this->icon_path.isNull())
-	{
+void Win32UserWindow::AppIconChanged() {
+	if (this->icon_path.isNull()) {
 		this->SetupIcon();
 	}
 }
 
-void Win32UserWindow::RemoveMenu()
-{
+void Win32UserWindow::RemoveMenu() {
 	// Check if we are already using a menu
 	// and the window is initialized.
-	if (this->window_handle != NULL && !this->menuInUse.isNull())
-	{
+	if (this->window_handle != NULL && !this->menuInUse.isNull()) {
 		this->menuInUse->ClearRealization(this->menuBarHandle);
 		::SetMenu(this->window_handle, NULL);
 	}
@@ -796,15 +783,13 @@ void Win32UserWindow::RemoveMenu()
 	this->menuInUse = NULL;
 }
 
-void Win32UserWindow::SetupMenu()
-{
+void Win32UserWindow::SetupMenu() {
 	SharedPtr<Win32MenuItemImpl> menu = this->menu;
 	SharedPtr<MenuItem> appMenu = UIModule::GetMenu();
 
 	// No window menu, try to use the application menu.
-	if (menu.isNull() && !appMenu.isNull())
-	{
-		menu = appMenu.cast<Win32MenuItemImpl>();
+	if (menu.isNull() && !appMenu.isNull()) {
+		menu = appMenu.cast<Win32MenuItemImpl> ();
 	}
 
 	// Only do this if the menu is actually changing.
@@ -813,8 +798,7 @@ void Win32UserWindow::SetupMenu()
 
 	this->RemoveMenu();
 
-	if (!menu.isNull() && this->window_handle)
-	{
+	if (!menu.isNull() && this->window_handle) {
 		this->menuBarHandle = menu->GetMenuBar();
 		::SetMenu(this->window_handle, menuBarHandle);
 		DrawMenuBar(this->window_handle);
@@ -823,8 +807,7 @@ void Win32UserWindow::SetupMenu()
 	this->menuInUse = menu;
 }
 
-void Win32UserWindow::ReloadTiWindowConfig()
-{
+void Win32UserWindow::ReloadTiWindowConfig() {
 	//host->webview()->GetMainFrame()->SetAllowsScrolling(tiWindowConfig->isUsingScrollbars());
 	//SetWindowText(hWnd, UTF8ToWide(tiWindowConfig->getTitle()).c_str());
 
@@ -842,42 +825,38 @@ void Win32UserWindow::ReloadTiWindowConfig()
 
 	//SetLayeredWindowAttributes(hWnd, 0, (BYTE)0, LWA_ALPHA);
 	if (config->GetTransparency() < 1.0) {
-		SetLayeredWindowAttributes(this->window_handle, 0, (BYTE)floor(config->GetTransparency() * 255), LWA_ALPHA);
+		SetLayeredWindowAttributes(this->window_handle, 0, (BYTE) floor(
+				config->GetTransparency() * 255), LWA_ALPHA);
 	}
-	SetLayeredWindowAttributes(this->window_handle, transparencyColor, 0, LWA_COLORKEY);
+	SetLayeredWindowAttributes(this->window_handle, transparencyColor, 0,
+			LWA_COLORKEY);
 }
 
-	// called by frame load delegate to let the window know it's loaded
-void Win32UserWindow::FrameLoaded()
-{
-	if (this->requires_display && this->config->IsVisible())
-	{
+// called by frame load delegate to let the window know it's loaded
+void Win32UserWindow::FrameLoaded() {
+	if (this->requires_display && this->config->IsVisible()) {
 		this->requires_display = false;
 		ShowWindow(window_handle, SW_SHOW);
 	}
 }
 
-bool Win32UserWindow::IsTopMost()
-{
+bool Win32UserWindow::IsTopMost() {
 	return this->config->IsTopMost();
 }
 
-void Win32UserWindow::SetTopMost(bool topmost)
-{
+void Win32UserWindow::SetTopMost(bool topmost) {
 	this->config->SetTopMost(topmost);
 
-	if (topmost)
-	{
-		SetWindowPos(window_handle,HWND_TOPMOST,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE);
-	}
-	else
-	{
-		SetWindowPos(window_handle,HWND_NOTOPMOST,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE);
+	if (topmost) {
+		SetWindowPos(window_handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE
+				| SWP_NOSIZE);
+	} else {
+		SetWindowPos(window_handle, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE
+				| SWP_NOSIZE);
 	}
 }
 
-void Win32UserWindow::SetupPosition()
-{
+void Win32UserWindow::SetupPosition() {
 	Bounds b = GetBounds();
 	b.x = this->config->GetX();
 	b.y = this->config->GetY();
@@ -885,8 +864,7 @@ void Win32UserWindow::SetupPosition()
 	this->SetBounds(b);
 }
 
-void Win32UserWindow::SetupSize()
-{
+void Win32UserWindow::SetupSize() {
 	Bounds b = GetBounds();
 	b.width = this->config->GetWidth();
 	b.height = this->config->GetHeight();
@@ -894,42 +872,24 @@ void Win32UserWindow::SetupSize()
 	this->SetBounds(b);
 }
 
-void Win32UserWindow::ShowWebInspector()
-{
-	std::cout << "showWebInspector() .." << std::endl;
-
-	//WebInspectorClient *wic = new WebInspector(web_view);
-	//wic->showWindow();
-	//if(1 == 1) return;
-
-	if(this->web_inspector)
-	{
-		std::cout << "requesting flag .. " << std::endl;
+void Win32UserWindow::ShowWebInspector() {
+	if (this->web_inspector) {
 		BOOL debug;
 		this->web_inspector->isDebuggingJavaScript(&debug);
-		std::cout << "debug = " << debug << std::endl;
-		//std::cout << "attaching..." << std::endl;
-		//this->web_inspector->attach();
-		std::cout << "showing..." << std::endl;
+		if (!debug) {
+			web_inspector->toggleDebuggingJavaScript();
+		}
 		this->web_inspector->show();
 	}
 }
 
-void Win32UserWindow::OpenFiles(
-	SharedBoundMethod callback,
-	bool multiple,
-	bool files,
-	bool directories,
-	std::string& path,
-	std::string& file,
-	std::vector<std::string>& types)
-{
+void Win32UserWindow::OpenFiles(SharedBoundMethod callback, bool multiple,
+		bool files, bool directories, std::string& path, std::string& file,
+		std::vector<std::string>& types) {
 	SharedBoundList results;
-	if(directories) {
+	if (directories) {
 		results = SelectDirectory(multiple, path, file);
-	}
-	else
-	{
+	} else {
 		results = SelectFile(callback, multiple, path, file, types);
 	}
 
@@ -938,31 +898,24 @@ void Win32UserWindow::OpenFiles(
 	callback->Call(args);
 }
 
-SharedBoundList Win32UserWindow::SelectFile(
-	SharedBoundMethod callback,
-	bool multiple,
-	std::string& path,
-	std::string& file,
-	std::vector<std::string>& types)
-{
+SharedBoundList Win32UserWindow::SelectFile(SharedBoundMethod callback,
+		bool multiple, std::string& path, std::string& file, std::vector<
+				std::string>& types) {
 	//std::string filterName = props->GetString("typesDescription", "Filtered Files");
 	std::string filterName = "Filtered Files";
 	std::string filter;
 
-	if(types.size() > 0)
-	{
+	if (types.size() > 0) {
 		//"All\0*.*\0Test\0*.TXT\0";
 		filter.append(filterName);
 		filter.push_back('\0');
 
-		for(int i = 0; i < types.size(); i++)
-		{
+		for (int i = 0; i < types.size(); i++) {
 			std::string type = types.at(i);
 
 			//multiple filters: "*.TXT;*.DOC;*.BAK"
 			size_t found = type.find("*.");
-			if(found != 0)
-			{
+			if (found != 0) {
 				filter.append("*.");
 			}
 			filter.append(type);
@@ -977,12 +930,9 @@ SharedBoundList Win32UserWindow::SelectFile(
 
 	ZeroMemory(&filen, sizeof(filen));
 
-	if(file.size() == 0)
-	{
+	if (file.size() == 0) {
 		filen[0] = '\0';
-	}
-	else
-	{
+	} else {
 		strcpy(filen, file.c_str());
 	}
 
@@ -999,27 +949,23 @@ SharedBoundList Win32UserWindow::SelectFile(
 	ofn.lpstrInitialDir = (path.length() == 0 ? NULL : path.c_str());
 	ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_EXPLORER;
 
-	if(multiple) ofn.Flags |= OFN_ALLOWMULTISELECT;
+	if (multiple)
+		ofn.Flags |= OFN_ALLOWMULTISELECT;
 
 	SharedBoundList results = new StaticBoundList();
 	// display the open dialog box
-	if(GetOpenFileName(&ofn) == TRUE)
-	{
+	if (GetOpenFileName(&ofn) == TRUE) {
 		// if the user selected multiple files, ofn.lpstrFile is a NULL-separated list of filenames
 		// if the user only selected one file, ofn.lpstrFile is a normal string
 
 		std::vector<std::string> tokens;
 		ParseStringNullSeparated(ofn.lpstrFile, tokens);
 
-		if(tokens.size() == 1)
-		{
+		if (tokens.size() == 1) {
 			results->Append(Value::NewString(tokens.at(0)));
-		}
-		else if(tokens.size() > 1)
-		{
+		} else if (tokens.size() > 1) {
 			std::string directory(tokens.at(0));
-			for(int i = 1; i < tokens.size(); i++)
-			{
+			for (int i = 1; i < tokens.size(); i++) {
 				std::string n;
 				n.append(directory.c_str());
 				n.append("\\");
@@ -1031,11 +977,8 @@ SharedBoundList Win32UserWindow::SelectFile(
 	return results;
 }
 
-SharedBoundList Win32UserWindow::SelectDirectory(
-	bool multiple,
-	std::string& path,
-	std::string& file)
-{
+SharedBoundList Win32UserWindow::SelectDirectory(bool multiple,
+		std::string& path, std::string& file) {
 	SharedBoundList results = new StaticBoundList();
 
 	BROWSEINFO bi = { 0 };
@@ -1044,46 +987,39 @@ SharedBoundList Win32UserWindow::SelectDirectory(
 	bi.hwndOwner = this->window_handle;
 	LPITEMIDLIST pidl = SHBrowseForFolder(&bi);
 
-	if(pidl != 0)
-	{
+	if (pidl != 0) {
 		// get folder name
 		TCHAR in_path[MAX_PATH];
-		if(SHGetPathFromIDList(pidl, in_path))
-		{
+		if (SHGetPathFromIDList(pidl, in_path)) {
 			results->Append(Value::NewString(std::string(in_path)));
 		}
 	}
 	return results;
 }
 
-void Win32UserWindow::ParseStringNullSeparated(const char *s, std::vector<std::string> &tokens)
-{
+void Win32UserWindow::ParseStringNullSeparated(const char *s, std::vector<
+		std::string> &tokens) {
 	std::string token;
 
 	// input string is expected to be composed of single-NULL-separated tokens, and double-NULL terminated
 	int i = 0;
-	while(true)
-	{
+	while (true) {
 		char c;
 
 		c = s[i++];
 
-		if(c == '\0')
-		{
+		if (c == '\0') {
 			// finished reading a token, save it in tokens vectory
 			tokens.push_back(token);
 			token.clear();
 
-			c = s[i];		// don't increment index because next token loop needs to read this char again
+			c = s[i]; // don't increment index because next token loop needs to read this char again
 
 			// if next char is NULL, then break out of the while loop
-			if(c == '\0')
-			{
-				break;	// out of while loop
-			}
-			else
-			{
-				continue;	// read next token
+			if (c == '\0') {
+				break; // out of while loop
+			} else {
+				continue; // read next token
 			}
 		}
 

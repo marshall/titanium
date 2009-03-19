@@ -7,35 +7,6 @@
 #include "ui_module.h"
 #include <Poco/URI.h>
 
-#ifdef OS_OSX
-  #define TI_FATAL_ERROR(msg) \
-  { \
-	NSApplicationLoad();	\
-	if (msg) NSRunCriticalAlertPanel (@"Application Error",	\
-				[NSString stringWithUTF8String:msg],nil,nil,nil);	\
-	[NSApp terminate:nil]; \
-	 \
-  }
-#elif OS_WIN32
-  #define TI_FATAL_ERROR(msg) \
-  { \
-	MessageBox(NULL,msg,"Application Error",MB_OK|MB_ICONERROR|MB_SYSTEMMODAL); \
-	ExitProcess(1);\
-  }
-#elif OS_LINUX
-  #define TI_FATAL_ERROR(msg) \
-  { \
-	GtkWidget* dialog = gtk_message_dialog_new (NULL,  \
-	                                  GTK_DIALOG_MODAL, \
-					  GTK_MESSAGE_ERROR,  \
-	                                  GTK_BUTTONS_OK, \
-	                                  msg); \
-	gtk_dialog_run (GTK_DIALOG (dialog)); \
-	gtk_widget_destroy (dialog); \
-	exit(1); \
-  }
-#endif
-
 namespace ti
 {
 	KROLL_MODULE(UIModule)
@@ -55,25 +26,40 @@ namespace ti
 		UIModule::global = global;
 		UIModule::instance_ = this;
 	}
-	
+
 	void UIModule::Start()
 	{
+		SharedBoundMethod api = this->host->GetGlobalObject()->GetNS("API.fire")->ToMethod();
+		api->Call("ti.UI.start", Value::Undefined);
+
+#ifdef OS_WIN32
+		UIBinding* binding = new Win32UIBinding(host);
+#elif OS_OSX
+		UIBinding* binding = new OSXUIBinding(host);
+#elif OS_LINUX
+		UIBinding* binding = new GtkUIBinding(host);
+#endif
+
 		AppConfig *config = AppConfig::Instance();
 		if (config == NULL)
 		{
-			TI_FATAL_ERROR("Error loading tiapp.xml. Your application is not properly configured or packaged.");
+			std::string msg = "Error loading tiapp.xml. Your application "
+			                  "is not properly configured or packaged.";
+			binding->ErrorDialog(msg);
+			throw ValueException::FromString(msg.c_str());
+			return;
 		}
 		WindowConfig *main_window_config = config->GetMainWindow();
 		if (main_window_config == NULL)
 		{
-			TI_FATAL_ERROR("Error loading tiapp.xml. Your application window is not properly configured or packaged.");
+			std::string msg ="Error loading tiapp.xml. Your application "
+			                 "window is not properly configured or packaged.";
+			binding->ErrorDialog(msg);
+			throw ValueException::FromString(msg.c_str());
+			return;
 		}
 
-		SharedBoundMethod api = this->host->GetGlobalObject()->GetNS("API.fire")->ToMethod();
-		api->Call("ti.UI.start",Value::Undefined);
-
-		// create the main window
-		UserWindow::CreateWindow(host,NULL,main_window_config,true);
+		binding->CreateMainWindow(main_window_config);
 	}
 
 	void UIModule::LoadUIJavascript(JSContextRef context)
@@ -101,7 +87,7 @@ namespace ti
 		// stop is called given that the API module is registered (and unregistered)
 		// before our module and it will then be too late
 		SharedBoundMethod api = this->host->GetGlobalObject()->GetNS("API.fire")->ToMethod();
-		api->Call("ti.UI.stop",Value::Undefined);
+		api->Call("ti.UI.stop", Value::Undefined);
 	}
 
 	void UIModule::Stop()
@@ -125,35 +111,22 @@ namespace ti
 	SharedString UIModule::GetResourcePath(const char *URL)
 	{
 		if (URL == NULL || !strcmp(URL, ""))
-			return SharedString(NULL);
+			return new std::string("");
 
 		Poco::URI uri(URL);
 		std::string scheme = uri.getScheme();
 
 		if (scheme == "app" || scheme == "ti")
 		{
-			SharedValue meth_val = UIModule::global->GetNS("App.appURLToPath");
-			if (!meth_val->IsMethod())
-				return SharedString(NULL);
+			SharedValue new_url = global->CallNS(
+				"App.appURLToPath",
+				Value::NewString(URL));
 
-			SharedBoundMethod meth = meth_val->ToMethod();
-			ValueList args;
-			args.push_back(Value::NewString(URL));
-			SharedValue out_val = meth->Call(args);
+			if (new_url->IsString())
+				return new std::string(new_url->ToString());
+		}
 
-			if (out_val->IsString())
-			{
-				return SharedString(new std::string(out_val->ToString()));
-			}
-			else
-			{
-				return SharedString(NULL);
-			}
-		}
-		else
-		{
-			return SharedString(new std::string(URL));
-		}
+		return new std::string(URL);
 	}
 
 	void UIModule::SetMenu(SharedPtr<MenuItem> menu)

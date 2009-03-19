@@ -29,6 +29,28 @@ namespace ti
 		g_set_prgname(buf);
 	}
 
+	SharedUserWindow GtkUIBinding::CreateWindow(
+		WindowConfig* config,
+		SharedUserWindow parent)
+	{
+		UserWindow* w = new GtkUserWindow(this, config, parent);
+		return w->GetSharedPtr();
+	}
+
+	void GtkUIBinding::ErrorDialog(std::string msg)
+	{
+		GtkWidget* dialog = gtk_message_dialog_new(
+			NULL,
+			GTK_DIALOG_MODAL,
+			GTK_MESSAGE_ERROR,
+			GTK_BUTTONS_OK,
+			"%s",
+			msg.c_str());
+		gtk_dialog_run(GTK_DIALOG (dialog));
+		gtk_widget_destroy(dialog);
+		UIBinding::ErrorDialog(msg);
+	}
+
 	SharedPtr<MenuItem> GtkUIBinding::CreateMenu(bool trayMenu)
 	{
 		SharedPtr<MenuItem> menu = new GtkMenuItemImpl();
@@ -38,14 +60,13 @@ namespace ti
 	void GtkUIBinding::SetMenu(SharedPtr<MenuItem> new_menu)
 	{
 		// Notify all windows that the app menu has changed.
-		std::vector<UserWindow*>& windows = UserWindow::GetWindows();
-		std::vector<UserWindow*>::iterator i = windows.begin();
+		std::vector<SharedUserWindow>& windows = this->GetOpenWindows();
+		std::vector<SharedUserWindow>::iterator i = windows.begin();
 		while (i != windows.end())
 		{
-			GtkUserWindow* guw = dynamic_cast<GtkUserWindow*>(*i);
-			if (guw != NULL)
+			SharedPtr<GtkUserWindow> guw = (*i).cast<GtkUserWindow>();
+			if (!guw.isNull())
 				guw->AppMenuChanged();
-
 			i++;
 		}
 	}
@@ -56,16 +77,14 @@ namespace ti
 
 	void GtkUIBinding::SetIcon(SharedString icon_path)
 	{
-
 		// Notify all windows that the app icon has changed.
-		std::vector<UserWindow*>& windows = UserWindow::GetWindows();
-		std::vector<UserWindow*>::iterator i = windows.begin();
+		std::vector<SharedUserWindow>& windows = this->GetOpenWindows();
+		std::vector<SharedUserWindow>::iterator i = windows.begin();
 		while (i != windows.end())
 		{
-			GtkUserWindow* guw = dynamic_cast<GtkUserWindow*>(*i);
-			if (guw != NULL)
+			SharedPtr<GtkUserWindow> guw = (*i).cast<GtkUserWindow>();
+			if (!guw.isNull())
 				guw->AppIconChanged();
-
 			i++;
 		}
 	}

@@ -42,28 +42,29 @@ static void load_finished_cb(
 	WebKitWebFrame* frame,
 	gpointer data);
 
-GtkUserWindow::GtkUserWindow(Host *host, WindowConfig* config) : UserWindow(host, config)
+GtkUserWindow::GtkUserWindow(SharedUIBinding binding, WindowConfig* config, SharedUserWindow parent) :
+	UserWindow(binding, config, parent),
+	gdk_width(-1),
+	gdk_height(-1),
+	gdk_x(-1),
+	gdk_y(-1),
+	gtk_window(NULL),
+	vbox(NULL),
+	web_view(NULL),
+	topmost(false),
+	menu(NULL),
+	menu_in_use(NULL),
+	menu_bar(NULL),
+	icon_path(NULL),
+	context_menu(NULL)
 {
-	this->gtk_window = NULL;
-	this->web_view = NULL,
-	this->menu = NULL;
-	this->menu_bar = NULL;
-	this->gdk_width = -1;
-	this->gdk_height = -1;
-	this->gdk_x = -1;
-	this->gdk_y = -1;
-
 	this->SetMethod("_OpenFilesWork", &GtkUserWindow::_OpenFilesWork);
 }
 
 GtkUserWindow::~GtkUserWindow()
 {
+	printf("GTK Destroying window\n\n\n\n");
 	this->Close();
-}
-
-UserWindow* GtkUserWindow::WindowFactory(Host *host, WindowConfig* config)
-{
-	return new GtkUserWindow(host, config);
 }
 
 void GtkUserWindow::Open()
@@ -153,6 +154,7 @@ void GtkUserWindow::Open()
 		this->SetupSize();
 		this->SetupMenu();
 		this->SetupIcon();
+		this->SetTopMost(config->IsTopMost());
 
 		gtk_widget_grab_focus(GTK_WIDGET (web_view));
 		webkit_web_view_open(web_view, this->config->GetURL().c_str());
@@ -167,7 +169,7 @@ void GtkUserWindow::Open()
 			gtk_window_fullscreen(this->gtk_window);
 		}
 
-		UserWindow::Open(this);
+		UserWindow::Open();
 		this->FireEvent(OPENED);
 	}
 	else
@@ -178,16 +180,18 @@ void GtkUserWindow::Open()
 
 void GtkUserWindow::Close()
 {
+	// Only close this window, if it is already open
 	if (this->gtk_window != NULL)
 	{
-		this->FireEvent(CLOSED);
+		UserWindow::Close();
+
 		this->RemoveOldMenu();
 		gtk_widget_destroy(GTK_WIDGET(gtk_window));
 		this->gtk_window = NULL;
 		this->web_view = NULL;
-	}
 
-	UserWindow::Close();
+		this->FireEvent(CLOSED);
+	}
 }
 
 void GtkUserWindow::SetupTransparency()
@@ -455,8 +459,7 @@ static void window_object_cleared_cb(
 		BoundObject* delegate_ui_api = new DelegateStaticBoundObject(ui_api);
 
 		// Place currentWindow in the delegate.
-		SharedBoundObject* shared_user_window = new SharedBoundObject(user_window);
-		SharedValue user_window_val = Value::NewObject(*shared_user_window);
+		SharedValue user_window_val = Value::NewObject(user_window->GetSharedPtr());
 		delegate_ui_api->Set("currentWindow", user_window_val);
 
 		// Place currentWindow.createWindow in the delegate.
