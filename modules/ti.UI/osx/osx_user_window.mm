@@ -214,8 +214,6 @@ namespace ti
 
 		// Compensate for frame size
 		NSRect frame = [window frame];
-		int diff = frame.size.width - [[window contentView] frame].size.width;
-		printf("width diff %i\n", diff);
 		width += frame.size.width - [[window contentView] frame].size.width;
 		BOOL display = config->IsVisible();
 		frame.size.width = width;
@@ -235,8 +233,6 @@ namespace ti
 
 		// Compensate for frame size
 		NSRect frame = [window frame];
-		int diff = frame.size.height - [[window contentView] frame].size.height;
-		printf("height diff %i\n", diff);
 		height += frame.size.height - [[window contentView] frame].size.height;
 		BOOL display = config->IsVisible();
 		double originalHeight = NSHeight(frame);
