@@ -31,7 +31,7 @@ namespace ti
 
 	SharedUserWindow GtkUIBinding::CreateWindow(
 		WindowConfig* config,
-		SharedUserWindow parent)
+		SharedUserWindow& parent)
 	{
 		UserWindow* w = new GtkUserWindow(this, config, parent);
 		return w->GetSharedPtr();

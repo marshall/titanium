@@ -42,7 +42,7 @@ static void load_finished_cb(
 	WebKitWebFrame* frame,
 	gpointer data);
 
-GtkUserWindow::GtkUserWindow(SharedUIBinding binding, WindowConfig* config, SharedUserWindow parent) :
+GtkUserWindow::GtkUserWindow(SharedUIBinding binding, WindowConfig* config, SharedUserWindow& parent) :
 	UserWindow(binding, config, parent),
 	gdk_width(-1),
 	gdk_height(-1),
@@ -63,7 +63,7 @@ GtkUserWindow::GtkUserWindow(SharedUIBinding binding, WindowConfig* config, Shar
 
 GtkUserWindow::~GtkUserWindow()
 {
-	printf("GTK Destroying window\n\n\n\n");
+	printf("destroying GTK window\n\n\n\n\n");
 	this->Close();
 }
 
@@ -133,8 +133,8 @@ void GtkUserWindow::Open()
 		gtk_widget_set_name(window, this->config->GetTitle().c_str());
 		gtk_window_set_title(GTK_WINDOW(window), this->config->GetTitle().c_str());
 
-		g_signal_connect(G_OBJECT(window), "destroy",
-		                 G_CALLBACK(destroy_cb), this);
+		this->destroy_cb_id = g_signal_connect(
+			G_OBJECT(window), "destroy", G_CALLBACK(destroy_cb), this);
 		g_signal_connect(G_OBJECT(window), "event",
 		                 G_CALLBACK(event_cb), this);
 
@@ -178,20 +178,38 @@ void GtkUserWindow::Open()
 	}
 }
 
+// Notify this GtkUserWindow that the GTK bits are invalid
+void GtkUserWindow::Destroyed()
+{
+	this->gtk_window = NULL;
+	this->web_view = NULL;
+}
+
+static void destroy_cb(
+	GtkWidget* widget,
+	gpointer data)
+{
+	GtkUserWindow* user_window = (GtkUserWindow*) data;
+	user_window->Destroyed(); // Inform the GtkUserWindow we are done
+	user_window->Close();
+}
+
 void GtkUserWindow::Close()
 {
-	// Only close this window, if it is already open
+	// Destroy the GTK bits, if we have them first, because
+	// we need to assume the GTK window is gone for  everything 
+	// below (this method might be called by destroy_cb)
 	if (this->gtk_window != NULL)
 	{
-		UserWindow::Close();
-
-		this->RemoveOldMenu();
-		gtk_widget_destroy(GTK_WIDGET(gtk_window));
-		this->gtk_window = NULL;
-		this->web_view = NULL;
-
-		this->FireEvent(CLOSED);
+		// We don't want the destroy signal handler to fire after now.
+		g_signal_handler_disconnect(this->gtk_window, this->destroy_cb_id);
+		gtk_widget_destroy(GTK_WIDGET(this->gtk_window));
+		this->Destroyed();
 	}
+	this->RemoveOldMenu(); // Cleanup old menu
+
+	UserWindow::Close();
+	this->FireEvent(CLOSED);
 }
 
 void GtkUserWindow::SetupTransparency()
@@ -304,14 +322,6 @@ void GtkUserWindow::SetupIcon()
 		}
 	}
 	gtk_window_set_icon(this->gtk_window, icon);
-}
-
-static void destroy_cb(
-	GtkWidget* widget,
-	gpointer data)
-{
-	GtkUserWindow* user_window = (GtkUserWindow*) data;
-	user_window->Close();
 }
 
 static gboolean event_cb(
@@ -541,7 +551,8 @@ void GtkUserWindow::Show() {
 }
 
 void GtkUserWindow::Focus() {
-	gtk_window_present(this->gtk_window);
+	if (this->gtk_window != NULL)
+		gtk_window_present(this->gtk_window);
 }
 
 void GtkUserWindow::Unfocus(){
@@ -839,15 +850,14 @@ SharedString GtkUserWindow::GetIcon()
 
 void GtkUserWindow::RemoveOldMenu()
 {
-	// Check if we are already using a menu
-	// and the window is initialized.
-	if (this->gtk_window != NULL &&
-	    !this->menu_in_use.isNull() &&
-	    this->menu_bar != NULL)
-	{
+
+	// Only clear a realization if we have one
+	if (!this->menu_in_use.isNull() && this->menu_bar != NULL)
 		this->menu_in_use->ClearRealization(this->menu_bar);
+
+	// Only remove the old menu if we still have a window
+	if (this->gtk_window != NULL)
 		gtk_container_remove(GTK_CONTAINER(this->vbox), this->menu_bar);
-	}
 
 	this->menu_in_use = NULL;
 	this->menu_bar = NULL;
