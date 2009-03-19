@@ -25,6 +25,14 @@ namespace ti
 	{
 	}
 
+	SharedUserWindow Win32UIBinding::CreateWindow(
+		WindowConfig* config,
+		SharedUserWindow parent)
+	{
+		UserWindow* w = new Win32UserWindow(this, config, parent);
+		return w->GetSharedPtr();
+	}
+
 	SharedPtr<MenuItem> Win32UIBinding::CreateMenu(bool trayMenu)
 	{
 		SharedPtr<MenuItem> menu = new Win32MenuItemImpl(NULL);
@@ -34,12 +42,12 @@ namespace ti
 	void Win32UIBinding::SetMenu(SharedPtr<MenuItem>)
 	{
 		// Notify all windows that the app menu has changed.
-		std::vector<UserWindow*>& windows = UserWindow::GetWindows();
-		std::vector<UserWindow*>::iterator i = windows.begin();
+		std::vector<SharedUserWindow>& windows = this->GetOpenWindows();
+		std::vector<SharedUserWindow>::iterator i = windows.begin();
 		while (i != windows.end())
 		{
-			Win32UserWindow* wuw = dynamic_cast<Win32UserWindow*>(*i);
-			if (wuw != NULL)
+			SharedPtr<Win32UserWindow> wuw = (*i).cast<Win32UserWindow>();
+			if (!wuw.isNull())
 				wuw->AppMenuChanged();
 
 			i++;
@@ -76,12 +84,12 @@ namespace ti
 	{
 		// Notify all windows that the app icon has changed
 		// TODO this kind of notification should really be placed in UIBinding..
-		std::vector<UserWindow*>& windows = UserWindow::GetWindows();
-		std::vector<UserWindow*>::iterator i = windows.begin();
+		std::vector<SharedUserWindow>& windows = this->GetOpenWindows();
+		std::vector<SharedUserWindow>::iterator i = windows.begin();
 		while (i != windows.end())
 		{
-			Win32UserWindow* wuw = dynamic_cast<Win32UserWindow*>(*i);
-			if (wuw != NULL)
+			SharedPtr<Win32UserWindow> wuw = (*i).cast<Win32UserWindow>();
+			if (!wuw.isNull())
 				wuw->AppIconChanged();
 
 			i++;

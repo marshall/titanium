@@ -31,7 +31,9 @@ enum UserWindowEvent
 {
 	FOCUSED,
 	UNFOCUSED,
+	OPEN,
 	OPENED,
+	CLOSE,
 	CLOSED,
 	HIDDEN,
 	SHOWN,
@@ -40,17 +42,20 @@ enum UserWindowEvent
 	MAXIMIZED,
 	MINIMIZED,
 	RESIZED,
-	MOVED
+	MOVED,
+	INIT,
+	LOAD,
+	CREATE
 };
 
 class UserWindow : public kroll::StaticBoundObject {
 	public:
-		UserWindow(kroll::Host *host, WindowConfig *config);
-		~UserWindow(){};
-		kroll::Host* GetHost() { return this->host; }
-		static SharedBoundObject CreateWindow(Host *host, UserWindow *parent, WindowConfig *config, bool initialWindow = false);
-		static std::vector<UserWindow*>& GetWindows();
+		UserWindow(SharedUIBinding binding, WindowConfig *config, SharedUserWindow parent);
+		virtual ~UserWindow();
+		static SharedBoundObject CreateWindow(Host *host, WindowConfig *config, SharedUserWindow parent, bool initialWindow = false);
 		void UpdateWindowForURL(std::string url);
+		Host* GetHost();
+		SharedUIBinding GetBinding();
 
 	private:
 		void _Hide(const kroll::ValueList&, kroll::SharedValue);
@@ -140,10 +145,8 @@ class UserWindow : public kroll::StaticBoundObject {
 			long id;
 		};
 		std::vector<Listener> listeners;
-		long next_listener_id;
 
 	public:
-
 		virtual void OpenFiles(
 			SharedBoundMethod callback,
 			bool multiple,
@@ -161,7 +164,7 @@ class UserWindow : public kroll::StaticBoundObject {
 		virtual bool IsUsingScrollbars() = 0;
 		virtual bool IsFullScreen() = 0;
 		virtual std::string GetId() = 0;
-		virtual void Open() = 0;
+		virtual void Open();
 		virtual void Close();
 
 		virtual double GetX() = 0;
@@ -213,27 +216,24 @@ class UserWindow : public kroll::StaticBoundObject {
 		virtual bool IsTopMost() = 0;
 		virtual void SetTopMost(bool topmost) = 0;
 
-		virtual void FireEvent(UserWindowEvent event);
+		virtual void FireEvent(UserWindowEvent event_type, SharedKObject event=NULL);
 		virtual void ContextBound(SharedBoundObject scope);
 		virtual void PageLoaded(SharedBoundObject scope,std::string &url);
 
+		SharedUserWindow GetSharedPtr();
+
 	protected:
-		kroll::Host *host;
+		SharedUIBinding binding;
+		Host* host;
 		WindowConfig *config;
-		UserWindow *parent;
+		SharedPtr<UserWindow> parent;
+		SharedUserWindow shared_this;
+		std::vector<SharedUserWindow> children;
+		long next_listener_id;
 
-		virtual UserWindow* GetParent();
-		virtual void SetParent(UserWindow *parent);
-		virtual void AddChild(UserWindow *window);
-		virtual void RemoveChild(UserWindow *window);
-
-		static std::vector<UserWindow*> windows;
-		static std::map<UserWindow*, std::vector<UserWindow*> > windowsMap;
-		static std::map<UserWindow*, SharedBoundObject> boundWindows;
-
-		static void Open(UserWindow *);
-		static void AddChild(UserWindow *parent, UserWindow *child);
-		static void RemoveChild(UserWindow *parent, UserWindow *child);
+		virtual SharedPtr<UserWindow> GetParent();
+		virtual void AddChild(SharedPtr<UserWindow>);
+		virtual void RemoveChild(SharedPtr<UserWindow> window);
 
 		// These are constants which will eventually
 		// be exposed to the API.
@@ -242,7 +242,6 @@ class UserWindow : public kroll::StaticBoundObject {
 	private:
 		DISALLOW_EVIL_CONSTRUCTORS(UserWindow);
 		SharedBoundMethod api;
-		static SharedBoundObject uiBinding;
 };
 
 }

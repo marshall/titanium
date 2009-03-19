@@ -15,16 +15,27 @@ namespace ti
 {
 	class UIBinding : public StaticBoundObject
 	{
-		friend class SharedPtr<BoundObject>;
 
 	public:
 		UIBinding(Host *host);
 		virtual ~UIBinding();
+		Host* GetHost();
+
+		virtual void CreateMainWindow(WindowConfig*);
+		virtual SharedUserWindow CreateWindow(WindowConfig*, SharedUserWindow parent) = 0;
+
+		std::vector<SharedUserWindow>& GetOpenWindows();
+		void AddToOpenWindows(SharedUserWindow);
+		void RemoveFromOpenWindows(SharedUserWindow);
 
 	protected:
 		Host* host;
 
 	private:
+		std::vector<SharedUserWindow> open_windows;
+		std::vector<SharedUserWindow> all_windows;
+		SharedKList open_window_list;
+
 		void _CreateMenu(const ValueList& args, SharedValue result);
 		void _CreateTrayMenu(const ValueList& args, SharedValue result);
 		void _SetMenu(const ValueList& args, SharedValue result);

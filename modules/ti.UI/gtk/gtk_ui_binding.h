@@ -18,12 +18,12 @@ namespace ti
 		public:
 		GtkUIBinding(Host* host);
 
+		SharedUserWindow CreateWindow(WindowConfig*, SharedUserWindow parent);
 		SharedPtr<MenuItem> CreateMenu(bool trayMenu);
 		void SetMenu(SharedPtr<MenuItem>);
 		void SetContextMenu(SharedPtr<MenuItem>);
 		void SetIcon(SharedString icon_path);
-		SharedPtr<TrayItem> AddTray(SharedString icon_path,
-		                            SharedBoundMethod cb);
+		SharedPtr<TrayItem> AddTray(SharedString icon_path, SharedBoundMethod cb);
 
 		long GetIdleTime();
 

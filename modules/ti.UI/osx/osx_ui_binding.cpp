@@ -47,6 +47,14 @@ namespace ti
 		[savedDockView release];
 	}
 
+	SharedUserWindow OSXUIBinding::CreateWindow(
+		WindowConfig* config,
+		SharedUserWindow parent)
+	{
+		UserWindow* w = new OSXUserWindow(this, config, parent);
+		return w->GetSharedPtr();
+	}
+
 	SharedPtr<MenuItem> OSXUIBinding::CreateMenu(bool trayMenu)
 	{
 		return new OSXMenuItem();

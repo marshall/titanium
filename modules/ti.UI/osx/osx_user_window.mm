@@ -1,5 +1,4 @@
-/**
- * Appcelerator Titanium - licensed under the Apache Public License 2
+/** * Appcelerator Titanium - licensed under the Apache Public License 2
  * see LICENSE in the root folder for details on the license.
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
@@ -11,6 +10,7 @@
 
 namespace ti
 {
+	bool OSXUserWindow::initial = false;
 	static unsigned int toWindowMask(WindowConfig *config)
 	{
 		unsigned int mask = 0;
@@ -41,7 +41,12 @@ namespace ti
 		return mask;
 	}
 
-	OSXUserWindow::OSXUserWindow(Host *host, WindowConfig *config, SharedPtr<OSXUIBinding> binding) : UserWindow(host,config), window(NULL), opened(false), closed(false), binding(binding)
+	OSXUserWindow::OSXUserWindow(UIBinding* binding, WindowConfig* config, SharedUserWindow parent) :
+		UserWindow(binding, config, parent),
+		window(NULL),
+		opened(false),
+		closed(false),
+		osx_binding(binding.cast<OSXUIBinding>())
 	{
 		unsigned int mask = toWindowMask(config);
 
@@ -68,7 +73,15 @@ namespace ti
 			this->SetWidth(config->GetWidth());
 		}
 
-		[window setupDecorations:config host:host userwindow:this];
+		[window setupDecorations:config host:binding->GetHost() userwindow:this];
+		if (OSXUserWindow::initial)
+		{
+			OSXuserWindow::intial = false;
+			[window setInitialWindow:YES];
+		}
+
+		this->SetTopMost(config->IsTopMost());
+
 	}
 	OSXUserWindow::~OSXUserWindow()
 	{
@@ -78,10 +91,6 @@ namespace ti
 		{
 			UserWindow::Close();
 		}
-	}
-	UserWindow* OSXUserWindow::WindowFactory(Host* host, WindowConfig* config, SharedPtr<OSXUIBinding> binding)
-	{
-		return new OSXUserWindow(host, config, binding);
 	}
 	void OSXUserWindow::Hide()
 	{
@@ -137,7 +146,7 @@ namespace ti
 	{
 		opened = true;
 		[window open];
-		UserWindow::Open(this);
+		UserWindow::Open();
 	}
 	void OSXUserWindow::Close()
 	{
@@ -400,7 +409,7 @@ namespace ti
 		if (focused)
 		{
 			SharedPtr<OSXMenuItem> m = menu.cast<OSXMenuItem>();
-			this->binding->WindowFocused(this,m.get());
+			this->osx_binding->WindowFocused(this,m.get());
 		}
 	}
 	
@@ -416,7 +425,7 @@ namespace ti
 		if (!menu.isNull())
 		{
 			SharedPtr<OSXMenuItem> m = menu.cast<OSXMenuItem>();
-			this->binding->WindowFocused(this,m.get());
+			this->osx_binding->WindowFocused(this,m.get());
 		}
 	}
 
@@ -426,7 +435,7 @@ namespace ti
 		if (!menu.isNull())
 		{
 			SharedPtr<OSXMenuItem> m = menu.cast<OSXMenuItem>();
-			this->binding->WindowUnfocused(this,m.get());
+			this->osx_binding->WindowUnfocused(this,m.get());
 		}
 	}
 	

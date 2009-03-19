@@ -176,9 +176,9 @@ Win32UserWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	return 0;
 }
 
-Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config) :
-	UserWindow(host, config),
-	script_evaluator(host),
+Win32UserWindow::Win32UserWindow(SharedUIBinding binding, WindowConfig* config, SharedUserWindow parent)
+	UserWindow(binding, config, parent),
+	script_evaluator(binding->GetHost()),
 	menuBarHandle(NULL),
 	menuInUse(NULL),
 	menu(NULL),
@@ -187,7 +187,7 @@ Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config) :
 	web_inspector(NULL)
 {
 	static bool initialized = false;
-	win32_host = static_cast<kroll::Win32Host*>(host);
+	win32_host = static_cast<kroll::Win32Host*>(binding->GetHost());
 	if (!initialized) {
 		INITCOMMONCONTROLSEX InitCtrlEx;
 
@@ -366,6 +366,8 @@ Win32UserWindow::Win32UserWindow(kroll::Host *host, WindowConfig *config) :
 	{
 		SendMessageA(window_handle, (UINT)WM_SETICON, ICON_BIG, (LPARAM)initial_icon);
 	}
+
+	this->SetTopMost(config->IsTopMost());
 }
 
 Win32UserWindow::~Win32UserWindow()
@@ -375,11 +377,6 @@ Win32UserWindow::~Win32UserWindow()
 
 	if (web_frame)
 		web_frame->Release();
-}
-
-UserWindow* Win32UserWindow::WindowFactory(Host *host, WindowConfig* config)
-{
-	return new Win32UserWindow(host, config);
 }
 
 std::string Win32UserWindow::GetTransparencyColor()
@@ -429,7 +426,8 @@ void Win32UserWindow::Open() {
 
 	ResizeSubViews();
 
-	UserWindow::Open(this);
+	UserWindow::Open();
+
 	SetURL(this->config->GetURL());
 	if (!this->requires_display)
 	{

@@ -12,8 +12,8 @@ namespace ti
 	{
 
 		public:
-		GtkUserWindow(Host *host, ti::WindowConfig *config);
-		~GtkUserWindow();
+		GtkUserWindow(SharedUIBinding, WindowConfig*, SharedUserWindow);
+		virtual ~GtkUserWindow();
 		void SetupDecorations();
 		void SetupTransparency();
 		void SetupSizeLimits();
@@ -24,8 +24,6 @@ namespace ti
 		void AppMenuChanged();
 		void AppIconChanged();
 		void RemoveOldMenu();
-
-		static UserWindow* WindowFactory(Host *, WindowConfig*);
 
 		void OpenFiles(
 			SharedBoundMethod callback,
@@ -97,7 +95,10 @@ namespace ti
 		void SetIcon(SharedString icon_path);
 		SharedString GetIcon();
 
-		int gdk_height, gdk_width, gdk_x, gdk_y;
+		int gdk_width;
+		int gdk_height;
+		int gdk_x;
+		int gdk_y;
 
 	protected:
 		GtkWindow* gtk_window;
