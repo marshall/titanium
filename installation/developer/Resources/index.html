@@ -48,35 +48,35 @@
 			<span style="color:#42C0FB" on="l:online.count then value[count]">loading...</span>  
 		</div>
 	</div>
-<!--
-	<div style="margin-auto">
-		<div class="nav1 nav_active" style="display:inline-block;" 
+	<div style="margin:auto;width:606px">
+		<div class="nav1 nav_active" style="display:inline-block;-webkit-border-bottom-left-radius: 6px;border-left:1px solid #222" 
 			on="click then l:menu[val=manage] and add[class=nav_active] 
 				or l:menu[val!=manage] then remove[class=nav_active]">
 			<div class="nav2">Projects</div>
 		</div>
-		<div class="nav1" style="display:inline-block;" 
+		<div class="nav1" style="display:inline-block;border-left:1px solid #222" 
 			on="click then l:menu[val=sandbox] and add[class=nav_active] 
 				or l:menu[val!=sandbox] then remove[class=nav_active]">
 			<div>Sandbox</div>
 		</div>
 
-		<div class="nav1" style="display:inline-block;" 
+		<div class="nav1" style="display:inline-block;border-left:1px solid #222" 
 			on="click then l:menu[val=apps] and add[class=nav_active] or l:menu[val!=apps] then remove[class=nav_active]">
 			<div>Apps</div>
 		</div>
-		<div class="nav1" style="display:inline-block;" 
+		<div class="nav1" style="display:inline-block;border-left:1px solid #222" 
 			on="click then l:menu[val=interact] and add[class=nav_active] 
 				or l:menu[val!=interact] then remove[class=nav_active]">
 			<div>Community 
 				<span id="irc_message_count" class="message_indicator" style="display:none"></span>
 			</div>
 		</div>
-		<div class="nav1" style="display:inline-block;" 
+		<div class="nav1" style="display:inline-block;-webkit-border-bottom-right-radius: 6px;border-right:1px solid #222;border-left:1px solid #222" 
 			on="click then l:menu[val=feeds] and add[class=nav_active] 
 				or l:menu[val!=feeds] then remove[class=nav_active]">
 			<div >Feeds</div>
 		</div>
+<!--
 		<div class="nav1" style="display:inline-block;" 
 			on="click then l:menu[val=api] and add[class=nav_active] 
 				or l:menu[val!=api] then remove[class=nav_active]">
@@ -85,12 +85,12 @@
 -->	
 	</div>
 
-	<div style="clear:both"></div>
+	<div style="clear:both;margin-bottom:10px"></div>
 
 	<!-- CONTENT -->
 	<div id="content" style="display:none" on="l:project.list.response[firstCall=1] then effect[fadeIn]">
 		
-		<!-- MAJOR ACTION BUTTONS -->
+		<!-- MAJOR ACTION BUTTONS 
 		<div class="button1 active" style="display:inline-block;width:150px" 
 			on="click then l:menu[val=manage] and add[class=active] or l:menu[val!=manage] then remove[class=active]">
 			<div class="button2">Projects</div>
@@ -113,6 +113,7 @@
 			on="click then l:menu[val=api] and add[class=active] or l:menu[val!=api] then remove[class=active]">
 			<div class="button2">Documentation</div>
 		</div>
+		-->
 
 
 		<!-- ************* -->
@@ -773,10 +774,6 @@
 											Packaging Error. 
 											<div style="font-size:28px">Make sure you are online.</div>
 											</div>
-										</div>
-
-										<div align="center" style="line-height:auto">
-											<img src="images/ti_warn.png" style="position:relative;top:-1px"/>
 										</div>
 									</div>
 									

@@ -1110,13 +1110,24 @@ $MQL('l:create.package.request',function(msg)
 					$('#packaging_listing').css('display','none');
 					$('#packaging_error').css('display','block');		
 					$('#packaging_in_progress').css('display','none');
-
+		
 				}
 			}
 		} ;
-
+		
 		xhr.open("POST",'http://publisher.titaniumapp.com/api/publish');
 		xhr.sendDir(project.dir);    
+
+		//TODO REMOVE
+		// setTimeout(function()
+		// {
+		// 	$('#packaging_none').css('display','none')
+		// 	$('#packaging_listing').css('display','block');
+		// 	$('#packaging_error').css('display','none');		
+		// 	$('#packaging_in_progress').css('display','none');
+		// 	
+		// },10000)
+		
 		TiDeveloper.Projects.packagingInProgress[project.guid] = true;
 		$('#packaging_none').css('display','none')
 		$('#packaging_listing').css('display','none');

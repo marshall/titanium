@@ -139,11 +139,12 @@ textarea, input:focus
 	color:#a0a0a0;
 	background-color:#333;
 	cursor:pointer;
+	border-bottom:1px solid #222;
 
 }
 .nav_active
 {
-	background-color:#000;
+	background-color:#414141;
 	color:#fff;
 }
 
