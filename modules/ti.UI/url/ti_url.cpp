@@ -24,7 +24,7 @@ namespace ti {
 	{
 		std::string joined = "";
 		joined += sep;
-		for (int i = begin; i < tokenizer.count(); i++) {
+		for (size_t i = begin; i < tokenizer.count(); i++) {
 			joined += tokenizer[i];
 			if (i < tokenizer.count() - 1) {
 				joined += sep;
@@ -40,7 +40,7 @@ namespace ti {
 	}
 
 	/* TODO: Memory leak here */
-	const char * TiURLGetAbsolutePath(const char *url)
+	const char* TiURLGetAbsolutePath(const char *url)
 	{
 		std::string url_str =  url;
 		Poco::StringTokenizer tokenizer(url_str, "/", Poco::StringTokenizer::TOK_TRIM | Poco::StringTokenizer::TOK_IGNORE_EMPTY);
