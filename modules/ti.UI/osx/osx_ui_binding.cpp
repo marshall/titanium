@@ -49,7 +49,7 @@ namespace ti
 
 	SharedUserWindow OSXUIBinding::CreateWindow(
 		WindowConfig* config,
-		SharedUserWindow parent)
+		SharedUserWindow& parent)
 	{
 		UserWindow* w = new OSXUserWindow(this, config, parent);
 		return w->GetSharedPtr();

@@ -19,7 +19,7 @@ namespace ti
 		Win32UIBinding(Host *host);
 		~Win32UIBinding();
 
-		SharedUserWindow CreateWindow(WindowConfig*, SharedUserWindow parent);
+		SharedUserWindow CreateWindow(WindowConfig*, SharedUserWindow& parent);
 		void ErrorDialog(std::string);
 
 		SharedPtr<MenuItem> CreateMenu(bool trayMenu);
