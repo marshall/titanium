@@ -2,8 +2,7 @@
  * see LICENSE in the root folder for details on the license.
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
-#import "osx_user_window.h"
-#import "osx_ui_binding.h"
+#import "../ui_module.h"
 #import "osx_menu_item.h"
 
 #define STUB() printf("Method is still a stub, %s:%i\n", __FILE__, __LINE__)
@@ -41,7 +40,7 @@ namespace ti
 		return mask;
 	}
 
-	OSXUserWindow::OSXUserWindow(UIBinding* binding, WindowConfig* config, SharedUserWindow parent) :
+	OSXUserWindow::OSXUserWindow(SharedUIBinding binding, WindowConfig* config, SharedUserWindow parent) :
 		UserWindow(binding, config, parent),
 		window(NULL),
 		opened(false),
@@ -76,7 +75,7 @@ namespace ti
 		[window setupDecorations:config host:binding->GetHost() userwindow:this];
 		if (OSXUserWindow::initial)
 		{
-			OSXuserWindow::intial = false;
+			OSXUserWindow::initial = false;
 			[window setInitialWindow:YES];
 		}
 
