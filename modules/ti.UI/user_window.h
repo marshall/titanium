@@ -50,9 +50,8 @@ enum UserWindowEvent
 
 class UserWindow : public kroll::StaticBoundObject {
 	public:
-		UserWindow(SharedUIBinding binding, WindowConfig *config, SharedUserWindow parent);
+		UserWindow(SharedUIBinding binding, WindowConfig *config, SharedUserWindow& parent);
 		virtual ~UserWindow();
-		static SharedBoundObject CreateWindow(Host *host, WindowConfig *config, SharedUserWindow parent, bool initialWindow = false);
 		void UpdateWindowForURL(std::string url);
 		Host* GetHost();
 		SharedUIBinding GetBinding();
@@ -226,14 +225,15 @@ class UserWindow : public kroll::StaticBoundObject {
 		SharedUIBinding binding;
 		Host* host;
 		WindowConfig *config;
-		SharedPtr<UserWindow> parent;
+		SharedUserWindow parent;
 		SharedUserWindow shared_this;
 		std::vector<SharedUserWindow> children;
 		long next_listener_id;
+		bool closed;
 
-		virtual SharedPtr<UserWindow> GetParent();
-		virtual void AddChild(SharedPtr<UserWindow>);
-		virtual void RemoveChild(SharedPtr<UserWindow> window);
+		virtual SharedUserWindow GetParent();
+		virtual void AddChild(SharedUserWindow);
+		virtual void RemoveChild(SharedUserWindow);
 
 		// These are constants which will eventually
 		// be exposed to the API.

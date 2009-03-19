@@ -40,7 +40,7 @@ namespace ti
 		return mask;
 	}
 
-	OSXUserWindow::OSXUserWindow(SharedUIBinding binding, WindowConfig* config, SharedUserWindow parent) :
+	OSXUserWindow::OSXUserWindow(SharedUIBinding binding, WindowConfig* config, SharedUserWindow& parent) :
 		UserWindow(binding, config, parent),
 		window(NULL),
 		opened(false),

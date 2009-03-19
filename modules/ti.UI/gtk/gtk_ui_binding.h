@@ -18,7 +18,7 @@ namespace ti
 		public:
 		GtkUIBinding(Host* host);
 
-		SharedUserWindow CreateWindow(WindowConfig*, SharedUserWindow parent);
+		SharedUserWindow CreateWindow(WindowConfig*, SharedUserWindow& parent);
 		void ErrorDialog(std::string);
 
 		SharedPtr<MenuItem> CreateMenu(bool trayMenu);

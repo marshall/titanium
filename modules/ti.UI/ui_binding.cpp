@@ -51,7 +51,8 @@ namespace ti
 
 	void UIBinding::CreateMainWindow(WindowConfig* config)
 	{
-		SharedUserWindow main_window = this->CreateWindow(config, NULL);
+		SharedPtr<UserWindow> no_parent = NULL;
+		SharedUserWindow main_window = this->CreateWindow(config, no_parent);
 
 		SharedBoundObject global = host->GetGlobalObject();
 		global->SetNS("UI.mainWindow", Value::NewObject(main_window));

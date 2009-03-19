@@ -12,8 +12,9 @@ namespace ti
 	{
 
 		public:
-		GtkUserWindow(SharedUIBinding, WindowConfig*, SharedUserWindow);
+		GtkUserWindow(SharedUIBinding, WindowConfig*, SharedUserWindow&);
 		virtual ~GtkUserWindow();
+		void Destroyed();
 		void SetupDecorations();
 		void SetupTransparency();
 		void SetupSizeLimits();
@@ -105,6 +106,7 @@ namespace ti
 		GtkWidget* vbox;
 		WebKitWebView* web_view;
 		bool topmost;
+		gulong destroy_cb_id;
 
 		/*
 		 * The window-specific menu.

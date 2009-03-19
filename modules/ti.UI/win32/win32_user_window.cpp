@@ -176,7 +176,7 @@ Win32UserWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	return 0;
 }
 
-Win32UserWindow::Win32UserWindow(SharedUIBinding binding, WindowConfig* config, SharedUserWindow parent) :
+Win32UserWindow::Win32UserWindow(SharedUIBinding binding, WindowConfig* config, SharedUserWindow& parent) :
 	UserWindow(binding, config, parent),
 	script_evaluator(binding->GetHost()),
 	menuBarHandle(NULL),
