@@ -716,6 +716,21 @@ TiDeveloper.Projects.getModules = function(appDir)
 };
 
 //
+//  Handle Package Project Button - enable/disable
+//
+$MQL('l:os_platform_click',function()
+{
+	if ($('.selected_os').length > 0)
+	{
+		$('#package_project_button').attr('disabled','false');
+	}
+	else
+	{
+		$('#package_project_button').attr('disabled','true');
+	}
+})
+
+//
 //  Project Package Request - get details about modules, etc
 //
 $MQL('l:package.project.request',function(msg)
@@ -1113,15 +1128,10 @@ $MQL('l:create.package.request',function(msg)
 				}
 				else
 				{
-					setTimeout(function()
-					{
-						$('#packaging_none').css('display','none')
-						$('#packaging_listing').css('display','none');
-						$('#packaging_error').css('display','block');		
-						$('#packaging_in_progress').css('display','none');
-						
-					},500);
-					
+					$('#packaging_none').css('display','none')
+					$('#packaging_listing').css('display','none');
+					$('#packaging_error').css('display','block');		
+					$('#packaging_in_progress').css('display','none');
 					TiDeveloper.Projects.packagingInProgress[project.guid] = false;
 					destDir.deleteDirectory(true)
 		

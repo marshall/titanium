@@ -1255,7 +1255,7 @@
 
 							<div id="platform_mac" class="button1" style="float:none;height:70px;width:80px">
 								<div  class="button2" style="height:68px"
-									on="click then toggle[class=selected_os] 
+									on="click then toggle[class=selected_os] and l:os_platform_click
 									and toggle[id=platform_mac,class=selected_os]
 									or l:package.project.request then remove[class=selected_os]
 									and remove[id=platform_mac,class=selected_os]">
@@ -1264,7 +1264,7 @@
 							</div>
 							<div id="platform_windows" class="button1" style="float:none;height:70px;width:80px">
 								<div class="button2" style="height:68px"
-									on="click then toggle[class=selected_os]
+									on="click then toggle[class=selected_os] and l:os_platform_click
 									and toggle[id=platform_windows,class=selected_os]
 									or l:package.project.request then remove[class=selected_os]
 									and remove[id=platform_windows,class=selected_os]">
@@ -1273,7 +1273,7 @@
 							</div>
 							<div id="platform_linux" class="button1" style="float:none;height:70px;width:80px">
 								<div  class="button2" style="height:68px"
-									on="click then toggle[class=selected_os]
+									on="click then toggle[class=selected_os] and l:os_platform_click
 									and toggle[id=platform_linux,class=selected_os]
 									or l:package.project.request then remove[class=selected_os]
 									and remove[id=platform_linux,class=selected_os]">
@@ -1380,10 +1380,12 @@
 									</div>
 									<div style="position:relative;top:20px;left:-5px">
 										<div class="button1" style="float:left;"
-											on="click then l:create.package.request[package=true,launch=no]
-											or l:create.package.response[result=0] then l:cancel.package.project 
-											and l:cancel[val=package] and l:proj_data[val=download,hint=Links to your packaged application by operating system]"
-											<div class="button2">
+											
+											<div class="button2" id="package_project_button" disabled="true"
+												on="click then l:create.package.request[package=true,launch=no]
+												if expr[$('#package_project_button').attr('disabled')!='true']
+												or l:create.package.response[result=0] then l:cancel.package.project 
+												and l:cancel[val=package] and l:proj_data[val=download,hint=Links to your packaged application by operating system]">
 												Package
 											</div>
 										</div>
