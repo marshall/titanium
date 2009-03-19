@@ -1014,6 +1014,6 @@ void GtkUserWindow::OpenFiles(
 	SharedBoundMethod meth = this->Get("_OpenFilesWork")->ToMethod();
 	ValueList args;
 	args.push_back(Value::NewVoidPtr(job));
-	job->host->InvokeMethodOnMainThread(meth, args);
+	job->host->InvokeMethodOnMainThread(meth, args, false);
 }
 

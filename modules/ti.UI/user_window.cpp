@@ -816,7 +816,7 @@ void UserWindow::FireEvent(UserWindowEvent event_type, SharedKObject event)
 		SharedBoundMethod callback = (*it).callback;
 		try
 		{
-			this->host->InvokeMethodOnMainThread(callback,args);
+			this->host->InvokeMethodOnMainThread(callback,args,false);
 		}
 		catch(std::exception &e)
 		{
