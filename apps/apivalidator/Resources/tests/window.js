@@ -110,11 +110,16 @@ testSuite("Titanium.UI Window API tests", "dummy.html",
 			assertEquals(originalBounds.y, m.getBounds().y);
 			assertEquals(originalBounds.width, m.getBounds().width);
 			assertEquals(originalBounds.height, m.getBounds().height);
-			
+
 			m.setMaxHeight(500);
 			assertEquals(m.getMaxHeight(), 500);
 			m.setHeight(599);
 			assertEquals(m.getHeight(), 500);
+
+			m.setMaxWidth(400);
+			assertEquals(m.getMaxWidth(), 400);
+			m.setWidth(499);
+			assertEquals(m.getWidth(), 400);
 		
 		});
 		
