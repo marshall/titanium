@@ -44,6 +44,7 @@ namespace ti
 			GTK_DIALOG_MODAL,
 			GTK_MESSAGE_ERROR,
 			GTK_BUTTONS_OK,
+			"%s",
 			msg.c_str());
 		gtk_dialog_run(GTK_DIALOG (dialog));
 		gtk_widget_destroy(dialog);
