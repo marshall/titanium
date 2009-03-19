@@ -48,6 +48,7 @@
 			<span style="color:#42C0FB" on="l:online.count then value[count]">loading...</span>  
 		</div>
 	</div>
+<!--
 	<div style="margin-auto">
 		<div class="nav1 nav_active" style="display:inline-block;" 
 			on="click then l:menu[val=manage] and add[class=nav_active] 
@@ -76,7 +77,6 @@
 				or l:menu[val!=feeds] then remove[class=nav_active]">
 			<div >Feeds</div>
 		</div>
-<!--
 		<div class="nav1" style="display:inline-block;" 
 			on="click then l:menu[val=api] and add[class=nav_active] 
 				or l:menu[val!=api] then remove[class=nav_active]">
@@ -90,7 +90,7 @@
 	<!-- CONTENT -->
 	<div id="content" style="display:none" on="l:project.list.response[firstCall=1] then effect[fadeIn]">
 		
-		<!-- MAJOR ACTION BUTTONS 
+		<!-- MAJOR ACTION BUTTONS -->
 		<div class="button1 active" style="display:inline-block;width:150px" 
 			on="click then l:menu[val=manage] and add[class=active] or l:menu[val!=manage] then remove[class=active]">
 			<div class="button2">Projects</div>
@@ -113,7 +113,6 @@
 			on="click then l:menu[val=api] and add[class=active] or l:menu[val!=api] then remove[class=active]">
 			<div class="button2">Documentation</div>
 		</div>
-		-->
 
 
 		<!-- ************* -->
