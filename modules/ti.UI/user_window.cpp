@@ -47,13 +47,14 @@ using namespace ti;
 // Initialize our constants here
 int UserWindow::CENTERED = WindowConfig::DEFAULT_POSITION;
 
-UserWindow::UserWindow(SharedUIBinding binding, WindowConfig *config, SharedUserWindow parent) :
+UserWindow::UserWindow(SharedUIBinding binding, WindowConfig *config, SharedUserWindow& parent) :
 	kroll::StaticBoundObject(),
 	binding(binding),
 	host(binding->GetHost()),
 	config(config),
 	parent(parent),
-	next_listener_id(0)
+	next_listener_id(0),
+	closed(false)
 {
 	this->shared_this = this;
 
@@ -155,30 +156,35 @@ void UserWindow::Open()
 
 void UserWindow::Close()
 {
+	if (this->closed)
+		return;
+	else
+		this->closed = true;
+
 	SharedUserWindow shthis = this->shared_this;
 	this->FireEvent(CLOSE);
 
 	// Close all children and cleanup
-	std::vector<SharedUserWindow>::iterator iter;
-	for (iter = this->children.begin(); iter != this->children.end(); iter++)
+	std::vector<SharedUserWindow>::iterator iter = this->children.begin();
+	while (iter != this->children.end())
 	{
-		(*iter)->Close();
+		// Save a pointer to the child here, because it may
+		// be freed by the SharedPtr otherwise and that will
+		// make this iterator seriously, seriously unhappy.
+		SharedUserWindow child = (*iter);
+		iter = children.erase(iter);
+		child->Close();
 	}
-	children.clear();
 
 	// Tell our parent that we are now closed
 	if (!this->parent.isNull())
 	{
 		this->parent->RemoveChild(this->shared_this);
-		parent->Focus(); // Focus the parent
+		this->parent->Focus(); // Focus the parent
 	}
 
 	// Tell the UIBinding that we are closed
-	this->binding->RemoveFromOpenWindows(shthis);
-
-	// This should be the last reference to this window
-	// after all external references are destroyed.
-	this->shared_this = NULL;
+	this->binding->RemoveFromOpenWindows(this->shared_this);
 
 	// When we have no more open windows, we exit...
 	std::vector<SharedUserWindow> windows = this->binding->GetOpenWindows();
@@ -186,6 +192,10 @@ void UserWindow::Close()
 		this->host->Exit(0);
 	else
 		windows.at(0)->Focus();
+
+	// This should be the last reference to this window
+	// after all external references are destroyed.
+	this->shared_this = NULL;
 }
 
 
@@ -806,7 +816,7 @@ void UserWindow::FireEvent(UserWindowEvent event_type, SharedKObject event)
 		SharedBoundMethod callback = (*it).callback;
 		try
 		{
-			this->host->InvokeMethodOnMainThread(callback,args);
+			this->host->InvokeMethodOnMainThread(callback,args,false);
 		}
 		catch(std::exception &e)
 		{

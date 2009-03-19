@@ -21,7 +21,7 @@ namespace ti
 		OSXUIBinding(Host *host);
 		~OSXUIBinding();
 
-		SharedUserWindow CreateWindow(WindowConfig*, SharedUserWindow parent);
+		SharedUserWindow CreateWindow(WindowConfig*, SharedUserWindow& parent);
 		void ErrorDialog(std::string);
 
 		SharedPtr<MenuItem> CreateMenu(bool trayMenu);

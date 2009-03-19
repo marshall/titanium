@@ -101,7 +101,7 @@ namespace ti
 			if (read_complete && !this->onReadComplete.isNull())
 			{
 				ValueList args;
-				ti_host->InvokeMethodOnMainThread(this->onReadComplete, args);
+				ti_host->InvokeMethodOnMainThread(this->onReadComplete, args, false);
 			}
 			else if (!read_complete && !this->onRead.isNull())
 			{
@@ -109,7 +109,7 @@ namespace ti
 
 				ValueList args;
 				args.push_back(Value::NewString(data));
-				SharedValue v = ti_host->InvokeMethodOnMainThread(this->onRead, args);
+				ti_host->InvokeMethodOnMainThread(this->onRead, args, false);
 			}
 		}
 		catch(ValueException& e)
@@ -132,7 +132,7 @@ namespace ti
 			return;
 		}
 		ValueList args;
-		ti_host->InvokeMethodOnMainThread(this->onWrite, args);
+		ti_host->InvokeMethodOnMainThread(this->onWrite, args, false);
 	}
 	void TCPSocketBinding::OnTimeout(const Poco::AutoPtr<TimeoutNotification>& n)
 	{
@@ -141,7 +141,7 @@ namespace ti
 			return;
 		}
 		ValueList args;
-		ti_host->InvokeMethodOnMainThread(this->onTimeout, args);
+		ti_host->InvokeMethodOnMainThread(this->onTimeout, args, false);
 	}
 	void TCPSocketBinding::Write(const ValueList& args, SharedValue result)
 	{

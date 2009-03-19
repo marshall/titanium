@@ -27,7 +27,7 @@ namespace ti
 
 	SharedUserWindow Win32UIBinding::CreateWindow(
 		WindowConfig* config,
-		SharedUserWindow parent)
+		SharedUserWindow& parent)
 	{
 		UserWindow* w = new Win32UserWindow(this, config, parent);
 		return w->GetSharedPtr();

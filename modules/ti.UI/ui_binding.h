@@ -22,7 +22,7 @@ namespace ti
 		Host* GetHost();
 
 		virtual void CreateMainWindow(WindowConfig*);
-		virtual SharedUserWindow CreateWindow(WindowConfig*, SharedUserWindow parent) = 0;
+		virtual SharedUserWindow CreateWindow(WindowConfig*, SharedUserWindow& parent) = 0;
 		virtual void ErrorDialog(std::string);
 
 		std::vector<SharedUserWindow>& GetOpenWindows();

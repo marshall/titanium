@@ -148,7 +148,7 @@ namespace ti
 				args.push_back(value);
 				args.push_back(Value::NewInt(c));
 				args.push_back(Value::NewInt(ac->files.size()));
-				ac->host->InvokeMethodOnMainThread(ac->callback, args);
+				ac->host->InvokeMethodOnMainThread(ac->callback, args, false);
 #ifdef DEBUG
 			std::cout << "after callback for async file: " << file << " (" << c << "/" << ac->files.size() << ")" << std::endl;
 #endif
