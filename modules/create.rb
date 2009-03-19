@@ -221,7 +221,7 @@ import os
 Import('build')
 
 env = build.env.Clone();
-env.Append(CPPDEFINES = ('TITANIUM_#{header_define}_API_EXPORT, 1))
+env.Append(CPPDEFINES = ('TITANIUM_#{header_define}_API_EXPORT', 1))
 env.Append(CPPPATH = ['#kroll'])
 
 

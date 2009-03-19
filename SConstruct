@@ -76,6 +76,8 @@ testapp = 'testapp' in targets or ARGUMENTS.get('testapp', 0)
 testsuite = 'testsuite' in targets or ARGUMENTS.get('testsuite', 0)
 clean = 'clean' in targets or ARGUMENTS.get('clean', 0)
 qclean = 'qclean' in targets or ARGUMENTS.get('qclean', 0)
+run = 'run' in targets or ARGUMENTS.get('run', 0)
+Export('run')
 
 if clean or qclean:
 	print "Obliterating your build directory: %s" % build.dir
@@ -102,11 +104,11 @@ if package:
 	SConscript('installation/runtime/SConscript')
 
 if testapp:
-	print "building packaging ..."
+	print "building testapp ..."
 	SConscript('apps/testapp/SConscript')
 
 if testsuite:
-	print 'running testsuite...'
+	print 'building testsuite...'
 	SConscript('apps/apivalidator/SConscript')
   
 

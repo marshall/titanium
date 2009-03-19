@@ -18,6 +18,7 @@
 
 #include "../ui_module.h"
 #include <kroll/kroll.h>
+#include <kroll/file_utils.h>
 #include "../../../kroll/host/win32/host.h"
 #include "../user_window.h"
 #include "script_evaluator.h"

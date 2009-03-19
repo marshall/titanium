@@ -29,6 +29,9 @@ namespace ti
 
 	void UIModule::Start()
 	{
+		SharedBoundMethod api = this->host->GetGlobalObject()->GetNS("API.fire")->ToMethod();
+		api->Call("ti.UI.start", Value::Undefined);
+
 		AppConfig *config = AppConfig::Instance();
 		if (config == NULL)
 		{
@@ -67,6 +70,15 @@ namespace ti
 		{
 			std::cerr << "WARNING: Unable to load " << js_path << std::endl;
 		}
+	}
+
+	void UIModule::Exiting(int exitcode)
+	{
+		// send a stop notification - we need to do this before 
+		// stop is called given that the API module is registered (and unregistered)
+		// before our module and it will then be too late
+		SharedBoundMethod api = this->host->GetGlobalObject()->GetNS("API.fire")->ToMethod();
+		api->Call("ti.UI.stop", Value::Undefined);
 	}
 
 	void UIModule::Stop()

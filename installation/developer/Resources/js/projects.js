@@ -7,6 +7,7 @@ TiDeveloper.Projects.runtimeVersion = null;
 TiDeveloper.Projects.requiredModuleMap = {};
 TiDeveloper.Projects.requiredModules = ['api','tiapp','tifilesystem','tiplatform','tiui']
 TiDeveloper.Projects.selectedProject = null;
+TiDeveloper.Projects.packagingInProgress = {};
 
 //
 //  Initialization message - setup all initial states
@@ -294,9 +295,14 @@ TiDeveloper.Projects.refreshStats = function(guid)
 			}
 			else
 			{
-				$('#download_stats_none').css('display','block')
-				$('#download_stats').css('display','none');
-				$('#download_stats_loading').css('display','none');
+				//TODO:remove
+				setTimeout(function()
+				{
+					$('#download_stats_none').css('display','block')
+					$('#download_stats').css('display','none');
+					$('#download_stats_loading').css('display','none');
+					
+				},1000)
 			}
 		}
 	});
@@ -329,56 +335,67 @@ $MQL('l:row.selected',function(msg)
 	msgObj.description = project.description;
 	$MQ('l:project.detail.data',msgObj)
 	
-	// get download info for DOWNLOAD tab
-    db.transaction(function (tx) 
-    {
-        tx.executeSql("SELECT url, platform, version, date from ProjectPackages WHERE guid = ?",[project.guid],
- 			function(tx,result)
-			{
-				if (result.rows.length == 0)
+	if (TiDeveloper.Projects.packagingInProgress[project.guid] == true)
+	{
+		$('#packaging_none').css('display','none')
+		$('#packaging_error').css('display','none');		
+		$('#packaging_listing').css('display','none');
+		$('#packaging_in_progress').css('display','block');
+		
+	}
+	else
+	{
+		// get download info for DOWNLOAD tab
+	    db.transaction(function (tx) 
+	    {
+	        tx.executeSql("SELECT url, platform, version, date from ProjectPackages WHERE guid = ?",[project.guid],
+	 			function(tx,result)
 				{
+					if (result.rows.length == 0)
+					{
+						$('#packaging_none').css('display','block')
+						$('#packaging_error').css('display','none');		
+						$('#packaging_listing').css('display','none');
+						$('#packaging_in_progress').css('display','none');
+					}
+					else
+					{
+						var a =[]
+						var date = null;
+						// cycle through downloads
+			           	for (var i = 0; i < result.rows.length; ++i) 
+					   	{
+			                var row = result.rows.item(i);
+							var url = row['url'];
+							var platform = row['platform'];
+							var version = row['version']
+							var date = row['date']
+							var platformShort = null;
+							if (platform.indexOf('Win')!=-1) platformShort = "win";
+							if (platform.indexOf('Linux')!=-1) platformShort = "linux";
+							if (platform.indexOf('Mac')!=-1) platformShort = "mac";
+							a.push({'url':url,'platform':platform,'version':version,'platform_short':platformShort})
+						}
+						$MQ('l:package_links',{date:date, rows:a})
+						$('#packaging_none').css('display','none')
+						$('#packaging_listing').css('display','block');
+						$('#packaging_in_progress').css('display','none');
+						$('#packaging_error').css('display','none');		
+					}
+				},
+				function(error)
+				{
+					// create table
+					tx.executeSql('CREATE TABLE ProjectPackages (guid TEXT, url TEXT, platform TEXT, version TEXT, date TEXT)');
+					// show no downloads message
 					$('#packaging_none').css('display','block')
-					$('#packaging_error').css('display','none');		
 					$('#packaging_listing').css('display','none');
 					$('#packaging_in_progress').css('display','none');
-				}
-				else
-				{
-					var a =[]
-					var date = null;
-					// cycle through downloads
-		           	for (var i = 0; i < result.rows.length; ++i) 
-				   	{
-		                var row = result.rows.item(i);
-						var url = row['url'];
-						var platform = row['platform'];
-						var version = row['version']
-						var date = row['date']
-						var platformShort = null;
-						if (platform.indexOf('Win')!=-1) platformShort = "win";
-						if (platform.indexOf('Linux')!=-1) platformShort = "linux";
-						if (platform.indexOf('Mac')!=-1) platformShort = "mac";
-						a.push({'url':url,'platform':platform,'version':version,'platform_short':platformShort})
-					}
-					$MQ('l:package_links',{date:date, rows:a})
-					$('#packaging_none').css('display','none')
-					$('#packaging_listing').css('display','block');
-					$('#packaging_in_progress').css('display','none');
 					$('#packaging_error').css('display','none');		
 				}
-			},
-			function(error)
-			{
-				// create table
-				tx.executeSql('CREATE TABLE ProjectPackages (guid TEXT, url TEXT, platform TEXT, version TEXT, date TEXT)');
-				// show no downloads message
-				$('#packaging_none').css('display','block')
-				$('#packaging_listing').css('display','none');
-				$('#packaging_in_progress').css('display','none');
-				$('#packaging_error').css('display','none');		
-			}
-		);
-    });
+			);
+	    });
+	}
 	
 	TiDeveloper.Projects.refreshStats(project.guid);
 	
@@ -1084,7 +1101,7 @@ $MQL('l:create.package.request',function(msg)
 				{
 				    var json = swiss.evalJSON(this.responseText);
 					destDir.deleteDirectory(true)
-					TiDeveloper.Projects.pollPackagingRequest(json.ticket);
+					TiDeveloper.Projects.pollPackagingRequest(json.ticket,project.guid);
 				}
 				else
 				{
@@ -1100,6 +1117,7 @@ $MQL('l:create.package.request',function(msg)
 
 		xhr.open("POST",'http://publisher.titaniumapp.com/api/publish');
 		xhr.sendDir(project.dir);    
+		TiDeveloper.Projects.packagingInProgress[project.guid] = true;
 		$('#packaging_none').css('display','none')
 		$('#packaging_listing').css('display','none');
 		$('#packaging_error').css('display','none');		
@@ -1114,7 +1132,7 @@ $MQL('l:create.package.request',function(msg)
 })
 
 
-TiDeveloper.Projects.pollPackagingRequest = function(ticket)
+TiDeveloper.Projects.pollPackagingRequest = function(ticket,guid)
 {          
 	$.get('http://d.titaniumapp.com/publish-status?ticket='+ticket,function(result)
 	{
@@ -1122,6 +1140,8 @@ TiDeveloper.Projects.pollPackagingRequest = function(ticket)
 	   	if (r.status == 'complete')
 	   	{
     		alert('done ' + swiss.toJSON(r));
+			TiDeveloper.Projects.packagingInProgress[project.guid] = false;
+
 			// INSERT DATA INTO DB AND SHOW DATA
 			// SEND MESSAGE TO POPULATE TABLE
 			$('#packaging_none').css('display','none')
@@ -1132,12 +1152,18 @@ TiDeveloper.Projects.pollPackagingRequest = function(ticket)
 	   	}
 	   	else if (r.status != 'working')
 	   	{
-	      	TiDeveloper.Projects.handlePackagingError('packaging')
+			$('#packaging_none').css('display','none')
+			$('#packaging_listing').css('display','none');
+			$('#packaging_error').css('display','block');		
+			$('#packaging_in_progress').css('display','none');
 	   	}
 		else
 		{
 			// poll every 10 seconds
-			setTimeout(TiDeveloper.Projects.pollPackagingRequest(ticket),10000);
+			setTimeout(function()
+			{
+				TiDeveloper.Projects.pollPackagingRequest(ticket,guid)
+			},10000);
 		}
 	});
 };
