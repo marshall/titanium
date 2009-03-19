@@ -104,33 +104,4 @@ namespace ti {
 	};
 }
 
-#ifdef OS_OSX
-  #define TI_FATAL_ERROR(msg) \
-  { \
-	NSApplicationLoad();	\
-	if (msg) NSRunCriticalAlertPanel (@"Application Error",	\
-				[NSString stringWithUTF8String:msg],nil,nil,nil);	\
-	[NSApp terminate:nil]; \
-	 \
-  }
-#elif OS_WIN32
-  #define TI_FATAL_ERROR(msg) \
-  { \
-	MessageBox(NULL,msg,"Application Error",MB_OK|MB_ICONERROR|MB_SYSTEMMODAL); \
-	ExitProcess(1);\
-  }
-#elif OS_LINUX
-  #define TI_FATAL_ERROR(msg) \
-  { \
-	GtkWidget* dialog = gtk_message_dialog_new (NULL,  \
-	                                  GTK_DIALOG_MODAL, \
-					  GTK_MESSAGE_ERROR,  \
-	                                  GTK_BUTTONS_OK, \
-	                                  msg); \
-	gtk_dialog_run (GTK_DIALOG (dialog)); \
-	gtk_widget_destroy (dialog); \
-	exit(1); \
-  }
-#endif
-
 #endif

@@ -33,6 +33,12 @@ namespace ti
 		return w->GetSharedPtr();
 	}
 
+	void Win32UIBinding::ErrorDialog(std::string msg)
+	{
+		MessageBox(NULL,msg.c_str(),"Application Error",MB_OK|MB_ICONERROR|MB_SYSTEMMODAL);
+		UIBinding::ErrorDialog(msg);
+	}
+
 	SharedPtr<MenuItem> Win32UIBinding::CreateMenu(bool trayMenu)
 	{
 		SharedPtr<MenuItem> menu = new Win32MenuItemImpl(NULL);

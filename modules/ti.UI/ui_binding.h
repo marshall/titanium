@@ -1,5 +1,5 @@
 /**
- g* Appcelerator Titanium - licensed under the Apache Public License 2
+ * Appcelerator Titanium - licensed under the Apache Public License 2
  * see LICENSE in the root folder for details on the license.
  * Copyright (c) 2009 Appcelerator, Inc. All Rights Reserved.
  */
@@ -23,10 +23,12 @@ namespace ti
 
 		virtual void CreateMainWindow(WindowConfig*);
 		virtual SharedUserWindow CreateWindow(WindowConfig*, SharedUserWindow parent) = 0;
+		virtual void ErrorDialog(std::string);
 
 		std::vector<SharedUserWindow>& GetOpenWindows();
 		void AddToOpenWindows(SharedUserWindow);
 		void RemoveFromOpenWindows(SharedUserWindow);
+
 
 	protected:
 		Host* host;

@@ -37,6 +37,19 @@ namespace ti
 		return w->GetSharedPtr();
 	}
 
+	void GtkUIBinding::ErrorDialog(std::string msg)
+	{
+		GtkWidget* dialog = gtk_message_dialog_new(
+			NULL,
+			GTK_DIALOG_MODAL,
+			GTK_MESSAGE_ERROR,
+			GTK_BUTTONS_OK,
+			msg.c_str());
+		gtk_dialog_run(GTK_DIALOG (dialog));
+		gtk_widget_destroy(dialog);
+		UIBinding::ErrorDialog(msg);
+	}
+
 	SharedPtr<MenuItem> GtkUIBinding::CreateMenu(bool trayMenu)
 	{
 		SharedPtr<MenuItem> menu = new GtkMenuItemImpl();

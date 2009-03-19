@@ -55,6 +55,14 @@ namespace ti
 		return w->GetSharedPtr();
 	}
 
+	void OSXUIBinding::ErrorDialog(std::string msg)
+	{
+		NSApplicationLoad();
+		if (!msg.empty())
+			 NSRunCriticalAlertPanel (@"Application Error", [NSString stringWithUTF8String:msg.c_str()],nil,nil,nil);
+		UIBinding::ErrorDialog(msg);
+	}
+
 	SharedPtr<MenuItem> OSXUIBinding::CreateMenu(bool trayMenu)
 	{
 		return new OSXMenuItem();

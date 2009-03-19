@@ -32,17 +32,6 @@ namespace ti
 		SharedBoundMethod api = this->host->GetGlobalObject()->GetNS("API.fire")->ToMethod();
 		api->Call("ti.UI.start", Value::Undefined);
 
-		AppConfig *config = AppConfig::Instance();
-		if (config == NULL)
-		{
-			TI_FATAL_ERROR("Error loading tiapp.xml. Your application is not properly configured or packaged.");
-		}
-		WindowConfig *main_window_config = config->GetMainWindow();
-		if (main_window_config == NULL)
-		{
-			TI_FATAL_ERROR("Error loading tiapp.xml. Your application window is not properly configured or packaged.");
-		}
-
 #ifdef OS_WIN32
 		UIBinding* binding = new Win32UIBinding(host);
 #elif OS_OSX
@@ -50,6 +39,26 @@ namespace ti
 #elif OS_LINUX
 		UIBinding* binding = new GtkUIBinding(host);
 #endif
+
+		AppConfig *config = AppConfig::Instance();
+		if (config == NULL)
+		{
+			std::string msg = "Error loading tiapp.xml. Your application "
+			                  "is not properly configured or packaged.";
+			binding->ErrorDialog(msg);
+			throw ValueException::FromString(msg.c_str());
+			return;
+		}
+		WindowConfig *main_window_config = config->GetMainWindow();
+		if (main_window_config == NULL)
+		{
+			std::string msg ="Error loading tiapp.xml. Your application "
+			                 "window is not properly configured or packaged.";
+			binding->ErrorDialog(msg);
+			throw ValueException::FromString(msg.c_str());
+			return;
+		}
+
 		binding->CreateMainWindow(main_window_config);
 	}
 

@@ -4,6 +4,7 @@
  * Copyright (c) 2009 Appcelerator, Inc. All Rights Reserved.
  */
 #include "ui_module.h"
+#include <string>
 
 #define GET_ARG_OR_RETURN(INDEX, TYPE, VAR) \
 	if ((int) args.size() < INDEX - 1 || !args.at(INDEX)->Is##TYPE()) \
@@ -52,6 +53,11 @@ namespace ti
 		global->SetNS("UI.mainWindow", Value::NewObject(main_window));
 
 		main_window->Open();
+	}
+
+	void UIBinding::ErrorDialog(std::string msg)
+	{
+		std::cerr << msg << std::endl;
 	}
 
 	UIBinding::~UIBinding()
