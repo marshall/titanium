@@ -94,6 +94,15 @@ testSuite("Titanium.UI Window API tests", "dummy.html",
 			m.show();
 			assert(m.isVisible());
 			
+			m.setWidth(444);
+			assertEquals(m.getWidth(), 444);
+			m.setHeight(666);
+			assertEquals(m.getHeight(), 666);
+			m.setX(43);
+			assertEquals(m.getX(), 43);
+			m.setY(55);
+			assertEquals(m.getY(), 55);
+
 			var originalBounds = m.getBounds();
 			var b = {
 				width: 350, height: 500,

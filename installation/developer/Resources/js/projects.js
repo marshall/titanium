@@ -1,13 +1,19 @@
 TiDeveloper.Projects = {};
+
+TiDeveloper.Projects.stats_url = 'http://publisher.titaniumapp.com/api/app-stats';
+TiDeveloper.Projects.publish_url = 'http://publisher.titaniumapp.com/api/publish';
+TiDeveloper.Projects.publish_status_url = 'http://publisher.titaniumapp.com/api/publish-status';
+
 TiDeveloper.Projects.projectArray = [];
 TiDeveloper.Projects.modules = [];
 TiDeveloper.Projects.module_map = {};
 TiDeveloper.Projects.runtimeDir = null;
 TiDeveloper.Projects.runtimeVersion = null;
 TiDeveloper.Projects.requiredModuleMap = {};
-TiDeveloper.Projects.requiredModules = ['api','tiapp','tifilesystem','tiplatform','tiui']
+TiDeveloper.Projects.requiredModules = ['api','tiapp','tifilesystem','tiplatform','tiui','javascript'];
 TiDeveloper.Projects.selectedProject = null;
 TiDeveloper.Projects.packagingInProgress = {};
+
 
 //
 //  Initialization message - setup all initial states
@@ -61,7 +67,7 @@ TiDeveloper.Projects.runGUIDMigration = function()
             for (var i = 0; i < result.rows.length; ++i) {
                 var row = result.rows.item(i);
 				var guid = Titanium.Platform.createUUID();
-				var projRow = {}
+				var projRow = {};
 				projRow['timestamp'] = row['timestamp'];
 				projRow['id'] = row['id']
 				projRow['guid'] = guid;
@@ -73,11 +79,10 @@ TiDeveloper.Projects.runGUIDMigration = function()
 				projRow['image'] = row['image'];
 				projRow['description'] = row['name'] + ' is a cool new app created by ' + row['publisher'];
 				a.push(projRow);
-            
 			}
 			if (a.length == 0)
 			{
-				TiDeveloper.Projects.loadProjects(true)
+				TiDeveloper.Projects.loadProjects(true);
 			}
 			// delete and re-add rows
 			tx.executeSql('DROP TABLE Projects',[],function(tx,result)
@@ -94,11 +99,11 @@ TiDeveloper.Projects.runGUIDMigration = function()
 							[a[i]['id'], a[i]['guid'],a[i]['description'],a[i]['timestamp'],a[i]['name'],a[i]['directory'],a[i]['appid'],a[i]['publisher'],a[i]['url'],a[i]['image']],
 							function()
 							{
-								rowCount++
+								rowCount++;
 								// if we're done, reload projects
 								if (rowCount == a.length)
 								{
-									TiDeveloper.Projects.loadProjects(true)
+									TiDeveloper.Projects.loadProjects(true);
 								}
 							});
 						}
@@ -124,7 +129,7 @@ TiDeveloper.Projects.importProject = function(f)
 	}
 	
 	// create object for DB record
-	var options = {}
+	var options = {};
 	options.dir = dir;
 	
 	// read manifest values to create new db record
@@ -183,7 +188,7 @@ TiDeveloper.Projects.importProject = function(f)
 	TiDeveloper.Projects.createRecord(options,function(obj)
 	{
 		TiDeveloper.Projects.loadProjects();
-	})
+	});
 	
 };
 //
@@ -218,12 +223,12 @@ TiDeveloper.Projects.updateAppData = function()
     });
 	
 	// update our array cache
-	var project = TiDeveloper.Projects.findProjectById(id)
-	project.name = values.name
-	project.dir = values.dir
-	project.publisher = values.publisher
-	project.url = values.url
-	project.image = values.image
+	var project = TiDeveloper.Projects.findProjectById(id);
+	project.name = values.name;
+	project.dir = values.dir;
+	project.publisher = values.publisher;
+	project.url = values.url;
+	project.image = values.image;
 	project.description = values.description;
 	
 };
@@ -249,8 +254,8 @@ TiDeveloper.Projects.refreshStats = function(guid)
 	                var row = result.rows.item(i);
 					var platform = row['platform'];
 					var count = row['count'];
-				 	statsLastUpdate= row['date']
-					statsArray.push({'name':platform,'value':count,})
+				 	statsLastUpdate= row['date'];
+					statsArray.push({'name':platform,'value':count,});
 				}
 				if (result.rows.length > 0) statsAvailable = true;
 			},
@@ -263,15 +268,18 @@ TiDeveloper.Projects.refreshStats = function(guid)
     });
 
 	// load stats
-	$('#download_stats_none').css('display','none')
+	$('#download_stats_none').css('display','none');
 	$('#download_stats').css('display','none');
 	$('#download_stats_loading').css('display','block');
+	
+	var url = TiDeveloper.make_url(TiDeveloper.Projects.stats_url,{
+		'guid':guid
+	});
 	
 	$.ajax({
 		type:'GET',
 		dataType:'json',
-		data:{guid:guid},
-		url:'http://d.titaniumapp.com/stats',
+		url:url,
 		
 		// update data
 		success: function(data)
@@ -288,7 +296,7 @@ TiDeveloper.Projects.refreshStats = function(guid)
 			// if we have them, send message
 			if (statsAvailable==true)
 			{
-				$('#download_stats_none').css('display','none')
+				$('#download_stats_none').css('display','none');
 				$('#download_stats').css('display','block');
 				$('#download_stats_loading').css('display','none');
 				$MQ('l:package_download_stats',{date:statsLastUpdate, rows:statsArray})
@@ -298,11 +306,11 @@ TiDeveloper.Projects.refreshStats = function(guid)
 				//TODO:remove
 				setTimeout(function()
 				{
-					$('#download_stats_none').css('display','block')
+					$('#download_stats_none').css('display','block');
 					$('#download_stats').css('display','none');
 					$('#download_stats_loading').css('display','none');
 					
-				},1000)
+				},1000);
 			}
 		}
 	});
@@ -322,22 +330,22 @@ $MQL('l:refresh_downlaod_stats',function(msg)
 //
 $MQL('l:row.selected',function(msg)
 {
-	var msgObj = {}
+	var msgObj = {};
 	var project = TiDeveloper.Projects.findProjectById(msg.payload.project_id);
 	TiDeveloper.Projects.selectedProject = project;	
 	msgObj.date = project.date;
 	msgObj.name = project.name;
 	msgObj.location = TiDeveloper.Projects.formatDirectory(project.dir);
 	msgObj.fullLocation = project.dir;
-	msgObj.pub = project.publisher
+	msgObj.pub = project.publisher;
 	msgObj.url = project.url;
 	msgObj.image = project.image;
 	msgObj.description = project.description;
-	$MQ('l:project.detail.data',msgObj)
+	$MQ('l:project.detail.data',msgObj);
 	
 	if (TiDeveloper.Projects.packagingInProgress[project.guid] == true)
 	{
-		$('#packaging_none').css('display','none')
+		$('#packaging_none').css('display','none');
 		$('#packaging_error').css('display','none');		
 		$('#packaging_listing').css('display','none');
 		$('#packaging_in_progress').css('display','block');
@@ -353,14 +361,14 @@ $MQL('l:row.selected',function(msg)
 				{
 					if (result.rows.length == 0)
 					{
-						$('#packaging_none').css('display','block')
+						$('#packaging_none').css('display','block');
 						$('#packaging_error').css('display','none');		
 						$('#packaging_listing').css('display','none');
 						$('#packaging_in_progress').css('display','none');
 					}
 					else
 					{
-						var a =[]
+						var a =[];
 						var date = null;
 						// cycle through downloads
 			           	for (var i = 0; i < result.rows.length; ++i) 
@@ -368,16 +376,16 @@ $MQL('l:row.selected',function(msg)
 			                var row = result.rows.item(i);
 							var url = row['url'];
 							var platform = row['platform'];
-							var version = row['version']
-							var date = row['date']
+							var version = row['version'];
+							var date = row['date'];
 							var platformShort = null;
 							if (platform.indexOf('Win')!=-1) platformShort = "win";
 							if (platform.indexOf('Linux')!=-1) platformShort = "linux";
 							if (platform.indexOf('Mac')!=-1) platformShort = "mac";
-							a.push({'url':url,'platform':platform,'version':version,'platform_short':platformShort})
+							a.push({'url':url,'platform':platform,'version':version,'platform_short':platformShort});
 						}
-						$MQ('l:package_links',{date:date, rows:a})
-						$('#packaging_none').css('display','none')
+						$MQ('l:package_links',{date:date, rows:a});
+						$('#packaging_none').css('display','none');
 						$('#packaging_listing').css('display','block');
 						$('#packaging_in_progress').css('display','none');
 						$('#packaging_error').css('display','none');		
@@ -388,7 +396,7 @@ $MQL('l:row.selected',function(msg)
 					// create table
 					tx.executeSql('CREATE TABLE ProjectPackages (guid TEXT, url TEXT, platform TEXT, version TEXT, date TEXT)');
 					// show no downloads message
-					$('#packaging_none').css('display','block')
+					$('#packaging_none').css('display','block');
 					$('#packaging_listing').css('display','none');
 					$('#packaging_in_progress').css('display','none');
 					$('#packaging_error').css('display','none');		
@@ -411,7 +419,7 @@ $MQL('l:row.selected',function(msg)
 				for (var i=0;i<activeFiles.length;i++)
 				{
 					var id = $(activeFiles[i]).attr('id');
-					$(activeFiles[i]).html($('#'+id+'_input').val())
+					$(activeFiles[i]).html($('#'+id+'_input').val());
 					TiDeveloper.Projects.updateAppData();
 					$(activeFiles[i]).get(0).removeAttribute('edit_mode');
 				}
@@ -449,7 +457,7 @@ $MQL('l:row.selected',function(msg)
 			{
 				if (e.keyCode==13)
 				{
-					el.innerHTML = $('#'+el.id+'_input').val() 
+					el.innerHTML = $('#'+el.id+'_input').val();
 					el.removeAttribute('edit_mode');
 					TiDeveloper.Projects.updateAppData();
 				}
@@ -461,9 +469,9 @@ $MQL('l:row.selected',function(msg)
 			});
 
 		}
-	})
+	});
 	
-})
+});
 
 //
 // Create a project record in the DB and update array cache
@@ -490,13 +498,13 @@ TiDeveloper.Projects.createRecord = function(options,callback)
     },
 	function(error)
 	{
-		alert('error insert ' + error)
-		callback({code:1,id:error.id,msg:error.message})
+		alert('error insert ' + error);
+		callback({code:1,id:error.id,msg:error.message});
 	},
 	function()
 	{
 		TiDeveloper.Projects.projectArray.push(record);
-		callback({code:0})
+		callback({code:0});
 	});
 }
 
@@ -522,7 +530,7 @@ TiDeveloper.Projects.loadProjects = function(init)
 				else
 				{
 					var date = new Date();
-					date.setTime(row['timestamp'])
+					date.setTime(row['timestamp']);
 					
 					TiDeveloper.Projects.projectArray.push({
 						id: row['id'],
@@ -549,12 +557,12 @@ TiDeveloper.Projects.loadProjects = function(init)
 			// show create project if none
 			if (TiDeveloper.Projects.projectArray.length == 0)
 			{
-				$MQ('l:menu',{val:'manage'})
+				$MQ('l:menu',{val:'manage'});
 			}
 			
-			$('#project_count_hidden').val(TiDeveloper.Projects.projectArray.length)
-			var firstCall = (init)?1:0
-			$MQ('l:project.list.response',{firstCall:firstCall,count:count,page:TiDeveloper.currentPage,totalRecords:TiDeveloper.Projects.projectArray.length,'rows':data})
+			$('#project_count_hidden').val(TiDeveloper.Projects.projectArray.length);
+			var firstCall = (init)?1:0;
+			$MQ('l:project.list.response',{firstCall:firstCall,count:count,page:TiDeveloper.currentPage,totalRecords:TiDeveloper.Projects.projectArray.length,'rows':data});
         });
 	});	
 }
@@ -639,9 +647,9 @@ $MQL('l:page.data.request',function(msg)
 	// cases - if search yields 0 results, do nothing
 	if (TiDeveloper.Projects.projectArray.length == 0)return;
 	
-	var state =msg.payload
-	var rowsPerPage = state.rowsPerPage
-	var page = state.page
+	var state =msg.payload;
+	var rowsPerPage = state.rowsPerPage;
+	var page = state.page;
 	TiDeveloper.currentPage = page;
 	var data = TiDeveloper.Projects.getProjectPage(rowsPerPage,page);
 	var count = TiDeveloper.formatCountMessage(TiDeveloper.Projects.projectArray.length,'project');
@@ -658,7 +666,7 @@ TiDeveloper.Projects.formatDirectory =function(dir)
 	
 	if (dir != null)
 	{
-		var dirStr = dir
+		var dirStr = dir;
 		if (dir.length > 70)
 		{
 			dirStr = dir.substring(0,70) + '...';
@@ -683,9 +691,9 @@ TiDeveloper.Projects.getProjectPage = function(pageSize,page)
 	var end = ((pageSize * page) > TiDeveloper.Projects.projectArray.length)?TiDeveloper.Projects.projectArray.length:(pageSize * page);
 	for (var i=start;i<end;i++)
 	{
-		pageData.push(TiDeveloper.Projects.projectArray[i])
+		pageData.push(TiDeveloper.Projects.projectArray[i]);
 	}
-	return pageData
+	return pageData;
 };
 
 
@@ -1008,7 +1016,7 @@ $MQL('l:create.package.request',function(msg)
 		
 		timanifest += platforms;
 		
-		timanifest += '"runtime":{"version":"0.2","package":"'+networkRuntime+'"},\n';
+		timanifest += '"runtime":{"version":"'+Titanium.version+'","package":"'+networkRuntime+'"},\n';
 		
 		timanifest += '"guid":"'+ project.guid+'",\n';
 		
@@ -1042,7 +1050,7 @@ $MQL('l:create.package.request',function(msg)
 		for (var c=0;c<TiDeveloper.Projects.modules.length;c++)
 		{
 			var module = TiDeveloper.Projects.modules[c].name;
-			var version = (TiDeveloper.Projects.modules[c].versions)?TiDeveloper.Projects.modules[c].versions[0]:'1.0';
+			var version = (TiDeveloper.Projects.modules[c].versions)?TiDeveloper.Projects.modules[c].versions[0]:Titanium.version;
 			
 			$.each(excludedEl,function()
 			{
@@ -1090,6 +1098,9 @@ $MQL('l:create.package.request',function(msg)
 		// copy files to temp dir
 		var resDir = TFS.getFile(destDir,'Resources');
 		resDir.createDirectory();
+		
+		//FIXME: we can't do this ... async may not finish before you
+		//go to package
 		TFS.asyncCopy(resources, resDir,function(){});		
 		TFS.asyncCopy(tiapp, destDir,function(){});		
 		TFS.asyncCopy(timanifest, destDir,function(){});		
@@ -1103,6 +1114,7 @@ $MQL('l:create.package.request',function(msg)
 			resDir.createDirectory();
 			TFS.asyncCopy(modules, resDir,function(){});
 		}
+		alert(destDir);
 
 		// packaging request
 		var xhr = Titanium.Network.createHTTPClient();
@@ -1115,45 +1127,46 @@ $MQL('l:create.package.request',function(msg)
 				if (this.status == 200)
 				{
 				    var json = swiss.evalJSON(this.responseText);
-					destDir.deleteDirectory(true)
+					destDir.deleteDirectory(true);
 					TiDeveloper.Projects.pollPackagingRequest(json.ticket,project.guid);
 				}
 				else
 				{
-					$('#packaging_none').css('display','none')
+					$('#packaging_none').css('display','none');
 					$('#packaging_listing').css('display','none');
 					$('#packaging_error').css('display','block');		
 					$('#packaging_in_progress').css('display','none');
 					TiDeveloper.Projects.packagingInProgress[project.guid] = false;
-					destDir.deleteDirectory(true)
-		
+					destDir.deleteDirectory(true);
 				}
 			}
-		} ;
+		};
 		
-		xhr.open("POST",'http://publisher.titaniumapp.com/api/publish');
+		xhr.open("POST",TiDeveloper.Projects.publish_url);
 		xhr.sendDir(destDir);    
 
 		TiDeveloper.Projects.packagingInProgress[project.guid] = true;
-		$('#packaging_none').css('display','none')
+		$('#packaging_none').css('display','none');
 		$('#packaging_listing').css('display','none');
 		$('#packaging_error').css('display','none');		
 		$('#packaging_in_progress').css('display','block');
-		$MQ('l:create.package.response',{result:0})
+		$MQ('l:create.package.response',{result:0});
 		
 	}
 	catch(E)
 	{
 		alert("Exception = "+E);
 	}
-})
+});
 
 
 TiDeveloper.Projects.pollPackagingRequest = function(ticket,guid)
 {          
-	$.get('http://d.titaniumapp.com/publish-status?ticket='+ticket,function(result)
+	var url = TiDeveloper.make_url(TiDeveloper.Projects.publish_status_url,{
+		'ticket':ticket
+	});
+	$.getJSON(url,function(r)
 	{
-		var r = swiss.evalJSON(result)
 	   	if (r.status == 'complete')
 	   	{
     		alert('done ' + swiss.toJSON(r));
@@ -1161,15 +1174,14 @@ TiDeveloper.Projects.pollPackagingRequest = function(ticket,guid)
 
 			// INSERT DATA INTO DB AND SHOW DATA
 			// SEND MESSAGE TO POPULATE TABLE
-			$('#packaging_none').css('display','none')
-			$('#packaging_error').css('display','none')
+			$('#packaging_none').css('display','none');
+			$('#packaging_error').css('display','none');
 			$('#packaging_listing').css('display','block');
 			$('#packaging_in_progress').css('display','none');
-
-	   	}
-	   	else if (r.status != 'working')
-	   	{
-			$('#packaging_none').css('display','none')
+		}
+		else if (r.status != 'working')
+		{
+			$('#packaging_none').css('display','none');
 			$('#packaging_listing').css('display','none');
 			$('#packaging_error').css('display','block');		
 			$('#packaging_in_progress').css('display','none');
@@ -1179,7 +1191,7 @@ TiDeveloper.Projects.pollPackagingRequest = function(ticket,guid)
 			// poll every 10 seconds
 			setTimeout(function()
 			{
-				TiDeveloper.Projects.pollPackagingRequest(ticket,guid)
+				TiDeveloper.Projects.pollPackagingRequest(ticket,guid);
 			},10000);
 		}
 	});
@@ -1190,7 +1202,7 @@ TiDeveloper.Projects.pollPackagingRequest = function(ticket,guid)
 $MQL('l:delete.project.request',function(msg)
 {
 	var name = msg.payload.name;
-	var id = msg.payload.project_id
+	var id = msg.payload.project_id;
 	var project = TiDeveloper.Projects.findProjectById(id);
 	var file = Titanium.Filesystem.getFile(project.dir);
 
@@ -1222,7 +1234,7 @@ $MQL('l:project.search.request',function(msg)
 					{
 		                var row = result.rows.item(i);
 						var date = new Date();
-						date.setTime(row['timestamp'])
+						date.setTime(row['timestamp']);
 						TiDeveloper.Projects.projectArray.push({
 							id: row['id'],
 							date: (date.getMonth()+1)+"/"+date.getDate()+"/"+date.getFullYear(),
