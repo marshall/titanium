@@ -1,6 +1,6 @@
 TiDeveloper.Apps = {};
-TiDeveloper.Apps.app_list_url = 'http://localhost/~jhaynie/dist/services/app-list';
-TiDeveloper.Apps.app_rate_url = 'http://localhost/~jhaynie/dist/services/app-rate';
+TiDeveloper.Apps.app_list_url = 'http://publisher.titaniumapp.com/api/app-list';
+TiDeveloper.Apps.app_rate_url = 'http://publisher.titaniumapp.com/api/app-rate';
 
 //
 // Rating Function

@@ -3,7 +3,7 @@
 //
 (function()
 {
-	var url = "http://localhost/~jhaynie/dist/services/app-track";
+	var url = "http://publisher.titaniumapp.com/api/app-track";
 	var guid = Titanium.App.getGUID();
 	
 	function send(qsv,async)
@@ -17,7 +17,8 @@
 			var qs = '';
 			for (var p in qsv)
 			{
-				qs+=p+'='+Titanium.Network.encodeURIComponent(String(qsv[p]))+'&';
+				var v = typeof(qsv[p])=='undefined' ? '' : String(qsv[p]);
+				qs+=p+'='+Titanium.Network.encodeURIComponent(v)+'&';
 			}
 			// this is asynchronous
 			var xhr = Titanium.Network.createHTTPClient();

@@ -1,12 +1,8 @@
 TiDeveloper.Projects = {};
 
-TiDeveloper.Projects.stats_url = 'http://localhost/~jhaynie/dist/services/app-stats';
-TiDeveloper.Projects.publish_url = 'http://localhost/~jhaynie/dist/services/publish';
-TiDeveloper.Projects.publish_status_url = 'http://localhost/~jhaynie/dist/services/publish-status';
-
-//TiDeveloper.Projects.publish_status_url = 'http://d.titaniumapp.com/publish-status';
-//TiDeveloper.Projects.stats_url = 'http://d.titaniumapp.com/stats';
-//TiDeveloper.Projects.publish_url = 'http://publisher.titaniumapp.com/api/publish';
+TiDeveloper.Projects.stats_url = 'http://publisher.titaniumapp.com/api/app-stats';
+TiDeveloper.Projects.publish_url = 'http://publisher.titaniumapp.com/api/publish';
+TiDeveloper.Projects.publish_status_url = 'http://publisher.titaniumapp.com/api/publish-status';
 
 TiDeveloper.Projects.projectArray = [];
 TiDeveloper.Projects.modules = [];
@@ -1102,6 +1098,9 @@ $MQL('l:create.package.request',function(msg)
 		// copy files to temp dir
 		var resDir = TFS.getFile(destDir,'Resources');
 		resDir.createDirectory();
+		
+		//FIXME: we can't do this ... async may not finish before you
+		//go to package
 		TFS.asyncCopy(resources, resDir,function(){});		
 		TFS.asyncCopy(tiapp, destDir,function(){});		
 		TFS.asyncCopy(timanifest, destDir,function(){});		
@@ -1115,6 +1114,7 @@ $MQL('l:create.package.request',function(msg)
 			resDir.createDirectory();
 			TFS.asyncCopy(modules, resDir,function(){});
 		}
+		alert(destDir);
 
 		// packaging request
 		var xhr = Titanium.Network.createHTTPClient();
@@ -1142,12 +1142,7 @@ $MQL('l:create.package.request',function(msg)
 			}
 		};
 		
-		var url = TiDeveloper.make_url(TiDeveloper.Projects.publish_url,{
-			'guid':project.guid,
-			'mid':Titanium.Platform.id
-		});
-
-		xhr.open("POST",url);
+		xhr.open("POST",TiDeveloper.Projects.publish_url);
 		xhr.sendDir(destDir);    
 
 		TiDeveloper.Projects.packagingInProgress[project.guid] = true;
