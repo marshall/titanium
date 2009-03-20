@@ -352,6 +352,7 @@
 {
 	KR_DUMP_LOCATION
 	JSObjectRef global_object = JSContextGetGlobalObject(context);
+	JSGlobalContextRetain(context);
 	KJSUtil::RegisterGlobalContext(global_object, context);
 
 	// Produce a delegating object to represent the top-level
