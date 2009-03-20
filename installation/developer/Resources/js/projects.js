@@ -1109,14 +1109,6 @@ $MQL('l:create.package.request',function(msg)
 		var ticket = null;
 		xhr.onreadystatechange = function()
 		{
-			try
-			{
-				
-			}
-			catch(e)
-			{
-				alert('exception caught on request ' + e)
-			}
 			// 4 means that the POST has completed
 			if (this.readyState == 4)
 			{

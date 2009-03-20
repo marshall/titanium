@@ -172,6 +172,7 @@ TiDeveloper.IRC.initialize = function()
 			{	
 				case '433':
 				{
+					alert('in 433 username =' + username + ' userSetNick ' + userSetNick)
 					$('#irc').append('<div style="color:#aaa;margin-bottom:8px">' + username + ' is already taken. trying another variation...</div>');
 					username = TiDeveloper.IRC.formatNick(username + (++nick_counter));
 					setNicknameAttempted = true;
@@ -206,6 +207,7 @@ TiDeveloper.IRC.initialize = function()
 						setNicknameAttempted = true;
 					}
 					// try again with a new nick
+					alert('setting nick to ' + username)
 					TiDeveloper.IRC.ircClient.setNick(username);
 					TiDeveloper.IRC.updateNickInDB(username);
 
@@ -237,6 +239,7 @@ TiDeveloper.IRC.initialize = function()
 					}
 					else if (nick=='NickServ' && (channel.indexOf('This nickname is registered')>=0 || channel.indexOf('Invalid password for')>=0))
 					{
+						alert('in else of NOTICE/PRIVMSG ' + data )
 						$('#irc').append('<div style="color:#aaa;margin-bottom:8px">' + data + ' is already taken. trying another variation...</div>');
 						username = TiDeveloper.IRC.formatNick(data + (++nick_counter));
 						setNicknameAttempted = true;
@@ -246,6 +249,7 @@ TiDeveloper.IRC.initialize = function()
 					}
 					break;
 				}
+				// USER LIST
 				case '366':
 				{					
 					var users = TiDeveloper.IRC.ircClient.getUsers(TiDeveloper.IRC.channel);
@@ -256,6 +260,8 @@ TiDeveloper.IRC.initialize = function()
 						$('#irc_users').append('<div class="'+users[i].name+'">'+users[i].name+'</div>');
 					}
 				}
+				
+				// SOMEONE HAS JOINED THE ROOM
 				case 'JOIN':
 				{
 					if (nick.indexOf('freenode.net') != -1)
@@ -277,6 +283,8 @@ TiDeveloper.IRC.initialize = function()
 					$MQ('l:online.count',{count:TiDeveloper.IRC.count});
 					break;
 				}
+				
+				// SOMEONE HAS LEFT THE ROOM
 				case 'QUIT':
 				case 'PART':
 				{
@@ -324,8 +332,9 @@ $MQL('l:send.irc.msg',function()
 		else
 		{
 			$('#irc').append('<div style="color:#ff9900;font-size:14px;float:left;margin-bottom:8px;width:90%">' + TiDeveloper.IRC.nick + ': <span style="color:white;font-size:12px;font-family:Arial">' + urlMsg + '</span></div><div style="float:right;color:#ccc;font-size:11px;width:10%;text-align:right">'+time+'</div><div style="clear:both"></div>');
+			TiDeveloper.IRC.ircClient.send(TiDeveloper.IRC.channel,rawMsg);
+
 		}
-		TiDeveloper.IRC.ircClient.send(TiDeveloper.IRC.channel,rawMsg);
 
 		$('#irc_msg').val('');
 		$('#irc').get(0).scrollTop = $('#irc').get(0).scrollHeight;

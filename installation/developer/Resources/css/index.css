@@ -125,6 +125,17 @@ textarea, input:focus
 	overflow:auto;
 }
 
+::-webkit-scrollbar-track-piece:vertical:decrement {
+    border-color: transparent;
+    border-width: 13px 0 0 0;
+	background-color:#333;
+}
+::-webkit-scrollbar-track-piece:vertical:increment {
+    border-color: transparent;
+   border-width: 13px 0 0 0;
+
+	background-color:#333;
+}
 /*********************
  BUTTON CLASSES
 **********************/
