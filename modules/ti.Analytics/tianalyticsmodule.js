@@ -4,7 +4,6 @@
 (function()
 {
 	var url = "http://localhost/~jhaynie/dist/services/app-track";
-	var sid = Titanium.Platform.createUUID();
 	var guid = Titanium.App.getGUID();
 	
 	function send(qsv,async)
@@ -13,7 +12,6 @@
 		{
 			async = (typeof async=='undefined') ? true : async;
 			qsv.mid = Titanium.Platform.id;
-			qsv.sid = sid;
 			qsv.guid = guid;
 			
 			var qs = '';
@@ -21,17 +19,18 @@
 			{
 				qs+=p+'='+Titanium.Network.encodeURIComponent(String(qsv[p]))+'&';
 			}
-			Titanium.API.debug(qs);
 			// this is asynchronous
 			var xhr = Titanium.Network.createHTTPClient();
 			xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+/* NICE FOR TESTING
 			xhr.onreadystatechange = function()
 			{
 				if (this.readyState==4)
 				{
-					Titanium.API.debug(this.responseText);
+					Titanium.API.debug("++ received:"+this.responseText);
 				}
 			}
+*/
 			xhr.open('POST',url,async);
 			xhr.send(qs);
 		}

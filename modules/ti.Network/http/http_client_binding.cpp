@@ -232,8 +232,6 @@ namespace ti
 				streamer = sv->ToMethod()->Get("apply")->ToMethod();
 			}
 			
-			std::cout << "connected = " << binding->Get("connected")->ToBool() << std::endl;
-			
 			while(!rs.eof() && binding->Get("connected")->ToBool())
 			{
 				try
@@ -323,11 +321,10 @@ namespace ti
 		}
 		this->thread = new Poco::Thread();
 		this->thread->start(&HTTPClientBinding::Run,(void*)this);
-		//FIXME: this will lock up UI thread ... need a better mechanism
-		// if (!this->async)
-		// {
-		// 	this->thread->join();
-		// }
+		if (!this->async)
+		{
+			this->thread->join();
+		}
 	}
 	void HTTPClientBinding::SendFile(const ValueList& args, SharedValue result)
 	{
@@ -366,11 +363,10 @@ namespace ti
 		}
 		this->thread = new Poco::Thread();
 		this->thread->start(&HTTPClientBinding::Run,(void*)this);
-		//FIXME: this will lock up UI thread ... need a better mechanism
-		// if (!this->async)
-		// {
-		// 	this->thread->join();
-		// }
+		if (!this->async)
+		{
+			this->thread->join();
+		}
 	}
 	void HTTPClientBinding::SendDir(const ValueList& args, SharedValue result)
 	{
@@ -406,11 +402,10 @@ namespace ti
 		}
 		this->thread = new Poco::Thread();
 		this->thread->start(&HTTPClientBinding::Run,(void*)this);
-		//FIXME: this will lock up UI thread ... need a better mechanism
-		// if (!this->async)
-		// {
-		// 	this->thread->join();
-		// }
+		if (!this->async)
+		{
+			this->thread->join();
+		}
 	}
 	void HTTPClientBinding::Abort(const ValueList& args, SharedValue result)
 	{
