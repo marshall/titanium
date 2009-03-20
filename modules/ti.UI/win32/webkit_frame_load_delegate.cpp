@@ -35,6 +35,7 @@ Win32WebKitFrameLoadDelegate::windowScriptObjectAvailable (
 {
 	JSObjectRef global_object = JSContextGetGlobalObject(context);
 	KJSUtil::RegisterGlobalContext(global_object, (JSGlobalContextRef) context);
+	KJSUtil::ProtectGlobalContext((JSGlobalContextRef) context);
 
 	Win32UserWindow* user_window = this->window;
 	Host* tihost = window->GetHost();
