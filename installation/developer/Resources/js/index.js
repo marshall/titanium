@@ -142,6 +142,20 @@ $.extend(
 	}
 });
 
+TiDeveloper.make_url = function(base,params)
+{
+	var url = base;
+	if (params)
+	{
+		url = url + '?';
+		for (var p in params)
+		{
+			url+=encodeURIComponent(p)+'='+encodeURIComponent(String(params[p]));
+		}
+	}
+	return url;
+};
+
 //
 // load doc iframe - delay for perf reasons
 //
