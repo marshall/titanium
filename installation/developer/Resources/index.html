@@ -48,30 +48,30 @@
 			<span style="color:#42C0FB" on="l:online.count then value[count]">loading...</span>  
 		</div>
 	</div>
-	<div style="margin-auto">
-		<div class="nav1 nav_active" style="display:inline-block;" 
+	<div style="margin:auto;width:606px">
+		<div class="nav1 nav_active" style="display:inline-block;-webkit-border-bottom-left-radius: 6px;border-left:1px solid #222" 
 			on="click then l:menu[val=manage] and add[class=nav_active] 
 				or l:menu[val!=manage] then remove[class=nav_active]">
 			<div class="nav2">Projects</div>
 		</div>
-		<div class="nav1" style="display:inline-block;" 
+		<div class="nav1" style="display:inline-block;border-left:1px solid #222" 
 			on="click then l:menu[val=sandbox] and add[class=nav_active] 
 				or l:menu[val!=sandbox] then remove[class=nav_active]">
 			<div>Sandbox</div>
 		</div>
 
-		<div class="nav1" style="display:inline-block;" 
+		<div class="nav1" style="display:inline-block;border-left:1px solid #222" 
 			on="click then l:menu[val=apps] and add[class=nav_active] or l:menu[val!=apps] then remove[class=nav_active]">
 			<div>Apps</div>
 		</div>
-		<div class="nav1" style="display:inline-block;" 
+		<div class="nav1" style="display:inline-block;border-left:1px solid #222" 
 			on="click then l:menu[val=interact] and add[class=nav_active] 
 				or l:menu[val!=interact] then remove[class=nav_active]">
 			<div>Community 
 				<span id="irc_message_count" class="message_indicator" style="display:none"></span>
 			</div>
 		</div>
-		<div class="nav1" style="display:inline-block;" 
+		<div class="nav1" style="display:inline-block;-webkit-border-bottom-right-radius: 6px;border-right:1px solid #222;border-left:1px solid #222" 
 			on="click then l:menu[val=feeds] and add[class=nav_active] 
 				or l:menu[val!=feeds] then remove[class=nav_active]">
 			<div >Feeds</div>
@@ -85,7 +85,7 @@
 -->	
 	</div>
 
-	<div style="clear:both"></div>
+	<div style="clear:both;margin-bottom:10px"></div>
 
 	<!-- CONTENT -->
 	<div id="content" style="display:none" on="l:project.list.response[firstCall=1] then effect[fadeIn]">
@@ -775,10 +775,6 @@
 											<div style="font-size:28px">Make sure you are online.</div>
 											</div>
 										</div>
-
-										<div align="center" style="line-height:auto">
-											<img src="images/ti_warn.png" style="position:relative;top:-1px"/>
-										</div>
 									</div>
 									
 									<!-- PACKAGE LISTING -->
@@ -1259,7 +1255,7 @@
 
 							<div id="platform_mac" class="button1" style="float:none;height:70px;width:80px">
 								<div  class="button2" style="height:68px"
-									on="click then toggle[class=selected_os] 
+									on="click then toggle[class=selected_os] and l:os_platform_click
 									and toggle[id=platform_mac,class=selected_os]
 									or l:package.project.request then remove[class=selected_os]
 									and remove[id=platform_mac,class=selected_os]">
@@ -1268,7 +1264,7 @@
 							</div>
 							<div id="platform_windows" class="button1" style="float:none;height:70px;width:80px">
 								<div class="button2" style="height:68px"
-									on="click then toggle[class=selected_os]
+									on="click then toggle[class=selected_os] and l:os_platform_click
 									and toggle[id=platform_windows,class=selected_os]
 									or l:package.project.request then remove[class=selected_os]
 									and remove[id=platform_windows,class=selected_os]">
@@ -1277,7 +1273,7 @@
 							</div>
 							<div id="platform_linux" class="button1" style="float:none;height:70px;width:80px">
 								<div  class="button2" style="height:68px"
-									on="click then toggle[class=selected_os]
+									on="click then toggle[class=selected_os] and l:os_platform_click
 									and toggle[id=platform_linux,class=selected_os]
 									or l:package.project.request then remove[class=selected_os]
 									and remove[id=platform_linux,class=selected_os]">
@@ -1384,10 +1380,12 @@
 									</div>
 									<div style="position:relative;top:20px;left:-5px">
 										<div class="button1" style="float:left;"
-											on="click then l:create.package.request[package=true,launch=no]
-											or l:create.package.response[result=0] then l:cancel.package.project 
-											and l:cancel[val=package] and l:proj_data[val=download,hint=Links to your packaged application by operating system]"
-											<div class="button2">
+											
+											<div class="button2" id="package_project_button" disabled="true"
+												on="click then l:create.package.request[package=true,launch=no]
+												if expr[$('#package_project_button').attr('disabled')!='true']
+												or l:create.package.response[result=0] then l:cancel.package.project 
+												and l:cancel[val=package] and l:proj_data[val=download,hint=Links to your packaged application by operating system]">
 												Package
 											</div>
 										</div>

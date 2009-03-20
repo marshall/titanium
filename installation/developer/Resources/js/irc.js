@@ -323,9 +323,10 @@ $MQL('l:send.irc.msg',function()
 		}
 		else
 		{
-			TiDeveloper.IRC.ircClient.send(TiDeveloper.IRC.channel,rawMsg);
 			$('#irc').append('<div style="color:#ff9900;font-size:14px;float:left;margin-bottom:8px;width:90%">' + TiDeveloper.IRC.nick + ': <span style="color:white;font-size:12px;font-family:Arial">' + urlMsg + '</span></div><div style="float:right;color:#ccc;font-size:11px;width:10%;text-align:right">'+time+'</div><div style="clear:both"></div>');
 		}
+		TiDeveloper.IRC.ircClient.send(TiDeveloper.IRC.channel,rawMsg);
+
 		$('#irc_msg').val('');
 		$('#irc').get(0).scrollTop = $('#irc').get(0).scrollHeight;
 		

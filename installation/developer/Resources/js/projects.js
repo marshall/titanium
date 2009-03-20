@@ -716,6 +716,21 @@ TiDeveloper.Projects.getModules = function(appDir)
 };
 
 //
+//  Handle Package Project Button - enable/disable
+//
+$MQL('l:os_platform_click',function()
+{
+	if ($('.selected_os').length > 0)
+	{
+		$('#package_project_button').attr('disabled','false');
+	}
+	else
+	{
+		$('#package_project_button').attr('disabled','true');
+	}
+})
+
+//
 //  Project Package Request - get details about modules, etc
 //
 $MQL('l:package.project.request',function(msg)
@@ -1094,6 +1109,14 @@ $MQL('l:create.package.request',function(msg)
 		var ticket = null;
 		xhr.onreadystatechange = function()
 		{
+			try
+			{
+				
+			}
+			catch(e)
+			{
+				alert('exception caught on request ' + e)
+			}
 			// 4 means that the POST has completed
 			if (this.readyState == 4)
 			{
@@ -1105,18 +1128,20 @@ $MQL('l:create.package.request',function(msg)
 				}
 				else
 				{
-					destDir.deleteDirectory(true)
 					$('#packaging_none').css('display','none')
 					$('#packaging_listing').css('display','none');
 					$('#packaging_error').css('display','block');		
 					$('#packaging_in_progress').css('display','none');
-
+					TiDeveloper.Projects.packagingInProgress[project.guid] = false;
+					destDir.deleteDirectory(true)
+		
 				}
 			}
 		} ;
-
+		
 		xhr.open("POST",'http://publisher.titaniumapp.com/api/publish');
-		xhr.sendDir(project.dir);    
+		xhr.sendDir(destDir);    
+
 		TiDeveloper.Projects.packagingInProgress[project.guid] = true;
 		$('#packaging_none').css('display','none')
 		$('#packaging_listing').css('display','none');
