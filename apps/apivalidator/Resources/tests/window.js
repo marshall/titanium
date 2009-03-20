@@ -94,6 +94,15 @@ testSuite("Titanium.UI Window API tests", "dummy.html",
 			m.show();
 			assert(m.isVisible());
 			
+			m.setWidth(444);
+			assertEquals(m.getWidth(), 444);
+			m.setHeight(666);
+			assertEquals(m.getHeight(), 666);
+			m.setX(43);
+			assertEquals(m.getX(), 43);
+			m.setY(55);
+			assertEquals(m.getY(), 55);
+
 			var originalBounds = m.getBounds();
 			var b = {
 				width: 350, height: 500,
@@ -116,52 +125,52 @@ testSuite("Titanium.UI Window API tests", "dummy.html",
 			m.setHeight(599);
 			assertEquals(m.getHeight(), 500);
 
-			m.setMaxWidth(400);
-			assertEquals(m.getMaxWidth(), 400);
-			m.setWidth(499);
-			assertEquals(m.getWidth(), 400);
+			m.setMaxWidth(600);
+			assertEquals(m.getMaxWidth(), 600);
+			m.setWidth(699);
+			assertEquals(m.getWidth(), 600);
 		
 		});
 		
 		test("Titanium.UI window events", function () {
 			var firedEvent = null;
-			var listener = function(event) {
-				firedEvent = event;
-			};
-			var waitForEvent = function(fn) {
+
+			var testListener = function(f) {
 				firedEvent = null;
-				fn();
-				while (firedEvent == null); 
-			};
-			
+				var startTime = (new Date()).getTime();
+				f();
+				while (firedEvent == null) {
+					if (startTime + 1000 < (new Date()).getTime()) {
+						return "timeout"
+					}
+				}
+				return firedEvent;
+			}
+
 			var m = Titanium.UI.mainWindow;
-			
-			m.addEventListener(listener);
-			m.focus();
-			assertEquals(firedEvent, 'focused');
-			m.unfocus();
-			assertEquals(firedEvent, 'unfocused');
-			m.hide();
-			assertEquals(firedEvent, 'hidden');
-			m.show();
-			assertEquals(firedEvent, 'shown');
-			m.setFullScreen(true);
-			assertEquals(firedEvent, 'fullscreened');
-			m.setFullScreen(false);
-			assertEquals(firedEvent, 'unfullscreened');
-			var originalWidth = m.getWidth();
-			m.setWidth(201);
-			assertEquals(firedEvent, 'resized');
-			m.setWidth(originalWidth);
-			var originalX = m.getX();
-			m.setX(37);
-			assertEquals(firedEvent, 'moved');
-			m.setX(originalX);
-			
-			m.removeEventListener(listener);
-			firedEvent = null;
-			m.focus();
-			assert(firedEvent == null);
+			var listener = function(event) { firedEvent = event; };
+			var lid = m.addEventListener(listener);
+
+			var evt = testListener(function() { m.unfocus(); });
+			assertEquals(evt, 'unfocused');
+			evt = testListener(function() { m.focus(); });
+			assertEquals(evt, 'focused');
+			evt = testListener(function() { m.hide(); });
+			assertEquals(evt, 'hidden');
+			evt = testListener(function() { m.show(); });
+			assertEquals(evt, 'shown');
+			evt = testListener(function() { m.setFullScreen(true); });
+			assertEquals(evt, 'fullscreened');
+			evt = testListener(function() { m.setFullScreen(false); });
+			assertEquals(evt, 'unfullscreened');
+			evt = testListener(function() { m.setWidth(m.getWidth() + 1); });
+			assertEquals(evt, 'resized');
+			evt = testListener(function() { m.setX(m.getX() + 1); });
+			assertEquals(evt, 'moved');
+
+			m.removeEventListener(lid);
+			evt = testListener(function() { m.setX(m.getX() + 1); });
+			assertEquals(evt, 'timeout');
 		});
 	}
 });
