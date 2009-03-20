@@ -63,7 +63,6 @@ GtkUserWindow::GtkUserWindow(SharedUIBinding binding, WindowConfig* config, Shar
 
 GtkUserWindow::~GtkUserWindow()
 {
-	printf("destroying GTK window\n\n\n\n\n");
 	this->Close();
 }
 
@@ -126,10 +125,6 @@ void GtkUserWindow::Open()
 
 		/* main window */
 		GtkWidget* window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-		gtk_window_set_default_size(
-			GTK_WINDOW(window),
-			this->config->GetWidth(),
-			this->config->GetHeight());
 		gtk_widget_set_name(window, this->config->GetTitle().c_str());
 		gtk_window_set_title(GTK_WINDOW(window), this->config->GetTitle().c_str());
 
@@ -149,12 +144,13 @@ void GtkUserWindow::Open()
 
 		gtk_widget_realize(window);
 		this->SetupDecorations();
+		this->SetupSize();
 		this->SetupSizeLimits();
 		this->SetupPosition();
-		this->SetupSize();
 		this->SetupMenu();
 		this->SetupIcon();
 		this->SetTopMost(config->IsTopMost());
+		this->SetCloseable(config->IsCloseable());
 
 		gtk_widget_grab_focus(GTK_WIDGET (web_view));
 		webkit_web_view_open(web_view, this->config->GetURL().c_str());
@@ -276,16 +272,23 @@ void GtkUserWindow::SetupPosition()
 {
 	if (this->gtk_window != NULL)
 	{
-		int x = this->GetX();
-		int y = this->GetY();
+		int x = this->config->GetX();
+		int y = this->config->GetY();
 
 		GdkScreen* screen = gdk_screen_get_default();
 		if (x == UserWindow::CENTERED)
 			x = (gdk_screen_get_width(screen) - this->GetWidth()) / 2;
 		if (y == UserWindow::CENTERED)
 			y = (gdk_screen_get_height(screen) - this->GetHeight()) / 2;
-
 		gtk_window_move(this->gtk_window, x, y);
+
+		// Moving in GTK is asynchronous, so we prime the
+		// values here in hopes that things will turn out okay.
+		// Another alternative would be to block until a resize
+		// is detected, but that might leave the application in
+		// a funky state.
+		this->gdk_x = x;
+		this->gdk_y = y;
 	}
 }
 
@@ -294,8 +297,16 @@ void GtkUserWindow::SetupSize()
 	if (this->gtk_window != NULL)
 	{
 		gtk_window_resize(this->gtk_window,
-			(int) this->GetWidth(),
-			(int) this->GetHeight());
+			(int) this->config->GetWidth(),
+			(int) this->config->GetHeight());
+
+		// Resizing in GTK is asynchronous, so we prime the
+		// values here in hopes that things will turn out okay.
+		// Another alternative would be to block until a resize
+		// is detected, but that might leave the application in
+		// a funky state.
+		this->gdk_width = this->config->GetWidth();
+		this->gdk_height = this->config->GetHeight();
 	}
 }
 
@@ -592,7 +603,7 @@ std::string GtkUserWindow::GetId() {
 
 
 double GtkUserWindow::GetX() {
-	return this->config->GetX();
+	return this->gdk_x;
 }
 
 void GtkUserWindow::SetX(double x) {
@@ -601,7 +612,7 @@ void GtkUserWindow::SetX(double x) {
 }
 
 double GtkUserWindow::GetY() {
-	return this->config->GetY();
+	return this->gdk_y;
 }
 
 void GtkUserWindow::SetY(double y) {
@@ -610,10 +621,14 @@ void GtkUserWindow::SetY(double y) {
 }
 
 double GtkUserWindow::GetWidth() {
-	return this->config->GetWidth();
+	return this->gdk_width;
 }
 
 void GtkUserWindow::SetWidth(double width) {
+	if (width > config->GetMaxWidth())
+		width = config->GetMaxWidth();
+	if (width < config->GetMinWidth())
+		width = config->GetMinWidth();
 	this->config->SetWidth((int)width);
 	this->SetupSize();
 }
@@ -637,10 +652,14 @@ void GtkUserWindow::SetMinWidth(double width) {
 }
 
 double GtkUserWindow::GetHeight() {
-	return this->config->GetHeight();
+	return this->gdk_height;
 }
 
 void GtkUserWindow::SetHeight(double height) {
+	if (height > config->GetMaxHeight())
+		height = config->GetMaxHeight();
+	if (height < config->GetMinHeight())
+		height = config->GetMinHeight();
 	this->config->SetHeight((int) height);
 	this->SetupSize();
 }
@@ -664,22 +683,31 @@ void GtkUserWindow::SetMinHeight(double height) {
 }
 
 Bounds GtkUserWindow::GetBounds() {
-	int width = this->GetWidth();
-	int height = this->GetHeight();
-	int x = this->GetX();
-	int y = this->GetY();
-	Bounds b = {x, y, width, height};
+	Bounds b;
+	b.width = gdk_width;
+	b.height = gdk_height;
+	b.x = gdk_x;
+	b.y = gdk_y;
 	return b;
 }
 
 void GtkUserWindow::SetBounds(Bounds b) {
 	this->config->SetX(b.x);
 	this->config->SetY(b.y);
-	this->config->SetWidth(b.width);
-	this->config->SetHeight(b.height);
-
-	this->SetupSize();
 	this->SetupPosition();
+
+	if (b.width > config->GetMaxWidth())
+		b.width = config->GetMaxWidth();
+	if (b.width < config->GetMinWidth())
+		b.width = config->GetMinWidth();
+	this->config->SetWidth(b.width);
+
+	if (b.height > config->GetMaxHeight())
+		b.height = config->GetMaxHeight();
+	if (b.height < config->GetMinHeight())
+		b.height = config->GetMinHeight();
+	this->config->SetHeight(b.height);
+	this->SetupSize();
 }
 
 std::string GtkUserWindow::GetTitle() {

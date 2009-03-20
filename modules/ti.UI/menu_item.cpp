@@ -134,7 +134,6 @@ namespace ti
 
 	void MenuItem::_SetLabel(const ValueList& args, SharedValue result)
 	{
-		printf("set label\n");
 		this->RawSet("label", args.at(0));
 
 		std::string label = std::string(args.at(0)->ToString());
@@ -142,7 +141,6 @@ namespace ti
 	}
 	void MenuItem::_SetIcon(const ValueList& args, SharedValue result)
 	{
-		printf("set icon\n");
 		this->RawSet("icon", args.at(0));
 		std::string icon_path = std::string(args.at(0)->ToString());
 		this->SetLabel(icon_path);
