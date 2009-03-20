@@ -353,6 +353,7 @@
 	KR_DUMP_LOCATION
 	JSObjectRef global_object = JSContextGetGlobalObject(context);
 	KJSUtil::RegisterGlobalContext(global_object, context);
+	KJSUtil::ProtectGlobalContext(context);
 
 	// Produce a delegating object to represent the top-level
 	// Titanium object. When a property isn't found in this object
