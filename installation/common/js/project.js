@@ -179,6 +179,8 @@ Titanium.Project =
 			head+='<head><style>body{background-color:#292929;color:white}</style>\n';
 		}
 		
+		// var path = Titanium.App.appURLToPath('app://thirdparty_js');
+		// TFS.getFile(path,'jquery-1.3.2.js');
 		if (jsLibs.jquery)
 		{
 			head += jquery
