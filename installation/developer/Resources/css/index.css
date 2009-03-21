@@ -560,3 +560,11 @@ div.formhint
 	-webkit-border-bottom-left-radius: 6px;
 	
 }
+
+#api_refresh
+{
+	cursor:pointer;
+	margin-left:4px;
+	position:relative;
+	top:4px;
+}

@@ -1,23 +1,71 @@
 TiDeveloper.Sandbox = {};
+TiDeveloper.Sandbox.url = "http://publisher.titaniumapp.com/api/snippet-list";
 TiDeveloper.Sandbox.lastTempDir = null;
-TiDeveloper.Sandbox.apiSamples = [
-{key:'select something',code:''},
-{	key:'Titanium.App variables',
-	code:"&lt;div&gt;Titanium.App.getID() = &lt;script&gt;document.write(Titanium.App.getID());&lt;/script&gt;\n&lt;/div&gt;\n\n"+
-	"&lt;div&gt;Titanium.App.getName() = &lt;script&gt;document.write(Titanium.App.getName());&lt;/script&gt;\n&lt;/div&gt;\n\n"+
-	"&lt;div&gt;Titanium.App.getVersion() = &lt;script&gt;document.write(Titanium.App.getVersion());&lt;/script&gt;\n&lt;/div&gt;\n\n"+
-	"&lt;div&gt;Titanium.App.appURLToPath() = &lt;script&gt;document.write(Titanium.App.appURLToPath('app://index.html'));&lt;/script&gt;\n&lt;/div&gt;\n\n"	
-}
-];
+TiDeveloper.Sandbox.code = [];
+TiDeveloper.Sandbox.refreshing = -1;
+
 $(document).ready(function()	
 {
 	$('#text_editor').markItUp(mySettings);
-	$MQ('l:populate.api.selector',{rows:TiDeveloper.Sandbox.apiSamples})
+	
+	var fetched = false;
+
+	function refreshAPIList()
+	{
+		$.getJSON(TiDeveloper.Sandbox.url,function(results)
+		{
+			fetched = true;
+			TiDeveloper.Sandbox.code = results;
+			var data = [];
+			data.unshift({
+				title:'select code snippet...',
+				code:null
+			});
+			for (var c=0;c<results.length;c++)
+			{
+				data.push({'title':results[c].title,'code':null});
+			}
+			$MQ('l:populate.api.selector',{rows:data});
+		});
+	}
+	
+	$('#api_refresh').click(function()
+	{
+		TiDeveloper.Sandbox.refreshing=$('#api_selector').get(0).selectedIndex;
+		refreshAPIList();
+		return false;
+	});
+	
+	$MQL('l:menu',function(data)
+	{
+		if (data.payload.val == 'sandbox')
+		{
+			if (!fetched) refreshAPIList();
+		}
+	});
 });
+
 
 TiDeveloper.Sandbox.setAPI = function()
 {
-	$('#text_editor').append($('select#api_selector option:selected').val()) 
+	var selector = $('#api_selector').get(0);
+	var selectedIndex = selector.selectedIndex;
+	if (TiDeveloper.Sandbox.refreshing!=-1 && selectedIndex == 0) 
+	{
+		selector.selectedIndex = TiDeveloper.Sandbox.refreshing;
+		TiDeveloper.Sandbox.refreshing=-1;
+		return;
+	}
+	if (selectedIndex > 0)
+	{
+		var entry = TiDeveloper.Sandbox.code[selectedIndex-1];
+		var code = $.gsub(entry.code,"\\\\n","\n");
+		$('#text_editor').val(code);
+	}
+	else
+	{
+		$('#text_editor').val('Select the name of a code snippet above to see the code here.\n\nYou can also start typing code here (and optionally select a Javascript library to the left) and click \'Launch\' to run the code in a quick-launch Titanium app.');
+	}
 }
 
 $MQL('l:launch.sandbox',function(msg)
@@ -77,4 +125,4 @@ $MQL('l:launch.sandbox',function(msg)
 	var guid = Titanium.Platform.createUUID();
 	Titanium.Project.create(project.name,guid,'sandbox app',project.rootdir,project.publisher,project.url,null,jsLibs, $('#text_editor').val());
 	TiDeveloper.Projects.launchProject(project,false)
-})
+});
