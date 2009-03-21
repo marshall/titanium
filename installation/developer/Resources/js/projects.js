@@ -3,7 +3,7 @@ TiDeveloper.Projects = {};
 TiDeveloper.Projects.stats_url = 'http://publisher.titaniumapp.com/api/app-stats';
 TiDeveloper.Projects.publish_url = 'http://publisher.titaniumapp.com/api/publish';
 TiDeveloper.Projects.publish_status_url = 'http://publisher.titaniumapp.com/api/publish-status';
-
+TiDeveloper.Projects.app_links_url = 'http://publisher.titaniumapp.com/api/app-list';
 TiDeveloper.Projects.projectArray = [];
 TiDeveloper.Projects.modules = [];
 TiDeveloper.Projects.module_map = {};
@@ -367,36 +367,80 @@ $MQL('l:row.selected',function(msg)
 	        tx.executeSql("SELECT url, platform, version, date from ProjectPackages WHERE guid = ?",[project.guid],
 	 			function(tx,result)
 				{
-					if (result.rows.length == 0)
-					{
-						$('#packaging_none').css('display','block');
-						$('#packaging_error').css('display','none');		
-						$('#packaging_listing').css('display','none');
-						$('#packaging_in_progress').css('display','none');
-					}
-					else
+					// helper function for
+					// send message with package data
+					function sendRows(rows,pubdate)
 					{
 						var a =[];
 						var date = null;
 						// cycle through downloads
-			           	for (var i = 0; i < result.rows.length; ++i) 
+			           	for (var i = 0; i < rows.length; ++i) 
 					   	{
-			                var row = result.rows.item(i);
+							// is db record or JSON
+			                var row = (rows.item)?rows.item(i):rows[i];
+							var date = (pubdate)?pubdate:row['date']
 							var url = row['url'];
 							var platform = row['platform'];
 							var version = row['version'];
-							var date = row['date'];
+							
+							// if no date, we just use now b/c 
+							
 							var platformShort = null;
-							if (platform.indexOf('Win')!=-1) platformShort = "win";
-							if (platform.indexOf('Linux')!=-1) platformShort = "linux";
-							if (platform.indexOf('Mac')!=-1) platformShort = "mac";
-							a.push({'url':url,'platform':platform,'version':version,'platform_short':platformShort});
+							if (platform.indexOf('win32')!=-1) 
+							{
+								platformShort = "win";
+								platformLong = "Windows";
+							}
+							if (platform.indexOf('linux')!=-1)
+							{
+								platformShort = "linux";
+								platformLong = "Linux";
+							} 
+							if (platform.indexOf('osx')!=-1)
+							{
+								platformShort = "mac";
+								platformLong = 'Mac OSX'
+							} 
+							a.push({'url':url,'platform':platformLong,'platform_short':platformShort});
 						}
-						$MQ('l:package_links',{date:date, rows:a});
+						$MQ('l:package_links',{'date':date, 'rows':a});
 						$('#packaging_none').css('display','none');
 						$('#packaging_listing').css('display','block');
 						$('#packaging_in_progress').css('display','none');
 						$('#packaging_error').css('display','none');		
+						
+					}
+					if (result.rows.length == 0)
+					{
+						// see if we have any rows in the cliz-oud
+						var url = TiDeveloper.make_url(TiDeveloper.Projects.app_links_url,{
+							'guid':project.guid
+						});
+						$.getJSON(url,function(r)
+						{
+							if (r.releases)
+							{
+								TiDeveloper.Projects.insertPackagingRows(project.guid,r.pubdate,r.releases);
+								var date = TiDeveloper.Projects.formatPackagingDate(r.pubdate);
+								sendRows(r.releases,date);
+								$('#packaging_none').css('display','none');
+								$('#packaging_error').css('display','none');		
+								$('#packaging_listing').css('display','block');
+								$('#packaging_in_progress').css('display','none');
+								
+							}
+							else
+							{
+								$('#packaging_none').css('display','block');
+								$('#packaging_error').css('display','none');		
+								$('#packaging_listing').css('display','none');
+								$('#packaging_in_progress').css('display','none');
+							}
+						});
+					}
+					else
+					{
+						sendRows(result.rows)
 					}
 				},
 				function(error)
@@ -587,9 +631,9 @@ $MQL('l:create.project.request',function(msg)
 		{
 			jsLibs.jquery = true;
 		}
-		if ($('#jqueryui_js').hasClass('selected_js'))
+		if ($('#entourage_js').hasClass('selected_js'))
 		{
-			jsLibs.jquery_ui = true;
+			jsLibs.entourage = true;
 		}
 		if ($('#prototype_js').hasClass('selected_js'))
 		{
@@ -971,8 +1015,16 @@ $MQL('l:create.package.request',function(msg)
 		if (project.image)
 		{
 			var image = TFS.getFile(project.image);
+			
+			// use default if not exists
+			if (!image.exists())
+			{
+				var path = Titanium.App.appURLToPath('app://images');
+				image = TFS.getFile(path,'default_app_logo.png')
+			}
+			
 			var image_dest = TFS.getFile(resources,image.name());
-			if (image.exists())
+			if (image.toString() != image_dest.toString())
 			{
 				image.copy(image_dest);
 			}
@@ -1113,66 +1165,111 @@ $MQL('l:create.package.request',function(msg)
 		
 		//FIXME: we can't do this ... async may not finish before you
 		//go to package
-		TFS.asyncCopy(resources, resDir,function(){});		
-		TFS.asyncCopy(tiapp, destDir,function(){});		
-		TFS.asyncCopy(timanifest, destDir,function(){});		
-		TFS.asyncCopy(manifest, destDir,function(){});		
 		
-		// if project has modules, copy
-		if (modules.exists())
+		TFS.asyncCopy(resources, resDir,function(path,currentIndex,total)
 		{
-			// create resources dir
-			var resDir = TFS.getFile(destDir,'modules');
-			resDir.createDirectory();
-			TFS.asyncCopy(modules, resDir,function(){});
-		}
-
-		// packaging request
-		var xhr = Titanium.Network.createHTTPClient();
-		var ticket = null;
-		xhr.onreadystatechange = function()
-		{
-			// 4 means that the POST has completed
-			if (this.readyState == 4)
+			if (currentIndex==total)
 			{
-				if (this.status == 200)
+				TFS.asyncCopy([tiapp,timanifest,manifest], destDir,function(path,currentIndex,total)
 				{
-				    var json = swiss.evalJSON(this.responseText);
-					destDir.deleteDirectory(true);
-					TiDeveloper.Projects.pollPackagingRequest(json.ticket,project.guid);
-				}
-				else
-				{
-					$('#packaging_none').css('display','none');
-					$('#packaging_listing').css('display','none');
-					$('#packaging_error').css('display','block');		
-					$('#packaging_in_progress').css('display','none');
-					TiDeveloper.Projects.packagingInProgress[project.guid] = false;
-					TiDeveloper.Projects.packagingError[project.guid] = true;
-					destDir.deleteDirectory(true);
-				}
-			}
-		};
-		
-		xhr.open("POST",TiDeveloper.Projects.publish_url);
-		xhr.sendDir(destDir);    
+					if (currentIndex==total)
+					{
+						// if project has modules, copy
+						if (modules.exists())
+						{
+							// create resources dir
+							var resDir = TFS.getFile(destDir,'modules');
+							resDir.createDirectory();
+							TFS.asyncCopy(modules, resDir,function(path,currentIndex,total)
+							{
+								if (currentIndex==total)
+								{
+									publish();
+								}
+							});
+						}
+						else
+						{
+							publish();
+						}
+						
+						function publish()
+						{
+							// packaging request
+							var xhr = Titanium.Network.createHTTPClient();
+							var ticket = null;
+							xhr.onreadystatechange = function()
+							{
+								// 4 means that the POST has completed
+								if (this.readyState == 4)
+								{
+									if (this.status == 200)
+									{
+									    var json = swiss.evalJSON(this.responseText);
+										destDir.deleteDirectory(true);
+										TiDeveloper.Projects.pollPackagingRequest(json.ticket,project.guid);
+									}
+									else
+									{
+										alert(this.status + ' ' + this.responseText);
+										$('#packaging_none').css('display','none');
+										$('#packaging_listing').css('display','none');
+										$('#packaging_error').css('display','block');		
+										$('#packaging_in_progress').css('display','none');
+										TiDeveloper.Projects.packagingInProgress[project.guid] = false;
+										TiDeveloper.Projects.packagingError[project.guid] = true;
+										destDir.deleteDirectory(true);
+									}
+								}
+							};
 
-		TiDeveloper.Projects.packagingInProgress[project.guid] = true;
-		TiDeveloper.Projects.packagingError[project.guid] = false;
-		
-		$('#packaging_none').css('display','none');
-		$('#packaging_listing').css('display','none');
-		$('#packaging_error').css('display','none');		
-		$('#packaging_in_progress').css('display','block');
-		$MQ('l:create.package.response',{result:0});
-		
+							xhr.open("POST",TiDeveloper.Projects.publish_url);
+							xhr.sendDir(destDir);    
+
+							TiDeveloper.Projects.packagingInProgress[project.guid] = true;
+							TiDeveloper.Projects.packagingError[project.guid] = false;
+
+							$('#packaging_none').css('display','none');
+							$('#packaging_listing').css('display','none');
+							$('#packaging_error').css('display','none');		
+							$('#packaging_in_progress').css('display','block');
+							$MQ('l:create.package.response',{result:0});
+							
+						};
+					}
+				});		
+			}
+			
+		});		
 	}
 	catch(E)
 	{
 		alert("Exception = "+E);
 	}
 });
+TiDeveloper.Projects.formatPackagingDate = function(str)
+{
+	var parts = str.split(' ');
+	var time = TiDeveloper.Feeds.convertDate(parts[1]);
+	var date = parts[0].split('-');
+	return date[1] + '/' + date[2] + '/' + date[0] + ' ' + time;
+}
+TiDeveloper.Projects.insertPackagingRows = function(guid,date,rows)
+{
+	var date = TiDeveloper.Projects.formatPackagingDate(date);
+    db.transaction(function (tx) 
+    {
+        tx.executeSql("DELETE from ProjectPackages WHERE guid = ?",[guid], function(tx,result)
+		{
+			for (var i=0;i<rows.length;i++)
+			{
+		        tx.executeSql("INSERT INTO ProjectPackages (guid,url, platform, version, date) values (?,?,?,?,?) ",[guid,rows[i]['url'],rows[i]['platform'],rows[i]['version'],date]);
+			}
+		});
 
+	});
+	
+};
 
 TiDeveloper.Projects.pollPackagingRequest = function(ticket,guid)
 {          
@@ -1183,11 +1280,11 @@ TiDeveloper.Projects.pollPackagingRequest = function(ticket,guid)
 	{
 	   	if (r.status == 'complete')
 	   	{
-    		alert('done ' + swiss.toJSON(r));
-			TiDeveloper.Projects.packagingInProgress[guid] = false;
-
-			// INSERT DATA INTO DB AND SHOW DATA
-			// SEND MESSAGE TO POPULATE TABLE
+  			TiDeveloper.Projects.packagingInProgress[guid] = false;
+alert('r.pubdate ' + r.pubdate)
+			TiDeveloper.Projects.insertPackagingRows(guid,r.pubdate,r.releases);
+			
+			$MQ('l:package_links',{date:r.pubdate,rows:r.releases})
 			$('#packaging_none').css('display','none');
 			$('#packaging_error').css('display','none');
 			$('#packaging_listing').css('display','block');
