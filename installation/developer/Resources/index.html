@@ -217,13 +217,13 @@
 						</div>
 					</div>
 				</div>
-				<div style="font-size:14px;position:absolute;top:0px;left:348px">
+				<div style="font-size:14px;position:absolute;top:0px;left:348px;margin-bottom:7px;">
 						Write code and/or select a code snippet:
 						<select id="api_selector" on="change then l:api.selector.change
 							or l:populate.api.selector then value[property=rows,value=code,text=title]">
 							<option>fetching...</select>
 						</select>
-						<a href="" id="api_refresh">Refresh</a>
+						<img src="images/code_refresh.png" id="api_refresh" title="Refresh code snippets list"/>
 				</div>
 				<div style="position:absolute;top:15px;left:342px;width:65%">
 					<textarea style="width:100%" on="l:api.selector.change then script[TiDeveloper.Sandbox.setAPI()]" 
