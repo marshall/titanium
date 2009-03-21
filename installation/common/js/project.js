@@ -159,14 +159,14 @@ Titanium.Project =
 		resources.createDirectory();
 		var index = TFS.getFile(resources,'index.html');
 		
-		var jquery = '<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.1/jquery.min.js"></script>\n';
-		var jquery_ui = '<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.5.3/jquery-ui.min.js"></script>\n';
-		var prototype_js = '<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/prototype/1.6.0.3/prototype.js"></script>\n';
-		var scriptaculous = '<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/scriptaculous/1.8.2/scriptaculous.js"></script>\n';
-		var mootools = '<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/mootools/1.2.1/mootools-yui-compressed.js"></script>\n';
-		var yahoo = '<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/yui/2.6.0/build/yuiloader/yuiloader-min.js"></script>\n';
-		var swfobject = '<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/swfobject/2.1/swfobject.js"></script>\n';
-		var dojo = '<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/dojo/1.2.3/dojo/dojo.xd.js"></script>\n';
+		var jquery = '<script type="text/javascript" src="js/jquery-1.3.2.js"></script>\n';
+		var jquery_ui = '<script type="text/javascript" src="js/entourage-jquery-3.0.js"></script>\n';
+		var prototype_js = '<script type="text/javascript" src="js/prototype-1.6.0.js"></script>\n';
+		var scriptaculous = '<script type="text/javascript" src="js/scriptaculous-1.8.2.js"></script>\n';
+		var mootools = '<script type="text/javascript" src="js/mootools-1.2.1.js"></script>\n';
+		var yahoo = '<script type="text/javascript" src="js/yui-2.6.0.js"></script>\n';
+		var swfobject = '<script type="text/javascript" src="js/swfobject-1.5.js"></script>\n';
+		var dojo = '<script type="text/javascript" src="js/dojo-1.2.3.js"></script>\n';
 
 		var head = '';
 		
