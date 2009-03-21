@@ -159,7 +159,6 @@ TiDeveloper.IRC.initialize = function()
 		var username = TiDeveloper.IRC.formatNick(TiDeveloper.IRC.nick);
 		var nick_counter = 1;
 		var setNicknameAttempted = false;
-		
 		// initial message
 		$('#irc').append('<div style="color:#aaa">you are joining the <span style="color:#42C0FB">Titanium Developer</span> IRC channel <span style="color:#42C0FB">'+TiDeveloper.IRC.channel+'</span>. one moment...</div>');
 		TiDeveloper.IRC.ircClient = Titanium.Network.createIRCClient();

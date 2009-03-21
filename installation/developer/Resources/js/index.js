@@ -71,6 +71,7 @@ TiDeveloper.getCurrentTime = function()
 Titanium.Network.addConnectivityListener(function(online)
 {
 	TiDeveloper.online = online;
+	$MQ('l:tideveloper.network',{online:online});
 });
 
 
@@ -148,9 +149,9 @@ TiDeveloper.make_url = function(base,params)
 //
 // load doc iframe - delay for perf reasons
 //
-setTimeout(function()
-{
-	var html = '<iframe src="http://titanium-js.appspot.com/" frameborder="0" height="80%" width="100%"></iframe>';
-	$('#documentation').html(html);
-	
-},800)
+// setTimeout(function()
+// {
+// 	var html = '<iframe src="http://titanium-js.appspot.com/" frameborder="0" height="80%" width="100%"></iframe>';
+// 	$('#documentation').html(html);
+// 	
+// },800)
