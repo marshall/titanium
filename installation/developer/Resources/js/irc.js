@@ -27,30 +27,7 @@ $MQL('l:app.compiled',function()
 		   tx.executeSql("INSERT INTO IRC (id, nick) values (?,?)",[1,Titanium.Platform.username])
 		   TiDeveloper.IRC.nick = Titanium.Platform.username;
 	   });
-
-	var online = Titanium.Network.online;
-	if (!online)
-	{
-		$MQ('l:online.count',{count:'offline'});
-		$MQ('l:tideveloper.network',{online:false});
-	}
-	else
-	{
-		$MQ('l:tideveloper.network',{online:true});
-	}
-	Titanium.Network.addConnectivityListener(function(online)
-	{
-		if (!online)
-		{
-			$MQ('l:online.count',{count:'offline'});
-			$MQ('l:tideveloper.network',{online:false});
-		}
-		else
-		{
-			$MQ('l:tideveloper.network',{online:true});
-		}
 	});
-});
 
 	var currentSelectionIdx = -1;
 	var savedPossibilities = null;
@@ -105,6 +82,13 @@ $MQL('l:app.compiled',function()
 		}
 	});
 	
+
+	setTimeout(function () {
+		if (Titanium.platform == "win32") {
+			TiDeveloper.online = true;
+			TiDeveloper.IRC.initialize();
+		}
+	}, 2000);
 });
 
 
@@ -307,7 +291,7 @@ TiDeveloper.IRC.initialize = function()
 	}
 	catch(E)
 	{
-		alert("Exception: "+E);
+//		alert("Exception: "+E);
 	}
 	
 }

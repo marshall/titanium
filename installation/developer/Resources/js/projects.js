@@ -967,6 +967,7 @@ $MQL('l:create.package.request',function(msg)
 		manifest+='#appid:'+project.appid+'\n';
 		manifest+='#publisher:'+project.publisher+'\n';
 
+		var imageName = null
 		if (project.image)
 		{
 			var image = TFS.getFile(project.image);
@@ -975,6 +976,7 @@ $MQL('l:create.package.request',function(msg)
 			{
 				image.copy(image_dest);
 			}
+			imageName = image.name();
 			manifest+='#image:'+image.name()+'\n';
 		}
 		
@@ -1011,6 +1013,8 @@ $MQL('l:create.package.request',function(msg)
 		timanifest += '"publisher":"'+project.publisher+'",\n';
 		timanifest += '"url":"'+project.url+'",\n';
 		timanifest += '"desc":"'+project.description+'",\n';
+		timanifest += '"image":"'+imageName+'",\n';
+
 		var visibility = ($('#package_public').attr('checked')==true)?'public':'private';
 	    timanifest += '"visibility":"'+visibility+'",\n';
 		
