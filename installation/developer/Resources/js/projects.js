@@ -1135,7 +1135,6 @@ $MQL('l:create.package.request',function(msg)
 				{
 				    var json = swiss.evalJSON(this.responseText);
 					destDir.deleteDirectory(true);
-					alert('received 200');
 					TiDeveloper.Projects.pollPackagingRequest(json.ticket,project.guid);
 				}
 				else
@@ -1151,7 +1150,6 @@ $MQL('l:create.package.request',function(msg)
 			}
 		};
 		
-		alert('firing publish request...')
 		xhr.open("POST",TiDeveloper.Projects.publish_url);
 		xhr.sendDir(destDir);    
 
