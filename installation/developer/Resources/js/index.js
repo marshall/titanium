@@ -70,18 +70,7 @@ TiDeveloper.getCurrentTime = function()
 //
 Titanium.Network.addConnectivityListener(function(online)
 {
-	if (online == false)
-	{
-		TiDeveloper.online = false;
-		$MQ('l:online.count',{count:'offline'});
-		$MQ('l:tideveloper.network',{online:false});
-	}
-	else
-	{
-		TiDeveloper.online = true;
-		$MQ('l:tideveloper.network',{online:true});
-		
-	}
+	TiDeveloper.online = online;
 });
 
 
