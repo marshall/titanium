@@ -86,6 +86,10 @@
 					multiple:true
 				});
 			}
+			function closeWindow()
+			{
+				Titanium.UI.currentWindow.close();
+			}
 			function chooseFileTypes()
 			{
 				Titanium.UI.openFiles(selectFilesCallback, {
@@ -126,6 +130,10 @@
 		<div>
 			<button onclick="chooseFileTypes()">Open File Dialog (JS or HTML files only)</button>
 		</div>
+		<div>
+			<button onclick="closeWindow()">Close Window</button>
+		</div>
+
 		<div id="log">
 		</div>
 	</body>

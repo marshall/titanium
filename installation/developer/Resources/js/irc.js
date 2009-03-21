@@ -172,12 +172,8 @@ TiDeveloper.IRC.initialize = function()
 			{	
 				case '433':
 				{
-					alert('in 433 username =' + username + ' userSetNick ' + userSetNick)
-					$('#irc').append('<div style="color:#aaa;margin-bottom:8px">' + username + ' is already taken. trying another variation...</div>');
-					username = TiDeveloper.IRC.formatNick(username + (++nick_counter));
+					$('#irc').append('<div style="color:#aaa;margin-bottom:8px">' + userSetNick + ' is already taken. try another nickname.</div>');
 					setNicknameAttempted = true;
-					TiDeveloper.IRC.ircClient.setNick(username);
-					TiDeveloper.IRC.updateNickInDB(username);
 					break;
 				}
 				case 'NICK':
@@ -207,8 +203,6 @@ TiDeveloper.IRC.initialize = function()
 						setNicknameAttempted = true;
 					}
 					// try again with a new nick
-					alert('setting nick to ' + username)
-					TiDeveloper.IRC.ircClient.setNick(username);
 					TiDeveloper.IRC.updateNickInDB(username);
 
 					break;
@@ -239,13 +233,8 @@ TiDeveloper.IRC.initialize = function()
 					}
 					else if (nick=='NickServ' && (channel.indexOf('This nickname is registered')>=0 || channel.indexOf('Invalid password for')>=0))
 					{
-						alert('in else of NOTICE/PRIVMSG ' + data )
-						$('#irc').append('<div style="color:#aaa;margin-bottom:8px">' + data + ' is already taken. trying another variation...</div>');
-						username = TiDeveloper.IRC.formatNick(data + (++nick_counter));
+						$('#irc').append('<div style="color:#aaa;margin-bottom:8px">' + data + ' is already taken. please try another nickname.</div>');
 						setNicknameAttempted = true;
-						// try again with a new nick
-						TiDeveloper.IRC.ircClient.setNick(username);
-						
 					}
 					break;
 				}
@@ -328,6 +317,8 @@ $MQL('l:send.irc.msg',function()
 		if (rawMsg.indexOf('/nick') == 0)
 		{
 			userSetNick = rawMsg.split(' ')[1];
+			TiDeveloper.IRC.ircClient.setNick(userSetNick);
+
 		}
 		else
 		{

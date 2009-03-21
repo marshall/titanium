@@ -13,6 +13,7 @@ TiDeveloper.Projects.requiredModuleMap = {};
 TiDeveloper.Projects.requiredModules = ['api','tiapp','tifilesystem','tiplatform','tiui','javascript'];
 TiDeveloper.Projects.selectedProject = null;
 TiDeveloper.Projects.packagingInProgress = {};
+TiDeveloper.Projects.packagingError = {};
 
 
 //
@@ -23,7 +24,6 @@ $MQL('l:app.compiled',function()
 	// load or initialize project table
 	db.transaction(function(tx) 
 	{   
-		
 		// see if project table exists
 	   	tx.executeSql("SELECT COUNT(*) FROM Projects", [], function(result) 
 	   	{
@@ -349,6 +349,14 @@ $MQL('l:row.selected',function(msg)
 		$('#packaging_error').css('display','none');		
 		$('#packaging_listing').css('display','none');
 		$('#packaging_in_progress').css('display','block');
+		
+	}
+	else if (TiDeveloper.Projects.packagingError[project.guid] == true)
+	{
+		$('#packaging_none').css('display','none');
+		$('#packaging_error').css('display','block');		
+		$('#packaging_listing').css('display','none');
+		$('#packaging_in_progress').css('display','none');
 		
 	}
 	else
@@ -1114,7 +1122,6 @@ $MQL('l:create.package.request',function(msg)
 			resDir.createDirectory();
 			TFS.asyncCopy(modules, resDir,function(){});
 		}
-		alert(destDir);
 
 		// packaging request
 		var xhr = Titanium.Network.createHTTPClient();
@@ -1128,6 +1135,7 @@ $MQL('l:create.package.request',function(msg)
 				{
 				    var json = swiss.evalJSON(this.responseText);
 					destDir.deleteDirectory(true);
+					alert('received 200');
 					TiDeveloper.Projects.pollPackagingRequest(json.ticket,project.guid);
 				}
 				else
@@ -1137,15 +1145,19 @@ $MQL('l:create.package.request',function(msg)
 					$('#packaging_error').css('display','block');		
 					$('#packaging_in_progress').css('display','none');
 					TiDeveloper.Projects.packagingInProgress[project.guid] = false;
+					TiDeveloper.Projects.packagingError[project.guid] = true;
 					destDir.deleteDirectory(true);
 				}
 			}
 		};
 		
+		alert('firing publish request...')
 		xhr.open("POST",TiDeveloper.Projects.publish_url);
 		xhr.sendDir(destDir);    
 
 		TiDeveloper.Projects.packagingInProgress[project.guid] = true;
+		TiDeveloper.Projects.packagingError[project.guid] = false;
+		
 		$('#packaging_none').css('display','none');
 		$('#packaging_listing').css('display','none');
 		$('#packaging_error').css('display','none');		
@@ -1170,7 +1182,7 @@ TiDeveloper.Projects.pollPackagingRequest = function(ticket,guid)
 	   	if (r.status == 'complete')
 	   	{
     		alert('done ' + swiss.toJSON(r));
-			TiDeveloper.Projects.packagingInProgress[project.guid] = false;
+			TiDeveloper.Projects.packagingInProgress[guid] = false;
 
 			// INSERT DATA INTO DB AND SHOW DATA
 			// SEND MESSAGE TO POPULATE TABLE

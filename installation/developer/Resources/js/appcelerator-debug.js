@@ -15599,7 +15599,6 @@ var $MQI = null;
 		publish: function(_msg_name_or_msg_object,data) {
 			var message = {}; //Message object to be queued
 			
-			Titanium.API.debug('publishing message ' + _msg_name_or_msg_object);
 			if (typeof _msg_name_or_msg_object == 'string') {
 				message = {
 					name: _msg_name_or_msg_object,
