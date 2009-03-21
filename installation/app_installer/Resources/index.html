@@ -138,7 +138,8 @@
 		}
 	})
 
-	Titanium.UI.currentWindow.setHeight(450)
+	Titanium.UI.currentWindow.setHeight(450);
+	Titanium.UI.currentWindow.setX(Titanium.UI.currentWindow.CENTERED);
 	
 	// show install info screen
 	$('#installation_info').fadeIn();
@@ -149,6 +150,7 @@
 	{
 		$('#installation_info').slideUp(500);
 		Titanium.UI.currentWindow.setHeight(220)
+		Titanium.UI.currentWindow.setX(Titanium.UI.currentWindow.CENTERED);
 		
 		// show installation screen
 		$('#install_app').fadeIn()

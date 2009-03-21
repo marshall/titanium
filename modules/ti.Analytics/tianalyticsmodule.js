@@ -5,6 +5,7 @@
 {
 	var url = "http://publisher.titaniumapp.com/api/app-track";
 	var guid = Titanium.App.getGUID();
+	var debug = false;
 	
 	function send(qsv,async)
 	{
@@ -23,15 +24,16 @@
 			// this is asynchronous
 			var xhr = Titanium.Network.createHTTPClient();
 			xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
-/* NICE FOR TESTING
-			xhr.onreadystatechange = function()
+			if (debug)
 			{
-				if (this.readyState==4)
+				xhr.onreadystatechange = function()
 				{
-					Titanium.API.debug("++ received:"+this.responseText);
+					if (this.readyState==4)
+					{
+						Titanium.API.debug("++ received:"+this.responseText);
+					}
 				}
 			}
-*/
 			xhr.open('POST',url,async);
 			xhr.send(qs);
 		}
@@ -67,6 +69,8 @@
 				return;
 			}
 			send({
+				'platform': Titanium.platform,
+				'version':Titanium.version,
 				'mac_addr': Titanium.Platform.macaddress,
 				'os':Titanium.Platform.name,
 				'ostype':Titanium.Platform.ostype,
