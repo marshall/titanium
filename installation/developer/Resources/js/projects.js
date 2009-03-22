@@ -235,6 +235,14 @@ TiDeveloper.Projects.updateAppData = function()
 	
 };
 
+$MQL('l:proj_data',function(msg)
+{
+	if (msg.payload.val == 'stats')
+	{
+		TiDeveloper.Projects.refreshStats(TiDeveloper.Projects.selectedProject.guid);
+	}
+	
+})
 //
 // Refresh project download stats
 //
@@ -672,6 +680,13 @@ $MQL('l:create.project.request',function(msg)
 		}
 
 		var guid = Titanium.Platform.createUUID();
+		
+		// set default image if not specified
+		if (msg.payload.image=="")
+		{
+			msg.payload.image = 'default_app_logo.png';
+		}
+		
 		var result = Titanium.Project.create(msg.payload.project_name,guid,msg.payload.description,msg.payload.project_location,msg.payload.publisher,msg.payload.url,msg.payload.image,jsLibs);
 		if (result.success)
 		{
