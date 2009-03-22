@@ -1119,7 +1119,7 @@ $MQL('l:create.package.request',function(msg)
 		var modules = '"modules":[';
 		
 		// required modules
-		if (networkRuntime ==true)
+		if (networkRuntime =='network')
 		{
 			for (var i=0;i<TiDeveloper.Projects.requiredModules.length;i++)
 			{
