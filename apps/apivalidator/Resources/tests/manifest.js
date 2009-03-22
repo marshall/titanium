@@ -5,6 +5,7 @@
 		"window.js",
 		"menu.js",
 		"desktop.js",
-		"filesystem.js"
+		"filesystem.js",
+		"binding.js"
 	]
 }
