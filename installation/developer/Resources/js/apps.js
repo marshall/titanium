@@ -12,9 +12,10 @@ TiDeveloper.Apps.setupRating = function(data)
 	{
 		var value = data[i].value;
 		var id = data[i]['app_id'];
-		for (var j=5;j>value;j--)
+		for (var j=1;j<=value;j++)
 		{
-			$('#rating_' + id + '_' + j).addClass('rating_off');
+			$('#rating_' + id + '_' + j).removeClass('rating_off');
+			
 		}
 	}
 	
