@@ -185,7 +185,7 @@ TiDeveloper.Projects.importProject = function(f)
 		options.guid = Titanium.Platform.createUUID();
 	}
 	
-	TiDeveloper.track('project-import',options);
+	TiDeveloper.track('project-import',{guid:options.guid,name:options.name});
 
 	TiDeveloper.Projects.createRecord(options,function(obj)
 	{
@@ -667,7 +667,7 @@ $MQL('l:create.project.request',function(msg)
 		if (result.success)
 		{
 			var options = {name:result.name, guid:guid,description:msg.payload.description,dir:result.basedir,appid:result.id,publisher:msg.payload.publisher,url:msg.payload.url,image:msg.payload.image}
-			TiDeveloper.track('project-create',{options:options,jsLibs:jsLibs});
+			TiDeveloper.track('project-create',{name:msg.payload.project_name,description:msg.payload.description,publisher:msg.payload.publisher,guid:guid,url:msg.payload.url,jsLibs:jsLibs});
 			var r = TiDeveloper.Projects.createRecord(options,function(obj)
 			{
 				if (obj.code == 0)
@@ -1327,6 +1327,8 @@ $MQL('l:delete.project.request',function(msg)
         tx.executeSql("DELETE FROM Projects where id = ?", [id]);
 		TiDeveloper.Projects.loadProjects();
     });
+
+	TiDeveloper.track('project-delete',{name:name,guid:id});
 });
 
 //
@@ -1335,7 +1337,6 @@ $MQL('l:delete.project.request',function(msg)
 $MQL('l:project.search.request',function(msg)
 {
 	var q = msg.payload.search_value;
-	TiDeveloper.track('project-search',{'q':q});
 	db.transaction(function(tx) 
 	{
 		try
@@ -1376,6 +1377,7 @@ $MQL('l:project.search.request',function(msg)
 			alert("E="+e);
 		}
 	});
+	TiDeveloper.track('project-search',{'q':q});
 });
 
 

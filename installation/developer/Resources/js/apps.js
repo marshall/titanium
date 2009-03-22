@@ -80,6 +80,8 @@ TiDeveloper.Apps.setupRating = function(data)
 			
 			// submit the new rating
 			$.get(url);
+			
+			TiDeveloper.track('app-rate',{guid:guid,rating:vote});
 		}
 	});
 	
