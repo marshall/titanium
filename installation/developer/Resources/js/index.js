@@ -146,10 +146,10 @@ TiDeveloper.make_url = function(base,params)
 		url = url + '?';
 		for (var p in params)
 		{
-			url+=encodeURIComponent(p)+'='+encodeURIComponent(String(params[p]));
+			url+=encodeURIComponent(p)+'='+encodeURIComponent(String(params[p])) + "&"
 		}
 	}
-	return url;
+	return url.substring(0,(url.length-1));
 };
 
 //

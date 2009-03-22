@@ -732,8 +732,7 @@ void IRC::parse_irc_reply(char* data)
 			*(params++)='\0';
 			std::string d(&params[1]);
 			std::string h(hostd_tmp.nick);
-			std::cout << "++++ D=[" << d << "], h=[" << h << "]" << std::endl;
-			if ((d=="VERSION" || d =="+VERSION") && h == "freenode-connect")
+			if (d.find("VERSION")==1 && h.find("freenode-connect")==0)
 			{
 				// ignore this message
 				return;
