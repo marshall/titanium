@@ -250,20 +250,25 @@
 			on="l:menu[val=apps] then effect[fadeIn] else hide">
 			<div style="margin-top:10px">
 				<div style="margin-top:10px;margin-bottom:10px">
-					<input type="text" value="search for apps" style="float:left"/>
+					<input type="text"   id="app_search" style="float:left"/>
 					<div class="button1" style="margin-left:10px">
-						<div class="button2">Search</div>
+						<div class="button2" on="click then l:app_search">Search</div>
 					</div>
 					<div class="button1" style="width:172px;float:right;margin-right:0px">
-						<div class="button2" style="width:170px">
+						<div class="button2" style="width:170px" on="click then l:toggle_app_sort[val=pop]
+						or l:toggle_app_sort[val=pop] then add[class=active_sort] else remove[class=active_sort]"
+							id="sort_most_popular">
 							<img src="images/star.png" style="position:relative;top:3px"/>
-							Show Most Popular
+							Sort - Most Popular
 						</div>
 					</div>
 					<div class="button1" style="width:172px;float:right;">
-						<div class="button2" style="width:170px">
+						<div class="button2 active_sort" style="width:170px" 
+						on="click then l:toggle_app_sort[val=download]
+						or l:toggle_app_sort[val=download] then add[class=active_sort] else remove[class=active_sort]"
+							id="sort_most_downloaded">
 							<img src="images/download.png" style="position:relative;top:4px"/>
-							Show Most Downloaded
+							Sort - Most Downloaded
 						</div>
 					</div>
 					
@@ -271,8 +276,8 @@
 				<div style="clear:both"></div>
 				<div style="border-top:1px solid #666">
 					<div  style="border-top:1px solid #141414;margin-bottom:10px">
-						<div 
-							style="font-size:11px;color:#fff;margin-top:10px;margin-bottom:10px;font-style:italic">
+						<div id="app_search_string"
+							style="font-size:12px;color:#fff;margin-top:10px;margin-bottom:10px;font-style:italic">
 							Showing Most Popular
 						</div>
 						<div control="iterator[property=rows]" on="l:applist then execute" 

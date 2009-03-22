@@ -447,7 +447,7 @@ div.formhint
 	font-size:10px;
 	color:#000;
 }
-.selected_os, .selected_js
+.selected_os, .selected_js, .active_sort
 {
 	background-color:#555;
 	border:1px solid #646464 !important;
