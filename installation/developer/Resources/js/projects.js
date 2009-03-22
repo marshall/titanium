@@ -1223,7 +1223,7 @@ $MQL('l:create.package.request',function(msg)
 									}
 									else
 									{
-										alert(this.status + ' ' + this.responseText);
+										$('#packaging_error_msg').html(this.responseText);
 										$('#packaging_none').css('display','none');
 										$('#packaging_listing').css('display','none');
 										$('#packaging_error').css('display','block');		
@@ -1301,13 +1301,16 @@ TiDeveloper.Projects.pollPackagingRequest = function(ticket,guid)
 			$('#packaging_listing').css('display','block');
 			$('#packaging_in_progress').css('display','none');
 		}
-		else if (r.status != 'working')
+		else if (r.success == false)
 		{
+			$('#packaging_error_msg').html(r.message);
 			$('#packaging_none').css('display','none');
 			$('#packaging_listing').css('display','none');
 			$('#packaging_error').css('display','block');		
 			$('#packaging_in_progress').css('display','none');
-	   	}
+			return;
+			
+		}
 		else
 		{
 			// poll every 10 seconds
