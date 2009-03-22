@@ -282,30 +282,32 @@
 									<div class="app_image"><img src="#{image}" height="78px" width="78px"/></div>
 									<div class="app_title">
 										<img src="images/download.png" style="position:relative;top:3px"/>
-										<span style="text-decoration:underline">#{title}</span> 
+										<a href="#{link}" target="ti:systembrowser" style="color:white">
+											<span style="text-decoration:underline">#{title}</span> 
+										</a>
 									</div>
 									<div class="app_downloads">#{downloads} downloads </div>
-									<div class="app_rating" id="rating_#{id}">
-										<img appid="#{id}" star="1" id="rating_#{id}_1" guid="#{guid}"
+									<div class="app_rating" id="rating_#{app_id}">
+										<img app_id="#{app_id}" star="1" id="rating_#{app_id}_1" guid="#{guid}"
 										  class="rating" src="images/star.png"/>
-										<img appid="#{id}" star="2" id="rating_#{id}_2" guid="#{guid}"
+										<img app_id="#{app_id}" star="2" id="rating_#{app_id}_2" guid="#{guid}"
 											class="rating" src="images/star.png"/>
-										<img appid="#{id}" star="3" id="rating_#{id}_3" guid="#{guid}"
+										<img app_id="#{app_id}" star="3" id="rating_#{app_id}_3" guid="#{guid}"
 											class="rating" src="images/star.png"/>
-										<img appid="#{id}" star="4" id="rating_#{id}_4" guid="#{guid}"
+										<img app_id="#{app_id}" star="4" id="rating_#{app_id}_4" guid="#{guid}"
 											class="rating" src="images/star.png"/>
-										<img appid="#{id}" star="5" id="rating_#{id}_5" guid="#{guid}"
+										<img app_id="#{app_id}" star="5" id="rating_#{app_id}_5" guid="#{guid}"
 											class="rating" 	src="images/star.png"/>
 									</div>
 									<div class="rating_detail">
-										<span class="rating_string" id="rating_string_#{id}" votes="#{votes}"
+										<span class="rating_string" id="rating_string_#{app_id}" votes="#{votes}"
 											rating="#{value}" hasVoted="#{hasVoted}">
 											#{value} rating from #{votes} votes
 										</span>
-										<span class="rating_string" id="already_voted_#{id}" style="display:none">
+										<span class="rating_string" id="already_voted_#{app_id}" style="display:none">
 											You have already voted!
 										</span>
-										<span class="rating_string" id="voted_success_#{id}"  
+										<span class="rating_string" id="voted_success_#{app_id}"  
 											style="display:none;font-size:11x;color:#809eb3">
 											Thanks for your vote!
 										</span>
@@ -794,10 +796,10 @@
 										<div control="iterator[property=rows]" on="l:package_links then execute"
 											style="margin-left:50px;margin-right:50px">
 											<div class="project_row" style="height:35px;line-height:35px;font-size:11px">
-												<img src="images/#{platform_short}_small.png" height="20px" width="20px"
+												<img src="images/#{platform}_small.png" height="20px" width="20px"
 													style="position:relative;top:6px"/>
 												<span 
-													style="color:#fff;font-size:12px;margin-left:10px">#{platform}</span>
+													style="color:#fff;font-size:12px;margin-left:10px">#{label}</span>
 												<span style="float:right;color:#ccc;">
 													<img src="images/download.png" style="position:relative;top:5px"/>
 													<a href="#{url}" target="ti:systembrowser" >#{url}</a>
@@ -836,7 +838,7 @@
 									<!-- DOWNLOAD STATS GRAPH -->
 									<div style="display:none" id="download_stats">
 										<div align="center" style="margin-top:20px">
-											Total Downloads By Operating System
+											Total Downloads By Operating System (last 7 days)
 											<div style="margin-top:10px;cursor:pointer">
 												<a href="#" style="cursor:pointer" 
 													on="click then l:refresh_downlaod_stats">
@@ -1257,7 +1259,7 @@
 							<div id="platform_mac" class="button1" style="float:none;height:70px;width:80px">
 								<div  class="button2" style="height:68px"
 									on="(l:show.package.project or l:package.project.request) then remove[class=selected_os] and remove[id=platform_mac,class=selected_os] or click then toggle[class=selected_os] and l:os_platform_click and toggle[id=platform_mac,class=selected_os]">
-									<img src="images/mac_small.png" style="position:relative;top:8px"/>
+									<img src="images/osx_small.png" style="position:relative;top:8px"/>
 								</div>
 							</div>
 							<div id="platform_windows" class="button1" style="float:none;height:70px;width:80px">

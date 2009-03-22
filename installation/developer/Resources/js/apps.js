@@ -10,8 +10,8 @@ TiDeveloper.Apps.setupRating = function(data)
 	// set rating
 	for (var i=0;i<data.length;i++)
 	{
-		var value = data[i].value
-		var id = data[i].id
+		var value = data[i].value;
+		var id = data[i]['app_id'];
 		for (var j=5;j>value;j--)
 		{
 			$('#rating_' + id + '_' + j).addClass('rating_off');
@@ -21,7 +21,7 @@ TiDeveloper.Apps.setupRating = function(data)
 	// capture rating on click
 	$('.rating').click(function()
 	{
-		var id = $(this).attr('appid');
+		var id = $(this).attr('app_id');
 		var guid = $(this).attr('guid');
 		var ratingStr = $('#rating_string_' + id);
 		var hasVoted = ratingStr.attr('hasVoted');
@@ -46,9 +46,15 @@ TiDeveloper.Apps.setupRating = function(data)
 		{
 			var totalRating = (votes * rating) + vote;
 			votes++;
-			var newRating = String(totalRating/votes).split('.');
-			newRating = newRating[0] + "." + newRating[1].substring(0,2);
-			
+			var newRating = String(totalRating/votes);
+			if (newRating.indexOf('.')!=-1)
+			{
+				newRating = newRating[0] + "." + newRating[1].substring(0,2);
+			}
+			else
+			{
+				newRating = newRating + '.0';
+			}
 			ratingStr.css('display','none');
 			ratingStr.html(newRating+' rating from '+votes+' votes');
 			$('#voted_success_'+id).fadeIn();
@@ -86,9 +92,9 @@ TiDeveloper.Apps.setupRating = function(data)
 	// enable mouseover
 	$('.rating').mouseover(function()
 	{
-		var id = $(this).attr('appid');
+		var id = $(this).attr('app_id');
 		var star = parseInt($(this).attr('star'));
-		for (var i=star;i>1;i--)
+		for (var i=star;i>=1;i--)
 		{
 			$('#rating_' + id + '_' + i).removeClass('rating_off');
 		}
@@ -97,7 +103,7 @@ TiDeveloper.Apps.setupRating = function(data)
 	// enable mouseout
 	$('.rating').mouseout(function()
 	{
-		var id = $(this).attr('appid');
+		var id = $(this).attr('app_id');
 		var rating = parseInt($('#rating_string_'+id).attr('rating'));
 		rating++;
 		for (var i=rating;i<6;i++)
@@ -113,11 +119,12 @@ TiDeveloper.Apps.setupRating = function(data)
 //
 $MQL('l:applist',function(msg)
 {
+	// need delay to let rows get into DOM
 	setTimeout(function()
 	{
 		TiDeveloper.Apps.setupRating(msg.payload['rows']);
-
-	},100);
+		
+	},500)
 })
 
 //
@@ -128,12 +135,41 @@ $MQL('l:menu',function(msg)
 	if (msg.payload.val == 'apps')
 	{
 		var url = TiDeveloper.make_url(TiDeveloper.Apps.app_list_url,{
-			'f':'json'
+			'f':'json',
+			'mid':Titanium.Platform.id
 		});
 		
 		$.getJSON(url,function(result)
 		{
-			$MQ('l:applist',{'rows':result});
+			TiDeveloper.Apps.formatAppRows(result);
 		});
 	}
 });
+
+TiDeveloper.Apps.formatAppRows = function(json)
+{
+	var count = json.length;
+	var a = [];
+	for (var i=0;i<json.length;i++)
+	{
+		var row = json[i];
+		var title = row.title;
+		var pubdate = TiDeveloper.Projects.formatPackagingDate(row.pubdate);
+		var desc = row.desc;
+		var url = row.url;
+		var author = row.author;
+		var downloads = row.downloads;
+		var value = row.value;
+		var votes = row.votes;
+		var hasVoted = row.hasVoted;
+		var link = row.download_url;
+		var guid = row.guid;
+		var image = row.image;
+		var app_id = row.id
+		a.push({image:image,app_id:app_id,guid:guid,title:title,pubdate:pubdate,desc:desc,url:url,author:author,downloads:downloads,value:value,votes:votes,hasVoted:hasVoted,link:link})
+		
+	}
+			
+	$MQ('l:applist',{'rows':a});
+	
+};

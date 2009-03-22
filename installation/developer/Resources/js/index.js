@@ -23,7 +23,6 @@ TiDeveloper.formatCountMessage = function(count,things)
 	return (count == 0) ? 'You have no '+things+'s' : count == 1 ? 'You have 1 '+things : 'You have ' + count + ' '+things+'s';
 }
 
-
 //
 // Track window focus events
 //
@@ -140,10 +139,10 @@ TiDeveloper.make_url = function(base,params)
 		url = url + '?';
 		for (var p in params)
 		{
-			url+=encodeURIComponent(p)+'='+encodeURIComponent(String(params[p]));
+			url+=encodeURIComponent(p)+'='+encodeURIComponent(String(params[p])) + "&"
 		}
 	}
-	return url;
+	return url.substring(0,(url.length-1));
 };
 
 //

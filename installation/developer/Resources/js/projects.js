@@ -284,11 +284,37 @@ TiDeveloper.Projects.refreshStats = function(guid)
 		// update data
 		success: function(data)
 		{
+			var aguid = guid;
 			if (data.length > 0)
 			{
 				$('#download_stats_none').css('display','none')
 				$('#download_stats').css('display','block');
 				$('#download_stats_loading').css('display','none');
+
+			    db.transaction(function (tx) 
+			    {
+			    	tx.executeSql("DELETE from ProjectDownloads WHERE guid = ?",[aguid], function(tx, result)
+					{
+						var date = new Date().toLocaleString();
+						var a = [];
+						for (var i=0; i< data.length;i++)
+						{
+							tx.executeSql("INSERT into ProjectDownloads (guid, platform, count,date) values (?,?,?,?)",[aguid,data[i]['os'],data[i]['count'], date]);
+							var platform = data[i]['os'];
+							var count = data[i]['count'];
+							a.push({name:platform,value:count,guid:aguid});
+						}
+						$MQ('l:package_download_stats',{date:date, rows:a})
+
+					});
+				});
+			}
+			else
+			{
+				$('#download_stats_none').css('display','block')
+				$('#download_stats').css('display','none');
+				$('#download_stats_loading').css('display','none');
+				
 			}
 		},
 		error: function()
@@ -364,7 +390,7 @@ $MQL('l:row.selected',function(msg)
 		// get download info for DOWNLOAD tab
 	    db.transaction(function (tx) 
 	    {
-	        tx.executeSql("SELECT url, platform, version, date from ProjectPackages WHERE guid = ?",[project.guid],
+	        tx.executeSql("SELECT url, label,platform, version, date from ProjectPackages WHERE guid = ?",[project.guid],
 	 			function(tx,result)
 				{
 					// helper function for
@@ -380,28 +406,11 @@ $MQL('l:row.selected',function(msg)
 			                var row = (rows.item)?rows.item(i):rows[i];
 							var date = (pubdate)?pubdate:row['date']
 							var url = row['url'];
+							var label = row['label'];
 							var platform = row['platform'];
 							var version = row['version'];
 							
-							// if no date, we just use now b/c 
-							
-							var platformShort = null;
-							if (platform.indexOf('win32')!=-1) 
-							{
-								platformShort = "win";
-								platformLong = "Windows";
-							}
-							if (platform.indexOf('linux')!=-1)
-							{
-								platformShort = "linux";
-								platformLong = "Linux";
-							} 
-							if (platform.indexOf('osx')!=-1)
-							{
-								platformShort = "mac";
-								platformLong = 'Mac OSX'
-							} 
-							a.push({'url':url,'platform':platformLong,'platform_short':platformShort});
+							a.push({'url':url,'label':label,'platform':platform});
 						}
 						$MQ('l:package_links',{'date':date, 'rows':a});
 						$('#packaging_none').css('display','none');
@@ -446,7 +455,7 @@ $MQL('l:row.selected',function(msg)
 				function(error)
 				{
 					// create table
-					tx.executeSql('CREATE TABLE ProjectPackages (guid TEXT, url TEXT, platform TEXT, version TEXT, date TEXT)');
+					tx.executeSql('CREATE TABLE ProjectPackages (guid TEXT, label TEXT, url TEXT, platform TEXT, version TEXT, date TEXT)');
 					// show no downloads message
 					$('#packaging_none').css('display','block');
 					$('#packaging_listing').css('display','none');
@@ -1263,7 +1272,7 @@ TiDeveloper.Projects.insertPackagingRows = function(guid,date,rows)
 		{
 			for (var i=0;i<rows.length;i++)
 			{
-		        tx.executeSql("INSERT INTO ProjectPackages (guid,url, platform, version, date) values (?,?,?,?,?) ",[guid,rows[i]['url'],rows[i]['platform'],rows[i]['version'],date]);
+		        tx.executeSql("INSERT INTO ProjectPackages (guid,url, label,platform, version, date) values (?,?,?,?,?,?) ",[guid,rows[i]['url'],rows[i]['label'],rows[i]['platform'],rows[i]['version'],date]);
 			}
 		});
 
@@ -1281,7 +1290,6 @@ TiDeveloper.Projects.pollPackagingRequest = function(ticket,guid)
 	   	if (r.status == 'complete')
 	   	{
   			TiDeveloper.Projects.packagingInProgress[guid] = false;
-alert('r.pubdate ' + r.pubdate)
 			TiDeveloper.Projects.insertPackagingRows(guid,r.pubdate,r.releases);
 			
 			$MQ('l:package_links',{date:r.pubdate,rows:r.releases})

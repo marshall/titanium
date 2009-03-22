@@ -472,8 +472,8 @@ div.formhint
 	position:absolute;
 	top:10px;
 	left:100px;
-	font-size:18px;
-	color:white;
+	font-size:18px !important;
+	color:white !important;
 	cursor:pointer;
 }
 
