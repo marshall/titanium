@@ -126,7 +126,7 @@ $MQL('l:applist',function(msg)
 	{
 		TiDeveloper.Apps.setupRating(msg.payload['rows']);
 		
-	},500)
+	},100)
 })
 
 //
@@ -148,6 +148,47 @@ $MQL('l:menu',function(msg)
 	}
 });
 
+TiDeveloper.Apps.findApps = function(options)
+{
+	var url = TiDeveloper.make_url(TiDeveloper.Apps.app_list_url,{
+		'f':'json',
+		'mid':Titanium.Platform.id,
+		'o':options.sort,
+		'q':options.search
+	});
+	
+	$.getJSON(url,function(result)
+	{
+		TiDeveloper.Apps.formatAppRows(result);
+	});
+	
+};
+
+//
+// Search Call
+//
+$MQL('l:app_search',function(msg)
+{
+	var sort = ($('#sort_most_downloaded').hasClass('active_sort'))?'downloaded':'popular';
+	var options = {sort:sort,search:$('#app_search').val()};
+	TiDeveloper.Apps.findApps(options);
+	
+})
+
+//
+// Sort Call
+//
+$MQL('l:toggle_app_sort',function(msg)
+{
+	var sort = 'popular'
+	if (msg.payload.val == 'download')
+	{
+		sort = 'download'
+	}
+	var options = {sort:sort,search:$('#app_search').val()};
+	TiDeveloper.Apps.findApps(options);
+
+});
 TiDeveloper.Apps.formatAppRows = function(json)
 {
 	var count = json.length;
@@ -171,7 +212,16 @@ TiDeveloper.Apps.formatAppRows = function(json)
 		a.push({image:image,app_id:app_id,guid:guid,title:title,pubdate:pubdate,desc:desc,url:url,author:author,downloads:downloads,value:value,votes:votes,hasVoted:hasVoted,link:link})
 		
 	}
-			
-	$MQ('l:applist',{'rows':a});
+	if (count == 0)
+	{
+		$('#app_search_string').html('No Apps found.  Please try your search again.')
+	}
+	else
+	{
+		var plural = (count == 1)?'app':'apps';
+		var sort = ($('#sort_most_downloaded').hasClass('active_sort'))?'most downloaded':'most popular';
+		$('#app_search_string').html('We found ' + count + ' ' + plural + ' (sorted by ' + sort + ')');
+	}
+	$MQ('l:applist',{'rows':a,count:count});
 	
 };
