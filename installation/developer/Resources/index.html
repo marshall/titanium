@@ -144,7 +144,7 @@
 							and toggle[id=entourage_js_sandbox,class=selected_js]
 							or l:create.project then remove[class=selected_js]
 							and remove[id=entourage_js_sandbox,class=selected_js]">
-							<img src="images/entourage.png" width="70px" height="80px"/>
+							<img src="images/entourage.png" width="150px" height="80px"/>
 						</div>
 					</div>
 					<div style="clear:both;margin-top:10px"></div>
@@ -946,7 +946,7 @@
 								and toggle[id=entourage_js,class=selected_js]
 								or l:create.project then remove[class=selected_js]
 								and remove[id=entourage_js,class=selected_js]">
-								<img src="images/entourage.png" width="70px" height="80px"/>
+								<img src="images/entourage.png" width="150px" height="80px"/>
 							</div>
 						</div>
 					</div>
@@ -1097,10 +1097,36 @@
 								be your company or personal URL. 
 							</div>
 						</div>
+
+						<div >Project Location:</div>
+						<div style="margin-top:3px;">
+							<input type="text" id="project_location" style="width:450px;float:left;" 
+								validator="required" fieldset="new_project" 
+								on="l:file.selected[for=project_location] then value[value]
+								or (l:create.project.response[result=success] or l:menu[val=create]) then reset"/>
+
+							<div class="button1" 
+								style="float:left;width:23px;height:23px;position:relative;top:1px;margin-left:10px" >
+								<div class="button2" style="height:21px" 
+									on="click then l:show.filedialog[for=project_location]">
+									<img src="images/folder_go.png" style="position:relative;top:3px;left:1px"/>
+								</div>
+							</div>
+							<div style="clear:both"></div>
+
+							<div class="hint_text" 
+								style="font-size:11px;font-style:italic;margin-bottom:10px;height:10px;margin-top:-7px">
+								<div behavior="tooltip[position=fixed,id=project_location,showEffect=fadeIn,hideEffect=fadeOut]">
+								  Newly created projects are placed in "Project Location/Project Name".
+								</div>
+							</div>
+
+						</div>
+						<div style="clear:both"></div>
 						<div>Application Image:</div>
 						<div style="margin-top:3px;">
 							<input type="text" id="project_image" name="image" 
-								style="width:450px;float:left;" validator="required" fieldset="new_project" 
+								style="width:450px;float:left;"  fieldset="new_project" 
 								on="l:file.selected[for=project_image,target=project_image] then value[value]
 								or (l:create.project.response[result=success] or l:menu[val=create]) then reset"/>
 							<div class="button1" 
@@ -1118,30 +1144,6 @@
 								</div>
 							</div>
 						</div>
-						<div style="clear:both"></div>
-
-						<div >Project Location:</div>
-						<div style="margin-top:3px;">
-							<input type="text" id="project_location" style="width:450px;float:left;" 
-								validator="required" fieldset="new_project" 
-								on="l:file.selected[for=project_location] then value[value]
-								or (l:create.project.response[result=success] or l:menu[val=create]) then reset"/>
-
-							<div class="button1" 
-								style="float:left;width:23px;height:23px;position:relative;top:1px;margin-left:10px" >
-								<div class="button2" style="height:21px" 
-									on="click then l:show.filedialog[for=project_location]">
-									<img src="images/folder_go.png" style="position:relative;top:3px;left:1px"/>
-								</div>
-							</div>
-						</div>
-						<div style="clear:both"></div>
-						<div class="hint_text" 
-							style="font-size:11px;font-style:italic;margin-bottom:10px;height:10px;margin-top:-7px">
-							<div behavior="tooltip[position=fixed,id=project_location,showEffect=fadeIn,hideEffect=fadeOut]">
-							  Newly created projects are placed in "Project Location/Project Name".
-							</div>
-						</div>
 					</div>
 					<div style="clear:both"></div>
 
@@ -1151,7 +1153,7 @@
 							<div class="button2" id="create_project_button"
 							on="click then l:create.project.request 
 							if expr[$('#create_project_button').attr('disabled')!='true']" 
-							activators="project_location,project_name,project_location,project_image,app_url, publisher_name"  
+							activators="project_location,project_name,project_location,app_url, publisher_name"  
 							fieldset="new_project">
 								Create
 							</div>

@@ -159,14 +159,14 @@ Titanium.Project =
 		resources.createDirectory();
 		var index = TFS.getFile(resources,'index.html');
 		
-		var jquery = '<script type="text/javascript" src="js/jquery-1.3.2.js"></script>\n';
-		var jquery_ui = '<script type="text/javascript" src="js/entourage-jquery-3.0.js"></script>\n';
-		var prototype_js = '<script type="text/javascript" src="js/prototype-1.6.0.js"></script>\n';
-		var scriptaculous = '<script type="text/javascript" src="js/scriptaculous-1.8.2.js"></script>\n';
-		var mootools = '<script type="text/javascript" src="js/mootools-1.2.1.js"></script>\n';
-		var yahoo = '<script type="text/javascript" src="js/yui-2.6.0.js"></script>\n';
-		var swfobject = '<script type="text/javascript" src="js/swfobject-1.5.js"></script>\n';
-		var dojo = '<script type="text/javascript" src="js/dojo-1.2.3.js"></script>\n';
+		var jquery = '<script type="text/javascript" src="jquery-1.3.2.js"></script>\n';
+		var entourage = '<script type="text/javascript" src="entourage-jquery-3.0.js"></script>\n';
+		var prototype_js = '<script type="text/javascript" src="prototype-1.6.0.js"></script>\n';
+		var scriptaculous = '<script type="text/javascript" src="scriptaculous-1.8.2.js"></script>\n';
+		var mootools = '<script type="text/javascript" src="mootools-1.2.1.js"></script>\n';
+		var yahoo = '<script type="text/javascript" src="yui-2.6.0.js"></script>\n';
+		var swfobject = '<script type="text/javascript" src="swfobject-1.5.js"></script>\n';
+		var dojo = '<script type="text/javascript" src="dojo-1.2.3.js"></script>\n';
 
 		var head = '';
 		
@@ -179,39 +179,55 @@ Titanium.Project =
 			head+='<head><style>body{background-color:#292929;color:white}</style>\n';
 		}
 		
-		// var path = Titanium.App.appURLToPath('app://thirdparty_js');
-		// TFS.getFile(path,'jquery-1.3.2.js');
+		var path = Titanium.App.appURLToPath('app://thirdparty_js');
+		
 		if (jsLibs.jquery)
 		{
 			head += jquery
+			var f = TFS.getFile(path,'jquery-1.3.2.js');
+			f.copy(resources);
 		}
-		if (jsLibs.jquery_ui)
+		if (jsLibs.entourage)
 		{
-			head += jquery_ui;
+			head += entourage;
+			var f = TFS.getFile(path,'entourage-jquery-3.0.js');
+			f.copy(resources);
 		}
 		if (jsLibs.prototype_js)
 		{
 			head+= prototype_js;
+			var f = TFS.getFile(path,'prototype-1.6.0.js');
+			f.copy(resources);
 		}
 		if (jsLibs.scriptaculous)
 		{
 			head+=scriptaculous;
+			var f = TFS.getFile(path,'scriptaculous-1.8.2.js');
+			f.copy(resources);
 		}
 		if (jsLibs.mootools)
 		{
 			head+=mootools;
+			var f = TFS.getFile(path,'mootools-1.2.1.js');
+			f.copy(resources);
 		}
 		if(jsLibs.dojo)
 		{
 			head+=dojo;
+			var f = TFS.getFile(path,'dojo-1.2.3.js');
+			f.copy(resources);
 		}
 		if (jsLibs.swf)
 		{
 			head+=swfobject;
+			var f = TFS.getFile(path,'swfobject-1.5.js');
+			f.copy(resources);
 		}
 		if (jsLibs.yahoo)
 		{
 			head+=yahoo;
+			var f = TFS.getFile(path,'yui-2.6.0.js');
+			f.copy(resources);
 		}
 		head += '</head>';
 		
