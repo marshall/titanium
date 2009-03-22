@@ -73,6 +73,8 @@ TiDeveloper.Feeds.saveTwitterCreds = function(username,password)
 		swiss('#twitter_username').fire('revalidate')
 		swiss('#twitter_password').fire('revalidate')
 		
+		TiDeveloper.track('twitter-save',{'twitter':username});
+		
 		//add
 		if (TiDeveloper.Feeds.twitterUsername == null)
 		{
@@ -107,6 +109,7 @@ TiDeveloper.Feeds.saveTwitterCreds = function(username,password)
 
 TiDeveloper.Feeds.followUs = function()
 {
+	TiDeveloper.track('follow-us',{'twitter':TiDeveloper.Feeds.twitterUsername});
 	$.ajax(
 	{
 		'username':TiDeveloper.Feeds.twitterUsername,
@@ -238,7 +241,7 @@ TiDeveloper.Feeds.loadTwitter = function()
 
 	$.ajax({
 		type:"GET",
-		url: 'http://search.twitter.com/search.rss?q=+%22Appcelerator+Titanium%22+OR+%23titanium+OR+%23appcelerator&rpp=' +rpp ,		
+		url: 'http://search.twitter.com/search.rss?q=%22appcelerator%22+OR+%22appcelerator+titanium%22+OR+%40titanium+OR+%40appcelerator+OR+%23titanium+OR+%23appcelerator&rpp=' +rpp ,		
 		success: function(data)
 		{
 	
@@ -342,6 +345,7 @@ $MQL('l:send.tweet.request',function(msg)
 	var tweet = String(msg.payload['twitter_message']);
 	var username = String(msg.payload['twitter_username']);
 	var password = String(msg.payload['twitter_password']);
+	TiDeveloper.track('tweet',{'twitter':username});
 	if (tweet.charAt(0)!='D') //D is direct message if first position
 	{
 		$.ajax(
