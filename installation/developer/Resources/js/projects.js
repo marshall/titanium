@@ -185,6 +185,8 @@ TiDeveloper.Projects.importProject = function(f)
 		options.guid = Titanium.Platform.createUUID();
 	}
 	
+	TiDeveloper.track('project-import',options);
+
 	TiDeveloper.Projects.createRecord(options,function(obj)
 	{
 		TiDeveloper.Projects.loadProjects();
@@ -621,6 +623,7 @@ $MQL('l:create.project.request',function(msg)
 		if (result.success)
 		{
 			var options = {name:result.name, guid:guid,description:msg.payload.description,dir:result.basedir,appid:result.id,publisher:msg.payload.publisher,url:msg.payload.url,image:msg.payload.image}
+			TiDeveloper.track('project-create',{options:options,jsLibs:jsLibs});
 			var r = TiDeveloper.Projects.createRecord(options,function(obj)
 			{
 				if (obj.code == 0)
@@ -1235,6 +1238,7 @@ $MQL('l:delete.project.request',function(msg)
 $MQL('l:project.search.request',function(msg)
 {
 	var q = msg.payload.search_value;
+	TiDeveloper.track('project-search',{'q':q});
 	db.transaction(function(tx) 
 	{
 		try

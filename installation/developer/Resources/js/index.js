@@ -21,8 +21,14 @@ var db = openDatabase("TiDeveloper","1.0");
 TiDeveloper.formatCountMessage = function(count,things)
 {
 	return (count == 0) ? 'You have no '+things+'s' : count == 1 ? 'You have 1 '+things : 'You have ' + count + ' '+things+'s';
-}
+};
 
+
+TiDeveloper.track = function(name,data)
+{
+	data = (typeof(data)!='undefined') ? swiss.toJSON(data) : null;
+	Titanium.Analytics.addEvent(name,data);
+};
 
 //
 // Track window focus events

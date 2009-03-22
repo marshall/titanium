@@ -730,6 +730,11 @@ void IRC::parse_irc_reply(char* data)
 			if (!params)
 				return;
 			*(params++)='\0';
+			if (!strcmp(&params[1],"+VERSION") && !strcmp(hostd_tmp.nick,"freenode-connect"))
+			{
+				// ignore this message
+				return;
+			}
 			#ifdef __IRC_DEBUG__
 			printf("%s: <%s> %s\n", hostd_tmp.target, hostd_tmp.nick, &params[1]);
 			#endif
