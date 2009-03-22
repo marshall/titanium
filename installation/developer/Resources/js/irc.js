@@ -89,6 +89,18 @@ $MQL('l:app.compiled',function()
 			TiDeveloper.IRC.initialize();
 		}
 	}, 2000);
+
+	$MQL('l:menu',function(data)
+	{
+		if (data.payload.val == 'interact')
+		{
+			setTimeout(function()
+			{
+				$('#irc').get(0).scrollTop = $('#irc').get(0).scrollHeight;
+			},20);
+		}
+	});
+
 });
 
 
@@ -331,3 +343,4 @@ $MQL('l:send.irc.msg',function()
 		
 	}
 });
+

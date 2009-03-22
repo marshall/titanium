@@ -3,10 +3,22 @@ TiDeveloper.Sandbox.url = "http://publisher.titaniumapp.com/api/snippet-list";
 TiDeveloper.Sandbox.lastTempDir = null;
 TiDeveloper.Sandbox.code = [];
 TiDeveloper.Sandbox.refreshing = -1;
+TiDeveloper.Sandbox.initialCodeMessage = 'Select the name of a code snippet above to see the code here.\n\nYou can also start typing code here (and optionally select a Javascript library to the left) and click \'Launch\' to run the code in a quick-launch Titanium app.';
 
 $(document).ready(function()	
 {
 	$('#text_editor').markItUp(mySettings);
+	
+	$('#text_editor').click(function()
+	{
+		var selector = $('#api_selector').get(0);
+		var selectedIndex = selector.selectedIndex;
+		var editor = $('#text_editor');
+		if (selectedIndex == 0 && editor.val()==TiDeveloper.Sandbox.initialCodeMessage)
+		{
+			editor.val('');
+		}
+	});
 	
 	var fetched = false;
 
@@ -64,7 +76,7 @@ TiDeveloper.Sandbox.setAPI = function()
 	}
 	else
 	{
-		$('#text_editor').val('Select the name of a code snippet above to see the code here.\n\nYou can also start typing code here (and optionally select a Javascript library to the left) and click \'Launch\' to run the code in a quick-launch Titanium app.');
+		$('#text_editor').val(TiDeveloper.Sandbox.initialCodeMessage);
 	}
 }
 
