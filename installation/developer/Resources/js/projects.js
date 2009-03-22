@@ -1041,7 +1041,12 @@ $MQL('l:create.package.request',function(msg)
 		var imageName = null
 		if (project.image)
 		{
+			// look for image in two places - either full path or in resources dir
 			var image = TFS.getFile(project.image);
+			if (!image.exists())
+			{
+				image = TFS.getFile(resources,project.image);
+			}
 			
 			// use default if not exists
 			if (!image.exists())

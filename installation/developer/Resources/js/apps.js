@@ -27,7 +27,7 @@ TiDeveloper.Apps.setupRating = function(data)
 		var hasVoted = ratingStr.attr('hasVoted');
 		var vote = parseInt($(this).attr('star'));
 		var votes = parseInt(ratingStr.attr('votes'));
-		var rating = parseInt(ratingStr.attr('rating'));
+		var rating = parseFloat(ratingStr.attr('rating'));
 		
 		
 		// we only count vote
@@ -49,12 +49,14 @@ TiDeveloper.Apps.setupRating = function(data)
 			var newRating = String(totalRating/votes);
 			if (newRating.indexOf('.')!=-1)
 			{
+				newRating = newRating.split('.')
 				newRating = newRating[0] + "." + newRating[1].substring(0,2);
 			}
 			else
 			{
 				newRating = newRating + '.0';
 			}
+
 			ratingStr.css('display','none');
 			ratingStr.html(newRating+' rating from '+votes+' votes');
 			$('#voted_success_'+id).fadeIn();
@@ -76,7 +78,8 @@ TiDeveloper.Apps.setupRating = function(data)
 			}
 			ratingStr.attr('rating',newRating);
 			ratingStr.attr('hasVoted','true');
-
+			ratingStr.attr('votes',votes);
+			
 			//TODO NOTE: rating should be 1-5
 			var url = TiDeveloper.make_url(TiDeveloper.Apps.app_rate_url,{
 				'rating':vote,
