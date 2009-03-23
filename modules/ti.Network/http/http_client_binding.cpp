@@ -14,7 +14,7 @@
 #include <sstream>
 #include <fstream>
 #include "../network_binding.h"
-#include "Poco/StreamCopier.h"
+#include "Poco/Buffer.h"
 #include "Poco/Net/MultipartWriter.h"
 #include "Poco/Net/MessageHeader.h"
 #include "Poco/Net/FilePartSource.h"
@@ -50,6 +50,7 @@ namespace ti
 		SET_BOOL_PROP("connected",false)
 		SET_NULL_PROP("onreadystatechange")
 		SET_NULL_PROP("ondatastream")
+		SET_NULL_PROP("onsendstream")
 
 		this->self = Value::NewObject(this);
 	}
@@ -172,7 +173,9 @@ namespace ti
 				Poco::File f(binding->filename);
 				std::ostringstream l;
 				l << f.getSize();
-				req.set("Content-Length",l.str().c_str());
+				const char *cl = l.str().c_str();
+				content_len = atoi(cl);
+				req.set("Content-Length",cl);
 			}
 			
 			// send and stream output
@@ -185,7 +188,58 @@ namespace ti
 			}
 			else if (binding->filestream)
 			{
-				Poco::StreamCopier::copyStream(*binding->filestream,out);
+				// SharedBoundMethod sender;
+				// SharedValue sv = binding->Get("onsendstream");
+				// if (sv->IsMethod())
+				// {
+				// 	sender = sv->ToMethod()->Get("apply")->ToMethod();
+				// }
+				std::streamsize bufferSize = 8096;
+				Poco::Buffer<char> buffer(bufferSize);
+				std::streamsize len = 0;
+				std::istream& istr = (*binding->filestream);
+				istr.read(buffer.begin(), bufferSize);
+				std::streamsize n = istr.gcount();
+				int remaining = content_len;
+				while (n > 0)
+				{
+					len += n;
+					remaining -= n;
+					out.write(buffer.begin(), n);
+// 					if (sender.get())
+// 					{
+// 						try
+// 						{
+// #ifdef DEBUG
+// 							std::cout << "ONSENDSTREAM = >> " << len <<" of " << content_len << std::endl;
+// #endif
+// 							ValueList args;
+// 							SharedBoundList list = new StaticBoundList();
+// 
+// 							args.push_back(binding->self); // reference to us
+// 							args.push_back(Value::NewList(list));
+// 
+// 							list->Append(Value::NewInt(len)); // bytes sent
+// 							list->Append(Value::NewInt(content_len)); // total size
+// 							list->Append(Value::NewInt(remaining)); // remaining
+// 							binding->host->InvokeMethodOnMainThread(sender,args,false);
+// 						}
+// 						catch(std::exception &e)
+// 						{
+// 							std::cerr << "Caught exception dispatching HTTP callback on transmit, Error: " << e.what() << std::endl;
+// 						}
+// 						catch(...)
+// 						{
+// 							std::cerr << "Caught unknown exception dispatching HTTP callback on transmit" << std::endl;
+// 						}
+//					}
+					if (istr)
+					{
+						istr.read(buffer.begin(), bufferSize);
+						n = istr.gcount();
+					}
+					else n = 0;
+				}
 			}
 			
 			if (deletefile)

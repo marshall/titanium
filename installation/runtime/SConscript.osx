@@ -19,7 +19,8 @@ class Bundler(object):
 		if tiapp:
 			shutil.copy(tiapp, self.contents)
 		kboot = p.join(build.dir, 'kboot')
-		shutil.copy(kboot, p.join(macos,name))
+		self.binary = p.join(macos,name)
+		shutil.copy(kboot, self.binary)
 		out_file = open(p.join(self.contents, 'manifest'), 'w')
 		out_file.write(manifest_text)
 		out_file.close()
@@ -107,8 +108,9 @@ installer = p.join(bundle.contents,'installer')
 os.makedirs(installer)
 netinstaller = p.join(build.dir, 'net_installer')
 bundle = Bundler('Installer App',installer,None,None,None)
-shutil.copy(p.join(netinstaller,'Info.plist'),bundle.basedir)
-shutil.copy(p.join(netinstaller,'MainMenu.nib'),bundle.basedir)
+shutil.copy(p.join(netinstaller,'Info.plist'),bundle.contents)
+shutil.copy(p.join(netinstaller,'MainMenu.nib'),bundle.lproj)
+shutil.copy(p.join(netinstaller,'net_installer'),bundle.binary)
 
 srcfolder=p.join(build.dir,name+'.app')
 tdmgname='_'+name

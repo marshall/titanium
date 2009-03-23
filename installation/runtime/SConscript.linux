@@ -43,5 +43,5 @@ build.utils.CopyToDir(developer, installer_dir)
 
 tgzfile = app_dir + '.tgz'
 binfile = app_dir + '.bin'
-build.env.KTarGzDir(tgzfile, app_dir)
+build.utils.TarGz(app_dir, tgzfile)
 build.env.KConcat(binfile, ['linux/self_extracting.sh', tgzfile])
