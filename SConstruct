@@ -75,6 +75,7 @@ testapp = 'testapp' in targets or ARGUMENTS.get('testapp', 0)
 testsuite = 'testsuite' in targets or ARGUMENTS.get('testsuite', 0)
 clean = 'clean' in targets or ARGUMENTS.get('clean', 0)
 qclean = 'qclean' in targets or ARGUMENTS.get('qclean', 0)
+dist = 'dist' in targets or ARGUMENTS.get('dist', 0)
 run = 'run' in targets or ARGUMENTS.get('run', 0)
 Export('run')
 
@@ -99,11 +100,15 @@ if not(package) or build.is_linux():
 	SConscript('modules/SConscript')
 
 if package:
-	print "building packaging ..."
+	print "Building packaging ..."
 	SConscript('installation/runtime/SConscript')
 
+if dist:
+	print 'Building dist files...'
+	dist = build.build_dist_files()
+
 if testapp:
-	print "building testapp ..."
+	print "Building testapp ..."
 	SConscript('apps/testapp/SConscript')
 
 if testsuite:
