@@ -78,7 +78,9 @@ dir_util.copy_tree(p.join(build.third_party, 'microsoft', 'Microsoft.VC80.CRT'),
 
 dir_util.copy_tree(p.join(build.dir, 'modules'), modules_dir, preserve_symlinks=True)
 print 'copying self extractor..'
-appexe =  p.join(build.dir, name + ".exe")
+try: os.makedirs(p.join(build.dir, 'dist'))
+except: pass
+appexe =  p.join(build.dir,'dist','titanium-sdk'+version+'.exe')
 shutil.copy(self_extractor, appexe)
 shutil.copy("tiapp.xml", app_dir)
 
@@ -135,7 +137,7 @@ for i in [developer,appinstaller,app_dir]:
 shutil.copy(kboot, p.join(app_dir,'installer.exe'))
 if not ARGUMENTS.get('skipzip', 0):
 	zff = p.join(build.dir,'titanium_runtime.zip')
-	build.utils.Mkdir(p.join(build.dir,'dist'))
+	# build.utils.Mkdir(p.join(build.dir,'dist'))
 	exe = p.join(build.dir,'dist','titanium-sdk'+version+'.exe')
 	zf = zipfile.ZipFile(exe,'a', zipfile.ZIP_DEFLATED)
 	zf.write(p.join(build.dir,'kboot.exe'),'template/kboot.exe')
