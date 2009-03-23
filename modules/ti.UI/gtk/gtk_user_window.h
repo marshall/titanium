@@ -108,33 +108,22 @@ namespace ti
 		bool topmost;
 		gulong destroy_cb_id;
 
-		/*
-		 * The window-specific menu.
-		 */
+		// The window-specific menu.
 		SharedPtr<GtkMenuItemImpl> menu;
-
 		/*
 		 * The menu this window is using. This
 		 * might just be a copy of the app menu.
 		 */
 		SharedPtr<GtkMenuItemImpl> menu_in_use;
-
-		/*
-		 * The widget this window uses for a menu.
-		 */
+		// The widget this window uses for a menu.
 		GtkWidget* menu_bar;
-
-		/*
-		 * The path to this window's icon
-		 */
+		// The path to this window's icon
 		SharedString icon_path;
-
-		/*
-		 * The widget this window uses for a context menu.
-		 */
+		// The widget this window uses for a context menu.
 		SharedPtr<GtkMenuItemImpl> context_menu;
 
 		void _OpenFilesWork(const ValueList&, SharedValue);
+		static std::string openFilesDirectory;
 
 	};
 
