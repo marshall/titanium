@@ -297,9 +297,6 @@ TiDeveloper.Projects.refreshStats = function(guid)
 			var aguid = guid;
 			if (data.length > 0)
 			{
-				$('#download_stats_none').css('display','none')
-				$('#download_stats').css('display','block');
-				$('#download_stats_loading').css('display','none');
 
 			    db.transaction(function (tx) 
 			    {
@@ -308,15 +305,28 @@ TiDeveloper.Projects.refreshStats = function(guid)
 						var date = new Date().toLocaleString();
 						var pageUrl = data.app_page
 						var a = [];
+						var totalCount = 0
 						for (var i=0; i< data.length;i++)
 						{
 							tx.executeSql("INSERT into ProjectDownloads (guid, platform, count,date,page_url) values (?,?,?,?,?)",[aguid,data[i]['os'],data[i]['count'], date,pageUrl]);
 							var platform = data[i]['os'];
 							var count = data[i]['count'];
+							totalCount += count;
 							a.push({name:platform,value:count,guid:aguid});
 						}
-						$MQ('l:package_download_stats',{date:date, rows:a})
-
+						if (totalCount == 0)
+						{
+							$('#download_stats_none').css('display','block')
+							$('#download_stats').css('display','none');
+							$('#download_stats_loading').css('display','none');
+						}
+						else
+						{
+							$('#download_stats_none').css('display','none')
+							$('#download_stats').css('display','block');
+							$('#download_stats_loading').css('display','none');
+							$MQ('l:package_download_stats',{date:date, rows:a})
+						}
 					});
 				});
 			}
