@@ -101,9 +101,26 @@
 		NSData *data = [downloader data];
 		NSString *path = [NSString stringWithFormat:@"%@/%@",dir,filename];
 		// write out our data
-		[data writeToFile:path atomically:YES];
+		BOOL isValidName = [filename length] > 5;
+		BOOL isValidData = [data length] > 100;
+		
+		
+		if (isValidData && isValidName) {
+			[data writeToFile:path atomically:YES];
+			[files addObject:path];
+		} else {
+			NSLog(@"Error in handling url \"%@\":",url);
+			if (!isValidName) {
+				NSLog(@"File name is too small to specify a file. \"%@\" was made instead.",filename);
+			}
+			if (!isValidData){
+				NSString * dataString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+				NSLog(@"Response data was too small to be a file. Received \"%@\" instead.",dataString);
+				[dataString release];
+			}
+		}
+
 		[downloader release];
-		[files addObject:path];
 	}
 	
 	[progressBar setIndeterminate:NO];
