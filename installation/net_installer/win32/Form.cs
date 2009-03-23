@@ -44,15 +44,18 @@ namespace Titanium
                     "Preparing to download " + this.urls.Length + " file" + (this.urls.Length > 1 ? "s" : "")    
                 });
 
-                string [] files = new string[this.urls.Length];
-
                 for (int c = 0; c < this.urls.Length; c++)
                 {
                     Uri uri = new Uri(this.urls[c]);
-                    string[] segments = uri.Segments;
-                    string filename = segments[segments.Length - 1];
-                    string path = tempdir + "//" + filename;
-                    files[c] = filename;
+                    string filename = this.getFilename(uri);
+
+                    if (filename == null)
+                    {
+                        System.Console.WriteLine("Unable to deteremine filename for " + this.urls[c]);
+                        continue;
+                    }
+
+                    string path = tempdir + "\\" + filename;
 
                     HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
                     request.UserAgent = "Mozilla/5.0 (compatible; Titanium_Downloader/0.2; Win32)";
@@ -104,18 +107,27 @@ namespace Titanium
                     outStream.Close();
                 }
 
-                for (int c = 0; c < files.Length; c++)
+                for (int c = 0; c < this.urls.Length; c++)
                 {
-                    string currentMessage = "Installing " + (c + 1) + " of " + files.Length + " ... ";
+                    string currentMessage = "Installing " + (c + 1) + " of " + this.urls.Length + " ... ";
                     this.Invoke(this.textDelegate, new object[]{
                         currentMessage
                     });
 
-                    string name = files[c];
-                    string [] tokens = name.Split('-');
-                    string type = tokens[0];
-                    string subtype = tokens[1];
-                    string version = tokens[2].Substring(0, tokens[2].LastIndexOf("."));
+                    Uri uri = new Uri(this.urls[c]);
+
+                    string filename = this.getFilename(uri);
+
+                    if (filename == null)
+                    {
+                        continue;
+                    }
+
+                    string name = this.getURIParam(uri, "name");
+                    // TODO don't hard code module
+                    string type = "module";
+                    string subtype = "win32";
+                    string version = this.getURIParam(uri, "version");
     
                     string destdir;
 
@@ -125,15 +137,19 @@ namespace Titanium
                     }
                     else if (type == "module")
                     {
-                        destdir = installdir + "\\modules\\" + subtype + "\\" + version;
+                        destdir = installdir + "\\modules\\" + subtype + "\\" + name + "\\" + version;
                     }
                     else
                     {
                         continue;
                     }
 
-                    string from = tempdir+"\\"+name;
-                    string to = destdir+"\\"+name;
+                    string from = tempdir + "\\" + filename;
+                    string to = destdir;
+
+                    System.Console.WriteLine("Extracting " + from + " >> " + destdir);
+
+                    MessageBox.Show("Unzipper = " + this.unzipper);
 
                     // in win32, we just invoke back the same process and let him unzip
                     Process p = new Process();
@@ -146,20 +162,60 @@ namespace Titanium
                     p.WaitForExit();
 
                     // delete the temp file and cleanup
-                    File.Delete(this.tempdir + "\\" + files[c]);
+                    File.Delete(from);
 
                     // update the progress indicator
                     this.Invoke(this.progressDelegate, new object[]{
                             c+1,
-                            files.Length
+                            this.urls.Length
                         });
                 }
             }
             catch (Exception ex)
             {
+                System.Console.WriteLine(ex.StackTrace);
                 MessageBox.Show(ex.Message+"\n\n"+ex.StackTrace);
             }
             Application.Exit();
+        }
+
+        private string getFilename(Uri uri)
+        {
+            string name = this.getURIParam(uri, "name");
+            string version = this.getURIParam(uri, "version");
+
+            if (name == null || version == null)
+            {
+                return null;
+            }
+
+            return name + "-" + version + ".zip";
+        }
+
+        private string getURIParam(Uri uri, string paramName)
+        {
+            string query = uri.Query;
+            if (query.Length > 0 && query[0] == '?')
+            {
+                query = query.Substring(1);
+            }
+
+            string[] pairs = query.Split('&');
+
+            for (int i = 0; i < pairs.Length; i++)
+            {
+                string pair = pairs[i];
+
+                string[] tokens = pair.Split('=');
+
+                if (paramName == tokens[0])
+                {
+                    // TODO -  ensure the value is decoded
+                    return tokens[1];
+                }
+            }
+
+            return null;
         }
 
         private void form_Load(object sender, EventArgs e)
