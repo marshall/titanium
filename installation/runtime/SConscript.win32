@@ -31,7 +31,8 @@ for tp in third_party:
 		if not p.isdir(d):
 			shutil.copy(d, runtime)
 		else:
-			dir_util.copy_tree(d, runtime)
+			basename = p.basename(d)
+			dir_util.copy_tree(d, runtime+"/"+basename)
 
 dir_util.copy_tree(p.join(build.third_party, 'microsoft', 'Microsoft.VC80.CRT'), p.join(app_dir, 'Microsoft.VC80.CRT'))
 dir_util.copy_tree(p.join(build.third_party, 'microsoft', 'Microsoft.VC80.CRT'), p.join(runtime, 'Microsoft.VC80.CRT'))
