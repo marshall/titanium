@@ -21,16 +21,7 @@
 		[progress startAnimation:self];
 
 #if USEURLREQUEST
-		NSMutableURLRequest * downloadRequest = [[NSMutableURLRequest alloc] initWithURL:url];
-		[downloadRequest setTimeoutInterval:4.0];
-		[downloadRequest setValue:@"Mozilla/5.0 (compatible; Titanium_Downloader/0.3; Mac)" 
-			   forHTTPHeaderField:@"User-Agent"];
-		
-		data = [[NSMutableData alloc] init];
-		downloadConnection = [[NSURLConnection alloc] initWithRequest:downloadRequest delegate:self];
-		[downloadRequest release];
-		[downloadConnection start];
-		[self setCompleted:NO];
+		[self performSelectorOnMainThread:@selector(startUrlRequest:) withObject:url waitUntilDone:YES];
 
 #else
 		handle = (CURLHandle *)[url URLHandleUsingCache:NO];
@@ -51,6 +42,21 @@
 	}
 	return self;
 }
+
+- (void)startUrlRequest: (NSURL *) url;
+{
+	NSMutableURLRequest * downloadRequest = [[NSMutableURLRequest alloc] initWithURL:url];
+	[downloadRequest setTimeoutInterval:4.0];
+	[downloadRequest setValue:@"Mozilla/5.0 (compatible; Titanium_Downloader/0.3; Mac)" 
+		   forHTTPHeaderField:@"User-Agent"];
+	
+	data = [[NSMutableData alloc] init];
+	downloadConnection = [[NSURLConnection alloc] initWithRequest:downloadRequest delegate:self];
+	[downloadRequest release];
+	[downloadConnection start];
+	[self setCompleted:NO];
+}
+
 -(void)dealloc
 {
 	[handle release];
