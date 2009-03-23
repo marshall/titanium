@@ -235,6 +235,14 @@ TiDeveloper.Projects.updateAppData = function()
 	
 };
 
+$MQL('l:proj_data',function(msg)
+{
+	if (msg.payload.val == 'stats')
+	{
+		TiDeveloper.Projects.refreshStats(TiDeveloper.Projects.selectedProject.guid);
+	}
+	
+})
 //
 // Refresh project download stats
 //
@@ -672,6 +680,13 @@ $MQL('l:create.project.request',function(msg)
 		}
 
 		var guid = Titanium.Platform.createUUID();
+		
+		// set default image if not specified
+		if (msg.payload.image=="")
+		{
+			msg.payload.image = 'default_app_logo.png';
+		}
+		
 		var result = Titanium.Project.create(msg.payload.project_name,guid,msg.payload.description,msg.payload.project_location,msg.payload.publisher,msg.payload.url,msg.payload.image,jsLibs);
 		if (result.success)
 		{
@@ -1026,7 +1041,12 @@ $MQL('l:create.package.request',function(msg)
 		var imageName = null
 		if (project.image)
 		{
+			// look for image in two places - either full path or in resources dir
 			var image = TFS.getFile(project.image);
+			if (!image.exists())
+			{
+				image = TFS.getFile(resources,project.image);
+			}
 			
 			// use default if not exists
 			if (!image.exists())
@@ -1099,7 +1119,7 @@ $MQL('l:create.package.request',function(msg)
 		var modules = '"modules":[';
 		
 		// required modules
-		if (networkRuntime ==true)
+		if (networkRuntime =='network')
 		{
 			for (var i=0;i<TiDeveloper.Projects.requiredModules.length;i++)
 			{
@@ -1223,7 +1243,7 @@ $MQL('l:create.package.request',function(msg)
 									}
 									else
 									{
-										alert(this.status + ' ' + this.responseText);
+										$('#packaging_error_msg').html(this.responseText);
 										$('#packaging_none').css('display','none');
 										$('#packaging_listing').css('display','none');
 										$('#packaging_error').css('display','block');		
@@ -1301,13 +1321,16 @@ TiDeveloper.Projects.pollPackagingRequest = function(ticket,guid)
 			$('#packaging_listing').css('display','block');
 			$('#packaging_in_progress').css('display','none');
 		}
-		else if (r.status != 'working')
+		else if (r.success == false)
 		{
+			$('#packaging_error_msg').html(r.message);
 			$('#packaging_none').css('display','none');
 			$('#packaging_listing').css('display','none');
 			$('#packaging_error').css('display','block');		
 			$('#packaging_in_progress').css('display','none');
-	   	}
+			return;
+			
+		}
 		else
 		{
 			// poll every 10 seconds

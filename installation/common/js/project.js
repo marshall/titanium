@@ -190,8 +190,10 @@ Titanium.Project =
 		if (jsLibs.entourage)
 		{
 			head += entourage;
-			var f = TFS.getFile(path,'entourage-jquery-3.0.js');
+			var f = TFS.getFile(path,'entourage','entourage-jquery-3.0.js');
 			f.copy(resources);
+			var f2 = TFS.getFile(path,'entourage','entourage-ui');
+			f2.copy(resources);
 		}
 		if (jsLibs.prototype_js)
 		{
