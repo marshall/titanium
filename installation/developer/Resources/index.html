@@ -324,7 +324,7 @@
 										</span>
 
 									</div>
-									<div class="app_author">Published by in fdd #{author} </div>
+									<div class="app_author">Published by #{author} </div>
 									<div class="app_pubdate">Last updated on: #{pubdate}</div>
 									<div class="app_url"><a target="ti:systembrowser" href="#{url}">#{url}</a></div>
 
@@ -795,6 +795,11 @@
 									
 									<!-- PACKAGE LISTING -->
 									<div style="display:none" id="packaging_listing">
+										<div style="position:absolute;bottom:10px;left:5px">
+											<img src="images/information.png" style="position:relative;top:3px"/>
+											<span style="margin-right:5px">Link to all of your downloads:</span>
+											<a id="all_download_link" target="ti:systembrowser" href="#"></a>
+										</div>
 										<div class="black_gradient" 
 											style="margin:10px;background-color:#222;font-size:11px">
 											<span style="position:relative;left:5px;top:1px">
