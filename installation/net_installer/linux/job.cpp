@@ -52,30 +52,36 @@ Job::Job(std::string url, Installer* installer) :
 	name("unknown"),
 	version("unknown")
 {
-	char* ch_url = strdup(this->url.c_str());
-	std::stringstream filename;
-	filename << this->index << ".zip";
-	free(ch_url);
-
-	this->out_filename = Job::download_dir + "/" + filename.str();
-	this->ParseName(filename.str());
+	this->ParseName(url);
+	std::string filename = this->type + "-" + this->version + ".zip";
+	this->out_filename = Job::download_dir + "/" + filename;
 }
 
-void Job::ParseName(std::string filename)
+void Job::ParseName(std::string url)
 {
-	size_t end = filename.find("-");
-	if (end != std::string::npos)
-		this->type = filename.substr(0, end);
+	size_t start, end;
+	start = url.find("name=");
+	if (start != std::string::npos)
+	{
+		start += 5;
+		end = url.find("&", start);
+		if (end != std::string::npos)
+			this->name = url.substr(start, end - start);
+	}
 
-	size_t start = end + 1;
-	end = filename.find("-", start);
-	if (end != std::string::npos)
-		this->name = filename.substr(start, end - start);
+	start = url.find("version=");
+	if (start != std::string::npos)
+	{
+		start += 8;
+		end = url.find("&", start);
+		if (end != std::string::npos)
+			this->version = url.substr(start, end - start);
+	}
 
-	start = end + 1;
-	end = filename.rfind(".");
-	if (end != std::string::npos)
-		this->version = filename.substr(start, end - start);
+	if (this->name == std::string("runtime"))
+		this->type = "runtime";
+	else
+		this->type = "modules";
 }
 
 void Job::Fetch()
@@ -99,6 +105,7 @@ void Job::Fetch()
 		curl_easy_setopt(Job::curl, CURLOPT_NOPROGRESS, 0L);
 		curl_easy_setopt(Job::curl, CURLOPT_PROGRESSFUNCTION, curl_progress_func);
 		curl_easy_setopt(Job::curl, CURLOPT_PROGRESSDATA, this);
+		curl_easy_setopt(Job::curl, CURLOPT_FOLLOWLOCATION, 1);
 		CURLcode result = curl_easy_perform(Job::curl);
 
 		if (result != CURLE_OK)
@@ -126,11 +133,7 @@ void Job::Unzip()
 {
 	this->progress = ((double) this->index) / ((double) Job::total);
 
-	std::string typedir = this->type;
-	if (this->type == "module")
-		typedir = "modules";
-
-	std::string outdir = Job::install_dir + "/" + typedir;
+	std::string outdir = Job::install_dir + "/" + this->type;
 	kroll::FileUtils::CreateDirectory(outdir);
 
 	outdir += "/" + this->name;
@@ -184,8 +187,6 @@ int curl_progress_func(
 	double ultotal,
 	double ulnow)
 {
-
-	usleep(10000);
 
 	if (job->GetInstaller()->IsCancelled())
 		return 1;
