@@ -148,6 +148,17 @@ Titanium.AppCreator = {
 			mresource.copy(localRuntimeMsvcrt);
 		}
 		
+		// also copy the inspector..
+		var runtimeInspector = TFS.getFile(runtime, "inspector");
+		var localInspector = TFS.getFile(localRuntime, "inspector");
+		localInspector.createDirectory(true);
+		var inspectorResources = runtimeInspector.getDirectoryListing();
+		for (var r = 0; r < inspectorResources.length; r++) {
+			var inspectorResource = inspectorResources[r];
+			inspectorResource.copy(localInspector);
+		}
+		
+		
 		// set our marker file
 		var marker = TFS.getFile(appDir,'.installed');
 		if (!install)
