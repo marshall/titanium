@@ -1257,9 +1257,33 @@ $MQL('l:create.package.request',function(msg)
 								{
 									if (this.status == 200)
 									{
-									    var json = swiss.evalJSON(this.responseText);
+										var json = null;
+										try
+										{
+										    json = swiss.evalJSON(this.responseText);
+										}
+										catch (e)
+										{
+											$('#packaging_error_msg').html('Invalid JSON response from service');
+											$('#packaging_none').css('display','none');
+											$('#packaging_listing').css('display','none');
+											$('#packaging_error').css('display','block');		
+											$('#packaging_in_progress').css('display','none');
+											
+										}
+										if (json.success == false)
+										{
+											$('#packaging_error_msg').html(json.message);
+											$('#packaging_none').css('display','none');
+											$('#packaging_listing').css('display','none');
+											$('#packaging_error').css('display','block');		
+											$('#packaging_in_progress').css('display','none');
+										}
+										else
+										{
+											TiDeveloper.Projects.pollPackagingRequest(json.ticket,project.guid);
+										}
 										destDir.deleteDirectory(true);
-										TiDeveloper.Projects.pollPackagingRequest(json.ticket,project.guid);
 									}
 									else
 									{
@@ -1268,6 +1292,7 @@ $MQL('l:create.package.request',function(msg)
 										$('#packaging_listing').css('display','none');
 										$('#packaging_error').css('display','block');		
 										$('#packaging_in_progress').css('display','none');
+
 										TiDeveloper.Projects.packagingInProgress[project.guid] = false;
 										TiDeveloper.Projects.packagingError[project.guid] = true;
 										destDir.deleteDirectory(true);

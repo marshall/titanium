@@ -11,9 +11,12 @@ using System.Diagnostics;
 
 namespace Titanium
 {
-
     public partial class form : Form
     {
+        //static string DISTRIBUTION_UUID = "7F7FA377-E695-4280-9F1F-96126F3D2C2A";
+        static string RUNTIME_UUID = "A2AC5CB5-8C52-456C-9525-601A5B0725DA";
+        static string MODULE_UUID = "1ACE5D3A-2B52-43FB-A136-007BD166CFD0";
+
         public form(string tempdir, string installdir, string title, string[] urls, string unzipper)
         {
             InitializeComponent();
@@ -124,18 +127,18 @@ namespace Titanium
                     }
 
                     string name = this.getURIParam(uri, "name");
-                    // TODO don't hard code module
-                    string type = "module";
                     string subtype = "win32";
                     string version = this.getURIParam(uri, "version");
     
+                    string uuid = this.getURIParam(uri, "uuid");
+
                     string destdir;
 
-                    if (type == "runtime")
+                    if (RUNTIME_UUID == uuid)
                     {
                         destdir = installdir + "\\runtime\\" + subtype + "\\" + version;
                     }
-                    else if (type == "module")
+                    else if (MODULE_UUID == uuid)
                     {
                         destdir = installdir + "\\modules\\" + subtype + "\\" + name + "\\" + version;
                     }
@@ -147,9 +150,7 @@ namespace Titanium
                     string from = tempdir + "\\" + filename;
                     string to = destdir;
 
-                    System.Console.WriteLine("Extracting " + from + " >> " + destdir);
-
-                    MessageBox.Show("Unzipper = " + this.unzipper);
+                    Directory.CreateDirectory(to);
 
                     // in win32, we just invoke back the same process and let him unzip
                     Process p = new Process();
@@ -173,7 +174,6 @@ namespace Titanium
             }
             catch (Exception ex)
             {
-                System.Console.WriteLine(ex.StackTrace);
                 MessageBox.Show(ex.Message+"\n\n"+ex.StackTrace);
             }
             Application.Exit();
