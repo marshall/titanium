@@ -16,7 +16,7 @@ class Job
 	int GetIndex();
 	void SetProgress(double progress);
 	double GetProgress();
-	void ParseName(std::string filename);
+	void ParseName(std::string url);
 	Installer* GetInstaller();
 
 	static int total;
