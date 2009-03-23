@@ -954,12 +954,16 @@ TiDeveloper.Projects.launchProject = function(project, install)
 					{
 						Titanium.Process.setEnv('KR_DEBUG','true');
 						Titanium.Desktop.openApplication(app.executable.nativePath());
+						TiDeveloper.track('project-launch',{'name':project.name});
+						
 					})
 				}
 				else
 				{
 					Titanium.Process.setEnv('KR_DEBUG','true');
 					Titanium.Desktop.openApplication(app.executable.nativePath());
+					TiDeveloper.track('project-launch',{'name':project.name});
+					
 				}
 			});
 		});
@@ -1378,7 +1382,7 @@ $MQL('l:delete.project.request',function(msg)
 		TiDeveloper.Projects.loadProjects();
     });
 
-	TiDeveloper.track('project-delete',{name:name,guid:id});
+	TiDeveloper.track('project-delete',{name:name,guid:project.guid});
 });
 
 //

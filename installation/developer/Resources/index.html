@@ -290,7 +290,8 @@
 											<img src="images/download.png" style="position:relative;top:3px"/>
 										</div>
 										<div style="float:left;width:165px;overflow:hidden">
-											<a href="#{link}" target="ti:systembrowser" style="color:white">
+											<a href="#{link}" target="ti:systembrowser" style="color:white"
+												on="click then l:track_app_download[val=#{link}]">
 												<span style="text-decoration:underline;">
 													#{title}
 												</span> 
@@ -325,13 +326,15 @@
 
 									</div>
 									<div class="app_author">Published by 
-										<a href="#{url}" target="ti:systembrowser">
+										<a href="#{url}" on="click then l:track_app_author[val=#{url}]" 
+											target="ti:systembrowser">
 											#{author}
 										</a> 
 									</div>
 									<div class="app_pubdate">Last updated on: #{pubdate}</div>
 									<div class="app_url">
-										<a target="ti:systembrowser" href="#{app_page}">
+										<a target="ti:systembrowser" on="click then l:track_app_all[val=#{app_page}]"
+											href="#{app_page}">
 										App Download Page (all platforms)
 										</a>
 									</div>
