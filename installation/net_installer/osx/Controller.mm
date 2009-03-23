@@ -169,12 +169,19 @@
 	[window setTitle:appTitle];
 	
 	// figure out where the caller wants us to write the files once download
-	directory = [[args objectAtIndex:4] stringByExpandingTildeInPath];
-	[directory retain];
+	if (count >5) {
+		directory = [[args objectAtIndex:4] stringByExpandingTildeInPath];
+		[directory retain];
 
-	// figure out where the caller wants us to install once download
-	installDirectory = [[args objectAtIndex:5] stringByExpandingTildeInPath];
-	[installDirectory retain];
+		// figure out where the caller wants us to install once download
+		installDirectory = [[args objectAtIndex:5] stringByExpandingTildeInPath];
+		[installDirectory retain];
+	} else {
+		NSRunCriticalAlertPanel(title, @"Sorry, but the Application Installer was not given enough information to determine which libraries need downloading.", @"Cancel", nil, nil);
+		[NSApp terminate:nil];
+		return;
+	}
+
 	
 	NSFileManager *fm = [NSFileManager defaultManager];
 	BOOL dir = NO;

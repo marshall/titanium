@@ -10,5 +10,12 @@
 
 int main(int argc, char *argv[])
 {
+	int i;
+	for (i = 0; i < argc; i++){
+#ifdef DEBUG
+		printf("Arg %d is: %s\n",i,argv[i]);
+#endif
+	}
+
     return NSApplicationMain(argc,  (const char **) argv);
 }

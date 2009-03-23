@@ -130,12 +130,13 @@ for i in [developer,appinstaller,app_dir]:
 
 ## is this necessary ??			
 #shutil.copy(p.join(build.kroll_third_party,'manifest'),p.join(app_dir,'runtime','manifest'))
-		
+
 # now for the fun part... build the self-extracting archive
 shutil.copy(kboot, p.join(app_dir,'installer.exe'))
 if not ARGUMENTS.get('skipzip', 0):
 	zff = p.join(build.dir,'titanium_runtime.zip')
-	exe = p.join(build.dir,'titanium_runtime.exe')
+	build.utils.Mkdir(p.join(build.dir,'dist'))
+	exe = p.join(build.dir,'dist','titanium-sdk'+version+'.exe')
 	zf = zipfile.ZipFile(exe,'a', zipfile.ZIP_DEFLATED)
 	zf.write(p.join(build.dir,'kboot.exe'),'template/kboot.exe')
 	files = os.walk(app_dir)

@@ -166,7 +166,7 @@ TiDeveloper.Feeds.loadFriendFeed = function()
 				var time = TiDeveloper.Feeds.convertDate(time);
 				date = date + ' ' + time
 				var serviceURL = row.service.profileUrl;
-				var title = '<a target="ti:systembrowser" href="'+row.link+'">'+row.title+'</a>';
+				var title = '<a target="ti:systembrowser" class="ff_clickable" href="'+row.link+'">'+row.title+'</a>';
 				var image = null;
 				var author = null;
 				var sourceImg = null;
@@ -210,7 +210,7 @@ TiDeveloper.Feeds.loadFriendFeed = function()
 				// feed row markup
 				html.push('<div style="height:80px;margin-bottom:10px">');
 				html.push('		<table width="100%"><tr><td valign="middle" width="100px" align="center">')
-				html.push('		<div><a target="ti:systembrowser" href="'+url+'"><img style="border:2px solid #4b4b4b;background-color:#4b4b4b;position:relative;left:-7px" height="48px" width="48px" src="'+image+'"/></a></div>');
+				html.push('		<div><a class="ff_clickable" target="ti:systembrowser" href="'+url+'"><img style="border:2px solid #4b4b4b;background-color:#4b4b4b;position:relative;left:-7px" height="48px" width="48px" src="'+image+'"/></a></div>');
 				html.push('		</td><td valign="middle">')
 				html.push('		<div style="position:relative;height:80px;-webkit-border-radius:6px;background-color:#414141">');
 				html.push('			<img style="position:absolute;left:-24px;top:25px" src="images/triangle.png"/>');
@@ -221,8 +221,13 @@ TiDeveloper.Feeds.loadFriendFeed = function()
 				html.push('</div>');
 
 				$('#friend_feed_content').append(html.join(''));
-				
 			}
+
+			$('.ff_clickable').click(function()
+			{
+				TiDeveloper.track('friendfeed-link-click',{'url':$(this).attr('href')});
+			})
+
 		}
 	});
 }
@@ -287,7 +292,7 @@ TiDeveloper.Feeds.loadTwitter = function()
 							case 'description':
 							{
 								desc = children[j].textContent
-								desc = desc.replace(/href/g,'target="ti:systembrowser" href');
+								desc = desc.replace(/href/g,'class="tw_clickable" target="ti:systembrowser" href');
 								desc = desc.replace(/href="\/search/g,'href="http://search.twitter.com/search');
 								break;
 							}
@@ -303,11 +308,11 @@ TiDeveloper.Feeds.loadTwitter = function()
 				}
 				html.push('<div style="height:80px;margin-bottom:10px">');
 				html.push(	'	<table width="100%"><tr><td valign="middle" align="center" width="100px">');
-				html.push('		<div><a href="'+link+'" target="ti:systembrowser"><img style="border:2px solid #4b4b4b;background-color:#4b4b4b;position:relative;left:-7px" height="48px" width="48px" src="'+image+'"/></a></div>');
+				html.push('		<div><a href="'+link+'" class="tw_clickable" target="ti:systembrowser"><img style="border:2px solid #4b4b4b;background-color:#4b4b4b;position:relative;left:-7px" height="48px" width="48px" src="'+image+'"/></a></div>');
 				html.push('		</td><td valign="middle">')
 				html.push('		<div style="position:relative;height:80px;-webkit-border-radius:6px;background-color:#414141">');
 				html.push('			<img style="position:absolute;left:-24px;top:25px" src="images/triangle.png"/>');
-				html.push('			<div style="position:absolute;left:10px;top:8px;"><a target="ti:systembrowser"  href="'+link+'">' + author + '</a> <span style="color:#a4a4a4">says:</span></div>');
+				html.push('			<div style="position:absolute;left:10px;top:8px;"><a target="ti:systembrowser" class="tw_clickable" href="'+link+'">' + author + '</a> <span style="color:#a4a4a4">says:</span></div>');
 				html.push('			<div style="color:#a4a4a4;font-size:11px;position:absolute;right:10px;top:10px">' + date + '</div>');
 				html.push('			<div style="position:absolute;left:10px;top:30px;color:#fff;">'+desc +'</div>')
 				html.push('		</div></td></tr></table>');
@@ -318,6 +323,11 @@ TiDeveloper.Feeds.loadTwitter = function()
 				$('#twitter_last_update').html(d.toLocaleString())
 				
 			}
+
+			$('.tw_clickable').click(function()
+			{
+				TiDeveloper.track('twitter-link-click',{'url':$(this).attr('href')});
+			})
 
 			// load after return - keep
 			// browser threads free

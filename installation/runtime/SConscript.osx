@@ -114,7 +114,7 @@ shutil.copy(p.join(netinstaller,'net_installer'),bundle.binary)
 
 srcfolder=p.join(build.dir,name+'.app')
 tdmgname='_'+name
-dmgname=name
+dmgname='titanium-sdk-'+version
 
 app_dir = p.join(srcfolder,'Contents')
 
@@ -129,20 +129,21 @@ def invoke(cmd):
 	print cmd
 	os.system(cmd)
 
-try:
-	invoke("hdiutil detach /Volumes/Titanium")
-except OSError:
-    print ''
-
 shutil.copy(p.join(build.titanium_source_dir,'installation','runtime','manifest'), p.join(app_dir,'manifest'))
 shutil.copy(p.join(build.titanium_source_dir,'installation','runtime','install'), p.join(app_dir,'install'))
-
-for d in [tdmgname,dmgname]:
-	n = d+'.dmg'
-	if p.isfile(n):
-		os.remove(n)
+build.utils.Mkdir(p.join(build.dir,'dist'))
 
 if not ARGUMENTS.get('skipdmg', 0):
+	try:
+		invoke("hdiutil detach /Volumes/Titanium")
+	except OSError:
+	    print ''
+
+	for d in [tdmgname,dmgname]:
+		n = d+'.dmg'
+		if p.isfile(n):
+			os.remove(n)
+
 	invoke("hdiutil create -srcfolder \"%s\" -scrub -volname \"Titanium\" -fs HFS+ -fsargs \"-c c=64,a=16,e=16\" -format UDRW \"%s\"" % (srcfolder,tdmgname))
 	invoke("hdiutil attach -readwrite -noverify -noautoopen \"%s.dmg\"" % tdmgname)
 	invoke("bless --folder /Volumes/Titanium --openfolder /Volumes/Titanium")
@@ -157,5 +158,5 @@ if not ARGUMENTS.get('skipdmg', 0):
 	invoke("hdiutil convert %s.dmg -format UDBZ -imagekey zlib-level=9 -o %s.dmg" % (tdmgname,dmgname))
 	invoke("hdiutil internet-enable -yes %s.dmg" % dmgname)
 	os.remove(tdmgname+'.dmg')
-	shutil.move(dmgname+'.dmg',build.dir)
+	shutil.move(dmgname+'.dmg',p.join(build.dir,'dist'))
 
