@@ -1025,7 +1025,8 @@ void GtkUserWindow::_OpenFilesWork(const ValueList& args, SharedValue lresult)
 	}
 	catch (ValueException &e)
 	{
-		std::cerr << "openFiles callback failed because of an exception" << std::endl;
+		SharedString ss = e.GetValue()->DisplayString();
+		std::cerr << "openFiles callback failed: " << *ss << std::endl;
 	}
 }
 
