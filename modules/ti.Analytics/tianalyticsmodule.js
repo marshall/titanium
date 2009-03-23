@@ -7,6 +7,7 @@
 	var guid = Titanium.App.getGUID();
 	var sid = Titanium.Platform.createUUID();
 	var debug = false;
+	var initialized = false;
 	
 	function send(qsv,async)
 	{
@@ -22,6 +23,7 @@
 			{
 				var v = typeof(qsv[p])=='undefined' ? '' : String(qsv[p]);
 				qs+=p+'='+Titanium.Network.encodeURIComponent(v)+'&';
+
 			}
 			// this is asynchronous
 			var xhr = Titanium.Network.createHTTPClient();
@@ -59,12 +61,13 @@
 	{
 		try
 		{
-			var user_window = event.window;
-			if (user_window.track_registered===true)
+			if (initialized===true)
 			{
 				return;
 			}
-			user_window.track_registered = true;
+
+			initialized = true;
+
 			if (!Titanium.Platform.id)
 			{
 				Titanium.API.debug("No machine id found");
@@ -73,6 +76,7 @@
 			send({
 				'platform': Titanium.platform,
 				'version':Titanium.version,
+				'app_version':Titanium.App.getVersion(),
 				'mac_addr': Titanium.Platform.macaddress,
 				'os':Titanium.Platform.name,
 				'ostype':Titanium.Platform.ostype,

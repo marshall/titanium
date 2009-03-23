@@ -189,7 +189,7 @@ namespace ti
 
 	void PlatformBinding::CreateUUID(const ValueList& args, SharedValue result)
 	{
-		Poco::UUID uuid = Poco::UUIDGenerator::defaultGenerator().createOne();
+		Poco::UUID uuid = Poco::UUIDGenerator::defaultGenerator().createRandom();
 		result->SetString(uuid.toString().c_str());
 	}
 }
