@@ -29,7 +29,7 @@
 		[handle setFailsOnError:YES];	
 		[handle setFollowsRedirects:YES];
 		[handle setConnectionTimeout:4];
-		[handle setUserAgent:@"Mozilla/5.0 (compatible; Titanium_Downloader/0.2; Mac)"];
+		[handle setUserAgent:@"Mozilla/5.0 (compatible; Titanium_Downloader/0.3; Mac)"];
 		[handle addClient:self];
 		[handle setProgressIndicator:progress];
 		// directly call up the results
