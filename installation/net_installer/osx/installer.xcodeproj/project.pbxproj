@@ -11,13 +11,12 @@
 		24291A370F318D7A00DCB70A /* titanium.icns in Resources */ = {isa = PBXBuildFile; fileRef = 24291A360F318D7A00DCB70A /* titanium.icns */; };
 		24BEA3820F312E6B00DFDA8B /* Controller.mm in Sources */ = {isa = PBXBuildFile; fileRef = 24BEA3810F312E6B00DFDA8B /* Controller.mm */; };
 		24BEA3A90F3140F200DFDA8B /* Downloader.m in Sources */ = {isa = PBXBuildFile; fileRef = 24BEA3A80F3140F200DFDA8B /* Downloader.m */; };
-		24BEA3C40F3145A000DFDA8B /* CURLHandle+extras.m in Sources */ = {isa = PBXBuildFile; fileRef = 24BEA3BE0F3145A000DFDA8B /* CURLHandle+extras.m */; };
-		24BEA3C50F3145A000DFDA8B /* CURLHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 24BEA3C00F3145A000DFDA8B /* CURLHandle.m */; };
 		24BEA3D80F3145E300DFDA8B /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 24BEA3D70F3145E300DFDA8B /* SystemConfiguration.framework */; };
 		24BEA5690F316CFD00DFDA8B /* libcurl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 24BEA5680F316CFD00DFDA8B /* libcurl.dylib */; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
+		B4B060730F7743B200B2AB8B /* file_utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B4B0605E0F77431A00B2AB8B /* file_utils.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,10 +29,6 @@
 		24BEA3810F312E6B00DFDA8B /* Controller.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Controller.mm; sourceTree = "<group>"; };
 		24BEA3A70F3140F200DFDA8B /* Downloader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Downloader.h; sourceTree = "<group>"; };
 		24BEA3A80F3140F200DFDA8B /* Downloader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Downloader.m; sourceTree = "<group>"; };
-		24BEA3BD0F3145A000DFDA8B /* CURLHandle+extras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CURLHandle+extras.h"; sourceTree = "<group>"; };
-		24BEA3BE0F3145A000DFDA8B /* CURLHandle+extras.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "CURLHandle+extras.m"; sourceTree = "<group>"; };
-		24BEA3BF0F3145A000DFDA8B /* CURLHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CURLHandle.h; sourceTree = "<group>"; };
-		24BEA3C00F3145A000DFDA8B /* CURLHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CURLHandle.m; sourceTree = "<group>"; };
 		24BEA3D70F3145E300DFDA8B /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = /System/Library/Frameworks/SystemConfiguration.framework; sourceTree = "<absolute>"; };
 		24BEA5680F316CFD00DFDA8B /* libcurl.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcurl.dylib; path = usr/lib/libcurl.dylib; sourceTree = SDKROOT; };
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -42,6 +37,7 @@
 		32CA4F630368D1EE00C91783 /* installer_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = installer_Prefix.pch; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* Installer App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Installer App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B4B0605E0F77431A00B2AB8B /* file_utils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = file_utils.cpp; path = ../../../kroll/api/file_utils.cpp; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -97,21 +93,9 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		24BEA3BC0F31458600DFDA8B /* libcurl */ = {
-			isa = PBXGroup;
-			children = (
-				24BEA3BD0F3145A000DFDA8B /* CURLHandle+extras.h */,
-				24BEA3BE0F3145A000DFDA8B /* CURLHandle+extras.m */,
-				24BEA3BF0F3145A000DFDA8B /* CURLHandle.h */,
-				24BEA3C00F3145A000DFDA8B /* CURLHandle.m */,
-			);
-			name = libcurl;
-			sourceTree = "<group>";
-		};
 		29B97314FDCFA39411CA2CEA /* Installer App */ = {
 			isa = PBXGroup;
 			children = (
-				24BEA3BC0F31458600DFDA8B /* libcurl */,
 				080E96DDFE201D6D7F000001 /* Classes */,
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
@@ -126,6 +110,7 @@
 			children = (
 				32CA4F630368D1EE00C91783 /* installer_Prefix.pch */,
 				29B97316FDCFA39411CA2CEA /* main.m */,
+				B4B0605E0F77431A00B2AB8B /* file_utils.cpp */,
 			);
 			name = "Other Sources";
 			sourceTree = "<group>";
@@ -209,8 +194,7 @@
 				8D11072D0486CEB800E47090 /* main.m in Sources */,
 				24BEA3820F312E6B00DFDA8B /* Controller.mm in Sources */,
 				24BEA3A90F3140F200DFDA8B /* Downloader.m in Sources */,
-				24BEA3C40F3145A000DFDA8B /* CURLHandle+extras.m in Sources */,
-				24BEA3C50F3145A000DFDA8B /* CURLHandle.m in Sources */,
+				B4B060730F7743B200B2AB8B /* file_utils.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -249,6 +233,11 @@
 				GCC_PREFIX_HEADER = installer_Prefix.pch;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../../build/osx\"",
+					"\"$(SRCROOT)\"",
+				);
 				PRODUCT_NAME = "Installer App";
 			};
 			name = Debug;
@@ -263,6 +252,11 @@
 				GCC_PREFIX_HEADER = installer_Prefix.pch;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../../build/osx\"",
+					"\"$(SRCROOT)\"",
+				);
 				PRODUCT_NAME = "Installer App";
 			};
 			name = Release;
@@ -272,15 +266,33 @@
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_INPUT_FILETYPE = sourcecode.cpp.objcpp;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "";
+				LIBRARY_SEARCH_PATHS = "";
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-DOS_OSX=1",
+					"-D_OS_NAME=osx",
+					"-D_INSTALL_PREFIX=/usr/local",
+					"-D_PRODUCT_VERSION=0.3",
+					"-D_PRODUCT_NAME=Titanium",
+					"-D_GLOBAL_NS_VARNAME=Titanium",
+					"-D_CONFIG_FILENAME=tiapp.xml",
+					"-D_BOOT_RUNTIME_FLAG=--runtime",
+					"-D_BOOT_HOME_FLAG=--start",
+					"-D_BOOT_UPDATESITE_ENVNAME=TI_UPDATESITE",
+					"-DOS_32=1",
+					"-DDEBUG=1",
+				);
+				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
 				SDKROOT = macosx10.5;
-				USER_HEADER_SEARCH_PATHS = ../../../kroll/api/;
+				USER_HEADER_SEARCH_PATHS = "../../../kroll/api ../../../kroll/";
 			};
 			name = Debug;
 		};
@@ -289,11 +301,30 @@
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_INPUT_FILETYPE = sourcecode.cpp.objcpp;
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-DOS_OSX=1",
+					"-D_OS_NAME=osx",
+					"-D_INSTALL_PREFIX=/usr/local",
+					"-D_PRODUCT_VERSION=0.3",
+					"-D_PRODUCT_NAME=Titanium",
+					"-D_GLOBAL_NS_VARNAME=Titanium",
+					"-D_CONFIG_FILENAME=tiapp.xml",
+					"-D_BOOT_RUNTIME_FLAG=--runtime",
+					"-D_BOOT_HOME_FLAG=--start",
+					"-D_BOOT_UPDATESITE_ENVNAME=TI_UPDATESITE",
+					"-DOS_32=1",
+					"-DDEBUG=1",
+				);
+				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
 				SDKROOT = macosx10.5;
+				USER_HEADER_SEARCH_PATHS = "../../../kroll/api ../../../kroll/";
 			};
 			name = Release;
 		};
