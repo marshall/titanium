@@ -55,7 +55,7 @@ TiDeveloper.Apps.setupRating = function(data)
 			}
 			else
 			{
-				newRating = newRating + '.0';
+				newRating = newRating;
 			}
 
 			ratingStr.css('display','none');
@@ -95,14 +95,38 @@ TiDeveloper.Apps.setupRating = function(data)
 		}
 	});
 	
+	// $('.app_rating').mouseover(function()
+	// {
+	// 	var id = $(this).attr('app_id');
+	// 	var star = parseInt($(this).attr('star'));
+	// 	var ratingStr = $('#rating_string_' + id);
+	// 	var hasVoted = ratingStr.attr('hasVoted');
+	// 	if (hasVoted == 'false')
+	// 	{
+	// 		
+	// 	}
+	// 	for (var i=star;i>=1;i--)
+	// 	{
+	// 		$('#rating_' + id + '_' + i).removeClass('rating_off');
+	// 	}
+	// 	
+	// });
+
 	// enable mouseover
 	$('.rating').mouseover(function()
 	{
 		var id = $(this).attr('app_id');
 		var star = parseInt($(this).attr('star'));
+		
+		// start 3
+		// rating 5
 		for (var i=star;i>=1;i--)
 		{
 			$('#rating_' + id + '_' + i).removeClass('rating_off');
+		}
+		for (var i=5;i>star;i--)
+		{
+			$('#rating_' + id + '_' + i).addClass('rating_off');
 		}
 	});
 
@@ -112,9 +136,13 @@ TiDeveloper.Apps.setupRating = function(data)
 		var id = $(this).attr('app_id');
 		var rating = parseInt($('#rating_string_'+id).attr('rating'));
 		rating++;
-		for (var i=rating;i<6;i++)
+		for (var i=rating;i<=5;i++)
 		{
 			$('#rating_' + id + '_' + i).addClass('rating_off');
+		}
+		for (var i=1;i<rating;i++)
+		{
+			$('#rating_' + id + '_' + i).removeClass('rating_off');
 		}
 	});
 }
