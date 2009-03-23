@@ -97,7 +97,7 @@
 		{
 			[NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.2]]; // this could be more elegant, but it works
 		}
-		NSString *filename = [[url path] lastPathComponent];
+		NSString *filename = [downloader suggestedFileName];
 		NSData *data = [downloader data];
 		NSString *path = [NSString stringWithFormat:@"%@/%@",dir,filename];
 		// write out our data
