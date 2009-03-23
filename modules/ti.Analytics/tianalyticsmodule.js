@@ -5,6 +5,7 @@
 {
 	var url = "http://publisher.titaniumapp.com/api/app-track";
 	var guid = Titanium.App.getGUID();
+	var sid = Titanium.Platform.createUUID();
 	var debug = false;
 	
 	function send(qsv,async)
@@ -14,6 +15,7 @@
 			async = (typeof async=='undefined') ? true : async;
 			qsv.mid = Titanium.Platform.id;
 			qsv.guid = guid;
+			qsv.sid = sid;
 			
 			var qs = '';
 			for (var p in qsv)
