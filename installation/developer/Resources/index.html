@@ -324,10 +324,17 @@
 										</span>
 
 									</div>
-									<div class="app_author">Published by #{author} </div>
+									<div class="app_author">Published by 
+										<a href="#{url}" target="ti:systembrowser">
+											#{author}
+										</a> 
+									</div>
 									<div class="app_pubdate">Last updated on: #{pubdate}</div>
-									<div class="app_url"><a target="ti:systembrowser" href="#{url}">#{url}</a></div>
-
+									<div class="app_url">
+										<a target="ti:systembrowser" href="#{app_page}">
+										App Download Page (all platforms)
+										</a>
+									</div>
 									<div class="app_description">#{desc}</div>
 								</div>
 							</div>

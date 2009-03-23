@@ -213,7 +213,8 @@ TiDeveloper.Apps.formatAppRows = function(json)
 		var guid = row.guid;
 		var image = row.image;
 		var app_id = row.id
-		a.push({image:image,app_id:app_id,guid:guid,title:title,pubdate:pubdate,desc:desc,url:url,author:author,downloads:downloads,value:value,votes:votes,hasVoted:hasVoted,link:link})
+		var app_page = row.app_page
+		a.push({'app_page':app_page,image:image,app_id:app_id,guid:guid,title:title,pubdate:pubdate,desc:desc,url:url,author:author,downloads:downloads,value:value,votes:votes,hasVoted:hasVoted,link:link})
 		
 	}
 	if (count == 0)
