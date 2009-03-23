@@ -9,17 +9,20 @@
 #include <cstring>
 #include <libgen.h>
 #include <unistd.h>
+#include <iostream>
+#include <sstream>
 
 int Job::total = 0;
 std::string Job::download_dir = "";
 std::string Job::install_dir = "";
 CURL* Job::curl = NULL;
 
-int curl_progress_func(Job *fetcher,
-                     double t, /* dltotal */
-                     double d, /* dlnow */
-                     double ultotal,
-                     double ulnow);
+int curl_progress_func(
+	Job *fetcher,
+	double t, /* dltotal */
+	double d, /* dlnow */
+	double ultotal,
+	double ulnow);
 size_t curl_write_func(void *ptr, size_t size, size_t nmemb, FILE *stream);
 size_t curl_read_func(void *ptr, size_t size, size_t nmemb, FILE *stream);
 
@@ -40,21 +43,22 @@ void Job::ShutdownDownloader()
 	}
 }
 
-Job::Job(std::string url, Installer* installer)
-	 : url(url),
-	   installer(installer),
-	   index(++Job::total),
-	   progress(0.0),
-	   type("unknown"),
-	   name("unknown"),
-	   version("unknown")
+Job::Job(std::string url, Installer* installer) :
+	url(url),
+	installer(installer),
+	index(++Job::total),
+	progress(0.0),
+	type("unknown"),
+	name("unknown"),
+	version("unknown")
 {
 	char* ch_url = strdup(this->url.c_str());
-	std::string filename = basename(ch_url);
+	std::stringstream filename;
+	filename << this->index << ".zip";
 	free(ch_url);
 
-	this->out_filename = Job::download_dir + "/" + filename;
-	this->ParseName(filename);
+	this->out_filename = Job::download_dir + "/" + filename.str();
+	this->ParseName(filename.str());
 }
 
 void Job::ParseName(std::string filename)
