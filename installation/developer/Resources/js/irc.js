@@ -10,23 +10,38 @@ TiDeveloper.IRC.messageCount = 0;
 //
 $MQL('l:app.compiled',function()
 {
+	function ircOnlineTest(online) {
+		if (!online)
+		{
+			$MQ('l:online.count',{count:'offline'});
+			$MQ('l:tideveloper.network',{online:false});
+		}
+		else
+		{
+			$MQ('l:tideveloper.network',{online:true});
+		}
+	}
+	Titanium.Network.addConnectivityListener(ircOnlineTest);
+
 	// load or initialize IRC data
 	db.transaction(function(tx) 
 	{
-	   tx.executeSql("SELECT nick FROM IRC", [], function(tx,result) 
-	   {
-		   for (var i = 0; i < result.rows.length; ++i) 
-		   {
-                var row = result.rows.item(i);
+		tx.executeSql("SELECT nick FROM IRC", [], function(tx,result) 
+		{
+			for (var i = 0; i < result.rows.length; ++i) 
+			{
+				var row = result.rows.item(i);
 				TiDeveloper.IRC.nick = row['nick'];
 				break;
 			}
-	   }, function(tx, error) 
-	   {
-	       tx.executeSql("CREATE TABLE IRC (id REAL UNIQUE, nick TEXT)");
-		   tx.executeSql("INSERT INTO IRC (id, nick) values (?,?)",[1,Titanium.Platform.username])
-		   TiDeveloper.IRC.nick = Titanium.Platform.username;
-	   });
+			ircOnlineTest(Titanium.Network.online);
+		}, function(tx, error) 
+		{
+			tx.executeSql("CREATE TABLE IRC (id REAL UNIQUE, nick TEXT)");
+			tx.executeSql("INSERT INTO IRC (id, nick) values (?,?)",[1,Titanium.Platform.username])
+			TiDeveloper.IRC.nick = Titanium.Platform.username;
+			ircOnlineTest(Titanium.Network.online);
+		});
 	});
 
 	var currentSelectionIdx = -1;
@@ -83,13 +98,6 @@ $MQL('l:app.compiled',function()
 	});
 	
 
-	setTimeout(function () {
-		if (Titanium.platform == "win32") {
-			TiDeveloper.online = true;
-			TiDeveloper.IRC.initialize();
-		}
-	}, 2000);
-
 	$MQL('l:menu',function(data)
 	{
 		if (data.payload.val == 'interact')
@@ -102,8 +110,6 @@ $MQL('l:app.compiled',function()
 	});
 
 });
-
-
 //
 // Format IRC nickname
 //
@@ -136,7 +142,7 @@ $MQL('l:tideveloper.network',function(msg)
 {
 	if (msg.payload.online == true)
 	{
-		TiDeveloper.IRC.initialize()	
+		TiDeveloper.IRC.initialize()
 	}
 	else
 	{
@@ -166,12 +172,15 @@ var userSetNick = null;
 
 TiDeveloper.IRC.initialize = function()
 {
+    Titanium.API.debug("1");
 	try
 	{
 		// clear irc window
 		$('#irc').empty();
 		
+    Titanium.API.debug("2");
 		// set name vars
+    Titanium.API.debug(TiDeveloper.IRC.nick);
 		var username = TiDeveloper.IRC.formatNick(TiDeveloper.IRC.nick);
 		userSetNick = username;
 		
@@ -361,4 +370,5 @@ $MQL('l:send.irc.msg',function()
 		
 	}
 });
+
 

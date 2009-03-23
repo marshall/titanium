@@ -77,7 +77,6 @@ TiDeveloper.getCurrentTime = function()
 Titanium.Network.addConnectivityListener(function(online)
 {
 	TiDeveloper.online = online;
-	$MQ('l:tideveloper.network',{online:online});
 });
 
 
