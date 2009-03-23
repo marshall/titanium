@@ -297,25 +297,36 @@ TiDeveloper.Projects.refreshStats = function(guid)
 			var aguid = guid;
 			if (data.length > 0)
 			{
-				$('#download_stats_none').css('display','none')
-				$('#download_stats').css('display','block');
-				$('#download_stats_loading').css('display','none');
 
 			    db.transaction(function (tx) 
 			    {
 			    	tx.executeSql("DELETE from ProjectDownloads WHERE guid = ?",[aguid], function(tx, result)
 					{
 						var date = new Date().toLocaleString();
+						var pageUrl = data.app_page
 						var a = [];
+						var totalCount = 0
 						for (var i=0; i< data.length;i++)
 						{
-							tx.executeSql("INSERT into ProjectDownloads (guid, platform, count,date) values (?,?,?,?)",[aguid,data[i]['os'],data[i]['count'], date]);
+							tx.executeSql("INSERT into ProjectDownloads (guid, platform, count,date,page_url) values (?,?,?,?,?)",[aguid,data[i]['os'],data[i]['count'], date,pageUrl]);
 							var platform = data[i]['os'];
 							var count = data[i]['count'];
+							totalCount += count;
 							a.push({name:platform,value:count,guid:aguid});
 						}
-						$MQ('l:package_download_stats',{date:date, rows:a})
-
+						if (totalCount == 0)
+						{
+							$('#download_stats_none').css('display','block')
+							$('#download_stats').css('display','none');
+							$('#download_stats_loading').css('display','none');
+						}
+						else
+						{
+							$('#download_stats_none').css('display','none')
+							$('#download_stats').css('display','block');
+							$('#download_stats_loading').css('display','none');
+							$MQ('l:package_download_stats',{date:date, rows:a})
+						}
 					});
 				});
 			}
@@ -400,12 +411,12 @@ $MQL('l:row.selected',function(msg)
 		// get download info for DOWNLOAD tab
 	    db.transaction(function (tx) 
 	    {
-	        tx.executeSql("SELECT url, label,platform, version, date from ProjectPackages WHERE guid = ?",[project.guid],
+	        tx.executeSql("SELECT url, page_url,label,platform, version, date from ProjectPackages WHERE guid = ?",[project.guid],
 	 			function(tx,result)
 				{
 					// helper function for
 					// send message with package data
-					function sendRows(rows,pubdate)
+					function sendRows(rows,pubdate,pageUrl)
 					{
 						var a =[];
 						var date = null;
@@ -419,10 +430,15 @@ $MQL('l:row.selected',function(msg)
 							var label = row['label'];
 							var platform = row['platform'];
 							var version = row['version'];
-							
+							if (!pageUrl)
+							{
+								pageUrl = row['page_url']
+							}
 							a.push({'url':url,'label':label,'platform':platform});
 						}
 						$MQ('l:package_links',{'date':date, 'rows':a});
+						$('#all_download_link').attr('href',pageUrl);
+						$('#all_download_link').html(pageUrl);						
 						$('#packaging_none').css('display','none');
 						$('#packaging_listing').css('display','block');
 						$('#packaging_in_progress').css('display','none');
@@ -439,9 +455,9 @@ $MQL('l:row.selected',function(msg)
 						{
 							if (r.releases)
 							{
-								TiDeveloper.Projects.insertPackagingRows(project.guid,r.pubdate,r.releases);
+								TiDeveloper.Projects.insertPackagingRows(project.guid,r.pubdate,r.releases,r.app_page);
 								var date = TiDeveloper.Projects.formatPackagingDate(r.pubdate);
-								sendRows(r.releases,date);
+								sendRows(r.releases,date,r.app_page);
 								$('#packaging_none').css('display','none');
 								$('#packaging_error').css('display','none');		
 								$('#packaging_listing').css('display','block');
@@ -465,7 +481,7 @@ $MQL('l:row.selected',function(msg)
 				function(error)
 				{
 					// create table
-					tx.executeSql('CREATE TABLE ProjectPackages (guid TEXT, label TEXT, url TEXT, platform TEXT, version TEXT, date TEXT)');
+					tx.executeSql('CREATE TABLE ProjectPackages (guid TEXT, label TEXT, url TEXT, platform TEXT, version TEXT, date TEXT,page_url TEXT)');
 					// show no downloads message
 					$('#packaging_none').css('display','block');
 					$('#packaging_listing').css('display','none');
@@ -1286,7 +1302,7 @@ TiDeveloper.Projects.formatPackagingDate = function(str)
 	var date = parts[0].split('-');
 	return date[1] + '/' + date[2] + '/' + date[0] + ' ' + time;
 }
-TiDeveloper.Projects.insertPackagingRows = function(guid,date,rows)
+TiDeveloper.Projects.insertPackagingRows = function(guid,date,rows,pageUrl)
 {
 	var date = TiDeveloper.Projects.formatPackagingDate(date);
     db.transaction(function (tx) 
@@ -1295,7 +1311,7 @@ TiDeveloper.Projects.insertPackagingRows = function(guid,date,rows)
 		{
 			for (var i=0;i<rows.length;i++)
 			{
-		        tx.executeSql("INSERT INTO ProjectPackages (guid,url, label,platform, version, date) values (?,?,?,?,?,?) ",[guid,rows[i]['url'],rows[i]['label'],rows[i]['platform'],rows[i]['version'],date]);
+		        tx.executeSql("INSERT INTO ProjectPackages (guid,url, label,platform, version, date,page_url) values (?,?,?,?,?,?,?) ",[guid,rows[i]['url'],rows[i]['label'],rows[i]['platform'],rows[i]['version'],date,pageUrl]);
 			}
 		});
 
@@ -1313,7 +1329,10 @@ TiDeveloper.Projects.pollPackagingRequest = function(ticket,guid)
 	   	if (r.status == 'complete')
 	   	{
   			TiDeveloper.Projects.packagingInProgress[guid] = false;
-			TiDeveloper.Projects.insertPackagingRows(guid,r.pubdate,r.releases);
+			TiDeveloper.Projects.insertPackagingRows(guid,r.pubdate,r.releases,r.app_page);
+			
+			$('#all_download_link').attr('href',r.app_page);
+			$('#all_download_link').html(r.app_page);						
 			
 			$MQ('l:package_links',{date:r.pubdate,rows:r.releases})
 			$('#packaging_none').css('display','none');
