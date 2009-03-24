@@ -1304,7 +1304,7 @@ $MQL('l:create.package.request',function(msg)
 									}
 									else
 									{
-										$('#packaging_error_msg').html(this.responseText);
+										$('#packaging_error_msg').html('Unexpected error. Please try again later.');
 										$('#packaging_none').css('display','none');
 										$('#packaging_listing').css('display','none');
 										$('#packaging_error').css('display','block');		
