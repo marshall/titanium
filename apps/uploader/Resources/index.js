@@ -3,9 +3,9 @@ var TFS = Titanium.Filesystem;
 
 var build_types = 
 {
-	'osx':['10.5/Intel','10.4/PPC'],
+	'osx':['10.5_i386','10.5_i386','10.4_ppc'],
 	'win32':['win32'],
-	'linux':['32bit','64bit']
+	'linux':['32bit_i386','64bit_i386','32bit_ppc']
 };
 
 var guids = {
@@ -78,8 +78,10 @@ $(function()
 		var build_type = file.build_type;
 		var path = file.path;
 
+		try {
 		setStatus('Preparing distribution:' + path);
 		var guid = guids[type];
+		Titanium.API.debug("1");
 		var tmp = TFS.createTempDirectory();
 		var manifest = TFS.getFile(tmp,'timanifest');
 		var from = TFS.getFile(path);
@@ -114,7 +116,7 @@ $(function()
 		{
 			if (this.readyState == 4)
 			{
-				setStatus('Finished sending: ' + path);
+				setStatus('Finished sending:' + path);
 				if (this.status == 200)
 				{
 					sendNextFile();
@@ -134,6 +136,9 @@ $(function()
 		var url = URL+"?activate=1&secret="+encodeURIComponent(secret)+"&ts="+ts;
 		xhr.open("POST",url);
 		xhr.sendDir(tmp);
+		} catch (e) {
+			alert(e);
+		}
 	}
 	function sendNextFile()
 	{
