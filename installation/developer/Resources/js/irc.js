@@ -172,15 +172,12 @@ var userSetNick = null;
 
 TiDeveloper.IRC.initialize = function()
 {
-    Titanium.API.debug("1");
 	try
 	{
 		// clear irc window
 		$('#irc').empty();
 		
-    Titanium.API.debug("2");
 		// set name vars
-    Titanium.API.debug(TiDeveloper.IRC.nick);
 		var username = TiDeveloper.IRC.formatNick(TiDeveloper.IRC.nick);
 		userSetNick = username;
 		
@@ -336,7 +333,7 @@ TiDeveloper.IRC.initialize = function()
 
 $MQL('l:send.irc.msg',function()
 {
-	if (TiDeveloper.online == true)
+	if (Titanium.Network.online == true)
 	{
 		TiDeveloper.IRC.currentSelection = null;
 		var time = TiDeveloper.getCurrentTime();
