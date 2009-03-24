@@ -113,7 +113,7 @@ if testapp:
 	SConscript('apps/testapp/SConscript')
 
 if uploader:
-	SConscript('apps/release_uploader/SConscript')
+	SConscript('apps/uploader/SConscript')
 
 if testsuite:
 	print 'building testsuite...'
