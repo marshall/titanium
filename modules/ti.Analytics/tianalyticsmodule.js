@@ -3,9 +3,10 @@
 //
 (function()
 {
+	
 	var url = "http://publisher.titaniumapp.com/api/app-track";
-	var guid = Titanium.App.getGUID();
-	var sid = Titanium.Platform.createUUID();
+	var guid = null;
+	var sid = null;
 	var debug = false;
 	var initialized = false;
 	
@@ -17,13 +18,24 @@
 			qsv.mid = Titanium.Platform.id;
 			qsv.guid = guid;
 			qsv.sid = sid;
+			qsv.mac_addr = Titanium.Platform.macaddress;
+			qsv.osver = Titanium.Platform.version;
+			qsv.platform = Titanium.platform;
+			qsv.version =Titanium.version;
+			qsv.app_version =Titanium.App.getVersion();
+			qsv.os =Titanium.Platform.name;
+			qsv.ostype =Titanium.Platform.ostype;
+			qsv.osarch =Titanium.Platform.architecture;
+			qsv.oscpu =Titanium.Platform.processorCount;
+			qsv.un =Titanium.Platform.username;
+			qsv.ip =Titanium.Platform.address;
+			
 			
 			var qs = '';
 			for (var p in qsv)
 			{
 				var v = typeof(qsv[p])=='undefined' ? '' : String(qsv[p]);
 				qs+=p+'='+Titanium.Network.encodeURIComponent(v)+'&';
-
 			}
 			// this is asynchronous
 			var xhr = Titanium.Network.createHTTPClient();
@@ -73,14 +85,16 @@
 				Titanium.API.debug("No machine id found");
 				return;
 			}
+			
+			guid = Titanium.App.getGUID();
+			sid = Titanium.Platform.createUUID();
+			
 			send({
 				'platform': Titanium.platform,
 				'version':Titanium.version,
 				'app_version':Titanium.App.getVersion(),
-				'mac_addr': Titanium.Platform.macaddress,
 				'os':Titanium.Platform.name,
 				'ostype':Titanium.Platform.ostype,
-				'osver':Titanium.Platform.version,
 				'osarch':Titanium.Platform.architecture,
 				'oscpu':Titanium.Platform.processorCount,
 				'un':Titanium.Platform.username,
@@ -93,5 +107,5 @@
 			// never never never die in this function
 			Titanium.API.error("Error: "+e);
 		}
-	});	
+	});
 })();
