@@ -5,7 +5,6 @@ var TFS = Titanium.Filesystem;
 var TiDeveloper  = {};
 TiDeveloper.currentPage = 1;
 TiDeveloper.init = false;
-TiDeveloper.online = Titanium.Network.online;
 TiDeveloper.windowFocused = false
 TiDeveloper.highestId = 0;
 
@@ -69,16 +68,6 @@ TiDeveloper.getCurrentTime = function()
   	return curTime;
 	
 };
-
-
-//
-// Network Connectivity Listener
-//
-Titanium.Network.addConnectivityListener(function(online)
-{
-	TiDeveloper.online = online;
-});
-
 
 // these are not all the TLDs but most of the popular ones
 TiDeveloper.TLD = /\.(com|com\.uk|gov|org|net|mil|name|co\.uk|biz|info|edu|tv|mobi)/i;

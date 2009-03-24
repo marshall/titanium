@@ -34,7 +34,7 @@ static void TiReachabilityCallback(SCNetworkReachabilityRef  target,
 	if (self!=nil)
 	{	
 		delegate = new SharedBoundMethod(m);
-		online = NO;
+		online = YES;
 		[self start];
 	}
 	return self;
