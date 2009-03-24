@@ -10,7 +10,7 @@ TiDeveloper.Projects.module_map = {};
 TiDeveloper.Projects.runtimeDir = null;
 TiDeveloper.Projects.runtimeVersion = null;
 TiDeveloper.Projects.requiredModuleMap = {};
-TiDeveloper.Projects.requiredModules = ['api','tiapp','tifilesystem','tiplatform','tiui','javascript'];
+TiDeveloper.Projects.requiredModules = ['api','tiapp','tifilesystem','tiplatform','tiui','javascript','tianalytics'];
 TiDeveloper.Projects.selectedProject = null;
 TiDeveloper.Projects.packagingInProgress = {};
 TiDeveloper.Projects.packagingError = {};
@@ -1036,12 +1036,9 @@ $MQL('l:create.package.request',function(msg)
 		
 		// manifest files to write out
 		var manifest = '';
-		var timanifest = "{\n";
 
-		// OS options
-		var buildMac = ($('#platform_mac').hasClass('selected_os'))?true:false;
-		var buildWin = ($('#platform_windows').hasClass('selected_os'))?true:false;
-		var buildLinux = ($('#platform_linux').hasClass('selected_os'))?true:false;
+		timanifest = {};
+
 
 		// base runtime option
 		var networkRuntime = ($('#required_modules_network').attr('checked') ==true)?'network':'include';
@@ -1127,70 +1124,67 @@ $MQL('l:create.package.request',function(msg)
 		//
 		// Write out TIMANIFEST
 		//
-		timanifest += '"appname":"'+project_name+'",\n';
-		timanifest += '"appid":"'+project.appid+'",\n';
-		timanifest += '"appversion":"1.0",\n';
-		timanifest += '"mid":"'+Titanium.Platform.id+'",\n';
-		timanifest += '"publisher":"'+project.publisher+'",\n';
-		timanifest += '"url":"'+project.url+'",\n';
-		timanifest += '"desc":"'+project.description+'",\n';
-		timanifest += '"image":"'+imageName+'",\n';
+		timanifest.appname = project_name;
+		timanifest.appid = project.appid;
+		timanifest.appversion = "1.0";
+		timanifest.mid = Titanium.Platform.id;
+		timanifest.publisher = project.publisher;
+		timanifest.url = project.url;
+		timanifest.desc = project.description;
+		timanifest.image = imageName;
+
+		// OS options
+		timanifest.platforms = [];
+		if ($('#platform_mac').hasClass('selected_os'))
+		{
+			timanifest.platforms.push('osx');
+		}
+		if ($('#platform_windows').hasClass('selected_os'))
+		{
+			timanifest.platforms.push('win32');
+		}
+		if ($('#platform_linux').hasClass('selected_os'))
+		{
+			timanifest.platforms.push('linux');
+		}
 
 		var visibility = ($('#package_public').attr('checked')==true)?'public':'private';
-	    timanifest += '"visibility":"'+visibility+'",\n';
-		
-		var platforms = '"platforms":[';
-		if (buildMac) platforms += '"osx"'
-		if (buildMac && (buildWin || buildLinux)) platforms += ',';
-		if (buildWin) platforms += '"win32"';
-		if (buildLinux) platforms += ','
-		if (buildLinux) platforms +='"linux"';
-		platforms+= '],\n';
-		
-		timanifest += platforms;
-		
-		timanifest += '"runtime":{"version":"'+Titanium.version+'","package":"'+networkRuntime+'"},\n';
-		
-		timanifest += '"guid":"'+ project.guid+'",\n';
-		
-		var modules = '"modules":[';
+		timanifest.visibility = visibility;
+
+		timanifest.runtime = {};
+		timanifest.runtime.version = "" + Titanium.version;
+		timanifest.runtime.package = networkRuntime;
+
+		timanifest.guid = project.guid;
+		timanifest.modules = [];
 		
 		// required modules
-		if (networkRuntime =='network')
+		var requiredModulesPackaging = networkRuntime; // 'network' or 'include'
+		for (var i=0;i<TiDeveloper.Projects.requiredModules.length;i++)
 		{
-			for (var i=0;i<TiDeveloper.Projects.requiredModules.length;i++)
-			{
-				modules+='{"name":'+'"'+TiDeveloper.Projects.requiredModules[i]+'","version":'+'"'+TiDeveloper.Projects.requiredModuleMap[TiDeveloper.Projects.requiredModules[i]].versions[0]+'"'+',"package":"network"}';
-				if (i<(TiDeveloper.Projects.requiredModules.length))
-				{
-					modules+= ',\n';
-				}
-			}
-		}
-		else
-		{
-			for (var i=0;i<TiDeveloper.Projects.requiredModules.length;i++)
-			{
-				modules+='{"name":'+'"'+TiDeveloper.Projects.requiredModules[i]+'","version":'+'"'+TiDeveloper.Projects.requiredModuleMap[TiDeveloper.Projects.requiredModules[i]].versions[0]+'"'+',"package":"include"}';
-				if (i<(TiDeveloper.Projects.requiredModules.length))
-				{
-					modules+= ',\n';
-				}
-			}
+			var m = {};
+			m.name = TiDeveloper.Projects.requiredModules[i];
+			m.version = "" + TiDeveloper.Projects.requiredModuleMap[TiDeveloper.Projects.requiredModules[i]].versions[0];
+			m.package = requiredModulesPackaging;
+			timanifest.modules.push(m);
 		}
 
 		// write out optional modules
 		for (var c=0;c<TiDeveloper.Projects.modules.length;c++)
 		{
 			var module = TiDeveloper.Projects.modules[c].name;
-			var version = (TiDeveloper.Projects.modules[c].versions)?TiDeveloper.Projects.modules[c].versions[0]:Titanium.version;
+			var version = "" + (TiDeveloper.Projects.modules[c].versions)?TiDeveloper.Projects.modules[c].versions[0]:Titanium.version;
 			
 			$.each(excludedEl,function()
 			{
 				var key = $.trim($(this).html());
 				if (key == module)
 				{
-					modules+='{"name":"'+module+'","version":'+'"'+version+'","package":"exclude"}';
+					var m = {};
+					m.name = module;
+					m.version = "" + version;
+					m.package = 'exclude';
+					timanifest.modules.push(m);
 				}
 			});
 			$.each(bundledEl,function()
@@ -1198,7 +1192,11 @@ $MQL('l:create.package.request',function(msg)
 				var key = $.trim($(this).html());
 				if (key == module)
 				{
-					modules+='{"name":"'+module+'","version":'+'"'+version+'","package":"include"}';
+					var m = {};
+					m.name = module;
+					m.version = "" + version;
+					m.package = 'include';
+					timanifest.modules.push(m);
 				}
 			});
 			$.each(networkEl,function()
@@ -1206,18 +1204,20 @@ $MQL('l:create.package.request',function(msg)
 				var key = $.trim($(this).html());
 				if (key == module)
 				{
-					modules+='{"name":"'+module+'","version":'+'"'+version+'","package":"network"}';
+					var m = {};
+					m.name = module;
+					m.version = "" + version;
+					m.package = 'network';
+					timanifest.modules.push(m);
 				}
 			});
 			if (c<(TiDeveloper.Projects.modules.length-1))
 			{
-				modules+= ',\n';
 			}
 			
 		}
-		timanifest+= modules + ']}\n';
 		var timanifestFile = TFS.getFile(project.dir,'timanifest');
-		timanifestFile.write(timanifest);
+		timanifestFile.write(swiss.toJSON(timanifest));
 				
 		//
 		// NOW CREATE TEMP DIR AND MOVE CONTENTS FOR PACKAGING

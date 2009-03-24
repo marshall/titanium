@@ -28,19 +28,24 @@ build.utils.CopyTree(jsfiles, jstarget)
 # Copy developer application
 developer = p.join(build.titanium_source_dir, "installation", "developer")
 build.utils.CopyToDir(developer, app_dir)
+
+# copy common js into developer tool
 jstarget = p.join(app_dir, 'developer', 'Resources', 'js')
 build.utils.CopyTree(jsfiles, jstarget)
 
 # copy the app installer application
 appinstaller = p.join(build.titanium_source_dir, "installation", "app_installer")
-build.utils.CopyToDir(developer, app_dir)
-jstarget = p.join(app_dir, 'appinstaller', 'Resources', 'js')
+appinstaller_target = p.join(app_dir, 'appinstaller')
+build.utils.CopyTree(appinstaller, appinstaller_target)
+
+# copy common js into appinstaller
+jstarget = p.join(appinstaller_target, 'Resources', 'js')
 build.utils.CopyTree(jsfiles, jstarget)
 
 # copy the package installer application
 installer_dir = p.join(app_dir, 'installer');
 net_installer = p.join(build.dir, 'net_installer', 'net_installer')
-build.utils.CopyToDir(developer, installer_dir)
+build.utils.Copy(net_installer, p.join(installer_dir, 'installer'))
 
 tgzfile = app_dir + '.tgz'
 binfile = app_dir + '.bin'
