@@ -13411,6 +13411,17 @@ $.effects.transfer = function(o) {
 				if (object === null) return 'null';
 				if (object.toJSON) return object.toJSON();
 				if (object.nodeType == 1) return 'null';
+				if (object.constructor.toString().indexOf("Array") != -1) {
+					var arrayString = "[";
+					for (var i=0;i<object.length;i++) {
+						arrayString = arrayString+this.toJSON(object[i]);
+						if ((i+1) != object.length) {
+							arrayString = arrayString+", "
+						}
+					}
+					arrayString = arrayString + "]"
+					return arrayString;
+				}
 
 				var objects = [];
 
