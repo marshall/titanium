@@ -53,7 +53,7 @@ Job::Job(std::string url, Installer* installer) :
 	version("unknown")
 {
 	this->ParseName(url);
-	std::string filename = this->type + "-" + this->version + ".zip";
+	std::string filename = this->type + "-" + this->name + "-" + this->version + ".zip";
 	this->out_filename = Job::download_dir + "/" + filename;
 }
 

@@ -7,15 +7,16 @@
 #import <Cocoa/Cocoa.h>
 #define USEURLREQUEST 1
 
-@class CURLHandle;
 
 #if USEURLREQUEST
+@class CURLHandle;
+
 @interface Downloader :  NSObject {
+	CURLHandle *handle;
 #else
 @interface Downloader :  NSObject<NSURLHandleClient> {
 #endif
-
-	CURLHandle *handle;
+	NSString * suggestedFileName;
 	
 	NSURLConnection * downloadConnection;
 	NSProgressIndicator *progress;
@@ -29,6 +30,8 @@
 
 - (BOOL)completed;
 - (void)setCompleted:(BOOL)value;
-
+- (NSString *)suggestedFileName;
+- (void)setSuggestedFileName:(NSString *)value;
+		
 -(NSData*)data;
 @end

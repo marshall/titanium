@@ -243,6 +243,101 @@ $MQL('l:proj_data',function(msg)
 	}
 	
 })
+
+//
+// Refresh project packages 
+//
+TiDeveloper.Projects.refreshPackages = function(guid)
+{
+	var array = [];
+	var date = null;
+	var pageUrl = null;
+	
+	//
+	// GENRIC FUNCTION FOR POPULATING ARRAY
+	//
+	function setRows(rows,pubdate)
+	{
+		// reset array
+		array = [];
+
+		// cycle through downloads
+       	for (var i = 0; i < rows.length; ++i) 
+	   	{
+			// is db record or JSON
+            var row = (rows.item)?rows.item(i):rows[i];
+
+			date = (pubdate)?pubdate:row['date']
+
+			var url = row['url'];
+			var label = row['label'];
+			var platform = row['platform'];
+			var version = row['version'];
+			if (!pageUrl)
+			{
+				pageUrl = row['page_url']
+			}
+			array.push({'url':url,'label':label,'platform':platform});
+		}
+	}
+
+	//
+	// GET DATA FROM DB
+	//
+    db.transaction(function (tx) 
+    {
+        tx.executeSql("SELECT url, page_url,label,platform, version, date from ProjectPackages WHERE guid = ?",[guid],
+ 			function(tx,result)
+			{
+				if (result.rows.length != 0)
+				{
+					setRows(result.rows)
+				}
+			},
+			function(error)
+			{
+				// create table
+				tx.executeSql('CREATE TABLE ProjectPackages (guid TEXT, label TEXT, url TEXT, platform TEXT, version TEXT, date TEXT,page_url TEXT)');
+			}
+		);
+    });
+
+	//
+	// CHECK FOR DATA IN THE CLOUD
+	//
+	var url = TiDeveloper.make_url(TiDeveloper.Projects.app_links_url,{
+		'guid':guid
+	});
+	$.getJSON(url,function(r)
+	{
+		if (r.releases)
+		{
+			TiDeveloper.Projects.insertPackagingRows(guid,r.pubdate,r.releases,r.app_page);
+			date = TiDeveloper.Projects.formatPackagingDate(r.pubdate);
+			pageUrl = r.app_page;
+			setRows(r.releases,date);
+			
+			// send message and set UI state
+			$MQ('l:package_links',{'date':date, 'rows':array});
+			$('#all_download_link').attr('href',pageUrl);
+			$('#all_download_link').html(pageUrl);						
+			$('#packaging_none').css('display','none');
+			$('#packaging_listing').css('display','block');
+			$('#packaging_in_progress').css('display','none');
+			$('#packaging_error').css('display','none');		
+
+		}
+		else
+		{
+			$('#packaging_none').css('display','block');
+			$('#packaging_error').css('display','none');		
+			$('#packaging_listing').css('display','none');
+			$('#packaging_in_progress').css('display','none');
+			
+		}
+	});
+};
+
 //
 // Refresh project download stats
 //
@@ -390,6 +485,9 @@ $MQL('l:row.selected',function(msg)
 	msgObj.description = project.description;
 	$MQ('l:project.detail.data',msgObj);
 	
+	// 
+	// UPDATE STATS and DOWNLOADS TABS
+	//
 	if (TiDeveloper.Projects.packagingInProgress[project.guid] == true)
 	{
 		$('#packaging_none').css('display','none');
@@ -408,88 +506,7 @@ $MQL('l:row.selected',function(msg)
 	}
 	else
 	{
-		// get download info for DOWNLOAD tab
-	    db.transaction(function (tx) 
-	    {
-	        tx.executeSql("SELECT url, page_url,label,platform, version, date from ProjectPackages WHERE guid = ?",[project.guid],
-	 			function(tx,result)
-				{
-					// helper function for
-					// send message with package data
-					function sendRows(rows,pubdate,pageUrl)
-					{
-						var a =[];
-						var date = null;
-						// cycle through downloads
-			           	for (var i = 0; i < rows.length; ++i) 
-					   	{
-							// is db record or JSON
-			                var row = (rows.item)?rows.item(i):rows[i];
-							var date = (pubdate)?pubdate:row['date']
-							var url = row['url'];
-							var label = row['label'];
-							var platform = row['platform'];
-							var version = row['version'];
-							if (!pageUrl)
-							{
-								pageUrl = row['page_url']
-							}
-							a.push({'url':url,'label':label,'platform':platform});
-						}
-						$MQ('l:package_links',{'date':date, 'rows':a});
-						$('#all_download_link').attr('href',pageUrl);
-						$('#all_download_link').html(pageUrl);						
-						$('#packaging_none').css('display','none');
-						$('#packaging_listing').css('display','block');
-						$('#packaging_in_progress').css('display','none');
-						$('#packaging_error').css('display','none');		
-						
-					}
-					if (result.rows.length == 0)
-					{
-						// see if we have any rows in the cliz-oud
-						var url = TiDeveloper.make_url(TiDeveloper.Projects.app_links_url,{
-							'guid':project.guid
-						});
-						$.getJSON(url,function(r)
-						{
-							if (r.releases)
-							{
-								TiDeveloper.Projects.insertPackagingRows(project.guid,r.pubdate,r.releases,r.app_page);
-								var date = TiDeveloper.Projects.formatPackagingDate(r.pubdate);
-								sendRows(r.releases,date,r.app_page);
-								$('#packaging_none').css('display','none');
-								$('#packaging_error').css('display','none');		
-								$('#packaging_listing').css('display','block');
-								$('#packaging_in_progress').css('display','none');
-								
-							}
-							else
-							{
-								$('#packaging_none').css('display','block');
-								$('#packaging_error').css('display','none');		
-								$('#packaging_listing').css('display','none');
-								$('#packaging_in_progress').css('display','none');
-							}
-						});
-					}
-					else
-					{
-						sendRows(result.rows)
-					}
-				},
-				function(error)
-				{
-					// create table
-					tx.executeSql('CREATE TABLE ProjectPackages (guid TEXT, label TEXT, url TEXT, platform TEXT, version TEXT, date TEXT,page_url TEXT)');
-					// show no downloads message
-					$('#packaging_none').css('display','block');
-					$('#packaging_listing').css('display','none');
-					$('#packaging_in_progress').css('display','none');
-					$('#packaging_error').css('display','none');		
-				}
-			);
-	    });
+		TiDeveloper.Projects.refreshPackages(project.guid)
 	}
 	
 	TiDeveloper.Projects.refreshStats(project.guid);

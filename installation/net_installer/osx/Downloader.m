@@ -69,6 +69,17 @@
 	return [[data retain] autorelease];
 }
 
+- (NSString *)suggestedFileName {
+    return [[suggestedFileName retain] autorelease];
+}
+
+- (void)setSuggestedFileName:(NSString *)value {
+    if (suggestedFileName != value) {
+        [suggestedFileName release];
+        suggestedFileName = [value copy];
+    }
+}
+
 - (BOOL)completed;
 {
 	return completed;
@@ -94,10 +105,19 @@
 
 #pragma mark NSURLConnection delegate methods
 
+- (NSURLRequest *)connection:(NSURLConnection *)connection willSendRequest:(NSURLRequest *)request redirectResponse:(NSURLResponse *)response;
+{
+	return request;
+}
+
+
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
 {
 	[data setLength:0];
 	expectedBytes = [response expectedContentLength];
+	NSLog(@"File? The filename suggested is \"%@\"",[response suggestedFilename]);
+	[suggestedFileName autorelease];
+	suggestedFileName = [[[[response URL] path] lastPathComponent] retain];
 }
 
 
