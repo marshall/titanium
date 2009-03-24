@@ -820,7 +820,7 @@
 										</div>
 									</div>
 									<!-- PACKAGING IN PROGRESS -->
-									<div style="display:none;background-color:#424242" id="packaging_in_progress">
+									<div style="display:none;background-color:#424242" id="packaging_in_progress_mac">
 										<div align="center">
 											<img src="images/ti_package.gif" style="height:350px"/>
 											<div align="center" style="margin-top:10px">
@@ -830,6 +830,20 @@
 										</div>
 										
 									</div>
+									<!-- PACKAGING IN PROGRESS -->
+									<div style="display:none;background-color:#424242;height:410px;position:relative; 
+										top:-10px" 
+										id="packaging_in_progress">
+										<div align="center">
+											<div align="center" style="margin-top:10px">
+												<img style="position:relative;top:135px;"
+												src="images/bg_animated.gif"/>
+												<img src="images/cloud.png" style="z-index:2;position:relative;top:10px"/>
+											</div>
+										</div>
+										
+									</div>
+
 									<!-- PACKAGING ERROR -->
 									<div style="display:none" id="packaging_error">
 										<div align="center" style="margin-top:20px">
@@ -838,6 +852,17 @@
 												Packaging Error 
 												<div style="font-size:28px" id="packaging_error_msg">
 													Make sure you are online.
+												</div>
+											</div>
+										</div>
+									</div>
+									<!-- LOADING PACKAGES -->
+									<div style="display:none;" id="packaging_loading">
+										<div align="center" style=";background-color:#424242;height:400px">
+											<div style="position:relative;top:80px">
+												<img src="images/ti_progress.gif"/>
+												<div style="font-size:40px;color:#fff;">
+											 	Loading Stats
 												</div>
 											</div>
 										</div>
@@ -895,11 +920,12 @@
 									</div>
 									<!-- LOADING STATS -->
 									<div style="display:none;" id="download_stats_loading">
-										<div align="center" style="padding-top:20px;background-color:#424242;
-											height:400px	">
-											<img src="images/ti_progress.gif"/>
-											<div style="font-size:40px;color:#fff;">
-										 	Loading...
+										<div align="center" style=";background-color:#424242;height:400px">
+											<div style="position:relative;top:80px">
+												<img src="images/ti_progress.gif"/>
+												<div style="font-size:40px;color:#fff;">
+											 	Loading Stats
+												</div>
 											</div>
 										</div>
 									</div>
