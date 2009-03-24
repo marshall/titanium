@@ -4,13 +4,19 @@ TiDeveloper.IRC.channel = "#titanium_app";
 TiDeveloper.IRC.count = 0;
 TiDeveloper.IRC.ircClient = null;
 TiDeveloper.IRC.messageCount = 0;
-
+TiDeveloper.IRC.online = false;
 //
 //  Initialization message - setup all initial states
 //
 $MQL('l:app.compiled',function()
 {
-	function ircOnlineTest(online) {
+	function ircOnlineTest(online) 
+	{
+		if (online==true && TiDeveloper.IRC.online==true)
+		{
+			return;
+		}
+		TiDeveloper.IRC.online=online;
 		if (!online)
 		{
 			$MQ('l:online.count',{count:'offline'});
