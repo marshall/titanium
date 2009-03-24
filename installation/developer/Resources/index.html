@@ -89,31 +89,71 @@
 
 	<!-- CONTENT -->
 	<div id="content" style="display:none" on="l:project.list.response[firstCall=1] then effect[fadeIn]">
-		
-		<!-- MAJOR ACTION BUTTONS 
-		<div class="button1 active" style="display:inline-block;width:150px" 
-			on="click then l:menu[val=manage] and add[class=active] or l:menu[val!=manage] then remove[class=active]">
-			<div class="button2">Projects</div>
-		</div>
-		<div class="button1" style="display:inline-block;width:150px" 
-			on="click then l:menu[val=apps] and add[class=active] or l:menu[val!=apps] then remove[class=active]">
-			<div class="button2">Apps</div>
-		</div>
-		<div class="button1" style="display:inline-block;width:150px" 
-			on="click then l:menu[val=interact] and add[class=active] or l:menu[val!=interact] then remove[class=active]">
-			<div class="button2">Community 
-				<span id="irc_message_count" class="message_indicator" style="display:none"></span>
+
+		<!-- MODAL FOR DISPLAYING LONG LOCATION NAMES -->
+		<div behavior="modal[opacity=0.9,showEffect=fadeIn,hideEffect=fadeOut]" 
+			on="l:show.project.modal then show or l:hide.project.modal then hide">
+			<div class="black_gradient" style="padding:5px;font-size:11px;margin:0px">
+				Project Location
+			</div>
+			<div class="infobox" >
+				<div class="content" style="padding:10px">
+					<div 
+					on="l:project.detail.data then value[fullLocation]" 
+						style="padding:10px;color:#fff;font-size:11px">
+					</div>
+					<div class="button1" style="margin:auto;float:none"  
+						on="click then l:hide.project.modal">
+						<div class="button2">
+							Close
+						</div>
+					</div>
+
+				</div>
 			</div>
 		</div>
-		<div class="button1" style="display:inline-block;width:150px" 
-			on="click then l:menu[val=feeds] and add[class=active] or l:menu[val!=feeds] then remove[class=active]">
-			<div class="button2">Feeds</div>
+
+
+
+		<!-- MODAL FOR DELETING PROJECTS -->
+		<div behavior="modal[opacity=0.9,showEffect=fadeIn,hideEffect=fadeOut]" 
+			on="l:delete.project.prompt then show or (l:delete.project.request or l:cancel.delete.project) then hide">
+			<div class="black_gradient" style="padding:5px;font-size:11px;margin:0px">
+				Delete Project
+			</div>
+			<div class="infobox" >
+				<div class="content" style="padding:10px;color:#fff;font-size:11px">
+					Are you sure you want to delete the project: 		
+					<span on="l:delete.project.prompt then value[name]" 
+						style="padding:5px;color:#fff;font-size:11px">
+					</span>
+					<input type="hidden" id="delete_project_id" on="l:delete.project.prompt then value[project_id]">
+					<table align="center" style="margin-top:10px;position:relative;top:5px">
+						<tr>
+							<td align="center">
+								<div class="button1" style="float:none;margin-right:10px"  
+									on="click then l:delete.project.request[project_id=$delete_project_id]">
+									<div class="button2">
+										Delete
+									</div>
+								</div>
+							</td>
+							<td align="center">
+								<div class="button1" style="float:none"  
+									on="click then l:cancel.delete.project">
+									<div class="button2">
+										Cancel
+									</div>
+								</div>
+							</td>
+							</tr>
+						</tr>
+					</table>
+
+				</div>
+			</div>
 		</div>
-		<div class="button1" style="display:inline-block;width:150px" 
-			on="click then l:menu[val=api] and add[class=active] or l:menu[val!=api] then remove[class=active]">
-			<div class="button2">Documentation</div>
-		</div>
-		-->
+		
 
 
 		<!-- ************* -->
@@ -1294,7 +1334,7 @@
 							<div id="platform_windows" class="button1" style="float:none;height:70px;width:80px">
 								<div class="button2" style="height:68px"
 									on="(l:show.package.project or l:package.project.request) then remove[class=selected_os] and remove[id=platform_windows,class=selected_os] or click then toggle[class=selected_os] and l:os_platform_click and toggle[id=platform_windows,class=selected_os]">
-									<img src="images/win_small.png" style="position:relative;top:11px"/>
+									<img src="images/win32_small.png" style="position:relative;top:11px"/>
 								</div>
 							</div>
 							<div id="platform_linux" class="button1" style="float:none;height:70px;width:80px">
@@ -1432,69 +1472,6 @@
 						</div>
 					</div>
 				</div>
-			</div>
-		</div>
-	</div>
-	<!-- MODAL FOR DISPLAYING LONG LOCATION NAMES -->
-	<div behavior="modal[opacity=0.9,showEffect=fadeIn,hideEffect=fadeOut]" 
-		on="l:show.project.modal then show or l:hide.project.modal then hide">
-		<div class="black_gradient" style="padding:5px;font-size:11px;margin:0px">
-			Project Location
-		</div>
-		<div class="infobox" >
-			<div class="content" style="padding:10px">
-				<div 
-				on="l:project.detail.data then value[fullLocation]" 
-					style="padding:10px;color:#fff;font-size:11px">
-				</div>
-				<div class="button1" style="margin:auto;float:none"  
-					on="click then l:hide.project.modal">
-					<div class="button2">
-						Close
-					</div>
-				</div>
-				
-			</div>
-		</div>
-	</div>
-
-
-
-	<!-- MODAL FOR DELETING PROJECTS -->
-	<div behavior="modal[opacity=0.9,showEffect=fadeIn,hideEffect=fadeOut]" 
-		on="l:delete.project.prompt then show or (l:delete.project.request or l:cancel.delete.project) then hide">
-		<div class="black_gradient" style="padding:5px;font-size:11px;margin:0px">
-			Delete Project
-		</div>
-		<div class="infobox" >
-			<div class="content" style="padding:10px;color:#fff;font-size:11px">
-				Are you sure you want to delete the project: 		
-				<span on="l:delete.project.prompt then value[name]" 
-					style="padding:5px;color:#fff;font-size:11px">
-				</span>
-				<input type="hidden" id="delete_project_id" on="l:delete.project.prompt then value[project_id]">
-				<table align="center" style="margin-top:10px;position:relative;top:5px">
-					<tr>
-						<td align="center">
-							<div class="button1" style="float:none;margin-right:10px"  
-								on="click then l:delete.project.request[project_id=$delete_project_id]">
-								<div class="button2">
-									Delete
-								</div>
-							</div>
-						</td>
-						<td align="center">
-							<div class="button1" style="float:none"  
-								on="click then l:cancel.delete.project">
-								<div class="button2">
-									Cancel
-								</div>
-							</div>
-						</td>
-						</tr>
-					</tr>
-				</table>
-
 			</div>
 		</div>
 	</div>

@@ -146,8 +146,11 @@ $MQL('l:tideveloper.network',function(msg)
 	}
 	else
 	{
-		TiDeveloper.IRC.ircClient.disconnect();
-		TiDeveloper.IRC.ircClient = null;
+		if (TiDeveloper.IRC.ircClient != null)
+		{
+			TiDeveloper.IRC.ircClient.disconnect();
+			TiDeveloper.IRC.ircClient = null;
+		}
 		$('#irc').html('<div style="color:#aaa">you are offline</div>');
 		$('#irc_users').empty();
 	}

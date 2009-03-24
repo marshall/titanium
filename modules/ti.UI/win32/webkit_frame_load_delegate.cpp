@@ -74,7 +74,7 @@ Win32WebKitFrameLoadDelegate::windowScriptObjectAvailable (
 	}
 
 	// Get the global object into a KJSKObject
-	BoundObject *global_bound_object = new KJSKObject(context, global_object);
+	SharedBoundObject global_bound_object = new KJSKObject(context, global_object);
 
 	// Copy the document and window properties to the Titanium object
 	SharedValue doc_value = global_bound_object->Get("document");
@@ -86,7 +86,7 @@ Win32WebKitFrameLoadDelegate::windowScriptObjectAvailable (
 	SharedValue ti_object_value = Value::NewObject(shared_ti_obj);
 	global_bound_object->Set(GLOBAL_NS_VARNAME, ti_object_value);
 
-//TODO->	window->ContextBound(global_object,url_str);
+	window->ContextBound(global_bound_object);
 
 	/*
 
