@@ -324,6 +324,12 @@ int main(int argc, char* argv[])
 	gtk_init(&argc, &argv);
 	curl_global_init(CURL_GLOBAL_ALL);
 
+	if (argc < 8)
+	{
+		std::cerr << "Not enough arguments given, aborting." << std::endl;
+		exit(2);
+	}
+
 	std::string app_name = argv[1];
 	std::string confirm_title = argv[2];
 	std::string message = argv[3];

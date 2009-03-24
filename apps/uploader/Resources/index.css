@@ -1,0 +1,53 @@
+body
+{
+	background-color:#292929;
+	color:white;
+	font-family:sans-serif;
+	padding:20px;
+	font-size: 12pt;
+}
+
+table
+{
+	width:100%;
+}
+
+input[type="text"], select
+{
+	width:200px;
+}
+
+td,input,select,button
+{
+	font-size:12pt;
+	outline:none;
+}
+
+h1
+{
+	color:#809eb3;
+}
+
+#status
+{
+	margin-top:10px;
+	background-color:#ffffcc;
+	border:1px solid #ffff99;
+	padding:8px;
+	color:#222;
+	height:20px;
+}
+
+#status.error
+{
+	background-color:#FF9999;
+	border:1px solid #990000;
+	color:#f00;
+}
+
+#status.error h1
+{
+	margin:0;
+	font-size:15px;
+	color:#f00;
+}

@@ -133,13 +133,15 @@ void Job::Unzip()
 {
 	this->progress = ((double) this->index) / ((double) Job::total);
 
-	std::string outdir = Job::install_dir + "/" + this->type;
+	std::string outdir = Job::install_dir;
 	kroll::FileUtils::CreateDirectory(outdir);
-
-	outdir += "/" + this->name;
+	outdir.append("/" + this->type);
 	kroll::FileUtils::CreateDirectory(outdir);
-
-	outdir += "/" + this->version;
+	outdir.append("/linux");
+	kroll::FileUtils::CreateDirectory(outdir);
+	outdir.append("/" + this->name);
+	kroll::FileUtils::CreateDirectory(outdir);
+	outdir.append("/" + this->version);
 	kroll::FileUtils::CreateDirectory(outdir);
 
 	kroll::FileUtils::Unzip(this->out_filename, outdir);
