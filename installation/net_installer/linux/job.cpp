@@ -139,8 +139,13 @@ void Job::Unzip()
 	kroll::FileUtils::CreateDirectory(outdir);
 	outdir.append("/linux");
 	kroll::FileUtils::CreateDirectory(outdir);
-	outdir.append("/" + this->name);
-	kroll::FileUtils::CreateDirectory(outdir);
+
+	if (this->type != "runtime")
+	{
+		outdir.append("/" + this->name);
+		kroll::FileUtils::CreateDirectory(outdir);
+	}
+
 	outdir.append("/" + this->version);
 	kroll::FileUtils::CreateDirectory(outdir);
 
