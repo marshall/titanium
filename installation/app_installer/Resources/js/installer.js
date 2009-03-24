@@ -32,31 +32,55 @@ function installApp(dir)
 	// remember in case we launch
 	launch = result.executable;
 	
-	var files = TFS.getFile(src,'Resources');
+	var resource_files = TFS.getFile(src, 'Resources');
+	var module_files = TFS.getFile(src, 'modules');
+	var runtime_files = TFS.getFile(src, 'runtime');
 
-	var count = files.getDirectoryListing().length + 2; // 2 files below
+	// manifest + tiapp.xml (below) + app resources
+	var count = 2 + resource_files.getDirectoryListing().length
+	if (module_files.isDirectory())
+	{
+		count++;
+	}
+	if (runtime_files.isDirectory())
+	{
+		count++;
+	}
+
 	var increment = 100 / count;
 	var value = 0;
-	
-	TFS.getFile(src,'manifest').copy(result.base);
-	value+=increment;
-	$('#progressbar_install').progressbar('value',value)
+	var total = 0;
 
-	TFS.getFile(src,'tiapp.xml').copy(result.base);
-	value+=increment;
-	$('#progressbar_install').progressbar('value',value)
-	
-	TFS.asyncCopy(files,result.resources,function(fn,count,total)
+	function fileCopied()
 	{
-		value+=increment;
+		value += increment;
+		total++;
 		$('#progressbar_install').progressbar('value',value)
+
 		if (count == total)
 		{
 			// complete
 			$('#install_app_finished').fadeIn();
 			$('#install_app').slideUp(100);
 		}
-	});
+	}
+
+	TFS.getFile(src,'manifest').copy(result.base);
+	fileCopied();
+	TFS.getFile(src,'tiapp.xml').copy(result.base);
+	fileCopied();
+
+	TFS.asyncCopy(resource_files.getDirectoryListing(),result.resources,function(fn,count,total) { fileCopied(); });
+	if (module_files.isDirectory())
+	{
+		var module_dest = TFS.getFile(result.base, 'modules');
+		TFS.asyncCopy(module_files,module_dest,function(fn,count,total) { fileCopied(); });
+	}
+	if (runtime_files.isDirectory())
+	{
+		var runtime_dest = TFS.getFile(result.base, 'runtime');
+		TFS.asyncCopy(runtime_files,runtime_dest,function(fn,count,total) { fileCopied(); });
+	}
 }
 
 $(function(){
