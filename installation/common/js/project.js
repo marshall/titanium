@@ -123,8 +123,10 @@ Titanium.Project =
 			}
 		}
 		outdir.createDirectory(true);
-		var normalized_name = name.replace(/ /g,'_').toLowerCase();
-		var normalized_publisher = publisher.replace(/ /g,'_').toLowerCase();
+		var normalized_name = name.replace(/[^a-zA-Z0-9]/g,'_').toLowerCase();
+		normalized_name = normalized_name.replace(/ /g,'_').toLowerCase();
+		var normalized_publisher = publisher.replace(/[^a-zA-Z0-9]/g,'_').toLowerCase();
+		normalized_publisher = normalized_publisher.replace(/ /g,'_').toLowerCase();
 		// write out the TIAPP.xml
 		var tiappxml = this.XML_PROLOG;
 		var year = new Date().getFullYear();
@@ -291,8 +293,10 @@ Titanium.Project =
 	updateManifest: function(values,addGuid)
 	{
 		var manifest = TFS.getFile(values.dir,"manifest");
-		var normalized_name = values.name.replace(/ /g,'_').toLowerCase();
-		var normalized_publisher = values.publisher.replace(/ /g,'_').toLowerCase();
+		var normalized_name = name.replace(/[^a-zA-Z0-9]/g,'_').toLowerCase();
+		normalized_name = normalized_name.replace(/ /g,'_').toLowerCase();
+		var normalized_publisher = publisher.replace(/[^a-zA-Z0-9]/g,'_').toLowerCase();
+		normalized_publisher = normalized_publisher.replace(/ /g,'_').toLowerCase();
 		var id = 'com.'+normalized_publisher+'.'+normalized_name;
 		var newManifest = ''
 
