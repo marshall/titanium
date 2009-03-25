@@ -41,4 +41,5 @@ class Job
 	static std::string download_dir;
 	static std::string install_dir;
 	static CURL *curl;
+	static char* curl_error;
 };
