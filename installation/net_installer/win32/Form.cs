@@ -11,6 +11,21 @@ using System.Diagnostics;
 
 namespace Titanium
 {
+    public class WindowWrapper : System.Windows.Forms.IWin32Window
+    {
+        public WindowWrapper(IntPtr handle)
+        {
+            _hwnd = handle;
+        }
+
+        public IntPtr Handle
+        {
+            get { return _hwnd; }
+        }
+
+        private IntPtr _hwnd;
+    }
+
     public partial class form : Form
     {
         //static string DISTRIBUTION_UUID = "7F7FA377-E695-4280-9F1F-96126F3D2C2A";
@@ -39,6 +54,11 @@ namespace Titanium
 
         private void backgroundWorker_DoWork_1(object sender, DoWorkEventArgs e)
         {
+
+            string name = null;
+            string version = null;
+            Uri uri = null;
+
             try
             {
                 IFormatProvider provider = new Titanium.FileSizeFormatProvider();
@@ -49,7 +69,8 @@ namespace Titanium
 
                 for (int c = 0; c < this.urls.Length; c++)
                 {
-                    Uri uri = new Uri(this.urls[c]);
+                    uri = new Uri(this.urls[c]);
+
                     string filename = this.getFilename(uri);
 
                     if (filename == null)
@@ -112,12 +133,15 @@ namespace Titanium
 
                 for (int c = 0; c < this.urls.Length; c++)
                 {
-                    string currentMessage = "Installing " + (c + 1) + " of " + this.urls.Length + " ... ";
+                    uri = new Uri(this.urls[c]);
+                    name = this.getURIParam(uri, "name");
+                    string subtype = "win32";
+                    version = this.getURIParam(uri, "version");
+
+                    string currentMessage = "Installing " + name + "/" + version + " (" + (c + 1) + " of " + this.urls.Length + ") ... ";
                     this.Invoke(this.textDelegate, new object[]{
                         currentMessage
                     });
-
-                    Uri uri = new Uri(this.urls[c]);
 
                     string filename = this.getFilename(uri);
 
@@ -126,10 +150,6 @@ namespace Titanium
                         continue;
                     }
 
-                    string name = this.getURIParam(uri, "name");
-                    string subtype = "win32";
-                    string version = this.getURIParam(uri, "version");
-    
                     string uuid = this.getURIParam(uri, "uuid");
 
                     string destdir;
@@ -174,7 +194,11 @@ namespace Titanium
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message+"\n\n"+ex.StackTrace);
+                if (ex != null)
+                {
+                    MessageBox.Show(new WindowWrapper(this.Handle), "Error downloading required application dependency name:" + name + ",version:" + version, "Application Error",
+                        MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                }
             }
             Application.Exit();
         }
