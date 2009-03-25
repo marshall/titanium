@@ -1,14 +1,10 @@
 /**
- * Appcelerator Kroll - licensed under the Apache Public License 2
+ * Appcelerator Titanium - licensed under the Apache Public License 2
  * see LICENSE in the root folder for details on the license.
  * Copyright (c) 2009 Appcelerator, Inc. All Rights Reserved.
  */
 
 #import "Downloader.h"
-
-#if !USEURLREQUEST
-#import "CURLHandle.h"
-#endif
 
 @implementation Downloader
 
@@ -19,47 +15,32 @@
 	{
 		progress = [p retain];
 		[progress startAnimation:self];
-
-#if USEURLREQUEST
 		[self performSelectorOnMainThread:@selector(startUrlRequest:) withObject:url waitUntilDone:YES];
-
-#else
-		handle = (CURLHandle *)[url URLHandleUsingCache:NO];
-		[handle retain];
-		[handle setFailsOnError:YES];	
-		[handle setFollowsRedirects:YES];
-		[handle setConnectionTimeout:4];
-		[handle setUserAgent:@"Mozilla/5.0 (compatible; Titanium_Downloader/0.3; Mac)"];
-		[handle addClient:self];
-		[handle setProgressIndicator:progress];
-		// directly call up the results
-		[self URLHandleResourceDidFinishLoading:handle];
-//		if (NSURLHandleLoadFailed == [handle status])
-//		{
-//			[oResultCode setStringValue:[mURLHandle failureReason]];
-//		}
-#endif
 	}
 	return self;
 }
 
+#define VAL(str) #str
+#define STRING(str) VAL(str)
+
 - (void)startUrlRequest: (NSURL *) url;
 {
-	NSMutableURLRequest * downloadRequest = [[NSMutableURLRequest alloc] initWithURL:url];
-	[downloadRequest setTimeoutInterval:4.0];
-	[downloadRequest setValue:@"Mozilla/5.0 (compatible; Titanium_Downloader/0.3; Mac)" 
-		   forHTTPHeaderField:@"User-Agent"];
-	
+	[data release];
+	[downloadRequest release];
+	downloadRequest = [[NSMutableURLRequest alloc] initWithURL:url];
+	[downloadRequest setTimeoutInterval:10.0];
+	userAgent = [NSString stringWithFormat:@"Mozilla/5.0 (compatible; Titanium_Downloader/%s; Mac)",STRING(_PRODUCT_VERSION)];
+	[downloadRequest setValue:userAgent forHTTPHeaderField:@"User-Agent"];
 	data = [[NSMutableData alloc] init];
 	downloadConnection = [[NSURLConnection alloc] initWithRequest:downloadRequest delegate:self];
-	[downloadRequest release];
-	[downloadConnection start];
+	//NOTE: do not call start!! it's automatically called and you will segfault if you call it
+	//NOTE: do not release downloadRequest!
 	[self setCompleted:NO];
 }
 
 -(void)dealloc
 {
-	[handle release];
+	[downloadRequest release];
 	[suggestedFileName release];
 	[downloadConnection release];
 	[progress release];
@@ -69,18 +50,12 @@
 
 -(NSData*)data
 {
-	return [[data retain] autorelease];
+	return data;
 }
 
-- (NSString *)suggestedFileName {
-    return [[suggestedFileName retain] autorelease];
-}
-
-- (void)setSuggestedFileName:(NSString *)value {
-    if (suggestedFileName != value) {
-        [suggestedFileName release];
-        suggestedFileName = [value copy];
-    }
+- (NSString *)suggestedFileName 
+{
+	return suggestedFileName;
 }
 
 - (BOOL)completed;
@@ -91,43 +66,108 @@
 - (void)setCompleted:(BOOL)value;
 {
 	completed = value;
-	if (completed) {
+	if (completed) 
+	{
 		[progress stopAnimation:self];
-#if !USEURLREQUEST
-		[handle removeClient:self];
-#endif
-	} else {
+	} 
+	else 
+	{
 		[progress startAnimation:self];
 	}
 }
 
 -(BOOL)isDownloadComplete
 {
-	return [self completed];
+	return completed;
 }
 
 #pragma mark NSURLConnection delegate methods
 
-- (NSURLRequest *)connection:(NSURLConnection *)connection willSendRequest:(NSURLRequest *)request redirectResponse:(NSURLResponse *)response;
-{
-	return request;
-}
+//
+// NSURLConnection Delegate Methods
+//
 
+// part of this code courtesy of google mac toolkit
+
+// This method just says "follow all redirects", which _should_ be the default behavior,
+// According to file:///Developer/ADC%20Reference%20Library/documentation/Cocoa/Conceptual/URLLoadingSystem
+// but the redirects were not being followed until I added this method.  May be
+// a bug in the NSURLConnection code, or the documentation.
+//
+// In OS X 10.4.8 and earlier, the redirect request doesn't
+// get the original's headers and body. This causes POSTs to fail. 
+// So we construct a new request, a copy of the original, with overrides from the
+// redirect.
+//
+// Docs say that if redirectResponse is nil, just return the redirectRequest.
+
+- (NSURLRequest *)connection:(NSURLConnection *)connection
+             willSendRequest:(NSURLRequest *)redirectRequest
+            redirectResponse:(NSURLResponse *)redirectResponse 
+{
+	if (redirectResponse==nil)
+	{
+		return redirectRequest;
+	}
+				
+  	if (redirectRequest && redirectResponse) 
+	{
+	    NSURL *redirectURL = [redirectRequest URL];
+	    NSURL *url = [downloadRequest URL];
+
+		NSMutableURLRequest *newRequest = [[NSMutableURLRequest alloc] init];
+		[newRequest setTimeoutInterval:10.0];
+		[newRequest setValue:userAgent forHTTPHeaderField:@"User-Agent"];
+
+	    // disallow scheme changes (say, from https to http)    
+	    NSString *redirectScheme = [url scheme];
+	    NSString *newScheme = [redirectURL scheme];
+	    NSString *newResourceSpecifier = [redirectURL resourceSpecifier];
+
+	    if ([redirectScheme caseInsensitiveCompare:@"http"] == NSOrderedSame
+	        && newScheme != nil
+	        && [newScheme caseInsensitiveCompare:@"https"] == NSOrderedSame) 
+		{
+	      // allow the change from http to https
+	      redirectScheme = newScheme; 
+	    }
+    
+	    NSString *newUrlString = [NSString stringWithFormat:@"%@:%@",
+	      redirectScheme, newResourceSpecifier];
+    
+	    NSURL *newURL = [NSURL URLWithString:newUrlString];
+	    [newRequest setURL:newURL];
+
+	    // any headers in the redirect override headers in the original.
+		NSDictionary *redirectHeaders = [redirectRequest allHTTPHeaderFields];
+		if (redirectHeaders) 
+		{
+			NSEnumerator *enumerator = [redirectHeaders keyEnumerator];
+			NSString *key;
+			while (nil != (key = [enumerator nextObject])) 
+			{
+			  NSString *value = [redirectHeaders objectForKey:key];
+			  [newRequest setValue:value forHTTPHeaderField:key];
+			}
+		}
+	  	return newRequest;
+	}
+	return redirectRequest;
+}
 
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
 {
 	[data setLength:0];
 	expectedBytes = [response expectedContentLength];
-	NSLog(@"File? The filename suggested is \"%@\"",[response suggestedFilename]);
-	[suggestedFileName autorelease];
+	[suggestedFileName release];
 	suggestedFileName = [[[[response URL] path] lastPathComponent] retain];
 }
-
 
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)newData
 {
 	[data appendData:newData];
-	if (expectedBytes != 0) {
+	if (expectedBytes != 0) 
+	{
 		[progress setIndeterminate:NO];
 		[progress setMaxValue:(double)expectedBytes];
 		[progress setDoubleValue:(double)[data length]];
@@ -136,57 +176,13 @@
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
 {
-	NSLog(@"Failed with error %@",[error localizedDescription]);
 	[progress setIndeterminate:YES];
 	[self setCompleted:YES];
 }
-
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection;
 {
 	[self setCompleted:YES];
 }
-
-
-#if	!USEURLREQUEST
-
-- (void)URLHandle:(NSURLHandle *)sender resourceDataDidBecomeAvailable:(NSData *)newBytes
-{
-	id contentLength = [sender propertyForKeyIfAvailable:@"content-length"];
-	bytesRetrievedSoFar += [newBytes length];
-	
-	if (nil != contentLength)
-	{
-		double total = [contentLength doubleValue];
-		[progress setIndeterminate:NO];
-		[progress setMaxValue:total];
-		[progress setDoubleValue:bytesRetrievedSoFar];
-	}
-}
-
-- (void)URLHandleResourceDidBeginLoading:(NSURLHandle *)sender
-{
-	[self setCompleted:NO];
-}
-
-- (void)URLHandleResourceDidFinishLoading:(NSURLHandle *)sender
-{
-	data = [handle resourceData];
-	[data retain];
-	[self setCompleted:YES];
-}
-
-- (void)URLHandleResourceDidCancelLoading:(NSURLHandle *)sender
-{
-	[progress setIndeterminate:YES];
-	[self setCompleted:YES];
-}
-
-- (void)URLHandle:(NSURLHandle *)sender resourceDidFailLoadingWithReason:(NSString *)reason
-{
-	[progress setIndeterminate:YES];
-	[self setCompleted:YES];
-}
-#endif
 
 @end

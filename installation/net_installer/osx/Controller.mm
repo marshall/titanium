@@ -1,5 +1,5 @@
 /**
- * Appcelerator Kroll - licensed under the Apache Public License 2
+ * Appcelerator Titanium - licensed under the Apache Public License 2
  * see LICENSE in the root folder for details on the license.
  * Copyright (c) 2009 Appcelerator, Inc. All Rights Reserved.
  */
@@ -7,11 +7,6 @@
 #import <string>
 #import "file_utils.h"
 #import <zlib.h>
-
-#if !USEURLREQUEST
-#import "CURLHandle.h"
-#import "CURLHandle+extras.h"
-#endif
 
 #define RUNTIME_UUID_FRAGMENT @"uuid=A2AC5CB5-8C52-456C-9525-601A5B0725DA"
 #define MODULE_UUID_FRAGMENT @"uuid=1ACE5D3A-2B52-43FB-A136-007BD166CFD0"
@@ -120,7 +115,9 @@
 	std::string src([file UTF8String]);
 	std::string dest([destdir UTF8String]);
 	kroll::FileUtils::Unzip(src,dest);
+#ifdef DEBUG
 	NSLog(@"After unzip %s to %s",src.c_str(),dest.c_str());
+#endif
 }
 -(void)download:(Controller*)controller 
 {
@@ -149,10 +146,13 @@
 		BOOL isValidData = [data length] > 100;
 		
 		
-		if (isValidData && isValidName) {
+		if (isValidData && isValidName) 
+		{
 			[data writeToFile:path atomically:YES];
 			[files setObject:path forKey:url];
-		} else {
+		} 
+		else 
+		{
 			NSLog(@"Error in handling url \"%@\":",url);
 			if (!isValidName) {
 				NSLog(@"File name is too small to specify a file. \"%@\" was made instead.",filename);
@@ -163,7 +163,7 @@
 				[dataString release];
 			}
 		}
-
+		
 		[downloader release];
 	}
 	
@@ -292,17 +292,7 @@
 
 - (void) applicationDidFinishLaunching:(NSNotification *) notif
 {
-#if !USEURLREQUEST
-	[CURLHandle curlHelloSignature:@"XxXx" acceptAll:YES];	// to get CURLHandle registered for handling URLs
-#endif
 	[NSThread detachNewThreadSelector:@selector(download:) toTarget:self withObject:self];
 }
-
-#if !USEURLREQUEST
-- (void) applicationWillTerminate:(NSNotification *) notif
-{
-	[CURLHandle curlGoodbye];	// to clean up
-}
-#endif
 
 @end

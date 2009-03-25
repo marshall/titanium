@@ -5,8 +5,6 @@ Import('build')
 
 Env = build.env.Clone()
 Env.Append(FRAMEWORKS=['Cocoa','SystemConfiguration','IOKit'])
-#Env.Append(LIBS=['curl'])
-Env.Append(CPPFLAGS=['-Wno-error']) #turn off warnings, CURLHandle has a lot
 Env.Append(CPPPATH=[build.kroll_source_dir+'/api'])
 
 sources = Glob('*.m') + Glob('*.mm')

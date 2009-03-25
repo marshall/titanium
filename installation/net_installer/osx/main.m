@@ -1,11 +1,8 @@
-//
-//  main.m
-//  progress
-//
-//  Created by Jeff Haynie on 1/28/09.
-//  Copyright Appcelerator 2009. All rights reserved.
-//
-
+/**
+ * Appcelerator Titanium - licensed under the Apache Public License 2
+ * see LICENSE in the root folder for details on the license.
+ * Copyright (c) 2009 Appcelerator, Inc. All Rights Reserved.
+ */
 #import <Cocoa/Cocoa.h>
 
 int main(int argc, char *argv[])
