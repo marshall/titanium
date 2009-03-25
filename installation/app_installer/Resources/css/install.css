@@ -108,7 +108,7 @@ input:focus
 }
 .text
 {
-	font-family:'Lucida Grande';
+	font-family:'Lucida Grande', Georgia;
 	font-size:12px;
 }
 .light

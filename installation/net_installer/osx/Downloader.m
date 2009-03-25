@@ -17,7 +17,7 @@
 	self = [super init];
 	if (self)
 	{
-		progress = p;
+		progress = [p retain];
 		[progress startAnimation:self];
 
 #if USEURLREQUEST
@@ -60,6 +60,9 @@
 -(void)dealloc
 {
 	[handle release];
+	[suggestedFileName release];
+	[downloadConnection release];
+	[progress release];
 	[data release];
 	[super dealloc];
 }
@@ -133,6 +136,7 @@
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
 {
+	NSLog(@"Failed with error %@",[error localizedDescription]);
 	[progress setIndeterminate:YES];
 	[self setCompleted:YES];
 }

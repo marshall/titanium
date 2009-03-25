@@ -107,7 +107,7 @@ $(function()
 		if (idx > 0) version = version.substring(0,idx);
 		from.copy(tmp);
 		var contents = {'name':name,'guid':guid,'version':version,'build_type':build_type,'os':os,'filename':from.name()};
-		alert(swiss.toJSON(contents))
+//		alert(swiss.toJSON(contents))
 		manifest.write(swiss.toJSON(contents));
 
 		setStatus('Sending:' + path);
