@@ -213,7 +213,7 @@ TiDeveloper.Apps.formatAppRows = function(json)
 	for (var i=0;i<json.length;i++)
 	{
 		var row = json[i];
-		var title = row.title;
+		var title = (row.title.length > 18)?row.title.substring(0,17)+'...':row.title;
 		var pubdate = TiDeveloper.Projects.formatPackagingDate(row.pubdate);
 		var desc = row.desc;
 		var url = row.url;
