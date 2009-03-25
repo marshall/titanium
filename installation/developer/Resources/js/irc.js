@@ -121,7 +121,7 @@ $MQL('l:app.compiled',function()
 //
 TiDeveloper.IRC.formatNick =  function(name)
 {
-	return name.replace(' ','_');
+	return name.replace(/ /g,'_');
 }
 
 //
