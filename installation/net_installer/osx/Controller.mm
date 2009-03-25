@@ -13,6 +13,8 @@
 #import "CURLHandle+extras.h"
 #endif
 
+#define RUNTIME_UUID_FRAGMENT @"uuid=A2AC5CB5-8C52-456C-9525-601A5B0725DA"
+#define MODULE_UUID_FRAGMENT @"uuid=1ACE5D3A-2B52-43FB-A136-007BD166CFD0"
 
 @implementation Controller
 
@@ -67,37 +69,51 @@
 	}
 }
 
--(void)install:(NSString *)file destination:(NSString*)dir
+-(void)install:(NSString *)file forUrl:(NSURL *)url destination:(NSString*)dir
 {
-	NSArray *parts = [[file lastPathComponent] componentsSeparatedByString:@"-"];
-	if ([parts count] == 3)
-	{
-		NSString *type = [parts objectAtIndex:0];
-		NSString *subtype = [parts objectAtIndex:1];
-		NSString *version = [[parts objectAtIndex:2] stringByDeletingPathExtension];
-		/**
-		 * directories:
-		 *
-		 * /runtime/<version>/<files>
-		 * /modules/<name>/<version>
-		 */
-		NSString *destdir = nil;
-		if ([type isEqualToString:@"runtime"])
-		{
-			destdir = [NSString stringWithFormat:@"%@/runtime/osx/%@/%@",dir,subtype,version];
+	NSArray *parts = [[url query] componentsSeparatedByString:@"&"];
+	BOOL isRuntime = NO;
+	BOOL isModule = NO;
+	NSString *destdir = nil;
+	NSString *subtype = nil;
+	NSString *version = nil;
+	
+	NSEnumerator * partsEnumerator = [parts objectEnumerator];
+	NSString *thisPart;
+	while ((thisPart = [partsEnumerator nextObject])){
+		if ([thisPart isEqualToString:RUNTIME_UUID_FRAGMENT]){
+			isRuntime = YES;
+			continue;
 		}
-		else if ([type isEqualToString:@"module"])
-		{
-			destdir = [NSString stringWithFormat:@"%@/modules/osx/%@/%@",dir,subtype,version];
+
+		if ([thisPart isEqualToString:MODULE_UUID_FRAGMENT]){
+			isModule = YES;
+			continue;
 		}
-		if (destdir)
-		{
-			[self generateDirectory:destdir];
-			std::string src([file UTF8String]);
-			std::string dest([destdir UTF8String]);
-			kroll::FileUtils::Unzip(src,dest);
+		
+		if ([thisPart hasPrefix:@"name="]){
+			subtype = [thisPart substringFromIndex:5];
+			continue;
+		}
+
+		if ([thisPart hasPrefix:@"version="]){
+			subtype = [thisPart substringFromIndex:8];
+			continue;
 		}
 	}
+
+	if (isRuntime){
+		destdir = [NSString stringWithFormat:@"%@/runtime/osx/%@",dir,subtype];
+	} else if (isModule) {
+		destdir = [NSString stringWithFormat:@"%@/modules/osx/%@/%@",dir,subtype,version];
+	} else {
+		return;
+	}
+	
+	[self generateDirectory:destdir];
+	std::string src([file UTF8String]);
+	std::string dest([destdir UTF8String]);
+	kroll::FileUtils::Unzip(src,dest);
 }
 -(void)download:(Controller*)controller 
 {
@@ -106,7 +122,7 @@
 	NSArray *u = [controller urls];
 	int count = [u count];
 	NSString *dir = [controller directory];
-	NSMutableArray *files = [[[NSMutableArray alloc] init] autorelease];
+	NSMutableDictionary *files = [[[NSMutableDictionary alloc] init] autorelease];
 	NSProgressIndicator *progressBar = [controller progress];
 	
 	for (int c=0;c<count;c++)
@@ -128,7 +144,7 @@
 		
 		if (isValidData && isValidName) {
 			[data writeToFile:path atomically:YES];
-			[files addObject:path];
+			[files setObject:path forKey:url];
 		} else {
 			NSLog(@"Error in handling url \"%@\":",url);
 			if (!isValidName) {
@@ -154,12 +170,16 @@
 #ifdef DEBUG
 	NSLog(@"installing to: %@, count: %d",destination,[files count]);
 #endif
+
+	NSArray * filesKeys = [files allKeys];
 	
-	for (int c=0;c<(int)[files count];c++)
+	for (int c=0;c<(int)[filesKeys count];c++)
 	{
 		[progressBar setDoubleValue:c+1];
 		[controller updateMessage:[NSString stringWithFormat:@"Installing %d of %d file%s",c+1,[files count],[files count]>1?"s":""]];
-		[controller install:[files objectAtIndex:c] destination:destination];
+		NSURL * thisFileKey = [filesKeys objectAtIndex:c];
+		NSString * thisFileString = [files objectForKey:thisFileKey];
+		[controller install:thisFileString forUrl:thisFileKey destination:destination];
 	}
 	[progressBar setDoubleValue:[files count]];
 
