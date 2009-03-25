@@ -188,6 +188,7 @@ $MQL('l:app_search',function(msg)
 	var sort = ($('#sort_most_downloaded').hasClass('active_sort'))?'downloaded':'popular';
 	var options = {sort:sort,search:$('#app_search').val()};
 	TiDeveloper.Apps.findApps(options);
+	TiDeveloper.track('app-search',{val:search:$('#app_search').val()});
 	
 })
 
