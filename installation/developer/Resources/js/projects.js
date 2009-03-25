@@ -425,7 +425,7 @@ TiDeveloper.Projects.refreshStats = function(guid)
 							
 							topValue = parseInt(topValue*1.2);
 							var mid = parseInt(topValue/2);
-							var imageUrl = "http://chart.apis.google.com/chart?chxt=x,y&chxl=0:|Windows|Linxu|OSX|1:|0|"+mid+"|"+topValue+"&cht=bvs&chd=t:"+data[0]['count']+","+data[1]['count']+","+data[2]['count']+"&chds=0,"+topValue+"&chco=76A4FB&chls=2.0&chs=300x200&chbh=r,0.3&chf=bg,s,333333"
+							var imageUrl = "http://chart.apis.google.com/chart?chxt=x,y&chxl=0:|Windows|Linux|OSX|1:|0|"+mid+"|"+topValue+"&cht=bvs&chd=t:"+data[0]['count']+","+data[1]['count']+","+data[2]['count']+"&chds=0,"+topValue+"&chco=76A4FB&chls=2.0&chs=300x200&chbh=r,0.3&chf=bg,s,333333"
 							var img = document.createElement('img')
 							img.src = imageUrl;
 							$('#google_chart').html(img);
