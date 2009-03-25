@@ -345,7 +345,7 @@ TiDeveloper.Projects.refreshStats = function(guid)
 	var statsArray = [];
 	var statsLastUpdate = null;
 	var statsAvailable = false;
-	
+	var topValue = 0;
     db.transaction(function (tx) 
     {
     	tx.executeSql("SELECT platform, count, date from ProjectDownloads WHERE guid = ?",[guid],
@@ -358,6 +358,8 @@ TiDeveloper.Projects.refreshStats = function(guid)
 	                var row = result.rows.item(i);
 					var platform = row['platform'];
 					var count = row['count'];
+					if (count >= topValue)topValue = count;
+					
 				 	statsLastUpdate= row['date'];
 					statsArray.push({'name':platform,'value':count,});
 				}
@@ -405,6 +407,7 @@ TiDeveloper.Projects.refreshStats = function(guid)
 							tx.executeSql("INSERT into ProjectDownloads (guid, platform, count,date,page_url) values (?,?,?,?,?)",[aguid,data[i]['os'],data[i]['count'], date,pageUrl]);
 							var platform = data[i]['os'];
 							var count = data[i]['count'];
+							if (count >= topValue)topValue = count;
 							totalCount += count;
 							a.push({name:platform,value:count,guid:aguid});
 						}
@@ -419,7 +422,16 @@ TiDeveloper.Projects.refreshStats = function(guid)
 							$('#download_stats_none').css('display','none')
 							$('#download_stats').css('display','block');
 							$('#download_stats_loading').css('display','none');
-							$MQ('l:package_download_stats',{date:date, rows:a})
+							
+							topValue = parseInt(topValue*1.2);
+							var mid = parseInt(topValue/2);
+							var imageUrl = "http://chart.apis.google.com/chart?chxt=x,y&chxl=0:|Windows|Linux|OSX|1:|0|"+mid+"|"+topValue+"&cht=bvs&chd=t:"+data[0]['count']+","+data[1]['count']+","+data[2]['count']+"&chds=0,"+topValue+"&chco=76A4FB&chls=2.0&chs=300x200&chbh=r,0.3&chf=bg,s,333333"
+							var img = document.createElement('img')
+							img.src = imageUrl;
+							$('#google_chart').html(img);
+							
+							//$MQ('l:package_download_stats',{date:date, rows:a})
+	
 						}
 					});
 				});
@@ -440,7 +452,15 @@ TiDeveloper.Projects.refreshStats = function(guid)
 				$('#download_stats_none').css('display','none');
 				$('#download_stats').css('display','block');
 				$('#download_stats_loading').css('display','none');
-				$MQ('l:package_download_stats',{date:statsLastUpdate, rows:statsArray})
+
+				topValue = parseInt(topValue*1.2);
+				var mid = parseInt(topValue/2);
+				var imageUrl = "http://chart.apis.google.com/chart?chxt=x,y&chxl=0:|Windows|Linux|OSX|1:|0|"+mid+"|"+topValue+"&chd=t:"+statsArray[0]['count']+","+statsArray[1]['count']+","+statsArray[2]['count']+"&chds=0,"+topValue+"&chco=76A4FB&chls=2.0&chs=300x200&chbh=r,0.3&chf=bg,s,333333"
+				var img = document.createElement('img')
+				img.src = imageUrl;
+				$('#google_chart').html(img);
+
+//				$MQ('l:package_download_stats',{date:statsLastUpdate, rows:statsArray})
 			}
 			else
 			{

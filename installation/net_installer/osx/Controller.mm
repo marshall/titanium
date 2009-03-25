@@ -71,7 +71,7 @@
 
 -(void)install:(NSString *)file forUrl:(NSURL *)url destination:(NSString*)dir
 {
-	NSArray *parts = [[url query] componentsSeparatedByString:@"&"];
+	NSArray *parts = [[[url query] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding] componentsSeparatedByString:@"&"];
 	BOOL isRuntime = NO;
 	BOOL isModule = NO;
 	NSString *destdir = nil;
@@ -97,23 +97,30 @@
 		}
 
 		if ([thisPart hasPrefix:@"version="]){
-			subtype = [thisPart substringFromIndex:8];
+			version = [thisPart substringFromIndex:8];
 			continue;
 		}
 	}
 
 	if (isRuntime){
-		destdir = [NSString stringWithFormat:@"%@/runtime/osx/%@",dir,subtype];
+		destdir = [NSString stringWithFormat:@"%@/runtime/osx/%@",dir,version];
 	} else if (isModule) {
 		destdir = [NSString stringWithFormat:@"%@/modules/osx/%@/%@",dir,subtype,version];
 	} else {
+		NSLog(@"Not sure what to do with %@ for %@",file,url);
 		return;
 	}
-	
+
+#ifdef DEBUG	
+	NSLog(@"subtype=%@,version=%@,runtime=%d,module=%d",subtype,version,isRuntime,isModule);
+#endif
+
+	NSLog(@"Installing %@ for %@ into %@",file,url,destdir);
 	[self generateDirectory:destdir];
 	std::string src([file UTF8String]);
 	std::string dest([destdir UTF8String]);
 	kroll::FileUtils::Unzip(src,dest);
+	NSLog(@"After unzip %s to %s",src.c_str(),dest.c_str());
 }
 -(void)download:(Controller*)controller 
 {
@@ -184,7 +191,8 @@
 	[progressBar setDoubleValue:[files count]];
 
 	[controller updateMessage:@"Installation complete"];
-	
+
+	NSLog(@"Installation is complete, exiting after installing %d files",[filesKeys count]);
 	[pool release];
 	[NSApp terminate:self];
 }
