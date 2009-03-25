@@ -17,7 +17,7 @@ namespace ti
 	void ProcessModule::Initialize()
 	{
 		// load our variables
-		this->binding = new ProcessBinding(host->GetGlobalObject());
+		this->binding = new ProcessBinding(host,host->GetGlobalObject());
 
 		// set our ti.Process
 		SharedValue value = Value::NewObject(this->binding);

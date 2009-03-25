@@ -15,7 +15,7 @@
 
 namespace ti
 {
-	ProcessBinding::ProcessBinding(SharedBoundObject global) : global(global)
+	ProcessBinding::ProcessBinding(Host *h, SharedBoundObject global) : host(h),global(global)
 	{
 #ifdef OS_OSX
 		NSProcessInfo *p = [NSProcessInfo processInfo];
@@ -30,6 +30,7 @@ namespace ti
 		this->SetMethod("setEnv",&ProcessBinding::SetEnv);
 		this->SetMethod("hasEnv",&ProcessBinding::HasEnv);
 		this->SetMethod("launch",&ProcessBinding::Launch);
+		this->SetMethod("restart",&ProcessBinding::Restart);
 	}
 	ProcessBinding::~ProcessBinding()
 	{
@@ -105,5 +106,41 @@ namespace ti
 		std::string key(args.at(0)->ToString());
 		std::string value(args.at(1)->ToString());
 		Poco::Environment::set(key,value);
+	}
+	void ProcessBinding::Restart(const ValueList& args, SharedValue result)
+	{
+#ifdef OS_OSX
+		NSProcessInfo *p = [NSProcessInfo processInfo];
+		NSString *path = [[NSBundle mainBundle] bundlePath];
+		NSString *killArg1AndOpenArg2Script = [NSString stringWithFormat:@"kill -9 %d\n open \"%@\"",[p processIdentifier],path];
+		NSArray *shArgs = [NSArray arrayWithObjects:@"-c", // -c tells sh to execute the next argument, passing it the remaining arguments.
+			killArg1AndOpenArg2Script,nil];
+		NSTask *restartTask = [NSTask launchedTaskWithLaunchPath:@"/bin/sh" arguments:shArgs];
+		[restartTask waitUntilExit]; //wait for killArg1AndOpenArg2Script to finish
+#elif OS_WIN32
+		std::string cmdline = host->GetCommandLineArg(0);
+		STARTUPINFO si;
+		PROCESS_INFORMATION pi;
+		ZeroMemory( &si, sizeof(si) );
+		si.cb = sizeof(si);
+		ZeroMemory( &pi, sizeof(pi) );
+		HANDLE h = CreateProcess(NULL,
+			cmdline.c_str(),
+			NULL, /*lpProcessAttributes*/
+			NULL, /*lpThreadAttributes*/
+			FALSE, /*bInheritHandles*/
+			NORMAL_PRIORITY_CLASS,
+			NULL,
+			NULL,
+			&si,
+			&pi);
+		CloseHandle( pi.hProcess );
+		CloseHandle( pi.hThread );
+#elif OS_LINUX
+		std::string cmdline = host->GetCommandLineArg(0);
+		std::string script = "sh " + cmdline + " &";
+		system(script.c_str());
+#endif
+		host->Exit(999);
 	}
 }

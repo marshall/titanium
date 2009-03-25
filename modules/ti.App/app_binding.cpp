@@ -19,8 +19,15 @@ namespace ti
 		this->SetMethod("getUpdateURL", &AppBinding::GetUpdateURL);
 		this->SetMethod("getGUID", &AppBinding::GetGUID);
 		this->SetMethod("appURLToPath", &AppBinding::AppURLToPath);
+		
+		// set the path to the executable we're running
+#ifdef OS_OSX
+		NSString *path = [[NSBundle mainBundle] bundlePath];
+		this->Set("path",Value::NewString([path UTF8String]));
+#else
+		this->Set("path",Value::NewString(host->GetCommandLineArg(0)));
+#endif
 
-		// FIXME: for now this version is hardcoded
 		SharedValue version = Value::NewDouble(PRODUCT_VERSION);
 		global->Set("version", version);
 
