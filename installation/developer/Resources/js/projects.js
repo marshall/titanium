@@ -15,7 +15,6 @@ TiDeveloper.Projects.selectedProject = null;
 TiDeveloper.Projects.packagingInProgress = {};
 TiDeveloper.Projects.packagingError = {};
 
-
 //
 //  Initialization message - setup all initial states
 //
