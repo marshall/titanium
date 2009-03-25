@@ -15,6 +15,7 @@
 int Job::total = 0;
 std::string Job::download_dir = "";
 std::string Job::install_dir = "";
+char* Job::curl_error = NULL;
 CURL* Job::curl = NULL;
 
 int curl_progress_func(
@@ -31,6 +32,9 @@ void Job::Init(std::string download_dir, std::string install_dir)
 	Job::curl = curl_easy_init();
 	Job::download_dir = download_dir;
 	Job::install_dir = install_dir;
+
+	if (Job::curl_error == NULL)
+		Job::curl_error = new char[CURL_ERROR_SIZE];
 }
 
 void Job::ShutdownDownloader()
@@ -40,6 +44,12 @@ void Job::ShutdownDownloader()
 		curl_easy_cleanup(Job::curl);
 		curl_global_cleanup();
 		Job::curl = NULL;
+	}
+
+	if (Job::curl_error != NULL)
+	{
+		delete [] Job::curl_error;
+		Job::curl_error = NULL;
 	}
 }
 
@@ -106,17 +116,19 @@ void Job::Fetch()
 		curl_easy_setopt(Job::curl, CURLOPT_PROGRESSFUNCTION, curl_progress_func);
 		curl_easy_setopt(Job::curl, CURLOPT_PROGRESSDATA, this);
 		curl_easy_setopt(Job::curl, CURLOPT_FOLLOWLOCATION, 1);
+		curl_easy_setopt(Job::curl, CURLOPT_FAILONERROR, 1);
+		curl_easy_setopt(Job::curl, CURLOPT_ERRORBUFFER, Job::curl_error);
 		CURLcode result = curl_easy_perform(Job::curl);
 
 		if (result != CURLE_OK)
-			throw std::string("Download failJob::ed: some files failed to download.");
+			throw std::string("Download failed: ") + Job::curl_error;
+
 		fflush(out);
 		fclose(out);
 
 	}
 	catch (...)
 	{
-		printf("Error\n");
 		// Cleanup
 		if (out != NULL)
 		{

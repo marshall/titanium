@@ -2,7 +2,7 @@
 Import('build')
 import os.path as p
 
-name = 'titanium_runtime'
+name = 'titanium-sdk'
 version = build.version
 appid ='com.titaniumapp.installer.runtime'
 

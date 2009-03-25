@@ -42,7 +42,7 @@ class Bundler(object):
 		out_file.close()
 		out_file = open(p.join(self.contents, 'manifest'), 'w')
 		out_file.write(manifest_text)
-		out_file.close()		
+		out_file.close()
 
 bundle = Bundler(name,build.dir,'tiapp.xml','Resources',None)
 runtime = p.join(bundle.contents, 'runtime');
@@ -114,7 +114,7 @@ shutil.copy(p.join(netinstaller,'net_installer'),bundle.binary)
 
 srcfolder=p.join(build.dir,name+'.app')
 tdmgname='_'+name
-dmgname='titanium-sdk-'+version
+dmgname=name+version
 
 app_dir = p.join(srcfolder,'Contents')
 
@@ -147,8 +147,8 @@ if not ARGUMENTS.get('skipdmg', 0):
 	invoke("hdiutil create -srcfolder \"%s\" -scrub -volname \"Titanium\" -fs HFS+ -fsargs \"-c c=64,a=16,e=16\" -format UDRW \"%s\"" % (srcfolder,tdmgname))
 	invoke("hdiutil attach -readwrite -noverify -noautoopen \"%s.dmg\"" % tdmgname)
 	invoke("bless --folder /Volumes/Titanium --openfolder /Volumes/Titanium")
-	shutil.move("/Volumes/Titanium/titanium_runtime.app","/Volumes/Titanium/Install Titanium.app")
-	invoke("strip -u -r \"/Volumes/Titanium/Install Titanium.app/Contents/MacOS/titanium_runtime\"")
+	shutil.move("/Volumes/Titanium/titanium-sdk.app","/Volumes/Titanium/Install Titanium.app")
+	invoke("strip -u -r \"/Volumes/Titanium/Install Titanium.app/Contents/MacOS/titanium-sdk\"")
 	invoke("ditto %s/installation/runtime/osx/installer_DS_Store /Volumes/Titanium/.DS_Store" % build.titanium_source_dir)
 	invoke("ditto %s/installation/runtime/osx/background.jpg /Volumes/Titanium/background.jpg" % build.titanium_source_dir)
 	invoke("ditto %s/support/osx/titanium.icns /Volumes/Titanium/.VolumeIcon.icns" % build.titanium_source_dir)

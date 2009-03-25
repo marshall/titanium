@@ -1,5 +1,5 @@
-#appname:titanium_runtime
-#appid:com.titaniumapp.runtime
+#appname:titanium-sdk
+#appid:com.titaniumapp.sdk
 #guid:323C8AD1-EB03-4D2B-95B2-00518B9DDD13
 runtime: 0.3
 javascript: 0.3

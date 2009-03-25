@@ -162,7 +162,7 @@ function runInstaller()
 					
 					break;
 				case 'win32':
-					// copy titanium_runtime.exe to template/kboot.exe
+					// copy titanium-sdk.exe to template/kboot.exe
 					var boot = TFS.getFile(src,appname+'.exe');
 					if(!boot.exists())
 					{
