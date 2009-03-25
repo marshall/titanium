@@ -46,6 +46,27 @@
 	return installDirectory;
 }
 
+-(void)bailWithMessage: (NSString *) errorString;
+{
+	NSLog(@"Bailing with error: %@",errorString);
+	NSRunCriticalAlertPanel(nil, errorString, @"Cancel", nil, nil);
+	[NSApp terminate:nil];
+}
+
+-(void)generateDirectory:(NSString *) newDirectoryPath;
+{
+	NSFileManager * theFM = [[NSFileManager alloc] init];
+	BOOL isDirectory;
+	BOOL isExistent = [theFM fileExistsAtPath:newDirectoryPath isDirectory:&isDirectory];
+	if (!isExistent) {
+		[self generateDirectory:[newDirectoryPath stringByDeletingLastPathComponent]];
+		[theFM createDirectoryAtPath:newDirectoryPath attributes:nil];
+	} else if (!isDirectory) {
+		NSString * errorMessage = [NSString stringWithFormat:@"Installer tried to create the folder \"%@\", but found a file in its place.",newDirectoryPath];
+		[self performSelectorOnMainThread:@selector(bailWithMessage:) withObject:errorMessage waitUntilDone:YES];
+	}
+}
+
 -(void)install:(NSString *)file destination:(NSString*)dir
 {
 	NSArray *parts = [[file lastPathComponent] componentsSeparatedByString:@"-"];
@@ -63,15 +84,15 @@
 		NSString *destdir = nil;
 		if ([type isEqualToString:@"runtime"])
 		{
-			destdir = [NSString stringWithFormat:@"%@/runtime/%@/%@",dir,subtype,version];
+			destdir = [NSString stringWithFormat:@"%@/runtime/osx/%@/%@",dir,subtype,version];
 		}
 		else if ([type isEqualToString:@"module"])
 		{
-			destdir = [NSString stringWithFormat:@"%@/modules/%@/%@",dir,subtype,version];
+			destdir = [NSString stringWithFormat:@"%@/modules/osx/%@/%@",dir,subtype,version];
 		}
 		if (destdir)
 		{
-			[[NSFileManager defaultManager]createDirectoryAtPath:destdir attributes:nil];
+			[self generateDirectory:destdir];
 			std::string src([file UTF8String]);
 			std::string dest([destdir UTF8String]);
 			kroll::FileUtils::Unzip(src,dest);
@@ -194,8 +215,7 @@
 		installDirectory = [[args objectAtIndex:5] stringByExpandingTildeInPath];
 		[installDirectory retain];
 	} else {
-		NSRunCriticalAlertPanel(title, @"Sorry, but the Application Installer was not given enough information to determine which libraries need downloading.", @"Cancel", nil, nil);
-		[NSApp terminate:nil];
+		[self bailWithMessage:@"Sorry, but the Application Installer was not given enough information to determine which libraries need downloading."];
 		return;
 	}
 
