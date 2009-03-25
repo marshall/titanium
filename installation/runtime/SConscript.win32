@@ -136,7 +136,7 @@ for i in [developer,appinstaller,app_dir]:
 # now for the fun part... build the self-extracting archive
 shutil.copy(kboot, p.join(app_dir,'installer.exe'))
 if not ARGUMENTS.get('skipzip', 0):
-	zff = p.join(build.dir,'titanium_runtime.zip')
+	zff = p.join(build.dir,'titanium-sdk.zip')
 	# build.utils.Mkdir(p.join(build.dir,'dist'))
 	exe = p.join(build.dir,'dist','titanium-sdk'+version+'.exe')
 	zf = zipfile.ZipFile(exe,'a', zipfile.ZIP_DEFLATED)
