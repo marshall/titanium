@@ -144,7 +144,12 @@ namespace ti
 		CloseHandle( pi.hThread );
 #elif OS_LINUX
 		std::string cmdline = host->GetCommandLineArg(0);
-		std::string script = "sh " + cmdline + " &";
+		size_t idx;
+		while ((idx = cmdline.find_first_of('\"')) != std::string::npos)
+		{
+			cmdline.replace(idx, 1, "\\\"");
+		}
+		std::string script = "\"" + cmdline + "\" &";
 		system(script.c_str());
 #endif
 		host->Exit(999);
