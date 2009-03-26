@@ -27,10 +27,7 @@
 			<!-- INSTALL INFO -->
 			<div id="installation_info"  class="page" style="display:none">
 				<div class="header_text appname">Loading...</div>
-
-				<div class="text section">
-					Information about the application you are about to install:
-				</div>
+				<div class="text section" id="intro"></div>
 				<div class="text section">
 					<div style="width:100px;float:left" class="light">
 						<div>Publisher:</div>
@@ -42,45 +39,48 @@
 					</div>	
 					<div style="clear:both"></div>
 				</div>
-				<div class="text section">
-					Installation Preferences:
+				<div id="install_screen">
+					<div class="text section">
+						Installation Preferences:
+					</div>
+					<div class="text section light">
+						<div>
+							<input type="checkbox" checked="true" id="open_after_install"/> 
+							Start application after install
+						</div>
+						<div style="margin-top:10px">
+							<input type="checkbox" checked="true" id="create_shortcut"/> 
+							Create a shortcut for the application
+						</div>
+						<div style="margin-top:10px">
+							<input type="checkbox" checked="true" id="check_updates"/> 
+							Periodically check for application updates
+						</div>
+						<div style="margin-top:10px">
+							<span style="float:left;position:relative;top:6px;margin-right:10px">Location:</span>
+							<input type="text" id="install_location" style="float:left"/> 
+							<div class="button1" id="file_browse"
+								style="float:left;width:25px;height:25px;position:relative;top:1px;margin-left:10px" >
+								<div class="button2" style="height:23px">
+									<img src="images/folder_go.png" style="position:relative;top:3px;left:1px"/>
+								</div>
+							</div>
+							<div style="clear:both"></div>
+						</div>
+					</div>
 				</div>
 				<div class="text section light">
-					<div>
-						<input type="checkbox" checked="true" id="open_after_install"/> 
-						Start application after install
-					</div>
-					<div style="margin-top:10px">
-						<input type="checkbox" checked="true" id="create_shortcut"/> 
-						Create a shortcut for the application
-					</div>
-					<div style="margin-top:10px">
-						<input type="checkbox" checked="true" id="check_updates"/> 
-						Periodically check for application updates
-					</div>
-					<div style="margin-top:10px">
-						<span style="float:left;position:relative;top:6px;margin-right:10px">Location:</span>
-						<input type="text" id="install_location" style="float:left"/> 
-						<div class="button1" id="file_browse"
-							style="float:left;width:25px;height:25px;position:relative;top:1px;margin-left:10px" >
-							<div class="button2" style="height:23px">
-								<img src="images/folder_go.png" style="position:relative;top:3px;left:1px"/>
-							</div>
-						</div>
-						<div style="clear:both"></div>
-					</div>
 					<div style="margin-top:10px;" id="app_warning">
 						<img src="images/warning.png" /> This application has application access like all installed applications running on the desktop.
 					</div>
 				</div>
 				<div class="text section">
 					<div class="button1 disabled" id="install">
-						<div class="button2">Install</div>
+						<div class="button2" id="install_btn">Install</div>
 					</div>
 					<div class="button1" id="cancel">
 						<div class="button2">Cancel</div>
 					</div>
-
 				</div>
 			</div>
 			
@@ -110,70 +110,5 @@
 	
 	<!-- POWERED BY LOGO -->
 	<div id="powered_by" class="section" onclick="Titanium.Desktop.openURL('http://titaniumapp.com');"></div>
-
-	<script>
-	// create progress bars
-	$('#progressbar').progressbar({value:0})
-	$('#progressbar_install').progressbar({value:0})
-
-	// cancel install click
-	$('#cancel').click(function()
-	{
-		if (confirm('Are you sure you want to cancel the installation?')==true)
-		{
-			Titanium.UI.currentWindow.close();
-		}
-	});
-	
-	// finish install click
-	$('#finish').click(function()
-	{
-		if ($('#open_after_install').is(':checked'))
-		{
-			launchApp();
-		}
-		else
-		{
-			Titanium.App.exit(0);
-		}
-	})
-
-	Titanium.UI.currentWindow.setHeight(450)
-	
-	// show install info screen
-	$('#installation_info').fadeIn();
-	$('#install').removeClass('disabled');
-	
-	// install app click
-	$('#install').click(function()
-	{
-		$('#installation_info').slideUp(500);
-		Titanium.UI.currentWindow.setHeight(220)
-		
-		// show installation screen
-		$('#install_app').fadeIn()
-		
-		// run the installer
-		installApp($('#install_location').val());
-	});
-	
-	$('#file_browse').click(function()
-	{
-		var props = {multiple:false};
-		props.directories = true;
-		props.files = false;
-
-		Titanium.UI.openFiles(function(f)
-		{
-			if (f.length)
-			{
-				$('#install_location').val(f[0]);
-			}
-		},
-		props);	
-	});
-	
-	
-	</script>
 </body>
 </html>

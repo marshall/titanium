@@ -11,9 +11,27 @@ using System.Diagnostics;
 
 namespace Titanium
 {
+    public class WindowWrapper : System.Windows.Forms.IWin32Window
+    {
+        public WindowWrapper(IntPtr handle)
+        {
+            _hwnd = handle;
+        }
+
+        public IntPtr Handle
+        {
+            get { return _hwnd; }
+        }
+
+        private IntPtr _hwnd;
+    }
 
     public partial class form : Form
     {
+        //static string DISTRIBUTION_UUID = "7F7FA377-E695-4280-9F1F-96126F3D2C2A";
+        static string RUNTIME_UUID = "A2AC5CB5-8C52-456C-9525-601A5B0725DA";
+        static string MODULE_UUID = "1ACE5D3A-2B52-43FB-A136-007BD166CFD0";
+
         public form(string tempdir, string installdir, string title, string[] urls, string unzipper)
         {
             InitializeComponent();
@@ -36,6 +54,11 @@ namespace Titanium
 
         private void backgroundWorker_DoWork_1(object sender, DoWorkEventArgs e)
         {
+
+            string name = null;
+            string version = null;
+            Uri uri = null;
+
             try
             {
                 IFormatProvider provider = new Titanium.FileSizeFormatProvider();
@@ -44,15 +67,19 @@ namespace Titanium
                     "Preparing to download " + this.urls.Length + " file" + (this.urls.Length > 1 ? "s" : "")    
                 });
 
-                string [] files = new string[this.urls.Length];
-
                 for (int c = 0; c < this.urls.Length; c++)
                 {
-                    Uri uri = new Uri(this.urls[c]);
-                    string[] segments = uri.Segments;
-                    string filename = segments[segments.Length - 1];
-                    string path = tempdir + "//" + filename;
-                    files[c] = filename;
+                    uri = new Uri(this.urls[c]);
+
+                    string filename = this.getFilename(uri);
+
+                    if (filename == null)
+                    {
+                        System.Console.WriteLine("Unable to deteremine filename for " + this.urls[c]);
+                        continue;
+                    }
+
+                    string path = tempdir + "\\" + filename;
 
                     HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
                     request.UserAgent = "Mozilla/5.0 (compatible; Titanium_Downloader/0.2; Win32)";
@@ -104,36 +131,46 @@ namespace Titanium
                     outStream.Close();
                 }
 
-                for (int c = 0; c < files.Length; c++)
+                for (int c = 0; c < this.urls.Length; c++)
                 {
-                    string currentMessage = "Installing " + (c + 1) + " of " + files.Length + " ... ";
+                    uri = new Uri(this.urls[c]);
+                    name = this.getURIParam(uri, "name");
+                    string subtype = "win32";
+                    version = this.getURIParam(uri, "version");
+
+                    string currentMessage = "Installing " + name + "/" + version + " (" + (c + 1) + " of " + this.urls.Length + ") ... ";
                     this.Invoke(this.textDelegate, new object[]{
                         currentMessage
                     });
 
-                    string name = files[c];
-                    string [] tokens = name.Split('-');
-                    string type = tokens[0];
-                    string subtype = tokens[1];
-                    string version = tokens[2].Substring(0, tokens[2].LastIndexOf("."));
-    
+                    string filename = this.getFilename(uri);
+
+                    if (filename == null)
+                    {
+                        continue;
+                    }
+
+                    string uuid = this.getURIParam(uri, "uuid");
+
                     string destdir;
 
-                    if (type == "runtime")
+                    if (RUNTIME_UUID == uuid)
                     {
                         destdir = installdir + "\\runtime\\" + subtype + "\\" + version;
                     }
-                    else if (type == "module")
+                    else if (MODULE_UUID == uuid)
                     {
-                        destdir = installdir + "\\modules\\" + subtype + "\\" + version;
+                        destdir = installdir + "\\modules\\" + subtype + "\\" + name + "\\" + version;
                     }
                     else
                     {
                         continue;
                     }
 
-                    string from = tempdir+"\\"+name;
-                    string to = destdir+"\\"+name;
+                    string from = tempdir + "\\" + filename;
+                    string to = destdir;
+
+                    Directory.CreateDirectory(to);
 
                     // in win32, we just invoke back the same process and let him unzip
                     Process p = new Process();
@@ -146,20 +183,62 @@ namespace Titanium
                     p.WaitForExit();
 
                     // delete the temp file and cleanup
-                    File.Delete(this.tempdir + "\\" + files[c]);
+                    File.Delete(from);
 
                     // update the progress indicator
                     this.Invoke(this.progressDelegate, new object[]{
                             c+1,
-                            files.Length
+                            this.urls.Length
                         });
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message+"\n\n"+ex.StackTrace);
+                if (ex != null)
+                {
+                    MessageBox.Show(new WindowWrapper(this.Handle), "Error downloading required application dependency name:" + name + ",version:" + version, "Application Error",
+                        MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                }
             }
             Application.Exit();
+        }
+
+        private string getFilename(Uri uri)
+        {
+            string name = this.getURIParam(uri, "name");
+            string version = this.getURIParam(uri, "version");
+
+            if (name == null || version == null)
+            {
+                return null;
+            }
+
+            return name + "-" + version + ".zip";
+        }
+
+        private string getURIParam(Uri uri, string paramName)
+        {
+            string query = uri.Query;
+            if (query.Length > 0 && query[0] == '?')
+            {
+                query = query.Substring(1);
+            }
+
+            string[] pairs = query.Split('&');
+
+            for (int i = 0; i < pairs.Length; i++)
+            {
+                string pair = pairs[i];
+
+                string[] tokens = pair.Split('=');
+
+                if (paramName == tokens[0])
+                {
+                    return System.Web.HttpUtility.UrlDecode(tokens[1]);
+                }
+            }
+
+            return null;
         }
 
         private void form_Load(object sender, EventArgs e)

@@ -4,29 +4,50 @@ TiDeveloper.IRC.channel = "#titanium_app";
 TiDeveloper.IRC.count = 0;
 TiDeveloper.IRC.ircClient = null;
 TiDeveloper.IRC.messageCount = 0;
-
+TiDeveloper.IRC.online = false;
 //
 //  Initialization message - setup all initial states
 //
 $MQL('l:app.compiled',function()
 {
+	function ircOnlineTest(online) 
+	{
+		if (online==true && TiDeveloper.IRC.online==true)
+		{
+			return;
+		}
+		TiDeveloper.IRC.online=online;
+		if (!online)
+		{
+			$MQ('l:online.count',{count:'offline'});
+			$MQ('l:tideveloper.network',{online:false});
+		}
+		else
+		{
+			$MQ('l:tideveloper.network',{online:true});
+		}
+	}
+	Titanium.Network.addConnectivityListener(ircOnlineTest);
+
 	// load or initialize IRC data
 	db.transaction(function(tx) 
 	{
-	   tx.executeSql("SELECT nick FROM IRC", [], function(tx,result) 
-	   {
-		   for (var i = 0; i < result.rows.length; ++i) 
-		   {
-                var row = result.rows.item(i);
+		tx.executeSql("SELECT nick FROM IRC", [], function(tx,result) 
+		{
+			for (var i = 0; i < result.rows.length; ++i) 
+			{
+				var row = result.rows.item(i);
 				TiDeveloper.IRC.nick = row['nick'];
 				break;
 			}
-	   }, function(tx, error) 
-	   {
-	       tx.executeSql("CREATE TABLE IRC (id REAL UNIQUE, nick TEXT)");
-		   tx.executeSql("INSERT INTO IRC (id, nick) values (?,?)",[1,Titanium.Platform.username])
-		   TiDeveloper.IRC.nick = Titanium.Platform.username;
-	   });
+			ircOnlineTest(Titanium.Network.online);
+		}, function(tx, error) 
+		{
+			tx.executeSql("CREATE TABLE IRC (id REAL UNIQUE, nick TEXT)");
+			tx.executeSql("INSERT INTO IRC (id, nick) values (?,?)",[1,Titanium.Platform.username])
+			TiDeveloper.IRC.nick = Titanium.Platform.username;
+			ircOnlineTest(Titanium.Network.online);
+		});
 	});
 
 	var currentSelectionIdx = -1;
@@ -83,21 +104,24 @@ $MQL('l:app.compiled',function()
 	});
 	
 
-	setTimeout(function () {
-		if (Titanium.platform == "win32") {
-			TiDeveloper.online = true;
-			TiDeveloper.IRC.initialize();
+	$MQL('l:menu',function(data)
+	{
+		if (data.payload.val == 'interact')
+		{
+			setTimeout(function()
+			{
+				$('#irc').get(0).scrollTop = $('#irc').get(0).scrollHeight;
+			},20);
 		}
-	}, 2000);
+	});
+
 });
-
-
 //
 // Format IRC nickname
 //
 TiDeveloper.IRC.formatNick =  function(name)
 {
-	return name.replace(' ','_');
+	return name.replace(/ /g,'_');
 }
 
 //
@@ -124,12 +148,15 @@ $MQL('l:tideveloper.network',function(msg)
 {
 	if (msg.payload.online == true)
 	{
-		TiDeveloper.IRC.initialize()	
+		TiDeveloper.IRC.initialize()
 	}
 	else
 	{
-		TiDeveloper.IRC.ircClient.disconnect();
-		TiDeveloper.IRC.ircClient = null;
+		if (TiDeveloper.IRC.ircClient != null)
+		{
+			TiDeveloper.IRC.ircClient.disconnect();
+			TiDeveloper.IRC.ircClient = null;
+		}
 		$('#irc').html('<div style="color:#aaa">you are offline</div>');
 		$('#irc_users').empty();
 	}
@@ -156,11 +183,23 @@ TiDeveloper.IRC.initialize = function()
 {
 	try
 	{
+		// clear irc window
+		$('#irc').empty();
+		
+		// set name vars
 		var username = TiDeveloper.IRC.formatNick(TiDeveloper.IRC.nick);
+		userSetNick = username;
+		
+		// used to increment nick if taken
 		var nick_counter = 1;
-		var setNicknameAttempted = false;
-		// initial message
+		
+		// used to track if we are connecting for the first time
+		var firstAttempt = true;
+		
+		// intro message
 		$('#irc').append('<div style="color:#aaa">you are joining the <span style="color:#42C0FB">Titanium Developer</span> IRC channel <span style="color:#42C0FB">'+TiDeveloper.IRC.channel+'</span>. one moment...</div>');
+		
+		// connect
 		TiDeveloper.IRC.ircClient = Titanium.Network.createIRCClient();
 		TiDeveloper.IRC.ircClient.connect("irc.freenode.net",6667,username,username,username,String(new Date().getTime()),function(cmd,channel,data,nick)
 		{
@@ -171,39 +210,43 @@ TiDeveloper.IRC.initialize = function()
 			{	
 				case '433':
 				{
-					$('#irc').append('<div style="color:#aaa;margin-bottom:8px">' + userSetNick + ' is already taken. try another nickname.</div>');
-					setNicknameAttempted = true;
+					// show message and try a new nick
+					$('#irc').append('<div style="color:#aaa;margin-bottom:8px">' + userSetNick + ' is already taken. trying another nickname.</div>');
+					userSetNick = userSetNick  + (nick_counter++);
+					userSetNick = TiDeveloper.IRC.formatNick(userSetNick);
+					TiDeveloper.IRC.nick = userSetNick;
+				    TiDeveloper.IRC.updateNickInDB(userSetNick);
+
+					// if first time, let's disconnect/reconnect with new nick
+					// we do this because an initial 433 causes problems
+					if (firstAttempt == true)
+					{
+						TiDeveloper.IRC.ircClient.disconnect();
+						TiDeveloper.IRC.ircClient = null;
+						TiDeveloper.IRC.initialize()	
+					}
+					else
+					{
+						TiDeveloper.IRC.ircClient.setNick(userSetNick);
+					}
+
 					break;
 				}
 				case 'NICK':
 				{
-					// user is trying to set their nickname
-					if (userSetNick != null)
-					{
-						if ($('.' + userSetNick).length == 0)
-						{
-							$('#irc').append('<div style="color:#aaa;margin-bottom:8px">' + username + ' is now known as <span style"color:#42C0FB">'+userSetNick+'</span></div>');
-							$('.'+username).html('');
-							$('#irc_users').append('<div class="'+userSetNick+'" >'+userSetNick+'</div>');
-							username = userSetNick;
-						
-							// update database
-						    TiDeveloper.IRC.updateNickInDB(username);
-						}
-						else
-						{
-							return;
-						}
-					}
-					// initial attempt to set nickname
-					else
-					{
-						username = TiDeveloper.IRC.formatNick(TiDeveloper.IRC.nick);
-						setNicknameAttempted = true;
-					}
-					// try again with a new nick
-					TiDeveloper.IRC.updateNickInDB(username);
+					firstAttempt = false;
 
+					// remove old user, add new one
+					if ($('.' + userSetNick).length == 0)
+					{
+						$('#irc').append('<div style="color:#aaa;margin-bottom:8px">' + username + ' is now known as <span style"color:#42C0FB">'+userSetNick+'</span></div>');
+						$('.'+username).html('');
+						$('#irc_users').append('<div class="'+userSetNick+'" >'+userSetNick+'</div>');
+						username = userSetNick;
+					
+						// update database
+					    TiDeveloper.IRC.updateNickInDB(username);
+					}
 					break;
 				}
 				case 'NOTICE':
@@ -239,7 +282,8 @@ TiDeveloper.IRC.initialize = function()
 				}
 				// USER LIST
 				case '366':
-				{					
+				{	
+					firstAttempt = false;
 					var users = TiDeveloper.IRC.ircClient.getUsers(TiDeveloper.IRC.channel);
 					$MQ('l:online.count',{count:users.length});
 					TiDeveloper.IRC.count = users.length;
@@ -257,15 +301,16 @@ TiDeveloper.IRC.initialize = function()
 						return;
 					}
 					
-					if (nick == username)
+					if (nick == userSetNick)
 					{
 						$('#irc').append('<div style="color:#aaa;margin-bottom:20px"> you are now in the room. your handle is: <span style="color:#42C0FB">'+username+'</span>.  You can change your handle using: <span style="color:#42C0FB">/nick new_handle</span></div>');
-						break;
+						return;
 					}
 					else
 					{
 						TiDeveloper.IRC.count++;
 					}
+					
 					$('#irc').append('<div style="color:#aaa;margin-bottom:8px">' + nick + ' has joined the room </div>');
 					$('#irc_users').append('<div class="'+nick+'" >'+nick+'</div>');
 					$MQ('l:online.count',{count:TiDeveloper.IRC.count});
@@ -297,7 +342,7 @@ TiDeveloper.IRC.initialize = function()
 
 $MQL('l:send.irc.msg',function()
 {
-	if (TiDeveloper.online == true)
+	if (Titanium.Network.online == true)
 	{
 		TiDeveloper.IRC.currentSelection = null;
 		var time = TiDeveloper.getCurrentTime();
@@ -331,3 +376,5 @@ $MQL('l:send.irc.msg',function()
 		
 	}
 });
+
+

@@ -5,7 +5,6 @@ var TFS = Titanium.Filesystem;
 var TiDeveloper  = {};
 TiDeveloper.currentPage = 1;
 TiDeveloper.init = false;
-TiDeveloper.online = Titanium.Network.online;
 TiDeveloper.windowFocused = false
 TiDeveloper.highestId = 0;
 
@@ -21,8 +20,14 @@ var db = openDatabase("TiDeveloper","1.0");
 TiDeveloper.formatCountMessage = function(count,things)
 {
 	return (count == 0) ? 'You have no '+things+'s' : count == 1 ? 'You have 1 '+things : 'You have ' + count + ' '+things+'s';
-}
+};
 
+
+TiDeveloper.track = function(name,data)
+{
+	data = (typeof(data)!='undefined') ? swiss.toJSON(data) : null;
+	Titanium.Analytics.addEvent(name,data);
+};
 
 //
 // Track window focus events
@@ -63,17 +68,6 @@ TiDeveloper.getCurrentTime = function()
   	return curTime;
 	
 };
-
-
-//
-// Network Connectivity Listener
-//
-Titanium.Network.addConnectivityListener(function(online)
-{
-	TiDeveloper.online = online;
-	$MQ('l:tideveloper.network',{online:online});
-});
-
 
 // these are not all the TLDs but most of the popular ones
 TiDeveloper.TLD = /\.(com|com\.uk|gov|org|net|mil|name|co\.uk|biz|info|edu|tv|mobi)/i;
@@ -140,10 +134,10 @@ TiDeveloper.make_url = function(base,params)
 		url = url + '?';
 		for (var p in params)
 		{
-			url+=encodeURIComponent(p)+'='+encodeURIComponent(String(params[p]));
+			url+=encodeURIComponent(p)+'='+encodeURIComponent(String(params[p])) + "&"
 		}
 	}
-	return url;
+	return url.substring(0,(url.length-1));
 };
 
 //

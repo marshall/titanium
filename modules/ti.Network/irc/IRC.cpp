@@ -730,6 +730,13 @@ void IRC::parse_irc_reply(char* data)
 			if (!params)
 				return;
 			*(params++)='\0';
+			std::string d(&params[1]);
+			std::string h(hostd_tmp.nick);
+			if (d.find("VERSION")==1 && h.find("freenode-connect")==0)
+			{
+				// ignore this message
+				return;
+			}
 			#ifdef __IRC_DEBUG__
 			printf("%s: <%s> %s\n", hostd_tmp.target, hostd_tmp.nick, &params[1]);
 			#endif

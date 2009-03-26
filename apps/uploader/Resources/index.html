@@ -1,0 +1,72 @@
+<html>
+<head>
+<link rel="stylesheet" href="index.css" type="text/css" media="screen" charset="utf-8"/>
+<script type="text/javascript" src="entourage-jquery-3.0.js"></script>
+<script type="text/javascript" src="index.js"></script>
+<script type="text/javascript" src="md5.js"></script>
+</head>
+<body>
+	<h1>Titanium Release Uploader</h1>
+	
+	<table>
+		<tr>
+			<td>Release Type:</td>
+			<td>
+				<select id="type">
+					<option value="distribution">SDK Distribution</option>
+					<option value="runtime">Runtime Bundle</option>
+					<option value="module">Module Bundle</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td>Release OS:</td>
+			<td>
+				<select id="os">
+					<option value="">Choose one..</option>
+					<option value="osx">Mac OSX</option>
+					<option value="win32">Windows</option>
+					<option value="linux">Linux</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td>Build type:</td>
+			<td>
+				<select id="build_type">
+					<option>Choose an OS</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2">Distribution Files:</td>
+			<td></td>
+		</tr>
+		<tr>
+			<td colspan="2" style="font-size: 8pt;">
+				<div id="files_display"> </div>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<input type="button" value="Add file..." id="filepicker"/>
+			</td>
+			<td>
+				<input type="button" value="Clear files" id="clearfiles"/>
+			</td>
+		</tr>
+		<tr>
+			<td>Upload Password:</td>
+			<td>
+				<input type="password" id="secret" value=""/>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2">
+				<button>Upload</button>
+			</td>
+		</tr>
+	</table>
+	<div id="status" style="display:none"></div>
+</body>
+</html>

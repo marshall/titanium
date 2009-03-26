@@ -86,6 +86,7 @@ namespace Titanium
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Installer App";
+            this.TopMost = true;
             this.Load += new System.EventHandler(this.form_Load);
             this.ResumeLayout(false);
             this.PerformLayout();

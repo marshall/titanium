@@ -9,17 +9,21 @@
 #include <cstring>
 #include <libgen.h>
 #include <unistd.h>
+#include <iostream>
+#include <sstream>
 
 int Job::total = 0;
 std::string Job::download_dir = "";
 std::string Job::install_dir = "";
+char* Job::curl_error = NULL;
 CURL* Job::curl = NULL;
 
-int curl_progress_func(Job *fetcher,
-                     double t, /* dltotal */
-                     double d, /* dlnow */
-                     double ultotal,
-                     double ulnow);
+int curl_progress_func(
+	Job *fetcher,
+	double t, /* dltotal */
+	double d, /* dlnow */
+	double ultotal,
+	double ulnow);
 size_t curl_write_func(void *ptr, size_t size, size_t nmemb, FILE *stream);
 size_t curl_read_func(void *ptr, size_t size, size_t nmemb, FILE *stream);
 
@@ -28,6 +32,9 @@ void Job::Init(std::string download_dir, std::string install_dir)
 	Job::curl = curl_easy_init();
 	Job::download_dir = download_dir;
 	Job::install_dir = install_dir;
+
+	if (Job::curl_error == NULL)
+		Job::curl_error = new char[CURL_ERROR_SIZE];
 }
 
 void Job::ShutdownDownloader()
@@ -38,40 +45,53 @@ void Job::ShutdownDownloader()
 		curl_global_cleanup();
 		Job::curl = NULL;
 	}
+
+	if (Job::curl_error != NULL)
+	{
+		delete [] Job::curl_error;
+		Job::curl_error = NULL;
+	}
 }
 
-Job::Job(std::string url, Installer* installer)
-	 : url(url),
-	   installer(installer),
-	   index(++Job::total),
-	   progress(0.0),
-	   type("unknown"),
-	   name("unknown"),
-	   version("unknown")
+Job::Job(std::string url, Installer* installer) :
+	url(url),
+	installer(installer),
+	index(++Job::total),
+	progress(0.0),
+	type("unknown"),
+	name("unknown"),
+	version("unknown")
 {
-	char* ch_url = strdup(this->url.c_str());
-	std::string filename = basename(ch_url);
-	free(ch_url);
-
+	this->ParseName(url);
+	std::string filename = this->type + "-" + this->name + "-" + this->version + ".zip";
 	this->out_filename = Job::download_dir + "/" + filename;
-	this->ParseName(filename);
 }
 
-void Job::ParseName(std::string filename)
+void Job::ParseName(std::string url)
 {
-	size_t end = filename.find("-");
-	if (end != std::string::npos)
-		this->type = filename.substr(0, end);
+	size_t start, end;
+	start = url.find("name=");
+	if (start != std::string::npos)
+	{
+		start += 5;
+		end = url.find("&", start);
+		if (end != std::string::npos)
+			this->name = url.substr(start, end - start);
+	}
 
-	size_t start = end + 1;
-	end = filename.find("-", start);
-	if (end != std::string::npos)
-		this->name = filename.substr(start, end - start);
+	start = url.find("version=");
+	if (start != std::string::npos)
+	{
+		start += 8;
+		end = url.find("&", start);
+		if (end != std::string::npos)
+			this->version = url.substr(start, end - start);
+	}
 
-	start = end + 1;
-	end = filename.rfind(".");
-	if (end != std::string::npos)
-		this->version = filename.substr(start, end - start);
+	if (this->name == std::string("runtime"))
+		this->type = "runtime";
+	else
+		this->type = "modules";
 }
 
 void Job::Fetch()
@@ -95,17 +115,20 @@ void Job::Fetch()
 		curl_easy_setopt(Job::curl, CURLOPT_NOPROGRESS, 0L);
 		curl_easy_setopt(Job::curl, CURLOPT_PROGRESSFUNCTION, curl_progress_func);
 		curl_easy_setopt(Job::curl, CURLOPT_PROGRESSDATA, this);
+		curl_easy_setopt(Job::curl, CURLOPT_FOLLOWLOCATION, 1);
+		curl_easy_setopt(Job::curl, CURLOPT_FAILONERROR, 1);
+		curl_easy_setopt(Job::curl, CURLOPT_ERRORBUFFER, Job::curl_error);
 		CURLcode result = curl_easy_perform(Job::curl);
 
 		if (result != CURLE_OK)
-			throw std::string("Download failJob::ed: some files failed to download.");
+			throw std::string("Download failed: ") + Job::curl_error;
+
 		fflush(out);
 		fclose(out);
 
 	}
 	catch (...)
 	{
-		printf("Error\n");
 		// Cleanup
 		if (out != NULL)
 		{
@@ -122,17 +145,20 @@ void Job::Unzip()
 {
 	this->progress = ((double) this->index) / ((double) Job::total);
 
-	std::string typedir = this->type;
-	if (this->type == "module")
-		typedir = "modules";
-
-	std::string outdir = Job::install_dir + "/" + typedir;
+	std::string outdir = Job::install_dir;
+	kroll::FileUtils::CreateDirectory(outdir);
+	outdir.append("/" + this->type);
+	kroll::FileUtils::CreateDirectory(outdir);
+	outdir.append("/linux");
 	kroll::FileUtils::CreateDirectory(outdir);
 
-	outdir += "/" + this->name;
-	kroll::FileUtils::CreateDirectory(outdir);
+	if (this->type != "runtime")
+	{
+		outdir.append("/" + this->name);
+		kroll::FileUtils::CreateDirectory(outdir);
+	}
 
-	outdir += "/" + this->version;
+	outdir.append("/" + this->version);
 	kroll::FileUtils::CreateDirectory(outdir);
 
 	kroll::FileUtils::Unzip(this->out_filename, outdir);
@@ -180,8 +206,6 @@ int curl_progress_func(
 	double ultotal,
 	double ulnow)
 {
-
-	usleep(10000);
 
 	if (job->GetInstaller()->IsCancelled())
 		return 1;

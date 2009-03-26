@@ -20,13 +20,13 @@ static void destroy_cb(GtkWidget *widget, gpointer data);
 Installer::Installer(
 	std::string app_name,
 	std::string confirm_title,
-	std::string message)
-	: app_name(app_name),
-	  confirm_title(confirm_title),
-	  message(message),
-	  current_job(NULL),
-	  cancel(false),
-	  error("")
+	std::string message) :
+		app_name(app_name),
+		confirm_title(confirm_title),
+		message(message),
+		current_job(NULL),
+		cancel(false),
+		error("")
 {
 
 	this->download_finished = false;
@@ -200,7 +200,7 @@ static gboolean watcher(gpointer data)
 {
 	Installer *i = (Installer*) data;
 
-	if (i->DownloadFinished())
+	if (i->DownloadFinished() && i->IsRunning())
 	{
 		i->StartInstalling();
 	}
@@ -241,15 +241,18 @@ void *download_thread_f(gpointer data)
 	{
 		std::string message = e.what();
 		inst->SetError(message);
+		inst->SetRunning(false);
 	}
 	catch (std::string& e)
 	{
 		inst->SetError(e);
+		inst->SetRunning(false);
 	}
 	catch (...)
 	{
 		std::string message = "Unknown error";
 		inst->SetError(message);
+		inst->SetRunning(false);
 	}
 
 	inst->DownloadDone();
@@ -323,6 +326,12 @@ int main(int argc, char* argv[])
 {
 	gtk_init(&argc, &argv);
 	curl_global_init(CURL_GLOBAL_ALL);
+
+	if (argc < 8)
+	{
+		std::cerr << "Not enough arguments given, aborting." << std::endl;
+		exit(2);
+	}
 
 	std::string app_name = argv[1];
 	std::string confirm_title = argv[2];

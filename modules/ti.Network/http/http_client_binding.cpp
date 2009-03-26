@@ -14,7 +14,7 @@
 #include <sstream>
 #include <fstream>
 #include "../network_binding.h"
-#include "Poco/StreamCopier.h"
+#include "Poco/Buffer.h"
 #include "Poco/Net/MultipartWriter.h"
 #include "Poco/Net/MessageHeader.h"
 #include "Poco/Net/FilePartSource.h"
@@ -25,7 +25,7 @@
 
 namespace ti
 {
-	HTTPClientBinding::HTTPClientBinding(Host* host) : 
+	HTTPClientBinding::HTTPClientBinding(Host* host) :
 		host(host),global(host->GetGlobalObject()),
 		thread(NULL),response(NULL),async(true),filestream(NULL)
 	{
@@ -50,6 +50,7 @@ namespace ti
 		SET_BOOL_PROP("connected",false)
 		SET_NULL_PROP("onreadystatechange")
 		SET_NULL_PROP("ondatastream")
+		SET_NULL_PROP("onsendstream")
 
 		this->self = Value::NewObject(this);
 	}
@@ -81,6 +82,9 @@ namespace ti
 		int max_redirects = 5;
 		int status;
 		std::string url = binding->url;
+
+		bool deletefile = false;
+
 		for (int x=0;x<max_redirects;x++)
 		{
 			Poco::URI uri(url);
@@ -88,13 +92,13 @@ namespace ti
 			if (path.empty()) path = "/";
 			binding->Set("connected",Value::NewBool(true));
 			Poco::Net::HTTPClientSession session(uri.getHost(), uri.getPort());
-			
+
 			std::string method = binding->method;
 			if (method.empty())
 			{
 				method = Poco::Net::HTTPRequest::HTTP_GET;
 			}
-			
+
 			if (!binding->dirstream.empty())
 			{
 				method = Poco::Net::HTTPRequest::HTTP_POST;
@@ -129,14 +133,17 @@ namespace ti
 					i++;
 				}
 			}
-			
+
 			std::string data;
 			int content_len = 0;
-			bool deletefile = false;
 
 			if (!binding->dirstream.empty())
 			{
 				std::string tmpdir = FileUtils::GetTempDirectory();
+				Poco::File tmpPath (tmpdir);
+				if (!tmpPath.exists()) {
+					tmpPath.createDirectories();
+				}
 				std::ostringstream tmpfilename;
 				tmpfilename << "ti";
 				tmpfilename << rand();
@@ -145,7 +152,6 @@ namespace ti
 				std::ofstream outfile(fn.c_str(), std::ios::binary|std::ios::out|std::ios::trunc);
 				Poco::Zip::Compress compressor(outfile,true);
 				Poco::Path path(binding->dirstream);
-				path.makeDirectory();
 				compressor.addRecursive(path);
 				compressor.close();
 				outfile.close();
@@ -153,7 +159,7 @@ namespace ti
 				binding->filename = std::string(fn.c_str());
 				binding->filestream = new Poco::FileInputStream(binding->filename);
 			}
-			
+
 			if (!binding->datastream.empty())
 			{
 				data = binding->datastream;
@@ -165,19 +171,21 @@ namespace ti
 			{
 				std::ostringstream l(std::stringstream::binary|std::stringstream::out);
 				l << content_len;
-				req.set("Content-Length",l.str().c_str());
+				req.set("Content-Length",l.str());
 			}
 			else if (!binding->filename.empty())
 			{
 				Poco::File f(binding->filename);
 				std::ostringstream l;
 				l << f.getSize();
-				req.set("Content-Length",l.str().c_str());
+				const char *cl = l.str().c_str();
+				content_len = atoi(cl);
+				req.set("Content-Length", l.str());
 			}
-			
+
 			// send and stream output
 			std::ostream& out = session.sendRequest(req);
-			
+
 			// write out the data
 			if (!data.empty())
 			{
@@ -185,16 +193,62 @@ namespace ti
 			}
 			else if (binding->filestream)
 			{
-				Poco::StreamCopier::copyStream(*binding->filestream,out);
+				// SharedBoundMethod sender;
+				// SharedValue sv = binding->Get("onsendstream");
+				// if (sv->IsMethod())
+				// {
+				// 	sender = sv->ToMethod()->Get("apply")->ToMethod();
+				// }
+				std::streamsize bufferSize = 8096;
+				Poco::Buffer<char> buffer(bufferSize);
+				std::streamsize len = 0;
+				std::istream& istr = (*binding->filestream);
+				istr.read(buffer.begin(), bufferSize);
+				std::streamsize n = istr.gcount();
+				int remaining = content_len;
+				while (n > 0)
+				{
+					len += n;
+					remaining -= n;
+					out.write(buffer.begin(), n);
+// 					if (sender.get())
+// 					{
+// 						try
+// 						{
+// #ifdef DEBUG
+// 							std::cout << "ONSENDSTREAM = >> " << len <<" of " << content_len << std::endl;
+// #endif
+// 							ValueList args;
+// 							SharedBoundList list = new StaticBoundList();
+//
+// 							args.push_back(binding->self); // reference to us
+// 							args.push_back(Value::NewList(list));
+//
+// 							list->Append(Value::NewInt(len)); // bytes sent
+// 							list->Append(Value::NewInt(content_len)); // total size
+// 							list->Append(Value::NewInt(remaining)); // remaining
+// 							binding->host->InvokeMethodOnMainThread(sender,args,false);
+// 						}
+// 						catch(std::exception &e)
+// 						{
+// 							std::cerr << "Caught exception dispatching HTTP callback on transmit, Error: " << e.what() << std::endl;
+// 						}
+// 						catch(...)
+// 						{
+// 							std::cerr << "Caught unknown exception dispatching HTTP callback on transmit" << std::endl;
+// 						}
+//					}
+					if (istr)
+					{
+						istr.read(buffer.begin(), bufferSize);
+						n = istr.gcount();
+					}
+					else n = 0;
+				}
+				binding->filestream->close();
 			}
-			
-			if (deletefile)
-			{
-				Poco::File f(binding->filename);
-				f.remove();
-			}
-			
-			Poco::Net::HTTPResponse res;
+
+						Poco::Net::HTTPResponse res;
 			std::istream& rs = session.receiveResponse(res);
 			int total = res.getContentLength();
 			status = res.getStatus();
@@ -214,7 +268,7 @@ namespace ti
 				url = res.get("Location");
 #ifdef DEBUG
 				std::cout << "redirect to " << url << std::endl;
-#endif				
+#endif
 				continue;
 			}
 			SharedValue totalValue = Value::NewInt(total);
@@ -224,14 +278,14 @@ namespace ti
 
 			int count = 0;
 			char buf[8096];
-			
+
 			SharedBoundMethod streamer;
 			SharedValue sv = binding->Get("ondatastream");
 			if (sv->IsMethod())
 			{
 				streamer = sv->ToMethod()->Get("apply")->ToMethod();
 			}
-			
+
 			while(!rs.eof() && binding->Get("connected")->ToBool())
 			{
 				try
@@ -246,15 +300,15 @@ namespace ti
 						{
 							ValueList args;
 							SharedBoundList list = new StaticBoundList();
-							
+
 							args.push_back(binding->self); // reference to us
 							args.push_back(Value::NewList(list));
-							
+
 							list->Append(Value::NewInt(count)); // total count
 							list->Append(totalValue); // total size
 							list->Append(Value::NewObject(new Blob(buf,c))); // buffer
 							list->Append(Value::NewInt(c)); // buffer length
-						
+
 							binding->host->InvokeMethodOnMainThread(streamer,args,false);
 						}
 						else
@@ -287,12 +341,20 @@ namespace ti
 #endif
 			binding->Set("responseText",Value::NewString(data.c_str()));
 		}
+
+		if (deletefile)
+		{
+			Poco::File f(binding->filename);
+			f.remove();
+		}
+
 		binding->Set("connected",Value::NewBool(false));
 		binding->ChangeState(4); // closed
 		NetworkBinding::RemoveBinding(binding);
 #ifdef OS_OSX
 		[pool release];
 #endif
+
 	}
 	void HTTPClientBinding::Send(const ValueList& args, SharedValue result)
 	{
@@ -456,7 +518,7 @@ namespace ti
 	}
 	void HTTPClientBinding::ChangeState(int readyState)
 	{
-		SET_INT_PROP("readyState",readyState) 
+		SET_INT_PROP("readyState",readyState)
 		SharedValue v = this->Get("onreadystatechange");
 		if (v->IsMethod())
 		{

@@ -1,5 +1,5 @@
 /**
- * Appcelerator Kroll - licensed under the Apache Public License 2
+ * Appcelerator Titanium - licensed under the Apache Public License 2
  * see LICENSE in the root folder for details on the license.
  * Copyright (c) 2009 Appcelerator, Inc. All Rights Reserved.
  */
@@ -8,11 +8,8 @@
 #import "file_utils.h"
 #import <zlib.h>
 
-#if !USEURLREQUEST
-#import "CURLHandle.h"
-#import "CURLHandle+extras.h"
-#endif
-
+#define RUNTIME_UUID_FRAGMENT @"uuid=A2AC5CB5-8C52-456C-9525-601A5B0725DA"
+#define MODULE_UUID_FRAGMENT @"uuid=1ACE5D3A-2B52-43FB-A136-007BD166CFD0"
 
 @implementation Controller
 
@@ -46,37 +43,81 @@
 	return installDirectory;
 }
 
--(void)install:(NSString *)file destination:(NSString*)dir
+-(void)bailWithMessage: (NSString *) errorString;
 {
-	NSArray *parts = [[file lastPathComponent] componentsSeparatedByString:@"-"];
-	if ([parts count] == 3)
-	{
-		NSString *type = [parts objectAtIndex:0];
-		NSString *subtype = [parts objectAtIndex:1];
-		NSString *version = [[parts objectAtIndex:2] stringByDeletingPathExtension];
-		/**
-		 * directories:
-		 *
-		 * /runtime/<version>/<files>
-		 * /modules/<name>/<version>
-		 */
-		NSString *destdir = nil;
-		if ([type isEqualToString:@"runtime"])
-		{
-			destdir = [NSString stringWithFormat:@"%@/runtime/%@/%@",dir,subtype,version];
+	NSLog(@"Bailing with error: %@",errorString);
+	NSRunCriticalAlertPanel(nil, errorString, @"Cancel", nil, nil);
+	[NSApp terminate:nil];
+}
+
+-(void)generateDirectory:(NSString *) newDirectoryPath;
+{
+	NSFileManager * theFM = [[NSFileManager alloc] init];
+	BOOL isDirectory;
+	BOOL isExistent = [theFM fileExistsAtPath:newDirectoryPath isDirectory:&isDirectory];
+	if (!isExistent) {
+		[self generateDirectory:[newDirectoryPath stringByDeletingLastPathComponent]];
+		[theFM createDirectoryAtPath:newDirectoryPath attributes:nil];
+	} else if (!isDirectory) {
+		NSString * errorMessage = [NSString stringWithFormat:@"Installer tried to create the folder \"%@\", but found a file in its place.",newDirectoryPath];
+		[self performSelectorOnMainThread:@selector(bailWithMessage:) withObject:errorMessage waitUntilDone:YES];
+	}
+}
+
+-(void)install:(NSString *)file forUrl:(NSURL *)url destination:(NSString*)dir
+{
+	NSArray *parts = [[[url query] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding] componentsSeparatedByString:@"&"];
+	BOOL isRuntime = NO;
+	BOOL isModule = NO;
+	NSString *destdir = nil;
+	NSString *subtype = nil;
+	NSString *version = nil;
+	
+	NSEnumerator * partsEnumerator = [parts objectEnumerator];
+	NSString *thisPart;
+	while ((thisPart = [partsEnumerator nextObject])){
+		if ([thisPart isEqualToString:RUNTIME_UUID_FRAGMENT]){
+			isRuntime = YES;
+			continue;
 		}
-		else if ([type isEqualToString:@"module"])
-		{
-			destdir = [NSString stringWithFormat:@"%@/modules/%@/%@",dir,subtype,version];
+
+		if ([thisPart isEqualToString:MODULE_UUID_FRAGMENT]){
+			isModule = YES;
+			continue;
 		}
-		if (destdir)
-		{
-			[[NSFileManager defaultManager]createDirectoryAtPath:destdir attributes:nil];
-			std::string src([file UTF8String]);
-			std::string dest([destdir UTF8String]);
-			kroll::FileUtils::Unzip(src,dest);
+		
+		if ([thisPart hasPrefix:@"name="]){
+			subtype = [thisPart substringFromIndex:5];
+			continue;
+		}
+
+		if ([thisPart hasPrefix:@"version="]){
+			version = [thisPart substringFromIndex:8];
+			continue;
 		}
 	}
+
+	if (isRuntime){
+		destdir = [NSString stringWithFormat:@"%@/runtime/osx/%@",dir,version];
+	} else if (isModule) {
+		destdir = [NSString stringWithFormat:@"%@/modules/osx/%@/%@",dir,subtype,version];
+	} else {
+		NSLog(@"Not sure what to do with %@ for %@",file,url);
+		return;
+	}
+
+#ifdef DEBUG	
+	NSLog(@"subtype=%@,version=%@,runtime=%d,module=%d",subtype,version,isRuntime,isModule);
+#endif
+
+	NSLog(@"Installing %@ for %@ into %@",file,url,destdir);
+	[self generateDirectory:destdir];
+	std::string src([file UTF8String]);
+	std::string dest([destdir UTF8String]);
+	kroll::FileUtils::Unzip(src,dest);
+#ifdef DEBUG
+	NSLog(@"After unzip %s to %s",src.c_str(),dest.c_str());
+#endif
 }
 -(void)download:(Controller*)controller 
 {
@@ -85,7 +126,7 @@
 	NSArray *u = [controller urls];
 	int count = [u count];
 	NSString *dir = [controller directory];
-	NSMutableArray *files = [[[NSMutableArray alloc] init] autorelease];
+	NSMutableDictionary *files = [[[NSMutableDictionary alloc] init] autorelease];
 	NSProgressIndicator *progressBar = [controller progress];
 	
 	for (int c=0;c<count;c++)
@@ -97,13 +138,33 @@
 		{
 			[NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.2]]; // this could be more elegant, but it works
 		}
-		NSString *filename = [[url path] lastPathComponent];
+		NSString *filename = [downloader suggestedFileName];
 		NSData *data = [downloader data];
 		NSString *path = [NSString stringWithFormat:@"%@/%@",dir,filename];
 		// write out our data
-		[data writeToFile:path atomically:YES];
+		BOOL isValidName = [filename length] > 5;
+		BOOL isValidData = [data length] > 100;
+		
+		
+		if (isValidData && isValidName) 
+		{
+			[data writeToFile:path atomically:YES];
+			[files setObject:path forKey:url];
+		} 
+		else 
+		{
+			NSLog(@"Error in handling url \"%@\":",url);
+			if (!isValidName) {
+				NSLog(@"File name is too small to specify a file. \"%@\" was made instead.",filename);
+			}
+			if (!isValidData){
+				NSString * dataString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+				NSLog(@"Response data was too small to be a file. Received \"%@\" instead.",dataString);
+				[dataString release];
+			}
+		}
+		
 		[downloader release];
-		[files addObject:path];
 	}
 	
 	[progressBar setIndeterminate:NO];
@@ -116,17 +177,22 @@
 #ifdef DEBUG
 	NSLog(@"installing to: %@, count: %d",destination,[files count]);
 #endif
+
+	NSArray * filesKeys = [files allKeys];
 	
-	for (int c=0;c<(int)[files count];c++)
+	for (int c=0;c<(int)[filesKeys count];c++)
 	{
 		[progressBar setDoubleValue:c+1];
 		[controller updateMessage:[NSString stringWithFormat:@"Installing %d of %d file%s",c+1,[files count],[files count]>1?"s":""]];
-		[controller install:[files objectAtIndex:c] destination:destination];
+		NSURL * thisFileKey = [filesKeys objectAtIndex:c];
+		NSString * thisFileString = [files objectForKey:thisFileKey];
+		[controller install:thisFileString forUrl:thisFileKey destination:destination];
 	}
 	[progressBar setDoubleValue:[files count]];
 
 	[controller updateMessage:@"Installation complete"];
-	
+
+	NSLog(@"Installation is complete, exiting after installing %d files",[filesKeys count]);
 	[pool release];
 	[NSApp terminate:self];
 }
@@ -169,12 +235,18 @@
 	[window setTitle:appTitle];
 	
 	// figure out where the caller wants us to write the files once download
-	directory = [[args objectAtIndex:4] stringByExpandingTildeInPath];
-	[directory retain];
+	if (count >5) {
+		directory = [[args objectAtIndex:4] stringByExpandingTildeInPath];
+		[directory retain];
 
-	// figure out where the caller wants us to install once download
-	installDirectory = [[args objectAtIndex:5] stringByExpandingTildeInPath];
-	[installDirectory retain];
+		// figure out where the caller wants us to install once download
+		installDirectory = [[args objectAtIndex:5] stringByExpandingTildeInPath];
+		[installDirectory retain];
+	} else {
+		[self bailWithMessage:@"Sorry, but the Application Installer was not given enough information to determine which libraries need downloading."];
+		return;
+	}
+
 	
 	NSFileManager *fm = [NSFileManager defaultManager];
 	BOOL dir = NO;
@@ -220,17 +292,7 @@
 
 - (void) applicationDidFinishLaunching:(NSNotification *) notif
 {
-#if !USEURLREQUEST
-	[CURLHandle curlHelloSignature:@"XxXx" acceptAll:YES];	// to get CURLHandle registered for handling URLs
-#endif
 	[NSThread detachNewThreadSelector:@selector(download:) toTarget:self withObject:self];
 }
-
-#if !USEURLREQUEST
-- (void) applicationWillTerminate:(NSNotification *) notif
-{
-	[CURLHandle curlGoodbye];	// to clean up
-}
-#endif
 
 @end

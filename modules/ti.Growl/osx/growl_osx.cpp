@@ -55,7 +55,8 @@ namespace ti {
 	{
 		NSData *iconData = nil;
 
-		if (iconURL.size() > 0) {
+		if (iconURL.size() > 0)
+		{
 			const char * iconURLCString = iconURL.c_str();
 			//TODO: This should be more generalized and using centralized methods, but for now,
 
@@ -69,13 +70,10 @@ namespace ti {
 			}
 		}
 
-		NSMutableDictionary* clickContext = [[NSMutableDictionary alloc] initWithCapacity:10];
+		//NSMutableArray* clickContext = [[NSMutableArray alloc] init];
+		//[clickContext addObject:[[MethodWrapper alloc] initWithMethod:new SharedBoundMethod(callback)]];
 
-		if (!callback.isNull()) {
-			[clickContext setObject:[[MethodWrapper alloc] initWithMethod:new SharedBoundMethod(callback)] forKey:@"method_wrapper"];
-		}
-
-		const char * titleCString = title.c_str();
+		const char* titleCString = title.c_str();
 		NSString * titleString = nil;
 		if (titleCString != NULL) {
 			titleString = [NSString stringWithUTF8String:titleCString];
@@ -86,7 +84,6 @@ namespace ti {
 		if (descriptionCString != NULL) {
 			descriptionString = [NSString stringWithUTF8String:descriptionCString];
 		}
-		
 
 		[GrowlApplicationBridge
 			 notifyWithTitle:titleString
@@ -95,7 +92,7 @@ namespace ti {
 			 iconData:iconData
 			 priority:0
 			 isSticky:NO
-			 clickContext:clickContext];
+			 clickContext:nil];
 	}
 
 	bool GrowlOSX::IsRunning()

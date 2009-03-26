@@ -3,8 +3,12 @@
 //
 (function()
 {
+	
 	var url = "http://publisher.titaniumapp.com/api/app-track";
-	var guid = Titanium.App.getGUID();
+	var guid = null;
+	var sid = null;
+	var debug = false;
+	var initialized = false;
 	
 	function send(qsv,async)
 	{
@@ -13,6 +17,19 @@
 			async = (typeof async=='undefined') ? true : async;
 			qsv.mid = Titanium.Platform.id;
 			qsv.guid = guid;
+			qsv.sid = sid;
+			qsv.mac_addr = Titanium.Platform.macaddress;
+			qsv.osver = Titanium.Platform.version;
+			qsv.platform = Titanium.platform;
+			qsv.version =Titanium.version;
+			qsv.app_version =Titanium.App.getVersion();
+			qsv.os =Titanium.Platform.name;
+			qsv.ostype =Titanium.Platform.ostype;
+			qsv.osarch =Titanium.Platform.architecture;
+			qsv.oscpu =Titanium.Platform.processorCount;
+			qsv.un =Titanium.Platform.username;
+			qsv.ip =Titanium.Platform.address;
+			
 			
 			var qs = '';
 			for (var p in qsv)
@@ -23,15 +40,16 @@
 			// this is asynchronous
 			var xhr = Titanium.Network.createHTTPClient();
 			xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
-/* NICE FOR TESTING
-			xhr.onreadystatechange = function()
+			if (debug)
 			{
-				if (this.readyState==4)
+				xhr.onreadystatechange = function()
 				{
-					Titanium.API.debug("++ received:"+this.responseText);
+					if (this.readyState==4)
+					{
+						Titanium.API.debug("++ received:"+this.responseText);
+					}
 				}
 			}
-*/
 			xhr.open('POST',url,async);
 			xhr.send(qs);
 		}
@@ -55,22 +73,28 @@
 	{
 		try
 		{
-			var user_window = event.window;
-			if (user_window.track_registered===true)
+			if (initialized===true)
 			{
 				return;
 			}
-			user_window.track_registered = true;
+
+			initialized = true;
+
 			if (!Titanium.Platform.id)
 			{
 				Titanium.API.debug("No machine id found");
 				return;
 			}
+			
+			guid = Titanium.App.getGUID();
+			sid = Titanium.Platform.createUUID();
+			
 			send({
-				'mac_addr': Titanium.Platform.macaddress,
+				'platform': Titanium.platform,
+				'version':Titanium.version,
+				'app_version':Titanium.App.getVersion(),
 				'os':Titanium.Platform.name,
 				'ostype':Titanium.Platform.ostype,
-				'osver':Titanium.Platform.version,
 				'osarch':Titanium.Platform.architecture,
 				'oscpu':Titanium.Platform.processorCount,
 				'un':Titanium.Platform.username,
@@ -83,5 +107,5 @@
 			// never never never die in this function
 			Titanium.API.error("Error: "+e);
 		}
-	});	
+	});
 })();

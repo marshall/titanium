@@ -952,6 +952,7 @@ struct OpenFilesJob
 	std::vector<std::string> types;
 };
 
+std::string GtkUserWindow::openFilesDirectory = "";
 void GtkUserWindow::_OpenFilesWork(const ValueList& args, SharedValue lresult)
 {
 	void* data = args.at(0)->ToVoidPtr();
@@ -973,6 +974,13 @@ void GtkUserWindow::_OpenFilesWork(const ValueList& args, SharedValue lresult)
 		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 		GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
 		NULL);
+
+	std::string path = this->openFilesDirectory;
+	if (!job->path.empty())
+		path = job->path;
+	if (!path.empty())
+		gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(chooser), path.c_str());
+
 	gtk_file_chooser_set_select_multiple(GTK_FILE_CHOOSER(chooser), job->multiple);
 
 	if (job->types.size() > 0)
@@ -1004,6 +1012,9 @@ void GtkUserWindow::_OpenFilesWork(const ValueList& args, SharedValue lresult)
 		results->Append(Value::NewString(f));
 		g_free(f);
 	}
+
+	this->openFilesDirectory =
+		 gtk_file_chooser_get_current_folder(GTK_FILE_CHOOSER(chooser));
 	gtk_widget_destroy(chooser);
 
 	ValueList cargs;
@@ -1014,7 +1025,8 @@ void GtkUserWindow::_OpenFilesWork(const ValueList& args, SharedValue lresult)
 	}
 	catch (ValueException &e)
 	{
-		std::cerr << "openFiles callback failed because of an exception" << std::endl;
+		SharedString ss = e.GetValue()->DisplayString();
+		std::cerr << "openFiles callback failed: " << *ss << std::endl;
 	}
 }
 

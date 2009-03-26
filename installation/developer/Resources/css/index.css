@@ -1,6 +1,6 @@
 body.linux, body.win32
 {
-	background: #282828 url(../images/bg_gradient_tall) repeat-x;
+	background: #282828 url(../images/bg_gradient_tall.png) repeat-x;
 	font-family: Arial;
 }
 body
@@ -85,7 +85,7 @@ input[type=password], textarea, input[type=text]
 
 #text_editor
 {
-	font-family:"Monaco";
+	font-family:"Monaco","Consolas",monospace;
 	font-size:16px;
 	color:yellow;
 	width:100%;
@@ -447,7 +447,7 @@ div.formhint
 	font-size:10px;
 	color:#000;
 }
-.selected_os, .selected_js
+.selected_os, .selected_js, .active_sort
 {
 	background-color:#555;
 	border:1px solid #646464 !important;
@@ -459,7 +459,7 @@ div.formhint
 	float:left;
 	margin-right:10px;
 	margin-bottom:20px;
-	height:175px;
+	height:190px;
 }
 .app_image
 {
@@ -472,12 +472,12 @@ div.formhint
 	position:absolute;
 	top:10px;
 	left:100px;
-	font-size:18px;
-	color:white;
+	font-size:18px !important;
+	color:white !important;
 	cursor:pointer;
 }
 
-.app_pubinfo
+.app_author
 {
 	position:absolute;
 	top:90px;
@@ -485,13 +485,25 @@ div.formhint
 	font-size:11px;
 	font-style:italic;
 	color:#809eb3;
+	width:290px;
+	overflow:hidden;
+	height:16px;
 	
+}
+.app_pubdate
+{
+	position:absolute;
+	top:105px;
+	left:10px;
+	font-size:11px;
+	font-style:italic;
+	color:#809eb3;
 }
 
 .app_url
 {
 	position:absolute;
-	top:105px;
+	top:122px;
 	left:10px;
 	font-size:11px;
 }
@@ -537,10 +549,11 @@ div.formhint
 .app_description
 {
 	position:absolute;
-	top:122px;
+	top:139px;
 	left:10px;
 	font-size:12px;
 	color:#fff;
+	padding-right:5px;
 }
 
 .info_blind
@@ -559,4 +572,12 @@ div.formhint
 	-webkit-border-bottom-right-radius: 6px;
 	-webkit-border-bottom-left-radius: 6px;
 	
+}
+
+#api_refresh
+{
+	cursor:pointer;
+	margin-left:4px;
+	position:relative;
+	top:4px;
 }

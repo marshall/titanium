@@ -926,7 +926,7 @@ SharedBoundList Win32UserWindow::SelectFile(SharedBoundMethod callback,
 	}
 
 	OPENFILENAME ofn;
-	char filen[255];
+	char filen[8192];
 
 	ZeroMemory(&filen, sizeof(filen));
 
@@ -954,7 +954,9 @@ SharedBoundList Win32UserWindow::SelectFile(SharedBoundMethod callback,
 
 	SharedBoundList results = new StaticBoundList();
 	// display the open dialog box
-	if (GetOpenFileName(&ofn) == TRUE) {
+	BOOL result = GetOpenFileName(&ofn);
+
+	if (result) {
 		// if the user selected multiple files, ofn.lpstrFile is a NULL-separated list of filenames
 		// if the user only selected one file, ofn.lpstrFile is a normal string
 
@@ -972,6 +974,27 @@ SharedBoundList Win32UserWindow::SelectFile(SharedBoundMethod callback,
 				n.append(tokens.at(i).c_str());
 				results->Append(Value::NewString(n));
 			}
+		}
+	}
+	else {
+		DWORD error = CommDlgExtendedError();
+		printf("Error when opening files: %d\n", error);
+		switch(error) {
+			case CDERR_DIALOGFAILURE: printf("CDERR_DIALOGFAILURE\n"); break;
+			case CDERR_FINDRESFAILURE: printf("CDERR_FINDRESFAILURE\n"); break;
+			case CDERR_NOHINSTANCE: printf("CDERR_NOHINSTANCE\n"); break;
+			case CDERR_INITIALIZATION: printf("CDERR_INITIALIZATION\n"); break;
+			case CDERR_NOHOOK: printf("CDERR_NOHOOK\n"); break;
+			case CDERR_LOCKRESFAILURE: printf("CDERR_LOCKRESFAILURE\n"); break;
+			case CDERR_NOTEMPLATE: printf("CDERR_NOTEMPLATE\n"); break;
+			case CDERR_LOADRESFAILURE: printf("CDERR_LOADRESFAILURE\n"); break;
+			case CDERR_STRUCTSIZE: printf("CDERR_STRUCTSIZE\n"); break;
+			case CDERR_LOADSTRFAILURE: printf("CDERR_LOADSTRFAILURE\n"); break;
+			case FNERR_BUFFERTOOSMALL: printf("FNERR_BUFFERTOOSMALL\n"); break;
+			case CDERR_MEMALLOCFAILURE: printf("CDERR_MEMALLOCFAILURE\n"); break;
+			case FNERR_INVALIDFILENAME: printf("FNERR_INVALIDFILENAME\n"); break;
+			case CDERR_MEMLOCKFAILURE: printf("CDERR_MEMLOCKFAILURE\n"); break;
+			case FNERR_SUBCLASSFAILURE: printf("FNERR_SUBCLASSFAILURE\n"); break;
 		}
 	}
 	return results;

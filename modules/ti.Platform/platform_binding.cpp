@@ -95,11 +95,23 @@ namespace ti
 		// for the other OS too??? -JGH
 		std::string macid = Poco::Environment::nodeId();
 #elif defined(OS_WIN32)
-		IP_ADAPTER_INFO adapter;
-		DWORD dwBufLen = sizeof(adapter);
-		DWORD dwStatus = GetAdaptersInfo(&adapter,&dwBufLen);
-		if (dwStatus != ERROR_SUCCESS) return;
-		BYTE *MACData = adapter.Address;
+		//IP_ADAPTER_INFO adapter;
+		PIP_ADAPTER_ADDRESSES addresses = NULL;
+		//DWORD dwBufLen = sizeof(adapter);
+		ULONG family = AF_UNSPEC;
+		ULONG flags = GAA_FLAG_INCLUDE_PREFIX;
+		ULONG bufferLength = sizeof (IP_ADAPTER_ADDRESSES);
+		addresses = (IP_ADAPTER_ADDRESSES *) malloc(bufferLength);
+		// first call to check if we've allocated enough buffer space
+		if (GetAdaptersAddresses(family, flags, NULL, addresses, &bufferLength) == ERROR_BUFFER_OVERFLOW) {
+			free(addresses);
+			addresses = (IP_ADAPTER_ADDRESSES *) malloc(bufferLength);
+		}
+
+		// "actual" call
+		DWORD dwStatus = GetAdaptersAddresses(family, flags, NULL, addresses, &bufferLength);
+		if (dwStatus != NO_ERROR) return;
+		BYTE *MACData = addresses->PhysicalAddress;
 		char buf[MAX_PATH];
 		sprintf_s(buf,MAX_PATH,"%02X:%02X:%02X:%02X:%02X:%02X", MACData[0], MACData[1], MACData[2], MACData[3], MACData[4], MACData[5]);
 		std::string macid = std::string(buf);
@@ -177,7 +189,7 @@ namespace ti
 
 	void PlatformBinding::CreateUUID(const ValueList& args, SharedValue result)
 	{
-		Poco::UUID uuid = Poco::UUIDGenerator::defaultGenerator().createOne();
+		Poco::UUID uuid = Poco::UUIDGenerator::defaultGenerator().createRandom();
 		result->SetString(uuid.toString().c_str());
 	}
 }

@@ -1,22 +1,16 @@
 /**
- * Appcelerator Kroll - licensed under the Apache Public License 2
+ * Appcelerator Titanium - licensed under the Apache Public License 2
  * see LICENSE in the root folder for details on the license.
  * Copyright (c) 2009 Appcelerator, Inc. All Rights Reserved.
  */
 
 #import <Cocoa/Cocoa.h>
-#define USEURLREQUEST 1
 
-@class CURLHandle;
 
-#if USEURLREQUEST
 @interface Downloader :  NSObject {
-#else
-@interface Downloader :  NSObject<NSURLHandleClient> {
-#endif
-
-	CURLHandle *handle;
-	
+	NSString * suggestedFileName;
+	NSString * userAgent;
+	NSMutableURLRequest * downloadRequest;
 	NSURLConnection * downloadConnection;
 	NSProgressIndicator *progress;
 	int bytesRetrievedSoFar;
@@ -26,9 +20,9 @@
 }
 -(id)initWithURL:(NSURL*)url progress:(NSProgressIndicator*)p;
 -(BOOL)isDownloadComplete;
-
-- (BOOL)completed;
-- (void)setCompleted:(BOOL)value;
-
+-(BOOL)completed;
+-(void)setCompleted:(BOOL)value;
+-(NSString *)suggestedFileName;
+		
 -(NSData*)data;
 @end

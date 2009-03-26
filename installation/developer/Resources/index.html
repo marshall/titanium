@@ -89,31 +89,71 @@
 
 	<!-- CONTENT -->
 	<div id="content" style="display:none" on="l:project.list.response[firstCall=1] then effect[fadeIn]">
-		
-		<!-- MAJOR ACTION BUTTONS 
-		<div class="button1 active" style="display:inline-block;width:150px" 
-			on="click then l:menu[val=manage] and add[class=active] or l:menu[val!=manage] then remove[class=active]">
-			<div class="button2">Projects</div>
-		</div>
-		<div class="button1" style="display:inline-block;width:150px" 
-			on="click then l:menu[val=apps] and add[class=active] or l:menu[val!=apps] then remove[class=active]">
-			<div class="button2">Apps</div>
-		</div>
-		<div class="button1" style="display:inline-block;width:150px" 
-			on="click then l:menu[val=interact] and add[class=active] or l:menu[val!=interact] then remove[class=active]">
-			<div class="button2">Community 
-				<span id="irc_message_count" class="message_indicator" style="display:none"></span>
+
+		<!-- MODAL FOR DISPLAYING LONG LOCATION NAMES -->
+		<div behavior="modal[opacity=0.9,showEffect=fadeIn,hideEffect=fadeOut]" 
+			on="l:show.project.modal then show or l:hide.project.modal then hide">
+			<div class="black_gradient" style="padding:5px;font-size:11px;margin:0px">
+				Project Location
+			</div>
+			<div class="infobox" >
+				<div class="content" style="padding:10px">
+					<div 
+					on="l:project.detail.data then value[fullLocation]" 
+						style="padding:10px;color:#fff;font-size:11px">
+					</div>
+					<div class="button1" style="margin:auto;float:none"  
+						on="click then l:hide.project.modal">
+						<div class="button2">
+							Close
+						</div>
+					</div>
+
+				</div>
 			</div>
 		</div>
-		<div class="button1" style="display:inline-block;width:150px" 
-			on="click then l:menu[val=feeds] and add[class=active] or l:menu[val!=feeds] then remove[class=active]">
-			<div class="button2">Feeds</div>
+
+
+
+		<!-- MODAL FOR DELETING PROJECTS -->
+		<div behavior="modal[opacity=0.9,showEffect=fadeIn,hideEffect=fadeOut]" 
+			on="l:delete.project.prompt then show or (l:delete.project.request or l:cancel.delete.project) then hide">
+			<div class="black_gradient" style="padding:5px;font-size:11px;margin:0px">
+				Delete Project
+			</div>
+			<div class="infobox" >
+				<div class="content" style="padding:10px;color:#fff;font-size:11px">
+					Are you sure you want to delete the project: 		
+					<span on="l:delete.project.prompt then value[name]" 
+						style="padding:5px;color:#fff;font-size:11px">
+					</span>
+					<input type="hidden" id="delete_project_id" on="l:delete.project.prompt then value[project_id]">
+					<table align="center" style="margin-top:10px;position:relative;top:5px">
+						<tr>
+							<td align="center">
+								<div class="button1" style="float:none;margin-right:10px"  
+									on="click then l:delete.project.request[project_id=$delete_project_id]">
+									<div class="button2">
+										Delete
+									</div>
+								</div>
+							</td>
+							<td align="center">
+								<div class="button1" style="float:none"  
+									on="click then l:cancel.delete.project">
+									<div class="button2">
+										Cancel
+									</div>
+								</div>
+							</td>
+							</tr>
+						</tr>
+					</table>
+
+				</div>
+			</div>
 		</div>
-		<div class="button1" style="display:inline-block;width:150px" 
-			on="click then l:menu[val=api] and add[class=active] or l:menu[val!=api] then remove[class=active]">
-			<div class="button2">Documentation</div>
-		</div>
-		-->
+		
 
 
 		<!-- ************* -->
@@ -125,27 +165,26 @@
 			<div style="margin-bottom:10px;width:80%" class="hint_text">
 			</div>
 			<div style="position:relative">
-				<div style="margin-bottom:10px;font-size:14px">Select Javasacript Libraries</div>
+				<div style="margin-bottom:10px;font-size:14px">Select JavaScript Libraries (optional)</div>
 				<div style="position:absolute;top:25px;left:0px">
 					<div id="jquery_js_sandbox" class="button1" 
 						style="float:left;width:160px;height:80px; margin-right:10px">
 						<div class="button2" style="height:78px"
 							on="click then toggle[class=selected_js] 
-							and toggle[id=jquery_js,class=selected_js]
+							and toggle[id=jquery_js_sandbox,class=selected_js]
 							or l:create.project then remove[class=selected_js]
-							and remove[id=jquery_js,class=selected_js]">
+							and remove[id=jquery_js_sandbox,class=selected_js]">
 							<img src="images/jquery.gif" width="136px" height="36px"
 								style="position:relative;top:20px"/>
 						</div>
 					</div>
-					<div id="jqueryui_js_sandbox" class="button1" style="float:left;width:160px;height:80px">
-						<div class="button2" style="height:78px"
+					<div id="entourage_js_sandbox" class="button1" style="float:left;width:160px;height:80px">
+						<div class="button2" style="height:78px" 
 							on="click then toggle[class=selected_js] 
-							and toggle[id=jqueryui_js,class=selected_js]
+							and toggle[id=entourage_js_sandbox,class=selected_js]
 							or l:create.project then remove[class=selected_js]
-							and remove[id=jqueryui_js,class=selected_js]">
-							<img src="images/jquery_ui.gif" width="136px" height="36px"
-								style="position:relative;top:21px"/>
+							and remove[id=entourage_js_sandbox,class=selected_js]">
+							<img src="images/entourage.png" width="150px" height="80px"/>
 						</div>
 					</div>
 					<div style="clear:both;margin-top:10px"></div>
@@ -153,9 +192,9 @@
 						style="float:left;width:160px;height:80px;margin-right:10px">
 						<div class="button2" style="height:78px"
 							on="click then toggle[class=selected_js] 
-							and toggle[id=prototype_js,class=selected_js]
+							and toggle[id=prototype_js_sandbox,class=selected_js]
 							or l:create.project then remove[class=selected_js]
-							and remove[id=prototype_js,class=selected_js]">
+							and remove[id=prototype_js_sandbox,class=selected_js]">
 							<img src="images/prototype.gif" width="127px" height="64px"
 								style="position:relative;top:10px"/>
 						</div>
@@ -164,9 +203,9 @@
 						style="float:left;width:160px;height:80px;margin-right:10px">
 						<div class="button2" style="height:78px"
 							on="click then toggle[class=selected_js] 
-							and toggle[id=scriptaculous_js,class=selected_js]
+							and toggle[id=scriptaculous_js_sandbox,class=selected_js]
 							or l:create.project then remove[class=selected_js]
-							and remove[id=scriptaculous_js,class=selected_js]">
+							and remove[id=scriptaculous_js_sandbox,class=selected_js]">
 							<img src="images/scriptaculous_logo.png" width="175px" height="64px"
 								style="position:relative;top:5px;left:-3px"/>
 						</div>
@@ -175,9 +214,9 @@
 					<div id="mootools_js_sandbox" class="button1" style="float:left;width:160px;height:80px">
 						<div class="button2" style="height:78px"
 							on="click then toggle[class=selected_js] 
-							and toggle[id=mootools_js,class=selected_js]
+							and toggle[id=mootools_js_sandbox,class=selected_js]
 							or l:create.project then remove[class=selected_js]
-							and remove[id=mootools_js,class=selected_js]">
+							and remove[id=mootools_js_sandbox,class=selected_js]">
 							<img src="images/mootools.png" width="127px" height="32px"
 								style="position:relative;top:20px"/>
 						</div>	
@@ -185,9 +224,9 @@
 					<div id="dojo_js_sandbox" class="button1" style="float:left;width:160px;height:80px">
 						<div class="button2" style="height:78px"
 							on="click then toggle[class=selected_js] 
-							and toggle[id=dojo_js,class=selected_js]
+							and toggle[id=dojo_js_sandbox,class=selected_js]
 							or l:create.project then remove[class=selected_js]
-							and remove[id=dojo_js,class=selected_js]">
+							and remove[id=dojo_js_sandbox,class=selected_js]">
 							<img src="images/dojo.gif" width="152px" height="32px"
 								style="position:relative;top:20px;left:5px"/>
 						</div>
@@ -197,9 +236,9 @@
 						style="float:left;width:160px;height:80px;margin-right:10px">
 						<div class="button2" style="height:78px"
 							on="click then toggle[class=selected_js] 
-							and toggle[id=yahoo_js,class=selected_js]
+							and toggle[id=yahoo_js_sandbox,class=selected_js]
 							or l:create.project then remove[class=selected_js]
-							and remove[id=yahoo_js,class=selected_js]">
+							and remove[id=yahoo_js_sandbox,class=selected_js]">
 							<img src="images/yahoo.gif" width="116px" height="22px"
 								style="position:relative;top:25px"/> 
 						</div>
@@ -208,9 +247,9 @@
 					<div id="swfobject_js_sandbox" class="button1" style="float:left;width:160px;height:80px">
 						<div class="button2" style="height:78px"
 							on="click then toggle[class=selected_js] 
-							and toggle[id=swfobject_js,class=selected_js]
+							and toggle[id=swfobject_js_sandbox,class=selected_js]
 							or l:create.project then remove[class=selected_js]
-							and remove[id=swfobject_js,class=selected_js]">
+							and remove[id=swfobject_js_sandbox,class=selected_js]">
 							<div style="position:relative;top:20px">
 								<img src="images/flash.gif"/> 
 								<span style="position:relative;top:-14px;margin-left:5px">SWFObject</span>
@@ -218,12 +257,13 @@
 						</div>
 					</div>
 				</div>
-				<div style="font-size:14px;position:absolute;top:0px;left:348px">
-						Write code and/or select an API:
+				<div style="font-size:14px;position:absolute;top:0px;left:348px;margin-bottom:7px;">
+						Write code and/or select a code snippet:
 						<select id="api_selector" on="change then l:api.selector.change
-							or l:populate.api.selector then value[property=rows,value=code,text=key]">
-							<option>select api</select>
+							or l:populate.api.selector then value[property=rows,value=code,text=title]">
+							<option>fetching...</select>
 						</select>
+						<img src="images/code_refresh.png" id="api_refresh" title="Refresh code snippets list"/>
 				</div>
 				<div style="position:absolute;top:15px;left:342px;width:65%">
 					<textarea style="width:100%" on="l:api.selector.change then script[TiDeveloper.Sandbox.setAPI()]" 
@@ -250,20 +290,25 @@
 			on="l:menu[val=apps] then effect[fadeIn] else hide">
 			<div style="margin-top:10px">
 				<div style="margin-top:10px;margin-bottom:10px">
-					<input type="text" value="search for apps" style="float:left"/>
+					<input type="text"   id="app_search" style="float:left"/>
 					<div class="button1" style="margin-left:10px">
-						<div class="button2">Search</div>
+						<div class="button2" on="click then l:app_search">Search</div>
 					</div>
 					<div class="button1" style="width:172px;float:right;margin-right:0px">
-						<div class="button2" style="width:170px">
+						<div class="button2" style="width:170px" on="click then l:toggle_app_sort[val=pop]
+						or l:toggle_app_sort[val=pop] then add[class=active_sort] else remove[class=active_sort]"
+							id="sort_most_popular">
 							<img src="images/star.png" style="position:relative;top:3px"/>
-							Show Most Popular
+							Sort - Most Popular
 						</div>
 					</div>
 					<div class="button1" style="width:172px;float:right;">
-						<div class="button2" style="width:170px">
+						<div class="button2 active_sort" style="width:170px" 
+						on="click then l:toggle_app_sort[val=download]
+						or l:toggle_app_sort[val=download] then add[class=active_sort] else remove[class=active_sort]"
+							id="sort_most_downloaded">
 							<img src="images/download.png" style="position:relative;top:4px"/>
-							Show Most Downloaded
+							Sort - Most Downloaded
 						</div>
 					</div>
 					
@@ -271,49 +316,68 @@
 				<div style="clear:both"></div>
 				<div style="border-top:1px solid #666">
 					<div  style="border-top:1px solid #141414;margin-bottom:10px">
-						<div 
-							style="font-size:11px;color:#fff;margin-top:10px;margin-bottom:10px;font-style:italic">
+						<div id="app_search_string"
+							style="font-size:12px;color:#fff;margin-top:10px;margin-bottom:10px;font-style:italic">
 							Showing Most Popular
 						</div>
 						<div control="iterator[property=rows]" on="l:applist then execute" 
 							style="height:100%;overflow:auto">
 							<div class="infobox appitem">
-								<div class="content" style="position:relative;height:163px">
+								<div class="content" style="position:relative;height:178px;">
 									<div class="app_image"><img src="#{image}" height="78px" width="78px"/></div>
-									<div class="app_title">
-										<img src="images/download.png" style="position:relative;top:3px"/>
-										<span style="text-decoration:underline">#{title}</span> 
+									<div class="app_title" >
+										<div style="float:left;width:20px">
+											<img src="images/download.png" style="position:relative;top:3px"/>
+										</div>
+										<div style="float:left;width:165px;overflow:hidden">
+											<a href="#{link}" target="ti:systembrowser" style="color:white"
+												on="click then l:track_app_download[val=#{link}]">
+												<span style="text-decoration:underline;">
+													#{title}
+												</span> 
+											</a>
+										</div>
 									</div>
 									<div class="app_downloads">#{downloads} downloads </div>
-									<div class="app_rating" id="rating_#{id}">
-										<img appid="#{id}" star="1" id="rating_#{id}_1" guid="#{guid}"
-										  class="rating" src="images/star.png"/>
-										<img appid="#{id}" star="2" id="rating_#{id}_2" guid="#{guid}"
-											class="rating" src="images/star.png"/>
-										<img appid="#{id}" star="3" id="rating_#{id}_3" guid="#{guid}"
-											class="rating" src="images/star.png"/>
-										<img appid="#{id}" star="4" id="rating_#{id}_4" guid="#{guid}"
-											class="rating" src="images/star.png"/>
-										<img appid="#{id}" star="5" id="rating_#{id}_5" guid="#{guid}"
-											class="rating" 	src="images/star.png"/>
+									<div class="app_rating" id="rating_#{app_id}">
+										<img app_id="#{app_id}" star="1" id="rating_#{app_id}_1" guid="#{guid}"
+										  class="rating rating_off" src="images/star.png"/>
+										<img app_id="#{app_id}" star="2" id="rating_#{app_id}_2" guid="#{guid}"
+											class="rating rating_off" src="images/star.png"/>
+										<img app_id="#{app_id}" star="3" id="rating_#{app_id}_3" guid="#{guid}"
+											class="rating rating_off" src="images/star.png"/>
+										<img app_id="#{app_id}" star="4" id="rating_#{app_id}_4" guid="#{guid}"
+											class="rating rating_off" src="images/star.png"/>
+										<img app_id="#{app_id}" star="5" id="rating_#{app_id}_5" guid="#{guid}"
+											class="rating rating_off" 	src="images/star.png"/>
 									</div>
 									<div class="rating_detail">
-										<span class="rating_string" id="rating_string_#{id}" votes="#{votes}"
+										<span class="rating_string" id="rating_string_#{app_id}" votes="#{votes}"
 											rating="#{value}" hasVoted="#{hasVoted}">
 											#{value} rating from #{votes} votes
 										</span>
-										<span class="rating_string" id="already_voted_#{id}" style="display:none">
+										<span class="rating_string" id="already_voted_#{app_id}" style="display:none">
 											You have already voted!
 										</span>
-										<span class="rating_string" id="voted_success_#{id}"  
+										<span class="rating_string" id="voted_success_#{app_id}"  
 											style="display:none;font-size:11x;color:#809eb3">
 											Thanks for your vote!
 										</span>
 
 									</div>
-									<div class="app_pubinfo">published by #{author} on #{pubdate}</div>
-									<div class="app_url"><a target="ti:systembrowser" href="#{url}">#{url}</a></div>
-
+									<div class="app_author">Published by 
+										<a href="#{url}" on="click then l:track_app_author[val=#{url}]" 
+											target="ti:systembrowser">
+											#{author}
+										</a> 
+									</div>
+									<div class="app_pubdate">Last updated on: #{pubdate}</div>
+									<div class="app_url">
+										<a target="ti:systembrowser" on="click then l:track_app_all[val=#{app_page}]"
+											href="#{app_page}">
+										App Download Page (all platforms)
+										</a>
+									</div>
 									<div class="app_description">#{desc}</div>
 								</div>
 							</div>
@@ -756,7 +820,7 @@
 										</div>
 									</div>
 									<!-- PACKAGING IN PROGRESS -->
-									<div style="display:none;background-color:#424242" id="packaging_in_progress">
+									<div style="display:none;background-color:#424242" id="packaging_in_progress_mac">
 										<div align="center">
 											<img src="images/ti_package.gif" style="height:350px"/>
 											<div align="center" style="margin-top:10px">
@@ -766,19 +830,55 @@
 										</div>
 										
 									</div>
+									<!-- PACKAGING IN PROGRESS -->
+									<div style="display:none;background-color:#424242;height:410px;position:relative; 
+										top:-10px" 
+										id="packaging_in_progress">
+										<div align="center">
+											<div align="center" style="margin-top:10px">
+												<img style="position:relative;top:125px;"
+												src="images/bg_animated.gif"/>
+												<img src="images/cloud.png" style="z-index:2;position:relative;top:0px"/>
+											</div>
+											<div style="font-size:18px;margin-bottom:10px;position:relative;top:15px">
+												Your app is being packaged - this make take a few...
+											</div>
+											
+										</div>
+										
+									</div>
+
 									<!-- PACKAGING ERROR -->
 									<div style="display:none" id="packaging_error">
 										<div align="center" style="margin-top:20px">
 											<img src="images/ti_warn.png"/>
 											<div style="font-size:40px;color:#fff;margin-left:40px;margin-right:40px">
-											Packaging Error. 
-											<div style="font-size:28px">Make sure you are online.</div>
+												Packaging Error 
+												<div style="font-size:28px" id="packaging_error_msg">
+													Make sure you are online.
+												</div>
+											</div>
+										</div>
+									</div>
+									<!-- LOADING PACKAGES -->
+									<div style="display:none;" id="packaging_loading">
+										<div align="center" style=";background-color:#424242;height:400px">
+											<div style="position:relative;top:80px">
+												<img src="images/ti_progress.gif"/>
+												<div style="font-size:40px;color:#fff;">
+											 	Loading Stats
+												</div>
 											</div>
 										</div>
 									</div>
 									
 									<!-- PACKAGE LISTING -->
 									<div style="display:none" id="packaging_listing">
+										<div style="position:absolute;bottom:10px;left:5px">
+											<img src="images/information.png" style="position:relative;top:3px"/>
+											<span style="margin-right:5px">Link to all of your downloads:</span>
+											<a id="all_download_link" target="ti:systembrowser" href="#"></a>
+										</div>
 										<div class="black_gradient" 
 											style="margin:10px;background-color:#222;font-size:11px">
 											<span style="position:relative;left:5px;top:1px">
@@ -794,10 +894,10 @@
 										<div control="iterator[property=rows]" on="l:package_links then execute"
 											style="margin-left:50px;margin-right:50px">
 											<div class="project_row" style="height:35px;line-height:35px;font-size:11px">
-												<img src="images/#{platform_short}_small.png" height="20px" width="20px"
+												<img src="images/#{platform}_small.png" height="20px" width="20px"
 													style="position:relative;top:6px"/>
 												<span 
-													style="color:#fff;font-size:12px;margin-left:10px">#{platform}</span>
+													style="color:#fff;font-size:12px;margin-left:10px">#{label}</span>
 												<span style="float:right;color:#ccc;">
 													<img src="images/download.png" style="position:relative;top:5px"/>
 													<a href="#{url}" target="ti:systembrowser" >#{url}</a>
@@ -824,11 +924,12 @@
 									</div>
 									<!-- LOADING STATS -->
 									<div style="display:none;" id="download_stats_loading">
-										<div align="center" style="padding-top:20px;background-color:#424242;
-											height:400px	">
-											<img src="images/ti_progress.gif"/>
-											<div style="font-size:40px;color:#fff;">
-										 	Loading...
+										<div align="center" style=";background-color:#424242;height:400px">
+											<div style="position:relative;top:80px">
+												<img src="images/ti_progress.gif"/>
+												<div style="font-size:40px;color:#fff;">
+											 	Loading Stats
+												</div>
 											</div>
 										</div>
 									</div>
@@ -836,7 +937,7 @@
 									<!-- DOWNLOAD STATS GRAPH -->
 									<div style="display:none" id="download_stats">
 										<div align="center" style="margin-top:20px">
-											Total Downloads By Operating System
+											Total Downloads By Operating System (last 7 days)
 											<div style="margin-top:10px;cursor:pointer">
 												<a href="#" style="cursor:pointer" 
 													on="click then l:refresh_downlaod_stats">
@@ -844,12 +945,15 @@
 												</a>
 											</div>
 										</div>
+										<div align="center" id="google_chart" style="margin-top:50px">
+										</div>
+										<!---
 										<div align="center" 
 											control="chart[property=rows, type=bar, background-color=#333333, 
 											textColor=#ffffff, lineColor=#111111]" 
 											on="l:package_download_stats then render">
 										</div>
-										
+									-->
 									</div>
 								</div>
 
@@ -891,7 +995,7 @@
 							</span>
 							<span on="l:create.project then set[display=inline] 
 							or l:project.wizard[show=1] then set[display=inline] else hide">
-							Step 1: Select Javascript libraries to include in your project.  
+							Step 1: Select JavaScript libraries to include in your project.  
 							</span>
 							<span on="l:project.wizard[show=2] then set[display=inline] else hide
 								or l:create.project then hide" style="display:none">
@@ -940,14 +1044,13 @@
 									style="position:relative;top:20px"/>
 							</div>
 						</div>
-						<div id="jqueryui_js" class="button1" style="float:none;width:160px;height:80px">
-							<div class="button2" style="height:78px"
+						<div id="entourage_js" class="button1" style="float:left;width:160px;height:80px">
+							<div class="button2" style="height:78px" 
 								on="click then toggle[class=selected_js] 
-								and toggle[id=jqueryui_js,class=selected_js]
+								and toggle[id=entourage_js,class=selected_js]
 								or l:create.project then remove[class=selected_js]
-								and remove[id=jqueryui_js,class=selected_js]">
-								<img src="images/jquery_ui.gif" width="136px" height="36px"
-									style="position:relative;top:25px"/>
+								and remove[id=entourage_js,class=selected_js]">
+								<img src="images/entourage.png" width="150px" height="80px"/>
 							</div>
 						</div>
 					</div>
@@ -1098,10 +1201,36 @@
 								be your company or personal URL. 
 							</div>
 						</div>
+
+						<div >Project Location:</div>
+						<div style="margin-top:3px;">
+							<input type="text" id="project_location" style="width:450px;float:left;" 
+								validator="required" fieldset="new_project" 
+								on="l:file.selected[for=project_location] then value[value]
+								or (l:create.project.response[result=success] or l:menu[val=create]) then reset"/>
+
+							<div class="button1" 
+								style="float:left;width:23px;height:23px;position:relative;top:1px;margin-left:10px" >
+								<div class="button2" style="height:21px" 
+									on="click then l:show.filedialog[for=project_location]">
+									<img src="images/folder_go.png" style="position:relative;top:3px;left:1px"/>
+								</div>
+							</div>
+							<div style="clear:both"></div>
+
+							<div class="hint_text" 
+								style="font-size:11px;font-style:italic;margin-bottom:10px;height:10px;margin-top:-7px">
+								<div behavior="tooltip[position=fixed,id=project_location,showEffect=fadeIn,hideEffect=fadeOut]">
+								  Newly created projects are placed in "Project Location/Project Name".
+								</div>
+							</div>
+
+						</div>
+						<div style="clear:both"></div>
 						<div>Application Image:</div>
 						<div style="margin-top:3px;">
 							<input type="text" id="project_image" name="image" 
-								style="width:450px;float:left;" validator="required" fieldset="new_project" 
+								style="width:450px;float:left;"  fieldset="new_project" 
 								on="l:file.selected[for=project_image,target=project_image] then value[value]
 								or (l:create.project.response[result=success] or l:menu[val=create]) then reset"/>
 							<div class="button1" 
@@ -1119,30 +1248,6 @@
 								</div>
 							</div>
 						</div>
-						<div style="clear:both"></div>
-
-						<div >Project Location:</div>
-						<div style="margin-top:3px;">
-							<input type="text" id="project_location" style="width:450px;float:left;" 
-								validator="required" fieldset="new_project" 
-								on="l:file.selected[for=project_location] then value[value]
-								or (l:create.project.response[result=success] or l:menu[val=create]) then reset"/>
-
-							<div class="button1" 
-								style="float:left;width:23px;height:23px;position:relative;top:1px;margin-left:10px" >
-								<div class="button2" style="height:21px" 
-									on="click then l:show.filedialog[for=project_location]">
-									<img src="images/folder_go.png" style="position:relative;top:3px;left:1px"/>
-								</div>
-							</div>
-						</div>
-						<div style="clear:both"></div>
-						<div class="hint_text" 
-							style="font-size:11px;font-style:italic;margin-bottom:10px;height:10px;margin-top:-7px">
-							<div behavior="tooltip[position=fixed,id=project_location,showEffect=fadeIn,hideEffect=fadeOut]">
-							  Newly created projects are placed in "Project Location/Project Name".
-							</div>
-						</div>
 					</div>
 					<div style="clear:both"></div>
 
@@ -1152,7 +1257,7 @@
 							<div class="button2" id="create_project_button"
 							on="click then l:create.project.request 
 							if expr[$('#create_project_button').attr('disabled')!='true']" 
-							activators="project_location,project_name,project_location,project_image,app_url, publisher_name"  
+							activators="project_location,project_name,project_location,app_url, publisher_name"  
 							fieldset="new_project">
 								Create
 							</div>
@@ -1256,13 +1361,13 @@
 							<div id="platform_mac" class="button1" style="float:none;height:70px;width:80px">
 								<div  class="button2" style="height:68px"
 									on="(l:show.package.project or l:package.project.request) then remove[class=selected_os] and remove[id=platform_mac,class=selected_os] or click then toggle[class=selected_os] and l:os_platform_click and toggle[id=platform_mac,class=selected_os]">
-									<img src="images/mac_small.png" style="position:relative;top:8px"/>
+									<img src="images/osx_small.png" style="position:relative;top:8px"/>
 								</div>
 							</div>
 							<div id="platform_windows" class="button1" style="float:none;height:70px;width:80px">
 								<div class="button2" style="height:68px"
 									on="(l:show.package.project or l:package.project.request) then remove[class=selected_os] and remove[id=platform_windows,class=selected_os] or click then toggle[class=selected_os] and l:os_platform_click and toggle[id=platform_windows,class=selected_os]">
-									<img src="images/win_small.png" style="position:relative;top:11px"/>
+									<img src="images/win32_small.png" style="position:relative;top:11px"/>
 								</div>
 							</div>
 							<div id="platform_linux" class="button1" style="float:none;height:70px;width:80px">
@@ -1281,7 +1386,7 @@
 											Select how Titanium Runtime will be packaged:
 											</span>
 										<input type="radio" name="required_module_load" id="required_modules_network" 
-											value="network" on="click then l:runtime.option[val=network]" checked/> 
+											value="network" on="click then l:runtime.option[val=network]" checked="true"/> 
 											Network
 										<input type="radio" name="required_module_load" value="bundled"
 											id="required_modules_bundled"
@@ -1400,69 +1505,6 @@
 						</div>
 					</div>
 				</div>
-			</div>
-		</div>
-	</div>
-	<!-- MODAL FOR DISPLAYING LONG LOCATION NAMES -->
-	<div behavior="modal[opacity=0.9,showEffect=fadeIn,hideEffect=fadeOut]" 
-		on="l:show.project.modal then show or l:hide.project.modal then hide">
-		<div class="black_gradient" style="padding:5px;font-size:11px;margin:0px">
-			Project Location
-		</div>
-		<div class="infobox" >
-			<div class="content" style="padding:10px">
-				<div 
-				on="l:project.detail.data then value[fullLocation]" 
-					style="padding:10px;color:#fff;font-size:11px">
-				</div>
-				<div class="button1" style="margin:auto;float:none"  
-					on="click then l:hide.project.modal">
-					<div class="button2">
-						Close
-					</div>
-				</div>
-				
-			</div>
-		</div>
-	</div>
-
-
-
-	<!-- MODAL FOR DELETING PROJECTS -->
-	<div behavior="modal[opacity=0.9,showEffect=fadeIn,hideEffect=fadeOut]" 
-		on="l:delete.project.prompt then show or (l:delete.project.request or l:cancel.delete.project) then hide">
-		<div class="black_gradient" style="padding:5px;font-size:11px;margin:0px">
-			Delete Project
-		</div>
-		<div class="infobox" >
-			<div class="content" style="padding:10px;color:#fff;font-size:11px">
-				Are you sure you want to delete the project: 		
-				<span on="l:delete.project.prompt then value[name]" 
-					style="padding:5px;color:#fff;font-size:11px">
-				</span>
-				<input type="hidden" id="delete_project_id" on="l:delete.project.prompt then value[project_id]">
-				<table align="center" style="margin-top:10px;position:relative;top:5px">
-					<tr>
-						<td align="center">
-							<div class="button1" style="float:none;margin-right:10px"  
-								on="click then l:delete.project.request[project_id=$delete_project_id]">
-								<div class="button2">
-									Delete
-								</div>
-							</div>
-						</td>
-						<td align="center">
-							<div class="button1" style="float:none"  
-								on="click then l:cancel.delete.project">
-								<div class="button2">
-									Cancel
-								</div>
-							</div>
-						</td>
-						</tr>
-					</tr>
-				</table>
-
 			</div>
 		</div>
 	</div>

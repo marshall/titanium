@@ -123,8 +123,10 @@ Titanium.Project =
 			}
 		}
 		outdir.createDirectory(true);
-		var normalized_name = name.replace(' ','_').toLowerCase();
-		var normalized_publisher = publisher.replace(' ','_').toLowerCase();
+		var normalized_name = name.replace(/[^a-zA-Z0-9]/g,'_').toLowerCase();
+		normalized_name = normalized_name.replace(/ /g,'_').toLowerCase();
+		var normalized_publisher = publisher.replace(/[^a-zA-Z0-9]/g,'_').toLowerCase();
+		normalized_publisher = normalized_publisher.replace(/ /g,'_').toLowerCase();
 		// write out the TIAPP.xml
 		var tiappxml = this.XML_PROLOG;
 		var year = new Date().getFullYear();
@@ -159,14 +161,14 @@ Titanium.Project =
 		resources.createDirectory();
 		var index = TFS.getFile(resources,'index.html');
 		
-		var jquery = '<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.1/jquery.min.js"></script>\n';
-		var jquery_ui = '<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.5.3/jquery-ui.min.js"></script>\n';
-		var prototype_js = '<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/prototype/1.6.0.3/prototype.js"></script>\n';
-		var scriptaculous = '<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/scriptaculous/1.8.2/scriptaculous.js"></script>\n';
-		var mootools = '<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/mootools/1.2.1/mootools-yui-compressed.js"></script>\n';
-		var yahoo = '<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/yui/2.6.0/build/yuiloader/yuiloader-min.js"></script>\n';
-		var swfobject = '<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/swfobject/2.1/swfobject.js"></script>\n';
-		var dojo = '<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/dojo/1.2.3/dojo/dojo.xd.js"></script>\n';
+		var jquery = '<script type="text/javascript" src="jquery-1.3.2.js"></script>\n';
+		var entourage = '<script type="text/javascript" src="entourage-jquery-3.0.js"></script>\n';
+		var prototype_js = '<script type="text/javascript" src="prototype-1.6.0.js"></script>\n';
+		var scriptaculous = '<script type="text/javascript" src="scriptaculous-1.8.2.js"></script>\n';
+		var mootools = '<script type="text/javascript" src="mootools-1.2.1.js"></script>\n';
+		var yahoo = '<script type="text/javascript" src="yui-2.6.0.js"></script>\n';
+		var swfobject = '<script type="text/javascript" src="swfobject-1.5.js"></script>\n';
+		var dojo = '<script type="text/javascript" src="dojo-1.2.3.js"></script>\n';
 
 		var head = '';
 		
@@ -179,37 +181,57 @@ Titanium.Project =
 			head+='<head><style>body{background-color:#292929;color:white}</style>\n';
 		}
 		
+		var path = Titanium.App.appURLToPath('app://thirdparty_js');
+		
 		if (jsLibs.jquery)
 		{
 			head += jquery
+			var f = TFS.getFile(path,'jquery-1.3.2.js');
+			f.copy(resources);
 		}
-		if (jsLibs.jquery_ui)
+		if (jsLibs.entourage)
 		{
-			head += jquery_ui;
+			head += entourage;
+			var f = TFS.getFile(path,'entourage','entourage-jquery-3.0.js');
+			f.copy(resources);
+			var f2 = TFS.getFile(path,'entourage','entourage-ui');
+			f2.copy(resources);
 		}
 		if (jsLibs.prototype_js)
 		{
 			head+= prototype_js;
+			var f = TFS.getFile(path,'prototype-1.6.0.js');
+			f.copy(resources);
 		}
 		if (jsLibs.scriptaculous)
 		{
 			head+=scriptaculous;
+			var f = TFS.getFile(path,'scriptaculous-1.8.2.js');
+			f.copy(resources);
 		}
 		if (jsLibs.mootools)
 		{
 			head+=mootools;
+			var f = TFS.getFile(path,'mootools-1.2.1.js');
+			f.copy(resources);
 		}
 		if(jsLibs.dojo)
 		{
 			head+=dojo;
+			var f = TFS.getFile(path,'dojo-1.2.3.js');
+			f.copy(resources);
 		}
 		if (jsLibs.swf)
 		{
 			head+=swfobject;
+			var f = TFS.getFile(path,'swfobject-1.5.js');
+			f.copy(resources);
 		}
 		if (jsLibs.yahoo)
 		{
 			head+=yahoo;
+			var f = TFS.getFile(path,'yui-2.6.0.js');
+			f.copy(resources);
 		}
 		head += '</head>';
 		
@@ -271,8 +293,10 @@ Titanium.Project =
 	updateManifest: function(values,addGuid)
 	{
 		var manifest = TFS.getFile(values.dir,"manifest");
-		var normalized_name = values.name.replace(' ','_').toLowerCase();
-		var normalized_publisher = values.publisher.replace(' ','_').toLowerCase();
+		var normalized_name = name.replace(/[^a-zA-Z0-9]/g,'_').toLowerCase();
+		normalized_name = normalized_name.replace(/ /g,'_').toLowerCase();
+		var normalized_publisher = publisher.replace(/[^a-zA-Z0-9]/g,'_').toLowerCase();
+		normalized_publisher = normalized_publisher.replace(/ /g,'_').toLowerCase();
 		var id = 'com.'+normalized_publisher+'.'+normalized_name;
 		var newManifest = ''
 

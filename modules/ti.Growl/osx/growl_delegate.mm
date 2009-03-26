@@ -36,19 +36,15 @@
 - (void) growlNotificationWasClicked:(id)clickContext
 {
 	NSLog(@">>>>>>>>>>>>>>> Growl notification clicked");
-	if (clickContext != nil)
+	NSMutableArray* array = (NSMutableArray*) clickContext;
+	MethodWrapper* wrapper = (MethodWrapper*) [array objectAtIndex:0];
+	SharedKMethod* method = [wrapper method];
+	if (!method->isNull())
 	{
-		NSDictionary *dictionary = (NSDictionary*)clickContext;
-		
-		MethodWrapper *methodWrapper = (MethodWrapper*)[dictionary objectForKey:@"method_wrapper"];
-		
-		SharedBoundMethod *boundMethod = [methodWrapper method];
 		ValueList args;
-		(*boundMethod)->Call(args);
-		
-		// after callback release the reference
-		[methodWrapper release];
+		(*method)->Call(args);
 	}
+	[array release]; // after callback release the reference
 }
 
 @end

@@ -19,7 +19,8 @@ class Bundler(object):
 		if tiapp:
 			shutil.copy(tiapp, self.contents)
 		kboot = p.join(build.dir, 'kboot')
-		shutil.copy(kboot, p.join(macos,name))
+		self.binary = p.join(macos,name)
+		shutil.copy(kboot, self.binary)
 		out_file = open(p.join(self.contents, 'manifest'), 'w')
 		out_file.write(manifest_text)
 		out_file.close()
@@ -41,7 +42,7 @@ class Bundler(object):
 		out_file.close()
 		out_file = open(p.join(self.contents, 'manifest'), 'w')
 		out_file.write(manifest_text)
-		out_file.close()		
+		out_file.close()
 
 bundle = Bundler(name,build.dir,'tiapp.xml','Resources',None)
 runtime = p.join(bundle.contents, 'runtime');
@@ -107,12 +108,13 @@ installer = p.join(bundle.contents,'installer')
 os.makedirs(installer)
 netinstaller = p.join(build.dir, 'net_installer')
 bundle = Bundler('Installer App',installer,None,None,None)
-shutil.copy(p.join(netinstaller,'Info.plist'),bundle.basedir)
-shutil.copy(p.join(netinstaller,'MainMenu.nib'),bundle.basedir)
+shutil.copy(p.join(netinstaller,'Info.plist'),bundle.contents)
+shutil.copy(p.join(netinstaller,'MainMenu.nib'),bundle.lproj)
+shutil.copy(p.join(netinstaller,'net_installer'),bundle.binary)
 
 srcfolder=p.join(build.dir,name+'.app')
 tdmgname='_'+name
-dmgname=name
+dmgname=name+version
 
 app_dir = p.join(srcfolder,'Contents')
 
@@ -127,25 +129,26 @@ def invoke(cmd):
 	print cmd
 	os.system(cmd)
 
-try:
-	invoke("hdiutil detach /Volumes/Titanium")
-except OSError:
-    print ''
-
 shutil.copy(p.join(build.titanium_source_dir,'installation','runtime','manifest'), p.join(app_dir,'manifest'))
 shutil.copy(p.join(build.titanium_source_dir,'installation','runtime','install'), p.join(app_dir,'install'))
-
-for d in [tdmgname,dmgname]:
-	n = d+'.dmg'
-	if p.isfile(n):
-		os.remove(n)
+build.utils.Mkdir(p.join(build.dir,'dist'))
 
 if not ARGUMENTS.get('skipdmg', 0):
+	try:
+		invoke("hdiutil detach /Volumes/Titanium")
+	except OSError:
+	    print ''
+
+	for d in [tdmgname,dmgname]:
+		n = d+'.dmg'
+		if p.isfile(n):
+			os.remove(n)
+
 	invoke("hdiutil create -srcfolder \"%s\" -scrub -volname \"Titanium\" -fs HFS+ -fsargs \"-c c=64,a=16,e=16\" -format UDRW \"%s\"" % (srcfolder,tdmgname))
 	invoke("hdiutil attach -readwrite -noverify -noautoopen \"%s.dmg\"" % tdmgname)
 	invoke("bless --folder /Volumes/Titanium --openfolder /Volumes/Titanium")
-	shutil.move("/Volumes/Titanium/titanium_runtime.app","/Volumes/Titanium/Install Titanium.app")
-	invoke("strip -u -r \"/Volumes/Titanium/Install Titanium.app/Contents/MacOS/titanium_runtime\"")
+	shutil.move("/Volumes/Titanium/titanium-sdk.app","/Volumes/Titanium/Install Titanium.app")
+	invoke("strip -u -r \"/Volumes/Titanium/Install Titanium.app/Contents/MacOS/titanium-sdk\"")
 	invoke("ditto %s/installation/runtime/osx/installer_DS_Store /Volumes/Titanium/.DS_Store" % build.titanium_source_dir)
 	invoke("ditto %s/installation/runtime/osx/background.jpg /Volumes/Titanium/background.jpg" % build.titanium_source_dir)
 	invoke("ditto %s/support/osx/titanium.icns /Volumes/Titanium/.VolumeIcon.icns" % build.titanium_source_dir)
@@ -155,5 +158,5 @@ if not ARGUMENTS.get('skipdmg', 0):
 	invoke("hdiutil convert %s.dmg -format UDBZ -imagekey zlib-level=9 -o %s.dmg" % (tdmgname,dmgname))
 	invoke("hdiutil internet-enable -yes %s.dmg" % dmgname)
 	os.remove(tdmgname+'.dmg')
-	shutil.move(dmgname+'.dmg',build.dir)
+	shutil.move(dmgname+'.dmg',p.join(build.dir,'dist'))
 
