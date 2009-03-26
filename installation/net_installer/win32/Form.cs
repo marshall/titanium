@@ -234,8 +234,7 @@ namespace Titanium
 
                 if (paramName == tokens[0])
                 {
-                    // TODO -  ensure the value is decoded
-                    return tokens[1];
+                    return System.Web.HttpUtility.UrlDecode(tokens[1]);
                 }
             }
 
