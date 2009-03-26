@@ -95,7 +95,7 @@ namespace ti {
 			 iconData:iconData
 			 priority:0
 			 isSticky:NO
-			 clickContext:clickContext];
+			 clickContext:nil];
 	}
 
 	bool GrowlOSX::IsRunning()
