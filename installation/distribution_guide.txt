@@ -37,7 +37,16 @@ packaged sdk (titanium-sdk-0.3)
 	* ...etc...
 
 - installer
-	* installer[.exe] -- network package installer
+	* installer[.exe] -- (win32 and linux) network package installer
+	* Installer App.app (osx only)
+		** Contents
+			*** Resources
+					**** English.lproj
+						***** MainMenu.nib
+						***** titaium.icns
+			*** MacOS
+				**** Installer App
+			*** Info.plist
 
 - developer
 	* .installed [signal to appinstaller that this app is installed]
@@ -62,10 +71,15 @@ packaged sdk (titanium-sdk-0.3)
 		** <contents of installation/common/js>
 	* English.lproj (osx only)
 		** MainMenu.nib
-	* titanium.icns (osx only)
+		** titanium.icns (osx only)
 
-- titanium-sdk-[version]-[.exe] -- this is just kboot
+- MacOS (osx only)
+	* titanium-sdk 
+
+- titanium-sdk[.exe] (win32 and linux only -- kboot)
 - Microsoft.VC80.CRT (win32 only)
 - Info.plist (osx only)
 - .installed [signal to appinstaller that this app is installed]
+- install [from installation/runtime/install]
+- tiapp.xml [from installation/runtime/tiapp.xml]
 
