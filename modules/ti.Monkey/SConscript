@@ -8,5 +8,6 @@ env.Append(CPPPATH = ['#kroll'])
 build.add_thirdparty(env, 'poco', True)
 
 m = build.add_module('ti.Monkey')
-s = env.SharedLibrary(target = m.build_dir + '/timonkeymodule', source = Glob('*.cpp'))
+t = env.SharedLibrary(target = m.build_dir + '/timonkeymodule', source = Glob('*.cpp'))
+build.require(t)
 s = env.SharedLibrary(target = build.dir + '/timonkeymodule', source = Glob('*.cpp'))

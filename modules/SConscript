@@ -4,11 +4,12 @@ import os
 
 modules = ['App','UI','Network','Growl','Filesystem','Media','Desktop','Platform','Process','Notification','Monkey','Analytics']
 
-for moduled in modules:
-	module = "ti.%s" % (moduled)
+for module in modules:
+	module = "ti.%s" % module
 	module_dir = os.path.join(build.dir,'objs', 'modules', module)
 	SConscript(os.path.join(module,'SConscript'), build_dir=module_dir, duplicate=0)
-	out_dir = os.path.join(build.dir, 'modules', module)
-	script = os.path.join(build.kroll_build_dir, 'module.py')
-	os.system('python "%s" "%s" "%s" "%s"' % (script, build.dir, out_dir, build.os))
+
+	#out_dir = os.path.join(build.dir, 'modules', module)
+	#script = os.path.join(build.kroll_build_dir, 'module.py')
+	#os.system('python "%s" "%s" "%s" "%s"' % (script, build.dir, out_dir, build.os))
 

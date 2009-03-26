@@ -31,6 +31,8 @@ elif build.is_linux():
 	sources += Glob('libnotify/*.cpp')
 	env.ParseConfig('pkg-config --cflags --libs libnotify')
 
-m = build.add_module('ti.Growl')
-s = env.SharedLibrary(target = m.build_dir + '/tigrowlmodule', source=sources)
 s = env.SharedLibrary(target = build.dir + '/tigrowlmodule', source=sources)
+
+m = build.add_module('ti.Growl')
+t = env.SharedLibrary(target = m.build_dir + '/tigrowlmodule', source=sources)
+build.require(t)

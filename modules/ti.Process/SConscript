@@ -15,5 +15,6 @@ else:
 
 
 m = build.add_module('ti.Process')
-s = env.SharedLibrary(target = m.build_dir + '/tiprocessmodule', source = Glob('*.cpp'))
+t = env.SharedLibrary(target = m.build_dir + '/tiprocessmodule', source = Glob('*.cpp'))
+build.require(t)
 s = env.SharedLibrary(target = build.dir + '/tiprocessmodule', source = Glob('*.cpp'))

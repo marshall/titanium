@@ -12,9 +12,11 @@ Env.Append(CPPPATH=[build.kroll_source_dir+'/api'])
 sources = Glob('*.m') + Glob('*.mm')
 sources.append(path.join(build.kroll_source_dir,'api','file_utils.cpp'))
 s = Env.Program('net_installer', sources)
+build.require(s)
 
 # TODO: is there some way to read the incomming build_dir?
 # If so we should do that instead.
+print str(s)
 out_dir = path.join(build.dir, 'net_installer')
 
 for i in Glob('English.lproj/*.xib'):
