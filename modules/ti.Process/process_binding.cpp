@@ -13,6 +13,12 @@
 	#include <Foundation/Foundation.h>
 #endif
 
+
+#ifdef OS_WIN32
+#include <windows.h>
+#endif
+
+
 namespace ti
 {
 	ProcessBinding::ProcessBinding(Host *h, SharedBoundObject global) : host(h),global(global)
@@ -124,8 +130,8 @@ namespace ti
 		ZeroMemory( &si, sizeof(si) );
 		si.cb = sizeof(si);
 		ZeroMemory( &pi, sizeof(pi) );
-		HANDLE h = CreateProcess(NULL,
-			cmdline.c_str(),
+		CreateProcessA(NULL,
+			(LPSTR)cmdline.c_str(),
 			NULL, /*lpProcessAttributes*/
 			NULL, /*lpThreadAttributes*/
 			FALSE, /*bInheritHandles*/
