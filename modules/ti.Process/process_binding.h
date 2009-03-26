@@ -16,12 +16,13 @@ namespace ti
 	class ProcessBinding : public StaticBoundObject
 	{
 	public:
-		ProcessBinding(SharedBoundObject);
+		ProcessBinding(Host *,SharedBoundObject);
 		virtual ~ProcessBinding();
 		
 		void Terminated(Process* p);
 		
 	private:
+		Host *host;
 		SharedBoundObject global;
 		std::vector< SharedBoundObject > processes;
 		
@@ -29,6 +30,7 @@ namespace ti
 		void GetEnv(const ValueList& args, SharedValue result);
 		void HasEnv(const ValueList& args, SharedValue result);
 		void SetEnv(const ValueList& args, SharedValue result);
+		void Restart(const ValueList& args, SharedValue result);
 		
 	};
 }
