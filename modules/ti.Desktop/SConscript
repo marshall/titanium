@@ -6,12 +6,7 @@ env = build.env.Clone();
 env.Append(CPPDEFINES = ('TITANIUM_DESKTOP_API_EXPORT', 1))
 env.Append(CPPPATH = ['#kroll'])
 
-if build.is_osx():
-	build.add_thirdparty(env, 'poco', True)
-	env.Append(LIBS=['kroll'])
-else:
-	build.add_thirdparty(env, 'poco')
-
+build.add_thirdparty(env, 'poco')
 sources = Glob('*.cpp')
 
 if build.is_osx():
@@ -24,6 +19,8 @@ elif build.is_win32():
 elif build.is_linux():
 	sources+=Glob('linux/*.cpp')
 
-m = build.add_module('ti.Desktop')
-s = env.SharedLibrary(target = m.build_dir + '/tidesktopmodule', source=sources)
 s = env.SharedLibrary(target = build.dir + '/tidesktopmodule', source=sources)
+
+m = build.add_module('ti.Desktop')
+t = env.SharedLibrary(target = m.build_dir + '/tidesktopmodule', source=sources)
+build.require(t)

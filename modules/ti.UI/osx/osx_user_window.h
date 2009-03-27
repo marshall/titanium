@@ -103,6 +103,12 @@ namespace ti
 			SharedPtr<OSXUIBinding> osx_binding;
 			static bool initial;
 
+			NSRect CalculateWindowFrame(double, double, double, double);
+			double real_x;
+			double real_y;
+			double real_w;
+			double real_h;
+
 			void InstallMenu(OSXMenuItem *menu);
 			
 			DISALLOW_EVIL_CONSTRUCTORS(OSXUserWindow);
