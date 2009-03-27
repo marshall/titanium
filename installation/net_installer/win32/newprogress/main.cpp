@@ -1,11 +1,11 @@
 /**
  * Appcelerator Titanium - licensed under the Apache Public License 2
- * see LICENSE in the root folder for details on the license. 
+ * see LICENSE in the root folder for details on the license.
  * Copyright (c) 2009 Appcelerator, Inc. All Rights Reserved.
- */	
+ */
 
 #include <windows.h>
-#include <objbase.h> 
+#include <objbase.h>
 #include <Wininet.h>
 #include <vector>
 #include <iostream>
@@ -53,7 +53,7 @@ bool DownloadURL(Progress *p, HINTERNET hINet, std::wstring url, std::wstring ou
 	bool failed = false;
 
 	// parse the URL
-	HRESULT hr = CoInternetParseUrl(url.c_str(), PARSE_DECODE, URL_ENCODING_NONE, szDecodedUrl, 
+	HRESULT hr = CoInternetParseUrl(url.c_str(), PARSE_DECODE, URL_ENCODING_NONE, szDecodedUrl,
                     INTERNET_MAX_URL_LENGTH, &cchDecodedUrl, 0);
 	if (hr != S_OK)
 	{
@@ -73,12 +73,12 @@ bool DownloadURL(Progress *p, HINTERNET hINet, std::wstring url, std::wstring ou
 	// TODO - how to cancel download if user presses the Cancel button
 
 	// start the HTTP fetch
-	HINTERNET hConnection = InternetConnect( hINet, szDomainName, 80, L" ", L" ", INTERNET_SERVICE_HTTP, 0, 0 );
+	HINTERNET hConnection = InternetConnectW( hINet, szDomainName, 80, L" ", L" ", INTERNET_SERVICE_HTTP, 0, 0 );
 	if ( !hConnection )
 	{
 		failed = true;
 	}
-	HINTERNET hRequest = HttpOpenRequest( hConnection, L"GET", L"", NULL, NULL, NULL, INTERNET_FLAG_RELOAD|INTERNET_FLAG_NO_CACHE_WRITE|INTERNET_FLAG_NO_COOKIES|INTERNET_FLAG_NO_UI|INTERNET_FLAG_IGNORE_CERT_CN_INVALID|INTERNET_FLAG_IGNORE_CERT_DATE_INVALID, 0 );
+	HINTERNET hRequest = HttpOpenRequestW( hConnection, L"GET", L"", NULL, NULL, NULL, INTERNET_FLAG_RELOAD|INTERNET_FLAG_NO_CACHE_WRITE|INTERNET_FLAG_NO_COOKIES|INTERNET_FLAG_NO_UI|INTERNET_FLAG_IGNORE_CERT_CN_INVALID|INTERNET_FLAG_IGNORE_CERT_DATE_INVALID, 0 );
 	if ( !hRequest )
 	{
 		InternetCloseHandle(hConnection);
@@ -88,11 +88,11 @@ bool DownloadURL(Progress *p, HINTERNET hINet, std::wstring url, std::wstring ou
 	// now stream the resulting HTTP into a file
 	std::ofstream ostr;
 	ostr.open(outFilename.c_str(), std::ios_base::binary | std::ios_base::trunc);
-	
+
 	CHAR buffer[2048];
 	DWORD dwRead;
 	DWORD total = 0;
-	TCHAR msg[255];
+	wchar_t msg[255];
 	HttpSendRequest( hRequest, NULL, 0, NULL, 0);
 	while( InternetReadFile( hRequest, buffer, 2047, &dwRead ) )
 	{
@@ -108,9 +108,9 @@ bool DownloadURL(Progress *p, HINTERNET hINet, std::wstring url, std::wstring ou
 		buffer[dwRead] = 0;
 		total+=dwRead;
 		ostr << buffer;
-		wsprintf(msg,L"Downloaded %d bytes",total);
+		wsprintfW(msg,L"Downloaded %d bytes",total);
 		p->SetLineText(2,msg,true);
-	}	
+	}
 	ostr.close();
 	InternetCloseHandle(hConnection);
 	InternetCloseHandle(hRequest);
@@ -121,7 +121,7 @@ bool DownloadURL(Progress *p, HINTERNET hINet, std::wstring url, std::wstring ou
 bool UnzipFile(std::wstring unzipper, std::wstring zipFile, std::wstring destdir)
 {
 	// now we're going to invoke back into the boot to unzip our file and install
-	STARTUPINFO si;
+	STARTUPINFOW si;
 	PROCESS_INFORMATION pi;
 	ZeroMemory( &si, sizeof(si) );
 	ZeroMemory( &pi, sizeof(pi) );
@@ -136,7 +136,7 @@ bool UnzipFile(std::wstring unzipper, std::wstring zipFile, std::wstring destdir
 	cmdline+=L"\"";
 
 	// in win32, we just invoke back the same process and let him unzip
-	if (!CreateProcess(NULL,(LPWSTR)cmdline.c_str(),NULL,NULL,FALSE,NULL,NULL,NULL,&si,&pi))
+	if (!CreateProcessW(NULL,(LPWSTR)cmdline.c_str(),NULL,NULL,FALSE,NULL,NULL,NULL,&si,&pi))
 	{
 		return false;
 	}
@@ -147,7 +147,7 @@ bool UnzipFile(std::wstring unzipper, std::wstring zipFile, std::wstring destdir
 	return true;
 }
 
-int WINAPI WinMain(      
+int WINAPI WinMain(
     HINSTANCE hInstance,
     HINSTANCE hPrevInstance,
     LPSTR lpCmdLine,
@@ -155,18 +155,18 @@ int WINAPI WinMain(
 )
 {
 	//TODO: set the icon for this app and dialogs
-//	HICON icon = LoadIcon(hInstance,MAKEINTRESOURCE(IDR_MAINFRAME));	
+//	HICON icon = LoadIcon(hInstance,MAKEINTRESOURCE(IDR_MAINFRAME));
 //	SendMessage(NULL, WM_SETICON, (WPARAM)true, (LPARAM)icon);
 
-	// get the command line 
-	LPWSTR cmdline = GetCommandLine();
+	// get the command line
+	LPWSTR cmdline = GetCommandLineW();
     int argcount = 0;
 	LPWSTR *args = CommandLineToArgvW(cmdline,&argcount);
 
 	// we must have at least the mandatory args + 1 URL
 	if (argcount < 8)
 	{
-		MessageBox(GetDesktopWindow(),L"Invalid arguments passed to Installer",L"Application Error",MB_OK|MB_SYSTEMMODAL|MB_ICONEXCLAMATION);
+		MessageBoxW(GetDesktopWindow(),L"Invalid arguments passed to Installer",L"Application Error",MB_OK|MB_SYSTEMMODAL|MB_ICONEXCLAMATION);
 		return 1;
 	}
 
@@ -177,11 +177,11 @@ int WINAPI WinMain(
 	std::wstring tempdir = args[4];
 	std::wstring installdir = args[5];
 	std::wstring unzipper = args[6];
-	 
+
 	// verify the installation
-	if (IDOK != MessageBox(GetDesktopWindow(),message.c_str(),title.c_str(),MB_ICONINFORMATION|MB_OKCANCEL))
+	if (IDOK != MessageBoxW(GetDesktopWindow(),message.c_str(),title.c_str(),MB_ICONINFORMATION|MB_OKCANCEL))
 	{
-		MessageBox(GetDesktopWindow(),L"Installation Aborted. To install later, re-run the application again.", title.c_str(), MB_OK|MB_ICONWARNING);
+		MessageBoxW(GetDesktopWindow(),L"Installation Aborted. To install later, re-run the application again.", title.c_str(), MB_OK|MB_ICONWARNING);
 		return 1;
 	}
 
@@ -195,15 +195,15 @@ int WINAPI WinMain(
 	p->SetTitle(appTitle.c_str());
 	p->SetCancelMessage(L"Cancelling, one moment...");
 
-	TCHAR buf[255];
-	wsprintf(buf,L"Preparing to download %d file%s", count, (count > 1 ? L"s" : L""));
+	wchar_t buf[255];
+	wsprintfW(buf,L"Preparing to download %d file%s", count, (count > 1 ? L"s" : L""));
 
 	p->SetLineText(1,std::wstring(buf),true);
 	p->Show();
 	p->Update(0,count);
 
 	// initialize interent DLL
-	HINTERNET hINet = InternetOpen(L"Mozilla/5.0 (compatible; Titanium_Downloader/0.1; Win32)", INTERNET_OPEN_TYPE_PRECONFIG, NULL, NULL, 0 );
+	HINTERNET hINet = InternetOpenW(L"Mozilla/5.0 (compatible; Titanium_Downloader/0.1; Win32)", INTERNET_OPEN_TYPE_PRECONFIG, NULL, NULL, 0 );
 
 	// for each URL, fetch the URL and then unzip it
 	bool failed = false;
@@ -242,8 +242,8 @@ int WINAPI WinMain(
 
 		if(downloaded)
 		{
-			TCHAR msg[255];
-			wsprintf(msg, L"Installing %s/%s ...",name.c_str(),version.c_str());
+			wchar_t msg[255];
+			wsprintfW(msg, L"Installing %s/%s ...",name.c_str(),version.c_str());
 			p->SetLineText(2,msg,true);
 			UnzipFile(unzipper, path, destdir);
 		}

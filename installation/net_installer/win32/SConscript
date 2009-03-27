@@ -2,11 +2,24 @@
 import os.path as path
 
 Import('build')
-csbuilder = Builder(action = 'devenv $SOURCE /rebuild Release')
 
-Env = build.env.Clone(BUILDERS = {'CSProgram': csbuilder})
-Env.Append(CPPPATH=[build.kroll_source_dir+'/api'])
+Env = build.env.Clone()
+Env.Append(LIBS=['wininet', 'urlmon', 'comdlg32', 'ole32', 'kernel32', 'user32', 'shell32', 'advapi32', 'gdi32'])
+build.add_thirdparty(Env, 'poco')
 
-p = Env.CSProgram('Installer.exe', 'newprogress.sln')
-out_dir = path.join(build.dir, 'net_installer')
-Env.AddPostAction(p, Copy(out_dir + '/Installer.exe', build.titanium_source_dir+'/installation/net_installer/win32/bin/Release/newprogress.exe'))
+Env.Append(CPPPATH=['C:\\Program Files\\Microsoft Visual Studio 8\\VC\\atlmfc\\include'])
+Env.Append(CCFLAGS=['/MT'])
+
+sources = Glob("newprogress/*.cpp")
+rc = Env.RES("newprogress/progress.rc")
+sources += rc
+Env.Program(build.dir + '/Installer.exe', sources)
+
+#csbuilder = Builder(action = 'devenv $SOURCE /rebuild Release')
+
+#Env = build.env.Clone(BUILDERS = {'CSProgram': csbuilder})
+#Env.Append(CPPPATH=[build.kroll_source_dir+'/api'])
+
+#p = Env.CSProgram('Installer.exe', 'newprogress.sln')
+#out_dir = path.join(build.dir, 'net_installer')
+#Env.AddPostAction(p, Copy(out_dir + '/Installer.exe', build.titanium_source_dir+'/installation/net_installer/win32/bin/Release/newprogress.exe'))
