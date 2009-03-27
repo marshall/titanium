@@ -70,7 +70,7 @@ int WINAPI WinMain(
 	std::wstring unzipper = args[6];
 	 
 	// verify the installation
-	if (MB_OK != MessageBox(GetDesktopWindow(),message.c_str(),title.c_str(),MB_ICONINFORMATION|MB_OKCANCEL))
+	if (IDOK != MessageBox(GetDesktopWindow(),message.c_str(),title.c_str(),MB_ICONINFORMATION|MB_OKCANCEL))
 	{
 		MessageBox(GetDesktopWindow(),L"Installation Aborted. To install later, re-run the application again.", title.c_str(), MB_OK|MB_ICONWARNING);
 		return 1;
