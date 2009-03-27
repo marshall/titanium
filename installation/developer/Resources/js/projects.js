@@ -1045,6 +1045,14 @@ $MQL('l:launch.project.installer.request',function(msg)
 	TiDeveloper.Projects.launchProject(project,true);
 });
 
+$MQL('l:show.package.project',function()
+{
+	$('#package_public').get(0).checked = false;
+});
+$MQL('l:package.project.request',function()
+{
+	$('#package_public').get(0).checked = false;
+});
 
 //
 // Create Package Request
@@ -1188,8 +1196,8 @@ $MQL('l:create.package.request',function(msg)
 		{
 			timanifest.platforms.push('linux');
 		}
-
 		var visibility = ($('#package_public').attr('checked')==true)?'public':'private';
+
 		timanifest.visibility = visibility;
 
 		timanifest.runtime = {};
