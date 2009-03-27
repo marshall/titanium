@@ -131,7 +131,7 @@ bool UnzipFile(std::wstring unzipper, std::wstring zipFile, std::wstring destdir
 	cmdline+=unzipper;
 	cmdline+=L"\" --tiunzip \"";
 	cmdline+=zipFile;
-	cmdline+=L"\" ";
+	cmdline+=L"\" \"";
 	cmdline+=destdir;
 	cmdline+=L"\"";
 
