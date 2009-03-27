@@ -5,12 +5,14 @@ import os, os.path as path
 Env = build.env.Clone()
 Env.Append(CPPDEFINES=['USE_NO_EXPORT=1'])
 Env.Append(LIBS=['kernel32','shell32','user32','comctl32','comdlg32'])
-Env.Append(CCFLAGS=['/O2','/GL','/FD','/EHsc','/MD','/W3','/Wp64','/Zi','/TP'])
-Env.Append(LINKFLAGS=['/SUBSYSTEM:WINDOWS','/MANIFEST','/MANIFESTFILE:build\\win32\\self_extractor.exe.intermediate.manifest','/OPT:REF','/OPT:ICF','/LTCG','/MACHINE:X86'])
+# /MD
+Env.Append(CCFLAGS=['/O2','/GL','/FD','/EHsc','/MT','/W3','/Wp64','/Zi','/TP'])
+#'/MANIFEST', '/MANIFESTFILE:build\\win32\\self_extractor.exe.intermediate.manifest',
+Env.Append(LINKFLAGS=['/SUBSYSTEM:WINDOWS','/OPT:REF','/OPT:ICF','/LTCG','/MACHINE:X86'])
 
 resfile = Env.RES('progress.rc')
 p = Env.Program(build.dir + '/self_extractor', Glob('*.cpp') + resfile)
-Env.AddPostAction(p, ('mt.exe -nologo /outputresource:"%s\self_extractor.exe;#1" /manifest "%s"' % (build.dir, 'build\\win32\\self_extractor.exe.intermediate.manifest')))
+#Env.AddPostAction(p, ('mt.exe -nologo /outputresource:"%s\self_extractor.exe;#1" /manifest "%s"' % (build.dir, 'build\\win32\\self_extractor.exe.intermediate.manifest')))
 
 
 	

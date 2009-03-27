@@ -1,0 +1,85 @@
+-- A Handy Guide --
+
+runtime zip release (runtime-0.3.zip)
+---------------------------------------------------------
+- <all libs and frameworks>
+- Microsoft.VC80.CRT (win32 only)
+- appinstaller
+	* Resources
+		** <contents of installation/appinstaller/Resources>
+		** js
+			*** <contents of installation/appinstaller/Resources/js>
+			*** <contents of installation/common/js>
+- template
+	* kboot
+	* MainMenu.nib (osx only)
+	* titanium.icns (osx only)
+
+module zip release (module-api-0.3.zip)
+---------------------------------------------------------
+- <all libs and support files>
+- <contents of [module_src]/Resources/all and [module_src]/Resources/[os]>
+- AppResources
+	* <contents of AppResources/all>
+	* <contents of AppResources/[os]>
+
+packaged sdk (titanium-sdk-0.3)
+---------------------------------------------------------
+- runtime
+	* <all libs and frameworks>
+	* ???? should "template" and "appinstaller" go here -- will make packaging easier ????
+
+- modules
+	* api 
+		** <'module zip release' for api as above>
+	* tiui
+		** <'module zip release' for tiui as above>
+	* ...etc...
+
+- installer
+	* installer[.exe] -- (win32 and linux) network package installer
+	* Installer App.app (osx only)
+		** Contents
+			*** Resources
+					**** English.lproj
+						***** MainMenu.nib
+						***** titaium.icns
+			*** MacOS
+				**** Installer App
+			*** Info.plist
+
+- developer
+	* .installed [signal to appinstaller that this app is installed]
+	* Resources
+		** <contents of installation/developer/Resources>
+		** js
+			*** <contents of installation/developer/Resources/js>
+			*** <contents of installation/common/js>
+
+- appinstaller
+	* .installed [signal to appinstaller that this app is installed]
+	* Resources
+		** <contents of installation/appinstaller/Resources>
+		** js
+			*** <contents of installation/appinstaller/Resources/js>
+			*** <contents of installation/common/js>
+
+- Resources
+	* <contents of installation/runtime/Resources>
+	* js
+		** <contents of installation/runtime/Resources/js>
+		** <contents of installation/common/js>
+	* English.lproj (osx only)
+		** MainMenu.nib
+		** titanium.icns (osx only)
+
+- MacOS (osx only)
+	* titanium-sdk 
+
+- titanium-sdk[.exe] (win32 and linux only -- kboot)
+- Microsoft.VC80.CRT (win32 only)
+- Info.plist (osx only)
+- .installed [signal to appinstaller that this app is installed]
+- install [from installation/runtime/install]
+- tiapp.xml [from installation/runtime/tiapp.xml]
+

@@ -921,6 +921,24 @@ TiDeveloper.Projects.getProjectName = function(id)
 }
 
 //
+// Always return the latest version for a module
+//
+TiDeveloper.Projects.getModuleVersion = function(versions)
+{
+	var latestVer = 0
+	for (var i=0;i<versions.length;i++)
+	{
+		var ver = parseFloat(versions[i]);
+		if (ver > latestVer)
+		{
+			latestVer = ver;
+		}
+	}
+	
+	return ver;
+};
+
+//
 // Launch or launch and install project locally
 //
 TiDeveloper.Projects.launchProject = function(project, install)
@@ -952,15 +970,17 @@ TiDeveloper.Projects.launchProject = function(project, install)
 		manifest+='#desc:'+project.description+'\n';
 
 		manifest+='runtime:'+TiDeveloper.Projects.runtimeVersion+'\n';
+
 		// write out required modules
 		for (var i=0;i<TiDeveloper.Projects.requiredModules.length;i++)
 		{
-			manifest+= TiDeveloper.Projects.requiredModules[i] +':'+ TiDeveloper.Projects.requiredModuleMap[TiDeveloper.Projects.requiredModules[i]].versions[0]+'\n';
+			var version = TiDeveloper.Projects.getModuleVersion(TiDeveloper.Projects.requiredModuleMap[TiDeveloper.Projects.requiredModules[i]].versions);		
+			manifest+= TiDeveloper.Projects.requiredModules[i] +':'+ version+'\n';
 		}
 		// write out optional modules
 		for (var c=0;c<TiDeveloper.Projects.modules.length;c++)
 		{
-			var version = (TiDeveloper.Projects.modules[c].versions)?TiDeveloper.Projects.modules[c].versions[0]:'0.1';
+			var version = TiDeveloper.Projects.getModuleVersion(TiDeveloper.Projects.modules[c].versions);
 			manifest+=TiDeveloper.Projects.modules[c].name+':'+version+'\n';
 		}
 
@@ -1023,6 +1043,15 @@ $MQL('l:launch.project.installer.request',function(msg)
 	var project_name = $('#package_project_name').html();
 	var project = TiDeveloper.Projects.findProject(project_name);
 	TiDeveloper.Projects.launchProject(project,true);
+});
+
+$MQL('l:show.package.project',function()
+{
+	$('#package_public').get(0).checked = false;
+});
+$MQL('l:package.project.request',function()
+{
+	$('#package_public').get(0).checked = false;
 });
 
 //
@@ -1100,7 +1129,6 @@ $MQL('l:create.package.request',function(msg)
 			{
 				image = TFS.getFile(resources,project.image);
 			}
-			
 			// use default if not exists
 			if (!image.exists())
 			{
@@ -1122,17 +1150,19 @@ $MQL('l:create.package.request',function(msg)
 		manifest+='#desc:'+project.description +'\n';
 		manifest+='runtime:'+TiDeveloper.Projects.runtimeVersion+'\n';
 		
+		
 		// write out required modules
 		for (var i=0;i<TiDeveloper.Projects.requiredModules.length;i++)
 		{
-			manifest+= TiDeveloper.Projects.requiredModules[i] +':'+ TiDeveloper.Projects.requiredModuleMap[TiDeveloper.Projects.requiredModules[i]].versions[0]+'\n';
+			var version = TiDeveloper.Projects.getModuleVersion(TiDeveloper.Projects.requiredModuleMap[TiDeveloper.Projects.requiredModules[i]].versions);		
+			manifest+= TiDeveloper.Projects.requiredModules[i] +':'+ version+'\n';
 		}
 		// write out optional modules
 		for (var c=0;c<TiDeveloper.Projects.modules.length;c++)
 		{
 			if (!excluded[TiDeveloper.Projects.modules[c].name])
 			{
-				var version = (TiDeveloper.Projects.modules[c].versions)?TiDeveloper.Projects.modules[c].versions[0]:'1.0';
+				var version = TiDeveloper.Projects.getModuleVersion(TiDeveloper.Projects.modules[c].versions);
 				manifest+=TiDeveloper.Projects.modules[c].name+':'+version+'\n';
 			}
 		}
@@ -1166,8 +1196,8 @@ $MQL('l:create.package.request',function(msg)
 		{
 			timanifest.platforms.push('linux');
 		}
-
 		var visibility = ($('#package_public').attr('checked')==true)?'public':'private';
+
 		timanifest.visibility = visibility;
 
 		timanifest.runtime = {};
@@ -1182,8 +1212,8 @@ $MQL('l:create.package.request',function(msg)
 		for (var i=0;i<TiDeveloper.Projects.requiredModules.length;i++)
 		{
 			var m = {};
-			m.name = TiDeveloper.Projects.requiredModules[i];
-			m.version = "" + TiDeveloper.Projects.requiredModuleMap[TiDeveloper.Projects.requiredModules[i]].versions[0];
+			m.name = TiDeveloper.Projects.requiredModules[i];			
+			m.version = "" + TiDeveloper.Projects.getModuleVersion(TiDeveloper.Projects.requiredModuleMap[TiDeveloper.Projects.requiredModules[i]].versions);
 			m.package = requiredModulesPackaging;
 			timanifest.modules.push(m);
 		}
@@ -1192,7 +1222,7 @@ $MQL('l:create.package.request',function(msg)
 		for (var c=0;c<TiDeveloper.Projects.modules.length;c++)
 		{
 			var module = TiDeveloper.Projects.modules[c].name;
-			var version = "" + (TiDeveloper.Projects.modules[c].versions)?TiDeveloper.Projects.modules[c].versions[0]:Titanium.version;
+			var version = "" + TiDeveloper.Projects.getModuleVersion(TiDeveloper.Projects.modules[c].versions);
 			
 			$.each(excludedEl,function()
 			{
