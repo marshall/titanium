@@ -84,24 +84,19 @@ bool DownloadURL(Progress *p, HINTERNET hINet, std::wstring url, std::wstring ou
 	DWORD cchDecodedUrl = INTERNET_MAX_URL_LENGTH;
 	WCHAR szDomainName[INTERNET_MAX_URL_LENGTH];
 
-	bool failed = false;
-
 	// parse the URL
 	HRESULT hr = CoInternetParseUrl(url.c_str(), PARSE_DECODE, URL_ENCODING_NONE, szDecodedUrl,
                     INTERNET_MAX_URL_LENGTH, &cchDecodedUrl, 0);
-					
 	if (hr != S_OK)
 	{
-		//TODO
-		failed = true;
+		return false;
 	}
 
 	// figure out the domain/hostname
 	hr = CoInternetParseUrl(szDecodedUrl, PARSE_DOMAIN, 0, szDomainName, INTERNET_MAX_URL_LENGTH, &cchDecodedUrl, 0);
 	if (hr != S_OK)
 	{
-		//TODO
-		failed = true;
+		return false;
 	}
 	
 	// TODO - how to cancel download if user presses the Cancel button
@@ -110,7 +105,7 @@ bool DownloadURL(Progress *p, HINTERNET hINet, std::wstring url, std::wstring ou
 	HINTERNET hConnection = InternetConnectW( hINet, szDomainName, 80, L" ", L" ", INTERNET_SERVICE_HTTP, 0, 0 );
 	if ( !hConnection )
 	{
-		failed = true; 
+		return false;
 	}
 	
 	std::wstring wurl(szDecodedUrl);
@@ -119,15 +114,18 @@ bool DownloadURL(Progress *p, HINTERNET hINet, std::wstring url, std::wstring ou
 	//astd::wstring object = path + "?" + queryString;
 	
 	HINTERNET hRequest = HttpOpenRequestW( hConnection, L"GET", path.c_str(), NULL, NULL, NULL, INTERNET_FLAG_RELOAD|INTERNET_FLAG_NO_CACHE_WRITE|INTERNET_FLAG_NO_COOKIES|INTERNET_FLAG_NO_UI|INTERNET_FLAG_IGNORE_CERT_CN_INVALID|INTERNET_FLAG_IGNORE_CERT_DATE_INVALID, 0 );
+
 	if ( !hRequest )
 	{
 		InternetCloseHandle(hConnection);
-		failed = true;
+		return false;
 	}
 
 	// now stream the resulting HTTP into a file
 	std::ofstream ostr;
 	ostr.open(outFilename.c_str(), std::ios_base::binary | std::ios_base::trunc);
+
+	bool failed = false;
 
 	CHAR buffer[2048];
 	DWORD dwRead;
@@ -159,8 +157,90 @@ bool DownloadURL(Progress *p, HINTERNET hINet, std::wstring url, std::wstring ou
 	return ! failed;
 }
 
+bool DownloadURL2(Progress *p, HINTERNET hINet, std::wstring url, std::wstring outFilename)
+{
+	// TODO - how to cancel download if user presses the Cancel button
+
+	//url = L"http://www.google.com";
+	// start the HTTP fetch
+	HINTERNET urlConn = InternetOpenUrlW(hINet, url.c_str(), NULL, 0, 0, 0);
+	if ( !urlConn )
+	{
+		MessageBoxW(GetDesktopWindow(), L"didn't get a good url connection?", L"Download no good", MB_OK);
+		return false;
+	}
+
+	bool failed = false;
+
+
+	// now stream the resulting HTTP into a file
+	std::ofstream ostr;
+	ostr.open(outFilename.c_str(), std::ios_base::binary | std::ios_base::trunc);
+	
+	CHAR buffer[2048];
+	DWORD dwRead;
+	DWORD total = 0;
+	wchar_t msg[255];
+	while( InternetReadFile(urlConn, buffer, 2047, &dwRead ) )
+	{
+		if ( dwRead == 0)
+		{
+			break;
+		}
+		if (p->IsCancelled())
+		{
+			failed = true;
+			break;
+		}
+		buffer[dwRead] = 0;
+		total+=dwRead;
+		ostr << buffer;
+		wsprintfW(msg,L"Downloaded %d bytes",total);
+		p->SetLineText(2,msg,true);
+	}	
+	ostr.close();
+	InternetCloseHandle(urlConn);
+
+	MessageBoxW(GetDesktopWindow(), url.c_str(), L"URL Downloaded", MB_OK);
+	MessageBoxW(GetDesktopWindow(), outFilename.c_str(), L"File Downloaded", MB_OK);
+
+	return ! failed;
+}
+
+BOOL DirectoryExists(std::wstring dirName)
+{
+	DWORD attribs = ::GetFileAttributesW(dirName.c_str());
+
+	if (attribs == INVALID_FILE_ATTRIBUTES) {
+		return false;
+	}
+
+	return (attribs & FILE_ATTRIBUTE_DIRECTORY);
+}
+
+void CreateDirectoryTree(std::wstring dir)
+{
+	if(! DirectoryExists(dir))
+	{
+		// ensure parent dir exits
+		int lastSlash = dir.find_last_of(L"\\");
+		if(lastSlash != std::wstring::npos)
+		{
+			std::wstring parent = dir.substr(0, lastSlash);
+
+			CreateDirectoryTree(parent);
+		}
+
+		// by this point, all parent dirs are created
+		CreateDirectoryW(dir.c_str(), NULL);
+	}
+}
+
 bool UnzipFile(std::wstring unzipper, std::wstring zipFile, std::wstring destdir)
 {
+	// ensure destdir exists
+	CreateDirectoryTree(destdir);
+
 	// now we're going to invoke back into the boot to unzip our file and install
 	STARTUPINFOW si;
 	PROCESS_INFORMATION pi;
