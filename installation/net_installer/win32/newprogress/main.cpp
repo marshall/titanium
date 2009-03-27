@@ -10,9 +10,14 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
+#include <io.h>
+#include <stdlib.h>
+#include <stdio.h>
 #include "Progress.h"
 #include "Resource.h"
 
+#define alert(msg) MessageBoxA(GetDesktopWindow(), msg, "Message", MB_OK);
+#define walert(msg) MessageBoxW(GetDesktopWindow(), msg, L"Message", MB_OK);
 
 #define DISTRIBUTION_UUID	L"7F7FA377-E695-4280-9F1F-96126F3D2C2A"
 #define RUNTIME_UUID		L"A2AC5CB5-8C52-456C-9525-601A5B0725DA"
@@ -44,6 +49,35 @@ std::wstring ParseQueryParam(std::wstring uri, std::wstring name)
 	return L"";
 }
 
+std::wstring ProgressString(DWORD size, DWORD total)
+{
+	char str[1024];
+
+#define KB 1024
+#define MB KB * 1024
+
+	if (total < KB) {
+		sprintf(str, "%0.2f of %0.2f bytes", size, total);
+	}
+
+	else if (size < MB) {
+		double totalKB = total/1024.0;
+		double sizeKB = size/1024.0;
+		sprintf(str, "%0.2f of %0.2f KB", sizeKB, totalKB);
+	}
+	
+	else {
+		// hopefully we shouldn't ever need to count more than 1023 in a single file!
+		double totalMB = total/1024.0/1024.0;
+		double sizeMB = size/1024.0/1024.0;
+		sprintf(str, "%0.2f of %0.2f MB", size, total);
+	}
+	
+	wchar_t wstr[1024];
+	mbtowc(wstr, str, strlen(str));
+	return std::wstring(wstr);
+}
+
 bool DownloadURL(Progress *p, HINTERNET hINet, std::wstring url, std::wstring outFilename)
 {
 	WCHAR szDecodedUrl[INTERNET_MAX_URL_LENGTH];
@@ -55,6 +89,7 @@ bool DownloadURL(Progress *p, HINTERNET hINet, std::wstring url, std::wstring ou
 	// parse the URL
 	HRESULT hr = CoInternetParseUrl(url.c_str(), PARSE_DECODE, URL_ENCODING_NONE, szDecodedUrl,
                     INTERNET_MAX_URL_LENGTH, &cchDecodedUrl, 0);
+					
 	if (hr != S_OK)
 	{
 		//TODO
@@ -63,22 +98,27 @@ bool DownloadURL(Progress *p, HINTERNET hINet, std::wstring url, std::wstring ou
 
 	// figure out the domain/hostname
 	hr = CoInternetParseUrl(szDecodedUrl, PARSE_DOMAIN, 0, szDomainName, INTERNET_MAX_URL_LENGTH, &cchDecodedUrl, 0);
-
 	if (hr != S_OK)
 	{
 		//TODO
 		failed = true;
 	}
-
+	
 	// TODO - how to cancel download if user presses the Cancel button
-
+	
 	// start the HTTP fetch
 	HINTERNET hConnection = InternetConnectW( hINet, szDomainName, 80, L" ", L" ", INTERNET_SERVICE_HTTP, 0, 0 );
 	if ( !hConnection )
 	{
-		failed = true;
+		failed = true; 
 	}
-	HINTERNET hRequest = HttpOpenRequestW( hConnection, L"GET", L"", NULL, NULL, NULL, INTERNET_FLAG_RELOAD|INTERNET_FLAG_NO_CACHE_WRITE|INTERNET_FLAG_NO_COOKIES|INTERNET_FLAG_NO_UI|INTERNET_FLAG_IGNORE_CERT_CN_INVALID|INTERNET_FLAG_IGNORE_CERT_DATE_INVALID, 0 );
+	
+	std::wstring wurl(szDecodedUrl);
+	std::wstring path = wurl.substr(wurl.find(szDomainName)+wcslen(szDomainName));
+	//std::wstring queryString = url.substr(url.rfind("?")+1);
+	//astd::wstring object = path + "?" + queryString;
+	
+	HINTERNET hRequest = HttpOpenRequestW( hConnection, L"GET", path.c_str(), NULL, NULL, NULL, INTERNET_FLAG_RELOAD|INTERNET_FLAG_NO_CACHE_WRITE|INTERNET_FLAG_NO_COOKIES|INTERNET_FLAG_NO_UI|INTERNET_FLAG_IGNORE_CERT_CN_INVALID|INTERNET_FLAG_IGNORE_CERT_DATE_INVALID, 0 );
 	if ( !hRequest )
 	{
 		InternetCloseHandle(hConnection);
@@ -93,6 +133,7 @@ bool DownloadURL(Progress *p, HINTERNET hINet, std::wstring url, std::wstring ou
 	DWORD dwRead;
 	DWORD total = 0;
 	wchar_t msg[255];
+	
 	HttpSendRequest( hRequest, NULL, 0, NULL, 0);
 	while( InternetReadFile( hRequest, buffer, 2047, &dwRead ) )
 	{
@@ -105,10 +146,10 @@ bool DownloadURL(Progress *p, HINTERNET hINet, std::wstring url, std::wstring ou
 			failed = true;
 			break;
 		}
-		buffer[dwRead] = 0;
+		buffer[dwRead] = '\0';
 		total+=dwRead;
-		ostr << buffer;
-		wsprintfW(msg,L"Downloaded %d bytes",total);
+		ostr.write(buffer, dwRead);
+		wsprintfW(msg,L"Downloaded %d KB",total/1024);
 		p->SetLineText(2,msg,true);
 	}
 	ostr.close();
@@ -146,7 +187,6 @@ bool UnzipFile(std::wstring unzipper, std::wstring zipFile, std::wstring destdir
 
 	return true;
 }
-
 int WINAPI WinMain(
     HINSTANCE hInstance,
     HINSTANCE hPrevInstance,
@@ -162,9 +202,9 @@ int WINAPI WinMain(
 	LPWSTR cmdline = GetCommandLineW();
     int argcount = 0;
 	LPWSTR *args = CommandLineToArgvW(cmdline,&argcount);
-
+	
 	// we must have at least the mandatory args + 1 URL
-	if (argcount < 8)
+	if (argcount < 7)
 	{
 		MessageBoxW(GetDesktopWindow(),L"Invalid arguments passed to Installer",L"Application Error",MB_OK|MB_SYSTEMMODAL|MB_ICONEXCLAMATION);
 		return 1;
