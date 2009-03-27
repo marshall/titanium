@@ -100,6 +100,9 @@ int WINAPI WinMain(
 	p->Show();
 	p->Update(0,count);
 
+	// initialize interent DLL
+	HINTERNET hINet = InternetOpen(L"Mozilla/5.0 (compatible; Titanium_Downloader/0.1; Win32)", INTERNET_OPEN_TYPE_PRECONFIG, NULL, NULL, 0 );
+
 	// for each URL, fetch the URL and then unzip it
 	bool failed = false;
 	DWORD x = 0;
@@ -110,7 +113,7 @@ int WINAPI WinMain(
 
 		WCHAR szDecodedUrl[INTERNET_MAX_URL_LENGTH];
 		DWORD cchDecodedUrl = INTERNET_MAX_URL_LENGTH;
-		WCHAR szOut[INTERNET_MAX_URL_LENGTH];
+		WCHAR szDomainName[INTERNET_MAX_URL_LENGTH];
 
 		// parse the URL
 		HRESULT hr = CoInternetParseUrl(url.c_str(), PARSE_DECODE, URL_ENCODING_NONE, szDecodedUrl, 
@@ -122,7 +125,7 @@ int WINAPI WinMain(
 		}
 
 		// figure out the domain/hostname
-		hr = CoInternetParseUrl(szDecodedUrl, PARSE_DOMAIN, 0, szOut, INTERNET_MAX_URL_LENGTH, &cchDecodedUrl, 0);
+		hr = CoInternetParseUrl(szDecodedUrl, PARSE_DOMAIN, 0, szDomainName, INTERNET_MAX_URL_LENGTH, &cchDecodedUrl, 0);
 
 		if (hr != S_OK)
 		{
@@ -134,19 +137,16 @@ int WINAPI WinMain(
 		while ( !p->IsCancelled() )
 		{
 			// start the HTTP fetch
-			HINTERNET hINet = InternetOpen(L"Mozilla/5.0 (compatible; Titanium_Downloader/0.1; Win32)", INTERNET_OPEN_TYPE_PRECONFIG, NULL, NULL, 0 );
-			HINTERNET hConnection = InternetConnect( hINet, szOut, 80, L" ", L" ", INTERNET_SERVICE_HTTP, 0, 0 );
+			HINTERNET hConnection = InternetConnect( hINet, szDomainName, 80, L" ", L" ", INTERNET_SERVICE_HTTP, 0, 0 );
 			if ( !hConnection )
 			{
 				failed = true;
-				InternetCloseHandle(hINet);
 				break;
 			}
 			HINTERNET hRequest = HttpOpenRequest( hConnection, L"GET", L"", NULL, NULL, NULL, INTERNET_FLAG_RELOAD|INTERNET_FLAG_NO_CACHE_WRITE|INTERNET_FLAG_NO_COOKIES|INTERNET_FLAG_NO_UI|INTERNET_FLAG_IGNORE_CERT_CN_INVALID|INTERNET_FLAG_IGNORE_CERT_DATE_INVALID, 0 );
 			if ( !hRequest )
 			{
 				InternetCloseHandle(hConnection);
-				InternetCloseHandle(hINet);
 				failed = true;
 				break;
 			}
@@ -204,7 +204,6 @@ int WINAPI WinMain(
 			}	
 			ostr.close();
 			InternetCloseHandle(hConnection);
-			InternetCloseHandle(hINet);
 			InternetCloseHandle(hRequest);
 
 			// now we're going to invoke back into the boot to unzip our file and install
@@ -236,6 +235,9 @@ int WINAPI WinMain(
 			WaitForSingleObject(pi.hProcess,INFINITE);
 		}
 	}
+
+	// done with iNet - so close it
+	InternetCloseHandle(hINet);
 
 	if (p->IsCancelled())
 	{
