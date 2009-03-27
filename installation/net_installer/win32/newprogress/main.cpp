@@ -118,6 +118,56 @@ bool DownloadURL(Progress *p, HINTERNET hINet, std::wstring url, std::wstring ou
 	return ! failed;
 }
 
+bool DownloadURL2(Progress *p, HINTERNET hINet, std::wstring url, std::wstring outFilename)
+{
+	// TODO - how to cancel download if user presses the Cancel button
+
+	//url = L"http://www.google.com";
+	// start the HTTP fetch
+	HINTERNET urlConn = InternetOpenUrl(hINet, url.c_str(), NULL, 0, 0, 0);
+	if ( !urlConn )
+	{
+		MessageBox(GetDesktopWindow(), L"didn't get a good url connection?", L"Download no good", MB_OK);
+		return false;
+	}
+
+	bool failed = false;
+
+
+	// now stream the resulting HTTP into a file
+	std::ofstream ostr;
+	ostr.open(outFilename.c_str(), std::ios_base::binary | std::ios_base::trunc);
+	
+	CHAR buffer[2048];
+	DWORD dwRead;
+	DWORD total = 0;
+	TCHAR msg[255];
+	while( InternetReadFile(urlConn, buffer, 2047, &dwRead ) )
+	{
+		if ( dwRead == 0)
+		{
+			break;
+		}
+		if (p->IsCancelled())
+		{
+			failed = true;
+			break;
+		}
+		buffer[dwRead] = 0;
+		total+=dwRead;
+		ostr << buffer;
+		wsprintf(msg,L"Downloaded %d bytes",total);
+		p->SetLineText(2,msg,true);
+	}	
+	ostr.close();
+	InternetCloseHandle(urlConn);
+
+	MessageBox(GetDesktopWindow(), url.c_str(), L"URL Downloaded", MB_OK);
+	MessageBox(GetDesktopWindow(), outFilename.c_str(), L"File Downloaded", MB_OK);
+
+	return ! failed;
+}
+
 bool UnzipFile(std::wstring unzipper, std::wstring zipFile, std::wstring destdir)
 {
 	// now we're going to invoke back into the boot to unzip our file and install
