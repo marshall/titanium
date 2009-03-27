@@ -6,14 +6,11 @@ sources = Glob('*.cpp')+Glob('irc/*.cpp')+Glob('http/*.cpp')
 
 env = build.env.Clone();
 env.Append(CPPDEFINES = ('TITANIUM_NETWORK_API_EXPORT', 1))
+build.add_thirdparty(env, 'poco')
 
 if build.is_osx():
-	build.add_thirdparty(env, 'poco', True)
-	env.Append(LIBS=['kroll'])
 	env.Append(FRAMEWORKS=['SystemConfiguration'])
 	sources+=Glob('osx/*.mm')
-else:
-	build.add_thirdparty(env, 'poco')
 
 if build.is_linux():
 	sources+=Glob('linux/*.cpp')

@@ -25,6 +25,9 @@ build.kroll_third_party = build.third_party
 build.kroll_include_dir = path.join(build.dir, 'include')
 build.titanium_support_dir = path.join(build.titanium_source_dir, 'support', build.os)
 
+build.sdk_build_dir = path.join(build.dir, 'titanium-sdk-' + build.version)
+if build.is_osx(): build.sdk_build_dir = path.join(build.sdk_build_dir + '.app')
+
 # This should only be used for accessing various
 # scripts in the kroll build directory. All resources
 # should instead be built to build.dir
@@ -75,7 +78,7 @@ testapp = 'testapp' in targets or ARGUMENTS.get('testapp', 0)
 testsuite = 'testsuite' in targets or ARGUMENTS.get('testsuite', 0)
 clean = 'clean' in targets or ARGUMENTS.get('clean', 0)
 qclean = 'qclean' in targets or ARGUMENTS.get('qclean', 0)
-dist = 'dist' in targets or ARGUMENTS.get('dist', 0)
+#dist = 'dist' in targets or ARGUMENTS.get('dist', 0)
 uploader = 'uploader' in targets or ARGUMENTS.get('uploader', 0)
 run = 'run' in targets or ARGUMENTS.get('run', 0)
 Export('run')
@@ -87,26 +90,19 @@ if clean or qclean:
 	if not qclean: os.system('scons -c')
 	Exit(0)
 
-# Linux can package and build at the same time now
-if not(package) or build.is_linux():
+## Kroll *must not be required* for installation
+SConscript('installation/SConscript')
 
-	## Kroll *must not be required* for installation
-	SConscript('installation/SConscript')
+# After Kroll builds, the environment will  link 
+# against libkroll, so anything that should not be
+# linked against kroll should be above this point.
+SConscript('kroll/SConscript', exports='debug')
+SConscript('modules/SConscript')
 
-	SConscript('kroll/SConscript', exports='debug')
+SConscript('installation/runtime/SConscript')
 
-	# Kroll library is now built (hopefully)
-	if not build.is_linux():
-		build.env.Append(LIBS=['kroll']) 
-	SConscript('modules/SConscript')
-
-if package:
-	print "Building packaging ..."
-	SConscript('installation/runtime/SConscript')
-
-if dist:
-	print 'Building dist files...'
-	dist = build.build_dist_files()
+#dist = build.build_dist_files()
+Alias('alldist', build.dist_targets)
 
 if testapp:
 	print "Building testapp ..."

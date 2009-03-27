@@ -5,49 +5,46 @@ import glob, distutils.dir_util as dir_util
 Import('vars')
 Import(vars)
 
-kboot = p.join(build.dir, 'kboot')
-app_dir = p.join(build.dir, 'dist', name + '-' + version)
-build.utils.Mkdir(app_dir)
-runtime = p.join(app_dir, 'runtime')
-modules_dir = p.join(app_dir, 'modules');
-jsfiles = p.join(build.titanium_source_dir, 'installation', 'common', 'js')
+cwd = build.cwd()
+sdk = App(
+	build,
+	shortname='titanium-sdk', 
+	fullname='', 
+	id='com.titaniumapp.sdk',
+	version=build.version,
+	guid='7F7FA377-E695-4280-9F1F-96126F3D2C2A')
 
-if p.isdir(app_dir): dir_util.remove_tree(app_dir)
-build.utils.CopyToDir(build.dir + '/runtime', app_dir)
-build.utils.CopyToDir(build.dir + '/modules', app_dir)
-build.utils.Touch(p.join(app_dir, '.installed')) # prevent appinstaller run
-build.utils.Copy(kboot, p.join(app_dir, name))
+modules = ['runtime', 'javascript', 'tiapp', 'tifilesystem', 'tiplatform', 'tiprocess', 'tidesktop', 'api', 'tiui', 'tinetwork', 'tianalytics']
+sdk.set_modules(modules)
 
-to_copy = ['Resources', 'tiapp.xml', 'manifest', 'install']
+build_dir = p.join(build.dir, 'dist')
+sdk.stage(build.sdk_build_dir, src_resources=p.join(cwd, 'Resources'))
+
+to_copy = ['tiapp.xml', 'manifest', 'install']
 for item in to_copy:
-	build.utils.CopyToDir(item, app_dir)
+	futils.CopyToDir(p.join(cwd, item), sdk.contents)
 
-jstarget = p.join(app_dir, 'Resources', 'js')
-build.utils.CopyTree(jsfiles, jstarget)
+# Copy developer and appinstaller applications
+devtool = p.join(build.titanium_source_dir, "installation", "developer")
+devtool_target = p.join(sdk.contents, 'developer')
+build.utils.Copy(developer, devtool_target)
 
-# Copy developer application
-developer = p.join(build.titanium_source_dir, "installation", "developer")
-build.utils.CopyToDir(developer, app_dir)
-
-# copy common js into developer tool
-jstarget = p.join(app_dir, 'developer', 'Resources', 'js')
-build.utils.CopyTree(jsfiles, jstarget)
-
-# copy the app installer application
 appinstaller = p.join(build.titanium_source_dir, "installation", "app_installer")
 appinstaller_target = p.join(app_dir, 'appinstaller')
-build.utils.CopyTree(appinstaller, appinstaller_target)
+build.utils.Copy(appinstaller, appinstaller_target)
 
-# copy common js into appinstaller
-jstarget = p.join(appinstaller_target, 'Resources', 'js')
-build.utils.CopyTree(jsfiles, jstarget)
+# Copy common js files into all applications
+common_js = p.join(build.titanium_source_dir, 'installation', 'common', 'js')
+build.utils.CopyTree(common_js, p.join(sdk.contents, 'Resources', 'js'))
+build.utils.CopyTree(common_js, p.join(devtool_target, 'Resources', 'js'))
+build.utils.CopyTree(common_js, p.join(appinstaller_target, 'Resources', 'js'))
 
-# copy the package installer application
-installer_dir = p.join(app_dir, 'installer');
-net_installer = p.join(build.dir, 'net_installer', 'net_installer')
-build.utils.Copy(net_installer, p.join(installer_dir, 'installer'))
+# Mark all applications as installed
+futils.Touch(p.join(sdk.contents, '.installed'))
+futils.Touch(p.join(devtool_target, '.installed'))
+futils.Touch(p.join(appinstaller, '.installed'))
 
-tgzfile = app_dir + '.tgz'
-binfile = app_dir + '.bin'
-build.utils.TarGz(app_dir, tgzfile)
-build.env.KConcat(binfile, ['linux/extractor.sh', tgzfile])
+#tgzfile = app_dir + '.tgz'
+#binfile = app_dir + '.bin'
+#build.utils.TarGz(app_dir, tgzfile)
+#build.env.KConcat(binfile, ['linux/extractor.sh', tgzfile])

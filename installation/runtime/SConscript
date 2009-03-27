@@ -1,33 +1,61 @@
 #!/usr/bin/env python
+import os.path as p, futils
+from app import App
 Import('build')
-import os.path as p
 
-name = 'titanium-sdk'
-version = build.version
-appid ='com.titaniumapp.installer.runtime'
+def package_sdk(target, source, env):
+	print "Packaging the Titanium SDK..."
+	cwd = build.cwd()
+	sdk = App(
+		build,
+		shortname='titanium-sdk',
+		fullname='Titanium SDK Installer', 
+		id='com.titaniumapp.sdk.installer',
+		version=build.version,
+		guid='7F7FA377-E695-4280-9F1F-96126F3D2C2A')
+	
+	modules = ['runtime', 'javascript', 'tiapp', 'tifilesystem', 'tiplatform', 'tiprocess', 'tidesktop', 'api', 'tiui', 'tinetwork', 'tianalytics']
+	sdk.set_modules(modules)
 
-runtime_libs = ['kroll', 'khost']
-third_party = ['webkit', 'poco']
+	# Create the basic application shell
+	sdk.stage(build.sdk_build_dir, src_resources=p.join(cwd, 'Resources'))
+	
+	# The SDK installer application is staged.
+	# -- so now we do pre-package processing
+	to_copy = ['tiapp.xml', 'manifest', 'install']
+	for item in to_copy:
+		futils.CopyToDir(p.join(cwd, item), sdk.contents)
+	
+	# Copy developer and appinstaller applications
+	devtool = p.join(build.titanium_source_dir, "installation", "developer")
+	devtool_target = p.join(sdk.contents, 'developer')
+	futils.CopyTree(devtool, devtool_target)
 
-modules = build.modules
+	appinstaller = p.join(build.titanium_source_dir, "installation", "app_installer")
+	appinstaller_target = p.join(sdk.contents, 'appinstaller')
+	futils.CopyTree(appinstaller, appinstaller_target)
 
-manifest_text="""
-#appname: %s
-#appid: %s
-runtime: %s
-""" % (name, appid, version)
+	# Copy common js files into all applications
+	common_js = p.join(build.titanium_source_dir, 'installation', 'common', 'js')
+	futils.CopyTree(common_js, p.join(sdk.contents, 'Resources', 'js'))
+	futils.CopyTree(common_js, p.join(devtool_target, 'Resources', 'js'))
+	futils.CopyTree(common_js, p.join(appinstaller_target, 'Resources', 'js'))
+	
+	# Mark all applications as installed
+	futils.Touch(p.join(sdk.contents, '.installed'))
+	futils.Touch(p.join(devtool_target, '.installed'))
+	futils.Touch(p.join(appinstaller_target, '.installed'))
 
-for m in modules:
-	manifest_text += "%s: %s\n" % (m.name, build.version)
+	if build.is_osx():
+		sdk.package_dmg(
+			app_name="Install Titanium SDK",
+			vol_name="Titanium",
+			dmg_name='titanium-sdk-' + build.version,
+			out_dir=p.join(build.dir, 'dist'),
+			icns_file=p.join(cwd, 'osx', 'VolumeIcon.icns'),
+			ds_store_file=p.join(cwd, 'osx', 'installer_DS_Store'),
+			ds_store_extras=[p.join(cwd, 'osx', 'background.jpg')])
 
-vars = 'vars build name version runtime_libs '
-vars += ' third_party modules appid manifest_text'
-if build.is_osx():
-	SConscript('SConscript.osx', vars)
-
-if build.is_linux():
-	SConscript('SConscript.linux', vars)
-
-if build.is_win32():
-	SConscript('SConscript.win32', vars)
-
+build.env.Append(BUILDERS = {'PackageSDK' : Builder(action=package_sdk)})
+sdk_target = build.env.PackageSDK("#dummy-target", build.targets)
+build.require_for_dist(sdk_target)

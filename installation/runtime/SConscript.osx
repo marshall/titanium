@@ -5,125 +5,125 @@ from datetime import date
 Import('vars')
 Import(vars)
 
-class Bundler(object): 
-	def __init__(self, name, dest, tiapp, resources, lprojs):
-		self.basedir = p.join(dest,'%s.app' % name)
-		if p.isdir(self.basedir):
-		  dir_util.remove_tree(self.basedir)
-		self.contents = p.join(self.basedir,'Contents')
-		macos = p.join(self.contents,'MacOS')
-		self.resources = p.join(self.contents,'Resources')
-		self.lproj = p.join(self.resources,'English.lproj')
-		for d in [self.basedir,self.contents,macos,self.resources,self.lproj]:
-			os.makedirs(d)
-		if tiapp:
-			shutil.copy(tiapp, self.contents)
-		kboot = p.join(build.dir, 'kboot')
-		self.binary = p.join(macos,name)
-		shutil.copy(kboot, self.binary)
-		out_file = open(p.join(self.contents, 'manifest'), 'w')
-		out_file.write(manifest_text)
-		out_file.close()
-		icns = p.join(build.titanium_support_dir, 'titanium.icns')
-		shutil.copy(icns, self.lproj)
-		if resources:
-			dir_util.copy_tree(resources, self.resources, preserve_symlinks=True)
-		if lprojs:
-			dir_util.copy_tree(lprojs, self.lproj, preserve_symlinks=False)
-		plist = open(p.join(build.titanium_support_dir, 'Info.plist')).read()
-		plist = plist.replace('APPNAME', name)
-		plist = plist.replace('APPEXE', name)
-		plist = plist.replace('APPICON', 'titanium.icns')
-		plist = plist.replace('APPID', appid)
-		plist = plist.replace('APPNIB', 'MainMenu')
-		plist = plist.replace('APPVER', version)
-		out_file = open(p.join(self.contents, 'Info.plist'), 'w')
-		out_file.write(plist)
-		out_file.close()
-		out_file = open(p.join(self.contents, 'manifest'), 'w')
-		out_file.write(manifest_text)
-		out_file.close()
-
-bundle = Bundler(name,build.dir,'tiapp.xml','Resources',None)
-runtime = p.join(bundle.contents, 'runtime');
-modules_dir = p.join(bundle.contents, 'modules');
-for d in [runtime,modules_dir]:
-	os.makedirs(d)
-dir_util.copy_tree(p.join(build.titanium_source_dir,'installation','common','js'), p.join(bundle.resources,'js'), preserve_symlinks=True)
-
-# create a flag file on the runtime bundle so we don't
-# attempt to re-run the application installer	
-out_file = open(p.join(bundle.basedir, '.installed'), 'w')
-out_file.close()
-
-# Gather all runtime third-party libraries
-for lib in runtime_libs:
-	path = p.join(build.dir, 'lib' + lib+ '.dylib')
-	shutil.copy(path, runtime)
-
-for tp in third_party:
-	pattern = '%s/%s/*.framework' % (build.third_party, tp)
-	for d in glob.glob(pattern):
-		dest = runtime + '/' + p.basename(d)
-		shutil.copytree(d, dest, symlinks=True)
-	cwd = os.getcwd()
-	pattern = '%s/%s/lib' % (build.third_party, tp)
-	os.chdir(runtime)
-	if p.exists(pattern):
-		os.system('cp -Rv '+pattern+'/* . >/dev/null')
-	os.chdir(cwd)
-	
-dir_util.copy_tree(p.join(build.dir, 'modules'), modules_dir, preserve_symlinks=True)
-
-menu_nib = p.join(build.dir, 'modules', 'tiui', 'MainMenu.nib')
-shutil.copy(menu_nib, bundle.lproj)
-
-# Remove uneeded files
-files = os.walk(bundle.basedir)
-for walk in os.walk(bundle.basedir):
-	for dir in walk[1]:
-		if dir == 'JavaScriptGlue.framework':
-			dir_util.remove_tree(p.join(bundle.basedir, walk[0], dir))
-	for file in walk[2]:
-		if (file.endswith('.h')
-		  or file.endswith('.defs')
-		  or file.startswith('SConscript')
-		  or file.startswith('.')):
-			os.remove(p.join(bundle.basedir, walk[0], file))
-
-# copy the developer product
-developer = p.join(bundle.contents,'developer')
-os.makedirs(developer)
-dir_util.copy_tree(p.join(build.titanium_source_dir,'installation','developer'), developer, preserve_symlinks=True)
-dir_util.copy_tree(p.join(build.titanium_source_dir,'installation','common','js'), p.join(developer,'Resources','js'), preserve_symlinks=True)
-
-# copy the app installer product
-appinstaller = p.join(bundle.contents,'appinstaller')
-os.makedirs(appinstaller)
-dir_util.copy_tree(p.join(build.titanium_source_dir,'installation','app_installer'), appinstaller, preserve_symlinks=True)
-dir_util.copy_tree(p.join(build.titanium_source_dir,'installation','common','js'), p.join(appinstaller,'Resources','js'), preserve_symlinks=True)
-
-# copy the network installer
-installer = p.join(bundle.contents,'installer')
-os.makedirs(installer)
-netinstaller = p.join(build.dir, 'net_installer')
-bundle = Bundler('Installer App',installer,None,None,None)
-shutil.copy(p.join(netinstaller,'Info.plist'),bundle.contents)
-shutil.copy(p.join(netinstaller,'MainMenu.nib'),bundle.lproj)
-shutil.copy(p.join(netinstaller,'net_installer'),bundle.binary)
-
-srcfolder=p.join(build.dir,name+'.app')
-tdmgname='_'+name
-dmgname=name+version
-
-app_dir = p.join(srcfolder,'Contents')
-
-for i in [developer,appinstaller,bundle.contents,app_dir]:
-	# create a flag file on the netinstaller bundle so we don't
-	# attempt to re-run the application installer	
-	out_file = open(p.join(i, '.installed'), 'w')
-	out_file.write(str(date.today()))
-	out_file.close()
+#class Bundler(object): 
+#	def __init__(self, name, dest, tiapp, resources, lprojs):
+#		self.basedir = p.join(dest,'%s.app' % name)
+#		if p.isdir(self.basedir):
+#		  dir_util.remove_tree(self.basedir)
+#		self.contents = p.join(self.basedir,'Contents')
+#		macos = p.join(self.contents,'MacOS')
+#		self.resources = p.join(self.contents,'Resources')
+#		self.lproj = p.join(self.resources,'English.lproj')
+#		for d in [self.basedir,self.contents,macos,self.resources,self.lproj]:
+#			os.makedirs(d)
+#		if tiapp:
+#			shutil.copy(tiapp, self.contents)
+#		kboot = p.join(build.dir, 'kboot')
+#		self.binary = p.join(macos,name)
+#		shutil.copy(kboot, self.binary)
+#		out_file = open(p.join(self.contents, 'manifest'), 'w')
+#		out_file.write(manifest_text)
+#		out_file.close()
+#		icns = p.join(build.titanium_support_dir, 'titanium.icns')
+#		shutil.copy(icns, self.lproj)
+#		if resources:
+#			dir_util.copy_tree(resources, self.resources, preserve_symlinks=True)
+#		if lprojs:
+#			dir_util.copy_tree(lprojs, self.lproj, preserve_symlinks=False)
+#		plist = open(p.join(build.titanium_support_dir, 'Info.plist')).read()
+#		plist = plist.replace('APPNAME', name)
+#		plist = plist.replace('APPEXE', name)
+#		plist = plist.replace('APPICON', 'titanium.icns')
+#		plist = plist.replace('APPID', appid)
+#		plist = plist.replace('APPNIB', 'MainMenu')
+#		plist = plist.replace('APPVER', version)
+#		out_file = open(p.join(self.contents, 'Info.plist'), 'w')
+#		out_file.write(plist)
+#		out_file.close()
+#		out_file = open(p.join(self.contents, 'manifest'), 'w')
+#		out_file.write(manifest_text)
+#		out_file.close()
+#
+#bundle = Bundler(name,build.dir,'tiapp.xml','Resources',None)
+#runtime = p.join(bundle.contents, 'runtime');
+#modules_dir = p.join(bundle.contents, 'modules');
+#for d in [runtime,modules_dir]:
+#	os.makedirs(d)
+#dir_util.copy_tree(p.join(build.titanium_source_dir,'installation','common','js'), p.join(bundle.resources,'js'), preserve_symlinks=True)
+#
+## create a flag file on the runtime bundle so we don't
+## attempt to re-run the application installer	
+#out_file = open(p.join(bundle.basedir, '.installed'), 'w')
+#out_file.close()
+#
+## Gather all runtime third-party libraries
+#for lib in runtime_libs:
+#	path = p.join(build.dir, 'lib' + lib+ '.dylib')
+#	shutil.copy(path, runtime)
+#
+#for tp in third_party:
+#	pattern = '%s/%s/*.framework' % (build.third_party, tp)
+#	for d in glob.glob(pattern):
+#		dest = runtime + '/' + p.basename(d)
+#		shutil.copytree(d, dest, symlinks=True)
+#	cwd = os.getcwd()
+#	pattern = '%s/%s/lib' % (build.third_party, tp)
+#	os.chdir(runtime)
+#	if p.exists(pattern):
+#		os.system('cp -Rv '+pattern+'/* . >/dev/null')
+#	os.chdir(cwd)
+#	
+#dir_util.copy_tree(p.join(build.dir, 'modules'), modules_dir, preserve_symlinks=True)
+#
+#menu_nib = p.join(build.dir, 'modules', 'tiui', 'MainMenu.nib')
+#shutil.copy(menu_nib, bundle.lproj)
+#
+## Remove uneeded files
+#files = os.walk(bundle.basedir)
+#for walk in os.walk(bundle.basedir):
+#	for dir in walk[1]:
+#		if dir == 'JavaScriptGlue.framework':
+#			dir_util.remove_tree(p.join(bundle.basedir, walk[0], dir))
+#	for file in walk[2]:
+#		if (file.endswith('.h')
+#		  or file.endswith('.defs')
+#		  or file.startswith('SConscript')
+#		  or file.startswith('.')):
+#			os.remove(p.join(bundle.basedir, walk[0], file))
+#
+## copy the developer product
+#developer = p.join(bundle.contents,'developer')
+#os.makedirs(developer)
+#dir_util.copy_tree(p.join(build.titanium_source_dir,'installation','developer'), developer, preserve_symlinks=True)
+#dir_util.copy_tree(p.join(build.titanium_source_dir,'installation','common','js'), p.join(developer,'Resources','js'), preserve_symlinks=True)
+#
+## copy the app installer product
+#appinstaller = p.join(bundle.contents,'appinstaller')
+#os.makedirs(appinstaller)
+#dir_util.copy_tree(p.join(build.titanium_source_dir,'installation','app_installer'), appinstaller, preserve_symlinks=True)
+#dir_util.copy_tree(p.join(build.titanium_source_dir,'installation','common','js'), p.join(appinstaller,'Resources','js'), preserve_symlinks=True)
+#
+## copy the network installer
+#installer = p.join(bundle.contents,'installer')
+#os.makedirs(installer)
+#netinstaller = p.join(build.dir, 'net_installer')
+#bundle = Bundler('Installer App',installer,None,None,None)
+#shutil.copy(p.join(netinstaller,'Info.plist'),bundle.contents)
+#shutil.copy(p.join(netinstaller,'MainMenu.nib'),bundle.lproj)
+#shutil.copy(p.join(netinstaller,'net_installer'),bundle.binary)
+#
+#srcfolder=p.join(build.dir,name+'.app')
+#tdmgname='_'+name
+#dmgname=name+version
+#
+#app_dir = p.join(srcfolder,'Contents')
+#
+#for i in [developer,appinstaller,bundle.contents,app_dir]:
+#	# create a flag file on the netinstaller bundle so we don't
+#	# attempt to re-run the application installer	
+#	out_file = open(p.join(i, '.installed'), 'w')
+#	out_file.write(str(date.today()))
+#	out_file.close()
 
 def invoke(cmd):
 	print cmd

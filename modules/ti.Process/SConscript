@@ -6,12 +6,7 @@ Import('build')
 env = build.env.Clone();
 env.Append(CPPDEFINES = ('TITANIUM_PROCESS_API_EXPORT', 1))
 env.Append(CPPPATH = ['#kroll'])
-
-if build.is_osx():
-	build.add_thirdparty(env, 'poco', True)
-	env.Append(LIBS=['kroll'])
-else:
-	build.add_thirdparty(env, 'poco')
+build.add_thirdparty(env, 'poco')
 
 
 m = build.add_module('ti.Process')

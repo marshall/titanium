@@ -4,15 +4,10 @@ Import('build')
 
 env = build.env.Clone();
 
+build.add_thirdparty(env, 'poco')
+env.Append(LIBS=['tiappmodule'])
 if build.is_osx():
-	build.add_thirdparty(env, 'poco', True)
-	env.Append(LIBS=['kroll','tiappmodule'])
 	env.Append(FRAMEWORKS = ['Cocoa'])
-elif build.is_win32():
-	build.add_thirdparty(env, 'poco', True)
-	env.Append(LIBS=['kroll','tiappmodule'])
-else:
-	build.add_thirdparty(env, 'poco')
 
 env.Append(CPPDEFINES = ('TITANIUM_FILESYSTEM_API_EXPORT', 1))
 env.Append(CPPPATH = ['#kroll','%s/modules/ti.App' % build.titanium_source_dir])
