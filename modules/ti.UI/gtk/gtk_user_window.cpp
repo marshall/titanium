@@ -512,6 +512,12 @@ static void window_object_cleared_cb(
 	SharedValue ti_object_value = Value::NewObject(shared_ti_obj);
 	frame_global->Set(GLOBAL_NS_VARNAME, ti_object_value);
 
+
+	// bind the window into currentWindow so you can call things like
+	// Titanium.UI.currentWindow.getParent().window to get the parents
+	// window and global variable scope
+	user_window->GetSharedPtr()->Set("window",window_value);
+
 	user_window->ContextBound(frame_global);
 }
 

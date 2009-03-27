@@ -86,18 +86,13 @@ Win32WebKitFrameLoadDelegate::windowScriptObjectAvailable (
 	SharedValue ti_object_value = Value::NewObject(shared_ti_obj);
 	global_bound_object->Set(GLOBAL_NS_VARNAME, ti_object_value);
 
+
+	// bind the window into currentWindow so you can call things like
+	// Titanium.UI.currentWindow.getParent().window to get the parents
+	// window and global variable scope
+	user_window->GetSharedPtr()->Set("window",window_value);
+
 	window->ContextBound(global_bound_object);
-
-	/*
-
-	// Set user window into the Titanium object
-	SharedBoundObject* shared_user_window = new SharedBoundObject(window);
-	SharedValue user_window_val = Value::NewObject(*shared_user_window);
-	BoundObject *current_window = new StaticBoundObject();
-	SharedBoundObject shared_current_window(current_window);
-	shared_current_window->Set("window", user_window_val);
-	*/
-
 
 	return S_OK;
 }

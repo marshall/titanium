@@ -408,6 +408,11 @@
 	SharedBoundObject shared_global = global_bound_object;
 	(*frames)[frame]=shared_global;
 	
+	// bind the window into currentWindow so you can call things like
+	// Titanium.UI.currentWindow.getParent().window to get the parents
+	// window and global variable scope
+	shared_user_window->Set("window",window_value);
+	
 	// fire context bound event
 	shared_user_window->ContextBound(shared_global);
 }
