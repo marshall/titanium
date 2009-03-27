@@ -99,8 +99,6 @@ bool DownloadURL(Progress *p, HINTERNET hINet, std::wstring url, std::wstring ou
 		return false;
 	}
 	
-	// TODO - how to cancel download if user presses the Cancel button
-	
 	// start the HTTP fetch
 	HINTERNET hConnection = InternetConnectW( hINet, szDomainName, 80, L" ", L" ", INTERNET_SERVICE_HTTP, 0, 0 );
 	if ( !hConnection )
