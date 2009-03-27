@@ -50,24 +50,18 @@ bool DownloadURL(Progress *p, HINTERNET hINet, std::wstring url, std::wstring ou
 	DWORD cchDecodedUrl = INTERNET_MAX_URL_LENGTH;
 	WCHAR szDomainName[INTERNET_MAX_URL_LENGTH];
 
-	bool failed = false;
-
 	// parse the URL
-	HRESULT hr = CoInternetParseUrl(url.c_str(), PARSE_DECODE, URL_ENCODING_NONE, szDecodedUrl,
-                    INTERNET_MAX_URL_LENGTH, &cchDecodedUrl, 0);
+	HRESULT hr = CoInternetParseUrl(url.c_str(), PARSE_DECODE, URL_ENCODING_NONE, szDecodedUrl, INTERNET_MAX_URL_LENGTH, &cchDecodedUrl, 0);
 	if (hr != S_OK)
 	{
-		//TODO
-		failed = true;
+		return false;
 	}
 
 	// figure out the domain/hostname
 	hr = CoInternetParseUrl(szDecodedUrl, PARSE_DOMAIN, 0, szDomainName, INTERNET_MAX_URL_LENGTH, &cchDecodedUrl, 0);
-
 	if (hr != S_OK)
 	{
-		//TODO
-		failed = true;
+		return false;
 	}
 
 	// TODO - how to cancel download if user presses the Cancel button
@@ -76,18 +70,21 @@ bool DownloadURL(Progress *p, HINTERNET hINet, std::wstring url, std::wstring ou
 	HINTERNET hConnection = InternetConnectW( hINet, szDomainName, 80, L" ", L" ", INTERNET_SERVICE_HTTP, 0, 0 );
 	if ( !hConnection )
 	{
-		failed = true;
+		return false;
 	}
+
 	HINTERNET hRequest = HttpOpenRequestW( hConnection, L"GET", L"", NULL, NULL, NULL, INTERNET_FLAG_RELOAD|INTERNET_FLAG_NO_CACHE_WRITE|INTERNET_FLAG_NO_COOKIES|INTERNET_FLAG_NO_UI|INTERNET_FLAG_IGNORE_CERT_CN_INVALID|INTERNET_FLAG_IGNORE_CERT_DATE_INVALID, 0 );
 	if ( !hRequest )
 	{
 		InternetCloseHandle(hConnection);
-		failed = true;
+		return false;
 	}
 
 	// now stream the resulting HTTP into a file
 	std::ofstream ostr;
 	ostr.open(outFilename.c_str(), std::ios_base::binary | std::ios_base::trunc);
+
+	bool failed = false;
 
 	CHAR buffer[2048];
 	DWORD dwRead;
