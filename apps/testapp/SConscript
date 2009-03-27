@@ -4,63 +4,12 @@ import os.path as p, os
 import glob, distutils.dir_util as dir_util
 Import('build')
 
-shortname = 'titanium_testapp'
-fullname = 'Titanium Test App'
-id = 'com.titaniumapp.testapp'
-version = '0.1'
-guid = "D36DD8BA-D092-4F20-9073-EB613BFB8F46"
-
-if build.is_linux():
-	over_dir = app_dir = p.join(build.dir, shortname)
-	exe_path = p.join(app_dir, shortname)
-	kboot = p.join(build.dir, 'kboot')
-elif build.is_win32():
-	over_dir = app_dir = p.join(build.dir, shortname)
-	exe_path = p.join(app_dir, shortname+'.exe')
-	kboot = p.join(build.dir, 'kboot.exe')
-elif build.is_osx():
-	over_dir = p.join(build.dir, shortname+'.app')
-	app_dir = p.join(over_dir, 'Contents')
-	exe_path = p.join(app_dir, 'MacOS', shortname)
-	kboot = p.join(build.dir, 'kboot')
-else:
-	print "Sorry, the testapp builder does not support your environment yet."
-	Exit()
-runtime = p.join(app_dir, 'runtime');
-rsc_dir = p.join(app_dir, 'Resources');
-
-#if p.isdir(over_dir):
-#	dir_util.remove_tree(over_dir)
-excludes = ['.dll.manifest', '.dll.pdb', '.exp', '.ilk']
-build.utils.CopyToDir(build.dir + '/runtime', app_dir, exclude=excludes)
-build.utils.CopyToDir(p.join(build.dir, 'modules'), app_dir, exclude=excludes)
-build.utils.Touch(p.join(app_dir, '.installed')) # prevent appinstaller run
-build.utils.Copy(kboot, exe_path)
-
-build.utils.CopyToDir('Resources', app_dir)
-build.utils.CopyToDir('tiapp.xml', app_dir)
-
-manifest = build.generate_manifest(fullname, id, guid)
-build.utils.WriteStrings(p.join(app_dir, 'manifest'), manifest)
-
-if build.is_osx():
-	if 'tiui' in build.modules:
-		build.utils.CopyToDir(
-			p.join(build.modules['tiui'].build_dir, 'MainMenu.nib'),
-			p.join(rsc_dir, 'English.lproj'))
-	build.utils.CopyToDir(p.join(build.titanium_support_dir, 'titanium.icns'), rsc_dir)
-
-	plist = p.join(app_dir, 'Info.plist')
-	build.utils.Copy(p.join(build.titanium_support_dir, 'Info.plist'), plist)
-	build.utils.ReplaceVars(plist, {
-		'APPEXE': shortname,
-		'APPNAME': fullname,
-		'APPICON': 'titanium.icns',
-		'APPID': id,
-		'APPNIB': 'MainMenu',
-		'APPVER': version})
-
-if build.is_win32():
-	mscrt = p.join(build.third_party, 'microsoft', 'Microsoft.VC80.CRT')
-	build.utils.CopyToDir(mscrt, app_dir)
+t = build.env.PackageApp('#testapp-target',
+	[Dir('Resources'), 'tiapp.xml'],
+	SHORTNAME='testapp',
+	FULLNAME='Titanium Test App',
+	ID='com.titaniumapp.testapp',
+	GUID='D36DD8BA-D092-4F20-9073-EB613BFB8F46')
+Depends(t, build.targets)
+Alias('testapp', t)
 

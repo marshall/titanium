@@ -74,8 +74,8 @@ Export('build')
 
 targets = COMMAND_LINE_TARGETS
 package = 'package' in targets or ARGUMENTS.get('package', 0)
-testapp = 'testapp' in targets or ARGUMENTS.get('testapp', 0)
-testsuite = 'testsuite' in targets or ARGUMENTS.get('testsuite', 0)
+#testapp = 'testapp' in targets or ARGUMENTS.get('testapp', 0)
+#testsuite = 'testsuite' in targets or ARGUMENTS.get('testsuite', 0)
 clean = 'clean' in targets or ARGUMENTS.get('clean', 0)
 qclean = 'qclean' in targets or ARGUMENTS.get('qclean', 0)
 #dist = 'dist' in targets or ARGUMENTS.get('dist', 0)
@@ -104,15 +104,13 @@ SConscript('installation/runtime/SConscript')
 #dist = build.build_dist_files()
 Alias('alldist', build.dist_targets)
 
-if testapp:
-	print "Building testapp ..."
-	SConscript('apps/testapp/SConscript')
+SConscript('apps/SConscript')
 
-if uploader:
-	SConscript('apps/uploader/SConscript')
-
-if testsuite:
-	print 'building testsuite...'
-	SConscript('apps/apivalidator/SConscript')
-  
+#if uploader:
+#	SConscript('apps/uploader/SConscript')
+#
+#if testsuite:
+#	print 'building testsuite...'
+#	SConscript('apps/apivalidator/SConscript')
+#  
 
