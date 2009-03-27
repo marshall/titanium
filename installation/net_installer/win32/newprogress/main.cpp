@@ -165,8 +165,40 @@ bool DownloadURL2(Progress *p, HINTERNET hINet, std::wstring url, std::wstring o
 	return ! failed;
 }
 
+BOOL DirectoryExists(std::wstring dirName)
+{
+	DWORD attribs = ::GetFileAttributes(dirName.c_str());
+
+	if (attribs == INVALID_FILE_ATTRIBUTES) {
+		return false;
+	}
+
+	return (attribs & FILE_ATTRIBUTE_DIRECTORY);
+}
+
+void CreateDirectoryTree(std::wstring dir)
+{
+	if(! DirectoryExists(dir))
+	{
+		// ensure parent dir exits
+		int lastSlash = dir.find_last_of(L"\\");
+		if(lastSlash != std::wstring::npos)
+		{
+			std::wstring parent = dir.substr(0, lastSlash);
+
+			CreateDirectoryTree(parent);
+		}
+
+		// by this point, all parent dirs are created
+		CreateDirectory(dir.c_str(), NULL);
+	}
+}
+
 bool UnzipFile(std::wstring unzipper, std::wstring zipFile, std::wstring destdir)
 {
+	// ensure destdir exists
+	CreateDirectoryTree(destdir);
+
 	// now we're going to invoke back into the boot to unzip our file and install
 	STARTUPINFOW si;
 	PROCESS_INFORMATION pi;
