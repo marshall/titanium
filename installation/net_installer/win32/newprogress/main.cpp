@@ -32,6 +32,13 @@ std::wstring ParseQueryParam(std::wstring uri, std::wstring name)
 		{
 			p = p.substr(0,pos);
 		}
+
+		// decode
+		WCHAR szOut[INTERNET_MAX_URL_LENGTH];
+		DWORD cchDecodedUrl = INTERNET_MAX_URL_LENGTH;
+		CoInternetParseUrl(p.c_str(), PARSE_UNESCAPE, 0, szOut, INTERNET_MAX_URL_LENGTH, &cchDecodedUrl, 0);
+		p.assign(szOut);
+
 		return p;
 	}
 	return L"";
