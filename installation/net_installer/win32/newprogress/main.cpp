@@ -159,14 +159,18 @@ bool DownloadURL(Progress *p, HINTERNET hINet, std::wstring url, std::wstring ou
 
 bool DownloadURL2(Progress *p, HINTERNET hINet, std::wstring url, std::wstring outFilename)
 {
-	// TODO - how to cancel download if user presses the Cancel button
+	WCHAR szDecodedUrl[INTERNET_MAX_URL_LENGTH];
+	DWORD cchDecodedUrl = INTERNET_MAX_URL_LENGTH;
+	HRESULT hr = CoInternetParseUrl(url.c_str(), PARSE_DECODE, URL_ENCODING_NONE, szDecodedUrl, INTERNET_MAX_URL_LENGTH, &cchDecodedUrl, 0);
+	if (hr != S_OK)
+	{
+		return false;
+	}
 
-	//url = L"http://www.google.com";
 	// start the HTTP fetch
-	HINTERNET urlConn = InternetOpenUrlW(hINet, url.c_str(), NULL, 0, 0, 0);
+	HINTERNET urlConn = InternetOpenUrlW(hINet, szDecodedUrl, NULL, 0, 0, 0);
 	if ( !urlConn )
 	{
-		MessageBoxW(GetDesktopWindow(), L"didn't get a good url connection?", L"Download no good", MB_OK);
 		return false;
 	}
 
@@ -192,17 +196,14 @@ bool DownloadURL2(Progress *p, HINTERNET hINet, std::wstring url, std::wstring o
 			failed = true;
 			break;
 		}
-		buffer[dwRead] = 0;
+		buffer[dwRead] = '\0';
 		total+=dwRead;
-		ostr << buffer;
-		wsprintfW(msg,L"Downloaded %d bytes",total);
+		ostr.write(buffer, dwRead);
+		wsprintfW(msg,L"Downloaded %d KB",total/1024);
 		p->SetLineText(2,msg,true);
 	}	
 	ostr.close();
 	InternetCloseHandle(urlConn);
-
-	MessageBoxW(GetDesktopWindow(), url.c_str(), L"URL Downloaded", MB_OK);
-	MessageBoxW(GetDesktopWindow(), outFilename.c_str(), L"File Downloaded", MB_OK);
 
 	return ! failed;
 }
