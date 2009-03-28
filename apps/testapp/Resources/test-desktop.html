@@ -63,6 +63,15 @@
 				var worked =Titanium.Desktop.createShortcut(from,to);
 				log("Worked? " + (worked?"you bet ya!":"nope..."));
 			}
+			function takeScreenshot()
+			{
+				var filePath = Titanium.Filesystem.getApplicationDataDirectory();
+				filePath += Titanium.Filesystem.getSeparator();
+				filePath += "screenshot.png";
+
+				Titanium.Desktop.takeScreenshot(filePath);
+				alert("screenshot should be saved at: " + filePath);
+			}
 		</script>
 	</head>
 	<body>
@@ -85,6 +94,9 @@
 		</div>
 		<div>
 			<button onclick="openURLEx()">Open URL with no parameters (test exception)</button>
+		</div>
+		<div>
+			<button onclick="takeScreenshot()">Take a desktop screenshot</button>
 		</div>
 		<div>
 			<button onclick="createShortcut()">Create Shortcut</button><br/>

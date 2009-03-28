@@ -23,6 +23,7 @@ namespace ti
 	public:
 		static bool OpenApplication(std::string &name);
 		static bool OpenURL(std::string &url);
+		static void TakeScreenshot(std::string &screenshotFile);
 	private:
 		OSXDesktop();
 		~OSXDesktop();
