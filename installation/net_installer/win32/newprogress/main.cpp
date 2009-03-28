@@ -155,57 +155,6 @@ bool DownloadURL(Progress *p, HINTERNET hINet, std::wstring url, std::wstring ou
 	return ! failed;
 }
 
-bool DownloadURL2(Progress *p, HINTERNET hINet, std::wstring url, std::wstring outFilename)
-{
-	WCHAR szDecodedUrl[INTERNET_MAX_URL_LENGTH];
-	DWORD cchDecodedUrl = INTERNET_MAX_URL_LENGTH;
-	HRESULT hr = CoInternetParseUrl(url.c_str(), PARSE_DECODE, URL_ENCODING_NONE, szDecodedUrl, INTERNET_MAX_URL_LENGTH, &cchDecodedUrl, 0);
-	if (hr != S_OK)
-	{
-		return false;
-	}
-
-	// start the HTTP fetch
-	HINTERNET urlConn = InternetOpenUrlW(hINet, szDecodedUrl, NULL, 0, 0, 0);
-	if ( !urlConn )
-	{
-		return false;
-	}
-
-	bool failed = false;
-
-
-	// now stream the resulting HTTP into a file
-	std::ofstream ostr;
-	ostr.open(outFilename.c_str(), std::ios_base::binary | std::ios_base::trunc);
-	
-	CHAR buffer[2048];
-	DWORD dwRead;
-	DWORD total = 0;
-	wchar_t msg[255];
-	while( InternetReadFile(urlConn, buffer, 2047, &dwRead ) )
-	{
-		if ( dwRead == 0)
-		{
-			break;
-		}
-		if (p->IsCancelled())
-		{
-			failed = true;
-			break;
-		}
-		buffer[dwRead] = '\0';
-		total+=dwRead;
-		ostr.write(buffer, dwRead);
-		wsprintfW(msg,L"Downloaded %d KB",total/1024);
-		p->SetLineText(2,msg,true);
-	}	
-	ostr.close();
-	InternetCloseHandle(urlConn);
-
-	return ! failed;
-}
-
 BOOL DirectoryExists(std::wstring dirName)
 {
 	DWORD attribs = ::GetFileAttributesW(dirName.c_str());
