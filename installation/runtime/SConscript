@@ -31,20 +31,21 @@ def package_sdk(target, source, env):
 	devtool_target = p.join(sdk.contents, 'developer')
 	futils.CopyTree(devtool, devtool_target)
 
-	appinstaller = p.join(build.titanium_source_dir, "installation", "app_installer")
-	appinstaller_target = p.join(sdk.contents, 'appinstaller')
-	futils.CopyTree(appinstaller, appinstaller_target)
-
 	# Copy common js files into all applications
 	common_js = p.join(build.titanium_source_dir, 'installation', 'common', 'js')
 	futils.CopyTree(common_js, p.join(sdk.contents, 'Resources', 'js'))
 	futils.CopyTree(common_js, p.join(devtool_target, 'Resources', 'js'))
-	futils.CopyTree(common_js, p.join(appinstaller_target, 'Resources', 'js'))
-	
+
+	# app installer now stages to runtime dir
+	#appinstaller = p.join(build.titanium_source_dir, "installation", "app_installer")
+	#appinstaller_target = p.join(sdk.contents, 'appinstaller')
+	#futils.CopyTree(appinstaller, appinstaller_target)
+	#futils.CopyTree(common_js, p.join(appinstaller_target, 'Resources', 'js'))
+	#futils.Touch(p.join(appinstaller_target, '.installed'))
+
 	# Mark all applications as installed
 	futils.Touch(p.join(sdk.contents, '.installed'))
 	futils.Touch(p.join(devtool_target, '.installed'))
-	futils.Touch(p.join(appinstaller_target, '.installed'))
 
 	sdk.package(
 		# osx options
@@ -58,4 +59,5 @@ def package_sdk(target, source, env):
 
 build.env.Append(BUILDERS = {'PackageSDK' : Builder(action=package_sdk)})
 sdk_target = build.env.PackageSDK("#dummy-target", build.targets)
+Alias('sdk', sdk_target)
 build.require_for_dist(sdk_target)

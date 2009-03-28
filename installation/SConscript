@@ -2,6 +2,7 @@
 import os, os.path as p
 Import('build')
 
+SConscript(p.join('appinstaller', 'SConscript'))
 SConscript(p.join('net_installer', 'SConscript'))
 
 if build.is_win32():

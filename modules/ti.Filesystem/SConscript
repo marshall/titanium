@@ -6,6 +6,7 @@ env = build.env.Clone();
 
 build.add_thirdparty(env, 'poco')
 env.Append(LIBS=['tiappmodule'])
+env.Append(LIBPATH=[build.get_module('tiapp').build_dir])
 if build.is_osx():
 	env.Append(FRAMEWORKS = ['Cocoa'])
 
@@ -18,8 +19,6 @@ if build.is_win32():
 	env.Append(CCFLAGS=['/MD'])
 	env.Append(LIBS=['shell32', 'user32', 'comdlg32', 'ole32'])
 	env.Append(CPPDEFINES = ('WIN32_LEAN_AND_MEAN',1))
-
-s = env.SharedLibrary(target = build.dir + '/tifilesystemmodule', source = Glob('*.cpp'))
 
 m = build.add_module('ti.Filesystem')
 t = env.SharedLibrary(target = m.build_dir + '/tifilesystemmodule', source = Glob('*.cpp'))

@@ -39,8 +39,6 @@ build.env.Append(CPPPATH=[
 	build.kroll_include_dir
 ])
 
-build.env.Append(LIBPATH=[build.dir])
-
 # debug build flags
 if ARGUMENTS.get('debug', 0):
 	build.env.Append(CPPDEFINES = ('DEBUG', 1))
@@ -74,13 +72,10 @@ Export('build')
 
 targets = COMMAND_LINE_TARGETS
 package = 'package' in targets or ARGUMENTS.get('package', 0)
-#testapp = 'testapp' in targets or ARGUMENTS.get('testapp', 0)
-#testsuite = 'testsuite' in targets or ARGUMENTS.get('testsuite', 0)
 clean = 'clean' in targets or ARGUMENTS.get('clean', 0)
 qclean = 'qclean' in targets or ARGUMENTS.get('qclean', 0)
-#dist = 'dist' in targets or ARGUMENTS.get('dist', 0)
-uploader = 'uploader' in targets or ARGUMENTS.get('uploader', 0)
-run = 'run' in targets or ARGUMENTS.get('run', 0)
+
+run = ARGUMENTS.get('run', 0)
 Export('run')
 
 if clean or qclean:

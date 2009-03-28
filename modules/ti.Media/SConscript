@@ -32,5 +32,3 @@ m = build.add_module('ti.Media')
 t = env.SharedLibrary(target = m.build_dir + '/timediamodule', source = sources)
 build.require(t)
 
-s = env.SharedLibrary(target = build.dir + '/timediamodule', source = sources)
-

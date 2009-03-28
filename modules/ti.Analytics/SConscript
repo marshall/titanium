@@ -5,4 +5,5 @@ Import('build')
 
 m = build.add_module('ti.Analytics')
 t = build.utils.CopyTree(Glob('*.js'), m.build_dir)
+print t
 build.require(t)
