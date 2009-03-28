@@ -13,7 +13,7 @@ Env.Append(CCFLAGS=['/MT'])
 sources = Glob("newprogress/*.cpp")
 rc = Env.RES("newprogress/progress.rc")
 sources += rc
-Env.Program(build.dir + '/Installer.exe', sources)
+Env.Program(build.dir + '/net_installer/Installer.exe', sources)
 
 #csbuilder = Builder(action = 'devenv $SOURCE /rebuild Release')
 
