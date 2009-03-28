@@ -50,7 +50,7 @@ bool Progress::IsCancelled()
 
 void Progress::Show()
 {
-	DWORD flags = PROGDLG_NORMAL | PROGDLG_AUTOTIME;
+	DWORD flags = PROGDLG_NORMAL | PROGDLG_AUTOTIME | PROGDLG_NOMINIMIZE;
 	HRESULT hr = dialog->StartProgressDialog ( GetDesktopWindow(),
                                         NULL, flags, NULL );
 

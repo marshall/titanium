@@ -247,9 +247,10 @@ int WINAPI WinMain(
 	std::wstring unzipper = args[6];
 
 	// verify the installation
-	if (IDOK != MessageBoxW(GetDesktopWindow(),message.c_str(),title.c_str(),MB_ICONINFORMATION|MB_OKCANCEL))
+	std::wstring tempTitle = appname + L" - " + title;
+	if (IDOK != MessageBoxW(GetDesktopWindow(),message.c_str(),tempTitle.c_str(),MB_ICONINFORMATION|MB_OKCANCEL|MB_TOPMOST))
 	{
-		MessageBoxW(GetDesktopWindow(),L"Installation Aborted. To install later, re-run the application again.", title.c_str(), MB_OK|MB_ICONWARNING);
+		MessageBoxW(GetDesktopWindow(),L"Installation Aborted. To install later, re-run the application again.", tempTitle.c_str(), MB_OK|MB_ICONWARNING|MB_TOPMOST);
 		return 1;
 	}
 
