@@ -11,5 +11,5 @@ t = build.env.PackageApp('#apivalidator-target',
 	FULLNAME='Titanium API Validator',
 	ID='com.titaniumapp.apivalidator',
 	GUID='F28A8274-1000-11DE-AE9B-587656D89593')
-Depends(t, build.targets)
+Depends(t, build.build_targets + build.staging_targets)
 Alias('apivalidator', t)

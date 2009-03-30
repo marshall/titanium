@@ -26,5 +26,5 @@ else:
 
 m = build.add_module('ti.App')
 t = env.SharedLibrary(target = m.build_dir + '/tiappmodule', source = Glob('*.cpp') + Glob('Properties/*.cpp'))
-build.require(t)
+build.mark_build_target(t)
 

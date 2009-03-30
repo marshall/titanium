@@ -10,6 +10,6 @@ t = build.env.PackageApp('#testapp-target',
 	FULLNAME='Titanium Test App',
 	ID='com.titaniumapp.testapp',
 	GUID='D36DD8BA-D092-4F20-9073-EB613BFB8F46')
-Depends(t, build.targets)
+Depends(t, build.build_targets + build.staging_targets)
 Alias('testapp', t)
 

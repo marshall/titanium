@@ -48,16 +48,19 @@ def package_sdk(target, source, env):
 	futils.Touch(p.join(devtool_target, '.installed'))
 
 	sdk.package(
+		out_dir=build.dist_dir,
+
 		# osx options
 		app_name="Install Titanium SDK",
 		vol_name="Titanium",
 		dmg_name='titanium-sdk-' + build.version,
-		out_dir=p.join(build.dir, 'dist'),
 		icns_file=p.join(cwd, 'osx', 'VolumeIcon.icns'),
 		ds_store_file=p.join(cwd, 'osx', 'installer_DS_Store'),
 		ds_store_extras=[p.join(cwd, 'osx', 'background.jpg')])
 
 build.env.Append(BUILDERS = {'PackageSDK' : Builder(action=package_sdk)})
-sdk_target = build.env.PackageSDK("#dummy-target", build.targets)
+sdk_target = build.env.PackageSDK("#dummy-target", [])
+build.mark_dist_target(sdk_target)
+
+AlwaysBuild(sdk_target) # incremental builder doesn't work
 Alias('sdk', sdk_target)
-build.require_for_dist(sdk_target)

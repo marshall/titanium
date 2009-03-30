@@ -24,6 +24,6 @@ if build.is_win32():
 
 m = build.add_module('ti.Network')
 t = env.SharedLibrary(target = m.build_dir + '/tinetworkmodule', source = sources)
-build.require(t)
+build.mark_build_target(t)
 
 

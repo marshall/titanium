@@ -69,14 +69,9 @@ if build.is_win32():
 
 	
 Export('build')
-
 targets = COMMAND_LINE_TARGETS
-package = 'package' in targets or ARGUMENTS.get('package', 0)
 clean = 'clean' in targets or ARGUMENTS.get('clean', 0)
 qclean = 'qclean' in targets or ARGUMENTS.get('qclean', 0)
-
-run = ARGUMENTS.get('run', 0)
-Export('run')
 
 if clean or qclean:
 	print "Obliterating your build directory: %s" % build.dir
@@ -90,22 +85,11 @@ SConscript('installation/SConscript')
 
 # After Kroll builds, the environment will  link 
 # against libkroll, so anything that should not be
-# linked against kroll should be above this point.
+# linked against libkroll should be above this point.
 SConscript('kroll/SConscript', exports='debug')
 SConscript('modules/SConscript')
+SConscript('SConscript.dist')
 
-SConscript('installation/runtime/SConscript')
-
-#dist = build.build_dist_files()
-Alias('alldist', build.dist_targets)
-
+run = ARGUMENTS.get('run', 0)
+Export('run')
 SConscript('apps/SConscript')
-
-#if uploader:
-#	SConscript('apps/uploader/SConscript')
-#
-#if testsuite:
-#	print 'building testsuite...'
-#	SConscript('apps/apivalidator/SConscript')
-#  
-

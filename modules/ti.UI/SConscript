@@ -54,7 +54,7 @@ elif build.is_osx():
 
 m = build.add_module('ti.UI')
 s1 = env.SharedLibrary(target = m.build_dir + '/tiuimodule', source = sources)
-build.require(s1)
+build.mark_build_target(s1)
 
 if build.is_osx():
 	if not(path.exists(build.dir + '/modules/tiui')):

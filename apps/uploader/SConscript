@@ -10,5 +10,5 @@ t = build.env.PackageApp('#uploader-target',
 	FULLNAME='Titanium Release Uploader',
 	ID='com.titaniumapp.uploader',
 	GUID='925AE1B0-180B-11DE-8C30-0800200C9A66')
-Depends(t, build.targets)
+Depends(t, build.build_targets + build.staging_targets)
 Alias('uploader', t)

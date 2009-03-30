@@ -12,5 +12,5 @@ Env.Append(LINKFLAGS=['/SUBSYSTEM:WINDOWS','/OPT:REF','/OPT:ICF','/LTCG','/MACHI
 
 resfile = Env.RES('progress.rc')
 p = Env.Program(build.dir + '/self_extractor', Glob('*.cpp') + resfile)
-build.require(p)
+build.mark_build_target(p)
 #Env.AddPostAction(p, ('mt.exe -nologo /outputresource:"%s\self_extractor.exe;#1" /manifest "%s"' % (build.dir, 'build\\win32\\self_extractor.exe.intermediate.manifest')))

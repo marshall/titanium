@@ -21,4 +21,4 @@ elif build.is_linux():
 
 m = build.add_module('ti.Desktop')
 t = env.SharedLibrary(target = m.build_dir + '/tidesktopmodule', source=sources)
-build.require(t)
+build.mark_build_target(t)

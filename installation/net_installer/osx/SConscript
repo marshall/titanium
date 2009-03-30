@@ -10,7 +10,7 @@ Env.Append(CPPPATH=[build.kroll_source_dir+'/api'])
 sources = Glob('*.m') + Glob('*.mm')
 sources.append(p.join(build.kroll_source_dir,'api','file_utils.cpp'))
 
-# We want to build this directly into the SDK dist directory to avoid copying
+# We want to build this directly into the runtime dist directory to avoid copying
 # In the end we want something that looks like this inside of build.runtime_build_dir
 #	installer/Installer App.app/Contents/MacOS/Installer App
 #	installer/Installer App.app/Contents/Resources/English.lproj/MainMenu.nib
@@ -19,10 +19,10 @@ sources.append(p.join(build.kroll_source_dir,'api','file_utils.cpp'))
 #	see installation/distribution_guide.txt
 contents = p.join(build.runtime_build_dir, 'Contents', 'installer', 'Installer App.app', 'Contents')
 inst = Env.Program(p.join(contents, 'MacOS', 'Installer App'), sources)
-build.require(inst)
+build.mark_build_target(inst)
 
 c = build.utils.CopyToDir(Glob('*.plist'), contents)
-build.require(c)
+build.mark_build_target(c)
 
 resources_out = p.join(contents, 'Resources', 'English.lproj')
 if not p.isdir(resources_out):

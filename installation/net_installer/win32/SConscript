@@ -9,4 +9,4 @@ Env.Append(CPPPATH=[build.kroll_source_dir+'/api'])
 
 out = path.join(build.runtime_build_dir, 'installer', 'Installer.exe')
 p = Env.CSProgram(out, 'Installer.sln')
-build.require(p)
+build.mark_build_target(p)

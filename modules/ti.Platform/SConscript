@@ -14,4 +14,4 @@ if build.is_win32():
 
 m = build.add_module('ti.Platform')
 t = env.SharedLibrary(target = m.build_dir + '/tiplatformmodule', source = Glob('*.cpp'))
-build.require(t)
+build.mark_build_target(t)

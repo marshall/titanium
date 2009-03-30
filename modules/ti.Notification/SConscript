@@ -5,4 +5,4 @@ Import('build')
 
 m = build.add_module('ti.Notification')
 t = build.utils.CopyTree(Glob('*.js'), m.build_dir)
-build.require(t)
+build.mark_build_target(t)

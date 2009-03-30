@@ -9,4 +9,4 @@ build.add_thirdparty(env, 'poco')
 
 m = build.add_module('ti.Monkey')
 t = env.SharedLibrary(target = m.build_dir + '/timonkeymodule', source = Glob('*.cpp'))
-build.require(t)
+build.mark_build_target(t)
