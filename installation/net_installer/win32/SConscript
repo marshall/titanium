@@ -2,11 +2,18 @@
 import os.path as path
 
 Import('build')
-csbuilder = Builder(action = 'devenv $SOURCE /rebuild Release')
 
-Env = build.env.Clone(BUILDERS = {'CSProgram': csbuilder})
-Env.Append(CPPPATH=[build.kroll_source_dir+'/api'])
+Env = build.env.Clone()
+Env.Append(LIBS=['wininet', 'urlmon', 'comdlg32', 'ole32', 'kernel32', 'user32', 'shell32', 'advapi32', 'gdi32'])
+build.add_thirdparty(Env, 'poco')
 
-out = path.join(build.runtime_build_dir, 'installer', 'Installer.exe')
-p = Env.CSProgram(out, 'Installer.sln')
+Env.Append(CPPPATH=['C:\\Program Files\\Microsoft Visual Studio 8\\VC\\atlmfc\\include'])
+Env.Append(CCFLAGS=['/MT'])
+
+sources = Glob("newprogress/*.cpp") + Env.RES("newprogress/progress.rc")
+out_file = path.join(build.runtime_build_dir, 'installer', 'Installer.exe')
+p = Env.Program(out_file, sources)
 build.mark_build_target(p)
+
+common_controls_manifest = path.join(build.titanium_source_dir, 'installation', 'net_installer', 'win32', 'common_controls.manifest')
+Env.AddPostAction(p, 'mt.exe -nologo -manifest "%s" -outputresource:"%s;1"' % (common_controls_manifest, out_file))
