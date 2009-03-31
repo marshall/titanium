@@ -21,10 +21,13 @@ runtime zip release (runtime-0.3.zip)
 module zip release (module-api-0.3.zip)
 ---------------------------------------------------------
 - <all libs and support files>
-- <contents of [module_src]/Resources/all and [module_src]/Resources/[os]>
+- <contents of [module_src]/Resources/all>
+- <contents of [module_src]/Resources/[os]>
 - AppResources
-	* <contents of AppResources/all>
-	* <contents of AppResources/[os]>
+	* all
+		** <contents of AppResources/all>
+	* [os]
+		** <contents of AppResources/[os]>
 
 packaged sdk (titanium-sdk-0.3)
 ---------------------------------------------------------

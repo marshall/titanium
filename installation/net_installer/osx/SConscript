@@ -17,7 +17,7 @@ sources.append(p.join(build.kroll_source_dir,'api','file_utils.cpp'))
 #	installer/Installer App.app/Contents/Resources/English.lproj/titanium.icns
 #	installer/Installer App.app/Contents/Info.plist
 #	see installation/distribution_guide.txt
-contents = p.join(build.runtime_build_dir, 'Contents', 'installer', 'Installer App.app', 'Contents')
+contents = p.join(build.runtime_build_dir, 'installer', 'Installer App.app', 'Contents')
 inst = Env.Program(p.join(contents, 'MacOS', 'Installer App'), sources)
 build.mark_build_target(inst)
 

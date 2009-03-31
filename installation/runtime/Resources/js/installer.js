@@ -122,22 +122,20 @@ function runInstaller()
 		});
 		total++;
 	}
+
 	var files = runtimeSrc.getDirectoryListing();
-	total += 2;
+	total++; // One more for the runtime
 	moveby = 100 / total;
 
-	updateProgressMessage(total+' files to install ... ');
-	
 	tasks.push({
 		dest:runtimeDir,
 		files:runtimeSrc
 	});
+	updateProgressMessage(total+' files to install ... ');
 	
 	runCopyTasks(function()
 	{
 		updateProgressMessage('Configuring system paths ...');
-		
-
 		try
 		{
 			// Runtime template files are now in the
