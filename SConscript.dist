@@ -2,13 +2,13 @@ Import('build')
 import os.path as path
 
 # Network installable zip files for distribution
-#excludes = ['.dll.manifest', '.dll.pdb', '.exp', '.ilk']
-#
-#f = path.join(build.dist_dir, 'runtime-%s.zip' % build.version)
-#t = build.utils.Zip(build.runtime_build_dir, f, exclude=excludes)
-#build.mark_dist_target(t)
-#
-#for m in build.modules:
-#	f = path.join(build.dist_dir, 'module-%s-%s.zip' % (m.name, m.version))
-#	t = build.utils.Zip(m.build_dir, f, exclude=excludes)
-#	build.mark_dist_target(t)
+excludes = ['.dll.manifest', '.dll.pdb', '.exp', '.ilk', '.lib']
+
+f = path.join(build.dist_dir, 'runtime-%s.zip' % build.version)
+t = build.utils.Zip(build.runtime_build_dir, f, exclude=excludes)
+build.mark_dist_target(t)
+
+for m in build.modules:
+	f = path.join(build.dist_dir, 'module-%s-%s.zip' % (m.name, m.version))
+	t = build.utils.Zip(m.build_dir, f, exclude=excludes)
+	build.mark_dist_target(t)
