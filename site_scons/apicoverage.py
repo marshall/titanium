@@ -65,6 +65,15 @@ def generate_api_coverage(dir,fs):
 				elif re.match('^[0-9\.]+$',value):
 					value = float(value)
 				metadata[key]=value
+			
+			rargs = {}
+			if metadata.has_key('args'):
+				args = metadata['args'].replace('[', '').replace(']', '')
+				for value in args.split(','):
+					key,value = value.split(':')
+					rargs[key] = value
+					
+				metadata['args'] = rargs
 				
 			api = metadata['name']
 			del metadata['name']
