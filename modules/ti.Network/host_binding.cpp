@@ -50,10 +50,25 @@ namespace ti
 	void HostBinding::Init() 
 	{
 		this->invalid = false;
+		/**
+		 * @tiapi(method=True,returns=string,name=Network.Host.toString) returns a string representation
+		 */
 		this->SetMethod("toString",&HostBinding::ToString);
+		/**
+		 * @tiapi(method=True,returns=boolean,name=Network.Host.isInvalid) returns true if valid
+		 */
 		this->SetMethod("isInvalid",&HostBinding::IsInvalid);
+		/**
+		 * @tiapi(method=True,returns=string,name=Network.Host.getName) returns the hostname
+		 */
 		this->SetMethod("getName",&HostBinding::GetName);
+		/**
+		 * @tiapi(method=True,returns=list,name=Network.Host.getAliases) returns a list of aliases
+		 */
 		this->SetMethod("getAliases",&HostBinding::GetAliases);
+		/**
+		 * @tiapi(method=True,returns=list,name=Network.Host.getAddresses) returns a list of addresses
+		 */
 		this->SetMethod("getAddresses",&HostBinding::GetAddresses);
 	}
 	void HostBinding::ToString(const ValueList& args, SharedValue result)

@@ -15,16 +15,39 @@ namespace ti
 		ti_host(ti_host), host(host), port(port), opened(false), 
 		onRead(NULL), onWrite(NULL), onTimeout(NULL), onReadComplete(NULL)
 	{
-		// methods
+		/**
+		 * @tiapi(method=True,returns=boolean,name=Network.TCPSocket.connect) connect the socket
+		 */
 		this->SetMethod("connect",&TCPSocketBinding::Connect);
+		/**
+		 * @tiapi(method=True,returns=boolean,name=Network.TCPSocket.close) close the socket connection
+		 */
 		this->SetMethod("close",&TCPSocketBinding::Close);
+		/**
+		 * @tiapi(method=True,returns=boolean,name=Network.TCPSocket.write) write data to the socket
+		 */
 		this->SetMethod("write",&TCPSocketBinding::Write);
+		/**
+		 * @tiapi(method=True,returns=boolean,name=Network.TCPSocket.isClosed) returns true if the socket is closed
+		 */
 		this->SetMethod("isClosed",&TCPSocketBinding::IsClosed);
 
 		// event handler callbacks
+		/**
+		 * @tiapi(method=True,returns=void,name=Network.TCPSocket.onRead) sets the callback to be invoked on a read
+		 */
 		this->SetMethod("onRead",&TCPSocketBinding::SetOnRead);
+		/**
+		 * @tiapi(method=True,returns=void,name=Network.TCPSocket.onWrite) sets the callback to be invoked on a write
+		 */
 		this->SetMethod("onWrite",&TCPSocketBinding::SetOnWrite);
+		/**
+		 * @tiapi(method=True,returns=void,name=Network.TCPSocket.onTimeout) sets the callback to be invoked when a read times out
+		 */
 		this->SetMethod("onTimeout",&TCPSocketBinding::SetOnTimeout);
+		/**
+		 * @tiapi(method=True,returns=void,name=Network.TCPSocket.onReadComplete) sets the callback to be invoked when no more data is available
+		 */
 		this->SetMethod("onReadComplete",&TCPSocketBinding::SetOnReadComplete);
 
 		// our reactor event handlers

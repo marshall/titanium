@@ -29,20 +29,38 @@ namespace ti
 			throw ValueException::FromString(e.what());
 		}
 		
+		/**
+		 * @tiapi(property=True,type=string,name=Process.Process.command) returns the command for the process
+		 */
 		this->Set("command",Value::NewString(cmd));
+		/**
+		 * @tiapi(property=True,type=integer,name=Process.Process.pid) returns the process id for the process
+		 */
 		this->Set("pid",Value::NewInt((int)process->id()));
+		/**
+		 * @tiapi(property=True,type=boolean,name=Process.Process.running) returns true if the command is running
+		 */
 		this->Set("running",Value::NewBool(true)); 
 		 
 		this->err = new Pipe(new Poco::PipeInputStream(*errp));
 		SharedBoundObject errb = this->err;
+		/**
+		 * @tiapi(method=True,returns=object,name=Process.Process.err) returns the error stream as a Pipe object
+		 */
 		this->Set("err",Value::NewObject(errb));
 		
 		this->out = new Pipe(new Poco::PipeInputStream(*outp));
 		SharedBoundObject outb = this->out;
+		/**
+		 * @tiapi(method=True,returns=object,name=Process.Process.out) returns the output stream as a Pipe object
+		 */
 		this->Set("out",Value::NewObject(outb));
 		
 		this->in = new Pipe(new Poco::PipeOutputStream(*inp));
 		SharedBoundObject inb = this->in;
+		/**
+		 * @tiapi(method=True,returns=object,name=Process.Process.in) returns the input stream as a Pipe object
+		 */
 		this->Set("in",Value::NewObject(inb));
 		
 		this->SetMethod("terminate",&Process::Terminate);

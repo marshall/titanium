@@ -14,25 +14,50 @@ namespace ti
 	{
 
 		// query methods
+		/**
+		 * @tiapi(method=True,returns=boolean,name=UI.Menu.isSeparator) returns true if a separator
+		 */
 		this->SetMethod("isSeparator", &MenuItem::_IsSeparator);
+		/**
+		 * @tiapi(method=True,returns=boolean,name=UI.Menu.isItem) returns true if an item
+		 */
 		this->SetMethod("isItem", &MenuItem::_IsItem);
+		/**
+		 * @tiapi(method=True,returns=boolean,name=UI.Menu.isSubMenu) returns true if a submenu
+		 */
 		this->SetMethod("isSubMenu", &MenuItem::_IsSubMenu);
 
 		// submenu methods
+		/**
+		 * @tiapi(method=True,returns=object,name=UI.Menu.addSepartor) add a separator
+		 */
 		this->SetMethod("addSeparator", &MenuItem::_AddSeparator);
+		/**
+		 * @tiapi(method=True,returns=object,name=UI.Menu.addItem) add an item
+		 */
 		this->SetMethod("addItem", &MenuItem::_AddItem);
+		/**
+		 * @tiapi(method=True,returns=object,name=UI.Menu.addSubMenu) add a submenu
+		 */
 		this->SetMethod("addSubMenu", &MenuItem::_AddSubMenu);
 
+		/**
+		 * @tiapi(method=True,returns=void,name=UI.Menu.enable) enable the menu item
+		 */
 		this->SetMethod("enable", &MenuItem::_Enable);
+		/**
+		 * @tiapi(method=True,returns=void,name=UI.Menu.disable) disable the menu item
+		 */
 		this->SetMethod("disable", &MenuItem::_Disable);
 
+		/**
+		 * @tiapi(method=True,returns=void,name=UI.Menu.setLabel) set the menu label
+		 */
 		this->SetMethod("setLabel", &MenuItem::_SetLabel);
+		/**
+		 * @tiapi(method=True,returns=void,name=UI.Menu.setIcon) set the icon for the menu
+		 */
 		this->SetMethod("setIcon", &MenuItem::_SetIcon);
-
-		// mutators
-		//this->SetMethod("makeSeparator", &MenuItem::_MakeSeparator);
-		//this->SetMethod("makeItem", &MenuItem::_MakeItem);
-		//this->SetMethod("makeSubMenu", &MenuItem::_MakeSubMenu);
 	}
 
 	MenuItem::~MenuItem()

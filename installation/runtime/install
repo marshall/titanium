@@ -1,20 +1,20 @@
 #appname:titanium-sdk
 #appid:com.titaniumapp.sdk
 #guid:323C8AD1-EB03-4D2B-95B2-00518B9DDD13
-runtime: 0.3
-javascript: 0.3
-tiapp: 0.3
-tiui: 0.3
-tifilesystem: 0.3
-tiplatform: 0.3
-tiprocess: 0.3
-tidesktop: 0.3
-api: 0.3
-ruby: 0.3
-python: 0.3
-tinetwork: 0.3
-tigrowl: 0.3
-tinotification: 0.3
-timedia: 0.3
-tianalytics: 0.3
-timonkey: 0.3
+runtime: 0.4
+javascript: 0.4
+tiapp: 0.4
+tiui: 0.4
+tifilesystem: 0.4
+tiplatform: 0.4
+tiprocess: 0.4
+tidesktop: 0.4
+api: 0.4
+ruby: 0.4
+python: 0.4
+tinetwork: 0.4
+tigrowl: 0.4
+tinotification: 0.4
+timedia: 0.4
+tianalytics: 0.4
+timonkey: 0.4

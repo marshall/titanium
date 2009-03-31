@@ -23,41 +23,137 @@ namespace ti
 		this->filename = filename;
 #endif
 
+		/**
+		 * @tiapi(method=True,returns=string,name=Filesystem.File.toString) returns a string representation of the File object
+		 */
 		this->SetMethod("toString",&File::ToString);
+		/**
+		 * @tiapi(method=True,returns=boolean,name=Filesystem.File.isFile) returns true if this is a file
+		 */
 		this->SetMethod("isFile",&File::IsFile);
+		/**
+		 * @tiapi(method=True,returns=boolean,name=Filesystem.File.isDirectory) returns true if this is a directory
+		 */
 		this->SetMethod("isDirectory",&File::IsDirectory);
+		/**
+		 * @tiapi(method=True,returns=boolean,name=Filesystem.File.isHidden) returns true if this is a hidden file or directory
+		 */
 		this->SetMethod("isHidden",&File::IsHidden);
+		/**
+		 * @tiapi(method=True,returns=boolean,name=Filesystem.File.isSymbolicLink) returns true if this points to a symbolic link
+		 */
 		this->SetMethod("isSymbolicLink",&File::IsSymbolicLink);
+		/**
+		 * @tiapi(method=True,returns=boolean,name=Filesystem.File.isExecutable) returns true if this file is executable
+		 */
 		this->SetMethod("isExecutable",&File::IsExecutable);
+		/**
+		 * @tiapi(method=True,returns=boolean,name=Filesystem.File.isReadonly) returns true if this file or directory is read only
+		 */
 		this->SetMethod("isReadonly",&File::IsReadonly);
+		/**
+		 * @tiapi(method=True,returns=boolean,name=Filesystem.File.isWriteable) returns true if the file or directory is writeable
+		 */
 		this->SetMethod("isWriteable",&File::IsWriteable);
-
+		/**
+		 * @tiapi(method=True,returns=boolean,name=Filesystem.File.resolve) resolves the file
+		 */
 		this->SetMethod("resolve",&File::Resolve);
+		/**
+		 * @tiapi(method=True,returns=void,name=Filesystem.File.write) write data to the file
+		 */
 		this->SetMethod("write",&File::Write);
+		/**
+		 * @tiapi(method=True,returns=string,name=Filesystem.File.read) returns data as a string from the file
+		 */
 		this->SetMethod("read",&File::Read);
+		/**
+		 * @tiapi(method=True,returns=string,name=Filesystem.File.readLine) returns one line (separated by line ending) from the file
+		 */
 		this->SetMethod("readLine",&File::ReadLine);
+		/**
+		 * @tiapi(method=True,returns=boolean,name=Filesystem.File.copy) copy the file and returns true if successful
+		 */
 		this->SetMethod("copy",&File::Copy);
+		/**
+		 * @tiapi(method=True,returns=boolean,name=Filesystem.File.move) moves the file and returns true if successful
+		 */
 		this->SetMethod("move",&File::Move);
+		/**
+		 * @tiapi(method=True,returns=boolean,name=Filesystem.File.rename) renames the file and returns true if successful
+		 */
 		this->SetMethod("rename",&File::Rename);
+		/**
+		 * @tiapi(method=True,returns=boolean,name=Filesystem.File.createDirectory) creates a directory and returns true if successful
+		 */
 		this->SetMethod("createDirectory",&File::CreateDirectory);
+		/**
+		 * @tiapi(method=True,returns=boolean,name=Filesystem.File.deleteDirectory) deletes the directory and returns true if successful
+		 */
 		this->SetMethod("deleteDirectory",&File::DeleteDirectory);
+		/**
+		 * @tiapi(method=True,returns=boolean,name=Filesystem.File.deleteFile) deletes the file and returns true if successful
+		 */
 		this->SetMethod("deleteFile",&File::DeleteFile);
+		/**
+		 * @tiapi(method=True,returns=list,name=Filesystem.File.getDirectoryListing) returns list of directory entries
+		 */
 		this->SetMethod("getDirectoryListing",&File::GetDirectoryListing);
-
+		/**
+		 * @tiapi(method=True,returns=file,name=Filesystem.File.parent) returns the parent file
+		 */
 		this->SetMethod("parent",&File::GetParent);
+		/**
+		 * @tiapi(method=True,returns=boolean,name=Filesystem.File.exists) returns true if the file or directory exists
+		 */
 		this->SetMethod("exists",&File::GetExists);
+		/**
+		 * @tiapi(method=True,returns=double,name=Filesystem.File.createTimestamp) returns the created timestamp
+		 */
 		this->SetMethod("createTimestamp",&File::GetCreateTimestamp);
+		/**
+		 * @tiapi(method=True,returns=double,name=Filesystem.File.modificationTimestamp) returns the modification timestamp
+		 */
 		this->SetMethod("modificationTimestamp",&File::GetModificationTimestamp);
+		/**
+		 * @tiapi(method=True,returns=string,name=Filesystem.File.name) returns the name of the file or directory
+		 */
 		this->SetMethod("name",&File::GetName);
+		/**
+		 * @tiapi(method=True,returns=string,name=Filesystem.File.extension) returns the name of the file extension
+		 */
 		this->SetMethod("extension",&File::GetExtension);
+		/**
+		 * @tiapi(method=True,returns=string,name=Filesystem.File.nativePath) returns the full native path
+		 */
 		this->SetMethod("nativePath",&File::GetNativePath);
+		/**
+		 * @tiapi(method=True,returns=double,name=Filesystem.File.size) returns the size of the file in bytes
+		 */
 		this->SetMethod("size",&File::GetSize);
+		/**
+		 * @tiapi(method=True,returns=double,name=Filesystem.File.spaceAvailable) returns the space available on the filesystem
+		 */
 		this->SetMethod("spaceAvailable",&File::GetSpaceAvailable);
+		/**
+		 * @tiapi(method=True,returns=boolean,name=Filesystem.File.createShortcut) create a shortcut to the file
+		 */
 		this->SetMethod("createShortcut",&File::CreateShortcut);
+		/**
+		 * @tiapi(method=True,returns=boolean,name=Filesystem.File.setExecutable) make the file or directory executable
+		 */
 		this->SetMethod("setExecutable",&File::SetExecutable);
+		/**
+		 * @tiapi(method=True,returns=boolean,name=Filesystem.File.setReadonly) make the file or directory readonly
+		 */
 		this->SetMethod("setReadonly",&File::SetReadonly);
+		/**
+		 * @tiapi(method=True,returns=boolean,name=Filesystem.File.setWriteable) make the file or directory writeable
+		 */
 		this->SetMethod("setWriteable",&File::SetWriteable);
-
+		/**
+		 * @tiapi(method=True,returns=boolean,name=Filesystem.File.unzip) unzip the file into a directory
+		 */
 		this->SetMethod("unzip",&File::Unzip);
 
 		this->readLineFS = NULL;

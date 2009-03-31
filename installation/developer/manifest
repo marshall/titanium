@@ -1,17 +1,17 @@
 #appname: Titanium Developer
 #appid: com.titaniumapp.developer
 #guid:CC835453-7FF6-48A3-A64F-DB1CCB0F28D7
-runtime: 0.3
-api:0.3
-javascript:0.3
-tiplatform:0.3
-tiapp:0.3
-tiui:0.3
-tinetwork:0.3
-tifilesystem:0.3
-timedia:0.3
-tidesktop:0.3
-tigrowl:0.3
-tiprocess:0.3
-tinotification: 0.3
-tianalytics: 0.3
+runtime: 0.4
+api:0.4
+javascript:0.4
+tiplatform:0.4
+tiapp:0.4
+tiui:0.4
+tinetwork:0.4
+tifilesystem:0.4
+timedia:0.4
+tidesktop:0.4
+tigrowl:0.4
+tiprocess:0.4
+tinotification: 0.4
+tianalytics: 0.4

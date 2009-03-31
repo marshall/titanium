@@ -7,7 +7,7 @@ import subprocess, distutils.dir_util as dir_util
 
 from kroll import BuildConfig
 build = BuildConfig(
-	PRODUCT_VERSION = '0.3',
+	PRODUCT_VERSION = '0.4',
 	INSTALL_PREFIX = '/usr/local',
 	PRODUCT_NAME = 'Titanium',
 	GLOBAL_NS_VARNAME = 'Titanium',
@@ -78,6 +78,8 @@ qclean = 'qclean' in targets or ARGUMENTS.get('qclean', 0)
 dist = 'dist' in targets or ARGUMENTS.get('dist', 0)
 uploader = 'uploader' in targets or ARGUMENTS.get('uploader', 0)
 run = 'run' in targets or ARGUMENTS.get('run', 0)
+apicoverage = 'apicoverage' in targets or ARGUMENTS.get('apicoverage',0)
+
 Export('run')
 
 if clean or qclean:
@@ -119,4 +121,9 @@ if testsuite:
 	print 'building testsuite...'
 	SConscript('apps/apivalidator/SConscript')
   
-
+if apicoverage:
+	print 'building API coverage report...'
+	import apicoverage
+	f = open(path.join(build.dir,'apicoverage.json'),'w')
+	apicoverage.generate_api_coverage('.',f)
+	

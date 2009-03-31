@@ -11,9 +11,21 @@ namespace ti
 
 	TrayItem::TrayItem() : StaticBoundObject()
 	{
+		/**
+		 * @tiapi(method=True,returns=void,name=UI.Tray.setIcon) set the tray icon image
+		 */
 		this->SetMethod("setIcon", &TrayItem::_SetIcon);
+		/**
+		 * @tiapi(method=True,returns=void,name=UI.Tray.setMenu) set the tray menu
+		 */
 		this->SetMethod("setMenu", &TrayItem::_SetMenu);
+		/**
+		 * @tiapi(method=True,returns=void,name=UI.Tray.setHint) set the tray hint tooltip
+		 */
 		this->SetMethod("setHint", &TrayItem::_SetHint);
+		/**
+		 * @tiapi(method=True,returns=void,name=UI.Tray.remove) remove the tray item
+		 */
 		this->SetMethod("remove", &TrayItem::_Remove);
 	}
 

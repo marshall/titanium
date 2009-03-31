@@ -20,21 +20,55 @@ namespace ti
 		 global(host->GetGlobalObject()),
 		 next_listener_id(0)
 	{
-		SharedValue online = Value::NewBool(true);
+   		SharedValue online = Value::NewBool(true);
+		/**
+		 * @tiapi(property=True,returns=boolean,name=Network.online) returns true if the machine is connected to the Internet
+		 */
 		this->Set("online", online);
 
 		// methods that are available on Titanium.Network
+		/**
+		 * @tiapi(method=True,returns=object,name=Network.createTCPSocket) creates a TCP client socket
+		 */
 		this->SetMethod("createTCPSocket",&NetworkBinding::CreateTCPSocket);
+		/**
+		 * @tiapi(method=True,returns=object,name=Network.createIRCClient) creates an IRC client socket
+		 */
 		this->SetMethod("createIRCClient",&NetworkBinding::CreateIRCClient);
+		/**
+		 * @tiapi(method=True,returns=object,name=Network.createIPAddress) creates IP Address object
+		 */
 		this->SetMethod("createIPAddress",&NetworkBinding::CreateIPAddress);
+		/**
+		 * @tiapi(method=True,returns=object,name=Network.createHTTPClient) creates an HTTP client
+		 */
 		this->SetMethod("createHTTPClient",&NetworkBinding::CreateHTTPClient);
+		/**
+		 * @tiapi(method=True,returns=object,name=Network.getHostByName) convert a host by name into a Host object
+		 */
 		this->SetMethod("getHostByName",&NetworkBinding::GetHostByName);
+		/**
+		 * @tiapi(method=True,returns=object,name=Network.getHostByAddress) convert a host by ip into a Host object
+		 */
 		this->SetMethod("getHostByAddress",&NetworkBinding::GetHostByAddress);
+		/**
+		 * @tiapi(method=True,returns=object,name=Network.encodeURIComponent) encode a URI component
+		 */
 		this->SetMethod("encodeURIComponent",&NetworkBinding::EncodeURIComponent);
+		/**
+		 * @tiapi(method=True,returns=object,name=Network.decodeURIComponent) decode a URI component
+		 */
 		this->SetMethod("decodeURIComponent",&NetworkBinding::DecodeURIComponent);
 
+		/**
+		 * @tiapi(method=True,returns=int,name=Network.addConnectivityListener) add a connectivity change listener. returns an id to be used when removing.
+		 */
 		this->SetMethod("addConnectivityListener",&NetworkBinding::AddConnectivityListener);
+		/**
+		 * @tiapi(method=True,returns=boolean,name=Network.removeConnectivityListener) remove a connectivity change listener
+		 */
 		this->SetMethod("removeConnectivityListener",&NetworkBinding::RemoveConnectivityListener);
+
 
 		// NOTE: this is only used internally and shouldn't be published
 		this->SetMethod("FireOnlineStatusChange",&NetworkBinding::FireOnlineStatusChange);

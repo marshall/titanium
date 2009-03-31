@@ -38,19 +38,6 @@ namespace ti
 		// load our variables
 		this->app_binding = new AppBinding(host,host->GetGlobalObject());
 
-		// add our command line array
-		SharedBoundList args = new StaticBoundList();
-		// skip the first argument which is the filepath to the
-		// executable
-		for (int c=1;c<host->GetCommandLineArgCount();c++)
-		{
-			const char *v = host->GetCommandLineArg(c);
-			Value *value = Value::NewString(v);
-			args->Append(value);
-		}
-		SharedValue argsvalue = Value::NewList(args);
-		this->app_binding->Set("commandline",argsvalue);
-
 		// set our ti.App
 		SharedValue value = Value::NewObject(this->app_binding);
 		host->GetGlobalObject()->Set("App",value);
@@ -68,6 +55,9 @@ namespace ti
 
 		this->properties_binding = new PropertiesBinding(app_properties);
 		SharedValue properties_value = Value::NewObject(this->properties_binding);
+		/**
+		 * @tiapi(property=True,type=object,name=App.Properties) returns the application's private properties
+		 */
 		this->app_binding->Set("Properties", properties_value);
 	}
 

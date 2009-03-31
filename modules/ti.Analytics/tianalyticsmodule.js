@@ -59,6 +59,9 @@
 		}
 	}
 	
+	/**
+	 * @tiapi(method=True,returns=void,name=Analytics.addEvent) send an analytics event associated with the application
+	 */
 	Titanium.API.set("Titanium.Analytics.addEvent",function(event,data)
 	{
 		send({'event':event,'data':data});

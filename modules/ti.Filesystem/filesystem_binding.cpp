@@ -29,25 +29,82 @@ namespace ti
 {
 	FilesystemBinding::FilesystemBinding(Host *host, SharedBoundObject global) : host(host), global(global), timer(0)
 	{
+		/**
+		 * @tiapi(method=True,returns=file,name=Filesystem.createTempFile) create a temporary file
+		 */
 		this->SetMethod("createTempFile",&FilesystemBinding::CreateTempFile);
+		/**
+		 * @tiapi(method=True,returns=file,name=Filesystem.createTempDirectory) create a temporary directory
+		 */
 		this->SetMethod("createTempDirectory",&FilesystemBinding::CreateTempDirectory);
+		/**
+		 * @tiapi(method=True,returns=file,name=Filesystem.getFile) get a file path, optionally joining multiple arguments together in an OS specific way
+		 */
 		this->SetMethod("getFile",&FilesystemBinding::GetFile);
+		/**
+		 * @tiapi(method=True,returns=filestream,name=Filesystem.getFileStream) get a file stream object
+		 */
 		this->SetMethod("getFileStream",&FilesystemBinding::GetFileStream);
+		/**
+		 * @tiapi(method=True,returns=file,name=Filesystem.getProgramsDirectory) gets the OS specific program directory
+		 */
 		this->SetMethod("getProgramsDirectory",&FilesystemBinding::GetProgramsDirectory);
+		/**
+		 * @tiapi(method=True,returns=file,name=Filesystem.getApplicationDirectory) gets the OS specific application directory
+		 */
 		this->SetMethod("getApplicationDirectory",&FilesystemBinding::GetApplicationDirectory);
+		/**
+		 * @tiapi(method=True,returns=file,name=Filesystem.getApplicationDataDirectory) gets the OS specific application data directory
+		 */
 		this->SetMethod("getApplicationDataDirectory",&FilesystemBinding::GetApplicationDataDirectory);
+		/**
+		 * @tiapi(method=True,returns=file,name=Filesystem.getRuntimeBaseDirectory) gets the OS specific runtime base directory
+		 */
 		this->SetMethod("getRuntimeBaseDirectory",&FilesystemBinding::GetRuntimeBaseDirectory);
+		/**
+		 * @tiapi(method=True,returns=file,name=Filesystem.getResourcesDirectory) gets the OS specific resources directory of the application
+		 */
 		this->SetMethod("getResourcesDirectory",&FilesystemBinding::GetResourcesDirectory);
+		/**
+		 * @tiapi(method=True,returns=file,name=Filesystem.getDesktopDirectory) gets the OS specific desktop directory
+		 */
 		this->SetMethod("getDesktopDirectory",&FilesystemBinding::GetDesktopDirectory);
+		/**
+		 * @tiapi(method=True,returns=file,name=Filesystem.getDocumentsDirectory) gets the OS specific documents directory
+		 */
 		this->SetMethod("getDocumentsDirectory",&FilesystemBinding::GetDocumentsDirectory);
+		/**
+		 * @tiapi(method=True,returns=file,name=Filesystem.getUserDirectory) gets the OS specific user's home directory
+		 */
 		this->SetMethod("getUserDirectory",&FilesystemBinding::GetUserDirectory);
+		/**
+		 * @tiapi(method=True,returns=string,name=Filesystem.getLineEnding) gets the OS specific line ending string
+		 */
 		this->SetMethod("getLineEnding",&FilesystemBinding::GetLineEnding);
+		/**
+		 * @tiapi(method=True,returns=string,name=Filesystem.getSeparator) gets the OS specific path separator string
+		 */
 		this->SetMethod("getSeparator",&FilesystemBinding::GetSeparator);
+		/**
+		 * @tiapi(method=True,returns=list,name=Filesystem.getRootDirectories) gets the OS specific root directories
+		 */
 		this->SetMethod("getRootDirectories",&FilesystemBinding::GetRootDirectories);
+		/**
+		 * @tiapi(method=True,returns=object,name=Filesystem.asyncCopy) executes an async copy operation
+		 */
 		this->SetMethod("asyncCopy",&FilesystemBinding::ExecuteAsyncCopy);
 
+		/**
+		 * @tiapi(property=True,immutable=True,name=Filesystem.FILESTREAM_MODE_READ) file read constant
+		 */
 		this->Set("FILESTREAM_MODE_READ", Value::NewString(FileStream::MODE_READ));
+		/**
+		 * @tiapi(property=True,immutable=True,name=Filesystem.FILESTREAM_MODE_WRITE) file write constant
+		 */
 		this->Set("FILESTREAM_MODE_WRITE", Value::NewString(FileStream::MODE_WRITE));
+		/**
+		 * @tiapi(property=True,immutable=True,returns=file,name=Filesystem.FILESTREAM_MODE_APPEND) file append constant
+		 */
 		this->Set("FILESTREAM_MODE_APPEND", Value::NewString(FileStream::MODE_APPEND));
 	}
 	FilesystemBinding::~FilesystemBinding()

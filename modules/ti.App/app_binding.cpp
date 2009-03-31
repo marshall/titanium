@@ -13,14 +13,34 @@ namespace ti
 {
 	AppBinding::AppBinding(Host *host,SharedBoundObject global) : host(host),global(global)
 	{
+		/**
+		 * @tiapi(method=True,immutable=True,returns=string,name=App.getID) get the application id
+		 */
 		this->SetMethod("getID", &AppBinding::GetID);
+		/**
+		 * @tiapi(method=True,immutable=True,returns=string,name=App.getName) get the application name
+		 */
 		this->SetMethod("getName", &AppBinding::GetName);
+		/**
+		 * @tiapi(method=True,immutable=True,returns=string,name=App.getVersion) get the application version
+		 */
 		this->SetMethod("getVersion", &AppBinding::GetVersion);
+		/**
+		 * @tiapi(method=True,immutable=True,returns=string,name=App.getUpdateURL) get the application update URL
+		 */
 		this->SetMethod("getUpdateURL", &AppBinding::GetUpdateURL);
+		/**
+		 * @tiapi(method=True,immutable=True,returns=string,name=App.getGUID) get the application globally unique id
+		 */
 		this->SetMethod("getGUID", &AppBinding::GetGUID);
+		/**
+		 * @tiapi(method=True,immutable=True,returns=string,name=App.appURLToPath) get a full path from an application using app: URL
+		 */
 		this->SetMethod("appURLToPath", &AppBinding::AppURLToPath);
 		
-		// set the path to the executable we're running
+		/**
+		 * @tiapi(property=True,immutable=True,type=string,name=App.path) get a full path to the application
+		 */
 #ifdef OS_OSX
 		NSString *path = [[NSBundle mainBundle] bundlePath];
 		this->Set("path",Value::NewString([path UTF8String]));
@@ -28,21 +48,38 @@ namespace ti
 		this->Set("path",Value::NewString(host->GetCommandLineArg(0)));
 #endif
 
+		/**
+		 * @tiapi(property=True,immutable=True,type=double,name=App.version) returns the Titanium product version
+		 */
 		SharedValue version = Value::NewDouble(PRODUCT_VERSION);
 		global->Set("version", version);
 
-		// platform
+		/**
+		 * @tiapi(property=True,immutable=True,type=string,name=App.platform) returns the Titanium platform
+		 */
 		SharedValue platform = Value::NewString(host->GetPlatform());
 		global->Set("platform",platform);
 
+		// skip the first argument which is the filepath to the
+		// executable
 		SharedBoundList argList = new StaticBoundList();
-		for (int i = 0; i < Host::GetInstance()->GetCommandLineArgCount(); i++) {
+		for (int i = 1; i < Host::GetInstance()->GetCommandLineArgCount(); i++) {
 			argList->Append(Value::NewString(Host::GetInstance()->GetCommandLineArg(i)));
 		}
 		SharedValue arguments = Value::NewList(argList);
+		/**
+		 * @tiapi(property=True,immutable=True,type=list,name=App.arguments) returns the arguments from the command line
+		 */
 		Set("arguments", arguments);
 
+		/**
+		 * @tiapi(method=True,immutable=True,returns=void,name=App.exit) causes the application to exit
+		 */
 		this->SetMethod("exit",&AppBinding::Exit);
+
+		/**
+		 * @tiapi(method=True,immutable=True,returns=list,name=App.loadProperties) load a properties list from a file path
+		 */
 		this->SetMethod("loadProperties", &AppBinding::LoadProperties);
 	}
 

@@ -12,9 +12,21 @@ namespace ti
 {
 	Pipe::Pipe(Poco::PipeIOS* pipe) : pipe(pipe), closed(false)
 	{
+		/**
+		 * @tiapi(property=True,type=boolean,name=Process.Pipe.closed) returns true if the pipe is closed
+		 */
 		this->Set("closed",Value::NewBool(false));
+		/**
+		 * @tiapi(method=True,returns=object,name=Process.Pipe.close) close the pipe
+		 */
 		this->SetMethod("close",&Pipe::Close);
+		/**
+		 * @tiapi(method=True,returns=object,name=Process.Pipe.write) write data to the pipe
+		 */
 		this->SetMethod("write",&Pipe::Write);
+		/**
+		 * @tiapi(method=True,returns=object,name=Process.Pipe.close) read data from the pipe
+		 */
 		this->SetMethod("read",&Pipe::Read);
 	}
 	Pipe::~Pipe()

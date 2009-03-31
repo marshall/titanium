@@ -23,24 +23,68 @@ namespace ti
 	{
 		instance = this;
 
+		/**
+		 * @tiapi(method=True,returns=object,name=UI.createMenu) creates a Menu object
+		 */
 		this->SetMethod("createMenu", &UIBinding::_CreateMenu);
+		/**
+		 * @tiapi(method=True,returns=object,name=UI.createTrayMenu) creates a tray Menu object
+		 */
 		this->SetMethod("createTrayMenu", &UIBinding::_CreateTrayMenu);
+		/**
+		 * @tiapi(method=True,returns=void,name=UI.setMenu) sets a menu for the application
+		 */
 		this->SetMethod("setMenu", &UIBinding::_SetMenu);
+		/**
+		 * @tiapi(method=True,returns=object,name=UI.getMeu) returns the application menu
+		 */
 		this->SetMethod("getMenu", &UIBinding::_GetMenu);
+		/**
+		 * @tiapi(method=True,returns=void,name=UI.setContextMenu) sets the application context menu
+		 */
 		this->SetMethod("setContextMenu", &UIBinding::_SetContextMenu);
+		/**
+		 * @tiapi(method=True,returns=object,name=UI.getContextMenu) gets the application context menu
+		 */
 		this->SetMethod("getContextMenu", &UIBinding::_GetContextMenu);
+		/**
+		 * @tiapi(method=True,returns=void,name=UI.setIcon) sets the application icon
+		 */
 		this->SetMethod("setIcon", &UIBinding::_SetIcon);
+		/**
+		 * @tiapi(method=True,returns=void,name=UI.addTray) adds a tray menu
+		 */
 		this->SetMethod("addTray", &UIBinding::_AddTray);
+		/**
+		 * @tiapi(method=True,returns=void,name=UI.clearTray) removes a tray menu
+		 */
 		this->SetMethod("clearTray", &UIBinding::_ClearTray);
-
+		/**
+		 * @tiapi(method=True,returns=void,name=UI.setDockIcon) set the dock icon
+		 */
 		this->SetMethod("setDockIcon", &UIBinding::_SetDockIcon);
+		/**
+		 * @tiapi(method=True,returns=void,name=UI.setDockMenu) set the dock menu
+		 */
 		this->SetMethod("setDockMenu", &UIBinding::_SetDockMenu);
+		/**
+		 * @tiapi(method=True,returns=void,name=UI.setBadge) set the application badge value
+		 */
 		this->SetMethod("setBadge", &UIBinding::_SetBadge);
+		/**
+		 * @tiapi(method=True,returns=void,name=UI.setBadgeImage) set the application badge image
+		 */
 		this->SetMethod("setBadgeImage", &UIBinding::_SetBadgeImage);
 
+		/**
+		 * @tiapi(method=True,returns=long,name=UI.createMenu) get the user's idle time (for the machine, not just the application)
+		 */
 		this->SetMethod("getIdleTime", &UIBinding::_GetIdleTime);
 
 		this->open_window_list = new StaticBoundList();
+		/**
+		 * @tiapi(property=True,returns=list,name=UI.windows) gets a list of user created windows
+		 */
 		this->Set("windows", Value::NewList(this->open_window_list));
 
 		SharedBoundObject global = host->GetGlobalObject();
@@ -55,6 +99,9 @@ namespace ti
 		SharedUserWindow main_window = this->CreateWindow(config, no_parent);
 
 		SharedBoundObject global = host->GetGlobalObject();
+		/**
+		 * @tiapi(property=True,returns=object,name=UI.mainWindow) get the main window 
+		 */
 		global->SetNS("UI.mainWindow", Value::NewObject(main_window));
 
 		main_window->Open();
@@ -87,16 +134,6 @@ namespace ti
 
 	void UIBinding::RemoveFromOpenWindows(SharedUserWindow window)
 	{
-		//for (unsigned int i = 0; i < open_window_list->Size(); i++)
-		//{
-		//	SharedBoundObject cand = open_window_list->At(i)->ToObject();
-		//	if (cand.get() == window.get())
-		//	{
-		//		open_window_list->Remove(i);
-		//		break;
-		//	}
-		//}
-
 		std::vector<SharedUserWindow>::iterator w = open_windows.begin();
 		while (w != open_windows.end())
 		{

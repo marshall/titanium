@@ -9,16 +9,49 @@ namespace ti
 {
 	Sound::Sound (std::string &s) : url(s)
 	{
+		/**
+		 * @tiapi(method=True,returns=void,name=Media.Sound.play) starting playing the sound
+		 */
 		this->SetMethod("play",&Sound::Play);
+		/**
+		 * @tiapi(method=True,returns=void,name=Media.Sound.pause) pause a playing sound
+		 */
 		this->SetMethod("pause",&Sound::Pause);
+		/**
+		 * @tiapi(method=True,returns=void,name=Media.Sound.stop) stop a playing sound
+		 */
 		this->SetMethod("stop",&Sound::Stop);
+		/**
+		 * @tiapi(method=True,returns=void,name=Media.Sound.reload) reload a playing sound
+		 */
 		this->SetMethod("reload",&Sound::Reload);
+		/**
+		 * @tiapi(method=True,returns=void,name=Media.Sound.setVolume) set the volume from 0.0-1.0
+		 */
 		this->SetMethod("setVolume",&Sound::SetVolume);
+		/**
+		 * @tiapi(method=True,returns=double,name=Media.Sound.getVolume) get the volume from 0.0-1.0
+		 */
 		this->SetMethod("getVolume",&Sound::GetVolume);
+		/**
+		 * @tiapi(method=True,returns=boolean,name=Media.Sound.setLooping) sets the looping of the sound
+		 */
 		this->SetMethod("setLooping",&Sound::SetLooping);
+		/**
+		 * @tiapi(method=True,returns=boolean,name=Media.Sound.isLooping) returns true if the sound is looping
+		 */
 		this->SetMethod("isLooping",&Sound::IsLooping);
+		/**
+		 * @tiapi(method=True,returns=boolean,name=Media.Sound.isPlaying) returns true if the sound is playing
+		 */
 		this->SetMethod("isPlaying",&Sound::IsPlaying);
+		/**
+		 * @tiapi(method=True,returns=boolean,name=Media.Sound.isPaused) returns true if the sound is paused
+		 */
 		this->SetMethod("isPaused",&Sound::IsPaused);
+		/**
+		 * @tiapi(method=True,returns=void,name=Media.Sound.onComplete) set the oncomplete function callback
+		 */
 		this->SetMethod("onComplete",&Sound::OnComplete);
 	}
 	Sound::~Sound()

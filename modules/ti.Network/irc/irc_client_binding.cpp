@@ -17,16 +17,49 @@ namespace ti
 	IRCClientBinding::IRCClientBinding(Host* host) : 
 		host(host), global(host->GetGlobalObject()), thread(NULL)
 	{
+		/**
+		 * @tiapi(property=True,type=boolean,name=Network.IRC.connected) returns true if connected
+		 */
 		this->Set("connected",Value::NewBool(false));
+		/**
+		 * @tiapi(method=True,returns=void,name=Network.IRC.connect) connect the IRC connection
+		 */
 		this->SetMethod("connect",&IRCClientBinding::Connect);
+		/**
+		 * @tiapi(method=True,returns=void,name=Network.IRC.disconnect) disconnect the IRC connection
+		 */
 		this->SetMethod("disconnect",&IRCClientBinding::Disconnect);
+		/**
+		 * @tiapi(method=True,returns=void,name=Network.IRC.send) send data on the IRC connection
+		 */
 		this->SetMethod("send",&IRCClientBinding::Send);
+		/**
+		 * @tiapi(method=True,returns=void,name=Network.IRC.setNick) set the nick name for the connection
+		 */
 		this->SetMethod("setNick",&IRCClientBinding::SetNick);
+		/**
+		 * @tiapi(method=True,returns=string,name=Network.IRC.getNick) get the nick name for the connection
+		 */
 		this->SetMethod("getNick",&IRCClientBinding::GetNick);
+		/**
+		 * @tiapi(method=True,returns=list,name=Network.IRC.getUsers) get a list of users for the channel
+		 */
 		this->SetMethod("getUsers",&IRCClientBinding::GetUsers);
+		/**
+		 * @tiapi(method=True,returns=void,name=Network.IRC.join) join a channel
+		 */
 		this->SetMethod("join",&IRCClientBinding::Join);
+		/**
+		 * @tiapi(method=True,returns=void,name=Network.IRC.unjoin) unjoin from a channel
+		 */
 		this->SetMethod("unjoin",&IRCClientBinding::Unjoin);
+		/**
+		 * @tiapi(method=True,returns=boolean,name=Network.IRC.isOp) returns true if the user is an operator
+		 */
 		this->SetMethod("isOp",&IRCClientBinding::IsOp);
+		/**
+		 * @tiapi(method=True,returns=boolean,name=Network.IRC.isVoice) returns true if the user has voice
+		 */
 		this->SetMethod("isVoice",&IRCClientBinding::IsVoice);
 
 		// NULL is how we hook all commands (wildcard)
