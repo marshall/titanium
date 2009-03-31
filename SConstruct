@@ -79,6 +79,7 @@ dist = 'dist' in targets or ARGUMENTS.get('dist', 0)
 uploader = 'uploader' in targets or ARGUMENTS.get('uploader', 0)
 run = 'run' in targets or ARGUMENTS.get('run', 0)
 apicoverage = 'apicoverage' in targets or ARGUMENTS.get('apicoverage',0)
+textmate = 'textmate' in targets or ARGUMENTS.get('textmate',0)
 
 Export('run')
 
@@ -126,4 +127,13 @@ if apicoverage:
 	import apicoverage
 	f = open(path.join(build.dir,'apicoverage.json'),'w')
 	apicoverage.generate_api_coverage('.',f)
-	
+
+if textmate:
+	print 'building Textmate bundle...'
+	import textmate
+	f = open(path.join(build.dir,'apicoverage.json'),'r')
+	outdir = path.join(build.dir,'Titanium.tmbundle')
+	if not os.path.exists(outdir):
+		os.makedirs(outdir)
+	textmate.generate_textmate_bundle(f,outdir)
+		
