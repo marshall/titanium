@@ -8,16 +8,13 @@ env = build.env.Clone();
 env.Append(CPPDEFINES = ('TITANIUM_GROWL_API_EXPORT', 1))
 env.Append(CPPPATH = ['#kroll'])
 
-if build.is_osx():
-	build.add_thirdparty(env, 'poco', True)
-else:
-	build.add_thirdparty(env, 'poco')
-
+build.add_thirdparty(env, 'poco')
 sources = Glob('*.cpp')
 
 if build.is_osx():
-	env.Append(FRAMEWORKPATH = [build.third_party+'/growl'])
-	env.Append(CPPPATH = [build.third_party+'/growl/Growl.framework/Headers', build.third_party +'/poco/headers'])
+	cwd = build.cwd()
+	env.Append(FRAMEWORKPATH = [cwd + '/AppResources/osx/Frameworks'])
+	env.Append(CPPPATH = [cwd + '/AppResources/osx/Frameworks/Growl.framework/Headers'])
 	env.Append(FRAMEWORKS = ['Cocoa', 'Growl'])
 	env.Append(LIBS = ['kroll','dl'])
 	sources += Glob(build.os + '/*.mm')
@@ -32,5 +29,5 @@ elif build.is_linux():
 	env.ParseConfig('pkg-config --cflags --libs libnotify')
 
 m = build.add_module('ti.Growl')
-s = env.SharedLibrary(target = m.build_dir + '/tigrowlmodule', source=sources)
-s = env.SharedLibrary(target = build.dir + '/tigrowlmodule', source=sources)
+t = env.SharedLibrary(target = m.build_dir + '/tigrowlmodule', source=sources)
+build.mark_build_target(t)

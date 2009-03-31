@@ -1,0 +1,59 @@
+Import('build')
+Import('run')
+import SCons.Variables
+import SCons.Environment
+import futils, os.path as path
+from SCons.Script import *
+from app import App
+from subprocess import Popen
+
+def package_app_builder(target, source, env):
+	print "Packaging the Titanium SDK..."
+
+	if not 'SHORTNAME' in env:
+		env['SHORTNAME'] = path.basename(path.dirname(str(source[0])))
+	if not 'FULLNAME' in env:
+		env['FULLNAME'] = env['SHORTNAME']
+	if not 'ID' in env:
+		env['ID'] = 'com.titaniumapp.' + env['SHORTNAME']
+	if not 'GUID' in env:
+		env['GUID'] = 'DEADBEEF-E695-4280-9F1F-96126F3D2C2A'
+	if not 'VERSION' in env:
+		env['VERSION'] = build.version
+
+	app = App(
+		build,
+		shortname=env['SHORTNAME'],
+		fullname=env['FULLNAME'],
+		id=env['ID'],
+		version=env['VERSION'],
+		guid=env['ID'])
+
+	if 'MODULES' in env:
+		app.set_modules(env['MODULES'])
+
+	app.stage(path.join(build.dir, env['SHORTNAME']), src_resources=str(source[0]))
+
+	# Mark these applications as installed
+	futils.Touch(path.join(build.dir, '.installed'))
+
+	for s in source[1:]:
+		s = str(s)
+		futils.CopyToDir(s, app.dir)
+
+	if run:
+		Popen(app.exe)
+
+build.env['BUILDERS']['PackageApp'] = build.env.Builder(
+	action=package_app_builder,
+	target_factory=SCons.Node.FS.default_fs.Entry,
+	multi=0)
+
+#build.env.Append(BUILDERS = 
+#builder = {'PackageApp' : Builder(
+#	action=package_app_builder,
+#	source_factory=SCons.Node.FS.default_fs.Entry}))
+
+SConscript('testapp/SConscript')
+SConscript('apivalidator/SConscript')
+SConscript('uploader/SConscript')

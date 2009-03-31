@@ -6,9 +6,9 @@ Import('build')
 Env = build.env.Clone()
 Env.Append(LIBS=['curl'])
 Env.ParseConfig('pkg-config --cflags --libs gtk+-2.0 gdk-2.0 gthread-2.0')
-Env.Append(CPPFLAGS=['-Wno-error']) # turn off warnings, CURLHandle has a lot
-Env.Append(CPPPATH=[build.kroll_source_dir + '/api'])
+#Env.Append(CPPFLAGS=['-Wno-error']) # turn off warnings, CURLHandle has a lot
 
 sources = Glob('*.cpp')
-sources.append(build.kroll_source_dir + '/api/file_utils.cpp')
-s = Env.Program('net_installer', sources)
+out = path.join(build.runtime_build_dir, 'installer', 'installer')
+i = Env.Program(out, Glob('*.cpp') + [build.kroll_source_dir + '/api/file_utils.cpp'])
+build.mark_build_target(i)

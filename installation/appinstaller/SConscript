@@ -1,0 +1,10 @@
+Import('build')
+import os.path as path
+
+todir = path.join(build.dir, 'runtime', 'appinstaller')
+t = build.utils.CopyToDir(['Resources', 'tiapp.xml'], todir)
+build.mark_build_target(t)
+
+common_js = path.join(build.titanium_source_dir, 'installation', 'common', 'js')
+t = build.utils.CopyTree(common_js, path.join(todir, 'Resources', 'js'))
+build.mark_build_target(t)

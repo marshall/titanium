@@ -10,19 +10,10 @@ build.add_thirdparty(Env, 'poco')
 Env.Append(CPPPATH=['C:\\Program Files\\Microsoft Visual Studio 8\\VC\\atlmfc\\include'])
 Env.Append(CCFLAGS=['/MT'])
 
-sources = Glob("newprogress/*.cpp")
-rc = Env.RES("newprogress/progress.rc")
-sources += rc
-p = Env.Program(build.dir + '/net_installer/Installer.exe', sources)
-
-#csbuilder = Builder(action = 'devenv $SOURCE /rebuild Release')
-
-#Env = build.env.Clone(BUILDERS = {'CSProgram': csbuilder})
-#Env.Append(CPPPATH=[build.kroll_source_dir+'/api'])
-
-#p = Env.CSProgram('Installer.exe', 'newprogress.sln')
-#out_dir = path.join(build.dir, 'net_installer')
-#Env.AddPostAction(p, Copy(out_dir + '/Installer.exe', build.titanium_source_dir+'/installation/net_installer/win32/bin/Release/newprogress.exe'))
+sources = Glob("newprogress/*.cpp") + Env.RES("newprogress/progress.rc")
+out_file = path.join(build.runtime_build_dir, 'installer', 'Installer.exe')
+p = Env.Program(out_file, sources)
+build.mark_build_target(p)
 
 common_controls_manifest = path.join(build.titanium_source_dir, 'installation', 'net_installer', 'win32', 'common_controls.manifest')
-Env.AddPostAction(p, 'mt.exe -nologo -manifest "'+common_controls_manifest+'" -outputresource:"' + build.dir + '\\net_installer\\Installer.exe;1"')
+Env.AddPostAction(p, 'mt.exe -nologo -manifest "%s" -outputresource:"%s;1"' % (common_controls_manifest, out_file))

@@ -66,10 +66,12 @@ namespace ti
 
 		if (!config->IsFullScreen())
 		{
-			this->SetX(config->GetX());
-			this->SetY(config->GetY());
-			this->SetHeight(config->GetHeight());
-			this->SetWidth(config->GetWidth());
+			this->real_x = config->GetX();
+			this->real_y = config->GetY();
+			this->real_w = config->GetWidth();
+			this->real_h = config->GetHeight();
+			NSRect rect = CalculateWindowFrame(real_x, real_y, real_w, real_h);
+			[window setFrame:rect display:NO animate:NO];
 		}
 
 		[window setupDecorations:config host:binding->GetHost() userwindow:this];
@@ -158,6 +160,48 @@ namespace ti
 			UserWindow::Close();
 		}
 	}
+
+	NSRect OSXUserWindow::CalculateWindowFrame(double x, double y, double width, double height)
+	{
+		NSRect frame = [window frame];
+		NSRect screenFrame = [[window screen] frame];
+		NSRect contentFrame = [[window contentView] frame];
+
+		// Don't resize beyond restrictions
+		if (width > config->GetMaxWidth())
+			width = config->GetMaxWidth();
+		if (width < config->GetMinWidth())
+			width = config->GetMinWidth();
+		if (height > config->GetMaxHeight())
+			height = config->GetMaxHeight();
+		if (height < config->GetMinHeight())
+			height = config->GetMinHeight();
+
+		printf("\n\ny1 %i\n", (int) y);
+		// Center frame, if requested
+		if (y == UserWindow::CENTERED)
+			y = (screenFrame.size.height - height) / 2;
+		if (x == UserWindow::CENTERED)
+			x = (screenFrame.size.width - width) / 2;
+		printf("\n\ny2 %i\n", (int) y);
+
+		config->SetX(x);
+		config->SetY(y);
+		config->SetWidth(width);
+		config->SetHeight(height);
+
+		// Now we adjust for the size of the frame decorations
+		width += frame.size.width - contentFrame.size.width;
+		height += frame.size.height - contentFrame.size.height;
+		// Adjust the position for the origin of this screen and use cartesian coordinates
+		printf("\n\no: %i   screen:%i     y:%i %i\n", (int) screenFrame.origin.y, (int) screenFrame.size.height, (int) y, (int) height);
+		x += screenFrame.origin.x;
+		y = screenFrame.origin.y + (screenFrame.size.height - (y + height));
+
+		printf("\n\ny3 %i\n", (int) y);
+		return NSMakeRect(x, y, width, height);
+	}
+
 	double OSXUserWindow::GetX()
 	{
 		return this->config->GetX();
@@ -165,19 +209,9 @@ namespace ti
 	
 	void OSXUserWindow::SetX(double x)
 	{
-		NSRect winFrame = [[window screen] frame];
-		if (x == UserWindow::CENTERED)
-		{
-			double width = config->GetWidth();
-			x = (winFrame.size.width - width) / 2;
-		}
-		config->SetX(x);
-
-		// Flip for cartesian coordinates and adjust for origin
-		x = x + winFrame.origin.x;
-		double y = winFrame.origin.y + winFrame.size.height - config->GetY();
-		NSPoint p = NSMakePoint(x, y);
-		[window setFrameTopLeftPoint:p];
+		this->real_x = x; // Preserve input value
+		NSRect newRect = CalculateWindowFrame(x, real_y, real_w, real_h);
+		[window setFrameOrigin: newRect.origin];
 	}
 	double OSXUserWindow::GetY()
 	{
@@ -185,61 +219,43 @@ namespace ti
 	}
 	void OSXUserWindow::SetY(double y)
 	{
-		NSRect winFrame = [[window screen] frame];
-		if (y == UserWindow::CENTERED)
-		{
-			double height = config->GetHeight();
-			y = (winFrame.size.height - height) / 2;
-		}
-		config->SetY(y);
-
-		// Flip for cartesian coordinates
-		double x = config->GetX() + winFrame.origin.x;
-		y = winFrame.origin.y + winFrame.size.height - y;
-		NSPoint p = NSMakePoint(x, y);
-		[window setFrameTopLeftPoint:p];
-
+		this->real_y = y; // Preserve input value
+		NSRect newRect = CalculateWindowFrame(real_x, real_y, real_w, real_h);
+		[window setFrameOrigin: newRect.origin];
 	}
+
 	double OSXUserWindow::GetWidth()
 	{
 		return [[window contentView] frame].size.width;
 	}
+
 	void OSXUserWindow::SetWidth(double width)
 	{
-		if (width > config->GetMaxWidth())
-			width = config->GetMaxWidth();
-		if (width < config->GetMinWidth())
-			width = config->GetMinWidth();
-		config->SetWidth(width);
-
-		// Compensate for frame size
-		NSRect frame = [window frame];
-		width += frame.size.width - [[window contentView] frame].size.width;
-		BOOL display = config->IsVisible();
-		frame.size.width = width;
-		[window setFrame:frame display:display animate:display];
+		this->real_w = width;
+		NSRect newFrame = CalculateWindowFrame(real_x, real_y, width, real_h);
+		[window setFrame:newFrame display:config->IsVisible() animate:YES];
 	}
+
 	double OSXUserWindow::GetHeight()
 	{
 		return [[window contentView] frame].size.height;
 	}
+
 	void OSXUserWindow::SetHeight(double height)
 	{
-		if (height > config->GetMaxHeight())
-			height = config->GetMaxHeight();
-		if (height < config->GetMinHeight())
-			height = config->GetMinHeight();
-		config->SetHeight(height);
+		this->real_h = height;
+		NSRect newFrame = CalculateWindowFrame(real_x, real_y, real_w, real_h);
+		[window setFrame:newFrame display:config->IsVisible() animate:YES];
 
 		// Compensate for frame size
-		NSRect frame = [window frame];
-		height += frame.size.height - [[window contentView] frame].size.height;
-		BOOL display = config->IsVisible();
-		double originalHeight = NSHeight(frame);
-		frame.size.height = height;
-		NSPoint origin = frame.origin;
-		origin.y += (originalHeight - height);
-		[window setFrame: NSMakeRect(origin.x, origin.y, frame.size.width, height) display:display animate:YES];
+		//NSRect frame = [window frame];
+		//height += frame.size.height - [[window contentView] frame].size.height;
+		//BOOL display = config->IsVisible();
+		//double originalHeight = NSHeight(frame);
+		//frame.size.height = height;
+		//NSPoint origin = frame.origin;
+		//origin.y += (originalHeight - height);
+		//[window setFrame: NSMakeRect(origin.x, origin.y, frame.size.width, height) display:display animate:YES];
 	}
 	double OSXUserWindow::GetMaxWidth() {
 		return this->config->GetMaxWidth();
@@ -299,10 +315,12 @@ namespace ti
 	}
 	void OSXUserWindow::SetBounds(Bounds bounds)
 	{
-		this->SetX(bounds.x);
-		this->SetY(bounds.y);
-		this->SetWidth(bounds.width);
-		this->SetHeight(bounds.height);
+		this->real_x = bounds.x;
+		this->real_y = bounds.y;
+		this->real_w = bounds.width;
+		this->real_h = bounds.height;
+		NSRect newFrame = CalculateWindowFrame(real_x, real_y, real_w, real_h);
+		[window setFrame:newFrame display:config->IsVisible() animate:YES];
 	}
 	std::string OSXUserWindow::GetTitle()
 	{

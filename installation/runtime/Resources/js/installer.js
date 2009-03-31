@@ -122,67 +122,24 @@ function runInstaller()
 		});
 		total++;
 	}
-	var files = runtimeSrc.getDirectoryListing();
-	total += 1;
-	moveby = 100 / (total+4);
 
-	updateProgressMessage(total+' files to install ... ');
-	
+	var files = runtimeSrc.getDirectoryListing();
+	total++; // One more for the runtime
+	moveby = 100 / total;
+
 	tasks.push({
 		dest:runtimeDir,
 		files:runtimeSrc
 	});
+	updateProgressMessage(total+' files to install ... ');
 	
 	runCopyTasks(function()
 	{
 		updateProgressMessage('Configuring system paths ...');
-		
-		// create templates
 		try
 		{
-			var template = TFS.getFile(runtimeDir,'template');
-			template.createDirectory(true);
-
-			switch(Titanium.platform)
-			{
-				case 'osx':
-				 
-					// link up WebKit libraries
-					Titanium.linkLibraries(runtimeDir);
-					var boot = TFS.getFile(src,'MacOS',appname);
-					boot.copy(template);
-					var target = TFS.getFile(template,appname);
-					target.rename('kboot');
-					target.setExecutable(true);
-					var lproj = TFS.getFile(src,'Resources','English.lproj');
-					var menu = TFS.getFile(lproj,'MainMenu.nib');
-					var icons = TFS.getFile(lproj,'titanium.icns');
-					menu.copy(template);
-					icons.copy(template);
-					
-					break;
-				case 'win32':
-					// copy titanium-sdk.exe to template/kboot.exe
-					var boot = TFS.getFile(src,appname+'.exe');
-					if(!boot.exists())
-					{
-						boot = TFS.getFile(src,'installer.exe');
-					}
-					
-					var target = TFS.getFile(template,'kboot.exe');
-					boot.copy(target);
-					break;
-				case 'linux':
-					var boot = TFS.getFile(src,appname);
-					boot.copy(template);
-					var target = TFS.getFile(template,appname);
-					target.rename('kboot');
-					target.setExecutable(true);
-					break;
-			}
-
-			current+=moveby;
-			updateProgressValue(current);
+			// Runtime template files are now in the
+			// runtime distribution by default
 
 			// developer product
 			var devDest = TFS.getProgramsDirectory();
@@ -198,31 +155,15 @@ function runInstaller()
 			devtiapp.copy(developer.base);
 			var devmanifest = TFS.getFile(devsrc,'manifest');
 			devmanifest.copy(developer.base);
+
 			TFS.asyncCopy(devresources,developer.resources,function()
 			{
 				current+=moveby;
 				updateProgressValue(current);
-				// net installer product
-				var net_installer_dest = TFS.getFile(runtimeDir,'installer');
-				var net_installer = TFS.getFile(src,'installer');
-				TFS.asyncCopy(net_installer,net_installer_dest,function()
-				{
-					current+=moveby;
-					updateProgressValue(current);
-					
-					// app installer product
-					var app_installer_dest = TFS.getFile(runtimeDir,'appinstaller');
-					var app_installer = TFS.getFile(src,'appinstaller');
-					TFS.asyncCopy(app_installer,app_installer_dest,function()
-					{
-						current+=moveby;
-						updateProgressValue(current);
-						Titanium.Analytics.addEvent('ti.install');
-						finishInstall(developer.executable);
-					});
-				});
+				Titanium.Analytics.addEvent('ti.install');
+				finishInstall(developer.executable);
 			});
-					
+
 		}
 		catch(E)
 		{

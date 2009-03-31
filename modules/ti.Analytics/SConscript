@@ -4,4 +4,5 @@ import os, os.path as path
 Import('build')
 
 m = build.add_module('ti.Analytics')
-build.utils.CopyTree(Glob('*.js'), m.build_dir)
+t = build.utils.CopyTree(Glob('*.js'), m.build_dir)
+build.mark_build_target(t)

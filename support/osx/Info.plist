@@ -5,23 +5,23 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleExecutable</key>
-	<string>APPEXE</string>
+	<string>titanium-sdk</string>
 	<key>CFBundleIconFile</key>
-	<string>APPICON</string>
+	<string>titanium.icns</string>
 	<key>CFBundleIdentifier</key>
-	<string>APPID</string>
+	<string>com.titaniumapp.sdk.installer</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>APPNAME</string>
+	<string></string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
-  	<key>CFBundleSignature</key>
-  	<string>WRUN</string>
-  	<key>CFBundleVersion</key>
-  	<string>APPVER</string>
+	<key>CFBundleSignature</key>
+	<string>WRUN</string>
+	<key>CFBundleVersion</key>
+	<string>0.3</string>
 	<key>NSMainNibFile</key>
-	<string>APPNIB</string>
+	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
 </dict>
