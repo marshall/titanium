@@ -24,10 +24,11 @@ namespace ti
 	public:
 		static bool OpenApplication(std::string &name);
 		static bool OpenURL(std::string &url);
+		static void TakeScreenshot(std::string &screenshotFile);
 	private:
 		Win32Desktop();
 		~Win32Desktop();
-
+		static bool SaveBMPFile(const char *filename, HBITMAP bitmap, HDC bitmapDC, int width, int height);
 	};
 }
 

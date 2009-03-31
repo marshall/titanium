@@ -54,17 +54,21 @@ namespace ti
 		std::string url = args.at(0)->ToString();
 		result->SetBool(TI_DESKTOP::OpenURL(url));
 	}
-	
+
 	void DesktopBinding::TakeScreenshot(const ValueList& args, SharedValue result)
 	{
 		if (args.size() < 1) {
 			throw ValueException::FromString("takeScreenshot takes 1 parameter");
 		}
-		
+
 		std::string filePath = args.at(0)->ToString();
-		//TODO implement for win32/linux
-#if defined(OS_OSX)
+
+#ifdef OS_WIN32
 		TI_DESKTOP::TakeScreenshot(filePath);
+#elif OS_OSX
+		TI_DESKTOP::TakeScreenshot(filePath);
+#elif OS_LINUX
+		// TODO - implement for linux
 #endif
 	}
 }
