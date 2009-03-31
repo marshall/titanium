@@ -136,16 +136,6 @@ sudo apt-get install git-core
 You may need a later version of Scons for Linux if you get build errors.  (>=1.2.0)
 
 
---------------------------------------
- One Time GIT Setup (Committers only)
---------------------------------------
-
-Configure git to handle newlines properly:
-
-> git config --global core.autocrlf tru
-
-
-
 --------------------
  Getting Assistance
 --------------------
