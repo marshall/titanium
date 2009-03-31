@@ -28,6 +28,7 @@ namespace ti
 		void CreateShortcut(const ValueList& args, SharedValue result);
 		void OpenApplication(const ValueList& args, SharedValue result);
 		void OpenURL(const ValueList& args, SharedValue result);
+		void TakeScreenshot(const ValueList& args, SharedValue result);
 	};
 }
 
