@@ -27,15 +27,15 @@ namespace ti
 	DesktopBinding::DesktopBinding(SharedBoundObject global) : global(global)
 	{
 		/**
-		 * @tiapi(method=True,returns=void,name=Desktop.openApplication) opens an application by name using the operating system
+		 * @tiapi(method=True,returns=void,name=Desktop.openApplication,args=[name:string]) opens an application by name using the operating system
 		 */
 		this->SetMethod("openApplication",&DesktopBinding::OpenApplication);
 		/**
-		 * @tiapi(method=True,returns=void,name=Desktop.openURL) opens a URL in the default system browser
+		 * @tiapi(method=True,returns=void,name=Desktop.openURL,args=[url:string]) opens a URL in the default system browser
 		 */
 		this->SetMethod("openURL",&DesktopBinding::OpenURL);
 		/**
-		 * @tiapi(method=True,returns=void,name=Desktop.takeScreenshot) create a screenshot and saved to passed in file
+		 * @tiapi(method=True,returns=void,name=Desktop.takeScreenshot,args=[file:string]) create a screenshot and saved to passed in file
 		 */
 		this->SetMethod("takeScreenshot", &DesktopBinding::TakeScreenshot);
 	}
