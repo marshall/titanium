@@ -139,7 +139,6 @@ public:
 	bool IsCloseable() { return config->IsCloseable(); }
 	void SetCloseable(bool closeable);
 	bool IsVisible();
-	void SetVisible(bool visible);
 	double GetTransparency() { return config->GetTransparency(); }
 	void SetTransparency(double transparency);
 	std::string GetTransparencyColor();

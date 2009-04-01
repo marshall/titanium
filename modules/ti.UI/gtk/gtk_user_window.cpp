@@ -277,9 +277,15 @@ void GtkUserWindow::SetupPosition()
 
 		GdkScreen* screen = gdk_screen_get_default();
 		if (x == UserWindow::CENTERED)
+		{
 			x = (gdk_screen_get_width(screen) - this->GetWidth()) / 2;
+			this->config->SetX(x);
+		}
 		if (y == UserWindow::CENTERED)
+		{
 			y = (gdk_screen_get_height(screen) - this->GetHeight()) / 2;
+			this->config->SetY(y);
+		}
 		gtk_window_move(this->gtk_window, x, y);
 
 		// Moving in GTK is asynchronous, so we prime the
@@ -552,8 +558,6 @@ static void populate_popup_cb(
 
 
 void GtkUserWindow::Hide() {
-	this->config->SetVisible(false);
-
 	if (this->gtk_window != NULL)
 	{
 		gtk_widget_hide_all(GTK_WIDGET(this->gtk_window));
@@ -561,7 +565,6 @@ void GtkUserWindow::Hide() {
 }
 
 void GtkUserWindow::Show() {
-	this->config->SetVisible(true);
 	if (this->gtk_window != NULL)
 	{
 		gtk_widget_show_all(GTK_WIDGET(this->gtk_window));
@@ -592,7 +595,6 @@ bool GtkUserWindow::IsFullScreen() {
 
 void GtkUserWindow::SetFullScreen(bool fullscreen)
 {
-	this->config->SetFullScreen(fullscreen);
 	if (fullscreen && this->gtk_window != NULL)
 	{
 		gtk_window_fullscreen(this->gtk_window);
@@ -614,7 +616,6 @@ double GtkUserWindow::GetX() {
 }
 
 void GtkUserWindow::SetX(double x) {
-	this->config->SetX(x);
 	this->SetupPosition();
 }
 
@@ -623,7 +624,6 @@ double GtkUserWindow::GetY() {
 }
 
 void GtkUserWindow::SetY(double y) {
-	this->config->SetY(y);
 	this->SetupPosition();
 }
 
@@ -632,11 +632,6 @@ double GtkUserWindow::GetWidth() {
 }
 
 void GtkUserWindow::SetWidth(double width) {
-	if (width > config->GetMaxWidth())
-		width = config->GetMaxWidth();
-	if (width < config->GetMinWidth())
-		width = config->GetMinWidth();
-	this->config->SetWidth((int)width);
 	this->SetupSize();
 }
 
@@ -645,7 +640,6 @@ double GtkUserWindow::GetMaxWidth() {
 }
 
 void GtkUserWindow::SetMaxWidth(double width) {
-	this->config->SetMaxWidth(width);
 	this->SetupSizeLimits();
 }
 
@@ -654,7 +648,6 @@ double GtkUserWindow::GetMinWidth() {
 }
 
 void GtkUserWindow::SetMinWidth(double width) {
-	this->config->SetMinWidth(width);
 	this->SetupSizeLimits();
 }
 
@@ -663,11 +656,6 @@ double GtkUserWindow::GetHeight() {
 }
 
 void GtkUserWindow::SetHeight(double height) {
-	if (height > config->GetMaxHeight())
-		height = config->GetMaxHeight();
-	if (height < config->GetMinHeight())
-		height = config->GetMinHeight();
-	this->config->SetHeight((int) height);
 	this->SetupSize();
 }
 
@@ -676,7 +664,6 @@ double GtkUserWindow::GetMaxHeight() {
 }
 
 void GtkUserWindow::SetMaxHeight(double height) {
-	this->config->SetMaxHeight(height);
 	this->SetupSizeLimits();
 }
 
@@ -685,7 +672,6 @@ double GtkUserWindow::GetMinHeight() {
 }
 
 void GtkUserWindow::SetMinHeight(double height) {
-	this->config->SetMinHeight(height);
 	this->SetupSizeLimits();
 }
 
@@ -699,21 +685,7 @@ Bounds GtkUserWindow::GetBounds() {
 }
 
 void GtkUserWindow::SetBounds(Bounds b) {
-	this->config->SetX(b.x);
-	this->config->SetY(b.y);
 	this->SetupPosition();
-
-	if (b.width > config->GetMaxWidth())
-		b.width = config->GetMaxWidth();
-	if (b.width < config->GetMinWidth())
-		b.width = config->GetMinWidth();
-	this->config->SetWidth(b.width);
-
-	if (b.height > config->GetMaxHeight())
-		b.height = config->GetMaxHeight();
-	if (b.height < config->GetMinHeight())
-		b.height = config->GetMinHeight();
-	this->config->SetHeight(b.height);
 	this->SetupSize();
 }
 
@@ -723,11 +695,6 @@ std::string GtkUserWindow::GetTitle() {
 
 void GtkUserWindow::SetTitle(std::string& title)
 {
-	if (this->gtk_window != NULL)
-		gtk_window_set_title(this->gtk_window, "");
-
-	this->config->SetTitle(title);
-
 	if (this->gtk_window != NULL)
 	{
 		std::string& ntitle = this->config->GetTitle();
@@ -742,8 +709,6 @@ std::string GtkUserWindow::GetURL()
 
 void GtkUserWindow::SetURL(std::string& uri)
 {
-	this->config->SetURL(uri);
-
 	if (this->gtk_window != NULL && this->web_view != NULL)
 		webkit_web_view_open(this->web_view, uri.c_str());
 }
@@ -753,8 +718,6 @@ bool GtkUserWindow::IsUsingChrome() {
 }
 
 void GtkUserWindow::SetUsingChrome(bool chrome) {
-	this->config->SetUsingChrome(chrome);
-
 	if (this->gtk_window != NULL)
 		gtk_window_set_decorated(this->gtk_window, chrome);
 }
@@ -766,8 +729,6 @@ bool GtkUserWindow::IsResizable()
 
 void GtkUserWindow::SetResizable(bool resizable)
 {
-	this->config->SetResizable(resizable);
-
 	if (this->gtk_window != NULL)
 		gtk_window_set_resizable(this->gtk_window, resizable);
 }
@@ -779,7 +740,6 @@ bool GtkUserWindow::IsMaximizable()
 
 void GtkUserWindow::SetMaximizable(bool maximizable)
 {
-	this->config->SetMaximizable(maximizable);
 	this->SetupDecorations();
 }
 
@@ -790,7 +750,6 @@ bool GtkUserWindow::IsMinimizable()
 
 void GtkUserWindow::SetMinimizable(bool minimizable)
 {
-	this->config->SetMinimizable(minimizable);
 	this->SetupDecorations();
 }
 
@@ -800,7 +759,6 @@ bool GtkUserWindow::IsCloseable()
 }
 void GtkUserWindow::SetCloseable(bool closeable)
 {
-	this->config->SetCloseable(closeable);
 	if (this->gtk_window != NULL)
 		gtk_window_set_deletable(this->gtk_window, closeable);
 }
@@ -810,15 +768,6 @@ bool GtkUserWindow::IsVisible()
 	return this->config->IsVisible();
 }
 
-void GtkUserWindow::SetVisible(bool visible)
-{
-	if (visible) {
-		this->Show();
-	} else {
-		this->Hide();
-	}
-}
-
 double GtkUserWindow::GetTransparency()
 {
 	return this->config->GetTransparency();
@@ -826,8 +775,6 @@ double GtkUserWindow::GetTransparency()
 
 void GtkUserWindow::SetTransparency(double alpha)
 {
-	this->config->SetTransparency(alpha);
-
 	if (this->gtk_window != NULL)
 		gtk_window_set_opacity(this->gtk_window, alpha);
 }
@@ -839,8 +786,6 @@ bool GtkUserWindow::IsTopMost()
 
 void GtkUserWindow::SetTopMost(bool topmost)
 {
-	this->config->SetTopMost(topmost);
-
 	if (this->gtk_window != NULL)
 	{
 		guint topmost_i = topmost ? TRUE : FALSE;

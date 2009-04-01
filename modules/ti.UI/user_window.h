@@ -200,7 +200,6 @@ class UserWindow : public kroll::StaticBoundObject {
 		virtual bool IsCloseable() = 0;
 		virtual void SetCloseable(bool closeable) = 0;
 		virtual bool IsVisible() = 0;
-		virtual void SetVisible(bool visible) = 0;
 		virtual double GetTransparency() = 0;
 		virtual void SetTransparency(double transparency) = 0;
 		virtual std::string GetTransparencyColor() { return ""; }
@@ -229,7 +228,8 @@ class UserWindow : public kroll::StaticBoundObject {
 		SharedUserWindow shared_this;
 		std::vector<SharedUserWindow> children;
 		long next_listener_id;
-		bool closed;
+		bool active;
+		bool initialized;
 
 		virtual SharedUserWindow GetParent();
 		virtual void AddChild(SharedUserWindow);
@@ -242,6 +242,7 @@ class UserWindow : public kroll::StaticBoundObject {
 	private:
 		DISALLOW_EVIL_CONSTRUCTORS(UserWindow);
 		SharedBoundMethod api;
+		static double Constrain(double, double, double);
 };
 
 }

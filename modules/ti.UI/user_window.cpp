@@ -19,30 +19,6 @@
 
 
 using namespace ti;
-#define TI_SET_BOOL(method, index) \
-{ \
-	SharedValue arg = args.at(index);\
-	if (arg->IsBool()) \
-	{ \
-		this->method(arg->ToBool()); \
-	}\
-	else if (arg->IsInt()) \
-	{ \
-		this->method(arg->ToInt()==1); \
-	} \
-	else if (arg->IsString()) \
-	{ \
-		std::string yn(arg->ToString()); \
-		if (yn=="yes" || yn=="true" || yn=="1") \
-		{ \
-			this->method(true); \
-		} \
-		else \
-		{ \
-			this->method(false); \
-		} \
-	} \
-}
 
 // Initialize our constants here
 int UserWindow::CENTERED = WindowConfig::DEFAULT_POSITION;
@@ -54,7 +30,8 @@ UserWindow::UserWindow(SharedUIBinding binding, WindowConfig *config, SharedUser
 	config(config),
 	parent(parent),
 	next_listener_id(0),
-	closed(false)
+	active(false),
+	initialized(false)
 {
 	this->shared_this = this;
 
@@ -332,14 +309,14 @@ void UserWindow::Open()
 	// Tell the parent window that we are open for business
 	if (!parent.isNull())
 		parent->AddChild(this->shared_this);
+
+	this->initialized = true;
+	this->active = true;
 }
 
 void UserWindow::Close()
 {
-	if (this->closed)
-		return;
-	else
-		this->closed = true;
+	this->active = false;
 
 	SharedUserWindow shthis = this->shared_this;
 	this->FireEvent(CLOSE);
@@ -381,11 +358,13 @@ void UserWindow::Close()
 
 void UserWindow::_Hide(const kroll::ValueList& args, kroll::SharedValue result)
 {
+	this->config->SetVisible(false);
 	this->Hide();
 }
 
 void UserWindow::_Show(const kroll::ValueList& args, kroll::SharedValue result)
 {
+	this->config->SetVisible(true);
 	this->Show();
 }
 
@@ -401,153 +380,263 @@ void UserWindow::_Unfocus(const kroll::ValueList& args, kroll::SharedValue resul
 
 void UserWindow::_IsUsingChrome(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	result->SetBool(this->IsUsingChrome());
+	if (this->active)
+		result->SetBool(this->IsUsingChrome());
+	else
+		result->SetBool(this->config->IsUsingChrome());
 }
 
 void UserWindow::_SetTopMost(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	TI_SET_BOOL(SetTopMost, 0);
+	ArgUtils::VerifyArgsException("setTopMost", args, "b");
+	bool b = args.at(0)->ToBool();
+	this->config->SetTopMost(b);
+	if (this->active)
+		this->SetTopMost(b);
 }
 
 void UserWindow::_IsTopMost(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	result->SetBool(this->IsTopMost());
+	if (this->active)
+		result->SetBool(this->IsUsingChrome());
+	else
+		result->SetBool(this->config->IsTopMost());
 }
 
 void UserWindow::_SetUsingChrome(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	TI_SET_BOOL(SetUsingChrome, 0);
+	ArgUtils::VerifyArgsException("setUsingChrome", args, "b");
+	bool b = args.at(0)->ToBool();
+	this->config->SetUsingChrome(b);
+	if (this->active)
+		this->SetUsingChrome(b);
 }
 
 void UserWindow::_IsUsingScrollbars(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	result->SetBool(this->IsUsingScrollbars());
+	if (this->active)
+		result->SetBool(this->IsUsingChrome());
+	else
+		result->SetBool(this->config->IsUsingScrollbars());
 }
 
 void UserWindow::_IsFullScreen(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	result->SetBool(this->IsFullScreen());
+	if (this->active)
+		result->SetBool(this->IsFullScreen());
+	else
+		result->SetBool(this->config->IsFullScreen());
 }
 
 void UserWindow::_SetFullScreen(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	TI_SET_BOOL(SetFullScreen, 0);
+	ArgUtils::VerifyArgsException("setFullScreen", args, "b");
+	bool b = args.at(0)->ToBool();
+	this->config->SetFullScreen(b);
+	if (this->active)
+		this->SetFullScreen(b);
 }
 
 void UserWindow::_GetId(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	result->SetString(this->GetId().c_str());
+	result->SetString(this->config->GetID());
 }
 
 void UserWindow::_Open(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	this->Open();
+	// Don't allow a window to be opened twice
+	if (!this->active && !this->initialized)
+		this->Open();
 }
 
 void UserWindow::_Close(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	this->Close();
+	// Don't allow a non-active window to be closed
+	if (this->active)
+		this->Close();
 }
 
 void UserWindow::_GetX(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	result->SetDouble(this->GetX());
+	if (this->active)
+		result->SetDouble(this->GetX());
+	else
+		result->SetDouble(this->config->GetX());
 }
 
 void UserWindow::_SetX(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	if (args.size() > 0) {
-		this->SetX(args.at(0)->ToDouble());
+	// We don't use ArgUtils here because this method should be fast
+	if (args.size() > 0 && args.at(0)->IsNumber())
+	{
+		double x = args.at(0)->ToNumber();
+		this->config->SetX(x);
+		if (this->active)
+			this->SetX(x);
 	}
 }
 
 void UserWindow::_GetY(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	result->SetDouble(this->GetY());
+	if (this->active)
+		result->SetDouble(this->GetY());
+	else
+		result->SetDouble(this->config->GetY());
 }
 
 void UserWindow::_SetY(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	if (args.size() > 0) {
-		this->SetY(args.at(0)->ToDouble());
+	// We don't use ArgUtils here because this method should be fast
+	if (args.size() > 0 && args.at(0)->IsNumber())
+	{
+		double y = args.at(0)->ToNumber();
+		this->config->SetY(y);
+		if (this->active)
+			this->SetY(y);
 	}
 }
 
 void UserWindow::_GetWidth(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	result->SetDouble(this->GetWidth());
+	if (this->active)
+		result->SetDouble(this->GetWidth());
+	else
+		result->SetDouble(this->config->GetWidth());
 }
 
 void UserWindow::_SetWidth(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	if (args.size() > 0) {
-		this->SetWidth(args.at(0)->ToDouble());
+	// We don't use ArgUtils here because this method should be fast
+	if (args.size() > 0 && args.at(0)->IsNumber())
+	{
+		double w = args.at(0)->ToNumber();
+		w = UserWindow::Constrain(w, config->GetMinWidth(), config->GetMaxWidth());
+		this->config->SetWidth(w);
+		if (this->active)
+			this->SetWidth(w);
 	}
 }
 
 void UserWindow::_GetMinWidth(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	result->SetDouble(this->GetMinWidth());
+	if (this->active)
+		result->SetDouble(this->GetMinWidth());
+	else
+		result->SetDouble(this->config->GetMinWidth());
 }
 
 void UserWindow::_SetMinWidth(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	if (args.size() > 0) {
-		this->SetMinWidth(args.at(0)->ToDouble());
-	}
+	ArgUtils::VerifyArgsException("setMinWidth", args, "n");
+
+	double mw = args.at(0)->ToNumber();
+	this->config->SetMinWidth(mw);
+	if (this->active)
+		this->SetMinWidth(mw);
+
+	if (this->GetWidth() < mw)
+		this->SetWidth(mw);
 }
 
 void UserWindow::_GetMaxWidth(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	result->SetDouble(this->GetMaxWidth());
+	if (this->active)
+		result->SetDouble(this->GetMaxWidth());
+	else
+		result->SetDouble(this->config->GetMaxWidth());
 }
 
 void UserWindow::_SetMaxWidth(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	if (args.size() > 0) {
-		this->SetMaxWidth(args.at(0)->ToDouble());
-	}
+	ArgUtils::VerifyArgsException("setMaxWidth", args, "n");
+
+	double mw = args.at(0)->ToNumber();
+	this->config->SetMaxWidth(mw);
+	if (this->active)
+		this->SetMaxWidth(mw);
+
+	if (this->GetWidth() > mw)
+		this->SetWidth(mw);
 }
 
 void UserWindow::_GetHeight(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	result->SetDouble(this->GetHeight());
+	if (this->active)
+		result->SetDouble(this->GetHeight());
+	else
+		result->SetDouble(this->config->GetHeight());
 }
 
 void UserWindow::_SetHeight(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	if (args.size() > 0) {
-		this->SetHeight(args.at(0)->ToDouble());
+	// We don't use ArgUtils here because this method should be fast
+	if (args.size() > 0 && args.at(0)->IsNumber())
+	{
+		double h = args.at(0)->ToNumber();
+		h = UserWindow::Constrain(h, config->GetMinHeight(), config->GetMaxHeight());
+		this->config->SetHeight(h);
+		if (this->active)
+			this->SetHeight(h);
 	}
 }
 
 void UserWindow::_GetMinHeight(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	result->SetDouble(this->GetMinHeight());
+	if (this->active)
+		result->SetDouble(this->GetMinHeight());
+	else
+		result->SetDouble(this->config->GetMinHeight());
 }
 
 void UserWindow::_SetMinHeight(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	if (args.size() > 0) {
-		this->SetMinHeight(args.at(0)->ToDouble());
-	}
+	ArgUtils::VerifyArgsException("setMinHeight", args, "n");
+
+	double mh = args.at(0)->ToNumber();
+	this->config->SetMinHeight(mh);
+	if (this->active)
+		this->SetMinHeight(mh);
+
+	if (this->GetHeight() < mh)
+		this->SetHeight(mh);
 }
 
 void UserWindow::_GetMaxHeight(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	result->SetDouble(this->GetMaxHeight());
+	if (this->active)
+		result->SetDouble(this->GetMaxHeight());
+	else
+		result->SetDouble(this->config->GetMaxHeight());
 }
 
 void UserWindow::_SetMaxHeight(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	if (args.size() > 0) {
-		this->SetMaxHeight(args.at(0)->ToDouble());
-	}
+	ArgUtils::VerifyArgsException("setMaxHeight", args, "n");
+
+	double mh = args.at(0)->ToNumber();
+	this->config->SetMaxHeight(mh);
+	if (this->active)
+		this->SetMaxHeight(mh);
+
+	if (this->GetHeight() > mh)
+		this->SetHeight(mh);
 }
 
 void UserWindow::_GetBounds(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	Bounds bounds = this->GetBounds();
+	Bounds bounds;
+	if (this->active)
+	{
+		bounds = this->GetBounds();
+	}
+	else
+	{
+		bounds.x = this->config->GetX();
+		bounds.y = this->config->GetY();
+		bounds.width = this->config->GetWidth();
+		bounds.height = this->config->GetHeight();
+	}
+
 	kroll::StaticBoundObject *b = new kroll::StaticBoundObject();
 	b->Set("x", kroll::Value::NewInt(bounds.x));
 	b->Set("y", kroll::Value::NewInt(bounds.y));
@@ -558,112 +647,195 @@ void UserWindow::_GetBounds(const kroll::ValueList& args, kroll::SharedValue res
 
 void UserWindow::_SetBounds(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	if (args.size() > 0 && args.at(0)->IsObject())
+	if (!args.size() < 1 || !args.at(0)->IsObject())
+	{
+		throw ValueException::FromString("setBounds takes an object with x, y, width and height properties.");
+		return;
+	}
+
+	SharedKObject o = args.at(0)->ToObject();
+	if (!o->Get("x")->IsNumber()
+		|| !o->Get("y")->IsNumber()
+		|| !o->Get("width")->IsNumber()
+		||!o->Get("height")->IsNumber())
+	{
+		throw ValueException::FromString("setBounds takes an object with x, y, width and height properties.");
+		return;
+	}
+
+	double x = o->Get("x")->ToNumber();
+	double y = o->Get("y")->ToNumber();
+	double w = o->Get("width")->ToNumber();
+	double h = o->Get("height")->ToNumber();
+	w = UserWindow::Constrain(w, config->GetMinWidth(), config->GetMaxWidth());
+	h = UserWindow::Constrain(h, config->GetMinHeight(), config->GetMaxHeight());
+
+	this->config->SetX(x);
+	this->config->SetY(y);
+	this->config->SetWidth(w);
+	this->config->SetHeight(h);
+
+	if (this->active)
 	{
 		Bounds bounds;
-
-		kroll::BoundObject* o = args[0]->ToObject();
-		bounds.x = o->Get("x")->ToInt();
-		bounds.y = o->Get("y")->ToInt();
-		bounds.width = o->Get("width")->ToInt();
-		bounds.height = o->Get("height")->ToInt();
+		bounds.x = x;
+		bounds.y = y;
+		bounds.width = w;
+		bounds.height = h;
 		this->SetBounds(bounds);
 	}
 }
 
 void UserWindow::_GetTitle(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	result->SetString(this->GetTitle().c_str());
+	if (this->active)
+		result->SetString(this->GetTitle());
+	else
+		result->SetString(this->config->GetTitle());
 }
 
 void UserWindow::_SetTitle(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	if (args.size() > 0) {
-		std::string title = args.at(0)->ToString();
+	ArgUtils::VerifyArgsException("setTitle", args, "s");
+
+	std::string title = args.at(0)->ToString();
+	this->config->SetTitle(title);
+	if (this->active)
 		this->SetTitle(title);
-	}
 }
 
 void UserWindow::_GetURL(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	result->SetString(this->GetURL().c_str());
+	if (this->active)
+		result->SetString(this->GetURL());
+	else
+		result->SetString(this->config->GetURL());
 }
 
 void UserWindow::_SetURL(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	if (args.size() > 0 && args.at(0)->IsString()) {
-		std::string url = args.at(0)->ToString();
-		url = AppConfig::Instance()->InsertAppIDIntoURL(url);
+	ArgUtils::VerifyArgsException("setURL", args, "s");
+
+	std::string url = args.at(0)->ToString();
+	url = AppConfig::Instance()->InsertAppIDIntoURL(url);
+	this->config->SetURL(url);
+	if (this->active)
 		this->SetURL(url);
-	}
 }
 
 void UserWindow::_IsResizable(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	result->SetBool(this->IsResizable());
+	if (this->active)
+		result->SetBool(this->IsResizable());
+	else
+		result->SetBool(this->config->IsResizable());
 }
 
 void UserWindow::_SetResizable(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	TI_SET_BOOL(SetResizable, 0);
+	ArgUtils::VerifyArgsException("setResizable", args, "b");
+	bool b = args.at(0)->ToBool();
+	this->config->SetResizable(b);
+	if (this->active)
+		this->SetResizable(b);
 }
 
 void UserWindow::_IsMaximizable(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	result->SetBool(this->IsMaximizable());
+	if (this->active)
+		result->SetBool(this->IsMaximizable());
+	else
+		result->SetBool(this->config->IsMaximizable());
 }
 
 void UserWindow::_SetMaximizable(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	TI_SET_BOOL(SetMaximizable, 0);
+	ArgUtils::VerifyArgsException("setMaximizable", args, "b");
+	bool b = args.at(0)->ToBool();
+	this->config->SetMaximizable(b);
+	if (this->active)
+		this->SetMaximizable(b);
 }
 
 void UserWindow::_IsMinimizable(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	result->SetBool(this->IsMinimizable());
+	if (this->active)
+		result->SetBool(this->IsMinimizable());
+	else
+		result->SetBool(this->config->IsMinimizable());
 }
 
 void UserWindow::_SetMinimizable(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	TI_SET_BOOL(SetMinimizable, 0);
+	ArgUtils::VerifyArgsException("setMinimizable", args, "b");
+	bool b = args.at(0)->ToBool();
+	this->config->SetMinimizable(b);
+	if (this->active)
+		this->SetMinimizable(b);
 }
 
 void UserWindow::_IsCloseable(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	result->SetBool(this->IsCloseable());
+	if (this->active)
+		result->SetBool(this->IsCloseable());
+	else
+		result->SetBool(this->config->IsCloseable());
 }
 
 void UserWindow::_SetCloseable(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	TI_SET_BOOL(SetCloseable, 0);
+	ArgUtils::VerifyArgsException("setCloseable", args, "b");
+	bool b = args.at(0)->ToBool();
+	this->config->SetCloseable(b);
+	if (this->active)
+		this->SetCloseable(b);
 }
 
 void UserWindow::_IsVisible(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	result->SetBool(this->IsVisible());
+	if (this->active)
+		result->SetBool(this->IsVisible());
+	else
+		result->SetBool(false);
 }
 
 void UserWindow::_SetVisible(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	TI_SET_BOOL(SetVisible, 0);
+	ArgUtils::VerifyArgsException("setVisible", args, "b");
+	bool b = args.at(0)->ToBool();
+	this->config->SetVisible(b);
+
+	if (this->active)
+	{
+		if (b)
+			this->Show();
+		else
+			this->Hide();
+	}
 }
 
 void UserWindow::_GetTransparency(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	result->SetDouble(this->GetTransparency());
+	if (this->active)
+		result->SetDouble(this->GetTransparency());
+	else
+		result->SetDouble(this->config->GetTransparency());
 }
 
 void UserWindow::_SetTransparency(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	if (args.size() > 0) {
-		this->SetTransparency(args.at(0)->ToDouble());
-	}
+	ArgUtils::VerifyArgsException("setTransparency", args, "n");
+	double t = args.at(0)->ToNumber();
+	t = UserWindow::Constrain(t, 0.0, 1.0);
+
+	this->config->SetTransparency(t);
+	if (this->active)
+		this->SetTransparency(t);
 }
 
 void UserWindow::_GetTransparencyColor(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	std::string color = this->GetTransparencyColor();
-	result->SetString(color);
+	result->SetString(this->GetTransparencyColor());
 }
 
 void UserWindow::_SetMenu(const kroll::ValueList& args, kroll::SharedValue result)
@@ -725,7 +897,7 @@ void UserWindow::_SetIcon(const kroll::ValueList& args, kroll::SharedValue resul
 
 void UserWindow::_GetIcon(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	result->SetString(this->GetIcon()->c_str());
+	result->SetString(this->GetIcon());
 }
 
 void UserWindow::_GetParent(const kroll::ValueList& args, kroll::SharedValue result)
@@ -1041,4 +1213,13 @@ void UserWindow::PageLoaded(SharedBoundObject global_bound_object, std::string &
 	event->Set("scope", Value::NewObject(global_bound_object));
 	event->Set("url", Value::NewString(url.c_str()));
 	this->FireEvent(LOAD, event);
+}
+
+double UserWindow::Constrain(double value, double min, double max)
+{
+	if (value < min)
+		value = min;
+	if (value > max)
+		value = max;
+	return value;
 }
