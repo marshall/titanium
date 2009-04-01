@@ -71,12 +71,12 @@ if build.is_osx():
 		env.AddPostAction(s1, 'ibtool --errors --warnings --notices --output-format human-readable-text --compile %s/%s.nib %s' % (template_dir, base, i))
 
 if build.is_win32():
-	embed_manifest = os.path.join(build.dir, 'tiuimodule.embed.manifest')
-	dll_manifest = os.path.join(build.dir, 'tiuimodule.dll.manifest')
+	embed_manifest = os.path.join(build.dir, 'modules', 'tiui', 'tiuimodule.embed.manifest')
+	dll_manifest = os.path.join(build.dir, 'modules', 'tiui', 'tiuimodule.dll.manifest')
 	common_controls_manifest = os.path.join(build.cwd(), 'win32', 'common_controls.manifest')
-	merged_manifest = os.path.join(build.dir, 'tiuimodule.merged.manifest')
-	kboot_exe = os.path.join(build.runtime_build_dir, 'template' 'kboot.exe')
+	merged_manifest = os.path.join(build.dir, 'modules', 'tiui', 'tiuimodule.merged.manifest')
+	kboot_exe = os.path.join(build.runtime_build_dir, 'template', 'kboot.exe')
 
-	env.AddPostAction(s2, 'mt.exe /nologo /manifest "' + dll_manifest + '" /tlb:"' + path.join(webkit_lib, 'WebKit.tlb') + '" /dll:runtime/WebKit /out:"'+embed_manifest+'"')
-	env.AddPostAction(s2, 'mt.exe -nologo -manifest "'+common_controls_manifest+'" "'+embed_manifest+'" -out:"' + merged_manifest +'"')
-	env.AddPostAction(s2, 'mt.exe -nologo -manifest "' + merged_manifest + '" -outputresource:"'+kboot_exe+';1"')
+	env.AddPostAction(s1, 'mt.exe /nologo /manifest "' + dll_manifest + '" /tlb:"' + path.join(webkit_lib, 'WebKit.tlb') + '" /dll:runtime/WebKit /out:"'+embed_manifest+'"')
+	env.AddPostAction(s1, 'mt.exe -nologo -manifest "'+common_controls_manifest+'" "'+embed_manifest+'" -out:"' + merged_manifest +'"')
+	env.AddPostAction(s1, 'mt.exe -nologo -manifest "' + merged_manifest + '" -outputresource:"'+kboot_exe+';1"')
