@@ -9,15 +9,6 @@
 #include "ui_module.h"
 #include <stdlib.h>
 
-#ifdef OS_WIN32
-	#include "win32/win32_user_window.h"
-#elif OS_OSX
-	#include "osx/osx_user_window.h"
-#elif OS_LINUX
-	#include "gtk/gtk_user_window.h"
-#endif
-
-
 using namespace ti;
 
 // Initialize our constants here
@@ -919,7 +910,7 @@ void UserWindow::_CreateWindow(const ValueList& args, SharedValue result)
 
 	if (args.size() > 0 && args.at(0)->IsObject())
 	{
-		SharedBoundObject props = SharedBoundObject(new StaticBoundObject());
+		SharedKObject props = SharedKObject(new StaticBoundObject());
 		config = new WindowConfig();
 		props = args.at(0)->ToObject();
 		config->UseProperties(props);
@@ -988,7 +979,7 @@ void UserWindow::_OpenFiles(const ValueList& args, SharedValue result)
 	}
 	callback = args.at(0)->ToMethod();
 
-	SharedBoundObject props;
+	SharedKObject props;
 	if (args.size() < 2 || !args.at(1)->IsObject())
 	{
 		props = new StaticBoundObject();
@@ -1200,16 +1191,71 @@ void UserWindow::RemoveChild(SharedUserWindow child)
 	}
 }
 
-void UserWindow::ContextBound(SharedBoundObject global_bound_object)
+void UserWindow::RegisterJSContext(JSGlobalContextRef context)
 {
-	SharedBoundObject event = new StaticBoundObject();
-	event->Set("scope", Value::NewObject(global_bound_object));
+	JSObjectRef global_object = JSContextGetGlobalObject(context);
+	KJSUtil::RegisterGlobalContext(global_object, context);
+	KJSUtil::ProtectGlobalContext(context);
+
+	// Produce a delegating object to represent the top-level
+	// Titanium object. When a property isn't found in this object
+	// it will look for it in global_tibo.
+	SharedKObject global_tibo = this->host->GetGlobalObject();
+	BoundObject* ti_object = new DelegateStaticBoundObject(global_tibo);
+	SharedKObject shared_ti_obj = SharedKObject(ti_object);
+
+	SharedValue ui_api_value = ti_object->Get("UI");
+	if (ui_api_value->IsObject())
+	{
+		// Create a delegate object for the UI API.
+		SharedKObject ui_api = ui_api_value->ToObject();
+		BoundObject* delegate_ui_api = new DelegateStaticBoundObject(ui_api);
+
+		// Place currentWindow in the delegate.
+		SharedValue user_window_val = Value::NewObject(this->GetSharedPtr());
+		delegate_ui_api->Set("currentWindow", user_window_val);
+
+		// Place currentWindow.createWindow in the delegate.
+		SharedValue create_window_value = this->Get("createWindow");
+		delegate_ui_api->Set("createWindow", create_window_value);
+
+		// Place currentWindow.openFiles in the delegate.
+		SharedValue open_files_value = this->Get("openFiles");
+		delegate_ui_api->Set("openFiles", open_files_value);
+
+		ti_object->Set("UI", Value::NewObject(delegate_ui_api));
+	}
+	else
+	{
+		std::cerr << "Could not find UI API point!" << std::endl;
+	}
+
+	// Get the global object into a KJSKObject
+	SharedKObject frame_global = new KJSKObject(context, global_object);
+
+	// Copy the document and window properties to the Titanium object
+	SharedValue doc_value = frame_global->Get("document");
+	ti_object->Set("document", doc_value);
+	SharedValue window_value = frame_global->Get("window");
+	ti_object->Set("window", window_value);
+
+	// Place the Titanium object into the window's global object
+	SharedValue ti_object_value = Value::NewObject(shared_ti_obj);
+	frame_global->Set(GLOBAL_NS_VARNAME, ti_object_value);
+
+	// bind the window into currentWindow so you can call things like
+	// Titanium.UI.currentWindow.getParent().window to get the parents
+	// window and global variable scope
+	this->Set("window", window_value);
+
+	SharedKObject event = new StaticBoundObject();
+	event->Set("scope", Value::NewObject(frame_global));
 	this->FireEvent(INIT, event);
 }
 
-void UserWindow::PageLoaded(SharedBoundObject global_bound_object, std::string &url)
+void UserWindow::PageLoaded(SharedKObject global_bound_object, std::string &url)
 {
-	SharedBoundObject event = new StaticBoundObject();
+	SharedKObject event = new StaticBoundObject();
 	event->Set("scope", Value::NewObject(global_bound_object));
 	event->Set("url", Value::NewString(url.c_str()));
 	this->FireEvent(LOAD, event);

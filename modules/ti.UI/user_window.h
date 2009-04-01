@@ -215,7 +215,7 @@ class UserWindow : public kroll::StaticBoundObject {
 		virtual void SetTopMost(bool topmost) = 0;
 
 		virtual void FireEvent(UserWindowEvent event_type, SharedKObject event=NULL);
-		virtual void ContextBound(SharedBoundObject scope);
+		virtual void RegisterJSContext(JSGlobalContextRef);
 		virtual void PageLoaded(SharedBoundObject scope,std::string &url);
 
 		SharedUserWindow GetSharedPtr();

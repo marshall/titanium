@@ -25,6 +25,10 @@ namespace ti {
 #include "win32/win32_user_window.h"
 #endif
 
+#include <JavaScriptCore/JSObjectRef.h>
+#include <JavaScriptCore/JSStringRef.h>
+#include <JavaScriptCore/JSContextRef.h>
+
 #include <iostream>
 #include "window_config.h"
 #include "user_window.h"
