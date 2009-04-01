@@ -10,6 +10,7 @@
 
 #include "app_config.h"
 #include "window_config.h"
+#include "config_utils.h"
 
 #define SET_STRING(name, prop) \
 { \
@@ -160,80 +161,114 @@ WindowConfig::WindowConfig(WindowConfig *config, std::string& url)
 	this->transparency = config->GetTransparency();
 
 }
+
 WindowConfig::WindowConfig(void* data)
 {
 	xmlElementPtr element = (xmlElementPtr) data;
 	SetDefaults();
 
 	xmlNodePtr child = element->children;
-	while (child != NULL) {
-		if (nodeNameEquals(child, "id")) {
-			winid = nodeValue(child);
+	while (child != NULL)
+	{
+		if (nodeNameEquals(child, "id"))
+		{
+			winid = ConfigUtils::GetNodeValue(child);
 		}
-		else if (nodeNameEquals(child, "title")) {
-			title = nodeValue(child);
+		else if (nodeNameEquals(child, "title"))
+		{
+			title = ConfigUtils::GetNodeValue(child);
 		}
-		else if (nodeNameEquals(child, "url")) {
-			url = nodeValue(child);
+		else if (nodeNameEquals(child, "url"))
+		{
+			url = ConfigUtils::GetNodeValue(child);
 			url = AppConfig::Instance()->InsertAppIDIntoURL(url);
 		}
-		else if (nodeNameEquals(child, "url-regex")) {
-			urlRegex = nodeValue(child);
+		else if (nodeNameEquals(child, "url-regex"))
+		{
+			urlRegex = ConfigUtils::GetNodeValue(child);
 		}
-		else if (nodeNameEquals(child, "maximizable")) {
-			maximizable = boolValue(child);
+		else if (nodeNameEquals(child, "maximizable"))
+		{
+			maximizable = ConfigUtils::GetNodeValueAsBool(child);
 		}
-		else if (nodeNameEquals(child, "minimizable")) {
-			minimizable = boolValue(child);
+		else if (nodeNameEquals(child, "minimizable"))
+		{
+			minimizable = ConfigUtils::GetNodeValueAsBool(child);
 		}
-		else if (nodeNameEquals(child, "closeable")) {
-			closeable = boolValue(child);
+		else if (nodeNameEquals(child, "closeable"))
+		{
+			closeable = ConfigUtils::GetNodeValueAsBool(child);
 		}
-		else if (nodeNameEquals(child, "resizable")) {
-			resizable = boolValue(child);
+		else if (nodeNameEquals(child, "resizable"))
+		{
+			resizable = ConfigUtils::GetNodeValueAsBool(child);
 		}
-		else if (nodeNameEquals(child, "fullscreen")) {
-			fullscreen = boolValue(child);
+		else if (nodeNameEquals(child, "fullscreen"))
+		{
+			fullscreen = ConfigUtils::GetNodeValueAsBool(child);
 		}
-		else if (nodeNameEquals(child, "chrome")) {
-			usingChrome = boolValue(child);
-			const char * scrollbars = (const char *)xmlGetProp(child, (const xmlChar *)"scrollbars");
-			if (scrollbars != NULL) {
-				usingScrollbars = AppConfig::StringToBool(scrollbars);
+		else if (nodeNameEquals(child, "chrome"))
+		{
+			usingChrome = ConfigUtils::GetNodeValueAsBool(child);
+			std::string scrollbars = ConfigUtils::GetPropertyValue(child, "scrollbars");
+			if (!scrollbars.empty())
+			{
+				usingScrollbars = ConfigUtils::StringToBool(scrollbars);
+
 			}
 		}
-		else if (nodeNameEquals(child, "transparency")) {
-			transparency = (float)atof(nodeValue(child));
+		else if (nodeNameEquals(child, "transparency"))
+		{
+			std::string value = ConfigUtils::GetNodeValue(child);
+			transparency = (float) atof(value.c_str());
 		}
-		else if (nodeNameEquals(child, "x")) {
-			x = atoi(nodeValue(child));
+		else if (nodeNameEquals(child, "x"))
+		{
+			std::string value = ConfigUtils::GetNodeValue(child);
+			x = atoi(value.c_str());
 		}
-		else if (nodeNameEquals(child, "y")) {
-			y = atoi(nodeValue(child));
+		else if (nodeNameEquals(child, "y"))
+		{
+			std::string value = ConfigUtils::GetNodeValue(child);
+			y = atoi(value.c_str());
 		}
-		else if (nodeNameEquals(child, "width")) {
-			width = atoi(nodeValue(child));
+		else if (nodeNameEquals(child, "width"))
+		{
+			std::string value = ConfigUtils::GetNodeValue(child);
+			width = atoi(value.c_str());
 		}
-		else if (nodeNameEquals(child, "height")) {
-			height = atoi(nodeValue(child));
+		else if (nodeNameEquals(child, "height"))
+		{
+			std::string value = ConfigUtils::GetNodeValue(child);
+			height = atoi(value.c_str());
 		}
-		else if (nodeNameEquals(child, "visible")) {
-			visible = boolValue(child);
+		else if (nodeNameEquals(child, "visible"))
+		{
+			visible = ConfigUtils::GetNodeValueAsBool(child);
 		}
-		else if (nodeNameEquals(child, "min-width")) {
-			minWidth = atoi(nodeValue(child));
+		else if (nodeNameEquals(child, "min-width"))
+		{
+			std::string value = ConfigUtils::GetNodeValue(child);
+			minWidth = atoi(value.c_str());
 		}
-		else if (nodeNameEquals(child, "max-width")) {
-			maxWidth = atoi(nodeValue(child));
+		else if (nodeNameEquals(child, "max-width"))
+		{
+			std::string value = ConfigUtils::GetNodeValue(child);
+			maxWidth = atoi(value.c_str());
 		}
-		else if (nodeNameEquals(child, "min-height")) {
-			minHeight = atoi(nodeValue(child));
+		else if (nodeNameEquals(child, "min-height"))
+		{
+			std::string value = ConfigUtils::GetNodeValue(child);
+			minHeight = atoi(value.c_str());
 		}
-		else if (nodeNameEquals(child, "max-height")) {
-			maxHeight = atoi(nodeValue(child));
+		else if (nodeNameEquals(child, "max-height"))
+		{
+			std::string value = ConfigUtils::GetNodeValue(child);
+			maxHeight = atoi(value.c_str());
 		}
-		else if (nodeNameEquals(child, "top-most")) {
-			topMost = boolValue(child);
+		else if (nodeNameEquals(child, "top-most"))
+		{
+			topMost = ConfigUtils::GetNodeValueAsBool(child);
 		}
 		child = child->next;
 	}

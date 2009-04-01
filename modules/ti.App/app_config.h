@@ -13,13 +13,10 @@
 #include <sstream>
 
 #include "app_api.h"
-#include "window_config.h"
 
 #define TITRUE 1
 #define TIFALSE 0
 #define nodeNameEquals(n,s) (xmlStrcmp(n->name, (const xmlChar *)s) == 0)
-#define nodeValue(n) ((const char *)xmlNodeListGetString(n->doc, n->children, TITRUE))
-#define boolValue(n) (AppConfig::StringToBool(nodeValue(n)))
 
 namespace ti {
 
@@ -42,8 +39,6 @@ private:
 
 public:
 	~AppConfig();
-
-	static bool StringToBool (const char * str);
 
 	std::string& GetAppName() { return appName; }
 	std::string& GetAppID() { return appID; }

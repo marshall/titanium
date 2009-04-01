@@ -92,8 +92,9 @@ void GtkUserWindow::Open()
 		SharedKObject global = host->GetGlobalObject();
 		if (global->Get("userAgent")->IsUndefined())
 		{
-			const gchar* user_agent = webkit_web_view_get_user_agent(G_OBJECT(web_view));
+			gchar* user_agent = webkit_web_view_get_user_agent(G_OBJECT(web_view));
 			global->Set("userAgent", Value::NewString(user_agent));
+			g_free(user_agent);
 		}
 
 		WebKitWebSettings* settings = webkit_web_settings_new();
