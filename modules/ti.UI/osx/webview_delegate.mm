@@ -352,6 +352,12 @@
 {
 	UserWindow* userWindow = [window userWindow];
 	userWindow->RegisterJSContext(context);
+
+	// Track that we've cleared this frame
+	JSObjectRef global_object = JSContextGetGlobalObject(context);
+	BoundObject *global_bound_object = new KJSKObject(context, global_object);
+	SharedBoundObject shared_global = global_bound_object;
+	(*frames)[frame] = shared_global;
 }
 
 - (void)webView:(WebView *)sender didFinishLoadForFrame:(WebFrame *)frame
