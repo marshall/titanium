@@ -118,10 +118,14 @@
 				</div>
 			</div>
 		</div>
+		<div id="footer"></div>
 	</div>
 	<script>
 	
 		var state = 0;
+		
+		// set the current version of titanium
+		$('#footer').html('v'+Titanium.version);
 		
 		// cancel
 		function cancelInstaller()

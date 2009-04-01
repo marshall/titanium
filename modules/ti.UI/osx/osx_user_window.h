@@ -74,7 +74,6 @@ namespace ti
 			bool IsCloseable();
 			void SetCloseable(bool closeable);
 			bool IsVisible();
-			void SetVisible(bool visible);
 			double GetTransparency();
 			void SetTransparency(double transparency);
 			void SetFullScreen(bool fullscreen);

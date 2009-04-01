@@ -89,7 +89,7 @@ void GtkUserWindow::Open()
 			G_CALLBACK(load_finished_cb), this);
 
 		// Tell Titanium what Webkit is using for a user-agent
-		SharedBoundObject global = host->GetGlobalObject();
+		SharedKObject global = host->GetGlobalObject();
 		if (global->Get("userAgent")->IsUndefined())
 		{
 			const gchar* user_agent = webkit_web_view_get_user_agent(G_OBJECT(web_view));
@@ -277,9 +277,15 @@ void GtkUserWindow::SetupPosition()
 
 		GdkScreen* screen = gdk_screen_get_default();
 		if (x == UserWindow::CENTERED)
+		{
 			x = (gdk_screen_get_width(screen) - this->GetWidth()) / 2;
+			this->config->SetX(x);
+		}
 		if (y == UserWindow::CENTERED)
+		{
 			y = (gdk_screen_get_height(screen) - this->GetHeight()) / 2;
+			this->config->SetY(y);
+		}
 		gtk_window_move(this->gtk_window, x, y);
 
 		// Moving in GTK is asynchronous, so we prime the
@@ -443,7 +449,7 @@ static void load_finished_cb(
 {
 	JSGlobalContextRef context = webkit_web_frame_get_global_context(frame);
 	JSObjectRef global_object = JSContextGetGlobalObject(context);
-	SharedBoundObject frame_global = new KJSKObject(context, global_object);
+	SharedKObject frame_global = new KJSKObject(context, global_object);
 	std::string uri = webkit_web_frame_get_uri(frame);
 
 	GtkUserWindow* user_window = static_cast<GtkUserWindow*>(data);
@@ -459,66 +465,9 @@ static void window_object_cleared_cb(
 	JSObjectRef window_object,
 	gpointer data)
 {
-	JSObjectRef global_object = JSContextGetGlobalObject(context);
-	KJSUtil::RegisterGlobalContext(global_object, context);
-	KJSUtil::ProtectGlobalContext(context);
 
 	GtkUserWindow* user_window = (GtkUserWindow*) data;
-	Host* tihost = user_window->GetHost();
-
-	// Produce a delegating object to represent the top-level
-	// Titanium object. When a property isn't found in this object
-	// it will look for it in global_tibo.
-	SharedBoundObject global_tibo = tihost->GetGlobalObject();
-	BoundObject* ti_object = new DelegateStaticBoundObject(global_tibo);
-	SharedBoundObject shared_ti_obj = SharedBoundObject(ti_object);
-
-	SharedValue ui_api_value = ti_object->Get("UI");
-	if (ui_api_value->IsObject())
-	{
-		// Create a delegate object for the UI API.
-		SharedBoundObject ui_api = ui_api_value->ToObject();
-		BoundObject* delegate_ui_api = new DelegateStaticBoundObject(ui_api);
-
-		// Place currentWindow in the delegate.
-		SharedValue user_window_val = Value::NewObject(user_window->GetSharedPtr());
-		delegate_ui_api->Set("currentWindow", user_window_val);
-
-		// Place currentWindow.createWindow in the delegate.
-		SharedValue create_window_value = user_window->Get("createWindow");
-		delegate_ui_api->Set("createWindow", create_window_value);
-
-		// Place currentWindow.openFiles in the delegate.
-		SharedValue open_files_value = user_window->Get("openFiles");
-		delegate_ui_api->Set("openFiles", open_files_value);
-
-		ti_object->Set("UI", Value::NewObject(delegate_ui_api));
-	}
-	else
-	{
-		std::cerr << "Could not find UI API point!" << std::endl;
-	}
-
-	// Get the global object into a KJSKObject
-	SharedBoundObject frame_global = new KJSKObject(context, global_object);
-
-	// Copy the document and window properties to the Titanium object
-	SharedValue doc_value = frame_global->Get("document");
-	ti_object->Set("document", doc_value);
-	SharedValue window_value = frame_global->Get("window");
-	ti_object->Set("window", window_value);
-
-	// Place the Titanium object into the window's global object
-	SharedValue ti_object_value = Value::NewObject(shared_ti_obj);
-	frame_global->Set(GLOBAL_NS_VARNAME, ti_object_value);
-
-
-	// bind the window into currentWindow so you can call things like
-	// Titanium.UI.currentWindow.getParent().window to get the parents
-	// window and global variable scope
-	user_window->GetSharedPtr()->Set("window",window_value);
-
-	user_window->ContextBound(frame_global);
+	user_window->RegisterJSContext(context);
 }
 
 static void populate_popup_cb(
@@ -552,8 +501,6 @@ static void populate_popup_cb(
 
 
 void GtkUserWindow::Hide() {
-	this->config->SetVisible(false);
-
 	if (this->gtk_window != NULL)
 	{
 		gtk_widget_hide_all(GTK_WIDGET(this->gtk_window));
@@ -561,7 +508,6 @@ void GtkUserWindow::Hide() {
 }
 
 void GtkUserWindow::Show() {
-	this->config->SetVisible(true);
 	if (this->gtk_window != NULL)
 	{
 		gtk_widget_show_all(GTK_WIDGET(this->gtk_window));
@@ -592,7 +538,6 @@ bool GtkUserWindow::IsFullScreen() {
 
 void GtkUserWindow::SetFullScreen(bool fullscreen)
 {
-	this->config->SetFullScreen(fullscreen);
 	if (fullscreen && this->gtk_window != NULL)
 	{
 		gtk_window_fullscreen(this->gtk_window);
@@ -614,7 +559,6 @@ double GtkUserWindow::GetX() {
 }
 
 void GtkUserWindow::SetX(double x) {
-	this->config->SetX(x);
 	this->SetupPosition();
 }
 
@@ -623,7 +567,6 @@ double GtkUserWindow::GetY() {
 }
 
 void GtkUserWindow::SetY(double y) {
-	this->config->SetY(y);
 	this->SetupPosition();
 }
 
@@ -632,11 +575,6 @@ double GtkUserWindow::GetWidth() {
 }
 
 void GtkUserWindow::SetWidth(double width) {
-	if (width > config->GetMaxWidth())
-		width = config->GetMaxWidth();
-	if (width < config->GetMinWidth())
-		width = config->GetMinWidth();
-	this->config->SetWidth((int)width);
 	this->SetupSize();
 }
 
@@ -645,7 +583,6 @@ double GtkUserWindow::GetMaxWidth() {
 }
 
 void GtkUserWindow::SetMaxWidth(double width) {
-	this->config->SetMaxWidth(width);
 	this->SetupSizeLimits();
 }
 
@@ -654,7 +591,6 @@ double GtkUserWindow::GetMinWidth() {
 }
 
 void GtkUserWindow::SetMinWidth(double width) {
-	this->config->SetMinWidth(width);
 	this->SetupSizeLimits();
 }
 
@@ -663,11 +599,6 @@ double GtkUserWindow::GetHeight() {
 }
 
 void GtkUserWindow::SetHeight(double height) {
-	if (height > config->GetMaxHeight())
-		height = config->GetMaxHeight();
-	if (height < config->GetMinHeight())
-		height = config->GetMinHeight();
-	this->config->SetHeight((int) height);
 	this->SetupSize();
 }
 
@@ -676,7 +607,6 @@ double GtkUserWindow::GetMaxHeight() {
 }
 
 void GtkUserWindow::SetMaxHeight(double height) {
-	this->config->SetMaxHeight(height);
 	this->SetupSizeLimits();
 }
 
@@ -685,7 +615,6 @@ double GtkUserWindow::GetMinHeight() {
 }
 
 void GtkUserWindow::SetMinHeight(double height) {
-	this->config->SetMinHeight(height);
 	this->SetupSizeLimits();
 }
 
@@ -699,21 +628,7 @@ Bounds GtkUserWindow::GetBounds() {
 }
 
 void GtkUserWindow::SetBounds(Bounds b) {
-	this->config->SetX(b.x);
-	this->config->SetY(b.y);
 	this->SetupPosition();
-
-	if (b.width > config->GetMaxWidth())
-		b.width = config->GetMaxWidth();
-	if (b.width < config->GetMinWidth())
-		b.width = config->GetMinWidth();
-	this->config->SetWidth(b.width);
-
-	if (b.height > config->GetMaxHeight())
-		b.height = config->GetMaxHeight();
-	if (b.height < config->GetMinHeight())
-		b.height = config->GetMinHeight();
-	this->config->SetHeight(b.height);
 	this->SetupSize();
 }
 
@@ -723,11 +638,6 @@ std::string GtkUserWindow::GetTitle() {
 
 void GtkUserWindow::SetTitle(std::string& title)
 {
-	if (this->gtk_window != NULL)
-		gtk_window_set_title(this->gtk_window, "");
-
-	this->config->SetTitle(title);
-
 	if (this->gtk_window != NULL)
 	{
 		std::string& ntitle = this->config->GetTitle();
@@ -742,8 +652,6 @@ std::string GtkUserWindow::GetURL()
 
 void GtkUserWindow::SetURL(std::string& uri)
 {
-	this->config->SetURL(uri);
-
 	if (this->gtk_window != NULL && this->web_view != NULL)
 		webkit_web_view_open(this->web_view, uri.c_str());
 }
@@ -753,8 +661,6 @@ bool GtkUserWindow::IsUsingChrome() {
 }
 
 void GtkUserWindow::SetUsingChrome(bool chrome) {
-	this->config->SetUsingChrome(chrome);
-
 	if (this->gtk_window != NULL)
 		gtk_window_set_decorated(this->gtk_window, chrome);
 }
@@ -766,8 +672,6 @@ bool GtkUserWindow::IsResizable()
 
 void GtkUserWindow::SetResizable(bool resizable)
 {
-	this->config->SetResizable(resizable);
-
 	if (this->gtk_window != NULL)
 		gtk_window_set_resizable(this->gtk_window, resizable);
 }
@@ -779,7 +683,6 @@ bool GtkUserWindow::IsMaximizable()
 
 void GtkUserWindow::SetMaximizable(bool maximizable)
 {
-	this->config->SetMaximizable(maximizable);
 	this->SetupDecorations();
 }
 
@@ -790,7 +693,6 @@ bool GtkUserWindow::IsMinimizable()
 
 void GtkUserWindow::SetMinimizable(bool minimizable)
 {
-	this->config->SetMinimizable(minimizable);
 	this->SetupDecorations();
 }
 
@@ -800,7 +702,6 @@ bool GtkUserWindow::IsCloseable()
 }
 void GtkUserWindow::SetCloseable(bool closeable)
 {
-	this->config->SetCloseable(closeable);
 	if (this->gtk_window != NULL)
 		gtk_window_set_deletable(this->gtk_window, closeable);
 }
@@ -810,15 +711,6 @@ bool GtkUserWindow::IsVisible()
 	return this->config->IsVisible();
 }
 
-void GtkUserWindow::SetVisible(bool visible)
-{
-	if (visible) {
-		this->Show();
-	} else {
-		this->Hide();
-	}
-}
-
 double GtkUserWindow::GetTransparency()
 {
 	return this->config->GetTransparency();
@@ -826,8 +718,6 @@ double GtkUserWindow::GetTransparency()
 
 void GtkUserWindow::SetTransparency(double alpha)
 {
-	this->config->SetTransparency(alpha);
-
 	if (this->gtk_window != NULL)
 		gtk_window_set_opacity(this->gtk_window, alpha);
 }
@@ -839,8 +729,6 @@ bool GtkUserWindow::IsTopMost()
 
 void GtkUserWindow::SetTopMost(bool topmost)
 {
-	this->config->SetTopMost(topmost);
-
 	if (this->gtk_window != NULL)
 	{
 		guint topmost_i = topmost ? TRUE : FALSE;

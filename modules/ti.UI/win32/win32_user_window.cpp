@@ -454,7 +454,6 @@ double Win32UserWindow::GetX() {
 }
 
 void Win32UserWindow::SetX(double x) {
-	this->config->SetX(x);
 	this->SetupPosition();
 }
 
@@ -463,7 +462,6 @@ double Win32UserWindow::GetY() {
 }
 
 void Win32UserWindow::SetY(double y) {
-	this->config->SetY(y);
 	this->SetupPosition();
 }
 
@@ -472,7 +470,6 @@ double Win32UserWindow::GetWidth() {
 }
 
 void Win32UserWindow::SetWidth(double width) {
-	this->config->SetWidth(width);
 	this->SetupSize();
 }
 
@@ -481,7 +478,6 @@ double Win32UserWindow::GetHeight() {
 }
 
 void Win32UserWindow::SetHeight(double height) {
-	this->config->SetHeight(height);
 	this->SetupSize();
 }
 
@@ -490,7 +486,6 @@ double Win32UserWindow::GetMaxWidth() {
 }
 
 void Win32UserWindow::SetMaxWidth(double width) {
-	this->config->SetMaxWidth(width);
 }
 
 double Win32UserWindow::GetMinWidth() {
@@ -498,7 +493,6 @@ double Win32UserWindow::GetMinWidth() {
 }
 
 void Win32UserWindow::SetMinWidth(double width) {
-	this->config->SetMinWidth(width);
 }
 
 double Win32UserWindow::GetMaxHeight() {
@@ -506,7 +500,6 @@ double Win32UserWindow::GetMaxHeight() {
 }
 
 void Win32UserWindow::SetMaxHeight(double height) {
-	this->config->SetMaxHeight(height);
 }
 
 double Win32UserWindow::GetMinHeight() {
@@ -514,7 +507,6 @@ double Win32UserWindow::GetMinHeight() {
 }
 
 void Win32UserWindow::SetMinHeight(double height) {
-	this->config->SetMinHeight(height);
 }
 
 Bounds Win32UserWindow::GetBounds() {
@@ -538,9 +530,11 @@ void Win32UserWindow::SetBounds(Bounds bounds) {
 
 	if (bounds.x == UserWindow::CENTERED) {
 		bounds.x = (desktopRect.right - bounds.width) / 2;
+		this->config->SetX(bounds.x);
 	}
 	if (bounds.y == UserWindow::CENTERED) {
 		bounds.y = (desktopRect.bottom - bounds.height) / 2;
+		this->config->SetY(bounds.y);
 	}
 
 	UINT flags = SWP_SHOWWINDOW | SWP_NOZORDER;
@@ -552,14 +546,11 @@ void Win32UserWindow::SetBounds(Bounds bounds) {
 }
 
 void Win32UserWindow::SetTitle(std::string& title) {
-	this->config->SetTitle(std::string(title));
 	SetWindowText(window_handle, title.c_str());
 }
 
 void Win32UserWindow::SetURL(std::string& url_) {
 	std::string url = url_;
-
-	this->config->SetURL(url);
 
 	url = AppURLNormalizeURL(url, AppConfig::Instance()->GetAppID());
 	std::cout << "SetURL: " << url << std::endl;
@@ -611,22 +602,18 @@ SetFlag(window_style, flag, b);\
 SetWindowLong(wnd, GWL_STYLE, window_style);
 
 void Win32UserWindow::SetResizable(bool resizable) {
-	this->config->SetResizable(resizable);
 	SetGWLFlag(window_handle, WS_OVERLAPPEDWINDOW, this->config->IsUsingChrome() && !resizable);
 }
 
 void Win32UserWindow::SetMaximizable(bool maximizable) {
-	this->config->SetMaximizable(maximizable);
 	this->SetupDecorations();
 }
 
 void Win32UserWindow::SetMinimizable(bool minimizable) {
-	this->config->SetMinimizable(minimizable);
 	this->SetupDecorations();
 }
 
 void Win32UserWindow::SetCloseable(bool closeable) {
-	this->config->SetCloseable(closeable);
 	this->SetupDecorations();
 }
 
@@ -634,20 +621,12 @@ bool Win32UserWindow::IsVisible() {
 	return IsWindowVisible(window_handle);
 }
 
-void Win32UserWindow::SetVisible(bool visible) {
-	this->config->SetVisible(visible);
-	ShowWindow(window_handle, visible ? SW_SHOW : SW_HIDE);
-}
-
 void Win32UserWindow::SetTransparency(double transparency) {
-	this->config->SetTransparency(transparency);
 	SetLayeredWindowAttributes(window_handle, 0, (BYTE) floor(transparency
 			* 255), LWA_ALPHA);
 }
 
 void Win32UserWindow::SetFullScreen(bool fullscreen) {
-	config->SetFullScreen(fullscreen);
-
 	if (fullscreen) {
 		restore_bounds = GetBounds();
 		restore_styles = GetWindowLong(window_handle, GWL_STYLE);
@@ -737,7 +716,6 @@ SharedString Win32UserWindow::GetIcon() {
 }
 
 void Win32UserWindow::SetUsingChrome(bool chrome) {
-	this->config->SetUsingChrome(chrome);
 	this->SetupDecorations();
 }
 
@@ -845,8 +823,6 @@ bool Win32UserWindow::IsTopMost() {
 }
 
 void Win32UserWindow::SetTopMost(bool topmost) {
-	this->config->SetTopMost(topmost);
-
 	if (topmost) {
 		SetWindowPos(window_handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE
 				| SWP_NOSIZE);

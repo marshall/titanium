@@ -33,67 +33,8 @@ HRESULT STDMETHODCALLTYPE
 Win32WebKitFrameLoadDelegate::windowScriptObjectAvailable (
 		IWebView *webView, JSContextRef context, JSObjectRef windowScriptObject)
 {
-	JSObjectRef global_object = JSContextGetGlobalObject(context);
-	KJSUtil::RegisterGlobalContext(global_object, (JSGlobalContextRef) context);
-	KJSUtil::ProtectGlobalContext((JSGlobalContextRef) context);
-
-	Win32UserWindow* user_window = this->window;
-	Host* tihost = window->GetHost();
-
-	// Produce a delegating object to represent the top-level
-	// Titanium object. When a property isn't found in this object
-	// it will look for it in global_tibo.
-	SharedBoundObject global_tibo = tihost->GetGlobalObject();
-	BoundObject* ti_object = new DelegateStaticBoundObject(global_tibo);
-	SharedBoundObject shared_ti_obj = SharedBoundObject(ti_object);
-
-	SharedValue ui_api_value = ti_object->Get("UI");
-	if (ui_api_value->IsObject())
-	{
-		// Create a delegate object for the UI API.
-		SharedBoundObject ui_api = ui_api_value->ToObject();
-		BoundObject* delegate_ui_api = new DelegateStaticBoundObject(ui_api);
-
-		// Place currentWindow in the delegate.
-		SharedValue user_window_val = Value::NewObject(user_window->GetSharedPtr());
-		delegate_ui_api->Set("currentWindow", user_window_val);
-
-		// Place currentWindow.createWindow in the delegate.
-		SharedValue create_window_value = user_window->Get("createWindow");
-		delegate_ui_api->Set("createWindow", create_window_value);
-
-		// Place currentWindow.openFiles in the delegate.
-		SharedValue open_files_value = user_window->Get("openFiles");
-		delegate_ui_api->Set("openFiles", open_files_value);
-
-		ti_object->Set("UI", Value::NewObject(delegate_ui_api));
-	}
-	else
-	{
-		std::cerr << "Could not find UI API point!" << std::endl;
-	}
-
-	// Get the global object into a KJSKObject
-	SharedBoundObject global_bound_object = new KJSKObject(context, global_object);
-
-	// Copy the document and window properties to the Titanium object
-	SharedValue doc_value = global_bound_object->Get("document");
-	ti_object->Set("document", doc_value);
-	SharedValue window_value = global_bound_object->Get("window");
-	ti_object->Set("window", window_value);
-
-	// Place the Titanium object into the window's global object
-	SharedValue ti_object_value = Value::NewObject(shared_ti_obj);
-	global_bound_object->Set(GLOBAL_NS_VARNAME, ti_object_value);
-
-
-	// bind the window into currentWindow so you can call things like
-	// Titanium.UI.currentWindow.getParent().window to get the parents
-	// window and global variable scope
-	user_window->GetSharedPtr()->Set("window",window_value);
-
-	window->ContextBound(global_bound_object);
-
+	Win32UserWindow* userWindow = this->window;
+	userWindow->RegisterJSContext((JSGlobalContextRef) context);
 	return S_OK;
 }
 

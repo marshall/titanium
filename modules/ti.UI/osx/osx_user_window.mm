@@ -95,7 +95,6 @@ namespace ti
 	}
 	void OSXUserWindow::Hide()
 	{
-		this->config->SetVisible(false);
 		if (opened)
 		{
 			this->Unfocus();
@@ -120,7 +119,6 @@ namespace ti
 	}
 	void OSXUserWindow::Show()
 	{
-		this->config->SetVisible(true);
 		if (opened)
 		{
 			this->Focus();
@@ -167,38 +165,26 @@ namespace ti
 		NSRect screenFrame = [[window screen] frame];
 		NSRect contentFrame = [[window contentView] frame];
 
-		// Don't resize beyond restrictions
-		if (width > config->GetMaxWidth())
-			width = config->GetMaxWidth();
-		if (width < config->GetMinWidth())
-			width = config->GetMinWidth();
-		if (height > config->GetMaxHeight())
-			height = config->GetMaxHeight();
-		if (height < config->GetMinHeight())
-			height = config->GetMinHeight();
-
-		printf("\n\ny1 %i\n", (int) y);
 		// Center frame, if requested
 		if (y == UserWindow::CENTERED)
+		{
 			y = (screenFrame.size.height - height) / 2;
+			config->SetY(y);
+		}
 		if (x == UserWindow::CENTERED)
+		{
 			x = (screenFrame.size.width - width) / 2;
-		printf("\n\ny2 %i\n", (int) y);
-
-		config->SetX(x);
-		config->SetY(y);
-		config->SetWidth(width);
-		config->SetHeight(height);
+			config->SetX(x);
+		}
 
 		// Now we adjust for the size of the frame decorations
 		width += frame.size.width - contentFrame.size.width;
 		height += frame.size.height - contentFrame.size.height;
+
 		// Adjust the position for the origin of this screen and use cartesian coordinates
-		printf("\n\no: %i   screen:%i     y:%i %i\n", (int) screenFrame.origin.y, (int) screenFrame.size.height, (int) y, (int) height);
 		x += screenFrame.origin.x;
 		y = screenFrame.origin.y + (screenFrame.size.height - (y + height));
 
-		printf("\n\ny3 %i\n", (int) y);
 		return NSMakeRect(x, y, width, height);
 	}
 
@@ -262,7 +248,6 @@ namespace ti
 	}
 	
 	void OSXUserWindow::SetMaxWidth(double width) {
-		this->config->SetMaxWidth(width);
 		this->ReconfigureWindowConstraints();
 	}
 	
@@ -283,7 +268,6 @@ namespace ti
 	}
 
 	void OSXUserWindow::SetMinWidth(double width) {
-		this->config->SetMinWidth(width);
 		this->ReconfigureWindowConstraints();
 	}
 	
@@ -292,7 +276,6 @@ namespace ti
 	}
 	
 	void OSXUserWindow::SetMaxHeight(double height) {
-		this->config->SetMaxHeight(height);
 		this->ReconfigureWindowConstraints();
 	}
 	
@@ -301,7 +284,6 @@ namespace ti
 	}
 	
 	void OSXUserWindow::SetMinHeight(double height) {
-		this->config->SetMinHeight(height);
 		this->ReconfigureWindowConstraints();
 	}
 	Bounds OSXUserWindow::GetBounds()
@@ -328,7 +310,6 @@ namespace ti
 	}
 	void OSXUserWindow::SetTitle(std::string& title)
 	{
-		this->config->SetTitle(title);
 		[window setTitle:[NSString stringWithCString:this->config->GetTitle().c_str()]];
 	}
 	std::string OSXUserWindow::GetURL()
@@ -337,7 +318,6 @@ namespace ti
 	}
 	void OSXUserWindow::SetURL(std::string& url)
 	{
-		this->config->SetURL(url);
 		if (opened)
 		{
 			std::string url_str = AppConfig::Instance()->InsertAppIDIntoURL(config->GetURL());
@@ -351,7 +331,6 @@ namespace ti
 	}
 	void OSXUserWindow::SetResizable(bool resizable)
 	{
-		this->config->SetResizable(resizable);
 		[window setShowsResizeIndicator:resizable];
 	}
 	bool OSXUserWindow::IsMaximizable()
@@ -360,7 +339,6 @@ namespace ti
 	}
 	void OSXUserWindow::SetMaximizable(bool maximizable)
 	{
-		this->config->SetMaximizable(maximizable);
 		[[window standardWindowButton:NSWindowZoomButton] setHidden:!maximizable];
 	}
 	bool OSXUserWindow::IsMinimizable()
@@ -369,7 +347,6 @@ namespace ti
 	}
 	void OSXUserWindow::SetMinimizable(bool minimizable)
 	{
-		this->config->SetMinimizable(minimizable);
 		[[window standardWindowButton:NSWindowMiniaturizeButton] setHidden:!minimizable];
 	}
 	bool OSXUserWindow::IsCloseable()
@@ -378,24 +355,11 @@ namespace ti
 	}
 	void OSXUserWindow::SetCloseable(bool closeable)
 	{
-		this->config->SetCloseable(closeable);
 		[[window standardWindowButton:NSWindowCloseButton] setHidden:!closeable];
 	}
 	bool OSXUserWindow::IsVisible()
 	{
 		return this->config->IsVisible();
-	}
-	void OSXUserWindow::SetVisible(bool visible)
-	{
-		this->config->SetVisible(visible);
-		if (visible)
-		{
-			this->Show();
-		}
-		else
-		{
-			this->Hide();
-		}
 	}
 	double OSXUserWindow::GetTransparency()
 	{
@@ -403,16 +367,10 @@ namespace ti
 	}
 	void OSXUserWindow::SetTransparency(double transparency)
 	{
-		if (transparency < 0.0)
-		{
-			transparency = 1.0;
-		}
-		this->config->SetTransparency(transparency);
 		[window setTransparency:transparency];
 	}
 	void OSXUserWindow::SetFullScreen(bool fullscreen)
 	{
-		config->SetFullScreen(fullscreen);
 		[window setFullScreen:fullscreen];
 	}
 

@@ -35,11 +35,11 @@ def package_app_builder(target, source, env):
 	app.stage(path.join(build.dir, env['SHORTNAME']), src_resources=str(source[0]))
 
 	# Mark these applications as installed
-	futils.Touch(path.join(build.dir, '.installed'))
+	futils.Touch(path.join(app.contents, '.installed'))
 
 	for s in source[1:]:
 		s = str(s)
-		futils.CopyToDir(s, app.dir)
+		futils.CopyToDir(s, app.contents)
 
 	if run:
 		Popen(app.exe)
