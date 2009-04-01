@@ -29,6 +29,7 @@ def textmate_builder(target, source, env):
 	if not os.path.exists(outdir):
 		os.makedirs(outdir)
 	textmate.generate_textmate_bundle(f, outdir)
+	f.close()
 	print 'done'
 
 build.env.Append(BUILDERS = {'Textmate' : Builder(
