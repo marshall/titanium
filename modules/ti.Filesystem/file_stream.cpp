@@ -24,23 +24,29 @@ FileStream::FileStream(std::string filename_) : stream(NULL)
 #endif
 
 	/**
-	 * @tiapi(method=True,returns=boolean,name=Filesystem.Filestream.open) open the file
+	 * @tiapi(method=True,name=Filesystem.Filestream.open,since=0.2) open the file
+	 * @tiresult(for=Filesystem.Filestream.open,type=boolean) returns true if successful
 	 */
 	this->SetMethod("open",&FileStream::Open);
 	/**
-	 * @tiapi(method=True,returns=boolean,name=Filesystem.Filestream.close) close the file
+	 * @tiapi(method=True,name=Filesystem.Filestream.close,since=0.2) close the file
+	 * @tiresult(for=Filesystem.Filestream.close,type=boolean) returns true if successful
 	 */
 	this->SetMethod("close",&FileStream::Close);
 	/**
-	 * @tiapi(method=True,returns=boolean,name=Filesystem.Filestream.read) read from the file
+	 * @tiapi(method=True,name=Filesystem.Filestream.read,since=0.2) read from the file
+	 * @tiresult(for=Filesystem.Filestream.read,type=string) returns data as string
 	 */
 	this->SetMethod("read",&FileStream::Read);
 	/**
-	 * @tiapi(method=True,returns=boolean,name=Filesystem.Filestream.readLine) read one line from the file
+	 * @tiapi(method=True,name=Filesystem.Filestream.readLine,since=0.2) read one line from the file
+	 * @tiresult(for=Filesystem.Filestream.readLine,type=string) returns data as string
 	 */
 	this->SetMethod("readLine",&FileStream::ReadLine);
 	/**
-	 * @tiapi(method=True,returns=boolean,name=Filesystem.Filestream.write) write into the file
+	 * @tiapi(method=True,name=Filesystem.Filestream.write,since=0.2) write into the file
+	 * @tiarg(for=Filesystem.Filestream.write,type=string,name=data) data to write
+	 * @tiresult(for=Filesystem.Filestream.write,type=boolean) returns true if successful
 	 */
 	this->SetMethod("write",&FileStream::Write);
 }

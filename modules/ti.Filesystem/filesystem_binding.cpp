@@ -30,67 +30,86 @@ namespace ti
 	FilesystemBinding::FilesystemBinding(Host *host, SharedBoundObject global) : host(host), global(global), timer(0)
 	{
 		/**
-		 * @tiapi(method=True,returns=file,name=Filesystem.createTempFile) create a temporary file
+		 * @tiapi(method=True,name=Filesystem.createTempFile) create a temporary file
+		 * @tiresult(for=Filesystem.createTempFile,type=object) file object
 		 */
 		this->SetMethod("createTempFile",&FilesystemBinding::CreateTempFile);
 		/**
-		 * @tiapi(method=True,returns=file,name=Filesystem.createTempDirectory) create a temporary directory
+		 * @tiapi(method=True,name=Filesystem.createTempDirectory) create a temporary directory
+		 * @tiresult(for=Filesystem.createTempDirectory,type=object) file object
 		 */
 		this->SetMethod("createTempDirectory",&FilesystemBinding::CreateTempDirectory);
 		/**
-		 * @tiapi(method=True,returns=file,name=Filesystem.getFile) get a file path, optionally joining multiple arguments together in an OS specific way
+		 * @tiapi(method=True,name=Filesystem.getFile) get a file path, optionally joining multiple arguments together in an OS specific way
+		 * @tiresult(for=Filesystem.getFile,type=object) file object
 		 */
 		this->SetMethod("getFile",&FilesystemBinding::GetFile);
 		/**
 		 * @tiapi(method=True,returns=filestream,name=Filesystem.getFileStream) get a file stream object
+		 * @tiresult(for=Filesystem.getFileStream,type=object) file object
 		 */
 		this->SetMethod("getFileStream",&FilesystemBinding::GetFileStream);
 		/**
-		 * @tiapi(method=True,returns=file,name=Filesystem.getProgramsDirectory) gets the OS specific program directory
+		 * @tiapi(method=True,name=Filesystem.getProgramsDirectory) gets the OS specific program directory
+		 * @tiresult(for=Filesystem.getProgramsDirectory,type=object) file object
 		 */
 		this->SetMethod("getProgramsDirectory",&FilesystemBinding::GetProgramsDirectory);
 		/**
-		 * @tiapi(method=True,returns=file,name=Filesystem.getApplicationDirectory) gets the OS specific application directory
+		 * @tiapi(method=True,name=Filesystem.getApplicationDirectory) gets the OS specific application directory
+		 * @tiresult(for=Filesystem.getApplicationDirectory,type=object) file object
 		 */
 		this->SetMethod("getApplicationDirectory",&FilesystemBinding::GetApplicationDirectory);
 		/**
-		 * @tiapi(method=True,returns=file,name=Filesystem.getApplicationDataDirectory) gets the OS specific application data directory
+		 * @tiapi(method=True,name=Filesystem.getApplicationDataDirectory) gets the OS specific application data directory
+		 * @tiresult(for=Filesystem.getApplicationDataDirectory,type=object) file object
 		 */
 		this->SetMethod("getApplicationDataDirectory",&FilesystemBinding::GetApplicationDataDirectory);
 		/**
-		 * @tiapi(method=True,returns=file,name=Filesystem.getRuntimeBaseDirectory) gets the OS specific runtime base directory
+		 * @tiapi(method=True,name=Filesystem.getRuntimeBaseDirectory) gets the OS specific runtime base directory
+		 * @tiresult(for=Filesystem.getRuntimeBaseDirectory,type=object) file object
 		 */
 		this->SetMethod("getRuntimeBaseDirectory",&FilesystemBinding::GetRuntimeBaseDirectory);
 		/**
-		 * @tiapi(method=True,returns=file,name=Filesystem.getResourcesDirectory) gets the OS specific resources directory of the application
+		 * @tiapi(method=True,name=Filesystem.getResourcesDirectory) gets the OS specific resources directory of the application
+		 * @tiresult(for=Filesystem.getResourcesDirectory,type=object) file object
 		 */
 		this->SetMethod("getResourcesDirectory",&FilesystemBinding::GetResourcesDirectory);
 		/**
-		 * @tiapi(method=True,returns=file,name=Filesystem.getDesktopDirectory) gets the OS specific desktop directory
+		 * @tiapi(method=True,name=Filesystem.getDesktopDirectory) gets the OS specific desktop directory
+		 * @tiresult(for=Filesystem.getDesktopDirectory,type=object) file object
 		 */
 		this->SetMethod("getDesktopDirectory",&FilesystemBinding::GetDesktopDirectory);
 		/**
-		 * @tiapi(method=True,returns=file,name=Filesystem.getDocumentsDirectory) gets the OS specific documents directory
+		 * @tiapi(method=True,name=Filesystem.getDocumentsDirectory) gets the OS specific documents directory
+		 * @tiresult(for=Filesystem.getDocumentsDirectory,type=object) file object
 		 */
 		this->SetMethod("getDocumentsDirectory",&FilesystemBinding::GetDocumentsDirectory);
 		/**
-		 * @tiapi(method=True,returns=file,name=Filesystem.getUserDirectory) gets the OS specific user's home directory
+		 * @tiapi(method=True,name=Filesystem.getUserDirectory) gets the OS specific user's home directory
+		 * @tiresult(for=Filesystem.getUserDirectory,type=object) file object
 		 */
 		this->SetMethod("getUserDirectory",&FilesystemBinding::GetUserDirectory);
 		/**
-		 * @tiapi(method=True,returns=string,name=Filesystem.getLineEnding) gets the OS specific line ending string
+		 * @tiapi(method=True,name=Filesystem.getLineEnding) gets the OS specific line ending string
+		 * @tiresult(for=Filesystem.getLineEnding,type=string) line ending
 		 */
 		this->SetMethod("getLineEnding",&FilesystemBinding::GetLineEnding);
 		/**
-		 * @tiapi(method=True,returns=string,name=Filesystem.getSeparator) gets the OS specific path separator string
+		 * @tiapi(method=True,name=Filesystem.getSeparator) gets the OS specific path separator string
+		 * @tiresult(for=Filesystem.getSeparator,type=string) path separator
 		 */
 		this->SetMethod("getSeparator",&FilesystemBinding::GetSeparator);
 		/**
-		 * @tiapi(method=True,returns=list,name=Filesystem.getRootDirectories) gets the OS specific root directories
+		 * @tiapi(method=True,name=Filesystem.getRootDirectories) gets the OS specific root directories
+		 * @tiresult(for=Filesystem.getRootDirectories,type=list) root directory names
 		 */
 		this->SetMethod("getRootDirectories",&FilesystemBinding::GetRootDirectories);
 		/**
-		 * @tiapi(method=True,returns=object,name=Filesystem.asyncCopy) executes an async copy operation
+		 * @tiapi(method=True,name=Filesystem.asyncCopy) executes an async copy operation
+		 * @tiarg(for=Filesystem.asyncCopy,name=paths,type=object) either a path or array of paths to copy from
+		 * @tiarg(for=Filesystem.asyncCopy,name=destination,type=object) either a string or file object to copy to
+		 * @tiarg(for=Filesystem.asyncCopy,name=callback,type=method) callback to invoke on each copy completion operation
+		 * @tiresult(for=Filesystem.asyncCopy,type=object) async copy object
 		 */
 		this->SetMethod("asyncCopy",&FilesystemBinding::ExecuteAsyncCopy);
 
@@ -103,7 +122,7 @@ namespace ti
 		 */
 		this->Set("FILESTREAM_MODE_WRITE", Value::NewString(FileStream::MODE_WRITE));
 		/**
-		 * @tiapi(property=True,immutable=True,returns=file,name=Filesystem.FILESTREAM_MODE_APPEND) file append constant
+		 * @tiapi(property=True,immutable=True,name=Filesystem.FILESTREAM_MODE_APPEND) file append constant
 		 */
 		this->Set("FILESTREAM_MODE_APPEND", Value::NewString(FileStream::MODE_APPEND));
 	}

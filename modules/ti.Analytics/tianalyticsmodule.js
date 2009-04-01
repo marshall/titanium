@@ -60,7 +60,9 @@
 	}
 	
 	/**
-	 * @tiapi(method=True,returns=void,name=Analytics.addEvent) send an analytics event associated with the application
+	 * @tiapi(method=True,name=Analytics.addEvent,since=0.3) send an analytics event associated with the application
+	 * @tiarg(for=Analytics.addEvent,type=string,name=event) event name
+	 * @tiarg(for=Analytics.addEvent,type=object,name=data,optional=True) event data
 	 */
 	Titanium.API.set("Titanium.Analytics.addEvent",function(event,data)
 	{

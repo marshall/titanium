@@ -51,23 +51,28 @@ namespace ti
 	{
 		this->invalid = false;
 		/**
-		 * @tiapi(method=True,returns=string,name=Network.Host.toString) returns a string representation
+		 * @tiapi(method=True,name=Network.Host.toString,since=0.2) returns a string representation
+		 * @tiresult(for=Network.Host.toString,type=string) string
 		 */
 		this->SetMethod("toString",&HostBinding::ToString);
 		/**
-		 * @tiapi(method=True,returns=boolean,name=Network.Host.isInvalid) returns true if valid
+		 * @tiapi(method=True,name=Network.Host.isInvalid,since=0.2) returns true if valid
+		 * @tiresult(for=Network.Host.isInvalid,type=boolean) true if invalid
 		 */
 		this->SetMethod("isInvalid",&HostBinding::IsInvalid);
 		/**
-		 * @tiapi(method=True,returns=string,name=Network.Host.getName) returns the hostname
+		 * @tiapi(method=True,name=Network.Host.getName,since=0.2) returns the hostname
+		 * @tiresult(for=Network.Host.getName,type=string) hostname
 		 */
 		this->SetMethod("getName",&HostBinding::GetName);
 		/**
-		 * @tiapi(method=True,returns=list,name=Network.Host.getAliases) returns a list of aliases
+		 * @tiapi(method=True,name=Network.Host.getAliases,since=0.2) returns a list of aliases
+		 * @tiresult(for=Network.Host.getAliases,type=list) return a list of aliases
 		 */
 		this->SetMethod("getAliases",&HostBinding::GetAliases);
 		/**
-		 * @tiapi(method=True,returns=list,name=Network.Host.getAddresses) returns a list of addresses
+		 * @tiapi(method=True,name=Network.Host.getAddresses,since=0.2) returns a list of addresses
+		 * @tiresult(for=Network.Host.getAddresses,type=list) return a list of ip addresses
 		 */
 		this->SetMethod("getAddresses",&HostBinding::GetAddresses);
 	}

@@ -28,7 +28,7 @@ namespace ti
 			  stopped(false)
 	{
 		/**
-		 * @tiapi(property=True,type=boolean,name=Filesystem.AsyncCopy.running) boolean property to indicate if the copy operation is running
+		 * @tiapi(property=True,type=boolean,name=Filesystem.AsyncCopy.running,since=0.3) boolean property to indicate if the copy operation is running
 		 */
 		this->Set("running",Value::NewBool(true));
 		this->thread = new Poco::Thread();

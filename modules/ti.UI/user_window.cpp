@@ -59,243 +59,300 @@ UserWindow::UserWindow(SharedUIBinding binding, WindowConfig *config, SharedUser
 	this->shared_this = this;
 
 	/**
-	 * @tiapi(property=True,type=int,name=UI.UserWindow.CENTERED) CENTERED constant
+	 * @tiapi(property=True,type=integer,name=UI.UserWindow.CENTERED,since=0.3) CENTERED constant
 	 */
 	this->Set("CENTERED", Value::NewInt(UserWindow::CENTERED));
 	/**
-	 * @tiapi(method=True,returns=void,name=UI.UserWindow.hide) hides the window
+	 * @tiapi(method=True,name=UI.UserWindow.hide,since=0.2) hides the window
 	 */
 	this->SetMethod("hide", &UserWindow::_Hide);
 	/**
-	 * @tiapi(method=True,returns=void,name=UI.UserWindow.show) shows the window
+	 * @tiapi(method=True,name=UI.UserWindow.show,since=0.2) shows the window
 	 */
 	this->SetMethod("show", &UserWindow::_Show);
 	/**
-	 * @tiapi(method=True,returns=void,name=UI.UserWindow.focus) focus the window
+	 * @tiapi(method=True,name=UI.UserWindow.focus,since=0.2) focus the window
 	 */
 	this->SetMethod("focus", &UserWindow::_Focus);
 	/**
-	 * @tiapi(method=True,returns=void,name=UI.UserWindow.unfocus) unfocus the window
+	 * @tiapi(method=True,name=UI.UserWindow.unfocus,since=0.2) unfocus the window
 	 */
 	this->SetMethod("unfocus", &UserWindow::_Unfocus);
 	/**
-	 * @tiapi(method=True,returns=boolean,name=UI.UserWindow.isUsingChrome) returns true if the window has system chrome
+	 * @tiapi(method=True,name=UI.UserWindow.isUsingChrome,since=0.2) returns true if the window has system chrome
+	 * @tiresult(for=UI.UserWindow.isUsingChrome,type=boolean) true if using system chrome
 	 */
 	this->SetMethod("isUsingChrome", &UserWindow::_IsUsingChrome);
 	/**
-	 * @tiapi(method=True,returns=void,name=UI.UserWindow.setUsingChrome) sets true if the window should use system chrome
+	 * @tiapi(method=True,name=UI.UserWindow.setUsingChrome,since=0.2) sets true if the window should use system chrome
+	 * @tiarg(for=UI.UserWindow.setUsingChrome,name=chrome,type=boolean) true to use system chrome
 	 */
 	this->SetMethod("setUsingChrome", &UserWindow::_SetUsingChrome);
 	/**
-	 * @tiapi(method=True,returns=boolean,name=UI.UserWindow.isFullscreen) returns true if the window is full screen
+	 * @tiapi(method=True,name=UI.UserWindow.isFullscreen,since=0.2) returns true if the window is full screen
+	 * @tiarg(for=UI.UserWindow.isFullscreen,name=chrome,type=boolean) true if system chrome
 	 */
 	this->SetMethod("isFullScreen", &UserWindow::_IsFullScreen);
 	/**
-	 * @tiapi(method=True,returns=void,name=UI.UserWindow.setFullScreen) make the window fullscreen
+	 * @tiapi(method=True,name=UI.UserWindow.setFullScreen,since=0.2) make the window fullscreen
+	 * @tiarg(for=UI.UserWindow.setFullScreen,name=fullscreen,type=boolean) true for fullscreen
 	 */
 	this->SetMethod("setFullScreen", &UserWindow::_SetFullScreen);
 	/**
-	 * @tiapi(method=True,returns=integer,name=UI.UserWindow.getID) return the window id
+	 * @tiapi(method=True,returns=integer,name=UI.UserWindow.getID,since=0.2) return the window id
+	 * @tiresult(for=UI.UserWindow.getID,type=string) return id
 	 */
 	this->SetMethod("getID", &UserWindow::_GetId);
 	/**
-	 * @tiapi(method=True,returns=void,name=UI.UserWindow.open) open the window
+	 * @tiapi(method=True,name=UI.UserWindow.open,since=0.2) open the window
 	 */
 	this->SetMethod("open", &UserWindow::_Open);
 	/**
-	 * @tiapi(method=True,returns=void,name=UI.UserWindow.close) close the window
+	 * @tiapi(method=True,name=UI.UserWindow.close,since=0.2) close the window
 	 */
 	this->SetMethod("close", &UserWindow::_Close);
 	/**
-	 * @tiapi(method=True,returns=double,name=UI.UserWindow.getX) return the windows X position
+	 * @tiapi(method=True,returns=double,name=UI.UserWindow.getX,since=0.2) return the windows X position
+	 * @tiresult(for=UI.UserWindow.getX,type=double) return the x value
 	 */
 	this->SetMethod("getX", &UserWindow::_GetX);
 	/**
-	 * @tiapi(method=True,returns=void,name=UI.UserWindow.setX) sets the windows X position
+	 * @tiapi(method=True,name=UI.UserWindow.setX,since=0.2) sets the windows X position
+	 * @tiarg(for=UI.UserWindow.setX,type=double,name=x) x position
 	 */
 	this->SetMethod("setX", &UserWindow::_SetX);
 	/**
-	 * @tiapi(method=True,returns=double,name=UI.UserWindow.getY) returns the windows Y position
+	 * @tiapi(method=True,returns=double,name=UI.UserWindow.getY,since=0.2) returns the windows Y position
+	 * @tiresult(for=UI.UserWindow.getY,type=double) return the y value
 	 */
 	this->SetMethod("getY", &UserWindow::_GetY);
 	/**
-	 * @tiapi(method=True,returns=void,name=UI.UserWindow.setY) sets the windows Y position
+	 * @tiapi(method=True,name=UI.UserWindow.setY,since=0.2) sets the windows Y position
+	 * @tiarg(for=UI.UserWindow.setY,type=double,name=y) y position
 	 */
 	this->SetMethod("setY", &UserWindow::_SetY);
 	/**
-	 * @tiapi(method=True,returns=double,name=UI.UserWindow.getWidth) returns the windows width
+	 * @tiapi(method=True,returns=double,name=UI.UserWindow.getWidth,since=0.2) returns the windows width
+	 * @tiresult(for=UI.UserWindow.getWidth,type=double) return the width value
 	 */
 	this->SetMethod("getWidth", &UserWindow::_GetWidth);
 	/**
-	 * @tiapi(method=True,returns=void,name=UI.UserWindow.setWidth) sets the windows width
+	 * @tiapi(method=True,name=UI.UserWindow.setWidth,since=0.2) sets the windows width
+	 * @tiarg(for=UI.UserWindow.setWidth,type=double,name=width) width 
 	 */
 	this->SetMethod("setWidth", &UserWindow::_SetWidth);
 	/**
-	 * @tiapi(method=True,returns=double,name=UI.UserWindow.getMaxWidth) gets the windows max width
+	 * @tiapi(method=True,returns=double,name=UI.UserWindow.getMaxWidth,since=0.2) gets the windows max width
+	 * @tiresult(for=UI.UserWindow.getMaxWidth,type=double) return the max width value
 	 */
 	this->SetMethod("getMaxWidth", &UserWindow::_GetMaxWidth);
 	/**
-	 * @tiapi(method=True,returns=void,name=UI.UserWindow.setMaxWidth) sets the windows max width
+	 * @tiapi(method=True,name=UI.UserWindow.setMaxWidth,since=0.2) sets the windows max width
+	 * @tiarg(for=UI.UserWindow.setMaxWidth,type=double,name=width) max width
 	 */
 	this->SetMethod("setMaxWidth", &UserWindow::_SetMaxWidth);
 	/**
-	 * @tiapi(method=True,returns=double,name=UI.UserWindow.getMinWidth) gets the windows min width
+	 * @tiapi(method=True,returns=double,name=UI.UserWindow.getMinWidth,since=0.2) gets the windows min width
+	 * @tiresult(for=UI.UserWindow.getMinWidth,type=double) return the min width value
 	 */
 	this->SetMethod("getMinWidth", &UserWindow::_GetMinWidth);
 	/**
-	 * @tiapi(method=True,returns=void,name=UI.UserWindow.setMinWidth) sets the windows min width
+	 * @tiapi(method=True,name=UI.UserWindow.setMinWidth,since=0.2) sets the windows min width
+	 * @tiarg(for=UI.UserWindow.setMinWidth,type=double,name=width) min width
 	 */
 	this->SetMethod("setMinWidth", &UserWindow::_SetMinWidth);
 	/**
-	 * @tiapi(method=True,returns=double,name=UI.UserWindow.getHeight) get the windows height
+	 * @tiapi(method=True,returns=double,name=UI.UserWindow.getHeight,since=0.2) get the windows height
+	 * @tiresult(for=UI.UserWindow.getHeight,type=double) return the height value
 	 */
 	this->SetMethod("getHeight", &UserWindow::_GetHeight);
 	/**
-	 * @tiapi(method=True,returns=void,name=UI.UserWindow.setHeight) set the windows height
+	 * @tiapi(method=True,name=UI.UserWindow.setHeight,since=0.2) set the windows height
+	 * @tiarg(for=UI.UserWindow.setHeight,type=double,name=height) height
 	 */
 	this->SetMethod("setHeight", &UserWindow::_SetHeight);
 	/**
-	 * @tiapi(method=True,returns=double,name=UI.UserWindow.getMaxHeight) get the windows max height
+	 * @tiapi(method=True,returns=double,name=UI.UserWindow.getMaxHeight,since=0.2) get the windows max height
+	 * @tiresult(for=UI.UserWindow.getMaxHeight,type=double) return the max height value
 	 */
 	this->SetMethod("getMaxHeight", &UserWindow::_GetMaxHeight);
 	/**
-	 * @tiapi(method=True,returns=void,name=UI.UserWindow.setMaxHeight) set the windows max height
+	 * @tiapi(method=True,name=UI.UserWindow.setMaxHeight,since=0.2) set the windows max height
+	 * @tiarg(for=UI.UserWindow.setMaxHeight,type=double,name=height) max height
 	 */
 	this->SetMethod("setMaxHeight", &UserWindow::_SetMaxHeight);
 	/**
-	 * @tiapi(method=True,returns=double,name=UI.UserWindow.getMinHeight) get the windows min height
+	 * @tiapi(method=True,returns=double,name=UI.UserWindow.getMinHeight,since=0.2) get the windows min height
+	 * @tiresult(for=UI.UserWindow.getMinHeight,type=double) return the min height value
 	 */
 	this->SetMethod("getMinHeight", &UserWindow::_GetMinHeight);
 	/**
-	 * @tiapi(method=True,returns=void,name=UI.UserWindow.setMinHeight) sets the windows min height
+	 * @tiapi(method=True,name=UI.UserWindow.setMinHeight,since=0.2) sets the windows min height
+	 * @tiarg(for=UI.UserWindow.setMinHeight,type=double,name=height) min height
 	 */
 	this->SetMethod("setMinHeight", &UserWindow::_SetMinHeight);
 	/**
-	 * @tiapi(method=True,returns=object,name=UI.UserWindow.getBounds) get the window bounds
+	 * @tiapi(method=True,name=UI.UserWindow.getBounds,since=0.2) get the window bounds
+	 * @tiresult(for=UI.UserWindow.getBounds,type=object) returns bound object
 	 */
 	this->SetMethod("getBounds", &UserWindow::_GetBounds);
 	/**
-	 * @tiapi(method=True,returns=void,name=UI.UserWindow.setBounds) set the window bounds
+	 * @tiapi(method=True,name=UI.UserWindow.setBounds,since=0.2) set the window bounds
+	 * @tiarg(for=UI.UserWindow.setBounds,type=object,name=bounds) bounds object
 	 */
 	this->SetMethod("setBounds", &UserWindow::_SetBounds);
 	/**
-	 * @tiapi(method=True,returns=string,name=UI.UserWindow.getTitle) get the title of the window
+	 * @tiapi(method=True,returns=string,name=UI.UserWindow.getTitle,since=0.2) get the title of the window
+	 * @tiresult(for=UI.UserWindow.isUsingChrome,type=boolean) true if using system chrome
 	 */
 	this->SetMethod("getTitle", &UserWindow::_GetTitle);
 	/**
-	 * @tiapi(method=True,returns=void,name=UI.UserWindow.setTitle) set the title of the window
+	 * @tiapi(method=True,name=UI.UserWindow.setTitle,since=0.2) set the title of the window
+	 * @tiarg(for=UI.UserWindow.setTitle,type=object,name=title) title
 	 */
 	this->SetMethod("setTitle", &UserWindow::_SetTitle);
 	/**
-	 * @tiapi(method=True,returns=string,name=UI.UserWindow.getURL) get the url for the window
+	 * @tiapi(method=True,returns=string,name=UI.UserWindow.getURL,since=0.2) get the url for the window
+	 * @tiresult(for=UI.UserWindow.isUsingChrome,type=boolean) true if using system chrome
 	 */
 	this->SetMethod("getURL", &UserWindow::_GetURL);
 	/**
-	 * @tiapi(method=True,returns=void,name=UI.UserWindow.setURL) set the url for the window
+	 * @tiapi(method=True,name=UI.UserWindow.setURL,since=0.2) set the url for the window
+	 * @tiarg(for=UI.UserWindow.setURL,type=string,name=url) url
 	 */
 	this->SetMethod("setURL", &UserWindow::_SetURL);
 	/**
-	 * @tiapi(method=True,returns=boolean,name=UI.UserWindow.isResizable) returns true if the window is resizable
+	 * @tiapi(method=True,name=UI.UserWindow.isResizable,since=0.2) returns true if the window is resizable
+	 * @tiresult(for=UI.UserWindow.isResizable,type=boolean) true if using resizable
 	 */
 	this->SetMethod("isResizable", &UserWindow::_IsResizable);
 	/**
-	 * @tiapi(method=True,returns=void,name=UI.UserWindow.setResizable) sets the resizability of the window
+	 * @tiapi(method=True,name=UI.UserWindow.setResizable,since=0.2) sets the resizability of the window
+	 * @tiarg(for=UI.UserWindow.setResizable,type=boolean,name=resizable) resizable
 	 */
 	this->SetMethod("setResizable", &UserWindow::_SetResizable);
 	/**
-	 * @tiapi(method=True,returns=boolean,name=UI.UserWindow.isMaximizable) returns true if the window is maximizable
+	 * @tiapi(method=True,name=UI.UserWindow.isMaximizable,since=0.2) returns true if the window is maximizable
+	 * @tiresult(for=UI.UserWindow.isUsingChrome,type=boolean) true if using system chrome
 	 */
 	this->SetMethod("isMaximizable", &UserWindow::_IsMaximizable);
 	/**
-	 * @tiapi(method=True,returns=void,name=UI.UserWindow.setMaximizable) sets the maximizability of the window
+	 * @tiapi(method=True,name=UI.UserWindow.setMaximizable,since=0.2) sets the maximizability of the window
+	 * @tiarg(for=UI.UserWindow.setMaximizable,type=boolean,name=maximizable) maximizable
 	 */
 	this->SetMethod("setMaximizable", &UserWindow::_SetMaximizable);
 	/**
-	 * @tiapi(method=True,returns=boolean,name=UI.UserWindow.isMinimizable) returns true if the window is minimizable
+	 * @tiapi(method=True,name=UI.UserWindow.isMinimizable,since=0.2) returns true if the window is minimizable
+	 * @tiresult(for=UI.UserWindow.isMinimizable,type=boolean) true if minimizable
 	 */
 	this->SetMethod("isMinimizable", &UserWindow::_IsMinimizable);
 	/**
-	 * @tiapi(method=True,returns=void,name=UI.UserWindow.setMinimizable) sets the minimizability of the window
+	 * @tiapi(method=True,name=UI.UserWindow.setMinimizable,since=0.2) sets the minimizability of the window
+	 * @tiarg(for=UI.UserWindow.setMinimizable,type=boolean,name=minimizable) minimizable
 	 */
 	this->SetMethod("setMinimizable", &UserWindow::_SetMinimizable);
 	/**
-	 * @tiapi(method=True,returns=boolean,name=UI.UserWindow.isCloseable) returns true if the window is closeable
+	 * @tiapi(method=True,name=UI.UserWindow.isCloseable,since=0.2) returns true if the window is closeable
+	 * @tiresult(for=UI.UserWindow.isCloseable,type=boolean) true if closeable
 	 */
 	this->SetMethod("isCloseable", &UserWindow::_IsCloseable);
 	/**
-	 * @tiapi(method=True,returns=void,name=UI.UserWindow.setCloseable) sets the closeability of the window
+	 * @tiapi(method=True,name=UI.UserWindow.setCloseable,since=0.2) sets the closeability of the window
+	 * @tiarg(for=UI.UserWindow.setCloseable,type=boolean,name=closeable) closeable
 	 */
 	this->SetMethod("setCloseable", &UserWindow::_SetCloseable);
 	/**
-	 * @tiapi(method=True,returns=boolean,name=UI.UserWindow.isVisible) returns true if the window is visible
+	 * @tiapi(method=True,name=UI.UserWindow.isVisible,since=0.2) returns true if the window is visible
+	 * @tiresult(for=UI.UserWindow.isVisible,type=boolean) true if visible
 	 */
 	this->SetMethod("isVisible", &UserWindow::_IsVisible);
 	/**
-	 * @tiapi(method=True,returns=void,name=UI.UserWindow.setVisible) sets the visibility of the window
+	 * @tiapi(method=True,name=UI.UserWindow.setVisible,since=0.2) sets the visibility of the window
+	 * @tiarg(for=UI.UserWindow.setVisible,type=boolean,name=visible) visible
 	 */
 	this->SetMethod("setVisible", &UserWindow::_SetVisible);
 	/**
-	 * @tiapi(method=True,returns=double,name=UI.UserWindow.getTransparency) returns the window transparency
+	 * @tiapi(method=True,returns=double,name=UI.UserWindow.getTransparency,since=0.2) returns the window transparency
+	 * @tiresult(for=UI.UserWindow.getTransparency,type=double) return transparency value
 	 */
 	this->SetMethod("getTransparency", &UserWindow::_GetTransparency);
 	/**
-	 * @tiapi(method=True,returns=void,name=UI.UserWindow.setTransparency) gets the windows transparency
+	 * @tiapi(method=True,name=UI.UserWindow.setTransparency,since=0.2) gets the windows transparency
+	 * @tiarg(for=UI.UserWindow.setTransparency,type=double,name=url) transparency value
 	 */
 	this->SetMethod("setTransparency", &UserWindow::_SetTransparency);
 	/**
-	 * @tiapi(method=True,returns=string,name=UI.UserWindow.getTransparencyColor) returns the transparency color for the window
+	 * @tiapi(method=True,returns=string,name=UI.UserWindow.getTransparencyColor,since=0.2) returns the transparency color for the window
+	 * @tiresult(for=UI.UserWindow.getTransparencyColor,type=string) color
 	 */
 	this->SetMethod("getTransparencyColor", &UserWindow::_GetTransparencyColor);
 	/**
-	 * @tiapi(method=True,returns=void,name=UI.UserWindow.setMenu) set the window menu
+	 * @tiapi(method=True,name=UI.UserWindow.setMenu,since=0.2) set the window menu
+	 * @tiarg(for=UI.UserWindow.setMenu,type=object,name=menu) menu
 	 */
 	this->SetMethod("setMenu", &UserWindow::_SetMenu);
 	/**
-	 * @tiapi(method=True,returns=object,name=UI.UserWindow.getMenu) gets the window menu
+	 * @tiapi(method=True,name=UI.UserWindow.getMenu,since=0.2) gets the window menu
+	 * @tiresult(for=UI.UserWindow.getMenu,type=object) return the menu
 	 */
 	this->SetMethod("getMenu", &UserWindow::_GetMenu);
 	/**
-	 * @tiapi(method=True,returns=void,name=UI.UserWindow.setContextMenu) set the window context menu
+	 * @tiapi(method=True,name=UI.UserWindow.setContextMenu,since=0.2) set the window context menu
+	 * @tiarg(for=UI.UserWindow.setContextMenu,type=object,name=menu) menu
 	 */
 	this->SetMethod("setContextMenu", &UserWindow::_SetContextMenu);
 	/**
-	 * @tiapi(method=True,returns=object,name=UI.UserWindow.getContextMenu) get the window context menu
+	 * @tiapi(method=True,name=UI.UserWindow.getContextMenu,since=0.2) get the window context menu
+	 * @tiresult(for=UI.UserWindow.getContextMenu,type=object) returns context menu
 	 */
 	this->SetMethod("getContextMenu", &UserWindow::_GetContextMenu);
 	/**
-	 * @tiapi(method=True,returns=void,name=UI.UserWindow.setIcon) set the window icon
+	 * @tiapi(method=True,name=UI.UserWindow.setIcon,since=0.2) set the window icon
+	 * @tiarg(for=UI.UserWindow.setIcon,type=string,name=icon) icon
 	 */
 	this->SetMethod("setIcon", &UserWindow::_SetIcon);
 	/**
-	 * @tiapi(method=True,returns=string,name=UI.UserWindow.getIcon) get the window icon
+	 * @tiapi(method=True,name=UI.UserWindow.getIcon,since=0.2) get the window icon
+	 * @tiresult(for=UI.UserWindow.getIcon,type=string) icon
 	 */
 	this->SetMethod("getIcon", &UserWindow::_GetIcon);
 	/**
-	 * @tiapi(method=True,returns=void,name=UI.UserWindow.setTopMost) sets whether the window is top most (above other windows)
+	 * @tiapi(method=True,name=UI.UserWindow.setTopMost,since=0.3) sets whether the window is top most (above other windows)
+	 * @tiarg(for=UI.UserWindow.setTopMost,type=boolean,name=topmost) true if top most
 	 */
 	this->SetMethod("setTopMost", &UserWindow::_SetTopMost);
 	/**
-	 * @tiapi(method=True,returns=boolean,name=UI.UserWindow.isTopMost) returns true if the window is top most
+	 * @tiapi(method=True,name=UI.UserWindow.isTopMost,since=0.3) returns true if the window is top most
+	 * @tiresult(for=UI.UserWindow.isTopMost,type=boolean) true if top most
 	 */
 	this->SetMethod("isTopMost", &UserWindow::_IsTopMost);
 	/**
-	 * @tiapi(method=True,returns=object,name=UI.UserWindow.createWindow) create a new window as a child of this window
+	 * @tiapi(method=True,name=UI.UserWindow.createWindow,since=0.2) create a new window as a child of this window
+	 * @tiarg(for=UI.UserWindow.createWindow,name=options,type=object,optional=True) pass in either an object of properties or a url to the window content
+	 * @tiresult(for=UI.UserWindow.createWindow,type=object) return window
 	 */
 	this->SetMethod("createWindow", &UserWindow::_CreateWindow);
 	/**
-	 * @tiapi(method=True,returns=void,name=UI.UserWindow.openFiles) show the open files dialog
+	 * @tiapi(method=True,name=UI.UserWindow.openFiles,since=0.2) show the open files dialog
+	 * @tiarg(for=UI.UserWindow.openFiles,type=method,name=callback) callback method
+	 * @tiarg(for=UI.UserWindow.openFiles,type=object,name=options,optional=True) options
 	 */
 	this->SetMethod("openFiles", &UserWindow::_OpenFiles);
 	/**
-	 * @tiapi(method=True,returns=object,name=UI.UserWindow.getParent) get the window parent
+	 * @tiapi(method=True,name=UI.UserWindow.getParent,since=0.3) get the window parent
+	 * @tiresult(for=UI.UserWindow.getParent,type=object) return the parent window or NULL if no parent
 	 */
 	this->SetMethod("getParent", &UserWindow::_GetParent);
 	/**
-	 * @tiapi(method=True,returns=integer,name=UI.UserWindow.addEventListener) add an event listener to the window and returns integer to use when removing
+	 * @tiapi(method=True,returns=integer,name=UI.UserWindow.addEventListener,since=0.3) add an event listener to the window and returns integer to use when removing
+	 * @tiarg(for=UI.UserWindow.addEventListener,type=method,name=listener) listener method
+	 * @tiresult(for=UI.UserWindow.addEventListener,type=integer) return the listener id
 	 */
 	this->SetMethod("addEventListener", &UserWindow::_AddEventListener);
 	/**
-	 * @tiapi(method=True,returns=void,name=UI.UserWindow.removeEventListener) removes an event listener from the window
+	 * @tiapi(method=True,name=UI.UserWindow.removeEventListener,since=0.3) removes an event listener from the window
+	 * @tiarg(for=UI.UserWindow.removeEventListener,type=integer,name=id) the id returned from addEventListener
+	 * @tiresult(for=UI.UserWindow.removeEventListener,type=boolean) return true if removed
 	 */
 	this->SetMethod("removeEventListener", &UserWindow::_RemoveEventListener);
 

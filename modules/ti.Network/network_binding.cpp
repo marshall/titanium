@@ -22,50 +22,69 @@ namespace ti
 	{
    		SharedValue online = Value::NewBool(true);
 		/**
-		 * @tiapi(property=True,returns=boolean,name=Network.online) returns true if the machine is connected to the Internet
+		 * @tiapi(property=True,name=Network.online,since=0.2) returns true if the machine is connected to the Internet
+		 * @tiresult(for=Network.online,type=boolean) returns true if online
 		 */
 		this->Set("online", online);
 
 		// methods that are available on Titanium.Network
 		/**
-		 * @tiapi(method=True,returns=object,name=Network.createTCPSocket) creates a TCP client socket
+		 * @tiapi(method=True,name=Network.createTCPSocket,since=0.2) creates a TCP client socket
+		 * @tiarg(for=Network.createTCPSocket,name=host,type=string) hostname
+		 * @tiarg(for=Network.createTCPSocket,name=port,type=integer) port
+		 * @tiresult(for=Network.createTCPSocket,type=object) return a Network.TCPSocket object
 		 */
 		this->SetMethod("createTCPSocket",&NetworkBinding::CreateTCPSocket);
 		/**
-		 * @tiapi(method=True,returns=object,name=Network.createIRCClient) creates an IRC client socket
+		 * @tiapi(method=True,name=Network.createIRCClient,since=0.2) creates an IRC client socket
+		 * @tiresult(for=Network.createIRCClient,type=object) return a Network.IRCClient object
 		 */
 		this->SetMethod("createIRCClient",&NetworkBinding::CreateIRCClient);
 		/**
-		 * @tiapi(method=True,returns=object,name=Network.createIPAddress) creates IP Address object
+		 * @tiapi(method=True,name=Network.createIPAddress,since=0.2) creates IP Address object
+		 * @tiarg(for=Network.createIPAddress,name=address,type=string) address
+		 * @tiresult(for=Network.createIPAddress,type=object) return a Network.IPAddress object
 		 */
 		this->SetMethod("createIPAddress",&NetworkBinding::CreateIPAddress);
 		/**
-		 * @tiapi(method=True,returns=object,name=Network.createHTTPClient) creates an HTTP client
+		 * @tiapi(method=True,name=Network.createHTTPClient,since=0.3) creates an HTTP client
+		 * @tiresult(for=Network.createHTTPClient,type=object) return a Network.HTTPClient object
 		 */
 		this->SetMethod("createHTTPClient",&NetworkBinding::CreateHTTPClient);
 		/**
-		 * @tiapi(method=True,returns=object,name=Network.getHostByName) convert a host by name into a Host object
+		 * @tiapi(method=True,name=Network.getHostByName,since=0.2) convert a host by name into a Host object
+		 * @tiarg(for=Network.getHostByName,name=name,type=string) hostname
+		 * @tiresult(for=Network.getHostByName,type=object) return a Network.Host object
 		 */
 		this->SetMethod("getHostByName",&NetworkBinding::GetHostByName);
 		/**
-		 * @tiapi(method=True,returns=object,name=Network.getHostByAddress) convert a host by ip into a Host object
+		 * @tiapi(method=True,name=Network.getHostByAddress,since=0.2) convert a host by ip into a Host object
+		 * @tiarg(for=Network.getHostByAddress,name=address,type=string) address
+		 * @tiresult(for=Network.getHostByAddress,type=object) return a Network.Host object
 		 */
 		this->SetMethod("getHostByAddress",&NetworkBinding::GetHostByAddress);
 		/**
-		 * @tiapi(method=True,returns=object,name=Network.encodeURIComponent) encode a URI component
+		 * @tiapi(method=True,name=Network.encodeURIComponent,since=0.3) encode a URI component
+		 * @tiarg(for=Network.encodeURIComponent,name=value,type=string) value to encode
+		 * @tiresult(for=Network.encodeURIComponent,type=string) encoded value
 		 */
 		this->SetMethod("encodeURIComponent",&NetworkBinding::EncodeURIComponent);
 		/**
-		 * @tiapi(method=True,returns=object,name=Network.decodeURIComponent) decode a URI component
+		 * @tiapi(method=True,name=Network.decodeURIComponent,since=0.3) decode a URI component
+		 * @tiarg(for=Network.decodeURIComponent,name=value,type=string) value to decode
+		 * @tiresult(for=Network.decodeURIComponent,type=string) decoded value
 		 */
 		this->SetMethod("decodeURIComponent",&NetworkBinding::DecodeURIComponent);
 
 		/**
-		 * @tiapi(method=True,returns=int,name=Network.addConnectivityListener) add a connectivity change listener. returns an id to be used when removing.
+		 * @tiapi(method=True,name=Network.addConnectivityListener,since=0.2) add a connectivity change listener. returns an id to be used when removing.
+		 * @tiarg(for=Network.addConnectivityListener,type=method,name=listener) callback method
+		 * @tiresult(for=Network.addConnectivityListener,type=integer) returns an registration id to use when removing
 		 */
 		this->SetMethod("addConnectivityListener",&NetworkBinding::AddConnectivityListener);
 		/**
-		 * @tiapi(method=True,returns=boolean,name=Network.removeConnectivityListener) remove a connectivity change listener
+		 * @tiapi(method=True,name=Network.removeConnectivityListener,since=0.2) remove a connectivity change listener
+		 * @tiarg(for=Network.removeConnectivityListener,type=integer,name=id) registration id
 		 */
 		this->SetMethod("removeConnectivityListener",&NetworkBinding::RemoveConnectivityListener);
 

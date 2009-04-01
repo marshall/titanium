@@ -12,11 +12,16 @@ namespace ti
 	GrowlBinding::GrowlBinding(SharedBoundObject global) : global(global)
 	{
 		/**
-		 * @tiapi(method=True,returns=void,name=Notification.showNotification) show a growl notification
+		 * @tiapi(method=True,name=Notification.showNotification,since=0.2) show a growl notification
+         * @tiarg(for=Notification.showNotification,name=title,type=string) title of the notification window (the first argument can also be an object with each argument as a property)
+         * @tiarg(for=Notification.showNotification,name=description,type=string) title of the notification window
+         * @tiarg(for=Notification.showNotification,name=icon,type=string,optional=False) icon path for the notification window
+         * @tiarg(for=Notification.showNotification,name=timeout,type=string,optional=False) timeout to hide the window
 		 */
 		SetMethod("showNotification", &GrowlBinding::ShowNotification);
 		/**
-		 * @tiapi(method=True,returns=boolean,name=Notification.isRunning) returns true if Growl is running
+		 * @tiapi(method=True,name=Notification.isRunning,since=0.2) returns true if Growl is running
+		 * @tiresult(for=Notification.isRunning,type=boolean) returns true if running
 		 */
 		SetMethod("isRunning", &GrowlBinding::IsRunning);
 	}

@@ -30,39 +30,42 @@ namespace ti
 		}
 		
 		/**
-		 * @tiapi(property=True,type=string,name=Process.Process.command) returns the command for the process
+		 * @tiapi(property=True,type=string,name=Process.Process.command,version=0.2) returns the command for the process
 		 */
 		this->Set("command",Value::NewString(cmd));
 		/**
-		 * @tiapi(property=True,type=integer,name=Process.Process.pid) returns the process id for the process
+		 * @tiapi(property=True,type=integer,name=Process.Process.pid,version=0.2) returns the process id for the process
 		 */
 		this->Set("pid",Value::NewInt((int)process->id()));
 		/**
-		 * @tiapi(property=True,type=boolean,name=Process.Process.running) returns true if the command is running
+		 * @tiapi(property=True,type=boolean,name=Process.Process.running,version=0.2) returns true if the command is running
 		 */
 		this->Set("running",Value::NewBool(true)); 
 		 
 		this->err = new Pipe(new Poco::PipeInputStream(*errp));
 		SharedBoundObject errb = this->err;
 		/**
-		 * @tiapi(method=True,returns=object,name=Process.Process.err) returns the error stream as a Pipe object
+		 * @tiapi(property=True,name=Process.Process.err,version=0.2) returns the error stream as a Pipe object
 		 */
 		this->Set("err",Value::NewObject(errb));
 		
 		this->out = new Pipe(new Poco::PipeInputStream(*outp));
 		SharedBoundObject outb = this->out;
 		/**
-		 * @tiapi(method=True,returns=object,name=Process.Process.out) returns the output stream as a Pipe object
+		 * @tiapi(property=True,name=Process.Process.out,version=0.2) returns the output stream as a Pipe object
 		 */
 		this->Set("out",Value::NewObject(outb));
 		
 		this->in = new Pipe(new Poco::PipeOutputStream(*inp));
 		SharedBoundObject inb = this->in;
 		/**
-		 * @tiapi(method=True,returns=object,name=Process.Process.in) returns the input stream as a Pipe object
+		 * @tiapi(property=True,name=Process.Process.in,version=0.2) returns the input stream as a Pipe object
 		 */
 		this->Set("in",Value::NewObject(inb));
 		
+		/**
+		 * @tiapi(method=True,name=Process.Process.terminate,version=0.2) terminate the process
+		 */
 		this->SetMethod("terminate",&Process::Terminate);
 	}
 	Process::~Process()

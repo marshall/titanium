@@ -24,7 +24,7 @@ namespace ti
 	ProcessBinding::ProcessBinding(Host *h, SharedBoundObject global) : host(h),global(global)
 	{
 		/**
-		 * @tiapi(property=True,type=integer,name=Process.pid) returns the process id from the application
+		 * @tiapi(property=True,type=integer,name=Process.pid,since=0.3) returns the process id from the application
 		 */
 #ifdef OS_OSX
 		NSProcessInfo *p = [NSProcessInfo processInfo];
@@ -36,23 +36,31 @@ namespace ti
 		//static void times(long& userTime, long& kernelTime);
 
 		/**
-		 * @tiapi(method=True,returns=list,name=Process.getEnv) returns a list of environment variables
+		 * @tiapi(method=True,returns=list,name=Process.getEnv,since=0.2) returns a list of environment variables
+		 * @tiarg(for=Process.getEnv,name=name,type=string) name of the environment property
+		 * @tiresult(for=Process.getEnv,type=string) value for name
 		 */
 		this->SetMethod("getEnv",&ProcessBinding::GetEnv);
 		/**
-		 * @tiapi(method=True,returns=void,name=Process.setEnv) sets an environment variable
+		 * @tiapi(method=True,returns=void,name=Process.setEnv,since=0.2) sets an environment variable
+		 * @tiarg(for=Process.setEnv,name=name,type=string) name of the environment property
+		 * @tiarg(for=Process.setEnv,name=value,type=string) value of the environment property
 		 */
 		this->SetMethod("setEnv",&ProcessBinding::SetEnv);
 		/**
-		 * @tiapi(method=True,returns=boolean,name=Process.hasEnv) returns true if a value exists in the environment
+		 * @tiapi(method=True,name=Process.hasEnv,since=0.2) returns true if a value exists in the environment
+		 * @tiarg(for=Process.hasEnv,name=name,type=string) name of the environment property
+		 * @tiresult(for=Process.hasEnv,type=boolean) returns true if found
 		 */
 		this->SetMethod("hasEnv",&ProcessBinding::HasEnv);
 		/**
-		 * @tiapi(method=True,returns=object,name=Process.launch) launch an external application and returns a Process object
+		 * @tiapi(method=True,name=Process.launch,since=0.2) launch an external application and returns a Process object
+		 * @tiarg(for=Process.launch,name=command,type=string) command line
+		 * @tiresult(for=Process.launch,type=object) returns Process object
 		 */
 		this->SetMethod("launch",&ProcessBinding::Launch);
 		/**
-		 * @tiapi(method=True,returns=void,name=Process.restart) restart the application
+		 * @tiapi(method=True,returns=void,name=Process.restart,since=0.3) restart the application
 		 */
 		this->SetMethod("restart",&ProcessBinding::Restart);
 	}

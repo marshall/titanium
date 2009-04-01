@@ -15,47 +15,60 @@ namespace ti
 
 		// query methods
 		/**
-		 * @tiapi(method=True,returns=boolean,name=UI.Menu.isSeparator) returns true if a separator
+		 * @tiapi(method=True,name=UI.Menu.isSeparator,since=0.2) returns true if a separator
+		 * @tiresult(for=UI.Menu.isSeparator,type=boolean) true if separator
 		 */
 		this->SetMethod("isSeparator", &MenuItem::_IsSeparator);
 		/**
-		 * @tiapi(method=True,returns=boolean,name=UI.Menu.isItem) returns true if an item
+		 * @tiapi(method=True,name=UI.Menu.isItem,since=0.2) returns true if an item
+		 * @tiresult(for=UI.Menu.isItem,type=boolean) true if item
 		 */
 		this->SetMethod("isItem", &MenuItem::_IsItem);
 		/**
-		 * @tiapi(method=True,returns=boolean,name=UI.Menu.isSubMenu) returns true if a submenu
+		 * @tiapi(method=True,name=UI.Menu.isSubMenu,since=0.2) returns true if a submenu
+		 * @tiresult(for=UI.Menu.isSubMenu,type=boolean) true if submenu
 		 */
 		this->SetMethod("isSubMenu", &MenuItem::_IsSubMenu);
 
 		// submenu methods
 		/**
-		 * @tiapi(method=True,returns=object,name=UI.Menu.addSepartor) add a separator
+		 * @tiapi(method=True,name=UI.Menu.addSeparator,since=0.2) add a separator
+		 * @tiresult(for=UI.Menu.addSeparator,type=object) returns separator MenuItem
 		 */
 		this->SetMethod("addSeparator", &MenuItem::_AddSeparator);
 		/**
-		 * @tiapi(method=True,returns=object,name=UI.Menu.addItem) add an item
+		 * @tiapi(method=True,name=UI.Menu.addItem,since=0.2) add an item
+		 * @tiarg(for=UI.Menu.addItem,name=label,type=string,optional=True) label for the menu
+		 * @tiarg(for=UI.Menu.addItem,name=callback,type=method,optional=True) callback for the menu
+		 * @tiarg(for=UI.Menu.addItem,name=icon,type=string,optional=True) icon for the menu
+		 * @tiresult(for=UI.Menu.addItem,type=object) returns item MenuItem
 		 */
 		this->SetMethod("addItem", &MenuItem::_AddItem);
 		/**
-		 * @tiapi(method=True,returns=object,name=UI.Menu.addSubMenu) add a submenu
+		 * @tiapi(method=True,name=UI.Menu.addSubMenu,since=0.2) add a submenu
+		 * @tiarg(for=UI.Menu.addItem,name=label,type=string,optional=True) label for the menu
+		 * @tiarg(for=UI.Menu.addItem,name=icon,type=string,optional=True) icon for the menu
+		 * @tiresult(for=UI.Menu.addSubMenu,type=object) returns submenu MenuItem
 		 */
 		this->SetMethod("addSubMenu", &MenuItem::_AddSubMenu);
 
 		/**
-		 * @tiapi(method=True,returns=void,name=UI.Menu.enable) enable the menu item
+		 * @tiapi(method=True,name=UI.Menu.enable,since=0.2) enable the menu item
 		 */
 		this->SetMethod("enable", &MenuItem::_Enable);
 		/**
-		 * @tiapi(method=True,returns=void,name=UI.Menu.disable) disable the menu item
+		 * @tiapi(method=True,name=UI.Menu.disable,since=0.2) disable the menu item
 		 */
 		this->SetMethod("disable", &MenuItem::_Disable);
 
 		/**
-		 * @tiapi(method=True,returns=void,name=UI.Menu.setLabel) set the menu label
+		 * @tiapi(method=True,name=UI.Menu.setLabel,since=0.2) set the menu label
+		 * @tiarg(for=UI.Menu.setLabel,name=label,type=string) label value
 		 */
 		this->SetMethod("setLabel", &MenuItem::_SetLabel);
 		/**
-		 * @tiapi(method=True,returns=void,name=UI.Menu.setIcon) set the icon for the menu
+		 * @tiapi(method=True,name=UI.Menu.setIcon,since=0.2) set the icon for the menu
+		 * @tiarg(for=UI.Menu.setIcon,name=icon,type=string) icon value
 		 */
 		this->SetMethod("setIcon", &MenuItem::_SetIcon);
 	}

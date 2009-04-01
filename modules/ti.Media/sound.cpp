@@ -10,47 +10,54 @@ namespace ti
 	Sound::Sound (std::string &s) : url(s)
 	{
 		/**
-		 * @tiapi(method=True,returns=void,name=Media.Sound.play) starting playing the sound
+		 * @tiapi(method=True,name=Media.Sound.play,since=0.2) starting playing the sound
 		 */
 		this->SetMethod("play",&Sound::Play);
 		/**
-		 * @tiapi(method=True,returns=void,name=Media.Sound.pause) pause a playing sound
+		 * @tiapi(method=True,name=Media.Sound.pause,since=0.2) pause a playing sound
 		 */
 		this->SetMethod("pause",&Sound::Pause);
 		/**
-		 * @tiapi(method=True,returns=void,name=Media.Sound.stop) stop a playing sound
+		 * @tiapi(method=True,name=Media.Sound.stop,since=0.2) stop a playing sound
 		 */
 		this->SetMethod("stop",&Sound::Stop);
 		/**
-		 * @tiapi(method=True,returns=void,name=Media.Sound.reload) reload a playing sound
+		 * @tiapi(method=True,name=Media.Sound.reload,since=0.2) reload a playing sound
 		 */
 		this->SetMethod("reload",&Sound::Reload);
 		/**
-		 * @tiapi(method=True,returns=void,name=Media.Sound.setVolume) set the volume from 0.0-1.0
+		 * @tiapi(method=True,name=Media.Sound.setVolume,since=0.2) set the volume from 0.0-1.0
+		 * @tiarg(for=Media.Sound.setVolume,type=double,name=volume) volume from 0.0-1.0
 		 */
 		this->SetMethod("setVolume",&Sound::SetVolume);
 		/**
-		 * @tiapi(method=True,returns=double,name=Media.Sound.getVolume) get the volume from 0.0-1.0
+		 * @tiapi(method=True,name=Media.Sound.getVolume,since=0.2) get the volume from 0.0-1.0
+		 * @tiresult(for=Media.Sound.getVolume,type=double) return the volume as 0.0-1.0
 		 */
 		this->SetMethod("getVolume",&Sound::GetVolume);
 		/**
-		 * @tiapi(method=True,returns=boolean,name=Media.Sound.setLooping) sets the looping of the sound
+		 * @tiapi(method=True,name=Media.Sound.setLooping,since=0.2) sets the looping of the sound
+		 * @tiarg(for=Media.Sound.setLooping,name=loop,type=boolean) true to set looping
 		 */
 		this->SetMethod("setLooping",&Sound::SetLooping);
 		/**
-		 * @tiapi(method=True,returns=boolean,name=Media.Sound.isLooping) returns true if the sound is looping
+		 * @tiapi(method=True,name=Media.Sound.isLooping,since=0.2) returns true if the sound is looping
+		 * @tiresult(for=Media.Sound.isLooping,type=boolean) returns true if looping
 		 */
 		this->SetMethod("isLooping",&Sound::IsLooping);
 		/**
-		 * @tiapi(method=True,returns=boolean,name=Media.Sound.isPlaying) returns true if the sound is playing
+		 * @tiapi(method=True,name=Media.Sound.isPlaying,since=0.2) returns true if the sound is playing
+		 * @tiresult(for=Media.Sound.isPlaying,type=boolean) returns true if playing
 		 */
 		this->SetMethod("isPlaying",&Sound::IsPlaying);
 		/**
-		 * @tiapi(method=True,returns=boolean,name=Media.Sound.isPaused) returns true if the sound is paused
+		 * @tiapi(method=True,name=Media.Sound.isPaused,since=0.2) returns true if the sound is paused
+		 * @tiresult(for=Media.Sound.isPaused,type=boolean) returns true if paused
 		 */
 		this->SetMethod("isPaused",&Sound::IsPaused);
 		/**
-		 * @tiapi(method=True,returns=void,name=Media.Sound.onComplete) set the oncomplete function callback
+		 * @tiapi(method=True,name=Media.Sound.onComplete,since=0.2) set the oncomplete function callback
+		 * @tiarg(for=Media.Sound.onComplete,type=method,name=callback) callback method
 		 */
 		this->SetMethod("onComplete",&Sound::OnComplete);
 	}

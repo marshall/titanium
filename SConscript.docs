@@ -24,20 +24,20 @@ AlwaysBuild(apicoveraget)
 def textmate_builder(target, source, env):
 	print 'Building Textmate bundle...',
 	sys.stdout.flush()
-	f = open(str(source[0]))
+	f = open(str(source[0]),'w')
 	outdir = str(target[0])
 	if not os.path.exists(outdir):
 		os.makedirs(outdir)
 	textmate.generate_textmate_bundle(f, outdir)
 	print 'done'
 
-build.env.Append(BUILDERS = {'Texmate' : Builder(
+build.env.Append(BUILDERS = {'Textmate' : Builder(
 	action=textmate_builder,
 	source_factory=SCons.Node.FS.default_fs.Entry,
 	target_factory=SCons.Node.FS.default_fs.Dir,
 	multi=0)})
 
 tm_out = path.join(build.dir, 'Titanium.tmbundle')
-textmatet = build.env.Texmate(tm_out, [api_out])
+textmatet = build.env.Textmate(tm_out, [api_out])
 Alias('textmate', textmatet)
 AlwaysBuild(textmatet)

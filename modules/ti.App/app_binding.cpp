@@ -14,32 +14,38 @@ namespace ti
 	AppBinding::AppBinding(Host *host,SharedBoundObject global) : host(host),global(global)
 	{
 		/**
-		 * @tiapi(method=True,immutable=True,returns=string,name=App.getID) get the application id
+		 * @tiapi(method=True,immutable=True,name=App.getID,since=0.2) get the application id
+		 * @tiresult(for=App.getID,type=string) returns the id
 		 */
 		this->SetMethod("getID", &AppBinding::GetID);
 		/**
-		 * @tiapi(method=True,immutable=True,returns=string,name=App.getName) get the application name
+		 * @tiapi(method=True,immutable=True,name=App.getName,since=0.2) get the application name
+	     * @tiresult(for=App.getName,type=string) returns the name
 		 */
 		this->SetMethod("getName", &AppBinding::GetName);
 		/**
-		 * @tiapi(method=True,immutable=True,returns=string,name=App.getVersion) get the application version
+		 * @tiapi(method=True,immutable=True,name=App.getVersion,since=0.2) get the application version
+		 * @tiresult(for=App.getVersion,type=string) returns the version
 		 */
 		this->SetMethod("getVersion", &AppBinding::GetVersion);
 		/**
-		 * @tiapi(method=True,immutable=True,returns=string,name=App.getUpdateURL) get the application update URL
+		 * @tiapi(method=True,immutable=True,name=App.getUpdateURL,since=0.2) get the application update URL
+	     * @tiresult(for=App.getUpdateURL,type=string) returns the url
 		 */
 		this->SetMethod("getUpdateURL", &AppBinding::GetUpdateURL);
 		/**
-		 * @tiapi(method=True,immutable=True,returns=string,name=App.getGUID) get the application globally unique id
+		 * @tiapi(method=True,immutable=True,name=App.getGUID,since=0.2) get the application globally unique id
+	     * @tiresult(for=App.getGUID,type=string) returns the unique id
 		 */
 		this->SetMethod("getGUID", &AppBinding::GetGUID);
 		/**
-		 * @tiapi(method=True,immutable=True,returns=string,name=App.appURLToPath) get a full path from an application using app: URL
+		 * @tiapi(method=True,immutable=True,name=App.appURLToPath,since=0.2) get a full path from an application using app: URL
+		 * @tiresult(for=App.appURLToPath,type=string) returns the path
 		 */
 		this->SetMethod("appURLToPath", &AppBinding::AppURLToPath);
 		
 		/**
-		 * @tiapi(property=True,immutable=True,type=string,name=App.path) get a full path to the application
+		 * @tiapi(property=True,immutable=True,type=string,name=App.path,since=0.2) get a full path to the application
 		 */
 #ifdef OS_OSX
 		NSString *path = [[NSBundle mainBundle] bundlePath];
@@ -49,13 +55,13 @@ namespace ti
 #endif
 
 		/**
-		 * @tiapi(property=True,immutable=True,type=double,name=App.version) returns the Titanium product version
+		 * @tiapi(property=True,immutable=True,type=double,name=App.version,since=0.2) returns the Titanium product version
 		 */
 		SharedValue version = Value::NewDouble(PRODUCT_VERSION);
 		global->Set("version", version);
 
 		/**
-		 * @tiapi(property=True,immutable=True,type=string,name=App.platform) returns the Titanium platform
+		 * @tiapi(property=True,immutable=True,type=string,name=App.platform,since=0.2) returns the Titanium platform
 		 */
 		SharedValue platform = Value::NewString(host->GetPlatform());
 		global->Set("platform",platform);
@@ -68,17 +74,19 @@ namespace ti
 		}
 		SharedValue arguments = Value::NewList(argList);
 		/**
-		 * @tiapi(property=True,immutable=True,type=list,name=App.arguments) returns the arguments from the command line
+		 * @tiapi(property=True,immutable=True,type=list,name=App.arguments,since=0.2) returns the arguments from the command line
 		 */
 		Set("arguments", arguments);
 
 		/**
-		 * @tiapi(method=True,immutable=True,returns=void,name=App.exit) causes the application to exit
+		 * @tiapi(method=True,immutable=True,name=App.exit,since=0.2) causes the application to exit
 		 */
 		this->SetMethod("exit",&AppBinding::Exit);
 
 		/**
-		 * @tiapi(method=True,immutable=True,returns=list,name=App.loadProperties) load a properties list from a file path
+		 * @tiapi(method=True,name=App.loadProperties,since=0.2) load a properties list from a file path
+		 * @tiarg(for=App.loadProperties,type=string,name=path) path to properties file
+		 * @tiresult(for=App.loadProperties,type=list) returns the properties as a list
 		 */
 		this->SetMethod("loadProperties", &AppBinding::LoadProperties);
 	}
@@ -145,7 +153,7 @@ namespace ti
 	void AppBinding::LoadProperties(const ValueList& args, SharedValue result)
 	{
 		if (args.size() >= 1 && args.at(0)->IsString()) {
-			std::string file_path = args.at(1)->ToString();
+			std::string file_path = args.at(0)->ToString();
 			SharedBoundObject properties = new PropertiesBinding(file_path);
 			result->SetObject(properties);
 		}
