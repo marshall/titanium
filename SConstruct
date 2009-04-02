@@ -70,8 +70,10 @@ if build.is_win32():
 	
 Export('build')
 targets = COMMAND_LINE_TARGETS
+
 clean = 'clean' in targets or ARGUMENTS.get('clean', 0)
 qclean = 'qclean' in targets or ARGUMENTS.get('qclean', 0)
+build.nopackage = ARGUMENTS.get('nopackage', 0)
 
 if clean or qclean:
 	print "Obliterating your build directory: %s" % build.dir

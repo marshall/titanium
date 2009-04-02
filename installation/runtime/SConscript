@@ -47,16 +47,17 @@ def package_sdk(target, source, env):
 	futils.Touch(p.join(sdk.contents, '.installed'))
 	futils.Touch(p.join(devtool_target, '.installed'))
 
-	sdk.package(
-		out_dir=build.dist_dir,
+	if not build.nopackage:
+		sdk.package(
+			out_dir=build.dist_dir,
 
-		# osx options
-		app_name="Install Titanium SDK",
-		vol_name="Titanium",
-		dmg_name='titanium-sdk-' + build.version,
-		icns_file=p.join(cwd, 'osx', 'VolumeIcon.icns'),
-		ds_store_file=p.join(cwd, 'osx', 'installer_DS_Store'),
-		ds_store_extras=[p.join(cwd, 'osx', 'background.jpg')])
+			# osx options
+			app_name="Install Titanium SDK",
+			vol_name="Titanium",
+			dmg_name='titanium-sdk-' + build.version,
+			icns_file=p.join(cwd, 'osx', 'VolumeIcon.icns'),
+			ds_store_file=p.join(cwd, 'osx', 'installer_DS_Store'),
+			ds_store_extras=[p.join(cwd, 'osx', 'background.jpg')])
 
 build.env.Append(BUILDERS = {'PackageSDK' : Builder(action=package_sdk)})
 sdk_target = build.env.PackageSDK("#dummy-target", [])
