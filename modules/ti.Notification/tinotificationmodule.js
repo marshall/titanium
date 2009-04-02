@@ -25,7 +25,6 @@ function TitaniumNotification(window)
   var callback = null;
   var hideTimer = null;
   
-  mywindow.open();
   this.setTitle = function(value)
   {
     title = value;
@@ -77,6 +76,7 @@ function TitaniumNotification(window)
     mywindow.setTransparency(.99);
     mywindow.callback = notificationClicked;
     mywindow.setURL('app://tinotification.html?title='+encodeURIComponent(title)+'&message='+encodeURIComponent(message)+'&icon='+encodeURIComponent(icon));
+    mywindow.open();
     mywindow.show();
     if (autohide)
     {
