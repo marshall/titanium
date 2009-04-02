@@ -269,8 +269,8 @@
 				return dir;
 			}
 
-			tests.getRuntimeBaseDirectory = function(params) {
-				var dir = Titanium.Filesystem.getRuntimeBaseDirectory();
+			tests.getRuntimeHomeDirectory = function(params) {
+				var dir = Titanium.Filesystem.getRuntimeHomeDirectory();
 				return dir;
 			}
 
@@ -472,7 +472,7 @@
 				<option value="readLine">readLine</option>
 				<option value="getProgramsDirectory">getProgramsDirectory</option>
 				<option value="getApplicationDirectory">getApplicationDirectory</option>
-				<option value="getRuntimeBaseDirectory">getRuntimeBaseDirectory</option>
+				<option value="getRuntimeHomeDirectory">getRuntimeHomeDirectory</option>
 				<option value="getApplicationDataDirectory">getApplicationDataDirectory</option>
 				<option value="getResourcesDirectory">getResourcesDirectory</option>
 				<option value="getDesktopDirectory">getDesktopDirectory</option>
@@ -757,9 +757,9 @@
 				string Filesystem.getApplicationDirectory()
 			</div>
 		</div>
-		<div id="test_getRuntimeBaseDirectory" class="test">
+		<div id="test_getRuntimeHomeDirectory" class="test">
 			<div class="memberInfo">
-				string Filesystem.getRuntimeBaseDirectory()
+				string Filesystem.getRuntimeHomeDirectory()
 			</div>
 		</div>
 		<div id="test_getApplicationDataDirectory" class="test">

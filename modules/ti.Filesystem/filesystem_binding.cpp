@@ -65,10 +65,10 @@ namespace ti
 		 */
 		this->SetMethod("getApplicationDataDirectory",&FilesystemBinding::GetApplicationDataDirectory);
 		/**
-		 * @tiapi(method=True,name=Filesystem.getRuntimeBaseDirectory) gets the OS specific runtime base directory
-		 * @tiresult(for=Filesystem.getRuntimeBaseDirectory,type=object) file object
+		 * @tiapi(method=True,name=Filesystem.getRuntimeHomeDirectory) gets the OS specific runtime base directory
+		 * @tiresult(for=Filesystem.getRuntimeHomeDirectory,type=object) file object
 		 */
-		this->SetMethod("getRuntimeBaseDirectory",&FilesystemBinding::GetRuntimeBaseDirectory);
+		this->SetMethod("getRuntimeHomeDirectory",&FilesystemBinding::GetRuntimeHomeDirectory);
 		/**
 		 * @tiapi(method=True,name=Filesystem.getResourcesDirectory) gets the OS specific resources directory of the application
 		 * @tiresult(for=Filesystem.getResourcesDirectory,type=object) file object
@@ -221,9 +221,9 @@ namespace ti
 		ti::File* file = new ti::File(dir);
 		result->SetObject(file);
 	}
-	void FilesystemBinding::GetRuntimeBaseDirectory(const ValueList& args, SharedValue result)
+	void FilesystemBinding::GetRuntimeHomeDirectory(const ValueList& args, SharedValue result)
 	{
-		std::string dir = FileUtils::GetRuntimeBaseDirectory();
+		std::string dir = host->GetRuntimeHomePath();
 		ti::File* file = new ti::File(dir);
 		result->SetObject(file);
 	}

@@ -15,7 +15,7 @@ namespace ti
 {
 	MonkeyBinding::MonkeyBinding(Host *host, SharedBoundObject global) : global(global), registration(0)
 	{
-		const std::string home = host->GetApplicationHome();
+		const std::string home = host->GetApplicationHomePath();
 		
 		// check to make sure we have a user scripts directory
 		std::string dir = FileUtils::Join(home.c_str(),"Resources","userscripts",NULL);

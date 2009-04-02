@@ -18,7 +18,7 @@ namespace ti
 {
 	void AppModule::Initialize()
 	{
-		std::string home = host->GetApplicationHome();
+		std::string home = host->GetApplicationHomePath();
 		std::string config = FileUtils::Join(home.c_str(),CONFIG_FILENAME,NULL);
 
 		PRINTD("+++home = " << home);

@@ -145,7 +145,7 @@ function runInstaller()
 			var devDest = TFS.getProgramsDirectory();
 			if (Titanium.platform == 'linux')
 			{
-				devDest = TFS.getFile(TFS.getRuntimeBaseDirectory().nativePath(), "apps");
+				devDest = TFS.getFile(Titanium.Process.getEnv('HOME'), "TitaniumApps");
 				devDest.createDirectory(true);
 			}
 			var developer = Titanium.createApp(runtimeDir,devDest,'Titanium Developer','com.titaniumapp.developer',false);

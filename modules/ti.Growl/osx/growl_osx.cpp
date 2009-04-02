@@ -102,18 +102,18 @@ namespace ti {
 
 	void GrowlOSX::CopyToApp(kroll::Host *host, kroll::Module *module)
 	{
-		std::string dir = host->GetApplicationHome() + KR_PATH_SEP + "Contents" +
+		std::string dir = host->GetApplicationHomePath() + KR_PATH_SEP + "Contents" +
 			KR_PATH_SEP + "Frameworks" + KR_PATH_SEP + "Growl.framework";
 
 		if (!FileUtils::IsDirectory(dir))
 		{
 			NSFileManager *fm = [NSFileManager defaultManager];
 			NSString *src = [NSString stringWithFormat:@"%s/Resources/Growl.framework", module->GetPath()];
-			NSString *dest = [NSString stringWithFormat:@"%s/Contents/Frameworks", host->GetApplicationHome().c_str()];
+			NSString *dest = [NSString stringWithFormat:@"%s/Contents/Frameworks", host->GetApplicationHomePath().c_str()];
 			[fm copyPath:src toPath:dest handler:nil];
 
 			src = [NSString stringWithFormat:@"%s/Resources/Growl Registration Ticket.growlRegDict", module->GetPath()];
-			dest = [NSString stringWithFormat:@"%s/Contents/Resources", host->GetApplicationHome().c_str()];
+			dest = [NSString stringWithFormat:@"%s/Contents/Resources", host->GetApplicationHomePath().c_str()];
 			[fm copyPath:src toPath:dest handler:nil];
 		}
 	}
