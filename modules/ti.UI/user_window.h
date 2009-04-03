@@ -17,6 +17,7 @@
 #endif
 
 #include "../ti.App/app_config.h"
+#include "../ti.App/window_config.h"
 
 namespace ti {
 
