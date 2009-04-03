@@ -13,7 +13,7 @@ std::string FileStream::MODE_READ = "read";
 std::string FileStream::MODE_APPEND = "append";
 std::string FileStream::MODE_WRITE = "write";
 
-FileStream::FileStream(std::string filename_) : stream(NULL) 
+FileStream::FileStream(std::string filename_) : stream(NULL)
 {
 #ifdef OS_OSX
 	// in OSX, we need to expand ~ in paths to their absolute path value
@@ -51,7 +51,7 @@ FileStream::FileStream(std::string filename_) : stream(NULL)
 	this->SetMethod("write",&FileStream::Write);
 }
 
-FileStream::~FileStream() 
+FileStream::~FileStream()
 {
 	this->Close();
 }
@@ -74,29 +74,28 @@ bool FileStream::Open(std::string mode, bool binary, bool append)
 
 	try
 	{
-		std::ios::openmode flags = std::ios::in;
+		std::ios::openmode flags = 0;
 		bool output = false;
 		if (binary)
 		{
 			flags|=std::ios::binary;
 		}
+
 		if(mode == FileStream::MODE_APPEND)
 		{
-			flags|=std::ios::app;
+			flags|=std::ios::out|std::ios::app;
+			output = true;
 		}
 		else if(mode == FileStream::MODE_WRITE)
 		{
-			flags|=std::ios::out;
+			flags|=std::ios::out|std::ios::trunc;
 			output = true;
 		}
 		else if(mode == FileStream::MODE_READ)
 		{
 			flags|=std::ios::in;
 		}
-		if (!append && output)
-		{
-			flags|=std::ios::trunc;
-		}
+
 #ifdef DEBUG
 		std::cout << "FILE OPEN FLAGS = " << flags << ", binary=" << binary << ", mode = " << mode << ", append=" << append << std::endl;
 #endif

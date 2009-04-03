@@ -36,6 +36,7 @@
 				if(contents) {
 					contents = contents.replace(/\r/g,"<br>");
 				}
+				fs.close();
 				
 				return '<br>' + contents;
 			}
