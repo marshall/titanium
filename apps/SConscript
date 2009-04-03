@@ -8,7 +8,6 @@ from app import App
 from subprocess import Popen
 
 def package_app_builder(target, source, env):
-	print "Packaging the Titanium SDK..."
 
 	if not 'SHORTNAME' in env:
 		env['SHORTNAME'] = path.basename(path.dirname(str(source[0])))
@@ -27,7 +26,7 @@ def package_app_builder(target, source, env):
 		fullname=env['FULLNAME'],
 		id=env['ID'],
 		version=env['VERSION'],
-		guid=env['ID'])
+		guid=env['GUID'])
 
 	if 'MODULES' in env:
 		app.set_modules(env['MODULES'])
