@@ -74,26 +74,25 @@ bool FileStream::Open(std::string mode, bool binary, bool append)
 
 	try
 	{
-		std::ios::openmode flags = 0;
+		std::ios::openmode flags = (std::ios::openmode) 0;
 		bool output = false;
 		if (binary)
 		{
 			flags|=std::ios::binary;
 		}
-
-		if(mode == FileStream::MODE_APPEND)
+		if (mode == FileStream::MODE_APPEND)
 		{
 			flags|=std::ios::out|std::ios::app;
 			output = true;
 		}
-		else if(mode == FileStream::MODE_WRITE)
+		else if (mode == FileStream::MODE_WRITE)
 		{
-			flags|=std::ios::out|std::ios::trunc;
+			flags |= std::ios::out|std::ios::trunc;
 			output = true;
 		}
-		else if(mode == FileStream::MODE_READ)
+		else if (mode == FileStream::MODE_READ)
 		{
-			flags|=std::ios::in;
+			flags |= std::ios::in;
 		}
 
 #ifdef DEBUG
