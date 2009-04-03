@@ -27,7 +27,7 @@ def package_app_builder(target, source, env):
 		fullname=env['FULLNAME'],
 		id=env['ID'],
 		version=env['VERSION'],
-		guid=env['ID'])
+		guid=env['GUID'])
 
 	if 'MODULES' in env:
 		app.set_modules(env['MODULES'])
