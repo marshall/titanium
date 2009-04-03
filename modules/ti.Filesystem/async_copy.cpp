@@ -5,6 +5,8 @@
  */
 #include "async_copy.h"
 #include "filesystem_binding.h"
+#include <iostream>
+#include <sstream>
 
 #ifndef OS_WIN32
 #include <unistd.h>
@@ -45,11 +47,38 @@ namespace ti
 	}
 	void AsyncCopy::Copy(Poco::Path &src, Poco::Path &dest)
 	{
-		Poco::File from(src.toString());
-#ifdef DEBUG
-		std::cout << "COPY: " << src.toString() << " => " << dest.toString() << " LINK=" << from.isLink() << std::endl;
+		Logger& logger = Logger::Get("Filesystem.AsyncCopy");
+		std::string srcString = src.toString();
+		std::string destString = dest.toString();
+		Poco::File from(srcString);
+		bool isLink = from.isLink();
+
+		logger.Debug("file=%s dest=%s link=%i", srcString.c_str(), destString.c_str(), isLink);
+#ifndef OS_WIN32
+		if (isLink)
+		{
+			char linkPath[PATH_MAX];
+			ssize_t length = readlink(from.path().c_str(), linkPath, PATH_MAX);
+			linkPath[length] = '\0';
+
+			std::string newPath (dest.toString());
+			const char *destPath = newPath.c_str();
+			unlink(destPath); // unlink it first, fails in some OS if already there
+			int result = symlink(linkPath, destPath);
+
+			if (result == -1)
+			{
+				std::string err = "Copy failed: Could not make symlink (";
+				err.append(destPath);
+				err.append(") from ");
+				err.append(linkPath);
+				err.append(" : ");
+				err.append(strerror(errno));
+				throw kroll::ValueException::FromString(err);
+			}
+		}
 #endif
-		if (from.isDirectory() && !from.isLink())
+		if (!isLink && from.isDirectory())
 		{
 			Poco::File d(dest.toString());
 			if (!d.exists())
@@ -67,35 +96,7 @@ namespace ti
 				this->Copy(sp,dp);
 			}
 		}
-#ifndef OS_WIN32
-		else if (from.isLink())
-		{
-			char linkPath[PATH_MAX];
-			ssize_t length = readlink(from.path().c_str(), linkPath, PATH_MAX);
-			linkPath[length] = '\0';
-
-			std::string newPath (dest.toString());
-			const char *destPath = newPath.c_str();
-			// unlink it first, fails in some OS if already there
-			unlink(destPath);
-			int result = symlink(linkPath, destPath);
-#ifdef DEBUG
-			std::cout << "Result: " << result << " for file: " << destPath << std::endl;
-#endif
-			if (result == -1)
-			{
-				std::string err = "Copy failed: Could not make symlink (";
-				err.append(destPath);
-				err.append(") from ");
-				err.append(linkPath);
-				err.append(" : ");
-				err.append(strerror(errno));
-				throw kroll::ValueException::FromString(err);
-			}
-
-		}
-#endif
-		else
+		else if (!isLink)
 		{
 			// in this case it's a regular file
 			Poco::File s(src.toString());
@@ -104,32 +105,29 @@ namespace ti
 	}
 	void AsyncCopy::Run(void* data)
 	{
+		Logger& logger = Logger::Get("Filesystem.AsyncCopy");
 #ifdef OS_OSX
 		NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 #endif
 
 		AsyncCopy* ac = static_cast<AsyncCopy*>(data);
-#ifdef DEBUG
-		std::cout << "async copy started with " << ac->files.size() << " files" << std::endl;
-#endif
+
 		std::vector<std::string>::iterator iter = ac->files.begin();
 		Poco::Path to(ac->destination);
 		Poco::File tof(to.toString());
-#ifdef DEBUG
-		std::cout << "ASYNC DEST: " << ac->destination << std::endl;
-#endif
+
+		logger.Debug("Job started: dest=%s, count=%i", ac->destination.c_str(), ac->files.size());
 		if (!tof.exists())
 		{
 			tof.createDirectory();
 		}
 		int c = 0;
-		while(!ac->stopped && iter!=ac->files.end())
+		while (!ac->stopped && iter!=ac->files.end())
 		{
 			std::string file = (*iter++);
 			c++;
-#ifdef DEBUG
-			std::cout << "copying async file: " << file << " (" << c << "/" << ac->files.size() << ")" << std::endl;
-#endif
+
+			logger.Debug("File: path=%s, count=%i\n", file.c_str(), c);
 			try
 			{
 				Poco::Path from(file);
@@ -143,42 +141,39 @@ namespace ti
 					Poco::Path dest(to,from.getFileName());
 					ac->Copy(from,dest);
 				}
-#ifdef DEBUG
-			std::cout << "copied async file: " << file << " (" << c << "/" << ac->files.size() << ")" << std::endl;
-#endif
+				logger.Debug("File copied");
+
 				SharedValue value = Value::NewString(file);
 				ValueList args;
 				args.push_back(value);
 				args.push_back(Value::NewInt(c));
 				args.push_back(Value::NewInt(ac->files.size()));
 				ac->host->InvokeMethodOnMainThread(ac->callback, args, false);
-#ifdef DEBUG
-			std::cout << "after callback for async file: " << file << " (" << c << "/" << ac->files.size() << ")" << std::endl;
-#endif
+
+				logger.Debug("Callback executed");
 			}
 			catch (ValueException &ex)
 			{
 				SharedString ss = ex.DisplayString();
-				std::cerr << "Error running async file copy: " << *ss << " for file: " << file << std::endl;
+				logger.Error(std::string("Error: ") + *ss + " for file: " + file);
 			}
 			catch (Poco::Exception &ex)
 			{
-				std::cerr << "Error running async file copy: " << ex.displayText() << " for file: " << file << std::endl;
+				logger.Error(std::string("Error: ") + ex.displayText() + " for file: " + file);
 			}
 			catch (std::exception &ex)
 			{
-				std::cerr << "Error running async file copy: " << ex.what() << " for file: " << file << std::endl;
+				logger.Error(std::string("Error: ") + ex.what() + " for file: " + file);
 			}
 			catch (...)
 			{
-				std::cerr << "Unknown error running async file copy for file: " << file << std::endl;
+				logger.Error(std::string("Unknown error during copy: ") + file);
 			}
 		}
 		ac->Set("running",Value::NewBool(false));
 		ac->stopped = true;
-#ifdef DEBUG
-		std::cout << "async copy finished by copying " << c << " files" << std::endl;
-#endif
+
+		logger.Debug(std::string("Job finished"));
 #ifdef OS_OSX
 		[pool release];
 #endif
