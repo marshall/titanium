@@ -24,6 +24,7 @@ namespace ti
 		Poco::PipeIOS *pipe;
 		bool closed;
 
+	public:
 		void Write(const ValueList& args, SharedValue result);
 		void Read(const ValueList& args, SharedValue result);
 		void Close(const ValueList& args, SharedValue result);

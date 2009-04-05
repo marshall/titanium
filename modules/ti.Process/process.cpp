@@ -6,6 +6,7 @@
 #include <vector>
 #include "process.h"
 #include "pipe.h"
+#include <Poco/Path.h>
 
 namespace ti
 {
@@ -22,6 +23,25 @@ namespace ti
 
 		try
 		{
+#ifdef OS_OSX
+			// this is a simple check to see if the path passed
+			// in is an actual .app folder and not the full path
+			// to the binary. in this case, we'll instead invoke
+			// the fullpath to the binary
+			size_t found = cmd.rfind(".app");
+			if (found!=std::string::npos)
+			{
+				Poco::Path p(cmd);
+				std::string fn = p.getFileName();
+				found = fn.find(".app");
+				fn = fn.substr(0,found);
+				fn = kroll::FileUtils::Join(cmd.c_str(),"Contents","MacOS",fn.c_str(),NULL);
+				if (FileUtils::IsFile(fn))
+				{
+					cmd = fn;
+				}
+			}
+#endif
 			this->process = new Poco::ProcessHandle(Poco::Process::launch(cmd,args,inp,outp,errp));
 		}
 		catch (std::exception &e)	
@@ -45,21 +65,21 @@ namespace ti
 		this->err = new Pipe(new Poco::PipeInputStream(*errp));
 		SharedBoundObject errb = this->err;
 		/**
-		 * @tiapi(property=True,name=Process.Process.err,version=0.2) returns the error stream as a Pipe object
+		 * @tiapi(property=True,type=object,name=Process.Process.err,version=0.2) returns the error stream as a Pipe object
 		 */
 		this->Set("err",Value::NewObject(errb));
 		
 		this->out = new Pipe(new Poco::PipeInputStream(*outp));
 		SharedBoundObject outb = this->out;
 		/**
-		 * @tiapi(property=True,name=Process.Process.out,version=0.2) returns the output stream as a Pipe object
+		 * @tiapi(property=True,type=object,name=Process.Process.out,version=0.2) returns the output stream as a Pipe object
 		 */
 		this->Set("out",Value::NewObject(outb));
 		
 		this->in = new Pipe(new Poco::PipeOutputStream(*inp));
 		SharedBoundObject inb = this->in;
 		/**
-		 * @tiapi(property=True,name=Process.Process.in,version=0.2) returns the input stream as a Pipe object
+		 * @tiapi(property=True,type=object,name=Process.Process.in,version=0.2) returns the input stream as a Pipe object
 		 */
 		this->Set("in",Value::NewObject(inb));
 		
@@ -67,10 +87,108 @@ namespace ti
 		 * @tiapi(method=True,name=Process.Process.terminate,version=0.2) terminate the process
 		 */
 		this->SetMethod("terminate",&Process::Terminate);
+		
+		/**
+		 * @tiapi(property=True,type=integer,name=Process.Process.exitCode,version=0.4) returns the exit code or null if not yet exited
+		 */
+		this->Set("exitCode",Value::Null);
+
+		/**
+		 * @tiapi(property=True,type=method,name=Process.Process.onread,since=0.4) set the function handler to call when sys out is read
+		 */
+		SET_NULL_PROP("onread")
+
+		/**
+		 * @tiapi(property=True,type=method,name=Process.Process.onexit,since=0.4) set the function handler to call when the process exits
+		 */
+		SET_NULL_PROP("onexit")
+
+		// setup threads which can read output and also
+		// monitor the exit
+		this->thread1 = new Poco::Thread();
+		this->thread2 = new Poco::Thread();
+		this->thread3 = new Poco::Thread();
+		this->thread1->start(&Process::WaitExit,(void*)this);
+		this->thread2->start(&Process::ReadOut,(void*)this);
+		this->thread3->start(&Process::ReadErr,(void*)this);
 	}
 	Process::~Process()
 	{
 		Terminate();
+		if (this->thread1->isRunning())
+		{
+			this->thread1->join();
+		}
+		if (this->thread2->isRunning())
+		{
+			this->thread2->join();
+		}
+		if (this->thread2->isRunning())
+		{
+			this->thread2->join();
+		}
+		delete this->thread1;
+		this->thread1 = NULL;
+		delete this->thread2;
+		this->thread2 = NULL;
+		delete this->thread3;
+		this->thread3 = NULL;
+	}
+	void Process::WaitExit(void *data)
+	{
+		Process *process = static_cast<Process*>(data);
+		int exitCode = process->process->wait();
+		process->running = false;
+		process->Set("running",Value::NewBool(false));
+		process->Set("exitCode",Value::NewInt(exitCode));
+		SharedValue sv = process->Get("onexit");
+		if (sv->IsMethod())
+		{
+			ValueList args;
+			args.push_back(Value::NewInt(exitCode));
+			SharedBoundMethod callback = sv->ToMethod();
+			process->parent->GetHost()->InvokeMethodOnMainThread(callback,args,false);
+		}
+	}
+	void Process::ReadOut(void *data)
+	{
+		Process *process = static_cast<Process*>(data);
+		ValueList a;
+		
+		while (process->running)
+		{
+			SharedValue result;
+			process->out->Read(a,result);
+			SharedValue sv = process->Get("onread");
+			if (sv->IsMethod())
+			{
+				ValueList args;
+				args.push_back(result);
+				args.push_back(Value::NewBool(false));
+				SharedBoundMethod callback = sv->ToMethod();
+				process->parent->GetHost()->InvokeMethodOnMainThread(callback,args,false);
+			}
+		}
+	}
+	void Process::ReadErr(void *data)
+	{
+		Process *process = static_cast<Process*>(data);
+		ValueList a;
+		
+		while (process->running)
+		{
+			SharedValue result;
+			process->err->Read(a,result);
+			SharedValue sv = process->Get("onread");
+			if (sv->IsMethod())
+			{
+				ValueList args;
+				args.push_back(result);
+				args.push_back(Value::NewBool(true));
+				SharedBoundMethod callback = sv->ToMethod();
+				process->parent->GetHost()->InvokeMethodOnMainThread(callback,args,false);
+			}
+		}
 	}
 	void Process::Terminate(const ValueList& args, SharedValue result)
 	{
@@ -87,3 +205,4 @@ namespace ti
 		}
 	}
 }
+

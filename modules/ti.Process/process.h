@@ -11,6 +11,7 @@
 #include <api/binding/binding.h>
 #include <Poco/Process.h>
 #include <Poco/Pipe.h>
+#include <Poco/Thread.h>
 #include "pipe.h"
 #include "process_binding.h"
 
@@ -23,8 +24,11 @@ namespace ti
 	protected:
 		virtual ~Process();
 	private:
-		ProcessBinding* parent;
+		ProcessBinding *parent;
 		Poco::ProcessHandle *process;
+		Poco::Thread *thread1;
+		Poco::Thread *thread2;
+		Poco::Thread *thread3;
 		bool running;
 		Pipe *in;
 		Pipe *out;
@@ -35,6 +39,9 @@ namespace ti
 		
 		void Terminate(const ValueList& args, SharedValue result);
 		void Terminate();
+		static void WaitExit(void*);
+		static void ReadOut(void*);
+		static void ReadErr(void*);
 	};
 }
 
