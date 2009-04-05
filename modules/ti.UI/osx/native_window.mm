@@ -25,9 +25,6 @@
 	[self setOpaque:false];
 	[self setHasShadow:true];
 	[self setBackgroundColor:[NSColor clearColor]];
-	
-	// turn on/off zoom button to control app maximize behavior
-	[[self standardWindowButton:NSWindowZoomButton] setHidden:!config->IsMaximizable()];
 
 	webView = [[WebView alloc] init];
 	delegate = [[WebViewDelegate alloc] initWithWindow:self host:host];
@@ -95,24 +92,7 @@
 }
 - (NSSize)windowWillResize:(NSWindow *) window toSize:(NSSize)newSize
 {
-	//TODO: refactor to use setMin/setMax on window
-	if (config->IsResizable())
-	{
-		// if we're resizable, we need to resize within the constraints of the 
-		// windows min/max width/height
-		
-		double minWidth = config->GetMinWidth();
-		double maxWidth = config->GetMaxWidth();
-		double minHeight = config->GetMinHeight();
-		double maxHeight = config->GetMaxHeight();
-
-		if (newSize.width >= minWidth && newSize.width <= maxWidth && 
-			newSize.height >= minHeight && newSize.height <= maxHeight)
-		{
-			return newSize;
-		}
-	}
-	return [window frame].size;
+	return newSize;
 }
 - (void)updateConfig
 {
