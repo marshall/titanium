@@ -176,16 +176,12 @@ Titanium.Project =
 						try
 						{
 							TiDeveloper.track('project-launch',{'name':project.name});
-							alert(app.executable.nativePath())
-							var x = Titanium.Process.launch(app.executable.nativePath());
-							if (x && callback)
-							{
-								callback(x);
-							}
-
 						}
-						catch(e){
-							alert('error launching ' + e.message + ' ' + e)
+						catch(e){}
+						var x = Titanium.Process.launch(app.executable.nativePath());
+						if (x && callback)
+						{
+							callback(x);
 						}
 					}
 				});
