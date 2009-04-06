@@ -5,6 +5,189 @@ var TFS = Titanium.Filesystem;
 
 Titanium.Project = 
 {
+	requiredModulesList: ['api','tiapp','tifilesystem','tiplatform','tiui','javascript','tianalytics'],
+	requiredModules:[],
+	optionalModules:[],
+	runtimeDir:null,
+	runtimeVersion:null,
+	getModuleVersion: function(versions)
+	{
+		var latestVer = 0
+		for (var i=0;i<versions.length;i++)
+		{
+			var ver = parseFloat(versions[i]);
+			if (ver > latestVer)
+			{
+				latestVer = ver;
+			}
+		}
+		return ver;
+	},
+	setModules: function(dir)
+	{
+		var result = this.getModulesAndRuntime(dir);
+		
+		// set runtime DIR and VERSION
+		this.runtimeDir = result.runtime.dir;
+		this.runtimeVersion = String(this.getModuleVersion(result.runtime.versions));
+		
+		this.requiredModules = [];
+		this.optionalModules = [];
+		
+		// set optional and required modules
+		for (var c=0;c<result.modules.length;c++)
+		{
+			var name = result.modules[c].name;
+			if (this.requiredModulesList.indexOf(name) == -1)
+			{
+				this.optionalModules.push({
+					name:name,
+					version:this.getModuleVersion(result.modules[c].versions),
+					dir:result.modules[c].dir
+				});
+			}
+			else
+			{
+				this.requiredModules.push({
+					name:name,
+					version:this.getModuleVersion(result.modules[c].versions),
+					dir:result.modules[c].dir
+				});
+			}
+		}
+		
+	},
+	writeManifest: function(project,excludedModules)
+	{
+		this.setModules(project.dir);
+
+		var resources = TFS.getFile(project.dir,'Resources');
+
+		// build the manifest
+		var manifest = '#appname:'+project.name+'\n';
+		manifest+='#appid:'+project.appid+'\n';
+		manifest+='#publisher:'+project.publisher+'\n';
+
+		if (project.image)
+		{
+			// look for image in two places - either full path or in resources dir
+			var image = TFS.getFile(project.image);
+			if (!image.exists())
+			{
+				image = TFS.getFile(resources,project.image);
+			}
+			// use default if not exists
+			if (!image.exists())
+			{
+				var path = Titanium.App.appURLToPath('app://images');
+				image = TFS.getFile(path,'default_app_logo.png')
+			}
+			
+			var image_dest = TFS.getFile(resources,image.name());
+			if (image.toString() != image_dest.toString())
+			{
+				image.copy(image_dest);
+			}
+			imageName = image.name();
+			manifest+='#image:'+image.name()+'\n';
+		}
+
+		manifest+='#url:'+project.url+'\n';
+		manifest+='#guid:'+project.guid+'\n';
+		manifest+='#desc:'+project.description+'\n';
+		manifest+='runtime:'+this.runtimeVersion+'\n';
+
+		// write out required modules
+		for (var i=0;i<this.requiredModules.length;i++)
+		{
+			manifest+= this.requiredModules[i].name +':'+ this.requiredModules[i].version+'\n';
+		}
+		// write out optional modules
+		for (var c=0;c<this.optionalModules.length;c++)
+		{
+			if (excludedModules)
+			{
+				if (!excludedModules[this.optionalModules[c].name])
+				{
+					manifest+=this.optionalModules[c].name+':'+this.optionalModules[c].version+'\n';
+				}
+			}
+			else
+			{
+				manifest+=this.optionalModules[c].name+':'+this.optionalModules[c].version+'\n';
+			}
+		}
+
+		var mf = TFS.getFile(project.dir,'manifest');
+		mf.write(manifest);
+		return manifest;
+		
+	},
+	launch: function(project,install,callback)
+	{
+		try
+		{
+			// write out new manifest based on current modules
+			var manifest = this.writeManifest(project);
+
+			// create dist dir
+			var dist = TFS.getFile(project.dir,'dist',Titanium.platform);
+			dist.createDirectory(true);
+
+			// create appp
+			var runtime = TFS.getFile(this.runtimeDir,this.runtimeVersion);
+			var app = Titanium.createApp(runtime,dist,project.name,project.appid,install);
+			
+			// write out new manifest
+			var app_manifest = TFS.getFile(app.base,'manifest');
+			app_manifest.write(manifest);
+			
+			// write out tiapp.xml
+			var resources = TFS.getFile(project.dir,'Resources');
+			var tiapp = TFS.getFile(project.dir,'tiapp.xml');
+			tiapp.copy(app.base);
+			TFS.asyncCopy(resources,app.resources,function()
+			{
+				// no modules to bundle, install the net installer
+				var net_installer_src = TFS.getFile(runtime,'installer');
+				var net_installer_dest = TFS.getFile(app.base,'installer');
+				TFS.asyncCopy(net_installer_src,net_installer_dest,function(filename,c,total)
+				{
+					var appModules = TFS.getFile(project.dir,"modules");
+					if (appModules.exists())
+					{
+						var moduleDest = TFS.getFile(app.base,"modules");
+						TFS.asyncCopy(appModules,moduleDest, function()
+						{
+							Titanium.Process.setEnv('KR_DEBUG','true');
+							TiDeveloper.track('project-launch',{'name':project.name});
+							var x =  Titanium.Process.launch(app.executable.nativePath());
+							if (x && callback)
+							{
+								callback(x);
+							}
+
+						})
+					}
+					else
+					{
+						Titanium.Process.setEnv('KR_DEBUG','true');
+						TiDeveloper.track('project-launch',{'name':project.name});
+						var x = Titanium.Process.launch(app.executable.nativePath());
+						if (x && callback)
+						{
+							callback(x);
+						}
+					}
+				});
+			});
+		}
+		catch(e)
+		{
+			alert('Error launching app ' + e);
+		}
+		
+	},
 	getVersions:function(dir)
 	{
 		var entry = {name:dir.name(), versions:[], dir:dir};
@@ -182,56 +365,59 @@ Titanium.Project =
 		}
 		
 		var path = Titanium.App.appURLToPath('app://thirdparty_js');
-		
-		if (jsLibs.jquery)
+		if (jsLibs)
 		{
-			head += jquery
-			var f = TFS.getFile(path,'jquery-1.3.2.js');
-			f.copy(resources);
-		}
-		if (jsLibs.entourage)
-		{
-			head += entourage;
-			var f = TFS.getFile(path,'entourage','entourage-jquery-3.0.js');
-			f.copy(resources);
-			var f2 = TFS.getFile(path,'entourage','entourage-ui');
-			f2.copy(resources);
-		}
-		if (jsLibs.prototype_js)
-		{
-			head+= prototype_js;
-			var f = TFS.getFile(path,'prototype-1.6.0.js');
-			f.copy(resources);
-		}
-		if (jsLibs.scriptaculous)
-		{
-			head+=scriptaculous;
-			var f = TFS.getFile(path,'scriptaculous-1.8.2.js');
-			f.copy(resources);
-		}
-		if (jsLibs.mootools)
-		{
-			head+=mootools;
-			var f = TFS.getFile(path,'mootools-1.2.1.js');
-			f.copy(resources);
-		}
-		if(jsLibs.dojo)
-		{
-			head+=dojo;
-			var f = TFS.getFile(path,'dojo-1.2.3.js');
-			f.copy(resources);
-		}
-		if (jsLibs.swf)
-		{
-			head+=swfobject;
-			var f = TFS.getFile(path,'swfobject-1.5.js');
-			f.copy(resources);
-		}
-		if (jsLibs.yahoo)
-		{
-			head+=yahoo;
-			var f = TFS.getFile(path,'yui-2.6.0.js');
-			f.copy(resources);
+			if (jsLibs.jquery)
+			{
+				head += jquery
+				var f = TFS.getFile(path,'jquery-1.3.2.js');
+				f.copy(resources);
+			}
+			if (jsLibs.entourage)
+			{
+				head += entourage;
+				var f = TFS.getFile(path,'entourage','entourage-jquery-3.0.js');
+				f.copy(resources);
+				var f2 = TFS.getFile(path,'entourage','entourage-ui');
+				f2.copy(resources);
+			}
+			if (jsLibs.prototype_js)
+			{
+				head+= prototype_js;
+				var f = TFS.getFile(path,'prototype-1.6.0.js');
+				f.copy(resources);
+			}
+			if (jsLibs.scriptaculous)
+			{
+				head+=scriptaculous;
+				var f = TFS.getFile(path,'scriptaculous-1.8.2.js');
+				f.copy(resources);
+			}
+			if (jsLibs.mootools)
+			{
+				head+=mootools;
+				var f = TFS.getFile(path,'mootools-1.2.1.js');
+				f.copy(resources);
+			}
+			if(jsLibs.dojo)
+			{
+				head+=dojo;
+				var f = TFS.getFile(path,'dojo-1.2.3.js');
+				f.copy(resources);
+			}
+			if (jsLibs.swf)
+			{
+				head+=swfobject;
+				var f = TFS.getFile(path,'swfobject-1.5.js');
+				f.copy(resources);
+			}
+			if (jsLibs.yahoo)
+			{
+				head+=yahoo;
+				var f = TFS.getFile(path,'yui-2.6.0.js');
+				f.copy(resources);
+			}
+			
 		}
 		head += '</head>';
 		

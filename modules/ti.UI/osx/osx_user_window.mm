@@ -12,32 +12,14 @@ namespace ti
 	bool OSXUserWindow::initial = false;
 	static unsigned int toWindowMask(WindowConfig *config)
 	{
-		unsigned int mask = 0;
 		if (!config->IsUsingChrome() || config->IsFullScreen())
 		{
-			mask = NSBorderlessWindowMask;
+			return NSBorderlessWindowMask;
 		}
 		else
 		{
-			mask |= NSTitledWindowMask;
-			if (config->IsResizable())
-			{
-				mask |= NSResizableWindowMask;
-			}
-			if (config->IsCloseable())
-			{
-				mask |= NSClosableWindowMask;
-			}
-			if (config->IsMaximizable())
-			{
-				mask |= NSMiniaturizableWindowMask;
-			}
-			if (config->IsMaximizable())
-			{
-				// handled in the window code
-			}
+			return NSTitledWindowMask | NSClosableWindowMask | NSResizableWindowMask | NSMiniaturizableWindowMask;
 		}
-		return mask;
 	}
 
 	OSXUserWindow::OSXUserWindow(SharedUIBinding binding, WindowConfig* config, SharedUserWindow& parent) :
@@ -59,10 +41,10 @@ namespace ti
 			frame = NSMakeRect(0, 0, 10, 10);
 
 		window = [[NativeWindow alloc]
-		           initWithContentRect: frame
-		           styleMask: mask
-		           backing: NSBackingStoreBuffered
-		           defer: false];
+			initWithContentRect: frame
+			styleMask: mask
+			backing: NSBackingStoreBuffered
+			defer: false];
 
 		if (!config->IsFullScreen())
 		{
@@ -72,7 +54,17 @@ namespace ti
 			this->real_h = config->GetHeight();
 			NSRect rect = CalculateWindowFrame(real_x, real_y, real_w, real_h);
 			[window setFrame:rect display:NO animate:NO];
+
+			this->ReconfigureWindowConstraints();
+			if (!config->IsResizable())
+			{
+				[window setMinSize: rect.size];
+				[window setMaxSize: rect.size];
+			}
 		}
+		this->SetCloseable(config->IsCloseable());
+		this->SetMaximizable(config->IsMaximizable());
+		this->SetMinimizable(config->IsMinimizable());
 
 		[window setupDecorations:config host:binding->GetHost() userwindow:this];
 		if (OSXUserWindow::initial)
@@ -82,7 +74,6 @@ namespace ti
 		}
 
 		this->SetTopMost(config->IsTopMost());
-
 	}
 	OSXUserWindow::~OSXUserWindow()
 	{
@@ -219,6 +210,12 @@ namespace ti
 	{
 		this->real_w = width;
 		NSRect newFrame = CalculateWindowFrame(real_x, real_y, width, real_h);
+
+		if (!config->IsResizable())
+		{
+			[window setMinSize: newFrame.size];
+			[window setMaxSize: newFrame.size];
+		}
 		[window setFrame:newFrame display:config->IsVisible() animate:YES];
 	}
 
@@ -231,6 +228,12 @@ namespace ti
 	{
 		this->real_h = height;
 		NSRect newFrame = CalculateWindowFrame(real_x, real_y, real_w, real_h);
+
+		if (!config->IsResizable())
+		{
+			[window setMinSize: newFrame.size];
+			[window setMaxSize: newFrame.size];
+		}
 		[window setFrame:newFrame display:config->IsVisible() animate:YES];
 
 		// Compensate for frame size
@@ -302,6 +305,12 @@ namespace ti
 		this->real_w = bounds.width;
 		this->real_h = bounds.height;
 		NSRect newFrame = CalculateWindowFrame(real_x, real_y, real_w, real_h);
+
+		if (!config->IsResizable())
+		{
+			[window setMinSize: newFrame.size];
+			[window setMaxSize: newFrame.size];
+		}
 		[window setFrame:newFrame display:config->IsVisible() animate:YES];
 	}
 	std::string OSXUserWindow::GetTitle()
@@ -332,6 +341,16 @@ namespace ti
 	void OSXUserWindow::SetResizable(bool resizable)
 	{
 		[window setShowsResizeIndicator:resizable];
+		if (resizable)
+		{
+			[window setContentMinSize: NSMakeSize(config->GetMinWidth(), config->GetMinHeight())];
+			[window setContentMaxSize: NSMakeSize(config->GetMaxWidth(), config->GetMaxHeight())];
+		}
+		else
+		{
+			[window setMinSize: [window frame].size];
+			[window setMaxSize: [window frame].size];
+		}
 	}
 	bool OSXUserWindow::IsMaximizable()
 	{
@@ -339,7 +358,7 @@ namespace ti
 	}
 	void OSXUserWindow::SetMaximizable(bool maximizable)
 	{
-		[[window standardWindowButton:NSWindowZoomButton] setHidden:!maximizable];
+		[[window standardWindowButton:NSWindowZoomButton] setEnabled:maximizable];
 	}
 	bool OSXUserWindow::IsMinimizable()
 	{
@@ -347,7 +366,7 @@ namespace ti
 	}
 	void OSXUserWindow::SetMinimizable(bool minimizable)
 	{
-		[[window standardWindowButton:NSWindowMiniaturizeButton] setHidden:!minimizable];
+		[[window standardWindowButton:NSWindowMiniaturizeButton] setEnabled:minimizable];
 	}
 	bool OSXUserWindow::IsCloseable()
 	{
@@ -355,7 +374,7 @@ namespace ti
 	}
 	void OSXUserWindow::SetCloseable(bool closeable)
 	{
-		[[window standardWindowButton:NSWindowCloseButton] setHidden:!closeable];
+		[[window standardWindowButton:NSWindowCloseButton] setEnabled:closeable];
 	}
 	bool OSXUserWindow::IsVisible()
 	{

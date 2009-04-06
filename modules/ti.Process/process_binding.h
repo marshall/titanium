@@ -20,6 +20,7 @@ namespace ti
 		virtual ~ProcessBinding();
 		
 		void Terminated(Process* p);
+		Host* GetHost() { return host; }
 		
 	private:
 		Host *host;

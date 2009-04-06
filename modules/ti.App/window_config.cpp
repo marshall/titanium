@@ -272,6 +272,15 @@ WindowConfig::WindowConfig(void* data)
 		}
 		child = child->next;
 	}
+
+	if (width < minWidth)
+		width = minWidth;
+	if (width > maxWidth)
+		width = maxWidth;
+	if (height < minHeight)
+		height = minHeight;
+	if (height > maxHeight)
+		height = maxHeight;
 }
 
 std::string WindowConfig::ToString()

@@ -8,6 +8,12 @@ env.Append(CPPDEFINES = ('TITANIUM_PROCESS_API_EXPORT', 1))
 env.Append(CPPPATH = ['#kroll'])
 build.add_thirdparty(env, 'poco')
 
+sources = Glob('*.cpp')
+
+if build.is_osx():
+	sources = sources + Glob('osx/*.cpp')
+	env.Append(CCFLAGS=['-x', 'objective-c++'])
+
 m = build.add_module('ti.Process')
-t = env.SharedLibrary(target = m.build_dir + '/tiprocessmodule', source = Glob('*.cpp'))
+t = env.SharedLibrary(target = m.build_dir + '/tiprocessmodule', source = sources)
 build.mark_build_target(t)

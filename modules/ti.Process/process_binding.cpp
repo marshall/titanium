@@ -11,6 +11,7 @@
 
 #ifdef OS_OSX
 	#include <Foundation/Foundation.h>
+	#include "osx/osx_process.h"
 #endif
 
 
@@ -88,7 +89,11 @@ namespace ti
 				}
 			}
 		}
+#ifdef OS_OSX
+		SharedBoundObject p = new OSXProcess(this, cmd, arguments);
+#else
 		SharedBoundObject p = new Process(this, cmd, arguments);
+#endif
 		processes.push_back(p);
 		result->SetObject(p);
 	}

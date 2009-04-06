@@ -11,6 +11,9 @@
 #include <api/binding/binding.h>
 #include <Poco/Process.h>
 #include <Poco/Pipe.h>
+#include <Poco/Thread.h>
+#include <Poco/Mutex.h>
+#include <Poco/Condition.h>
 #include "pipe.h"
 #include "process_binding.h"
 
@@ -23,18 +26,36 @@ namespace ti
 	protected:
 		virtual ~Process();
 	private:
-		ProcessBinding* parent;
-		Poco::ProcessHandle *process;
+		ProcessBinding *parent;
+		Poco::Thread *thread1;
+		Poco::Thread *thread2;
+		Poco::Thread *thread3;
+		bool thread1Running;
+		bool thread2Running;
+		bool thread3Running;
 		bool running;
+		int pid;
+		std::vector<std::string> arguments;
+		std::string command;
 		Pipe *in;
 		Pipe *out;
 		Pipe *err;
 		Poco::Pipe *errp;
 		Poco::Pipe *outp;
 		Poco::Pipe *inp;
-		
+		SharedBoundObject *shared_input;
+		SharedBoundObject *shared_output;
+		SharedBoundObject *shared_error;
+
 		void Terminate(const ValueList& args, SharedValue result);
 		void Terminate();
+		static void WaitExit(void*);
+		static void ReadOut(void*);
+		static void ReadErr(void*);
+		
+	protected:
+		void Bound(const char *name, SharedValue value);
+		
 	};
 }
 

@@ -4,27 +4,29 @@
  * Copyright (c) 2009 Appcelerator, Inc. All Rights Reserved.
  */
 
-#ifndef _PIPE_H_
-#define _PIPE_H_
+#ifndef _OSX_PIPE_H_
+#define _OSX_PIPE_H_
 
 #include <api/module.h>
 #include <api/binding/binding.h>
-#include <Poco/Process.h>
-#include <Poco/PipeStream.h>
-#include <Poco/Exception.h>
+#include <Cocoa/Cocoa.h>
 
 namespace ti
 {
-	class Pipe : public StaticBoundObject
+	class OSXPipe : public StaticBoundObject
 	{
 	public:
-		Pipe(Poco::PipeIOS *pipe);
-		virtual ~Pipe();
+		OSXPipe(NSFileHandle *pipe);
+		virtual ~OSXPipe();
 	private:
-		Poco::PipeIOS *pipe;
+		NSFileHandle *handle;
+		NSMutableString *data;
 		bool closed;
 
 	public:
+		
+		void OnData(NSString *data);
+		
 		void Write(const ValueList& args, SharedValue result);
 		void Read(const ValueList& args, SharedValue result);
 		void Close(const ValueList& args, SharedValue result);
