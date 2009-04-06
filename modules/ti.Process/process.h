@@ -27,11 +27,12 @@ namespace ti
 		virtual ~Process();
 	private:
 		ProcessBinding *parent;
-		Poco::Mutex startMutex;
-		Poco::Condition startCondition;
 		Poco::Thread *thread1;
 		Poco::Thread *thread2;
 		Poco::Thread *thread3;
+		bool thread1Running;
+		bool thread2Running;
+		bool thread3Running;
 		bool running;
 		int pid;
 		std::vector<std::string> arguments;
@@ -42,12 +43,19 @@ namespace ti
 		Poco::Pipe *errp;
 		Poco::Pipe *outp;
 		Poco::Pipe *inp;
-		
+		SharedBoundObject *shared_input;
+		SharedBoundObject *shared_output;
+		SharedBoundObject *shared_error;
+
 		void Terminate(const ValueList& args, SharedValue result);
 		void Terminate();
 		static void WaitExit(void*);
 		static void ReadOut(void*);
 		static void ReadErr(void*);
+		
+	protected:
+		void Bound(const char *name, SharedValue value);
+		
 	};
 }
 
