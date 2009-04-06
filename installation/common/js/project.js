@@ -30,7 +30,10 @@ Titanium.Project =
 		// set runtime DIR and VERSION
 		this.runtimeDir = result.runtime.dir;
 		this.runtimeVersion = String(this.getModuleVersion(result.runtime.versions));
-	
+		
+		this.requiredModules = [];
+		this.optionalModules = [];
+		
 		// set optional and required modules
 		for (var c=0;c<result.modules.length;c++)
 		{
@@ -157,11 +160,7 @@ Titanium.Project =
 						TFS.asyncCopy(appModules,moduleDest, function()
 						{
 							Titanium.Process.setEnv('KR_DEBUG','true');
-							try
-							{
-								TiDeveloper.track('project-launch',{'name':project.name});
-							}
-							catch(e){}
+							TiDeveloper.track('project-launch',{'name':project.name});
 							var x =  Titanium.Process.launch(app.executable.nativePath());
 							if (x && callback)
 							{
@@ -173,11 +172,7 @@ Titanium.Project =
 					else
 					{
 						Titanium.Process.setEnv('KR_DEBUG','true');
-						try
-						{
-							TiDeveloper.track('project-launch',{'name':project.name});
-						}
-						catch(e){}
+						TiDeveloper.track('project-launch',{'name':project.name});
 						var x = Titanium.Process.launch(app.executable.nativePath());
 						if (x && callback)
 						{
