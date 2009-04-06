@@ -42,7 +42,8 @@ namespace ti
 				}
 			}
 #endif
-			this->process = new Poco::ProcessHandle(Poco::Process::launch(cmd,args,inp,outp,errp));
+			this->arguments = args;
+			this->command = cmd;
 		}
 		catch (std::exception &e)	
 		{
@@ -60,7 +61,7 @@ namespace ti
 		/**
 		 * @tiapi(property=True,type=boolean,name=Process.Process.running,version=0.2) returns true if the command is running
 		 */
-		this->Set("running",Value::NewBool(true)); 
+		this->Set("running",Value::NewBool(false)); 
 		 
 		this->err = new Pipe(new Poco::PipeInputStream(*errp));
 		SharedBoundObject errb = this->err;
@@ -109,6 +110,7 @@ namespace ti
 		this->thread2 = new Poco::Thread();
 		this->thread3 = new Poco::Thread();
 		this->thread1->start(&Process::WaitExit,(void*)this);
+		this->startCondition.wait(this->startMutex);
 		this->thread2->start(&Process::ReadOut,(void*)this);
 		this->thread3->start(&Process::ReadErr,(void*)this);
 	}
@@ -137,6 +139,9 @@ namespace ti
 	void Process::WaitExit(void *data)
 	{
 		Process *process = static_cast<Process*>(data);
+		process->Set("running",Value::NewBool(true));
+		process->startCondition.signal();
+		process->process = new Poco::ProcessHandle(Poco::Process::launch(process->command,process->arguments,process->inp,process->outp,process->errp));
 		int exitCode = process->process->wait();
 		process->running = false;
 		process->Set("running",Value::NewBool(false));

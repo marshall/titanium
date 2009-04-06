@@ -12,6 +12,8 @@
 #include <Poco/Process.h>
 #include <Poco/Pipe.h>
 #include <Poco/Thread.h>
+#include <Poco/Mutex.h>
+#include <Poco/Condition.h>
 #include "pipe.h"
 #include "process_binding.h"
 
@@ -26,10 +28,14 @@ namespace ti
 	private:
 		ProcessBinding *parent;
 		Poco::ProcessHandle *process;
+		Poco::Mutex startMutex;
+		Poco::Condition startCondition;
 		Poco::Thread *thread1;
 		Poco::Thread *thread2;
 		Poco::Thread *thread3;
 		bool running;
+		std::vector<std::string> arguments;
+		std::string command;
 		Pipe *in;
 		Pipe *out;
 		Pipe *err;
