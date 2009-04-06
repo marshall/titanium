@@ -27,13 +27,13 @@ namespace ti
 		virtual ~Process();
 	private:
 		ProcessBinding *parent;
-		Poco::ProcessHandle *process;
 		Poco::Mutex startMutex;
 		Poco::Condition startCondition;
 		Poco::Thread *thread1;
 		Poco::Thread *thread2;
 		Poco::Thread *thread3;
 		bool running;
+		int pid;
 		std::vector<std::string> arguments;
 		std::string command;
 		Pipe *in;

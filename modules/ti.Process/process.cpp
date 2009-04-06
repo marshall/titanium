@@ -10,7 +10,7 @@
 
 namespace ti
 {
-	Process::Process(ProcessBinding* parent, std::string& cmd, std::vector<std::string>& args) : process(0), running(true)
+	Process::Process(ProcessBinding* parent, std::string& cmd, std::vector<std::string>& args) : running(true),pid(-1)
 	{
 		this->parent = parent;
 		this->errp = new Poco::Pipe();
@@ -42,6 +42,7 @@ namespace ti
 				}
 			}
 #endif
+
 			this->arguments = args;
 			this->command = cmd;
 		}
@@ -57,7 +58,7 @@ namespace ti
 		/**
 		 * @tiapi(property=True,type=integer,name=Process.Process.pid,version=0.2) returns the process id for the process
 		 */
-		this->Set("pid",Value::NewInt((int)process->id()));
+		this->Set("pid",Value::NewNull());
 		/**
 		 * @tiapi(property=True,type=boolean,name=Process.Process.running,version=0.2) returns true if the command is running
 		 */
@@ -141,9 +142,12 @@ namespace ti
 		Process *process = static_cast<Process*>(data);
 		process->Set("running",Value::NewBool(true));
 		process->startCondition.signal();
-		process->process = new Poco::ProcessHandle(Poco::Process::launch(process->command,process->arguments,process->inp,process->outp,process->errp));
-		int exitCode = process->process->wait();
+		Poco::ProcessHandle ph = Poco::Process::launch(process->command,process->arguments,process->inp,process->outp,process->errp);
+		process->pid = (int)ph.id();
+		process->Set("pid",Value::NewInt(process->pid));
+		int exitCode = ph.wait();
 		process->running = false;
+		process->pid = -1;
 		process->Set("running",Value::NewBool(false));
 		process->Set("exitCode",Value::NewInt(exitCode));
 		SharedValue sv = process->Get("onexit");
@@ -154,6 +158,7 @@ namespace ti
 			SharedBoundMethod callback = sv->ToMethod();
 			process->parent->GetHost()->InvokeMethodOnMainThread(callback,args,false);
 		}
+		process->parent->Terminated(process);
 	}
 	void Process::ReadOut(void *data)
 	{
@@ -201,9 +206,9 @@ namespace ti
 	}
 	void Process::Terminate()
 	{
-		if (running)
+		if (running && pid!=-1)
 		{
-			Poco::Process::kill(this->process->id());
+			Poco::Process::kill(this->pid);
 			running = false;
 			this->Set("running",Value::NewBool(false));
 			this->parent->Terminated(this);
