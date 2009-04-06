@@ -20,7 +20,7 @@ class Job
 	Installer* GetInstaller();
 
 	static int total;
-	static void Init(std::string download_dir, std::string install_dir);
+	static void Init(std::string, std::string);
 	static void ShutdownDownloader();
 
 	int Index()
