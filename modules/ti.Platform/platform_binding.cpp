@@ -101,7 +101,7 @@ namespace ti
 		int num_proc = 1;
 #endif
 
-		std::string machineid = FileUtils::GetMachineId();
+		std::string machineid = PlatformUtils::GetMachineId();
 		std::string macAddress = PlatformUtils::GetFirstMACAddress();
 
 //NOTE: for now we determine this at compile time -- in the future
