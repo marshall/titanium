@@ -25,13 +25,10 @@ build = BuildConfig(
 	BOOT_HOME_FLAG = '--start',
 	BOOT_UPDATESITE_ENVNAME = 'TI_UPDATESITE'
 )
+build.set_kroll_source_dir(path.abspath('kroll'))
 
 build.titanium_source_dir = path.abspath('.')
-build.kroll_source_dir = path.abspath('kroll')
-build.kroll_third_party = build.third_party
-build.kroll_include_dir = path.join(build.dir, 'include')
 build.titanium_support_dir = path.join(build.titanium_source_dir, 'support', build.os)
-
 build.sdk_build_dir = path.join(build.dir, 'titanium-sdk-' + build.version)
 if build.is_osx(): build.sdk_build_dir = path.join(build.sdk_build_dir + '.app')
 

@@ -9,7 +9,7 @@
 #include <vector>
 #include <gtk/gtk.h>
 #include <glib.h>
-#include <api/file_utils.h>
+#include <utils.h>
 
 class Installer;
 class Job;

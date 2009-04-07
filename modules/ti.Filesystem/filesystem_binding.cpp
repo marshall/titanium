@@ -7,7 +7,6 @@
 #include "filesystem_binding.h"
 #include "file.h"
 #include "async_copy.h"
-#include "api/file_utils.h"
 #include "filesystem_utils.h"
 #include "app_config.h"
 
