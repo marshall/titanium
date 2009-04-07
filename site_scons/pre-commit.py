@@ -1,11 +1,15 @@
 import sys,re,os
 import os.path as path
 fname_regex = re.compile('diff --git a/(.*) b/')
+not_a_line_regex = re.compile('^-')
+
 fname = None
 bad_files = []
 for line in sys.stdin:
+	if not_a_line_regex.match(line):
+		continue
 
-	if fname and (not fname in bad_files) and line.find('\r\n') != -1:
+	if fname and (not fname in bad_files) and line.find('\r') != -1:
 		found_bad_newlines = True
 		bad_files.append(fname)
 
@@ -23,7 +27,7 @@ if len(bad_files) > 0:
 	paths = ' '.join(paths)
 	print ''
 	print 'You can fix these files by running:'
-	print ' $ %s %s' % (path.join(os.getcwd(), 'site_scons', 'crlf.py'), paths)
+	print ' $ python %s %s' % (path.join(os.getcwd(), 'site_scons', 'crlf.py'), paths)
 	print ''
 	print 'If you REALLY want to make this commit you can override with --no-verify'
 	print 'It\'s probably not a good idea though -- think of the repositories!'

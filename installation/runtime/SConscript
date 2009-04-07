@@ -36,13 +36,6 @@ def package_sdk(target, source, env):
 	futils.CopyTree(common_js, p.join(sdk.contents, 'Resources', 'js'))
 	futils.CopyTree(common_js, p.join(devtool_target, 'Resources', 'js'))
 
-	# app installer now stages to runtime dir
-	#appinstaller = p.join(build.titanium_source_dir, "installation", "app_installer")
-	#appinstaller_target = p.join(sdk.contents, 'appinstaller')
-	#futils.CopyTree(appinstaller, appinstaller_target)
-	#futils.CopyTree(common_js, p.join(appinstaller_target, 'Resources', 'js'))
-	#futils.Touch(p.join(appinstaller_target, '.installed'))
-
 	# Mark all applications as installed
 	futils.Touch(p.join(sdk.contents, '.installed'))
 	futils.Touch(p.join(devtool_target, '.installed'))
