@@ -5,7 +5,7 @@
  */
 #import "Controller.h"
 #import <string>
-#import "file_utils.h"
+#import <utils.h>
 #import <zlib.h>
 
 #define RUNTIME_UUID_FRAGMENT @"uuid=A2AC5CB5-8C52-456C-9525-601A5B0725DA"
