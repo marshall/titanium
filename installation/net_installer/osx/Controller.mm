@@ -5,6 +5,7 @@
  */
 #import "Controller.h"
 #import <string>
+#include "base.h"
 #import "file_utils.h"
 #import <zlib.h>
 
