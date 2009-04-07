@@ -161,6 +161,18 @@ function runInstaller()
 				current+=moveby;
 				updateProgressValue(current);
 				Titanium.Analytics.addEvent('ti.install');
+				
+				// add app shortcut in Start menu
+				if (Titanium.platform == 'win32')
+				{
+					var userDir = TFS.getUserDirectory();
+					var startMenu = TFS.getFile(userDir, "Start Menu");
+					var to = TFS.getFile(startMenu, 'Titanium Developer');
+					
+					var exeFile = TFS.getFile(developer.executable);
+					exeFile.createShortcut(to);
+				}
+				
 				finishInstall(developer.executable);
 			});
 

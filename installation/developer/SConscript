@@ -4,48 +4,51 @@ from app import App
 Import('build')
 
 def package_sdk(target, source, env):
-	print "Packaging the Titanium SDK..."
+	print "Packaging Titanium Developer (the SDK)..."
 	cwd = build.cwd()
 	sdk = App(
 		build,
-		shortname='titanium-sdk',
-		fullname='Titanium SDK Installer', 
-		id='com.titaniumapp.sdk.installer',
+		shortname='titanium-developer',
+		fullname='Titanium Developer', 
+		id='com.titaniumapp.developer',
 		version=build.version,
-		guid='7F7FA377-E695-4280-9F1F-96126F3D2C2A')
-	
-	modules = ['runtime', 'javascript', 'tiapp', 'tifilesystem', 'tiplatform', 'tiprocess', 'tidesktop', 'api', 'tiui', 'tinetwork', 'tianalytics']
-	sdk.set_modules(modules)
+		guid='CC835453-7FF6-48A3-A64F-DB1CCB0F28D7')
+
+	# Titanium Developer should depend on all installed modules
+	# so that all modules will be installed when it first starts.
+	# modules = []
+	# sdk.set_modules(modules)
 
 	# Create the basic application shell
 	sdk.stage(build.sdk_build_dir, src_resources=p.join(cwd, 'Resources'))
 	
 	# The SDK installer application is staged.
 	# -- so now we do pre-package processing
-	to_copy = ['tiapp.xml', 'install']
+	to_copy = ['tiapp.xml']
 	for item in to_copy:
 		futils.CopyToDir(p.join(cwd, item), sdk.contents)
 	
-	# Copy developer and appinstaller applications
-	devtool = p.join(build.titanium_source_dir, "installation", "developer")
-	devtool_target = p.join(sdk.contents, 'developer')
-	futils.CopyTree(devtool, devtool_target)
-
-	# Copy common js files into all applications
+	# Copy in common js files into all applications
 	common_js = p.join(build.titanium_source_dir, 'installation', 'common', 'js')
 	futils.CopyTree(common_js, p.join(sdk.contents, 'Resources', 'js'))
-	futils.CopyTree(common_js, p.join(devtool_target, 'Resources', 'js'))
 
-	# Mark all applications as installed
-	futils.Touch(p.join(sdk.contents, '.installed'))
-	futils.Touch(p.join(devtool_target, '.installed'))
+	# Copy in appinstaller files particular to Titanium developer
+	appinstaller = p.join(cwd, 'appinstaller')
+	appinstaller_common = p.join(cwd, '..', 'appinstaller')
+	appinstaller_target = p.join(sdk.contents, 'appinstaller')
+	futils.CopyTree(appinstaller_common, appinstaller_target, exclude=['SConscript'])
+	futils.CopyTree(appinstaller, appinstaller_target, exclude=['README'])
+
+	# Don't mark this application as installed, because we want
+	# the appinstaller to run when it is first executed
+	#futils.Touch(p.join(sdk.contents, '.installed'))
 
 	if not build.nopackage:
 		sdk.package(
 			out_dir=build.dist_dir,
 
 			# osx options
-			app_name="Install Titanium SDK",
+			app_name="Titanium Developer",
 			vol_name="Titanium",
 			dmg_name='titanium-sdk-' + build.version,
 			icns_file=p.join(cwd, 'osx', 'VolumeIcon.icns'),
@@ -58,3 +61,4 @@ build.mark_dist_target(sdk_target)
 
 AlwaysBuild(sdk_target) # incremental builder doesn't work
 Alias('sdk', sdk_target)
+Alias('developer', sdk_target)

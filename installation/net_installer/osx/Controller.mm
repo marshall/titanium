@@ -5,8 +5,12 @@
  */
 #import "Controller.h"
 #import <string>
+<<<<<<< HEAD:installation/net_installer/osx/Controller.mm
 #include "base.h"
 #import "file_utils.h"
+=======
+#import <utils.h>
+>>>>>>> b8335b01284911a254164ef8071d632d5be75a5d:installation/net_installer/osx/Controller.mm
 #import <zlib.h>
 
 #define RUNTIME_UUID_FRAGMENT @"uuid=A2AC5CB5-8C52-456C-9525-601A5B0725DA"
