@@ -246,6 +246,8 @@
 				NSLog(@"Response data was too small to be a file. Received \"%@\" instead.",dataString);
 				[dataString release];
 			}
+			NSString* msg = @"Some files failed to download properly. Cannot continue.";
+			[self performSelectorOnMainThread:@selector(bailWithMessage:) withObject:msg waitUntilDone:YES];
 		}
 		
 		[downloader release];
