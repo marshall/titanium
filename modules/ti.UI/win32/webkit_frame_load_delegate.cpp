@@ -24,7 +24,21 @@ Win32WebKitFrameLoadDelegate::didFinishLoadForFrame(IWebView *webView, IWebFrame
 	JSGlobalContextRef context = frame->globalContext();
 	UIModule::GetInstance()->LoadUIJavascript(context);
 
-//TODO->	window->PageLoaded(global_object,url_str);
+	JSObjectRef global_object = JSContextGetGlobalObject(context);
+	SharedKObject frame_global = new KJSKObject(context, global_object);
+
+	IWebDataSource *webDataSource;
+	frame->dataSource(&webDataSource);
+	IWebMutableURLRequest *urlRequest;
+	webDataSource->request(&urlRequest);
+
+	BSTR u;
+	urlRequest->URL(&u);
+	std::wstring u2(u);
+	std::string url;
+	url.assign(u2.begin(), u2.end());
+
+	window->PageLoaded(frame_global,url);
 	window->FrameLoaded();
 	return S_OK;
 }
