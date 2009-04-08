@@ -348,7 +348,7 @@
 		[window setTitle:title];
     }
 }
-- (void)inject:(WebScriptObject *)windowScriptObject context:(JSGlobalContextRef)context frame:(WebFrame*)frame
+- (SharedBoundObject)inject:(WebScriptObject *)windowScriptObject context:(JSGlobalContextRef)context frame:(WebFrame*)frame store:(BOOL)store
 {
 	UserWindow* userWindow = [window userWindow];
 	userWindow->RegisterJSContext(context);
@@ -357,7 +357,11 @@
 	JSObjectRef global_object = JSContextGetGlobalObject(context);
 	BoundObject *global_bound_object = new KJSKObject(context, global_object);
 	SharedBoundObject shared_global = global_bound_object;
-	(*frames)[frame] = shared_global;
+	if (store)
+	{
+		(*frames)[frame] = shared_global;
+	}
+	return shared_global;
 }
 
 - (void)webView:(WebView *)sender didFinishLoadForFrame:(WebFrame *)frame
@@ -385,9 +389,11 @@
 	{
 		TRACE(@"page loaded with no <script> tags, manually injecting Titanium runtime", scriptCleared);
 		JSGlobalContextRef context = [frame globalContext];
-		[self inject:[frame windowObject] context:context frame:frame];
+		// return the global object but don't store it since we're forcely
+		// creating it since we need the global_object to be passed below
+		global_object=[self inject:[frame windowObject] context:context frame:frame store:NO];
 	}
-	
+
 	// apply patches
 	UIModule::GetInstance()->LoadUIJavascript([frame globalContext]);
 	
@@ -442,7 +448,7 @@
 - (void)webView:(WebView *)sender didClearWindowObject:(WebScriptObject *)windowScriptObject forFrame:(WebFrame*)frame 
 {
 	JSGlobalContextRef context = [frame globalContext];
-	[self inject:windowScriptObject context:context frame:frame];
+	[self inject:windowScriptObject context:context frame:frame store:YES];
 }
 
 // WebUIDelegate Methods
