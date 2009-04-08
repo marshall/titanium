@@ -12,7 +12,10 @@ def package_sdk(target, source, env):
 		fullname='Titanium Developer', 
 		id='com.titaniumapp.developer',
 		version=build.version,
-		guid='CC835453-7FF6-48A3-A64F-DB1CCB0F28D7')
+		guid='CC835453-7FF6-48A3-A64F-DB1CCB0F28D7',
+		image='images/default_app_logo.png',
+		publisher='Appcelerator, Inc',
+		url='http://www.titaniumapp.com')
 
 	# Titanium Developer should depend on all installed modules
 	# so that all modules will be installed when it first starts.
@@ -21,7 +24,7 @@ def package_sdk(target, source, env):
 
 	# Create the basic application shell
 	sdk.stage(build.sdk_build_dir, src_resources=p.join(cwd, 'Resources'))
-	
+
 	# The SDK installer application is staged.
 	# -- so now we do pre-package processing
 	to_copy = ['tiapp.xml']
@@ -36,6 +39,7 @@ def package_sdk(target, source, env):
 	appinstaller = p.join(cwd, 'appinstaller')
 	appinstaller_common = p.join(cwd, '..', 'appinstaller')
 	appinstaller_target = p.join(sdk.contents, 'appinstaller')
+	futils.CopyTree(common_js, p.join(appinstaller_target, 'Resources', 'js'))
 	futils.CopyTree(appinstaller_common, appinstaller_target, exclude=['SConscript'])
 	futils.CopyTree(appinstaller, appinstaller_target, exclude=['README'])
 
