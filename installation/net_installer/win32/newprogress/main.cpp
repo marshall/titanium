@@ -184,6 +184,19 @@ void CreateDirectoryTree(std::wstring dir)
 	}
 }
 
+bool IsFile(std::wstring file)
+{
+	WIN32_FIND_DATAW findFileData;
+	HANDLE hFind = FindFirstFileW(file.c_str(), &findFileData);
+	if (hFind != INVALID_HANDLE_VALUE)
+	{
+		bool yesno = (findFileData.dwFileAttributes & 0x00000000) == 0x00000000;
+		FindClose(hFind);
+		return yesno;
+	}
+	return false;
+}
+
 bool UnzipFile(std::wstring unzipper, std::wstring zipFile, std::wstring destdir)
 {
 	// ensure destdir exists
@@ -215,6 +228,101 @@ bool UnzipFile(std::wstring unzipper, std::wstring zipFile, std::wstring destdir
 
 	return true;
 }
+
+void ProcessURL(std::wstring url, std::wstring tempdir, std::wstring installdir, std::wstring unzipper, Progress *p, HINTERNET hINet)
+{
+	std::wstring uuid = ParseQueryParam(url,L"uuid");
+	std::wstring name = ParseQueryParam(url,L"name");
+	std::wstring version = ParseQueryParam(url,L"version");
+	std::wstring filename = name;
+	filename+=L"-";
+	filename+=version;
+	filename+=L".zip";
+
+	// figure out the path and destination
+	std::wstring path = tempdir + L"\\" + filename;
+	std::wstring destdir;
+
+	if (RUNTIME_UUID == uuid)
+    {
+		destdir = installdir + L"\\runtime\\win32\\" + version;
+    }
+    else if (MODULE_UUID == uuid)
+    {
+		destdir = installdir + L"\\modules\\win32\\" + name + L"\\" + version;
+    }
+    else
+    {
+		// nothing to do
+		return;
+    }
+
+	bool downloaded = DownloadURL(p, hINet, url, path);
+
+	if(downloaded)
+	{
+		wchar_t msg[255];
+		wsprintfW(msg, L"Installing %s/%s ...",name.c_str(),version.c_str());
+		p->SetLineText(2,msg,true);
+		UnzipFile(unzipper, path, destdir);
+	}
+}
+
+void ProcessFile(std::wstring fileurl, std::wstring installdir, std::wstring unzipper, Progress *p)
+{
+	std::wstring type = L"";
+	std::wstring name = L"";
+	std::wstring version = L"";
+
+	size_t start, end;
+
+	size_t lastSlash = fileurl.find_last_of(L"\\");
+	if(lastSlash == std::string::npos)
+	{
+		lastSlash = -1;
+	}
+	std::wstring basename = fileurl.substr(lastSlash + 1);
+
+	end = basename.find(L"-");
+	std::wstring partOne = basename.substr(0, end);
+	if (partOne == L"runtime")
+	{
+		type = L"runtime";
+		name = L"runtime";
+	}
+	else if (partOne == L"module")
+	{
+		type = L"module";
+		start = end + 1;
+		end = basename.find(L"-", start);
+		name = basename.substr(start, end - start);
+	}
+	start = end + 1;
+	end = basename.find(L".zip", start);
+	version = basename.substr(start, end - start);
+
+	std::wstring destdir;
+
+	if (type == L"runtime")
+    {
+		destdir = installdir + L"\\runtime\\win32\\" + version;
+    }
+    else if (type == L"module")
+    {
+		destdir = installdir + L"\\modules\\win32\\" + name + L"\\" + version;
+    }
+    else
+    {
+		// nothing to do
+		return;
+    }
+
+	wchar_t msg[255];
+	wsprintfW(msg, L"Installing %s/%s ...",name.c_str(),version.c_str());
+	p->SetLineText(2,msg,true);
+	UnzipFile(unzipper, fileurl, destdir);
+}
+
 int WINAPI WinMain(
     HINSTANCE hInstance,
     HINSTANCE hPrevInstance,
@@ -282,39 +390,13 @@ int WINAPI WinMain(
 		p->Update(x++,count);
 		std::wstring url = args[c];
 
-		std::wstring uuid = ParseQueryParam(url,L"uuid");
-		std::wstring name = ParseQueryParam(url,L"name");
-		std::wstring version = ParseQueryParam(url,L"version");
-		std::wstring filename = name;
-		filename+=L"-";
-		filename+=version;
-		filename+=L".zip";
-
-		// figure out the path and destination
-		std::wstring path = tempdir + L"\\" + filename;
-		std::wstring destdir;
-
-		if (RUNTIME_UUID == uuid)
-        {
-			destdir = installdir + L"\\runtime\\win32\\" + version;
-        }
-        else if (MODULE_UUID == uuid)
-        {
-			destdir = installdir + L"\\modules\\win32\\" + name + L"\\" + version;
-        }
-        else
-        {
-			continue;
-        }
-
-		bool downloaded = DownloadURL(p, hINet, url, path);
-
-		if(downloaded)
+		if(IsFile(url))
 		{
-			wchar_t msg[255];
-			wsprintfW(msg, L"Installing %s/%s ...",name.c_str(),version.c_str());
-			p->SetLineText(2,msg,true);
-			UnzipFile(unzipper, path, destdir);
+			ProcessFile(url, installdir, unzipper, p);
+		}
+		else
+		{
+			ProcessURL(url, tempdir, installdir, unzipper, p, hINet);
 		}
 	}
 
