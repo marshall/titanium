@@ -9,12 +9,12 @@ def build_dist_zips(target, source, env):
 	
 	f = path.join(build.dist_dir, 'runtime-%s.zip' % build.version)
 	print "Packing %s" % f
-	futils.Zip(build.runtime_build_dir, f, exclude=excludes)
+	futils.ZipDir(build.runtime_build_dir, f, exclude=excludes)
 	
 	for m in build.modules:
 		f = path.join(build.dist_dir, 'module-%s-%s.zip' % (m.name, m.version))
 		print "Packing %s" % f
-		futils.Zip(m.build_dir, f, exclude=excludes)
+		futils.ZipDir(m.build_dir, f, exclude=excludes)
 
 build.env.Append(BUILDERS = {'BuildDistZips' : Builder(action=build_dist_zips)})
 zips = build.env.BuildDistZips('#dummy-dist-zips', [])

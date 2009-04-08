@@ -15,15 +15,22 @@
 	IBOutlet NSProgressIndicator* progress;
 	IBOutlet NSImageView* image;
 	IBOutlet NSWindow* window;
-	NSMutableArray *urls;
+	NSMutableDictionary *urls;
+	NSMutableArray *files;
 	NSString *directory;
 	NSString *installDirectory;
 }
 
 -(IBAction)cancel:(id)sender;
 -(void)updateMessage:(NSString*)msg;
--(NSArray*)urls;
+-(NSMutableDictionary*)urls;
+-(NSArray*)files;
 -(NSString*)directory;
 -(NSString*)installDirectory;
+-(void)downloadAndInstall:(Controller*)controller;
+-(void)install:(NSString*)file;
+-(void)install:(NSString *)file forUrl:(NSURL *)url;
+-(void)install:(NSString*)file isModule:(BOOL)isModule  withName:(NSString *)name withVersion:(NSString*)version;
+-(void)download;
 
 @end

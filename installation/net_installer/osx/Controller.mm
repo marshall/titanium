@@ -30,9 +30,14 @@
 	[textField setStringValue:msg];
 }
 
--(NSArray*)urls
+-(NSMutableDictionary*)urls
 {
 	return urls;
+}
+
+-(NSArray*)files
+{
+	return files;
 }
 
 -(NSString*)directory
@@ -66,12 +71,64 @@
 	}
 }
 
--(void)install:(NSString *)file forUrl:(NSURL *)url destination:(NSString*)dir
+-(void)install:(NSString*)file 
+{
+	NSArray* fileParts = [file componentsSeparatedByString:@"/"];
+	NSString* trimmed = [[fileParts lastObject] stringByReplacingOccurrencesOfString:@".zip" withString: @""];
+	NSArray* parts = [trimmed componentsSeparatedByString:@"-"];
+	NSString* name;
+	NSString* version;
+	BOOL isModule;
+	if ((int)[parts count] == 3)
+	{
+		// part 0 should be "module"
+		isModule = YES;
+		name = [parts objectAtIndex:1];
+		version = [parts objectAtIndex:2];
+	}
+	else if ((int)[parts count] == 2)
+	{
+		isModule = NO;
+		name = [parts objectAtIndex:0];
+		version = [parts objectAtIndex:1];
+	}
+	else
+	{
+		NSLog(trimmed);
+		NSLog(file);
+		return;
+	}
+	[self install:file isModule:isModule withName:name withVersion:version];
+}
+
+-(void)install:(NSString*)file isModule:(BOOL)isModule  withName:(NSString *)name withVersion:(NSString*)version
+{
+	NSString* installDir = [self installDirectory];
+	NSString* destDir;
+	if (isModule) // this is a module
+		destDir = [NSString stringWithFormat:@"%@/modules/osx/%@/%@", installDir, name, version];
+	else // this is the runtime
+		destDir = [NSString stringWithFormat:@"%@/runtime/osx/%@", installDir, version];
+
+#ifdef DEBUG	
+	NSLog(@"name=%@,version=%@,module=%d",name,version,isModule);
+#endif
+	NSLog(@"Installing %@ into %@", file, destDir);
+	[self generateDirectory:destDir];
+	std::string src([file UTF8String]);
+	std::string dest([destDir UTF8String]);
+	kroll::FileUtils::Unzip(src, dest);
+#ifdef DEBUG
+	NSLog(@"After unzip %s to %s",src.c_str(),dest.c_str());
+#endif
+
+}
+
+-(void)install:(NSString *)file forUrl:(NSURL *)url
 {
 	NSArray *parts = [[[url query] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding] componentsSeparatedByString:@"&"];
 	BOOL isRuntime = NO;
 	BOOL isModule = NO;
-	NSString *destdir = nil;
 	NSString *subtype = nil;
 	NSString *version = nil;
 	
@@ -98,43 +155,69 @@
 			continue;
 		}
 	}
+	[self install:file isModule:isModule withName:subtype withVersion:version];
 
-	if (isRuntime){
-		destdir = [NSString stringWithFormat:@"%@/runtime/osx/%@",dir,version];
-	} else if (isModule) {
-		destdir = [NSString stringWithFormat:@"%@/modules/osx/%@/%@",dir,subtype,version];
-	} else {
-		NSLog(@"Not sure what to do with %@ for %@",file,url);
-		return;
+}
+
+-(void)downloadAndInstall:(Controller*)controller 
+{	
+	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+	int numURLs = (int) [[urls allKeys] count];
+	int numFiles = (int) [files count];
+	int count = numURLs + numFiles;
+	int current = 1;
+
+	if (numURLs > 0)
+	{
+		[controller download];
 	}
 
-#ifdef DEBUG	
-	NSLog(@"subtype=%@,version=%@,runtime=%d,module=%d",subtype,version,isRuntime,isModule);
-#endif
-
-	NSLog(@"Installing %@ for %@ into %@",file,url,destdir);
-	[self generateDirectory:destdir];
-	std::string src([file UTF8String]);
-	std::string dest([destdir UTF8String]);
-	kroll::FileUtils::Unzip(src,dest);
-#ifdef DEBUG
-	NSLog(@"After unzip %s to %s",src.c_str(),dest.c_str());
-#endif
-}
--(void)download:(Controller*)controller 
-{
-	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+	NSProgressIndicator *progressBar = [self progress];
+	[progressBar setIndeterminate:NO];
+	[progressBar setMinValue:0.0];
+	[progressBar setMaxValue:count];
+	[progressBar setDoubleValue:0.0];
+	[controller updateMessage:[NSString stringWithFormat:@"Installing %d file%s", count, count>1?"s":""]];
 	
-	NSArray *u = [controller urls];
+	NSArray * urlsKeys = [urls allKeys];
+	for (int c=0; c<(int)[urlsKeys count];c++)
+	{
+		current++;
+		[progressBar setDoubleValue:current];
+		[controller updateMessage:[NSString stringWithFormat:@"Installing %d of %d file%s", current, count, count>1?"s":""]];
+		NSURL* url = [urlsKeys objectAtIndex:c];
+		NSString* file = [urls objectForKey:url];
+		[controller install:file forUrl:url];
+	}
+
+	for (int c = 0; c < (int)[files count]; c++)
+	{
+		current++;
+		[progressBar setDoubleValue:current];
+		[controller updateMessage:[NSString stringWithFormat:@"Installing %d of %d file%s", current, count, count>1?"s":""]];
+		NSString* file = [files objectAtIndex:c];
+		[controller install:file];
+	}
+
+	[progressBar setDoubleValue:count];
+	[controller updateMessage:@"Installation complete"];
+	NSLog(@"Installation is complete, exiting after installing %d files",count);
+
+	[pool release];
+	[NSApp terminate:self];
+}
+
+-(void)download
+{
+	NSArray *u = [[self urls] allKeys];
 	int count = [u count];
-	NSString *dir = [controller directory];
-	NSMutableDictionary *files = [[[NSMutableDictionary alloc] init] autorelease];
-	NSProgressIndicator *progressBar = [controller progress];
+	NSString *dir = [self directory];
+	NSProgressIndicator *progressBar = [self progress];
 	
 	for (int c=0;c<count;c++)
 	{
 		NSURL *url = [u objectAtIndex:c];
-		[controller updateMessage:[NSString stringWithFormat:@"Downloading %d of %d",c+1,count]];
+		[self updateMessage:[NSString stringWithFormat:@"Downloading %d of %d",c+1,count]];
 		Downloader *downloader = [[Downloader alloc] initWithURL:url progress:progressBar];
 		while ([downloader isDownloadComplete] == NO)
 		{
@@ -147,11 +230,10 @@
 		BOOL isValidName = [filename length] > 5;
 		BOOL isValidData = [data length] > 100;
 		
-		
 		if (isValidData && isValidName) 
 		{
 			[data writeToFile:path atomically:YES];
-			[files setObject:path forKey:url];
+			[[self urls] setObject:path forKey:url];
 		} 
 		else 
 		{
@@ -168,40 +250,12 @@
 		
 		[downloader release];
 	}
-	
-	[progressBar setIndeterminate:NO];
-	[progressBar setMinValue:0.0];
-	[progressBar setMaxValue:[files count]];
-	[progressBar setDoubleValue:0.0];
-	[controller updateMessage:[NSString stringWithFormat:@"Installing %d file%s",[files count],[files count]>1?"s":""]];
-	
-	NSString *destination = [controller installDirectory];
-#ifdef DEBUG
-	NSLog(@"installing to: %@, count: %d",destination,[files count]);
-#endif
-
-	NSArray * filesKeys = [files allKeys];
-	
-	for (int c=0;c<(int)[filesKeys count];c++)
-	{
-		[progressBar setDoubleValue:c+1];
-		[controller updateMessage:[NSString stringWithFormat:@"Installing %d of %d file%s",c+1,[files count],[files count]>1?"s":""]];
-		NSURL * thisFileKey = [filesKeys objectAtIndex:c];
-		NSString * thisFileString = [files objectForKey:thisFileKey];
-		[controller install:thisFileString forUrl:thisFileKey destination:destination];
-	}
-	[progressBar setDoubleValue:[files count]];
-
-	[controller updateMessage:@"Installation complete"];
-
-	NSLog(@"Installation is complete, exiting after installing %d files",[filesKeys count]);
-	[pool release];
-	[NSApp terminate:self];
 }
 
 -(void)dealloc
 {
 	[urls release];
+	[files release];
 	[directory release];
 	[installDirectory release];
 	[super dealloc];
@@ -258,11 +312,20 @@
 	}
 	
 	// slurp in the URLS
-	urls = [[NSMutableArray alloc] init];
-	for (int c=6;c<count;c++)
+	urls = [[NSMutableDictionary alloc] init];
+	files = [[NSMutableArray alloc] init];
+	for (int c = 6; c < count; c++)
 	{
-		NSURL *url = [NSURL URLWithString:[args objectAtIndex:c]];
-		[urls addObject:url];
+		NSString* arg = [args objectAtIndex:c];
+		if ([fm fileExistsAtPath:arg])
+		{
+			[files addObject: arg];
+		}
+		else
+		{
+			NSURL *url = [NSURL URLWithString:[args objectAtIndex:c]];
+			[urls setObject:url forKey:url];
+		}
 	}
 
 	NSAlert *alert = [[NSAlert alloc] init];
@@ -294,7 +357,7 @@
 
 - (void) applicationDidFinishLaunching:(NSNotification *) notif
 {
-	[NSThread detachNewThreadSelector:@selector(download:) toTarget:self withObject:self];
+	[NSThread detachNewThreadSelector:@selector(downloadAndInstall:) toTarget:self withObject:self];
 }
 
 @end
