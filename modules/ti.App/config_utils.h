@@ -25,16 +25,16 @@ namespace ti {
 			return value;
 		}
 
-		static std::string GetPropertyValue(xmlNodePtr n, std::string property)
+		static std::string GetPropertyValue(xmlNodePtr n, const char* property)
 		{
-			xmlChar* strValue = xmlGetProp(n, (const xmlChar *) property.c_str());
-			std::string value;
+			char* strValue = (char*) xmlGetProp(n, (const xmlChar *) property);
 			if (strValue != NULL)
 			{
-				std::string value = (const char*) strValue;
+				std::string value = strValue;
 				xmlFree(strValue);
+				return value;
 			}
-			return value;
+			return std::string();
 		}
 
 		static bool GetNodeValueAsBool(xmlNodePtr n)
@@ -48,7 +48,6 @@ namespace ti {
 			std::transform(str.begin(), str.end(), str.begin(), tolower);
 			return (str == "yes" || str == "true" || str == "on");
 		}
-
 	};
 }
 

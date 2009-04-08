@@ -214,7 +214,6 @@ WindowConfig::WindowConfig(void* data)
 			if (!scrollbars.empty())
 			{
 				usingScrollbars = ConfigUtils::StringToBool(scrollbars);
-
 			}
 		}
 		else if (nodeNameEquals(child, "transparency"))
