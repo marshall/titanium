@@ -7,8 +7,7 @@
 #ifndef _APP_BINDING_H_
 #define _APP_BINDING_H_
 
-#include <api/module.h>
-#include <api/binding/binding.h>
+#include <kroll/kroll.h>
 
 
 namespace ti

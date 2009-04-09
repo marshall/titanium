@@ -7,7 +7,7 @@
 #ifndef _OSX_MEDIA_BINDING_H_
 #define _OSX_MEDIA_BINDING_H_
 
-#include <api/binding/binding.h>
+#include <kroll/kroll.h>
 #import <Cocoa/Cocoa.h>
 #include "../sound.h"
 #include "../media_binding.h"

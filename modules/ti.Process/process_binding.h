@@ -6,8 +6,7 @@
 #ifndef _PROCESS_BINDING_H_
 #define _PROCESS_BINDING_H_
 
-#include <api/module.h>
-#include <api/binding/binding.h>
+#include <kroll/kroll.h>
 #include <vector>
 
 namespace ti

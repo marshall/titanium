@@ -8,8 +8,7 @@
 #ifndef _LIBNOTIFY_BINDING_H_
 #define _LIBNOTIFY_BINDING_H_
 
-#include <api/module.h>
-#include <api/binding/binding.h>
+#include <kroll/kroll.h>
 
 using kroll::SharedBoundObject;
 

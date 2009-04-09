@@ -6,9 +6,7 @@
 
 #ifndef _MEDIA_SOUND_H_
 #define _MEDIA_SOUND_H_
-
-#include <api/module.h>
-#include <api/binding/binding.h>
+#include <kroll/kroll.h>
 
 using namespace kroll;
 

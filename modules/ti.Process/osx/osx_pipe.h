@@ -6,9 +6,7 @@
 
 #ifndef _OSX_PIPE_H_
 #define _OSX_PIPE_H_
-
-#include <api/module.h>
-#include <api/binding/binding.h>
+#include <kroll/kroll.h>
 #include <Cocoa/Cocoa.h>
 
 namespace ti

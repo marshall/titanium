@@ -6,15 +6,14 @@
 #ifndef _TI_ASYNC_COPY_H
 #define _TI_ASYNC_COPY_H
 
+#include <kroll/kroll.h>
+
 #ifdef OS_WIN32
-#include <api/base.h>
 #include <windows.h>
 #elif OS_OSX
 #import <Foundation/Foundation.h>
 #endif
 
-#include <api/binding/binding.h>
-#include <api/binding/static_bound_list.h>
 #include <string>
 #include <vector>
 #include <Poco/Thread.h>

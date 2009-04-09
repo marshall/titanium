@@ -5,9 +5,9 @@
  */
 #ifndef _TI_FILE_H_
 #define _TI_FILE_H_
+#include <kroll/kroll.h>
 
 #ifdef OS_WIN32
-#include <api/base.h>
 #include <windows.h>
 #include <commdlg.h>
 #include <shellapi.h>
@@ -17,10 +17,7 @@
 #import <Foundation/Foundation.h>
 #endif
 
-
-#include <api/binding/binding.h>
-#include <api/binding/static_bound_list.h>
-#include "file_stream.h"		// TODO remove this include when read/write methods are removed from File class
+#include "file_stream.h" // TODO remove this include when read/write methods are removed from File class
 #include <string>
 
 namespace ti

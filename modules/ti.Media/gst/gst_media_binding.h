@@ -7,8 +7,7 @@
 #ifndef _GST_MEDIA_BINDING_H_
 #define _GST_MEDIA_BINDING_H_
 
-#include <api/module.h>
-#include <api/binding/binding.h>
+#include <kroll/kroll.h>
 #include <gst/gst.h>
 #include "../sound.h"
 #include "../media_binding.h"
