@@ -23,7 +23,10 @@ def package_sdk(target, source, env):
 	# sdk.set_modules(modules)
 
 	# Create the basic application shell
-	sdk.stage(build.sdk_build_dir, src_resources=p.join(cwd, 'Resources'))
+	sdk.stage(build.sdk_build_dir, src_resources=p.join(cwd, 'Resources'), bundle=False)
+
+	# Copy the zip files from the dist directory to sdk.contents/dist
+	futils.CopyTree(build.dist_dir, p.join(sdk.contents, 'dist'), include=['*.zip'])
 
 	# The SDK installer application is staged.
 	# -- so now we do pre-package processing
@@ -61,7 +64,7 @@ def package_sdk(target, source, env):
 
 build.env.Append(BUILDERS = {'PackageSDK' : Builder(action=package_sdk)})
 sdk_target = build.env.PackageSDK("#dummy-target", [])
-build.mark_dist_target(sdk_target)
+Depends(sdk_target, ['stage', 'dist'])
 
 AlwaysBuild(sdk_target) # incremental builder doesn't work
 Alias('sdk', sdk_target)
