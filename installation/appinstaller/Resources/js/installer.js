@@ -24,8 +24,24 @@ function launchApp()
 
 var install_started;
 
-function finishInstall()
+function createShortcutIfNeeded()
 {
+	if ($('#create_shortcut').is(':checked'))
+	{
+		if (Titanium.platform == 'win32')
+		{
+			var userDir = TFS.getUserDirectory();
+			var startMenu = TFS.getFile(userDir, "Start Menu");
+			var to = TFS.getFile(startMenu, appname);
+			
+			var exeFile = TFS.getFile(launch);
+			exeFile.createShortcut(to);
+		}
+	}
+}
+
+function finishInstall()
+{	
 	var ts = new Date().getTime()-install_started;
 	if (ts < 1000)
 	{
@@ -36,6 +52,10 @@ function finishInstall()
 		
 		return;
 	}
+
+	// create shortcut if needed
+	createShortcutIfNeeded();
+	
 	$('#install_app').slideUp(200);
 	$('#install_app_finished').fadeIn();
 }
