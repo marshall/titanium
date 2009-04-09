@@ -114,12 +114,13 @@
           // when retrieving it from the query string, just chop that sucker off
           // (it's causing the icon not to load correctly)
           if (qs.icon.substring(qs.icon.length-1) == "/") {
-			qs.icon = qs.icon.substring(0, qs.icon.length-1);
+				qs.icon = qs.icon.substring(0, qs.icon.length-1);
           }
 
           img.src = qs.icon;
           img.style.visibility = 'visible';
           img.style.display = '';
+          img.onerror = function() { img.style.visibility='hidden' };
         }
         else
         {
