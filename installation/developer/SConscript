@@ -26,7 +26,8 @@ def package_sdk(target, source, env):
 	sdk.stage(build.sdk_build_dir, src_resources=p.join(cwd, 'Resources'), bundle=False)
 
 	# Copy the zip files from the dist directory to sdk.contents/dist
-	futils.CopyTree(build.dist_dir, p.join(sdk.contents, 'dist'), include=['*.zip'])
+	print "    -> Copying zips from %s to %s" % (build.dist_dir, p.join(sdk.contents, 'dist'))
+	futils.CopyTree(build.dist_dir, p.join(sdk.contents, 'dist'), filter=lambda x: not p.isdir(x) and x.endswith('.zip'))
 
 	# The SDK installer application is staged.
 	# -- so now we do pre-package processing
