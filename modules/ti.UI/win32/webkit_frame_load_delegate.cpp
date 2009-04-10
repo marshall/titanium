@@ -25,7 +25,7 @@ Win32WebKitFrameLoadDelegate::didFinishLoadForFrame(IWebView *webView, IWebFrame
 	UIModule::GetInstance()->LoadUIJavascript(context);
 
 	JSObjectRef global_object = JSContextGetGlobalObject(context);
-	SharedKObject frame_global = new KJSKObject(context, global_object);
+	SharedKObject frame_global = new KKJSObject(context, global_object);
 
 	IWebDataSource *webDataSource;
 	frame->dataSource(&webDataSource);

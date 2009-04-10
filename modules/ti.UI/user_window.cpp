@@ -1287,8 +1287,8 @@ void UserWindow::RegisterJSContext(JSGlobalContextRef context)
 		std::cerr << "Could not find UI API point!" << std::endl;
 	}
 
-	// Get the global object into a KJSKObject
-	SharedKObject frame_global = new KJSKObject(context, global_object);
+	// Get the global object into a KKJSObject
+	SharedKObject frame_global = new KKJSObject(context, global_object);
 
 	// Copy the document and window properties to the Titanium object
 	SharedValue doc_value = frame_global->Get("document");
