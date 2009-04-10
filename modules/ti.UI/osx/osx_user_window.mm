@@ -14,11 +14,11 @@ namespace ti
 	{
 		if (!config->IsUsingChrome() || config->IsFullScreen())
 		{
-			return NSBorderlessWindowMask;
+			return NSBorderlessWindowMask | NSTexturedBackgroundWindowMask ;
 		}
 		else
 		{
-			return NSTitledWindowMask | NSClosableWindowMask | NSResizableWindowMask | NSMiniaturizableWindowMask;
+			return NSTitledWindowMask | NSClosableWindowMask | NSResizableWindowMask | NSMiniaturizableWindowMask | NSTexturedBackgroundWindowMask;
 		}
 	}
 

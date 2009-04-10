@@ -160,24 +160,25 @@ Titanium.Project =
 						TFS.asyncCopy(appModules,moduleDest, function()
 						{
 							Titanium.Process.setEnv('KR_DEBUG','true');
-							TiDeveloper.track('project-launch',{'name':project.name});
 							var x =  Titanium.Process.launch(app.executable.nativePath());
 							if (x && callback)
 							{
 								callback(x);
 							}
+							TiDeveloper.track('project-launch',{'name':project.name});
 
 						})
 					}
 					else
 					{
 						Titanium.Process.setEnv('KR_DEBUG','true');
-						TiDeveloper.track('project-launch',{'name':project.name});
 						var x = Titanium.Process.launch(app.executable.nativePath());
 						if (x && callback)
 						{
 							callback(x);
 						}
+						TiDeveloper.track('project-launch',{'name':project.name});
+
 					}
 				});
 			});

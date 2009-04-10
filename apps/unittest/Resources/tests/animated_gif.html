@@ -1,0 +1,28 @@
+<html>
+	<script>
+	function startTest()
+	{
+		
+		// take several screenshots to see if its moving...		
+		Titanium.AppTest.takeScreenshot('animated_gif_1_of_4',function()
+		{
+			Titanium.AppTest.takeScreenshot('animated_gif_2_of_4', function()
+			{
+				Titanium.AppTest.takeScreenshot('animated_gif_3_of_4', function()
+				{
+					Titanium.AppTest.takeScreenshot('animated_gif_4_of_4', function()
+					{
+						Titanium.AppTest.stop();
+					});
+				})
+			})
+		});
+	}
+	</script>
+	<body>
+		<div>
+			Animated GIF Test
+		<div>
+		<img src="resources/animated.gif"/>
+	</body>
+</html>

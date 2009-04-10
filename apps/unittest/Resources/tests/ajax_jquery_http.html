@@ -1,0 +1,34 @@
+<html>
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
+
+	<script>
+	function startTest()
+	{
+		// make default timeout longer
+		Titanium.AppTest.setTimeout(5500);
+		
+		$.ajax({
+			type:'GET',
+			dataType:'json',
+			url:'http://twitter.com/statuses/public_timeline.json',
+
+			success: function(data)
+			{
+				Titanium.AppTest.addResult('jquery-ajax-http',true);
+				Titanium.AppTes.stop()
+			}
+		});
+		
+		// fail test after 5s
+		setTimeout(function()
+		{
+			Titanium.AppTest.addResult('jquery-ajax-http',false)
+			Titanium.AppTest.stop();
+			
+		},5000)
+	};
+	</script>
+	
+<body>
+</body>
+</html>
