@@ -25,6 +25,7 @@ using namespace ti;
 	WebInspector *inspector;
 	BOOL closed;
 	BOOL fullscreen;
+	BOOL focused;
 	NSRect savedFrame;
 }
 - (void)setupDecorations:(WindowConfig*)config host:(Host*)h userwindow:(UserWindow*)uw;

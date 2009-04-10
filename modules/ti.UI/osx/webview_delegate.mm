@@ -81,6 +81,9 @@
 	[webView setBackgroundColor:[NSColor clearColor]];
 	[webView setAutoresizingMask:NSViewHeightSizable | NSViewWidthSizable];
 	[webView setShouldCloseWithWindow:NO];
+	
+	// if we use a textured window mask, this is on by default which we don't want
+	[window setMovableByWindowBackground:NO];
 }
 
 -(id)initWithWindow:(NativeWindow*)win host:(Host*)h

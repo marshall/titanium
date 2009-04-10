@@ -56,10 +56,11 @@
 		if (showInspectorSep != nil) [windowMenu removeItem:showInspectorSep];
 	}
 	closed = NO;
-	NSLog(@">>>>>>>>>>>>>>>>>fuck you");
 }
 - (void)dealloc
 {
+	// make sure we go back to normal mode
+	SetSystemUIMode(kUIModeNormal,0);
 	[inspector release];
 	[delegate release];
 	delegate = nil;
@@ -117,12 +118,22 @@
 	[self fireWindowEvent:FOCUSED];
 	OSXUserWindow* uw = static_cast<OSXUserWindow*>(userWindow);
 	uw->Focused();
+	if (!focused && fullscreen)
+	{
+		SetSystemUIMode(kUIModeAllHidden,kUIOptionAutoShowMenuBar);
+	}
+	focused = YES;
 }
 - (void)windowDidResignKey:(NSNotification*)notification
 {
 	[self fireWindowEvent:UNFOCUSED];
 	OSXUserWindow* uw = static_cast<OSXUserWindow*>(userWindow);
 	uw->Unfocused();
+	if (fullscreen && focused)
+	{
+		SetSystemUIMode(kUIModeNormal,0);
+	}
+	focused = NO;
 }
 - (void)windowDidMiniaturize:(NSNotification*)notification
 {

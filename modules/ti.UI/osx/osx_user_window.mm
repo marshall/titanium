@@ -236,16 +236,6 @@ namespace ti
 			[window setMaxSize: newFrame.size];
 		}
 		[window setFrame:newFrame display:config->IsVisible() animate:YES];
-
-		// Compensate for frame size
-		//NSRect frame = [window frame];
-		//height += frame.size.height - [[window contentView] frame].size.height;
-		//BOOL display = config->IsVisible();
-		//double originalHeight = NSHeight(frame);
-		//frame.size.height = height;
-		//NSPoint origin = frame.origin;
-		//origin.y += (originalHeight - height);
-		//[window setFrame: NSMakeRect(origin.x, origin.y, frame.size.width, height) display:display animate:YES];
 	}
 	double OSXUserWindow::GetMaxWidth() {
 		return this->config->GetMaxWidth();
