@@ -62,6 +62,7 @@ namespace ti
 				[window setMaxSize: rect.size];
 			}
 		}
+
 		this->SetCloseable(config->IsCloseable());
 		this->SetMaximizable(config->IsMaximizable());
 		this->SetMinimizable(config->IsMinimizable());
@@ -358,7 +359,7 @@ namespace ti
 	}
 	void OSXUserWindow::SetMaximizable(bool maximizable)
 	{
-		[[window standardWindowButton:NSWindowZoomButton] setEnabled:maximizable];
+		[[window standardWindowButton:NSWindowZoomButton] setHidden:!maximizable];
 	}
 	bool OSXUserWindow::IsMinimizable()
 	{
@@ -366,7 +367,7 @@ namespace ti
 	}
 	void OSXUserWindow::SetMinimizable(bool minimizable)
 	{
-		[[window standardWindowButton:NSWindowMiniaturizeButton] setEnabled:minimizable];
+		[[window standardWindowButton:NSWindowMiniaturizeButton] setHidden:!minimizable];
 	}
 	bool OSXUserWindow::IsCloseable()
 	{
@@ -374,7 +375,7 @@ namespace ti
 	}
 	void OSXUserWindow::SetCloseable(bool closeable)
 	{
-		[[window standardWindowButton:NSWindowCloseButton] setEnabled:closeable];
+		[[window standardWindowButton:NSWindowCloseButton] setHidden:!closeable];
 	}
 	bool OSXUserWindow::IsVisible()
 	{
