@@ -55,11 +55,6 @@ top_dir = path.abspath('./../')
 build_dir = path.join(top_dir, 'build')
 build_dir = path.join(build_dir, osname)
 
-if (osname == 'linux' and build.x64):
- third_party_dir = path.join(top_dir, 'kroll','thirdparty', 'linux64');
-else:
- third_party_dir = path.join(top_dir, 'kroll','thirdparty', osname); 
-
 support_dir = path.join(top_dir,'support',osname)
 
 app_dir = path.join(build_dir, app_name)
@@ -85,12 +80,12 @@ for lib in runtime_libs:
 
 for tp in third_party:
     if osname is 'osx':
-        pattern = path.join(third_party_dir, tp, '*.framework')
+        pattern = path.join(build.third_party, tp, '*.framework')
         for d in glob.glob(pattern):
             dest = path.join(runtime_dir, path.basename(d))
             shutil.copytree(d, dest, symlinks=True)
 
-    lib_files_dir = path.join(third_party_dir, tp, lib_dir)
+    lib_files_dir = path.join(build.third_party, tp, lib_dir)
     if path.exists(lib_files_dir):
     	dir_util.copy_tree(lib_files_dir, runtime_dir, preserve_symlinks=1)
 
