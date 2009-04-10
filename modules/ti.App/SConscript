@@ -1,11 +1,9 @@
 #!/usr/bin/env python
-import os
+import os, os.path as path
 Import('build')
-
 
 env = build.env.Clone();
 env.Append(CPPDEFINES = ('TITANIUM_APP_API_EXPORT', 1))
-env.Append(CPPPATH = ['#kroll'])
 
 build.add_thirdparty(env, 'poco')
 if build.is_osx():
@@ -25,6 +23,7 @@ else:
 		env.ParseConfig('pkg-config --cflags --libs libxml-2.0')
 
 m = build.add_module('ti.App')
-t = env.SharedLibrary(target = m.build_dir + '/tiappmodule', source = Glob('*.cpp') + Glob('Properties/*.cpp'))
+sources = Glob('*.cpp') + Glob('Properties/*.cpp')
+t = env.SharedLibrary(target = m.build_dir + '/tiappmodule', source=sources)
 build.mark_build_target(t)
 

@@ -7,8 +7,7 @@
 #ifndef _MEDIA_WIN32_H_
 #define _MEDIA_WIN32_H_
 
-#include <api/module.h>
-#include <api/binding/binding.h>
+#include <kroll/kroll.h>
 #include <windows.h>
 #include "../sound.h"
 #include "../media_binding.h"

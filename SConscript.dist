@@ -1,20 +1,23 @@
 Import('build')
-import os.path as path, futils
+import os.path as path, futils, os
 
 # Network installable zip files for distribution. We must
 # encase this in a builder because the files necessary for zipping
 # don't exist when this file is processed.
 def build_dist_zips(target, source, env):
 	excludes = ['.dll.manifest', '.dll.pdb', '.exp', '.ilk']
-	
+
 	f = path.join(build.dist_dir, 'runtime-%s.zip' % build.version)
+	if not(path.isdir(build.dist_dir)):
+		os.makedirs(build.dist_dir)
+
 	print "Packing %s" % f
-	futils.Zip(build.runtime_build_dir, f, exclude=excludes)
+	futils.ZipDir(build.runtime_build_dir, f, exclude=excludes)
 	
 	for m in build.modules:
 		f = path.join(build.dist_dir, 'module-%s-%s.zip' % (m.name, m.version))
 		print "Packing %s" % f
-		futils.Zip(m.build_dir, f, exclude=excludes)
+		futils.ZipDir(m.build_dir, f, exclude=excludes)
 
 build.env.Append(BUILDERS = {'BuildDistZips' : Builder(action=build_dist_zips)})
 zips = build.env.BuildDistZips('#dummy-dist-zips', [])

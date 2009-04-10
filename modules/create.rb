@@ -40,8 +40,7 @@ bh.puts <<-END
 #ifndef _#{header_define}_BINDING_H_
 #define _#{header_define}_BINDING_H_
 
-#include <api/module.h>
-#include <api/binding/binding.h>
+#include <kroll/kroll.h>
 
 namespace ti
 {

@@ -7,8 +7,7 @@
 #ifndef _PIPE_H_
 #define _PIPE_H_
 
-#include <api/module.h>
-#include <api/binding/binding.h>
+#include <kroll/kroll.h>
 #include <Poco/Process.h>
 #include <Poco/PipeStream.h>
 #include <Poco/Exception.h>

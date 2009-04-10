@@ -9,7 +9,7 @@
 #include <vector>
 #include <gtk/gtk.h>
 #include <glib.h>
-#include <api/file_utils.h>
+#include <utils.h>
 
 class Installer;
 class Job;
@@ -17,18 +17,15 @@ class Job;
 
 class Installer
 {
-
 	public:
-	Installer(
-		std::string app_name,
-		std::string confirm_title,
-		std::string message);
+	Installer(std::string app_name);
 
 	void AddJob(std::string url);
 	void ClearJobs();
 	void Run();
 	void UpdateProgress();
 	void ShowError();
+	std::string GetInstallDir();
 
 	GtkWidget* GetWindow() { return this->window; }
 	void SetWindow(GtkWidget* w) { this->window = w; }
@@ -79,8 +76,8 @@ class Installer
 
 	private:
 	std::string app_name;
-	std::string confirm_title;
-	std::string message;
+	std::string system_runtime_home;
+	std::string user_runtime_home;
 
 	GtkWidget* window;
 	GtkWidget* bar;
@@ -92,5 +89,6 @@ class Installer
 	bool download_finished;
 	GThread* download_thread;
 	std::string error;
+	int install_type;
 
 };

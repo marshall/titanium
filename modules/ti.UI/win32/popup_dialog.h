@@ -6,7 +6,7 @@
 #ifndef TI_POPUP_DIALOG_H_
 #define TI_POPUP_DIALOG_H_
 
-#include <api/base.h>
+#include <kroll/kroll.h>
 #include <windows.h>
 #include <string>
 

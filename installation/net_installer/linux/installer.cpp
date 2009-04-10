@@ -8,6 +8,7 @@
 
 #include <iostream>
 #include <sstream>
+
 void *download_thread_f(gpointer data);
 void *install_thread_f(gpointer data);
 static gboolean watcher(gpointer data);
@@ -17,16 +18,16 @@ static void destroy_cb(GtkWidget *widget, gpointer data);
 #define WINDOW_WIDTH 350 
 #define WINDOW_HEIGHT 130
 
-Installer::Installer(
-	std::string app_name,
-	std::string confirm_title,
-	std::string message) :
+#define CANCEL 0
+#define HOMEDIR_INSTALL 1
+#define SYSTEM_INSTALL 2
+
+Installer::Installer(std::string app_name) :
 		app_name(app_name),
-		confirm_title(confirm_title),
-		message(message),
 		current_job(NULL),
 		cancel(false),
-		error("")
+		error(""),
+		install_type(HOMEDIR_INSTALL)
 {
 
 	this->download_finished = false;
@@ -93,11 +94,13 @@ void Installer::AddJob(std::string url)
 
 void Installer::ClearJobs()
 {
-	for (size_t i = 0; i < jobs.size(); i++)
+	std::vector<Job*>::iterator i = jobs.begin();
+	while (i != jobs.end())
 	{
-		delete jobs.at(i);
+		Job* j = *i;
+		i = jobs.erase(i);
+		delete j;
 	}
-	jobs.clear();
 }
 
 void Installer::Run()
@@ -105,32 +108,16 @@ void Installer::Run()
 
 	this->SetRunning(true);
 
-	GtkWidget* dialog = gtk_message_dialog_new(
-		NULL,
-		GTK_DIALOG_MODAL,
-		GTK_MESSAGE_QUESTION,
-		GTK_BUTTONS_YES_NO,
-		"%s",
-		this->message.c_str());
-	gtk_window_set_title(GTK_WINDOW(dialog), this->confirm_title.c_str());
-	gint r = gtk_dialog_run(GTK_DIALOG(dialog));
-	gtk_widget_destroy(dialog);
+	this->StartDownloading();
+	int timer = g_timeout_add(100, watcher, this);
+	gtk_widget_show_all(this->window);
 
-	if (r == GTK_RESPONSE_YES)
-	{
-	
-		this->StartDownloading();
+	gdk_threads_enter();
+	gtk_main();
+	gdk_threads_leave();
 
-		int timer = g_timeout_add(100, watcher, this);
-		gtk_widget_show_all(this->window);
+	g_source_remove(timer);
 
-		gdk_threads_enter();
-		gtk_main();
-		gdk_threads_leave();
-
-		g_source_remove(timer);
-
-	}
 
 }
 
@@ -321,36 +308,206 @@ static void destroy_cb(GtkWidget *widget, gpointer data)
 	i->Cancel();
 }
 
+int get_installation_type(std::string system_runtime_home)
+{
+
+	GtkWidget* dialog = gtk_dialog_new();
+
+	/* Titanium icon */
+	GdkColormap* colormap = gtk_widget_get_colormap(dialog);
+	GdkBitmap *mask = NULL;
+	GdkPixmap* icon = gdk_pixmap_colormap_create_from_xpm_d(
+		NULL,
+		colormap,
+		&mask,
+		NULL,
+		(gchar**) titanium_xpm);
+	GtkWidget* image = gtk_image_new_from_pixmap(icon, mask);
+
+	/* Install dialog label */
+	GtkWidget* label = gtk_label_new("This application needs additional components which will be downloaded from the network. Press install to continue.");
+	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
+
+	/* Install type combobox */
+	GtkListStore* store = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING);
+	GtkTreeIter iter;
+	gtk_list_store_append(store, &iter);
+	gtk_list_store_set(store, &iter,
+		0, GTK_STOCK_HOME,
+		1, "Install to my home directory", -1);
+	std::string text = std::string("Install to ") + system_runtime_home;
+	gtk_list_store_append(store, &iter);
+	gtk_list_store_set(store, &iter,
+		0, GTK_STOCK_DIALOG_AUTHENTICATION,
+		1, text.c_str(), -1);
+	GtkWidget* install_type = gtk_combo_box_new_with_model(GTK_TREE_MODEL(store));
+
+	GtkCellRenderer *renderer = gtk_cell_renderer_pixbuf_new();
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(install_type), renderer, FALSE);
+	gtk_cell_layout_set_attributes(
+		GTK_CELL_LAYOUT(install_type), renderer,
+		"stock-id", 0, NULL);
+	renderer = gtk_cell_renderer_text_new();
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(install_type), renderer, TRUE);
+	gtk_cell_layout_set_attributes(
+		GTK_CELL_LAYOUT(install_type), renderer,
+		"text", 1, NULL);
+
+	gtk_combo_box_set_active(GTK_COMBO_BOX(install_type), 0);
+
+	/* Pack label and combobox into vbox */
+	GtkWidget* labelbox = gtk_vbox_new(FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(labelbox), label, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(labelbox), install_type, FALSE, FALSE, 10);
+
+	/* Pack image and labelbox vbox into top_box */
+	GtkWidget* top_box = gtk_hbox_new(FALSE, 0);
+	gtk_container_set_border_width(GTK_CONTAINER(top_box), 10);
+	gtk_box_pack_start(GTK_BOX(top_box), image, FALSE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(top_box), labelbox, FALSE, FALSE, 5);
+
+	GtkWidget* top_part = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
+	gtk_box_pack_start(GTK_BOX(top_part), top_box, FALSE, FALSE, 0); 
+
+	GtkWidget* cancel = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
+
+	GtkWidget* install = gtk_button_new_with_label("install");
+	GtkWidget* install_icon = gtk_image_new_from_stock(
+		GTK_STOCK_OK,
+		GTK_ICON_SIZE_BUTTON);
+	gtk_button_set_image(GTK_BUTTON(install), install_icon);
+
+	GtkWidget* action_area = gtk_dialog_get_action_area(GTK_DIALOG(dialog));
+	gtk_box_set_homogeneous(GTK_BOX(action_area), FALSE);
+
+	gtk_dialog_add_action_widget(GTK_DIALOG(dialog), cancel, CANCEL);
+	gtk_dialog_add_action_widget(GTK_DIALOG(dialog), install, CANCEL+1);
+
+	gtk_window_set_modal(GTK_WINDOW(dialog), TRUE);
+	gtk_window_set_title(GTK_WINDOW(dialog), "Additional application files required");
+	gtk_window_set_default_size(GTK_WINDOW(dialog), 325, 100);
+
+	gtk_widget_show_all(dialog);
+	gint r = gtk_dialog_run(GTK_DIALOG(dialog));
+	gint subr = gtk_combo_box_get_active(GTK_COMBO_BOX(install_type));
+
+	if (r != CANCEL && subr == 0)
+	{
+		r = HOMEDIR_INSTALL;
+	}
+	else if (r != CANCEL && subr == 1)
+	{
+		r = SYSTEM_INSTALL;
+	}
+	gtk_widget_destroy(dialog);
+
+	return r;
+}
+
+int do_install(std::string directory, int argc, char* argv[])
+{
+	printf("Installing to: %s\n", directory.c_str());
+	std::string app_name = argv[4];
+	std::string temp_dir = argv[5];
+
+	Installer i = Installer(app_name);
+	curl_global_init(CURL_GLOBAL_ALL);
+	Job::Init(temp_dir, directory);
+
+	int urls_start = 6;
+	for (int u = urls_start; u < argc; u++)
+	{
+		printf("%s\n", argv[u]);
+		i.AddJob(argv[u]);
+	}
+
+	i.Run();
+	i.ClearJobs();
+	Job::ShutdownDownloader();
+
+	return 0;
+}
+
+// TODO: Switch to PolicyKit
+int do_install_sudo(int argc, char* argv[])
+{
+	// Copy all but the first command-line arg
+	std::vector<std::string> args;
+	args.push_back("--description");
+	args.push_back("Titanium Network Installer");
+
+	args.push_back("--");
+	args.push_back(argv[0]);
+	args.push_back("--system");
+	for (int i = 2; i < argc; i++)
+	{
+		args.push_back(argv[i]);
+	}
+
+	// Restart in a sudoed environment
+	std::string cmd = "gksudo";
+	int r = kroll::FileUtils::RunAndWait(cmd, args);
+	if (r == 127)
+	{
+		// Erase gksudo specific options
+		args.erase(args.begin());
+		args.erase(args.begin());
+		cmd = std::string("kdesudo");
+		args.insert(args.begin(), "The Titanium network installer needs adminstrator privileges to run. Please enter your password.");
+		args.insert(args.begin(), "--comment");
+		args.insert(args.begin(), "-d");
+		r = kroll::FileUtils::RunAndWait(cmd, args);
+	}
+	if (r == 127)
+	{
+		// Erase kdesudo specific option
+		args.erase(args.begin());
+		args.erase(args.begin());
+		args.erase(args.begin());
+		cmd = std::string("xterm");
+		args.insert(args.begin(), "sudo");
+		args.insert(args.begin(), "-e");
+		r = kroll::FileUtils::RunAndWait(cmd, args);
+	}
+	return r;
+}
+
+int choose_install_path(int argc, char* argv[])
+{
+	std::string type = argv[1];
+	std::string system_runtime_home = argv[2];
+	std::string user_runtime_home = argv[3];
+
+	if (type == "--initial")
+	{
+		int result = get_installation_type(system_runtime_home);
+		if (result == HOMEDIR_INSTALL)
+		{
+			return do_install(user_runtime_home, argc, argv);
+		}
+		else if (result == SYSTEM_INSTALL)
+		{
+			return do_install_sudo(argc, argv);
+		}
+		else // cancelled
+		{
+			return 0; 
+		}
+	}
+	else // We've entered after a sudo
+	{
+		return do_install(system_runtime_home, argc, argv);
+	}
+}
 
 int main(int argc, char* argv[])
 {
 	gtk_init(&argc, &argv);
-	curl_global_init(CURL_GLOBAL_ALL);
 
-	if (argc < 8)
+	if (argc < 6)
 	{
 		std::cerr << "Not enough arguments given, aborting." << std::endl;
 		exit(2);
 	}
-
-	std::string app_name = argv[1];
-	std::string confirm_title = argv[2];
-	std::string message = argv[3];
-	std::string temp_dir = argv[4];
-	std::string install_dir = argv[5];
-	std::string unzipper = argv[6];
-	int urls_start = 7;
-
-	Installer i = Installer(app_name, confirm_title, message);
-
-	Job::Init(temp_dir, install_dir);
-
-	for (int u = urls_start; u < argc; u++)
-		i.AddJob(argv[u]);
-
-	i.Run();
-	i.ClearJobs();
-
-	Job::ShutdownDownloader();
-
+	return choose_install_path(argc, argv);
 }

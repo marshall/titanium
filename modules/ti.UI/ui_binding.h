@@ -7,8 +7,7 @@
 #ifndef _UI_BINDING_H_
 #define _UI_BINDING_H_
 
-#include <api/module.h>
-#include <api/binding/binding.h>
+#include <kroll/kroll.h>
 #include "menu_item.h"
 
 namespace ti

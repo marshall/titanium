@@ -60,14 +60,52 @@ Job::Job(std::string url, Installer* installer) :
 	progress(0.0),
 	type("unknown"),
 	name("unknown"),
-	version("unknown")
+	version("unknown"),
+	download(true)
 {
-	this->ParseName(url);
-	std::string filename = this->type + "-" + this->name + "-" + this->version + ".zip";
-	this->out_filename = Job::download_dir + "/" + filename;
+	if (kroll::FileUtils::IsFile(url))
+	{
+		this->ParseFile(url);
+		this->out_filename = url;
+		this->download = false;
+	}
+	else
+	{
+		this->ParseURL(url);
+		std::string filename = this->type + "-" + this->name + "-" + this->version + ".zip";
+		this->out_filename = Job::download_dir + "/" + filename;
+	}
 }
 
-void Job::ParseName(std::string url)
+void Job::ParseFile(std::string url)
+{
+	char* url_cstr = strdup(url.c_str());
+	std::string file = basename(url_cstr);
+	free(url_cstr);
+	printf("file: %s\n", file.c_str());
+
+	size_t start, end;
+	end = file.find("-");
+	std::string partOne = file.substr(0, end);
+	if (partOne == "runtime")
+	{
+		this->type = this->name = "runtime";
+	}
+	else if (partOne == "module")
+	{
+		this->type = "modules";
+		start = end + 1;
+		end = file.find("-", start);
+		this->name = file.substr(start, end - start);
+	}
+
+	start = end + 1;
+	end = file.find(".zip", start);
+	this->version = file.substr(start, end - start);
+	printf("%s %s %s\n", this->type.c_str(), this->name.c_str(), this->version.c_str());
+}
+
+void Job::ParseURL(std::string url)
 {
 	size_t start, end;
 	start = url.find("name=");
@@ -96,6 +134,12 @@ void Job::ParseName(std::string url)
 
 void Job::Fetch()
 {
+	if (!this->download)
+	{
+		this->progress = 1.0;
+		return;
+	}
+
 	FILE *out = NULL;
 	this->progress = 0.0;
 

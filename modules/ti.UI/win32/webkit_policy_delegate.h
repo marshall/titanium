@@ -8,7 +8,7 @@
 #ifndef _TI_WEB_KIT_POLICY_DELEGATE_H_
 #define _TI_WEB_KIT_POLICY_DELEGATE_H_
 
-#include <api/base.h>
+#include <kroll/kroll.h>
 #include "WebKit.h"
 
 namespace ti {

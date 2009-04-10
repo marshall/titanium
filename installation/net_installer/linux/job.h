@@ -16,11 +16,12 @@ class Job
 	int GetIndex();
 	void SetProgress(double progress);
 	double GetProgress();
-	void ParseName(std::string url);
+	void ParseURL(std::string url);
+	void ParseFile(std::string url);
 	Installer* GetInstaller();
 
 	static int total;
-	static void Init(std::string download_dir, std::string install_dir);
+	static void Init(std::string, std::string);
 	static void ShutdownDownloader();
 
 	int Index()
@@ -37,6 +38,7 @@ class Job
 	std::string type;
 	std::string name;
 	std::string version;
+	bool download;
 
 	static std::string download_dir;
 	static std::string install_dir;

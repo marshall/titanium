@@ -101,77 +101,8 @@ namespace ti
 		int num_proc = 1;
 #endif
 
-		std::string machineid = FileUtils::GetMachineId();
-#ifdef OS_OSX
-		// for OSX this returns the mac address, can we just use this
-		// for the other OS too??? -JGH
-		std::string macid = Poco::Environment::nodeId();
-#elif defined(OS_WIN32)
-		//IP_ADAPTER_INFO adapter;
-		PIP_ADAPTER_ADDRESSES addresses = NULL;
-		//DWORD dwBufLen = sizeof(adapter);
-		ULONG family = AF_UNSPEC;
-		ULONG flags = GAA_FLAG_INCLUDE_PREFIX;
-		ULONG bufferLength = sizeof (IP_ADAPTER_ADDRESSES);
-		addresses = (IP_ADAPTER_ADDRESSES *) malloc(bufferLength);
-		// first call to check if we've allocated enough buffer space
-		if (GetAdaptersAddresses(family, flags, NULL, addresses, &bufferLength) == ERROR_BUFFER_OVERFLOW) {
-			free(addresses);
-			addresses = (IP_ADAPTER_ADDRESSES *) malloc(bufferLength);
-		}
-
-		// "actual" call
-		DWORD dwStatus = GetAdaptersAddresses(family, flags, NULL, addresses, &bufferLength);
-		if (dwStatus != NO_ERROR) return;
-		BYTE *MACData = addresses->PhysicalAddress;
-		char buf[MAX_PATH];
-		sprintf_s(buf,MAX_PATH,"%02X:%02X:%02X:%02X:%02X:%02X", MACData[0], MACData[1], MACData[2], MACData[3], MACData[4], MACData[5]);
-		std::string macid = std::string(buf);
-#elif defined(OS_LINUX)
-		//Based on code from:
-		//http://adywicaksono.wordpress.com/2007/11/08/detecting-mac-address-using-c-application/
-		std::string macid = "00:00:00:00:00:00";
-		struct ifreq ifr;
-		struct ifconf ifc;
-		char buf[1024];
-		u_char addr[6] = {'\0','\0','\0','\0','\0','\0'};
-		int s,a;
-
-		s = socket(AF_INET, SOCK_DGRAM, 0);
-		if (s != -1)
-		{
-			ifc.ifc_len = sizeof(buf);
-			ifc.ifc_buf = buf;
-			ioctl(s, SIOCGIFCONF, &ifc);
-			struct ifreq* IFR = ifc.ifc_req;
-			bool success = false;
-			for (a = ifc.ifc_len / sizeof(struct ifreq); --a >= 0; IFR++) {
-				strcpy(ifr.ifr_name, IFR->ifr_name);
-				if (ioctl(s, SIOCGIFFLAGS, &ifr) == 0
-					 && (!(ifr.ifr_flags & IFF_LOOPBACK))
-					 && (ioctl(s, SIOCGIFHWADDR, &ifr) == 0))
-				{
-					success = true;
-					bcopy(ifr.ifr_hwaddr.sa_data, addr, 6);
-					break;
-				}
-			}
-			close(s);
-
-			if (success)
-			{
-				char mac_buf[36];
-				std::ostringstream mac;
-				snprintf(mac_buf, 36,
-					"%2.2x:%2.2x:%2.2x:%2.2x:%2.2x:%2.2x",
-					addr[0], addr[1],
-					addr[2], addr[3],
-					addr[4], addr[5]);
-				macid = std::string(mac_buf);
-			}
-		}
-#endif
-
+		std::string machineid = PlatformUtils::GetMachineId();
+		std::string macAddress = PlatformUtils::GetFirstMACAddress();
 
 //NOTE: for now we determine this at compile time -- in the future
 //we might want to actually programmatically determine if running on
@@ -207,7 +138,7 @@ namespace ti
 		/**
 		 * @tiapi(property=True,type=string,name=Platform.macaddress,since=0.3) the primary mac address
 		 */
-		this->Set("macaddress", Value::NewString(macid));
+		this->Set("macaddress", Value::NewString(macAddress));
 		/**
 		 * @tiapi(property=True,type=integer,name=Platform.processorCount,since=0.2) the number of processors for the machine
 		 */

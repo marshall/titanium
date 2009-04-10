@@ -109,36 +109,36 @@
 	{
 		return redirectRequest;
 	}
-				
-  	if (redirectRequest && redirectResponse) 
+
+	if (redirectRequest && redirectResponse) 
 	{
-	    NSURL *redirectURL = [redirectRequest URL];
-	    NSURL *url = [downloadRequest URL];
+		NSURL *redirectURL = [redirectRequest URL];
+		NSURL *url = [downloadRequest URL];
 
 		NSMutableURLRequest *newRequest = [[NSMutableURLRequest alloc] init];
 		[newRequest setTimeoutInterval:10.0];
 		[newRequest setValue:userAgent forHTTPHeaderField:@"User-Agent"];
 
-	    // disallow scheme changes (say, from https to http)    
-	    NSString *redirectScheme = [url scheme];
-	    NSString *newScheme = [redirectURL scheme];
-	    NSString *newResourceSpecifier = [redirectURL resourceSpecifier];
+		// disallow scheme changes (say, from https to http)
+		NSString *redirectScheme = [url scheme];
+		NSString *newScheme = [redirectURL scheme];
+		NSString *newResourceSpecifier = [redirectURL resourceSpecifier];
 
-	    if ([redirectScheme caseInsensitiveCompare:@"http"] == NSOrderedSame
-	        && newScheme != nil
-	        && [newScheme caseInsensitiveCompare:@"https"] == NSOrderedSame) 
+		if ([redirectScheme caseInsensitiveCompare:@"http"] == NSOrderedSame
+			&& newScheme != nil
+			&& [newScheme caseInsensitiveCompare:@"https"] == NSOrderedSame) 
 		{
-	      // allow the change from http to https
-	      redirectScheme = newScheme; 
-	    }
-    
-	    NSString *newUrlString = [NSString stringWithFormat:@"%@:%@",
-	      redirectScheme, newResourceSpecifier];
-    
-	    NSURL *newURL = [NSURL URLWithString:newUrlString];
-	    [newRequest setURL:newURL];
+			// allow the change from http to https
+			redirectScheme = newScheme; 
+		}
 
-	    // any headers in the redirect override headers in the original.
+		NSString *newUrlString = [NSString stringWithFormat:@"%@:%@",
+			redirectScheme, newResourceSpecifier];
+
+		NSURL *newURL = [NSURL URLWithString:newUrlString];
+		[newRequest setURL:newURL];
+
+		// any headers in the redirect override headers in the original.
 		NSDictionary *redirectHeaders = [redirectRequest allHTTPHeaderFields];
 		if (redirectHeaders) 
 		{
@@ -146,11 +146,11 @@
 			NSString *key;
 			while (nil != (key = [enumerator nextObject])) 
 			{
-			  NSString *value = [redirectHeaders objectForKey:key];
-			  [newRequest setValue:value forHTTPHeaderField:key];
+				NSString *value = [redirectHeaders objectForKey:key];
+				[newRequest setValue:value forHTTPHeaderField:key];
 			}
 		}
-	  	return newRequest;
+		return newRequest;
 	}
 	return redirectRequest;
 }

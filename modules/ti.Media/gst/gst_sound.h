@@ -7,8 +7,7 @@
 #ifndef _TI_MEDIA_GST_SOUND_H_
 #define _TI_MEDIA_GST_SOUND_H_
 
-#include <api/module.h>
-#include <api/binding/binding.h>
+#include <kroll/kroll.h>
 #include <vector>
 
 using namespace kroll;
