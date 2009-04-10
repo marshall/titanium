@@ -844,7 +844,7 @@ $MQL('l:package.project.request',function(msg)
 {
 	var project = TiDeveloper.Projects.findProjectById(msg.payload.id);
 	Titanium.Project.setModules(project.dir);
-	$MQ('l:package.project.data',{rows:TiDeveloper.Projects.modules});
+	$MQ('l:package.project.data',{rows:Titanium.Project.optionalModules});
  	$MQ('l:package.all',{val:'network'});
 
 });
