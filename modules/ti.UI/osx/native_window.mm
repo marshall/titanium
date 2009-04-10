@@ -24,7 +24,6 @@
 	[self setTitle:[NSString stringWithCString:config->GetTitle().c_str()]];
 	[self setOpaque:false];
 	[self setHasShadow:true];
-//	[self setBackgroundColor:[NSColor clearColor]];
 
 	webView = [[WebView alloc] init];
 	[webView setDrawsBackground:NO];
@@ -57,7 +56,7 @@
 		if (showInspectorSep != nil) [windowMenu removeItem:showInspectorSep];
 	}
 	closed = NO;
-	[self setMovableByWindowBackground:YES];
+	NSLog(@">>>>>>>>>>>>>>>>>fuck you");
 }
 - (void)dealloc
 {
