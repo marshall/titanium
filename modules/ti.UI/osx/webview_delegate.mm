@@ -358,7 +358,7 @@
 
 	// Track that we've cleared this frame
 	JSObjectRef global_object = JSContextGetGlobalObject(context);
-	BoundObject *global_bound_object = new KJSKObject(context, global_object);
+	BoundObject *global_bound_object = new KKJSObject(context, global_object);
 	SharedBoundObject shared_global = global_bound_object;
 	if (store)
 	{
@@ -838,7 +838,7 @@ std::string GetModuleName(NSString *typeStr)
 			SharedValue typeValue = Value::NewString(type);
 			SharedValue sourceCodeValue = Value::NewString([sourceCode UTF8String]);
 			JSObjectRef globalObjectRef = JSContextGetGlobalObject(contextRef);
-			SharedBoundObject contextObject = new KJSKObject(contextRef, globalObjectRef);
+			SharedBoundObject contextObject = new KKJSObject(contextRef, globalObjectRef);
 			SharedValue contextValue = Value::NewObject(contextObject);
 			args.push_back(typeValue);
 			args.push_back(sourceCodeValue);
