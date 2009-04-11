@@ -4,7 +4,7 @@
 //  This is the main driver JS file for running automated unit and application level tests.
 //
 		
-// glboal TestDriver object		
+// global TestDriver object		
 Titanium.TestDriver = {};
 
 // array of test files
@@ -170,12 +170,12 @@ Titanium.TestDriver.launchApp = function(testfile)
 	if (Titanium.TestDriver.mode == Titanium.TestDriver.UNITMODE)
 	{
 		project.name = "unittest";
-		project.url = "http://www.titaniumapp.com";
+		project.url = "http://titaniumapp.com";
 		project.rootdir = Titanium.Filesystem.createTempDirectory().toString();
 		project.dir = project.rootdir +'/'+ project.name;
-		project.appid = 'com.titanium.unitest';
-		project.publisher = "Titanium";
-		project.desc = 'unittest app';
+		project.appid = 'com.titaniumapp.unittest';
+		project.publisher = "Appcelerator";
+		project.desc = 'automated unit test app';
 		project.guid = Titanium.Platform.createUUID();
 		
 		var outdir = Titanium.Filesystem.getFile(project.rootdir,project.name);
@@ -260,6 +260,7 @@ Titanium.TestDriver.launchApp = function(testfile)
 		}
 		return null;
 	}
+	var args = ['--profile=profile.json'];
 	
 	// launch app
 	var pid = Titanium.Project.launch(project,false,function(p)
@@ -306,7 +307,7 @@ Titanium.TestDriver.launchApp = function(testfile)
 			// start next test
 			Titanium.TestDriver.loadNextTest();
 		};
-	});
+	},args);
 };
 
 //

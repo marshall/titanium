@@ -123,7 +123,7 @@ Titanium.Project =
 		return manifest;
 		
 	},
-	launch: function(project,install,callback)
+	launch: function(project,install,callback,args)
 	{
 		try
 		{
@@ -172,7 +172,15 @@ Titanium.Project =
 					else
 					{
 						Titanium.Process.setEnv('KR_DEBUG','true');
-						var x = Titanium.Process.launch(app.executable.nativePath());
+						var x = null;
+						if (typeof(args)!='undefined')
+						{
+							x = Titanium.Process.launch(app.executable.nativePath(),args);
+						}
+						else
+						{
+							x = Titanium.Process.launch(app.executable.nativePath());
+						}
 						if (x && callback)
 						{
 							callback(x);

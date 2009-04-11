@@ -1,0 +1,36 @@
+#!/usr/bin/env python
+
+import os.path as p, os, futils
+import glob, distutils.dir_util as dir_util
+from app import App
+from subprocess import Popen
+Import('build')
+
+def package_unittest_builder(target,source,env):
+	print "Running Titanium Unit Tests..."
+
+	cwd = build.cwd()
+	app = App(
+		build,
+		shortname='unittest',
+		fullname='Titanium Unittest', 
+		id='com.titaniumapp.unittest.driver',
+		version=build.version,
+		guid='D83B08F4-B43B-4909-9FEE-336CDB44750B',
+		image='images/default_app_logo.png',
+		publisher='Appcelerator, Inc',
+		url='http://www.titaniumapp.com')
+
+	app.stage(build.sdk_build_dir, src_resources=p.join(cwd, 'Resources'), bundle=False)
+	common_js = p.join(build.titanium_source_dir, 'installation', 'common', 'js')
+	futils.CopyTree(common_js, p.join(app.contents, 'Resources', 'js'))
+
+	Popen(app.exe)
+
+
+build.env.Append(BUILDERS = {'PackageUnitTest' : Builder(action=package_unittest_builder)})
+unittest_target = build.env.PackageUnitTest("#dummy-target", [])
+Depends(unittest_target, ['stage', 'dist'])
+
+AlwaysBuild(unittest_target) # incremental builder doesn't work
+Alias('unittest', unittest_target)

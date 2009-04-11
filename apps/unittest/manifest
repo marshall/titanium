@@ -1,10 +1,10 @@
-#appname:UnitTestProject
-#appid:com.test.unittestproject
-#publisher:test
+#appname:UnitTest
+#appid:com.titaniumapp.unittest.driver
+#publisher:Appcelerator
 #image:default_app_logo.png
-#url:test.com
-#guid:6e352b48-cb2d-4c33-b188-7bf83c39fb46
-#desc:test
+#url:http://titaniumapp.com
+#guid:D83B08F4-B43B-4909-9FEE-336CDB44750B
+#desc:Unit Test Driver
 runtime:0.4
 api:0.4
 javascript:0.4
