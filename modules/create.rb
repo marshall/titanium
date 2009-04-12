@@ -113,8 +113,6 @@ namespace ti
 	{
 		KROLL_MODULE_CLASS(#{module_name}Module)
 		
-		void Test();
-
 	private:
 		kroll::SharedBoundObject binding;
 	};
@@ -133,7 +131,6 @@ mc.puts <<-END
  */
 #include <kroll/kroll.h>
 #include "#{name}_module.h"
-#include "#{name}_test.h"
 
 using namespace kroll;
 using namespace ti;
@@ -156,62 +153,10 @@ namespace ti
 	{
 	}
 	
-	void #{module_name}Module::Test()
-	{
-	  #{module_name}UnitTestSuite test;
-	  test.Run(host);
-	}
 }
 END
 mc.close
 
-th = File.open(File.join(module_dir_name,"#{name}_test.h"),'w')
-th.puts <<-END
-/**
- * Appcelerator Titanium - licensed under the Apache Public License 2
- * see LICENSE in the root folder for details on the license.
- * Copyright (c) 2009 Appcelerator, Inc. All Rights Reserved.
- */
-#ifndef TI_#{header_define}_TEST_H_
-#define TI_#{header_define}_TEST_H_
-#include "#{name}_test.h"
-#include "#{name}_module.h"
-#include "#{name}_binding.h"
-
-namespace ti
-{
-	class #{module_name}UnitTestSuite
-	{
-    public:
-      #{module_name}UnitTestSuite() {};
-      virtual ~#{module_name}UnitTestSuite() {};
-      void Run(Host *host);
-	};
-}
-#endif
-END
-th.close
-
-tc = File.open(File.join(module_dir_name,"#{name}_test.cpp"),'w')
-tc.puts <<-END
-/**
- * Appcelerator Titanium - licensed under the Apache Public License 2
- * see LICENSE in the root folder for details on the license.
- * Copyright (c) 2009 Appcelerator, Inc. All Rights Reserved.
- */
-#include "#{name}_test.h"
-#include "#{name}_module.h"
-#include "#{name}_binding.h"
-
-namespace ti
-{
-	void #{module_name}UnitTestSuite::Run(Host *host)
-	{
-	  //TODO: write your test cases here
-	}
-}
-END
-tc.close
 
 sc = File.open(File.join(module_dir_name,"SConscript"),'w')
 sc.puts <<-END

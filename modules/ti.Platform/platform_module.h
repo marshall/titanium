@@ -26,8 +26,6 @@ namespace ti
 	class TITANIUM_PLATFORM_API PlatformModule : public kroll::Module
 	{
 		KROLL_MODULE_CLASS(PlatformModule)
-		
-		void Test();
 
 	private:
 		kroll::SharedBoundObject binding;

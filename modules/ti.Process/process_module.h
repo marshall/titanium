@@ -27,7 +27,6 @@ namespace ti
 	{
 		KROLL_MODULE_CLASS(ProcessModule)
 		
-		void Test();
 
 	private:
 		kroll::SharedBoundObject binding;

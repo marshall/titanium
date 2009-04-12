@@ -5,7 +5,7 @@
  */
 #include <kroll/kroll.h>
 #include "platform_module.h"
-#include "platform_test.h"
+#include "platform_binding.h"
 
 using namespace kroll;
 using namespace ti;
@@ -28,9 +28,4 @@ namespace ti
 	{
 	}
 	
-	void PlatformModule::Test()
-	{
-	  PlatformUnitTestSuite test;
-	  test.Run(host);
-	}
 }

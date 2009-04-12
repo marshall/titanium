@@ -5,7 +5,6 @@
  */
 #include <kroll/kroll.h>
 #include "growl_module.h"
-#include "growl_test.h"
 
 #if defined(OS_OSX)
 #include "osx/growl_osx.h"
@@ -45,9 +44,4 @@ namespace ti
 	{
 	}
 
-	void GrowlModule::Test()
-	{
-	  GrowlUnitTestSuite test;
-	  test.Run(host);
-	}
 }

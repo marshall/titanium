@@ -5,7 +5,7 @@
  */
 #include <kroll/kroll.h>
 #include "monkey_module.h"
-#include "monkey_test.h"
+#include "monkey_binding.h"
 
 using namespace kroll;
 using namespace ti;
@@ -28,9 +28,4 @@ namespace ti
 	{
 	}
 	
-	void MonkeyModule::Test()
-	{
-	  MonkeyUnitTestSuite test;
-	  test.Run(host);
-	}
 }
