@@ -96,7 +96,8 @@ bool FileStream::Open(std::string mode, bool binary, bool append)
 		}
 
 #ifdef DEBUG
-		std::cout << "FILE OPEN FLAGS = " << flags << ", binary=" << binary << ", mode = " << mode << ", append=" << append << std::endl;
+		Logger& logger = Logger::Get("Filesystem.FileStream");
+		logger.Debug("FILE OPEN FLAGS = %d, binary=%d, mode=%s, append=%d",flags,binary,mode.c_str(),append);
 #endif
 		if (output)
 		{

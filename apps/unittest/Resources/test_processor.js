@@ -28,6 +28,7 @@ Titanium.AppTest.timeoutFunction = setTimeout(function()
 // @detail - can contain error info or success info
 Titanium.AppTest.addResult = function(name, result, detail)
 {
+	if (result && typeof(detail)=='undefined') detail = 'passed';
 	Titanium.AppTest.results.push({name:name,result:result,detail:detail});
 	Titanium.AppTest.writeResults();
 };
