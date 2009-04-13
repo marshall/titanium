@@ -73,11 +73,13 @@ namespace ti
 		catch (kroll::ValueException &e)
 		{
 			SharedString ss = e.DisplayString();
-			std::cerr << "Error: " << *ss << std::endl;
+			Logger logger = Logger::GetRootLogger();
+			logger.Error("Error loading %s: %s",js_path.c_str(),(*ss).c_str());
 		}
 		catch (...)
 		{
-			std::cerr << "WARNING: Unable to load " << js_path << std::endl;
+			Logger logger = Logger::GetRootLogger();
+			logger.Error("Unexpected error loading %s",js_path.c_str());
 		}
 	}
 

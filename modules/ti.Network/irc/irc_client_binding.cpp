@@ -90,9 +90,8 @@ namespace ti
 	}
 	int IRCClientBinding::Callback(char *irc_command, char* param, irc_reply_data* data, void* conn, void *pd)
 	{
-#ifdef DEBUG
-		std::cout << "Received: " << param << std::endl;
-#endif
+		PRINTD("IRC Received: " << param)
+		
 		IRCClientBinding *binding = (IRCClientBinding*)pd;
 		if (!binding->callback.isNull())
 		{
@@ -108,7 +107,8 @@ namespace ti
 			}
 			catch(std::exception &e)
 			{
-				std::cerr << "Caught exception dispatching IRC callback: " << irc_command << ", Error: " << e.what() << std::endl;
+				Logger logger = Logger::GetRootLogger();
+				logger.Error("Caught exception dispatching IRC callback: %s, Error: %s", irc_command, e.what());
 			}
 		}
 		return 0;
@@ -184,7 +184,7 @@ namespace ti
 			const char *channel = args.at(0)->ToString();
 			const char *msg = args.at(1)->ToString();
 #ifdef DEBUG
-			std::cout << "sending IRC: " << channel << " => " << msg << std::endl;
+			PRINTD("sending IRC: " << channel << " => " << msg);
 #endif
 			std::string cmd(msg);
 			size_t pos = std::string::npos;
@@ -217,7 +217,7 @@ namespace ti
 		{
 			const char *channel = args.at(0)->ToString();
 #ifdef DEBUG
-			std::cout << "JOIN " << channel << std::endl;
+			PRINTD("JOIN " << channel);
 #endif
 			this->irc.join((char*)channel);
 		}

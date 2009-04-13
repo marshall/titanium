@@ -3,46 +3,6 @@
    styles across different operating systems 
 */
 
-@font-face 
-{
-  	font-family: "monospace";
-  	src: url(ti://ti.ui/fonts/Inconsolata.otf) format("opentype");
-}
-
-@font-face 
-{
-  	font-family: "sans-serif";
-  	src: url(ti://ti.ui/fonts/Junction.otf) format("opentype");
-}
-
-@font-face 
-{
-  	font-family: "serif";
-  	src: url(ti://ti.ui/fonts/texgyreschola-regular.otf) format("opentype");
-}
-
-@font-face 
-{
-  	font-family: "serif";
-	font-weight: bold;
-  	src: url(ti://ti.ui/fonts/texgyreschola-bold.otf) format("opentype");
-}
-
-@font-face 
-{
-  	font-family: "serif";
-	font-style: italic;
-  	src: url(ti://ti.ui/fonts/texgyreschola-italic.otf) format("opentype");
-}
-
-@font-face 
-{
-  	font-family: "serif";
-	font-weight: bold;
-	font-style: italic;
-  	src: url(ti://ti.ui/fonts/texgyreschola-bolditalic.otf) format("opentype");
-}
-
 body
 {
 	font-family: "sans-serif";

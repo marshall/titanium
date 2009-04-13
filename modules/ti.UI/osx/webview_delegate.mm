@@ -3,12 +3,11 @@
  * see LICENSE in the root folder for details on the license.
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
+#include <kroll/kroll.h>
 #include "../ui_module.h"
 #include "WebScriptElement.h"
 #include "osx_menu_item.h"
 #include "WebFramePrivate.h"
-
-#define TRACE  NSLog
 
 @interface NSApplication (DeclarationStolenFromAppKit)
 - (void)_cycleWindowsReversed:(BOOL)reversed;
@@ -42,10 +41,7 @@
 		[webPrefs setLocalStorageEnabled:YES];
 	}
 	[webPrefs setDOMPasteAllowed:YES];
-	
-	// setup custom stylesheet default for Titanium
-	[webPrefs setUserStyleSheetEnabled:YES];
-	[webPrefs setUserStyleSheetLocation:[NSURL URLWithString:@"ti://tiui/default.css"]];
+	[webPrefs setUserStyleSheetEnabled:NO];
 	
 	// Setup the DB to store it's DB under our data directory for the app
 	NSString *datadir = [NSString stringWithCString:kroll::FileUtils::GetApplicationDataDirectory(appid).c_str()];
@@ -102,7 +98,9 @@
 		[webView setUIDelegate:self];
 		[webView setResourceLoadDelegate:self];
 		[webView setPolicyDelegate:self];
-//		[webView setScriptDebugDelegate:self];
+#ifdef DEBUG
+		[webView setScriptDebugDelegate:self];
+#endif
 		[WebScriptElement addScriptEvaluator:self];
 		
 		SharedBoundObject global = host->GetGlobalObject();
@@ -158,14 +156,6 @@
 -(BOOL)newWindowAction:(NSDictionary*)actionInformation request:(NSURLRequest*)request listener:(id < WebPolicyDecisionListener >)listener
 {
 	NSDictionary* elementDict = [actionInformation objectForKey:WebActionElementKey];
-#ifdef DEBUG
-	NSEnumerator * keyEnum = [elementDict keyEnumerator];
-	id key;
-	while ((key = [keyEnum nextObject]))
-	{
-		NSLog(@"window action - key = %@",key);
-	}
-#endif 
 	DOMNode *target = [elementDict objectForKey:WebElementDOMNodeKey];
 	DOMElement *anchor = [self findAnchor:target];
 	
@@ -219,7 +209,7 @@
 	}
 	else if ([protocol isEqual:@"http"] || [protocol isEqual:@"https"])
 	{
-		// TODO: we need to probalby make this configurable to support
+		// TODO: we need to probably make this configurable to support
 		// opening the URL in the system browser (code below). for now 
 		// we just open inside the same frame
 		//[[NSWorkspace sharedWorkspace] openURL:newURL];
@@ -304,7 +294,7 @@
 	}
 	else
 	{
-		TRACE(@"Application attempted to navigate to illegal location: %@", newURL);
+		PRINTD("Application attempted to navigate to illegal location: " << [[newURL absoluteString] UTF8String]);
 		[listener ignore];
 	}
 }
@@ -335,6 +325,8 @@
 }
 - (SharedBoundObject)inject:(WebScriptObject *)windowScriptObject context:(JSGlobalContextRef)context frame:(WebFrame*)frame store:(BOOL)store
 {
+	KR_DUMP_LOCATION
+	
 	UserWindow* userWindow = [window userWindow];
 	userWindow->RegisterJSContext(context);
 
@@ -366,22 +358,21 @@
 	}
 	else
 	{
-#ifdef DEBUG
-		std::cout << "not found frame = " << frame << std::endl;
-#endif
+		PRINTD("not found frame = " << frame);
 	}
+
+	JSGlobalContextRef context = [frame globalContext];
 	if (!scriptCleared)
 	{
-		TRACE(@"page loaded with no <script> tags, manually injecting Titanium runtime", scriptCleared);
-		JSGlobalContextRef context = [frame globalContext];
+		PRINTD("page loaded with no <script> tags, manually injecting Titanium runtime");
 		// return the global object but don't store it since we're forcely
 		// creating it since we need the global_object to be passed below
 		global_object=[self inject:[frame windowObject] context:context frame:frame store:NO];
 	}
 
 	// apply patches
-	UIModule::GetInstance()->LoadUIJavascript([frame globalContext]);
-	
+	UIModule::GetInstance()->LoadUIJavascript(context);
+
 	NSURL *theurl =[[[frame dataSource] request] URL];
 	// fire load event
 	UserWindow *user_window = [window userWindow];
@@ -401,7 +392,7 @@
 			initialDisplay=YES;
 			// cause the initial window to show since it was initially opened hidden
 			// so you don't get the nasty wide screen while content is loading
-			[window performSelector:@selector(frameLoaded) withObject:nil afterDelay:.005];
+			[window frameLoaded];
 		}
     }
 }
@@ -419,7 +410,8 @@
 			return;
 		}
 		NSString *err = [NSString stringWithFormat:@"Error loading URL: %@. %@", url,[error localizedDescription]];
-		TRACE(@"error: %@",err);
+		Logger logger = Logger::GetRootLogger();
+		logger.Error("error: %s",[err UTF8String]);
 		
 		// in this case we need to ensure that the window is showing if not initially shown
 		if (initialDisplay==NO)
@@ -432,6 +424,7 @@
 
 - (void)webView:(WebView *)sender didClearWindowObject:(WebScriptObject *)windowScriptObject forFrame:(WebFrame*)frame 
 {
+	KR_DUMP_LOCATION
 	JSGlobalContextRef context = [frame globalContext];
 	[self inject:windowScriptObject context:context frame:frame store:YES];
 }
@@ -442,6 +435,7 @@
 
 - (WebView *)webView:(WebView *)sender createWebViewWithRequest:(NSURLRequest *)request
 {
+	KR_DUMP_LOCATION
 	// this is called when you attempt to create a new child window from this document
 	// for example using window.open
 	NSURL *newurl = [request URL];
@@ -461,8 +455,6 @@
 - (void)webViewShow:(WebView *)sender
 {
 	KR_DUMP_LOCATION
-	TRACE(@"webview_delegate::webViewShow = %x",self);
-	//TODO: so we need to deal with this at all?
 }
 
 
@@ -483,7 +475,6 @@
 - (void)webViewFocus:(WebView *)wv 
 {
 	KR_DUMP_LOCATION
-	// [[TiController instance] activate:self];
 	[[wv window] makeKeyAndOrderFront:wv];
 }
 
@@ -495,7 +486,6 @@
 	{
 		[NSApp _cycleWindowsReversed:FALSE];
 	}
-	// [[TiController instance] deactivate:self];
 }
 
 
@@ -530,10 +520,9 @@
 
 - (void)webView:(WebView *)wv setFrame:(NSRect)frame 
 {
-	TRACE(@"webview_delegate::setFrame = %x",self);
+	PRINTD("webview_delegate::setFrame = "<<self);
 	[[wv window] setFrame:frame display:YES];
 }
-
 
 - (NSRect)webViewFrame:(WebView *)wv 
 {
@@ -541,12 +530,10 @@
 	return w == nil ? NSZeroRect : [w frame];
 }
 
-
 - (BOOL)webViewAreToolbarsVisible:(WebView *)wv 
 {
 	return NO;
 }
-
 
 - (BOOL)webViewIsStatusBarVisible:(WebView *)wv 
 {
@@ -566,13 +553,13 @@
 
 -(NSURLRequest *)webView:(WebView *)sender resource:(id)identifier willSendRequest:(NSURLRequest *)request redirectResponse:(NSURLResponse *)redirectResponsefromDataSource:(WebDataSource *)dataSource
 {
-	TRACE(@"webview_delegate::willSendRequest = %x",self);
+	PRINTD("webview_delegate::willSendRequest = "<<self);
     return request;
 }
 
 -(void)webView:(WebView *)sender resource:(id)identifier didFailLoadingWithError:(NSError *)error fromDataSource:(WebDataSource *)dataSource
 {
-	TRACE(@"webview_delegate::didFailLoadingWithError = %@", [error localizedDescription]);
+	PRINTD("webview_delegate::didFailLoadingWithError = "<<[[error localizedDescription] UTF8String]);
 }
 
 -(void)webView:(WebView *)sender resource:(id)identifier didFinishLoadingFromDataSource:(WebDataSource *)dataSource
@@ -581,7 +568,7 @@
 
 - (void)webView:(WebView *)wv runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WebFrame *)frame 
 {
-	TRACE(@"alert = %@",message);
+	PRINTD("alert = "<<[message UTF8String]);
 	
 	NSRunInformationalAlertPanel([window title],	// title
 								 message,								// message
@@ -636,30 +623,30 @@
 
 - (NSString *)webView:(WebView *)wv generateReplacementFile:(NSString *)path 
 {
-	NSLog(@"generateReplacementFile: %@",path);
+	PRINTD("generateReplacementFile: "<<[path UTF8String]);
 	return nil;
 }
 
 
 - (BOOL)webView:(WebView *)wv shouldBeginDragForElement:(NSDictionary *)element dragImage:(NSImage *)dragImage mouseDownEvent:(NSEvent *)mouseDownEvent mouseDraggedEvent:(NSEvent *)mouseDraggedEvent 
 {
-	NSLog(@"shouldBeginDragForElement");
+	PRINTD("shouldBeginDragForElement");
 	return YES;
 }
 
 //TODO: in 10.5, this becomes an NSUInteger
 - (unsigned int)webView:(WebView *)wv dragDestinationActionMaskForDraggingInfo:(id <NSDraggingInfo>)draggingInfo 
 {
-	NSLog(@"dragDestinationActionMaskForDraggingInfo");
+	PRINTD("dragDestinationActionMaskForDraggingInfo");
 	return WebDragDestinationActionAny;
 }
 
 
 - (void)webView:(WebView *)webView willPerformDragDestinationAction:(WebDragDestinationAction)action forDraggingInfo:(id <NSDraggingInfo>)draggingInfo 
 {
-	NSLog(@"willPerformDragDestinationAction: %d",action);
-	NSPasteboard *pasteboard = [draggingInfo draggingPasteboard];
-	NSLog(@"pasteboard types: %@",[pasteboard types]);
+	PRINTD("willPerformDragDestinationAction: "<<action);
+	// NSPasteboard *pasteboard = [draggingInfo draggingPasteboard];
+	// PRINTD("pasteboard types: %@",[pasteboard types]);
 }
 
 
@@ -704,11 +691,6 @@
 	   sourceId:(int)sid
 	forWebFrame:(WebFrame *)webFrame
 {
-	TRACE(@"loading javascript from %@ with sid: %d",[aurl absoluteURL],sid);
-	// NSString *key = [NSString stringWithFormat:@"%d",sid];
-	// NSString *value = [NSString stringWithFormat:@"%@",(aurl==nil? @"<main doc>" : aurl)];
-	// //TODO: trim off app://<aid>/
-	// [javascripts setObject:value forKey:key];
 }
 
 // some source failed to parse
@@ -718,7 +700,7 @@
 	  withError:(NSError *)error
 	forWebFrame:(WebFrame *)webFrame
 {
-	TRACE(@"failed to parse javascript from %@ at lineNumber: %d, error: %@",[theurl absoluteURL],lineNumber,[error localizedDescription]);
+	PRINTD("failed to parse javascript from "<<[[theurl absoluteString] UTF8String]<<" at lineNumber: " << lineNumber << ", error: " <<[[error localizedDescription] UTF8String]);
 }
 
 // just entered a stack frame (i.e. called a function, or started global scope)
@@ -735,8 +717,6 @@
 		   line:(int)lineno
 	forWebFrame:(WebFrame *)webFrame
 {
-	// NOTE: this is very chatty and prints out each line as it's being executed
-	//	TRACE(@"executing javascript lineNumber: %d",lineno);
 }
 
 // about to leave a stack frame (i.e. return from a function)
@@ -753,16 +733,6 @@
 		   line:(int)lineno
 	forWebFrame:(WebFrame *)webFrame
 {
-	// NSString *key = [NSString stringWithFormat:@"%d",sid];
-	// for (id akey in javascripts)
-	// {
-	// 	if ([key isEqualToString:akey])
-	// 	{
-	// 		NSString *aurl = [javascripts objectForKey:akey];
-	// 		TRACE(@"raising javascript exception at lineNumber: %d in %@ (%d)",lineno,aurl,sid);
-	// 		break;
-	// 	}
-	// }
 }
 
 // return whether or not quota has been reached for a db (enabling db support)
@@ -834,21 +804,25 @@ std::string GetModuleName(NSString *typeStr)
 			catch(ValueException &e)
 			{
 				SharedString s = e.GetValue()->DisplayString();
-				std::cerr << "Exception evaluating " << type << ". Error: " << *s << std::endl;
+				Logger logger = Logger::GetRootLogger();
+				logger.Error("Exception evaluating %s. Error: %s",type.c_str(),(*s).c_str());
 			}
 			catch(std::exception &e)
 			{
-				std::cerr << "Exception evaluating " << type << ". Error: " << e.what() << std::endl;
+				Logger logger = Logger::GetRootLogger();
+				logger.Error("Exception evaluating %s. Error: %s",type.c_str(),e.what());
 			}
 			catch(...)
 			{
-				std::cerr << "Exception evaluating " << type << ". Unknown Error." << std::endl;
+				Logger logger = Logger::GetRootLogger();
+				logger.Error("Exception evaluating %s. Unknown Error.",type.c_str());
 			}
 		}
 	}
 	else
 	{
-		std::cerr << "Couldn't find script type bound object for " << type << std::endl;
+		Logger logger = Logger::GetRootLogger();
+		logger.Error("Couldn't find script type bound object for %s",type.c_str());
 	}
 }
 

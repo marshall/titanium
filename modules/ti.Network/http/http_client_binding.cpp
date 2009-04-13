@@ -148,9 +148,8 @@ namespace ti
 #endif
 		HTTPClientBinding *binding = reinterpret_cast<HTTPClientBinding*>(p);
 
-#ifdef DEBUG
-		std::cout << "HTTPClientBinding:: starting => " << binding->url << std::endl;
-#endif
+		PRINTD("HTTPClientBinding:: starting => " << binding->url);
+		
 		std::ostringstream ostr;
 		int max_redirects = 5;
 		int status;
@@ -180,9 +179,7 @@ namespace ti
 
 			Poco::Net::HTTPRequest req(method, path, Poco::Net::HTTPMessage::HTTP_1_1);
 			const char* ua = binding->global->Get("userAgent")->IsString() ? binding->global->Get("userAgent")->ToString() : NULL;
-#ifdef DEBUG
-			std::cout << "HTTPClientBinding:: userAgent = " << ua << std::endl;
-#endif
+			PRINTD("HTTPClientBinding:: userAgent = " << ua);
 			if (ua)
 			{
 				req.set("User-Agent",ua);
@@ -325,10 +322,7 @@ namespace ti
 			std::istream& rs = session.receiveResponse(res);
 			int total = res.getContentLength();
 			status = res.getStatus();
-#ifdef DEBUG
-			std::cout << "HTTPClientBinding:: response length received = " << total << " - ";
-			std::cout << status << " " << res.getReason() << std::endl;
-#endif
+			PRINTD("HTTPClientBinding:: response length received = " << total << " - " << status << " " << res.getReason());
 			binding->Set("status",Value::NewInt(status));
 			binding->Set("statusText",Value::NewString(res.getReason().c_str()));
 
@@ -339,9 +333,7 @@ namespace ti
 					break;
 				}
 				url = res.get("Location");
-#ifdef DEBUG
-				std::cout << "redirect to " << url << std::endl;
-#endif
+				PRINTD("redirect to " << url);
 				continue;
 			}
 			SharedValue totalValue = Value::NewInt(total);
@@ -392,11 +384,13 @@ namespace ti
 				}
 				catch(std::exception &e)
 				{
-					std::cerr << "Caught exception dispatching HTTP callback, Error: " << e.what() << std::endl;
+					Logger logger = Logger::GetRootLogger();
+					logger.Error("Caught exception dispatching HTTP callback, Error: %s",e.what());
 				}
 				catch(...)
 				{
-					std::cerr << "Caught unknown exception dispatching HTTP callback" << std::endl;
+					Logger logger = Logger::GetRootLogger();
+					logger.Error("Caught unknown exception dispatching HTTP callback");
 				}
 				if (rs.eof()) break;
 			}
@@ -409,7 +403,7 @@ namespace ti
 #ifdef DEBUG
 			if (status > 200)
 			{
-				std::cout << "RECEIVED = " << data << std::endl;
+				PRINTD("RECEIVED = " << data);
 			}
 #endif
 			binding->Set("responseText",Value::NewString(data.c_str()));
@@ -458,6 +452,7 @@ namespace ti
 		this->thread->start(&HTTPClientBinding::Run,(void*)this);
 		if (!this->async)
 		{
+			PRINTD("Waiting on HTTP Client thread to finish");
 			this->thread->join();
 		}
 	}
@@ -500,6 +495,7 @@ namespace ti
 		this->thread->start(&HTTPClientBinding::Run,(void*)this);
 		if (!this->async)
 		{
+			PRINTD("Waiting on HTTP Client thread to finish");
 			this->thread->join();
 		}
 	}
@@ -539,6 +535,7 @@ namespace ti
 		this->thread->start(&HTTPClientBinding::Run,(void*)this);
 		if (!this->async)
 		{
+			PRINTD("Waiting on HTTP Client thread to finish");
 			this->thread->join();
 		}
 	}
@@ -604,7 +601,8 @@ namespace ti
 			}
 			catch (std::exception &ex)
 			{
-				std::cerr << "Exception calling readyState. Exception: " << ex.what() << std::endl;
+				Logger logger = Logger::GetRootLogger();
+				logger.Error("Exception calling readyState. Exception: %s",ex.what());
 			}
 		}
 	}

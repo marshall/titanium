@@ -20,9 +20,7 @@ namespace ti
 		// check to make sure we have a user scripts directory
 		std::string dir = FileUtils::Join(home.c_str(),"Resources","userscripts",NULL);
 
-#ifdef DEBUG		
-		std::cout << "USER SCRIPT DIR = " << dir << std::endl;
-#endif
+		PRINTD("USER SCRIPT DIR = " << dir);
 
 		if (FileUtils::IsDirectory(dir))
 		{

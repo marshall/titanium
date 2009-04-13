@@ -37,6 +37,43 @@
 	// use platform specific CSS such as body.win32 div { } 
 	var cn = (document.body.className || '');
 	document.body.className =  cn + (cn ? ' ': '') + Titanium.platform;
+
+	//
+	// insert our user specific stylesheet in a generic way
+	//
+	var link = document.createElement('link');
+	link.setAttribute('rel','stylesheet');
+	link.setAttribute('href','ti://tiui/default.css');
+	link.setAttribute('type','text/css');
+	
+	
+	var headNodes = document.getElementsByTagName("head");
+	if (headNodes && headNodes.length > 0)
+	{
+		var head = headNodes[0];
+		// if we have children, insert at the top
+		if (head.childNodes.length > 0)
+		{
+			head.insertBefore(link,head.childNodes[0]);
+		}
+		else
+		{
+			head.appendChild(link);
+		}
+	}
+	else
+	{
+		// else we don't have a <head> element, just insert
+		// in the body at the top
+		if (document.body.childNodes.length > 0)
+		{
+			document.body.insertBefore(link,document.body.childNodes[0]);
+		}
+		else
+		{
+			document.body.appendChild(link);
+		}
+	}
 	
 })();
  
