@@ -9,7 +9,7 @@
 class Job
 {
 	public:
-	Job(std::string url, Installer *installer);
+	Job(std::string url);
 	void Fetch();
 	void Unzip();
 	std::string GetFilename();
@@ -21,8 +21,11 @@ class Job
 	Installer* GetInstaller();
 
 	static int total;
-	static void Init(std::string, std::string);
+	static void InitDownloader();
 	static void ShutdownDownloader();
+
+	static std::string download_dir;
+	static std::string install_dir;
 
 	int Index()
 	{
@@ -31,7 +34,6 @@ class Job
 
 	private:
 	std::string url;
-	Installer* installer;
 	int index;
 	std::string out_filename;
 	double progress;
@@ -40,8 +42,6 @@ class Job
 	std::string version;
 	bool download;
 
-	static std::string download_dir;
-	static std::string install_dir;
 	static CURL *curl;
 	static char* curl_error;
 };
