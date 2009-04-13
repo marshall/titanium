@@ -1,0 +1,11 @@
+/* 
+   this is Titanium's default stylesheet to attempt to normalize
+   styles across different operating systems 
+*/
+
+body
+{
+	font-family: "sans-serif";
+	background: transparent;
+}
+

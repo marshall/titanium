@@ -48,6 +48,8 @@
 
 #include <iostream>
 
+#include <kroll/kroll.h>
+
 IRC::IRC()
 {
 	hooks=0;
@@ -136,9 +138,9 @@ void IRC::send(const char *fmt, ...)
 #endif
 	if (size > 0)
 	{
-	#ifdef DEBUG
-		printf("IRC sending[%d] => %s\n",size,szBuf);
-	#endif	
+#ifdef DEBUG
+		PRINTD("IRC sending[" << size << "] => " << szBuf);
+#endif	
 		::send(irc_socket,(const char*)szBuf,size,0);
 	}
 }
@@ -175,7 +177,8 @@ int IRC::start(char* server, int port, char* nick, char* user, char* name, char*
 	if (connect(irc_socket, (const sockaddr*)&rem, sizeof(rem))==SOCKET_ERROR)
 	{
 #ifdef WIN32
-		std::cerr << "Failed to connect: "<< WSAGetLastError() << std::endl;
+		Logger logger = Logger::GetRootLogger();
+		logger.Error("Failed to connect: %s", WSAGetLastError());
 #endif
 		connecting = false;
 		closesocket(irc_socket);
@@ -199,12 +202,12 @@ void IRC::disconnect()
 {
 	if (connected)
 	{
-		printf("Disconnected from server.\n");
+		PRINTD("Disconnected from server");
 		connected=false;
 		quit("Leaving");
-		#ifdef WIN32
+#ifdef WIN32
 		shutdown(irc_socket, 2);
-		#endif
+#endif
 		closesocket(irc_socket);
 	}
 }
@@ -227,9 +230,7 @@ int IRC::message_loop()
 	char buffer[4096];
 	int ret_len;
 	
-#ifdef DEBUG
-	std::cout << "ENTER IRC::message_loop()"<< std::endl;
-#endif	
+	PRINTD("ENTER IRC::message_loop()");
 
 	if (!connected)
 	{
@@ -260,17 +261,17 @@ int IRC::message_loop()
 		}
 		catch(std::exception &e)
 		{
-			std::cerr << "ERROR DISPATCHING IRC RECEIVE BUFFER. Error=" << e.what() << std::endl;
+			Logger logger = Logger::GetRootLogger();
+			logger.Error("ERROR DISPATCHING IRC RECEIVE BUFFER. Error=%s", e.what());
 		}
 		catch(...)
 		{
-			std::cerr << "UNKNOWN EXCEPTION IN IRC RECEIVE THREAD..." << std::endl;
+			Logger logger = Logger::GetRootLogger();
+			logger.Error("UNKNOWN EXCEPTION IN IRC RECEIVE THREAD...");
 		}
 	}
 
-#ifdef DEBUG
-	std::cout << "EXIT IRC::message_loop() => " << rc << std::endl;
-#endif	
+	PRINTD("EXIT IRC::message_loop() => " << rc);
 	return rc;
 }
 
@@ -339,9 +340,7 @@ void IRC::parse_irc_reply(char* data)
 
 	hostd_tmp.target=0;
 
-#ifdef DEBUG
-	std::cout << "IRC INCOMING: " << data << std::endl;
-#endif
+	PRINTD("IRC INCOMING: " << data);
 
 	if (data[0]==':')
 	{
@@ -719,9 +718,6 @@ void IRC::parse_irc_reply(char* data)
 			if (params)
 				*params='\0';
 			params++;
-			#ifdef __IRC_DEBUG__
-			printf("%s >-%s- %s\n", hostd_tmp.nick, hostd_tmp.target, &params[1]);
-			#endif
 		}
 		else if (!strcmp(cmd, "PRIVMSG"))
 		{
@@ -738,7 +734,7 @@ void IRC::parse_irc_reply(char* data)
 				return;
 			}
 			#ifdef __IRC_DEBUG__
-			printf("%s: <%s> %s\n", hostd_tmp.target, hostd_tmp.nick, &params[1]);
+			PRINTD(hostd_tmp.target << ": <" << hostd_tmp.nick << "> " << &params[1]);
 			#endif
 		}
 		else if (!strcmp(cmd, "NICK"))
@@ -771,9 +767,6 @@ void IRC::parse_irc_reply(char* data)
 			if (!params)
 				return;
 			send("PONG %s\r\n", &params[1]);
-			#ifdef __IRC_DEBUG__
-			printf("Ping received, pong sent.\n");
-			#endif
 		}
 		else
 		{

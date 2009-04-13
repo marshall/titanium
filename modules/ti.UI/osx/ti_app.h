@@ -14,11 +14,13 @@
 
 @interface TiApplication : NSObject
 {
-	NSString *appid;
 	ti::UIBinding *binding;
+	kroll::Host *host;
 }
++(TiApplication*)instance;
 +(NSString*)appID;
--(id)initWithBinding:(ti::UIBinding*)binding;
+-(id)initWithBinding:(ti::UIBinding*)binding host:(kroll::Host*)host;
+-(kroll::Host*)host;
 @end
 
 

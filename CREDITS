@@ -32,7 +32,8 @@ CURL
 http://curl.haxx.se/
 MIT/X derivate [4]
 
-Guy Eric Schalnat, Andreas Dilger, Glenn Randers-Pehrson (current maintainer), and others
+Guy Eric Schalnat, Andreas Dilger, Glenn Randers-Pehrson 
+(current maintainer), and others
 libpng
 http://www.libpng.org
 LibPNG License [5]
@@ -47,9 +48,24 @@ SQLite
 http://www.sqlite.org
 Public Domain [7]
 
+Latex Project
+TeX Gyre Schola Font
+http://www.latex-project.org/
+LaTex Project Public License [8]
 
+Junction Regular Open Type Font
+http://creativecommons.org/licenses/by-sa/3.0/
+Creative Commons Attribution Share Alike license
 
-================================================================================
+Inconsolata Open Type Font
+http://scripts.sil.org/OFL
+SIL Open Font License, Version 1.1
+
+Iain Sheppard
+cpIRC - C++ class based IRC protocol wrapper
+LGPL [9]
+
+==============================================================================
 [1] WebKit, KJS and related
 
 
@@ -100,7 +116,7 @@ along with this library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 Boston, MA 02110-1301, USA.
 
-================================================================================
+==============================================================================
 [2] The POCO/Boost Software License
 
 Permission is hereby granted, free of charge, to any person or organization 
@@ -125,7 +141,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 
-================================================================================
+==============================================================================
 [3] BSD License
 
 Copyright © 2008, The Chromium Authors 
@@ -159,7 +175,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 
 
-================================================================================
+==============================================================================
 [4] CURL
 
 Copyright (c) 1996 - 2009, Daniel Stenberg, <daniel@haxx.se>.
@@ -183,7 +199,7 @@ be used in advertising or otherwise to promote the sale, use or other dealings
 in this Software without prior written authorization of the copyright holder.
 
 
-================================================================================
+==============================================================================
 [5] LIBPNG
 
 The PNG Reference Library is supplied "AS IS".  The Contributing Authors
@@ -215,7 +231,7 @@ appreciated.
 Libpng is OSI Certified Open Source Software.  OSI Certified Open Source is a
 certification mark of the Open Source Initiative.
 
-================================================================================
+==============================================================================
 [6] ICU License
 Copyright (c) 1995-2009 International Business Machines Corporation and others
 
@@ -244,22 +260,48 @@ used in advertising or otherwise to promote the sale, use or other dealings in
 this Software without prior written authorization of the copyright holder.
 
 
-================================================================================
+==============================================================================
 [7] SQLite Public Domain
 
 SQLite is public domain. For more information, please see:
 http://www.sqlite.org/copyright.html
 
 
+==============================================================================
+[8] LaTex Project Public License
+
+This work may be distributed and/or modified under the conditions of the LaTeX 
+Project Public License, either version 1.3c of this license or (at your 
+option) any later version. The latest version of the LaTeX Project Public 
+License is in http://www.latex-project.org/lppl.txt and version 1.3c or later 
+is part of all distributions of LaTeX version 2006/05/20 or later.
+
+==============================================================================
+[8] cpIRC - C++ class based IRC protocol wrapper
+
+Copyright (C) 2003 Iain Sheppard
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 
-
-================================================================================
-================================================================================
+==============================================================================
+==============================================================================
 Appcelerator is a registered trademark of Appcelerator, Inc. Appcelerator,
 Appcelerator Titanium and the Appcelerator and Titanium logos and marks 
 are property of Appcelerator, Inc.  All other trademarks, logos and copyrights 
 are property of their respective owners.
-================================================================================
-================================================================================
+==============================================================================
+==============================================================================
 
