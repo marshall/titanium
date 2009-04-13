@@ -5,6 +5,7 @@
  */
 #include <kroll/kroll.h>
 #include "growl_module.h"
+#include "growl_binding.h"
 
 #if defined(OS_OSX)
 #include "osx/growl_osx.h"
