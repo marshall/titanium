@@ -43,12 +43,14 @@
 	}
 	[webPrefs setDOMPasteAllowed:YES];
 	
+	// setup custom stylesheet default for Titanium
+	[webPrefs setUserStyleSheetEnabled:YES];
+	[webPrefs setUserStyleSheetLocation:[NSURL URLWithString:@"ti://tiui/default.css"]];
+	
 	// Setup the DB to store it's DB under our data directory for the app
 	NSString *datadir = [NSString stringWithCString:kroll::FileUtils::GetApplicationDataDirectory(appid).c_str()];
 	[webPrefs _setLocalStorageDatabasePath:datadir];
 	
-	
-	//TODO: make sure this is OK
 	[webPrefs setFullDocumentTeardownEnabled:YES];
 
 	NSUserDefaults *standardUserDefaults = [NSUserDefaults standardUserDefaults];
@@ -278,7 +280,7 @@
 		return ;
 	}
 	
-	if ([protocol isEqual:@"app"])
+	if ([protocol isEqual:@"app"] || [protocol isEqual:@"ti"])
 	{
 		// we only care about loading new TiDocuments if this is the main frame,
 		// otherwise we're an internal frame of some kind
@@ -287,26 +289,6 @@
 			[self setURL:newURL];
 			return;
 		}
-		
-		// if ([[TiController instance] shouldOpenInNewWindow])
-		// {
-		// 	// if we're trying to open an internal page, we essentially need to always open a 
-		// 	// new document and later close the old document.  we have to do this because 
-		// 	// each document could have a different window spec.
-		// 	
-		// 	TiDocument *doc = [[TiController instance] createDocument:newURL visible:YES config:nil];
-		// 	[doc setPrecedent:self];
-		// 	
-		// 	//TODO: window opens slightly offset from current doc, make sure we 
-		// 	//get the bounds from self and set on doc
-		// 	[listener ignore];
-		// }
-		// else
-		// {
-		// 	// tell him to open in the same document and set our new URL
-		// 	[self setURL:newURL];
-		// 	[listener use];
-		// }
 		[self setURL:newURL];
 		[listener use];
 	}

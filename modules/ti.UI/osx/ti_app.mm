@@ -9,7 +9,13 @@
 #import "osx_ui_binding.h"
 #import "osx_menu_item.h"
 
+static TiApplication *tiAppInstance = NULL;
+
 @implementation TiApplication
++(TiApplication*)instance
+{
+	return tiAppInstance;
+}
 +(NSString*)appID
 {
 	AppConfig *config = AppConfig::Instance();
@@ -29,14 +35,20 @@
 	}
 	return nil;
 }
-- (id)initWithBinding:(ti::UIBinding*)b
+- (id)initWithBinding:(ti::UIBinding*)b host:(kroll::Host*)h
 {
 	self = [super init];
 	if (self)
 	{
 		binding = b;
+		host = h;
+		tiAppInstance = self;
 	}
 	return self;
+}
+-(kroll::Host*)host
+{
+	return host;
 }
 @end
 

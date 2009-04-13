@@ -1,4 +1,4 @@
-/*!(c) 2006-2009 Appcelerator, Inc. http://appcelerator.org
+/*!(c) 2008-2009 Appcelerator, Inc. http://appcelerator.org
  * Licensed under the Apache License, Version 2.0. Please visit
  * http://license.appcelerator.com for full copy of the License.
  **/
@@ -27,3 +27,7 @@ if(Titanium) {
 		}
 	}
 }
+
+// append the platform (osx, linux, win32) to the body so we can dynamically
+// use platform specific CSS such as body.win32 div { } 
+document.body.className = (document.body.className || '') + ' ' + Titanium.platform;

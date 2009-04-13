@@ -24,13 +24,14 @@ def package_unittest_builder(target,source,env):
 	app.stage(build.sdk_build_dir, src_resources=p.join(cwd, 'Resources'), bundle=False)
 	common_js = p.join(build.titanium_source_dir, 'installation', 'common', 'js')
 	futils.CopyTree(common_js, p.join(app.contents, 'Resources', 'js'))
-
+	app.installed()
+	
 	Popen(app.exe)
 
 
 build.env.Append(BUILDERS = {'PackageUnitTest' : Builder(action=package_unittest_builder)})
-unittest_target = build.env.PackageUnitTest("#dummy-target", [])
-Depends(unittest_target, ['stage', 'dist'])
+unittest_target = build.env.PackageUnitTest("#unit-dummy-target", [])
+Depends(unittest_target, ['stage', 'dist', 'sdk'])
 
 AlwaysBuild(unittest_target) # incremental builder doesn't work
 Alias('unittest', unittest_target)
