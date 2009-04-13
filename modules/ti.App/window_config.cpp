@@ -139,7 +139,9 @@ WindowConfig::WindowConfig(WindowConfig *config, std::string& url)
 	this->url = url;
 
 	if (config == NULL) // Just use defaults if not found
+	{
 		return;
+	}
 
 	this->title = config->GetTitle();
 	this->x = config->GetX();
@@ -273,13 +275,21 @@ WindowConfig::WindowConfig(void* data)
 	}
 
 	if (width < minWidth)
+	{
 		width = minWidth;
+	}
 	if (width > maxWidth)
+	{
 		width = maxWidth;
+	}
 	if (height < minHeight)
+	{
 		height = minHeight;
+	}
 	if (height > maxHeight)
+	{
 		height = maxHeight;
+	}
 }
 
 std::string WindowConfig::ToString()
