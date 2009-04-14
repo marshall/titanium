@@ -14,11 +14,11 @@ namespace ti
 	{
 		if (!config->IsUsingChrome() || config->IsFullScreen())
 		{
-			return NSBorderlessWindowMask;
+			return NSBorderlessWindowMask | NSTexturedBackgroundWindowMask ;
 		}
 		else
 		{
-			return NSTitledWindowMask | NSClosableWindowMask | NSResizableWindowMask | NSMiniaturizableWindowMask;
+			return NSTitledWindowMask | NSClosableWindowMask | NSResizableWindowMask | NSMiniaturizableWindowMask | NSTexturedBackgroundWindowMask;
 		}
 	}
 
@@ -62,6 +62,7 @@ namespace ti
 				[window setMaxSize: rect.size];
 			}
 		}
+
 		this->SetCloseable(config->IsCloseable());
 		this->SetMaximizable(config->IsMaximizable());
 		this->SetMinimizable(config->IsMinimizable());
@@ -235,16 +236,6 @@ namespace ti
 			[window setMaxSize: newFrame.size];
 		}
 		[window setFrame:newFrame display:config->IsVisible() animate:YES];
-
-		// Compensate for frame size
-		//NSRect frame = [window frame];
-		//height += frame.size.height - [[window contentView] frame].size.height;
-		//BOOL display = config->IsVisible();
-		//double originalHeight = NSHeight(frame);
-		//frame.size.height = height;
-		//NSPoint origin = frame.origin;
-		//origin.y += (originalHeight - height);
-		//[window setFrame: NSMakeRect(origin.x, origin.y, frame.size.width, height) display:display animate:YES];
 	}
 	double OSXUserWindow::GetMaxWidth() {
 		return this->config->GetMaxWidth();
@@ -358,7 +349,7 @@ namespace ti
 	}
 	void OSXUserWindow::SetMaximizable(bool maximizable)
 	{
-		[[window standardWindowButton:NSWindowZoomButton] setEnabled:maximizable];
+		[[window standardWindowButton:NSWindowZoomButton] setHidden:!maximizable];
 	}
 	bool OSXUserWindow::IsMinimizable()
 	{
@@ -366,7 +357,7 @@ namespace ti
 	}
 	void OSXUserWindow::SetMinimizable(bool minimizable)
 	{
-		[[window standardWindowButton:NSWindowMiniaturizeButton] setEnabled:minimizable];
+		[[window standardWindowButton:NSWindowMiniaturizeButton] setHidden:!minimizable];
 	}
 	bool OSXUserWindow::IsCloseable()
 	{
@@ -374,7 +365,7 @@ namespace ti
 	}
 	void OSXUserWindow::SetCloseable(bool closeable)
 	{
-		[[window standardWindowButton:NSWindowCloseButton] setEnabled:closeable];
+		[[window standardWindowButton:NSWindowCloseButton] setHidden:!closeable];
 	}
 	bool OSXUserWindow::IsVisible()
 	{

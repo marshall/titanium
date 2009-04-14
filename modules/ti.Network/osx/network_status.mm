@@ -35,7 +35,7 @@ static void TiReachabilityCallback(SCNetworkReachabilityRef  target,
 	{	
 		delegate = new SharedBoundMethod(m);
 		online = YES;
-		[self start];
+		[NSThread detachNewThreadSelector:@selector(start) toTarget:self withObject:nil];
 	}
 	return self;
 }
@@ -47,6 +47,7 @@ static void TiReachabilityCallback(SCNetworkReachabilityRef  target,
 }
 - (void)start
 {
+	NSAutoreleasePool *pool = [[NSAutoreleasePool init] alloc];
 	SCNetworkReachabilityRef thisTarget;
 	SCNetworkReachabilityContext thisContext;
     thisContext.version = 0;
@@ -62,7 +63,7 @@ static void TiReachabilityCallback(SCNetworkReachabilityRef  target,
     if (thisTarget) 
     {
     	SCNetworkReachabilitySetCallback(thisTarget, TiReachabilityCallback, &thisContext);
-    	SCNetworkReachabilityScheduleWithRunLoop(thisTarget, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
+    	SCNetworkReachabilityScheduleWithRunLoop(thisTarget, CFRunLoopGetMain(), kCFRunLoopDefaultMode);
       	SCNetworkConnectionFlags flags;
       	if ( SCNetworkReachabilityGetFlags(thisTarget, &flags) ) 
       	{
@@ -70,6 +71,7 @@ static void TiReachabilityCallback(SCNetworkReachabilityRef  target,
         	[self triggerChange:yn];
       	}
     }
+	[pool release];
 }
 - (void)triggerChange:(BOOL)yn
 {

@@ -1,0 +1,18 @@
+<html>
+	<head>
+		<link href="resources/test2.css" media="screen" rel="Stylesheet" type="text/css"/>
+		<link href="resources/test1.css" media="screen" rel="Stylesheet" type="text/css"/>
+		<script>
+		function startTest()
+		{
+			Titanium.AppTest.takeScreenshot('external_css',function()
+			{
+				Titanium.AppTest.stop();
+			})
+		}
+		</script>
+	</head>
+	<body>
+		You should see white text on a green background
+	</body>
+</html>

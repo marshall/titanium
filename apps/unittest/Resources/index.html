@@ -1,0 +1,152 @@
+
+<html>
+<head>
+<script type="text/javascript" src="entourage-jquery-3.0.js"></script>
+<script type="text/javascript" src="test_driver.js"></script>
+<script type="text/javascript" src="js/project.js"></script>
+<script type="text/javascript" src="js/app.js"></script>
+<script type="text/javascript" src="js/index.js"></script>
+
+<script>
+Titanium.TestDriver.init(Titanium.App.appURLToPath('app://'));
+</script>
+
+<link rel="stylesheet" type="text/css" href="css/index.css" />
+
+</head>
+<body>
+
+	<!-- PROGRESS BAR -->
+	<div on="l:titanium_test_results then effect[slideUp]">
+		Processing  
+		<span class="accent"  on="l:titanium_test_pctcomplete then value[current]"></span> of 
+		<span class="accent" on="l:titanium_test_pctcomplete then value[total]"></span> test files
+
+		<div control="jquery_progressbar[value=0]" on="l:titanium_test_pctcomplete then value[pct_complete]" 
+			style="height:10px;margin-top:10px">
+		</div>
+	</div>
+
+	<!-- RESULTS -->
+	<div on="l:titanium_test_results then script[Titanium.UI.currentWindow.setHeight(500)] and effect[fadeIn]" 
+		style="display:none">
+		<div on="l:showshots then hide or l:showtable then effect[fadeIn]" style="margin-bottom:20px">
+			<span class="label">Test Count: </span>
+			<span class="total" on="l:titanium_test_results then value[test_count]"></span>
+			<span class="label">Passed: </span>
+			<span class="passed" on="l:titanium_test_results then value[passed]"></span>
+			<span class="label">Failed: </span>
+			<span class="failed" on="l:titanium_test_results then value[failed]"></span>
+			<span class="label">Pending: </span>
+			<span class="pending" on="l:titanium_test_results then value[pending]"></span>
+			<span class="label">Not Executed: </span>
+			<span class="not_executed" on="l:titanium_test_results then value[not_executed]"></span>
+
+
+		</div>
+
+		<!-- SCREENSHOT META DATA -->
+		<div id="test_name" style="display:none;font-size:14px;" 
+			on="l:showshots then effect[fadeIn] or l:showtable then hide">
+		</div>
+		
+		<!-- TEST RESULTS HINT -->
+		<div class="hint" on="(l:showshots or l:rowselect) then hide or l:showtable then effect[fadeIn]">
+			Click a row to see error detail
+		</div>
+
+		<!-- TEST RESULTS -->
+		<div class="infobox" on="l:showshots then hide or l:showtable then effect[fadeIn]">
+			<div class="content" on="l:rowselect then hide or l:showtable then effect[fadeIn]">
+				<div>
+					<div control="iterator[property=rows]" style="height:300px;overflow:auto" on="l:titanium_test_results then render">
+						<div class="row" on="click then l:rowselect[name=#{name}]">
+							<div style="float:left;width:20px" class="test_#{result}"></div>
+							<div style="float:left;margin-left:10px">#{name}</div>
+							<div style="float:right;margin-right:10px" class="small_blue">#{file}</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div on="l:rowselect then effect[fadeIn] or l:showtable then hide" style="display:none" class="content">
+					<div class="test_detail" id="test_detail" on="l:detail then value[detail]">this test failed</div>
+			</div>
+		</div>
+		
+		<!-- SCREENSHOT VIEW -->
+		<div class="infobox" on="l:showshots then effect[fadeIn] or l:showtable then hide" style="display:none;">
+			<div class="content">
+				<div class="test_detail" id="screenshot_list" style="height:500px;overflow:hidden">
+				</div>
+			</div>
+		</div>
+		
+		<div style="clear:both"></div>
+		
+		<!-- BACK BUTTON WHEN VIEW TEST DETAIL -->
+		<div style="margin-top:10px;display:none" on="l:rowselect then effect[fadeIn] or l:showtable then hide 
+			or l:showshots then hide">
+			<div class="button1">
+				<div class="button2" on="click then l:showtable">
+					Back
+				</div>
+			</div>
+		</div>
+		
+		<!-- VIEW SCREENSHOT BUTTON -->
+		<div on="l:showshots then hide or l:showresults then effect[fadeIn] or l:titanium_test_results then effect[fadeIn]"
+			style="display:none;margin-top:10px;">
+			<div class="button1" on="click then l:showshots " 
+				style="width:120px">
+				<div class="button2">
+					View Screenshots
+				</div>
+			</div>
+		</div>
+		
+		<!-- SCREENSHOT BUTTON BAR -->
+		<div on="l:showshots then effect[fadeIn] or l:showtable then hide" style="display:none">
+			<div style="margin-top:10px">
+				<div class="button1">
+					<div class="button2" on="click then l:prev">
+						Pre<u>v</u>ious
+					</div>
+				</div>
+			</div>
+			<div  style="margin-top:10px">
+				<div class="button1">
+					<div class="button2" on="click then l:next">
+						<u>N</u>ext
+					</div>
+				</div>
+			</div>
+			<div  style="margin-top:10px">
+				<div class="button1">
+					<div class="button2" style="background-color:green" on="click then l:shot[val=pass]">
+						<u>P</u>ass
+					</div>
+				</div>
+			</div>
+			<div  style="margin-top:10px">
+				<div class="button1">
+					<div class="button2" style="background-color:red" on="click then l:shot[val=fail]">
+						<u>F</u>ail
+					</div>
+				</div>
+			</div>
+			<div style="float:left;margin-left:10px">
+				Notes: <input type="text" id="screenshot_note"/>
+			</div>
+			<div style="float:right">
+				<div class="button1">
+					<div class="button2" on="click then l:showtable">
+						Done
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		
+	</div>
+</body>
+</html>

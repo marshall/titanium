@@ -5,6 +5,7 @@
  */
 #import "ti_protocol.h"
 #import "app_protocol.h"
+#import "ti_app.h"
 
 @implementation TiProtocol
 
@@ -34,94 +35,71 @@
     return request;
 }
 
-- (void)startLoading
+- (void)load:(NSURL*)url path:(NSString*)fullpath
 {
     id<NSURLProtocolClient> client = [self client];
-    NSURLRequest *request = [self request];
-	
-	NSURL *url = [request URL];
-	NSString *ts = [url absoluteString];
-	NSString *s = nil;
-	if ([ts hasPrefix:@"ti://"])
-	{
-		s=[ts substringFromIndex:[[TiProtocol specialProtocolScheme] length]+3];	
-	}
-	else if ([ts hasPrefix:@"ti:/"])
-	{
-		s=[ts substringFromIndex:[[TiProtocol specialProtocolScheme] length]+2];	
-	}
-	else if ([ts hasPrefix:@"ti:"])
-	{
-		s=[ts substringFromIndex:[[TiProtocol specialProtocolScheme] length]+1];	
-	}
-	NSString *basePath = [NSString stringWithFormat:@"%s/Resources",getenv("KR_HOME")];
-	basePath = [basePath stringByAppendingPathComponent:@"titanium"];
-	NSString *resourcePath = nil;
-	
-	//TODO: this class still needs implementation
-	KR_UNUSED(basePath);
-	
-	NSData *data = nil;
-	NSString *mime = nil;
-	BOOL needToReleaseData = NO;
-	
-	// support for loading app://notification which is the notification template
-	if ([ts hasPrefix:@"ti://notification/"])
-	{
-		resourcePath = [basePath stringByAppendingPathComponent:@"notification.html"];
-		mime = @"text/html";
-	}
-	else
-	{
-		
-		// TiAppArguments *args = (TiAppArguments *)[[TiController instance] arguments];
-		// 
-		// if ([args devLaunch]) {
-		// 	if ([s rangeOfString:@"plugin/"].location == 0) {
-		// 		resourcePath = [[args pluginPath:pluginInfo.pluginName] stringByAppendingPathComponent:pluginInfo.pluginResource];
-		// 	}
-		// 	else if([s rangeOfString:@"plugins.js"].location == 0) {
-		// 		// plugins.js is a virtual resource in dev launch mode , so we simulate it
-		// 		NSString *content = @"ti.plugins=[];\n";
-		// 		
-		// 		NSEnumerator *pluginEnum = [args plugins];
-		// 		id object;
-		// 		while ((object = [pluginEnum nextObject])) {
-		// 			content = [content stringByAppendingString:@"ti.App.include(\"ti://plugin/"];
-		// 			content = [content stringByAppendingString:(NSString *)object];
-		// 			content = [content stringByAppendingString:@"/plugin.js\");\n"];
-		// 		}
-		// 		
-		// 		data = [content dataUsingEncoding:NSUTF8StringEncoding];
-		// 		mime = @"text/javascript";
-		// 	} else {
-		// 		resourcePath = [[args runtimePath] stringByAppendingPathComponent:s];
-		// 	}
-		// } else if (resourcePath == nil) {
-		// 	resourcePath = [basePath stringByAppendingPathComponent:s];
-		// }
-	}
-	
-	
-	if (data == nil) {
-		data = [[NSData alloc] initWithContentsOfFile:resourcePath];
-		needToReleaseData = YES;
-		NSString *ext = [resourcePath pathExtension];
-		mime = [AppProtocol mimeTypeFromExtension:ext];
-	}
-	
+	NSData *data = [[NSData alloc] initWithContentsOfFile:fullpath];
+	NSString *ext = [fullpath pathExtension];
+	NSString *mime = [AppProtocol mimeTypeFromExtension:ext];
 	NSURLResponse *response = [[NSURLResponse alloc] initWithURL:url MIMEType:mime expectedContentLength:-1 textEncodingName:@"utf-8" ];
 	[client URLProtocol:self didReceiveResponse:response cacheStoragePolicy:NSURLCacheStorageAllowed];
-	
+
 	if (data != nil && [data length] > 0) {
 		[client URLProtocol:self didLoadData:data];
 	}
-	
+
 	[client URLProtocolDidFinishLoading:self];
 	[response release];
+	[data release];
+}
+
+- (void)startLoading
+{
+    NSURLRequest *request = [self request];
+	NSURL *url = [request URL];
 	
-	if (needToReleaseData)
-		[data release];
+	NSString *hostpart = [[[url host] stringByReplacingOccurrencesOfString:@"." withString:@""] lowercaseString];
+	NSString *pathpart = [url path];
+	NSString *normpath = [pathpart stringByReplacingOccurrencesOfString:@".." withString:@""];
+	kroll::Host *host = [[TiApplication instance] host];
+	
+	std::string basedir;
+
+	if ([hostpart isEqualTo:@"runtime"])
+	{
+		basedir = host->GetRuntimePath();
+	}
+	else
+	{
+		std::string modulename([hostpart UTF8String]);
+		SharedPtr<Module> module = host->GetModuleByName(modulename);
+
+		if (!module.isNull())
+		{
+			basedir = module->GetPath();
+		}
+	}
+
+	if (!basedir.empty())
+	{
+		std::string resourcepath = kroll::FileUtils::Join(basedir.c_str(),[normpath UTF8String],NULL);
+
+		if (kroll::FileUtils::IsFile(resourcepath))
+		{
+			NSString *fullpath = [NSString stringWithCString:resourcepath.c_str()];
+			[self load:url path:fullpath];
+			return;
+		}
+	}
+	
+	kroll::Logger logger = kroll::Logger::GetRootLogger();
+	logger.Error("error finding %s",[[url absoluteString] UTF8String]);
+	
+	// File doesn't exist
+    int resultCode = NSURLErrorResourceUnavailable;
+    id<NSURLProtocolClient> client = [self client];
+    [client URLProtocol:self didFailWithError:[NSError errorWithDomain:NSURLErrorDomain code:resultCode userInfo:nil]];
+	[client URLProtocolDidFinishLoading:self];
 }
 
 - (void)stopLoading {

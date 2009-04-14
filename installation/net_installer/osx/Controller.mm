@@ -5,20 +5,11 @@
  */
 #import "Controller.h"
 #import <string>
-#include "base.h"
-#import "file_utils.h"
-#import <utils.h>
-#import <zlib.h>
 
 #define RUNTIME_UUID_FRAGMENT @"uuid=A2AC5CB5-8C52-456C-9525-601A5B0725DA"
 #define MODULE_UUID_FRAGMENT @"uuid=1ACE5D3A-2B52-43FB-A136-007BD166CFD0"
 
 @implementation Controller
-
--(void)simulate
-{
-	[progress setDoubleValue:[progress doubleValue]+1.0];
-}
 
 -(NSProgressIndicator*)progress
 {
@@ -115,11 +106,15 @@
 #endif
 	NSLog(@"Installing %@ into %@", file, destDir);
 	[self generateDirectory:destDir];
-	std::string src([file UTF8String]);
-	std::string dest([destDir UTF8String]);
-	kroll::FileUtils::Unzip(src, dest);
+	std::string cmdline = "/usr/bin/ditto --noqtn -x -k --rsrc ";
+	cmdline+="\"";
+	cmdline+=[file UTF8String];
+	cmdline+="\" \"";
+	cmdline+=[destDir UTF8String];
+	cmdline+="\"";
+	system(cmdline.c_str());
 #ifdef DEBUG
-	NSLog(@"After unzip %s to %s",src.c_str(),dest.c_str());
+	NSLog(@"After unzip %@ to %@",file,destDir);
 #endif
 
 }
@@ -165,7 +160,7 @@
 	int numURLs = (int) [[urls allKeys] count];
 	int numFiles = (int) [files count];
 	int count = numURLs + numFiles;
-	int current = 1;
+	int current = 0;
 
 	if (numURLs > 0)
 	{
@@ -177,12 +172,13 @@
 	[progressBar setMinValue:0.0];
 	[progressBar setMaxValue:count];
 	[progressBar setDoubleValue:0.0];
+	
 	[controller updateMessage:[NSString stringWithFormat:@"Installing %d file%s", count, count>1?"s":""]];
 	
 	NSArray * urlsKeys = [urls allKeys];
 	for (int c=0; c<(int)[urlsKeys count];c++)
 	{
-		current++;
+		count++;
 		[progressBar setDoubleValue:current];
 		[controller updateMessage:[NSString stringWithFormat:@"Installing %d of %d file%s", current, count, count>1?"s":""]];
 		NSURL* url = [urlsKeys objectAtIndex:c];
@@ -274,8 +270,6 @@
 	[progress setDoubleValue:0.0];
 	[window center];
 	
-	NSBeep();
-
 	NSProcessInfo *p = [NSProcessInfo processInfo];
 	NSArray *args = [p arguments];
 #ifdef DEBUG
@@ -313,6 +307,8 @@
 		[fm createDirectoryAtPath:directory attributes:nil];
 	}
 	
+	BOOL allZips = YES;
+	
 	// slurp in the URLS
 	urls = [[NSMutableDictionary alloc] init];
 	files = [[NSMutableArray alloc] init];
@@ -327,26 +323,36 @@
 		{
 			NSURL *url = [NSURL URLWithString:[args objectAtIndex:c]];
 			[urls setObject:url forKey:url];
+			allZips = NO;
 		}
 	}
 
-	NSAlert *alert = [[NSAlert alloc] init];
-	[alert addButtonWithTitle:@"Continue"];
-	[alert addButtonWithTitle:@"Cancel"];
-	[alert setMessageText:title];
-	[alert setInformativeText:message];
-	[alert setAlertStyle:NSInformationalAlertStyle];
-	
-	if ([alert runModal] != NSAlertFirstButtonReturn) 
+	if (allZips == NO)
 	{
-		[NSApp terminate:nil];
-		return;
-	}
-	[alert release];
+		NSAlert *alert = [[NSAlert alloc] init];
+		[alert addButtonWithTitle:@"Continue"];
+		[alert addButtonWithTitle:@"Cancel"];
+		[alert setMessageText:title];
+		[alert setInformativeText:message];
+		[alert setAlertStyle:NSInformationalAlertStyle];
+		NSBeep();
 
-	[NSApp arrangeInFront:window];
-	[window makeKeyAndOrderFront:window];
-	[NSApp activateIgnoringOtherApps:YES];
+		if ([alert runModal] != NSAlertFirstButtonReturn) 
+		{
+			[NSApp terminate:nil];
+			return;
+		}
+		[alert release];
+
+		[NSApp arrangeInFront:window];
+		[window makeKeyAndOrderFront:window];
+		[NSApp activateIgnoringOtherApps:YES];
+	}
+	else
+	{
+		[NSApp arrangeInFront:window];
+		[window makeKeyAndOrderFront:window];
+	}
 }
 
 -(IBAction)cancel:(id)sender

@@ -11,6 +11,13 @@
 #include <glib.h>
 #include <utils.h>
 
+using kroll::BootUtils;
+using kroll::FileUtils;
+using kroll::EnvironmentUtils;
+using std::string;
+using std::vector;
+using kroll::Application;
+using kroll::KComponent;
 class Installer;
 class Job;
 #include "job.h"
@@ -18,77 +25,92 @@ class Job;
 class Installer
 {
 	public:
-	Installer(std::string app_name);
+	static Installer* instance;
+	Installer(string, vector<Job*>, int);
+	~Installer();
+	void ResizeWindow(int width, int height);
+	void CreateIntroView();
+	void CreateProgressView();
+	void CreateInfoBox(GtkWidget*);
+	GtkWidget* GetTitaniumIcon();
+	GtkWidget* GetApplicationIcon();
 
-	void AddJob(std::string url);
-	void ClearJobs();
-	void Run();
+	void StartInstallProcess();
+	void StartDownloading();
+	void StartInstalling();
 	void UpdateProgress();
 	void ShowError();
-	std::string GetInstallDir();
+	void FinishInstall();
 
 	GtkWidget* GetWindow() { return this->window; }
 	void SetWindow(GtkWidget* w) { this->window = w; }
+	void Cancel();
 
-	void Cancel()
+	enum Stage
 	{
-		this->cancel = true;
-	}
-	bool IsCancelled()
+		SUCCESS = 0,
+		PREDOWNLOAD,
+		DOWNLOADING,
+		PREINSTALL,
+		INSTALLING,
+		CANCEL_REQUEST,
+		SUDO_REQUEST,
+		CANCELLED,
+		ERROR
+	};
+
+	Stage GetStage()
 	{
-		return this->cancel;
+		return this->stage;
 	}
-	bool IsRunning()
+
+	void SetStage(Stage stage)
 	{
-		return this->running;
+		this->stage = stage;
 	}
-	void SetRunning(bool running)
-	{
-		this->running = running;
-	}
+
 	void SetError(std::string error)
 	{
 		this->error = error;
+		this->stage = ERROR;
 	}
+
 	Job* CurrentJob()
 	{
-		return this->current_job;
+		return this->currentJob;
 	}
+
 	void SetCurrentJob(Job* job)
 	{
-		this->current_job = job;
+		this->currentJob = job;
 	}
+
 	std::vector<Job*>& GetJobs()
 	{
 		return this->jobs;
 	}
-	bool DownloadFinished()
+
+	std::string GetApplicationPath()
 	{
-		return this->download_finished;
-	}
-	void DownloadDone()
-	{
-		this->download_finished = true;
+		return this->applicationPath;
 	}
 
-	void StartDownloading();
-	void StartInstalling();
 
 	private:
-	std::string app_name;
-	std::string system_runtime_home;
-	std::string user_runtime_home;
-
-	GtkWidget* window;
-	GtkWidget* bar;
-	GtkWidget* label;
+	std::string applicationPath;
 	std::vector<Job*> jobs;
-	Job* current_job;
-	bool running;
+	Application* app;
+	int installType;
+	Stage stage;
+
+	Job* currentJob;
 	bool cancel;
-	bool download_finished;
-	GThread* download_thread;
 	std::string error;
-	int install_type;
+	GtkWidget* window;
+	GtkWidget* progressBar;
+	GtkWidget* downloadingLabel;
+	GtkWidget* installCombo;
+	bool running;
+	GThread* download_thread;
 
 };

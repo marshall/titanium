@@ -7,8 +7,7 @@
 #ifndef _MEDIA_BINDING_H_
 #define _MEDIA_BINDING_H_
 
-#include <api/module.h>
-#include <api/binding/binding.h>
+#include <kroll/kroll.h>
 #include <map>
 #include <vector>
 #include <string>

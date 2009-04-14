@@ -24,9 +24,9 @@
 	[self setTitle:[NSString stringWithCString:config->GetTitle().c_str()]];
 	[self setOpaque:false];
 	[self setHasShadow:true];
-	[self setBackgroundColor:[NSColor clearColor]];
 
 	webView = [[WebView alloc] init];
+	[webView setDrawsBackground:NO];
 	delegate = [[WebViewDelegate alloc] initWithWindow:self host:host];
 	[self setContentView:webView];
 	[self setDelegate:self];
@@ -59,6 +59,8 @@
 }
 - (void)dealloc
 {
+	// make sure we go back to normal mode
+	SetSystemUIMode(kUIModeNormal,0);
 	[inspector release];
 	[delegate release];
 	delegate = nil;
@@ -116,12 +118,22 @@
 	[self fireWindowEvent:FOCUSED];
 	OSXUserWindow* uw = static_cast<OSXUserWindow*>(userWindow);
 	uw->Focused();
+	if (!focused && fullscreen)
+	{
+		SetSystemUIMode(kUIModeAllHidden,kUIOptionAutoShowMenuBar);
+	}
+	focused = YES;
 }
 - (void)windowDidResignKey:(NSNotification*)notification
 {
 	[self fireWindowEvent:UNFOCUSED];
 	OSXUserWindow* uw = static_cast<OSXUserWindow*>(userWindow);
 	uw->Unfocused();
+	if (fullscreen && focused)
+	{
+		SetSystemUIMode(kUIModeNormal,0);
+	}
+	focused = NO;
 }
 - (void)windowDidMiniaturize:(NSNotification*)notification
 {

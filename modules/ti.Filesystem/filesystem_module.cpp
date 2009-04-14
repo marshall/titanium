@@ -5,7 +5,7 @@
  */
 #include <kroll/kroll.h>
 #include "filesystem_module.h"
-#include "filesystem_test.h"
+#include "filesystem_binding.h"
 
 using namespace kroll;
 using namespace ti;
@@ -17,10 +17,10 @@ namespace ti
 	void FilesystemModule::Initialize()
 	{
 		// load our variables
-		this->variables = new FilesystemBinding(host,host->GetGlobalObject());
+		this->binding= new FilesystemBinding(host,host->GetGlobalObject());
 
 		// set our ti.Filesystem
-		SharedValue value = Value::NewObject(this->variables);
+		SharedValue value = Value::NewObject(this->binding);
 		host->GetGlobalObject()->Set("Filesystem",value);
 	}
 
@@ -29,9 +29,4 @@ namespace ti
 
 	}
 
-	void FilesystemModule::Test()
-	{
-	  FilesystemUnitTestSuite test;
-	  test.Run(host);
-	}
 }

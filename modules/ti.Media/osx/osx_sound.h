@@ -7,8 +7,7 @@
 #ifndef _MEDIA_OSX_SOUND_H_
 #define _MEDIA_OSX_SOUND_H_
 
-#include <api/module.h>
-#include <api/binding/binding.h>
+#include <kroll/kroll.h>
 #include <vector>
 #include "../sound.h"
 #import <Cocoa/Cocoa.h>

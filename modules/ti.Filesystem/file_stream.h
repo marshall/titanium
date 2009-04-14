@@ -6,17 +6,14 @@
 
 #ifndef FILE_STREAM_H_
 #define FILE_STREAM_H_
+#include <kroll/kroll.h>
 
 #ifdef OS_WIN32
-#include <api/base.h>
 #include <string>
 #elif OS_OSX
 #import <Foundation/Foundation.h>
 #endif
 
-
-#include <api/binding/binding.h>
-#include <api/binding/static_bound_list.h>
 #include <string>
 #include <Poco/FileStream.h>
 

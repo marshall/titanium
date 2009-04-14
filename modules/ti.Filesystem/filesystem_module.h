@@ -27,10 +27,9 @@ namespace ti
 	{
 		KROLL_MODULE_CLASS(FilesystemModule)
 		
-		void Test();
 
-	private:
-		kroll::BoundObject *variables;
+		private:
+			SharedBoundObject binding;
 	};
 
 }

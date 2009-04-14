@@ -7,8 +7,7 @@
 #ifndef _PROCESS_H_
 #define _PROCESS_H_
 
-#include <api/module.h>
-#include <api/binding/binding.h>
+#include <kroll/kroll.h>
 #include <Poco/Process.h>
 #include <Poco/Pipe.h>
 #include <Poco/Thread.h>

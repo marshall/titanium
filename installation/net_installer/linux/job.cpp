@@ -13,8 +13,8 @@
 #include <sstream>
 
 int Job::total = 0;
-std::string Job::download_dir = "";
-std::string Job::install_dir = "";
+std::string Job::downloadDir = "";
+std::string Job::installDir = "";
 char* Job::curl_error = NULL;
 CURL* Job::curl = NULL;
 
@@ -27,12 +27,9 @@ int curl_progress_func(
 size_t curl_write_func(void *ptr, size_t size, size_t nmemb, FILE *stream);
 size_t curl_read_func(void *ptr, size_t size, size_t nmemb, FILE *stream);
 
-void Job::Init(std::string download_dir, std::string install_dir)
+void Job::InitDownloader()
 {
 	Job::curl = curl_easy_init();
-	Job::download_dir = download_dir;
-	Job::install_dir = install_dir;
-
 	if (Job::curl_error == NULL)
 		Job::curl_error = new char[CURL_ERROR_SIZE];
 }
@@ -53,12 +50,12 @@ void Job::ShutdownDownloader()
 	}
 }
 
-Job::Job(std::string url, Installer* installer) :
+Job::Job(std::string url, int type) :
 	url(url),
-	installer(installer),
+	type(type),
 	index(++Job::total),
 	progress(0.0),
-	type("unknown"),
+	componentType("unknown"),
 	name("unknown"),
 	version("unknown"),
 	download(true)
@@ -72,8 +69,6 @@ Job::Job(std::string url, Installer* installer) :
 	else
 	{
 		this->ParseURL(url);
-		std::string filename = this->type + "-" + this->name + "-" + this->version + ".zip";
-		this->out_filename = Job::download_dir + "/" + filename;
 	}
 }
 
@@ -82,18 +77,17 @@ void Job::ParseFile(std::string url)
 	char* url_cstr = strdup(url.c_str());
 	std::string file = basename(url_cstr);
 	free(url_cstr);
-	printf("file: %s\n", file.c_str());
 
 	size_t start, end;
 	end = file.find("-");
 	std::string partOne = file.substr(0, end);
 	if (partOne == "runtime")
 	{
-		this->type = this->name = "runtime";
+		this->componentType = this->name = "runtime";
 	}
 	else if (partOne == "module")
 	{
-		this->type = "modules";
+		this->componentType = "modules";
 		start = end + 1;
 		end = file.find("-", start);
 		this->name = file.substr(start, end - start);
@@ -102,7 +96,6 @@ void Job::ParseFile(std::string url)
 	start = end + 1;
 	end = file.find(".zip", start);
 	this->version = file.substr(start, end - start);
-	printf("%s %s %s\n", this->type.c_str(), this->name.c_str(), this->version.c_str());
 }
 
 void Job::ParseURL(std::string url)
@@ -127,9 +120,9 @@ void Job::ParseURL(std::string url)
 	}
 
 	if (this->name == std::string("runtime"))
-		this->type = "runtime";
+		this->componentType = "runtime";
 	else
-		this->type = "modules";
+		this->componentType = "modules";
 }
 
 void Job::Fetch()
@@ -148,6 +141,9 @@ void Job::Fetch()
 		if (Job::curl == NULL)
 			throw std::string("Download failed: could not initialize cURL.");
 
+		std::string filename = this->componentType +
+			"-" + this->name + "-" + this->version + ".zip";
+		this->out_filename = Job::downloadDir + "/" + filename;
 		FILE* out = fopen(out_filename.c_str(), "w");
 		if (out == NULL)
 			throw std::string("Download failed: could not open file for writing.");
@@ -164,7 +160,11 @@ void Job::Fetch()
 		curl_easy_setopt(Job::curl, CURLOPT_ERRORBUFFER, Job::curl_error);
 		CURLcode result = curl_easy_perform(Job::curl);
 
-		if (result != CURLE_OK)
+		// Don't report an error if the user cancelled
+		Installer::Stage s = Installer::instance->GetStage();
+		if (result != CURLE_OK
+			&& s != Installer::CANCELLED
+			&& s != Installer::CANCEL_REQUEST)
 			throw std::string("Download failed: ") + Job::curl_error;
 
 		fflush(out);
@@ -185,18 +185,16 @@ void Job::Fetch()
 	this->progress = 1.0;
 }
 
-void Job::Unzip()
+void Job::UnzipComponent()
 {
-	this->progress = ((double) this->index) / ((double) Job::total);
-
-	std::string outdir = Job::install_dir;
+	std::string outdir = Job::installDir;
 	kroll::FileUtils::CreateDirectory(outdir);
-	outdir.append("/" + this->type);
+	outdir.append("/" + this->componentType);
 	kroll::FileUtils::CreateDirectory(outdir);
 	outdir.append("/linux");
 	kroll::FileUtils::CreateDirectory(outdir);
 
-	if (this->type != "runtime")
+	if (this->componentType != "runtime")
 	{
 		outdir.append("/" + this->name);
 		kroll::FileUtils::CreateDirectory(outdir);
@@ -208,9 +206,19 @@ void Job::Unzip()
 	kroll::FileUtils::Unzip(this->out_filename, outdir);
 }
 
-Installer* Job::GetInstaller()
+void Job::UnzipApplication()
 {
-	return this->installer;
+	std::string outdir = Installer::instance->GetApplicationPath();
+	kroll::FileUtils::Unzip(this->out_filename, outdir);
+}
+
+void Job::Unzip()
+{
+	this->progress = ((double) this->index) / ((double) Job::total);
+	if (this->type == COMPONENT_JOB)
+		this->UnzipComponent();
+	else
+		this->UnzipApplication();
 }
 
 int Job::GetIndex()
@@ -250,8 +258,8 @@ int curl_progress_func(
 	double ultotal,
 	double ulnow)
 {
-
-	if (job->GetInstaller()->IsCancelled())
+	Installer::Stage s = Installer::instance->GetStage();
+	if (s == Installer::CANCELLED || s == Installer::CANCEL_REQUEST || s == Installer::ERROR)
 		return 1;
 
 	if (t == 0)

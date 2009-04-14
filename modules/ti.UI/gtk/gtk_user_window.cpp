@@ -450,7 +450,7 @@ static void load_finished_cb(
 {
 	JSGlobalContextRef context = webkit_web_frame_get_global_context(frame);
 	JSObjectRef global_object = JSContextGetGlobalObject(context);
-	SharedKObject frame_global = new KJSKObject(context, global_object);
+	SharedKObject frame_global = new KKJSObject(context, global_object);
 	std::string uri = webkit_web_frame_get_uri(frame);
 
 	GtkUserWindow* user_window = static_cast<GtkUserWindow*>(data);

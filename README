@@ -164,9 +164,13 @@ Titanium was made possible by a number of awesome contributors:
 - Jeff Haynie, OSX
 - Martin Robinson, Linux
 - Nolan Wright, Apps + Testing
+- Don Thorp, Mobile Lead
+- Blain Hamon, OSX
 - Paolo F, Apps + Testing
 - Mark Obcena, Documentation + Testing (and moral support)
 - Will Robertson, Build + Testing on various Linux distros
+
+(and lots others who we don't necessarily know your name but we know you have helped)
 
 Special thanks to all those who continually stop by the IRC channel to
 offer assistance, bug reports and moral support.  We love you!
@@ -182,5 +186,5 @@ Copyright (C) 2008-2009 by Appcelerator, Inc. All Rights Reserved.
 For more information, please visit <http://license.appcelerator.org>.
 Appcelerator, Titanium and logos are trademarks of Appcelerator, Inc.
 
-Please see the file named COPYING for the full license.
+Please see the file named LICENSE for the full license.
 

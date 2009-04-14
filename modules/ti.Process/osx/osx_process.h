@@ -6,9 +6,7 @@
 
 #ifndef _OSX_PROCESS_H_
 #define _OSX_PROCESS_H_
-
-#include <api/module.h>
-#include <api/binding/binding.h>
+#include <kroll/kroll.h>
 #include <Cocoa/Cocoa.h>
 #include "../process_binding.h"
 #include "osx_pipe.h"

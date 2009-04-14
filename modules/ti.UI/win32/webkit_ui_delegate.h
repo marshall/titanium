@@ -6,7 +6,7 @@
 #ifndef TI_WEBKIT_WIN32_UI_DELEGATE_H_
 #define TI_WEBKIT_WIN32_UI_DELEGATE_H_
 
-#include <api/base.h>
+#include <kroll/kroll.h>
 #include <windows.h>
 
 #include "WebKit.h"

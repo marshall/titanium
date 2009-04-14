@@ -4,12 +4,10 @@
  * Copyright (c) 2009 Appcelerator, Inc. All Rights Reserved.
  */
 
-
 #ifndef _GROWL_BINDING_H_
 #define _GROWL_BINDING_H_
 
-#include <api/module.h>
-#include <api/binding/binding.h>
+#include <kroll/kroll.h>
 
 using namespace kroll;
 
@@ -23,10 +21,15 @@ namespace ti
 		void ShowNotification(const ValueList& args, SharedValue result);
 		void IsRunning(const ValueList& args, SharedValue result);
 	protected:
-		virtual ~GrowlBinding();
 		kroll::SharedBoundObject global;
-		virtual void ShowNotification(std::string& title, std::string& description, std::string& iconURL, int notification_delay, SharedBoundMethod callback) = 0;
 
+		virtual ~GrowlBinding();
+		virtual void ShowNotification(
+			std::string& title,
+			std::string& description,
+			std::string& iconURL,
+			int notification_delay,
+			SharedBoundMethod callback) = 0;
 		virtual bool IsRunning() = 0;
 	};
 }

@@ -33,7 +33,7 @@ namespace ti
 	{
 		[TiProtocol registerSpecialProtocol];
 		[AppProtocol registerSpecialProtocol];
-		application = [[TiApplication alloc] initWithBinding:this];
+		application = [[TiApplication alloc] initWithBinding:this host:host];
 		NSApplication *nsapp = [NSApplication sharedApplication];
 		[nsapp setDelegate:application];
 		[NSBundle loadNibNamed:@"MainMenu" owner:nsapp];

@@ -5,7 +5,7 @@
  */
 #include <kroll/kroll.h>
 #include "process_module.h"
-#include "process_test.h"
+#include "process_binding.h"
 
 using namespace kroll;
 using namespace ti;
@@ -28,9 +28,4 @@ namespace ti
 	{
 	}
 	
-	void ProcessModule::Test()
-	{
-	  ProcessUnitTestSuite test;
-	  test.Run(host);
-	}
 }
