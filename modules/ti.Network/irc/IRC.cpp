@@ -23,7 +23,7 @@
 	IRC:	#magpie @ irc.quakenet.org
 
 
-	Numeorous minor changes by Jeff Haynie <jhaynie@appcelerator.org> to 
+	Numeorous minor changes by Jeff Haynie <jhaynie@appcelerator.org> to
 	get it working well under Titanium
 */
 
@@ -47,8 +47,6 @@
 #endif
 
 #include <iostream>
-
-#include <kroll/kroll.h>
 
 IRC::IRC()
 {
@@ -128,7 +126,7 @@ void IRC::delete_irc_command_hook(irc_command_hook* cmd_hook)
 
 void IRC::send(const char *fmt, ...)
 {
-	va_list args; 
+	va_list args;
 	va_start(args, fmt);
 	char szBuf[1024];
 #ifdef OS_WIN32
@@ -140,7 +138,7 @@ void IRC::send(const char *fmt, ...)
 	{
 #ifdef DEBUG
 		PRINTD("IRC sending[" << size << "] => " << szBuf);
-#endif	
+#endif
 		::send(irc_socket,(const char*)szBuf,size,0);
 	}
 }
@@ -173,7 +171,7 @@ int IRC::start(char* server, int port, char* nick, char* user, char* name, char*
 	rem.sin_port=htons(port);
 
 	connecting = true;
-	
+
 	if (connect(irc_socket, (const sockaddr*)&rem, sizeof(rem))==SOCKET_ERROR)
 	{
 #ifdef WIN32
@@ -194,7 +192,7 @@ int IRC::start(char* server, int port, char* nick, char* user, char* name, char*
 
 	connected=true;
 	connecting=false;
-	
+
 	return 0;
 }
 
@@ -229,7 +227,7 @@ int IRC::message_loop()
 {
 	char buffer[4096];
 	int ret_len;
-	
+
 	PRINTD("ENTER IRC::message_loop()");
 
 	if (!connected)
@@ -245,7 +243,7 @@ int IRC::message_loop()
 	}
 
 	int rc = 0;
-	
+
 	while (connected)
 	{
 		ret_len=recv(irc_socket, buffer, 4095, 0);
@@ -292,7 +290,7 @@ int IRC::is_op(char* channel, char* nick)
 	channel_user* cup;
 
 	cup=chan_users;
-	
+
 	while (cup)
 	{
 		if (!strcmp(cup->channel, channel) && !strcmp(cup->nick, nick))
@@ -310,7 +308,7 @@ int IRC::is_voice(char* channel, char* nick)
 	channel_user* cup;
 
 	cup=chan_users;
-	
+
 	while (cup)
 	{
 		if (!strcmp(cup->channel, channel) && !strcmp(cup->nick, nick))
@@ -509,7 +507,7 @@ void IRC::parse_irc_reply(char* data)
 			}
 			*params='\0';
 			params++;
-		
+
 			plus=false;
 			for (i=0; i<(signed)strlen(changevars); i++)
 			{
@@ -814,7 +812,7 @@ int IRC::notice(char* target, char* message)
 int IRC::notice(char* fmt, ...)
 {
 	va_list argp;
-	
+
 	if (!connected)
 		return 1;
 	va_start(argp, fmt);

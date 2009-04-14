@@ -4,7 +4,7 @@
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
 #include "webkit_ui_delegate.h"
-
+#define FormatMessage FormatMessageA
 #include <comdef.h>
 #include "win32_user_window.h"
 #include "win32_ui_binding.h"
