@@ -27,8 +27,8 @@ class Job
 	static void InitDownloader();
 	static void ShutdownDownloader();
 
-	static std::string downloadDir;
-	static std::string installDir;
+	static std::string temporaryDirectory;
+	static std::string installDirectory;
 
 	int Index()
 	{

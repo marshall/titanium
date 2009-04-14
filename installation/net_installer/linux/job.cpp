@@ -11,10 +11,11 @@
 #include <unistd.h>
 #include <iostream>
 #include <sstream>
+using std::string;
 
 int Job::total = 0;
-std::string Job::downloadDir = "";
-std::string Job::installDir = "";
+std::string Job::temporaryDirectory = "";
+std::string Job::installDirectory = "";
 char* Job::curl_error = NULL;
 CURL* Job::curl = NULL;
 
@@ -29,6 +30,8 @@ size_t curl_read_func(void *ptr, size_t size, size_t nmemb, FILE *stream);
 
 void Job::InitDownloader()
 {
+	Job::temporaryDirectory = FileUtils::GetTempDirectory();
+	curl_global_init(CURL_GLOBAL_ALL);
 	Job::curl = curl_easy_init();
 	if (Job::curl_error == NULL)
 		Job::curl_error = new char[CURL_ERROR_SIZE];
@@ -48,6 +51,10 @@ void Job::ShutdownDownloader()
 		delete [] Job::curl_error;
 		Job::curl_error = NULL;
 	}
+
+	if (!Job::temporaryDirectory.empty()
+			&& FileUtils::IsDirectory(Job::temporaryDirectory))
+		FileUtils::DeleteDirectory(Job::temporaryDirectory); // Clean up
 }
 
 Job::Job(std::string url, int type) :
@@ -66,7 +73,7 @@ Job::Job(std::string url, int type) :
 		this->out_filename = url;
 		this->download = false;
 	}
-	else
+	else if (this->type == COMPONENT_JOB)
 	{
 		this->ParseURL(url);
 	}
@@ -141,9 +148,18 @@ void Job::Fetch()
 		if (Job::curl == NULL)
 			throw std::string("Download failed: could not initialize cURL.");
 
-		std::string filename = this->componentType +
-			"-" + this->name + "-" + this->version + ".zip";
-		this->out_filename = Job::downloadDir + "/" + filename;
+		this->out_filename = Job::temporaryDirectory + "/";
+		if (this->type == COMPONENT_JOB)
+		{
+			std::string filename = this->componentType +
+				"-" + this->name + "-" + this->version + ".zip";
+			this->out_filename += filename;
+		}
+		else
+		{
+			this->out_filename += "application-update.zip";
+		}
+
 		FILE* out = fopen(out_filename.c_str(), "w");
 		if (out == NULL)
 			throw std::string("Download failed: could not open file for writing.");
@@ -187,7 +203,7 @@ void Job::Fetch()
 
 void Job::UnzipComponent()
 {
-	std::string outdir = Job::installDir;
+	std::string outdir = Job::installDirectory;
 	kroll::FileUtils::CreateDirectory(outdir);
 	outdir.append("/" + this->componentType);
 	kroll::FileUtils::CreateDirectory(outdir);
