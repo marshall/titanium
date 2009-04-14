@@ -7,7 +7,7 @@
 
 #include "webkit_policy_delegate.h"
 #include "win32_user_window.h"
-
+#include <shellapi.h>
 #include <string>
 
 namespace ti {
