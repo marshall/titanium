@@ -90,6 +90,11 @@ class Installer
 		return this->jobs;
 	}
 
+	std::string GetApplicationPath()
+	{
+		return this->applicationPath;
+	}
+
 
 	private:
 	std::string applicationPath;

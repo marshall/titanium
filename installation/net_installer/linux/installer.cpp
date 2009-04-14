@@ -8,6 +8,8 @@
 
 #include <iostream>
 #include <sstream>
+#include <unistd.h>
+#include <sys/types.h>
 
 void *download_thread_f(gpointer data);
 void *install_thread_f(gpointer data);
@@ -15,7 +17,7 @@ static gboolean watcher(gpointer data);
 static void install_cb(GtkWidget *widget, gpointer data);
 static void cancel_cb(GtkWidget *widget, gpointer data);
 static void destroy_cb(GtkWidget *widget, gpointer data);
-static int do_install_sudo();
+static int do_install_sudo(int);
 
 #define LICENSE_WINDOW_WIDTH 600
 #define LICENSE_WINDOW_HEIGHT 500
@@ -27,6 +29,7 @@ static int do_install_sudo();
 #define CANCEL 0
 #define HOMEDIR_INSTALL 1
 #define SYSTEM_INSTALL 2
+#define UPDATE_INSTALL 2
 
 Installer* Installer::instance;
 string systemRuntimeHome;
@@ -46,7 +49,15 @@ Installer::Installer(string applicationPath, vector<Job*> jobs, int installType)
 	error("")
 {
 	Installer::instance = this;
+
 	this->app = BootUtils::ReadManifest(applicationPath);
+
+	if (installType == UPDATE_INSTALL)
+	{
+		string updatePath = FileUtils::GetApplicationDataDirectory(app->id);
+		updatePath = FileUtils::Join(updatePath.c_str(), UPDATE_FILENAME, NULL);
+		this->app = BootUtils::ReadManifestFile(updatePath, applicationPath);
+	} 
 
 	this->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	string title = this->app->name + " Installer";
@@ -57,7 +68,7 @@ Installer::Installer(string applicationPath, vector<Job*> jobs, int installType)
 		G_CALLBACK(destroy_cb),
 		(gpointer) this);
 
-	if (this->installType == HOMEDIR_INSTALL)
+	if (this->installType == HOMEDIR_INSTALL || this->installType == UPDATE_INSTALL)
 	{
 		this->CreateIntroView();
 	}
@@ -82,6 +93,10 @@ void Installer::FinishInstall()
 		file = fopen(path.c_str(),"w"); 
 		fprintf(file, "\n");
 		fclose(file);
+	}
+	if (this->stage == SUCCESS && this->installType == UPDATE_INSTALL)
+	{
+
 	}
 }
 
@@ -183,13 +198,13 @@ void Installer::CreateIntroView()
 
 		gtk_container_set_border_width(GTK_CONTAINER(scroller), 5);
 		gtk_box_pack_start(GTK_BOX(windowVbox), scroller, TRUE, TRUE, 0);
+
+		GtkWidget* hseperator = gtk_hseparator_new();
+		gtk_box_pack_start(GTK_BOX(windowVbox), hseperator, FALSE, FALSE, 0);
 	}
 
 	if (this->jobs.size() > 0)
 	{
-		GtkWidget* hseperator = gtk_hseparator_new();
-		gtk_box_pack_start(GTK_BOX(windowVbox), hseperator, FALSE, FALSE, 0);
-
 		///* Install dialog label */
 		GtkWidget* label = gtk_label_new(
 			"This application may need to download and install "
@@ -230,6 +245,21 @@ void Installer::CreateIntroView()
 		gtk_box_pack_start(GTK_BOX(installTypeBox), installCombo, FALSE, FALSE, 10);
 		gtk_box_pack_start(GTK_BOX(windowVbox), installTypeBox, FALSE, FALSE, 0);
 	}
+
+	// Add the security warning
+	GtkWidget* securityLabel = gtk_label_new(
+		"<span style=\"italic\">"
+		"This application has the same security access as "
+		"all installed applications running on the desktop."
+		"</span>");
+	gtk_label_set_line_wrap(GTK_LABEL(securityLabel), TRUE);
+	gtk_widget_set_size_request(securityLabel, width - 10, -1);
+	gtk_label_set_use_markup(GTK_LABEL(securityLabel), TRUE);
+	gtk_misc_set_alignment(GTK_MISC(securityLabel), 0.0, 0.0);
+	GtkWidget* securityBox = gtk_vbox_new(FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(securityBox), securityLabel, FALSE, FALSE, 0);
+	gtk_container_set_border_width(GTK_CONTAINER(securityBox), 5);
+	gtk_box_pack_start(GTK_BOX(windowVbox), securityBox, FALSE, FALSE, 0);
 
 	// Add the buttons
 	string continueText = "Install";
@@ -339,7 +369,11 @@ GtkWidget* Installer::GetApplicationIcon()
 void Installer::StartInstallProcess()
 {
 	int choice = gtk_combo_box_get_active(GTK_COMBO_BOX(this->installCombo));
-	if (choice == 0) // home directory install
+	if (choice != 0)
+		this->installType = SYSTEM_INSTALL;
+
+	// Home directory install or we already have a root-level effective userid
+	if (choice == 0 || geteuid() == 0) 
 	{
 		this->StartDownloading();
 	}
@@ -363,7 +397,13 @@ void Installer::StartDownloading()
 	else
 	{
 		temporaryDirectory = FileUtils::GetTempDirectory();
-		Job::download_dir = temporaryDirectory;
+		Job::downloadDir = temporaryDirectory;
+
+		if (this->installType == HOMEDIR_INSTALL)
+			Job::installDir = userRuntimeHome;
+		else if (this->installType == SYSTEM_INSTALL)
+			Job::installDir = systemRuntimeHome;
+
 		Job::InitDownloader();
 
 		this->CreateProgressView();
@@ -602,7 +642,7 @@ static void destroy_cb(GtkWidget *widget, gpointer data)
 }
 
 // TODO: Switch to PolicyKit
-int do_install_sudo()
+int do_install_sudo(int type)
 {
 	// Copy all but the first command-line arg
 	std::vector<std::string> args;
@@ -611,7 +651,12 @@ int do_install_sudo()
 
 	args.push_back("--");
 	args.push_back(argv[0]);
-	args.push_back("--system");
+
+	if (type == SYSTEM_INSTALL)
+		args.push_back("--system");
+	else if (type == UPDATE_INSTALL)
+		args.push_back("--update");
+
 	for (int i = 2; i < argc; i++)
 	{
 		args.push_back(argv[i]);
@@ -645,6 +690,33 @@ int do_install_sudo()
 	return r;
 }
 
+bool can_write_to_all_files(std::string path)
+{
+	vector<string> files;
+	vector<string> dirs;
+	FileUtils::ListDir(path, files);
+	vector<string>::iterator iter = files.begin();
+	while (iter != files.end())
+	{
+		string file = *iter++;
+		string fullPath = FileUtils::Join(path.c_str(), file.c_str(), NULL);
+		if (FileUtils::IsDirectory(fullPath))
+			dirs.push_back(fullPath);
+
+		if (eaccess(fullPath.c_str(), W_OK))
+			return false;
+	}
+
+	iter = dirs.begin();
+	while (iter != dirs.end())
+	{
+		string fullPath = *iter++;
+		if (!can_write_to_all_files(fullPath.c_str()))
+			return false;
+	}
+	return true;
+}
+
 int main(int _argc, const char* _argv[])
 {
 	argc = _argc;
@@ -657,40 +729,54 @@ int main(int _argc, const char* _argv[])
 	systemRuntimeHome = argv[4];
 
 	int installType;
+	if (typeString == "--update")
+	{
+		installType = UPDATE_INSTALL;
+	}
 	if (typeString == "--system")
 	{
 		installType = SYSTEM_INSTALL;
-		Job::install_dir = systemRuntimeHome;
+		Job::installDir = systemRuntimeHome;
 	}
 	else
 	{
 		installType = HOMEDIR_INSTALL;
-		Job::install_dir = userRuntimeHome;
 	}
 
-	vector<Job*> jobs;
-	for (int i = 5; i < argc; i++)
+	int result;
+	if (installType == UPDATE_INSTALL && !can_write_to_all_files(applicationPath))
 	{
-		jobs.push_back(new Job(argv[i]));
+		result = do_install_sudo(UPDATE_INSTALL);
 	}
-
-	curl_global_init(CURL_GLOBAL_ALL);
-
-	new Installer(applicationPath, jobs, installType);
-	int result = Installer::instance->GetStage();
-
-	if (result == Installer::SUDO_REQUEST)
+	else
 	{
-		result = do_install_sudo();
-		Installer::instance->SetStage((Installer::Stage) result);
+		int jobStart = 5;
+		vector<Job*> jobs;
+		for (int i = jobStart; i < argc; i++)
+		{
+			if (i == jobStart && installType == UPDATE_INSTALL)
+				jobs.push_back(new Job(argv[i], APPLICATION_JOB));
+			else
+				jobs.push_back(new Job(argv[i]));
+		}
+		curl_global_init(CURL_GLOBAL_ALL);
+
+		new Installer(applicationPath, jobs, installType);
+		result = Installer::instance->GetStage();
+
+		if (result == Installer::SUDO_REQUEST)
+		{
+			result = do_install_sudo(SYSTEM_INSTALL);
+			Installer::instance->SetStage((Installer::Stage) result);
+		}
+
+		Installer::instance->FinishInstall();
+		result = Installer::instance->GetStage();
+		delete Installer::instance;
+
+		Job::ShutdownDownloader();
 	}
 
-	Installer::instance->FinishInstall();
-	result = Installer::instance->GetStage();
-
-	delete Installer::instance;
-
-	Job::ShutdownDownloader();
 	if (!temporaryDirectory.empty() && FileUtils::IsDirectory(temporaryDirectory))
 		FileUtils::DeleteDirectory(temporaryDirectory); // Clean up
 
