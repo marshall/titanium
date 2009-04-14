@@ -17,7 +17,7 @@ using kroll::EnvironmentUtils;
 using std::string;
 using std::vector;
 using kroll::Application;
-using kroll::Component;
+using kroll::KComponent;
 class Installer;
 class Job;
 #include "job.h"
