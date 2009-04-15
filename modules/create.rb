@@ -150,7 +150,7 @@ namespace ti
 		host->GetGlobalObject()->Set("#{module_name}", value);
 	}
 
-	void #{module_name}Module::Destroy()
+	void #{module_name}Module::Stop()
 	{
 	}
 	
