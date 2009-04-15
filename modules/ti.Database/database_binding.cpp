@@ -10,7 +10,7 @@
 
 namespace ti
 {
-	DatabaseBinding::DatabaseBinding(SharedBoundObject global) : global(global), database(NULL)
+	DatabaseBinding::DatabaseBinding(SharedKObject global) : global(global), database(NULL)
 	{
 		/**
 		 * @tiapi(method=True,name=Database.open,since=0.4) open a database
