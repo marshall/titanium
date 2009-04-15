@@ -84,6 +84,10 @@ Installer::Installer(vector<Job*> jobs, int installType) :
 	}
 
 	this->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+
+	GdkPixbuf* titanium_icon = gdk_pixbuf_new_from_xpm_data(titanium_xpm);
+	gtk_window_set_icon(GTK_WINDOW(this->window), titanium_icon);
+
 	string title = this->app->name + " Installer";
 	gtk_window_set_title(GTK_WINDOW(this->window), title.c_str());
 	g_signal_connect(
@@ -196,8 +200,8 @@ void Installer::CreateInfoBox(GtkWidget* vbox)
 
 	gtk_box_pack_start(GTK_BOX(vbox), infoBox, FALSE, FALSE, 0);
 
-	GtkWidget* hseperator = gtk_hseparator_new();
-	gtk_box_pack_start(GTK_BOX(vbox), hseperator, FALSE, FALSE, 0);
+	GtkWidget* hseparator = gtk_hseparator_new();
+	gtk_box_pack_start(GTK_BOX(vbox), hseparator, FALSE, FALSE, 5);
 }
 
 void Installer::CreateIntroView()
@@ -221,6 +225,10 @@ void Installer::CreateIntroView()
 	// Create the part with the license
 	if (!licenseText.empty())
 	{
+		GtkWidget* licenseFrame = gtk_frame_new(
+			"By continuing, you agree to the following terms "
+			"and conditions on use of this software");
+
 		GtkWidget* licenseTextView = gtk_text_view_new();
 		gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(licenseTextView), GTK_WRAP_WORD);
 		gtk_text_buffer_set_text(
@@ -232,24 +240,26 @@ void Installer::CreateIntroView()
 			GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 		gtk_scrolled_window_add_with_viewport(
 			GTK_SCROLLED_WINDOW(scroller), licenseTextView);
-
 		gtk_container_set_border_width(GTK_CONTAINER(scroller), 5);
-		gtk_box_pack_start(GTK_BOX(windowVbox), scroller, TRUE, TRUE, 0);
+
+		gtk_container_set_border_width(GTK_CONTAINER(licenseFrame), 5);
+		gtk_container_add(GTK_CONTAINER(licenseFrame), scroller);
+		gtk_box_pack_start(GTK_BOX(windowVbox), licenseFrame, TRUE, TRUE, 0);
 
 		GtkWidget* hseperator = gtk_hseparator_new();
-		gtk_box_pack_start(GTK_BOX(windowVbox), hseperator, FALSE, FALSE, 0);
+		gtk_box_pack_start(GTK_BOX(windowVbox), hseperator, FALSE, FALSE, 5);
 	}
 
 	if (this->jobs.size() > 0)
 	{
-		///* Install dialog label */
+		// Install dialog label
 		GtkWidget* label = gtk_label_new(
 			"This application may need to download and install "
 			"additional components. Where should they be installed?");
 		gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
 		gtk_widget_set_size_request(label, width - 10, -1);
 
-		/* Install type combobox */
+		// Install type combobox
 		GtkListStore* store = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING);
 		GtkTreeIter iter;
 		gtk_list_store_append(store, &iter);
@@ -289,6 +299,12 @@ void Installer::CreateIntroView()
 	}
 
 	// Add the security warning
+	GtkWidget* securityBox = gtk_hbox_new(FALSE, 0);
+	GtkWidget* securityImage = gtk_image_new_from_stock(
+		GTK_STOCK_DIALOG_WARNING,
+		GTK_ICON_SIZE_LARGE_TOOLBAR);
+	gtk_box_pack_start(GTK_BOX(securityBox), securityImage, FALSE, FALSE, 0);
+
 	GtkWidget* securityLabel = gtk_label_new(
 		"<span style=\"italic\">"
 		"This application has the same security access as "
@@ -297,8 +313,7 @@ void Installer::CreateIntroView()
 	gtk_label_set_line_wrap(GTK_LABEL(securityLabel), TRUE);
 	gtk_widget_set_size_request(securityLabel, width - 10, -1);
 	gtk_label_set_use_markup(GTK_LABEL(securityLabel), TRUE);
-	gtk_misc_set_alignment(GTK_MISC(securityLabel), 0.0, 0.0);
-	GtkWidget* securityBox = gtk_vbox_new(FALSE, 0);
+	gtk_misc_set_alignment(GTK_MISC(securityLabel), 0.0, 0.5);
 	gtk_box_pack_start(GTK_BOX(securityBox), securityLabel, FALSE, FALSE, 0);
 	gtk_container_set_border_width(GTK_CONTAINER(securityBox), 5);
 	gtk_box_pack_start(GTK_BOX(windowVbox), securityBox, FALSE, FALSE, 0);
@@ -315,6 +330,7 @@ void Installer::CreateIntroView()
 		GTK_ICON_SIZE_BUTTON);
 	gtk_button_set_image(GTK_BUTTON(install), install_icon);
 	GtkWidget* buttonBox = gtk_hbutton_box_new();
+	gtk_container_set_border_width(GTK_CONTAINER(buttonBox), 5);
 	gtk_button_box_set_spacing(GTK_BUTTON_BOX(buttonBox), 5);
 	gtk_button_box_set_layout(GTK_BUTTON_BOX(buttonBox), GTK_BUTTONBOX_END);
 	gtk_box_pack_start(GTK_BOX(buttonBox), cancel, FALSE, FALSE, 0);
