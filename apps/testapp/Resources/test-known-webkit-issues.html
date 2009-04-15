@@ -1,11 +1,51 @@
 <html>
 <head>
+<script type="text/javascript" src="swfobject-1.5.js"></script>
 </head>
 <body>
 <p>1 - https urls don't work</p> 
 <button onclick="window.location.href='https://www.chase.com';">Load https://www.chase.com</button>
 <p>2 - Flash video should show up here</p>
-<object width="425" height="344"><param name="movie" value="http://www.youtube.com/v/TzHFZ4Soq70&hl=en&fs=1"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube.com/v/TzHFZ4Soq70&hl=en&fs=1" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="425" height="344"></embed></object>
+<object width="425" height="344">
+	<param name="movie" value="http://www.youtube.com/v/wzGWvZAd228&hl=en&fs=1"></param>
+	<param name="allowFullScreen" value="true"></param>
+	<param name="allowscriptaccess" value="always"></param>
+	<embed src="http://www.youtube.com/v/wzGWvZAd228&hl=en&fs=1" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="425" height="344"></embed>
+</object>
+<p>End of Flash video</p>
+<p>2a - Flash video should show up here</p>
+	<div id="flashcontent">flashplayer not found</div>
+	<script type="text/javascript">
+	/*
+	var so = new SWFObject
+	(
+		//"http://lab.andre-michelle.com/swf/fl10/ToneMatrix.swf",
+		"http://www.youtube.com/v/wzGWvZAd228&hl=en&fs=1",
+		"flashmovie",
+		"425",
+		"344",
+		"10",
+		"#336699"
+	);
+	so.addParam( "movie", "http://www.youtube.com/v/wzGWvZAd228&hl=en&fs=1" );
+	so.addParam( "allowFullScreen", "true" );
+	so.addParam( "allowscriptaccess", "always" );
+	*/
+
+	var so = new SWFObject
+	(
+		"http://lab.andre-michelle.com/swf/fl10/ToneMatrix.swf",
+		"flashmovie",
+		"528",
+		"528",
+		"10",
+		"#336699"
+	);
+	so.addParam( "base", "" );
+	so.addParam( "wmode", "" );
+			
+	so.write("flashcontent");
+	</script>
 <p>End of Flash video</p>
 <p>3 - css transforms with slow frame rate</p> 
 <button onclick="window.location.href='http://www.iblipper.com/blip/?a=vibrato,fade&d=150&r=52&q=whazzz%20up%3F%20;-';">CSS Transoformations test page</button>
