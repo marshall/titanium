@@ -17,7 +17,7 @@ namespace ti
 	void DatabaseModule::Initialize()
 	{
 		// load our variables
-		this->binding = new DatabaseBinding(host->GetGlobalObject());
+		this->binding = new DatabaseBinding(host);
 
 		// set our ti.Database
 		SharedValue value = Value::NewObject(this->binding);

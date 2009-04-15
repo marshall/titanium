@@ -3,11 +3,7 @@ import os, os.path as path
 Import('build')
 
 env = build.env.Clone();
-env.Append(LIBS=['tiappmodule'])
 env.Append(CPPDEFINES = ('TITANIUM_DATABASE_API_EXPORT', 1))
-env.Append(CPPPATH = ['#kroll','%s/modules/ti.App' % build.titanium_source_dir])
-env.Append(LIBPATH=[path.join(build.dir, 'modules', 'ti.App')])
-env.Append(LIBPATH=[build.get_module('tiapp').build_dir])
 build.add_thirdparty(env, 'poco')
 
 m = build.add_module('ti.Database')

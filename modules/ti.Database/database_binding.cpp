@@ -5,12 +5,14 @@
  */	
 #include <kroll/kroll.h>
 #include "database_binding.h"
-#include "app_config.h"
 #include "resultset_binding.h"
 
 namespace ti
 {
-	DatabaseBinding::DatabaseBinding(SharedKObject global) : global(global), database(NULL)
+	DatabaseBinding::DatabaseBinding(Host* host) :
+		host(host),
+		global(host->GetGlobalObject()),
+		database(NULL)
 	{
 		/**
 		 * @tiapi(method=True,name=Database.open,since=0.4) open a database
@@ -68,7 +70,7 @@ namespace ti
 		{
 			delete database;
 		}
-		std::string appid = AppConfig::Instance()->GetAppID();
+		std::string appid = host->GetApplicationID();
 		std::string dir = FileUtils::GetApplicationDataDirectory(appid);
 		dbname = args.at(0)->ToString();
 		origin = GetSecurityOrigin(appid);
