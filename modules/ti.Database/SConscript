@@ -9,5 +9,4 @@ build.add_thirdparty(env, 'poco')
 m = build.add_module('ti.Database')
 t = env.SharedLibrary(target = m.build_dir + '/tidatabasemodule', source = Glob('*.cpp'))
 build.mark_build_target(t)
-AlwaysBuild(t)
 
