@@ -16,11 +16,11 @@ namespace ti
 	class DatabaseBinding : public StaticBoundObject
 	{
 	public:
-		DatabaseBinding(SharedBoundObject);
+		DatabaseBinding(SharedKObject);
 	protected:
 		virtual ~DatabaseBinding();
 	private:
-		SharedBoundObject global;
+		SharedKObject global;
 		Databases *database;
 		std::string dbname;
 		std::string origin;

@@ -38,7 +38,7 @@ namespace ti
 		KROLL_MODULE_CLASS(DatabaseModule)
 		
 	private:
-		kroll::SharedBoundObject binding;
+		kroll::SharedKObject binding;
 	};
 
 }
