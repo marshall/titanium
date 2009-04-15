@@ -838,7 +838,7 @@ struct OpenFilesJob
 {
 	Host *host;
 	GtkWindow* window;
-	SharedBoundMethod callback;
+	SharedKMethod callback;
 	bool multiple;
 	bool files;
 	bool directories;
@@ -852,7 +852,7 @@ void GtkUserWindow::_OpenFilesWork(const ValueList& args, SharedValue lresult)
 {
 	void* data = args.at(0)->ToVoidPtr();
 	OpenFilesJob* job = reinterpret_cast<OpenFilesJob*>(data);
-	SharedBoundList results = new StaticBoundList();
+	SharedKList results = new StaticBoundList();
 
 	std::string text = "Select File";
 	GtkFileChooserAction a = GTK_FILE_CHOOSER_ACTION_OPEN;
@@ -926,7 +926,7 @@ void GtkUserWindow::_OpenFilesWork(const ValueList& args, SharedValue lresult)
 }
 
 void GtkUserWindow::OpenFiles(
-	SharedBoundMethod callback,
+	SharedKMethod callback,
 	bool multiple,
 	bool files,
 	bool directories,
@@ -947,7 +947,7 @@ void GtkUserWindow::OpenFiles(
 
 	// Call this on the main thread so we don't have to
 	// worry about glib threads.
-	SharedBoundMethod meth = this->Get("_OpenFilesWork")->ToMethod();
+	SharedKMethod meth = this->Get("_OpenFilesWork")->ToMethod();
 	ValueList args;
 	args.push_back(Value::NewVoidPtr(job));
 	job->host->InvokeMethodOnMainThread(meth, args, false);

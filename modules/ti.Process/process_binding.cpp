@@ -22,7 +22,7 @@
 
 namespace ti
 {
-	ProcessBinding::ProcessBinding(Host *h, SharedBoundObject global) : host(h),global(global)
+	ProcessBinding::ProcessBinding(Host *h, SharedKObject global) : host(h),global(global)
 	{
 		/**
 		 * @tiapi(property=True,type=integer,name=Process.pid,since=0.3) returns the process id from the application
@@ -81,7 +81,7 @@ namespace ti
 			}
 			else if (args.at(1)->IsList())
 			{
-				SharedBoundList list = args.at(1)->ToList();
+				SharedKList list = args.at(1)->ToList();
 				for (unsigned int c = 0; c < list->Size(); c++)
 				{
 					SharedValue value = list->At(c);
@@ -90,19 +90,19 @@ namespace ti
 			}
 		}
 #ifdef OS_OSX
-		SharedBoundObject p = new OSXProcess(this, cmd, arguments);
+		SharedKObject p = new OSXProcess(this, cmd, arguments);
 #else
-		SharedBoundObject p = new Process(this, cmd, arguments);
+		SharedKObject p = new Process(this, cmd, arguments);
 #endif
 		processes.push_back(p);
 		result->SetObject(p);
 	}
 	void ProcessBinding::Terminated(Process* p)
 	{
-		std::vector<SharedBoundObject>::iterator i = processes.begin();
+		std::vector<SharedKObject>::iterator i = processes.begin();
 		while(i!=processes.end())
 		{
-			SharedBoundObject obj = (*i);
+			SharedKObject obj = (*i);
 			if (obj.get()==p)
 			{
 				processes.erase(i);

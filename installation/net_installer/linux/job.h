@@ -5,11 +5,14 @@
  */
 
 #include <curl/curl.h>
+#define COMPONENT_JOB 0
+#define APPLICATION_JOB 1
+
 
 class Job
 {
 	public:
-	Job(std::string url);
+	Job(std::string url, int type = COMPONENT_JOB);
 	void Fetch();
 	void Unzip();
 	std::string GetFilename();
@@ -24,8 +27,8 @@ class Job
 	static void InitDownloader();
 	static void ShutdownDownloader();
 
-	static std::string download_dir;
-	static std::string install_dir;
+	static std::string temporaryDirectory;
+	static std::string installDirectory;
 
 	int Index()
 	{
@@ -34,14 +37,17 @@ class Job
 
 	private:
 	std::string url;
+	int type;
 	int index;
 	std::string out_filename;
 	double progress;
-	std::string type;
+	std::string componentType;
 	std::string name;
 	std::string version;
 	bool download;
 
 	static CURL *curl;
 	static char* curl_error;
+	void UnzipComponent();
+	void UnzipApplication();
 };

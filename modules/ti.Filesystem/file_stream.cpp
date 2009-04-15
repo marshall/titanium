@@ -145,7 +145,7 @@ void FileStream::Write(const ValueList& args, SharedValue result)
 		int size = 0;
 		if (args.at(0)->IsObject())
 		{
-			SharedBoundObject b = args.at(0)->ToObject();
+			SharedKObject b = args.at(0)->ToObject();
 			SharedPtr<Blob> blob = b.cast<Blob>();
 			if (!blob.isNull())
 			{

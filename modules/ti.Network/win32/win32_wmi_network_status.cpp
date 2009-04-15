@@ -9,9 +9,9 @@
 
 namespace ti
 {
-	Win32WMINetworkStatus::Win32WMINetworkStatus(SharedBoundMethod callback) : ref_count(1)
+	Win32WMINetworkStatus::Win32WMINetworkStatus(SharedKMethod callback) : ref_count(1)
 	{
-		/*this->callback = new SharedBoundMethod(callback);
+		/*this->callback = new SharedKMethod(callback);
 
 		IWbemLocator* locator;
 		HRESULT hr = CoCreateInstance( CLSID_WbemAdministrativeLocator, NULL,

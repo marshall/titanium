@@ -17,7 +17,7 @@ using kroll::EnvironmentUtils;
 using std::string;
 using std::vector;
 using kroll::Application;
-using kroll::Component;
+using kroll::KComponent;
 class Installer;
 class Job;
 #include "job.h"
@@ -26,7 +26,7 @@ class Installer
 {
 	public:
 	static Installer* instance;
-	Installer(string, vector<Job*>, int);
+	Installer(vector<Job*>, int);
 	~Installer();
 	void ResizeWindow(int width, int height);
 	void CreateIntroView();
@@ -40,7 +40,7 @@ class Installer
 	void StartInstalling();
 	void UpdateProgress();
 	void ShowError();
-	void FinishInstall();
+	void Finish();
 
 	GtkWidget* GetWindow() { return this->window; }
 	void SetWindow(GtkWidget* w) { this->window = w; }
@@ -90,16 +90,26 @@ class Installer
 		return this->jobs;
 	}
 
+	std::string GetApplicationPath()
+	{
+		return this->applicationPath;
+	}
+
+	int GetType()
+	{
+		return this->installType;
+	}
+
 
 	private:
 	std::string applicationPath;
 	std::vector<Job*> jobs;
 	Application* app;
 	int installType;
+	bool isUpdate;
 	Stage stage;
 
 	Job* currentJob;
-	bool cancel;
 	std::string error;
 	GtkWidget* window;
 	GtkWidget* progressBar;

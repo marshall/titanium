@@ -141,14 +141,14 @@ class UserWindow : public kroll::StaticBoundObject {
 		void _SetTopMost(const kroll::ValueList&, kroll::SharedValue);
 
 		struct Listener {
-			SharedBoundMethod callback;
+			SharedKMethod callback;
 			long id;
 		};
 		std::vector<Listener> listeners;
 
 	public:
 		virtual void OpenFiles(
-			SharedBoundMethod callback,
+			SharedKMethod callback,
 			bool multiple,
 			bool files,
 			bool directories,
@@ -217,7 +217,7 @@ class UserWindow : public kroll::StaticBoundObject {
 
 		virtual void FireEvent(UserWindowEvent event_type, SharedKObject event=NULL);
 		virtual void RegisterJSContext(JSGlobalContextRef);
-		virtual void PageLoaded(SharedBoundObject scope,std::string &url);
+		virtual void PageLoaded(SharedKObject scope,std::string &url);
 
 		SharedUserWindow GetSharedPtr();
 
@@ -242,7 +242,7 @@ class UserWindow : public kroll::StaticBoundObject {
 
 	private:
 		DISALLOW_EVIL_CONSTRUCTORS(UserWindow);
-		SharedBoundMethod api;
+		SharedKMethod api;
 		static double Constrain(double, double, double);
 };
 

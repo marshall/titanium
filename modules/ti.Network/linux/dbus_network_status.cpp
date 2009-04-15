@@ -136,7 +136,7 @@ namespace ti
 		if (this->bus == NULL)
 			return true;
 
-		SharedBoundMethod meth = this->Get("_DBusStatus")->ToMethod();
+		SharedKMethod meth = this->Get("_DBusStatus")->ToMethod();
 		SharedValue r = binding->GetHost()->InvokeMethodOnMainThread(meth, ValueList());
 		return r->ToBool();
 	}

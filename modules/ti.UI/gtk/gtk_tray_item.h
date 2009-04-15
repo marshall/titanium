@@ -15,7 +15,7 @@ namespace ti
 
 	public:
 		GtkTrayItem(SharedString icon_path,
-		            SharedBoundMethod cb);
+		            SharedKMethod cb);
 		~GtkTrayItem();
 
 		void SetIcon(SharedString icon_path);
@@ -31,7 +31,7 @@ namespace ti
 		GtkStatusIcon* item;
 		SharedPtr<GtkMenuItemImpl> menu;
 		GtkWidget* menu_widget;
-		SharedBoundMethod callback;
+		SharedKMethod callback;
 		bool active;
 	};
 }

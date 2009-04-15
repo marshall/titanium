@@ -7,7 +7,7 @@
 
 namespace ti
 {
-	GstMediaBinding::GstMediaBinding(SharedBoundObject global) : MediaBinding(global)
+	GstMediaBinding::GstMediaBinding(SharedKObject global) : MediaBinding(global)
 	{
 		char **argv;
 		int argc = 0;
@@ -23,7 +23,7 @@ namespace ti
 		printf("\a"); // \a to console should cause the beep sound
 	}
 
-	SharedBoundObject GstMediaBinding::CreateSound(std::string& url)
+	SharedKObject GstMediaBinding::CreateSound(std::string& url)
 	{
 		//This is a path so, turn it into a file:// URL
 		std::string url_or_path = this->GetResourcePath(url.c_str());

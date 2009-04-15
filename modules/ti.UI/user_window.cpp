@@ -1036,7 +1036,7 @@ void UserWindow::_SetMenu(const kroll::ValueList& args, kroll::SharedValue resul
 
 void UserWindow::_GetMenu(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	SharedBoundList menu = this->GetMenu();
+	SharedKList menu = this->GetMenu();
 	if (!menu.isNull())
 	{
 		result->SetList(menu);
@@ -1059,7 +1059,7 @@ void UserWindow::_SetContextMenu(const kroll::ValueList& args, kroll::SharedValu
 
 void UserWindow::_GetContextMenu(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	SharedBoundList menu = this->GetContextMenu();
+	SharedKList menu = this->GetContextMenu();
 	if (!menu.isNull())
 	{
 		result->SetList(menu);
@@ -1167,7 +1167,7 @@ void UserWindow::_OpenFiles(const ValueList& args, SharedValue result)
 	// });
 	//
 	//
-	SharedBoundMethod callback;
+	SharedKMethod callback;
 	if (args.size() < 1 || !args.at(0)->IsMethod())
 	{
 		throw ValueException::FromString("openFiles expects first argument to be a callback");
@@ -1193,7 +1193,7 @@ void UserWindow::_OpenFiles(const ValueList& args, SharedValue result)
 	std::vector<std::string> types;
 	if (props->Get("types")->IsList())
 	{
-		SharedBoundList l = props->Get("types")->ToList();
+		SharedKList l = props->Get("types")->ToList();
 		for (unsigned int i = 0; i < l->Size(); i++)
 		{
 			if (l->At(i)->IsString())
@@ -1210,7 +1210,7 @@ void UserWindow::_AddEventListener(const ValueList& args, SharedValue result)
 {
 	ArgUtils::VerifyArgsException("addEventListener", args, "m");
 
-	SharedBoundMethod target = args.at(0)->ToMethod();
+	SharedKMethod target = args.at(0)->ToMethod();
 	Listener listener = Listener();
 	listener.id = this->next_listener_id++;
 	listener.callback = target;
@@ -1355,7 +1355,7 @@ void UserWindow::FireEvent(UserWindowEvent event_type, SharedKObject event)
 	std::vector<Listener>::iterator it = this->listeners.begin();
 	while (it != this->listeners.end())
 	{
-		SharedBoundMethod callback = (*it).callback;
+		SharedKMethod callback = (*it).callback;
 		try
 		{
 			this->host->InvokeMethodOnMainThread(callback,args,false);
@@ -1404,7 +1404,7 @@ void UserWindow::RegisterJSContext(JSGlobalContextRef context)
 	// Titanium object. When a property isn't found in this object
 	// it will look for it in global_tibo.
 	SharedKObject global_tibo = this->host->GetGlobalObject();
-	BoundObject* ti_object = new DelegateStaticBoundObject(global_tibo);
+	KObject* ti_object = new DelegateStaticBoundObject(global_tibo);
 	SharedKObject shared_ti_obj = SharedKObject(ti_object);
 
 	SharedValue ui_api_value = ti_object->Get("UI");
@@ -1412,7 +1412,7 @@ void UserWindow::RegisterJSContext(JSGlobalContextRef context)
 	{
 		// Create a delegate object for the UI API.
 		SharedKObject ui_api = ui_api_value->ToObject();
-		BoundObject* delegate_ui_api = new DelegateStaticBoundObject(ui_api);
+		KObject* delegate_ui_api = new DelegateStaticBoundObject(ui_api);
 
 		// Place currentWindow in the delegate.
 		SharedValue user_window_val = Value::NewObject(this->GetSharedPtr());

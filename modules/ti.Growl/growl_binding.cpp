@@ -9,7 +9,7 @@
 
 namespace ti
 {
-	GrowlBinding::GrowlBinding(SharedBoundObject global) : global(global)
+	GrowlBinding::GrowlBinding(SharedKObject global) : global(global)
 	{
 		/**
 		 * @tiapi(method=True,name=Notification.showNotification,since=0.2) show a growl notification
@@ -30,7 +30,7 @@ namespace ti
 	{
 		std::string title, description, iconURL = "";
 		int notification_timeout = 3;
-		SharedBoundMethod callback;
+		SharedKMethod callback;
 
 		if (args.size() >= 2) {
 			title = args.at(0)->ToString();
@@ -43,7 +43,7 @@ namespace ti
 				notification_timeout = args.at(3)->ToInt();
 			}
 
-			SharedBoundMethod callback;
+			SharedKMethod callback;
 			if (args.size() >= 5 && args.at(4)->IsMethod()) {
 				callback = args.at(4)->ToMethod();
 			}
@@ -51,7 +51,7 @@ namespace ti
 			ShowNotification(title, description, iconURL, notification_timeout, callback);
 		}
 		else if (args.size() == 1  && args.at(0)->IsObject()) {
-			SharedBoundObject options = args.at(0)->ToObject();
+			SharedKObject options = args.at(0)->ToObject();
 
 			SharedValue value = options->Get("title");
 			if (value->IsUndefined()) {

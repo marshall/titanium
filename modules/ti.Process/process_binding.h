@@ -15,7 +15,7 @@ namespace ti
 	class ProcessBinding : public StaticBoundObject
 	{
 	public:
-		ProcessBinding(Host *,SharedBoundObject);
+		ProcessBinding(Host *, SharedKObject);
 		virtual ~ProcessBinding();
 		
 		void Terminated(Process* p);
@@ -23,8 +23,8 @@ namespace ti
 		
 	private:
 		Host *host;
-		SharedBoundObject global;
-		std::vector< SharedBoundObject > processes;
+		SharedKObject global;
+		std::vector<SharedKObject> processes;
 		
 		void Launch(const ValueList& args, SharedValue result);
 		void GetEnv(const ValueList& args, SharedValue result);

@@ -95,7 +95,7 @@ namespace ti
 		HRESULT hr = media_control->GetState(500, (OAFilterState*)&fs);
 		return (fs == State_Paused);
 	}
-	void Win32Sound::OnComplete(SharedBoundMethod callback)
+	void Win32Sound::OnComplete(SharedKMethod callback)
 	{
 		// TODO: implement me
 	}

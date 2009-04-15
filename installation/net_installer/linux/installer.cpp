@@ -6,8 +6,22 @@
 #include "installer.h"
 #include "titanium_icon.h"
 
+#include <cstring>
 #include <iostream>
 #include <sstream>
+#include <unistd.h>
+#include <sys/types.h>
+
+#define LICENSE_WINDOW_WIDTH 600
+#define LICENSE_WINDOW_HEIGHT 500
+#define NO_LICENSE_WINDOW_WIDTH 400 
+#define NO_LICENSE_WINDOW_HEIGHT 150
+#define PROGRESS_WINDOW_WIDTH 350 
+#define PROGRESS_WINDOW_HEIGHT 130
+
+#define UNKNOWN_INSTALL 0
+#define HOMEDIR_INSTALL 1
+#define SYSTEM_INSTALL 2
 
 void *download_thread_f(gpointer data);
 void *install_thread_f(gpointer data);
@@ -16,39 +30,64 @@ static void install_cb(GtkWidget *widget, gpointer data);
 static void cancel_cb(GtkWidget *widget, gpointer data);
 static void destroy_cb(GtkWidget *widget, gpointer data);
 static int do_install_sudo();
+bool can_write_to_all_files(string);
 
-#define LICENSE_WINDOW_WIDTH 600
-#define LICENSE_WINDOW_HEIGHT 500
-#define NO_LICENSE_WINDOW_WIDTH 400 
-#define NO_LICENSE_WINDOW_HEIGHT 150
-#define PROGRESS_WINDOW_WIDTH 350 
-#define PROGRESS_WINDOW_HEIGHT 100
-
-#define CANCEL 0
-#define HOMEDIR_INSTALL 1
-#define SYSTEM_INSTALL 2
+static gchar* system_runtime_home = NULL;
+static gchar* user_runtime_home = NULL;
+static gchar* application_path = NULL;
+static gchar* update_filename = NULL;
+static gchar* install_type;
+static gchar** urls = NULL;
+static gboolean in_sudo_mode;
+static GOptionEntry option_entries[] =
+{
+	{ "sysruntime", 0, 0, G_OPTION_ARG_FILENAME, &system_runtime_home, "The system runtime home", NULL},
+	{ "userruntime", 0, 0, G_OPTION_ARG_FILENAME, &user_runtime_home, "The user runtime home", NULL},
+	{ "apppath", 0, 0, G_OPTION_ARG_FILENAME, &application_path, "The application path", NULL},
+	{ "updatefile", 0, G_OPTION_FLAG_OPTIONAL_ARG, G_OPTION_ARG_FILENAME, &update_filename, "The filename of the update", NULL},
+	{ "type", 0, G_OPTION_FLAG_OPTIONAL_ARG, G_OPTION_ARG_STRING, &install_type, "Force installation type -- non-interactive", NULL},
+	{ "sudo", 0, G_OPTION_FLAG_OPTIONAL_ARG, G_OPTION_ARG_NONE, &in_sudo_mode, "Whether or not the installer is running inside a sudoed environment", NULL},
+	{ G_OPTION_REMAINING, 0, G_OPTION_FLAG_OPTIONAL_ARG, G_OPTION_ARG_STRING_ARRAY, &urls, "Url or filename of a component to install", NULL},
+	{ NULL }
+};
 
 Installer* Installer::instance;
+string applicationPath;
 string systemRuntimeHome;
 string userRuntimeHome;
-string temporaryDirectory;
-int argc;
-char** argv;
+string updateFilename;
+vector<string> originalArgs;
 
-Installer::Installer(string applicationPath, vector<Job*> jobs, int installType) :
-	applicationPath(applicationPath),
+Installer::Installer(vector<Job*> jobs, int installType) :
 	jobs(jobs),
 	app(NULL),
 	installType(installType),
 	stage(PREDOWNLOAD),
 	currentJob(NULL),
-	cancel(false),
 	error("")
 {
 	Installer::instance = this;
-	this->app = BootUtils::ReadManifest(applicationPath);
+
+	bool isUpdate = !updateFilename.empty();
+	if (isUpdate && !can_write_to_all_files(applicationPath))
+	{
+		this->SetStage(SUDO_REQUEST);
+		return;
+	}
+	else if (isUpdate)
+	{
+		this->app = BootUtils::ReadManifestFile(updateFilename, applicationPath);
+	} 
+	else
+	{
+		this->app = BootUtils::ReadManifest(applicationPath);
+	}
 
 	this->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+
+	GdkPixbuf* titanium_icon = gdk_pixbuf_new_from_xpm_data(titanium_xpm);
+	gtk_window_set_icon(GTK_WINDOW(this->window), titanium_icon);
+
 	string title = this->app->name + " Installer";
 	gtk_window_set_title(GTK_WINDOW(this->window), title.c_str());
 	g_signal_connect(
@@ -57,11 +96,11 @@ Installer::Installer(string applicationPath, vector<Job*> jobs, int installType)
 		G_CALLBACK(destroy_cb),
 		(gpointer) this);
 
-	if (this->installType == HOMEDIR_INSTALL)
+	if (this->installType == UNKNOWN_INSTALL)
 	{
 		this->CreateIntroView();
 	}
-	else
+	else // If we know the install type, skip the intro
 	{
 		this->StartDownloading();
 	}
@@ -73,15 +112,23 @@ Installer::Installer(string applicationPath, vector<Job*> jobs, int installType)
 	gdk_threads_leave();
 }
 
-void Installer::FinishInstall()
+void Installer::Finish()
 {
-	if (this->stage == SUCCESS && this->installType == HOMEDIR_INSTALL)
+	if (this->stage == SUCCESS)
 	{
-		FILE *file;
-		string path = FileUtils::Join(this->app->path.c_str(), ".installed", NULL);
-		file = fopen(path.c_str(),"w"); 
-		fprintf(file, "\n");
-		fclose(file);
+		if (!in_sudo_mode)
+		{
+			FILE *file;
+			string path = FileUtils::Join(this->app->path.c_str(), ".installed", NULL);
+			file = fopen(path.c_str(),"w"); 
+			fprintf(file, "\n");
+			fclose(file);
+		}
+
+		if (!updateFilename.empty() && FileUtils::IsFile(updateFilename))
+		{
+			unlink(updateFilename.c_str());
+		}
 	}
 }
 
@@ -120,6 +167,16 @@ void Installer::CreateInfoBox(GtkWidget* vbox)
 	gtk_label_set_use_markup(GTK_LABEL(nameLabel), TRUE);
 	gtk_misc_set_alignment(GTK_MISC(nameLabel), 0.0, 0.0);
 	gtk_box_pack_start(GTK_BOX(infoVbox), nameLabel, FALSE, FALSE, 0);
+	if (!this->app->version.empty())
+	{
+		string versionLabelText = string("Version: ") + this->app->version;
+		if (!updateFilename.empty())
+			versionLabelText += "<span style=\"italic\"> (Update)</span>";
+		GtkWidget* versionLabel = gtk_label_new(versionLabelText.c_str());
+		gtk_label_set_use_markup(GTK_LABEL(versionLabel), TRUE);
+		gtk_misc_set_alignment(GTK_MISC(versionLabel), 0.0, 0.0);
+		gtk_box_pack_start(GTK_BOX(infoVbox), versionLabel, FALSE, FALSE, 0);
+	}
 	if (!this->app->publisher.empty())
 	{
 		string publisherLabelText = string("Publisher: ") + this->app->publisher;
@@ -143,8 +200,8 @@ void Installer::CreateInfoBox(GtkWidget* vbox)
 
 	gtk_box_pack_start(GTK_BOX(vbox), infoBox, FALSE, FALSE, 0);
 
-	GtkWidget* hseperator = gtk_hseparator_new();
-	gtk_box_pack_start(GTK_BOX(vbox), hseperator, FALSE, FALSE, 0);
+	GtkWidget* hseparator = gtk_hseparator_new();
+	gtk_box_pack_start(GTK_BOX(vbox), hseparator, FALSE, FALSE, 5);
 }
 
 void Installer::CreateIntroView()
@@ -161,7 +218,6 @@ void Installer::CreateIntroView()
 		width = LICENSE_WINDOW_WIDTH;
 		height = LICENSE_WINDOW_HEIGHT;
 	}
-	this->ResizeWindow(width, height);
 
 	GtkWidget* windowVbox = gtk_vbox_new(FALSE, 0);
 	this->CreateInfoBox(windowVbox);
@@ -169,6 +225,10 @@ void Installer::CreateIntroView()
 	// Create the part with the license
 	if (!licenseText.empty())
 	{
+		GtkWidget* licenseFrame = gtk_frame_new(
+			"By continuing, you agree to the following terms "
+			"and conditions on use of this software");
+
 		GtkWidget* licenseTextView = gtk_text_view_new();
 		gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(licenseTextView), GTK_WRAP_WORD);
 		gtk_text_buffer_set_text(
@@ -180,24 +240,26 @@ void Installer::CreateIntroView()
 			GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 		gtk_scrolled_window_add_with_viewport(
 			GTK_SCROLLED_WINDOW(scroller), licenseTextView);
-
 		gtk_container_set_border_width(GTK_CONTAINER(scroller), 5);
-		gtk_box_pack_start(GTK_BOX(windowVbox), scroller, TRUE, TRUE, 0);
+
+		gtk_container_set_border_width(GTK_CONTAINER(licenseFrame), 5);
+		gtk_container_add(GTK_CONTAINER(licenseFrame), scroller);
+		gtk_box_pack_start(GTK_BOX(windowVbox), licenseFrame, TRUE, TRUE, 0);
+
+		GtkWidget* hseperator = gtk_hseparator_new();
+		gtk_box_pack_start(GTK_BOX(windowVbox), hseperator, FALSE, FALSE, 5);
 	}
 
 	if (this->jobs.size() > 0)
 	{
-		GtkWidget* hseperator = gtk_hseparator_new();
-		gtk_box_pack_start(GTK_BOX(windowVbox), hseperator, FALSE, FALSE, 0);
-
-		///* Install dialog label */
+		// Install dialog label
 		GtkWidget* label = gtk_label_new(
 			"This application may need to download and install "
 			"additional components. Where should they be installed?");
 		gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
 		gtk_widget_set_size_request(label, width - 10, -1);
 
-		/* Install type combobox */
+		// Install type combobox
 		GtkListStore* store = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING);
 		GtkTreeIter iter;
 		gtk_list_store_append(store, &iter);
@@ -230,11 +292,36 @@ void Installer::CreateIntroView()
 		gtk_box_pack_start(GTK_BOX(installTypeBox), installCombo, FALSE, FALSE, 10);
 		gtk_box_pack_start(GTK_BOX(windowVbox), installTypeBox, FALSE, FALSE, 0);
 	}
+	else
+	{
+		// Make the window a little smaller in this case
+		this->ResizeWindow(width, height - 40);
+	}
+
+	// Add the security warning
+	GtkWidget* securityBox = gtk_hbox_new(FALSE, 0);
+	GtkWidget* securityImage = gtk_image_new_from_stock(
+		GTK_STOCK_DIALOG_WARNING,
+		GTK_ICON_SIZE_LARGE_TOOLBAR);
+	gtk_box_pack_start(GTK_BOX(securityBox), securityImage, FALSE, FALSE, 0);
+
+	GtkWidget* securityLabel = gtk_label_new(
+		"<span style=\"italic\">"
+		"This application has the same security access as "
+		"all installed applications running on the desktop."
+		"</span>");
+	gtk_label_set_line_wrap(GTK_LABEL(securityLabel), TRUE);
+	gtk_widget_set_size_request(securityLabel, width - 10, -1);
+	gtk_label_set_use_markup(GTK_LABEL(securityLabel), TRUE);
+	gtk_misc_set_alignment(GTK_MISC(securityLabel), 0.0, 0.5);
+	gtk_box_pack_start(GTK_BOX(securityBox), securityLabel, FALSE, FALSE, 0);
+	gtk_container_set_border_width(GTK_CONTAINER(securityBox), 5);
+	gtk_box_pack_start(GTK_BOX(windowVbox), securityBox, FALSE, FALSE, 0);
 
 	// Add the buttons
 	string continueText = "Install";
 	if (this->jobs.size() == 0)
-		continueText = "OK";
+		continueText = "Run";
 
 	GtkWidget* cancel = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
 	GtkWidget* install = gtk_button_new_with_label(continueText.c_str());
@@ -243,6 +330,7 @@ void Installer::CreateIntroView()
 		GTK_ICON_SIZE_BUTTON);
 	gtk_button_set_image(GTK_BUTTON(install), install_icon);
 	GtkWidget* buttonBox = gtk_hbutton_box_new();
+	gtk_container_set_border_width(GTK_CONTAINER(buttonBox), 5);
 	gtk_button_box_set_spacing(GTK_BUTTON_BOX(buttonBox), 5);
 	gtk_button_box_set_layout(GTK_BUTTON_BOX(buttonBox), GTK_BUTTONBOX_END);
 	gtk_box_pack_start(GTK_BOX(buttonBox), cancel, FALSE, FALSE, 0);
@@ -262,8 +350,9 @@ void Installer::CreateIntroView()
 		(gpointer) this);
 
 	gtk_container_add(GTK_CONTAINER(this->window), windowVbox);
-	gtk_widget_show_all(this->window);
 
+	this->ResizeWindow(width, height);
+	gtk_widget_show_all(this->window);
 }
 
 void Installer::CreateProgressView()
@@ -277,17 +366,11 @@ void Installer::CreateProgressView()
 	}
 	gtk_container_set_border_width(GTK_CONTAINER(this->window), 5);
 
-	this->ResizeWindow(PROGRESS_WINDOW_WIDTH, PROGRESS_WINDOW_HEIGHT);
 	GtkWidget* vbox = gtk_vbox_new(FALSE, 5);
 	this->CreateInfoBox(vbox);
 
 	this->downloadingLabel = gtk_label_new("Downloading packages...");
 	gtk_box_pack_start(GTK_BOX(vbox), this->downloadingLabel, FALSE, FALSE, 2);
-
-	//GtkWidget* icon = this->GetTitaniumIcon();
-	//GtkWidget* hbox = gtk_hbox_new(FALSE, 0);
-	//gtk_box_pack_start(GTK_BOX(hbox), icon, FALSE, FALSE, 5);
-	//gtk_box_pack_start(GTK_BOX(hbox), this->downloadingLabel, FALSE, FALSE, 0);
 
 	this->progressBar = gtk_progress_bar_new();
 	gtk_box_pack_start(GTK_BOX(vbox), this->progressBar, FALSE, FALSE, 0);
@@ -295,7 +378,7 @@ void Installer::CreateProgressView()
 	GtkWidget* hbox2 = gtk_hbox_new(FALSE, 0);
 	GtkWidget* cancel_but = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
 	gtk_box_pack_start(GTK_BOX(hbox2), cancel_but, TRUE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox2, FALSE, FALSE, 10);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox2, FALSE, FALSE, 5);
 
 	gtk_container_add(GTK_CONTAINER(this->window), vbox);
 
@@ -305,6 +388,7 @@ void Installer::CreateProgressView()
 		G_CALLBACK(cancel_cb),
 		(gpointer) this);
 
+	this->ResizeWindow(PROGRESS_WINDOW_WIDTH, PROGRESS_WINDOW_HEIGHT);
 	gtk_widget_show_all(this->window);
 }
 
@@ -339,7 +423,13 @@ GtkWidget* Installer::GetApplicationIcon()
 void Installer::StartInstallProcess()
 {
 	int choice = gtk_combo_box_get_active(GTK_COMBO_BOX(this->installCombo));
-	if (choice == 0) // home directory install
+	if (choice == 0)
+		this->installType = HOMEDIR_INSTALL;
+	else
+		this->installType = SYSTEM_INSTALL;
+
+	// Home directory install or we already have a root-level effective userid
+	if (this->installType == HOMEDIR_INSTALL || geteuid() == 0)
 	{
 		this->StartDownloading();
 	}
@@ -354,6 +444,12 @@ void Installer::StartInstallProcess()
 
 void Installer::StartDownloading()
 {
+	if (!updateFilename.empty())
+	{
+		string updateURL = this->app->GetUpdateURL();
+		jobs.push_back(new Job(updateURL, APPLICATION_JOB));
+	}
+
 	if (this->jobs.size() <= 0)
 	{
 		this->SetStage(SUCCESS);
@@ -362,10 +458,6 @@ void Installer::StartDownloading()
 	}
 	else
 	{
-		temporaryDirectory = FileUtils::GetTempDirectory();
-		Job::download_dir = temporaryDirectory;
-		Job::InitDownloader();
-
 		this->CreateProgressView();
 		this->SetStage(DOWNLOADING);
 
@@ -446,6 +538,11 @@ static gboolean watcher(gpointer data)
 
 void Installer::StartInstalling()
 {
+	if (this->installType == HOMEDIR_INSTALL)
+		Job::installDirectory = userRuntimeHome;
+	else if (this->installType == SYSTEM_INSTALL)
+		Job::installDirectory = systemRuntimeHome;
+
 	if (this->download_thread != NULL)
 	{
 		g_thread_join(this->download_thread);
@@ -610,11 +707,26 @@ int do_install_sudo()
 	args.push_back("Titanium Network Installer");
 
 	args.push_back("--");
-	args.push_back(argv[0]);
-	args.push_back("--system");
-	for (int i = 2; i < argc; i++)
+	args.push_back(originalArgs.at(0));
+	args.push_back("--sudo");
+
+	// If the user has already chosen an install-type force
+	// non-interactive mode when we start up again.
+	if (Installer::instance->GetType() == SYSTEM_INSTALL)
 	{
-		args.push_back(argv[i]);
+		args.push_back("--type");
+		args.push_back("system");
+	}
+	else if (Installer::instance->GetType() == HOMEDIR_INSTALL)
+	{
+		args.push_back("--type");
+		args.push_back("homedir");
+	}
+
+	// Preserve all arguments
+	for (size_t i = 1; i < originalArgs.size(); i++)
+	{
+		args.push_back(originalArgs.at(i));
 	}
 
 	// Restart in a sudoed environment
@@ -626,7 +738,7 @@ int do_install_sudo()
 		args.erase(args.begin());
 		args.erase(args.begin());
 		cmd = std::string("kdesudo");
-		args.insert(args.begin(), "The Titanium network installer needs adminstrator privileges to run. Please enter your password.");
+		args.insert(args.begin(), "The Titanium installer needs adminstrator privileges to run. Please enter your password.");
 		args.insert(args.begin(), "--comment");
 		args.insert(args.begin(), "-d");
 		r = kroll::FileUtils::RunAndWait(cmd, args);
@@ -645,55 +757,94 @@ int do_install_sudo()
 	return r;
 }
 
-int main(int _argc, const char* _argv[])
+bool can_write_to_all_files(std::string path)
 {
-	argc = _argc;
-	argv = (char **) _argv;
+	vector<string> files;
+	vector<string> dirs;
+	FileUtils::ListDir(path, files);
+	vector<string>::iterator iter = files.begin();
+	while (iter != files.end())
+	{
+		string file = *iter++;
+		string fullPath = FileUtils::Join(path.c_str(), file.c_str(), NULL);
+		if (FileUtils::IsDirectory(fullPath))
+			dirs.push_back(fullPath);
+
+		if (eaccess(fullPath.c_str(), W_OK))
+			return false;
+	}
+
+	iter = dirs.begin();
+	while (iter != dirs.end())
+	{
+		string fullPath = *iter++;
+		if (!can_write_to_all_files(fullPath.c_str()))
+			return false;
+	}
+	return true;
+}
+
+int main(int argc, char* argv[])
+{
+	for (int i = 0; i < argc; i++)
+		originalArgs.push_back(argv[i]);
+
+	GError *error = NULL;
+	GOptionContext *context;
+	context = g_option_context_new("- Installer utility");
+	g_option_context_add_main_entries(context, option_entries, NULL);
+	g_option_context_add_group(context, gtk_get_option_group(TRUE));
+	if (!g_option_context_parse(context, &argc, &argv, &error))
+	{
+		g_print ("option parsing failed: %s\n", error->message);
+		exit (1);
+	}
+
+	Job::InitDownloader();
 	gtk_init(&argc, &argv);
 
-	string typeString = argv[1];
-	string applicationPath = argv[2];
-	userRuntimeHome = argv[3];
-	systemRuntimeHome = argv[4];
+	applicationPath = application_path;
+	userRuntimeHome = user_runtime_home;
+	systemRuntimeHome = system_runtime_home;
 
-	int installType;
-	if (typeString == "--system")
+	if (update_filename == NULL)
+		updateFilename == string();
+	else
+		updateFilename = update_filename;
+
+	vector<Job*> jobs;
+	if (urls != NULL)
 	{
-		installType = SYSTEM_INSTALL;
-		Job::install_dir = systemRuntimeHome;
+		for (int i = 0; urls[i] != NULL; i++)
+			jobs.push_back(new Job(urls[i]));
+	}
+
+	if (install_type != NULL)
+	{
+		if (!strcmp("homedir", install_type))
+			new Installer(jobs, HOMEDIR_INSTALL);
+
+		else if (!strcmp("system", install_type))
+			new Installer(jobs, SYSTEM_INSTALL);
 	}
 	else
 	{
-		installType = HOMEDIR_INSTALL;
-		Job::install_dir = userRuntimeHome;
+		new Installer(jobs, UNKNOWN_INSTALL);
 	}
 
-	vector<Job*> jobs;
-	for (int i = 5; i < argc; i++)
-	{
-		jobs.push_back(new Job(argv[i]));
-	}
-
-	curl_global_init(CURL_GLOBAL_ALL);
-
-	new Installer(applicationPath, jobs, installType);
 	int result = Installer::instance->GetStage();
 
+	// The installer wants to run again, but in sudoed mode
 	if (result == Installer::SUDO_REQUEST)
 	{
 		result = do_install_sudo();
 		Installer::instance->SetStage((Installer::Stage) result);
 	}
 
-	Installer::instance->FinishInstall();
+	Installer::instance->Finish();
 	result = Installer::instance->GetStage();
-
 	delete Installer::instance;
 
 	Job::ShutdownDownloader();
-	if (!temporaryDirectory.empty() && FileUtils::IsDirectory(temporaryDirectory))
-		FileUtils::DeleteDirectory(temporaryDirectory); // Clean up
-
 	return result;
-	//return choose_install_path(argc, argv);
 }

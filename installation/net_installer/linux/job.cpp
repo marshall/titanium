@@ -11,10 +11,11 @@
 #include <unistd.h>
 #include <iostream>
 #include <sstream>
+using std::string;
 
 int Job::total = 0;
-std::string Job::download_dir = "";
-std::string Job::install_dir = "";
+std::string Job::temporaryDirectory = "";
+std::string Job::installDirectory = "";
 char* Job::curl_error = NULL;
 CURL* Job::curl = NULL;
 
@@ -29,6 +30,8 @@ size_t curl_read_func(void *ptr, size_t size, size_t nmemb, FILE *stream);
 
 void Job::InitDownloader()
 {
+	Job::temporaryDirectory = FileUtils::GetTempDirectory();
+	curl_global_init(CURL_GLOBAL_ALL);
 	Job::curl = curl_easy_init();
 	if (Job::curl_error == NULL)
 		Job::curl_error = new char[CURL_ERROR_SIZE];
@@ -48,13 +51,18 @@ void Job::ShutdownDownloader()
 		delete [] Job::curl_error;
 		Job::curl_error = NULL;
 	}
+
+	if (!Job::temporaryDirectory.empty()
+			&& FileUtils::IsDirectory(Job::temporaryDirectory))
+		FileUtils::DeleteDirectory(Job::temporaryDirectory); // Clean up
 }
 
-Job::Job(std::string url) :
+Job::Job(std::string url, int type) :
 	url(url),
+	type(type),
 	index(++Job::total),
 	progress(0.0),
-	type("unknown"),
+	componentType("unknown"),
 	name("unknown"),
 	version("unknown"),
 	download(true)
@@ -65,7 +73,7 @@ Job::Job(std::string url) :
 		this->out_filename = url;
 		this->download = false;
 	}
-	else
+	else if (this->type == COMPONENT_JOB)
 	{
 		this->ParseURL(url);
 	}
@@ -82,11 +90,11 @@ void Job::ParseFile(std::string url)
 	std::string partOne = file.substr(0, end);
 	if (partOne == "runtime")
 	{
-		this->type = this->name = "runtime";
+		this->componentType = this->name = "runtime";
 	}
 	else if (partOne == "module")
 	{
-		this->type = "modules";
+		this->componentType = "modules";
 		start = end + 1;
 		end = file.find("-", start);
 		this->name = file.substr(start, end - start);
@@ -119,9 +127,9 @@ void Job::ParseURL(std::string url)
 	}
 
 	if (this->name == std::string("runtime"))
-		this->type = "runtime";
+		this->componentType = "runtime";
 	else
-		this->type = "modules";
+		this->componentType = "modules";
 }
 
 void Job::Fetch()
@@ -140,8 +148,18 @@ void Job::Fetch()
 		if (Job::curl == NULL)
 			throw std::string("Download failed: could not initialize cURL.");
 
-		std::string filename = this->type + "-" + this->name + "-" + this->version + ".zip";
-		this->out_filename = Job::download_dir + "/" + filename;
+		this->out_filename = Job::temporaryDirectory + "/";
+		if (this->type == COMPONENT_JOB)
+		{
+			std::string filename = this->componentType +
+				"-" + this->name + "-" + this->version + ".zip";
+			this->out_filename += filename;
+		}
+		else
+		{
+			this->out_filename += "application-update.zip";
+		}
+
 		FILE* out = fopen(out_filename.c_str(), "w");
 		if (out == NULL)
 			throw std::string("Download failed: could not open file for writing.");
@@ -183,19 +201,16 @@ void Job::Fetch()
 	this->progress = 1.0;
 }
 
-void Job::Unzip()
+void Job::UnzipComponent()
 {
-	this->progress = ((double) this->index) / ((double) Job::total);
-
-	printf("install_dir2: %s\n", Job::install_dir.c_str());
-	std::string outdir = Job::install_dir;
+	std::string outdir = Job::installDirectory;
 	kroll::FileUtils::CreateDirectory(outdir);
-	outdir.append("/" + this->type);
+	outdir.append("/" + this->componentType);
 	kroll::FileUtils::CreateDirectory(outdir);
 	outdir.append("/linux");
 	kroll::FileUtils::CreateDirectory(outdir);
 
-	if (this->type != "runtime")
+	if (this->componentType != "runtime")
 	{
 		outdir.append("/" + this->name);
 		kroll::FileUtils::CreateDirectory(outdir);
@@ -205,6 +220,21 @@ void Job::Unzip()
 	kroll::FileUtils::CreateDirectory(outdir);
 
 	kroll::FileUtils::Unzip(this->out_filename, outdir);
+}
+
+void Job::UnzipApplication()
+{
+	std::string outdir = Installer::instance->GetApplicationPath();
+	kroll::FileUtils::Unzip(this->out_filename, outdir);
+}
+
+void Job::Unzip()
+{
+	this->progress = ((double) this->index) / ((double) Job::total);
+	if (this->type == COMPONENT_JOB)
+		this->UnzipComponent();
+	else
+		this->UnzipApplication();
 }
 
 int Job::GetIndex()

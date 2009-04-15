@@ -14,7 +14,7 @@
 
 namespace ti
 {
-	std::vector<SharedBoundObject> NetworkBinding::bindings;
+	std::vector<SharedKObject> NetworkBinding::bindings;
 	NetworkBinding::NetworkBinding(Host* host) :
 		 host(host),
 		 global(host->GetGlobalObject()),
@@ -96,7 +96,7 @@ namespace ti
 		this->net_status = new DBusNetworkStatus(this);
 		this->net_status->Start();
 #elif defined(OS_OSX)
-		SharedBoundMethod delegate = this->Get("FireOnlineStatusChange")->ToMethod();
+		SharedKMethod delegate = this->Get("FireOnlineStatusChange")->ToMethod();
 		networkDelegate = [[NetworkReachability alloc] initWithDelegate:delegate];
 #endif
 	}
@@ -123,7 +123,7 @@ namespace ti
 	{
 		if (args.at(0)->IsObject())
 		{
-			SharedBoundObject obj = args.at(0)->ToObject();
+			SharedKObject obj = args.at(0)->ToObject();
 			SharedPtr<IPAddressBinding> b = obj.cast<IPAddressBinding>();
 			if (!b.isNull())
 			{
@@ -144,7 +144,7 @@ namespace ti
 				SharedValue bo = obj->Get("toString");
 				if (bo->IsMethod())
 				{
-					SharedBoundMethod m = bo->ToMethod();
+					SharedKMethod m = bo->ToMethod();
 					ValueList args;
 					SharedValue tostr = m->Call(args);
 					this->_GetByHost(tostr->ToString(),result);
@@ -186,10 +186,10 @@ namespace ti
 	}
 	void NetworkBinding::RemoveBinding(void* binding)
 	{
-		std::vector<SharedBoundObject>::iterator i = bindings.begin();
+		std::vector<SharedKObject>::iterator i = bindings.begin();
 		while(i!=bindings.end())
 		{
-			SharedBoundObject b = (*i);
+			SharedKObject b = (*i);
 			if (binding == b.get())
 			{
 				bindings.erase(i);
@@ -201,7 +201,7 @@ namespace ti
 	void NetworkBinding::CreateHTTPClient(const ValueList& args, SharedValue result)
 	{
 		HTTPClientBinding* http = new HTTPClientBinding(host);
-		SharedBoundObject obj = http->GetSelf()->ToObject();
+		SharedKObject obj = http->GetSelf()->ToObject();
 		// we hold the reference to this until we're done with it
 		// which happense when the binding impl calls remove
 		this->bindings.push_back(obj);
@@ -210,7 +210,7 @@ namespace ti
 	void NetworkBinding::AddConnectivityListener(const ValueList& args, SharedValue result)
 	{
 		ArgUtils::VerifyArgsException("addConnectivityListener", args, "m");
-		SharedBoundMethod target = args.at(0)->ToMethod();
+		SharedKMethod target = args.at(0)->ToMethod();
 
 		Listener listener = Listener();
 		listener.id = this->next_listener_id++;
@@ -255,7 +255,7 @@ namespace ti
 		std::vector<Listener>::iterator it = this->listeners.begin();
 		while (it != this->listeners.end())
 		{
-			SharedBoundMethod callback = (*it++).callback;
+			SharedKMethod callback = (*it++).callback;
 			try
 			{
 				host->InvokeMethodOnMainThread(callback, args, false);

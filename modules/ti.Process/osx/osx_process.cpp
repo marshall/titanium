@@ -9,7 +9,7 @@
 
 @implementation TiOSXProcess
 
--(id)initWithPath:(NSString*)cmd args:(NSArray*)args host:(Host*)h bound:(BoundObject*)bo
+-(id)initWithPath:(NSString*)cmd args:(NSArray*)args host:(Host*)h bound:(KObject*)bo
 {
 	self = [super init];
 	if (self)
@@ -56,9 +56,9 @@
 		output = new ti::OSXPipe([[task standardOutput] fileHandleForReading]);
 		error = new ti::OSXPipe([[task standardError] fileHandleForReading]);
 		
-		shared_input = new SharedBoundObject(input);
-		shared_output = new SharedBoundObject(output);
-		shared_error = new SharedBoundObject(error);
+		shared_input = new SharedKObject(input);
+		shared_output = new SharedKObject(output);
+		shared_error = new SharedKObject(error);
 		
 		bound->Set("in", Value::NewObject(*shared_input));
 		bound->Set("err", Value::NewObject(*shared_error));
@@ -107,7 +107,7 @@
 		[task terminate];
 	}
 }
--(void)setRead: (SharedBoundMethod*)method
+-(void)setRead: (SharedKMethod*)method
 {
 	if (onread)
 	{
@@ -115,7 +115,7 @@
 	}
 	onread = method;
 }
--(void)setExit: (SharedBoundMethod*)method
+-(void)setExit: (SharedKMethod*)method
 {
 	if (onexit)
 	{
@@ -267,11 +267,11 @@ namespace ti
 		std::string fn(name);
 		if (fn == "onread")
 		{
-			[process setRead:new SharedBoundMethod(value->ToMethod())];
+			[process setRead:new SharedKMethod(value->ToMethod())];
 		}
 		else if (fn == "onexit")
 		{
-			[process setExit:new SharedBoundMethod(value->ToMethod())];
+			[process setExit:new SharedKMethod(value->ToMethod())];
 		}
 	}
 }

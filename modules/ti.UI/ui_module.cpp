@@ -11,7 +11,7 @@ namespace ti
 {
 	KROLL_MODULE(UIModule)
 
-	SharedBoundObject UIModule::global = SharedBoundObject(NULL);
+	SharedKObject UIModule::global = SharedKObject(NULL);
 	SharedPtr<MenuItem> UIModule::app_menu = SharedPtr<MenuItem>(NULL);
 	SharedPtr<MenuItem> UIModule::app_context_menu = SharedPtr<MenuItem>(NULL);
 	SharedString UIModule::icon_path = SharedString(NULL);
@@ -22,14 +22,14 @@ namespace ti
 	{
 		// We are keeping this object in a static variable, which means
 		// that we should only ever have one copy of the UI module.
-		SharedBoundObject global = this->host->GetGlobalObject();
+		SharedKObject global = this->host->GetGlobalObject();
 		UIModule::global = global;
 		UIModule::instance_ = this;
 	}
 
 	void UIModule::Start()
 	{
-		SharedBoundMethod api = this->host->GetGlobalObject()->GetNS("API.fire")->ToMethod();
+		SharedKMethod api = this->host->GetGlobalObject()->GetNS("API.fire")->ToMethod();
 		api->Call("ti.UI.start", Value::Undefined);
 
 #ifdef OS_WIN32
@@ -88,7 +88,7 @@ namespace ti
 		// send a stop notification - we need to do this before 
 		// stop is called given that the API module is registered (and unregistered)
 		// before our module and it will then be too late
-		SharedBoundMethod api = this->host->GetGlobalObject()->GetNS("API.fire")->ToMethod();
+		SharedKMethod api = this->host->GetGlobalObject()->GetNS("API.fire")->ToMethod();
 		api->Call("ti.UI.stop", Value::Undefined);
 	}
 
@@ -100,7 +100,7 @@ namespace ti
 		// Only one copy of the UI module loaded hopefully,
 		// otherwise we need to count instances and free
 		// this variable when the last instance disappears
-		UIModule::global = SharedBoundObject(NULL);
+		UIModule::global = SharedKObject(NULL);
 	}
 
 	bool UIModule::IsResourceLocalFile(std::string string)

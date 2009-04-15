@@ -47,7 +47,7 @@ protected:
 	IWebView* web_view;
 	IWebFrame *web_frame;
 	IWebInspector *web_inspector;
-	std::map<long, SharedBoundMethod> messageHandlers;
+	std::map<long, SharedKMethod> messageHandlers;
 	bool requires_display;
 
 	/*
@@ -81,7 +81,7 @@ public:
 	virtual ~Win32UserWindow();
 
 	void OpenFiles(
-		SharedBoundMethod callback,
+		SharedKMethod callback,
 		bool multiple,
 		bool files,
 		bool directories,
@@ -165,13 +165,13 @@ private:
 	void SetupMenu();
 	void SetupIcon();
 
-	SharedBoundList SelectDirectory(
+	SharedKList SelectDirectory(
 		bool multiple,
 		std::string& path,
 		std::string& file);
 
-	SharedBoundList SelectFile(
-		SharedBoundMethod callback,
+	SharedKList SelectFile(
+		SharedKMethod callback,
 		bool multiple,
 		std::string& path,
 		std::string& file,

@@ -122,7 +122,7 @@ namespace ti {
 		SharedValue callback_val = this->RawGet("callback");
 		if (callback_val->IsMethod())
 		{
-			SharedBoundMethod method = callback_val->ToMethod();
+			SharedKMethod method = callback_val->ToMethod();
 			try
 			{
 				ValueList args;

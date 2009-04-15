@@ -51,7 +51,7 @@ public:
 	WindowConfig() { SetDefaults(); }
 	WindowConfig(void* data);
 	WindowConfig(WindowConfig *config, std::string& url);
-	void UseProperties(SharedBoundObject properties);
+	void UseProperties(SharedKObject properties);
 
 	std::string ToString();
 

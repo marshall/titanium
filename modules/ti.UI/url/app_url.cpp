@@ -70,6 +70,11 @@ namespace ti {
 				url = urlPrefix + "/" + originalURL;
 			}
 		}
+		else
+		{
+			// no need to modify the url
+			url = originalURL;
+		}
 
 		return url;
 	}

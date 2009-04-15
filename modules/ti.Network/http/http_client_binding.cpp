@@ -263,7 +263,7 @@ namespace ti
 			}
 			else if (binding->filestream)
 			{
-				// SharedBoundMethod sender;
+				// SharedKMethod sender;
 				// SharedValue sv = binding->Get("onsendstream");
 				// if (sv->IsMethod())
 				// {
@@ -289,7 +289,7 @@ namespace ti
 // 							std::cout << "ONSENDSTREAM = >> " << len <<" of " << content_len << std::endl;
 // #endif
 // 							ValueList args;
-// 							SharedBoundList list = new StaticBoundList();
+// 							SharedKList list = new StaticBoundList();
 //
 // 							args.push_back(binding->self); // reference to us
 // 							args.push_back(Value::NewList(list));
@@ -344,7 +344,7 @@ namespace ti
 			int count = 0;
 			char buf[8096];
 
-			SharedBoundMethod streamer;
+			SharedKMethod streamer;
 			SharedValue sv = binding->Get("ondatastream");
 			if (sv->IsMethod())
 			{
@@ -364,7 +364,7 @@ namespace ti
 						if (streamer.get())
 						{
 							ValueList args;
-							SharedBoundList list = new StaticBoundList();
+							SharedKList list = new StaticBoundList();
 
 							args.push_back(binding->self); // reference to us
 							args.push_back(Value::NewList(list));
@@ -436,7 +436,7 @@ namespace ti
 			if (v->IsObject())
 			{
 				// probably a file
-				SharedBoundObject obj = v->ToObject();
+				SharedKObject obj = v->ToObject();
 				this->datastream = obj->Get("toString")->ToMethod()->Call()->ToString();
 			}
 			else if (v->IsString())
@@ -469,7 +469,7 @@ namespace ti
 			if (v->IsObject())
 			{
 				// probably a file
-				SharedBoundObject obj = v->ToObject();
+				SharedKObject obj = v->ToObject();
 				if (obj->Get("isFile")->IsMethod())
 				{
 					std::string file = obj->Get("toString")->ToMethod()->Call()->ToString();
@@ -512,7 +512,7 @@ namespace ti
 			if (v->IsObject())
 			{
 				// probably a file
-				SharedBoundObject obj = v->ToObject();
+				SharedKObject obj = v->ToObject();
 				if (obj->Get("isFile")->IsMethod())
 				{
 					this->dirstream = obj->Get("toString")->ToMethod()->Call()->ToString();
@@ -594,7 +594,7 @@ namespace ti
 		{
 			try
 			{
-				SharedBoundMethod m = v->ToMethod()->Get("call")->ToMethod();
+				SharedKMethod m = v->ToMethod()->Get("call")->ToMethod();
 				ValueList args;
 				args.push_back(this->self);
 				this->host->InvokeMethodOnMainThread(m,args,false);

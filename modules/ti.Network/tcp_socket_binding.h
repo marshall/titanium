@@ -48,10 +48,10 @@ namespace ti
 		Thread thread;
 		bool opened;
 
-		SharedBoundMethod onRead;
-		SharedBoundMethod onWrite;
-		SharedBoundMethod onTimeout;
-		SharedBoundMethod onReadComplete;
+		SharedKMethod onRead;
+		SharedKMethod onWrite;
+		SharedKMethod onTimeout;
+		SharedKMethod onReadComplete;
 
 		void Connect(const ValueList& args, SharedValue result);
 		void Write(const ValueList& args, SharedValue result);

@@ -105,7 +105,7 @@ void WindowConfig::SetDefaults ()
 	this->title = "Titanium Application";
 }
 
-void WindowConfig::UseProperties(SharedBoundObject properties)
+void WindowConfig::UseProperties(SharedKObject properties)
 {
 	this->SetDefaults();
 

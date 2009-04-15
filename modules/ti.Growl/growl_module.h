@@ -29,7 +29,7 @@ namespace ti
 
 
 	private:
-		SharedBoundObject binding;
+		SharedKObject binding;
 	};
 
 }

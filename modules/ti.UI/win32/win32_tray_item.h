@@ -19,7 +19,7 @@ namespace ti
 class Win32TrayItem: public TrayItem
 {
 public:
-	Win32TrayItem(SharedString iconPath, SharedBoundMethod cb);
+	Win32TrayItem(SharedString iconPath, SharedKMethod cb);
 	virtual ~Win32TrayItem();
 
 	void SetIcon(SharedString iconPath);
@@ -32,7 +32,7 @@ public:
 	static bool ShowTrayMenu(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 	static bool ShowTrayMenu(int trayIconID);
 private:
-	SharedBoundMethod callback;
+	SharedKMethod callback;
 	SharedPtr<Win32MenuItemImpl> trayMenu;
 	HMENU trayMenuHandle;
 

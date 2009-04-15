@@ -19,6 +19,10 @@ def package_app_builder(target, source, env):
 		env['GUID'] = 'DEADBEEF-E695-4280-9F1F-96126F3D2C2A'
 	if not 'VERSION' in env:
 		env['VERSION'] = build.version
+	if not 'PUBLISHER' in env:
+		env['PUBLISHER'] = None
+	if not 'URL' in env:
+		env['URL'] = None
 
 	app = App(
 		build,
@@ -26,7 +30,9 @@ def package_app_builder(target, source, env):
 		fullname=env['FULLNAME'],
 		id=env['ID'],
 		version=env['VERSION'],
-		guid=env['GUID'])
+		guid=env['GUID'],
+		publisher=env['PUBLISHER'],
+		url=env['URL'])
 
 	if 'MODULES' in env:
 		app.set_modules(env['MODULES'])

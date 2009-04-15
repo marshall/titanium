@@ -51,7 +51,7 @@
 
 @implementation MethodWrapper
 
--(id) initWithMethod:(SharedBoundMethod*)m
+-(id) initWithMethod:(SharedKMethod*)m
 {
 	self = [super init];
 	
@@ -62,7 +62,7 @@
 	return self;
 }
 
-- (SharedBoundMethod *) method
+- (SharedKMethod *) method
 {
 	return method;
 }

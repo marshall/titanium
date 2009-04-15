@@ -10,11 +10,11 @@
 #include <kroll/kroll.h>
 
 using kroll::Value;
-using kroll::BoundObject;
+using kroll::KObject;
 using kroll::StaticBoundObject;
-using kroll::BoundMethod;
+using kroll::KMethod;
 using kroll::StaticBoundMethod;
-using kroll::BoundList;
+using kroll::KList;
 using kroll::StaticBoundList;
 
 #include <gdk/gdk.h>

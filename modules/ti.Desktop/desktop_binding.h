@@ -19,11 +19,11 @@ namespace ti
 	class DesktopBinding : public StaticBoundObject
 	{
 	public:
-		DesktopBinding(SharedBoundObject);
+		DesktopBinding(SharedKObject);
 	protected:
 		virtual ~DesktopBinding();
 	private:
-		SharedBoundObject global;
+		SharedKObject global;
 		void CreateShortcut(const ValueList& args, SharedValue result);
 		void OpenApplication(const ValueList& args, SharedValue result);
 		void OpenURL(const ValueList& args, SharedValue result);

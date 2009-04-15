@@ -104,7 +104,7 @@ namespace ti
 
 	SharedPtr<TrayItem> Win32UIBinding::AddTray(
 		SharedString icon_path,
-		SharedBoundMethod cb)
+		SharedKMethod cb)
 	{
 		SharedPtr<TrayItem> trayItem = new Win32TrayItem(icon_path, cb);
 		return trayItem;

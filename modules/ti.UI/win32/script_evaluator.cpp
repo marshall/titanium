@@ -40,7 +40,7 @@ HRESULT STDMETHODCALLTYPE
 ScriptEvaluator::matchesMimeType(BSTR mimeType, BOOL *result)
 {
 	std::string moduleName = GetModuleName(BSTRToString(mimeType));
-	SharedBoundObject global = host->GetGlobalObject();
+	SharedKObject global = host->GetGlobalObject();
 
 	SharedValue moduleValue = global->Get(moduleName.c_str());
 	*result = FALSE;
@@ -62,7 +62,7 @@ ScriptEvaluator::evaluate(BSTR mimeType, BSTR sourceCode, int *context)
 	std::string moduleName = GetModuleName(type);
 	JSContextRef contextRef = reinterpret_cast<JSContextRef>(context);
 
-	SharedBoundObject global = host->GetGlobalObject();
+	SharedKObject global = host->GetGlobalObject();
 
 	SharedValue moduleValue = global->Get(moduleName.c_str());
 	if (!moduleValue->IsNull()) {
@@ -72,7 +72,7 @@ ScriptEvaluator::evaluate(BSTR mimeType, BSTR sourceCode, int *context)
 			SharedValue typeValue = Value::NewString(type);
 			SharedValue sourceCodeValue = Value::NewString(BSTRToString(sourceCode));
 			JSObjectRef globalObjectRef = JSContextGetGlobalObject(contextRef);
-			SharedBoundObject contextObject = new KKJSObject(contextRef, globalObjectRef);
+			SharedKObject contextObject = new KKJSObject(contextRef, globalObjectRef);
 			SharedValue contextValue = Value::NewObject(contextObject);
 			args.push_back(typeValue);
 			args.push_back(sourceCodeValue);

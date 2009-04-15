@@ -80,7 +80,7 @@ namespace ti
 	void MenuItem::SetMethod(const char *name, void (MenuItem::*method)(const ValueList&, SharedValue))
 	{
 		MethodCallback* callback = NewCallback<MenuItem, const ValueList&, SharedValue>(static_cast<MenuItem*>(this), method);
-		SharedBoundMethod bound_method = new StaticBoundMethod(callback);
+		SharedKMethod bound_method = new StaticBoundMethod(callback);
 		SharedValue method_value = Value::NewMethod(bound_method);
 		this->RawSet(name, method_value);
 	}
@@ -215,7 +215,7 @@ namespace ti
 
 	SharedValue MenuItem::AddToListModel(MenuItem* item)
 	{
-		SharedBoundList so = SharedBoundList(item);
+		SharedKList so = SharedKList(item);
 		SharedValue v = Value::NewList(so);
 		this->Append(v);
 		return v;

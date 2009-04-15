@@ -86,7 +86,7 @@ void Win32UserWindow::AddMessageHandler(const ValueList& args,
 		return;
 
 	long messageCode = (long) args.at(0)->ToDouble();
-	SharedBoundMethod callback = args.at(1)->ToMethod();
+	SharedKMethod callback = args.at(1)->ToMethod();
 
 	messageHandlers[messageCode] = callback;
 }
@@ -99,7 +99,7 @@ Win32UserWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 	if (window && (window->messageHandlers.size() > 0) && (window->messageHandlers.find(message) != window->messageHandlers.end()))
 	{
-		SharedBoundMethod handler = window->messageHandlers[message];
+		SharedKMethod handler = window->messageHandlers[message];
 		ValueList args;
 		handler->Call(args);
 
@@ -258,7 +258,7 @@ Win32UserWindow::Win32UserWindow(SharedUIBinding binding, WindowConfig* config, 
 	web_view->setApplicationNameForUserAgent(ua.copy());
 
 	// place our user agent string in the global so we can later use it
-	SharedBoundObject global = host->GetGlobalObject();
+	SharedKObject global = host->GetGlobalObject();
 	_bstr_t uaurl("http://titaniumapp.com");
 	BSTR uaresp;
 	web_view->userAgentForURL(uaurl.copy(), &uaresp);
@@ -859,10 +859,10 @@ void Win32UserWindow::ShowWebInspector() {
 	}
 }
 
-void Win32UserWindow::OpenFiles(SharedBoundMethod callback, bool multiple,
+void Win32UserWindow::OpenFiles(SharedKMethod callback, bool multiple,
 		bool files, bool directories, std::string& path, std::string& file,
 		std::vector<std::string>& types) {
-	SharedBoundList results;
+	SharedKList results;
 	if (directories) {
 		results = SelectDirectory(multiple, path, file);
 	} else {
@@ -874,7 +874,7 @@ void Win32UserWindow::OpenFiles(SharedBoundMethod callback, bool multiple,
 	callback->Call(args);
 }
 
-SharedBoundList Win32UserWindow::SelectFile(SharedBoundMethod callback,
+SharedKList Win32UserWindow::SelectFile(SharedKMethod callback,
 		bool multiple, std::string& path, std::string& file, std::vector<
 				std::string>& types) {
 	//std::string filterName = props->GetString("typesDescription", "Filtered Files");
@@ -928,7 +928,7 @@ SharedBoundList Win32UserWindow::SelectFile(SharedBoundMethod callback,
 	if (multiple)
 		ofn.Flags |= OFN_ALLOWMULTISELECT;
 
-	SharedBoundList results = new StaticBoundList();
+	SharedKList results = new StaticBoundList();
 	// display the open dialog box
 	BOOL result = GetOpenFileName(&ofn);
 
@@ -976,9 +976,9 @@ SharedBoundList Win32UserWindow::SelectFile(SharedBoundMethod callback,
 	return results;
 }
 
-SharedBoundList Win32UserWindow::SelectDirectory(bool multiple,
+SharedKList Win32UserWindow::SelectDirectory(bool multiple,
 		std::string& path, std::string& file) {
-	SharedBoundList results = new StaticBoundList();
+	SharedKList results = new StaticBoundList();
 
 	BROWSEINFO bi = { 0 };
 	//std::string title("Select a directory");

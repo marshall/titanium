@@ -49,7 +49,7 @@ namespace ti
 		this->Set("running",Value::NewBool(false)); 
 		 
 		this->err = new Pipe(new Poco::PipeInputStream(*errp));
-		this->shared_error = new SharedBoundObject(this->err);
+		this->shared_error = new SharedKObject(this->err);
 		
 		/**
 		 * @tiapi(property=True,type=object,name=Process.Process.err,version=0.2) returns the error stream as a Pipe object
@@ -57,14 +57,14 @@ namespace ti
 		this->Set("err",Value::NewObject(*shared_error));
 		
 		this->out = new Pipe(new Poco::PipeInputStream(*outp));
-		this->shared_output = new SharedBoundObject(this->out);
+		this->shared_output = new SharedKObject(this->out);
 		/**
 		 * @tiapi(property=True,type=object,name=Process.Process.out,version=0.2) returns the output stream as a Pipe object
 		 */
 		this->Set("out",Value::NewObject(*shared_output));
 		
 		this->in = new Pipe(new Poco::PipeOutputStream(*inp));
-		this->shared_input = new SharedBoundObject(this->in);
+		this->shared_input = new SharedKObject(this->in);
 		/**
 		 * @tiapi(property=True,type=object,name=Process.Process.in,version=0.2) returns the input stream as a Pipe object
 		 */
@@ -174,7 +174,7 @@ namespace ti
 		{
 			ValueList args;
 			args.push_back(Value::NewInt(exitCode));
-			SharedBoundMethod callback = sv->ToMethod();
+			SharedKMethod callback = sv->ToMethod();
 			process->parent->GetHost()->InvokeMethodOnMainThread(callback,args,false);
 		}
 		process->parent->Terminated(process);
@@ -194,7 +194,7 @@ namespace ti
 				ValueList args;
 				args.push_back(result);
 				args.push_back(Value::NewBool(false));
-				SharedBoundMethod callback = sv->ToMethod();
+				SharedKMethod callback = sv->ToMethod();
 				process->parent->GetHost()->InvokeMethodOnMainThread(callback,args,false);
 			}
 		}
@@ -215,7 +215,7 @@ namespace ti
 				ValueList args;
 				args.push_back(result);
 				args.push_back(Value::NewBool(true));
-				SharedBoundMethod callback = sv->ToMethod();
+				SharedKMethod callback = sv->ToMethod();
 				process->parent->GetHost()->InvokeMethodOnMainThread(callback,args,false);
 			}
 		}

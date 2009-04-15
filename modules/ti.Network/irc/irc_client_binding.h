@@ -23,9 +23,9 @@ namespace ti
 		virtual ~IRCClientBinding();
 	private:
 		Host* host;
-		SharedBoundObject global;
+		SharedKObject global;
 		IRC irc;
-		SharedBoundMethod callback;
+		SharedKMethod callback;
 		Poco::Thread *thread;
 		
 		static void Run(void*);

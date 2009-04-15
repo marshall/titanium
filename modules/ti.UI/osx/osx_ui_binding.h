@@ -29,7 +29,7 @@ namespace ti
 		void SetContextMenu(SharedPtr<MenuItem>);
 		void SetIcon(SharedString icon_path);
 		SharedPtr<TrayItem> AddTray(SharedString icon_path,
-		                            SharedBoundMethod cb);
+		                            SharedKMethod cb);
 
 		virtual void SetDockIcon(SharedString icon_path);
 		virtual void SetDockMenu(SharedPtr<MenuItem>);

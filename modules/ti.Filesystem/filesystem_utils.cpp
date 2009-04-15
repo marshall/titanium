@@ -24,7 +24,7 @@ namespace ti
 		}
 		else if (v->IsObject())
 		{
-			SharedBoundObject bo = v->ToObject();
+			SharedKObject bo = v->ToObject();
 			SharedPtr<File> file = bo.cast<File>();
 			if (file.isNull())
 			{

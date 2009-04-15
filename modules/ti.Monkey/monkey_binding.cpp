@@ -13,7 +13,7 @@
 
 namespace ti
 {
-	MonkeyBinding::MonkeyBinding(Host *host, SharedBoundObject global) : global(global), registration(0)
+	MonkeyBinding::MonkeyBinding(Host *host, SharedKObject global) : global(global), registration(0)
 	{
 		const std::string home = host->GetApplicationHomePath();
 		
@@ -124,7 +124,7 @@ namespace ti
 	}
 	void MonkeyBinding::Callback(const ValueList &args, SharedValue result)
 	{
-		SharedBoundObject event = args.at(1)->ToObject();
+		SharedKObject event = args.at(1)->ToObject();
 		std::string url_value = event->Get("url")->ToString();
 		
 		std::vector< std::pair< std::pair< VectorOfPatterns,VectorOfPatterns >,std::string> >::iterator iter = scripts.begin();
@@ -143,7 +143,7 @@ namespace ti
 				// I got a castle in brooklyn, that's where i dwell 
 				try
 				{
-					SharedBoundMethod eval = event->Get("scope")->ToObject()->Get("window")->ToObject()->Get("eval")->ToMethod();
+					SharedKMethod eval = event->Get("scope")->ToObject()->Get("window")->ToObject()->Get("eval")->ToMethod();
 #ifdef DEBUG
 					std::cout << ">>> loading user script for " << url_value << std::endl;
 #endif
@@ -159,7 +159,7 @@ namespace ti
 					}
 					else if (v->IsObject())
 					{
-						SharedBoundObject bo = v->ToObject();
+						SharedKObject bo = v->ToObject();
 						SharedValue tm = bo->Get("toString");
 						if (tm->IsMethod())
 						{

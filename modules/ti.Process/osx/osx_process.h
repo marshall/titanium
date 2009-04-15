@@ -15,22 +15,22 @@
 {
 	NSTask *task;
 	Host *host;
-	SharedBoundMethod *onread;
-	SharedBoundMethod *onexit;
+	SharedKMethod *onread;
+	SharedKMethod *onexit;
 	ti::OSXPipe *input;
 	ti::OSXPipe *output;
 	ti::OSXPipe *error;
-	SharedBoundObject *shared_input;
-	SharedBoundObject *shared_output;
-	SharedBoundObject *shared_error;
-	BoundObject *bound;
+	SharedKObject *shared_input;
+	SharedKObject *shared_output;
+	SharedKObject *shared_error;
+	KObject *bound;
 }
--(id)initWithPath:(NSString*)cmd args:(NSArray*)args host:(Host*)host bound:(BoundObject*)bo;
+-(id)initWithPath:(NSString*)cmd args:(NSArray*)args host:(Host*)host bound:(KObject*)bo;
 -(NSTask*)task;
 -(void)start;
 -(void)stop;
--(void)setRead: (SharedBoundMethod*)method;
--(void)setExit: (SharedBoundMethod*)method;
+-(void)setRead: (SharedKMethod*)method;
+-(void)setExit: (SharedKMethod*)method;
 -(void)getOutData: (NSNotification *)aNotification;
 -(void)getErrData: (NSNotification *)aNotification;
 -(void)terminated: (NSNotification *)aNotification;

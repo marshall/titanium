@@ -29,7 +29,7 @@ namespace ti
 		
 	private:
 		Host* host;
-		SharedBoundObject global;
+		SharedKObject global;
 		Poco::Thread *thread;
 		std::string url;
 		Poco::Net::HTTPResponse* response;

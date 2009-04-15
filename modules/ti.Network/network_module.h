@@ -29,7 +29,7 @@ namespace ti
 		KROLL_MODULE_CLASS(NetworkModule)
 		
 	private:
-		SharedBoundObject variables;
+		SharedKObject variables;
 	};
 
 }

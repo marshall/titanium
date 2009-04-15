@@ -146,12 +146,12 @@ namespace ti
 			(*this->callback)->Call(args);
 		}
 	}
-	void OSXSound::OnComplete(SharedBoundMethod callback)
+	void OSXSound::OnComplete(SharedKMethod callback)
 	{
 		if (this->callback)
 		{
 			delete this->callback;
 		}
-		this->callback = new SharedBoundMethod(callback);
+		this->callback = new SharedKMethod(callback);
 	}
 }

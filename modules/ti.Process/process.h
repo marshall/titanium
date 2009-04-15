@@ -42,9 +42,9 @@ namespace ti
 		Poco::Pipe *errp;
 		Poco::Pipe *outp;
 		Poco::Pipe *inp;
-		SharedBoundObject *shared_input;
-		SharedBoundObject *shared_output;
-		SharedBoundObject *shared_error;
+		SharedKObject *shared_input;
+		SharedKObject *shared_output;
+		SharedKObject *shared_error;
 
 		void Terminate(const ValueList& args, SharedValue result);
 		void Terminate();

@@ -26,7 +26,7 @@
 
 namespace ti
 {
-	FilesystemBinding::FilesystemBinding(Host *host, SharedBoundObject global) : host(host), global(global), timer(0)
+	FilesystemBinding::FilesystemBinding(Host *host, SharedKObject global) : host(host), global(global), timer(0)
 	{
 		/**
 		 * @tiapi(method=True,name=Filesystem.createTempFile) create a temporary file
@@ -171,7 +171,7 @@ namespace ti
 		if (args.at(0)->IsList())
 		{
 			// you can pass in an array of parts to join
-			SharedBoundList list = args.at(0)->ToList();
+			SharedKList list = args.at(0)->ToList();
 			for (unsigned int c=0; c < list->Size(); c++)
 			{
 				std::string arg = list->At(c)->ToString();
@@ -346,11 +346,11 @@ namespace ti
 			for(size_t i = 0; i < roots.size(); i++)
 			{
 				ti::File* file = new ti::File(roots.at(i));
-				SharedValue value = Value::NewObject((SharedBoundObject) file);
+				SharedValue value = Value::NewObject((SharedKObject) file);
 				rootList->Append(value);
 			}
 
-			SharedPtr<BoundList> list = rootList;
+			SharedKList list = rootList;
 			result->SetList(list);
 		}
 		catch (Poco::Exception& exc)
@@ -371,7 +371,7 @@ namespace ti
 		}
 		else if (args.at(0)->IsList())
 		{
-			SharedBoundList list = args.at(0)->ToList();
+			SharedKList list = args.at(0)->ToList();
 			for (unsigned int c = 0; c < list->Size(); c++)
 			{
 				SharedValue v = list->At(c);
@@ -381,7 +381,7 @@ namespace ti
 		}
 		else if (args.at(0)->IsObject())
 		{
-			SharedBoundObject bo = args.at(0)->ToObject();
+			SharedKObject bo = args.at(0)->ToObject();
 			SharedPtr<File> file = bo.cast<File>();
 			if (file.isNull())
 			{
@@ -391,8 +391,8 @@ namespace ti
 		}
 		SharedValue v = args.at(1);
 		std::string destination(FileSystemUtils::GetFileName(v));
-		SharedBoundMethod method = args.at(2)->ToMethod();
-		SharedBoundObject copier = new ti::AsyncCopy(this,host,files,destination,method);
+		SharedKMethod method = args.at(2)->ToMethod();
+		SharedKObject copier = new ti::AsyncCopy(this,host,files,destination,method);
 		result->SetObject(copier);
 		asyncOperations.push_back(copier);
 		// we need to create a timer thread that can cleanup operations
@@ -416,11 +416,11 @@ namespace ti
 			result->SetBool(true);
 			return;
 		}
-		std::vector< SharedBoundObject >::iterator iter = asyncOperations.begin();
+		std::vector<SharedKObject>::iterator iter = asyncOperations.begin();
 
 		while (iter!=asyncOperations.end())
 		{
-			SharedBoundObject c = (*iter);
+			SharedKObject c = (*iter);
 			SharedValue v = c->Get("running");
 			bool running = v->ToBool();
 			if (!running)
@@ -441,7 +441,7 @@ namespace ti
 #endif
 		KR_DUMP_LOCATION
 		ValueList args = ValueList();
-		SharedBoundMethod m = this->Get("_invoke")->ToMethod();
+		SharedKMethod m = this->Get("_invoke")->ToMethod();
 		SharedValue result = host->InvokeMethodOnMainThread(m, args);
 		if (result->ToBool())
 		{

@@ -11,10 +11,10 @@
 
 @interface NetworkReachability : NSObject
 {
-	SharedBoundMethod *delegate;
+	SharedKMethod *delegate;
 	BOOL online;
 }
-- (id)initWithDelegate:(SharedBoundMethod)delegate;
+- (id)initWithDelegate:(SharedKMethod)delegate;
 - (void)triggerChange:(BOOL)yn;
 - (void)start;
 @end
