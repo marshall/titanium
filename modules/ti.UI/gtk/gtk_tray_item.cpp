@@ -12,7 +12,7 @@ namespace ti
 	void tray_click_callback(GtkStatusIcon*, gpointer);
 	void tray_menu_callback(GtkStatusIcon*, guint, guint, gpointer);
 
-	GtkTrayItem::GtkTrayItem(SharedString icon_path, SharedBoundMethod cb)
+	GtkTrayItem::GtkTrayItem(SharedString icon_path, SharedKMethod cb)
 		 : TrayItem()
 	{
 		this->item = gtk_status_icon_new();
@@ -127,7 +127,7 @@ namespace ti
 
 	void tray_click_callback(GtkStatusIcon *status_icon, gpointer data)
 	{
-		BoundMethod* cb = (BoundMethod*) data;
+		KMethod* cb = (KMethod*) data;
 		// TODO: Handle exceptions in some way
 		try
 		{

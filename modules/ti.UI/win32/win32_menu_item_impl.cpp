@@ -304,7 +304,7 @@ namespace ti
 
 			if(item->menuItemID == menuItemUID)
 			{
-				BoundMethod* cb = (BoundMethod*) item->callback;
+				KMethod* cb = (KMethod*) item->callback;
 
 				// TODO: Handle exceptions in some way
 				try

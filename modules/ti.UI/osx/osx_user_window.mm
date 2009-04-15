@@ -470,7 +470,7 @@ namespace ti
 	}
 	
 	void OSXUserWindow::OpenFiles(
-		SharedBoundMethod callback,
+		SharedKMethod callback,
 		bool multiple,
 		bool files,
 		bool directories,
@@ -478,7 +478,7 @@ namespace ti
 		std::string& file,
 		std::vector<std::string>& types)
 	{
-		SharedBoundList results = new StaticBoundList();
+		SharedKList results = new StaticBoundList();
 
 		NSOpenPanel* openDlg = [NSOpenPanel openPanel];
 		[openDlg setCanChooseFiles:files];

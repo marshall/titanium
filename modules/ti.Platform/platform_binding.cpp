@@ -36,7 +36,7 @@
 
 namespace ti
 {
-	PlatformBinding::PlatformBinding(SharedBoundObject global) : global(global)
+	PlatformBinding::PlatformBinding(SharedKObject global) : global(global)
 	{
 		std::string os_name = Poco::Environment::osName();
 		std::string os_version = Poco::Environment::osVersion();
@@ -45,7 +45,7 @@ namespace ti
 
 		std::vector<Poco::Net::NetworkInterface> list = Poco::Net::NetworkInterface::list();
 		std::vector<Poco::Net::NetworkInterface>::iterator i = list.begin();
-		SharedBoundList interfaces = new StaticBoundList();
+		SharedKList interfaces = new StaticBoundList();
 		int c = 0;
 		while (i!=list.end())
 		{
@@ -61,7 +61,7 @@ namespace ti
 				// just get the first one and bail
 				if (c==1) address = ip.toString();
 				// add each interface
-				SharedBoundObject obj = new StaticBoundObject();
+				SharedKObject obj = new StaticBoundObject();
 				std::string ip_addr = ip.toString();
 				std::string display_name = nitf.displayName();
 				std::string name = nitf.name();

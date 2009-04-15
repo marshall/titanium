@@ -12,7 +12,7 @@ using namespace kroll;
 
 namespace ti {
 
-	SnarlWin32::SnarlWin32(SharedBoundObject global) : GrowlBinding(global) {
+	SnarlWin32::SnarlWin32(SharedKObject global) : GrowlBinding(global) {
 
 	}
 
@@ -29,7 +29,7 @@ namespace ti {
 	}
 
 	void SnarlWin32::ShowNotification(std::string& title, std::string& description,
-		std::string& iconURL, int notification_delay, SharedBoundMethod callback)
+		std::string& iconURL, int notification_delay, SharedKMethod callback)
 	{
 		SnarlInterface::SNARLSTRUCT snarlStruct;
 		snarlStruct.cmd = SnarlInterface::SNARL_SHOW;

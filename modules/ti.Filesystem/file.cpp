@@ -560,11 +560,11 @@ namespace ti
 					// store it as the fullpath
 					std::string filename = kroll::FileUtils::Join(this->filename.c_str(),entry.c_str(),NULL);
 					ti::File* file = new ti::File(filename);
-					SharedValue value = Value::NewObject((SharedBoundObject) file);
+					SharedValue value = Value::NewObject((SharedKObject) file);
 					fileList->Append(value);
 				}
 
-				SharedPtr<BoundList> list = fileList;
+				SharedKList list = fileList;
 				result->SetList(list);
 			}
 			else

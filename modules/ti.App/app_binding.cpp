@@ -11,7 +11,7 @@
 
 namespace ti
 {
-	AppBinding::AppBinding(Host *host,SharedBoundObject global) : host(host),global(global)
+	AppBinding::AppBinding(Host *host, SharedKObject global) : host(host),global(global)
 	{
 		/**
 		 * @tiapi(method=True,immutable=True,name=App.getID,since=0.2) get the application id
@@ -68,7 +68,7 @@ namespace ti
 
 		// skip the first argument which is the filepath to the
 		// executable
-		SharedBoundList argList = new StaticBoundList();
+		SharedKList argList = new StaticBoundList();
 		for (int i = 1; i < Host::GetInstance()->GetCommandLineArgCount(); i++) {
 			argList->Append(Value::NewString(Host::GetInstance()->GetCommandLineArg(i)));
 		}
@@ -154,7 +154,7 @@ namespace ti
 	{
 		if (args.size() >= 1 && args.at(0)->IsString()) {
 			std::string file_path = args.at(0)->ToString();
-			SharedBoundObject properties = new PropertiesBinding(file_path);
+			SharedKObject properties = new PropertiesBinding(file_path);
 			result->SetObject(properties);
 		}
 	}

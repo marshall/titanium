@@ -10,7 +10,7 @@
 
 namespace ti
 {
-	MediaBinding::MediaBinding(SharedBoundObject global) : global(global)
+	MediaBinding::MediaBinding(SharedKObject global) : global(global)
 	{
 		/**
 		 * @tiapi(method=True,name=Media.createSound,since=0.2) create a sound object
@@ -56,7 +56,7 @@ namespace ti
 			if (!meth_val->IsMethod())
 				return std::string();
 
-			SharedBoundMethod meth = meth_val->ToMethod();
+			SharedKMethod meth = meth_val->ToMethod();
 			ValueList args;
 			args.push_back(Value::NewString(URL));
 			SharedValue out_val = meth->Call(args);

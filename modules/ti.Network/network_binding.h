@@ -40,10 +40,10 @@ namespace ti
 
 	private:
 		Host* host;
-		SharedBoundObject global;
-		static std::vector<SharedBoundObject> bindings;
+		SharedKObject global;
+		static std::vector<SharedKObject> bindings;
 		struct Listener {
-			SharedBoundMethod callback;
+			SharedKMethod callback;
 			long id;
 		};
 		std::vector<Listener> listeners;

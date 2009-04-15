@@ -92,7 +92,7 @@
 		window = win;
 		host = h;
 		webView = [window webView];
-		frames = new std::map<WebFrame*,SharedBoundObject>();
+		frames = new std::map<WebFrame*,SharedKObject>();
 		[self setup];
 		[webView setFrameLoadDelegate:self];
 		[webView setUIDelegate:self];
@@ -103,7 +103,7 @@
 #endif
 		[WebScriptElement addScriptEvaluator:self];
 		
-		SharedBoundObject global = host->GetGlobalObject();
+		SharedKObject global = host->GetGlobalObject();
 		double version = global->Get("version")->ToDouble();
 		NSString *useragent = [NSString stringWithFormat:@"%s/%0.2f",PRODUCT_NAME,version];
 		[webView setApplicationNameForUserAgent:useragent];
@@ -306,7 +306,7 @@
 - (void)webView:(WebView *)sender didStartProvisionalLoadForFrame:(WebFrame *)frame
 {
 	KR_DUMP_LOCATION
-	(*frames)[frame]=SharedBoundObject(NULL);
+	(*frames)[frame]=SharedKObject(NULL);
 }
 
 - (void)webView:(WebView *)sender didReceiveTitle:(NSString *)title forFrame:(WebFrame *)frame
@@ -323,7 +323,7 @@
 		[window setTitle:title];
     }
 }
-- (SharedBoundObject)inject:(WebScriptObject *)windowScriptObject context:(JSGlobalContextRef)context frame:(WebFrame*)frame store:(BOOL)store
+- (SharedKObject)inject:(WebScriptObject *)windowScriptObject context:(JSGlobalContextRef)context frame:(WebFrame*)frame store:(BOOL)store
 {
 	KR_DUMP_LOCATION
 	
@@ -332,8 +332,8 @@
 
 	// Track that we've cleared this frame
 	JSObjectRef global_object = JSContextGetGlobalObject(context);
-	BoundObject *global_bound_object = new KKJSObject(context, global_object);
-	SharedBoundObject shared_global = global_bound_object;
+	KObject *global_bound_object = new KKJSObject(context, global_object);
+	SharedKObject shared_global = global_bound_object;
 	if (store)
 	{
 		(*frames)[frame] = shared_global;
@@ -346,12 +346,12 @@
 	KR_DUMP_LOCATION
 	
 	// we need to inject even in child frames
-	std::map<WebFrame*,SharedBoundObject>::iterator iter = frames->find(frame);
+	std::map<WebFrame*,SharedKObject>::iterator iter = frames->find(frame);
 	bool scriptCleared = false;
-	SharedBoundObject global_object = SharedBoundObject(NULL);
+	SharedKObject global_object = SharedKObject(NULL);
 	if (iter!=frames->end())
 	{
-		std::pair<WebFrame*,SharedBoundObject> pair = (*iter);
+		std::pair<WebFrame*,SharedKObject> pair = (*iter);
 		global_object = pair.second;
 		scriptCleared = global_object.get() != NULL;
 		frames->erase(iter);
@@ -671,7 +671,7 @@
 	{
 		for (unsigned int c=0;c<menu->Size();c++)
 		{
-			SharedBoundObject item = menu->At(c)->ToObject();
+			SharedKObject item = menu->At(c)->ToObject();
 			SharedPtr<OSXMenuItem> osx_menu = item.cast<OSXMenuItem>();
 			NSMenuItem *native = osx_menu->CreateNative();
 			[array addObject:native]; 
@@ -764,7 +764,7 @@ std::string GetModuleName(NSString *typeStr)
 -(BOOL) matchesMimeType:(NSString*)mimeType
 {
 	std::string moduleName = GetModuleName(mimeType);
-	SharedBoundObject global = host->GetGlobalObject();
+	SharedKObject global = host->GetGlobalObject();
 	SharedValue moduleValue = global->Get(moduleName.c_str());
 	return (moduleValue->IsObject() && moduleValue->ToObject()->Get("evaluate")->IsMethod());
 }
@@ -778,7 +778,7 @@ std::string GetModuleName(NSString *typeStr)
 	
 	JSContextRef contextRef = reinterpret_cast<JSContextRef>(context);
 
-	SharedBoundObject global = host->GetGlobalObject();
+	SharedKObject global = host->GetGlobalObject();
 	SharedValue moduleValue = global->Get(moduleName.c_str());
 
 	if (!moduleValue->IsNull()) 
@@ -790,7 +790,7 @@ std::string GetModuleName(NSString *typeStr)
 			SharedValue typeValue = Value::NewString(type);
 			SharedValue sourceCodeValue = Value::NewString([sourceCode UTF8String]);
 			JSObjectRef globalObjectRef = JSContextGetGlobalObject(contextRef);
-			SharedBoundObject contextObject = new KKJSObject(contextRef, globalObjectRef);
+			SharedKObject contextObject = new KKJSObject(contextRef, globalObjectRef);
 			SharedValue contextValue = Value::NewObject(contextObject);
 			args.push_back(typeValue);
 			args.push_back(sourceCodeValue);

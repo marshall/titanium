@@ -19,11 +19,11 @@ namespace ti {
 		void * URLWithAppCString(const char * inputCString);
 
 	public:
-		GrowlOSX(SharedBoundObject global);
+		GrowlOSX(SharedKObject global);
 		virtual ~GrowlOSX();
 
 		void CopyToApp(kroll::Host *host, kroll::Module *module);
-		virtual void ShowNotification(std::string& title, std::string& description, std::string& iconURL, int notification_delay, SharedBoundMethod callback);
+		virtual void ShowNotification(std::string& title, std::string& description, std::string& iconURL, int notification_delay, SharedKMethod callback);
 		virtual bool IsRunning();
 	};
 }

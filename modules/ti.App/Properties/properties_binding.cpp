@@ -189,7 +189,7 @@ namespace ti
 				list->Append(token);
 			}
 
-			SharedBoundList list2 = list;
+			SharedKList list2 = list;
 			result->SetList(list2);
 		}
 	}
@@ -218,7 +218,7 @@ namespace ti
 	{
 		if (args.size() >= 2 && args.at(0)->IsString() && args.at(1)->IsList()) {
 			std::string property = args.at(0)->ToString();
-			SharedBoundList list = args.at(1)->ToList();
+			SharedKList list = args.at(1)->ToList();
 
 			std::string value = "";
 			for (unsigned int i = 0; i < list->Size(); i++) {

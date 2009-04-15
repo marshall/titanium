@@ -17,13 +17,13 @@ namespace ti
 	class FilesystemBinding : public StaticBoundObject
 	{
 	public:
-		FilesystemBinding(Host*,SharedBoundObject);
+		FilesystemBinding(Host*, SharedKObject);
 		virtual ~FilesystemBinding();
 
 	private:
 		Host *host;
-		SharedBoundObject global;
-		std::vector< SharedBoundObject > asyncOperations;
+		SharedKObject global;
+		std::vector<SharedKObject> asyncOperations;
 		Poco::Timer *timer;
 
 		void OnAsyncOperationTimer(Poco::Timer &timer);

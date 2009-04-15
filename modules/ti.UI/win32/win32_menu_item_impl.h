@@ -51,7 +51,7 @@ namespace ti
 				   parent_menu(NULL) { }
 			int menuItemID; // This item's menu item ID (only 'normal' menu items)
 			HMENU menu; // This item's menu handle (only top-level menu and submenu items)
-			SharedBoundMethod callback; // This item's callback
+			SharedKMethod callback; // This item's callback
 			HMENU parent_menu; // This item's parent's menu handle
 		};
 

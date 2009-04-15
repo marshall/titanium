@@ -20,12 +20,12 @@ namespace ti
 	class Win32MediaBinding : public MediaBinding
 	{
 		public:
-		Win32MediaBinding(SharedBoundObject);
+		Win32MediaBinding(SharedKObject);
 		~Win32MediaBinding();
 
 		protected:
 		void Beep();
-		SharedBoundObject CreateSound(std::string&);
+		SharedKObject CreateSound(std::string&);
 	};
 }
 

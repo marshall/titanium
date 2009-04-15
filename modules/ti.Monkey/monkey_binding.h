@@ -47,11 +47,11 @@ namespace ti
 	class MonkeyBinding : public kroll::StaticBoundObject
 	{
 	public:
-		MonkeyBinding(Host*,SharedBoundObject);
+		MonkeyBinding(Host*,SharedKObject);
 	protected:
 		virtual ~MonkeyBinding();
 	private:
-		SharedBoundObject global;
+		SharedKObject global;
 		int registration;
 		std::vector< std::pair< std::pair< VectorOfPatterns,VectorOfPatterns > ,std::string> > scripts;
 		

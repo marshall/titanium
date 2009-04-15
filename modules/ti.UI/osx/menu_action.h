@@ -7,8 +7,8 @@
 #import <kroll/kroll.h>
 
 @interface MenuAction : NSObject {
-	SharedBoundMethod *method;
+	SharedKMethod *method;
 }
-- (id)initWithMethod:(SharedBoundMethod)method;
+- (id)initWithMethod:(SharedKMethod)method;
 - (void)fire;
 @end

@@ -91,7 +91,7 @@ namespace ti
 
 	SharedPtr<TrayItem> GtkUIBinding::AddTray(
 		SharedString icon_path,
-		SharedBoundMethod cb)
+		SharedKMethod cb)
 	{
 		SharedPtr<TrayItem> item = new GtkTrayItem(icon_path, cb);
 		return item;

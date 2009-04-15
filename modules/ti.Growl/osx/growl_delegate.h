@@ -21,10 +21,10 @@
 @end
 
 @interface MethodWrapper : NSObject {
- 	SharedBoundMethod *method;
+ 	SharedKMethod *method;
 };
 
-- (id) initWithMethod:(SharedBoundMethod*)m;
-- (SharedBoundMethod*) method;
+- (id) initWithMethod:(SharedKMethod*)m;
+- (SharedKMethod*) method;
 - (void) dealloc;
 @end

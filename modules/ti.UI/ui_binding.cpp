@@ -100,7 +100,7 @@ namespace ti
 		 */
 		this->Set("windows", Value::NewList(this->open_window_list));
 
-		SharedBoundObject global = host->GetGlobalObject();
+		SharedKObject global = host->GetGlobalObject();
 		SharedValue ui_binding_val = Value::NewObject(this);
 		global->Set("UI", ui_binding_val);
 
@@ -111,7 +111,7 @@ namespace ti
 		SharedPtr<UserWindow> no_parent = NULL;
 		SharedUserWindow main_window = this->CreateWindow(config, no_parent);
 
-		SharedBoundObject global = host->GetGlobalObject();
+		SharedKObject global = host->GetGlobalObject();
 		/**
 		 * @tiapi(property=True,name=UI.mainWindow) get the main window 
 		 */
@@ -185,7 +185,7 @@ namespace ti
 		SharedPtr<MenuItem> menu = UIModule::GetMenu();
 		if (menu.get() != NULL)
 		{
-			SharedBoundList list = menu;
+			SharedKList list = menu;
 			result->SetList(list);
 		}
 		else
@@ -210,7 +210,7 @@ namespace ti
 		SharedPtr<MenuItem> menu = UIModule::GetContextMenu();
 		if (menu.get() != NULL)
 		{
-			SharedBoundList list = menu;
+			SharedKList list = menu;
 			result->SetList(list);
 		}
 		else
@@ -239,7 +239,7 @@ namespace ti
 		if (icon_path.isNull())
 			return;
 
-		SharedBoundMethod cb = SharedBoundMethod(NULL);
+		SharedKMethod cb = SharedKMethod(NULL);
 		GET_ARG(1, Method, cb);
 
 		SharedPtr<TrayItem> item = this->AddTray(icon_path, cb);

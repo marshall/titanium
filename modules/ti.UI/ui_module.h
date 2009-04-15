@@ -96,7 +96,7 @@ namespace ti {
 		
 
 		protected:
-		static SharedBoundObject global;
+		static SharedKObject global;
 		static SharedPtr<MenuItem> app_menu;
 		static SharedPtr<MenuItem> app_context_menu;
 		static SharedString icon_path;

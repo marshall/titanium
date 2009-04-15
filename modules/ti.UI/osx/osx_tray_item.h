@@ -16,7 +16,7 @@ namespace ti
 	class OSXTrayItem: public TrayItem
 	{
 	public:
-		OSXTrayItem(SharedString iconPath, SharedBoundMethod cb);
+		OSXTrayItem(SharedString iconPath, SharedKMethod cb);
 		virtual ~OSXTrayItem();
 
 		void SetIcon(SharedString iconPath);
@@ -27,7 +27,7 @@ namespace ti
 		void Invoke();
 
 	private:
-		SharedBoundMethod callback;
+		SharedKMethod callback;
 		id delegate;
 	};
 }

@@ -17,16 +17,16 @@ namespace ti
 	class MediaBinding : public StaticBoundObject
 	{
 	public:
-		MediaBinding(SharedBoundObject);
+		MediaBinding(SharedKObject);
 	protected:
 		virtual ~MediaBinding();
 		std::string GetResourcePath(const char *URL);
 	private:
-		SharedBoundObject global;
+		SharedKObject global;
 		void _CreateSound(const ValueList& args, SharedValue result);
 		void _Beep(const ValueList& args, SharedValue result);
 
-		virtual SharedBoundObject CreateSound(std::string& url) = 0;
+		virtual SharedKObject CreateSound(std::string& url) = 0;
 		virtual void Beep() = 0;
 	};
 }

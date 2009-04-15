@@ -406,7 +406,7 @@ namespace ti
 	
 	SharedPtr<TrayItem> OSXUIBinding::AddTray(
 		SharedString icon_path,
-		SharedBoundMethod cb)
+		SharedKMethod cb)
 	{
 		return new OSXTrayItem(icon_path,cb);
 	}

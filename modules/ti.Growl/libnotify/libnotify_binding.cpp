@@ -10,7 +10,7 @@
 #include <cstring>
 
 namespace ti {
-	LibNotifyBinding::LibNotifyBinding(SharedBoundObject global) : GrowlBinding(global)
+	LibNotifyBinding::LibNotifyBinding(SharedKObject global) : GrowlBinding(global)
 	{
 		notify_init(LibNotifyBinding::GetAppName().c_str());
 	}
@@ -29,7 +29,7 @@ namespace ti {
 		std::string& description,
 		std::string& iconURL,
 		int notification_timeout,
-		SharedBoundMethod callback)
+		SharedKMethod callback)
 	{
 
 		const char *icon_path = NULL;
@@ -61,7 +61,7 @@ namespace ti {
 		if (!meth_val->IsMethod())
 			return SharedString(NULL);
 
-		SharedBoundMethod meth = meth_val->ToMethod();
+		SharedKMethod meth = meth_val->ToMethod();
 		ValueList args;
 		args.push_back(Value::NewString(URL));
 		SharedValue out_val = meth->Call(args);
@@ -82,7 +82,7 @@ namespace ti {
 		if (!meth_val->IsMethod())
 			return "";
 
-		SharedBoundMethod meth = meth_val->ToMethod();
+		SharedKMethod meth = meth_val->ToMethod();
 		SharedValue out_val = meth->Call(ValueList());
 		if (out_val->IsString())
 		{

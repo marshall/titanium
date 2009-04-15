@@ -130,7 +130,7 @@ namespace ti
 		{
 			throw ValueException::FromString("onComplete takes a function parameter");
 		}
-		SharedBoundMethod method = args.at(0)->ToMethod();
+		SharedKMethod method = args.at(0)->ToMethod();
 		this->OnComplete(method);
 	}
 }

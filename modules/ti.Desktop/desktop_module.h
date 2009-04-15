@@ -28,7 +28,7 @@ namespace ti
 		KROLL_MODULE_CLASS(DesktopModule)
 
 	private:
-		SharedBoundObject variables;
+		SharedKObject variables;
 	};
 
 }

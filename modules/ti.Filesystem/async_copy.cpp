@@ -21,7 +21,7 @@ namespace ti
 		Host *host, 
 		std::vector<std::string> files, 
 		std::string destination, 
-		SharedBoundMethod callback)
+		SharedKMethod callback)
 			: parent(parent),
 			  host(host),
 			  files(files),

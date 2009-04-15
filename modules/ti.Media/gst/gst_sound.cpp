@@ -116,7 +116,7 @@ namespace ti
 		return this->state == PAUSED;
 	}
 
-	void GstSound::OnComplete(SharedBoundMethod callback)
+	void GstSound::OnComplete(SharedKMethod callback)
 	{
 		this->callback = callback;
 	}

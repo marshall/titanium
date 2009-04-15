@@ -7,12 +7,12 @@
 
 @implementation MenuAction
 
-- (id)initWithMethod:(SharedBoundMethod)m
+- (id)initWithMethod:(SharedKMethod)m
 {
 	self = [super init];
 	if (self!=nil)
 	{
-		method = new SharedBoundMethod(m);
+		method = new SharedKMethod(m);
 	}
 	return self;
 }

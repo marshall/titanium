@@ -214,7 +214,7 @@ namespace ti {
 			// out from under us. At some point, in threaded code we will
 			// have to protect it with a mutex though, in the case that
 			// the callback is fired after it has been reassigned.
-			BoundMethod* cb = callback_val->ToMethod().get();
+			KMethod* cb = callback_val->ToMethod().get();
 
 			g_signal_connect_swapped(
 				G_OBJECT (pieces.item), "activate",
@@ -292,7 +292,7 @@ namespace ti {
 	/* Le callback */
 	void menu_callback(gpointer data)
 	{
-		BoundMethod* cb = (BoundMethod*) data;
+		KMethod* cb = (KMethod*) data;
 
 		// TODO: Handle exceptions in some way
 		try

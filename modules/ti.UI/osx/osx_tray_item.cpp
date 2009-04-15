@@ -9,7 +9,7 @@
 
 namespace ti
 {
-	OSXTrayItem::OSXTrayItem(SharedString iconPath, SharedBoundMethod cb)
+	OSXTrayItem::OSXTrayItem(SharedString iconPath, SharedKMethod cb)
 	{
 		this->callback = cb;
 		this->delegate = [[OSXTrayDelegate alloc] initWithTray:this];

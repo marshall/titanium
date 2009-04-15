@@ -36,11 +36,11 @@ namespace ti
 		virtual bool IsLooping();
 		virtual bool IsPlaying();
 		virtual bool IsPaused();
-		virtual void OnComplete(SharedBoundMethod callback);
+		virtual void OnComplete(SharedKMethod callback);
 
 		
 	private:
-		SharedBoundMethod* callback;
+		SharedKMethod* callback;
 		NSURL *theurl;
 		NSSound *sound;
 		id delegate;

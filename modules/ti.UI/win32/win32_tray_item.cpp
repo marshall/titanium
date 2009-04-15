@@ -13,7 +13,7 @@ namespace ti
 {
 std::vector<Win32TrayItem *> trayItems;
 
-Win32TrayItem::Win32TrayItem(SharedString iconPath, SharedBoundMethod cb)
+Win32TrayItem::Win32TrayItem(SharedString iconPath, SharedKMethod cb)
 {
 	this->callback = cb;
 	this->trayMenu = NULL;
@@ -159,7 +159,7 @@ bool Win32TrayItem::InvokeLeftClickCallback(int trayIconID)
 		{
 			if(item->callback)
 			{
-				BoundMethod* cb = (BoundMethod*) item->callback;
+				KMethod* cb = (KMethod*) item->callback;
 
 				// TODO: Handle exceptions in some way
 				try

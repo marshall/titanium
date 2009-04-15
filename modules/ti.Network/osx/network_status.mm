@@ -28,12 +28,12 @@ static void TiReachabilityCallback(SCNetworkReachabilityRef  target,
 
 @implementation NetworkReachability
 
--(id)initWithDelegate:(SharedBoundMethod)m
+-(id)initWithDelegate:(SharedKMethod)m
 {
 	self = [super init];
 	if (self!=nil)
 	{	
-		delegate = new SharedBoundMethod(m);
+		delegate = new SharedKMethod(m);
 		online = YES;
 		[NSThread detachNewThreadSelector:@selector(start) toTarget:self withObject:nil];
 	}

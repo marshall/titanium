@@ -33,7 +33,7 @@ namespace ti
 		virtual bool IsLooping();
 		virtual bool IsPlaying();
 		virtual bool IsPaused();
-		virtual void OnComplete(SharedBoundMethod callback);
+		virtual void OnComplete(SharedKMethod callback);
 
 		void GraphCallback(const ValueList& args, SharedValue result);
 	private:
@@ -41,7 +41,7 @@ namespace ti
 		IMediaControl *media_control;
 		IMediaEventEx *media_event_ex;
 		IMediaSeeking *media_seeking;
-		SharedBoundMethod* callback;
+		SharedKMethod* callback;
 
 		void InitGraphBuilder();
 	};

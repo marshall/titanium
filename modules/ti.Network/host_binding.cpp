@@ -93,7 +93,7 @@ namespace ti
 	}
 	void HostBinding::GetAliases(const ValueList& args, SharedValue result)
 	{
-		SharedBoundList list = new StaticBoundList();
+		SharedKList list = new StaticBoundList();
 		std::vector<std::string> aliases = this->host.aliases();
 		std::vector<std::string>::iterator iter = aliases.begin();
 		while (iter!=aliases.end())
@@ -105,13 +105,13 @@ namespace ti
 	}
 	void HostBinding::GetAddresses(const ValueList& args, SharedValue result)
 	{
-		SharedBoundList list = new StaticBoundList();
+		SharedKList list = new StaticBoundList();
 		std::vector<IPAddress> addresses = this->host.addresses();
 		std::vector<IPAddress>::iterator iter = addresses.begin();
 		while (iter!=addresses.end())
 		{
 			IPAddress address = (*iter++);
-			SharedBoundObject obj = new IPAddressBinding(address);
+			SharedKObject obj = new IPAddressBinding(address);
 			SharedValue addr = Value::NewObject(obj);
 			list->Append(addr);
 		}

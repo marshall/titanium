@@ -13,11 +13,11 @@ namespace ti
 	class PlatformBinding : public StaticBoundObject
 	{
 	public:
-		PlatformBinding(SharedBoundObject);
+		PlatformBinding(SharedKObject);
 	protected:
 		virtual ~PlatformBinding();
 	private:
-		SharedBoundObject global;
+		SharedKObject global;
 		
 		DECLAREBOUNDMETHOD(CreateUUID);
 	};

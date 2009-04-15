@@ -54,7 +54,7 @@ namespace ti
 		virtual void SetContextMenu(SharedPtr<MenuItem>) = 0;
 		virtual void SetIcon(SharedString icon_path) = 0;
 		virtual SharedPtr<TrayItem> AddTray(SharedString icon_path,
-		                                    SharedBoundMethod cb) = 0;
+		                                    SharedKMethod cb) = 0;
 
 		void _GetIdleTime(const ValueList& args, SharedValue result);
 

@@ -42,7 +42,7 @@ namespace ti
 		virtual bool IsLooping() = 0;
 		virtual bool IsPlaying() = 0;
 		virtual bool IsPaused() = 0;
-		virtual void OnComplete(SharedBoundMethod callback) = 0;
+		virtual void OnComplete(SharedKMethod callback) = 0;
 		
 	protected:
 		std::string url;

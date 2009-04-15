@@ -52,7 +52,7 @@ namespace ti
 				   parent_menu(NULL) { }
 			GtkWidget* item; // This item's widget
 			GtkWidget* menu; // This item's submenu
-			SharedBoundMethod callback; // This item's callback
+			SharedKMethod callback; // This item's callback
 			GtkWidget* parent_menu; // This item's parent's widget
 		};
 

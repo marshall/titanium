@@ -24,7 +24,7 @@
 
 namespace ti
 {
-	DesktopBinding::DesktopBinding(SharedBoundObject global) : global(global)
+	DesktopBinding::DesktopBinding(SharedKObject global) : global(global)
 	{
 		/**
 		 * @tiapi(method=True,name=Desktop.openApplication,since=0.2) opens an application by name using the operating system

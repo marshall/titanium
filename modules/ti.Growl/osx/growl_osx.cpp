@@ -15,7 +15,7 @@ using namespace kroll;
 using namespace ti;
 
 namespace ti {
-	GrowlOSX::GrowlOSX(SharedBoundObject global) : GrowlBinding(global) {
+	GrowlOSX::GrowlOSX(SharedKObject global) : GrowlBinding(global) {
 		delegate = [[TiGrowlDelegate alloc] init];
 		//Delegate will have a retain count of one from the alloc init.
 	}
@@ -51,7 +51,7 @@ namespace ti {
 	}
 	
 
-	void GrowlOSX::ShowNotification(std::string& title, std::string& description, std::string& iconURL, int notification_delay, SharedBoundMethod callback)
+	void GrowlOSX::ShowNotification(std::string& title, std::string& description, std::string& iconURL, int notification_delay, SharedKMethod callback)
 	{
 		NSData *iconData = nil;
 
@@ -71,7 +71,7 @@ namespace ti {
 		}
 
 		//NSMutableArray* clickContext = [[NSMutableArray alloc] init];
-		//[clickContext addObject:[[MethodWrapper alloc] initWithMethod:new SharedBoundMethod(callback)]];
+		//[clickContext addObject:[[MethodWrapper alloc] initWithMethod:new SharedKMethod(callback)]];
 
 		const char* titleCString = title.c_str();
 		NSString * titleString = nil;

@@ -27,7 +27,7 @@ namespace ti
 		void SetContextMenu(SharedPtr<MenuItem>);
 		void SetIcon(SharedString icon_path);
 		SharedPtr<TrayItem> AddTray(SharedString icon_path,
-		                            SharedBoundMethod cb);
+		                            SharedKMethod cb);
 
 		long GetIdleTime();
 

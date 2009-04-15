@@ -27,7 +27,7 @@ namespace ti
 		void RemoveOldMenu();
 
 		void OpenFiles(
-			SharedBoundMethod callback,
+			SharedKMethod callback,
 			bool multiple,
 			bool files,
 			bool directories,

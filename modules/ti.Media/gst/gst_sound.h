@@ -34,7 +34,7 @@ namespace ti
 		virtual bool IsLooping();
 		virtual bool IsPlaying();
 		virtual bool IsPaused();
-		virtual void OnComplete(SharedBoundMethod callback);
+		virtual void OnComplete(SharedKMethod callback);
 		virtual void Complete();
 
 		static void RegisterSound(SharedGstSound);
@@ -42,7 +42,7 @@ namespace ti
 		static SharedGstSound GetRegisteredSound(GstSound* sound);
 
 	private:
-		SharedBoundMethod callback;
+		SharedKMethod callback;
 		GstElement *pipeline;
 		bool looping;
 

@@ -28,7 +28,7 @@ std::string ScriptEvaluator::GetModuleName(std::string type)
 bool ScriptEvaluator::matchesMimeType(const gchar *mime_type)
 {
 	std::string moduleName = GetModuleName(mime_type);
-	SharedBoundObject global = kroll::Host::GetInstance()->GetGlobalObject();
+	SharedKObject global = kroll::Host::GetInstance()->GetGlobalObject();
 
 	SharedValue moduleValue = global->Get(moduleName.c_str());
 	if (!moduleValue->IsNull() && moduleValue->IsObject()) {
@@ -45,7 +45,7 @@ bool ScriptEvaluator::matchesMimeType(const gchar *mime_type)
 void ScriptEvaluator::evaluate(const gchar *mime_type, const gchar *source_code, void *context)
 {
 	std::string moduleName = GetModuleName(mime_type);
-	SharedBoundObject global = kroll::Host::GetInstance()->GetGlobalObject();
+	SharedKObject global = kroll::Host::GetInstance()->GetGlobalObject();
 	JSContextRef contextRef = reinterpret_cast<JSContextRef>(context);
 
 	SharedValue moduleValue = global->Get(moduleName.c_str());
@@ -56,7 +56,7 @@ void ScriptEvaluator::evaluate(const gchar *mime_type, const gchar *source_code,
 			SharedValue typeValue = Value::NewString(mime_type);
 			SharedValue sourceCodeValue = Value::NewString(source_code);
 			JSObjectRef globalObjectRef = JSContextGetGlobalObject(contextRef);
-			SharedBoundObject contextObject = new KKJSObject(contextRef, globalObjectRef);
+			SharedKObject contextObject = new KKJSObject(contextRef, globalObjectRef);
 			SharedValue contextValue = Value::NewObject(contextObject);
 			args.push_back(typeValue);
 			args.push_back(sourceCodeValue);
