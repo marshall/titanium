@@ -25,8 +25,12 @@ build.mark_build_target(c)
 
 resources_out = p.join(contents, 'Resources', 'English.lproj')
 
-c = build.utils.CopyToDir(p.join(build.titanium_support_dir, 'titanium.icns'), resources_out)
+files = []
+files.append(p.join(build.titanium_support_dir, 'titanium.icns'))
+files.append(p.join(build.cwd(), 'warning.png'))
+c = build.utils.CopyToDir(files, resources_out)
 build.mark_build_target(c)
+
 for f in Glob('English.lproj/*.xib'):
 	f = str(f)
 	out = p.join(resources_out, p.splitext(p.basename(f))[0] + '.nib')
