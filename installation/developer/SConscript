@@ -31,7 +31,7 @@ def package_sdk(target, source, env):
 
 	# The SDK installer application is staged.
 	# -- so now we do pre-package processing
-	to_copy = ['tiapp.xml']
+	to_copy = ['tiapp.xml', 'LICENSE.txt']
 	for item in to_copy:
 		futils.CopyToDir(p.join(cwd, item), sdk.contents)
 	

@@ -8,6 +8,8 @@ Env = build.env.Clone()
 Env.Append(FRAMEWORKS=['Cocoa'])
 sources = Glob('*.m') + Glob('*.mm')
 
+Env.Append(CPPPATH=[build.kroll_utils_dir])
+sources.extend(build.get_kroll_utils(p.join(build.dir, 'objs', 'netinstaller')))
 
 # We want to build this directly into the runtime dist directory to avoid copying
 # In the end we want something that looks like this inside of build.runtime_build_dir
@@ -27,7 +29,7 @@ resources_out = p.join(contents, 'Resources', 'English.lproj')
 
 files = []
 files.append(p.join(build.titanium_support_dir, 'titanium.icns'))
-files.append(p.join(build.cwd(), 'warning.png'))
+files.append(p.join(build.cwd(), 'dialog-warning.png'))
 c = build.utils.CopyToDir(files, resources_out)
 build.mark_build_target(c)
 

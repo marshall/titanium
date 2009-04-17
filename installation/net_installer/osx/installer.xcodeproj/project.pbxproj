@@ -13,11 +13,11 @@
 		24BEA3A90F3140F200DFDA8B /* Downloader.m in Sources */ = {isa = PBXBuildFile; fileRef = 24BEA3A80F3140F200DFDA8B /* Downloader.m */; };
 		24BEA3D80F3145E300DFDA8B /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 24BEA3D70F3145E300DFDA8B /* SystemConfiguration.framework */; };
 		24BEA5690F316CFD00DFDA8B /* libcurl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 24BEA5680F316CFD00DFDA8B /* libcurl.dylib */; };
+		5B40F3980F98FAF300CAEFD3 /* dialog-warning.png in Resources */ = {isa = PBXBuildFile; fileRef = 5B40F3970F98FAF300CAEFD3 /* dialog-warning.png */; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		B4B060730F7743B200B2AB8B /* file_utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B4B0605E0F77431A00B2AB8B /* file_utils.cpp */; };
-		F5F573E10F96AE93007BD950 /* warning.png in Resources */ = {isa = PBXBuildFile; fileRef = F5F573E00F96AE93007BD950 /* warning.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -36,10 +36,10 @@
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		32CA4F630368D1EE00C91783 /* installer_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = installer_Prefix.pch; sourceTree = "<group>"; };
+		5B40F3970F98FAF300CAEFD3 /* dialog-warning.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "dialog-warning.png"; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* Installer App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Installer App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B4B0605E0F77431A00B2AB8B /* file_utils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = file_utils.cpp; path = ../../../kroll/api/file_utils.cpp; sourceTree = SOURCE_ROOT; };
-		F5F573E00F96AE93007BD950 /* warning.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = warning.png; path = ../../appinstaller/Resources/images/warning.png; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -120,7 +120,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				F5F573E00F96AE93007BD950 /* warning.png */,
+				5B40F3970F98FAF300CAEFD3 /* dialog-warning.png */,
 				24291A360F318D7A00DCB70A /* titanium.icns */,
 				8D1107310486CEB800E47090 /* Info.plist */,
 				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
@@ -184,7 +184,7 @@
 				8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */,
 				1DDD58160DA1D0A300B32029 /* MainMenu.xib in Resources */,
 				24291A370F318D7A00DCB70A /* titanium.icns in Resources */,
-				F5F573E10F96AE93007BD950 /* warning.png in Resources */,
+				5B40F3980F98FAF300CAEFD3 /* dialog-warning.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
