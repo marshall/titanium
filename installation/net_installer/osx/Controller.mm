@@ -146,9 +146,9 @@ static int totalJobs = 0;
 
 -(void)install:(Job*)job 
 {
-	NSString* name;
-	NSString* version;
-	BOOL isModule;
+	NSString* name = @"unknown";
+	NSString* version = @"unknown";
+	BOOL isModule = YES;
 
 	NSString* path = [job path];
 	NSURL* url = [job url];
