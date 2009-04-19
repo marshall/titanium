@@ -6,13 +6,15 @@ from app import App
 from subprocess import Popen
 Import('build')
 
+common_dir = p.join(build.titanium_source_dir,'installation','common')
 
 t = build.env.PackageApp('#unittest-target',
 	[Dir('Resources'), 'tiapp.xml'],
 	SHORTNAME='unittest',
 	FULLNAME='Titanium Unit Test App',
 	ID='com.titaniumapp.unittest.driver',
-	GUID='D83B08F4-B43B-4909-9FEE-336CDB44750B')
+	GUID='D83B08F4-B43B-4909-9FEE-336CDB44750B',
+	RESOURCES=[common_dir])
 Depends(t, build.build_targets + build.staging_targets)
 Alias('unittest', t)
 

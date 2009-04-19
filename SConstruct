@@ -102,5 +102,7 @@ SConscript('SConscript.docs')
 SConscript('installation/developer/SConscript')
 
 run = ARGUMENTS.get('run', 0)
-Export('run')
+run_with = ARGUMENTS.get('run_with', 0)
+
+Export('run','run_with')
 SConscript('apps/SConscript')

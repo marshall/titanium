@@ -5,6 +5,7 @@ import glob, distutils.dir_util as dir_util
 Import('build')
 Import('run')
 
+
 t = build.env.PackageApp('#apivalidator-target',
 	[Dir('Resources'), 'tiapp.xml'],
 	SHORTNAME='apivalidator',

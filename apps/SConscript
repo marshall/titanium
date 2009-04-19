@@ -1,5 +1,6 @@
 Import('build')
 Import('run')
+Import('run_with')
 import SCons.Variables
 import SCons.Environment
 import futils, os.path as path
@@ -46,8 +47,17 @@ def package_app_builder(target, source, env):
 		s = str(s)
 		futils.CopyToDir(s, app.contents)
 
+	if 'RESOURCES' in env:
+		for f in env['RESOURCES']:
+			for dirname in os.listdir(f):
+				futils.CopyToDir(path.join(f,dirname), path.join(app.contents,'Resources'))
+
 	if run:
-		Popen(app.exe)
+		#Popen(app.exe)
+		if run_with:
+			os.system(app.exe + ' ' + run_with)
+		else:
+			os.system(app.exe)
 
 build.env['BUILDERS']['PackageApp'] = build.env.Builder(
 	action=package_app_builder,

@@ -80,6 +80,14 @@ Titanium.TestDriver.init(Titanium.App.appURLToPath('app://'));
 				</div>
 			</div>
 		</div>
+
+		<!-- LOG VIEW -->
+		<div class="infobox" on="l:showlog then effect[fadeIn] or l:showtable then hide" style="display:none;">
+			<div class="content">
+				<div class="test_detail" id="log" style="height:500px;overflow:auto;white-space:pre;font-family:monospace;" on="l:detail then value[log]">
+				</div>
+			</div>
+		</div>
 		
 		<div style="clear:both"></div>
 		
@@ -96,10 +104,21 @@ Titanium.TestDriver.init(Titanium.App.appURLToPath('app://'));
 		<!-- VIEW SCREENSHOT BUTTON -->
 		<div on="l:showshots then hide or l:showresults then effect[fadeIn] or l:titanium_test_results then effect[fadeIn]"
 			style="display:none;margin-top:10px;">
-			<div class="button1" on="click then l:showshots " 
+			<div class="button1" on="click then l:showshots" 
 				style="width:120px">
 				<div class="button2">
 					View Screenshots
+				</div>
+			</div>
+		</div>
+		
+		<!-- VIEW LOG BUTTON -->
+		<div on="(l:showshots or l:showlog) then hide or l:showresults then effect[fadeIn] or l:titanium_test_results then effect[fadeIn]"
+			style="display:none;margin-top:10px;">
+			<div class="button1" on="click then l:showlog" 
+				style="width:120px">
+				<div class="button2">
+					View Log
 				</div>
 			</div>
 		</div>

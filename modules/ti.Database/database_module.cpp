@@ -16,11 +16,14 @@ namespace ti
 	
 	void DatabaseModule::Initialize()
 	{
-		// load our variables
-		this->binding = new DatabaseBinding(host->GetGlobalObject());
+		/**
+		 * @tiapi(method=True,name=Database.open,since=0.4) open a database
+		 * @tiarg(for=Database.open,name=name,type=string) database name
+		 */
+		this->SetMethod("open",&DatabaseModule::Open);
 
 		// set our ti.Database
-		SharedValue value = Value::NewObject(this->binding);
+		SharedValue value = Value::NewObject(this);
 		host->GetGlobalObject()->Set("Database", value);
 	}
 
@@ -28,4 +31,11 @@ namespace ti
 	{
 	}
 	
+	void DatabaseModule::Open(const ValueList& args, SharedValue result)
+	{
+		DatabaseBinding *db = new DatabaseBinding();
+		db->Open(args,result);
+		SharedKObject kdb = db;
+		result->SetObject(kdb);
+	}
 }

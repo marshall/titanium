@@ -75,5 +75,15 @@
 		}
 	}
 	
+	//
+	// override console.log to also send into our API logger
+	//
+	var old_log = console.log;
+	console.log = function(msg)
+	{
+		Titanium.API.debug(msg);
+		return old_log(msg);
+	};
+	
 })();
  

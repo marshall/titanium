@@ -130,7 +130,7 @@ if (testDir.exists())
 	var testFiles = testDir.getDirectoryListing();
 	var f = Titanium.Filesystem.getFile(testFiles[0]);
 	var contents = f.read();
-	eval('((function(){'+contents+'})(window))');
+	eval('((function(){try{'+contents+'}catch(_E){Titanium.API.error("test caught error:"+_E);}})(window))');
 }
 // RUN HTML-based TEST
 else

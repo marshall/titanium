@@ -45,6 +45,12 @@ namespace ti
 		this->SetMethod("fieldCount",&ResultSetBinding::FieldCount);
 
 		/**
+		 * @tiapi(method=True,name=Database.ResultSet.rowCount,since=0.4) Returns the number of rows in this result set.
+		 * @tiresult(for=Database.ResultSet.rowCount,type=integer) count
+		 */
+		this->SetMethod("rowCount",&ResultSetBinding::RowCount);
+
+		/**
 		 * @tiapi(method=True,name=Database.ResultSet.fieldName,since=0.4) Returns the name of the specified field in the current result set. This name is derived from the SQL statement which was executed.
 		 * @tiarg(for=Database.ResultSet.fieldName,type=integer,name=fieldIndex) the zero-based index of the desired field
 		 * @tiresult(for=Database.ResultSet.fieldName,type=string) result
@@ -84,11 +90,6 @@ namespace ti
 		if (!rs.isNull() && !eof)
 		{
 			eof = (rs->moveNext() == false);
-			result->SetBool(!eof);
-		}
-		else
-		{
-			result->SetBool(false);
 		}
 	}
 	void ResultSetBinding::Close(const ValueList& args, SharedValue result)
@@ -96,6 +97,17 @@ namespace ti
 		if (!rs.isNull())
 		{
 			rs = NULL;
+		}
+	}
+	void ResultSetBinding::RowCount(const ValueList& args, SharedValue result)
+	{
+		if (rs.isNull())
+		{
+			result->SetInt(0);
+		}
+		else
+		{
+			result->SetInt(rs->rowCount());
 		}
 	}
 	void ResultSetBinding::FieldCount(const ValueList& args, SharedValue result)
@@ -106,7 +118,7 @@ namespace ti
 		}
 		else
 		{
-			result->SetInt(rs->rowCount());
+			result->SetInt(rs->columnCount());
 		}
 	}
 	void ResultSetBinding::FieldName(const ValueList& args, SharedValue result)

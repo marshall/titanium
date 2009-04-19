@@ -16,12 +16,12 @@ namespace ti
 	class DatabaseBinding : public StaticBoundObject
 	{
 	public:
-		DatabaseBinding(SharedKObject);
+		DatabaseBinding();
 	protected:
 		virtual ~DatabaseBinding();
 	private:
-		SharedKObject global;
 		Databases *database;
+		DBSession *session;
 		std::string dbname;
 		std::string origin;
 		
@@ -31,6 +31,8 @@ namespace ti
 		DECLAREBOUNDMETHOD(Execute);
 		DECLAREBOUNDMETHOD(Close);
 		DECLAREBOUNDMETHOD(Remove);
+		
+		friend class DatabaseModule;
 	};
 }
 

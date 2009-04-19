@@ -160,33 +160,25 @@ Titanium.Project =
 						TFS.asyncCopy(appModules,moduleDest, function()
 						{
 							Titanium.Process.setEnv('KR_DEBUG','true');
-							var x =  Titanium.Process.launch(app.executable.nativePath());
+							var x =  Titanium.Process.launch(app.executable.nativePath(),args);
 							if (x && callback)
 							{
 								callback(x);
 							}
-							TiDeveloper.track('project-launch',{'name':project.name});
-
-						})
+							//FIXME move this back to developer
+//							TiDeveloper.track('project-launch',{'name':project.name});
+						});
 					}
 					else
 					{
 						Titanium.Process.setEnv('KR_DEBUG','true');
-						var x = null;
-						if (typeof(args)!='undefined')
-						{
-							x = Titanium.Process.launch(app.executable.nativePath(),args);
-						}
-						else
-						{
-							x = Titanium.Process.launch(app.executable.nativePath());
-						}
+						var x = Titanium.Process.launch(app.executable.nativePath(),args);
 						if (x && callback)
 						{
 							callback(x);
 						}
-						TiDeveloper.track('project-launch',{'name':project.name});
-
+						//FIXME move this back to developer
+//						TiDeveloper.track('project-launch',{'name':project.name});
 					}
 				});
 			});
@@ -549,6 +541,24 @@ Titanium.Project =
 		manifest.write(newManifest);
    }
 };
+
+// // by default, add our current modules
+// (function()
+// {
+// 	var tok = Titanium.platform=='win32' ? ';' : ':';
+// 	var modules = Titanium.Process.getEnv('KR_MODULES').split(tok);
+// 	for (var c=0;c<modules.length;c++)
+// 	{
+// 		var m = modules[c];
+// 		if (m)
+// 		{
+// 			var f = Titanium.Filesystem.getFile(m);
+// 			alert("name="+m+",f="+f);
+// 			var name = f.getName();
+// 			Titanium.Project.optionalModules.push(name);
+// 		}
+// 	}
+// })();
 
 Titanium.Project.XML_PROLOG = "<?xml version='1.0' encoding='UTF-8'?>\n" +
 	"<ti:app xmlns:ti='http://ti.appcelerator.org'>\n";

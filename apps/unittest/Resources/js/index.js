@@ -34,7 +34,7 @@ $MQL('l:rowselect',function(msg)
 		{
 			var detail = resultArray[i].detail
 			if (!resultArray[i].detail) detail = 'no detail';
-			$MQ('l:detail',{detail:detail});
+			$MQ('l:detail',{detail:detail,log:resultArray[i].log});
 			break;
 		}
 	}
@@ -84,7 +84,7 @@ $MQL('l:showshots',function(msg)
 	if (shotArray.length == 0)
 	{
 		// create shot array
-		var path = Titanium.Filesystem.getFile(Titanium.App.appURLToPath('app://screenshots')) + Titanium.Filesystem.getSeparator();
+		var path = Titanium.Filesystem.getFile(Titanium.App.appURLToPath('app://results')) + Titanium.Filesystem.getSeparator();
 		for (var i=0;i<resultArray.length;i++)
 		{
 			if (resultArray[i].result == 'pending')
