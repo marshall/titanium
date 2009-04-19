@@ -16,10 +16,11 @@ namespace ti
 	class DatabaseBinding : public StaticBoundObject
 	{
 	public:
-		DatabaseBinding();
+		DatabaseBinding(Host*);
 	protected:
 		virtual ~DatabaseBinding();
 	private:
+		Host* host;
 		Databases *database;
 		DBSession *session;
 		std::string dbname;

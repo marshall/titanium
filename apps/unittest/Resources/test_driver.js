@@ -54,13 +54,13 @@ Titanium.TestDriver.init = function(project)
 	}
 	if (typeof(project)=='object')
 	{
-		Titanium.TestDriver.mode =Titanium.TestDriver.APPMODE; 
+		Titanium.TestDriver.mode = Titanium.TestDriver.APPMODE; 
 		Titanium.TestDriver.rootDir = project.dir;
 		Titanium.TestDriver.project = project;
 	}
 	else
 	{
-		Titanium.TestDriver.mode =Titanium.TestDriver.UNITMODE; 
+		Titanium.TestDriver.mode = Titanium.TestDriver.UNITMODE; 
 		Titanium.TestDriver.rootDir = project;
 	}
 	
@@ -84,11 +84,11 @@ Titanium.TestDriver.init = function(project)
 			specificTests = arg.substring(8).split(',');
 		}
 	}
-
 	
 	// load test files
 	var testDir = TFS.getFile(Titanium.TestDriver.rootDir,'tests');
 	var tests = testDir.getDirectoryListing();
+	
 	for (var i=0;i<tests.length;i++)
 	{
 		var testFile = TFS.getFile(tests[i]);
@@ -196,7 +196,7 @@ Titanium.TestDriver.setupFramework = function()
 		var appdir = TFS.getFile(Titanium.App.appURLToPath('app://_app'));
 		if (!appdir.exists())
 		{
-			appdir.createDirectory();
+			appdir.createDirectory(true);
 		}
 		
 		project.name = "unittest";
@@ -285,7 +285,7 @@ Titanium.TestDriver.launchApp = function(testfile)
 {
 	var xmlFile = null;
 	var testName = null;
-
+	
 	// copy in test file
 	if (testfile.file.extension() == 'html')
 	{

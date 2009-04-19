@@ -26,6 +26,11 @@ class Installer
 {
 	public:
 	static Installer* instance;
+	static string applicationPath;
+	static string systemRuntimeHome;
+	static string userRuntimeHome;
+	static string updateFilename;
+
 	Installer(vector<Job*>, int);
 	~Installer();
 	void ResizeWindow(int width, int height);
@@ -69,7 +74,7 @@ class Installer
 		this->stage = stage;
 	}
 
-	void SetError(std::string error)
+	void SetError(string error)
 	{
 		this->error = error;
 		this->stage = ERROR;
@@ -85,14 +90,9 @@ class Installer
 		this->currentJob = job;
 	}
 
-	std::vector<Job*>& GetJobs()
+	vector<Job*>& GetJobs()
 	{
 		return this->jobs;
-	}
-
-	std::string GetApplicationPath()
-	{
-		return this->applicationPath;
 	}
 
 	int GetType()
@@ -102,15 +102,13 @@ class Installer
 
 
 	private:
-	std::string applicationPath;
-	std::vector<Job*> jobs;
+	vector<Job*> jobs;
 	Application* app;
 	int installType;
-	bool isUpdate;
 	Stage stage;
 
 	Job* currentJob;
-	std::string error;
+	string error;
 	GtkWidget* window;
 	GtkWidget* progressBar;
 	GtkWidget* downloadingLabel;

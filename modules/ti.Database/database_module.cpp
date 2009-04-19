@@ -33,7 +33,7 @@ namespace ti
 	
 	void DatabaseModule::Open(const ValueList& args, SharedValue result)
 	{
-		DatabaseBinding *db = new DatabaseBinding();
+		DatabaseBinding *db = new DatabaseBinding(host);
 		db->Open(args,result);
 		SharedKObject kdb = db;
 		result->SetObject(kdb);

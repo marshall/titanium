@@ -3,34 +3,67 @@
  * see LICENSE in the root folder for details on the license.
  * Copyright (c) 2009 Appcelerator, Inc. All Rights Reserved.
  */
-
-
 #import <Cocoa/Cocoa.h>
 #import "Downloader.h"
+#import <utils.h>
+using kroll::Application;
+using kroll::BootUtils;
+using kroll::FileUtils;
 
+@interface Job : NSObject {
+	NSURL* url; 
+	NSString* path; 
+	BOOL isUpdate; 
+}
+-(Job*)init:(NSString*)pathOrURL;
+-(Job*)initUpdate:(NSString*)pathOrURL;
+-(NSURL*)url;
+-(NSString*)path;
+-(void)setPath:(NSString*)newPath;
+-(BOOL)needsDownload;
+-(BOOL)isUpdate;
+-(int)totalDownloads;
+-(int)totalJobs;
+@end
 
 @interface Controller : NSObject {
-	IBOutlet NSTextField* textField;
-	IBOutlet NSButton* button;
-	IBOutlet NSProgressIndicator* progress;
-	IBOutlet NSImageView* image;
-	IBOutlet NSWindow* window;
-	NSMutableDictionary *urls;
-	NSMutableArray *files;
-	NSString *directory;
+	IBOutlet NSWindow* progressWindow;
+	IBOutlet NSProgressIndicator* progressBar;
+	IBOutlet NSButton* progressCancelButton;
+	IBOutlet NSTextField* progressText;
+	IBOutlet NSImageView* progressImage;
+	IBOutlet NSTextField* progressAppName;
+	IBOutlet NSTextField* progressAppVersion;
+	IBOutlet NSTextField* progressAppPublisher;
+	IBOutlet NSTextField* progressAppURL;
+
+	IBOutlet NSWindow* introWindow;
+	IBOutlet NSTextField* introLicenseLabel;
+	IBOutlet NSBox* introLicenseBox;
+	IBOutlet NSTextView* introLicenseText;
+
+	IBOutlet NSImageView* introImage;
+	IBOutlet NSTextField* introAppName;
+	IBOutlet NSTextField* introAppVersion;
+	IBOutlet NSTextField* introAppPublisher;
+	IBOutlet NSTextField* introAppURL;
+
+	NSMutableArray *jobs;
+	NSString *temporaryDirectory;
 	NSString *installDirectory;
+	NSString *updateFile;
+	Application* app;
 }
 
--(IBAction)cancel:(id)sender;
+-(IBAction)cancelProgress:(id)sender;
+-(IBAction)cancelIntro:(id)sender;
+-(IBAction)continueIntro:(id)sender;
 -(void)updateMessage:(NSString*)msg;
--(NSMutableDictionary*)urls;
--(NSArray*)files;
--(NSString*)directory;
+-(NSString*)temporaryDirectory;
 -(NSString*)installDirectory;
+-(void)finishInstallation;
 -(void)downloadAndInstall:(Controller*)controller;
--(void)install:(NSString*)file;
--(void)install:(NSString *)file forUrl:(NSURL *)url;
--(void)install:(NSString*)file isModule:(BOOL)isModule  withName:(NSString *)name withVersion:(NSString*)version;
--(void)download;
+-(void)install:(Job*)job;
+-(void)downloadJob:(Job*)job atIndex:(int)index;
 
 @end

@@ -52,6 +52,7 @@ namespace ti {
 			return strdup(absolute_path.c_str());
 		}
 
-		return NULL;
+		// TODO - add real logic to determine path for ti:://appmodulename/path urls
+		return "";
 	}
 }

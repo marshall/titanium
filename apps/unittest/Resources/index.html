@@ -8,7 +8,14 @@
 <script type="text/javascript" src="js/index.js"></script>
 
 <script>
-Titanium.TestDriver.init(Titanium.App.appURLToPath('app://'));
+try
+{
+	Titanium.TestDriver.init(Titanium.App.appURLToPath('app://'));
+}
+catch(e)
+{
+	alert("Exception setting up driver: "+e);
+}
 </script>
 
 <link rel="stylesheet" type="text/css" href="css/index.css" />

@@ -41,9 +41,9 @@ static gchar** urls = NULL;
 static gboolean in_sudo_mode;
 static GOptionEntry option_entries[] =
 {
-	{ "sysruntime", 0, 0, G_OPTION_ARG_FILENAME, &system_runtime_home, "The system runtime home", NULL},
-	{ "userruntime", 0, 0, G_OPTION_ARG_FILENAME, &user_runtime_home, "The user runtime home", NULL},
-	{ "apppath", 0, 0, G_OPTION_ARG_FILENAME, &application_path, "The application path", NULL},
+	{ "sysruntime", 0, 0, G_OPTION_ARG_STRING, &system_runtime_home, "The system runtime home", NULL},
+	{ "userruntime", 0, 0, G_OPTION_ARG_STRING, &user_runtime_home, "The user runtime home", NULL},
+	{ "apppath", 0, 0, G_OPTION_ARG_STRING, &application_path, "The application path", NULL},
 	{ "updatefile", 0, G_OPTION_FLAG_OPTIONAL_ARG, G_OPTION_ARG_FILENAME, &update_filename, "The filename of the update", NULL},
 	{ "type", 0, G_OPTION_FLAG_OPTIONAL_ARG, G_OPTION_ARG_STRING, &install_type, "Force installation type -- non-interactive", NULL},
 	{ "sudo", 0, G_OPTION_FLAG_OPTIONAL_ARG, G_OPTION_ARG_NONE, &in_sudo_mode, "Whether or not the installer is running inside a sudoed environment", NULL},
@@ -52,10 +52,10 @@ static GOptionEntry option_entries[] =
 };
 
 Installer* Installer::instance;
-string applicationPath;
-string systemRuntimeHome;
-string userRuntimeHome;
-string updateFilename;
+string Installer::applicationPath;
+string Installer::systemRuntimeHome;
+string Installer::userRuntimeHome;
+string Installer::updateFilename;
 vector<string> originalArgs;
 
 Installer::Installer(vector<Job*> jobs, int installType) :
@@ -792,25 +792,26 @@ int main(int argc, char* argv[])
 	GError *error = NULL;
 	GOptionContext *context;
 	context = g_option_context_new("- Installer utility");
+	g_option_context_set_help_enabled(context, TRUE);
 	g_option_context_add_main_entries(context, option_entries, NULL);
 	g_option_context_add_group(context, gtk_get_option_group(TRUE));
 	if (!g_option_context_parse(context, &argc, &argv, &error))
 	{
-		g_print ("option parsing failed: %s\n", error->message);
-		exit (1);
+		g_print("option parsing failed: %s\n", error->message);
+		exit(1);
 	}
 
 	Job::InitDownloader();
 	gtk_init(&argc, &argv);
 
-	applicationPath = application_path;
-	userRuntimeHome = user_runtime_home;
-	systemRuntimeHome = system_runtime_home;
+	Installer::applicationPath = application_path;
+	Installer::userRuntimeHome = user_runtime_home;
+	Installer::systemRuntimeHome = system_runtime_home;
 
 	if (update_filename == NULL)
-		updateFilename == string();
+		Installer::updateFilename == string();
 	else
-		updateFilename = update_filename;
+		Installer::updateFilename = update_filename;
 
 	vector<Job*> jobs;
 	if (urls != NULL)

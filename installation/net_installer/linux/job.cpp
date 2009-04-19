@@ -224,8 +224,7 @@ void Job::UnzipComponent()
 
 void Job::UnzipApplication()
 {
-	std::string outdir = Installer::instance->GetApplicationPath();
-	kroll::FileUtils::Unzip(this->out_filename, outdir);
+	kroll::FileUtils::Unzip(this->out_filename, Installer::applicationPath);
 }
 
 void Job::Unzip()
