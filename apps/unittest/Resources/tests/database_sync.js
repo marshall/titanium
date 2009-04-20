@@ -195,3 +195,5 @@ catch(e)
 {
 	Titanium.AppTest.addResult('database_sync.db_close',false,"failed with exception: "+e);
 }
+
+Titanium.AppTest.stop();

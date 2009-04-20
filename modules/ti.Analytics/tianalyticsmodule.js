@@ -10,10 +10,16 @@
 	var debug = false;
 	var initialized = false;
 	
-	function send(qsv,async)
+	function send(qsv,async,timeout)
 	{
 		try
 		{
+			// if we're offline we don't even attempt these
+			if (!Titanium.Network.online)
+			{
+				Titanium.API.debug("we're not online - skipping analytics");
+				return;
+			}
 			async = (typeof async=='undefined') ? true : async;
 			qsv.mid = Titanium.Platform.id;
 			qsv.guid = guid;
@@ -39,6 +45,10 @@
 			}
 			// this is asynchronous
 			var xhr = Titanium.Network.createHTTPClient();
+			if (timeout > 0)
+			{
+				xhr.setTimeout(timeout);
+			}
 			xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
 			if (debug)
 			{
@@ -71,7 +81,7 @@
 	
 	Titanium.API.register("ti.UI.stop",function(name)
 	{
-		send({'event':'ti.end'},false);
+		send({'event':'ti.end'},false,5000);
 	});
 	
 	Titanium.API.register("ti.UI.window.page.init",function(name,event)

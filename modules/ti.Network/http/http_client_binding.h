@@ -43,6 +43,7 @@ namespace ti
 		std::string filename;
 		std::string datastream;
 		std::string dirstream;
+		int timeout;
 		
 		static void Run(void*);
 		
@@ -53,6 +54,7 @@ namespace ti
 		DECLAREBOUNDMETHOD(SendFile)
 		DECLAREBOUNDMETHOD(SendDir)
 		DECLAREBOUNDMETHOD(GetResponseHeader)
+		DECLAREBOUNDMETHOD(SetTimeout)
 		
 		void ChangeState(int readyState);
 	};

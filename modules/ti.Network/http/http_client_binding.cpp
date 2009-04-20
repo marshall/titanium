@@ -19,6 +19,7 @@
 #include "Poco/Net/MessageHeader.h"
 #include "Poco/Net/FilePartSource.h"
 #include "Poco/File.h"
+#include "Poco/Timespan.h"
 #include "Poco/Net/HTMLForm.h"
 #include "Poco/Zip/Compress.h"
 #include "Poco/Zip/ZipCommon.h"
@@ -27,7 +28,8 @@ namespace ti
 {
 	HTTPClientBinding::HTTPClientBinding(Host* host) :
 		host(host),global(host->GetGlobalObject()),
-		thread(NULL),response(NULL),async(true),filestream(NULL)
+		thread(NULL),response(NULL),async(true),filestream(NULL),
+		timeout(30000)
 	{
 		/**
 		 * @tiapi(method=True,name=Network.HTTPClient.abort,since=0.3) abort an in progress connection
@@ -64,6 +66,12 @@ namespace ti
 		 * @tiresult(for=Network.HTTPClient.getResponseHeader,type=string) returns the response header by name
 		 */
 		this->SetMethod("getResponseHeader",&HTTPClientBinding::GetResponseHeader);
+
+		/**
+		 * @tiapi(method=True,name=Network.HTTPClient.setTimeout,since=0.4) set timeout when request will be aborted if not completed
+		 * @tiarg(for=Network.HTTPClient.setTimeout,type=integer,name=timeout) value in milliseconds
+		 */
+		this->SetMethod("setTimeout",&HTTPClientBinding::SetTimeout);
 
 		/**
 		 * @tiapi(property=True,type=integer,name=Network.HTTPClient.readyState,since=0.3) get the ready state property for the connection
@@ -164,6 +172,10 @@ namespace ti
 			if (path.empty()) path = "/";
 			binding->Set("connected",Value::NewBool(true));
 			Poco::Net::HTTPClientSession session(uri.getHost(), uri.getPort());
+			
+			// set the timeout for the request
+			Poco::Timespan to((long)binding->timeout,0L);
+			session.setTimeout(to);
 
 			std::string method = binding->method;
 			if (method.empty())
@@ -585,6 +597,10 @@ namespace ti
 				result->SetNull();
 			}
 		}
+	}
+	void HTTPClientBinding::SetTimeout(const ValueList& args, SharedValue result)
+	{
+		this->timeout = args.at(0)->ToInt();
 	}
 	void HTTPClientBinding::ChangeState(int readyState)
 	{
