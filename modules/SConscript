@@ -2,7 +2,11 @@
 Import('build')
 import os
 
-modules = ['App','UI','Network','Growl','Filesystem','Media','Desktop','Platform','Process','Notification','Monkey','Analytics','Database']
+modules = ['App','UI','Network','Growl','Filesystem','Media','Desktop','Platform','Process','Notification','Monkey','Analytics']
+
+# we're currently disabling on win32 until we get DLLs in
+if not build.is_win32():
+	modules+=['Database']
 
 for module in modules:
 	module = "ti.%s" % module
