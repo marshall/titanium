@@ -265,7 +265,7 @@ static int totalJobs = 0;
 	for (int i = 0; i < numJobs; i++)
 	{
 		Job* job = [jobs objectAtIndex:i];
-		[progressBar setDoubleValue:current];
+		[progressBar setDoubleValue:i];
 		[controller updateMessage:[NSString stringWithFormat:@"Installing %d of %d file%s", i, numJobs, ext]];
 		[controller install:job];
 	}
