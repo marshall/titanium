@@ -361,7 +361,6 @@ static int totalJobs = 0;
 
 	updateFile = nil;
 	NSString *appPath = nil;
-	NSString *runtimeHome = nil;
 	jobs = [[NSMutableArray alloc] init];
 
 	NSArray* args = [[NSProcessInfo processInfo] arguments];
@@ -380,18 +379,13 @@ static int totalJobs = 0;
 			[updateFile retain];
 			i++;
 		}
-		else if ([arg isEqual:@"-runtimeHome"] && count > i+1)
-		{
-			runtimeHome = [args objectAtIndex:i+1];
-			i++;
-		}
 		else
 		{
 			[jobs addObject:[[Job alloc] init: arg]];
 		}
 	}
 
-	if (appPath == nil || runtimeHome == nil)
+	if (appPath == nil)
 	{
 		[self bailWithMessage:@"Sorry, but the installer was not given enough information to continue."];
 	}
@@ -477,7 +471,16 @@ static int totalJobs = 0;
 	[self createDirectory: temporaryDirectory];
 	[temporaryDirectory retain];
 
-	installDirectory = runtimeHome;
+	// Check to see if we can write to the system install location -- if so install there
+	std::string systemRuntimeHome = FileUtils::GetSystemRuntimeHomeDirectory();
+	installDirectory = [NSString stringWithUTF8String:systemRuntimeHome.c_str()];
+
+	// Cannot write to system-wide install location -- install to user directory
+	if (![[NSFileManager defaultManager] isWritableFileAtPath:installDirectory])
+	{
+		std::string userRuntimeHome = FileUtils::GetUserRuntimeHomeDirectory();
+		installDirectory = [NSString stringWithUTF8String:userRuntimeHome.c_str()];
+	}
 	[installDirectory retain];
 
 	[NSApp arrangeInFront:introWindow];
