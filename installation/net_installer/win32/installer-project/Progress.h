@@ -2,7 +2,7 @@
  * Appcelerator Titanium - licensed under the Apache Public License 2
  * see LICENSE in the root folder for details on the license. 
  * Copyright (c) 2009 Appcelerator, Inc. All Rights Reserved.
- */	
+ */
 
 #pragma once
 #include <windows.h>
@@ -13,11 +13,12 @@
 class Progress
 {
 public:
-	Progress(void);
-	~Progress(void);
+	Progress();
+	~Progress();
 
 	void SetTitle(std::wstring title);
 	void SetCancelMessage(std::wstring message);
+	void SetLineText(DWORD line, std::string message, bool compact);
 	void SetLineText(DWORD line, std::wstring message, bool compact);
 	void Update(DWORD value, DWORD max);
 	void Show();
@@ -25,5 +26,5 @@ public:
 	bool IsCancelled();
 
 private:
-    IProgressDialog* dialog;
+	IProgressDialog* dialog;
 };
