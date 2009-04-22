@@ -32,8 +32,6 @@ static void destroy_cb(GtkWidget *widget, gpointer data);
 static int do_install_sudo();
 bool can_write_to_all_files(string);
 
-static gchar* system_runtime_home = NULL;
-static gchar* user_runtime_home = NULL;
 static gchar* application_path = NULL;
 static gchar* update_filename = NULL;
 static gchar* install_type;
@@ -41,8 +39,6 @@ static gchar** urls = NULL;
 static gboolean in_sudo_mode;
 static GOptionEntry option_entries[] =
 {
-	{ "sysruntime", 0, 0, G_OPTION_ARG_STRING, &system_runtime_home, "The system runtime home", NULL},
-	{ "userruntime", 0, 0, G_OPTION_ARG_STRING, &user_runtime_home, "The user runtime home", NULL},
 	{ "apppath", 0, 0, G_OPTION_ARG_STRING, &application_path, "The application path", NULL},
 	{ "updatefile", 0, G_OPTION_FLAG_OPTIONAL_ARG, G_OPTION_ARG_FILENAME, &update_filename, "The filename of the update", NULL},
 	{ "type", 0, G_OPTION_FLAG_OPTIONAL_ARG, G_OPTION_ARG_STRING, &install_type, "Force installation type -- non-interactive", NULL},
@@ -805,8 +801,8 @@ int main(int argc, char* argv[])
 	gtk_init(&argc, &argv);
 
 	Installer::applicationPath = application_path;
-	Installer::userRuntimeHome = user_runtime_home;
-	Installer::systemRuntimeHome = system_runtime_home;
+	Installer::userRuntimeHome = FileUtils::GetUserRuntimeHomeDirectory();
+	Installer::systemRuntimeHome = FileUtils::GetSystemRuntimeHomeDirectory();
 
 	if (update_filename == NULL)
 		Installer::updateFilename == string();

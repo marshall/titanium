@@ -15,10 +15,10 @@ namespace ti
 	Databases::Databases(std::string datadir) : datadir(datadir)
 	{
 		std::string dbpath = FileUtils::Join(datadir.c_str(),"Databases.db",NULL);
-		
+
 		static Logger& logger = Logger::Get("Database.Databases");
 		logger.Debug("DB Path = %s",dbpath.c_str());
-		
+
 		session = new DBSession(dbpath);
 
 		Statement select(this->session->GetSession());
@@ -51,9 +51,9 @@ namespace ti
 		Poco::UInt32 seq = 0;
 		select << "SELECT seq FROM sqlite_sequence WHERE name='Databases'", into(seq);
 		select.execute();
-		
+
 		++seq;
-		
+
 		std::string filename = Poco::format("%016u.db",(unsigned int)seq);
 		logger.Debug("creating new db: %s",filename.c_str());
 
@@ -69,26 +69,26 @@ namespace ti
 			Statement select(this->session->GetSession());
 			select << "INSERT INTO Origins (origin,quota) values (:origin,1720462881547374560)", use(origin), now;
 		}
-		
+
 		// create the DB file
 		std::string dbdir = FileUtils::Join(datadir.c_str(),origin.c_str(),NULL);
 		if (!FileUtils::IsDirectory(dbdir))
 		{
 			logger.Debug("creating new db dir: %s",dbdir.c_str());
-			FileUtils::CreateDirectory(dbdir);
+			FileUtils::CreateDirectory2(dbdir);
 		}
 		std::string fullpath = FileUtils::Join(dbdir.c_str(),filename.c_str(),NULL);
 		logger.Debug("path to new db : %s",fullpath.c_str());
-		
+
 		DBSession s(fullpath);
-		
+
 		// create the metadata table for WebKit
 		Statement select3(s.GetSession());
 		select3 << "CREATE TABLE __WebKitDatabaseInfoTable__ (key TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE,value TEXT NOT NULL ON CONFLICT FAIL)", now;
-		
+
 		Statement select4(s.GetSession());
 		select4 << "insert into __WebKitDatabaseInfoTable__ values ('WebKitDatabaseVersionKey','1.0')", now;
-		
+
 		return fullpath;
 	}
 
@@ -98,7 +98,7 @@ namespace ti
 		if (Exists(origin, name))
 		{
 			std::string path = Path(origin,name);
-			
+
 			Statement select(this->session->GetSession());
 			select << "DELETE FROM Databases WHERE origin=:origin AND name=:name", use(origin), use(name), now;
 

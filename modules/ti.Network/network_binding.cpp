@@ -209,7 +209,7 @@ namespace ti
 	}
 	void NetworkBinding::AddConnectivityListener(const ValueList& args, SharedValue result)
 	{
-		ArgUtils::VerifyArgsException("addConnectivityListener", args, "m");
+		args.VerifyException("addConnectivityListener", "m");
 		SharedKMethod target = args.at(0)->ToMethod();
 
 		Listener listener = Listener();
@@ -223,7 +223,7 @@ namespace ti
 		const ValueList& args,
 		SharedValue result)
 	{
-		ArgUtils::VerifyArgsException("removeConnectivityListener", args, "n");
+		args.VerifyException("removeConnectivityListener", "n");
 		int id = args.at(0)->ToInt();
 
 		std::vector<Listener>::iterator it = this->listeners.begin();
