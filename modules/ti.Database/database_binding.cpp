@@ -65,7 +65,7 @@ namespace ti
 	void DatabaseBinding::Open(const ValueList& args, SharedValue result)
 	{
 		//FIXME: name can be optional which is "unnamed"
-		ArgUtils::VerifyArgsException("open", args, "s?");
+		args.VerifyException("open", "s?");
 		
 		if (database)
 		{
@@ -99,7 +99,7 @@ namespace ti
 	}
 	void DatabaseBinding::Execute(const ValueList& args, SharedValue result)
 	{
-		ArgUtils::VerifyArgsException("execute", args, "s,?l");
+		args.VerifyException("execute", "s,?l");
 		
 		if (database == NULL)
 		{

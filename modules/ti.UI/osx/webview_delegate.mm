@@ -99,7 +99,7 @@
 		[webView setResourceLoadDelegate:self];
 		[webView setPolicyDelegate:self];
 #ifdef DEBUG
-		[webView setScriptDebugDelegate:self];
+//		[webView setScriptDebugDelegate:self];
 #endif
 		[WebScriptElement addScriptEvaluator:self];
 		

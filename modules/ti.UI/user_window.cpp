@@ -446,7 +446,7 @@ void UserWindow::_IsUsingChrome(const kroll::ValueList& args, kroll::SharedValue
 
 void UserWindow::_SetTopMost(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	ArgUtils::VerifyArgsException("setTopMost", args, "b");
+	args.VerifyException("setTopMost", "b");
 	bool b = args.at(0)->ToBool();
 	this->config->SetTopMost(b);
 	if (this->active)
@@ -469,7 +469,7 @@ void UserWindow::_IsTopMost(const kroll::ValueList& args, kroll::SharedValue res
 
 void UserWindow::_SetUsingChrome(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	ArgUtils::VerifyArgsException("setUsingChrome", args, "b");
+	args.VerifyException("setUsingChrome", "b");
 	bool b = args.at(0)->ToBool();
 	this->config->SetUsingChrome(b);
 	if (this->active)
@@ -504,7 +504,7 @@ void UserWindow::_IsFullScreen(const kroll::ValueList& args, kroll::SharedValue 
 
 void UserWindow::_SetFullScreen(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	ArgUtils::VerifyArgsException("setFullScreen", args, "b");
+	args.VerifyException("setFullScreen", "b");
 	bool b = args.at(0)->ToBool();
 	this->config->SetFullScreen(b);
 	if (this->active)
@@ -550,7 +550,7 @@ void UserWindow::_GetX(const kroll::ValueList& args, kroll::SharedValue result)
 
 void UserWindow::_SetX(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	// We don't use ArgUtils here because this method should be fast
+	// Manual argument type-checking for speed considerations
 	if (args.size() > 0 && args.at(0)->IsNumber())
 	{
 		double x = args.at(0)->ToNumber();
@@ -576,7 +576,7 @@ void UserWindow::_GetY(const kroll::ValueList& args, kroll::SharedValue result)
 
 void UserWindow::_SetY(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	// We don't use ArgUtils here because this method should be fast
+	// Manual argument type-checking for speed considerations
 	if (args.size() > 0 && args.at(0)->IsNumber())
 	{
 		double y = args.at(0)->ToNumber();
@@ -602,7 +602,7 @@ void UserWindow::_GetWidth(const kroll::ValueList& args, kroll::SharedValue resu
 
 void UserWindow::_SetWidth(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	// We don't use ArgUtils here because this method should be fast
+	// Manual argument type-checking for speed considerations
 	if (args.size() > 0 && args.at(0)->IsNumber())
 	{
 		double w = args.at(0)->ToNumber();
@@ -629,7 +629,7 @@ void UserWindow::_GetMinWidth(const kroll::ValueList& args, kroll::SharedValue r
 
 void UserWindow::_SetMinWidth(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	ArgUtils::VerifyArgsException("setMinWidth", args, "n");
+	args.VerifyException("setMinWidth", "n");
 
 	double mw = args.at(0)->ToNumber();
 	this->config->SetMinWidth(mw);
@@ -658,7 +658,7 @@ void UserWindow::_GetMaxWidth(const kroll::ValueList& args, kroll::SharedValue r
 
 void UserWindow::_SetMaxWidth(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	ArgUtils::VerifyArgsException("setMaxWidth", args, "n");
+	args.VerifyException("setMaxWidth", "n");
 
 	double mw = args.at(0)->ToNumber();
 	this->config->SetMaxWidth(mw);
@@ -687,7 +687,7 @@ void UserWindow::_GetHeight(const kroll::ValueList& args, kroll::SharedValue res
 
 void UserWindow::_SetHeight(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	// We don't use ArgUtils here because this method should be fast
+	// Manual argument type-checking for speed considerations
 	if (args.size() > 0 && args.at(0)->IsNumber())
 	{
 		double h = args.at(0)->ToNumber();
@@ -714,7 +714,7 @@ void UserWindow::_GetMinHeight(const kroll::ValueList& args, kroll::SharedValue 
 
 void UserWindow::_SetMinHeight(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	ArgUtils::VerifyArgsException("setMinHeight", args, "n");
+	args.VerifyException("setMinHeight", "n");
 
 	double mh = args.at(0)->ToNumber();
 	this->config->SetMinHeight(mh);
@@ -743,7 +743,7 @@ void UserWindow::_GetMaxHeight(const kroll::ValueList& args, kroll::SharedValue 
 
 void UserWindow::_SetMaxHeight(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	ArgUtils::VerifyArgsException("setMaxHeight", args, "n");
+	args.VerifyException("setMaxHeight", "n");
 
 	double mh = args.at(0)->ToNumber();
 	this->config->SetMaxHeight(mh);
@@ -836,7 +836,7 @@ void UserWindow::_GetTitle(const kroll::ValueList& args, kroll::SharedValue resu
 
 void UserWindow::_SetTitle(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	ArgUtils::VerifyArgsException("setTitle", args, "s");
+	args.VerifyException("setTitle", "s");
 
 	std::string title = args.at(0)->ToString();
 	this->config->SetTitle(title);
@@ -860,7 +860,7 @@ void UserWindow::_GetURL(const kroll::ValueList& args, kroll::SharedValue result
 
 void UserWindow::_SetURL(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	ArgUtils::VerifyArgsException("setURL", args, "s");
+	args.VerifyException("setURL", "s");
 
 	std::string url = args.at(0)->ToString();
 	url = AppConfig::Instance()->InsertAppIDIntoURL(url);
@@ -885,7 +885,7 @@ void UserWindow::_IsResizable(const kroll::ValueList& args, kroll::SharedValue r
 
 void UserWindow::_SetResizable(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	ArgUtils::VerifyArgsException("setResizable", args, "b");
+	args.VerifyException("setResizable", "b");
 	bool b = args.at(0)->ToBool();
 	this->config->SetResizable(b);
 	if (this->active)
@@ -908,7 +908,7 @@ void UserWindow::_IsMaximizable(const kroll::ValueList& args, kroll::SharedValue
 
 void UserWindow::_SetMaximizable(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	ArgUtils::VerifyArgsException("setMaximizable", args, "b");
+	args.VerifyException("setMaximizable", "b");
 	bool b = args.at(0)->ToBool();
 	this->config->SetMaximizable(b);
 	if (this->active)
@@ -931,7 +931,7 @@ void UserWindow::_IsMinimizable(const kroll::ValueList& args, kroll::SharedValue
 
 void UserWindow::_SetMinimizable(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	ArgUtils::VerifyArgsException("setMinimizable", args, "b");
+	args.VerifyException("setMinimizable", "b");
 	bool b = args.at(0)->ToBool();
 	this->config->SetMinimizable(b);
 	if (this->active)
@@ -954,7 +954,7 @@ void UserWindow::_IsCloseable(const kroll::ValueList& args, kroll::SharedValue r
 
 void UserWindow::_SetCloseable(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	ArgUtils::VerifyArgsException("setCloseable", args, "b");
+	args.VerifyException("setCloseable", "b");
 	bool b = args.at(0)->ToBool();
 	this->config->SetCloseable(b);
 	if (this->active)
@@ -977,7 +977,7 @@ void UserWindow::_IsVisible(const kroll::ValueList& args, kroll::SharedValue res
 
 void UserWindow::_SetVisible(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	ArgUtils::VerifyArgsException("setVisible", args, "b");
+	args.VerifyException("setVisible", "b");
 	bool b = args.at(0)->ToBool();
 	this->config->SetVisible(b);
 
@@ -1008,7 +1008,7 @@ void UserWindow::_GetTransparency(const kroll::ValueList& args, kroll::SharedVal
 
 void UserWindow::_SetTransparency(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	ArgUtils::VerifyArgsException("setTransparency", args, "n");
+	args.VerifyException("setTransparency", "n");
 	double t = args.at(0)->ToNumber();
 	t = UserWindow::Constrain(t, 0.0, 1.0);
 
@@ -1208,7 +1208,7 @@ void UserWindow::_OpenFiles(const ValueList& args, SharedValue result)
 
 void UserWindow::_AddEventListener(const ValueList& args, SharedValue result)
 {
-	ArgUtils::VerifyArgsException("addEventListener", args, "m");
+	args.VerifyException("addEventListener", "m");
 
 	SharedKMethod target = args.at(0)->ToMethod();
 	Listener listener = Listener();

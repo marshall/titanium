@@ -129,7 +129,7 @@ namespace ti
 		}
 		else
 		{
-			ArgUtils::VerifyArgsException("fieldName", args, "i");
+			args.VerifyException("fieldName", "i");
 			const std::string &str = rs->columnName(args.at(0)->ToInt());
 			result->SetString(str);
 		}
@@ -142,7 +142,7 @@ namespace ti
 		}
 		else
 		{
-			ArgUtils::VerifyArgsException("field", args, "i");
+			args.VerifyException("field", "i");
 			TransformValue(args.at(0)->ToInt(),result);
 		}
 	}
@@ -151,7 +151,7 @@ namespace ti
 		result->SetNull();
 		if (!rs.isNull())
 		{
-			ArgUtils::VerifyArgsException("fieldByName", args, "s");
+			args.VerifyException("fieldByName", "s");
 			std::string name = args.at(0)->ToString();
 			size_t count = rs->columnCount();
 			for (size_t i = 0; i<count; i++)
