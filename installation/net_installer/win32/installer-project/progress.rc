@@ -137,7 +137,7 @@ END
 // Bitmap
 //
 
-IDB_BITMAP1             BITMAP                  "C:\\Users\\Martin Robinson\\Documents\\Downloads\\titanium.bmp"
+IDB_BITMAP1             BITMAP                  "titanium.bmp"
 #endif    // English (U.S.) resources
 /////////////////////////////////////////////////////////////////////////////
 
