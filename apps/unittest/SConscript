@@ -14,7 +14,8 @@ t = build.env.PackageApp('#unittest-target',
 	FULLNAME='Titanium Unit Test App',
 	ID='com.titaniumapp.unittest.driver',
 	GUID='D83B08F4-B43B-4909-9FEE-336CDB44750B',
-	RESOURCES=[common_dir])
+	RESOURCES=[common_dir],
+	INSTALLED=True)
 Depends(t, build.build_targets + build.staging_targets)
 Alias('unittest', t)
 
