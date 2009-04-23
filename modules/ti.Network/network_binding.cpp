@@ -94,13 +94,13 @@ namespace ti
 		 * @tiapi(method=True,name=Network.SetProxy,since=0.2) sets the proxy parameters to the system.
 		 * @tiarg(for=Network.SetProxy,type=integer,name=id) bool indicating success/failute
 		 */
-		this->SetMethod("SetProxy",&NetworkBinding::SetProxy);
+		this->SetMethod("setProxy",&NetworkBinding::SetProxy);
 
 		/**
 		 * @tiapi(method=True,name=Network.GetProxy,since=0.2)
 		 * @tiarg(for=Network.GetProxy,type=integer,name=id) returns the Proxy object
 		 */
-		this->SetMethod("GetProxy",&NetworkBinding::GetProxy);
+		this->SetMethod("getProxy",&NetworkBinding::GetProxy);
 
 		// NOTE: this is only used internally and shouldn't be published
 		this->SetMethod("FireOnlineStatusChange",&NetworkBinding::FireOnlineStatusChange);
