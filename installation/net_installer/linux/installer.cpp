@@ -47,6 +47,21 @@ static GOptionEntry option_entries[] =
 	{ NULL }
 };
 
+void show_error(string error, GtkWidget* window = NULL);
+
+void show_error(string error, GtkWidget* window)
+{
+	GtkWidget* dialog = gtk_message_dialog_new(
+		GTK_WINDOW(window),
+		GTK_DIALOG_MODAL,
+		GTK_MESSAGE_ERROR,
+		GTK_BUTTONS_CLOSE,
+		"%s",
+		error.c_str());
+	gtk_dialog_run(GTK_DIALOG(dialog));
+	gtk_widget_destroy(dialog);
+}
+
 Installer* Installer::instance;
 string Installer::applicationPath;
 string Installer::systemRuntimeHome;
@@ -648,15 +663,7 @@ void Installer::ShowError()
 {
 	if (this->error != "")
 	{
-		GtkWidget* dialog = gtk_message_dialog_new(
-			GTK_WINDOW(this->window),
-			GTK_DIALOG_MODAL,
-			GTK_MESSAGE_ERROR,
-			GTK_BUTTONS_CLOSE,
-			"%s",
-			this->error.c_str());
-		gtk_dialog_run(GTK_DIALOG(dialog));
-		gtk_widget_destroy(dialog);
+		show_error(this->error, this->window);
 	}
 }
 
@@ -793,15 +800,19 @@ int main(int argc, char* argv[])
 	g_option_context_set_help_enabled(context, TRUE);
 	g_option_context_add_main_entries(context, option_entries, NULL);
 	g_option_context_add_group(context, gtk_get_option_group(TRUE));
-	if (!g_option_context_parse(context, &argc, &argv, &error))
+
+	bool args_good = g_option_context_parse(context, &argc, &argv, &error) != 0;
+
+	gtk_init(&argc, &argv);
+	if (!args_good || application_path == NULL)
 	{
-		g_print("option parsing failed: %s\n", error->message);
-		exit(1);
+		string msg = "The installer was not given enough information to continue. ";
+		if (!args_good) msg += error->message;
+		show_error(msg);
+		return 1;
 	}
 
 	Job::InitDownloader();
-	gtk_init(&argc, &argv);
-
 	Installer::applicationPath = application_path;
 	Installer::userRuntimeHome = FileUtils::GetUserRuntimeHomeDirectory();
 	Installer::systemRuntimeHome = FileUtils::GetSystemRuntimeHomeDirectory();
