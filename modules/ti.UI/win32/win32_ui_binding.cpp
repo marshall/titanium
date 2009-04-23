@@ -17,12 +17,28 @@ namespace ti
 {
 	HMENU Win32UIBinding::contextMenuInUseHandle = NULL;
 
+
 	Win32UIBinding::Win32UIBinding(Host *host) : UIBinding(host)
 	{
+
+		// We're not using registration-free COM because it requires that
+		// the DLL be in a subdirectory of the exe. Use Activation Context
+		// API instead. We just need to point it to the .manifest file as below.
+		ACTCTX actctx; 
+		ZeroMemory(&actctx, sizeof(actctx)); 
+		actctx.cbSize = sizeof(actctx); 
+
+		std::string source = host->GetRuntimePath();
+		source = FileUtils::Join(source.c_str(), "WebKit.manifest", NULL);
+		actctx.lpSource = source.c_str(); // Path to the Side-by-Side Manifest File 
+		this->pActCtx = CreateActCtx(&actctx); 
+		ActivateActCtx(pActCtx, &this->lpCookie);
 	}
 
 	Win32UIBinding::~Win32UIBinding()
 	{
+   		DeactivateActCtx(0, this->lpCookie); 
+		ReleaseActCtx(this->pActCtx);
 	}
 
 	SharedUserWindow Win32UIBinding::CreateWindow(

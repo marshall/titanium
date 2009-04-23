@@ -12,8 +12,11 @@ build.add_thirdparty(Env, 'poco')
 Env.Append(CPPPATH=['C:\\Program Files\\Microsoft Visual Studio 8\\VC\\atlmfc\\include'])
 
 ccf = Env['CCFLAGS']
-ccf.remove('/MD')
+if '/MD' in ccf: ccf.remove('/MD')
+#if '/MT' in ccf: ccf.remove('/MT')
 ccf.append('/MT')
+ccf.append('/Os')
+ccf.append('/O1')
 Env.Append(CCFLAGS=ccf)
 
 sources = Glob("installer-project/*.cpp") + Env.RES("installer-project/progress.rc")

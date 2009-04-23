@@ -30,6 +30,7 @@ HINSTANCE mainInstance;
 HICON mainIcon;
 
 Application* app;
+string exePath;
 string updateFile;
 string appPath;
 string runtimeHome;
@@ -37,6 +38,15 @@ string appInstallPath;
 string componentInstallPath;
 string temporaryPath;
 bool doInstall = false;
+bool installStartMenuIcon = false;
+
+enum IType
+{
+	RUNTIME,
+	MODULE,
+	UPDATE,
+	UNKNOWN
+};
 
 wstring StringToWString(string in)
 {
@@ -89,6 +99,42 @@ std::wstring ParseQueryParam(string uri8, string key8)
 	return L"";
 }
 
+void MyCopyRecursive(string &dir, string &dest, string exclude)
+{
+	if (!FileUtils::IsDirectory(dest))
+	{
+		FileUtils::CreateDirectory(dest);
+	}
+
+	WIN32_FIND_DATA findFileData;
+	string q(dir+"\\*");
+	HANDLE hFind = FindFirstFile(q.c_str(), &findFileData);
+	if (hFind != INVALID_HANDLE_VALUE)
+	{
+		do
+		{
+			string filename = findFileData.cFileName;
+			if (filename == "." || filename == ".."
+				 || (!exclude.empty() && filename == exclude))
+				 continue;
+
+			string srcName = dir + "\\" + filename;
+			string destName = dest + "\\" + filename;
+
+			if (FileUtils::IsDirectory(srcName))
+			{
+				FileUtils::CreateDirectory(destName);
+				MyCopyRecursive(srcName, destName, string());
+			}
+			else
+			{
+				CopyFileA(srcName.c_str(), destName.c_str(), FALSE);
+			}
+		} while (FindNextFile(hFind, &findFileData));
+		FindClose(hFind);
+	}
+}
+
 std::wstring ProgressString(DWORD size, DWORD total)
 {
 	char str[1024];
@@ -118,7 +164,7 @@ std::wstring ProgressString(DWORD size, DWORD total)
 	return std::wstring(wstr);
 }
 
-bool DownloadURL(Progress *p, HINTERNET hINet, std::wstring url, std::wstring outFilename)
+bool DownloadURL(Progress *p, HINTERNET hINet, std::wstring url, std::wstring outFilename, std::wstring intro)
 {
 	WCHAR szDecodedUrl[INTERNET_MAX_URL_LENGTH];
 	DWORD cchDecodedUrl = INTERNET_MAX_URL_LENGTH;
@@ -183,7 +229,7 @@ bool DownloadURL(Progress *p, HINTERNET hINet, std::wstring url, std::wstring ou
 		buffer[dwRead] = '\0';
 		total+=dwRead;
 		ostr.write(buffer, dwRead);
-		wsprintfW(msg,L"Downloaded %d KB",total/1024);
+		wsprintfW(msg,L"%s - %d KB", intro.c_str(), total/1024);
 		p->SetLineText(2,msg,true);
 	}
 	ostr.close();
@@ -207,17 +253,27 @@ void CreateDirectoryTree(string dir)
 	}
 }
 
-void Install(string type, string name, string version, string path)
+void Install(IType type, string name, string version, string path)
 {
 	string destination;
-	if (type == "modules")
+	if (type == MODULE)
+	{
 		destination = FileUtils::Join(
-			componentInstallPath.c_str(), "modules", OS_NAME, name, version, NULL);
-	else if (type == "runtime")
+			componentInstallPath.c_str(), "modules", OS_NAME, name.c_str(), version.c_str(), NULL);
+	}
+	else if (type == RUNTIME)
+	{
 		destination = FileUtils::Join(
-			componentInstallPath.c_str(), "runtime", OS_NAME, version, NULL);
-	else if (type == "update")
+			componentInstallPath.c_str(), "runtime", OS_NAME, version.c_str(), NULL);
+	}
+	else if (type == UPDATE)
+	{
 		destination == app->path;
+	}
+	else
+	{
+		return;
+	}
 
 	// Recursively create directories
 	CreateDirectoryTree(destination);
@@ -226,22 +282,20 @@ void Install(string type, string name, string version, string path)
 
 void ProcessUpdate(Progress *p, HINTERNET hINet)
 {
-	string type = "update";
 	string version = app->version;
 	string name = app->name;
 	string url = app->GetUpdateURL();
 
-	string path = type + "-";
-	path.append("update-");
-	path.append(version + ".zip");
+	string path = "update-update.zip";
 	path = FileUtils::Join(temporaryPath.c_str(), path.c_str(), NULL);
 
 		// Figure out the path and destination
-	bool downloaded = DownloadURL(p, hINet, StringToWString(url), StringToWString(path));
+	string intro = string("Downloading application update");
+	bool downloaded = DownloadURL(p, hINet, StringToWString(url), StringToWString(path), StringToWString(intro));
 	if (downloaded)
 	{
 		p->SetLineText(2, string("Installing ") + name + "-" + version + "...", true);
-		Install(type, name, version, path);
+		Install(UPDATE, name, version, path);
 	}
 }
 
@@ -253,22 +307,32 @@ void ProcessURL(string url, Progress *p, HINTERNET hINet)
 	string uuid = WStringToString(wuuid);
 	string name = WStringToString(wname);
 	string version = WStringToString(wversion);
-	string type = "";
+	IType type = UNKNOWN;
 
+	string path = "";
 	if (string(RUNTIME_UUID) == uuid)
-		type = "runtime";
+	{
+		type = RUNTIME;
+		path = "runtime-";
+	}
 	else if (string(MODULE_UUID) == uuid)
-		type = "modules";
+	{
+		type = MODULE;
+		path = "module-";
+	}
 	else
+	{
 		return;
+	}
 
-	string path = type + "-";
 	path.append(name + "-");
 	path.append(version + ".zip");
 	path = FileUtils::Join(temporaryPath.c_str(), path.c_str(), NULL);
 
 	// Figure out the path and destination
-	bool downloaded = DownloadURL(p, hINet, StringToWString(url), StringToWString(path));
+	string intro = string("Downloading ") + name + " " + version;
+	bool downloaded = DownloadURL(p, hINet, StringToWString(url), StringToWString(path), StringToWString(intro));
+
 	if (downloaded)
 	{
 		p->SetLineText(2, string("Installing ") + name + "-" + version + "...", true);
@@ -276,29 +340,25 @@ void ProcessURL(string url, Progress *p, HINTERNET hINet)
 	}
 }
 
-void ProcessFile(string path, Progress *p)
+void ProcessFile(string fullPath, Progress *p)
 {
-	string type = "";
+	IType type = UNKNOWN;
 	string name = "";
 	string version = "";
 
-	size_t start, end;
-	size_t lastSlash = path.find_last_of("\\");
-	if (lastSlash == std::string::npos)
-	{
-		lastSlash = -1;
-	}
-	string basename = path.substr(lastSlash + 1);
+	string path = FileUtils::Basename(fullPath);
 
+	size_t start, end;
 	end = path.find("-");
 	std::string partOne = path.substr(0, end);
 	if (partOne == "runtime")
 	{
-		type = name = "runtime";
+		type = RUNTIME;
+		name = "runtime";
 	}
 	else if (partOne == "module")
 	{
-		type = "modules";
+		type = MODULE;
 		start = end + 1;
 		end = path.find("-", start);
 		name = path.substr(start, end - start);
@@ -309,7 +369,7 @@ void ProcessFile(string path, Progress *p)
 	version = path.substr(start, end - start);
 
 	p->SetLineText(2, string("Installing ") + name + "-" + version + "...", true);
-	Install(type, name, version, path);
+	Install(type, name, version, fullPath);
 }
 
 bool InstallApplication(Progress *p)
@@ -318,15 +378,15 @@ bool InstallApplication(Progress *p)
 	{
 		p->SetLineText(2, string("Installing to ") + appInstallPath, true);
 		FileUtils::CreateDirectory(appInstallPath);
-		FileUtils::CopyRecursive(app->path, appInstallPath);
+		MyCopyRecursive(app->path, appInstallPath, "dist");
 	}
 	return true;
 }
 
-
 bool HandleAllJobs(vector<string> jobs, Progress* p)
 {
 	temporaryPath = FileUtils::GetTempDirectory();
+	FileUtils::CreateDirectory(temporaryPath);
 
 	int count = jobs.size();
 	bool success = true;
@@ -359,6 +419,9 @@ bool HandleAllJobs(vector<string> jobs, Progress* p)
 			ProcessFile(url, p);
 		else
 			ProcessURL(url, p, hINet);
+
+		if (p->IsCancelled())
+			return false;
 	}
 
 	// done with iNet - so close it
@@ -370,6 +433,45 @@ bool HandleAllJobs(vector<string> jobs, Progress* p)
 	if (!temporaryPath.empty()  && FileUtils::IsDirectory(temporaryPath))
 		FileUtils::DeleteDirectory(temporaryPath);
 	return success;
+}
+
+bool CreateLink(LPCSTR lpszPathObj, LPCSTR lpszPathLink, LPCSTR lpszDesc) 
+{ 
+	HRESULT hres; 
+	IShellLink* psl; 
+ 
+	// Get a pointer to the IShellLink interface. 
+	hres = CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER, IID_IShellLink, (LPVOID*)&psl); 
+	if (SUCCEEDED(hres)) 
+	{ 
+		IPersistFile* ppf; 
+ 
+		// Set the path to the shortcut target and add the description. 
+		psl->SetPath(lpszPathObj); 
+		psl->SetDescription(lpszDesc); 
+ 
+		// Query IShellLink for the IPersistFile interface for saving the 
+		// shortcut in persistent storage. 
+		hres = psl->QueryInterface(IID_IPersistFile, (LPVOID*)&ppf); 
+ 
+		if (SUCCEEDED(hres)) 
+		{ 
+			WCHAR wsz[MAX_PATH]; 
+ 
+			// Ensure that the string is Unicode. 
+			MultiByteToWideChar(CP_ACP, 0, lpszPathLink, -1, wsz, MAX_PATH); 
+			
+			// Add code here to check return value from MultiByteWideChar 
+			// for success.
+ 
+			// Save the link by calling IPersistFile::Save. 
+			hres = ppf->Save(wsz, TRUE); 
+			ppf->Release(); 
+			return true;
+		} 
+		psl->Release(); 
+	} 
+	return false;
 }
 
 bool FinishInstallation()
@@ -391,6 +493,19 @@ bool FinishInstallation()
 	if(!updateFile.empty() && FileUtils::IsFile(updateFile))
 	{
 		DeleteFile(updateFile.c_str());
+	}
+
+	if (installStartMenuIcon && !app->IsInstalled())
+	{
+		string newExe = FileUtils::Basename(exePath);
+		newExe = FileUtils::Join(appInstallPath.c_str(), newExe.c_str(), NULL);
+		char path[MAX_PATH];
+		if (SHGetSpecialFolderPath(NULL, path, CSIDL_PROGRAMS, TRUE))
+		{
+			string linkPath = app->name + ".lnk";
+			linkPath = FileUtils::Join(path, linkPath.c_str(), NULL);
+			CreateLink(newExe.c_str(), linkPath.c_str(), "");
+		}
 	}
 
 	return true;
@@ -417,6 +532,7 @@ int WINAPI WinMain(
 	int argc = __argc;
 	char** argv = __argv;
 	vector<string> jobs;
+	string jobsFile;
 
 	for (int i = 1; i < argc; i++)
 	{
@@ -426,6 +542,11 @@ int WINAPI WinMain(
 			i++;
 			appPath = argv[i];
 		}
+		else if (arg == "-exePath" && argc > i+1)
+		{
+			i++;
+			exePath = argv[i];
+		}
 		else if (arg == "-updateFile" && argc > i+1)
 		{
 			i++;
@@ -434,11 +555,11 @@ int WINAPI WinMain(
 		}
 		else
 		{
-			jobs.push_back(arg);
+			jobsFile = arg;
 		}
 	}
 
-	if (appPath.empty())
+	if (appPath.empty() || exePath.empty())
 	{
 		ShowError("The installer was not given enough information to continue.");
 		return __LINE__;
@@ -469,6 +590,20 @@ int WINAPI WinMain(
 	}
 
 	componentInstallPath = FileUtils::GetSystemRuntimeHomeDirectory();
+
+	// Read all jobs from the jobs file
+	if (!jobsFile.empty() && FileUtils::IsFile(jobsFile))
+	{
+		std::ifstream file(jobsFile.c_str());
+		if (!file.bad() && !file.fail() && !file.eof())
+		{
+			string line;
+			while(!std::getline(file, line).eof())
+			{
+				jobs.push_back(line);
+			}
+		}
+	}
 
 	// Major WTF here, Redmond.
 	LoadLibrary(TEXT("Riched20.dll"));

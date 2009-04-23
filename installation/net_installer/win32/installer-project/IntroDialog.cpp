@@ -25,6 +25,7 @@ extern string appPath;
 extern string runtimeHome;
 extern string appInstallPath;
 extern bool doInstall;
+extern bool installStartMenuIcon;
 
 extern wstring StringToWString(string);
 
@@ -119,6 +120,17 @@ void IntializeDialog(HWND hwnd)
 
 	// Set intro dialog icon
 	SendMessage(hwnd, WM_SETICON, (WPARAM)true, (LPARAM)mainIcon);
+
+	// Center the dialog
+	HDC hScreenDC = CreateCompatibleDC(NULL);
+	int screenWidth = GetDeviceCaps(hScreenDC, HORZRES);
+	int screenHeight = GetDeviceCaps(hScreenDC, VERTRES);
+	DeleteDC(hScreenDC);
+	RECT dialogRect;
+	GetWindowRect(hwnd, &dialogRect);
+	int centerX = ( screenWidth - (dialogRect.right - dialogRect.left)) / 2;
+	int centerY = ( screenHeight - (dialogRect.bottom - dialogRect.top)) / 2;
+	SetWindowPos(hwnd, NULL, centerX, centerY-20, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
 }
 
 void InstallLocationClicked()
@@ -166,6 +178,10 @@ BOOL CALLBACK DialogProc(
 			else if (controlID == IDC_RUN && command == BN_CLICKED)
 			{
 				doInstall = true;
+				LRESULT checked = SendMessage(startMenuCheck, BM_GETCHECK, 0, 0);
+				if (checked == BST_CHECKED)
+					installStartMenuIcon = true;
+
 				DestroyWindow(hwnd);
 			}
 			else if (controlID == IDC_INSTALL_LOCATION_BUTTON && command == BN_CLICKED)
