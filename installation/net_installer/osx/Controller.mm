@@ -473,12 +473,18 @@ static int totalJobs = 0;
 
 	// Check to see if we can write to the system install location -- if so install there
 	std::string systemRuntimeHome = FileUtils::GetSystemRuntimeHomeDirectory();
-	installDirectory = [NSString stringWithUTF8String:systemRuntimeHome.c_str()];
+	std::string userRuntimeHome = FileUtils::GetUserRuntimeHomeDirectory();
 
-	// Cannot write to system-wide install location -- install to user directory
-	if (![[NSFileManager defaultManager] isWritableFileAtPath:installDirectory])
+	installDirectory = [NSString stringWithUTF8String:systemRuntimeHome.c_str()];
+	if ((!FileUtils::IsDirectory(systemRuntimeHome) && 
+			[[NSFileManager defaultManager] isWritableFileAtPath:[installDirectory stringByDeletingLastPathComponent]]) ||
+		[[NSFileManager defaultManager] isWritableFileAtPath:installDirectory])
 	{
-		std::string userRuntimeHome = FileUtils::GetUserRuntimeHomeDirectory();
+		installDirectory = [NSString stringWithUTF8String:systemRuntimeHome.c_str()];
+	}
+	else
+	{
+		// Cannot write to system-wide install location -- install to user directory
 		installDirectory = [NSString stringWithUTF8String:userRuntimeHome.c_str()];
 	}
 	[installDirectory retain];
