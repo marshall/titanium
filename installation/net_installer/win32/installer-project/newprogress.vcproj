@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
-	Name="newprogress"
+	Name="installer-project"
 	ProjectGUID="{CB4086A7-AE21-4C43-B5EA-9CB99661E592}"
 	RootNamespace="newprogress"
 	Keyword="Win32Proj"
@@ -54,6 +54,7 @@
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
+				AdditionalIncludeDirectories="&quot;C:\Users\Martin Robinson\titanium\kroll\api\utils&quot;;&quot;C:\Users\Martin Robinson\titanium\kroll\api&quot;"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
@@ -177,7 +178,11 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\main.cpp"
+				RelativePath=".\IntroDialog.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Main.cpp"
 				>
 			</File>
 			<File
@@ -190,6 +195,10 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
+			<File
+				RelativePath=".\IntroDialog.h"
+				>
+			</File>
 			<File
 				RelativePath=".\Progress.h"
 				>
@@ -210,6 +219,10 @@
 			</File>
 			<File
 				RelativePath=".\progress.rc"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\Documents\Downloads\titanium.bmp"
 				>
 			</File>
 			<File
