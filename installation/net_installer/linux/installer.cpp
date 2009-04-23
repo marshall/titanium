@@ -253,7 +253,8 @@ void Installer::CreateIntroView()
 			"This application may need to download and install "
 			"additional components. Where should they be installed?");
 		gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
-		gtk_widget_set_size_request(label, width - 10, -1);
+		gtk_widget_set_size_request(label, width - 5, -1);
+		gtk_misc_set_alignment(GTK_MISC(label), 0.0, 1.0);
 
 		// Install type combobox
 		GtkListStore* store = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING);
@@ -280,6 +281,7 @@ void Installer::CreateIntroView()
 			GTK_CELL_LAYOUT(installCombo), renderer,
 			"text", 1, NULL);
 		gtk_combo_box_set_active(GTK_COMBO_BOX(installCombo), 0);
+		gtk_widget_set_size_request(installCombo, width - 5, -1);
 
 		/* Pack label and combobox into vbox */
 		GtkWidget* installTypeBox = gtk_vbox_new(FALSE, 0);
@@ -299,7 +301,7 @@ void Installer::CreateIntroView()
 	GtkWidget* securityImage = gtk_image_new_from_stock(
 		GTK_STOCK_DIALOG_WARNING,
 		GTK_ICON_SIZE_LARGE_TOOLBAR);
-	gtk_box_pack_start(GTK_BOX(securityBox), securityImage, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(securityBox), securityImage, FALSE, FALSE, 3);
 
 	GtkWidget* securityLabel = gtk_label_new(
 		"<span style=\"italic\">"
