@@ -27,6 +27,7 @@ namespace ti
 		std::string origin;
 		
 		std::string GetSecurityOrigin(std::string &appid);
+		void Convert(Statement &select, SharedValue arg, std::vector<SharedPtr <void*> >& mem);
 
 		DECLAREBOUNDMETHOD(Open);
 		DECLAREBOUNDMETHOD(Execute);

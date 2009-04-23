@@ -6,9 +6,103 @@
 #include <kroll/kroll.h>
 #include "database_binding.h"
 #include "resultset_binding.h"
+#include <Poco/Data/AbstractBinding.h>
 
 namespace ti
 {
+	/**
+	 * this is a class that manages Value to Data bindings
+	 * and manages the memory that needs to be created during the
+	 * lifecycle of the Statement and then frees the memory once
+	 * this binding is destructed
+	 */
+	class ValueBinding
+	{
+	public:
+		void convert (Statement &select, SharedValue arg)
+		{
+			if (arg->IsString())
+			{
+				std::string *s = new std::string(arg->ToString()); 
+				select , use(*s);
+				strings.push_back(s);
+			}
+			else if (arg->IsInt())
+			{
+				int *i = new int(arg->ToInt());
+				select , use(*i);
+				ints.push_back(i);
+			}
+			else if (arg->IsDouble())
+			{
+				double *d = new double(arg->ToDouble());
+				select , use(*d);
+				doubles.push_back(d);
+			}
+			else if (arg->IsBool())
+			{
+				bool *b = new bool(arg->ToBool());
+				select , use(*b);
+				bools.push_back(b);
+			}
+			else
+			{
+				char msg[255];
+				sprintf("unknown supported type: %s for argument",arg->ToTypeString());
+				throw ValueException::FromString(msg);
+			}
+		} 
+		ValueBinding() {}
+		~ValueBinding()
+		{
+			if (strings.size()>0)
+			{
+				std::vector<std::string*>::iterator i = strings.begin();
+				while(i!=strings.end())
+				{
+					std::string *s = (*i);
+					delete s;
+					i++;
+				}
+			}
+			if (ints.size()>0)
+			{
+				std::vector<int*>::iterator i = ints.begin();
+				while(i!=ints.end())
+				{
+					int *s = (*i);
+					delete s;
+					i++;
+				}
+			}
+			if (doubles.size()>0)
+			{
+				std::vector<double*>::iterator i = doubles.begin();
+				while(i!=doubles.end())
+				{
+					double *s = (*i);
+					delete s;
+					i++;
+				}
+			}
+			if (bools.size()>0)
+			{
+				std::vector<bool*>::iterator i = bools.begin();
+				while(i!=bools.end())
+				{
+					bool *s = (*i);
+					delete s;
+					i++;
+				}
+			}
+		}
+	private:
+		std::vector<std::string*> strings;
+		std::vector<int*> ints;
+		std::vector<double*> doubles;
+		std::vector<bool*> bools;
+	};
+	
 	DatabaseBinding::DatabaseBinding(Host *host) : host(host), database(NULL), session(NULL)
 	{
 		/**
@@ -97,10 +191,37 @@ namespace ti
 		}
 		session = new DBSession(path);
 	}
+	void DatabaseBinding::Convert(Statement &select, SharedValue arg, std::vector<SharedPtr <void*> >& mem)
+	{
+		if (arg->IsString())
+		{
+			std::string *s = new std::string(arg->ToString()); 
+			select , use(*s);
+		}
+		else if (arg->IsInt())
+		{
+			int *i = new int(arg->ToInt());
+			select , use(*i);
+		}
+		else if (arg->IsDouble())
+		{
+			double *d = new double(arg->ToDouble());
+			select , use(*d);
+		}
+		else if (arg->IsBool())
+		{
+			bool *b = new bool(arg->ToBool());
+			select , use(*b);
+		}
+		else
+		{
+			char msg[255];
+			sprintf("unknown supported type: %s for argument",arg->ToTypeString());
+			throw ValueException::FromString(msg);
+		}
+	}
 	void DatabaseBinding::Execute(const ValueList& args, SharedValue result)
 	{
-		args.VerifyException("execute", "s,?l");
-		
 		if (database == NULL)
 		{
 			throw ValueException::FromString("no database opened");
@@ -112,50 +233,39 @@ namespace ti
 		
 		Statement select(session->GetSession());
 		
-		logger.Debug("After creating statement");
-		
-		
 		try
 		{
+			ValueBinding binding;
+			
 			select << sql;
 			
 			if (args.size()>1)
 			{
+				
 				for (size_t c=1;c<args.size();c++)
 				{
-					SharedValue arg = args.at(c);
-					if (arg->IsString())
+					SharedValue anarg = args.at(c);
+					if (anarg->IsList())
 					{
-						std::string s = arg->ToString();
-						select , use(s);
-					}
-					else if (arg->IsInt())
-					{
-						int i = arg->ToInt();
-						select , use(i);
-					}
-					else if (arg->IsDouble())
-					{
-						double d = arg->ToDouble();
-						select , use(d);
-					}
-					else if (arg->IsBool())
-					{
-						bool b = arg->ToBool();
-						select , use(b);
+						SharedKList list = anarg->ToList();
+						for (size_t a=0;a<list->Size();a++)
+						{
+							SharedValue arg = list->At(a);
+							binding.convert(select,arg);
+						}
 					}
 					else
 					{
-						char msg[255];
-						sprintf("unknown supported type: %s for argument %d",arg->ToTypeString(),c);
-						throw ValueException::FromString(msg);
+						binding.convert(select,anarg);
 					}
 				}
 			}
 			Poco::UInt32 count = select.execute();
-			logger.Debug("sql returned: %d rows for result",count);
-			SET_INT_PROP("rowsAffected",count);
 
+			logger.Debug("sql returned: %d rows for result",count);
+
+			SET_INT_PROP("rowsAffected",count);
+			
 			if (count > 0)
 			{
 				RecordSet rs(select);

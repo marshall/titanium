@@ -173,6 +173,95 @@ catch(e)
 	Titanium.AppTest.addResult('database_sync.select_multiple',false,"failed with exception: "+e);
 }
 
+try
+{
+	var rs = db.execute("select * from TEST where name = ?",['c']);
+	Titanium.AppTest.addResult('database_sync.select_parameters',db.rowsAffected==1);
+	Titanium.AppTest.addResult('database_sync.select_parameters.fieldcount',rs.fieldCount()==2,'was: '+rs.fieldCount());
+	Titanium.AppTest.addResult('database_sync.select_parameters.field_0',rs.field(0)=='c');
+	Titanium.AppTest.addResult('database_sync.select_parameters.field_1',rs.field(1)==567);
+	rs.close();
+}
+catch(e)
+{
+	Titanium.AppTest.addResult('database_sync.select_parameters',false,'Exception:'+e);
+}
+
+try
+{
+	var rs = db.execute("select * from TEST where name = ?",'c');
+	Titanium.AppTest.addResult('database_sync.select_parameters_comma',db.rowsAffected==1);
+	Titanium.AppTest.addResult('database_sync.select_parameters_comma.fieldcount',rs.fieldCount()==2,'was: '+rs.fieldCount());
+	Titanium.AppTest.addResult('database_sync.select_parameters_comma.field_0',rs.field(0)=='c');
+	Titanium.AppTest.addResult('database_sync.select_parameters_comma.field_1',rs.field(1)==567);
+	rs.close();
+}
+catch(e)
+{
+	Titanium.AppTest.addResult('database_sync.select_parameters_comma',false,'Exception:'+e);
+}
+
+try
+{
+	var rs = db.execute("select * from TEST where name = ? and size > ?",'c',1);
+	Titanium.AppTest.addResult('database_sync.select_parameters_multicomma',db.rowsAffected==1);
+	Titanium.AppTest.addResult('database_sync.select_parameters_multicomma.fieldcount',rs.fieldCount()==2,'was: '+rs.fieldCount());
+	Titanium.AppTest.addResult('database_sync.select_parameters_multicomma.field_0',rs.field(0)=='c');
+	Titanium.AppTest.addResult('database_sync.select_parameters_multicomma.field_1',rs.field(1)==567);
+	rs.close();
+}
+catch(e)
+{
+	Titanium.AppTest.addResult('database_sync.select_parameters_multicomma',false,'Exception:'+e);
+}
+
+try
+{
+	var rs = db.execute("select * from TEST where name = ? and size = ?",['c',567]);
+	Titanium.AppTest.addResult('database_sync.select_parameters_multi',db.rowsAffected==1);
+	Titanium.AppTest.addResult('database_sync.select_parameters_multi.fieldcount',rs.fieldCount()==2,'was: '+rs.fieldCount());
+	Titanium.AppTest.addResult('database_sync.select_parameters_multi.field_0',rs.field(0)=='c');
+	Titanium.AppTest.addResult('database_sync.select_parameters_multi.field_1',rs.field(1)==567);
+	rs.close();
+}
+catch(e)
+{
+	Titanium.AppTest.addResult('database_sync.select_parameters_multi',false,'Exception:'+e);
+}
+
+try
+{
+	db.execute("insert into TEST values (?,?)",['d',890]);
+	Titanium.AppTest.addResult('database_sync.insert1',true);
+
+	db.execute("insert into TEST values (?,?)",'e',891);
+	Titanium.AppTest.addResult('database_sync.insert2',true);
+}
+catch(e)
+{
+	Titanium.AppTest.addResult('database_sync.insert1',false,'Exception:'+e);
+}
+
+try
+{
+	db.execute("delete from TEST");
+	Titanium.AppTest.addResult('database_sync.delete',true);
+}
+catch(e)
+{
+	Titanium.AppTest.addResult('database_sync.delete',false,'Exception:'+e);
+}
+
+try
+{
+	var rs = db.execute("select count(*) from TEST");
+	Titanium.AppTest.addResult('database_sync.count_after_delete',rs.field(0)==0,'was: '+rs.field(0));
+	rs.close();
+}
+catch(e)
+{
+	Titanium.AppTest.addResult('database_sync.count_after_delete',false,'Exception:'+e);
+}
 
 try
 {
@@ -195,5 +284,6 @@ catch(e)
 {
 	Titanium.AppTest.addResult('database_sync.db_close',false,"failed with exception: "+e);
 }
+
 
 Titanium.AppTest.stop();
