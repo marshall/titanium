@@ -13,6 +13,8 @@
 #include "http/http_client_binding.h"
 #include "proxy/Proxy.h"
 
+using kroll::DataUtils;
+
 namespace ti
 {
 	std::vector<SharedKObject> NetworkBinding::bindings;
@@ -293,14 +295,14 @@ namespace ti
 	void NetworkBinding::EncodeURIComponent(const ValueList &args, SharedValue result)
 	{
 		std::string src = args.at(0)->ToString();
-	   	std::string sResult = kroll::FileUtils::EncodeURIComponent(src);
+	   	std::string sResult = DataUtils::EncodeURIComponent(src);
 		result->SetString(sResult);
 	}
 
 	void NetworkBinding::DecodeURIComponent(const ValueList &args, SharedValue result)
 	{
 		std::string src = args.at(0)->ToString();
-		std::string sResult = kroll::FileUtils::DecodeURIComponent(src);
+		std::string sResult = DataUtils::DecodeURIComponent(src);
 		result->SetString(sResult);
 	}
 	
