@@ -165,8 +165,6 @@ Titanium.Project =
 							{
 								callback(x);
 							}
-							//FIXME move this back to developer
-//							TiDeveloper.track('project-launch',{'name':project.name});
 						});
 					}
 					else
@@ -177,8 +175,6 @@ Titanium.Project =
 						{
 							callback(x);
 						}
-						//FIXME move this back to developer
-//						TiDeveloper.track('project-launch',{'name':project.name});
 					}
 				});
 			});

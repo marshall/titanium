@@ -180,6 +180,31 @@ Titanium.TestDriver.init = function(project)
 
 Titanium.TestDriver.setupFramework = function()
 {
+};
+
+//
+// helper function to find xml file for current test.
+//
+function getXML(name)
+{
+	for (var i=0;i<Titanium.TestDriver.xmlFiles.length;i++)
+	{
+		var xml = Titanium.TestDriver.xmlFiles[i].name
+		if (xml.substring(0,(xml.length -4)) == name)
+		{
+			return Titanium.TestDriver.xmlFiles[i];
+		}
+	}
+	return null;
+}
+
+//
+// Helper function to Launch temporary app for running tests
+//
+Titanium.TestDriver.launchApp = function(testfile)
+{
+	/*** THIS WAS IN setupFramework **/
+	
 	// delete tempdir if exists
 	if (Titanium.TestDriver.currentTempDir != null && Titanium.TestDriver.currentTempDir.exists()==true)
 	{
@@ -215,10 +240,10 @@ Titanium.TestDriver.setupFramework = function()
 		if (!outdir.exists())
 		{
 			var htmlContents = 'test executing...';
-			// if (testfile.file.extension() == 'html')
-			// {
-			// 	htmlContents = testfile.file.read();			
-			// }
+			if (testfile.file.extension() == 'html')
+			{
+				htmlContents = testfile.file.read();			
+			}
 
 			// create project
 			Titanium.Project.create(project.name,project.guid,project.desc,project.rootdir,project.publisher,project.url,null,null,htmlContents);
@@ -260,29 +285,9 @@ Titanium.TestDriver.setupFramework = function()
 	{
 		md.copy(Titanium.TestDriver.project.dir);
 	}
-};
 
-//
-// helper function to find xml file for current test.
-//
-function getXML(name)
-{
-	for (var i=0;i<Titanium.TestDriver.xmlFiles.length;i++)
-	{
-		var xml = Titanium.TestDriver.xmlFiles[i].name
-		if (xml.substring(0,(xml.length -4)) == name)
-		{
-			return Titanium.TestDriver.xmlFiles[i];
-		}
-	}
-	return null;
-}
+	/*** end of setupFramework **/
 
-//
-// Helper function to Launch temporary app for running tests
-//
-Titanium.TestDriver.launchApp = function(testfile)
-{
 	var xmlFile = null;
 	var testName = null;
 	
@@ -443,4 +448,3 @@ Titanium.TestDriver.summarizeResults = function()
 	}
 	$MQ('l:titanium_test_results',{rows:resultArray,'test_count':totalTests,passed:totalPassed,failed:totalFailed,pending:totalPending,'not_executed':totalNotExecuted})
 };
-
