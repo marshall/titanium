@@ -12,7 +12,8 @@ t = build.env.PackageApp('#testapp-target',
 	GUID='D36DD8BA-D092-4F20-9073-EB613BFB8F46',
 	PUBLISHER='Appcelerator, Inc.',
 	URL='http://www.titaniumapp.com',
-	VERSION=build.version)
+	VERSION=build.version,
+	INSTALLED=True)
 Depends(t, build.build_targets + build.staging_targets)
 Alias('testapp', t)
 
