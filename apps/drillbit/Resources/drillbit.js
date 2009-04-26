@@ -275,7 +275,9 @@ window.onload = function()
 		us+=drillbit_funcs + '\n';
 		us+="TitaniumTest.NAME = '"+entry.name+"';\n";
 		
+		us+="try{";
 		us+=make_function(entry.test.before_all);
+		us+="}catch(e){Titanium.API.error('before_all caught error:'+e);}\n";
 
 		// we skip these from being re-included
 		var excludes = ['before','before_all','after','after_all','timeout'];
@@ -311,7 +313,9 @@ window.onload = function()
 		}
 		
 		us+="TitaniumTest.on_complete = function(){\n";
+		us+="try{";
 		us+=make_function(entry.test.after_all);
+		us+="}catch(e){Titanium.API.error('after_all caught error:'+e);}\n";
 		us+="TitaniumTest.complete();\n";
 		us+="};\n";
 		us+="TitaniumTest.run_next_test();\n";

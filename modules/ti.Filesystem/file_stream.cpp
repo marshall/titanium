@@ -180,9 +180,6 @@ void FileStream::Write(const ValueList& args, SharedValue result)
 
 		fos->write(text, size);
 		result->SetBool(true);
-#ifdef DEBUG
-		std::cout << "wrote: " << size << " bytes" << std::endl;
-#endif
 	}
 	catch (Poco::Exception& exc)
 	{

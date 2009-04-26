@@ -22,9 +22,8 @@ describe("HTML 5 database tests",{
 	
 	test_data_as_async:function(scope)
 	{
-		// load or initialize project table
-		this.db.transaction(function(tx) 
-		{   
+		function run_test(tx)
+		{
 			// see if project table exists
 		   	tx.executeSql("CREATE TABLE TEST (name TEXT)", [], function(tx,result) 
 		   	{
@@ -48,6 +47,18 @@ describe("HTML 5 database tests",{
 		   	{
 				scope.failed('create table failed:'+error.message);
  		    });
+		}
+		this.db.transaction(function(tx)
+		{   
+			tx.executeSql('DROP TABLE TEST',null,function(tx,result)
+			{
+				run_test(tx);
+			},
+			function(tx,error)
+			{
+				// this is OK, just means we didn't have the table
+				run_test(tx);
+			});
 		});
 	}
 });
