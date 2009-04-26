@@ -292,25 +292,10 @@ Titanium.Project =
 		}
 		return result;
 	},
-	create:function(name,guid,desc,dir,publisher,url,image,jsLibs, html)
+	writeTiXML: function(id,name,publisher,url,outdir)
 	{
-		var outdir = TFS.getFile(dir,name);
-		if (outdir.isDirectory())
-		{
-			return {
-				success:false,
-				message:"Directory already exists: " + outdir
-			}
-		}
-		outdir.createDirectory(true);
-		var normalized_name = name.replace(/[^a-zA-Z0-9]/g,'_').toLowerCase();
-		normalized_name = normalized_name.replace(/ /g,'_').toLowerCase();
-		var normalized_publisher = publisher.replace(/[^a-zA-Z0-9]/g,'_').toLowerCase();
-		normalized_publisher = normalized_publisher.replace(/ /g,'_').toLowerCase();
-		// write out the TIAPP.xml
-		var tiappxml = this.XML_PROLOG;
 		var year = new Date().getFullYear();
-		var id = 'com.'+normalized_publisher+'.'+normalized_name;
+		var tiappxml = this.XML_PROLOG;
 		tiappxml+=this.makeEntry('id',id);
 		tiappxml+=this.makeEntry('name',name);
 		tiappxml+=this.makeEntry('version','1.0');
@@ -333,10 +318,31 @@ Titanium.Project =
 		tiappxml+=this.makeEntry('maximizable','true');
 		tiappxml+=this.makeEntry('minimizable','true');
 		tiappxml+=this.makeEntry('closeable','true');
+		tiappxml+=this.makeEntry('visible','true');
 		tiappxml+="</window>\n";
 		tiappxml+=this.XML_EPILOG;
 		var ti = TFS.getFile(outdir,'tiapp.xml');
 		ti.write(tiappxml);
+		return ti;
+	},
+	create:function(name,guid,desc,dir,publisher,url,image,jsLibs, html)
+	{
+		var outdir = TFS.getFile(dir,name);
+		if (outdir.isDirectory())
+		{
+			return {
+				success:false,
+				message:"Directory already exists: " + outdir
+			}
+		}
+		outdir.createDirectory(true);
+		var normalized_name = name.replace(/[^a-zA-Z0-9]/g,'_').toLowerCase();
+		normalized_name = normalized_name.replace(/ /g,'_').toLowerCase();
+		var normalized_publisher = publisher.replace(/[^a-zA-Z0-9]/g,'_').toLowerCase();
+		normalized_publisher = normalized_publisher.replace(/ /g,'_').toLowerCase();
+		// write out the TIAPP.xml
+		var id = 'com.'+normalized_publisher+'.'+normalized_name;
+		var ti = Titanium.Project.writeTiXML(id,name,publisher,url,outdir);
 		var resources = TFS.getFile(outdir,'Resources');
 		resources.createDirectory();
 		var index = TFS.getFile(resources,'index.html');

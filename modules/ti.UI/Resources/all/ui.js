@@ -85,5 +85,75 @@
 		return old_log(msg);
 	};
 	
+	Titanium.UI.isDialog = typeof(window._isDialog)=='undefined' ? false : window._isDialog;
+	Titanium.UI.DialogParams = typeof(window._DialogParams)=='undefined' ? null : window._DialogParams;
+	
+	if (window._isDialog) try { delete window._isDialog } catch(e) {}
+	if (window._DialogParams) try { delete window._DialogParams } catch(e) {}
+
+	var Dialog = function(params)
+	{
+		Titanium.API.debug("creating dialog with url: "+params.url);
+		var kv = params.parameters || {};
+		params.visible = true;
+		this.window = Titanium.UI.createWindow(params);
+		this.result = null;
+		this.sub_dom_window = null;
+		var w = this.window;
+		var closed = false;
+		var self = this;
+		self.onclose = params.onclose;
+		w.addEventListener(function(name,ev)
+		{
+			Titanium.API.debug("sub window="+name+', event='+ev+', scope='+ev.scope);
+			try
+			{
+				if (name == 'page.init')
+				{
+					self.sub_dom_window = ev.scope;
+					self.sub_dom_window._isDialog = true;
+					self.sub_dom_window._DialogParams = kv;
+					self.sub_dom_window._DialogResult = null;
+					var old_close = self.sub_dom_window.Titanium.UI.currentWindow.close;
+					self.sub_dom_window.Titanium.UI.currentWindow.close = function(r)
+					{
+						self.result = r;
+						old_close();
+					};
+				}
+				else if (name == 'closed' && !closed)
+				{
+					closed = true;
+					if (self.onclose)
+					{
+						self.onclose(self.result);
+					}
+					this.sub_dom_window = null;
+				}
+			}
+			catch(e)
+			{
+				alert(e);
+				Titanium.API.error("error in "+name+", exception: "+e);
+			}
+		});
+		w.open();
+	};
+	
+	Dialog.prototype.getResult = function()
+	{
+		return this.result;
+	};
+	
+	Dialog.prototype.close = function()
+	{
+		this.window.close();
+	};
+	
+	Titanium.UI.showDialog = function(params)
+	{
+		return new Dialog(params);
+	};
+
 })();
  

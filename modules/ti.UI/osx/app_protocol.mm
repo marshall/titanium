@@ -132,6 +132,9 @@
     NSURLRequest *request = [self request];
 	
 	NSURL *url = [AppProtocol normalizeURL:[request URL]];
+
+	NSLog(@"attempting to navigate to %@",url);
+	
 	NSString *s = [AppProtocol getPath:url];
 	NSString *basePath = [NSString stringWithFormat:@"%s/Resources",getenv("KR_HOME")];
 	NSString *resourcePath = [basePath stringByAppendingPathComponent:s];

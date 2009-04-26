@@ -330,6 +330,11 @@ UserWindow::UserWindow(SharedUIBinding binding, WindowConfig *config, SharedUser
 
 UserWindow::~UserWindow()
 {
+	KR_DUMP_LOCATION
+	if (this->active)
+	{
+		this->Close();
+	}
 }
 
 SharedUserWindow UserWindow::GetSharedPtr()
@@ -349,6 +354,8 @@ SharedUIBinding UserWindow::GetBinding()
 
 void UserWindow::Open()
 {
+	KR_DUMP_LOCATION
+	
 	this->FireEvent(OPEN);
 
 	// We are now in the UI binding's open window list
@@ -366,10 +373,11 @@ void UserWindow::Open()
 
 void UserWindow::Close()
 {
-	this->active = false;
+	KR_DUMP_LOCATION
+	
+	static Logger &logger = Logger::Get("UserWindow");
 
-	SharedUserWindow shthis = this->shared_this;
-	this->FireEvent(CLOSE);
+	this->active = false;
 
 	// Close all children and cleanup
 	std::vector<SharedUserWindow>::iterator iter = this->children.begin();
@@ -380,6 +388,7 @@ void UserWindow::Close()
 		// make this iterator seriously, seriously unhappy.
 		SharedUserWindow child = (*iter);
 		iter = children.erase(iter);
+		logger.Debug("Closing child window");
 		child->Close();
 	}
 
@@ -393,8 +402,12 @@ void UserWindow::Close()
 	// Tell the UIBinding that we are closed
 	this->binding->RemoveFromOpenWindows(this->shared_this);
 
+	// fire our close event
+	this->FireEvent(CLOSE);
+
 	// When we have no more open windows, we exit...
 	std::vector<SharedUserWindow> windows = this->binding->GetOpenWindows();
+	logger.Debug("On closing, %d windows open", windows.size());
 	if (windows.size() == 0)
 	{
 		this->host->Exit(0);
@@ -1352,6 +1365,7 @@ void UserWindow::FireEvent(UserWindowEvent event_type, SharedKObject event)
 
 	ValueList args;
 	args.push_back(Value::NewString(name));
+	args.push_back(Value::NewObject(event));
 	std::vector<Listener>::iterator it = this->listeners.begin();
 	while (it != this->listeners.end())
 	{

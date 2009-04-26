@@ -390,11 +390,11 @@ static int totalJobs = 0;
 
 	if (updateFile == nil)
 	{
-		app = BootUtils::ReadManifest([appPath UTF8String]);
+		app = BootUtils::ReadManifest([appPath UTF8String],0,NULL);
 	}
 	else
 	{
-		app = BootUtils::ReadManifestFile([updateFile UTF8String], [appPath UTF8String]);
+		app = BootUtils::ReadManifestFile([updateFile UTF8String], [appPath UTF8String],0, NULL);
 	}
 	NSString *appName, *appVersion, *appPublisher, *appURL, *appImage;
 	appName = appVersion = appPublisher = appURL = @"Unknown";
@@ -609,6 +609,7 @@ static int totalJobs = 0;
 		installDirectory = [NSString stringWithUTF8String:userRuntimeHome.c_str()];
 	}
 	[installDirectory retain];
+	
 
 	[NSApp arrangeInFront:introWindow];
 	[progressWindow makeKeyAndOrderFront:progressWindow];
