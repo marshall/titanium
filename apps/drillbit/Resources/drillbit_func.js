@@ -404,14 +404,6 @@ TitaniumTest.Subject.prototype.should_be_null = function(expected,lineNumber)
 	}
 };
 
-TitaniumTest.Subject.prototype.should_not_be_null = function(expected,lineNumber)
-{
-	if (this.target === null)
-	{
-		throw new TitaniumTest.Error('should not be null, was: '+this.target,lineNumber);
-	}
-};
-
 TitaniumTest.Subject.prototype.should_be_undefined = function(expected,lineNumber)
 {
 	if (this.target !== undefined)
@@ -420,13 +412,6 @@ TitaniumTest.Subject.prototype.should_be_undefined = function(expected,lineNumbe
 	}
 };
 
-TitaniumTest.Subject.prototype.should_not_be_undefined = function(expected,lineNumber)
-{
-	if (this.target === undefined)
-	{
-		throw new TitaniumTest.Error('should be undefined, was: '+this.target,lineNumber);
-	}
-};
 
 TitaniumTest.Subject.prototype.should_be_function = function(expected,lineNumber)
 {
