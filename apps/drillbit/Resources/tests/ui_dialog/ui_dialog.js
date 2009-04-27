@@ -1,6 +1,6 @@
-describe("UI dialog tests",
+describe("ti.UI.Dialog dialog tests",
 {
-/*	create_dialog_with_no_content_as_async:function(callback)
+	create_dialog_with_no_content_as_async:function(callback)
 	{
 		value_of(Titanium.UI.showDialog).should_be_function();
 		var dialog = Titanium.UI.showDialog({
@@ -11,10 +11,17 @@ describe("UI dialog tests",
 		setTimeout(function()
 		{
 			dialog.close();
-			value_of(dialog.getResult()).should_be_null();
-			callback.passed();
+			try
+			{
+				value_of(dialog.getResult()).should_be_null();
+				callback.passed();
+			}
+			catch(e)
+			{
+				callback.failed(e);
+			}
 		},5000);
-	},*/
+	},
 
 	create_dialog_return_result_as_async:function(callback)
 	{

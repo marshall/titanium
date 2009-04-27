@@ -260,8 +260,7 @@ window.onload = function()
 		// make it non-visual if no HTML found
 		if (!html_found)
 		{
-			//TODO: this makes it take 10s vs. <1s
-			//tiapp.write(non_visual_ti);
+			tiapp.write(non_visual_ti);
 		}
 		
 		var us = '// ==UserScript==\n';
@@ -277,7 +276,7 @@ window.onload = function()
 		
 		us+="try{";
 		us+=make_function(entry.test.before_all);
-		us+="}catch(e){Titanium.API.error('before_all caught error:'+e);}\n";
+		us+="}catch(e){Titanium.API.error('before_all caught error:'+e+' at line: '+e.line);}\n";
 
 		// we skip these from being re-included
 		var excludes = ['before','before_all','after','after_all','timeout'];
@@ -315,15 +314,45 @@ window.onload = function()
 		us+="TitaniumTest.on_complete = function(){\n";
 		us+="try{";
 		us+=make_function(entry.test.after_all);
-		us+="}catch(e){Titanium.API.error('after_all caught error:'+e);}\n";
+		us+="}catch(e){Titanium.API.error('after_all caught error:'+e+' at line: '+e.line);}\n";
 		us+="TitaniumTest.complete();\n";
 		us+="};\n";
 		us+="TitaniumTest.run_next_test();\n";
-		
-		// alert(us);
+
+		// poor man's hack to insert line numbers
+		var newus = '';
+		var lines = us.split("\n");
+		var ready = false;
+		for (var linenum=0;linenum<lines.length;linenum++)
+		{
+			var line = lines[linenum];
+			if (!ready)
+			{
+				if (line.indexOf('TitaniumTest.NAME')==0)
+				{
+					ready = true;
+				}
+				newus+=line+"\n";
+				continue;
+			}
+			var idx = line.indexOf('should_be');
+			if (idx != -1)
+			{
+				var endIdx = line.lastIndexOf(')');
+				if (line.charAt(endIdx-1)=='(')
+				{
+					line = line.substring(0,endIdx) + 'null,' + (linenum+1) + ');';
+				}
+				else
+				{
+					line = line.substring(0,endIdx) + ',' + (linenum+1) + ');';
+				}
+			}
+			newus+=line+"\n";
+		}
 		
 		var runner_js = TFS.getFile(user_scripts_dir,entry.name+'_driver.js');
-		runner_js.write(us);
+		runner_js.write(newus);
 		
 		
 		var profile_path = TFS.getFile(results_dir,entry.name+'.prof');

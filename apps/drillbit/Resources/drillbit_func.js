@@ -273,7 +273,8 @@ TitaniumTest =
 		this.results.push({
 			name:name,
 			passed:false,
-			message: e
+			lineNumber:e.line,
+			message:e.message || String(e)
 		});
 		TitaniumTest.run_next_test();
 	},
@@ -317,6 +318,17 @@ function value_of(obj)
 	return new TitaniumTest.Subject(obj);
 }
 
+TitaniumTest.Error = function(message,line)
+{
+	this.message = message;
+	this.line = line;
+};
+
+TitaniumTest.Error.prototype.toString = function()
+{
+	return this.message + ' at ' + this.line;
+}
+
 TitaniumTest.Subject = function(target) {
 	this.target = target;
 }
@@ -344,76 +356,110 @@ TitaniumTest.Scope.prototype.failed = function(ex)
 	}
 }
 
-TitaniumTest.Subject.prototype.should_be = function(expected)
+TitaniumTest.Subject.prototype.should_be = function(expected,lineNumber)
 {
 	if (this.target != expected)
 	{
-		throw 'should be: '+expected+', was: '+this.target;
+		throw new TitaniumTest.Error('should be: '+expected+', was: '+this.target,lineNumber);
 	}
 };
 
-TitaniumTest.Subject.prototype.should_not_be = function(expected)
+TitaniumTest.Subject.prototype.should_not_be = function(expected,lineNumber)
 {
 	if (this.target == expected)
 	{
-		throw 'should not be: '+expected+', was: '+this.target;
+		throw new TitaniumTest.Error('should not be: '+expected+', was: '+this.target,lineNumber);
 	}
 };
 
-TitaniumTest.Subject.prototype.should_be_exactly = function(expected)
+TitaniumTest.Subject.prototype.should_be_exactly = function(expected,lineNumber)
 {
 	if (this.target !== expected)
 	{
-		throw 'should be exactly: '+expected+', was: '+this.target;
+		throw new TitaniumTest.Error('should be exactly: '+expected+', was: '+this.target,lineNumber);
 	}
 };
 
-TitaniumTest.Subject.prototype.should_be_null = function(expected)
+TitaniumTest.Subject.prototype.should_be_null = function(expected,lineNumber)
 {
 	if (this.target !== null)
 	{
-		throw 'should be null, was: '+this.target;
+		throw new TitaniumTest.Error('should be null, was: '+this.target,lineNumber);
 	}
 };
 
-TitaniumTest.Subject.prototype.should_not_be_null = function(expected)
+TitaniumTest.Subject.prototype.should_not_be_null = function(expected,lineNumber)
 {
 	if (this.target === null)
 	{
-		throw 'should not be null, was: '+this.target;
+		throw new TitaniumTest.Error('should not be null, was: '+this.target,lineNumber);
 	}
 };
 
-TitaniumTest.Subject.prototype.should_be_undefined = function(expected)
+TitaniumTest.Subject.prototype.should_be_undefined = function(expected,lineNumber)
 {
 	if (this.target !== undefined)
 	{
-		throw 'should be undefined, was: '+this.target;
+		throw new TitaniumTest.Error('should be undefined, was: '+this.target,lineNumber);
 	}
 };
 
-TitaniumTest.Subject.prototype.should_not_be_undefined = function(expected)
+TitaniumTest.Subject.prototype.should_not_be_undefined = function(expected,lineNumber)
 {
 	if (this.target === undefined)
 	{
-		throw 'should be undefined, was: '+this.target;
+		throw new TitaniumTest.Error('should be undefined, was: '+this.target,lineNumber);
 	}
 };
 
-TitaniumTest.Subject.prototype.should_be_function = function(expected)
+TitaniumTest.Subject.prototype.should_be_function = function(expected,lineNumber)
 {
 	if (typeof(this.target) != 'function')
 	{
-		throw 'should be a function, was: '+typeof(this.target);
+		throw new TitaniumTest.Error('should be a function, was: '+typeof(this.target),lineNumber);
 	}
 };
 
-TitaniumTest.Subject.prototype.should_be_object = function(expected)
+TitaniumTest.Subject.prototype.should_be_object = function(expected,lineNumber)
 {
 	if (typeof(this.target) != 'object')
 	{
-		throw 'should be a object, was: '+typeof(this.target);
+		throw new TitaniumTest.Error('should be a object, was: '+typeof(this.target),lineNumber);
 	}
 };
+
+TitaniumTest.Subject.prototype.should_be_number = function(expected,lineNumber)
+{
+	if (typeof(this.target) != 'number')
+	{
+		throw new TitaniumTest.Error('should be a number, was: '+typeof(this.target),lineNumber);
+	}
+};
+
+
+TitaniumTest.Subject.prototype.should_be_true = function(expected,lineNumber)
+{
+	if (this.target!==true)
+	{
+		throw new TitaniumTest.Error('should be true, was: '+this.target,lineNumber);
+	}
+};
+
+TitaniumTest.Subject.prototype.should_be_false = function(expected,lineNumber)
+{
+	if (this.target!==false)
+	{
+		throw new TitaniumTest.Error('should be false, was: '+this.target,lineNumber);
+	}
+};
+
+TitaniumTest.Subject.prototype.should_be_zero = function(expected,lineNumber)
+{
+	if (this.target!==0)
+	{
+		throw new TitaniumTest.Error('should be 0 (zero), was: '+this.target+' ('+typeof(this.target)+')',lineNumber);
+	}
+};
+
 
 
