@@ -227,6 +227,7 @@ window.onload = function()
 		tofile.write(html);
 		
 		var html_found = false;
+		var tiapp_found = false;
 		function strip_extension(f)
 		{
 			var name = f.name();
@@ -249,8 +250,8 @@ window.onload = function()
 				{
 					case 'xml':
 					{
-						var tofile = TFS.getFile(app.base,'tiapp.xml');
-						src.copy(tofile);
+						tiapp_found=true;
+						tiapp.write(src.read());
 						break;
 					}
 					case 'html':
@@ -282,7 +283,7 @@ window.onload = function()
 		}
 
 		// make it non-visual if no HTML found
-		if (!html_found)
+		if (!html_found && !tiapp_found)
 		{
 			tiapp.write(non_visual_ti);
 		}

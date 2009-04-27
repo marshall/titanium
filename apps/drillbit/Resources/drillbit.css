@@ -106,8 +106,11 @@ td.status.failed
 
 #table
 {
+	margin:0;
+	padding:0;
 	height:230px;
-	overflow:auto;
+	overflow:hidden;
+	overflow-y:auto;
 }
 
 #status

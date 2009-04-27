@@ -28,7 +28,7 @@ class TITANIUM_APP_API AppConfig
 {
 private:
 	const char* error;
-	std::string appName, appID, description, copyright, homepage, version, updateSite;
+	std::string appName, appID, description, copyright, url, version, publisher;
 	WindowConfigList windows;
 
 	// icon properties
@@ -44,9 +44,9 @@ public:
 	std::string& GetAppID() { return appID; }
 	std::string& GetDescription() { return description; }
 	std::string& GetCopyright() { return copyright; }
-	std::string& GetHomepage() { return homepage; }
+	std::string& GetURL() { return url; }
 	std::string& GetVersion() { return version; }
-	std::string& GetUpdateSite() { return updateSite; }
+	std::string& GetPublisher() { return publisher; }
 
 	std::string InsertAppIDIntoURL(std::string url);
 

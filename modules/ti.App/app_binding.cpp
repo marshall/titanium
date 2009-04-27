@@ -29,10 +29,25 @@ namespace ti
 		 */
 		this->SetMethod("getVersion", &AppBinding::GetVersion);
 		/**
-		 * @tiapi(method=True,immutable=True,name=App.getUpdateURL,since=0.2) get the application update URL
-	     * @tiresult(for=App.getUpdateURL,type=string) returns the url
+		 * @tiapi(method=True,immutable=True,name=App.getPublisher,since=0.4) get the application publisher
+	     * @tiresult(for=App.getPublisher,type=string) returns the publisher
 		 */
-		this->SetMethod("getUpdateURL", &AppBinding::GetUpdateURL);
+		this->SetMethod("getPublisher", &AppBinding::GetPublisher);
+		/**
+		 * @tiapi(method=True,immutable=True,name=App.getURL,since=0.4) get the application url
+	     * @tiresult(for=App.getURL,type=string) returns the url for the app
+		 */
+		this->SetMethod("getURL", &AppBinding::GetURL);
+		/**
+		 * @tiapi(method=True,immutable=True,name=App.getDescription,since=0.4) get the application description
+	     * @tiresult(for=App.getDescription,type=string) returns the description for the app
+		 */
+		this->SetMethod("getDescription", &AppBinding::GetDescription);
+		/**
+		 * @tiapi(method=True,immutable=True,name=App.getCopyright,since=0.4) get the application copyright
+	     * @tiresult(for=App.getCopyright,type=string) returns the copyright for the app
+		 */
+		this->SetMethod("getCopyright", &AppBinding::GetCopyright);
 		/**
 		 * @tiapi(method=True,immutable=True,name=App.getGUID,since=0.2) get the application globally unique id
 	     * @tiresult(for=App.getGUID,type=string) returns the unique id
@@ -106,9 +121,21 @@ namespace ti
 	{
 		result->SetString(AppConfig::Instance()->GetVersion().c_str());
 	}
-	void AppBinding::GetUpdateURL(const ValueList& args, SharedValue result)
+	void AppBinding::GetPublisher(const ValueList& args, SharedValue result)
 	{
-		result->SetString(AppConfig::Instance()->GetUpdateSite().c_str());
+		result->SetString(AppConfig::Instance()->GetPublisher().c_str());
+	}
+	void AppBinding::GetCopyright(const ValueList& args, SharedValue result)
+	{
+		result->SetString(AppConfig::Instance()->GetCopyright().c_str());
+	}
+	void AppBinding::GetDescription(const ValueList& args, SharedValue result)
+	{
+		result->SetString(AppConfig::Instance()->GetDescription().c_str());
+	}
+	void AppBinding::GetURL(const ValueList& args, SharedValue result)
+	{
+		result->SetString(AppConfig::Instance()->GetURL().c_str());
 	}
 	void AppBinding::GetGUID(const ValueList& args, SharedValue result)
 	{

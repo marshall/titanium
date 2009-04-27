@@ -477,5 +477,20 @@ TitaniumTest.Subject.prototype.should_be_zero = function(expected,lineNumber)
 	}
 };
 
+TitaniumTest.Subject.prototype.should_contain = function(expected,lineNumber)
+{
+	if (this.target.indexOf(expected)==-1)
+	{
+		throw new TitaniumTest.Error('should contain: '+expected+', was: '+this.target,lineNumber);
+	}
+};
+
+TitaniumTest.Subject.prototype.should_be_one_of = function(expected,lineNumber)
+{
+	if (expected.indexOf(this.target)==-1)
+	{
+		throw new TitaniumTest.Error('should contain one of: ['+expected.join(",")+'] was: '+this.target,lineNumber);
+	}
+};
 
 
