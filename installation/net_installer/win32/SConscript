@@ -4,14 +4,27 @@ import os.path as path
 Import('build')
 
 Env = build.env.Clone()
-Env.Append(LIBS=['wininet', 'urlmon', 'comdlg32', 'ole32', 'kernel32', 'user32', 'shell32', 'advapi32', 'gdi32'])
+Env.Append(CPPDEFINES=['USE_NO_EXPORT=1'])
+
+Env.Append(LIBS=['wininet', 'urlmon', 'comdlg32', 'ole32', 'kernel32', 'user32', 'shell32', 'advapi32', 'gdi32', 'iphlpapi'])
 build.add_thirdparty(Env, 'poco')
 
 Env.Append(CPPPATH=['C:\\Program Files\\Microsoft Visual Studio 8\\VC\\atlmfc\\include'])
-Env.Append(CCFLAGS=['/MT'])
 
-sources = Glob("newprogress/*.cpp") + Env.RES("newprogress/progress.rc")
+ccf = Env['CCFLAGS']
+if '/MD' in ccf: ccf.remove('/MD')
+#if '/MT' in ccf: ccf.remove('/MT')
+ccf.append('/MT')
+ccf.append('/Os')
+ccf.append('/O1')
+Env.Append(CCFLAGS=ccf)
+
+sources = Glob("installer-project/*.cpp") + Env.RES("installer-project/progress.rc")
 out_file = path.join(build.runtime_build_dir, 'installer', 'Installer.exe')
+
+Env.Append(CPPPATH=[build.kroll_utils_dir])
+sources.extend(build.get_kroll_utils(path.join(build.dir, 'objs', 'netinstaller')))
+
 p = Env.Program(out_file, sources)
 build.mark_build_target(p)
 

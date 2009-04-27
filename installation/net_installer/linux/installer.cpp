@@ -32,8 +32,6 @@ static void destroy_cb(GtkWidget *widget, gpointer data);
 static int do_install_sudo();
 bool can_write_to_all_files(string);
 
-static gchar* system_runtime_home = NULL;
-static gchar* user_runtime_home = NULL;
 static gchar* application_path = NULL;
 static gchar* update_filename = NULL;
 static gchar* install_type;
@@ -41,8 +39,6 @@ static gchar** urls = NULL;
 static gboolean in_sudo_mode;
 static GOptionEntry option_entries[] =
 {
-	{ "sysruntime", 0, 0, G_OPTION_ARG_STRING, &system_runtime_home, "The system runtime home", NULL},
-	{ "userruntime", 0, 0, G_OPTION_ARG_STRING, &user_runtime_home, "The user runtime home", NULL},
 	{ "apppath", 0, 0, G_OPTION_ARG_STRING, &application_path, "The application path", NULL},
 	{ "updatefile", 0, G_OPTION_FLAG_OPTIONAL_ARG, G_OPTION_ARG_FILENAME, &update_filename, "The filename of the update", NULL},
 	{ "type", 0, G_OPTION_FLAG_OPTIONAL_ARG, G_OPTION_ARG_STRING, &install_type, "Force installation type -- non-interactive", NULL},
@@ -50,6 +46,21 @@ static GOptionEntry option_entries[] =
 	{ G_OPTION_REMAINING, 0, G_OPTION_FLAG_OPTIONAL_ARG, G_OPTION_ARG_STRING_ARRAY, &urls, "Url or filename of a component to install", NULL},
 	{ NULL }
 };
+
+void show_error(string error, GtkWidget* window = NULL);
+
+void show_error(string error, GtkWidget* window)
+{
+	GtkWidget* dialog = gtk_message_dialog_new(
+		GTK_WINDOW(window),
+		GTK_DIALOG_MODAL,
+		GTK_MESSAGE_ERROR,
+		GTK_BUTTONS_CLOSE,
+		"%s",
+		error.c_str());
+	gtk_dialog_run(GTK_DIALOG(dialog));
+	gtk_widget_destroy(dialog);
+}
 
 Installer* Installer::instance;
 string Installer::applicationPath;
@@ -257,7 +268,8 @@ void Installer::CreateIntroView()
 			"This application may need to download and install "
 			"additional components. Where should they be installed?");
 		gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
-		gtk_widget_set_size_request(label, width - 10, -1);
+		gtk_widget_set_size_request(label, width - 5, -1);
+		gtk_misc_set_alignment(GTK_MISC(label), 0.0, 1.0);
 
 		// Install type combobox
 		GtkListStore* store = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING);
@@ -284,6 +296,7 @@ void Installer::CreateIntroView()
 			GTK_CELL_LAYOUT(installCombo), renderer,
 			"text", 1, NULL);
 		gtk_combo_box_set_active(GTK_COMBO_BOX(installCombo), 0);
+		gtk_widget_set_size_request(installCombo, width - 5, -1);
 
 		/* Pack label and combobox into vbox */
 		GtkWidget* installTypeBox = gtk_vbox_new(FALSE, 0);
@@ -303,7 +316,7 @@ void Installer::CreateIntroView()
 	GtkWidget* securityImage = gtk_image_new_from_stock(
 		GTK_STOCK_DIALOG_WARNING,
 		GTK_ICON_SIZE_LARGE_TOOLBAR);
-	gtk_box_pack_start(GTK_BOX(securityBox), securityImage, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(securityBox), securityImage, FALSE, FALSE, 3);
 
 	GtkWidget* securityLabel = gtk_label_new(
 		"<span style=\"italic\">"
@@ -650,15 +663,7 @@ void Installer::ShowError()
 {
 	if (this->error != "")
 	{
-		GtkWidget* dialog = gtk_message_dialog_new(
-			GTK_WINDOW(this->window),
-			GTK_DIALOG_MODAL,
-			GTK_MESSAGE_ERROR,
-			GTK_BUTTONS_CLOSE,
-			"%s",
-			this->error.c_str());
-		gtk_dialog_run(GTK_DIALOG(dialog));
-		gtk_widget_destroy(dialog);
+		show_error(this->error, this->window);
 	}
 }
 
@@ -795,18 +800,22 @@ int main(int argc, char* argv[])
 	g_option_context_set_help_enabled(context, TRUE);
 	g_option_context_add_main_entries(context, option_entries, NULL);
 	g_option_context_add_group(context, gtk_get_option_group(TRUE));
-	if (!g_option_context_parse(context, &argc, &argv, &error))
+
+	bool args_good = g_option_context_parse(context, &argc, &argv, &error) != 0;
+
+	gtk_init(&argc, &argv);
+	if (!args_good || application_path == NULL)
 	{
-		g_print("option parsing failed: %s\n", error->message);
-		exit(1);
+		string msg = "The installer was not given enough information to continue. ";
+		if (!args_good) msg += error->message;
+		show_error(msg);
+		return 1;
 	}
 
 	Job::InitDownloader();
-	gtk_init(&argc, &argv);
-
 	Installer::applicationPath = application_path;
-	Installer::userRuntimeHome = user_runtime_home;
-	Installer::systemRuntimeHome = system_runtime_home;
+	Installer::userRuntimeHome = FileUtils::GetUserRuntimeHomeDirectory();
+	Installer::systemRuntimeHome = FileUtils::GetSystemRuntimeHomeDirectory();
 
 	if (update_filename == NULL)
 		Installer::updateFilename == string();

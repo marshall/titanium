@@ -783,7 +783,7 @@ void UserWindow::_GetBounds(const kroll::ValueList& args, kroll::SharedValue res
 
 void UserWindow::_SetBounds(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	if (!args.size() < 1 || !args.at(0)->IsObject())
+	if (args.size() < 1 || !args.at(0)->IsObject())
 	{
 		throw ValueException::FromString("setBounds takes an object with x, y, width and height properties.");
 		return;

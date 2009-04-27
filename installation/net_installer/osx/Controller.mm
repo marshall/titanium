@@ -15,10 +15,8 @@ static int totalJobs = 0;
 
 -(void)dealloc
 {
-	if (url != nil)
-		[url release];
-	if (path != nil)
-		[path release];
+	[url release];
+	[path release];
 	[super dealloc];
 }
 
@@ -361,7 +359,6 @@ static int totalJobs = 0;
 
 	updateFile = nil;
 	NSString *appPath = nil;
-	NSString *runtimeHome = nil;
 	jobs = [[NSMutableArray alloc] init];
 
 	NSArray* args = [[NSProcessInfo processInfo] arguments];
@@ -380,18 +377,13 @@ static int totalJobs = 0;
 			[updateFile retain];
 			i++;
 		}
-		else if ([arg isEqual:@"-runtimeHome"] && count > i+1)
-		{
-			runtimeHome = [args objectAtIndex:i+1];
-			i++;
-		}
 		else
 		{
 			[jobs addObject:[[Job alloc] init: arg]];
 		}
 	}
 
-	if (appPath == nil || runtimeHome == nil)
+	if (appPath == nil)
 	{
 		[self bailWithMessage:@"Sorry, but the installer was not given enough information to continue."];
 	}
@@ -409,7 +401,9 @@ static int totalJobs = 0;
 	appImage = nil;
 
 	if (!app->name.empty())
+	{
 		appName = [NSString stringWithUTF8String:app->name.c_str()];
+	}
 
 	if (!app->version.empty() && updateFile == nil)
 	{
@@ -422,11 +416,17 @@ static int totalJobs = 0;
 	}
 
 	if (!app->publisher.empty())
+	{
 		appPublisher = [NSString stringWithUTF8String:app->publisher.c_str()];
+	}
 	if (!app->url.empty())
+	{
 		appURL = [NSString stringWithUTF8String:app->url.c_str()];
+	}
 	if (!app->image.empty())
+	{
 		appImage = [NSString stringWithUTF8String:app->image.c_str()];
+	}
 
 	[progressAppName setStringValue:appName];
 	[introAppName setStringValue:appName];
@@ -436,6 +436,121 @@ static int totalJobs = 0;
 	[introAppPublisher setStringValue:appPublisher];
 	[progressAppURL setStringValue:appURL];
 	[introAppURL setStringValue:appURL];
+	
+	[introAppVersion setFont:[NSFont boldSystemFontOfSize:12]];
+	[introAppPublisher setFont:[NSFont boldSystemFontOfSize:12]];
+	[introAppURL setFont:[NSFont boldSystemFontOfSize:12]];
+	
+	NSString *menuAppName = [NSString stringWithFormat:@"%@ Installer",appName];
+
+	NSMenu * mainMenu = [[NSMenu alloc] initWithTitle:@"MainMenu"];
+	NSMenuItem * menuItem;
+	NSMenu * submenu;
+
+	// The titles of the menu items are for identification purposes only and shouldn't be localized.
+	// The strings in the menu bar come from the submenu titles,
+	// except for the application menu, whose title is ignored at runtime.
+	menuItem = [mainMenu addItemWithTitle:@"Apple" action:NULL keyEquivalent:@""];
+	submenu = [[NSMenu alloc] initWithTitle:@"Apple"];
+	[NSApp performSelector:@selector(setAppleMenu:) withObject:submenu];
+	[mainMenu setSubmenu:submenu forItem:menuItem];
+
+
+	NSMenu *aMenu = submenu;
+
+	menuItem = [aMenu addItemWithTitle:[NSString stringWithFormat:@"%@ %@", NSLocalizedString(@"About", nil), menuAppName]
+								action:@selector(orderFrontStandardAboutPanel:)
+						 keyEquivalent:@""];
+	[menuItem setTarget:NSApp];
+
+	[aMenu addItem:[NSMenuItem separatorItem]];
+
+	menuItem = [aMenu addItemWithTitle:NSLocalizedString(@"Services", nil)
+								action:NULL
+						 keyEquivalent:@""];
+	NSMenu * servicesMenu = [[NSMenu alloc] initWithTitle:@"Services"];
+	[aMenu setSubmenu:servicesMenu forItem:menuItem];
+	[NSApp setServicesMenu:servicesMenu];
+	
+	[aMenu addItem:[NSMenuItem separatorItem]];
+
+	menuItem = [aMenu addItemWithTitle:[NSString stringWithFormat:@"%@ %@", NSLocalizedString(@"Hide", nil), menuAppName]
+								action:@selector(hide:)
+						 keyEquivalent:@"h"];
+	[menuItem setTarget:NSApp];
+	
+	menuItem = [aMenu addItemWithTitle:NSLocalizedString(@"Hide Others", nil)
+								action:@selector(hideOtherApplications:)
+						 keyEquivalent:@"h"];
+	[menuItem setKeyEquivalentModifierMask:NSCommandKeyMask | NSAlternateKeyMask];
+	[menuItem setTarget:NSApp];
+	
+	menuItem = [aMenu addItemWithTitle:NSLocalizedString(@"Show All", nil)
+								action:@selector(unhideAllApplications:)
+						 keyEquivalent:@""];
+	[menuItem setTarget:NSApp];
+	
+	[aMenu addItem:[NSMenuItem separatorItem]];
+	
+	menuItem = [aMenu addItemWithTitle:[NSString stringWithFormat:@"%@ %@", NSLocalizedString(@"Quit", nil), menuAppName]
+								action:@selector(terminate:)
+						 keyEquivalent:@"q"];
+	[menuItem setTarget:NSApp];
+	
+	// edit
+	menuItem = [mainMenu addItemWithTitle:@"Edit" action:NULL keyEquivalent:@""];
+	submenu = [[NSMenu alloc] initWithTitle:NSLocalizedString(@"Edit", @"The Edit menu")];
+	[mainMenu setSubmenu:submenu forItem:menuItem];
+	menuItem = [submenu addItemWithTitle:NSLocalizedString(@"Undo", nil)
+								action:@selector(undo:)
+						 keyEquivalent:@"z"];
+	
+	menuItem = [submenu addItemWithTitle:NSLocalizedString(@"Redo", nil)
+								action:@selector(redo:)
+						 keyEquivalent:@"Z"];
+	
+	[submenu addItem:[NSMenuItem separatorItem]];
+	
+	menuItem = [submenu addItemWithTitle:NSLocalizedString(@"Cut", nil)
+								action:@selector(cut:)
+						 keyEquivalent:@"x"];
+	
+	menuItem = [submenu addItemWithTitle:NSLocalizedString(@"Copy", nil)
+								action:@selector(copy:)
+						 keyEquivalent:@"c"];
+	
+	menuItem = [submenu addItemWithTitle:NSLocalizedString(@"Paste", nil)
+								action:@selector(paste:)
+						 keyEquivalent:@"v"];
+	
+	menuItem = [submenu addItemWithTitle:NSLocalizedString(@"Delete", nil)
+								action:@selector(delete:)
+						 keyEquivalent:@""];
+
+	menuItem = [submenu addItemWithTitle: NSLocalizedString(@"Select All", nil)
+						  action: @selector(selectAll:)
+						  keyEquivalent: @"a"];
+	// window
+	menuItem = [mainMenu addItemWithTitle:@"Window" action:NULL keyEquivalent:@""];
+	submenu = [[NSMenu alloc] initWithTitle:NSLocalizedString(@"Window", @"The Window menu")];
+	[mainMenu setSubmenu:submenu forItem:menuItem];
+	menuItem = [submenu addItemWithTitle:NSLocalizedString(@"Minimize", nil)
+								action:@selector(performMinimize:)
+						 keyEquivalent:@"m"];
+	
+	menuItem = [submenu addItemWithTitle:NSLocalizedString(@"Zoom", nil)
+								action:@selector(performZoom:)
+						 keyEquivalent:@""];
+	
+	[submenu addItem:[NSMenuItem separatorItem]];
+	
+	menuItem = [submenu addItemWithTitle:NSLocalizedString(@"Bring All to Front", nil)
+								action:@selector(arrangeInFront:)
+						 keyEquivalent:@""];
+	
+	[NSApp setWindowsMenu:submenu];
+	[NSApp setMainMenu:mainMenu];
+	[mainMenu release];
 
 	if (appImage != nil)
 	{
@@ -464,12 +579,12 @@ static int totalJobs = 0;
 		[introLicenseLabel setHidden:YES];
 		[introLicenseBox setHidden:YES];
 		NSRect frame = [introWindow frame];
-		frame.size.width = 525;
-		frame.size.height = 225;
-		[introWindow setFrame:frame display:YES];
+	//	frame.size.width = 525;
+	//	frame.size.height = 225;
 		[introWindow setMinSize:frame.size];
 		[introWindow setMaxSize:frame.size];
 		[introWindow setShowsResizeIndicator:NO];
+		[introWindow setFrame:frame display:YES];
 	}
 
 	std::string tempDir = FileUtils::GetTempDirectory();
@@ -477,18 +592,41 @@ static int totalJobs = 0;
 	[self createDirectory: temporaryDirectory];
 	[temporaryDirectory retain];
 
-	installDirectory = runtimeHome;
+	// Check to see if we can write to the system install location -- if so install there
+	std::string systemRuntimeHome = FileUtils::GetSystemRuntimeHomeDirectory();
+	std::string userRuntimeHome = FileUtils::GetUserRuntimeHomeDirectory();
+
+	installDirectory = [NSString stringWithUTF8String:systemRuntimeHome.c_str()];
+	if ((!FileUtils::IsDirectory(systemRuntimeHome) && 
+			[[NSFileManager defaultManager] isWritableFileAtPath:[installDirectory stringByDeletingLastPathComponent]]) ||
+		[[NSFileManager defaultManager] isWritableFileAtPath:installDirectory])
+	{
+		installDirectory = [NSString stringWithUTF8String:systemRuntimeHome.c_str()];
+	}
+	else
+	{
+		// Cannot write to system-wide install location -- install to user directory
+		installDirectory = [NSString stringWithUTF8String:userRuntimeHome.c_str()];
+	}
 	[installDirectory retain];
 
 	[NSApp arrangeInFront:introWindow];
 	[progressWindow makeKeyAndOrderFront:progressWindow];
 	[NSApp activateIgnoringOtherApps:YES];
 }
-
+- (BOOL)canBecomeKeyWindow
+{
+	return YES;
+}
+- (BOOL)canBecomeMainWindow
+{
+	return YES;
+}
 -(void)applicationDidFinishLaunching:(NSNotification *) notif
 {
-	[progressWindow orderOut:self];
 	[introWindow center];
+	[progressWindow orderOut:self];
+	[introWindow makeKeyAndOrderFront:self];
 }
 
 -(IBAction)cancelProgress: (id)sender
@@ -513,9 +651,11 @@ static int totalJobs = 0;
 	[progressBar setMaxValue:100.0];
 	[progressBar setDoubleValue:0.0];
 
-	if ([jobs count] > 0)
-		[progressWindow orderFront:self];
 	[progressWindow center];
+	if ([jobs count] > 0)
+	{
+		[progressWindow orderFront:self];
+	}
 	[NSThread detachNewThreadSelector:@selector(downloadAndInstall:) toTarget:self withObject:self];
 }
 

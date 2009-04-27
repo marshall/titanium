@@ -36,6 +36,9 @@ namespace ti
 	private:
 		SharedPtr<Win32MenuItemImpl> contextMenuInUse;
 		static HMENU contextMenuInUseHandle;
+		// Cookie and handle for WebKit Activation Context
+		ULONG_PTR lpCookie; 
+		HANDLE pActCtx;
 	};
 }
 
