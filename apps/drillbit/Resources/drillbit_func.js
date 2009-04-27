@@ -264,6 +264,7 @@ TitaniumTest =
 			name:name,
 			passed:true
 		});
+		Titanium.App.stdout("DRILLBIT_PASS: "+name);
 		TitaniumTest.run_next_test();
 	},
 	
@@ -276,6 +277,7 @@ TitaniumTest =
 			lineNumber:e.line,
 			message:e.message || String(e)
 		});
+		Titanium.App.stdout("DRILLBIT_FAIL: "+name+" --- "+e);
 		TitaniumTest.run_next_test();
 	},
 	

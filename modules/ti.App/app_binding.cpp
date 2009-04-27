@@ -104,6 +104,17 @@ namespace ti
 		 * @tiresult(for=App.loadProperties,type=list) returns the properties as a list
 		 */
 		this->SetMethod("loadProperties", &AppBinding::LoadProperties);
+
+		/**
+		 * @tiapi(method=True,name=App.stdout,since=0.4) write to stdout
+		 * @tiarg(for=App.stdout,type=string,name=data) data to write
+		 */
+		this->SetMethod("stdout", &AppBinding::StdOut);
+		/**
+		 * @tiapi(method=True,name=App.stderr,since=0.4) write to stderr
+		 * @tiarg(for=App.stderr,type=string,name=data) data to write
+		 */
+		this->SetMethod("stderr", &AppBinding::StdErr);
 	}
 
 	AppBinding::~AppBinding()
@@ -184,6 +195,28 @@ namespace ti
 			SharedKObject properties = new PropertiesBinding(file_path);
 			result->SetObject(properties);
 		}
+	}
+
+	void AppBinding::StdOut(const ValueList& args, SharedValue result)
+	{
+		for (size_t c=0;c<args.size();c++)
+		{
+			SharedValue arg = args.at(c);
+			const char *s = arg->ToString();
+			std::cout << s;
+		}
+		std::cout << std::endl;
+	}
+
+	void AppBinding::StdErr(const ValueList& args, SharedValue result)
+	{
+		for (size_t c=0;c<args.size();c++)
+		{
+			SharedValue arg = args.at(c);
+			const char *s = arg->ToString();
+			std::cerr << s;
+		}
+		std::cerr << std::endl;
 	}
 
 }

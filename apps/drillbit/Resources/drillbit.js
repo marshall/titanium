@@ -4,13 +4,20 @@ var TA  = Titanium.App;
 
 var current_test_load = null;
 var current_test = null;
+var excludes = ['before','before_all','after','after_all','timeout'];
+var total_assertions = 0;
+var running_assertions = 0;
+var running_completed = 0;
 
 function update_status(msg,hide)
 {
 	$('#status').html(msg).css('visibility','visible');
-	if (hide)
+	if (typeof(hide)!='undefined')
 	{
-		$('#status').fadeOut(5000);
+		setTimeout(function()
+		{
+			$('#status').css('visibility','hidden');
+		},4000);
 	}
 }
 function test_status(name,classname)
@@ -26,6 +33,23 @@ function describe(description,test)
 	current_test_load.description = description;
 	current_test_load.test = test;
 	current_test_load.timeout = test.timeout || 5000;
+	current_test_load.assertions = {};
+	current_test_load.assertion_count = 0;
+	
+	for (var p in test)
+	{
+		if (excludes.indexOf(p)==-1)
+		{
+			var fn = test[p];
+			if (typeof fn == 'function')
+			{
+				total_assertions++;
+				current_test_load.assertion_count++;
+				current_test_load.assertions[p]=false;
+			}
+		}
+	}
+
 	current_test_load = null;
 }
 
@@ -304,7 +328,6 @@ window.onload = function()
 		us+="}catch(e){Titanium.API.error('before_all caught error:'+e+' at line: '+e.line);}\n";
 
 		// we skip these from being re-included
-		var excludes = ['before','before_all','after','after_all','timeout'];
 		for (var f in entry.test)
 		{
 			var i = excludes.indexOf(f);
@@ -387,11 +410,23 @@ window.onload = function()
 		log_path.deleteFile();
 
 		var args = ['--profile="'+profile_path+'"','--logpath="'+log_path+'"','--runtime_override="'+runtime_dir+'"','--module_override="'+modules_dir+'"','--no-console-logging'];
-		Titanium.Process.setEnv('KR_DEBUG','true');
 		var process = Titanium.Process.launch(app.executable.nativePath(),args);
 		process.onread = function(data)
 		{
-			Titanium.API.debug("PROCESS:"+data);
+			var i = data.indexOf('DRILLBIT_');
+			if (i != -1)
+			{
+				var test_name = data.substring(15,data.length-1);
+				var test_passed = data.indexOf('_PASS:')!=-1;
+				running_completed++;
+				var msg = "Completed: " +entry.name + " ... " + running_completed + "/" + running_assertions;
+				update_status(msg);
+				Titanium.API.debug("test ["+ test_name + "], passed:"+test_passed);
+			}
+			else
+			{
+				Titanium.API.debug("PROCESS:"+data);
+			}
 		};
 		var size = 0;
 		var timer = null;
@@ -413,7 +448,6 @@ window.onload = function()
 					update_status(current_test.name + " timed out");
 					test_status(current_test.name,'failed');
 					process.terminate();
-					// run_next_test();
 					return;
 				}
 			}
@@ -454,7 +488,7 @@ window.onload = function()
 		var entry = executing_tests.shift();
 		current_test = entry;
 		current_test.failed = false;
-		update_status('Executing: '+entry.name);
+		update_status('Executing: '+entry.name+' ... '+running_completed + "/" + running_assertions);
 		test_status(entry.name,'Running');
 		setTimeout(function(){run_test(entry)},1);
 	}
@@ -464,6 +498,8 @@ window.onload = function()
 		run_button.disabled = true;
 		update_status('Building test harness ... one moment');
 		executing_tests = [];
+		running_assertions = 0;
+		running_completed = 0;
 		
 		$.each($('#table tr.test'),function()
 		{
@@ -472,6 +508,7 @@ window.onload = function()
 				var name = $(this).find('.name').html();
 				var entry = tests[name];
 				executing_tests.push(entry);
+				running_assertions+=entry.assertion_count;
 			}
 		});
 		
