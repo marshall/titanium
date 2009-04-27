@@ -455,6 +455,10 @@ namespace ti
 			{
 				this->datastream = v->ToString();
 			}
+			else if (v->IsNull() || v->IsUndefined())
+			{
+				this->datastream = "";
+			}
 			else
 			{
 				throw ValueException::FromString("unknown data type");

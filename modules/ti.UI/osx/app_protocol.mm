@@ -115,6 +115,10 @@
 	{
 		mime = @"text/javascript";
 	}
+	else if ([ext isEqualToString:@"json"])
+	{
+		mime = @"application/json";
+	}
 	else if ([ext isEqualToString:@"css"])
 	{
 		mime = @"text/css";

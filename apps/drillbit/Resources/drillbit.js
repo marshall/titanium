@@ -122,10 +122,10 @@ window.onload = function()
 	
 	var table = '<table>' +
 		'<tr>'+
-			'<th onclick="toggle_test_includes();" style="cursor:pointer">Include</th>'+
+			'<th width="25" onclick="toggle_test_includes();" style="cursor:pointer">Include</th>'+
 			'<th>Test</th>'+
 			'<th>Description</th>'+
-			'<th>Result</th>'+
+			'<th width="25">Result</th>'+
 		'</tr>'+
 	'';
 		
@@ -359,7 +359,7 @@ window.onload = function()
 				newus+=line+"\n";
 				continue;
 			}
-			var idx = line.indexOf('should_be');
+			var idx = line.indexOf('should_');
 			if (idx != -1)
 			{
 				var endIdx = line.lastIndexOf(')');

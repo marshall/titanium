@@ -372,6 +372,22 @@ TitaniumTest.Subject.prototype.should_not_be = function(expected,lineNumber)
 	}
 };
 
+TitaniumTest.Subject.prototype.should_not_be_null = function(expected,lineNumber)
+{
+	if (this.target === null)
+	{
+		throw new TitaniumTest.Error('should not be null, was: '+this.target,lineNumber);
+	}
+};
+
+TitaniumTest.Subject.prototype.should_not_be_undefined = function(expected,lineNumber)
+{
+	if (this.target === undefined)
+	{
+		throw new TitaniumTest.Error('should not be undefined, was: '+this.target,lineNumber);
+	}
+};
+
 TitaniumTest.Subject.prototype.should_be_exactly = function(expected,lineNumber)
 {
 	if (this.target !== expected)

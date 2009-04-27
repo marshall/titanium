@@ -84,7 +84,7 @@ td.status.failed
 #table table
 {
 	border:1px solid #111;
-	width:640px;
+	width:690px;
 }
 
 #table table th
@@ -94,12 +94,14 @@ td.status.failed
 	background-color:#111;
 	color:#fff;
 	padding-left:5px;
+	font-size:12px;
 }
 
 #table table td
 {
 	padding:5px;
 	text-align:left;
+	font-size:12px;
 }
 
 #table

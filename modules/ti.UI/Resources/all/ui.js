@@ -11,22 +11,21 @@
 //
 (function()
 {
-	// Add app:// support to jquery's http success function
-	if (window.jQuery) 
-	{
-	 	var originalHttpSuccess = jQuery.httpSuccess;
-		jQuery.extend({
-			httpSuccess: function(r){
-				if (location.protocol == 'app:' && r.status === 0) {
-					return true;
-				}
-				return originalHttpSuccess.call(this,r);
-			}
-		}); 
-	 }
-
 	window.onload=function()
 	{
+		// Add app:// support to jquery's http success function
+		if (window.jQuery) 
+		{
+		 	var originalHttpSuccess = jQuery.httpSuccess;
+			jQuery.extend({
+				httpSuccess: function(r){
+					if (location.protocol == 'app:' && r.status === 0) {
+						return true;
+					}
+					return originalHttpSuccess.call(this,r);
+				}
+			}); 
+		}
 		// adjust background transparency for window if needed
 		if(Titanium.platform == "win32") {
 			if(Titanium.UI.currentWindow.getTransparency() < 1) {
