@@ -10,7 +10,6 @@ describe("ti.UI.Dialog dialog tests",
 		value_of(dialog.close).should_be_function();
 		setTimeout(function()
 		{
-			dialog.close();
 			try
 			{
 				value_of(dialog.getResult()).should_be_null();
@@ -20,7 +19,8 @@ describe("ti.UI.Dialog dialog tests",
 			{
 				callback.failed(e);
 			}
-		},5000);
+			dialog.close();
+		},1000);
 	},
 
 	create_dialog_return_result_as_async:function(callback)

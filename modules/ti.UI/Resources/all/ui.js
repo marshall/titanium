@@ -113,11 +113,14 @@
 					self.sub_dom_window = ev.scope;
 					self.sub_dom_window._isDialog = true;
 					self.sub_dom_window._DialogParams = kv;
-					self.sub_dom_window._DialogResult = null;
 					var old_close = self.sub_dom_window.Titanium.UI.currentWindow.close;
 					self.sub_dom_window.Titanium.UI.currentWindow.close = function(r)
 					{
-						self.result = r;
+						if (arguments.length > 0)
+						{
+							// only set it if it was passed in
+							self.result = r;
+						}
 						old_close();
 					};
 				}
