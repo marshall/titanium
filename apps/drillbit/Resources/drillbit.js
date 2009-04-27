@@ -54,6 +54,21 @@ function show_test_details(name)
 	//tests[name];
 }
 
+function toggle_test_includes()
+{
+	$.each($('#table .checkbox'),function()
+	{
+		if ($(this).is('.checked'))
+		{
+			$(this).removeClass('checked');
+		}
+		else
+		{
+			$(this).addClass('checked');
+		}
+	});
+}
+
 var tests = {};
 window.onload = function()
 {
@@ -92,7 +107,14 @@ window.onload = function()
 		}
 		entry[ext] = f;
 		current_test_load = entry;
-		eval(jsfile.read());
+		try
+		{
+			eval(jsfile.read());
+		}
+		catch(EX)
+		{
+			alert("error loading: "+f+". Exception: "+EX);
+		}
 	}
 
 	test_names.sort();
@@ -100,7 +122,7 @@ window.onload = function()
 	
 	var table = '<table>' +
 		'<tr>'+
-			'<th>Include</th>'+
+			'<th onclick="toggle_test_includes();" style="cursor:pointer">Include</th>'+
 			'<th>Test</th>'+
 			'<th>Description</th>'+
 			'<th>Result</th>'+
@@ -119,6 +141,8 @@ window.onload = function()
 			'<td class="status untested" onclick="show_test_details(\'' + name + '\')">Untested</td>'+
 		'</tr>';
 	}
+	
+	table+='</table>';
 	
 	$('#table').html(table);
 	$('#table .checkbox').click(function()

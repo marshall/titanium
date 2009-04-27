@@ -3,8 +3,8 @@
 <script>
 	window.onload = function()
 	{
-		Titanium.UI.currentWindow.close({'a':'b'});
-	}
+		Titanium.UI.currentWindow.close({'a':'b','out':Titanium.UI.getDialogParam('in')});
+	};
 </script>
 </head>
 <body>

@@ -29,13 +29,16 @@ describe("ti.UI.Dialog dialog tests",
 		value_of(Titanium.UI.showDialog).should_be_function();
 		var dialog = Titanium.UI.showDialog({
 			'url':'app://dialog_return_result.html',
+			'parameters':{'in':'out'},
 			'onclose':function(result)
 			{
 				clearTimeout(timer);
 				try
 				{
 					value_of(result).should_not_be_null();
+					value_of(result).should_be_object();
 					value_of(result.a).should_be('b');
+					value_of(result.out).should_be('out');
 					callback.passed();
 				}
 				catch(e)

@@ -336,6 +336,8 @@
 	{
 		(*frames)[frame] = shared_global;
 	}
+	// apply patches
+	UIModule::GetInstance()->LoadUIJavascript(context);
 	return shared_global;
 }
 
@@ -368,8 +370,6 @@
 		global_object=[self inject:[frame windowObject] context:context frame:frame store:NO];
 	}
 
-	// apply patches
-	UIModule::GetInstance()->LoadUIJavascript(context);
 
 	NSURL *theurl =[[[frame dataSource] request] URL];
 	// fire load event

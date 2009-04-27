@@ -272,6 +272,8 @@ namespace ti
 	void OSXProcess::Terminate(const ValueList& args, SharedValue result)
 	{
 		[process stop];
+		[process setRead:NULL];
+		[process setExit:NULL];
 	}
 	void OSXProcess::Bound(const char *name, SharedValue value)
 	{
