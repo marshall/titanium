@@ -24,7 +24,7 @@ function test_status(name,classname)
 {
 	var el = $('#test_'+name+' td.status');
 	el.html(classname);
-	el.removeClass('untested').removeClass('failed')
+	el.removeClass('untested').removeClass('failed').removeClass('running')
 	  .removeClass('passed').addClass(classname.toLowerCase());
 }
 
@@ -446,7 +446,7 @@ window.onload = function()
 					clearInterval(timer);
 					current_test.failed = true;
 					update_status(current_test.name + " timed out");
-					test_status(current_test.name,'failed');
+					test_status(current_test.name,'Failed');
 					process.terminate();
 					return;
 				}
@@ -466,7 +466,7 @@ window.onload = function()
 				var r = TFS.getFile(results_dir,current_test.name+'.json').read();
 				var results = eval('('+r+')');
 				current_test.results = results;
-				test_status(current_test.name,results.failed>0?'failed':'passed');
+				test_status(current_test.name,results.failed>0?'Failed':'Passed');
 				update_status(current_test.name + ' complete ... '+results.passed+' passed, '+results.failed+' failed');
 			}
 			run_next_test();
@@ -503,10 +503,11 @@ window.onload = function()
 		
 		$.each($('#table tr.test'),function()
 		{
+			var name = $(this).find('.name').html();
+			var entry = tests[name];
+			test_status(entry.name,'Untested');
 			if ($(this).find('.checkbox').is('.checked'))
 			{
-				var name = $(this).find('.name').html();
-				var entry = tests[name];
 				executing_tests.push(entry);
 				running_assertions+=entry.assertion_count;
 			}
