@@ -222,7 +222,7 @@ namespace ti
 	}
 	void FilesystemBinding::GetRuntimeHomeDirectory(const ValueList& args, SharedValue result)
 	{
-		std::string dir = host->GetRuntimeHomePath();
+		std::string dir = FileUtils::GetSystemRuntimeHomeDirectory();
 		ti::File* file = new ti::File(dir);
 		result->SetObject(file);
 	}

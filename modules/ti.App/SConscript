@@ -22,7 +22,7 @@ else:
 	if not build.is_osx():
 		env.ParseConfig('pkg-config --cflags --libs libxml-2.0')
 
-m = build.add_module('ti.App')
+m = build.add_module('ti.App', env=env)
 sources = Glob('*.cpp') + Glob('Properties/*.cpp')
 t = env.SharedLibrary(target = m.build_dir + '/tiappmodule', source=sources)
 build.mark_build_target(t)

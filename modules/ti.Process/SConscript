@@ -14,6 +14,6 @@ if build.is_osx():
 	sources = sources + Glob('osx/*.cpp')
 	env.Append(CCFLAGS=['-x', 'objective-c++'])
 
-m = build.add_module('ti.Process')
+m = build.add_module('ti.Process', env=env)
 t = env.SharedLibrary(target = m.build_dir + '/tiprocessmodule', source = sources)
 build.mark_build_target(t)

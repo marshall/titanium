@@ -14,10 +14,10 @@
 using kroll::BootUtils;
 using kroll::FileUtils;
 using kroll::EnvironmentUtils;
+using kroll::Application;
+using kroll::SharedApplication;
 using std::string;
 using std::vector;
-using kroll::Application;
-using kroll::KComponent;
 class Installer;
 class Job;
 #include "job.h"
@@ -103,7 +103,7 @@ class Installer
 
 	private:
 	vector<Job*> jobs;
-	Application* app;
+	SharedApplication app;
 	int installType;
 	Stage stage;
 

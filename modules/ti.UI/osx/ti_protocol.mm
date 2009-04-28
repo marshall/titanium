@@ -32,12 +32,12 @@
 }
 
 +(NSURLRequest *)canonicalRequestForRequest:(NSURLRequest *)request {
-    return request;
+	return request;
 }
 
 - (void)load:(NSURL*)url path:(NSString*)fullpath
 {
-    id<NSURLProtocolClient> client = [self client];
+	id<NSURLProtocolClient> client = [self client];
 	NSData *data = [[NSData alloc] initWithContentsOfFile:fullpath];
 	NSString *ext = [fullpath pathExtension];
 	NSString *mime = [AppProtocol mimeTypeFromExtension:ext];
@@ -55,14 +55,14 @@
 
 - (void)startLoading
 {
-    NSURLRequest *request = [self request];
+	NSURLRequest *request = [self request];
 	NSURL *url = [request URL];
-	
+
 	NSString *hostpart = [[[url host] stringByReplacingOccurrencesOfString:@"." withString:@""] lowercaseString];
 	NSString *pathpart = [url path];
 	NSString *normpath = [pathpart stringByReplacingOccurrencesOfString:@".." withString:@""];
 	kroll::Host *host = [[TiApplication instance] host];
-	
+
 	std::string basedir;
 
 	if ([hostpart isEqualTo:@"runtime"])
@@ -91,14 +91,14 @@
 			return;
 		}
 	}
-	
+
 	kroll::Logger logger = kroll::Logger::GetRootLogger();
 	logger.Error("error finding %s",[[url absoluteString] UTF8String]);
-	
+
 	// File doesn't exist
-    int resultCode = NSURLErrorResourceUnavailable;
-    id<NSURLProtocolClient> client = [self client];
-    [client URLProtocol:self didFailWithError:[NSError errorWithDomain:NSURLErrorDomain code:resultCode userInfo:nil]];
+	int resultCode = NSURLErrorResourceUnavailable;
+	id<NSURLProtocolClient> client = [self client];
+	[client URLProtocol:self didFailWithError:[NSError errorWithDomain:NSURLErrorDomain code:resultCode userInfo:nil]];
 	[client URLProtocolDidFinishLoading:self];
 }
 

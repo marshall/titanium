@@ -373,7 +373,7 @@
 	// apply patches
 	UIModule::GetInstance()->LoadUIJavascript(context);
 
-	NSURL *theurl =[[[frame dataSource] request] URL];
+	NSURL *theurl = [[[frame dataSource] request] URL];
 	// fire load event
 	UserWindow *user_window = [window userWindow];
 	std::string url_str = [[theurl absoluteString] UTF8String];

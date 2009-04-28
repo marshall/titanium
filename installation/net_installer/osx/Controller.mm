@@ -184,16 +184,12 @@ static int totalJobs = 0;
 		NSString *thisPart;
 		while ((thisPart = [partsEnumerator nextObject]))
 		{
-			printf("%s\n", [thisPart UTF8String]);
-			printf("%s\n\n", [RUNTIME_UUID_FRAGMENT UTF8String]);
 			if ([thisPart isEqualToString:RUNTIME_UUID_FRAGMENT])
 			{
-				printf("found runtime uuid fragment\n");
 				isModule = NO;
 			}
 			else if ([thisPart isEqualToString:MODULE_UUID_FRAGMENT])
 			{
-				printf("found module uuid fragment\n");
 				isModule = YES;
 			}
 			else if ([thisPart hasPrefix:@"name="])
@@ -217,7 +213,7 @@ static int totalJobs = 0;
 		destDir = [NSString stringWithFormat:@"%@/runtime/osx/%@", installDirectory, version];
 	}
 
-#ifdef DEBUG	
+#ifdef DEBUG
 	NSLog(@"name=%@,version=%@,module=%d",name,version,isModule);
 #endif
 
@@ -332,8 +328,6 @@ static int totalJobs = 0;
 -(void)dealloc
 {
 
-	if (app != NULL)
-		delete app;
 	[jobs release];
 	[installDirectory release];
 
@@ -352,9 +346,123 @@ static int totalJobs = 0;
 	[super dealloc];
 }
 
+-(void)createInstallerMenu: (NSString*)applicationName
+{
+	NSString* menuAppName = [NSString stringWithFormat:@"%@ Installer", applicationName];
+	NSMenu* mainMenu = [[NSMenu alloc] initWithTitle:@"MainMenu"];
+	NSMenuItem* menuItem;
+	NSMenu* submenu;
+
+	// The titles of the menu items are for identification purposes only and shouldn't be localized.
+	// The strings in the menu bar come from the submenu titles,
+	// except for the application menu, whose title is ignored at runtime.
+	menuItem = [mainMenu addItemWithTitle:@"Apple" action:NULL keyEquivalent:@""];
+	submenu = [[NSMenu alloc] initWithTitle:@"Apple"];
+	[NSApp performSelector:@selector(setAppleMenu:) withObject:submenu];
+	[mainMenu setSubmenu:submenu forItem:menuItem];
+
+
+	NSMenu* aMenu = submenu;
+
+	menuItem = [aMenu 
+		addItemWithTitle:[NSString stringWithFormat:@"%@ %@", NSLocalizedString(@"About", nil), menuAppName]
+		action:@selector(orderFrontStandardAboutPanel:)
+		keyEquivalent:@""];
+	[menuItem setTarget:NSApp];
+
+	[aMenu addItem:[NSMenuItem separatorItem]];
+
+	menuItem = [aMenu addItemWithTitle:NSLocalizedString(@"Services", nil)
+		action:NULL
+		keyEquivalent:@""];
+	NSMenu* servicesMenu = [[NSMenu alloc] initWithTitle:@"Services"];
+	[aMenu setSubmenu:servicesMenu forItem:menuItem];
+	[NSApp setServicesMenu:servicesMenu];
+	
+	[aMenu addItem:[NSMenuItem separatorItem]];
+
+	menuItem = [aMenu addItemWithTitle:[NSString stringWithFormat:@"%@ %@", NSLocalizedString(@"Hide", nil), menuAppName]
+		action:@selector(hide:)
+		keyEquivalent:@"h"];
+	[menuItem setTarget:NSApp];
+	
+	menuItem = [aMenu addItemWithTitle:NSLocalizedString(@"Hide Others", nil)
+		action:@selector(hideOtherApplications:)
+		keyEquivalent:@"h"];
+	[menuItem setKeyEquivalentModifierMask:NSCommandKeyMask | NSAlternateKeyMask];
+	[menuItem setTarget:NSApp];
+	
+	menuItem = [aMenu addItemWithTitle:NSLocalizedString(@"Show All", nil)
+		action:@selector(unhideAllApplications:)
+		keyEquivalent:@""];
+	[menuItem setTarget:NSApp];
+	
+	[aMenu addItem:[NSMenuItem separatorItem]];
+	
+	menuItem = [aMenu addItemWithTitle:[NSString stringWithFormat:@"%@ %@", NSLocalizedString(@"Quit", nil), menuAppName]
+		action:@selector(terminate:)
+		keyEquivalent:@"q"];
+	[menuItem setTarget:NSApp];
+	
+	// edit
+	menuItem = [mainMenu addItemWithTitle:@"Edit" action:NULL keyEquivalent:@""];
+	submenu = [[NSMenu alloc] initWithTitle:NSLocalizedString(@"Edit", @"The Edit menu")];
+	[mainMenu setSubmenu:submenu forItem:menuItem];
+	menuItem = [submenu addItemWithTitle:NSLocalizedString(@"Undo", nil)
+		action:@selector(undo:)
+		keyEquivalent:@"z"];
+	
+	menuItem = [submenu addItemWithTitle:NSLocalizedString(@"Redo", nil)
+		action:@selector(redo:)
+		keyEquivalent:@"Z"];
+	
+	[submenu addItem:[NSMenuItem separatorItem]];
+	
+	menuItem = [submenu addItemWithTitle:NSLocalizedString(@"Cut", nil)
+		action:@selector(cut:)
+		keyEquivalent:@"x"];
+	
+	menuItem = [submenu addItemWithTitle:NSLocalizedString(@"Copy", nil)
+		action:@selector(copy:)
+		keyEquivalent:@"c"];
+	
+	menuItem = [submenu addItemWithTitle:NSLocalizedString(@"Paste", nil)
+		action:@selector(paste:)
+		keyEquivalent:@"v"];
+	
+	menuItem = [submenu addItemWithTitle:NSLocalizedString(@"Delete", nil)
+		action:@selector(delete:)
+		keyEquivalent:@""];
+
+	menuItem = [submenu addItemWithTitle: NSLocalizedString(@"Select All", nil)
+		action: @selector(selectAll:)
+		keyEquivalent: @"a"];
+
+	// window
+	menuItem = [mainMenu addItemWithTitle:@"Window" action:NULL keyEquivalent:@""];
+	submenu = [[NSMenu alloc] initWithTitle:NSLocalizedString(@"Window", @"The Window menu")];
+	[mainMenu setSubmenu:submenu forItem:menuItem];
+	menuItem = [submenu addItemWithTitle:NSLocalizedString(@"Minimize", nil)
+		action:@selector(performMinimize:)
+		keyEquivalent:@"m"];
+	
+	menuItem = [submenu addItemWithTitle:NSLocalizedString(@"Zoom", nil)
+		action:@selector(performZoom:)
+		keyEquivalent:@""];
+	
+	[submenu addItem:[NSMenuItem separatorItem]];
+	
+	menuItem = [submenu addItemWithTitle:NSLocalizedString(@"Bring All to Front", nil)
+		action:@selector(arrangeInFront:)
+		keyEquivalent:@""];
+	
+	[NSApp setWindowsMenu:submenu];
+	[NSApp setMainMenu:mainMenu];
+	[mainMenu release];
+}
+
 -(void)awakeFromNib
 { 
-	app = NULL;
 	[NSApp setDelegate:self];
 
 	updateFile = nil;
@@ -390,11 +498,11 @@ static int totalJobs = 0;
 
 	if (updateFile == nil)
 	{
-		app = BootUtils::ReadManifest([appPath UTF8String]);
+		app = Application::NewApplication([appPath UTF8String]);
 	}
 	else
 	{
-		app = BootUtils::ReadManifestFile([updateFile UTF8String], [appPath UTF8String]);
+		app = Application::NewApplication([updateFile UTF8String], [appPath UTF8String]);
 	}
 	NSString *appName, *appVersion, *appPublisher, *appURL, *appImage;
 	appName = appVersion = appPublisher = appURL = @"Unknown";
@@ -428,6 +536,7 @@ static int totalJobs = 0;
 		appImage = [NSString stringWithUTF8String:app->image.c_str()];
 	}
 
+	[self createInstallerMenu:appName];
 	[progressAppName setStringValue:appName];
 	[introAppName setStringValue:appName];
 	[progressAppVersion setStringValue:appVersion];
@@ -436,121 +545,11 @@ static int totalJobs = 0;
 	[introAppPublisher setStringValue:appPublisher];
 	[progressAppURL setStringValue:appURL];
 	[introAppURL setStringValue:appURL];
-	
+
 	[introAppVersion setFont:[NSFont boldSystemFontOfSize:12]];
 	[introAppPublisher setFont:[NSFont boldSystemFontOfSize:12]];
 	[introAppURL setFont:[NSFont boldSystemFontOfSize:12]];
-	
-	NSString *menuAppName = [NSString stringWithFormat:@"%@ Installer",appName];
 
-	NSMenu * mainMenu = [[NSMenu alloc] initWithTitle:@"MainMenu"];
-	NSMenuItem * menuItem;
-	NSMenu * submenu;
-
-	// The titles of the menu items are for identification purposes only and shouldn't be localized.
-	// The strings in the menu bar come from the submenu titles,
-	// except for the application menu, whose title is ignored at runtime.
-	menuItem = [mainMenu addItemWithTitle:@"Apple" action:NULL keyEquivalent:@""];
-	submenu = [[NSMenu alloc] initWithTitle:@"Apple"];
-	[NSApp performSelector:@selector(setAppleMenu:) withObject:submenu];
-	[mainMenu setSubmenu:submenu forItem:menuItem];
-
-
-	NSMenu *aMenu = submenu;
-
-	menuItem = [aMenu addItemWithTitle:[NSString stringWithFormat:@"%@ %@", NSLocalizedString(@"About", nil), menuAppName]
-								action:@selector(orderFrontStandardAboutPanel:)
-						 keyEquivalent:@""];
-	[menuItem setTarget:NSApp];
-
-	[aMenu addItem:[NSMenuItem separatorItem]];
-
-	menuItem = [aMenu addItemWithTitle:NSLocalizedString(@"Services", nil)
-								action:NULL
-						 keyEquivalent:@""];
-	NSMenu * servicesMenu = [[NSMenu alloc] initWithTitle:@"Services"];
-	[aMenu setSubmenu:servicesMenu forItem:menuItem];
-	[NSApp setServicesMenu:servicesMenu];
-	
-	[aMenu addItem:[NSMenuItem separatorItem]];
-
-	menuItem = [aMenu addItemWithTitle:[NSString stringWithFormat:@"%@ %@", NSLocalizedString(@"Hide", nil), menuAppName]
-								action:@selector(hide:)
-						 keyEquivalent:@"h"];
-	[menuItem setTarget:NSApp];
-	
-	menuItem = [aMenu addItemWithTitle:NSLocalizedString(@"Hide Others", nil)
-								action:@selector(hideOtherApplications:)
-						 keyEquivalent:@"h"];
-	[menuItem setKeyEquivalentModifierMask:NSCommandKeyMask | NSAlternateKeyMask];
-	[menuItem setTarget:NSApp];
-	
-	menuItem = [aMenu addItemWithTitle:NSLocalizedString(@"Show All", nil)
-								action:@selector(unhideAllApplications:)
-						 keyEquivalent:@""];
-	[menuItem setTarget:NSApp];
-	
-	[aMenu addItem:[NSMenuItem separatorItem]];
-	
-	menuItem = [aMenu addItemWithTitle:[NSString stringWithFormat:@"%@ %@", NSLocalizedString(@"Quit", nil), menuAppName]
-								action:@selector(terminate:)
-						 keyEquivalent:@"q"];
-	[menuItem setTarget:NSApp];
-	
-	// edit
-	menuItem = [mainMenu addItemWithTitle:@"Edit" action:NULL keyEquivalent:@""];
-	submenu = [[NSMenu alloc] initWithTitle:NSLocalizedString(@"Edit", @"The Edit menu")];
-	[mainMenu setSubmenu:submenu forItem:menuItem];
-	menuItem = [submenu addItemWithTitle:NSLocalizedString(@"Undo", nil)
-								action:@selector(undo:)
-						 keyEquivalent:@"z"];
-	
-	menuItem = [submenu addItemWithTitle:NSLocalizedString(@"Redo", nil)
-								action:@selector(redo:)
-						 keyEquivalent:@"Z"];
-	
-	[submenu addItem:[NSMenuItem separatorItem]];
-	
-	menuItem = [submenu addItemWithTitle:NSLocalizedString(@"Cut", nil)
-								action:@selector(cut:)
-						 keyEquivalent:@"x"];
-	
-	menuItem = [submenu addItemWithTitle:NSLocalizedString(@"Copy", nil)
-								action:@selector(copy:)
-						 keyEquivalent:@"c"];
-	
-	menuItem = [submenu addItemWithTitle:NSLocalizedString(@"Paste", nil)
-								action:@selector(paste:)
-						 keyEquivalent:@"v"];
-	
-	menuItem = [submenu addItemWithTitle:NSLocalizedString(@"Delete", nil)
-								action:@selector(delete:)
-						 keyEquivalent:@""];
-
-	menuItem = [submenu addItemWithTitle: NSLocalizedString(@"Select All", nil)
-						  action: @selector(selectAll:)
-						  keyEquivalent: @"a"];
-	// window
-	menuItem = [mainMenu addItemWithTitle:@"Window" action:NULL keyEquivalent:@""];
-	submenu = [[NSMenu alloc] initWithTitle:NSLocalizedString(@"Window", @"The Window menu")];
-	[mainMenu setSubmenu:submenu forItem:menuItem];
-	menuItem = [submenu addItemWithTitle:NSLocalizedString(@"Minimize", nil)
-								action:@selector(performMinimize:)
-						 keyEquivalent:@"m"];
-	
-	menuItem = [submenu addItemWithTitle:NSLocalizedString(@"Zoom", nil)
-								action:@selector(performZoom:)
-						 keyEquivalent:@""];
-	
-	[submenu addItem:[NSMenuItem separatorItem]];
-	
-	menuItem = [submenu addItemWithTitle:NSLocalizedString(@"Bring All to Front", nil)
-								action:@selector(arrangeInFront:)
-						 keyEquivalent:@""];
-	
-	[NSApp setWindowsMenu:submenu];
-	[NSApp setMainMenu:mainMenu];
-	[mainMenu release];
 
 	if (appImage != nil)
 	{
@@ -579,8 +578,8 @@ static int totalJobs = 0;
 		[introLicenseLabel setHidden:YES];
 		[introLicenseBox setHidden:YES];
 		NSRect frame = [introWindow frame];
-	//	frame.size.width = 525;
-	//	frame.size.height = 225;
+		frame.size.width = 650;
+		frame.size.height = 275;
 		[introWindow setMinSize:frame.size];
 		[introWindow setMaxSize:frame.size];
 		[introWindow setShowsResizeIndicator:NO];

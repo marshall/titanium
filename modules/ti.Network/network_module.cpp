@@ -12,7 +12,7 @@ using namespace ti;
 
 namespace ti
 {
-	KROLL_MODULE(NetworkModule);
+	KROLL_MODULE(NetworkModule, STRING(MODULE_NAME), STRING(MODULE_VERSION));
 
 	void NetworkModule::Initialize()
 	{
