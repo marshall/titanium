@@ -123,9 +123,10 @@ bool FileStream::Close()
 {
 	try
 	{
-		if(this->stream)
+		if (this->stream)
 		{
 			this->stream->close();
+			delete this->stream;
 			this->stream = NULL;
 			return true;
 		}
@@ -180,9 +181,6 @@ void FileStream::Write(const ValueList& args, SharedValue result)
 
 		fos->write(text, size);
 		result->SetBool(true);
-#ifdef DEBUG
-		std::cout << "wrote: " << size << " bytes" << std::endl;
-#endif
 	}
 	catch (Poco::Exception& exc)
 	{
@@ -234,7 +232,7 @@ void FileStream::ReadLine(const ValueList& args, SharedValue result)
 		std::string line;
 
 		Poco::FileInputStream* fis = dynamic_cast<Poco::FileInputStream*>(this->stream);
-		if(! fis)
+		if(!fis)
 		{
 			throw ValueException::FromString("FileStream must be opened for reading before calling readLine");
 		}

@@ -47,17 +47,17 @@ AppConfig::AppConfig(std::string& xmlfile)
 				{
 					copyright = ConfigUtils::GetNodeValue(node);
 				}
-				else if (nodeNameEquals(node, "homepage"))
+				else if (nodeNameEquals(node, "url"))
 				{
-					homepage = ConfigUtils::GetNodeValue(node);
+					url = ConfigUtils::GetNodeValue(node);
 				}
 				else if (nodeNameEquals(node, "version"))
 				{
 					version = ConfigUtils::GetNodeValue(node);
 				}
-				else if (nodeNameEquals(node, "updatesite"))
+				else if (nodeNameEquals(node, "publisher"))
 				{
-					updateSite = ConfigUtils::GetNodeValue(node);
+					publisher = ConfigUtils::GetNodeValue(node);
 				}
 				else if (nodeNameEquals(node, "window"))
 				{

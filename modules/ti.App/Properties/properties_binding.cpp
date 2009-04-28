@@ -14,12 +14,11 @@ namespace ti
 {
 	PropertiesBinding::PropertiesBinding(std::string& file_path)
 	{
-#ifdef DEBUG
-		std::cout << "Application properties path=" << file_path << std::endl;
-#endif
+		PRINTD("Application properties path=" << file_path);
 
 		Poco::File file(file_path);
-		if (!file.exists()) {
+		if (!file.exists()) 
+		{
 			file.createFile();
 		}
 

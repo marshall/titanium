@@ -608,6 +608,7 @@ static int totalJobs = 0;
 		installDirectory = [NSString stringWithUTF8String:userRuntimeHome.c_str()];
 	}
 	[installDirectory retain];
+	
 
 	[NSApp arrangeInFront:introWindow];
 	[progressWindow makeKeyAndOrderFront:progressWindow];

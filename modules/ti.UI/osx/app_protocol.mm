@@ -115,6 +115,10 @@
 	{
 		mime = @"text/javascript";
 	}
+	else if ([ext isEqualToString:@"json"])
+	{
+		mime = @"application/json";
+	}
 	else if ([ext isEqualToString:@"css"])
 	{
 		mime = @"text/css";
@@ -132,6 +136,10 @@
     NSURLRequest *request = [self request];
 	
 	NSURL *url = [AppProtocol normalizeURL:[request URL]];
+
+	static Logger &logger = Logger::Get("app_protocol");
+	logger.Debug("attempting to load %s",[[url absoluteString] UTF8String]);
+	
 	NSString *s = [AppProtocol getPath:url];
 	NSString *basePath = [NSString stringWithFormat:@"%s/Resources",getenv("KR_HOME")];
 	NSString *resourcePath = [basePath stringByAppendingPathComponent:s];

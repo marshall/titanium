@@ -59,7 +59,6 @@ def package_app_builder(target, source, env):
 				futils.CopyToDir(path.join(f,dirname), path.join(app.contents,'Resources'))
 
 	if run:
-		#Popen(app.exe)
 		if run_with:
 			os.system(app.exe + ' ' + run_with)
 		else:
@@ -70,13 +69,10 @@ build.env['BUILDERS']['PackageApp'] = build.env.Builder(
 	target_factory=SCons.Node.FS.default_fs.Entry,
 	multi=0)
 
-#build.env.Append(BUILDERS = 
-#builder = {'PackageApp' : Builder(
-#	action=package_app_builder,
-#	source_factory=SCons.Node.FS.default_fs.Entry}))
-
 SConscript('testapp/SConscript')
 SConscript('apivalidator/SConscript')
 SConscript('uploader/SConscript')
 SConscript('unittest/SConscript')
+SConscript('drillbit/SConscript')
+
 

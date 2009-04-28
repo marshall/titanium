@@ -89,6 +89,17 @@ namespace ti
 				}
 			}
 		}
+		static Logger &logger = Logger::Get("Process");
+		logger.Debug("Launching: %s with %d args",cmd.c_str(),arguments.size());
+		if (arguments.size()>0)
+		{
+			std::vector<std::string>::const_iterator i = arguments.begin();
+			while(arguments.end()!=i)
+			{
+				logger.Debug("Argument: %s",(*i).c_str());
+				i++;
+			}
+		}
 #ifdef OS_OSX
 		SharedKObject p = new OSXProcess(this, cmd, arguments);
 #else
