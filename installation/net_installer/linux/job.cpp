@@ -67,7 +67,7 @@ Job::Job(std::string url, int type) :
 	version("unknown"),
 	download(true)
 {
-	if (kroll::FileUtils::IsFile(url))
+	if (FileUtils::IsFile(url))
 	{
 		this->ParseFile(url);
 		this->out_filename = url;
@@ -204,27 +204,27 @@ void Job::Fetch()
 void Job::UnzipComponent()
 {
 	std::string outdir = Job::installDirectory;
-	kroll::FileUtils::CreateDirectory(outdir);
+	FileUtils::CreateDirectory(outdir);
 	outdir.append("/" + this->componentType);
-	kroll::FileUtils::CreateDirectory(outdir);
+	FileUtils::CreateDirectory(outdir);
 	outdir.append("/linux");
-	kroll::FileUtils::CreateDirectory(outdir);
+	FileUtils::CreateDirectory(outdir);
 
 	if (this->componentType != "runtime")
 	{
 		outdir.append("/" + this->name);
-		kroll::FileUtils::CreateDirectory(outdir);
+		FileUtils::CreateDirectory(outdir);
 	}
 
 	outdir.append("/" + this->version);
-	kroll::FileUtils::CreateDirectory(outdir);
+	FileUtils::CreateDirectory(outdir);
 
-	kroll::FileUtils::Unzip(this->out_filename, outdir);
+	FileUtils::Unzip(this->out_filename, outdir);
 }
 
 void Job::UnzipApplication()
 {
-	kroll::FileUtils::Unzip(this->out_filename, Installer::applicationPath);
+	FileUtils::Unzip(this->out_filename, Installer::applicationPath);
 }
 
 void Job::Unzip()

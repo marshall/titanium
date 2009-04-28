@@ -11,11 +11,11 @@
 #include <glib.h>
 #include <utils.h>
 
-using kroll::BootUtils;
-using kroll::FileUtils;
-using kroll::EnvironmentUtils;
-using kroll::Application;
-using kroll::SharedApplication;
+using KrollUtils::BootUtils;
+using KrollUtils::FileUtils;
+using KrollUtils::EnvironmentUtils;
+using KrollUtils::Application;
+using KrollUtils::SharedApplication;
 using std::string;
 using std::vector;
 class Installer;
