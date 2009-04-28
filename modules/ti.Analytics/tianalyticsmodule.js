@@ -15,7 +15,7 @@
 		try
 		{
 			// if we're offline we don't even attempt these
-			if (!Titanium.Network.online)
+			if (qsv.event!='ti.start' && Titanium.Network.online===false)
 			{
 				Titanium.API.debug("we're not online - skipping analytics");
 				return;

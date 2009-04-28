@@ -73,18 +73,19 @@ namespace ti
 		catch (kroll::ValueException &e)
 		{
 			SharedString ss = e.DisplayString();
-			Logger logger = Logger::GetRootLogger();
+			Logger &logger = Logger::Get("UIModule");
 			logger.Error("Error loading %s: %s",js_path.c_str(),(*ss).c_str());
 		}
 		catch (...)
 		{
-			Logger logger = Logger::GetRootLogger();
+			Logger &logger = Logger::Get("UIModule");
 			logger.Error("Unexpected error loading %s",js_path.c_str());
 		}
 	}
 
 	void UIModule::Exiting(int exitcode)
 	{
+		KR_DUMP_LOCATION
 		// send a stop notification - we need to do this before 
 		// stop is called given that the API module is registered (and unregistered)
 		// before our module and it will then be too late
@@ -94,6 +95,7 @@ namespace ti
 
 	void UIModule::Stop()
 	{
+		KR_DUMP_LOCATION
 		// Remove app tray icons
 		UIModule::ClearTrayItems();
 

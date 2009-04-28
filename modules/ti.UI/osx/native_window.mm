@@ -226,7 +226,9 @@
 }
 - (void)open
 {
-	if (!requiresDisplay && config->IsVisible())
+	KR_DUMP_LOCATION
+//	if (!requiresDisplay && config->IsVisible())
+	if (config->IsVisible())
 	{
 		// if we call open and we're initially visible
 		// we need to basically set requires display which
@@ -240,6 +242,7 @@
 }
 - (void)close
 {
+	KR_DUMP_LOCATION
 	if (!closed)
 	{
 		closed = YES;
@@ -258,6 +261,7 @@
 }
 - (void)frameLoaded
 {
+	KR_DUMP_LOCATION
 	if (requiresDisplay)
 	{
 		requiresDisplay = NO;

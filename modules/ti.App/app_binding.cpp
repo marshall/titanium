@@ -29,10 +29,25 @@ namespace ti
 		 */
 		this->SetMethod("getVersion", &AppBinding::GetVersion);
 		/**
-		 * @tiapi(method=True,immutable=True,name=App.getUpdateURL,since=0.2) get the application update URL
-	     * @tiresult(for=App.getUpdateURL,type=string) returns the url
+		 * @tiapi(method=True,immutable=True,name=App.getPublisher,since=0.4) get the application publisher
+	     * @tiresult(for=App.getPublisher,type=string) returns the publisher
 		 */
-		this->SetMethod("getUpdateURL", &AppBinding::GetUpdateURL);
+		this->SetMethod("getPublisher", &AppBinding::GetPublisher);
+		/**
+		 * @tiapi(method=True,immutable=True,name=App.getURL,since=0.4) get the application url
+	     * @tiresult(for=App.getURL,type=string) returns the url for the app
+		 */
+		this->SetMethod("getURL", &AppBinding::GetURL);
+		/**
+		 * @tiapi(method=True,immutable=True,name=App.getDescription,since=0.4) get the application description
+	     * @tiresult(for=App.getDescription,type=string) returns the description for the app
+		 */
+		this->SetMethod("getDescription", &AppBinding::GetDescription);
+		/**
+		 * @tiapi(method=True,immutable=True,name=App.getCopyright,since=0.4) get the application copyright
+	     * @tiresult(for=App.getCopyright,type=string) returns the copyright for the app
+		 */
+		this->SetMethod("getCopyright", &AppBinding::GetCopyright);
 		/**
 		 * @tiapi(method=True,immutable=True,name=App.getGUID,since=0.2) get the application globally unique id
 	     * @tiresult(for=App.getGUID,type=string) returns the unique id
@@ -89,6 +104,17 @@ namespace ti
 		 * @tiresult(for=App.loadProperties,type=list) returns the properties as a list
 		 */
 		this->SetMethod("loadProperties", &AppBinding::LoadProperties);
+
+		/**
+		 * @tiapi(method=True,name=App.stdout,since=0.4) write to stdout
+		 * @tiarg(for=App.stdout,type=string,name=data) data to write
+		 */
+		this->SetMethod("stdout", &AppBinding::StdOut);
+		/**
+		 * @tiapi(method=True,name=App.stderr,since=0.4) write to stderr
+		 * @tiarg(for=App.stderr,type=string,name=data) data to write
+		 */
+		this->SetMethod("stderr", &AppBinding::StdErr);
 	}
 
 	AppBinding::~AppBinding()
@@ -106,9 +132,21 @@ namespace ti
 	{
 		result->SetString(AppConfig::Instance()->GetVersion().c_str());
 	}
-	void AppBinding::GetUpdateURL(const ValueList& args, SharedValue result)
+	void AppBinding::GetPublisher(const ValueList& args, SharedValue result)
 	{
-		result->SetString(AppConfig::Instance()->GetUpdateSite().c_str());
+		result->SetString(AppConfig::Instance()->GetPublisher().c_str());
+	}
+	void AppBinding::GetCopyright(const ValueList& args, SharedValue result)
+	{
+		result->SetString(AppConfig::Instance()->GetCopyright().c_str());
+	}
+	void AppBinding::GetDescription(const ValueList& args, SharedValue result)
+	{
+		result->SetString(AppConfig::Instance()->GetDescription().c_str());
+	}
+	void AppBinding::GetURL(const ValueList& args, SharedValue result)
+	{
+		result->SetString(AppConfig::Instance()->GetURL().c_str());
 	}
 	void AppBinding::GetGUID(const ValueList& args, SharedValue result)
 	{
@@ -157,6 +195,28 @@ namespace ti
 			SharedKObject properties = new PropertiesBinding(file_path);
 			result->SetObject(properties);
 		}
+	}
+
+	void AppBinding::StdOut(const ValueList& args, SharedValue result)
+	{
+		for (size_t c=0;c<args.size();c++)
+		{
+			SharedValue arg = args.at(c);
+			const char *s = arg->ToString();
+			std::cout << s;
+		}
+		std::cout << std::endl;
+	}
+
+	void AppBinding::StdErr(const ValueList& args, SharedValue result)
+	{
+		for (size_t c=0;c<args.size();c++)
+		{
+			SharedValue arg = args.at(c);
+			const char *s = arg->ToString();
+			std::cerr << s;
+		}
+		std::cerr << std::endl;
 	}
 
 }

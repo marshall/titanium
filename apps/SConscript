@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 Import('build')
 Import('run')
 Import('run_with')
@@ -25,6 +26,10 @@ def package_app_builder(target, source, env):
 	if not 'URL' in env:
 		env['URL'] = None
 
+	installed = False
+	if 'INSTALLED' in env:
+		installed = env['INSTALLED']
+
 	app = App(
 		build,
 		shortname=env['SHORTNAME'],
@@ -41,7 +46,8 @@ def package_app_builder(target, source, env):
 	app.stage(path.join(build.dir, env['SHORTNAME']), src_resources=str(source[0]))
 
 	# Mark these applications as installed
-	#futils.Touch(path.join(app.contents, '.installed'))
+	if installed:
+		futils.Touch(path.join(app.contents, '.installed'))
 
 	for s in source[1:]:
 		s = str(s)
@@ -53,7 +59,6 @@ def package_app_builder(target, source, env):
 				futils.CopyToDir(path.join(f,dirname), path.join(app.contents,'Resources'))
 
 	if run:
-		#Popen(app.exe)
 		if run_with:
 			os.system(app.exe + ' ' + run_with)
 		else:
@@ -64,13 +69,10 @@ build.env['BUILDERS']['PackageApp'] = build.env.Builder(
 	target_factory=SCons.Node.FS.default_fs.Entry,
 	multi=0)
 
-#build.env.Append(BUILDERS = 
-#builder = {'PackageApp' : Builder(
-#	action=package_app_builder,
-#	source_factory=SCons.Node.FS.default_fs.Entry}))
-
 SConscript('testapp/SConscript')
 SConscript('apivalidator/SConscript')
 SConscript('uploader/SConscript')
 SConscript('unittest/SConscript')
+SConscript('drillbit/SConscript')
+
 

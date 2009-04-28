@@ -29,13 +29,11 @@
 
 -(void) growlIsReady
 {
-	NSLog(@">>>>>>>>>>> Growl is ready");
 	ready = TRUE;
 }
 
 - (void) growlNotificationWasClicked:(id)clickContext
 {
-	NSLog(@">>>>>>>>>>>>>>> Growl notification clicked");
 	NSMutableArray* array = (NSMutableArray*) clickContext;
 	MethodWrapper* wrapper = (MethodWrapper*) [array objectAtIndex:0];
 	SharedKMethod* method = [wrapper method];

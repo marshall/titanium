@@ -23,11 +23,16 @@ namespace ti
 		void GetID(const ValueList& args, SharedValue result);
 		void GetName(const ValueList& args, SharedValue result);
 		void GetVersion(const ValueList& args, SharedValue result);
-		void GetUpdateURL(const ValueList& args, SharedValue result);
+		void GetPublisher(const ValueList& args, SharedValue result);
+		void GetCopyright(const ValueList& args, SharedValue result);
+		void GetDescription(const ValueList& args, SharedValue result);
+		void GetURL(const ValueList& args, SharedValue result);
 		void GetGUID(const ValueList& args, SharedValue result);
 		void AppURLToPath(const ValueList& args, SharedValue result);
 		void SetMenu(const ValueList& args, SharedValue result);
 		void Exit(const ValueList& args, SharedValue result);
+		void StdOut(const ValueList& args, SharedValue result);
+		void StdErr(const ValueList& args, SharedValue result);
 
 		void LoadProperties(const ValueList& args, SharedValue result);
 	};

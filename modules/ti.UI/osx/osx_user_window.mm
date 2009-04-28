@@ -1,4 +1,5 @@
-/** * Appcelerator Titanium - licensed under the Apache Public License 2
+/**
+ * Appcelerator Titanium - licensed under the Apache Public License 2
  * see LICENSE in the root folder for details on the license.
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
@@ -78,12 +79,9 @@ namespace ti
 	}
 	OSXUserWindow::~OSXUserWindow()
 	{
+		KR_DUMP_LOCATION
 		window = nil; // don't release
-		
-		if (!closed)
-		{
-			UserWindow::Close();
-		}
+		UserWindow::Close();
 	}
 	void OSXUserWindow::Hide()
 	{
@@ -111,6 +109,7 @@ namespace ti
 	}
 	void OSXUserWindow::Show()
 	{
+		KR_DUMP_LOCATION
 		if (opened)
 		{
 			this->Focus();
@@ -135,6 +134,7 @@ namespace ti
 	}
 	void OSXUserWindow::Open()
 	{
+		KR_DUMP_LOCATION
 		opened = true;
 		[window open];
 		UserWindow::Open();
@@ -411,6 +411,7 @@ namespace ti
 	
 	void OSXUserWindow::Focused()
 	{
+		KR_DUMP_LOCATION
 		this->focused = true;
 		if (!menu.isNull())
 		{

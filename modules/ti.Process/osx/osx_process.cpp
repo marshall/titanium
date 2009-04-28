@@ -79,15 +79,20 @@
 		[self stop];
 	}
 	delete shared_input;
+	shared_input=NULL;
 	delete shared_output;
+	shared_output=NULL;
 	delete shared_error;
+	shared_error=NULL;
 	if (onread)
 	{
 		delete onread;
+		onexit = NULL;
 	}
 	if (onexit)
 	{
 		delete onexit;
+		onexit = NULL;
 	}
 	[task release];
 	[super dealloc];
@@ -136,7 +141,13 @@
 	{
 		ValueList args;
 		args.push_back(Value::NewInt([task terminationStatus]));
-		host->InvokeMethodOnMainThread(*onexit,args,false);
+		try
+		{
+			host->InvokeMethodOnMainThread(*onexit,args,true);
+		}
+		catch(...)
+		{
+		}
 	}
 	
 	// close the streams after our onexit in case they want to read
@@ -261,6 +272,8 @@ namespace ti
 	void OSXProcess::Terminate(const ValueList& args, SharedValue result)
 	{
 		[process stop];
+		[process setRead:NULL];
+		[process setExit:NULL];
 	}
 	void OSXProcess::Bound(const char *name, SharedValue value)
 	{

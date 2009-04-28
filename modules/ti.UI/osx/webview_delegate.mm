@@ -86,6 +86,7 @@
 
 -(id)initWithWindow:(NativeWindow*)win host:(Host*)h
 {
+	KR_DUMP_LOCATION
 	self = [super init];
 	if (self!=nil)
 	{
@@ -312,16 +313,13 @@
 - (void)webView:(WebView *)sender didReceiveTitle:(NSString *)title forFrame:(WebFrame *)frame
 {
     // Only report feedback for the main frame.
-    if (frame == [sender mainFrame]) 
-	{
-		// set the title on the config in case they
-		// programatically set the title on the window
-		// so that it correctly is reflected in the config 
-		WindowConfig *config = [window config];
-		std::string t = std::string([title UTF8String]);
-		config->SetTitle(t);
-		[window setTitle:title];
-    }
+	// set the title on the config in case they
+	// programatically set the title on the window
+	// so that it correctly is reflected in the config 
+	WindowConfig *config = [window config];
+	std::string t = std::string([title UTF8String]);
+	config->SetTitle(t);
+	[window setTitle:title];
 }
 - (SharedKObject)inject:(WebScriptObject *)windowScriptObject context:(JSGlobalContextRef)context frame:(WebFrame*)frame store:(BOOL)store
 {
@@ -338,6 +336,8 @@
 	{
 		(*frames)[frame] = shared_global;
 	}
+	// apply patches
+	UIModule::GetInstance()->LoadUIJavascript(context);
 	return shared_global;
 }
 
@@ -370,8 +370,6 @@
 		global_object=[self inject:[frame windowObject] context:context frame:frame store:NO];
 	}
 
-	// apply patches
-	UIModule::GetInstance()->LoadUIJavascript(context);
 
 	NSURL *theurl =[[[frame dataSource] request] URL];
 	// fire load event
@@ -379,47 +377,41 @@
 	std::string url_str = [[theurl absoluteString] UTF8String];
 	user_window->PageLoaded(global_object,url_str);
 	
-    // Only report feedback for the main frame.
-    if (frame == [sender mainFrame]) 
+	if (![theurl isEqual:url])
 	{
-		if (![theurl isEqual:url])
-		{
-			[self setURL:theurl];
-		}
+		[self setURL:theurl];
+	}
 
-		if (initialDisplay==NO)
-		{
-			initialDisplay=YES;
-			// cause the initial window to show since it was initially opened hidden
-			// so you don't get the nasty wide screen while content is loading
-			[window frameLoaded];
-		}
-    }
+	if (initialDisplay==NO)
+	{
+		initialDisplay=YES;
+		// cause the initial window to show since it was initially opened hidden
+		// so you don't get the nasty wide screen while content is loading
+//		[window frameLoaded];
+		[window performSelector:@selector(frameLoaded) withObject:nil afterDelay:.005];
+	}
 }
 
 - (void)webView:(WebView *)sender didFailProvisionalLoadWithError:(NSError *)error forFrame:(WebFrame *)frame
 {
 	KR_DUMP_LOCATION
 
-    // Only report feedback for the main frame.
-    if (frame == [sender mainFrame]) 
+	if ([error code]==-999 && [[error domain] isEqual:NSURLErrorDomain])
 	{
-		if ([error code]==-999 && [[error domain] isEqual:NSURLErrorDomain])
-		{
-			//this is OK, this is a cancel to a pending web load request and can be ignored...
-			return;
-		}
-		NSString *err = [NSString stringWithFormat:@"Error loading URL: %@. %@", url,[error localizedDescription]];
-		Logger logger = Logger::GetRootLogger();
-		logger.Error("error: %s",[err UTF8String]);
-		
-		// in this case we need to ensure that the window is showing if not initially shown
-		if (initialDisplay==NO)
-		{
-			initialDisplay=YES;
-			[window performSelector:@selector(frameLoaded) withObject:nil afterDelay:.005];
-		}
-    }
+		//this is OK, this is a cancel to a pending web load request and can be ignored...
+		return;
+	}
+
+	NSString *err = [NSString stringWithFormat:@"Error loading URL: %@. %@", url,[error localizedDescription]];
+	Logger logger = Logger::GetRootLogger();
+	logger.Error("error: %s",[err UTF8String]);
+
+	// in this case we need to ensure that the window is showing if not initially shown
+	if (initialDisplay==NO)
+	{
+		initialDisplay=YES;
+		[window performSelector:@selector(frameLoaded) withObject:nil afterDelay:.005];
+	}
 }
 
 - (void)webView:(WebView *)sender didClearWindowObject:(WebScriptObject *)windowScriptObject forFrame:(WebFrame*)frame 

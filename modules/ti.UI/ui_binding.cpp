@@ -141,20 +141,30 @@ namespace ti
 
 	void UIBinding::AddToOpenWindows(SharedUserWindow window)
 	{
+		KR_DUMP_LOCATION
 		this->open_window_list->Append(Value::NewObject(window));
 		this->open_windows.push_back(window);
 	}
 
 	void UIBinding::RemoveFromOpenWindows(SharedUserWindow window)
 	{
+		KR_DUMP_LOCATION
+		static Logger &logger = Logger::Get("UIBinding");
 		std::vector<SharedUserWindow>::iterator w = open_windows.begin();
 		while (w != open_windows.end())
 		{
 			if ((*w).get() == window.get())
+			{
+				logger.Debug("found window to remove with 0x%x",window.get());
 				w = this->open_windows.erase(w);
+				return;
+			}
 			else
+			{
 				w++;
+			}
 		}
+		logger.Warn("didn't find window to remove with 0x%x",window.get());
 	}
 
 	void UIBinding::_CreateMenu(const ValueList& args, SharedValue result)
