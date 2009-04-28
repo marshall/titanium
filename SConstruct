@@ -21,8 +21,6 @@ build = BuildConfig(
 	CONFIG_FILENAME = 'tiapp.xml',
 	BUILD_DIR = path.abspath('build'),
 	THIRD_PARTY_DIR = path.join(path.abspath('kroll'), 'thirdparty'),
-	BOOT_RUNTIME_FLAG = '--runtime',
-	BOOT_HOME_FLAG = '--start',
 	BOOT_UPDATESITE_ENVNAME = 'TI_UPDATESITE',
 	CRASH_REPORT_URL = 'nosite'
 )

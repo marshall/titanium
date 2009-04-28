@@ -52,7 +52,7 @@ elif build.is_osx():
 	sources = sources + Glob('osx/*.mm') + Glob('osx/*.cpp')
 	env.Append(CCFLAGS=['-x', 'objective-c++'])
 
-m = build.add_module('ti.UI')
+m = build.add_module('ti.UI', env=env)
 s1 = env.SharedLibrary(target = m.build_dir + '/tiuimodule', source = sources)
 build.mark_build_target(s1)
 

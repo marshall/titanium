@@ -87,11 +87,11 @@ Installer::Installer(vector<Job*> jobs, int installType) :
 	}
 	else if (isUpdate)
 	{
-		this->app = BootUtils::ReadManifestFile(updateFilename, applicationPath);
+		this->app = Application::NewApplication(updateFilename, applicationPath);
 	} 
 	else
 	{
-		this->app = BootUtils::ReadManifest(applicationPath);
+		this->app = Application::NewApplication(applicationPath);
 	}
 
 	this->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);

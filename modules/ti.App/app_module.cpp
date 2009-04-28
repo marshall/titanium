@@ -12,7 +12,7 @@
 using namespace kroll;
 using namespace ti;
 
-KROLL_MODULE(AppModule);
+KROLL_MODULE(AppModule, STRING(MODULE_NAME), STRING(MODULE_VERSION));
 
 namespace ti
 {
