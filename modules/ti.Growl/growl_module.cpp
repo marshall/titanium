@@ -20,7 +20,7 @@ using namespace ti;
 
 namespace ti
 {
-	KROLL_MODULE(GrowlModule);
+	KROLL_MODULE(GrowlModule, STRING(MODULE_NAME), STRING(MODULE_VERSION));
 
 	void GrowlModule::Initialize()
 	{

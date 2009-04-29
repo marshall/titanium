@@ -184,6 +184,7 @@ window.onload = function()
 	// get the runtime dir
 	var runtime_dir = TFS.getFile(Titanium.Process.getEnv('KR_RUNTIME'));
 	var modules_dir = TFS.getFile(TFS.getApplicationDirectory(),'modules');
+	var app_dir = TFS.getApplicationDirectory();
 	
 	var run_button = $('#run').get(0);
 
@@ -409,7 +410,7 @@ window.onload = function()
 		profile_path.deleteFile();
 		log_path.deleteFile();
 
-		var args = ['--profile="'+profile_path+'"','--logpath="'+log_path+'"','--runtime_override="'+runtime_dir+'"','--module_override="'+modules_dir+'"','--no-console-logging'];
+		var args = ['--profile="'+profile_path+'"','--logpath="'+log_path+'"','--bundled_component_override="'+app_dir+'"','--no-console-logging'];
 		var process = Titanium.Process.launch(app.executable.nativePath(),args);
 		process.onread = function(data)
 		{

@@ -6,9 +6,11 @@
 #import <Cocoa/Cocoa.h>
 #import "Downloader.h"
 #import <utils.h>
-using kroll::Application;
-using kroll::BootUtils;
-using kroll::FileUtils;
+using KrollUtils::BootUtils;
+using KrollUtils::FileUtils;
+using KrollUtils::Application;
+using KrollUtils::SharedApplication;
+SharedApplication app;
 
 @interface Job : NSObject {
 	NSURL* url; 
@@ -52,7 +54,6 @@ using kroll::FileUtils;
 	NSString *temporaryDirectory;
 	NSString *installDirectory;
 	NSString *updateFile;
-	Application* app;
 }
 
 -(IBAction)cancelProgress:(id)sender;
@@ -65,5 +66,6 @@ using kroll::FileUtils;
 -(void)downloadAndInstall:(Controller*)controller;
 -(void)install:(Job*)job;
 -(void)downloadJob:(Job*)job atIndex:(int)index;
+-(void)createInstallerMenu:(NSString*)applicationName;
 
 @end

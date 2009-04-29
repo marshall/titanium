@@ -12,7 +12,7 @@ using namespace ti;
 
 namespace ti
 {
-	KROLL_MODULE(DesktopModule);
+	KROLL_MODULE(DesktopModule, STRING(MODULE_NAME), STRING(MODULE_VERSION));
 
 	void DesktopModule::Initialize()
 	{

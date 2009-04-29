@@ -18,13 +18,14 @@
 #include "Progress.h"
 #include "Resource.h"
 #include "IntroDialog.h"
+#include "api/utils/utils.h"
 
 using std::string;
 using std::wstring;
 using std::vector;
-using kroll::Application;
-using kroll::FileUtils;
-using kroll::BootUtils;
+using KrollUtils::Application;
+using KrollUtils::FileUtils;
+using KrollUtils::BootUtils;
 
 HINSTANCE mainInstance;
 HICON mainIcon;
@@ -567,11 +568,11 @@ int WINAPI WinMain(
 
 	if (updateFile.empty())
 	{
-		app = BootUtils::ReadManifest(appPath);
+		app = Application::NewApplication(appPath);
 	}
 	else
 	{
-		app = BootUtils::ReadManifestFile(updateFile, appPath);
+		app = Application::NewApplication(updateFile, appPath);
 	}
 	
 	if (app == NULL)

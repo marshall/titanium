@@ -87,11 +87,11 @@ Installer::Installer(vector<Job*> jobs, int installType) :
 	}
 	else if (isUpdate)
 	{
-		this->app = BootUtils::ReadManifestFile(updateFilename, applicationPath);
+		this->app = Application::NewApplication(updateFilename, applicationPath);
 	} 
 	else
 	{
-		this->app = BootUtils::ReadManifest(applicationPath);
+		this->app = Application::NewApplication(applicationPath);
 	}
 
 	this->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -736,7 +736,7 @@ int do_install_sudo()
 
 	// Restart in a sudoed environment
 	std::string cmd = "gksudo";
-	int r = kroll::FileUtils::RunAndWait(cmd, args);
+	int r = FileUtils::RunAndWait(cmd, args);
 	if (r == 127)
 	{
 		// Erase gksudo specific options
@@ -746,7 +746,7 @@ int do_install_sudo()
 		args.insert(args.begin(), "The Titanium installer needs adminstrator privileges to run. Please enter your password.");
 		args.insert(args.begin(), "--comment");
 		args.insert(args.begin(), "-d");
-		r = kroll::FileUtils::RunAndWait(cmd, args);
+		r = FileUtils::RunAndWait(cmd, args);
 	}
 	if (r == 127)
 	{
@@ -757,7 +757,7 @@ int do_install_sudo()
 		cmd = std::string("xterm");
 		args.insert(args.begin(), "sudo");
 		args.insert(args.begin(), "-e");
-		r = kroll::FileUtils::RunAndWait(cmd, args);
+		r = FileUtils::RunAndWait(cmd, args);
 	}
 	return r;
 }

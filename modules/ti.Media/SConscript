@@ -28,7 +28,7 @@ elif build.is_win32():
 elif build.is_linux():
 	sources += Glob('gst/*.cpp')
 
-m = build.add_module('ti.Media')
+m = build.add_module('ti.Media', env=env)
 t = env.SharedLibrary(target = m.build_dir + '/timediamodule', source = sources)
 build.mark_build_target(t)
 

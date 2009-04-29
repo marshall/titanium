@@ -12,7 +12,7 @@ using namespace ti;
 
 namespace ti
 {
-	KROLL_MODULE(ProcessModule);
+	KROLL_MODULE(ProcessModule, STRING(MODULE_NAME), STRING(MODULE_VERSION));
 	
 	void ProcessModule::Initialize()
 	{

@@ -10,11 +10,12 @@
 #include "Progress.h"
 #include "Resource.h"
 #include "IntroDialog.h"
+#include "api/utils/utils.h"
 
 using std::string;
 using std::wstring;
-using kroll::Application;
-using kroll::FileUtils;
+using KrollUtils::Application;
+using KrollUtils::FileUtils;
 
 extern HINSTANCE mainInstance;
 extern HICON mainIcon;

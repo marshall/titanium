@@ -9,7 +9,8 @@
 
 namespace ti
 {
-	KROLL_MODULE(UIModule)
+	KROLL_MODULE(UIModule, STRING(MODULE_NAME), STRING(MODULE_VERSION))
+
 
 	SharedKObject UIModule::global = SharedKObject(NULL);
 	SharedPtr<MenuItem> UIModule::app_menu = SharedPtr<MenuItem>(NULL);
