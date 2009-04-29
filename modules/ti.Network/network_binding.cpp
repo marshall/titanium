@@ -11,6 +11,7 @@
 #include "host_binding.h"
 #include "irc/irc_client_binding.h"
 #include "http/http_client_binding.h"
+#include "proxy/Proxy.h"
 
 using kroll::DataUtils;
 
@@ -20,6 +21,7 @@ namespace ti
 	NetworkBinding::NetworkBinding(Host* host) :
 		 host(host),
 		 global(host->GetGlobalObject()),
+		 proxy(NULL),
 		 next_listener_id(0)
 	{
    		SharedValue online = Value::NewBool(true);
@@ -90,6 +92,17 @@ namespace ti
 		 */
 		this->SetMethod("removeConnectivityListener",&NetworkBinding::RemoveConnectivityListener);
 
+		/**
+		 * @tiapi(method=True,name=Network.SetProxy,since=0.2) sets the proxy parameters to the system.
+		 * @tiarg(for=Network.SetProxy,type=integer,name=id) bool indicating success/failute
+		 */
+		this->SetMethod("setProxy",&NetworkBinding::SetProxy);
+
+		/**
+		 * @tiapi(method=True,name=Network.GetProxy,since=0.2)
+		 * @tiarg(for=Network.GetProxy,type=integer,name=id) returns the Proxy object
+		 */
+		this->SetMethod("getProxy",&NetworkBinding::GetProxy);
 
 		// NOTE: this is only used internally and shouldn't be published
 		this->SetMethod("FireOnlineStatusChange",&NetworkBinding::FireOnlineStatusChange);
@@ -292,6 +305,31 @@ namespace ti
 		std::string sResult = DataUtils::DecodeURIComponent(src);
 		result->SetString(sResult);
 	}
+	
+	void NetworkBinding::SetProxy(const ValueList& args, SharedValue result)
+	{
+		std::string hostname = args.at(0)->ToString();
+		std::string port = args.at(1)->ToString();
+		std::string username = args.at(2)->ToString();
+		std::string password = args.at(3)->ToString();
+		if(proxy)
+		{
+			delete proxy;
+			proxy = NULL;
+		}
+
+		proxy = new ti::Proxy(hostname, port, username,password);
+		result->SetBool(true);
+	}
+
+	void NetworkBinding::GetProxy(const ValueList& args, SharedValue result)
+	{
+		if(proxy)
+		{
+			result->SetObject(this->proxy);
+		}
+	}
+
 
 	Host* NetworkBinding::GetHost()
 	{

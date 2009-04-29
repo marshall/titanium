@@ -410,7 +410,7 @@ window.onload = function()
 		profile_path.deleteFile();
 		log_path.deleteFile();
 
-		var args = ['--profile="'+profile_path+'"','--logpath="'+log_path+'"','--bundled_component_override="'+app_dir+'"','--no-console-logging'];
+		var args = ['--profile="'+profile_path+'"','--logpath="'+log_path+'"','--bundled-component-override="'+app_dir+'"','--no-console-logging'];
 		var process = Titanium.Process.launch(app.executable.nativePath(),args);
 		process.onread = function(data)
 		{
