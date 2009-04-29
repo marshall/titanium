@@ -18,25 +18,25 @@ namespace ti
 	{
 
 		/**
-		 * @tiapi(method=True,name=Titanium.Network.Proxy.getHostName,since=0.2) returns a string object containing HostName
+		 * @tiapi(method=True,name=Titanium.Network.Proxy.getHostName,since=0.4) returns a string object containing HostName
 		 * @tiresult(for=Titanium.Network.Proxy.getHostName, type=string)
 		 */
 		this->SetMethod("getHostName",&Proxy::getHostName);
 
 		/**
-		 * @tiapi(method=True,name=Titanium.Network.Proxy.getHostName,since=0.2) returns a string object containing HostName
+		 * @tiapi(method=True,name=Titanium.Network.Proxy.getHostName,since=0.4) returns a string object containing HostName
 		 * @tiresult(for=Titanium.Network.Proxy.getHostName, type=string)
 		 */
 		this->SetMethod("getPort",&Proxy::getPort);
 		
 		/**
-		 * @tiapi(method=True,name=Titanium.Network.Proxy.getHostName,since=0.2) returns a string object containing HostName
+		 * @tiapi(method=True,name=Titanium.Network.Proxy.getHostName,since=0.4) returns a string object containing HostName
 		 * @tiresult(for=Titanium.Network.Proxy.getHostName, type=string)
 		 */
 		this->SetMethod("getUserName",&Proxy::getUserName);
 		
 		/**
-		 * @tiapi(method=True,name=Titanium.Network.Proxy.getHostName,since=0.2) returns a string object containing HostName
+		 * @tiapi(method=True,name=Titanium.Network.Proxy.getHostName,since=0.4) returns a string object containing HostName
 		 * @tiresult(for=Titanium.Network.Proxy.getHostName, type=string)
 		 */
 		this->SetMethod("getPassword",&Proxy::getPassword);

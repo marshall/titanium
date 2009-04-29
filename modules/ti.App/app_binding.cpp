@@ -54,6 +54,11 @@ namespace ti
 		 */
 		this->SetMethod("getGUID", &AppBinding::GetGUID);
 		/**
+		 * @tiapi(method=True,immutable=True,name=App.getStreamURL,since=0.4) get the application stream URL for the update channel
+	     * @tiresult(for=App.getStreamURL,type=string) returns the stream URL
+		 */
+		this->SetMethod("getStreamURL", &AppBinding::GetStreamURL);
+		/**
 		 * @tiapi(method=True,immutable=True,name=App.appURLToPath,since=0.2) get a full path from an application using app: URL
 		 * @tiresult(for=App.appURLToPath,type=string) returns the path
 		 */
@@ -217,6 +222,42 @@ namespace ti
 			std::cerr << s;
 		}
 		std::cerr << std::endl;
+	}
+
+	void AppBinding::GetStreamURL(const ValueList& args, SharedValue result)
+	{
+		const SharedApplication app = this->host->GetApplication();
+		std::string stream = app->stream;
+		
+		// TODO: switch to HTTPS once the ti.Network XHR supports it
+		std::string url = "http://api.appcelerator.net/";
+		if (stream == "production")
+		{
+			url+="p/v1";
+		}
+		else if (stream == "dev")
+		{
+			url+="d/v1";
+		}
+		else if (stream == "test")
+		{
+			url+="t/v1";
+		}
+		else
+		{
+			url+=stream;
+			url+="/v1";
+		}
+		for (size_t c = 0; c < args.size(); c++)
+		{
+			SharedValue arg = args.at(c);
+			if (arg->IsString())
+			{
+				url+="/";
+				url+=arg->ToString();
+			}
+		}
+		result->SetString(url);
 	}
 
 }
