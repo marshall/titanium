@@ -89,6 +89,12 @@ public:
 		std::string& file,
 		std::vector<std::string>& types);
 
+	void OpenSaveAs(
+		SharedKMethod callback,
+		std::string& path,
+		std::string& file,
+		std::vector<std::string>& types);
+
 	void AddMessageHandler(const ValueList& args, SharedValue result);
 
 	void ResizeSubViews();
@@ -175,7 +181,8 @@ private:
 		bool multiple,
 		std::string& path,
 		std::string& file,
-		std::vector<std::string>& types);
+		std::vector<std::string>& types,
+		bool saveDialog);
 
 	static void ParseStringNullSeparated(const char *s, std::vector<std::string> &tokens);
 };

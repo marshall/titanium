@@ -866,8 +866,19 @@ void Win32UserWindow::OpenFiles(SharedKMethod callback, bool multiple,
 	if (directories) {
 		results = SelectDirectory(multiple, path, file);
 	} else {
-		results = SelectFile(callback, multiple, path, file, types);
+		results = SelectFile(callback, multiple, path, file, types, false);
 	}
+
+	ValueList args;
+	args.push_back(Value::NewList(results));
+	callback->Call(args);
+}
+
+void Win32UserWindow::OpenSaveAs(SharedKMethod callback, std::string& path, std::string& file,
+		std::vector<std::string>& types) {
+	SharedKList results;
+
+	results = SelectFile(callback, false, path, file, types, true);
 
 	ValueList args;
 	args.push_back(Value::NewList(results));
@@ -876,7 +887,7 @@ void Win32UserWindow::OpenFiles(SharedKMethod callback, bool multiple,
 
 SharedKList Win32UserWindow::SelectFile(SharedKMethod callback,
 		bool multiple, std::string& path, std::string& file, std::vector<
-				std::string>& types) {
+				std::string>& types, bool saveDialog) {
 	//std::string filterName = props->GetString("typesDescription", "Filtered Files");
 	std::string filterName = "Filtered Files";
 	std::string filter;
@@ -923,14 +934,26 @@ SharedKList Win32UserWindow::SelectFile(SharedKMethod callback,
 	ofn.lpstrFileTitle = NULL;
 	ofn.nMaxFileTitle = 0;
 	ofn.lpstrInitialDir = (path.length() == 0 ? NULL : path.c_str());
-	ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_EXPLORER;
+	ofn.Flags = OFN_EXPLORER;
+
+	if(! saveDialog)
+		ofn.Flags |= OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
 
 	if (multiple)
 		ofn.Flags |= OFN_ALLOWMULTISELECT;
 
 	SharedKList results = new StaticBoundList();
 	// display the open dialog box
-	BOOL result = GetOpenFileName(&ofn);
+	BOOL result;
+
+	if(saveDialog)
+	{
+		result = GetSaveFileName(&ofn);
+	}
+	else
+	{
+		result = GetOpenFileName(&ofn);
+	}
 
 	if (result) {
 		// if the user selected multiple files, ofn.lpstrFile is a NULL-separated list of filenames

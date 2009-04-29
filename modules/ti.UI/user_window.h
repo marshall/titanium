@@ -133,6 +133,7 @@ class UserWindow : public kroll::StaticBoundObject {
 		void _GetParent(const kroll::ValueList&, kroll::SharedValue);
 		void _CreateWindow(const kroll::ValueList&, kroll::SharedValue);
 		void _OpenFiles(const ValueList& args, SharedValue result);
+		void _OpenSaveAs(const ValueList& args, SharedValue result);
 
 		void _AddEventListener(const kroll::ValueList&, kroll::SharedValue);
 		void _RemoveEventListener(const kroll::ValueList&, kroll::SharedValue);
@@ -152,6 +153,12 @@ class UserWindow : public kroll::StaticBoundObject {
 			bool multiple,
 			bool files,
 			bool directories,
+			std::string& path,
+			std::string& file,
+			std::vector<std::string>& types) = 0;
+
+		virtual void OpenSaveAs(
+			SharedKMethod callback,
 			std::string& path,
 			std::string& file,
 			std::vector<std::string>& types) = 0;
