@@ -25,5 +25,12 @@ describe("ti.App tests",
 		
 		value_of(Titanium.App.stdout).should_be_function();
 		value_of(Titanium.App.stderr).should_be_function();
+		
+		// this should be the default stream if not specified in the manifest
+		value_of(Titanium.App.getStreamURL()).should_be('http://api.appcelerator.net/p/v1');
+		// test passing arg
+		value_of(Titanium.App.getStreamURL('foo')).should_be('http://api.appcelerator.net/p/v1/foo');
+		// test passing multiple args
+		value_of(Titanium.App.getStreamURL('foo','bar')).should_be('http://api.appcelerator.net/p/v1/foo/bar');
 	}
 });
