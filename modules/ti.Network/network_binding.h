@@ -8,7 +8,7 @@
 #define _NETWORK_BINDING_H_
 
 #include <kroll/kroll.h>
-#include "proxy/Proxy.h"
+#include "proxy/proxy.h"
 
 
 namespace ti
