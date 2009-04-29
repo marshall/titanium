@@ -4,7 +4,7 @@
 (function()
 {
 	
-	var url = "http://publisher.titaniumapp.com/api/app-track";
+	var url = Titanium.App.getStreamURL("app-track");
 	var guid = null;
 	var sid = null;
 	var debug = false;
