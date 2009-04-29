@@ -21,7 +21,7 @@ describe("ti.App tests",
 		value_of(Titanium.App.Properties).should_be_object();
 		
 		// this is specific to the test harness args
-		value_of(Titanium.App.arguments.length).should_be(5); 
+		value_of(Titanium.App.arguments.length).should_be(4); 
 		
 		value_of(Titanium.App.stdout).should_be_function();
 		value_of(Titanium.App.stderr).should_be_function();
