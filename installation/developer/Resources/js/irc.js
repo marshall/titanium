@@ -103,6 +103,9 @@ $MQL('l:app.compiled',function()
 		}
 	});
 	
+	$("#initializeIRC").click(function(){
+		TiDeveloper.IRC.connect($("#initializeIRC").val());
+	})
 
 	$MQL('l:menu',function(data)
 	{
@@ -146,21 +149,37 @@ $MQL('l:tideveloper.windowFocus',function(msg)
 //
 $MQL('l:tideveloper.network',function(msg)
 {
+	$("#initializeIRC").val("Connect");
 	if (msg.payload.online == true)
 	{
-		TiDeveloper.IRC.initialize()
+		$("#initializeIRC").removeAttr("disabled");
 	}
 	else
 	{
+		TiDeveloper.IRC.connect("Disconnect");
+		$("#initializeIRC").attr("disabled","disabled");
+	}
+});
+
+TiDeveloper.IRC.connect = function(action)
+{
+	if (action == "Connect" && TiDeveloper.IRC.online==true)
+	{
+		TiDeveloper.IRC.initialize()
+		$("#initializeIRC").val("Disconnect");
+	}
+	else if(action == "Disconnect")
+	{
+		$("#initializeIRC").val("Connect");
 		if (TiDeveloper.IRC.ircClient != null)
 		{
 			TiDeveloper.IRC.ircClient.disconnect();
 			TiDeveloper.IRC.ircClient = null;
 		}
-		$('#irc').html('<div style="color:#aaa">you are offline</div>');
+		$('#irc').html('<div style="color:#aaa">Disconnected</div>');
 		$('#irc_users').empty();
 	}
-});
+}
 
 TiDeveloper.IRC.updateNickInDB = function(username)
 {
