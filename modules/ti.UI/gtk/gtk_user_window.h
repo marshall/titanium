@@ -127,7 +127,7 @@ namespace ti
 		// The widget this window uses for a context menu.
 		SharedPtr<GtkMenuItemImpl> context_menu;
 
-		void _OpenFilesWork(const ValueList&, SharedValue);
+		void _FileChooserWork(const ValueList&, SharedValue);
 		static std::string openFilesDirectory;
 
 	};

@@ -58,7 +58,7 @@ GtkUserWindow::GtkUserWindow(SharedUIBinding binding, WindowConfig* config, Shar
 	icon_path(NULL),
 	context_menu(NULL)
 {
-	this->SetMethod("_OpenFilesWork", &GtkUserWindow::_OpenFilesWork);
+	this->SetMethod("_FileChooserWork", &GtkUserWindow::_FileChooserWork);
 }
 
 GtkUserWindow::~GtkUserWindow()
@@ -834,47 +834,73 @@ void GtkUserWindow::AppIconChanged()
 	}
 }
 
-struct OpenFilesJob
+struct FileChooserJob
 {
+	enum FileChooserMode
+	{
+		SELECT_FILE,
+		SELECT_FOLDER,
+		SAVE_FILE
+	};
+
 	Host *host;
 	GtkWindow* window;
 	SharedKMethod callback;
+	FileChooserMode mode;
 	bool multiple;
-	bool files;
-	bool directories;
 	std::string path;
 	std::string file;
 	std::vector<std::string> types;
 };
 
 std::string GtkUserWindow::openFilesDirectory = "";
-void GtkUserWindow::_OpenFilesWork(const ValueList& args, SharedValue lresult)
+void GtkUserWindow::_FileChooserWork(const ValueList& args, SharedValue lresult)
 {
 	void* data = args.at(0)->ToVoidPtr();
-	OpenFilesJob* job = reinterpret_cast<OpenFilesJob*>(data);
+	FileChooserJob* job = static_cast<FileChooserJob*>(data);
 	SharedKList results = new StaticBoundList();
 
-	std::string text = "Select File";
-	GtkFileChooserAction a = GTK_FILE_CHOOSER_ACTION_OPEN;
-	if (job->directories)
+	std::string title;
+	GtkFileChooserAction action;
+	gchar* actionButton;
+
+	if (job->mode == FileChooserJob::SELECT_FILE)
 	{
-		text = "Select Directory";
-		a = GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER;
+		title = "Choose File";
+		action = GTK_FILE_CHOOSER_ACTION_OPEN;
+		actionButton = GTK_STOCK_OPEN;
+	}
+	else if (job->mode == FileChooserJob::SELECT_FOLDER)
+	{
+		title = "Choose Directory";
+		action = GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER;
+		actionButton = GTK_STOCK_OPEN;
+	}
+	else
+	{
+		title = "Save File";
+		action = GTK_FILE_CHOOSER_ACTION_SAVE;
+		actionButton = GTK_STOCK_SAVE;
 	}
 
 	GtkWidget* chooser = gtk_file_chooser_dialog_new(
-		text.c_str(),
+		title.c_str(),
 		job->window,
-		a,
+		action,
 		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-		GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
+		actionButton, GTK_RESPONSE_ACCEPT,
 		NULL);
 
 	std::string path = this->openFilesDirectory;
 	if (!job->path.empty())
+	{
 		path = job->path;
+	}
+
 	if (!path.empty())
+	{
 		gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(chooser), path.c_str());
+	}
 
 	gtk_file_chooser_set_select_multiple(GTK_FILE_CHOOSER(chooser), job->multiple);
 
@@ -934,20 +960,27 @@ void GtkUserWindow::OpenFiles(
 	std::string& file,
 	std::vector<std::string>& types)
 {
-	OpenFilesJob* job = new OpenFilesJob;
+	FileChooserJob* job = new FileChooserJob;
 	job->window = this->gtk_window;
 	job->callback = callback;
 	job->host = host;
 	job->multiple = multiple;
-	job->files = files;
-	job->directories = directories;
 	job->path = path;
 	job->file = file;
 	job->types = types;
 
-	// Call this on the main thread so we don't have to
-	// worry about glib threads.
-	SharedKMethod meth = this->Get("_OpenFilesWork")->ToMethod();
+	if (directories)
+	{
+		job->mode = FileChooserJob::SELECT_FOLDER;
+	}
+	else
+	{
+		job->mode = FileChooserJob::SELECT_FILE;
+	}
+
+	// Call this on the main thread -- so that it happens
+	// at the appropriate time in the event loop
+	SharedKMethod meth = this->Get("_FileChooserWork")->ToMethod();
 	ValueList args;
 	args.push_back(Value::NewVoidPtr(job));
 	job->host->InvokeMethodOnMainThread(meth, args, false);
@@ -959,6 +992,21 @@ void GtkUserWindow::OpenSaveAs(
 	std::string& file,
 	std::vector<std::string>& types)
 {
-	// TODO
+	FileChooserJob* job = new FileChooserJob;
+	job->window = this->gtk_window;
+	job->callback = callback;
+	job->host = host;
+	job->multiple = false;
+	job->path = path;
+	job->file = file;
+	job->types = types;
+	job->mode = FileChooserJob::SAVE_FILE;
+
+	// Call this on the main thread -- so that it happens
+	// at the appropriate time in the event loop
+	SharedKMethod meth = this->Get("_FileChooserWork")->ToMethod();
+	ValueList args;
+	args.push_back(Value::NewVoidPtr(job));
+	job->host->InvokeMethodOnMainThread(meth, args, false);
 }
 
