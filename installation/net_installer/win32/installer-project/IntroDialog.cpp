@@ -14,13 +14,14 @@
 
 using std::string;
 using std::wstring;
+using KrollUtils::SharedApplication;
 using KrollUtils::Application;
 using KrollUtils::FileUtils;
 
 extern HINSTANCE mainInstance;
 extern HICON mainIcon;
 
-extern Application* app;
+extern SharedApplication app;
 extern string updateFile;
 extern string appPath;
 extern string runtimeHome;
