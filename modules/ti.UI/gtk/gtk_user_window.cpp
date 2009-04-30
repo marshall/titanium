@@ -194,7 +194,7 @@ static void destroy_cb(
 void GtkUserWindow::Close()
 {
 	// Destroy the GTK bits, if we have them first, because
-	// we need to assume the GTK window is gone for  everything 
+	// we need to assume the GTK window is gone for  everything
 	// below (this method might be called by destroy_cb)
 	if (this->gtk_window != NULL)
 	{
@@ -951,5 +951,15 @@ void GtkUserWindow::OpenFiles(
 	ValueList args;
 	args.push_back(Value::NewVoidPtr(job));
 	job->host->InvokeMethodOnMainThread(meth, args, false);
+}
+
+void OpenSaveAs(
+	SharedKMethod callback,
+	std::string& path,
+	std::string& file,
+	std::vector<std::string>& types)
+{
+	// TODO
+}
 }
 

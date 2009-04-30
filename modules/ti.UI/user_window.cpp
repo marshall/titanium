@@ -106,7 +106,7 @@ UserWindow::UserWindow(SharedUIBinding binding, WindowConfig *config, SharedUser
 	this->SetMethod("getWidth", &UserWindow::_GetWidth);
 	/**
 	 * @tiapi(method=True,name=UI.UserWindow.setWidth,since=0.2) sets the windows width
-	 * @tiarg(for=UI.UserWindow.setWidth,type=double,name=width) width 
+	 * @tiarg(for=UI.UserWindow.setWidth,type=double,name=width) width
 	 */
 	this->SetMethod("setWidth", &UserWindow::_SetWidth);
 	/**
@@ -307,6 +307,12 @@ UserWindow::UserWindow(SharedUIBinding binding, WindowConfig *config, SharedUser
 	 */
 	this->SetMethod("openFiles", &UserWindow::_OpenFiles);
 	/**
+	 * @tiapi(method=True,name=UI.UserWindow.openSaveAs,since=0.4) show the save as file dialog
+	 * @tiarg(for=UI.UserWindow.openSaveAs,type=method,name=callback) callback method
+	 * @tiarg(for=UI.UserWindow.openSaveAs,type=object,name=options,optional=True) options
+	 */
+	this->SetMethod("openSaveAs", &UserWindow::_OpenSaveAs);
+	/**
 	 * @tiapi(method=True,name=UI.UserWindow.getParent,since=0.3) get the window parent
 	 * @tiresult(for=UI.UserWindow.getParent,type=object) return the parent window or NULL if no parent
 	 */
@@ -355,7 +361,7 @@ SharedUIBinding UserWindow::GetBinding()
 void UserWindow::Open()
 {
 	KR_DUMP_LOCATION
-	
+
 	this->FireEvent(OPEN);
 
 	// We are now in the UI binding's open window list
@@ -374,7 +380,7 @@ void UserWindow::Open()
 void UserWindow::Close()
 {
 	KR_DUMP_LOCATION
-	
+
 	static Logger &logger = Logger::Get("UserWindow");
 
 	this->active = false;
@@ -1172,7 +1178,7 @@ void UserWindow::_OpenFiles(const ValueList& args, SharedValue result)
 	// the name of the property and a boolean for its setting
 	// example:
 	//
-	// var selected = Titanium.Desktop.openFiles(callback,{
+	// var selected = Titanium.UI.openFiles(callback,{
 	//    multiple:true,
 	//    files:false,
 	//    directories:true,
@@ -1217,6 +1223,53 @@ void UserWindow::_OpenFiles(const ValueList& args, SharedValue result)
 	}
 
 	this->OpenFiles(callback, multiple, files, directories, path, file, types);
+}
+
+void UserWindow::_OpenSaveAs(const ValueList& args, SharedValue result)
+{
+	// pass in a set of properties with each key being
+	// the name of the property and a boolean for its setting
+	// example:
+	//
+	// var selected = Titanium.UI.openSaveAs(callback,{
+	//    types:['js','html']
+	// });
+	//
+	//
+	SharedKMethod callback;
+	if (args.size() < 1 || !args.at(0)->IsMethod())
+	{
+		throw ValueException::FromString("openSaveAs expects first argument to be a callback");
+	}
+	callback = args.at(0)->ToMethod();
+
+	SharedKObject props;
+	if (args.size() < 2 || !args.at(1)->IsObject())
+	{
+		props = new StaticBoundObject();
+	}
+	else
+	{
+		props = args.at(1)->ToObject();
+	}
+
+	std::string path = props->GetString("path", "");
+	std::string file = props->GetString("file", "");
+
+	std::vector<std::string> types;
+	if (props->Get("types")->IsList())
+	{
+		SharedKList l = props->Get("types")->ToList();
+		for (unsigned int i = 0; i < l->Size(); i++)
+		{
+			if (l->At(i)->IsString())
+			{
+				types.push_back(l->At(i)->ToString());
+			}
+		}
+	}
+
+	this->OpenSaveAs(callback, path, file, types);
 }
 
 void UserWindow::_AddEventListener(const ValueList& args, SharedValue result)
@@ -1439,6 +1492,10 @@ void UserWindow::RegisterJSContext(JSGlobalContextRef context)
 		// Place currentWindow.openFiles in the delegate.
 		SharedValue open_files_value = this->Get("openFiles");
 		delegate_ui_api->Set("openFiles", open_files_value);
+
+		// Place currentWindow.openSaveAs in the delegate.
+		SharedValue open_save_as_value = this->Get("openSaveAs");
+		delegate_ui_api->Set("openSaveAs", open_save_as_value);
 
 		ti_object->Set("UI", Value::NewObject(delegate_ui_api));
 	}

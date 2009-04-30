@@ -526,5 +526,13 @@ namespace ti
 		this->Show();
 	}
 
+	void OSXUserWindow::OpenSaveAs(
+			SharedKMethod callback,
+			std::string& path,
+			std::string& file,
+			std::vector<std::string>& types)
+	{
+		// TODO 
+	}
 }
     
