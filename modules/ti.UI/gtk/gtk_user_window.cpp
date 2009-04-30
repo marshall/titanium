@@ -953,13 +953,12 @@ void GtkUserWindow::OpenFiles(
 	job->host->InvokeMethodOnMainThread(meth, args, false);
 }
 
-void OpenSaveAs(
+void GtkUserWindow::OpenSaveAs(
 	SharedKMethod callback,
 	std::string& path,
 	std::string& file,
 	std::vector<std::string>& types)
 {
 	// TODO
-}
 }
 
