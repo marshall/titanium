@@ -24,13 +24,14 @@ using std::string;
 using std::wstring;
 using std::vector;
 using KrollUtils::Application;
+using KrollUtils::SharedApplication;
 using KrollUtils::FileUtils;
 using KrollUtils::BootUtils;
 
 HINSTANCE mainInstance;
 HICON mainIcon;
 
-Application* app;
+SharedApplication app;
 string exePath;
 string updateFile;
 string appPath;
@@ -574,8 +575,9 @@ int WINAPI WinMain(
 	{
 		app = Application::NewApplication(updateFile, appPath);
 	}
+	ShowError(app->name);
 	
-	if (app == NULL)
+	if (app.isNull())
 	{
 		ShowError("The installer could not read the application manifest.");
 		return __LINE__;
