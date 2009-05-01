@@ -3,7 +3,7 @@
  * see LICENSE in the root folder for details on the license.
  * Copyright (c) 2009 Appcelerator, Inc. All Rights Reserved.
  */
-#include "Proxy.h"
+#include "proxy.h"
 
 namespace ti
 {
@@ -18,26 +18,26 @@ namespace ti
 	{
 
 		/**
-		 * @tiapi(method=True,name=Titanium.Network.Proxy.getHostName,since=0.4) returns a string object containing HostName
+		 * @tiapi(method=True,name=Titanium.Network.Proxy.getHostName,since=0.4) returns a string object containing the hostname 
 		 * @tiresult(for=Titanium.Network.Proxy.getHostName, type=string)
 		 */
 		this->SetMethod("getHostName",&Proxy::getHostName);
 
 		/**
-		 * @tiapi(method=True,name=Titanium.Network.Proxy.getHostName,since=0.4) returns a string object containing HostName
-		 * @tiresult(for=Titanium.Network.Proxy.getHostName, type=string)
+		 * @tiapi(method=True,name=Titanium.Network.Proxy.getPort,since=0.4) returns a string object containing the port 
+		 * @tiresult(for=Titanium.Network.Proxy.getPort, type=string)
 		 */
 		this->SetMethod("getPort",&Proxy::getPort);
 		
 		/**
-		 * @tiapi(method=True,name=Titanium.Network.Proxy.getHostName,since=0.4) returns a string object containing HostName
-		 * @tiresult(for=Titanium.Network.Proxy.getHostName, type=string)
+		 * @tiapi(method=True,name=Titanium.Network.Proxy.getUserName,since=0.4) returns a string object containing the username 
+		 * @tiresult(for=Titanium.Network.Proxy.getUserName, type=string)
 		 */
 		this->SetMethod("getUserName",&Proxy::getUserName);
 		
 		/**
-		 * @tiapi(method=True,name=Titanium.Network.Proxy.getHostName,since=0.4) returns a string object containing HostName
-		 * @tiresult(for=Titanium.Network.Proxy.getHostName, type=string)
+		 * @tiapi(method=True,name=Titanium.Network.Proxy.getPassword,since=0.4) returns a string object containing the password 
+		 * @tiresult(for=Titanium.Network.Proxy.getPassword, type=string)
 		 */
 		this->SetMethod("getPassword",&Proxy::getPassword);
 	}

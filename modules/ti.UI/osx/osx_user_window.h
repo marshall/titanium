@@ -16,7 +16,7 @@ namespace ti
 {
 	class OSXUIBinding;
 	class OSXMenuItem;
-	
+
 	class OSXUserWindow : public UserWindow
 	{
 		public:
@@ -31,6 +31,11 @@ namespace ti
 				std::string& path,
 				std::string& file,
 				std::vector<std::string>& types);
+			void OpenSaveAs(
+					SharedKMethod callback,
+					std::string& path,
+					std::string& file,
+					std::vector<std::string>& types);
 			void Hide();
 			void Show();
 			void Focus();
@@ -109,7 +114,7 @@ namespace ti
 			double real_h;
 
 			void InstallMenu(OSXMenuItem *menu);
-			
+
 			DISALLOW_EVIL_CONSTRUCTORS(OSXUserWindow);
 	};
 }

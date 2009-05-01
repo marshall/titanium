@@ -8,6 +8,8 @@ var excludes = ['before','before_all','after','after_all','timeout'];
 var total_assertions = 0;
 var running_assertions = 0;
 var running_completed = 0;
+var auto_run = false;
+var test_failures = false;
 
 function update_status(msg,hide)
 {
@@ -469,6 +471,14 @@ window.onload = function()
 				current_test.results = results;
 				test_status(current_test.name,results.failed>0?'Failed':'Passed');
 				update_status(current_test.name + ' complete ... '+results.passed+' passed, '+results.failed+' failed');
+				if (!test_failures && results.failed>0)
+				{
+					test_failures = true;
+				}
+			}
+			else
+			{
+				test_failures = true;
 			}
 			run_next_test();
 		};
@@ -484,6 +494,10 @@ window.onload = function()
 			current_test = null;
 			run_button.disabled = false;
 			update_status('Testing complete ... took ' + test_duration + ' seconds',true);
+			if (auto_run)
+			{
+				Titanium.App.exit(test_failures ? 1 : 0);
+			}
 			return;
 		}
 		var entry = executing_tests.shift();
@@ -517,5 +531,16 @@ window.onload = function()
 		tests_started = new Date().getTime();
 		setTimeout(run_next_test,1);
 	};
+	
+	// if you pass in --autorun, just go ahead and start
+	for (var c=0;c<Titanium.App.arguments.length;c++)
+	{
+		if (Titanium.App.arguments[c] == '--autorun')
+		{
+			auto_run = true;
+			run_button.click();
+			break;
+		}
+	}
 };
 

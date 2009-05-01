@@ -102,6 +102,10 @@
 					typesDescription: 'Web Files'
 				});
 			}
+			function openSaveAs()
+			{
+				Titanium.UI.openSaveAs(selectFilesCallback);
+			}
 		</script>
 	</head>
 	<body>
@@ -129,6 +133,9 @@
 		</div>
 		<div>
 			<button onclick="chooseFileTypes()">Open File Dialog (JS or HTML files only)</button>
+		</div>
+		<div>
+			<button onclick="openSaveAs()">Open Save As Dialog</button>
 		</div>
 		<div>
 			<button onclick="closeWindow()">Close Window</button>

@@ -526,5 +526,42 @@ namespace ti
 		this->Show();
 	}
 
+	void OSXUserWindow::OpenSaveAs(
+			SharedKMethod callback,
+			std::string& path,
+			std::string& file,
+			std::vector<std::string>& types)
+	{
+		int runResult;
+		
+		NSMutableArray *filetypes = [[[NSMutableArray alloc] init] autorelease];
+		
+		std::vector<std::string>::const_iterator iter = types.begin();
+		while(iter!=types.end())
+		{
+			std::string ft = (*iter++);
+			[filetypes addObject:[NSString stringWithCString:ft.c_str()]];
+		}
+
+		NSSavePanel *sp = [NSSavePanel savePanel];
+
+		if ([filetypes count] > 0)
+		{
+			[sp setAllowedFileTypes:filetypes];
+		}
+
+		runResult = [sp runModalForDirectory:[NSString stringWithCString:path.c_str()] file:[NSString stringWithCString:file.c_str()]];
+
+		ValueList args;
+
+		if (runResult == NSFileHandlingPanelOKButton) 
+		{
+			NSString *selected = [sp filename];
+			args.push_back(Value::NewString([selected UTF8String]));
+		}
+		
+		callback->Call(args);
+		this->Show();
+	}
 }
     

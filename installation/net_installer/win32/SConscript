@@ -13,7 +13,6 @@ Env.Append(CPPPATH=['C:\\Program Files\\Microsoft Visual Studio 8\\VC\\atlmfc\\i
 
 ccf = Env['CCFLAGS']
 if '/MD' in ccf: ccf.remove('/MD')
-#if '/MT' in ccf: ccf.remove('/MT')
 ccf.append('/MT')
 ccf.append('/Os')
 ccf.append('/O1')
@@ -28,5 +27,7 @@ sources.extend(build.get_kroll_utils(path.join(build.dir, 'objs', 'netinstaller'
 p = Env.Program(out_file, sources)
 build.mark_build_target(p)
 
-common_controls_manifest = path.join(build.titanium_source_dir, 'installation', 'net_installer', 'win32', 'common_controls.manifest')
+# Don't use the common controls manifest from the support directory, because
+# our copy contains some special provisions for UAC.
+common_controls_manifest = path.join(build.cwd(), 'common_controls.manifest')
 Env.AddPostAction(p, 'mt.exe -nologo -manifest "%s" -outputresource:"%s;1"' % (common_controls_manifest, out_file))

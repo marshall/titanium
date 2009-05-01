@@ -35,6 +35,12 @@ namespace ti
 			std::string& file,
 			std::vector<std::string>& types);
 
+		void OpenSaveAs(
+			SharedKMethod callback,
+			std::string& path,
+			std::string& file,
+			std::vector<std::string>& types);
+
 		void Hide();
 		void Show();
 		void Focus();
@@ -121,7 +127,7 @@ namespace ti
 		// The widget this window uses for a context menu.
 		SharedPtr<GtkMenuItemImpl> context_menu;
 
-		void _OpenFilesWork(const ValueList&, SharedValue);
+		void _FileChooserWork(const ValueList&, SharedValue);
 		static std::string openFilesDirectory;
 
 	};

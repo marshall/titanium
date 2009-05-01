@@ -11,7 +11,7 @@
 #include "host_binding.h"
 #include "irc/irc_client_binding.h"
 #include "http/http_client_binding.h"
-#include "proxy/Proxy.h"
+#include "proxy/proxy.h"
 
 using kroll::DataUtils;
 
@@ -24,7 +24,7 @@ namespace ti
 		 proxy(NULL),
 		 next_listener_id(0)
 	{
-   		SharedValue online = Value::NewBool(true);
+		SharedValue online = Value::NewBool(true);
 		/**
 		 * @tiapi(property=True,name=Network.online,since=0.2) returns true if the machine is connected to the Internet
 		 * @tiresult(for=Network.online,type=boolean) returns true if online
