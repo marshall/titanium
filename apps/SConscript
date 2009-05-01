@@ -60,9 +60,9 @@ def package_app_builder(target, source, env):
 
 	if run:
 		if run_with:
-			os.system(app.exe + ' ' + run_with)
+			sys.exit(os.system(app.exe + ' ' + run_with))
 		else:
-			os.system(app.exe)
+			sys.exit(os.system(app.exe))
 
 build.env['BUILDERS']['PackageApp'] = build.env.Builder(
 	action=package_app_builder,
