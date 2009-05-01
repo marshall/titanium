@@ -5,7 +5,7 @@ import os.path as path, futils, os
 # encase this in a builder because the files necessary for zipping
 # don't exist when this file is processed.
 def build_dist_zips(target, source, env):
-	excludes = ['.manifest', '.pdb', '.exp', '.ilk']
+	excludes = ['.pdb', '.exp', '.ilk']
 
 	f = path.join(build.dist_dir, 'runtime-%s.zip' % build.version)
 	if not(path.isdir(build.dist_dir)):
