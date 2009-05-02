@@ -109,11 +109,41 @@ namespace ti
 	}
 	void OSXUserWindow::Show()
 	{
-		KR_DUMP_LOCATION
 		if (opened)
 		{
 			this->Focus();
 			[window fireWindowEvent:SHOWN];
+		}
+	}
+	void OSXUserWindow::Minimize()
+	{
+		if (opened)
+		{
+			[window miniaturize:self];
+		}
+	}
+	
+	void OSXUserWindow::Unminimize()
+	{
+		if (opened)
+		{
+			[window deminiaturize:self];
+		}
+	}
+	
+	void OSXUserWindow::Maximize()
+	{
+		if (opened)
+		{
+			[window zoom:self];
+		}
+	}
+	
+	void OSXUserWindow::Unmaximize()
+	{
+		if (opened && [window isZoomed])
+		{
+			[window zoom:self];
 		}
 	}
 	bool OSXUserWindow::IsUsingChrome()
