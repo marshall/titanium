@@ -105,6 +105,10 @@ public:
 	HWND GetWindowHandle();
 	void Hide();
 	void Show();
+	void Minimize();
+	void Maximize();
+	void Unminimize();
+	void Unmaximize();
 	void Focus();
 	void Unfocus();
 	bool IsUsingChrome() { return config->IsUsingChrome(); }

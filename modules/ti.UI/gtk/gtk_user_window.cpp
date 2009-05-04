@@ -220,7 +220,8 @@ void GtkUserWindow::SetupTransparency()
 
 		GdkScreen* screen = gtk_widget_get_screen(GTK_WIDGET(this->gtk_window));
 		GdkColormap* colormap = gdk_screen_get_rgba_colormap(screen);
-		if (!colormap) {
+		if (!colormap)
+		{
 			std::cerr << "Could not use ARGB colormap. "
 			          << "True transparency not available." << std::endl;
 			colormap = gdk_screen_get_rgb_colormap(screen);
@@ -501,21 +502,56 @@ static void populate_popup_cb(
 }
 
 
-void GtkUserWindow::Hide() {
+void GtkUserWindow::Hide()
+{
 	if (this->gtk_window != NULL)
 	{
 		gtk_widget_hide_all(GTK_WIDGET(this->gtk_window));
 	}
 }
 
-void GtkUserWindow::Show() {
+void GtkUserWindow::Show()
+{
 	if (this->gtk_window != NULL)
 	{
 		gtk_widget_show_all(GTK_WIDGET(this->gtk_window));
 	}
 }
 
-void GtkUserWindow::Focus() {
+void GtkUserWindow::Minimize()
+{
+	if (this->gtk_window != NULL)
+	{
+		gtk_window_iconify(this->gtk_window);
+	}
+}
+
+void GtkUserWindow::Unminimize()
+{
+	if (this->gtk_window != NULL)
+	{
+		gtk_window_deiconify(this->gtk_window);
+	}
+}
+
+void GtkUserWindow::Maximize()
+{
+	if (this->gtk_window != NULL)
+	{
+		gtk_window_maximize(this->gtk_window);
+	}
+}
+
+void GtkUserWindow::Unmaximize()
+{
+	if (this->gtk_window != NULL)
+	{
+		gtk_window_unmaximize(this->gtk_window);
+	}
+}
+
+void GtkUserWindow::Focus()
+{
 	if (this->gtk_window != NULL)
 		gtk_window_present(this->gtk_window);
 }
@@ -529,11 +565,13 @@ void GtkUserWindow::Unfocus(){
 	}
 }
 
-bool GtkUserWindow::IsUsingScrollbars() {
+bool GtkUserWindow::IsUsingScrollbars()
+{
 	return this->config->IsUsingScrollbars();
 }
 
-bool GtkUserWindow::IsFullScreen() {
+bool GtkUserWindow::IsFullScreen()
+{
 	return this->config->IsFullScreen();
 }
 
@@ -550,76 +588,94 @@ void GtkUserWindow::SetFullScreen(bool fullscreen)
 }
 
 
-std::string GtkUserWindow::GetId() {
+std::string GtkUserWindow::GetId()
+{
 	return this->config->GetID();
 }
 
 
-double GtkUserWindow::GetX() {
+double GtkUserWindow::GetX()
+{
 	return this->gdk_x;
 }
 
-void GtkUserWindow::SetX(double x) {
+void GtkUserWindow::SetX(double x)
+{
 	this->SetupPosition();
 }
 
-double GtkUserWindow::GetY() {
+double GtkUserWindow::GetY()
+{
 	return this->gdk_y;
 }
 
-void GtkUserWindow::SetY(double y) {
+void GtkUserWindow::SetY(double y)
+{
 	this->SetupPosition();
 }
 
-double GtkUserWindow::GetWidth() {
+double GtkUserWindow::GetWidth()
+{
 	return this->gdk_width;
 }
 
-void GtkUserWindow::SetWidth(double width) {
+void GtkUserWindow::SetWidth(double width)
+{
 	this->SetupSize();
 }
 
-double GtkUserWindow::GetMaxWidth() {
+double GtkUserWindow::GetMaxWidth()
+{
 	return this->config->GetMaxWidth();
 }
 
-void GtkUserWindow::SetMaxWidth(double width) {
+void GtkUserWindow::SetMaxWidth(double width)
+{
 	this->SetupSizeLimits();
 }
 
-double GtkUserWindow::GetMinWidth() {
+double GtkUserWindow::GetMinWidth()
+{
 	return this->config->GetMinWidth();
 }
 
-void GtkUserWindow::SetMinWidth(double width) {
+void GtkUserWindow::SetMinWidth(double width)
+{
 	this->SetupSizeLimits();
 }
 
-double GtkUserWindow::GetHeight() {
+double GtkUserWindow::GetHeight()
+{
 	return this->gdk_height;
 }
 
-void GtkUserWindow::SetHeight(double height) {
+void GtkUserWindow::SetHeight(double height)
+{
 	this->SetupSize();
 }
 
-double GtkUserWindow::GetMaxHeight() {
+double GtkUserWindow::GetMaxHeight()
+{
 	return this->config->GetMaxHeight();
 }
 
-void GtkUserWindow::SetMaxHeight(double height) {
+void GtkUserWindow::SetMaxHeight(double height)
+{
 	this->SetupSizeLimits();
 }
 
-double GtkUserWindow::GetMinHeight() {
+double GtkUserWindow::GetMinHeight()
+{
 	return this->config->GetMinHeight();
 }
 
-void GtkUserWindow::SetMinHeight(double height) {
+void GtkUserWindow::SetMinHeight(double height)
+{
 	this->SetupSizeLimits();
 }
 
-Bounds GtkUserWindow::GetBounds() {
+Bounds GtkUserWindow::GetBounds()
+{
 	Bounds b;
 	b.width = gdk_width;
 	b.height = gdk_height;
@@ -628,12 +684,14 @@ Bounds GtkUserWindow::GetBounds() {
 	return b;
 }
 
-void GtkUserWindow::SetBounds(Bounds b) {
+void GtkUserWindow::SetBounds(Bounds b)
+{
 	this->SetupPosition();
 	this->SetupSize();
 }
 
-std::string GtkUserWindow::GetTitle() {
+std::string GtkUserWindow::GetTitle()
+{
 	return this->config->GetTitle();
 }
 
@@ -657,11 +715,13 @@ void GtkUserWindow::SetURL(std::string& uri)
 		webkit_web_view_open(this->web_view, uri.c_str());
 }
 
-bool GtkUserWindow::IsUsingChrome() {
+bool GtkUserWindow::IsUsingChrome()
+{
 	return this->config->IsUsingChrome();
 }
 
-void GtkUserWindow::SetUsingChrome(bool chrome) {
+void GtkUserWindow::SetUsingChrome(bool chrome)
+{
 	if (this->gtk_window != NULL)
 		gtk_window_set_decorated(this->gtk_window, chrome);
 }
@@ -868,19 +928,19 @@ void GtkUserWindow::_FileChooserWork(const ValueList& args, SharedValue lresult)
 	{
 		title = "Choose File";
 		action = GTK_FILE_CHOOSER_ACTION_OPEN;
-		actionButton = GTK_STOCK_OPEN;
+		actionButton = (gchar*) GTK_STOCK_OPEN;
 	}
 	else if (job->mode == FileChooserJob::SELECT_FOLDER)
 	{
 		title = "Choose Directory";
 		action = GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER;
-		actionButton = GTK_STOCK_OPEN;
+		actionButton = (gchar*) GTK_STOCK_OPEN;
 	}
 	else
 	{
 		title = "Save File";
 		action = GTK_FILE_CHOOSER_ACTION_SAVE;
-		actionButton = GTK_STOCK_SAVE;
+		actionButton = (gchar*) GTK_STOCK_SAVE;
 	}
 
 	GtkWidget* chooser = gtk_file_chooser_dialog_new(

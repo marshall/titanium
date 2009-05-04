@@ -39,6 +39,22 @@ UserWindow::UserWindow(SharedUIBinding binding, WindowConfig *config, SharedUser
 	 */
 	this->SetMethod("show", &UserWindow::_Show);
 	/**
+	 * @tiapi(method=True,name=UI.UserWindow.minimize,since=0.2) minimize the window
+	 */
+	this->SetMethod("minimize", &UserWindow::_Minimize);
+	/**
+	 * @tiapi(method=True,name=UI.UserWindow.unminimize,since=0.2) unminimize the window
+	 */
+	this->SetMethod("unminimize", &UserWindow::_Unminimize);
+	/**
+	 * @tiapi(method=True,name=UI.UserWindow.maximize,since=0.2) maximize the window
+	 */
+	this->SetMethod("maximize", &UserWindow::_Maximize);
+	/**
+	 * @tiapi(method=True,name=UI.UserWindow.unmaximize,since=0.2) unmaximize the window
+	 */
+	this->SetMethod("unmaximize", &UserWindow::_Unmaximize);
+	/**
 	 * @tiapi(method=True,name=UI.UserWindow.focus,since=0.2) focus the window
 	 */
 	this->SetMethod("focus", &UserWindow::_Focus);
@@ -439,6 +455,26 @@ void UserWindow::_Show(const kroll::ValueList& args, kroll::SharedValue result)
 {
 	this->config->SetVisible(true);
 	this->Show();
+}
+
+void UserWindow::_Minimize(const kroll::ValueList& args, kroll::SharedValue result)
+{
+	this->Minimize();
+}
+
+void UserWindow::_Unminimize(const kroll::ValueList& args, kroll::SharedValue result)
+{
+	this->Unminimize();
+}
+
+void UserWindow::_Maximize(const kroll::ValueList& args, kroll::SharedValue result)
+{
+	this->Maximize();
+}
+
+void UserWindow::_Unmaximize(const kroll::ValueList& args, kroll::SharedValue result)
+{
+	this->Unmaximize();
 }
 
 void UserWindow::_Focus(const kroll::ValueList& args, kroll::SharedValue result)
