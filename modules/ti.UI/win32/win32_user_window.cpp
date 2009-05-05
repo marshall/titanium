@@ -380,6 +380,14 @@ Win32UserWindow::Win32UserWindow(SharedUIBinding binding, WindowConfig* config, 
 	{
 		this->SetFullScreen(true);
 	}
+	else if (this->config->IsMaximized())
+	{
+		this->Maximize();
+	}
+	else if (this->config->IsMinimized())
+	{
+		this->Minimize();
+	}
 
 	if (this->config->IsTopMost() && this->config->IsVisible())
 	{

@@ -26,6 +26,17 @@
 				}
 			}); 
 		}
+		
+		// Add app:// support to MooTool's Request class
+		if (window.MooTools && typeof(Request) == "function")
+		{
+			Request.prototype.isSuccess = function()
+			{
+				return (((this.status >= 200) && (this.status < 300))
+					|| (!!(window.Titanium) && (this.status == 0)));
+			};
+		}
+		
 		// adjust background transparency for window if needed
 		if(Titanium.platform == "win32") {
 			if(Titanium.UI.currentWindow.getTransparency() < 1) {
