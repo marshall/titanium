@@ -166,6 +166,16 @@ void GtkUserWindow::Open()
 			gtk_window_fullscreen(this->gtk_window);
 		}
 
+		if (this->config->IsMaximized())
+		{
+			gtk_window_maximize(this->gtk_window);
+		}
+
+		if (this->config->IsMinimized())
+		{
+			gtk_window_iconify(this->gtk_window);
+		}
+
 		UserWindow::Open();
 		this->FireEvent(OPENED);
 	}
