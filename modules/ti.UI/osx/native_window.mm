@@ -83,7 +83,6 @@
 }
 - (void)windowWillClose:(NSNotification *)notification
 {
-	KR_DUMP_LOCATION
 	if (inspector)
 	{
 		[inspector close:self];
@@ -226,9 +225,7 @@
 }
 - (void)open
 {
-	KR_DUMP_LOCATION
-//	if (!requiresDisplay && config->IsVisible())
-	if (config->IsVisible())
+	if (config->IsVisible() && !config->IsMinimized())
 	{
 		// if we call open and we're initially visible
 		// we need to basically set requires display which
@@ -242,7 +239,6 @@
 }
 - (void)close
 {
-	KR_DUMP_LOCATION
 	if (!closed)
 	{
 		closed = YES;
@@ -261,7 +257,6 @@
 }
 - (void)frameLoaded
 {
-	KR_DUMP_LOCATION
 	if (requiresDisplay)
 	{
 		requiresDisplay = NO;

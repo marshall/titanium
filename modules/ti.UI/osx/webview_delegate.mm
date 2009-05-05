@@ -86,7 +86,6 @@
 
 -(id)initWithWindow:(NativeWindow*)win host:(Host*)h
 {
-	KR_DUMP_LOCATION
 	self = [super init];
 	if (self!=nil)
 	{
@@ -117,7 +116,6 @@
 
 -(void)dealloc
 {
-	KR_DUMP_LOCATION
 	delete frames;
 	[url release];
 	[super dealloc];
@@ -224,7 +222,6 @@
 
 - (void)webView:(WebView *)sender decidePolicyForNewWindowAction:(NSDictionary *)actionInformation request:(NSURLRequest *)request newFrameName:(NSString *)frameName decisionListener:(id < WebPolicyDecisionListener >)listener
 {
-	KR_DUMP_LOCATION
 	
 	if (NO == [self newWindowAction:actionInformation request:request listener:listener])
 	{
@@ -235,7 +232,6 @@
 
 - (void)webView:(WebView *)sender decidePolicyForNavigationAction:(NSDictionary*) actionInformation request:(NSURLRequest*) request frame:(WebFrame*)frame decisionListener:(id <WebPolicyDecisionListener>)listener
 {
-	KR_DUMP_LOCATION
 
 	int type = [[actionInformation objectForKey:WebActionNavigationTypeKey] intValue];
 	
@@ -306,7 +302,6 @@
 
 - (void)webView:(WebView *)sender didStartProvisionalLoadForFrame:(WebFrame *)frame
 {
-	KR_DUMP_LOCATION
 	(*frames)[frame]=SharedKObject(NULL);
 }
 
@@ -323,7 +318,6 @@
 }
 - (SharedKObject)inject:(WebScriptObject *)windowScriptObject context:(JSGlobalContextRef)context frame:(WebFrame*)frame store:(BOOL)store
 {
-	KR_DUMP_LOCATION
 	
 	UserWindow* userWindow = [window userWindow];
 	userWindow->RegisterJSContext(context);
@@ -343,7 +337,6 @@
 
 - (void)webView:(WebView *)sender didFinishLoadForFrame:(WebFrame *)frame
 {
-	KR_DUMP_LOCATION
 	
 	// we need to inject even in child frames
 	std::map<WebFrame*,SharedKObject>::iterator iter = frames->find(frame);
@@ -387,14 +380,12 @@
 		initialDisplay=YES;
 		// cause the initial window to show since it was initially opened hidden
 		// so you don't get the nasty wide screen while content is loading
-//		[window frameLoaded];
 		[window performSelector:@selector(frameLoaded) withObject:nil afterDelay:.005];
 	}
 }
 
 - (void)webView:(WebView *)sender didFailProvisionalLoadWithError:(NSError *)error forFrame:(WebFrame *)frame
 {
-	KR_DUMP_LOCATION
 
 	if ([error code]==-999 && [[error domain] isEqual:NSURLErrorDomain])
 	{
@@ -416,7 +407,6 @@
 
 - (void)webView:(WebView *)sender didClearWindowObject:(WebScriptObject *)windowScriptObject forFrame:(WebFrame*)frame 
 {
-	KR_DUMP_LOCATION
 	JSGlobalContextRef context = [frame globalContext];
 	[self inject:windowScriptObject context:context frame:frame store:YES];
 }
@@ -427,7 +417,6 @@
 
 - (WebView *)webView:(WebView *)sender createWebViewWithRequest:(NSURLRequest *)request
 {
-	KR_DUMP_LOCATION
 	// this is called when you attempt to create a new child window from this document
 	// for example using window.open
 	NSURL *newurl = [request URL];
@@ -446,13 +435,11 @@
 
 - (void)webViewShow:(WebView *)sender
 {
-	KR_DUMP_LOCATION
 }
 
 
 - (void)webViewClose:(WebView *)wv 
 {
-	KR_DUMP_LOCATION
 	[[wv window] close];
 	WindowConfig *config = [window config];
 	config->SetVisible(NO);
@@ -466,14 +453,12 @@
 
 - (void)webViewFocus:(WebView *)wv 
 {
-	KR_DUMP_LOCATION
 	[[wv window] makeKeyAndOrderFront:wv];
 }
 
 
 - (void)webViewUnfocus:(WebView *)wv 
 {
-	KR_DUMP_LOCATION
 	if ([[wv window] isKeyWindow] || [[[wv window] attachedSheet] isKeyWindow]) 
 	{
 		[NSApp _cycleWindowsReversed:FALSE];
