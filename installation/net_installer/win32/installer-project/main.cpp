@@ -575,8 +575,7 @@ int WINAPI WinMain(
 	{
 		app = Application::NewApplication(updateFile, appPath);
 	}
-	ShowError(app->name);
-	
+
 	if (app.isNull())
 	{
 		ShowError("The installer could not read the application manifest.");
