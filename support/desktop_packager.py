@@ -6,7 +6,7 @@
 # Original author: Jeff Haynie 04/02/09
 #
 #
-import os, shutil, distutils.dir_util as dir_util
+import os, shutil, distutils.dir_util as dir_util, zipfile, tarfile
 
 class DesktopPackager(object):
 	def __init__(self, builder):
@@ -19,9 +19,58 @@ class DesktopPackager(object):
 			if self.options.platform == 'osx':
 				self.package = self.create_dmg(builder)
 			elif builder.options.platform == 'linux':
-				pass
+				self.package = self.create_sea(builder)
 			elif builder.options.platform == 'win32':
-				pass
+				self.package = self.create_zip(builder)
+
+	def create_zip(self, builder):
+		extractor = os.path.join(self.options.assets_dir, 'self_extractor.exe')
+		exe = os.path.join(outdir,builder.options.executable)
+		shutil.copy(extractor,exe)
+		builder.log("making win32 binary at %s, this will take a sec..." % exe)
+		zf = zipfile.ZipFile(exe, 'a', zipfile.ZIP_DEFLATED)
+
+		# add the shitty ass MSVCRT crap
+		for f in glob.glob(os.path.join(self.options.assets_dir,'Microsoft.VC80.CRT')+'/*'):
+			zf.write(f,'Microsoft.VC80.CRT/'+os.path.basename(f))
+
+		kboot = os.path.join(builder.options.runtime_dir, 'template', 'kboot.exe')
+		zf.write(kboot,'template/kboot.exe')
+
+		for walk in os.walk(builder.base_dir):
+			for file in walk[2]:
+				file = os.path.join(walk[0], file)
+				arcname = file.replace(builder.base_dir + '/', "")
+				zf.write(file, arcname)
+		zf.close()
+		return exe
+
+	def walk_dir(self, dir, callback):
+		files = os.walk(dir)
+		for walk in files:
+			for file in walk[2]:
+				callback(os.path.join(walk[0], file))
+				
+	def create_sea(self, builder):
+		outtarfile = os.path.join(builder.options.destination, builder.appname + '.tgz')
+		tar = tarfile.open(outtarfile, 'w:gz')
+		def tarcb(f):
+			arcname = f.replace(builder.basedir + os.sep, "")
+			tar.add(f, arcname)
+		self.walk_dir(builder.basedir, tarcb)
+		tar.close()
+
+		outfile = path.join(builder.options.destination, builder.appname + '.bin')
+		out = open(outfile, 'wb')
+		extractor = open(path.join(builder.options.assets_dir, 'self_extracting.sh'), 'r').read()
+
+		sane_name = builder.appname.replace("\"", "\\\"")
+		extractor = extractor.replace('APPNAME', sane_name)
+		out.write(extractor)
+		out.write(open(outtarfile, 'rb').read())
+		out.close()
+
+		return outfile
 		
 	def create_dmg(self,builder):	
 
