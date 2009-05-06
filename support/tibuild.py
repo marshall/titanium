@@ -29,7 +29,7 @@ def get_version_from_tiapp(appdir):
 		sys.exit(1)
 	xml = open(f).read()
 	m = re.search('<version>(.*?)</version>',xml)
-	return str(m.group(1))
+	return str(m.group(1)).strip()
 	
 def examine_manifest(appdir):
 	f = os.path.join(appdir,'manifest')
@@ -43,9 +43,9 @@ def examine_manifest(appdir):
 		if len(line)>0:
 			tok = line.strip().split(':')
 			if line[0:1] == '#':
-				manifest[tok[0][1:]]=tok[1]
+				manifest[tok[0][1:].strip()]=tok[1].strip()
 			else:
-				manifest['modules'][tok[0]]=tok[1]
+				manifest['modules'][tok[0].strip()]=tok[1].strip()
 	return manifest
 	
 def find_titanium_base():
@@ -62,7 +62,9 @@ def find_titanium_base():
 			pass
 		pass
 	elif 'linux' in p:
-		pass
+		f = os.path.expanduser('~/.titanium')
+		if not os.path.exists(f):
+			f = '/opt/titanium'
 	return f	
 	
 def is_mobile(options):
