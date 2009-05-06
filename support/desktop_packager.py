@@ -25,7 +25,7 @@ class DesktopPackager(object):
 
 	def create_zip(self, builder):
 		extractor = os.path.join(self.options.assets_dir, 'self_extractor.exe')
-		exe = os.path.join(outdir,builder.options.executable)
+		exe = os.path.join(self.options.destination,builder.options.executable)
 		shutil.copy(extractor,exe)
 		builder.log("making win32 binary at %s, this will take a sec..." % exe)
 		zf = zipfile.ZipFile(exe, 'a', zipfile.ZIP_DEFLATED)

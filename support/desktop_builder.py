@@ -34,7 +34,8 @@ class DesktopBuilder(object):
 				self.base_dir = os.path.join(options.destination,self.appname)
 				self.contents_dir = os.path.join(options.destination,self.appname)
 				self.executable_dir = os.path.join(options.destination,self.appname)
-				dir_util.remove_tree(self.contents_dir)
+				if os.path.exists(self.contents_dir):
+					dir_util.remove_tree(self.contents_dir)
 				os.makedirs(self.base_dir)
 				self.resources_dir = os.path.join(self.contents_dir,'Resources')
 				os.makedirs(self.resources_dir)

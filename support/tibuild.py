@@ -57,6 +57,9 @@ def find_titanium_base():
 		if not os.path.exists(f):
 			f = '~/Library/Application Support/Titanium'
 	elif 'win32' in p:
+		f = 'C:/ProgramData/Titanium'
+		if not os.path.exists(f):
+			pass
 		pass
 	elif 'linux' in p:
 		pass
@@ -203,8 +206,15 @@ if __name__ == '__main__':
 	parser.add_option("-r","--run",action="store_true",dest="run",default=False,help="run the packaged app after building")	
 	parser.add_option("-p","--package",dest="package",default=True,help="build the installation package")	
 	(options, args) = parser.parse_args()
-	if len(args) != 1:
+	if len(args) == 0:
 		parser.print_help()
+		sys.exit(1)
+	appdir = os.path.join(args[0])
+	if appdir == "":
+		parser.print_help()
+		sys.exit(1)
+	if not os.path.exists(appdir):
+		print "Couldn't find application directory at: %s" % appdir
 		sys.exit(1)
 	main(options,args[0])
 	
