@@ -76,10 +76,20 @@ namespace ti
 		}
 
 		this->SetTopMost(config->IsTopMost());
+
+		if (config->IsMaximized())
+		{
+			[window zoom:window];
+		}
+
+		if (config->IsMinimized())
+		{
+			[window miniaturize:window];
+		}
+
 	}
 	OSXUserWindow::~OSXUserWindow()
 	{
-		KR_DUMP_LOCATION
 		window = nil; // don't release
 		UserWindow::Close();
 	}
@@ -119,7 +129,7 @@ namespace ti
 	{
 		if (opened)
 		{
-			[window miniaturize:self];
+			[window miniaturize:window];
 		}
 	}
 	
@@ -127,7 +137,7 @@ namespace ti
 	{
 		if (opened)
 		{
-			[window deminiaturize:self];
+			[window deminiaturize:window];
 		}
 	}
 	
@@ -135,7 +145,7 @@ namespace ti
 	{
 		if (opened)
 		{
-			[window zoom:self];
+			[window zoom:window];
 		}
 	}
 	
@@ -143,7 +153,7 @@ namespace ti
 	{
 		if (opened && [window isZoomed])
 		{
-			[window zoom:self];
+			[window zoom:window];
 		}
 	}
 	bool OSXUserWindow::IsUsingChrome()
@@ -164,14 +174,12 @@ namespace ti
 	}
 	void OSXUserWindow::Open()
 	{
-		KR_DUMP_LOCATION
 		opened = true;
 		[window open];
 		UserWindow::Open();
 	}
 	void OSXUserWindow::Close()
 	{
-		KR_DUMP_LOCATION
 		if (!closed)
 		{
 			opened = false;
@@ -441,7 +449,6 @@ namespace ti
 	
 	void OSXUserWindow::Focused()
 	{
-		KR_DUMP_LOCATION
 		this->focused = true;
 		if (!menu.isNull())
 		{

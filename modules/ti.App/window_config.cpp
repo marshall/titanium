@@ -86,6 +86,8 @@ void WindowConfig::SetDefaults ()
 	this->usingChrome = true;
 	this->usingScrollbars = true;
 	this->fullscreen = false;
+	this->maximized = false;
+	this->minimized = false;
 	this->visible = true;
 	this->topMost = false;
 
@@ -127,6 +129,8 @@ void WindowConfig::UseProperties(SharedKObject properties)
 	SET_BOOL(closeable, closeable);
 	SET_BOOL(resizable, resizable);
 	SET_BOOL(fullscreen, fullscreen);
+	SET_BOOL(maximized, maximized);
+	SET_BOOL(minimized, minimized);
 	SET_BOOL(usingChrome, usingChrome);
 	SET_BOOL(usingScrollbars, usingScrollbars);
 	SET_BOOL(topMost, topMost);
@@ -157,6 +161,8 @@ WindowConfig::WindowConfig(WindowConfig *config, std::string& url)
 	this->minimizable = config->IsMinimizable();
 	this->resizable = config->IsResizable();
 	this->fullscreen = config->IsFullScreen();
+	this->maximized = config->IsMaximized();
+	this->minimized = config->IsMinimized();
 	this->usingChrome = config->IsUsingChrome();
 	this->usingScrollbars = config->IsUsingScrollbars();
 	this->topMost = config->IsTopMost();
@@ -208,6 +214,14 @@ WindowConfig::WindowConfig(void* data)
 		else if (nodeNameEquals(child, "fullscreen"))
 		{
 			fullscreen = ConfigUtils::GetNodeValueAsBool(child);
+		}
+		else if (nodeNameEquals(child, "maximized"))
+		{
+			maximized = ConfigUtils::GetNodeValueAsBool(child);
+		}
+		else if (nodeNameEquals(child, "minimized"))
+		{
+			minimized = ConfigUtils::GetNodeValueAsBool(child);
 		}
 		else if (nodeNameEquals(child, "chrome"))
 		{

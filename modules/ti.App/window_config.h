@@ -38,6 +38,8 @@ private:
 	bool closeable;
 	bool resizable;
 	bool fullscreen;
+	bool maximized;
+	bool minimized;
 	bool usingChrome;
 	bool usingScrollbars;
 	bool topMost;
@@ -96,6 +98,10 @@ public:
 	void SetResizable(bool resizable_) { resizable = resizable_; }
 	bool IsFullScreen() { return fullscreen; }
 	void SetFullScreen(bool fullscreen_) { fullscreen = fullscreen_; }
+	bool IsMaximized() { return maximized; }
+	void SetMaximized(bool maximized_) { maximized = maximized_; }
+	bool IsMinimized() { return minimized; }
+	void SetMinimized(bool minimized_) { minimized = minimized_; }
 	bool IsUsingChrome() { return usingChrome; }
 	void SetUsingChrome(bool usingChrome_) { usingChrome = usingChrome_; }
 	bool IsUsingScrollbars() { return usingScrollbars; }

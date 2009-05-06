@@ -75,9 +75,9 @@ namespace ti
 #endif
 
 		/**
-		 * @tiapi(property=True,immutable=True,type=double,name=App.version,since=0.2) returns the Titanium product version
+		 * @tiapi(property=True,immutable=True,type=string,name=App.version,since=0.2) returns the Titanium product version
 		 */
-		SharedValue version = Value::NewDouble(PRODUCT_VERSION);
+		SharedValue version = Value::NewString(STRING(PRODUCT_VERSION));
 		global->Set("version", version);
 
 		/**

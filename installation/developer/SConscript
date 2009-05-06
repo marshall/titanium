@@ -23,11 +23,21 @@ def package_sdk(target, source, env):
 	# sdk.set_modules(modules)
 
 	# Create the basic application shell
-	sdk.stage(build.sdk_build_dir, src_resources=p.join(cwd, 'Resources'), bundle=False)
+	package_dist = True
+	if 'PACKAGE_DIST' in env:
+		package_dist = env['PACKAGE_DIST']
 
-	# Copy the zip files from the dist directory to sdk.contents/dist
-	print "    -> Copying zips from %s to %s" % (build.dist_dir, p.join(sdk.contents, 'dist'))
-	futils.CopyTree(build.dist_dir, p.join(sdk.contents, 'dist'), filter=lambda x: not p.isdir(x) and x.endswith('.zip'))
+	if package_dist:
+		destdir = build.sdk_build_dir
+	else:
+		destdir = p.join(build.dir, 'titanium-sdk-netinstall-' + build.version)
+
+	sdk.stage(destdir, src_resources=p.join(cwd, 'Resources'), bundle=False)
+
+	if package_dist:
+		# Copy the zip files from the dist directory to sdk.contents/dist
+		print "    -> Copying zips from %s to %s" % (build.dist_dir, p.join(sdk.contents, 'dist'))
+		futils.CopyTree(build.dist_dir, p.join(sdk.contents, 'dist'), filter=lambda x: not p.isdir(x) and x.endswith('.zip'))
 
 	# The SDK installer application is staged.
 	# -- so now we do pre-package processing
@@ -54,7 +64,6 @@ def package_sdk(target, source, env):
 	if not build.nopackage:
 		sdk.package(
 			out_dir=build.dist_dir,
-
 			# osx options
 			app_name="Titanium Developer",
 			vol_name="Titanium",
@@ -65,8 +74,12 @@ def package_sdk(target, source, env):
 
 build.env.Append(BUILDERS = {'PackageSDK' : Builder(action=package_sdk)})
 sdk_target = build.env.PackageSDK("#dummy-target", [])
+sdk_target_netinstall = build.env.PackageSDK("#dummy-target2", [], PACKAGE_DIST=False)
 Depends(sdk_target, ['stage', 'dist'])
+Depends(sdk_target_netinstall, ['stage','dist'])
 
 AlwaysBuild(sdk_target) # incremental builder doesn't work
-Alias('sdk', sdk_target)
-Alias('developer', sdk_target)
+AlwaysBuild(sdk_target_netinstall) # incremental builder doesn't work
+
+Alias('sdk', [sdk_target, sdk_target_netinstall])
+Alias('developer', [sdk_target, sdk_target_netinstall])
