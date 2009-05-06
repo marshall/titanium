@@ -25,7 +25,7 @@ class DesktopPackager(object):
 
 	def create_zip(self, builder):
 		extractor = os.path.join(self.options.assets_dir, 'self_extractor.exe')
-		exe = os.path.join(outdir,builder.options.executable)
+		exe = os.path.join(self.options.destination,builder.options.executable)
 		shutil.copy(extractor,exe)
 		builder.log("making win32 binary at %s, this will take a sec..." % exe)
 		zf = zipfile.ZipFile(exe, 'a', zipfile.ZIP_DEFLATED)
@@ -55,14 +55,14 @@ class DesktopPackager(object):
 		outtarfile = os.path.join(builder.options.destination, builder.appname + '.tgz')
 		tar = tarfile.open(outtarfile, 'w:gz')
 		def tarcb(f):
-			arcname = f.replace(builder.basedir + os.sep, "")
+			arcname = f.replace(builder.base_dir + os.sep, "")
 			tar.add(f, arcname)
-		self.walk_dir(builder.basedir, tarcb)
+		self.walk_dir(builder.base_dir, tarcb)
 		tar.close()
 
-		outfile = path.join(builder.options.destination, builder.appname + '.bin')
+		outfile = os.path.join(builder.options.destination, builder.appname + '.bin')
 		out = open(outfile, 'wb')
-		extractor = open(path.join(builder.options.assets_dir, 'self_extracting.sh'), 'r').read()
+		extractor = open(os.path.join(builder.options.assets_dir, 'self_extracting.sh'), 'r').read()
 
 		sane_name = builder.appname.replace("\"", "\\\"")
 		extractor = extractor.replace('APPNAME', sane_name)

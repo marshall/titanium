@@ -29,7 +29,7 @@ def get_version_from_tiapp(appdir):
 		sys.exit(1)
 	xml = open(f).read()
 	m = re.search('<version>(.*?)</version>',xml)
-	return str(m.group(1))
+	return str(m.group(1)).strip()
 	
 def examine_manifest(appdir):
 	f = os.path.join(appdir,'manifest')
@@ -43,9 +43,9 @@ def examine_manifest(appdir):
 		if len(line)>0:
 			tok = line.strip().split(':')
 			if line[0:1] == '#':
-				manifest[tok[0][1:]]=tok[1]
+				manifest[tok[0][1:].strip()]=tok[1].strip()
 			else:
-				manifest['modules'][tok[0]]=tok[1]
+				manifest['modules'][tok[0].strip()]=tok[1].strip()
 	return manifest
 	
 def find_titanium_base():
@@ -57,9 +57,14 @@ def find_titanium_base():
 		if not os.path.exists(f):
 			f = '~/Library/Application Support/Titanium'
 	elif 'win32' in p:
+		f = 'C:/ProgramData/Titanium'
+		if not os.path.exists(f):
+			pass
 		pass
 	elif 'linux' in p:
-		pass
+		f = os.path.expanduser('~/.titanium')
+		if not os.path.exists(f):
+			f = '/opt/titanium'
 	return f	
 	
 def is_mobile(options):
@@ -203,8 +208,15 @@ if __name__ == '__main__':
 	parser.add_option("-r","--run",action="store_true",dest="run",default=False,help="run the packaged app after building")	
 	parser.add_option("-p","--package",dest="package",default=True,help="build the installation package")	
 	(options, args) = parser.parse_args()
-	if len(args) != 1:
+	if len(args) == 0:
 		parser.print_help()
+		sys.exit(1)
+	appdir = os.path.join(args[0])
+	if appdir == "":
+		parser.print_help()
+		sys.exit(1)
+	if not os.path.exists(appdir):
+		print "Couldn't find application directory at: %s" % appdir
 		sys.exit(1)
 	main(options,args[0])
 	
