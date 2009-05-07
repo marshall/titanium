@@ -131,7 +131,7 @@ namespace ti
 		{
 			args.VerifyException("fieldName", "i");
 			const std::string &str = rs->columnName(args.at(0)->ToInt());
-			result->SetString(str);
+			result->SetString(str.c_str());
 		}
 	}
 	void ResultSetBinding::Field(const ValueList& args, SharedValue result)
