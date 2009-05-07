@@ -318,9 +318,20 @@ namespace ti
 			proxy = NULL;
 		}
 
+#ifdef defined(OS_WIN32)
+		std::string http_proxy = "http://";
+		http_proxy += username + ":" + password + "@";
+		http_proxy += hostname + ":" + port;
+		int i = ::_putenv_s("HTTP_PROXY", http_proxy.c_str());
+		if(i != 0)
+		{
+			result->SetBool(false);
+		}
+#endif
+
 		proxy = new ti::Proxy(hostname, port, username,password);
 		result->SetBool(true);
-	}
+  	}
 
 	void NetworkBinding::GetProxy(const ValueList& args, SharedValue result)
 	{
