@@ -30,7 +30,7 @@ def package_sdk(target, source, env):
 	if package_dist:
 		destdir = build.sdk_build_dir
 	else:
-		destdir = p.join(build.dir, 'titanium-sdk-netinstall-' + build.version)
+		destdir = p.join(build.dir, 'titanium-developer-' + build.version)
 
 	sdk.stage(destdir, src_resources=p.join(cwd, 'Resources'), bundle=False)
 
@@ -73,13 +73,14 @@ def package_sdk(target, source, env):
 			ds_store_extras=[p.join(cwd, 'osx', 'background.jpg')])
 
 build.env.Append(BUILDERS = {'PackageSDK' : Builder(action=package_sdk)})
-sdk_target = build.env.PackageSDK("#dummy-target", [])
-sdk_target_netinstall = build.env.PackageSDK("#dummy-target2", [], PACKAGE_DIST=False)
-Depends(sdk_target, ['stage', 'dist'])
-Depends(sdk_target_netinstall, ['stage','dist'])
+#sdk_target = build.env.PackageSDK("#dummy-target", [])
+developer_target = build.env.PackageSDK("#dummy-target2", [], PACKAGE_DIST=False)
+#Depends(sdk_target, ['stage', 'dist'])
+Depends(developer_target, ['stage','dist'])
 
-AlwaysBuild(sdk_target) # incremental builder doesn't work
-AlwaysBuild(sdk_target_netinstall) # incremental builder doesn't work
+#AlwaysBuild(sdk_target) # incremental builder doesn't work
+AlwaysBuild(developer_target) # incremental builder doesn't work
 
-Alias('sdk', [sdk_target, sdk_target_netinstall])
-Alias('developer', [sdk_target, sdk_target_netinstall])
+sdk_targets = [developer_target]
+Alias('sdk', sdk_targets)
+Alias('developer', sdk_targets)
