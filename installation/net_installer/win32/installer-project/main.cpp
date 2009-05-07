@@ -27,6 +27,7 @@ using KrollUtils::Application;
 using KrollUtils::SharedApplication;
 using KrollUtils::FileUtils;
 using KrollUtils::BootUtils;
+using KrollUtils::KComponentType;
 
 HINSTANCE mainInstance;
 HICON mainIcon;
@@ -47,6 +48,7 @@ enum IType
 	RUNTIME,
 	MODULE,
 	UPDATE,
+	SDK,
 	UNKNOWN
 };
 
@@ -241,20 +243,6 @@ bool DownloadURL(Progress *p, HINTERNET hINet, std::wstring url, std::wstring ou
 	return !failed;
 }
 
-void CreateDirectoryTree(string dir)
-{
-	if(!FileUtils::IsDirectory(dir))
-	{
-		int lastSlash = dir.find_last_of("\\");
-		if(lastSlash != string::npos)
-		{
-			string parent = dir.substr(0, lastSlash);
-			CreateDirectoryTree(parent);
-		}
-		CreateDirectoryA(dir.c_str(), NULL);
-	}
-}
-
 void Install(IType type, string name, string version, string path)
 {
 	string destination;
@@ -268,6 +256,10 @@ void Install(IType type, string name, string version, string path)
 		destination = FileUtils::Join(
 			componentInstallPath.c_str(), "runtime", OS_NAME, version.c_str(), NULL);
 	}
+	else if (type == SDK)
+	{
+		destination = componentInstallPath;
+	}
 	else if (type == UPDATE)
 	{
 		destination == app->path;
@@ -278,7 +270,7 @@ void Install(IType type, string name, string version, string path)
 	}
 
 	// Recursively create directories
-	CreateDirectoryTree(destination);
+	FileUtils::CreateDirectory(destination, true);
 	FileUtils::Unzip(path, destination);
 }
 
@@ -322,6 +314,11 @@ void ProcessURL(string url, Progress *p, HINTERNET hINet)
 		type = MODULE;
 		path = "module-";
 	}
+	else if (string(SDK_UUID) == uuid)
+	{
+		type = SDK;
+		path = "sdk-";
+	}
 	else
 	{
 		return;
@@ -357,6 +354,11 @@ void ProcessFile(string fullPath, Progress *p)
 	{
 		type = RUNTIME;
 		name = "runtime";
+	}
+	else if (partOne == "sdk")
+	{
+		type = SDK;
+		name = "sdk";
 	}
 	else if (partOne == "module")
 	{
@@ -416,14 +418,23 @@ bool HandleAllJobs(vector<string> jobs, Progress* p)
 		std::string url = jobs[i];
 
 		if (url == string("update"))
+		{
 			ProcessUpdate(p, hINet);
+		}
+
 		if (FileUtils::IsFile(url))
+		{
 			ProcessFile(url, p);
+		}
 		else
+		{
 			ProcessURL(url, p, hINet);
+		}
 
 		if (p->IsCancelled())
+		{
 			return false;
+		}
 	}
 
 	// done with iNet - so close it

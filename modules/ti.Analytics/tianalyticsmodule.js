@@ -74,7 +74,7 @@
 	 * @tiarg(for=Analytics.addEvent,type=string,name=event) event name
 	 * @tiarg(for=Analytics.addEvent,type=object,name=data,optional=True) event data
 	 */
-	Titanium.API.set("Titanium.Analytics.addEvent",function(event,data)
+	Titanium.API.set("Analytics.addEvent", function(event,data)
 	{
 		send({'event':event,'data':data});
 	});
