@@ -41,7 +41,7 @@ class Job
 	int index;
 	std::string out_filename;
 	double progress;
-	std::string componentType;
+	KComponentType componentType;
 	std::string name;
 	std::string version;
 	bool download;

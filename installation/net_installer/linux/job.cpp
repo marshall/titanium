@@ -34,7 +34,9 @@ void Job::InitDownloader()
 	curl_global_init(CURL_GLOBAL_ALL);
 	Job::curl = curl_easy_init();
 	if (Job::curl_error == NULL)
+	{
 		Job::curl_error = new char[CURL_ERROR_SIZE];
+	}
 }
 
 void Job::ShutdownDownloader()
@@ -62,7 +64,7 @@ Job::Job(std::string url, int type) :
 	type(type),
 	index(++Job::total),
 	progress(0.0),
-	componentType("unknown"),
+	componentType(KrollUtils::UNKNOWN),
 	name("unknown"),
 	version("unknown"),
 	download(true)
@@ -90,11 +92,17 @@ void Job::ParseFile(std::string url)
 	std::string partOne = file.substr(0, end);
 	if (partOne == "runtime")
 	{
-		this->componentType = this->name = "runtime";
+		this->componentType = KrollUtils::RUNTIME;
+		this->name = "runtime";
+	}
+	else if (partOne == "sdk")
+	{
+		this->componentType = KrollUtils::SDK;
+		this->name = "sdk";
 	}
 	else if (partOne == "module")
 	{
-		this->componentType = "modules";
+		this->componentType = KrollUtils::MODULE;
 		start = end + 1;
 		end = file.find("-", start);
 		this->name = file.substr(start, end - start);
@@ -127,9 +135,17 @@ void Job::ParseURL(std::string url)
 	}
 
 	if (this->name == std::string("runtime"))
-		this->componentType = "runtime";
+	{
+		this->componentType = KrollUtils::RUNTIME;
+	}
+	else if (this->name == std::string("sdk"))
+	{
+		this->componentType = KrollUtils::SDK;
+	}
 	else
-		this->componentType = "modules";
+	{
+		this->componentType = KrollUtils::MODULE;
+	}
 }
 
 void Job::Fetch()
@@ -151,8 +167,8 @@ void Job::Fetch()
 		this->out_filename = Job::temporaryDirectory + "/";
 		if (this->type == COMPONENT_JOB)
 		{
-			std::string filename = this->componentType +
-				"-" + this->name + "-" + this->version + ".zip";
+			std::string filename =
+				"component-" + this->name + "-" + this->version + ".zip";
 			this->out_filename += filename;
 		}
 		else
@@ -185,7 +201,6 @@ void Job::Fetch()
 
 		fflush(out);
 		fclose(out);
-
 	}
 	catch (...)
 	{
@@ -203,22 +218,24 @@ void Job::Fetch()
 
 void Job::UnzipComponent()
 {
-	std::string outdir = Job::installDirectory;
-	FileUtils::CreateDirectory(outdir);
-	outdir.append("/" + this->componentType);
-	FileUtils::CreateDirectory(outdir);
-	outdir.append("/linux");
-	FileUtils::CreateDirectory(outdir);
+	string outdir = Job::installDirectory;
 
-	if (this->componentType != "runtime")
+	// SDK installation installs to the top-level directory.
+	// Other component types neeed to be in a subdirectory.
+	if (this->componentType == KrollUtils::RUNTIME)
 	{
-		outdir.append("/" + this->name);
-		FileUtils::CreateDirectory(outdir);
+		outdir = FileUtils::Join(
+			outdir.c_str(), "runtime",
+			"linux", this->version.c_str(), NULL);
+	}
+	else if (this->componentType == KrollUtils::MODULE)
+	{
+		outdir = FileUtils::Join(
+			outdir.c_str(), "modules", "linux",
+			this->name.c_str(), this->version.c_str(), NULL);
 	}
 
-	outdir.append("/" + this->version);
-	FileUtils::CreateDirectory(outdir);
-
+	FileUtils::CreateDirectory(outdir, true);
 	FileUtils::Unzip(this->out_filename, outdir);
 }
 
@@ -231,9 +248,13 @@ void Job::Unzip()
 {
 	this->progress = ((double) this->index) / ((double) Job::total);
 	if (this->type == COMPONENT_JOB)
+	{
 		this->UnzipComponent();
+	}
 	else
+	{
 		this->UnzipApplication();
+	}
 }
 
 int Job::GetIndex()

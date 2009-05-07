@@ -8,6 +8,7 @@
 
 #define RUNTIME_UUID_FRAGMENT @"uuid="RUNTIME_UUID
 #define MODULE_UUID_FRAGMENT @"uuid="MODULE_UUID
+#define SDK_UUID_FRAGMENT @"uuid="SDK_UUID
 
 @implementation Job
 static int totalDownloads = 0;
@@ -146,7 +147,7 @@ static int totalJobs = 0;
 {
 	NSString* name = @"unknown";
 	NSString* version = @"unknown";
-	BOOL isModule = YES;
+	KComponentType type = KrollUtils::UNKNOWN;
 
 	NSString* path = [job path];
 	NSURL* url = [job url];
@@ -158,16 +159,25 @@ static int totalJobs = 0;
 		NSArray* fileParts = [path componentsSeparatedByString:@"/"];
 		NSString* trimmed = [[fileParts lastObject] stringByDeletingPathExtension];
 		NSArray* parts = [trimmed componentsSeparatedByString:@"-"];
-		if ((int)[parts count] == 3)
+
+		NSString* typeString = [parts objectAtIndex:0];
+		typeString = [typeString lowercaseString];
+		if ([typeString isEqualToString:@"module"] && (int) [parts count] >= 3)
 		{
 			// part 0 should be "module"
-			isModule = YES;
+			type = KrollUtils::MODULE;
 			name = [parts objectAtIndex:1];
 			version = [parts objectAtIndex:2];
 		}
-		else if ((int)[parts count] == 2)
+		else if ([typeString isEqualToString:@"runtime"])
 		{
-			isModule = NO;
+			type = KrollUtils::RUNTIME;
+			name = [parts objectAtIndex:0];
+			version = [parts objectAtIndex:1];
+		}
+		else if ([typeString isEqualToString:@"sdk"])
+		{
+			type = KrollUtils::SDK;;
 			name = [parts objectAtIndex:0];
 			version = [parts objectAtIndex:1];
 		}
@@ -186,11 +196,15 @@ static int totalJobs = 0;
 		{
 			if ([thisPart isEqualToString:RUNTIME_UUID_FRAGMENT])
 			{
-				isModule = NO;
+				type = KrollUtils::RUNTIME;
 			}
 			else if ([thisPart isEqualToString:MODULE_UUID_FRAGMENT])
 			{
-				isModule = YES;
+				type = KrollUtils::MODULE;
+			}
+			else if ([thisPart isEqualToString:SDK_UUID_FRAGMENT])
+			{
+				type = KrollUtils::SDK;
 			}
 			else if ([thisPart hasPrefix:@"name="])
 			{
@@ -204,17 +218,26 @@ static int totalJobs = 0;
 	}
 
 	NSString* destDir;
-	if (isModule) 
+	if (type == KrollUtils::MODULE) 
 	{
 		destDir = [NSString stringWithFormat:@"%@/modules/osx/%@/%@", installDirectory, name, version];
 	}
-	else // This is the runtime
+	else if (type == KrollUtils::RUNTIME) 
 	{
 		destDir = [NSString stringWithFormat:@"%@/runtime/osx/%@", installDirectory, version];
 	}
+	else if (type == KrollUtils::SDK)
+	{
+		destDir = installDirectory;
+	}
+	else
+	{
+		// Unknown file!
+		return;
+	}
 
 #ifdef DEBUG
-	NSLog(@"name=%@,version=%@,module=%d",name,version,isModule);
+	NSLog(@"name=%@,version=%@,module=%d", name, version, type);
 #endif
 
 	NSLog(@"Installing %@ into %@", path, destDir);

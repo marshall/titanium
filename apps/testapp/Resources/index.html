@@ -49,7 +49,7 @@
 			function $(id) { return document.getElementById(id); }
 			function openTest() {
 				var test = $('tests').options[$('tests').selectedIndex].value;
-
+								
 				if(test.indexOf("http") == 0) {
 					window.location = test;
 				}
@@ -104,5 +104,20 @@
 			<span><a class="bye" href="javascript:bye();">bye</a></span>
 		</div>
 		<iframe id="testframe"></iframe>
+		<script>
+			window.onload = function() {
+				if (Titanium.App.arguments.length > 0) {
+					test = Titanium.App.arguments[0];
+					test = "test-"+test+".html";
+					for (var i = 0; i < $('tests').options.length; i++) {
+						if ($('tests').options[i].value == test) { 
+							$('tests').selectedIndex = i;
+							openTest();
+							break;
+						}
+					}
+				}
+			}
+		</script>
 	</body>
 </html>

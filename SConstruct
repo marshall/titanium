@@ -28,7 +28,7 @@ build.set_kroll_source_dir(path.abspath('kroll'))
 
 build.titanium_source_dir = path.abspath('.')
 build.titanium_support_dir = path.join(build.titanium_source_dir, 'support', build.os)
-build.sdk_build_dir = path.join(build.dir, 'titanium-sdk-' + build.version)
+build.sdk_build_dir = path.join(build.dir, 'titanium-developer-' + build.version)
 if build.is_osx(): build.sdk_build_dir = path.join(build.sdk_build_dir + '.app')
 
 # This should only be used for accessing various
