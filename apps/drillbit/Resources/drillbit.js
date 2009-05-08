@@ -412,7 +412,11 @@ window.onload = function()
 		profile_path.deleteFile();
 		log_path.deleteFile();
 
-		var args = ['--profile="'+profile_path+'"','--logpath="'+log_path+'"','--bundled-component-override="'+app_dir+'"','--no-console-logging'];
+		var args = ['--profile="'+profile_path+'"']
+		args.push('--logpath="'+log_path+'"')
+		args.push('--bundled-component-override="'+app_dir+'"')
+		args.push('--no-console-logging');
+		args.push('--results-dir="' + results_dir + '"');
 		var process = Titanium.Process.launch(app.executable.nativePath(),args);
 		process.onread = function(data)
 		{

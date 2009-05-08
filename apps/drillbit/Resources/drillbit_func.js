@@ -284,7 +284,8 @@ TitaniumTest =
 	complete: function()
 	{
 		Titanium.API.info("test complete");
-		var f = Titanium.Filesystem.getFile('test_results',TitaniumTest.NAME+'.json');
+		var results_dir = Titanium.API.getApplication().getArgumentValue('results-dir');
+		var f = Titanium.Filesystem.getFile(results_dir, TitaniumTest.NAME+'.json');
 		var data = {
 			'results':this.results,
 			'count':this.results.length,
