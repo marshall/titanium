@@ -879,14 +879,16 @@ void UserWindow::_SetBounds(const kroll::ValueList& args, kroll::SharedValue res
 
 void UserWindow::_GetTitle(const kroll::ValueList& args, kroll::SharedValue result)
 {
+	std::string title;
 	if (this->active)
 	{
-		result->SetString(this->GetTitle());
+		title = this->GetTitle();
 	}
 	else
 	{
-		result->SetString(this->config->GetTitle());
+		title = this->config->GetTitle();
 	}
+	result->SetString(title);
 }
 
 void UserWindow::_SetTitle(const kroll::ValueList& args, kroll::SharedValue result)
@@ -903,14 +905,16 @@ void UserWindow::_SetTitle(const kroll::ValueList& args, kroll::SharedValue resu
 
 void UserWindow::_GetURL(const kroll::ValueList& args, kroll::SharedValue result)
 {
+	string url;
 	if (this->active)
 	{
-		result->SetString(this->GetURL());
+		url = this->GetURL();
 	}
 	else
 	{
-		result->SetString(this->config->GetURL());
+		url = this->config->GetURL();
 	}
+	result->SetString(url);
 }
 
 void UserWindow::_SetURL(const kroll::ValueList& args, kroll::SharedValue result)
@@ -1076,7 +1080,8 @@ void UserWindow::_SetTransparency(const kroll::ValueList& args, kroll::SharedVal
 
 void UserWindow::_GetTransparencyColor(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	result->SetString(this->GetTransparencyColor());
+	std::string color = this->GetTransparencyColor();
+	result->SetString(color);
 }
 
 void UserWindow::_SetMenu(const kroll::ValueList& args, kroll::SharedValue result)
