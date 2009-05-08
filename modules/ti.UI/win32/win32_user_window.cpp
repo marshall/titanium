@@ -408,6 +408,8 @@ Win32UserWindow::Win32UserWindow(SharedUIBinding binding, WindowConfig* config, 
 		SendMessageA(window_handle, (UINT) WM_SETICON, ICON_BIG,
 				(LPARAM) initial_icon);
 	}
+
+	SetLayeredWindowAttributes(window_handle, 0, 255, LWA_ALPHA);
 }
 
 Win32UserWindow::~Win32UserWindow()
