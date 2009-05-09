@@ -1,10 +1,10 @@
 Import('build')
-import os.path as path, futils, os, zipfile
+import os.path as path, futils, os, zipfile, sys
 
 # Network installable zip files for distribution. We must
 # encase this in a builder because the files necessary for zipping
 # don't exist when this file is processed.
-excludes = ['.pdb', '.exp', '.ilk']
+excludes = ['.pdb', '.exp', '.ilk', '.db', '.gitignore']
 def build_dist_zips(target, source, env):
 	
 	f = path.join(build.dist_dir, 'runtime-%s.zip' % build.version)
@@ -29,20 +29,42 @@ def build_sdk(target, source, env):
 	print "Packing %s " % sdkZipPath
 	
 	sdkZip = zipfile.ZipFile(sdkZipPath, 'w', zipfile.ZIP_DEFLATED)
+	
+	sys.path.append(path.join(build.titanium_source_dir, 'build'))
+	import titanium_version
+	baseVersion = titanium_version.version
+	
 	def buildRuntimeZip(file):
 		relativePath = file.replace(build.runtime_build_dir, '')
-		zipPath = '/'.join(['runtime', build.os, build.version, relativePath])
+		zipPath = '/'.join(['runtime', build.os, baseVersion, relativePath])
 		futils.AddToZip(sdkZip, file, zipPath)
 		
 	futils.walk_dir(build.runtime_build_dir, buildRuntimeZip, exclude=excludes, dirs=True)
 	
 	def buildModuleZip(file, module):
 		relativePath = file.replace(m.build_dir, '')
-		zipPath = '/'.join(['modules', build.os, module.name, module.version, relativePath])
+		zipPath = '/'.join(['modules', build.os, module.name, baseVersion, relativePath])
 		futils.AddToZip(sdkZip, file, zipPath)
 	
 	for m in build.modules:
 		futils.walk_dir(m.build_dir, lambda f: buildModuleZip(f, m), exclude=excludes, dirs=True)
+	
+	def bundleSupport(supportDir):
+		for file in os.listdir(supportDir):
+			supportFile = path.join(supportDir, file)
+			fileExt = os.path.splitext(file)[1]
+			exclude = fileExt in excludes or file == fileExt
+			
+			if not exclude and path.isfile(supportFile):
+				sdkZip.write(supportFile, '/'.join(['sdk', build.os, baseVersion, file]))
+
+	supportDir = path.join(build.titanium_source_dir, 'support')
+	platformSupportDir = path.join(supportDir, build.os)
+	
+	bundleSupport(supportDir)
+	bundleSupport(platformSupportDir)
+	
+	futils.ZipDir(path.join(build.dir, 'include'), sdkZip, dest_path='sdk/%s/%s' % (build.os, baseVersion))
 	sdkZip.close()
 
 build.env.Append(BUILDERS = {'BuildSDK' : Builder(action=build_sdk)})
