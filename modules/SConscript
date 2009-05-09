@@ -3,8 +3,6 @@ Import('build')
 import os
 
 modules = ['App','UI','Network','Growl','Filesystem','Media','Desktop','Platform','Process','Notification','Monkey','Analytics','Database']
-if build.is_linux():
-	modules.remove('Database')
 
 for module in modules:
 	module = "ti.%s" % module
