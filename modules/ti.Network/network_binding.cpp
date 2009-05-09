@@ -318,7 +318,7 @@ namespace ti
 			proxy = NULL;
 		}
 
-#ifdef defined(OS_WIN32)
+#if defined(OS_WIN32)
 		std::string http_proxy = "http://";
 		http_proxy += username + ":" + password + "@";
 		http_proxy += hostname + ":" + port;
