@@ -7,5 +7,6 @@ body
 {
 	font-family: "sans-serif";
 	background: transparent;
+	-webkit-user-select: none;
 }
 
