@@ -14,15 +14,15 @@
 #include <sstream>
 #include <fstream>
 #include "../network_binding.h"
-#include "Poco/Buffer.h"
-#include "Poco/Net/MultipartWriter.h"
-#include "Poco/Net/MessageHeader.h"
-#include "Poco/Net/FilePartSource.h"
-#include "Poco/File.h"
-#include "Poco/Timespan.h"
-#include "Poco/Net/HTMLForm.h"
-#include "Poco/Zip/Compress.h"
-#include "Poco/Zip/ZipCommon.h"
+#include <Poco/Buffer.h>
+#include <Poco/Net/MultipartWriter.h>
+#include <Poco/Net/MessageHeader.h>
+#include <Poco/Net/FilePartSource.h>
+#include <Poco/File.h>
+#include <Poco/Timespan.h>
+#include <Poco/Net/HTMLForm.h>
+#include <Poco/Zip/Compress.h>
+#include <Poco/Zip/ZipCommon.h>
 
 namespace ti
 {
@@ -159,6 +159,7 @@ namespace ti
 
 		PRINTD("HTTPClientBinding:: starting => " << binding->url);
 		
+		Poco::Net::HTTPResponse res;
 		std::ostringstream ostr;
 		int max_redirects = 5;
 		int status;
@@ -310,7 +311,7 @@ namespace ti
 // 							list->Append(Value::NewInt(len)); // bytes sent
 // 							list->Append(Value::NewInt(content_len)); // total size
 // 							list->Append(Value::NewInt(remaining)); // remaining
-// 							binding->host->InvokeMethodOnMainThread(sender,args,false);
+// 							binding->host->InvokeMethodOnMainThread(sender,args,true);
 // 						}
 // 						catch(std::exception &e)
 // 						{
@@ -331,7 +332,6 @@ namespace ti
 				binding->filestream->close();
 			}
 
-						Poco::Net::HTTPResponse res;
 			std::istream& rs = session.receiveResponse(res);
 			int total = res.getContentLength();
 			status = res.getStatus();
@@ -387,7 +387,7 @@ namespace ti
 							list->Append(Value::NewObject(new Blob(buf,c))); // buffer
 							list->Append(Value::NewInt(c)); // buffer length
 
-							binding->host->InvokeMethodOnMainThread(streamer,args,false);
+							binding->host->InvokeMethodOnMainThread(streamer,args,true);
 						}
 						else
 						{
@@ -409,7 +409,6 @@ namespace ti
 			}
 			break;
 		}
-		binding->response = NULL;
 		std::string data = ostr.str();
 		if (!data.empty())
 		{
@@ -430,6 +429,7 @@ namespace ti
 
 		binding->Set("connected",Value::NewBool(false));
 		binding->ChangeState(4); // closed
+		binding->response = NULL; // must be done after change state
 		NetworkBinding::RemoveBinding(binding);
 #ifdef OS_OSX
 		[pool release];
@@ -590,7 +590,7 @@ namespace ti
 	}
 	void HTTPClientBinding::GetResponseHeader(const ValueList& args, SharedValue result)
 	{
-		if (this->response)
+		if (this->response!=NULL)
 		{
 			std::string name = args.at(0)->ToString();
 			if (this->response->has(name))
@@ -601,6 +601,10 @@ namespace ti
 			{
 				result->SetNull();
 			}
+		}
+		else
+		{
+			throw ValueException::FromString("no available response");
 		}
 	}
 	void HTTPClientBinding::SetTimeout(const ValueList& args, SharedValue result)
@@ -618,7 +622,7 @@ namespace ti
 				SharedKMethod m = v->ToMethod()->Get("call")->ToMethod();
 				ValueList args;
 				args.push_back(this->self);
-				this->host->InvokeMethodOnMainThread(m,args,false);
+				this->host->InvokeMethodOnMainThread(m,args,true);
 			}
 			catch (std::exception &ex)
 			{

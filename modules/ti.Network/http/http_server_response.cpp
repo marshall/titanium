@@ -85,8 +85,9 @@ namespace ti
 		
 		if (args.at(0)->IsString())
 		{
-			std::string data = args.at(0)->ToString();
+			const char *data = args.at(0)->ToString();
 			ostr << data;
+			ostr.flush();
 			return;
 		}
 		else if (args.at(0)->IsObject())
@@ -97,6 +98,7 @@ namespace ti
 			{
 				const char *data = blob->Get();
 				ostr << data;
+				ostr.flush();
 				return;
 			}
 		}

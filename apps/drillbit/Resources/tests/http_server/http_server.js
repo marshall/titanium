@@ -26,6 +26,7 @@ describe("http server tests",
 			}
 			catch(e)
 			{
+				server.close();
 				callback.failed(e);
 			}
 		});
@@ -53,10 +54,12 @@ describe("http server tests",
 				value_of(blob).should_be_object();
 				value_of(blob.length).should_be(3);
 				value_of(blob).should_be("a=b");
+				server.close();
 				callback.passed();
 			}
 			catch(e)
 			{
+				server.close();
 				callback.failed(e);
 			}
 		});
@@ -66,5 +69,50 @@ describe("http server tests",
 		xhr.setRequestHeader('Foo','Bar');
 		xhr.open("POST","http://127.0.0.1:8082/foo");
 		xhr.send("a=b");
+	},
+	get_request_simple_response_as_async: function(callback)
+	{
+		var server = Titanium.Network.createHTTPServer();
+		
+		server.bind(8082,function(request,response)
+		{
+			try
+			{
+				value_of(request.getMethod()).should_be('GET');
+				value_of(request.getURI()).should_be('/foo');
+				response.setContentType('text/plain');
+				response.setContentLength(3);
+				response.setStatusAndReason('200','OK');
+				response.write('123');
+			}
+			catch(e)
+			{
+				callback.failed(e);
+			}
+		});
+		
+		var xhr = Titanium.Network.createHTTPClient();
+		xhr.onreadystatechange = function()
+		{
+			if (this.readyState == 4)
+			{
+				try
+				{
+					value_of(this.status).should_be(200);
+					value_of(this.statusText).should_be('OK');
+					value_of(this.responseText).should_be('123');
+					value_of(this.getResponseHeader('Content-Type')).should_be('text/plain');
+					server.close();
+					callback.passed();
+				}
+				catch(e)
+				{
+					server.close();
+					callback.failed(e);
+				}
+			}
+		};
+		xhr.open("GET","http://127.0.0.1:8082/foo");
+		xhr.send(null);
 	}
 });

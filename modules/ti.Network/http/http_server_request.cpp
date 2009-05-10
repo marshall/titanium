@@ -6,6 +6,7 @@
 
 #include "http_server_request.h"
 #include "http_server_response.h"
+#include <Poco/Buffer.h>
 
 namespace ti
 {
@@ -83,20 +84,14 @@ namespace ti
 			result->SetNull();
 			return;
 		}
-		int max_size = 4096;
+		int max_size = 8096;
 		if (args.size()==1)
 		{
 			max_size = args.at(0)->ToInt();
 		}
-		static const int eof = std::char_traits<char>::eof();
-		int count = 0;
 		char *buf = new char[max_size];
-		int ch = in.get();
-		while (ch != eof && count < max_size)
-		{
-			buf[count++]=(char)ch;
-			ch = in.get();
-		}
+		in.read(buf,max_size);
+		std::streamsize count = in.gcount();
 		if (count == 0)
 		{
 			result->SetNull();
