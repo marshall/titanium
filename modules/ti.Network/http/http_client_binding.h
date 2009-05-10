@@ -44,6 +44,7 @@ namespace ti
 		std::string datastream;
 		std::string dirstream;
 		int timeout;
+		static bool initialized;
 		
 		static void Run(void*);
 		

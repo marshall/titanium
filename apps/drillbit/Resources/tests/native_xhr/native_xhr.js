@@ -64,7 +64,6 @@ describe("native XHR tests",
 				{
 					clearTimeout(timer);
 					callback.passed();
-					break;
 				}
 			}
 			catch(e)
@@ -80,6 +79,40 @@ describe("native XHR tests",
 		timer = setTimeout(function()
 		{
 			callback.failed('native XHR twitter timed out');
+		},20000);
+	},
+	
+	https_test_as_async: function(callback)
+	{
+		// this is a simple page that can be used (for now) to test
+		// HTTPS connectivity
+		var url = 'https://msp.f-secure.com/web-test/common/test.html';
+		var xhr = this.xhr;
+		
+		this.xhr.onreadystatechange = function()
+		{
+			try
+			{
+				if (this.readyState == this.DONE)
+				{
+					// if we get here, we connected and received 
+					// HTTPS encrypted content
+					clearTimeout(timer);
+					callback.passed();
+				}
+			}
+			catch(e)
+			{
+				clearTimeout(timer);
+				callback.failed(e);
+			}
+		};
+		this.xhr.open("GET",url);
+		this.xhr.send(null);
+		
+		timer = setTimeout(function()
+		{
+			callback.failed('native XHR HTTPS timed out');
 		},20000);
 	}
 });
