@@ -71,6 +71,7 @@ class API(dict):
 	def __init__(self, params, name, description):
 		self['description'] = description
 		self.name = name
+		self.deprecated = False
 		if get_property(params,'method',False):
 			self['method'] = True
 			self['returns'] = None
@@ -90,6 +91,11 @@ class API(dict):
 		
 	def set_return_type(self,return_type):
 		self['returns'] = return_type
+		
+	def set_deprecated(self,msg,version):
+		self.deprecated = True
+		self['deprecated'] = msg
+		self['deprecated_on'] = version
 
 class APIArgument(dict):
 	def __init__(self, params, description):
@@ -121,6 +127,7 @@ def generate_api_coverage(dirs,fs):
 	api_pattern = '@tiapi\(([^\)]*)\)\s+(.*)'
 	arg_pattern = '@tiarg\(([^\)]*)\)\s+(.*)'
 	res_pattern = '@tiresult\(([^\)]*)\)\s+(.*)'
+	dep_pattern = '@tideprecated\(([^\)]*)\)\s+(.*)'
 	
 	extensions = ['cc','c','cpp','m','mm','js','py','rb']
 
@@ -168,6 +175,12 @@ def generate_api_coverage(dirs,fs):
 				module_name,fn_name = get_api_names(metadata['for'])
 				api = apis[module_name][fn_name]
 				api.set_return_type(APIReturnType(metadata,description))
+			for m in re.finditer(dep_pattern,content):
+				match = m
+				description,metadata = parse_pattern(m)
+				module_name,fn_name = get_api_names(metadata['for'])
+				api = apis[module_name][fn_name]
+				api.set_deprecated(description,metadata['version'])
 			if found:
 				file_count+=1
 		except:

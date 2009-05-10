@@ -148,6 +148,7 @@ namespace ti
 			delete this->filestream;
 			this->filestream = NULL;
 		}
+		NetworkBinding::RemoveBinding(this);
 	}
 	void HTTPClientBinding::Run (void* p)
 	{

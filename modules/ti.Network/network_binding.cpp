@@ -11,6 +11,7 @@
 #include "host_binding.h"
 #include "irc/irc_client_binding.h"
 #include "http/http_client_binding.h"
+#include "http/http_server_binding.h"
 #include "proxy/proxy.h"
 
 using kroll::DataUtils;
@@ -55,6 +56,11 @@ namespace ti
 		 * @tiresult(for=Network.createHTTPClient,type=object) return a Network.HTTPClient object
 		 */
 		this->SetMethod("createHTTPClient",&NetworkBinding::CreateHTTPClient);
+		/**
+		 * @tiapi(method=True,name=Network.createHTTPServer,since=0.4) creates an HTTP server
+		 * @tiresult(for=Network.createHTTPServer,type=object) return a Network.HTTPServer object
+		 */
+		this->SetMethod("createHTTPServer",&NetworkBinding::CreateHTTPServer);
 		/**
 		 * @tiapi(method=True,name=Network.getHostByName,since=0.2) convert a host by name into a Host object
 		 * @tiarg(for=Network.getHostByName,name=name,type=string) hostname
@@ -216,6 +222,15 @@ namespace ti
 	void NetworkBinding::CreateHTTPClient(const ValueList& args, SharedValue result)
 	{
 		HTTPClientBinding* http = new HTTPClientBinding(host);
+		SharedKObject obj = http->GetSelf()->ToObject();
+		// we hold the reference to this until we're done with it
+		// which happense when the binding impl calls remove
+		this->bindings.push_back(obj);
+		result->SetObject(obj);
+	}
+	void NetworkBinding::CreateHTTPServer(const ValueList& args, SharedValue result)
+	{
+		HTTPServerBinding* http = new HTTPServerBinding(host);
 		SharedKObject obj = http->GetSelf()->ToObject();
 		// we hold the reference to this until we're done with it
 		// which happense when the binding impl calls remove
