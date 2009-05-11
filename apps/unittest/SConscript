@@ -10,8 +10,7 @@ common_dir = p.join(build.titanium_source_dir,'installation','common')
 
 t = build.env.PackageApp('#unittest-target',
 	[Dir('Resources'), 'tiapp.xml'],
-	SHORTNAME='unittest',
-	FULLNAME='Titanium Unit Test App',
+	FULLNAME='Titanium Unit Test App (old)',
 	ID='com.titaniumapp.unittest.driver',
 	GUID='D83B08F4-B43B-4909-9FEE-336CDB44750B',
 	RESOURCES=[common_dir],
