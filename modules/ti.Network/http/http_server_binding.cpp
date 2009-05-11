@@ -53,7 +53,7 @@ namespace ti
 		{
 			callback = args.at(1)->ToMethod();
 		}
-		else if (args.size()==3)
+		if (args.size()==3)
 		{
 			callback = args.at(2)->ToMethod();
 		}
