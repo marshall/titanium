@@ -3,12 +3,11 @@ import os.path as p, futils
 from app import App
 Import('build')
 
-def package_sdk(target, source, env):
+def package_developer(target, source, env):
 	print "Packaging Titanium Developer (the SDK)..."
 	cwd = build.cwd()
-	sdk = App(
+	developer = App(
 		build,
-		shortname='titanium-developer',
 		fullname='Titanium Developer', 
 		id='com.titaniumapp.developer',
 		version=build.version,
@@ -20,67 +19,59 @@ def package_sdk(target, source, env):
 	# Titanium Developer should depend on all installed modules
 	# so that all modules will be installed when it first starts.
 	# modules = []
-	# sdk.set_modules(modules)
+	# developer.set_modules(modules)
 
 	# Create the basic application shell
 	package_dist = True
 	if 'PACKAGE_DIST' in env:
 		package_dist = env['PACKAGE_DIST']
 
-	if package_dist:
-		destdir = build.sdk_build_dir
-	else:
-		destdir = p.join(build.dir, 'titanium-developer-' + build.version)
+	destdir = p.join(build.dir, 'Titanium Developer')
+	if build.is_osx(): destdir += ".app"
 
-	sdk.stage(destdir, src_resources=p.join(cwd, 'Resources'), bundle=False)
+	developer.stage(destdir, src_resources=p.join(cwd, 'Resources'), bundle=False)
 
 	if package_dist:
-		# Copy the zip files from the dist directory to sdk.contents/dist
-		print "    -> Copying zips from %s to %s" % (build.dist_dir, p.join(sdk.contents, 'dist'))
-		futils.CopyTree(build.dist_dir, p.join(sdk.contents, 'dist'), filter=lambda x: not p.isdir(x) and x.endswith('.zip'))
+		# Copy the zip files from the dist directory to developer.contents/dist
+		print "    -> Copying zips from %s to %s" % (build.dist_dir, p.join(developer.contents, 'dist'))
+		futils.CopyTree(build.dist_dir, p.join(developer.contents, 'dist'), filter=lambda x: not p.isdir(x) and x.endswith('.zip'))
 
 	# The SDK installer application is staged.
 	# -- so now we do pre-package processing
 	to_copy = ['tiapp.xml', 'LICENSE.txt']
 	for item in to_copy:
-		futils.CopyToDir(p.join(cwd, item), sdk.contents)
+		futils.CopyToDir(p.join(cwd, item), developer.contents)
 	
 	# Copy in common js files into all applications
 	common_js = p.join(build.titanium_source_dir, 'installation', 'common', 'js')
-	futils.CopyTree(common_js, p.join(sdk.contents, 'Resources', 'js'))
-
-	# Copy in appinstaller files particular to Titanium developer
-	appinstaller = p.join(cwd, 'appinstaller')
-	appinstaller_common = p.join(cwd, '..', 'appinstaller')
-	appinstaller_target = p.join(sdk.contents, 'appinstaller')
-	futils.CopyTree(common_js, p.join(appinstaller_target, 'Resources', 'js'))
-	futils.CopyTree(appinstaller_common, appinstaller_target, exclude=['SConscript'])
-	futils.CopyTree(appinstaller, appinstaller_target, exclude=['README'])
+	futils.CopyTree(common_js, p.join(developer.contents, 'Resources', 'js'))
 
 	# Don't mark this application as installed, because we want
 	# the appinstaller to run when it is first executed
-	#futils.Touch(p.join(sdk.contents, '.installed'))
+	#futils.Touch(p.join(developer.contents, '.installed'))
 
 	if not build.nopackage:
-		sdk.package(
+		developer.package(
 			out_dir=build.dist_dir,
 			# osx options
 			app_name="Titanium Developer",
 			vol_name="Titanium",
-			dmg_name='titanium-sdk-' + build.version,
+			dmg_name='titanium-developer-' + build.version,
 			icns_file=p.join(cwd, 'osx', 'VolumeIcon.icns'),
 			ds_store_file=p.join(cwd, 'osx', 'installer_DS_Store'),
 			ds_store_extras=[p.join(cwd, 'osx', 'background.jpg')])
 
-build.env.Append(BUILDERS = {'PackageSDK' : Builder(action=package_sdk)})
-#sdk_target = build.env.PackageSDK("#dummy-target", [])
-developer_target = build.env.PackageSDK("#dummy-target2", [], PACKAGE_DIST=False)
-#Depends(sdk_target, ['stage', 'dist'])
-Depends(developer_target, ['stage','dist'])
+build.env.Append(BUILDERS = {'PackageSDK' : Builder(action=package_developer)})
+developer_bundled = build.env.PackageSDK("#dummy-target", [])
+developer_netinst = build.env.PackageSDK("#dummy-target2", [], PACKAGE_DIST=False)
 
-#AlwaysBuild(sdk_target) # incremental builder doesn't work
-AlwaysBuild(developer_target) # incremental builder doesn't work
+Depends(developer_bundled, ['stage', 'dist'])
+Depends(developer_netinst, ['stage','dist'])
+AlwaysBuild(developer_bundled) # incremental builder doesn't work
+AlwaysBuild(developer_netinst) # incremental builder doesn't work
 
-sdk_targets = [developer_target]
-Alias('sdk', sdk_targets)
-Alias('developer', sdk_targets)
+developer_targets = [developer_bundled]
+Alias('sdk', developer_targets)
+Alias('developer', developer_targets)
+
+
