@@ -32,7 +32,7 @@ namespace ti
 	class NetworkBinding : public StaticBoundObject
 	{
 	public:
-		NetworkBinding(Host*);
+		NetworkBinding(Host*,std::string);
 		virtual ~NetworkBinding();
 
 		static void RemoveBinding(void* binding);
@@ -42,6 +42,7 @@ namespace ti
 
 	private:
 		Host* host;
+		std::string modulePath;
 		SharedKObject global;
 		Proxy * proxy;
 		static std::vector<SharedKObject> bindings;

@@ -19,8 +19,8 @@ using kroll::DataUtils;
 namespace ti
 {
 	std::vector<SharedKObject> NetworkBinding::bindings;
-	NetworkBinding::NetworkBinding(Host* host) :
-		 host(host),
+	NetworkBinding::NetworkBinding(Host* host, std::string modulePath) :
+		 host(host),modulePath(modulePath),
 		 global(host->GetGlobalObject()),
 		 proxy(NULL),
 		 next_listener_id(0)
@@ -221,7 +221,7 @@ namespace ti
 	}
 	void NetworkBinding::CreateHTTPClient(const ValueList& args, SharedValue result)
 	{
-		HTTPClientBinding* http = new HTTPClientBinding(host);
+		HTTPClientBinding* http = new HTTPClientBinding(host,modulePath);
 		SharedKObject obj = http->GetSelf()->ToObject();
 		// we hold the reference to this until we're done with it
 		// which happense when the binding impl calls remove

@@ -43,8 +43,8 @@ namespace ti
 {
 	bool HTTPClientBinding::initialized = false;
 	
-	HTTPClientBinding::HTTPClientBinding(Host* host) :
-		host(host),global(host->GetGlobalObject()),
+	HTTPClientBinding::HTTPClientBinding(Host* host, std::string path) :
+		host(host),modulePath(path),global(host->GetGlobalObject()),
 		thread(NULL),response(NULL),async(true),filestream(NULL),
 		timeout(30000)
 	{
@@ -199,10 +199,10 @@ namespace ti
 				if (HTTPClientBinding::initialized==false)
 				{
 					HTTPClientBinding::initialized = true;
-					SharedPtr<Poco::Net::PrivateKeyPassphraseHandler> ptrConsole = new Poco::Net::KeyConsoleHandler(false);   
 					SharedPtr<Poco::Net::InvalidCertificateHandler> ptrCert = new Poco::Net::AcceptCertificateHandler(false); 
-					Poco::Net::Context::Ptr ptrContext = new Poco::Net::Context(Poco::Net::Context::CLIENT_USE,"", "", false, Poco::Net::Context::VERIFY_NONE, 9, false, "ALL:!ADH:!LOW:!EXP:!MD5:@STRENGTH");
-					Poco::Net::SSLManager::instance().initializeClient(ptrConsole, ptrCert, ptrContext);
+					std::string rootpem = FileUtils::Join(binding->modulePath.c_str(),"rootcert.pem",NULL);
+					Poco::Net::Context::Ptr ptrContext = new Poco::Net::Context(Poco::Net::Context::CLIENT_USE,"", "", rootpem, Poco::Net::Context::VERIFY_NONE, 9, false, "ALL:!ADH:!LOW:!EXP:!MD5:@STRENGTH");
+					Poco::Net::SSLManager::instance().initializeClient(0, ptrCert, ptrContext);
 				}
 				session = new Poco::Net::HTTPSClientSession(uri.getHost(), uri.getPort());
 			}

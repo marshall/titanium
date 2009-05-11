@@ -86,7 +86,7 @@ describe("native XHR tests",
 	{
 		// this is a simple page that can be used (for now) to test
 		// HTTPS connectivity
-		var url = 'https://msp.f-secure.com/web-test/common/test.html';
+		var url = 'https://api.appcelerator.net/p/v1/app-list';
 		var xhr = this.xhr;
 		
 		this.xhr.onreadystatechange = function()

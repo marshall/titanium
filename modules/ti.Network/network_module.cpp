@@ -17,7 +17,7 @@ namespace ti
 	void NetworkModule::Initialize()
 	{
 		// load our variables
-		this->variables = new NetworkBinding(host);
+		this->variables = new NetworkBinding(host,GetPath());
 
 		// set our ti.Network
 		SharedValue value = Value::NewObject(this->variables);
