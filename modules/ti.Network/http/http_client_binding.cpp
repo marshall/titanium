@@ -201,7 +201,7 @@ namespace ti
 					HTTPClientBinding::initialized = true;
 					SharedPtr<Poco::Net::PrivateKeyPassphraseHandler> ptrConsole = new Poco::Net::KeyConsoleHandler(false);   
 					SharedPtr<Poco::Net::InvalidCertificateHandler> ptrCert = new Poco::Net::AcceptCertificateHandler(false); 
-					SharedPtr<Poco::Net::Context> ptrContext = new Poco::Net::Context("", "", false, Poco::Net::Context::VERIFY_NONE, 9, false, "ALL:!ADH:!LOW:!EXP:!MD5:@STRENGTH");
+					Poco::Net::Context::Ptr ptrContext = new Poco::Net::Context(Poco::Net::Context::CLIENT_USE,"", "", false, Poco::Net::Context::VERIFY_NONE, 9, false, "ALL:!ADH:!LOW:!EXP:!MD5:@STRENGTH");
 					Poco::Net::SSLManager::instance().initializeClient(ptrConsole, ptrCert, ptrContext);
 				}
 				session = new Poco::Net::HTTPSClientSession(uri.getHost(), uri.getPort());

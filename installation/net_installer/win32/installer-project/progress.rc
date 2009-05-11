@@ -119,16 +119,15 @@ BEGIN
     CONTROL         "Unknown",IDC_VERSION_LABEL,"Static",SS_LEFTNOWORDWRAP | SS_PATHELLIPSIS | WS_GROUP,117,28,226,8
     CONTROL         "Unknown",IDC_URL_LABEL,"Static",SS_LEFTNOWORDWRAP | SS_PATHELLIPSIS | WS_GROUP,117,48,226,8
     CONTROL         "Unknown",IDC_PUBLISHER_LABEL,"Static",SS_LEFTNOWORDWRAP | SS_PATHELLIPSIS | WS_GROUP,117,38,226,9
-    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,6,62,337,1
-    CONTROL         140,IDC_STATIC,"Static",SS_BITMAP | WS_BORDER,6,7,67,53,WS_EX_CLIENTEDGE
+    CONTROL         140,IDC_STATIC,"Static",SS_BITMAP,6,7,56,52
     LTEXT           "This application has the same security access as all installed applications running on the desktop.",IDC_SECURITY_BLURB,21,265,309,8
-    CONTROL         "Also add a shortcut to the Start Menu",IDC_START_MENU_CHECK,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,249,137,10
+    CONTROL         "Add application shortcut to the Start Menu",IDC_START_MENU_CHECK,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,249,152,10
     EDITTEXT        IDC_INSTALL_LOCATION_EDIT,12,232,285,14,ES_AUTOHSCROLL | ES_READONLY
     GROUPBOX        "Installation Location",IDC_INSTALL_BOX,6,222,337,41
     PUSHBUTTON      "Change",IDC_INSTALL_LOCATION_BUTTON,304,231,34,16,BS_BITMAP
     LTEXT           "By continuing, you agree to the following terms and conditions on use of this software:",IDC_LICENSE_BLURB,6,65,337,8
-    CONTROL         "",IDC_LICENSETEXT,"RichEdit20A",ES_MULTILINE | ES_READONLY | WS_BORDER | WS_VSCROLL | WS_TABSTOP,6,76,337,143
+    CONTROL         "",IDC_LICENSETEXT,"RichEdit20A",ES_MULTILINE | ES_READONLY | WS_VSCROLL | WS_TABSTOP,6,76,337,143,WS_EX_STATICEDGE
 END
 
 
