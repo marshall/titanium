@@ -606,9 +606,12 @@ Bounds Win32UserWindow::GetBounds()
 void Win32UserWindow::SetBounds(Bounds bounds)
 {
 	HWND desktop = GetDesktopWindow();
-	RECT desktopRect;
+	RECT clientRect, windowRect, desktopRect;
+	
 	GetWindowRect(desktop, &desktopRect);
-
+	GetClientRect(window_handle, &clientRect);
+	GetWindowRect(window_handle, &windowRect);
+	
 	if (bounds.x == UserWindow::CENTERED)
 	{
 		bounds.x = (desktopRect.right - bounds.width) / 2;
@@ -625,8 +628,14 @@ void Win32UserWindow::SetBounds(Bounds bounds)
 	{
 		flags = SWP_HIDEWINDOW;
 	}
-	SetWindowPos(window_handle, NULL, bounds.x, bounds.y, bounds.width,
-			bounds.height, flags);
+	
+	// offset the size of the window chrome
+	//
+	int widthDelta = (windowRect.right - windowRect.left) - (clientRect.right - clientRect.left);
+	int heightDelta = (windowRect.bottom - windowRect.top) - (clientRect.bottom - clientRect.top);
+	
+	SetWindowPos(window_handle, NULL, bounds.x, bounds.y,
+		bounds.width + widthDelta, bounds.height + heightDelta, flags);
 }
 
 void Win32UserWindow::SetTitle(std::string& title)
