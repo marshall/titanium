@@ -506,32 +506,33 @@ namespace ti
 			this->topmost = false;
 		}
 	}
-	
-	void OSXUserWindow::OpenFiles(
+
+	void OSXUserWindow::OpenChooserDialog(
+		bool files,
 		SharedKMethod callback,
 		bool multiple,
-		bool files,
-		bool directories,
+		std::string& title,
 		std::string& path,
-		std::string& file,
-		std::vector<std::string>& types)
+		std::string& defaultName,
+		std::vector<std::string>& types,
+		std::string& typesDescription)
 	{
 		SharedKList results = new StaticBoundList();
-
 		NSOpenPanel* openDlg = [NSOpenPanel openPanel];
+		[openDlg setTitle:[NSString stringWithUTF8String:title.c_str()]];
 		[openDlg setCanChooseFiles:files];
-		[openDlg setCanChooseDirectories:directories];
+		[openDlg setCanChooseDirectories:!files];
 		[openDlg setAllowsMultipleSelection:multiple];
 		[openDlg setResolvesAliases:YES];
 
 		NSMutableArray *filetypes = nil;
 		NSString *begin = nil, *filename = nil;
 
-		if (file != "")
+		if (!defaultName.empty())
 		{
 			filename = [NSString stringWithCString:file.c_str()];
 		}
-		if (path != "")
+		if (!path.empty())
 		{
 			begin = [NSString stringWithCString:path.c_str()];
 		}
@@ -545,7 +546,7 @@ namespace ti
 			}
 		}
 
-		if ( [openDlg runModalForDirectory:begin file:filename types:filetypes] == NSOKButton )
+		if ([openDlg runModalForDirectory:begin file:filename types:filetypes] == NSOKButton)
 		{
 			NSArray* selected = [openDlg filenames];
 			for (int i = 0; i < (int)[selected count]; i++)
@@ -557,22 +558,49 @@ namespace ti
 		}
 		[filetypes release];
 
-		ValueList args;
-		args.push_back(Value::NewList(results));
-		callback->Call(args);
+		callback->Call(ValueList(Value::NewList(result)));
 		this->Show();
+
 	}
 
-	void OSXUserWindow::OpenSaveAs(
-			SharedKMethod callback,
-			std::string& path,
-			std::string& file,
-			std::vector<std::string>& types)
+	void OSXUserWindow::OpenFileChooserDialog(
+		SharedKMethod callback,
+		bool multiple,
+		std::string& title,
+		std::string& path,
+		std::string& defaultName,
+		std::vector<std::string>& types,
+		std::string& typesDescription)
+	{
+		this->OpenChooserDialog(
+			true, callback, multiple,
+			title, path, defaultName, types, typesDescription);
+	}
+
+	void OSXUserWindow::OpenFolderChooserDialog(
+		SharedKMethod callback,
+		bool multiple,
+		std::string& title,
+		std::string& path,
+		std::string& defaultName)
+	{
+		std::vector<std::string> types;
+		std::string typesDescription;
+		this->OpenChooserDialog(
+			false, callback, multiple,
+			title, path, defaultName, types, typesDescription);
+	}
+
+	void OSXUserWindow::OpenSaveAsDialog(
+		SharedKMethod callback,
+		std::string& title,
+		std::string& path,
+		std::string& defaultName,
+		std::vector<std::string>& types,
+		std::string& typesDescription)
 	{
 		int runResult;
-		
-		NSMutableArray *filetypes = [[[NSMutableArray alloc] init] autorelease];
-		
+
 		std::vector<std::string>::const_iterator iter = types.begin();
 		while(iter!=types.end())
 		{
@@ -581,23 +609,25 @@ namespace ti
 		}
 
 		NSSavePanel *sp = [NSSavePanel savePanel];
+		[sp setTitle:[NSString stringWithUTF8String:title.c_str()]];
 
 		if ([filetypes count] > 0)
 		{
 			[sp setAllowedFileTypes:filetypes];
 		}
 
-		runResult = [sp runModalForDirectory:[NSString stringWithCString:path.c_str()] file:[NSString stringWithCString:file.c_str()]];
+		runResult = [sp runModalForDirectory:[NSString stringWithCString:path.c_str()] file:[NSString stringWithCString:defaultName.c_str()]];
 
 		ValueList args;
 
+		SharedKList results = new StaticBoundList();
 		if (runResult == NSFileHandlingPanelOKButton) 
 		{
 			NSString *selected = [sp filename];
-			args.push_back(Value::NewString([selected UTF8String]));
+			list->Append(Value::NewString([selected UTF8String]));
 		}
-		
-		callback->Call(args);
+
+		callback->Call(ValueList(Value::NewList(results)));
 		this->Show();
 	}
 }

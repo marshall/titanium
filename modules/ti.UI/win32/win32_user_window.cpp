@@ -1006,28 +1006,30 @@ void Win32UserWindow::ShowWebInspector()
 	}
 }
 
-void Win32UserWindow::OpenFiles(
+void Win32UserWindow::OpenFileChooserDialog(
 	SharedKMethod callback,
 	bool multiple,
-	bool files,
-	bool directories,
+	std::string& title,
 	std::string& path,
-	std::string& file,
-	std::vector<std::string>& types)
+	std::string& defaultName,
+	std::vector<std::string>& types,
+	std::string& typesDescription)
 {
-	SharedKList results;
-	if (directories)
-	{
-		results = SelectDirectory(multiple, path, file);
-	}
-	else
-	{
-		results = SelectFile(callback, multiple, path, file, types, false);
-	}
 
-	ValueList args;
-	args.push_back(Value::NewList(results));
-	callback->Call(args);
+	results = SelectFile(
+		false, multiple, title, path, defaultName, types, typesDescription);
+	callback->Call(ValueList(Value::NewList(results)));
+}
+
+void Win32UserWindow::OpenFolderChooserDialog(
+	SharedKMethod callback,
+	bool multiple,
+	std::string& title,
+	std::string& path,
+	std::string& defaultName)
+{
+	results = SelectDirectory(multiple, title, path, defaultName);
+	callback->Call(ValueList(Value::NewList(results)));
 }
 
 void Win32UserWindow::OpenSaveAs(
@@ -1036,31 +1038,25 @@ void Win32UserWindow::OpenSaveAs(
 	std::string& file,
 	std::vector<std::string>& types)
 {
-	SharedKList results;
-
-	results = SelectFile(callback, false, path, file, types, true);
-
-	ValueList args;
-	args.push_back(Value::NewList(results));
-	callback->Call(args);
+	results = SelectFile(
+		true, multiple, title, path, defaultName, types, typesDescription);
+	callback->Call(ValueList(Value::NewList(results)));
 }
 
 SharedKList Win32UserWindow::SelectFile(
-	SharedKMethod callback,
+ 	bool saveDialog,
 	bool multiple,
+	std::string& title,
 	std::string& path,
-	std::string& file,
-	std::vector<
-	std::string>& types, bool saveDialog)
+	std::string& defaultName,
+	std::vector<std::string>& types,
+	std::string& typesDescription)
 {
-	//std::string filterName = props->GetString("typesDescription", "Filtered Files");
-	std::string filterName = "Filtered Files";
 	std::string filter;
-
 	if (types.size() > 0)
 	{
 		//"All\0*.*\0Test\0*.TXT\0";
-		filter.append(filterName);
+		filter.append(typesDescription);
 		filter.push_back('\0');
 
 		for (int i = 0; i < types.size(); i++)
@@ -1081,17 +1077,11 @@ SharedKList Win32UserWindow::SelectFile(
 	}
 
 	OPENFILENAME ofn;
-	char filen[8192];
-
+	char filen[PATH_MAX];
 	ZeroMemory(&filen, sizeof(filen));
-
-	if (file.size() == 0)
+	if (defaultName.size() >= 0)
 	{
-		filen[0] = '\0';
-	}
-	else
-	{
-		strcpy(filen, file.c_str());
+		strcpy(filen, defaultName.c_str());
 	}
 
 	// init OPENFILE
@@ -1107,7 +1097,12 @@ SharedKList Win32UserWindow::SelectFile(
 	ofn.lpstrInitialDir = (path.length() == 0 ? NULL : path.c_str());
 	ofn.Flags = OFN_EXPLORER;
 
-	if(!saveDialog)
+	if (!title.empty())
+	{
+		ofn.lpstrtitle = title.c_str();
+	}
+
+	if (!saveDialog)
 	{
 		ofn.Flags |= OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
 	}
@@ -1121,7 +1116,7 @@ SharedKList Win32UserWindow::SelectFile(
 	// display the open dialog box
 	BOOL result;
 
-	if(saveDialog)
+	if (saveDialog)
 	{
 		result = GetSaveFileName(&ofn);
 	}
@@ -1155,11 +1150,12 @@ SharedKList Win32UserWindow::SelectFile(
 			}
 		}
 	}
-	else {
+	else
+	{
 		DWORD error = CommDlgExtendedError();
 		printf("Error when opening files: %d\n", error);
 		switch(error)
-{
+		{
 			case CDERR_DIALOGFAILURE: printf("CDERR_DIALOGFAILURE\n"); break;
 			case CDERR_FINDRESFAILURE: printf("CDERR_FINDRESFAILURE\n"); break;
 			case CDERR_NOHINSTANCE: printf("CDERR_NOHINSTANCE\n"); break;
@@ -1180,24 +1176,33 @@ SharedKList Win32UserWindow::SelectFile(
 	return results;
 }
 
-SharedKList Win32UserWindow::SelectDirectory(bool multiple,
-		std::string& path, std::string& file)
+SharedKList Win32UserWindow::SelectDirectory(
+	bool multiple,
+	std::string& title,
+	std::string& path,
+	std::string& defaultName)
 {
 	SharedKList results = new StaticBoundList();
 
 	BROWSEINFO bi = { 0 };
-	//std::string title("Select a directory");
-	//bi.lpszTitle = title.c_str();
+	bi.lpszTitle = title.c_str();
 	bi.hwndOwner = this->window_handle;
+	bi.uiFlags = BIF_RETURNONLYFSDIRS;
 	LPITEMIDLIST pidl = SHBrowseForFolder(&bi);
 
 	if (pidl != 0)
 	{
-		// get folder name
 		TCHAR in_path[MAX_PATH];
 		if (SHGetPathFromIDList(pidl, in_path))
 		{
 			results->Append(Value::NewString(std::string(in_path)));
+		}
+
+		IMalloc * imalloc = 0;
+		if (SUCCEEDED(SHGetMalloc(&imalloc)))
+		{
+			imalloc->Free(pidl);
+			imalloc->Release();
 		}
 	}
 	return results;
