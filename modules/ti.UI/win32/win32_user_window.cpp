@@ -215,7 +215,7 @@ Win32UserWindow::Win32UserWindow(SharedUIBinding binding, WindowConfig* config, 
 
 	Win32UserWindow::RegisterWindowClass(win32_host->GetInstanceHandle());
 	window_handle
-			= CreateWindowEx(WS_EX_LAYERED, windowClassName,
+			= CreateWindowEx(WS_EX_APPWINDOW /*WS_EX_LAYERED*/, windowClassName,
 					config->GetTitle().c_str(), WS_CLIPCHILDREN, CW_USEDEFAULT,
 					0, CW_USEDEFAULT, 0, NULL, NULL,
 					win32_host->GetInstanceHandle(), NULL);
@@ -724,8 +724,16 @@ bool Win32UserWindow::IsVisible()
 
 void Win32UserWindow::SetTransparency(double transparency)
 {
-	SetLayeredWindowAttributes(window_handle, 0, (BYTE) floor(transparency
-			* 255), LWA_ALPHA);
+	if (config->GetTransparency() < 1.0)
+	{
+		SetWindowLong( this->window_handle, GWL_EXSTYLE, WS_EX_LAYERED);
+		SetLayeredWindowAttributes(this->window_handle, 0, (BYTE) floor(
+		config->GetTransparency() * 255), LWA_ALPHA);
+	}
+	else
+	{
+		SetWindowLong( this->window_handle, GWL_EXSTYLE, WS_EX_APPWINDOW);
+	}
 }
 
 void Win32UserWindow::SetFullScreen(bool fullscreen)
@@ -938,9 +946,15 @@ void Win32UserWindow::ReloadTiWindowConfig()
 	//SetLayeredWindowAttributes(hWnd, 0, (BYTE)0, LWA_ALPHA);
 	if (config->GetTransparency() < 1.0)
 	{
+		SetWindowLong( this->window_handle, GWL_EXSTYLE, WS_EX_LAYERED);
 		SetLayeredWindowAttributes(this->window_handle, 0, (BYTE) floor(
 				config->GetTransparency() * 255), LWA_ALPHA);
 	}
+	else
+	{
+		SetWindowLong( this->window_handle, GWL_EXSTYLE, WS_EX_APPWINDOW);
+	}
+	
 	SetLayeredWindowAttributes(this->window_handle, transparencyColor, 0,
 			LWA_COLORKEY);
 }
