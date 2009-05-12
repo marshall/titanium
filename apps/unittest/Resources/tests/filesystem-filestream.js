@@ -19,7 +19,7 @@ base.createDirectory();
 try {
 	var textToWrite = "This is the text to write in the file";
 	var fs = Titanium.Filesystem.getFileStream(base, "writeTestFile.txt");
-	fs.open(Titanium.Filesystem.FILESTREAM_MODE_WRITE);
+	fs.open(Titanium.Filesystem.MODE_WRITE);
 	fs.write(textToWrite);
 	fs.close();
 	
@@ -28,7 +28,7 @@ try {
 	Titanium.AppTest.addResult('filesystem.filestream.write',f.exists(),"writeTestFile.txt should exist");
 	
 	// read back the file contents
-	fs.open(Titanium.Filesystem.FILESTREAM_MODE_READ);
+	fs.open(Titanium.Filesystem.MODE_READ);
 	var textRead = fs.read();
 	fs.close();
 	Titanium.AppTest.addResult('filesystem.filestream.write',textToWrite==textRead,"text written is not the same as text read");
@@ -44,12 +44,12 @@ try {
 	var textToAppend = "This is the text to append.";
 	
 	var fs = Titanium.Filesystem.getFileStream(base, filename);
-	fs.open(Titanium.Filesystem.FILESTREAM_MODE_WRITE);
+	fs.open(Titanium.Filesystem.MODE_WRITE);
 	fs.write(textToWrite);
 	fs.close();
 	
 	fs = Titanium.Filesystem.getFileStream(base, filename);
-	fs.open(Titanium.Filesystem.FILESTREAM_MODE_APPEND);
+	fs.open(Titanium.Filesystem.MODE_APPEND);
 	fs.write(textToAppend);
 	fs.close();
 	
@@ -58,7 +58,7 @@ try {
 	Titanium.AppTest.addResult('filesystem.filestream.writeappend',f.exists(),"writeAppendTestFile.txt should exist");
 	
 	// read back the file contents
-	fs.open(Titanium.Filesystem.FILESTREAM_MODE_READ);
+	fs.open(Titanium.Filesystem.MODE_READ);
 	var textRead = fs.read();
 	fs.close();
 	Titanium.AppTest.addResult('filesystem.filestream.writeappend',(textToWrite+textToAppend)==textRead,"existing + appended text is not the same as the text read");

@@ -1,6 +1,6 @@
 function createFile(name,text) {
 	var fs = Titanium.Filesystem.getFileStream(base, name);
-	fs.open(Titanium.Filesystem.FILESTREAM_MODE_WRITE);
+	fs.open(Titanium.Filesystem.MODE_WRITE);
 	fs.write(text);
 	fs.close();
 }
@@ -17,15 +17,15 @@ function createDirTree(name) {
 	subDir1.createDirectory();
 	var file3 = Titanium.Filesystem.getFileStream(subDir1, "file3.txt");
 	
-	file1.open(Titanium.Filesystem.FILESTREAM_MODE_WRITE);
+	file1.open(Titanium.Filesystem.MODE_WRITE);
 	file1.write("Text for file1");
 	file1.close();
 	
-	file2.open(Titanium.Filesystem.FILESTREAM_MODE_WRITE);
+	file2.open(Titanium.Filesystem.MODE_WRITE);
 	file2.write("Text for file2");
 	file2.close();
 	
-	file3.open(Titanium.Filesystem.FILESTREAM_MODE_WRITE);
+	file3.open(Titanium.Filesystem.MODE_WRITE);
 	file3.write("Text for file3");
 	file3.close();
 }

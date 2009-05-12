@@ -12,7 +12,6 @@
 #include <commdlg.h>
 #include <shellapi.h>
 #include <shlobj.h>
-#include <string>
 #elif OS_OSX
 #import <Foundation/Foundation.h>
 #endif
@@ -375,4 +374,4 @@ namespace ti
 	};
 }
 
-#endif /* FILE_H_ */
+#endif 

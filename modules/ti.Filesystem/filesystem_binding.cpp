@@ -113,17 +113,17 @@ namespace ti
 		this->SetMethod("asyncCopy",&FilesystemBinding::ExecuteAsyncCopy);
 
 		/**
-		 * @tiapi(property=True,immutable=True,name=Filesystem.FILESTREAM_MODE_READ) file read constant
+		 * @tiapi(property=True,immutable=True,name=Filesystem.MODE_READ, since=0.3, type=int) file read constant
 		 */
-		this->Set("FILESTREAM_MODE_READ", Value::NewString(FileStream::MODE_READ));
+		this->Set("MODE_READ", Value::NewInt(MODE_READ));
 		/**
-		 * @tiapi(property=True,immutable=True,name=Filesystem.FILESTREAM_MODE_WRITE) file write constant
+		 * @tiapi(property=True,immutable=True,name=Filesystem.MODE_WRITE, since=0.3, type=int) file write constant
 		 */
-		this->Set("FILESTREAM_MODE_WRITE", Value::NewString(FileStream::MODE_WRITE));
+		this->Set("MODE_WRITE", Value::NewInt(MODE_WRITE));
 		/**
-		 * @tiapi(property=True,immutable=True,name=Filesystem.FILESTREAM_MODE_APPEND) file append constant
+		 * @tiapi(property=True,immutable=True,name=Filesystem.MODE_APPEND, since=0.3, type=int) file append constant
 		 */
-		this->Set("FILESTREAM_MODE_APPEND", Value::NewString(FileStream::MODE_APPEND));
+		this->Set("MODE_APPEND", Value::NewInt(MODE_APPEND));
 	}
 	FilesystemBinding::~FilesystemBinding()
 	{

@@ -104,8 +104,8 @@
 		[WebScriptElement addScriptEvaluator:self];
 		
 		SharedKObject global = host->GetGlobalObject();
-		double version = global->Get("version")->ToDouble();
-		NSString *useragent = [NSString stringWithFormat:@"%s/%0.2f",PRODUCT_NAME,version];
+		const char* version = global->Get("version")->ToString();
+		NSString *useragent = [NSString stringWithFormat:@"%s/%s",PRODUCT_NAME,version];
 		[webView setApplicationNameForUserAgent:useragent];
 		// place our user agent string in the global so we can later use it
 		const char *ua = [[webView userAgentForURL:[NSURL URLWithString:@"http://titaniumapp.com"]] UTF8String];

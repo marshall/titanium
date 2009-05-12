@@ -1,4 +1,5 @@
-describe("Ti.Filesystem File tests",{
+describe("Ti.Filesystem File tests",
+{
 	before_all:function()
 	{
 		// clean up testing folder if needed
@@ -13,6 +14,39 @@ describe("Ti.Filesystem File tests",{
 		base.createDirectory();
 		
 		this.base = base;
+
+		this.createDirTree = function(base,name) {
+			var dir = Titanium.Filesystem.getFile(base, name);
+			if(! dir.exists()) {
+				dir.createDirectory();
+			}
+
+			var file1 = Titanium.Filesystem.getFileStream(dir, "file1.txt");
+			var file2 = Titanium.Filesystem.getFileStream(dir, "file2.txt");
+			var subDir1 = Titanium.Filesystem.getFile(dir, "subDir1");
+			subDir1.createDirectory();
+			var file3 = Titanium.Filesystem.getFileStream(subDir1, "file3.txt");
+
+			file1.open(Titanium.Filesystem.MODE_WRITE);
+			file1.write("Text for file1");
+			file1.close();
+
+			file2.open(Titanium.Filesystem.MODE_WRITE);
+			file2.write("Text for file2");
+			file2.close();
+
+			file3.open(Titanium.Filesystem.MODE_WRITE);
+			file3.write("Text for file3");
+			file3.close();
+		};
+		
+		this.createFile = function(base,name,text) {
+			var fs = Titanium.Filesystem.getFileStream(base, name);
+			fs.open(Titanium.Filesystem.MODE_WRITE);
+			fs.write(text);
+			fs.close();
+		};
+
 	},
 	
 	file_props:function()
@@ -22,7 +56,7 @@ describe("Ti.Filesystem File tests",{
 		value_of(f.exists()).should_be_false();
 		
 		// create new file to test props with
-		createFile(this.base,"filePropsTest.txt", "This is the text for the text file.");
+		this.createFile(this.base,"filePropsTest.txt", "This is the text for the text file.");
 		
 		f = Titanium.Filesystem.getFile(this.base, "filePropsTest.txt");
 		value_of(f).should_not_be_null();
@@ -53,7 +87,8 @@ describe("Ti.Filesystem File tests",{
 		value_of(f.exists()).should_be_true();
 		value_of(f.isHidden()).should_be_false();
 		value_of(f.isSymbolicLink()).should_be_false();
-		value_of(f.isExecutable()).should_be_false();
+		// directories are by default executable
+		value_of(f.isExecutable()).should_be_true();
 		value_of(f.isReadonly()).should_be_false();
 		value_of(f.isWriteable()).should_be_true();
 		value_of(f.createTimestamp()).should_not_be_null();
@@ -77,7 +112,7 @@ describe("Ti.Filesystem File tests",{
 		value_of(f.exists()).should_be_false();
 		
 		// create new file to test props with
-		createFile(this.base,"fileToCopy.txt","This ist he text for the test file.");
+		this.createFile(this.base,"fileToCopy.txt","This ist he text for the test file.");
 		
 		var copiedF = Titanium.Filesystem.getFile(this.base, "copiedFile.txt");
 		var r = f.copy(copiedF);
@@ -120,7 +155,7 @@ describe("Ti.Filesystem File tests",{
 		value_of(d).should_not_be_null();
 		value_of(d.exists()).should_be_false();
 		
-		createDirTree(this.base,"directoryListingTest");
+		this.createDirTree(this.base,"directoryListingTest");
 		value_of(d.exists()).should_be_true();
 
 		var listings = d.getDirectoryListing();
@@ -132,7 +167,7 @@ describe("Ti.Filesystem File tests",{
 		
 		var subDirListings = subDir1.getDirectoryListing();
 		value_of(subDirListings).should_not_be_null();
-		value_of(subDirListings.length).shoud_be(1);
+		value_of(subDirListings.length).should_be(1);
 	},
 	
 	parent:function()
@@ -142,13 +177,14 @@ describe("Ti.Filesystem File tests",{
 		value_of(f.exists()).should_be_false();
 		
 		var parent = f.parent();
-		value_of(parent.toString()).shoud_be(this.base.toString());
+		value_of(parent.toString()).should_be(this.base.toString());
 	},
 	
 	shortcut:function()
 	{
-		createFile(this.base,"shotcutTestFile.txt","text for test file");
+		this.createFile(this.base,"shortcutTestFile.txt","text for test file");
 		var f = Titanium.Filesystem.getFile(this.base, "shortcutTestFile.txt");
+		
 		value_of(f).should_not_be_null();
 		value_of(f.exists()).should_be_true();
 		
@@ -160,7 +196,7 @@ describe("Ti.Filesystem File tests",{
 	
 	file_permissions:function()
 	{
-		createFile(this.base,"permissionsTestFile.txt","text for test file");
+		this.createFile(this.base,"permissionsTestFile.txt","text for test file");
 		var f = Titanium.Filesystem.getFile(this.base, "permissionsTestFile.txt");
 		value_of(f).should_not_be_null();
 		value_of(f.exists()).should_be_true();
@@ -170,44 +206,21 @@ describe("Ti.Filesystem File tests",{
 		
 		f.setExecutable(true);
 		value_of(f.isExecutable()).should_be_true();
-		
+
+		f.setExecutable(false);
+		value_of(f.isExecutable()).should_be_false();
+
 		f.setReadonly(false);
 		value_of(f.isReadonly()).should_be_false();
+
+		f.setReadonly(true);
+		value_of(f.isReadonly()).should_be_true();
 		
 		f.setWriteable(false);
 		value_of(f.isWriteable()).should_be_false();
+
+		f.setWriteable(true);
+		value_of(f.isWriteable()).should_be_true();
 	}
 });
-
-function createFile(base,name,text) {
-	var fs = Titanium.Filesystem.getFileStream(base, name);
-	fs.open(Titanium.Filesystem.FILESTREAM_MODE_WRITE);
-	fs.write(text);
-	fs.close();
-}
-
-function createDirTree(base,name) {
-	var dir = Titanium.Filesystem.getFile(base, name);
-	if(! dir.exists()) {
-		dir.createDirectory();
-	}
-	
-	var file1 = Titanium.Filesystem.getFileStream(dir, "file1.txt");
-	var file2 = Titanium.Filesystem.getFileStream(dir, "file2.txt");
-	var subDir1 = Titanium.Filesystem.getFile(dir, "subDir1");
-	subDir1.createDirectory();
-	var file3 = Titanium.Filesystem.getFileStream(subDir1, "file3.txt");
-	
-	file1.open(Titanium.Filesystem.FILESTREAM_MODE_WRITE);
-	file1.write("Text for file1");
-	file1.close();
-	
-	file2.open(Titanium.Filesystem.FILESTREAM_MODE_WRITE);
-	file2.write("Text for file2");
-	file2.close();
-	
-	file3.open(Titanium.Filesystem.FILESTREAM_MODE_WRITE);
-	file3.write("Text for file3");
-	file3.close();
-}
 

@@ -283,16 +283,32 @@ TitaniumTest =
 	
 	complete: function()
 	{
-		Titanium.API.info("test complete");
-		var results_dir = Titanium.API.getApplication().getArgumentValue('results-dir');
-		var f = Titanium.Filesystem.getFile(results_dir, TitaniumTest.NAME+'.json');
-		var data = {
-			'results':this.results,
-			'count':this.results.length,
-			'success':this.success,
-			'failed':this.failed
-		};
-		f.write(JSON.stringify(data));
+		try
+		{
+			Titanium.API.info("test complete");
+			var results_dir = Titanium.API.getApplication().getArgumentValue('results-dir');
+			if (results_dir==null)
+			{
+				Titanium.API.error("INVALID ARGUMENT VALUE FOUND FOR ARG: results-dir");
+			}
+			var rd = Titanium.Filesystem.getFile(results_dir);
+			if (!rd.exists())
+			{
+				rd.createDirectory(true);
+			}
+			var f = Titanium.Filesystem.getFile(rd.nativePath(), TitaniumTest.NAME+'.json');
+			var data = {
+				'results':this.results,
+				'count':this.results.length,
+				'success':this.success,
+				'failed':this.failed
+			};
+			f.write(JSON.stringify(data));
+		}
+		catch(e)
+		{
+			Titanium.API.error("Exception on completion: "+e);
+		}
 		Titanium.App.exit(0);
 	},
 	
@@ -315,6 +331,8 @@ TitaniumTest =
 		}
 	}
 };
+
+TitaniumTest.gscope = {};
 
 function value_of(obj)
 {
@@ -339,6 +357,11 @@ TitaniumTest.Subject = function(target) {
 TitaniumTest.Scope = function(name) {
 	this._testName = name;
 	this._completed = false;
+	// copy in the global scope
+	for (var p in TitaniumTest.gscope)
+	{
+		this[p] = TitaniumTest.gscope[p];
+	}
 }
 
 TitaniumTest.Scope.prototype.passed = function()
@@ -404,6 +427,14 @@ TitaniumTest.Subject.prototype.should_be_null = function(expected,lineNumber)
 	if (this.target !== null)
 	{
 		throw new TitaniumTest.Error('should be null, was: '+this.target,lineNumber);
+	}
+};
+
+TitaniumTest.Subject.prototype.should_be_string = function(expected,lineNumber)
+{
+	if (typeof this.target !== 'string')
+	{
+		throw new TitaniumTest.Error('should be string, was: '+typeof(this.target),lineNumber);
 	}
 };
 

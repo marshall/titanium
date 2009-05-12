@@ -266,9 +266,9 @@ Win32UserWindow::Win32UserWindow(SharedUIBinding binding, WindowConfig* config, 
 	}
 
 	// set the custom user agent for Titanium
-	double version = host->GetGlobalObject()->Get("version")->ToDouble();
+	const char *version = host->GetGlobalObject()->Get("version")->ToString();
 	char userAgent[128];
-	sprintf(userAgent, "%s/%0.2f", PRODUCT_NAME, version);
+	sprintf(userAgent, "%s/%s", PRODUCT_NAME, version);
 	_bstr_t ua(userAgent);
 	web_view->setApplicationNameForUserAgent(ua.copy());
 

@@ -13,6 +13,33 @@ describe("Ti.Filesystem tests",{
 		base.createDirectory();
 		
 		this.base = base;
+
+		this.createDirTree = function(base,name) {
+			var dir = Titanium.Filesystem.getFile(base, name);
+			if(! dir.exists()) {
+				dir.createDirectory();
+			}
+
+			var file1 = Titanium.Filesystem.getFileStream(dir, "file1.txt");
+			var file2 = Titanium.Filesystem.getFileStream(dir, "file2.txt");
+			var subDir1 = Titanium.Filesystem.getFile(dir, "subDir1");
+			subDir1.createDirectory();
+			var file3 = Titanium.Filesystem.getFileStream(subDir1, "file3.txt");
+
+			file1.open(Titanium.Filesystem.MODE_WRITE);
+			file1.write("Text for file1");
+			file1.close();
+
+			file2.open(Titanium.Filesystem.MODE_WRITE);
+			file2.write("Text for file2");
+			file2.close();
+
+			file3.open(Titanium.Filesystem.MODE_WRITE);
+			file3.write("Text for file3");
+			file3.close();
+		};
+
+
 	},
 	
 	filesystem_basic_static_properties: function()
@@ -30,9 +57,9 @@ describe("Ti.Filesystem tests",{
 	{
 		value_of(Titanium.Filesystem.getLineEnding).should_be_function();
 		value_of(Titanium.Filesystem.getSeparator).should_be_function();
-		value_of(Titanium.Filesystem.FILESTREAM_MODE_READ).should_not_be_null();
-		value_of(Titanium.Filesystem.FILESTREAM_MODE_WRITE).should_not_be_null();
-		value_of(Titanium.Filesystem.FILESTREAM_MODE_APPEND).should_not_be_null();
+		value_of(Titanium.Filesystem.MODE_READ).should_not_be_null();
+		value_of(Titanium.Filesystem.MODE_WRITE).should_not_be_null();
+		value_of(Titanium.Filesystem.MODE_APPEND).should_not_be_null();
 				
 		value_of(Titanium.Filesystem.getLineEnding()).should_not_be_null();
 		value_of(Titanium.Filesystem.getSeparator()).should_not_be_null();
@@ -104,7 +131,7 @@ describe("Ti.Filesystem tests",{
 		var fromDir = Titanium.Filesystem.getFile(this.base, "ayncCopyFrom");
 		var toDir = Titanium.Filesystem.getFile(this.base, "asynCopyTo");
 		
-		createDirTree(this.base,"ayncCopyFrom");
+		this.createDirTree(this.base,"ayncCopyFrom");
 		Titanium.Filesystem.asyncCopy(fromDir,toDir,function() {
 			var listings = toDir.getDirectoryListing();
 			value_of(listings).should_not_be_null();
@@ -119,29 +146,4 @@ describe("Ti.Filesystem tests",{
 		});	
 	}
 });
-
-function createDirTree(base,name) {
-	var dir = Titanium.Filesystem.getFile(base, name);
-	if(! dir.exists()) {
-		dir.createDirectory();
-	}
-	
-	var file1 = Titanium.Filesystem.getFileStream(dir, "file1.txt");
-	var file2 = Titanium.Filesystem.getFileStream(dir, "file2.txt");
-	var subDir1 = Titanium.Filesystem.getFile(dir, "subDir1");
-	subDir1.createDirectory();
-	var file3 = Titanium.Filesystem.getFileStream(subDir1, "file3.txt");
-	
-	file1.open(Titanium.Filesystem.FILESTREAM_MODE_WRITE);
-	file1.write("Text for file1");
-	file1.close();
-	
-	file2.open(Titanium.Filesystem.FILESTREAM_MODE_WRITE);
-	file2.write("Text for file2");
-	file2.close();
-	
-	file3.open(Titanium.Filesystem.FILESTREAM_MODE_WRITE);
-	file3.write("Text for file3");
-	file3.close();
-}
 

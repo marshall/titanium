@@ -10,15 +10,15 @@ function createDirTree(name) {
 	subDir1.createDirectory();
 	var file3 = Titanium.Filesystem.getFileStream(subDir1, "file3.txt");
 	
-	file1.open(Titanium.Filesystem.FILESTREAM_MODE_WRITE);
+	file1.open(Titanium.Filesystem.MODE_WRITE);
 	file1.write("Text for file1");
 	file1.close();
 	
-	file2.open(Titanium.Filesystem.FILESTREAM_MODE_WRITE);
+	file2.open(Titanium.Filesystem.MODE_WRITE);
 	file2.write("Text for file2");
 	file2.close();
 	
-	file3.open(Titanium.Filesystem.FILESTREAM_MODE_WRITE);
+	file3.open(Titanium.Filesystem.MODE_WRITE);
 	file3.write("Text for file3");
 	file3.close();
 }
@@ -108,9 +108,9 @@ catch (e) {
 try {
 	Titanium.AppTest.addResult('filesystem.method_getLineEnding',typeof(Titanium.Filesystem.getLineEnding)=='function');
 	Titanium.AppTest.addResult('filesystem.method_getSeparator',typeof(Titanium.Filesystem.getSeparator)=='function');
-	Titanium.AppTest.addResult('filesystem.property_FILESTREAM_MODE_READ',typeof(Titanium.Filesystem.FILESTREAM_MODE_READ)=='string');
-	Titanium.AppTest.addResult('filesystem.property_FILESTREAM_MODE_WRITE',typeof(Titanium.Filesystem.FILESTREAM_MODE_WRITE)=='string');
-	Titanium.AppTest.addResult('filesystem.property_FILESTREAM_MODE_APPEND',typeof(Titanium.Filesystem.FILESTREAM_MODE_APPEND)=='string');
+	Titanium.AppTest.addResult('filesystem.property_MODE_READ',typeof(Titanium.Filesystem.MODE_READ)=='string');
+	Titanium.AppTest.addResult('filesystem.property_MODE_WRITE',typeof(Titanium.Filesystem.MODE_WRITE)=='string');
+	Titanium.AppTest.addResult('filesystem.property_MODE_APPEND',typeof(Titanium.Filesystem.MODE_APPEND)=='string');
 	
 	Titanium.AppTest.addResult('filesystem.getLineEnding',Titanium.Filesystem.getLineEnding()!=null);
 	Titanium.AppTest.addResult('filesystem.getSeparator',Titanium.Filesystem.getSeparator()!=null);
