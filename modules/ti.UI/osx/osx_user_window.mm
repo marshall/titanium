@@ -530,7 +530,7 @@ namespace ti
 
 		if (!defaultName.empty())
 		{
-			filename = [NSString stringWithCString:file.c_str()];
+			filename = [NSString stringWithCString:defaultName.c_str()];
 		}
 		if (!path.empty())
 		{
@@ -558,7 +558,7 @@ namespace ti
 		}
 		[filetypes release];
 
-		callback->Call(ValueList(Value::NewList(result)));
+		callback->Call(ValueList(Value::NewList(results)));
 		this->Show();
 
 	}
@@ -601,8 +601,9 @@ namespace ti
 	{
 		int runResult;
 
+		NSMutableArray *filetypes = [[NSMutableArray alloc] init];
 		std::vector<std::string>::const_iterator iter = types.begin();
-		while(iter!=types.end())
+		while (iter != types.end())
 		{
 			std::string ft = (*iter++);
 			[filetypes addObject:[NSString stringWithCString:ft.c_str()]];
@@ -624,7 +625,7 @@ namespace ti
 		if (runResult == NSFileHandlingPanelOKButton) 
 		{
 			NSString *selected = [sp filename];
-			list->Append(Value::NewString([selected UTF8String]));
+			results->Append(Value::NewString([selected UTF8String]));
 		}
 
 		callback->Call(ValueList(Value::NewList(results)));

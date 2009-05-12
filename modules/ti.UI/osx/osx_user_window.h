@@ -23,6 +23,17 @@ namespace ti
 			OSXUserWindow(SharedUIBinding, WindowConfig* config, SharedUserWindow& parent);
 			~OSXUserWindow();
 		public:
+
+			void OSXUserWindow::OpenChooserDialog(
+				bool files,
+				SharedKMethod callback,
+				bool multiple,
+				std::string& title,
+				std::string& path,
+				std::string& defaultName,
+				std::vector<std::string>& types,
+				std::string& typesDescription);
+			
 			void OpenFileChooserDialog(
 				SharedKMethod callback,
 				bool multiple,
@@ -45,7 +56,7 @@ namespace ti
 				std::string& path,
 				std::string& defaultName,
 				std::vector<std::string>& types,
-				std::string& typesDescription)
+				std::string& typesDescription);
 
 			void Hide();
 			void Show();

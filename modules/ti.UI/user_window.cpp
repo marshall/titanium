@@ -1336,7 +1336,7 @@ void UserWindow::_OpenFileChooserDialog(const ValueList& args, SharedValue resul
 	bool multiple = false;
 	std::string path;
 	std::string defaultName;
-	std::string title = "Choose file...";
+	std::string title = "Choose File";
 	std::vector<std::string> types;
 	std::string typesDescription;
 
@@ -1363,7 +1363,7 @@ void UserWindow::_OpenFolderChooserDialog(const ValueList& args, SharedValue res
 	bool multiple = false;
 	std::string path;
 	std::string defaultName;
-	std::string title = "Choose folder...";
+	std::string title = "Choose Directory";
 	std::vector<std::string> types;
 	std::string typesDescription;
 
@@ -1390,7 +1390,7 @@ void UserWindow::_OpenSaveAsDialog(const ValueList& args, SharedValue result)
 	bool multiple = false;
 	std::string path;
 	std::string defaultName;
-	std::string title = "Save file...";
+	std::string title = "Save File";
 	std::vector<std::string> types;
 	std::string typesDescription;
 
