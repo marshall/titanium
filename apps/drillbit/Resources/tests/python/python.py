@@ -30,6 +30,18 @@ def test_type_string():
 def test_type_int():
 	return 1
 	
+def test_type_float():
+	return 1.1
+
+def test_type_long():
+	return 10**100 #<= google
+
+def test_type_scientific_notation_large():
+	return 1.7e19
+
+def test_type_scientific_notation_small():
+	return 3.21e-13
+
 def test_type_boolean_false():
 	return False
 
@@ -51,4 +63,8 @@ def test_type_dict():
 def test_type_function():
 	return test_type_dict
 	
-					
+def test_type_anonymous_function():
+	def anonymous(*args):
+		return 'foobar'
+	return anonymous
+						

@@ -32,8 +32,6 @@ function test_status(name,classname)
 
 function describe(description,test)
 {
-	Titanium.API.debug("!!! description = "+description);
-	
 	current_test_load.description = description;
 	current_test_load.test = test;
 	current_test_load.timeout = test.timeout || 5000;

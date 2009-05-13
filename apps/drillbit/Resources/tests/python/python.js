@@ -41,51 +41,72 @@ describe("Python Tests",
 	},
 	test_type_string: function()
 	{
-		value_of(window.test_type_string).should_be_string();
-		value_of(window.test_type_string).should_be('i am string');
+		value_of(test_type_string()).should_be_string();
+		value_of(test_type_string()).should_be('i am string');
 	},
 	test_type_int: function()
 	{
-		value_of(window.test_type_int).should_be_number();
-		value_of(window.test_type_int).should_be_exactly(1);
+		value_of(test_type_int()).should_be_number();
+		value_of(test_type_int()).should_be_exactly(1);
+	},
+	test_type_long: function()
+	{
+		value_of(test_type_long()).should_be_number();
+		// the google
+		value_of(test_type_long()).should_be_exactly(10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000);
+	},
+	test_type_scientific_notation_large: function()
+	{
+		value_of(test_type_scientific_notation_large()).should_be_number();
+		value_of(test_type_scientific_notation_large()).should_be_exactly(17000000000000000000);
+	},
+	test_type_scientific_notation_small: function()
+	{
+		value_of(test_type_scientific_notation_small()).should_be_number();
+		value_of(test_type_scientific_notation_small()).should_be_exactly(3.21e-13);
 	},
 	test_type_boolean_false: function()
 	{
-		value_of(window.test_type_boolean_false).should_be_boolean();
-		value_of(window.test_type_boolean_false).should_be_false();
+		value_of(test_type_boolean_false()).should_be_boolean();
+		value_of(test_type_boolean_false()).should_be_false();
 	},
 	test_type_boolean_true: function()
 	{
-		value_of(window.test_type_boolean_true).should_be_boolean();
-		value_of(window.test_type_boolean_true).should_be_true();
+		value_of(test_type_boolean_true()).should_be_boolean();
+		value_of(test_type_boolean_true()).should_be_true();
 	},
 	test_type_map: function()
 	{
-		value_of(window.test_type_map).should_be_object();
-		value_of(window.test_type_map.a).should_be('b');
+		value_of(test_type_map()).should_be_object();
+		value_of(test_type_map().a).should_be('b');
 	},
 	test_type_tuple: function()
 	{
-		value_of(window.test_type_tuple).should_be_object();
-//		value_of(window.test_type_tuple['a']).should_be('b');
-//		value_of(window.test_type_tuple.a).should_be('b');
-		// value_of(window.test_type_tuple[0]).should_be('a');
-		// value_of(window.test_type_tuple[1]).should_be('b');
+		value_of(test_type_tuple()).should_be_object();
+		value_of(test_type_tuple().length).should_be(2);
+		value_of(test_type_tuple()[0]).should_be('a');
+		value_of(test_type_tuple()[1]).should_be('b');
 	},
 	test_type_none: function()
 	{
-		value_of(window.test_type_none).should_be_null();
+		value_of(test_type_none()).should_be_null();
 	},
 	test_type_dict: function()
 	{
-		value_of(window.test_type_dict).should_be_object();
-		value_of(window.test_type_dict['one']).should_be_exactly(2);
-		value_of(window.test_type_dict.one).should_be_exactly(2);
-		value_of(window.test_type_dict['two']).should_be_exactly(3);
-		value_of(window.test_type_dict.two).should_be_exactly(3);
+		value_of(test_type_dict()).should_be_object();
+		value_of(test_type_dict()['one']).should_be_exactly(2);
+		value_of(test_type_dict().one).should_be_exactly(2);
+		value_of(test_type_dict()['two']).should_be_exactly(3);
+		value_of(test_type_dict().two).should_be_exactly(3);
 	},
 	test_type_function: function()
 	{
-		value_of(window.test_type_function).should_be_function();
+		value_of(test_type_function()).should_be_function();
+		value_of(test_type_function()()).should_be_object();
+	},
+	test_type_anonymous_function: function()
+	{
+		value_of(test_type_anonymous_function()).should_be_function();
+		value_of(test_type_anonymous_function()()).should_be('foobar');
 	}
 });
