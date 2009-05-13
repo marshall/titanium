@@ -102,7 +102,7 @@ public:
 		std::string& path,
 		std::string& defaultName,
 		std::vector<std::string>& types,
-		std::string& typesDescription)
+		std::string& typesDescription);
 
 	void AddMessageHandler(const ValueList& args, SharedValue result);
 
@@ -198,8 +198,6 @@ private:
 		std::string& title,
 		std::string& path,
 		std::string& defaultName);
-
-{
 
 	static void ParseStringNullSeparated(const char *s, std::vector<std::string> &tokens);
 };

@@ -1016,7 +1016,7 @@ void Win32UserWindow::OpenFileChooserDialog(
 	std::string& typesDescription)
 {
 
-	results = SelectFile(
+	SharedKList results = SelectFile(
 		false, multiple, title, path, defaultName, types, typesDescription);
 	callback->Call(ValueList(Value::NewList(results)));
 }
@@ -1028,18 +1028,20 @@ void Win32UserWindow::OpenFolderChooserDialog(
 	std::string& path,
 	std::string& defaultName)
 {
-	results = SelectDirectory(multiple, title, path, defaultName);
+	SharedKList results = SelectDirectory(multiple, title, path, defaultName);
 	callback->Call(ValueList(Value::NewList(results)));
 }
 
-void Win32UserWindow::OpenSaveAs(
+void Win32UserWindow::OpenSaveAsDialog(
 	SharedKMethod callback,
+	std::string& title,
 	std::string& path,
-	std::string& file,
-	std::vector<std::string>& types)
+	std::string& defaultName,
+	std::vector<std::string>& types,
+	std::string& typesDescription)
 {
-	results = SelectFile(
-		true, multiple, title, path, defaultName, types, typesDescription);
+	SharedKList results = SelectFile(
+		true, false, title, path, defaultName, types, typesDescription);
 	callback->Call(ValueList(Value::NewList(results)));
 }
 
@@ -1077,7 +1079,7 @@ SharedKList Win32UserWindow::SelectFile(
 	}
 
 	OPENFILENAME ofn;
-	char filen[PATH_MAX];
+	char filen[MAX_PATH];
 	ZeroMemory(&filen, sizeof(filen));
 	if (defaultName.size() >= 0)
 	{
@@ -1090,7 +1092,7 @@ SharedKList Win32UserWindow::SelectFile(
 	ofn.hwndOwner = this->window_handle;
 	ofn.lpstrFile = filen;
 	ofn.nMaxFile = sizeof(filen);
-	ofn.lpstrFilter = (filter.length() == 0 ? NULL : filter.c_str());
+	ofn.lpstrFilter = (filter.empty() ? NULL : filter.c_str());
 	ofn.nFilterIndex = 1;
 	ofn.lpstrFileTitle = NULL;
 	ofn.nMaxFileTitle = 0;
@@ -1099,7 +1101,7 @@ SharedKList Win32UserWindow::SelectFile(
 
 	if (!title.empty())
 	{
-		ofn.lpstrtitle = title.c_str();
+		ofn.lpstrTitle = title.c_str();
 	}
 
 	if (!saveDialog)
@@ -1187,7 +1189,7 @@ SharedKList Win32UserWindow::SelectDirectory(
 	BROWSEINFO bi = { 0 };
 	bi.lpszTitle = title.c_str();
 	bi.hwndOwner = this->window_handle;
-	bi.uiFlags = BIF_RETURNONLYFSDIRS;
+	bi.ulFlags = BIF_RETURNONLYFSDIRS;
 	LPITEMIDLIST pidl = SHBrowseForFolder(&bi);
 
 	if (pidl != 0)
