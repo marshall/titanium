@@ -1,7 +1,3 @@
-resources_dir = Titanium.App.appURLToPath("app://index.html")
-resources_dir=resources_dir.split("index.html")[0]
-$LOAD_PATH << resources_dir
-
 require 'foo'
 require 'markaby/lib/markaby'
 
