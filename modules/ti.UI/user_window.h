@@ -58,6 +58,15 @@ class UserWindow : public kroll::StaticBoundObject {
 		SharedUIBinding GetBinding();
 
 	private:
+		void ReadChooserDialogObject(
+			SharedKObject o,
+			bool& multiple,
+			std::string& title,
+			std::string& path,
+			std::string& defaultName,
+			std::vector<std::string>& types,
+			std::string& typesDescription);
+
 		void _Hide(const kroll::ValueList&, kroll::SharedValue);
 		void _Show(const kroll::ValueList&, kroll::SharedValue);
 		void _Minimize(const kroll::ValueList&, kroll::SharedValue);
@@ -136,8 +145,10 @@ class UserWindow : public kroll::StaticBoundObject {
 
 		void _GetParent(const kroll::ValueList&, kroll::SharedValue);
 		void _CreateWindow(const kroll::ValueList&, kroll::SharedValue);
-		void _OpenFiles(const ValueList& args, SharedValue result);
-		void _OpenSaveAs(const ValueList& args, SharedValue result);
+
+		void _OpenFileChooserDialog(const ValueList& args, SharedValue result);
+		void _OpenFolderChooserDialog(const ValueList& args, SharedValue result);
+		void _OpenSaveAsDialog(const ValueList& args, SharedValue result);
 
 		void _AddEventListener(const kroll::ValueList&, kroll::SharedValue);
 		void _RemoveEventListener(const kroll::ValueList&, kroll::SharedValue);
@@ -152,20 +163,29 @@ class UserWindow : public kroll::StaticBoundObject {
 		std::vector<Listener> listeners;
 
 	public:
-		virtual void OpenFiles(
+		virtual void OpenFileChooserDialog(
 			SharedKMethod callback,
 			bool multiple,
-			bool files,
-			bool directories,
+			std::string& title,
 			std::string& path,
-			std::string& file,
-			std::vector<std::string>& types) = 0;
+			std::string& defaultName,
+			std::vector<std::string>& types,
+			std::string& typesDescription) = 0;
 
-		virtual void OpenSaveAs(
+		virtual void OpenFolderChooserDialog(
 			SharedKMethod callback,
+			bool multiple,
+			std::string& title,
 			std::string& path,
-			std::string& file,
-			std::vector<std::string>& types) = 0;
+			std::string& defaultName) = 0;
+
+		virtual void OpenSaveAsDialog(
+			SharedKMethod callback,
+			std::string& title,
+			std::string& path,
+			std::string& defaultName,
+			std::vector<std::string>& types,
+			std::string& typesDescription) = 0;
 
 		virtual void Hide() = 0;
 		virtual void Show() = 0;

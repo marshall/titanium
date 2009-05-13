@@ -80,20 +80,29 @@ public:
 	Win32UserWindow(SharedUIBinding binding, WindowConfig* config, SharedUserWindow& parent);
 	virtual ~Win32UserWindow();
 
-	void OpenFiles(
+	void OpenFileChooserDialog(
 		SharedKMethod callback,
 		bool multiple,
-		bool files,
-		bool directories,
+		std::string& title,
 		std::string& path,
-		std::string& file,
-		std::vector<std::string>& types);
+		std::string& defaultName,
+		std::vector<std::string>& types,
+		std::string& typesDescription);
 
-	void OpenSaveAs(
+	void OpenFolderChooserDialog(
 		SharedKMethod callback,
+		bool multiple,
+		std::string& title,
 		std::string& path,
-		std::string& file,
-		std::vector<std::string>& types);
+		std::string& defaultName);
+
+	void OpenSaveAsDialog(
+		SharedKMethod callback,
+		std::string& title,
+		std::string& path,
+		std::string& defaultName,
+		std::vector<std::string>& types,
+		std::string& typesDescription);
 
 	void AddMessageHandler(const ValueList& args, SharedValue result);
 
@@ -175,18 +184,20 @@ private:
 	void SetupMenu();
 	void SetupIcon();
 
+	SharedKList Win32UserWindow::SelectFile(
+		bool saveDialog,
+		bool multiple,
+		std::string& title,
+		std::string& path,
+		std::string& defaultName,
+		std::vector<std::string>& types,
+		std::string& typesDescription);
+
 	SharedKList SelectDirectory(
 		bool multiple,
+		std::string& title,
 		std::string& path,
-		std::string& file);
-
-	SharedKList SelectFile(
-		SharedKMethod callback,
-		bool multiple,
-		std::string& path,
-		std::string& file,
-		std::vector<std::string>& types,
-		bool saveDialog);
+		std::string& defaultName);
 
 	static void ParseStringNullSeparated(const char *s, std::vector<std::string> &tokens);
 };

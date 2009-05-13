@@ -41,48 +41,28 @@
 			}
 			function chooseFiles()
 			{
-				Titanium.UI.openFiles(selectFilesCallback);
+				Titanium.UI.openFileChooserDialog(selectFilesCallback);
 			}
 			function chooseFilesWithPath()
 			{
-				Titanium.UI.openFiles(selectFilesCallback, {
+				Titanium.UI.openFileChooserDialog(selectFilesCallback, {
 					path: 'c:\\windows'
 				});
 			}
 			function chooseFilesWithPathAndFilename()
 			{
-				Titanium.UI.openFiles(selectFilesCallback, {
+				Titanium.UI.openFileChooserDialog(selectFilesCallback, {
 					path: 'c:\\windows',
 					filename: 'notepad.exe'
 				});
 			}
 			function chooseDirs()
 			{
-				Titanium.UI.openFiles(selectFilesCallback, {
-					directories:true,
-					files:false
-				});
-			}
-			function chooseDirsAndFiles()
-			{
-				Titanium.UI.openFiles(selectFilesCallback, {
-					directories:true,
-					files:true
-				});
+				Titanium.UI.openFolderChooserDialog(selectFilesCallback);
 			}
 			function chooseMultipleFiles()
 			{
-				Titanium.UI.openFiles(selectFilesCallback, {
-					directories:false,
-					files:true,
-					multiple:true
-				});
-			}
-			function chooseMultiple()
-			{
-				Titanium.UI.openFiles(selectFilesCallback, {
-					directories:true,
-					files:true,
+				Titanium.UI.openFileChooserDialog(selectFilesCallback, {
 					multiple:true
 				});
 			}
@@ -92,19 +72,15 @@
 			}
 			function chooseFileTypes()
 			{
-				Titanium.UI.openFiles(selectFilesCallback, {
-					directories:false,
-					files:true,
+				Titanium.UI.openFileChooserDialog(selectFilesCallback, {
 					multiple:true,
-					types:[
-						'js','html'
-					],
+					types:[ 'js','html' ],
 					typesDescription: 'Web Files'
 				});
 			}
 			function openSaveAs()
 			{
-				Titanium.UI.openSaveAs(selectFilesCallback);
+				Titanium.UI.openSaveAsDialog(selectFilesCallback);
 			}
 		</script>
 	</head>

@@ -8,6 +8,30 @@
 
 namespace ti
 {
+	namespace GtkUserWindowNS
+	{
+		enum FileChooserMode
+		{
+			SELECT_FILE,
+			SELECT_FOLDER,
+			SAVE_FILE
+		};
+
+		struct FileChooserJob
+		{
+			Host *host;
+			GtkWindow* window;
+			SharedKMethod callback;
+			FileChooserMode mode;
+			bool multiple;
+			std::string title;
+			std::string path;
+			std::string defaultName;
+			std::vector<std::string> types;
+			std::string typesDescription;
+		};
+	}
+
 	class GtkUserWindow : public UserWindow
 	{
 
@@ -26,20 +50,39 @@ namespace ti
 		void AppIconChanged();
 		void RemoveOldMenu();
 
-		void OpenFiles(
+		void ShowFileChooser(
+			GtkUserWindowNS::FileChooserMode mode,
 			SharedKMethod callback,
 			bool multiple,
-			bool files,
-			bool directories,
+			std::string& title,
 			std::string& path,
-			std::string& file,
-			std::vector<std::string>& types);
+			std::string& defaultName,
+			std::vector<std::string>& types,
+			std::string& typesDescription);
 
-		void OpenSaveAs(
+		void OpenFileChooserDialog(
 			SharedKMethod callback,
+			bool multiple,
+			std::string& title,
 			std::string& path,
-			std::string& file,
-			std::vector<std::string>& types);
+			std::string& defaultName,
+			std::vector<std::string>& types,
+			std::string& typesDescription);
+
+		void OpenFolderChooserDialog(
+			SharedKMethod callback,
+			bool multiple,
+			std::string& title,
+			std::string& path,
+			std::string& defaultName);
+
+		void OpenSaveAsDialog(
+			SharedKMethod callback,
+			std::string& title,
+			std::string& path,
+			std::string& defaultName,
+			std::vector<std::string>& types,
+			std::string& typesDescription);
 
 		void Hide();
 		void Show();

@@ -215,7 +215,7 @@ Win32UserWindow::Win32UserWindow(SharedUIBinding binding, WindowConfig* config, 
 
 	Win32UserWindow::RegisterWindowClass(win32_host->GetInstanceHandle());
 	window_handle
-			= CreateWindowEx(WS_EX_LAYERED, windowClassName,
+			= CreateWindowEx(WS_EX_APPWINDOW /*WS_EX_LAYERED*/, windowClassName,
 					config->GetTitle().c_str(), WS_CLIPCHILDREN, CW_USEDEFAULT,
 					0, CW_USEDEFAULT, 0, NULL, NULL,
 					win32_host->GetInstanceHandle(), NULL);
@@ -724,8 +724,16 @@ bool Win32UserWindow::IsVisible()
 
 void Win32UserWindow::SetTransparency(double transparency)
 {
-	SetLayeredWindowAttributes(window_handle, 0, (BYTE) floor(transparency
-			* 255), LWA_ALPHA);
+	if (config->GetTransparency() < 1.0)
+	{
+		SetWindowLong( this->window_handle, GWL_EXSTYLE, WS_EX_LAYERED);
+		SetLayeredWindowAttributes(this->window_handle, 0, (BYTE) floor(
+		config->GetTransparency() * 255), LWA_ALPHA);
+	}
+	else
+	{
+		SetWindowLong( this->window_handle, GWL_EXSTYLE, WS_EX_APPWINDOW);
+	}
 }
 
 void Win32UserWindow::SetFullScreen(bool fullscreen)
@@ -938,9 +946,15 @@ void Win32UserWindow::ReloadTiWindowConfig()
 	//SetLayeredWindowAttributes(hWnd, 0, (BYTE)0, LWA_ALPHA);
 	if (config->GetTransparency() < 1.0)
 	{
+		SetWindowLong( this->window_handle, GWL_EXSTYLE, WS_EX_LAYERED);
 		SetLayeredWindowAttributes(this->window_handle, 0, (BYTE) floor(
 				config->GetTransparency() * 255), LWA_ALPHA);
 	}
+	else
+	{
+		SetWindowLong( this->window_handle, GWL_EXSTYLE, WS_EX_APPWINDOW);
+	}
+	
 	SetLayeredWindowAttributes(this->window_handle, transparencyColor, 0,
 			LWA_COLORKEY);
 }
@@ -1006,61 +1020,59 @@ void Win32UserWindow::ShowWebInspector()
 	}
 }
 
-void Win32UserWindow::OpenFiles(
+void Win32UserWindow::OpenFileChooserDialog(
 	SharedKMethod callback,
 	bool multiple,
-	bool files,
-	bool directories,
+	std::string& title,
 	std::string& path,
-	std::string& file,
-	std::vector<std::string>& types)
+	std::string& defaultName,
+	std::vector<std::string>& types,
+	std::string& typesDescription)
 {
-	SharedKList results;
-	if (directories)
-	{
-		results = SelectDirectory(multiple, path, file);
-	}
-	else
-	{
-		results = SelectFile(callback, multiple, path, file, types, false);
-	}
 
-	ValueList args;
-	args.push_back(Value::NewList(results));
-	callback->Call(args);
+	SharedKList results = SelectFile(
+		false, multiple, title, path, defaultName, types, typesDescription);
+	callback->Call(ValueList(Value::NewList(results)));
 }
 
-void Win32UserWindow::OpenSaveAs(
+void Win32UserWindow::OpenFolderChooserDialog(
 	SharedKMethod callback,
+	bool multiple,
+	std::string& title,
 	std::string& path,
-	std::string& file,
-	std::vector<std::string>& types)
+	std::string& defaultName)
 {
-	SharedKList results;
+	SharedKList results = SelectDirectory(multiple, title, path, defaultName);
+	callback->Call(ValueList(Value::NewList(results)));
+}
 
-	results = SelectFile(callback, false, path, file, types, true);
-
-	ValueList args;
-	args.push_back(Value::NewList(results));
-	callback->Call(args);
+void Win32UserWindow::OpenSaveAsDialog(
+	SharedKMethod callback,
+	std::string& title,
+	std::string& path,
+	std::string& defaultName,
+	std::vector<std::string>& types,
+	std::string& typesDescription)
+{
+	SharedKList results = SelectFile(
+		true, false, title, path, defaultName, types, typesDescription);
+	callback->Call(ValueList(Value::NewList(results)));
 }
 
 SharedKList Win32UserWindow::SelectFile(
-	SharedKMethod callback,
+ 	bool saveDialog,
 	bool multiple,
+	std::string& title,
 	std::string& path,
-	std::string& file,
-	std::vector<
-	std::string>& types, bool saveDialog)
+	std::string& defaultName,
+	std::vector<std::string>& types,
+	std::string& typesDescription)
 {
-	//std::string filterName = props->GetString("typesDescription", "Filtered Files");
-	std::string filterName = "Filtered Files";
 	std::string filter;
-
 	if (types.size() > 0)
 	{
 		//"All\0*.*\0Test\0*.TXT\0";
-		filter.append(filterName);
+		filter.append(typesDescription);
 		filter.push_back('\0');
 
 		for (int i = 0; i < types.size(); i++)
@@ -1081,17 +1093,11 @@ SharedKList Win32UserWindow::SelectFile(
 	}
 
 	OPENFILENAME ofn;
-	char filen[8192];
-
+	char filen[MAX_PATH];
 	ZeroMemory(&filen, sizeof(filen));
-
-	if (file.size() == 0)
+	if (defaultName.size() >= 0)
 	{
-		filen[0] = '\0';
-	}
-	else
-	{
-		strcpy(filen, file.c_str());
+		strcpy(filen, defaultName.c_str());
 	}
 
 	// init OPENFILE
@@ -1100,14 +1106,19 @@ SharedKList Win32UserWindow::SelectFile(
 	ofn.hwndOwner = this->window_handle;
 	ofn.lpstrFile = filen;
 	ofn.nMaxFile = sizeof(filen);
-	ofn.lpstrFilter = (filter.length() == 0 ? NULL : filter.c_str());
+	ofn.lpstrFilter = (filter.empty() ? NULL : filter.c_str());
 	ofn.nFilterIndex = 1;
 	ofn.lpstrFileTitle = NULL;
 	ofn.nMaxFileTitle = 0;
 	ofn.lpstrInitialDir = (path.length() == 0 ? NULL : path.c_str());
 	ofn.Flags = OFN_EXPLORER;
 
-	if(!saveDialog)
+	if (!title.empty())
+	{
+		ofn.lpstrTitle = title.c_str();
+	}
+
+	if (!saveDialog)
 	{
 		ofn.Flags |= OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
 	}
@@ -1121,7 +1132,7 @@ SharedKList Win32UserWindow::SelectFile(
 	// display the open dialog box
 	BOOL result;
 
-	if(saveDialog)
+	if (saveDialog)
 	{
 		result = GetSaveFileName(&ofn);
 	}
@@ -1155,11 +1166,12 @@ SharedKList Win32UserWindow::SelectFile(
 			}
 		}
 	}
-	else {
+	else
+	{
 		DWORD error = CommDlgExtendedError();
 		printf("Error when opening files: %d\n", error);
 		switch(error)
-{
+		{
 			case CDERR_DIALOGFAILURE: printf("CDERR_DIALOGFAILURE\n"); break;
 			case CDERR_FINDRESFAILURE: printf("CDERR_FINDRESFAILURE\n"); break;
 			case CDERR_NOHINSTANCE: printf("CDERR_NOHINSTANCE\n"); break;
@@ -1180,24 +1192,33 @@ SharedKList Win32UserWindow::SelectFile(
 	return results;
 }
 
-SharedKList Win32UserWindow::SelectDirectory(bool multiple,
-		std::string& path, std::string& file)
+SharedKList Win32UserWindow::SelectDirectory(
+	bool multiple,
+	std::string& title,
+	std::string& path,
+	std::string& defaultName)
 {
 	SharedKList results = new StaticBoundList();
 
 	BROWSEINFO bi = { 0 };
-	//std::string title("Select a directory");
-	//bi.lpszTitle = title.c_str();
+	bi.lpszTitle = title.c_str();
 	bi.hwndOwner = this->window_handle;
+	bi.ulFlags = BIF_RETURNONLYFSDIRS;
 	LPITEMIDLIST pidl = SHBrowseForFolder(&bi);
 
 	if (pidl != 0)
 	{
-		// get folder name
 		TCHAR in_path[MAX_PATH];
 		if (SHGetPathFromIDList(pidl, in_path))
 		{
 			results->Append(Value::NewString(std::string(in_path)));
+		}
+
+		IMalloc * imalloc = 0;
+		if (SUCCEEDED(SHGetMalloc(&imalloc)))
+		{
+			imalloc->Free(pidl);
+			imalloc->Release();
 		}
 	}
 	return results;
