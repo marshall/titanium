@@ -162,8 +162,6 @@ window.onload = function()
 		var name = test_names[c];
 		var entry = tests[name];
 		
-		Titanium.API.debug("++++ ADDING: "+name+", entry="+entry);
-
 		table+=
 		'<tr id="test_'+name+'" class="test">'+
 			'<td class="check"><div class="checkbox checked"></div></td>'+

@@ -471,6 +471,13 @@ TitaniumTest.Subject.prototype.should_be_number = function(expected,lineNumber)
 	}
 };
 
+TitaniumTest.Subject.prototype.should_be_boolean = function(expected,lineNumber)
+{
+	if (typeof(this.target) != 'boolean')
+	{
+		throw new TitaniumTest.Error('should be a boolean, was: '+typeof(this.target),lineNumber);
+	}
+};
 
 TitaniumTest.Subject.prototype.should_be_true = function(expected,lineNumber)
 {
