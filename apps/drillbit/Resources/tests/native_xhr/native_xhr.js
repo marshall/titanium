@@ -58,7 +58,12 @@ describe("native XHR tests",
 			{
 				if (this.readyState == xhr.HEADERS_RECEIVED)
 				{
-					value_of(xhr.getResponseHeader('Content-Type')).should_be('application/json;charset=utf-8');
+					// ah, different web servers it appears on twitter side
+					// have to compensate for space and without space separators
+					var ct = xhr.getResponseHeader('Content-Type');
+					value_of(ct).should_be_string();
+					ct = ct.replace(' ','');
+					value_of(ct).should_be('application/json;charset=utf-8');
 				}
 				else if (this.readyState == xhr.DONE)
 				{
