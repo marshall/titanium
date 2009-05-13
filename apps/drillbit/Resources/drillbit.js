@@ -6,6 +6,7 @@ var current_test_load = null;
 var current_test = null;
 var excludes = ['before','before_all','after','after_all','timeout'];
 var total_assertions = 0;
+var total_files = 0;
 var running_assertions = 0;
 var running_completed = 0;
 var auto_run = false;
@@ -51,6 +52,10 @@ function describe(description,test)
 			}
 		}
 	}
+	
+	total_files++;
+	
+	$('#header').html(total_assertions+' assertions in '+total_files+' files');
 
 	current_test_load = null;
 }

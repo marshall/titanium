@@ -21,14 +21,6 @@ input[type=text]
 	width:420px;
 }
 
-#header select
-{
-	width:100%;
-	outline:none;
-	margin-top:10px;
-	margin-bottom:10px;
-}
-
 button
 {
 	margin-top:10px;
@@ -37,7 +29,9 @@ button
 
 #header
 {
-	margin-bottom:25px;
+	font-size:10px;
+	margin-bottom:10px;
+	float:right;
 }
 
 div.checkbox
@@ -106,6 +100,7 @@ td.status.failed
 
 #table
 {
+	clear:both;
 	margin:0;
 	padding:0;
 	height:230px;
