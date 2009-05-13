@@ -115,5 +115,57 @@ describe("Ruby Tests",
 		value_of(p).should_be_function();
 		// try invoking the returned proc
 		value_of(p()).should_be('hello,world');
-	}
+	},
+	test_js_type_string: function()
+	{
+		value_of(test_js_type_string('1')).should_be_true();
+	},
+	test_js_type_int: function()
+	{
+		value_of(test_js_type_int(123)).should_be_true();
+	},
+	test_js_type_zero: function()
+	{
+		value_of(test_js_type_int(0)).should_be_true();
+	},
+	test_js_type_large_number: function()
+	{
+		value_of(test_js_type_int(10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000)).should_be_true();
+	},
+	test_js_type_float: function()
+	{
+		value_of(test_js_type_float(3.14)).should_be_true();
+	},
+	test_js_type_function: function()
+	{
+		value_of(test_js_type_function(function() { } )).should_be_true();
+	},
+	test_js_type_list: function()
+	{
+		value_of(test_js_type_list([1,2,3])).should_be_true();
+	},
+	test_js_type_dict: function()
+	{
+		value_of(test_js_type_dict({'a1':'sauce'})).should_be_true();
+	},
+	test_js_type_object: function()
+	{
+		value_of(test_js_type_dict({})).should_be_true();
+	},
+	test_js_type_null: function()
+	{
+		value_of(test_js_type_nil(null)).should_be_true();
+	},
+	test_js_type_undefined: function()
+	{
+		value_of(test_js_type_nil(undefined)).should_be_true();
+	},
+	test_js_type_true: function()
+	{
+		value_of(test_js_type_true_bool(true)).should_be_true();
+	},
+	test_js_type_false: function()
+	{
+		value_of(test_js_type_false_bool(false)).should_be_true();
+	},
 });

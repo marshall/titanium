@@ -98,3 +98,41 @@ def test_type_proc
   Proc.new { 'hello world' }
 end
 
+# tests for conversion from JS into Ruby							
+def test_js_type_string
+	return t.class == 'String'
+end
+	
+def test_js_type_int(t)
+	return t.class == 'Fixnum'
+end
+	
+def test_js_type_function(t)
+	return t.class == 'Method'
+end
+
+def test_js_type_float(t)
+	return t.class == 'Float'
+end
+
+def test_js_type_list(t)
+	return t.class == 'Array'
+end
+
+def test_js_type_dict(t)
+	return t.class == 'Hash'
+end
+
+def test_js_type_true_bool(t)
+	return t.class == 'TrueClass'
+end
+
+def test_js_type_false_bool(t)
+  	return t.class == 'FalseClass'
+  end
+	
+def test_js_type_nil(t)
+	return t.class == 'NilClass'
+end
+	
+	

@@ -68,3 +68,31 @@ def test_type_anonymous_function():
 		return 'foobar'
 	return anonymous
 						
+
+		
+# tests for conversion from JS into Python							
+def test_js_type_string(t):
+	return type(t).__name__ == 'str'
+	
+def test_js_type_int(t):
+	return type(t).__name__ == 'int'
+	
+def test_js_type_function(t):
+	return type(t).__name__ == 'function'
+
+def test_js_type_float(t):
+	return type(t).__name__ == 'float'
+
+def test_js_type_list(t):
+	return type(t).__name__ == 'list'
+
+def test_js_type_dict(t):
+	return type(t).__name__ == 'dict'
+
+def test_js_type_bool(t):
+	return type(t).__name__ == 'bool'
+	
+def test_js_type_none(t):
+	return type(t).__name__ == 'NoneType'
+	
+							
