@@ -22,7 +22,7 @@
 		task = [[NSTask alloc] init];
 		[task setLaunchPath:cmd];
 		[task setArguments:args];
-		[task setCurrentDirectoryPath:[[NSBundle mainBundle] resourcePath]];
+		[task setCurrentDirectoryPath: [[NSFileManager defaultManager] currentDirectoryPath]];
 
 		NSProcessInfo *pi = [NSProcessInfo processInfo];
 		[task setEnvironment:[pi environment]];

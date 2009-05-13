@@ -32,6 +32,8 @@ function test_status(name,classname)
 
 function describe(description,test)
 {
+	Titanium.API.debug("!!! description = "+description);
+	
 	current_test_load.description = description;
 	current_test_load.test = test;
 	current_test_load.timeout = test.timeout || 5000;
@@ -159,6 +161,9 @@ window.onload = function()
 	{
 		var name = test_names[c];
 		var entry = tests[name];
+		
+		Titanium.API.debug("++++ ADDING: "+name+", entry="+entry);
+
 		table+=
 		'<tr id="test_'+name+'" class="test">'+
 			'<td class="check"><div class="checkbox checked"></div></td>'+
@@ -300,6 +305,13 @@ window.onload = function()
 						src.copy(tofile);
 						break;
 					}
+					default:
+					{
+						// just copy the file otherwise
+						Titanium.API.debug("copying "+src+" to "+dir);
+						src.copy(dir);
+						break;
+					}
 				}
 			}
 			else
@@ -314,6 +326,8 @@ window.onload = function()
 		{
 			tiapp.write(non_visual_ti);
 		}
+
+Titanium.API.debug("1");
 		
 		var us = '// ==UserScript==\n';
 		us+='// @name	Titanium App Tester\n';
