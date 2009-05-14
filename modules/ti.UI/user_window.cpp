@@ -763,15 +763,20 @@ void UserWindow::_SetMinWidth(const kroll::ValueList& args, kroll::SharedValue r
 	args.VerifyException("setMinWidth", "n");
 
 	double mw = args.at(0)->ToNumber();
+
 	this->config->SetMinWidth(mw);
+	if (this->config->GetWidth() < mw)
+	{
+		this->config->SetWidth(mw);
+	}
+
 	if (this->active)
 	{
 		this->SetMinWidth(mw);
-	}
-
-	if (this->GetWidth() < mw)
-	{
-		this->SetWidth(mw);
+		if (this->GetWidth() < mw)
+		{
+			this->SetWidth(mw);
+		}
 	}
 }
 
@@ -793,14 +798,20 @@ void UserWindow::_SetMaxWidth(const kroll::ValueList& args, kroll::SharedValue r
 
 	double mw = args.at(0)->ToNumber();
 	this->config->SetMaxWidth(mw);
+	printf("mx_width: %f %f\n", this->config->GetWidth(), mw);
+	if (this->config->GetWidth() > mw)
+	{
+		this->config->SetWidth(mw);
+	}
+
 	if (this->active)
 	{
 		this->SetMaxWidth(mw);
-	}
-
-	if (this->GetWidth() > mw)
-	{
-		this->SetWidth(mw);
+		printf("mx_width: %f %f\n", this->GetWidth(), mw);
+		if (this->GetWidth() > mw)
+		{
+			this->SetWidth(mw);
+		}
 	}
 }
 
@@ -849,14 +860,18 @@ void UserWindow::_SetMinHeight(const kroll::ValueList& args, kroll::SharedValue 
 
 	double mh = args.at(0)->ToNumber();
 	this->config->SetMinHeight(mh);
+	if (this->config->GetHeight() < mh)
+	{
+		this->config->SetHeight(mh);
+	}
+
 	if (this->active)
 	{
 		this->SetMinHeight(mh);
-	}
-
-	if (this->GetHeight() < mh)
-	{
-		this->SetHeight(mh);
+		if (this->GetHeight() < mh)
+		{
+			this->SetHeight(mh);
+		}
 	}
 }
 
@@ -878,14 +893,18 @@ void UserWindow::_SetMaxHeight(const kroll::ValueList& args, kroll::SharedValue 
 
 	double mh = args.at(0)->ToNumber();
 	this->config->SetMaxHeight(mh);
+	if (this->config->GetHeight() > mh)
+	{
+		this->config->SetHeight(mh);
+	}
+
 	if (this->active)
 	{
 		this->SetMaxHeight(mh);
-	}
-
-	if (this->GetHeight() > mh)
-	{
-		this->SetHeight(mh);
+		if (this->GetHeight() > mh)
+		{
+			this->SetHeight(mh);
+		}
 	}
 }
 

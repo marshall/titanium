@@ -2,7 +2,7 @@ require 'bar'
 
 class Foo
   def bar
-    'hello,world'
+    'hello world'
   end
   def yum
     bar = Bar.new

@@ -1,4 +1,5 @@
 from foo import Foo
+import types
 
 def external_document():
 	return document.getElementById('a')
@@ -67,32 +68,37 @@ def test_type_anonymous_function():
 	def anonymous(*args):
 		return 'foobar'
 	return anonymous
-						
 
-		
-# tests for conversion from JS into Python							
+# tests for conversion from JS into Python
 def test_js_type_string(t):
-	return type(t).__name__ == 'str'
+	return type(t) == types.StringType
 	
 def test_js_type_int(t):
-	return type(t).__name__ == 'int'
-	
+	return type(t) == types.IntType
+
 def test_js_type_function(t):
-	return type(t).__name__ == 'function'
+	return type(t) == types.FunctionType
 
 def test_js_type_float(t):
-	return type(t).__name__ == 'float'
+	return type(t) == types.FloatType
 
 def test_js_type_list(t):
-	return type(t).__name__ == 'list'
+	return type(t) == types.ListType
+
+def test_js_type_klist(t):
+	return type(t).__name__ == 'KList'
+
+def test_js_type_kmethod(t):
+	return type(t).__name__ == 'KMethod'
+
+def test_js_type_kobject(t):
+	return type(t).__name__ == 'KObject'
 
 def test_js_type_dict(t):
-	return type(t).__name__ == 'dict'
+	return type(t) == types.DictType
 
 def test_js_type_bool(t):
-	return type(t).__name__ == 'bool'
+	return type(t) == types.BooleanType
 	
 def test_js_type_none(t):
-	return type(t).__name__ == 'NoneType'
-	
-							
+	return type(t) == types.NoneType

@@ -115,15 +115,15 @@ describe("Python Tests",
 	},
 	test_js_type_int: function()
 	{
-		value_of(test_js_type_int(123)).should_be_true();
+		value_of(test_js_type_float(123)).should_be_true();
 	},
 	test_js_type_zero: function()
 	{
-		value_of(test_js_type_int(0)).should_be_true();
+		value_of(test_js_type_float(0)).should_be_true();
 	},
 	test_js_type_large_number: function()
 	{
-		value_of(test_js_type_int(10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000)).should_be_true();
+		value_of(test_js_type_float(10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000)).should_be_true();
 	},
 	test_js_type_float: function()
 	{
@@ -131,19 +131,19 @@ describe("Python Tests",
 	},
 	test_js_type_function: function()
 	{
-		value_of(test_js_type_function(function() { } )).should_be_true();
+		value_of(test_js_type_kmethod(function() { } )).should_be_true();
 	},
 	test_js_type_list: function()
 	{
-		value_of(test_js_type_list([1,2,3])).should_be_true();
+		value_of(test_js_type_klist([1,2,3])).should_be_true();
 	},
 	test_js_type_dict: function()
 	{
-		value_of(test_js_type_dict({'a1':'sauce'})).should_be_true();
+		value_of(test_js_type_kobject({'a1':'sauce'})).should_be_true();
 	},
 	test_js_type_object: function()
 	{
-		value_of(test_js_type_dict({})).should_be_true();
+		value_of(test_js_type_kobject({})).should_be_true();
 	},
 	test_js_type_null: function()
 	{

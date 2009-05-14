@@ -322,6 +322,7 @@ namespace ti
 			// a funky state.
 			this->gdk_width = this->config->GetWidth();
 			this->gdk_height = this->config->GetHeight();
+			printf("new width: %i\n", this->gdk_width);
 		}
 	}
 	
