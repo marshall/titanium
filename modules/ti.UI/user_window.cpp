@@ -798,7 +798,6 @@ void UserWindow::_SetMaxWidth(const kroll::ValueList& args, kroll::SharedValue r
 
 	double mw = args.at(0)->ToNumber();
 	this->config->SetMaxWidth(mw);
-	printf("mx_width: %f %f\n", this->config->GetWidth(), mw);
 	if (this->config->GetWidth() > mw)
 	{
 		this->config->SetWidth(mw);
@@ -807,7 +806,6 @@ void UserWindow::_SetMaxWidth(const kroll::ValueList& args, kroll::SharedValue r
 	if (this->active)
 	{
 		this->SetMaxWidth(mw);
-		printf("mx_width: %f %f\n", this->GetWidth(), mw);
 		if (this->GetWidth() > mw)
 		{
 			this->SetWidth(mw);
@@ -1334,7 +1332,6 @@ void UserWindow::ReadChooserDialogObject(
 
 	SharedKList listTypes = new StaticBoundList();
 	listTypes = o->GetList("types", listTypes);
-	printf("iterating through types array\n");
 	for (size_t i = 0; i < listTypes->Size(); i++)
 	{
 		if (listTypes->At(i)->IsString())
