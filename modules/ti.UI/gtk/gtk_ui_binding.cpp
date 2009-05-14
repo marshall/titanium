@@ -23,9 +23,8 @@ namespace ti
 		evaluator = new ScriptEvaluator();
 		addScriptEvaluator(evaluator);
 
-		double ver = host->GetGlobalObject()->Get("version")->ToDouble();
 		char buf[256];
-		snprintf(buf, 256, "%s/%0.2f", PRODUCT_NAME, ver);
+		snprintf(buf, 256, "%s/%s", PRODUCT_NAME, STRING(PRODUCT_VERSION));
 		g_set_prgname(buf);
 	}
 

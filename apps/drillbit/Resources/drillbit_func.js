@@ -257,12 +257,13 @@ TitaniumTest =
 	success:0,
 	failed:0,
 	
-	testPassed:function(name)
+	testPassed:function(name, lineNumber)
 	{
 		this.success++;
 		this.results.push({
 			name:name,
-			passed:true
+			passed:true,
+			message: "Success"
 		});
 		Titanium.App.stdout("DRILLBIT_PASS: "+name);
 		TitaniumTest.run_next_test();
@@ -297,19 +298,84 @@ TitaniumTest =
 				rd.createDirectory(true);
 			}
 			var f = Titanium.Filesystem.getFile(rd.nativePath(), TitaniumTest.NAME+'.json');
-			var data = {
-				'results':this.results,
-				'count':this.results.length,
-				'success':this.success,
-				'failed':this.failed
-			};
-			f.write(JSON.stringify(data));
+			this.write_results_to_json(f);
+
+			// Only write the failure report HTML if we have failed -- it's very expensive
+			var f = Titanium.Filesystem.getFile(rd.nativePath(), TitaniumTest.NAME+'.html');
+			this.write_results_to_html(f);
 		}
 		catch(e)
 		{
 			Titanium.API.error("Exception on completion: "+e);
 		}
 		Titanium.App.exit(0);
+	},
+	
+	write_results_to_json: function(f)
+	{
+		var data = {
+			'results':this.results,
+			'count':this.results.length,
+			'success':this.success,
+			'failed':this.failed
+		};
+		f.write(JSON.stringify(data));
+	},
+
+	write_results_to_html: function(f)
+	{
+		var text = [];
+		text.push("<html><body>");
+		text.push("<table>");
+
+		text.push("<tr>");
+		text.push("<td><b>Test name</b></td>");
+		text.push("<td><b>Passed?</b></td>");
+		text.push("<td><b>Line number</b></td>");
+		text.push("<td><b>Message</b></td>");
+		text.push("</tr>");
+
+		var failed = false;
+		for (var i = 0; i < this.results.length; i++)
+		{
+			var lineno = this.results[i].lineNumber;
+			if (!this.results[i].passed)
+			{
+				failed = true;
+			}
+
+			text.push("<tr>");
+			text.push("<td>" + this.results[i].name + "</td>");
+			text.push("<td>" + this.results[i].passed + "</td>");
+			text.push('<td><a href="#l' + lineno + '">' + lineno + "</a></td>");
+			text.push("<td>" + this.results[i].message + "</td>");
+			text.push("</tr>");
+		}
+		text.push("</table>");
+
+		if (failed)
+		{
+			var app = Titanium.API.getApplication();
+			var script = Titanium.Filesystem.getFile(
+				app.getResourcesPath(), "userscripts", TitaniumTest.NAME + "_driver.js");
+			var scriptText = script.read();
+			var lines = scriptText.split("\n");
+
+			text.push('<table style="font-family: monospace; font-size: 10pt;">');
+			for (var i = 0; i < lines.length; i++)
+			{
+				var num = i + 1;
+				var line = lines[i].replace(/&/g,'&amp;').replace(/>/g,'&gt;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+				text.push('<tr>');
+				text.push('<td><a name="l' + num + '">' + num + '</a></td>');
+				text.push('<td>' + line + '</td>');
+				text.push('</tr>');
+			}
+			text.push("</table>");
+		}
+
+		text.push("</body></html>");
+		f.write(text.join("\n"));
 	},
 	
 	on_complete: function()
