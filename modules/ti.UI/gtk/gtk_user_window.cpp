@@ -138,8 +138,7 @@ namespace ti
 	
 			this->gtk_window = GTK_WINDOW(window);
 			this->web_view = web_view;
-			//this->SetupTransparency();
-	
+
 			gtk_widget_realize(window);
 			this->SetupDecorations();
 			this->SetupSize();
@@ -149,7 +148,9 @@ namespace ti
 			this->SetupIcon();
 			this->SetTopMost(config->IsTopMost());
 			this->SetCloseable(config->IsCloseable());
-	
+			// TI-62: Transparency currently causes bad crashes
+			//this->SetupTransparency();
+
 			gtk_widget_grab_focus(GTK_WIDGET (web_view));
 			webkit_web_view_open(web_view, this->config->GetURL().c_str());
 	
@@ -268,10 +269,46 @@ namespace ti
 		if (this->gtk_window != NULL)
 		{
 			GdkGeometry hints;
-			hints.max_width = this->config->GetMaxWidth();
-			hints.min_width = this->config->GetMinWidth();
-			hints.max_height = this->config->GetMaxHeight();
-			hints.min_height = this->config->GetMinHeight();
+			int max_width = (int) this->config->GetMaxWidth();
+			int min_width = (int) this->config->GetMinWidth();
+			int max_height = (int) this->config->GetMaxHeight();
+			int min_height = (int) this->config->GetMinHeight();
+
+			if (max_width == -1)
+			{
+				hints.max_width = INT_MAX;
+			}
+			else
+			{
+				hints.max_width = max_width;
+			}
+
+			if (min_width == -1)
+			{
+				hints.min_width = 1;
+			}
+			else
+			{
+				hints.min_width = min_width;
+			}
+
+			if (max_height == -1)
+			{
+				hints.max_height = INT_MAX;
+			}
+			else
+			{
+				hints.max_height = max_height;
+			}
+
+			if (min_height == -1)
+			{
+				hints.min_height = 1;
+			}
+			else
+			{
+				hints.min_height = min_height;
+			}
 			GdkWindowHints mask = (GdkWindowHints) (GDK_HINT_MIN_SIZE | GDK_HINT_MAX_SIZE);
 			gtk_window_set_geometry_hints(this->gtk_window, NULL, &hints, mask);
 		}

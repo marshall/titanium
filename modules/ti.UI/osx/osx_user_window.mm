@@ -289,14 +289,50 @@ namespace ti
 	
 	void OSXUserWindow::ReconfigureWindowConstraints()
 	{
-		NSSize min_size, max_size;
-		min_size.width = this->GetMinWidth();
-		min_size.height = this->GetMinHeight();
-		max_size.width = this->GetMaxWidth();
-		max_size.height = this->GetMaxHeight();
+		NSSize minSize, maxSize;
+		double maxWidth = (int) this->config->GetMaxWidth();
+		double minWidth = (int) this->config->GetMinWidth();
+		double maxHeight = (int) this->config->GetMaxHeight();
+		double minHeight = (int) this->config->GetMinHeight();
 
-		[window setContentMinSize: min_size];
-		[window setContentMaxSize: max_size];
+		if (maxWidth == -1)
+		{
+			maxSize.width = FLT_MAX;
+		}
+		else
+		{
+			maxSize.width = maxWidth;
+		}
+
+		if (minWidth == -1)
+		{
+			minSize.width = 1;
+		}
+		else
+		{
+			minSize.width = minWidth;
+		}
+
+		if (maxHeight == -1)
+		{
+			maxSize.height = FLT_MAX;
+		}
+		else
+		{
+			maxSize.height = maxHeight;
+		}
+
+		if (minHeight == -1)
+		{
+			minSize.height = 1;
+		}
+		else
+		{
+			minSize.height = minHeight;
+		}
+
+		[window setContentMinSize:minSize];
+		[window setContentMaxSize:maxSize];
 	}
 
 	void OSXUserWindow::SetMinWidth(double width) {

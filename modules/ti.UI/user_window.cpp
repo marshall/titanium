@@ -428,7 +428,6 @@ UserWindow::UserWindow(SharedUIBinding binding, WindowConfig *config, SharedUser
 
 UserWindow::~UserWindow()
 {
-	KR_DUMP_LOCATION
 	if (this->active)
 	{
 		this->Close();
@@ -452,8 +451,6 @@ SharedUIBinding UserWindow::GetBinding()
 
 void UserWindow::Open()
 {
-	KR_DUMP_LOCATION
-
 	this->FireEvent(OPEN);
 
 	// We are now in the UI binding's open window list
@@ -471,8 +468,6 @@ void UserWindow::Open()
 
 void UserWindow::Close()
 {
-	KR_DUMP_LOCATION
-
 	static Logger &logger = Logger::Get("UserWindow");
 
 	this->active = false;
@@ -524,13 +519,19 @@ void UserWindow::Close()
 void UserWindow::_Hide(const kroll::ValueList& args, kroll::SharedValue result)
 {
 	this->config->SetVisible(false);
-	this->Hide();
+	if (this->active)
+	{
+		this->Hide();
+	}
 }
 
 void UserWindow::_Show(const kroll::ValueList& args, kroll::SharedValue result)
 {
 	this->config->SetVisible(true);
-	this->Show();
+	if (this->active)
+	{
+		this->Show();
+	}
 }
 
 void UserWindow::_Minimize(const kroll::ValueList& args, kroll::SharedValue result)
@@ -555,12 +556,18 @@ void UserWindow::_Unmaximize(const kroll::ValueList& args, kroll::SharedValue re
 
 void UserWindow::_Focus(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	this->Focus();
+	if (this->active)
+	{
+		this->Focus();
+	}
 }
 
 void UserWindow::_Unfocus(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	this->Unfocus();
+	if (this->active)
+	{
+		this->Unfocus();
+	}
 }
 
 void UserWindow::_IsUsingChrome(const kroll::ValueList& args, kroll::SharedValue result)
@@ -737,11 +744,14 @@ void UserWindow::_SetWidth(const kroll::ValueList& args, kroll::SharedValue resu
 	if (args.size() > 0 && args.at(0)->IsNumber())
 	{
 		double w = args.at(0)->ToNumber();
-		w = UserWindow::Constrain(w, config->GetMinWidth(), config->GetMaxWidth());
-		this->config->SetWidth(w);
-		if (this->active)
+		if (w > 0)
 		{
-			this->SetWidth(w);
+			w = UserWindow::Constrain(w, config->GetMinWidth(), config->GetMaxWidth());
+			this->config->SetWidth(w);
+			if (this->active)
+			{
+				this->SetWidth(w);
+			}
 		}
 	}
 }
@@ -761,11 +771,15 @@ void UserWindow::_GetMinWidth(const kroll::ValueList& args, kroll::SharedValue r
 void UserWindow::_SetMinWidth(const kroll::ValueList& args, kroll::SharedValue result)
 {
 	args.VerifyException("setMinWidth", "n");
-
 	double mw = args.at(0)->ToNumber();
 
+	if (mw <= 0)
+	{
+		mw = -1;
+	}
+
 	this->config->SetMinWidth(mw);
-	if (this->config->GetWidth() < mw)
+	if (mw != -1 && this->config->GetWidth() < mw)
 	{
 		this->config->SetWidth(mw);
 	}
@@ -773,7 +787,7 @@ void UserWindow::_SetMinWidth(const kroll::ValueList& args, kroll::SharedValue r
 	if (this->active)
 	{
 		this->SetMinWidth(mw);
-		if (this->GetWidth() < mw)
+		if (mw != -1 && this->GetWidth() < mw)
 		{
 			this->SetWidth(mw);
 		}
@@ -795,10 +809,15 @@ void UserWindow::_GetMaxWidth(const kroll::ValueList& args, kroll::SharedValue r
 void UserWindow::_SetMaxWidth(const kroll::ValueList& args, kroll::SharedValue result)
 {
 	args.VerifyException("setMaxWidth", "n");
-
 	double mw = args.at(0)->ToNumber();
+
+	if (mw <= 0)
+	{
+		mw = -1;
+	}
+
 	this->config->SetMaxWidth(mw);
-	if (this->config->GetWidth() > mw)
+	if (mw != -1 && this->config->GetWidth() > mw)
 	{
 		this->config->SetWidth(mw);
 	}
@@ -806,7 +825,7 @@ void UserWindow::_SetMaxWidth(const kroll::ValueList& args, kroll::SharedValue r
 	if (this->active)
 	{
 		this->SetMaxWidth(mw);
-		if (this->GetWidth() > mw)
+		if (mw != -1 && this->GetWidth() > mw)
 		{
 			this->SetWidth(mw);
 		}
@@ -831,11 +850,14 @@ void UserWindow::_SetHeight(const kroll::ValueList& args, kroll::SharedValue res
 	if (args.size() > 0 && args.at(0)->IsNumber())
 	{
 		double h = args.at(0)->ToNumber();
-		h = UserWindow::Constrain(h, config->GetMinHeight(), config->GetMaxHeight());
-		this->config->SetHeight(h);
-		if (this->active)
+		if (h > 0)
 		{
-			this->SetHeight(h);
+			h = UserWindow::Constrain(h, config->GetMinHeight(), config->GetMaxHeight());
+			this->config->SetHeight(h);
+			if (this->active)
+			{
+				this->SetHeight(h);
+			}
 		}
 	}
 }
@@ -855,10 +877,14 @@ void UserWindow::_GetMinHeight(const kroll::ValueList& args, kroll::SharedValue 
 void UserWindow::_SetMinHeight(const kroll::ValueList& args, kroll::SharedValue result)
 {
 	args.VerifyException("setMinHeight", "n");
-
 	double mh = args.at(0)->ToNumber();
+	if (mh <= 0)
+	{
+		mh = -1;
+	}
+
 	this->config->SetMinHeight(mh);
-	if (this->config->GetHeight() < mh)
+	if (mh != -1 && this->config->GetHeight() < mh)
 	{
 		this->config->SetHeight(mh);
 	}
@@ -866,7 +892,7 @@ void UserWindow::_SetMinHeight(const kroll::ValueList& args, kroll::SharedValue 
 	if (this->active)
 	{
 		this->SetMinHeight(mh);
-		if (this->GetHeight() < mh)
+		if (mh != -1 && this->GetHeight() < mh)
 		{
 			this->SetHeight(mh);
 		}
@@ -888,10 +914,14 @@ void UserWindow::_GetMaxHeight(const kroll::ValueList& args, kroll::SharedValue 
 void UserWindow::_SetMaxHeight(const kroll::ValueList& args, kroll::SharedValue result)
 {
 	args.VerifyException("setMaxHeight", "n");
-
 	double mh = args.at(0)->ToNumber();
+	if (mh <= 0)
+	{
+		mh = -1;
+	}
+
 	this->config->SetMaxHeight(mh);
-	if (this->config->GetHeight() > mh)
+	if (mh != -1 && this->config->GetHeight() > mh)
 	{
 		this->config->SetHeight(mh);
 	}
@@ -899,7 +929,7 @@ void UserWindow::_SetMaxHeight(const kroll::ValueList& args, kroll::SharedValue 
 	if (this->active)
 	{
 		this->SetMaxHeight(mh);
-		if (this->GetHeight() > mh)
+		if (mh != -1 && this->GetHeight() > mh)
 		{
 			this->SetHeight(mh);
 		}
@@ -1688,11 +1718,11 @@ void UserWindow::PageLoaded(SharedKObject global_bound_object, std::string &url)
 
 double UserWindow::Constrain(double value, double min, double max)
 {
-	if (value < min)
+	if (min > 0 && value < min)
 	{
 		value = min;
 	}
-	if (value > max)
+	if (max > 0 && value > max)
 	{
 		value = max;
 	}
