@@ -172,20 +172,19 @@ namespace ti
 		{
 			// you can pass in an array of parts to join
 			SharedKList list = args.at(0)->ToList();
-			for (unsigned int c=0; c < list->Size(); c++)
+			for (size_t c = 0; c < list->Size(); c++)
 			{
 				std::string arg = list->At(c)->ToString();
-				filename = kroll::FileUtils::Join(filename.c_str(),arg.c_str(),NULL);
+				filename = kroll::FileUtils::Join(filename.c_str(), arg.c_str(), NULL);
 			}
 		}
 		else
 		{
-			// you can pass in vararg of strings which acts like
-			// a join
-			for (size_t c=0;c<args.size();c++)
+			// you can pass in vararg of strings which acts like  a join
+			for (size_t c = 0; c < args.size(); c++)
 			{
 				std::string arg = FileSystemUtils::GetFileName(args.at(c));
-				filename = kroll::FileUtils::Join(filename.c_str(),arg.c_str(),NULL);
+				filename = kroll::FileUtils::Join(filename.c_str(), arg.c_str(), NULL);
 			}
 		}
 		if (filename.empty())

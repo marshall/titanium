@@ -16,17 +16,25 @@
 #include <sys/stat.h>
 #endif
 
+#ifdef OS_LINUX
+#include <sys/statvfs.h>
+#endif
+
 namespace ti
 {
 	File::File(std::string filename)
 	{
-#ifdef OS_OSX
-		// in OSX, we need to expand ~ in paths to their absolute path value
-		// we do that with a nifty helper method in NSString
-		this->filename = [[[NSString stringWithCString:filename.c_str()] stringByExpandingTildeInPath] fileSystemRepresentation];
-#else
-		this->filename = filename;
-#endif
+
+		Poco::Path pocoPath(Poco::Path::expand(filename));
+		this->filename = pocoPath.absolute().toString();
+
+		// If the filename we were given contains a trailing slash, just remove it
+		// so that users can count on reproducible results fromr toShtring.
+		size_t length = this->filename.length();
+		if (length > 1 && this->filename[length - 1] == Poco::Path::separator())
+		{
+			this->filename.resize(length - 1);
+		}
 
 		/**
 		 * @tiapi(method=True,name=Filesystem.File.toString,since=0.2) returns a string representation of the File object
@@ -725,32 +733,30 @@ namespace ti
 	}
 	void File::GetSpaceAvailable(const ValueList& args, SharedValue result)
 	{
-		long avail = -1;
+		result->SetNull();
 		Poco::Path path(this->filename);
 
 #ifdef OS_OSX
 		NSString *p = [NSString stringWithCString:this->filename.c_str()];
-		avail = [[[[NSFileManager defaultManager] fileSystemAttributesAtPath:p] objectForKey:NSFileSystemFreeSize] longValue];
+		unsigned long avail = [[[[NSFileManager defaultManager] fileSystemAttributesAtPath:p] objectForKey:NSFileSystemFreeSize] longValue];
+		result->SetDouble(avail);
 #elif OS_WIN32
 		PULARGE_INTEGER freeBytesAvail = 0;
 		PULARGE_INTEGER totalNumOfBytes = 0;
 		PULARGE_INTEGER totalNumOfFreeBytes = 0;
 		if(GetDiskFreeSpaceEx(path.absolute().getFileName().c_str(), freeBytesAvail, totalNumOfBytes, totalNumOfFreeBytes))
 		{
-			avail = long(freeBytesAvail);
-		}
-#elif OS_LINUX
-		// TODO complete and test this
-#endif
-
-		if(avail == -1)
-		{
-			result->SetNull();
-		}
-		else
-		{
+			unsigned long avail = static_cast<unsigned long>(freeBytesAvail);
 			result->SetDouble(avail);
 		}
+#elif OS_LINUX
+		struct statvfs stats;
+		if (statvfs(this->filename.c_str(), &stats) == 0)
+		{
+			unsigned long avail = stats.f_bsize * static_cast<unsigned long>(stats.f_bavail);
+			result->SetDouble(avail);
+		}
+#endif
 	}
 	void File::CreateShortcut(const ValueList& args, SharedValue result)
 	{
