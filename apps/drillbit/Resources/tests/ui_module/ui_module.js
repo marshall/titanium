@@ -248,5 +248,25 @@ describe("UI Module Tests",{
 		w.hide();
 		value_of(w.isVisible()).should_be_false();
 	},
+	test_window_location: function()
+	{
+		var w = Titanium.UI.currentWindow.createWindow({x: 100, y:200});
+		value_of(w.getX()).should_be(100);
+		value_of(w.getY()).should_be(200);
+
+		w.setX(400);
+		w.setY(300);
+		value_of(w.getX()).should_be(400);
+		value_of(w.getY()).should_be(300);
+
+		w.open();
+		value_of(w.getX()).should_be(400);
+		value_of(w.getY()).should_be(300);
+
+		w.setX(101);
+		w.setY(153);
+		value_of(w.getX()).should_be(101);
+		value_of(w.getY()).should_be(153);
+    }
     
 });
