@@ -94,11 +94,18 @@ namespace ti
 		 */
 		this->SetMethod("getIdleTime", &UIBinding::_GetIdleTime);
 
-		this->open_window_list = new StaticBoundList();
+		this->openWindowList = new StaticBoundList();
 		/**
-		 * @tiapi(property=True,name=UI.windows,version=0.2) gets a list of user created windows
+		 * @tiapi(method=True,name=UI.getOpenWindows,version=0.4) get the list of currently open windows
+		 * @tiresult(for=UI.getOpenWindows,type=list) returns the list of open windows
 		 */
-		this->Set("windows", Value::NewList(this->open_window_list));
+		this->SetMethod("getOpenWindows", &UIBinding::_GetOpenWindows);
+
+		/**
+		 * @tiapi(property=True,name=UI.windows,version=0.2) gets a list of open user created windows
+		 * @tideprecated(for=UI.windows,version=0.4)
+		 */
+		this->Set("windows", Value::NewList(this->openWindowList));
 
 		SharedKObject global = host->GetGlobalObject();
 		SharedValue ui_binding_val = Value::NewObject(this);
@@ -136,25 +143,25 @@ namespace ti
 
 	std::vector<SharedUserWindow>& UIBinding::GetOpenWindows()
 	{
-		return this->open_windows;
+		return this->openWindows;
 	}
 
 	void UIBinding::AddToOpenWindows(SharedUserWindow window)
 	{
-		this->open_window_list->Append(Value::NewObject(window));
-		this->open_windows.push_back(window);
+		this->openWindowList->Append(Value::NewObject(window));
+		this->openWindows.push_back(window);
 	}
 
 	void UIBinding::RemoveFromOpenWindows(SharedUserWindow window)
 	{
 		static Logger &logger = Logger::Get("UIBinding");
-		std::vector<SharedUserWindow>::iterator w = open_windows.begin();
-		while (w != open_windows.end())
+		std::vector<SharedUserWindow>::iterator w = openWindows.begin();
+		while (w != openWindows.end())
 		{
 			if ((*w).get() == window.get())
 			{
 				logger.Debug("found window to remove with 0x%x",window.get());
-				w = this->open_windows.erase(w);
+				w = this->openWindows.erase(w);
 				return;
 			}
 			else
@@ -163,6 +170,11 @@ namespace ti
 			}
 		}
 		logger.Warn("didn't find window to remove with 0x%x",window.get());
+	}
+
+	void UIBinding::_GetOpenWindows(const ValueList& args, SharedValue result)
+	{
+		result->SetList(this->openWindowList);
 	}
 
 	void UIBinding::_CreateMenu(const ValueList& args, SharedValue result)

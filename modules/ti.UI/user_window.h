@@ -67,6 +67,7 @@ class UserWindow : public kroll::StaticBoundObject {
 			std::vector<std::string>& types,
 			std::string& typesDescription);
 
+		void _GetCurrentWindow(const kroll::ValueList&, kroll::SharedValue);
 		void _Hide(const kroll::ValueList&, kroll::SharedValue);
 		void _Show(const kroll::ValueList&, kroll::SharedValue);
 		void _Minimize(const kroll::ValueList&, kroll::SharedValue);

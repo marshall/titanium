@@ -27,6 +27,12 @@ UserWindow::UserWindow(SharedUIBinding binding, WindowConfig *config, SharedUser
 	this->shared_this = this;
 
 	/**
+	 * @tiapi(method=True,name=UI.getCurrentWindow,since=0.4) get the current 
+	 */
+	// This method is on Titanium.UI, but will be delegated to this class.
+	this->SetMethod("getCurrentWindow", &UserWindow::_GetCurrentWindow);
+
+	/**
 	 * @tiapi(property=True,type=integer,name=UI.UserWindow.CENTERED,since=0.3) CENTERED constant
 	 */
 	this->Set("CENTERED", Value::NewInt(UserWindow::CENTERED));
@@ -500,7 +506,6 @@ void UserWindow::Close()
 
 	// When we have no more open windows, we exit...
 	std::vector<SharedUserWindow> windows = this->binding->GetOpenWindows();
-	logger.Debug("On closing, %d windows open", windows.size());
 	if (windows.size() == 0)
 	{
 		this->host->Exit(0);
@@ -515,6 +520,10 @@ void UserWindow::Close()
 	this->shared_this = NULL;
 }
 
+void UserWindow::_GetCurrentWindow(const kroll::ValueList& args, kroll::SharedValue result)
+{
+	result->SetObject(this->shared_this);
+}
 
 void UserWindow::_Hide(const kroll::ValueList& args, kroll::SharedValue result)
 {
@@ -1583,9 +1592,7 @@ void UserWindow::FireEvent(UserWindowEvent event_type, SharedKObject event)
 		}
 	}
 
-	std::string en("ti.UI.window.");
-	en+=name;
-
+	std::string en = std::string("ti.UI.window.") + name;
 	if (event.isNull())
 	{
 		event = new StaticBoundObject();
@@ -1668,6 +1675,7 @@ void UserWindow::RegisterJSContext(JSGlobalContextRef context)
 		// Place currentWindow in the delegate.
 		SharedValue user_window_val = Value::NewObject(this->GetSharedPtr());
 		delegate_ui_api->Set("currentWindow", user_window_val);
+		delegate_ui_api->Set("getCurrentWindow", this->Get("getCurrentWindow"));
 
 		// Place currentWindow.createWindow in the delegate.
 		SharedValue create_window_value = this->Get("createWindow");

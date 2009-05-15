@@ -19,12 +19,26 @@ describe("UI Module Tests",{
 	},
 	test_windows_array: function()
 	{
-		value_of(Titanium.UI.windows).should_be_object();
-		value_of(Titanium.UI.windows.length).should_be(1);
+		value_of(Titanium.UI.getOpenWindows()).should_be_object();
+		value_of(Titanium.UI.getOpenWindows().length).should_be(1);
+
+		var w = Titanium.UI.getCurrentWindow().createWindow();
+		value_of(Titanium.UI.getOpenWindows().length).should_be(1);
+		w.open();
+		value_of(Titanium.UI.getOpenWindows().length).should_be(2);
+		value_of(Titanium.UI.getCurrentWindow().equals(w.getParent())).should_be_true();
+
+		var w2 = Titanium.UI.getCurrentWindow().createWindow();
+		value_of(Titanium.UI.getOpenWindows().length).should_be(2);
+		w2.open();
+		value_of(Titanium.UI.getOpenWindows().length).should_be(3);
+		value_of(Titanium.UI.getCurrentWindow().equals(w2.getParent())).should_be_true();
+		value_of(w2.getParent().equals(w.getParent())).should_be_true();
+		value_of(w2 != w).should_be_true();
 	},
 	test_window_max_size: function()
 	{
-		var w = Titanium.UI.currentWindow.createWindow();
+		var w = Titanium.UI.getCurrentWindow().createWindow();
 		w.setHeight(700);
 		w.setWidth(700);
 
@@ -67,7 +81,7 @@ describe("UI Module Tests",{
 	},
 	test_window_min_size: function()
 	{
-		var w = Titanium.UI.currentWindow.createWindow();
+		var w = Titanium.UI.getCurrentWindow().createWindow();
 		w.setHeight(100);
 		w.setWidth(100);
 
@@ -109,7 +123,7 @@ describe("UI Module Tests",{
 	},
 	test_window_set_height: function()
 	{
-		var w = Titanium.UI.currentWindow.createWindow();
+		var w = Titanium.UI.getCurrentWindow().createWindow();
 		w.setHeight(100);
 		value_of(w.getHeight()).should_be(100);
 		w.setHeight(200);
@@ -137,12 +151,14 @@ describe("UI Module Tests",{
 		value_of(w.getHeight()).should_be(100);
 		w.setHeight(-1);
 		value_of(w.getHeight()).should_be(100);
+		w.setHeight(-666);
+		value_of(w.getHeight()).should_be(100);
 		w.setHeight(0);
 		value_of(w.getHeight()).should_be(100);
 	},
 	test_window_set_width: function()
 	{
-		var w = Titanium.UI.currentWindow.createWindow();
+		var w = Titanium.UI.getCurrentWindow().createWindow();
 		w.setWidth(100);
 		value_of(w.getWidth()).should_be(100);
 		w.setWidth(200);
@@ -170,12 +186,14 @@ describe("UI Module Tests",{
 		value_of(w.getWidth()).should_be(100);
 		w.setWidth(-1);
 		value_of(w.getWidth()).should_be(100);
+		w.setWidth(-666);
+		value_of(w.getWidth()).should_be(100);
 		w.setWidth(0);
 		value_of(w.getWidth()).should_be(100);
 	},
 	test_window_set_closeable: function()
 	{
-		var w = Titanium.UI.currentWindow.createWindow({closeable: false});
+		var w = Titanium.UI.getCurrentWindow().createWindow({closeable: false});
 		value_of(w.isCloseable()).should_be_false();
 		w.setCloseable(true);
 		value_of(w.isCloseable()).should_be_true();
@@ -188,7 +206,7 @@ describe("UI Module Tests",{
 	},
 	test_window_set_minimizable: function()
 	{
-		var w = Titanium.UI.currentWindow.createWindow({minimizable: false});
+		var w = Titanium.UI.getCurrentWindow().createWindow({minimizable: false});
 		value_of(w.isMinimizable()).should_be_false();
 		w.setMinimizable(true);
 		value_of(w.isMinimizable()).should_be_true();
@@ -201,7 +219,7 @@ describe("UI Module Tests",{
 	},
 	test_window_set_maximizable: function()
 	{
-		var w = Titanium.UI.currentWindow.createWindow({maximizable: false});
+		var w = Titanium.UI.getCurrentWindow().createWindow({maximizable: false});
 		value_of(w.isMaximizable()).should_be_false();
 		w.setMaximizable(true);
 		value_of(w.isMaximizable()).should_be_true();
@@ -214,7 +232,7 @@ describe("UI Module Tests",{
 	},
 	test_window_set_using_chrome: function()
 	{
-		var w = Titanium.UI.currentWindow.createWindow({usingChrome: false});
+		var w = Titanium.UI.getCurrentWindow().createWindow({usingChrome: false});
 		value_of(w.isUsingChrome()).should_be_false();
 		w.setUsingChrome(true);
 		value_of(w.isUsingChrome()).should_be_true();
@@ -227,13 +245,13 @@ describe("UI Module Tests",{
 	},
 	test_window_visibility: function()
 	{
-		var w = Titanium.UI.currentWindow.createWindow({visible: false});
+		var w = Titanium.UI.getCurrentWindow().createWindow({visible: false});
 		value_of(w.isVisible()).should_be_false();
 		w.open();
 		value_of(w.isVisible()).should_be_false();
 		w.close();
 
-		var w = Titanium.UI.currentWindow.createWindow({visible: true});
+		var w = Titanium.UI.getCurrentWindow().createWindow({visible: true});
 		value_of(w.isVisible()).should_be_false();
 		w.setVisible(true);
 		value_of(w.isVisible()).should_be_false();
@@ -250,7 +268,7 @@ describe("UI Module Tests",{
 	},
 	test_window_location: function()
 	{
-		var w = Titanium.UI.currentWindow.createWindow({x: 100, y:200});
+		var w = Titanium.UI.getCurrentWindow().createWindow({x: 100, y:200});
 		value_of(w.getX()).should_be(100);
 		value_of(w.getY()).should_be(200);
 
@@ -267,6 +285,129 @@ describe("UI Module Tests",{
 		w.setY(153);
 		value_of(w.getX()).should_be(101);
 		value_of(w.getY()).should_be(153);
-    }
-    
+
+		w.setX(-1);
+		w.setY(-2);
+		value_of(w.getX()).should_be(-1);
+		value_of(w.getY()).should_be(-2);
+
+		w.setX(-666);
+		w.setY(-333);
+		value_of(w.getX()).should_be(-666);
+		value_of(w.getY()).should_be(-333);
+	},
+	test_offscreen_window_locations: function()
+	{
+		var w = Titanium.UI.getCurrentWindow().createWindow({x: 100, y:200});
+		value_of(w.getX()).should_be(100);
+		value_of(w.getY()).should_be(200);
+
+		w.setX(-1);
+		w.setY(-2);
+		value_of(w.getX()).should_be(-1);
+		value_of(w.getY()).should_be(-2);
+
+		w.setX(-666);
+		w.setY(-333);
+		value_of(w.getX()).should_be(-666);
+		value_of(w.getY()).should_be(-333);
+
+		// Take it to the max! Yeah!
+		w.setX(-10000);
+		w.setY(-10001);
+		value_of(w.getX()).should_be(-10000);
+		value_of(w.getY()).should_be(-10001);
+
+		w.setX(100000);
+		w.setY(200000);
+		value_of(w.getX()).should_be(100000);
+		value_of(w.getY()).should_be(200000);
+
+		w.setX(-666);
+		w.setY(-333);
+		value_of(w.getX()).should_be(-666);
+		value_of(w.getY()).should_be(-333);
+
+		w.open();
+		value_of(w.getX()).should_be(-666);
+		value_of(w.getY()).should_be(-333);
+
+		// Take it to the max! Yeah! Yeah!
+		w.setX(-10000);
+		w.setY(-10001);
+		value_of(w.getX()).should_be(-10000);
+		value_of(w.getY()).should_be(-10001);
+
+		w.setX(100000);
+		w.setY(200000);
+		value_of(w.getX()).should_be(100000);
+		value_of(w.getY()).should_be(200000);
+	},
+	test_window_bounds: function()
+	{
+		var w = Titanium.UI.getCurrentWindow().createWindow({
+			width: 444,
+			height: 333,
+			x: 100,
+			y: 200});
+		value_of(w.getX()).should_be(100);
+		value_of(w.getY()).should_be(200);
+		value_of(w.getWidth()).should_be(444);
+		value_of(w.getHeight()).should_be(333);
+
+		var b = w.getBounds();
+		value_of(b.x).should_be(100);
+		value_of(b.y).should_be(200);
+		value_of(b.width).should_be(444);
+		value_of(b.height).should_be(333);
+
+		b.x = 444;
+		b.y = 222;
+		b.width = 500;
+		b.height = 200;
+		w.setBounds(b);
+
+		var b = w.getBounds();
+		value_of(b.x).should_be(444);
+		value_of(b.y).should_be(222);
+		value_of(b.width).should_be(500);
+		value_of(b.height).should_be(200);
+		value_of(w.getX()).should_be(444);
+		value_of(w.getY()).should_be(222);
+		value_of(w.getWidth()).should_be(500);
+		value_of(w.getHeight()).should_be(200);
+
+		w.setWidth(444);
+		w.setHeight(333);
+		w.setX(100);
+		w.setY(200);
+		w.open();
+
+		value_of(w.getX()).should_be(100);
+		value_of(w.getY()).should_be(200);
+		value_of(w.getWidth()).should_be(444);
+		value_of(w.getHeight()).should_be(333);
+
+		var b = w.getBounds();
+		value_of(b.x).should_be(100);
+		value_of(b.y).should_be(200);
+		value_of(b.width).should_be(444);
+		value_of(b.height).should_be(333);
+
+		b.x = 444;
+		b.y = 222;
+		b.width = 500;
+		b.height = 200;
+		w.setBounds(b);
+
+		var b = w.getBounds();
+		value_of(b.x).should_be(444);
+		value_of(b.y).should_be(222);
+		value_of(b.width).should_be(500);
+		value_of(b.height).should_be(200);
+		value_of(w.getX()).should_be(444);
+		value_of(w.getY()).should_be(222);
+		value_of(w.getWidth()).should_be(500);
+		value_of(w.getHeight()).should_be(200);
+	}
 });
