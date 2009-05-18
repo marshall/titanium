@@ -19,6 +19,7 @@ namespace ti
 	{
 		if (this->session)
 		{
+			this->session->close();
 			delete this->session;
 			this->session = NULL;
 		}

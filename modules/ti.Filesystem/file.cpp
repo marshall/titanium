@@ -741,13 +741,16 @@ namespace ti
 		unsigned long avail = [[[[NSFileManager defaultManager] fileSystemAttributesAtPath:p] objectForKey:NSFileSystemFreeSize] longValue];
 		result->SetDouble(avail);
 #elif OS_WIN32
-		PULARGE_INTEGER freeBytesAvail = 0;
-		PULARGE_INTEGER totalNumOfBytes = 0;
-		PULARGE_INTEGER totalNumOfFreeBytes = 0;
-		if(GetDiskFreeSpaceEx(path.absolute().getFileName().c_str(), freeBytesAvail, totalNumOfBytes, totalNumOfFreeBytes))
+		unsigned __int64 i64FreeBytesToCaller;
+		unsigned __int64 i64TotalBytes;
+		unsigned __int64 i64FreeBytes;
+		if (GetDiskFreeSpaceEx(
+			path.absolute().getFileName().c_str(),
+			(PULARGE_INTEGER) &i64FreeBytesToCaller,
+			(PULARGE_INTEGER) &i64TotalBytes,
+			(PULARGE_INTEGER) &i64FreeBytes))
 		{
-			unsigned long avail = static_cast<unsigned long>(freeBytesAvail);
-			result->SetDouble(avail);
+			result->SetDouble((double) i64FreeBytesToCaller);
 		}
 #elif OS_LINUX
 		struct statvfs stats;

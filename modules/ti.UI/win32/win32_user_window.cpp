@@ -133,7 +133,7 @@ Win32UserWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				int max_height = (int) window->GetMaxHeight();
 				int min_height = (int) window->GetMinHeight();
 
-				if (max_width != -1)
+				if (max_width == -1)
 				{
 					mmi->ptMaxTrackSize.x = INT_MAX; // Uncomfortably large
 				}
@@ -142,7 +142,7 @@ Win32UserWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					mmi->ptMaxTrackSize.x = max_width;
 				}
 
-				if (min_width != -1)
+				if (min_width == -1)
 				{
 					mmi->ptMinTrackSize.x = minXTrackSize;
 				}
@@ -151,7 +151,7 @@ Win32UserWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					mmi->ptMinTrackSize.x = min_width;
 				}
 
-				if (max_height != -1)
+				if (max_height == -1)
 				{
 					mmi->ptMaxTrackSize.y = INT_MAX; // Uncomfortably large
 				}
@@ -160,7 +160,7 @@ Win32UserWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					mmi->ptMaxTrackSize.y = max_height;
 				}
 
-				if (min_height != -1)
+				if (min_height == -1)
 				{
 					mmi->ptMinTrackSize.y = minYTrackSize;
 				}
