@@ -107,8 +107,8 @@ namespace ti
 			}
 			catch(std::exception &e)
 			{
-				Logger logger = Logger::GetRootLogger();
-				logger.Error("Caught exception dispatching IRC callback: %s, Error: %s", irc_command, e.what());
+				Logger* logger = Logger::Get("Network.IRC");
+				logger->Error("Caught exception dispatching IRC callback: %s, Error: %s", irc_command, e.what());
 			}
 		}
 		return 0;

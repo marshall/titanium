@@ -47,13 +47,13 @@ namespace ti
 	}
 	void AsyncCopy::Copy(Poco::Path &src, Poco::Path &dest)
 	{
-		Logger& logger = Logger::Get("Filesystem.AsyncCopy");
+		Logger* logger = Logger::Get("Filesystem.AsyncCopy");
 		std::string srcString = src.toString();
 		std::string destString = dest.toString();
 		Poco::File from(srcString);
 		bool isLink = from.isLink();
 
-		logger.Debug("file=%s dest=%s link=%i", srcString.c_str(), destString.c_str(), isLink);
+		logger->Debug("file=%s dest=%s link=%i", srcString.c_str(), destString.c_str(), isLink);
 #ifndef OS_WIN32
 		if (isLink)
 		{
@@ -105,7 +105,7 @@ namespace ti
 	}
 	void AsyncCopy::Run(void* data)
 	{
-		Logger& logger = Logger::Get("Filesystem.AsyncCopy");
+		Logger* logger = Logger::Get("Filesystem.AsyncCopy");
 #ifdef OS_OSX
 		NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 #endif
@@ -116,7 +116,7 @@ namespace ti
 		Poco::Path to(ac->destination);
 		Poco::File tof(to.toString());
 
-		logger.Debug("Job started: dest=%s, count=%i", ac->destination.c_str(), ac->files.size());
+		logger->Debug("Job started: dest=%s, count=%i", ac->destination.c_str(), ac->files.size());
 		if (!tof.exists())
 		{
 			tof.createDirectory();
@@ -127,7 +127,7 @@ namespace ti
 			std::string file = (*iter++);
 			c++;
 
-			logger.Debug("File: path=%s, count=%i\n", file.c_str(), c);
+			logger->Debug("File: path=%s, count=%i\n", file.c_str(), c);
 			try
 			{
 				Poco::Path from(file);
@@ -141,7 +141,7 @@ namespace ti
 					Poco::Path dest(to,from.getFileName());
 					ac->Copy(from,dest);
 				}
-				logger.Debug("File copied");
+				logger->Debug("File copied");
 
 				SharedValue value = Value::NewString(file);
 				ValueList args;
@@ -150,30 +150,30 @@ namespace ti
 				args.push_back(Value::NewInt(ac->files.size()));
 				ac->host->InvokeMethodOnMainThread(ac->callback, args, false);
 
-				logger.Debug("Callback executed");
+				logger->Debug("Callback executed");
 			}
 			catch (ValueException &ex)
 			{
 				SharedString ss = ex.DisplayString();
-				logger.Error(std::string("Error: ") + *ss + " for file: " + file);
+				logger->Error(std::string("Error: ") + *ss + " for file: " + file);
 			}
 			catch (Poco::Exception &ex)
 			{
-				logger.Error(std::string("Error: ") + ex.displayText() + " for file: " + file);
+				logger->Error(std::string("Error: ") + ex.displayText() + " for file: " + file);
 			}
 			catch (std::exception &ex)
 			{
-				logger.Error(std::string("Error: ") + ex.what() + " for file: " + file);
+				logger->Error(std::string("Error: ") + ex.what() + " for file: " + file);
 			}
 			catch (...)
 			{
-				logger.Error(std::string("Unknown error during copy: ") + file);
+				logger->Error(std::string("Unknown error during copy: ") + file);
 			}
 		}
 		ac->Set("running",Value::NewBool(false));
 		ac->stopped = true;
 
-		logger.Debug(std::string("Job finished"));
+		logger->Debug(std::string("Job finished"));
 #ifdef OS_OSX
 		[pool release];
 #endif

@@ -154,13 +154,12 @@ namespace ti
 
 	void UIBinding::RemoveFromOpenWindows(SharedUserWindow window)
 	{
-		static Logger &logger = Logger::Get("UIBinding");
+		static Logger* logger = Logger::Get("UI");
 		std::vector<SharedUserWindow>::iterator w = openWindows.begin();
 		while (w != openWindows.end())
 		{
 			if ((*w).get() == window.get())
 			{
-				logger.Debug("found window to remove with 0x%x",window.get());
 				w = this->openWindows.erase(w);
 				return;
 			}
@@ -169,7 +168,7 @@ namespace ti
 				w++;
 			}
 		}
-		logger.Warn("didn't find window to remove with 0x%x",window.get());
+		logger->Warn("Tried to remove a non-existant window: 0x%lx", (long int) window.get());
 	}
 
 	void UIBinding::_GetOpenWindows(const ValueList& args, SharedValue result)

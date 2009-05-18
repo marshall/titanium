@@ -137,8 +137,8 @@
 	
 	NSURL *url = [AppProtocol normalizeURL:[request URL]];
 
-	static Logger &logger = Logger::Get("app_protocol");
-	logger.Debug("attempting to load %s",[[url absoluteString] UTF8String]);
+	static Logger* logger = Logger::Get("UI.AppProtocol");
+	logger->Trace("attempting to load %s",[[url absoluteString] UTF8String]);
 	
 	NSString *s = [AppProtocol getPath:url];
 	NSString *basePath = [NSString stringWithFormat:@"%s/Resources",getenv("KR_HOME")];
@@ -161,10 +161,11 @@
 	
 	if (data == nil)
 	{
-		std::cerr << "File not found: " << [resourcePath UTF8String] << std::endl;
+		logger->Error("Error finding %s", [resourcePath UTF8String]);
+
 		// File doesn't exist
-        int resultCode = NSURLErrorResourceUnavailable;
-        [client URLProtocol:self didFailWithError:[NSError errorWithDomain:NSURLErrorDomain code:resultCode userInfo:nil]];
+		int resultCode = NSURLErrorResourceUnavailable;
+		[client URLProtocol:self didFailWithError:[NSError errorWithDomain:NSURLErrorDomain code:resultCode userInfo:nil]];
 		[client URLProtocolDidFinishLoading:self];
 		return;
 	}

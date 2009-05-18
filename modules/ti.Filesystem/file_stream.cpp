@@ -123,8 +123,8 @@ namespace ti
 			}
 
 #ifdef DEBUG
-			Logger& logger = Logger::Get("Filesystem.FileStream");
-			logger.Debug("FILE OPEN FLAGS = %d, binary=%d, mode=%d, append=%d",flags,binary,(int)mode,append);
+			Logger* logger = Logger::Get("Filesystem.FileStream");
+			logger->Debug("FILE OPEN FLAGS = %d, binary=%d, mode=%d, append=%d",flags,binary,(int)mode,append);
 #endif
 			if (output)
 			{
@@ -141,8 +141,8 @@ namespace ti
 		}
 		catch (Poco::Exception& exc)
 		{
-			Logger &logger = Logger::Get("Filesystem.FileStream");
-			logger.Error("Error in open. Exception: %s",exc.displayText().c_str());
+			Logger* logger = Logger::Get("Filesystem.FileStream");
+			logger->Error("Error in open. Exception: %s",exc.displayText().c_str());
 			throw ValueException::FromString(exc.displayText());
 		}
 	}
@@ -170,8 +170,8 @@ namespace ti
 		}
 		catch (Poco::Exception& exc)
 		{
-			Logger &logger = Logger::Get("Filesystem.FileStream");
-			logger.Error("Error in close. Exception: %s",exc.displayText().c_str());
+			Logger* logger = Logger::Get("Filesystem.FileStream");
+			logger->Error("Error in close. Exception: %s",exc.displayText().c_str());
 			throw ValueException::FromString(exc.displayText());
 		}
 
@@ -242,8 +242,8 @@ namespace ti
 		}
 		catch (Poco::Exception& exc)
 		{
-			Logger &logger = Logger::Get("Filesystem.FileStream");
-			logger.Error("Error in write. Exception: %s",exc.displayText().c_str());
+			Logger* logger = Logger::Get("Filesystem.FileStream");
+			logger->Error("Error in write. Exception: %s",exc.displayText().c_str());
 			throw ValueException::FromString(exc.displayText());
 		}
 	}
@@ -251,8 +251,8 @@ namespace ti
 	{
 		if(!this->stream)
 		{
-			Logger &logger = Logger::Get("Filesystem.FileStream");
-			logger.Error("Error in read. FileStream must be opened before calling read");
+			Logger* logger = Logger::Get("Filesystem.FileStream");
+			logger->Error("Error in read. FileStream must be opened before calling read");
 			throw ValueException::FromString("FileStream must be opened before calling read");
 		}
 
@@ -263,8 +263,8 @@ namespace ti
 			Poco::FileInputStream* fis = dynamic_cast<Poco::FileInputStream*>(this->stream);
 			if(!fis)
 			{
-				Logger &logger = Logger::Get("Filesystem.FileStream");
-				logger.Error("Error in read. FileInputStream is null");
+				Logger* logger = Logger::Get("Filesystem.FileStream");
+				logger->Error("Error in read. FileInputStream is null");
 				throw ValueException::FromString("FileStream must be opened for reading before calling read");
 			}
 			
@@ -288,8 +288,8 @@ namespace ti
 		}
 		catch (Poco::Exception& exc)
 		{
-			Logger &logger = Logger::Get("Filesystem.FileStream");
-			logger.Error("Error in read. Exception: %s",exc.displayText().c_str());
+			Logger* logger = Logger::Get("Filesystem.FileStream");
+			logger->Error("Error in read. Exception: %s",exc.displayText().c_str());
 			throw ValueException::FromString(exc.displayText());
 		}
 	}
@@ -297,8 +297,8 @@ namespace ti
 	{
 		if(! this->stream)
 		{
-			Logger &logger = Logger::Get("Filesystem.FileStream");
-			logger.Error("Error in readLine. FileStream must be opened before calling read");
+			Logger* logger = Logger::Get("Filesystem.FileStream");
+			logger->Error("Error in readLine. FileStream must be opened before calling read");
 			throw ValueException::FromString("FileStream must be opened before calling readLine");
 		}
 
@@ -307,8 +307,8 @@ namespace ti
 			Poco::FileInputStream* fis = dynamic_cast<Poco::FileInputStream*>(this->stream);
 			if(!fis)
 			{
-				Logger &logger = Logger::Get("Filesystem.FileStream");
-				logger.Error("Error in readLine. FileInputStream is null");
+				Logger* logger = Logger::Get("Filesystem.FileStream");
+				logger->Error("Error in readLine. FileInputStream is null");
 				throw ValueException::FromString("FileStream must be opened for reading before calling readLine");
 			}
 
@@ -326,8 +326,8 @@ namespace ti
 		}
 		catch (Poco::Exception& exc)
 		{
-			Logger &logger = Logger::Get("Filesystem.FileStream");
-			logger.Error("Error in readLine. Exception: %s",exc.displayText().c_str());
+			Logger* logger = Logger::Get("Filesystem.FileStream");
+			logger->Error("Error in readLine. Exception: %s",exc.displayText().c_str());
 			throw ValueException::FromString(exc.displayText());
 		}
 	}

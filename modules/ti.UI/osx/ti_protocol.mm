@@ -92,8 +92,8 @@
 		}
 	}
 
-	kroll::Logger logger = kroll::Logger::GetRootLogger();
-	logger.Error("error finding %s",[[url absoluteString] UTF8String]);
+	Logger* logger = Logger::Get("UI.TiProtocol");
+	logger->Error("Error finding %s", [[url absoluteString] UTF8String]);
 
 	// File doesn't exist
 	int resultCode = NSURLErrorResourceUnavailable;

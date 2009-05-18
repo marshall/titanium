@@ -407,8 +407,9 @@ namespace ti
 				mode = MODE_APPEND;
 			}
 		}
-		static Logger &logger = Logger::Get("File");
-		logger.Trace("write called for %s",this->filename.c_str());
+
+		Logger* logger = Logger::Get("Filesystem.File");
+		logger->Trace("write called for %s",this->filename.c_str());
 
 		ti::FileStream fs(this->filename);
 		fs.Open(mode);
@@ -418,10 +419,11 @@ namespace ti
 		chmod(this->filename.c_str(),S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH);
 #endif		
 	}
+
 	void File::Read(const ValueList& args, SharedValue result)
 	{
-		static Logger &logger = Logger::Get("File");
-		logger.Trace("read called for %s",this->filename.c_str());
+		Logger* logger = Logger::Get("Filesystem.File");
+		logger->Trace("read called for %s",this->filename.c_str());
 
 		FileStream fs(this->filename);
 		fs.Open(MODE_READ);

@@ -474,8 +474,6 @@ void UserWindow::Open()
 
 void UserWindow::Close()
 {
-	static Logger &logger = Logger::Get("UserWindow");
-
 	this->active = false;
 
 	// Close all children and cleanup
@@ -487,7 +485,6 @@ void UserWindow::Close()
 		// make this iterator seriously, seriously unhappy.
 		SharedUserWindow child = (*iter);
 		iter = children.erase(iter);
-		logger.Debug("Closing child window");
 		child->Close();
 	}
 
