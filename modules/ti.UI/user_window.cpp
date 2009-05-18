@@ -388,23 +388,23 @@ UserWindow::UserWindow(SharedUIBinding binding, WindowConfig *config, SharedUser
 	this->SetMethod("createWindow", &UserWindow::_CreateWindow);
 
 	/**
-	 * @tiapi(method=True,name=UI.UserWindow.openFiles,since=0.4) show the file chooser dialog
-	 * @tiarg(for=UI.UserWindow.openFiles,type=method,name=callback) callback method
-	 * @tiarg(for=UI.UserWindow.openFiles,type=object,name=options,optional=True) options
+	 * @tiapi(method=True,name=UI.UserWindow.openFileChooserDialog,since=0.4) show the file chooser dialog
+	 * @tiarg(for=UI.UserWindow.openFileChooserDialog,type=method,name=callback) callback method
+	 * @tiarg(for=UI.UserWindow.openFileChooserDialog,type=object,name=options,optional=True) options
 	 */
 	this->SetMethod("openFileChooserDialog", &UserWindow::_OpenFileChooserDialog);
 
 	/**
-	 * @tiapi(method=True,name=UI.UserWindow.openSaveAsDialog,since=0.4) show the folder chooser dialog
-	 * @tiarg(for=UI.UserWindow.openSaveAs,type=method,name=callback) callback method
-	 * @tiarg(for=UI.UserWindow.openSaveAs,type=object,name=options,optional=True) an options object
+	 * @tiapi(method=True,name=UI.UserWindow.openFolderChooserDialog,since=0.4) show the folder chooser dialog
+	 * @tiarg(for=UI.UserWindow.openFolderChooserDialog,type=method,name=callback) callback method
+	 * @tiarg(for=UI.UserWindow.openFolderChooserDialog,type=object,name=options,optional=True) an options object
 	 */
 	this->SetMethod("openFolderChooserDialog", &UserWindow::_OpenFolderChooserDialog);
 
 	/**
 	 * @tiapi(method=True,name=UI.UserWindow.openSaveAsDialog,since=0.4) show the save as file dialog
-	 * @tiarg(for=UI.UserWindow.openSaveAs,type=method,name=callback) callback method
-	 * @tiarg(for=UI.UserWindow.openSaveAs,type=object,name=options,optional=True) an options object
+	 * @tiarg(for=UI.UserWindow.openSaveAsDialog,type=method,name=callback) callback method
+	 * @tiarg(for=UI.UserWindow.openSaveAsDialog,type=object,name=options,optional=True) an options object
 	 */
 	this->SetMethod("openSaveAsDialog", &UserWindow::_OpenSaveAsDialog);
 
