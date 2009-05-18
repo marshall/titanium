@@ -151,11 +151,11 @@ namespace ti
 				}
 				catch (ValueException &ex)
 				{
-					static Logger &logger = Logger::Get("Monkey");
+					Logger* logger = Logger::Get("Monkey");
 					SharedValue v = ex.GetValue();
 					if (v->IsString())
 					{
-						logger.Error("Exception generated evaluating user script for %s. Exception: %s",url_value.c_str(), v->ToString());
+						logger->Error("Exception generated evaluating user script for %s. Exception: %s",url_value.c_str(), v->ToString());
 						continue;
 					}
 					else if (v->IsObject())
@@ -166,16 +166,16 @@ namespace ti
 						{
 							SharedValue ln = bo->Get("line");
 							int lineNumber = (ln->IsInt() ? ln->ToInt() : -1);
-							logger.Error("+Exception generated evaluating user script for %s. Exception: %s at line: %d",url_value.c_str(), tm->ToMethod()->Call()->ToString(),lineNumber);
+							logger->Error("+Exception generated evaluating user script for %s. Exception: %s at line: %d",url_value.c_str(), tm->ToMethod()->Call()->ToString(),lineNumber);
 							continue;
 						}
 					}
-					logger.Error("Exception generated evaluating user script for %s. Unknown Exception: %s",url_value.c_str(),v->ToTypeString());
+					logger->Error("Exception generated evaluating user script for %s. Unknown Exception: %s",url_value.c_str(),v->ToTypeString());
 				}
 				catch (std::exception &ex)
 				{
-					static Logger &logger = Logger::Get("Monkey");
-					logger.Error("Exception generated evaluating user script for %s, Exception: %s",url_value.c_str(),ex.what());
+					Logger* logger = Logger::Get("Monkey");
+					logger->Error("Exception generated evaluating user script for %s, Exception: %s",url_value.c_str(),ex.what());
 				}
 			}
 		}

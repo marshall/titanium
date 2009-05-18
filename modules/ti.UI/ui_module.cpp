@@ -74,13 +74,13 @@ namespace ti
 		catch (kroll::ValueException &e)
 		{
 			SharedString ss = e.DisplayString();
-			Logger &logger = Logger::Get("UIModule");
-			logger.Error("Error loading %s: %s",js_path.c_str(),(*ss).c_str());
+			Logger* logger = Logger::Get("UIModule");
+			logger->Error("Error loading %s: %s",js_path.c_str(),(*ss).c_str());
 		}
 		catch (...)
 		{
-			Logger &logger = Logger::Get("UIModule");
-			logger.Error("Unexpected error loading %s",js_path.c_str());
+			Logger* logger = Logger::Get("UIModule");
+			logger->Error("Unexpected error loading %s",js_path.c_str());
 		}
 	}
 

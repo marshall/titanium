@@ -438,13 +438,13 @@ namespace ti
 				}
 				catch(std::exception &e)
 				{
-					Logger logger = Logger::GetRootLogger();
-					logger.Error("Caught exception dispatching HTTP callback, Error: %s",e.what());
+					Logger* logger = Logger::Get("Network.HTTPClient");
+					logger->Error("Caught exception dispatching HTTP callback, Error: %s",e.what());
 				}
 				catch(...)
 				{
-					Logger logger = Logger::GetRootLogger();
-					logger.Error("Caught unknown exception dispatching HTTP callback");
+					Logger* logger = Logger::Get("Network.HTTPClient");
+					logger->Error("Caught unknown exception dispatching HTTP callback");
 				}
 				if (rs.eof()) break;
 			}
@@ -667,8 +667,8 @@ namespace ti
 			}
 			catch (std::exception &ex)
 			{
-				Logger logger = Logger::GetRootLogger();
-				logger.Error("Exception calling readyState. Exception: %s",ex.what());
+				Logger* logger = Logger::Get("Network.HTTPClient");
+				logger->Error("Exception calling readyState. Exception: %s",ex.what());
 			}
 		}
 	}

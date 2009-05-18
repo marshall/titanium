@@ -393,9 +393,9 @@
 		return;
 	}
 
-	NSString *err = [NSString stringWithFormat:@"Error loading URL: %@. %@", url,[error localizedDescription]];
-	Logger logger = Logger::GetRootLogger();
-	logger.Error("error: %s",[err UTF8String]);
+	Logger* logger = Logger::Get("UI.WebViewDelegate");
+	std::string err = [[NSString stringWithFormat:@"Error loading URL: %@. %@", url,[error localizedDescription]] utf8String];
+	logger->Error(err);
 
 	// in this case we need to ensure that the window is showing if not initially shown
 	if (initialDisplay==NO)
@@ -781,25 +781,25 @@ std::string GetModuleName(NSString *typeStr)
 			catch(ValueException &e)
 			{
 				SharedString s = e.GetValue()->DisplayString();
-				Logger logger = Logger::GetRootLogger();
-				logger.Error("Exception evaluating %s. Error: %s",type.c_str(),(*s).c_str());
+				Logger* logger = Logger::Get("UI.WebViewDelegate");
+				logger->Error("Exception evaluating %s. Error: %s", type.c_str(), (*s).c_str());
 			}
 			catch(std::exception &e)
 			{
-				Logger logger = Logger::GetRootLogger();
-				logger.Error("Exception evaluating %s. Error: %s",type.c_str(),e.what());
+				Logger* logger = Logger::Get("UI.WebViewDelegate");
+				logger->Error("Exception evaluating %s. Error: %s", type.c_str(), e.what());
 			}
 			catch(...)
 			{
-				Logger logger = Logger::GetRootLogger();
-				logger.Error("Exception evaluating %s. Unknown Error.",type.c_str());
+				Logger* logger = Logger::Get("UI.WebViewDelegate");
+				logger->Error("Exception evaluating %s. Unknown Error.", type.c_str());
 			}
 		}
 	}
 	else
 	{
-		Logger logger = Logger::GetRootLogger();
-		logger.Error("Couldn't find script type bound object for %s",type.c_str());
+		Logger* logger = Logger::Get("UI.WebViewDelegate");
+		logger->Error("Couldn't find script type bound object for %s", type.c_str());
 	}
 }
 

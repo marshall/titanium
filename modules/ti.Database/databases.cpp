@@ -16,17 +16,17 @@ namespace ti
 	{
 		std::string dbpath = FileUtils::Join(datadir.c_str(),"Databases.db",NULL);
 
-		static Logger& logger = Logger::Get("Database.Databases");
-		logger.Debug("DB Path = %s",dbpath.c_str());
+		static Logger* logger = Logger::Get("Database.Databases");
+		logger->Debug("DB Path = %s",dbpath.c_str());
 
 		session = new DBSession(dbpath);
 
 		Statement select(this->session->GetSession());
-		logger.Debug("Creating table Origins");
+		logger->Debug("Creating table Origins");
 		select << "CREATE TABLE IF NOT EXISTS Origins (origin TEXT UNIQUE ON CONFLICT REPLACE, quota INTEGER NOT NULL ON CONFLICT FAIL)", now;
 
 		Statement select2(this->session->GetSession());
-		logger.Debug("Creating table Databases");
+		logger->Debug("Creating table Databases");
 		select2 << "CREATE TABLE IF NOT EXISTS Databases (guid INTEGER PRIMARY KEY AUTOINCREMENT, origin TEXT, name TEXT, displayName TEXT, estimatedSize INTEGER, path TEXT)", now;
 	}
 
@@ -45,7 +45,7 @@ namespace ti
 		{
 			return Path(origin,name);
 		}
-		static Logger& logger = Logger::Get("Database.Databases");
+		static Logger* logger = Logger::Get("Database.Databases");
 
 		Statement select(this->session->GetSession());
 		Poco::UInt32 seq = 0;
@@ -55,7 +55,7 @@ namespace ti
 		++seq;
 
 		std::string filename = Poco::format("%016u.db",(unsigned int)seq);
-		logger.Debug("creating new db: %s",filename.c_str());
+		logger->Debug("creating new db: %s",filename.c_str());
 
 		Statement select2(this->session->GetSession());
 		select2 << "INSERT INTO Databases (origin, name, path) VALUES (:origin,:name,:path)", use(origin), use(name), use(filename);
@@ -74,11 +74,11 @@ namespace ti
 		std::string dbdir = FileUtils::Join(datadir.c_str(),origin.c_str(),NULL);
 		if (!FileUtils::IsDirectory(dbdir))
 		{
-			logger.Debug("creating new db dir: %s",dbdir.c_str());
+			logger->Debug("creating new db dir: %s",dbdir.c_str());
 			FileUtils::CreateDirectory2(dbdir);
 		}
 		std::string fullpath = FileUtils::Join(dbdir.c_str(),filename.c_str(),NULL);
-		logger.Debug("path to new db : %s",fullpath.c_str());
+		logger->Debug("path to new db : %s",fullpath.c_str());
 
 		DBSession s(fullpath);
 
@@ -94,7 +94,7 @@ namespace ti
 
 	void Databases::Delete (std::string origin, std::string name)
 	{
-		static Logger& logger = Logger::Get("Database.Databases");
+		static Logger* logger = Logger::Get("Database.Databases");
 		if (Exists(origin, name))
 		{
 			std::string path = Path(origin,name);
@@ -105,11 +105,11 @@ namespace ti
 			Poco::File f(path);
 			f.remove(true);
 
-			logger.Debug("deleted database file: %s",path.c_str());
+			logger->Debug("deleted database file: %s",path.c_str());
 		}
 		else
 		{
-			logger.Debug("delete called with origin:%s, name: %s - but this DB doesn't appear to exist",origin.c_str(),name.c_str());
+			logger->Debug("delete called with origin:%s, name: %s - but this DB doesn't appear to exist",origin.c_str(),name.c_str());
 		}
 	}
 
