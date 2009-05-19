@@ -305,7 +305,9 @@ Win32UserWindow::Win32UserWindow(SharedUIBinding binding, WindowConfig* config, 
 	// set the custom user agent for Titanium
 	const char *version = host->GetGlobalObject()->Get("version")->ToString();
 	char userAgent[128];
-	sprintf(userAgent, "%s/%s", PRODUCT_NAME, version);
+	//TI-303 we need to add safari UA to our UA to resolve broken
+	//sites that look at Safari and not WebKit for UA
+	sprintf(userAgent, "Version/4.0 Safari/528.16 %s/%s", PRODUCT_NAME, version);
 	_bstr_t ua(userAgent);
 	web_view->setApplicationNameForUserAgent(ua.copy());
 

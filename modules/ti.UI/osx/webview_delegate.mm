@@ -105,7 +105,9 @@
 		
 		SharedKObject global = host->GetGlobalObject();
 		const char* version = global->Get("version")->ToString();
-		NSString *useragent = [NSString stringWithFormat:@"%s/%s",PRODUCT_NAME,version];
+		//TI-303 we need to add safari UA to our UA to resolve broken
+		//sites that look at Safari and not WebKit for UA
+		NSString *useragent = [NSString stringWithFormat:@"Version/4.0 Safari/528.16 %s/%s",PRODUCT_NAME,version];
 		[webView setApplicationNameForUserAgent:useragent];
 		// place our user agent string in the global so we can later use it
 		const char *ua = [[webView userAgentForURL:[NSURL URLWithString:@"http://titaniumapp.com"]] UTF8String];
