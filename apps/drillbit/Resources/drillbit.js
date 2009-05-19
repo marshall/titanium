@@ -366,7 +366,7 @@ Titanium.API.debug("1");
 				i = f.indexOf('_as_async');
 				if (i==-1)
 				{
-					us+="TitaniumTest.testPassed('"+f+"');\n";
+					us+="TitaniumTest.testPassed('"+f+"',TitaniumTest.currentSubject.lineNumber);\n";
 				}
 
 				us+="}\n";
