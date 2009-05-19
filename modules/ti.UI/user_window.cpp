@@ -48,22 +48,22 @@ UserWindow::UserWindow(SharedUIBinding binding, WindowConfig *config, SharedUser
 	this->SetMethod("show", &UserWindow::_Show);
 
 	/**
-	 * @tiapi(method=True,name=UI.UserWindow.minimize,since=0.2) minimize the window
+	 * @tiapi(method=True,name=UI.UserWindow.minimize,since=0.4) minimize the window
 	 */
 	this->SetMethod("minimize", &UserWindow::_Minimize);
 
 	/**
-	 * @tiapi(method=True,name=UI.UserWindow.unminimize,since=0.2) unminimize the window
+	 * @tiapi(method=True,name=UI.UserWindow.unminimize,since=0.4) unminimize the window
 	 */
 	this->SetMethod("unminimize", &UserWindow::_Unminimize);
 
 	/**
-	 * @tiapi(method=True,name=UI.UserWindow.maximize,since=0.2) maximize the window
+	 * @tiapi(method=True,name=UI.UserWindow.maximize,since=0.4) maximize the window
 	 */
 	this->SetMethod("maximize", &UserWindow::_Maximize);
 
 	/**
-	 * @tiapi(method=True,name=UI.UserWindow.unmaximize,since=0.2) unmaximize the window
+	 * @tiapi(method=True,name=UI.UserWindow.unmaximize,since=0.4) unmaximize the window
 	 */
 	this->SetMethod("unmaximize", &UserWindow::_Unmaximize);
 
@@ -260,6 +260,18 @@ UserWindow::UserWindow(SharedUIBinding binding, WindowConfig *config, SharedUser
 	 * @tiarg(for=UI.UserWindow.setResizable,type=boolean,name=resizable) resizable
 	 */
 	this->SetMethod("setResizable", &UserWindow::_SetResizable);
+
+	/**
+	 * @tiapi(method=True,name=UI.UserWindow.isMaximized,since=0.4) returns true if the window is maximized
+	 * @tiresult(for=UI.UserWindow.isMaximized,type=boolean) true if window is maximized
+	 */
+	this->SetMethod("isMaximized", &UserWindow::_IsMaximized);
+
+	/**
+	 * @tiapi(method=True,name=UI.UserWindow.isMinimized,since=0.4) returns true if the window is minimized
+	 * @tiresult(for=UI.UserWindow.isMinimized,type=boolean) true if window is minimized
+	 */
+	this->SetMethod("isMinimized", &UserWindow::_IsMinimized);
 
 	/**
 	 * @tiapi(method=True,name=UI.UserWindow.isMaximizable,since=0.2) returns true if the window is maximizable
@@ -542,22 +554,62 @@ void UserWindow::_Show(const kroll::ValueList& args, kroll::SharedValue result)
 
 void UserWindow::_Minimize(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	this->Minimize();
+	this->config->SetMinimized(true);
+	if (this->active)
+	{
+		this->Minimize();
+	}
 }
 
 void UserWindow::_Unminimize(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	this->Unminimize();
+	this->config->SetMinimized(false);
+	if (this->active)
+	{
+		this->Unminimize();
+	}
+}
+
+void UserWindow::_IsMinimized(const kroll::ValueList& args, kroll::SharedValue result)
+{
+	if (this->active)
+	{
+		result->SetBool(this->IsMinimized());
+	}
+	else
+	{
+		return result->SetBool(this->config->IsMinimized());
+	}
 }
 
 void UserWindow::_Maximize(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	this->Maximize();
+	this->config->SetMaximized(true);
+	if (this->active)
+	{
+		this->Maximize();
+	}
+}
+
+void UserWindow::_IsMaximized(const kroll::ValueList& args, kroll::SharedValue result)
+{
+	if (this->active)
+	{
+		result->SetBool(this->IsMaximized());
+	}
+	else
+	{
+		result->SetBool(this->config->IsMaximized());
+	}
 }
 
 void UserWindow::_Unmaximize(const kroll::ValueList& args, kroll::SharedValue result)
 {
-	this->Unmaximize();
+	this->config->SetMaximized(false);
+	if (this->active)
+	{
+		this->Unmaximize();
+	}
 }
 
 void UserWindow::_Focus(const kroll::ValueList& args, kroll::SharedValue result)

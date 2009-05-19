@@ -46,6 +46,8 @@ namespace ti
 		gdk_height(-1),
 		gdk_x(-1),
 		gdk_y(-1),
+		gdk_maximized(false),
+		gdk_minimized(false),
 		gtk_window(NULL),
 		vbox(NULL),
 		web_view(NULL),
@@ -57,7 +59,7 @@ namespace ti
 		context_menu(NULL)
 	{
 	}
-	
+
 	GtkUserWindow::~GtkUserWindow()
 	{
 		this->Close();
@@ -149,7 +151,7 @@ namespace ti
 			this->SetTopMost(config->IsTopMost());
 			this->SetCloseable(config->IsCloseable());
 			// TI-62: Transparency currently causes bad crashes
-			//this->SetupTransparency();
+			// this->SetupTransparency();
 
 			gtk_widget_grab_focus(GTK_WIDGET (web_view));
 			webkit_web_view_open(web_view, this->config->GetURL().c_str());
@@ -166,12 +168,12 @@ namespace ti
 	
 			if (this->config->IsMaximized())
 			{
-				gtk_window_maximize(this->gtk_window);
+				this->Maximize();
 			}
 	
 			if (this->config->IsMinimized())
 			{
-				gtk_window_iconify(this->gtk_window);
+				this->Minimize();
 			}
 	
 			UserWindow::Open();
@@ -386,7 +388,7 @@ namespace ti
 		}
 		gtk_window_set_icon(this->gtk_window, icon);
 	}
-	
+
 	static gboolean event_cb(
 		GtkWidget *w,
 		GdkEvent *event,
@@ -397,9 +399,13 @@ namespace ti
 		{
 			GdkEventFocus* f = (GdkEventFocus*) event;
 			if (f->in)
+			{
 				window->FireEvent(FOCUSED);
+			}
 			else
+			{
 				window->FireEvent(UNFOCUSED);
+			}
 		}
 		else if (event->type == GDK_WINDOW_STATE)
 		{
@@ -409,25 +415,35 @@ namespace ti
 			{
 				window->FireEvent(HIDDEN);
 			}
-			else if ((f->changed_mask & GDK_WINDOW_STATE_ICONIFIED)
+
+			if ((f->changed_mask & GDK_WINDOW_STATE_ICONIFIED)
 				&& (f->new_window_state & GDK_WINDOW_STATE_ICONIFIED))
 			{
 				window->FireEvent(MINIMIZED);
 			}
-			else if (((f->changed_mask & GDK_WINDOW_STATE_FULLSCREEN)
+
+			if (((f->changed_mask & GDK_WINDOW_STATE_FULLSCREEN)
 				&& (f->new_window_state & GDK_WINDOW_STATE_FULLSCREEN)))
 			{
 				window->FireEvent(FULLSCREENED);
 			}
-			else if (f->changed_mask & GDK_WINDOW_STATE_FULLSCREEN)
+
+			if (f->changed_mask & GDK_WINDOW_STATE_FULLSCREEN)
 			{
 				window->FireEvent(UNFULLSCREENED);
 			}
-			else if (((f->changed_mask & GDK_WINDOW_STATE_MAXIMIZED)
+
+			if (((f->changed_mask & GDK_WINDOW_STATE_MAXIMIZED)
 				&& (f->new_window_state & GDK_WINDOW_STATE_MAXIMIZED)))
 			{
 				window->FireEvent(MAXIMIZED);
 			}
+
+			window->gdk_minimized =
+				f->new_window_state & GDK_WINDOW_STATE_ICONIFIED;
+
+			window->gdk_maximized =
+				f->new_window_state & GDK_WINDOW_STATE_MAXIMIZED;
 		}
 		else if (event->type == GDK_CONFIGURE)
 		{
@@ -568,6 +584,12 @@ namespace ti
 		{
 			gtk_window_iconify(this->gtk_window);
 		}
+		// Maximizing in GTK is asynchronous, so we prime the
+		// values here in hopes that things will turn out okay.
+		// Another alternative would be to block until a resize
+		// is detected, but that might leave the application in
+		// a funky state.
+		this->gdk_minimized = true;
 	}
 	
 	void GtkUserWindow::Unminimize()
@@ -576,21 +598,65 @@ namespace ti
 		{
 			gtk_window_deiconify(this->gtk_window);
 		}
+		// Maximizing in GTK is asynchronous, so we prime the
+		// values here in hopes that things will turn out okay.
+		// Another alternative would be to block until a resize
+		// is detected, but that might leave the application in
+		// a funky state.
+		this->gdk_minimized = false;
 	}
-	
+
+	bool GtkUserWindow::IsMinimized()
+	{
+		if (this->gtk_window != NULL)
+		{
+			return this->gdk_minimized;
+		}
+		else
+		{
+			return this->config->IsMinimized();
+		}
+	}
+
 	void GtkUserWindow::Maximize()
 	{
 		if (this->gtk_window != NULL)
 		{
 			gtk_window_maximize(this->gtk_window);
 		}
+
+		// Maximizing in GTK is asynchronous, so we prime the
+		// values here in hopes that things will turn out okay.
+		// Another alternative would be to block until a resize
+		// is detected, but that might leave the application in
+		// a funky state.
+		this->gdk_maximized = true;
 	}
-	
+
 	void GtkUserWindow::Unmaximize()
 	{
 		if (this->gtk_window != NULL)
 		{
 			gtk_window_unmaximize(this->gtk_window);
+		}
+
+		// Maximizing in GTK is asynchronous, so we prime the
+		// values here in hopes that things will turn out okay.
+		// Another alternative would be to block until a resize
+		// is detected, but that might leave the application in
+		// a funky state.
+		this->gdk_maximized = false;
+	}
+
+	bool GtkUserWindow::IsMaximized()
+	{
+		if (this->gtk_window != NULL)
+		{
+			return this->gdk_maximized;
+		}
+		else
+		{
+			return this->config->IsMaximized();
 		}
 	}
 	

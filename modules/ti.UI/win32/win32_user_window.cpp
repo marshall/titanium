@@ -502,6 +502,11 @@ void Win32UserWindow::Unminimize()
 	ShowWindow(window_handle, SW_RESTORE);
 }
 
+bool Win32UserWindow::IsMinimized()
+{
+	return IsIconic(window_handle) != 0;
+}
+
 void Win32UserWindow::Maximize()
 {
 	ShowWindow(window_handle, SW_MAXIMIZE);
@@ -510,6 +515,11 @@ void Win32UserWindow::Maximize()
 void Win32UserWindow::Unmaximize()
 {
 	ShowWindow(window_handle, SW_RESTORE);
+}
+
+bool Win32UserWindow::IsMaximized()
+{
+	return IsZoomed(window_handle) != 0;
 }
 
 void Win32UserWindow::Focus()

@@ -409,5 +409,85 @@ describe("UI Module Tests",{
 		value_of(w.getY()).should_be(222);
 		value_of(w.getWidth()).should_be(500);
 		value_of(w.getHeight()).should_be(200);
+	},
+	test_window_maximize: function()
+	{
+		var w = Titanium.UI.getCurrentWindow().createWindow({maximized: true});
+		value_of(w.isMaximized()).should_be(true);
+		w.open();
+		value_of(w.isMaximized()).should_be(true);
+		w.close();
+
+		var w = Titanium.UI.getCurrentWindow().createWindow({maximized: false});
+		value_of(w.isMaximized()).should_be(false);
+		w.open();
+		value_of(w.isMaximized()).should_be(false);
+		w.close();
+
+		var w = Titanium.UI.getCurrentWindow().createWindow();
+		value_of(w.isMaximized()).should_be(false);
+		w.maximize();
+		value_of(w.isMaximized()).should_be(true);
+		w.open();
+		value_of(w.isMaximized()).should_be(true);
+		w.unmaximize();
+		value_of(w.isMaximized()).should_be(false);
+		w.maximize();
+		value_of(w.isMaximized()).should_be(true);
+		w.close();
+
+		var w = Titanium.UI.getCurrentWindow().createWindow();
+		value_of(w.isMaximized()).should_be(false);
+		w.maximize();
+		value_of(w.isMaximized()).should_be(true);
+		w.unmaximize();
+		value_of(w.isMaximized()).should_be(false);
+		w.open();
+		value_of(w.isMaximized()).should_be(false);
+		w.maximize();
+		value_of(w.isMaximized()).should_be(true);
+		w.unmaximize();
+		value_of(w.isMaximized()).should_be(false);
+		w.close();
+	},
+	test_window_minimize: function()
+	{
+		var w = Titanium.UI.getCurrentWindow().createWindow({minimized: true});
+		value_of(w.isMinimized()).should_be(true);
+		w.open();
+		value_of(w.isMinimized()).should_be(true);
+		w.close();
+
+		var w = Titanium.UI.getCurrentWindow().createWindow({minimized: false});
+		value_of(w.isMinimized()).should_be(false);
+		w.open();
+		value_of(w.isMinimized()).should_be(false);
+		w.close();
+
+		var w = Titanium.UI.getCurrentWindow().createWindow();
+		value_of(w.isMinimized()).should_be(false);
+		w.minimize();
+		value_of(w.isMinimized()).should_be(true);
+		w.open();
+		value_of(w.isMinimized()).should_be(true);
+		w.unminimize();
+		value_of(w.isMinimized()).should_be(false);
+		w.minimize();
+		value_of(w.isMinimized()).should_be(true);
+		w.close();
+
+		var w = Titanium.UI.getCurrentWindow().createWindow();
+		value_of(w.isMinimized()).should_be(false);
+		w.minimize();
+		value_of(w.isMinimized()).should_be(true);
+		w.unminimize();
+		value_of(w.isMinimized()).should_be(false);
+		w.open();
+		value_of(w.isMinimized()).should_be(false);
+		w.minimize();
+		value_of(w.isMinimized()).should_be(true);
+		w.unminimize();
+		value_of(w.isMinimized()).should_be(false);
+		w.close();
 	}
 });

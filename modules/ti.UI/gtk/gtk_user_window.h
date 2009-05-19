@@ -90,6 +90,8 @@ namespace ti
 		void Maximize();
 		void Unminimize();
 		void Unmaximize();
+		bool IsMinimized();
+		bool IsMaximized();
 		void Focus();
 		void Unfocus();
 		bool IsUsingChrome();
@@ -152,6 +154,8 @@ namespace ti
 		int gdk_height;
 		int gdk_x;
 		int gdk_y;
+		bool gdk_maximized;
+		bool gdk_minimized;
 
 	protected:
 		GtkWindow* gtk_window;
