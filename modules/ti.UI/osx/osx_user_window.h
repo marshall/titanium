@@ -64,6 +64,8 @@ namespace ti
 			void Maximize();
 			void Unminimize();
 			void Unmaximize();
+			bool IsMinimized();
+			bool IsMaximized();
 			void Focus();
 			void Unfocus();
 			bool IsUsingChrome();

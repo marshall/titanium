@@ -140,6 +140,7 @@ namespace ti
 			[window fireWindowEvent:SHOWN];
 		}
 	}
+
 	void OSXUserWindow::Minimize()
 	{
 		if (window != nil)
@@ -147,15 +148,27 @@ namespace ti
 			[window miniaturize:window];
 		}
 	}
-	
+
 	void OSXUserWindow::Unminimize()
 	{
-		if (window != nil)
+		if (window != nil && [window isMiniaturized])
 		{
 			[window deminiaturize:window];
 		}
 	}
-	
+
+	bool OSXUserWindow::IsMinimized()
+	{
+		if (window != nil)
+		{
+			return [window isMiniaturized];
+		}
+		else
+		{
+			return this->config->IsMinimized();
+		}
+	}
+
 	void OSXUserWindow::Maximize()
 	{
 		if (window != nil)
@@ -171,22 +184,39 @@ namespace ti
 			[window zoom:window];
 		}
 	}
+
+	bool OSXUserWindow::IsMaximized()
+	{
+		if (window != nil)
+		{
+			return [window isZoomed];
+		}
+		else
+		{
+			return this->config->IsMinimized();
+		}
+	}
+
 	bool OSXUserWindow::IsUsingChrome()
 	{
 		return this->config->IsUsingChrome();
 	}
+
 	bool OSXUserWindow::IsUsingScrollbars()
 	{
 		return this->config->IsUsingScrollbars();
 	}
+
 	bool OSXUserWindow::IsFullScreen()
 	{
 		return this->config->IsFullScreen();
 	}
+
 	std::string OSXUserWindow::GetId()
 	{
 		return this->config->GetID();
 	}
+
 	void OSXUserWindow::Close()
 	{
 		if (window != nil && !closed)
