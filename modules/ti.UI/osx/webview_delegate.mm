@@ -394,7 +394,7 @@
 	}
 
 	Logger* logger = Logger::Get("UI.WebViewDelegate");
-	std::string err = [[NSString stringWithFormat:@"Error loading URL: %@. %@", url,[error localizedDescription]] utf8String];
+	std::string err = [[NSString stringWithFormat:@"Error loading URL: %@. %@", url,[error localizedDescription]] UTF8String];
 	logger->Error(err);
 
 	// in this case we need to ensure that the window is showing if not initially shown

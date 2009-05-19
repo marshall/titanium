@@ -157,7 +157,7 @@ namespace ti
 		}
 	}
 
-	bool OSXuserWindow::IsMinimized()
+	bool OSXUserWindow::IsMinimized()
 	{
 		if (window != nil)
 		{
@@ -185,7 +185,7 @@ namespace ti
 		}
 	}
 
-	bool OSXuserWindow::IsMaximized()
+	bool OSXUserWindow::IsMaximized()
 	{
 		if (window != nil)
 		{
