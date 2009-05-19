@@ -135,6 +135,7 @@ namespace ti
 			SharedPtr<OSXUIBinding> osx_binding;
 			static bool initial;
 
+			NSScreen* GetWindowScreen();
 			NSRect CalculateWindowFrame(double, double, double, double);
 			double real_x;
 			double real_y;

@@ -229,15 +229,32 @@ namespace ti
 		}
 	}
 
+	NSScreen* OSXUserWindow::GetWindowScreen()
+	{
+
+		NSScreen* screen = [window screen];
+		if (screen == nil) 
+		{
+			// Window is offscreen, so set things relative to the main screen.
+			// The other option in this case would be to use the "closest" screen,
+			// which might be better, but the real fix is to add support for multiple
+			// screens in the UI API.
+			screen = [NSScreen mainScreen];	
+
+		}
+		return screen;
+	}
+
 	NSRect OSXUserWindow::CalculateWindowFrame(double x, double y, double width, double height)
 	{
 		NSRect frame = [window frame];
-		NSRect screenFrame = [[window screen] frame];
 		NSRect contentFrame = [[window contentView] frame];
-
+		NSRect screenFrame = [this->GetWindowScreen() frame];
+		
 		// Center frame, if requested
 		if (y == UserWindow::CENTERED)
 		{
+			printf("\twindow centered\n");
 			y = (screenFrame.size.height - height) / 2;
 			config->SetY(y);
 		}
@@ -253,6 +270,7 @@ namespace ti
 
 		// Adjust the position for the origin of this screen and use cartesian coordinates
 		x += screenFrame.origin.x;
+		printf("\t y=%f, height=%f, sfox=%f, sfheight=%f final=%f\n", y, height, screenFrame.origin.y, screenFrame.size.height, screenFrame.origin.y + (screenFrame.size.height - (y + height)));
 		y = screenFrame.origin.y + (screenFrame.size.height - (y + height));
 
 		return NSMakeRect(x, y, width, height);
@@ -264,7 +282,7 @@ namespace ti
 		{
 			// Cocoa frame coordinates are absolute on a plane with all
 			// screens, but Titanium wants them relative to the screen.
-			NSRect screenFrame = [[window screen] frame];
+			NSRect screenFrame = [this->GetWindowScreen() frame];
 			return [window frame].origin.x - screenFrame.origin.x;
 		}
 		else
@@ -289,7 +307,8 @@ namespace ti
 		{
 			// Cocoa frame coordinates are absolute on a plane with all
 			// screens, but Titanium wants them relative to the screen.
-			NSRect screenFrame = [[window screen] frame];
+			NSRect screenFrame = [this->GetWindowScreen() frame];
+			printf("window origin y = %f\n", [window frame].origin.y);
 			double y = [window frame].origin.y - screenFrame.origin.y;
 
 			// Adjust for the cartesian coordinate system
@@ -304,10 +323,12 @@ namespace ti
 
 	void OSXUserWindow::SetY(double y)
 	{
+		printf("set y=%f\n", y);
 		if (window != nil)
 		{
 			this->real_y = y; // Preserve input value
 			NSRect newRect = CalculateWindowFrame(real_x, real_y, real_w, real_h);
+			printf("set real y=%f\n", newRect.origin.y);
 			[window setFrameOrigin: newRect.origin];
 		}
 	}
