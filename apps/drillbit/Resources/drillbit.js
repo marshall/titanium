@@ -331,7 +331,6 @@ window.onload = function()
 			tiapp.write(non_visual_ti);
 		}
 
-Titanium.API.debug("1");
 		
 		var us = '// ==UserScript==\n';
 		us+='// @name	Titanium App Tester\n';
@@ -366,7 +365,7 @@ Titanium.API.debug("1");
 				i = f.indexOf('_as_async');
 				if (i==-1)
 				{
-					us+="TitaniumTest.testPassed('"+f+"');\n";
+					us+="TitaniumTest.testPassed('"+f+"',TitaniumTest.currentSubject.lineNumber);\n";
 				}
 
 				us+="}\n";
@@ -525,6 +524,8 @@ Titanium.API.debug("1");
 			current_test = null;
 			run_button.disabled = false;
 			update_status('Testing complete ... took ' + test_duration + ' seconds',true);
+			var f = TFS.getFile(results_dir,'drillbit.json');
+			f.write("{\"success\":" + String(!test_failures) + "}");
 			if (auto_run)
 			{
 				Titanium.App.exit(test_failures ? 1 : 0);

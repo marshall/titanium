@@ -229,12 +229,28 @@ namespace ti
 		}
 	}
 
+	NSScreen* OSXUserWindow::GetWindowScreen()
+	{
+
+		NSScreen* screen = [window screen];
+		if (screen == nil) 
+		{
+			// Window is offscreen, so set things relative to the main screen.
+			// The other option in this case would be to use the "closest" screen,
+			// which might be better, but the real fix is to add support for multiple
+			// screens in the UI API.
+			screen = [NSScreen mainScreen];	
+
+		}
+		return screen;
+	}
+
 	NSRect OSXUserWindow::CalculateWindowFrame(double x, double y, double width, double height)
 	{
 		NSRect frame = [window frame];
-		NSRect screenFrame = [[window screen] frame];
 		NSRect contentFrame = [[window contentView] frame];
-
+		NSRect screenFrame = [this->GetWindowScreen() frame];
+		
 		// Center frame, if requested
 		if (y == UserWindow::CENTERED)
 		{
@@ -264,7 +280,7 @@ namespace ti
 		{
 			// Cocoa frame coordinates are absolute on a plane with all
 			// screens, but Titanium wants them relative to the screen.
-			NSRect screenFrame = [[window screen] frame];
+			NSRect screenFrame = [this->GetWindowScreen() frame];
 			return [window frame].origin.x - screenFrame.origin.x;
 		}
 		else
@@ -289,7 +305,7 @@ namespace ti
 		{
 			// Cocoa frame coordinates are absolute on a plane with all
 			// screens, but Titanium wants them relative to the screen.
-			NSRect screenFrame = [[window screen] frame];
+			NSRect screenFrame = [this->GetWindowScreen() frame];
 			double y = [window frame].origin.y - screenFrame.origin.y;
 
 			// Adjust for the cartesian coordinate system

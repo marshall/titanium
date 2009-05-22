@@ -23,13 +23,13 @@ Titanium.Project =
 		}
 		return ver;
 	},
-	setModules: function(dir)
+	setModules: function(dir, runtime)
 	{
-		var result = this.getModulesAndRuntime(dir);
-		
+		var result = this.getModulesAndRuntime(dir,runtime);
+
 		// set runtime DIR and VERSION
-		this.runtimeDir = result.runtime.dir;
-		this.runtimeVersion = String(this.getModuleVersion(result.runtime.versions));
+		this.runtimeDir = result['runtime_basedir'];
+		this.runtimeVersion = runtime;
 		
 		this.requiredModules = [];
 		this.optionalModules = [];
@@ -42,24 +42,31 @@ Titanium.Project =
 			{
 				this.optionalModules.push({
 					name:name,
-					version:this.getModuleVersion(result.modules[c].versions),
-					dir:result.modules[c].dir
-				});
-			}
-			else
-			{
-				this.requiredModules.push({
-					name:name,
-					version:this.getModuleVersion(result.modules[c].versions),
+					version:result.modules[c].version,
 					dir:result.modules[c].dir
 				});
 			}
 		}
-		
+
+		// write out required modules in order
+		for (var i=0;i<this.requiredModulesList.length;i++)
+		{
+			for (var c=0;c<result.modules.length;c++)
+			{
+				if (result.modules[c].name == this.requiredModulesList[i])
+				{
+					this.requiredModules.push({
+						name:result.modules[c].name,
+						version:result.modules[c].version,
+						dir:result.modules[c].dir
+					});
+				}
+			}
+		}
 	},
-	writeManifest: function(project,excludedModules)
+	writeManifest: function(project)
 	{
-		this.setModules(project.dir);
+		this.setModules(project.dir, project.runtime);
 
 		var resources = TFS.getFile(project.dir,'Resources');
 
@@ -95,7 +102,8 @@ Titanium.Project =
 		manifest+='#url:'+project.url+'\n';
 		manifest+='#guid:'+project.guid+'\n';
 		manifest+='#desc:'+project.description+'\n';
-		manifest+='runtime:'+this.runtimeVersion+'\n';
+		manifest+='#type:desktop\n';
+		manifest+='runtime:0.4.0\n';
 
 		// write out required modules
 		for (var i=0;i<this.requiredModules.length;i++)
@@ -105,17 +113,34 @@ Titanium.Project =
 		// write out optional modules
 		for (var c=0;c<this.optionalModules.length;c++)
 		{
-			if (excludedModules)
+			// check for optional ruby language module
+			if (this.optionalModules[c].name == 'ruby')
 			{
-				if (!excludedModules[this.optionalModules[c].name])
+				if (project['languageModules'])
 				{
-					manifest+=this.optionalModules[c].name+':'+this.optionalModules[c].version+'\n';
+					if (project['languageModules'].ruby == 'on')
+					{
+						manifest+=this.optionalModules[c].name+':'+this.optionalModules[c].version+'\n';
+					}
+					continue;
 				}
 			}
-			else
+
+			// check for optional python language module
+			if (this.optionalModules[c].name == 'python')
 			{
-				manifest+=this.optionalModules[c].name+':'+this.optionalModules[c].version+'\n';
+				if (project['languageModules'])
+				{
+
+					if (project['languageModules'].python == 'on')
+					{
+						manifest+=this.optionalModules[c].name+':'+this.optionalModules[c].version+'\n';
+					}
+					continue;
+				}
 			}
+			
+			manifest+=this.optionalModules[c].name+':'+this.optionalModules[c].version+'\n';
 		}
 
 		var mf = TFS.getFile(project.dir,'manifest');
@@ -134,18 +159,19 @@ Titanium.Project =
 			var dist = TFS.getFile(project.dir,'dist',Titanium.platform);
 			dist.createDirectory(true);
 
-			// create appp
-			var runtime = TFS.getFile(this.runtimeDir,this.runtimeVersion);
+			// create app
+			var runtime = TFS.getFile(this.runtimeDir);
 			var app = Titanium.createApp(runtime,dist,project.name,project.appid,install);
-			
+
 			// write out new manifest
 			var app_manifest = TFS.getFile(app.base,'manifest');
 			app_manifest.write(manifest);
-			
+
 			// write out tiapp.xml
 			var resources = TFS.getFile(project.dir,'Resources');
 			var tiapp = TFS.getFile(project.dir,'tiapp.xml');
 			tiapp.copy(app.base);
+
 			TFS.asyncCopy(resources,app.resources,function()
 			{
 				// no modules to bundle, install the net installer
@@ -185,55 +211,68 @@ Titanium.Project =
 		}
 		
 	},
-	getVersions:function(dir)
+	
+	getRuntimes: function(appDir)
 	{
-		var entry = {name:dir.name(), versions:[], dir:dir};
-		var versions = dir.getDirectoryListing();
-		if (!versions)return null;
-		for (var v=0;v<versions.length;v++)
+		var app = Titanium.API.readApplicationManifest(appDir + Titanium.Filesystem.getSeparator() + 'manifest');
+		var modules = app.getAvailableComponents();
+		var versions = [];
+		var tracker = {};
+		if (modules)
 		{
-			if (TFS.getFile(dir,versions[v].name()).isDirectory()==true)
-				entry.versions.push(versions[v].name());
-		}
-		return entry;
-	},
-	getModulesAndRuntime:function(appDir)
-	{
-		os = Titanium.platform ;
-		// get core runtime modules
-		var dir = Titanium.Process.getEnv('KR_RUNTIME_HOME');
-		var modules = TFS.getFile(dir,'modules',os);
-		var dirs = modules.getDirectoryListing();
-		var result = [];
-		for (var c=0;c<dirs.length;c++)
-		{
-			if (this.getVersions(dirs[c]) == null)
-				continue;
-			
-			result.push(this.getVersions(dirs[c]));
-		}
-		
-		// get app modules
-		var appModules = TFS.getFile(appDir,'modules');
-		if (appModules.exists())
-		{
-			var appDirs = appModules.getDirectoryListing();
-			for (var c=0;c<appDirs.length;c++)
+			for(var i=0;i<modules.length;i++)
 			{
-				if (TFS.getFile(appDirs[c]).isDirectory()==true)
+				if (modules[i].getName()=='runtime')
 				{
-					var entry = {name:appDirs[c].name(), versions:['0.1'], dir:appDirs[c]};
-					result.push(entry);
+					if (!tracker[modules[i].getVersion()])
+					{
+						versions.push(modules[i].getVersion());
+						tracker[modules[i].getVersion()]=true;
+					}
 				}
 			}
 		}
-		var runtime = TFS.getFile(dir,'runtime',os);
+		return versions;
+	},
+	getModulesAndRuntime:function(appDir,runtime)
+	{
+		var os = Titanium.platform ;
+		var results = [];
+		var runtimeDir = null;
+		
+		// get core runtime modules
+		var app = Titanium.API.readApplicationManifest(appDir + Titanium.Filesystem.getSeparator() + 'manifest');
+		var modules = app.getAvailableComponents();
+		var tracker = {};
+		if (modules)
+		{
+			for (var i=0;i<modules.length;i++)
+			{
+				var mod = modules[i];
+				if (mod.getVersion() == "0.4.0")
+				{
+					if (mod.getName()=='runtime')
+					{
+						runtimeDir = mod.getPath();
+					}
+					else
+					{
+						if (!tracker[mod.getName()])
+						{
+		 					results.push({name:mod.getName(), version:String(mod.getVersion()), dir:mod.getPath()});
+							tracker[mod.getName()] = true;
+						}
+						
+					}
+				}
+			}
+		}
+		
 		return {
-			modules: result,
-			runtime: this.getVersions(runtime),
-			runtime_basedir: runtime,
-			modules_basedir: modules
+			modules: results,
+			'runtime_basedir': runtimeDir
 		};
+		
 	},
 	parseEntry:function(entry)
 	{
@@ -292,10 +331,33 @@ Titanium.Project =
 		}
 		return result;
 	},
-	writeTiXML: function(id,name,publisher,url,outdir)
+	create:function(options)
 	{
-		var year = new Date().getFullYear();
+		var name = options.name;
+		var guid = options.guid;
+		var desc = options.desc;
+		var dir = options.dir;
+		var publisher = options.publisher;
+		var url = options.url;
+		var image = options.image;
+		var jsLibs = options.jsLibs;
+		var html = options.html;
+		var type = options.type;
+		var id = options.id;
+		
+		var outdir = TFS.getFile(dir,name);
+		if (outdir.isDirectory())
+		{
+			return {
+				success:false,
+				message:"Directory already exists: " + outdir
+			}
+		}
+		outdir.createDirectory(true);
+
+		// write out the TIAPP.xml
 		var tiappxml = this.XML_PROLOG;
+		var year = new Date().getFullYear();
 		tiappxml+=this.makeEntry('id',id);
 		tiappxml+=this.makeEntry('name',name);
 		tiappxml+=this.makeEntry('version','1.0');
@@ -318,31 +380,10 @@ Titanium.Project =
 		tiappxml+=this.makeEntry('maximizable','true');
 		tiappxml+=this.makeEntry('minimizable','true');
 		tiappxml+=this.makeEntry('closeable','true');
-		tiappxml+=this.makeEntry('visible','true');
 		tiappxml+="</window>\n";
 		tiappxml+=this.XML_EPILOG;
 		var ti = TFS.getFile(outdir,'tiapp.xml');
 		ti.write(tiappxml);
-		return ti;
-	},
-	create:function(name,guid,desc,dir,publisher,url,image,jsLibs, html)
-	{
-		var outdir = TFS.getFile(dir,name);
-		if (outdir.isDirectory())
-		{
-			return {
-				success:false,
-				message:"Directory already exists: " + outdir
-			}
-		}
-		outdir.createDirectory(true);
-		var normalized_name = name.replace(/[^a-zA-Z0-9]/g,'_').toLowerCase();
-		normalized_name = normalized_name.replace(/ /g,'_').toLowerCase();
-		var normalized_publisher = publisher.replace(/[^a-zA-Z0-9]/g,'_').toLowerCase();
-		normalized_publisher = normalized_publisher.replace(/ /g,'_').toLowerCase();
-		// write out the TIAPP.xml
-		var id = 'com.'+normalized_publisher+'.'+normalized_name;
-		var ti = Titanium.Project.writeTiXML(id,name,publisher,url,outdir);
 		var resources = TFS.getFile(outdir,'Resources');
 		resources.createDirectory();
 		var index = TFS.getFile(resources,'index.html');
@@ -370,57 +411,71 @@ Titanium.Project =
 		var path = Titanium.App.appURLToPath('app://thirdparty_js');
 		if (jsLibs)
 		{
-			if (jsLibs.jquery)
+			for (var i=0;i<jsLibs.length;i++)
 			{
-				head += jquery
-				var f = TFS.getFile(path,'jquery-1.3.2.js');
-				f.copy(resources);
+				switch (jsLibs[i])
+				{
+					case 'jquery':
+					{
+						head += jquery
+						var f = TFS.getFile(path,'jquery-1.3.2.js');
+						f.copy(resources);
+						continue;
+					}
+					case 'entourage':
+					{
+						head += entourage;
+						var f = TFS.getFile(path,'entourage','entourage-jquery-3.0.js');
+						f.copy(resources);
+						var f2 = TFS.getFile(path,'entourage','entourage-ui');
+						f2.copy(resources);
+						continue;
+					}
+					case 'mootools':
+					{
+						head+=mootools;
+						var f = TFS.getFile(path,'mootools-1.2.1.js');
+						f.copy(resources);
+						continue;
+					}
+					case 'prototype':
+					{
+						head+= prototype_js;
+						var f = TFS.getFile(path,'prototype-1.6.0.js');
+						f.copy(resources);
+						continue;
+					}
+					case 'scriptaculous':
+					{
+						head+=scriptaculous;
+						var f = TFS.getFile(path,'scriptaculous-1.8.2.js');
+						f.copy(resources);
+						continue;
+					}
+					case 'dojo':
+					{
+						head+=dojo;
+						var f = TFS.getFile(path,'dojo-1.2.3.js');
+						f.copy(resources);
+						continue;
+					}
+					case 'yui':
+					{
+						head+=yahoo;
+						var f = TFS.getFile(path,'yui-2.6.0.js');
+						f.copy(resources);
+						continue;
+					}
+					case 'swf':
+					{
+						head+=swfobject;
+						var f = TFS.getFile(path,'swfobject-1.5.js');
+						f.copy(resources);
+						continue;
+					}
+				}
+				
 			}
-			if (jsLibs.entourage)
-			{
-				head += entourage;
-				var f = TFS.getFile(path,'entourage','entourage-jquery-3.0.js');
-				f.copy(resources);
-				var f2 = TFS.getFile(path,'entourage','entourage-ui');
-				f2.copy(resources);
-			}
-			if (jsLibs.prototype_js)
-			{
-				head+= prototype_js;
-				var f = TFS.getFile(path,'prototype-1.6.0.js');
-				f.copy(resources);
-			}
-			if (jsLibs.scriptaculous)
-			{
-				head+=scriptaculous;
-				var f = TFS.getFile(path,'scriptaculous-1.8.2.js');
-				f.copy(resources);
-			}
-			if (jsLibs.mootools)
-			{
-				head+=mootools;
-				var f = TFS.getFile(path,'mootools-1.2.1.js');
-				f.copy(resources);
-			}
-			if(jsLibs.dojo)
-			{
-				head+=dojo;
-				var f = TFS.getFile(path,'dojo-1.2.3.js');
-				f.copy(resources);
-			}
-			if (jsLibs.swf)
-			{
-				head+=swfobject;
-				var f = TFS.getFile(path,'swfobject-1.5.js');
-				f.copy(resources);
-			}
-			if (jsLibs.yahoo)
-			{
-				head+=yahoo;
-				var f = TFS.getFile(path,'yui-2.6.0.js');
-				f.copy(resources);
-			}
-			
 		}
 		head += '</head>';
 		
@@ -439,6 +494,7 @@ Titanium.Project =
 		"#image: "+image+"\n"+
 		"#appid: "+id+"\n"+
 		"#desc: "+desc+"\n"+
+		"#type: "+type+"\n"+
 		"#guid: " +  guid + "\n";
 		
 		var mf = TFS.getFile(outdir,'manifest');
