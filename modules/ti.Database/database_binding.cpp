@@ -48,7 +48,7 @@ namespace ti
 			else
 			{
 				char msg[255];
-				sprintf("unknown supported type: %s for argument",arg->ToTypeString());
+				sprintf(msg, "unknown supported type: %s for argument", arg->ToTypeString());
 				throw ValueException::FromString(msg);
 			}
 		} 
@@ -176,8 +176,8 @@ namespace ti
 		dbname = args.at(0)->ToString();
 		origin = GetSecurityOrigin(appid);
 
-		static Logger &logger = Logger::Get("Database");
-		logger.Debug("appid=%s,dir=%s,dbname=%s,origin=%s",appid.c_str(),dbdir.c_str(),dbname.c_str(),origin.c_str());
+		static Logger* logger = Logger::Get("Database");
+		logger->Debug("appid=%s,dir=%s,dbname=%s,origin=%s",appid.c_str(),dbdir.c_str(),dbname.c_str(),origin.c_str());
 
 		database = new Databases(dbdir);
 		std::string path;
@@ -216,7 +216,7 @@ namespace ti
 		else
 		{
 			char msg[255];
-			sprintf("unknown supported type: %s for argument",arg->ToTypeString());
+			sprintf(msg, "unknown supported type: %s for argument",arg->ToTypeString());
 			throw ValueException::FromString(msg);
 		}
 	}
@@ -228,8 +228,8 @@ namespace ti
 		}
 		std::string sql = args.at(0)->ToString();
 
-		static Logger &logger = Logger::Get("Database");
-		logger.Debug("Execute called with %s",sql.c_str());
+		static Logger* logger = Logger::Get("Database");
+		logger->Debug("Execute called with %s",sql.c_str());
 		
 		Statement select(session->GetSession());
 		
@@ -262,7 +262,7 @@ namespace ti
 			}
 			Poco::UInt32 count = select.execute();
 
-			logger.Debug("sql returned: %d rows for result",count);
+			logger->Debug("sql returned: %d rows for result",count);
 
 			SET_INT_PROP("rowsAffected",count);
 			
@@ -278,16 +278,16 @@ namespace ti
 				result->SetObject(r);
 			}
 		}
-		catch(Poco::Data::DataException &e)
+		catch (Poco::Data::DataException &e)
 		{
-			logger.Error("Exception executing: %s, Error was: %s",sql.c_str(),e.what());
+			logger->Error("Exception executing: %s, Error was: %s",sql.c_str(),e.what());
 			throw ValueException::FromString(e.what());
 		}
 	}
 	void DatabaseBinding::Close(const ValueList& args, SharedValue result)
 	{
-		static Logger &logger = Logger::Get("Database");
-		logger.Debug("Close database: %s",dbname.c_str());
+		static Logger* logger = Logger::Get("Database");
+		logger->Debug("Close database: %s",dbname.c_str());
 		if (session)
 		{
 			delete session;
@@ -301,8 +301,8 @@ namespace ti
 	}
 	void DatabaseBinding::Remove(const ValueList& args, SharedValue result)
 	{
-		static Logger &logger = Logger::Get("Database");
-		logger.Debug("Remove database: %s",dbname.c_str());
+		static Logger* logger = Logger::Get("Database");
+		logger->Debug("Remove database: %s",dbname.c_str());
 		if (session)
 		{
 			delete session;

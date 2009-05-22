@@ -23,9 +23,10 @@ namespace ti
 		evaluator = new ScriptEvaluator();
 		addScriptEvaluator(evaluator);
 
-		double ver = host->GetGlobalObject()->Get("version")->ToDouble();
 		char buf[256];
-		snprintf(buf, 256, "%s/%0.2f", PRODUCT_NAME, ver);
+		//TI-303 we need to add safari UA to our UA to resolve broken
+		//sites that look at Safari and not WebKit for UA
+		snprintf(buf, 256, "Version/4.0 Safari/528.16 %s/%s", PRODUCT_NAME, STRING(PRODUCT_VERSION));
 		g_set_prgname(buf);
 	}
 

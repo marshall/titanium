@@ -175,8 +175,8 @@ int IRC::start(char* server, int port, char* nick, char* user, char* name, char*
 	if (connect(irc_socket, (const sockaddr*)&rem, sizeof(rem))==SOCKET_ERROR)
 	{
 #ifdef WIN32
-		Logger logger = Logger::GetRootLogger();
-		logger.Error("Failed to connect: %s", WSAGetLastError());
+		Logger* logger = Logger::Get("Network.IRC");
+		logger->Error("Failed to connect: %i", WSAGetLastError());
 #endif
 		connecting = false;
 		closesocket(irc_socket);
@@ -259,13 +259,13 @@ int IRC::message_loop()
 		}
 		catch(std::exception &e)
 		{
-			Logger logger = Logger::GetRootLogger();
-			logger.Error("ERROR DISPATCHING IRC RECEIVE BUFFER. Error=%s", e.what());
+			Logger* logger = Logger::Get("Network.IRC");
+			logger->Error("ERROR DISPATCHING IRC RECEIVE BUFFER. Error=%s", e.what());
 		}
 		catch(...)
 		{
-			Logger logger = Logger::GetRootLogger();
-			logger.Error("UNKNOWN EXCEPTION IN IRC RECEIVE THREAD...");
+			Logger* logger = Logger::Get("Network.IRC");
+			logger->Error("UNKNOWN EXCEPTION IN IRC RECEIVE THREAD...");
 		}
 	}
 

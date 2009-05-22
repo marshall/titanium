@@ -65,9 +65,6 @@ build.env['BUILDERS']['PackageApp'] = build.env.Builder(
 	multi=0)
 
 SConscript('testapp/SConscript')
-SConscript('apivalidator/SConscript')
-SConscript('uploader/SConscript')
-SConscript('unittest/SConscript')
 SConscript('drillbit/SConscript')
 
 

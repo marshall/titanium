@@ -35,10 +35,10 @@ namespace ti
 
 	private:
 		static UIBinding* instance;
-		std::vector<SharedUserWindow> open_windows;
-		std::vector<SharedUserWindow> all_windows;
-		SharedKList open_window_list;
+		std::vector<SharedUserWindow> openWindows;
+		SharedKList openWindowList;
 
+		void _GetOpenWindows(const ValueList& args, SharedValue result);
 		void _CreateMenu(const ValueList& args, SharedValue result);
 		void _CreateTrayMenu(const ValueList& args, SharedValue result);
 		void _SetMenu(const ValueList& args, SharedValue result);

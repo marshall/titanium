@@ -11,17 +11,30 @@
 #include <Poco/FileStream.h>
 #include <Poco/Exception.h>
 
+#ifndef OS_WIN32
+#include <sys/types.h>
+#include <sys/stat.h>
+#endif
+
+#ifdef OS_LINUX
+#include <sys/statvfs.h>
+#endif
+
 namespace ti
 {
 	File::File(std::string filename)
 	{
-#ifdef OS_OSX
-		// in OSX, we need to expand ~ in paths to their absolute path value
-		// we do that with a nifty helper method in NSString
-		this->filename = [[[NSString stringWithCString:filename.c_str()] stringByExpandingTildeInPath] fileSystemRepresentation];
-#else
-		this->filename = filename;
-#endif
+
+		Poco::Path pocoPath(Poco::Path::expand(filename));
+		this->filename = pocoPath.absolute().toString();
+
+		// If the filename we were given contains a trailing slash, just remove it
+		// so that users can count on reproducible results fromr toShtring.
+		size_t length = this->filename.length();
+		if (length > 1 && this->filename[length - 1] == Poco::Path::separator())
+		{
+			this->filename.resize(length - 1);
+		}
 
 		/**
 		 * @tiapi(method=True,name=Filesystem.File.toString,since=0.2) returns a string representation of the File object
@@ -316,8 +329,22 @@ namespace ti
 	{
 		try
 		{
+#ifdef OS_WIN32
 			Poco::File file(this->filename);
-			result->SetBool(file.canRead());
+			result->SetBool(!file.canRead());
+#else
+			struct stat sb;
+			stat(this->filename.c_str(),&sb);
+			// can others read it?
+			if ((sb.st_mode & S_IROTH)==S_IROTH)
+			{
+				result->SetBool(false);
+			}
+			else
+			{
+				result->SetBool(true);
+			}
+#endif
 		}
 		catch (Poco::FileNotFoundException &fnf)
 		{
@@ -371,25 +398,35 @@ namespace ti
 	}
 	void File::Write(const ValueList& args, SharedValue result)
 	{
-		std::string mode = FileStream::MODE_WRITE;
+		FileStreamMode mode = MODE_WRITE;
 
 		if(args.size() > 1)
 		{
 			if(args.at(1)->ToBool())
 			{
-				mode = FileStream::MODE_APPEND;
+				mode = MODE_APPEND;
 			}
 		}
+
+		Logger* logger = Logger::Get("Filesystem.File");
+		logger->Trace("write called for %s",this->filename.c_str());
 
 		ti::FileStream fs(this->filename);
 		fs.Open(mode);
 		fs.Write(args, result);
 		fs.Close();
+#ifndef OS_WIN32
+		chmod(this->filename.c_str(),S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH);
+#endif		
 	}
+
 	void File::Read(const ValueList& args, SharedValue result)
 	{
+		Logger* logger = Logger::Get("Filesystem.File");
+		logger->Trace("read called for %s",this->filename.c_str());
+
 		FileStream fs(this->filename);
-		fs.Open(FileStream::MODE_READ);
+		fs.Open(MODE_READ);
 		fs.Read(args, result);
 		fs.Close();
 	}
@@ -411,7 +448,7 @@ namespace ti
 
 			// now open the file
 			this->readLineFS = new ti::FileStream(this->filename);
-			this->readLineFS->Open(FileStream::MODE_READ);
+			this->readLineFS->Open(MODE_READ);
 		}
 
 		if(this->readLineFS == NULL)
@@ -490,6 +527,10 @@ namespace ti
 					created = dir.createDirectory();
 				}
 			}
+#ifndef OS_WIN32
+		// directories must have execute bit by default or you can CD into them
+		chmod(this->filename.c_str(),S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH|S_IXUSR|S_IXGRP|S_IXOTH);
+#endif		
 			result->SetBool(created);
 		}
 		catch (Poco::Exception& exc)
@@ -692,32 +733,30 @@ namespace ti
 	}
 	void File::GetSpaceAvailable(const ValueList& args, SharedValue result)
 	{
-		long avail = -1;
+		result->SetNull();
 		Poco::Path path(this->filename);
 
 #ifdef OS_OSX
 		NSString *p = [NSString stringWithCString:this->filename.c_str()];
-		avail = [[[[NSFileManager defaultManager] fileSystemAttributesAtPath:p] objectForKey:NSFileSystemFreeSize] longValue];
+		unsigned long avail = [[[[NSFileManager defaultManager] fileSystemAttributesAtPath:p] objectForKey:NSFileSystemFreeSize] longValue];
+		result->SetDouble(avail);
 #elif OS_WIN32
 		PULARGE_INTEGER freeBytesAvail = 0;
 		PULARGE_INTEGER totalNumOfBytes = 0;
 		PULARGE_INTEGER totalNumOfFreeBytes = 0;
 		if(GetDiskFreeSpaceEx(path.absolute().getFileName().c_str(), freeBytesAvail, totalNumOfBytes, totalNumOfFreeBytes))
 		{
-			avail = long(freeBytesAvail);
-		}
-#elif OS_LINUX
-		// TODO complete and test this
-#endif
-
-		if(avail == -1)
-		{
-			result->SetNull();
-		}
-		else
-		{
+			unsigned long avail = static_cast<unsigned long>(freeBytesAvail);
 			result->SetDouble(avail);
 		}
+#elif OS_LINUX
+		struct statvfs stats;
+		if (statvfs(this->filename.c_str(), &stats) == 0)
+		{
+			unsigned long avail = stats.f_bsize * static_cast<unsigned long>(stats.f_bavail);
+			result->SetDouble(avail);
+		}
+#endif
 	}
 	void File::CreateShortcut(const ValueList& args, SharedValue result)
 	{
@@ -821,7 +860,7 @@ namespace ti
 		{
 			Poco::File file(this->filename);
 			file.setExecutable(args.at(0)->ToBool());
-			result->SetBool(true);
+			result->SetBool(file.canExecute());
 		}
 		catch (Poco::FileNotFoundException &fnf)
 		{
@@ -840,9 +879,25 @@ namespace ti
 	{
 		try
 		{
-			Poco::File file(this->filename);
-			file.setReadOnly(args.at(0)->ToBool());
+			bool readonly = args.at(0)->ToBool();
+#ifndef OS_WIN32
+			mode_t mode = S_IRUSR|S_IWUSR;
+			Poco::File f(this->filename);
+			if (f.canExecute())
+			{
+				mode |= S_IXUSR|S_IXGRP|S_IXOTH;
+			}
+			if (!readonly)
+			{
+				mode |= S_IRGRP | S_IROTH;
+			}
+			chmod(this->filename.c_str(),mode);
 			result->SetBool(true);
+#else
+			Poco::File file(this->filename);
+			file.setReadOnly(readonly);
+			result->SetBool(!file.canRead());
+#endif		
 		}
 		catch (Poco::FileNotFoundException &fnf)
 		{
@@ -863,7 +918,7 @@ namespace ti
 		{
 			Poco::File file(this->filename);
 			file.setWriteable(args.at(0)->ToBool());
-			result->SetBool(true);
+			result->SetBool(file.canWrite());
 		}
 		catch (Poco::FileNotFoundException &fnf)
 		{

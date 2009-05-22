@@ -58,12 +58,24 @@ class UserWindow : public kroll::StaticBoundObject {
 		SharedUIBinding GetBinding();
 
 	private:
+		void ReadChooserDialogObject(
+			SharedKObject o,
+			bool& multiple,
+			std::string& title,
+			std::string& path,
+			std::string& defaultName,
+			std::vector<std::string>& types,
+			std::string& typesDescription);
+
+		void _GetCurrentWindow(const kroll::ValueList&, kroll::SharedValue);
 		void _Hide(const kroll::ValueList&, kroll::SharedValue);
 		void _Show(const kroll::ValueList&, kroll::SharedValue);
 		void _Minimize(const kroll::ValueList&, kroll::SharedValue);
 		void _Maximize(const kroll::ValueList&, kroll::SharedValue);
 		void _Unminimize(const kroll::ValueList&, kroll::SharedValue);
 		void _Unmaximize(const kroll::ValueList&, kroll::SharedValue);
+		void _IsMaximized(const kroll::ValueList&, kroll::SharedValue);
+		void _IsMinimized(const kroll::ValueList&, kroll::SharedValue);
 		void _Focus(const kroll::ValueList&, kroll::SharedValue);
 		void _Unfocus(const kroll::ValueList&, kroll::SharedValue);
 		void _IsUsingChrome(const kroll::ValueList&, kroll::SharedValue);
@@ -136,8 +148,10 @@ class UserWindow : public kroll::StaticBoundObject {
 
 		void _GetParent(const kroll::ValueList&, kroll::SharedValue);
 		void _CreateWindow(const kroll::ValueList&, kroll::SharedValue);
-		void _OpenFiles(const ValueList& args, SharedValue result);
-		void _OpenSaveAs(const ValueList& args, SharedValue result);
+
+		void _OpenFileChooserDialog(const ValueList& args, SharedValue result);
+		void _OpenFolderChooserDialog(const ValueList& args, SharedValue result);
+		void _OpenSaveAsDialog(const ValueList& args, SharedValue result);
 
 		void _AddEventListener(const kroll::ValueList&, kroll::SharedValue);
 		void _RemoveEventListener(const kroll::ValueList&, kroll::SharedValue);
@@ -152,20 +166,29 @@ class UserWindow : public kroll::StaticBoundObject {
 		std::vector<Listener> listeners;
 
 	public:
-		virtual void OpenFiles(
+		virtual void OpenFileChooserDialog(
 			SharedKMethod callback,
 			bool multiple,
-			bool files,
-			bool directories,
+			std::string& title,
 			std::string& path,
-			std::string& file,
-			std::vector<std::string>& types) = 0;
+			std::string& defaultName,
+			std::vector<std::string>& types,
+			std::string& typesDescription) = 0;
 
-		virtual void OpenSaveAs(
+		virtual void OpenFolderChooserDialog(
 			SharedKMethod callback,
+			bool multiple,
+			std::string& title,
 			std::string& path,
-			std::string& file,
-			std::vector<std::string>& types) = 0;
+			std::string& defaultName) = 0;
+
+		virtual void OpenSaveAsDialog(
+			SharedKMethod callback,
+			std::string& title,
+			std::string& path,
+			std::string& defaultName,
+			std::vector<std::string>& types,
+			std::string& typesDescription) = 0;
 
 		virtual void Hide() = 0;
 		virtual void Show() = 0;
@@ -173,6 +196,8 @@ class UserWindow : public kroll::StaticBoundObject {
 		virtual void Maximize() = 0;
 		virtual void Unminimize() = 0;
 		virtual void Unmaximize() = 0;
+		virtual bool IsMaximized() = 0;
+		virtual bool IsMinimized() = 0;
 		virtual void Focus() = 0;
 		virtual void Unfocus() = 0;
 		virtual bool IsUsingChrome() = 0;

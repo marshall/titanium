@@ -104,8 +104,10 @@
 		[WebScriptElement addScriptEvaluator:self];
 		
 		SharedKObject global = host->GetGlobalObject();
-		double version = global->Get("version")->ToDouble();
-		NSString *useragent = [NSString stringWithFormat:@"%s/%0.2f",PRODUCT_NAME,version];
+		const char* version = global->Get("version")->ToString();
+		//TI-303 we need to add safari UA to our UA to resolve broken
+		//sites that look at Safari and not WebKit for UA
+		NSString *useragent = [NSString stringWithFormat:@"Version/4.0 Safari/528.16 %s/%s",PRODUCT_NAME,version];
 		[webView setApplicationNameForUserAgent:useragent];
 		// place our user agent string in the global so we can later use it
 		const char *ua = [[webView userAgentForURL:[NSURL URLWithString:@"http://titaniumapp.com"]] UTF8String];
@@ -393,9 +395,9 @@
 		return;
 	}
 
-	NSString *err = [NSString stringWithFormat:@"Error loading URL: %@. %@", url,[error localizedDescription]];
-	Logger logger = Logger::GetRootLogger();
-	logger.Error("error: %s",[err UTF8String]);
+	Logger* logger = Logger::Get("UI.WebViewDelegate");
+	std::string err = [[NSString stringWithFormat:@"Error loading URL: %@. %@", url,[error localizedDescription]] UTF8String];
+	logger->Error(err);
 
 	// in this case we need to ensure that the window is showing if not initially shown
 	if (initialDisplay==NO)
@@ -781,25 +783,25 @@ std::string GetModuleName(NSString *typeStr)
 			catch(ValueException &e)
 			{
 				SharedString s = e.GetValue()->DisplayString();
-				Logger logger = Logger::GetRootLogger();
-				logger.Error("Exception evaluating %s. Error: %s",type.c_str(),(*s).c_str());
+				Logger* logger = Logger::Get("UI.WebViewDelegate");
+				logger->Error("Exception evaluating %s. Error: %s", type.c_str(), (*s).c_str());
 			}
 			catch(std::exception &e)
 			{
-				Logger logger = Logger::GetRootLogger();
-				logger.Error("Exception evaluating %s. Error: %s",type.c_str(),e.what());
+				Logger* logger = Logger::Get("UI.WebViewDelegate");
+				logger->Error("Exception evaluating %s. Error: %s", type.c_str(), e.what());
 			}
 			catch(...)
 			{
-				Logger logger = Logger::GetRootLogger();
-				logger.Error("Exception evaluating %s. Unknown Error.",type.c_str());
+				Logger* logger = Logger::Get("UI.WebViewDelegate");
+				logger->Error("Exception evaluating %s. Unknown Error.", type.c_str());
 			}
 		}
 	}
 	else
 	{
-		Logger logger = Logger::GetRootLogger();
-		logger.Error("Couldn't find script type bound object for %s",type.c_str());
+		Logger* logger = Logger::Get("UI.WebViewDelegate");
+		logger->Error("Couldn't find script type bound object for %s", type.c_str());
 	}
 }
 

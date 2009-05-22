@@ -126,11 +126,48 @@ Win32UserWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			if(window)
 			{
 				MINMAXINFO *mmi = (MINMAXINFO*) lParam;
-				mmi->ptMaxTrackSize.x = window->GetMaxWidth();
-				mmi->ptMaxTrackSize.y = window->GetMaxHeight();
+				static int minYTrackSize = GetSystemMetrics(SM_CXMINTRACK);
+				static int minXTrackSize = GetSystemMetrics(SM_CYMINTRACK);
+				int max_width = (int) window->GetMaxWidth();
+				int min_width = (int) window->GetMinWidth();
+				int max_height = (int) window->GetMaxHeight();
+				int min_height = (int) window->GetMinHeight();
 
-				mmi->ptMinTrackSize.x = window->GetMinWidth();
-				mmi->ptMinTrackSize.y = window->GetMinHeight();
+				if (max_width != -1)
+				{
+					mmi->ptMaxTrackSize.x = INT_MAX; // Uncomfortably large
+				}
+				else
+				{
+					mmi->ptMaxTrackSize.x = max_width;
+				}
+
+				if (min_width != -1)
+				{
+					mmi->ptMinTrackSize.x = minXTrackSize;
+				}
+				else
+				{
+					mmi->ptMinTrackSize.x = min_width;
+				}
+
+				if (max_height != -1)
+				{
+					mmi->ptMaxTrackSize.y = INT_MAX; // Uncomfortably large
+				}
+				else
+				{
+					mmi->ptMaxTrackSize.y = max_height;
+				}
+
+				if (min_height != -1)
+				{
+					mmi->ptMinTrackSize.y = minYTrackSize;
+				}
+				else
+				{
+					mmi->ptMinTrackSize.y = min_height;
+				}
 			}
 		}
 		break;
@@ -215,7 +252,7 @@ Win32UserWindow::Win32UserWindow(SharedUIBinding binding, WindowConfig* config, 
 
 	Win32UserWindow::RegisterWindowClass(win32_host->GetInstanceHandle());
 	window_handle
-			= CreateWindowEx(WS_EX_LAYERED, windowClassName,
+			= CreateWindowEx(WS_EX_APPWINDOW /*WS_EX_LAYERED*/, windowClassName,
 					config->GetTitle().c_str(), WS_CLIPCHILDREN, CW_USEDEFAULT,
 					0, CW_USEDEFAULT, 0, NULL, NULL,
 					win32_host->GetInstanceHandle(), NULL);
@@ -266,9 +303,11 @@ Win32UserWindow::Win32UserWindow(SharedUIBinding binding, WindowConfig* config, 
 	}
 
 	// set the custom user agent for Titanium
-	double version = host->GetGlobalObject()->Get("version")->ToDouble();
+	const char *version = host->GetGlobalObject()->Get("version")->ToString();
 	char userAgent[128];
-	sprintf(userAgent, "%s/%0.2f", PRODUCT_NAME, version);
+	//TI-303 we need to add safari UA to our UA to resolve broken
+	//sites that look at Safari and not WebKit for UA
+	sprintf(userAgent, "Version/4.0 Safari/528.16 %s/%s", PRODUCT_NAME, version);
 	_bstr_t ua(userAgent);
 	web_view->setApplicationNameForUserAgent(ua.copy());
 
@@ -465,6 +504,11 @@ void Win32UserWindow::Unminimize()
 	ShowWindow(window_handle, SW_RESTORE);
 }
 
+bool Win32UserWindow::IsMinimized()
+{
+	return IsIconic(window_handle) != 0;
+}
+
 void Win32UserWindow::Maximize()
 {
 	ShowWindow(window_handle, SW_MAXIMIZE);
@@ -473,6 +517,11 @@ void Win32UserWindow::Maximize()
 void Win32UserWindow::Unmaximize()
 {
 	ShowWindow(window_handle, SW_RESTORE);
+}
+
+bool Win32UserWindow::IsMaximized()
+{
+	return IsZoomed(window_handle) != 0;
 }
 
 void Win32UserWindow::Focus()
@@ -606,9 +655,12 @@ Bounds Win32UserWindow::GetBounds()
 void Win32UserWindow::SetBounds(Bounds bounds)
 {
 	HWND desktop = GetDesktopWindow();
-	RECT desktopRect;
+	RECT clientRect, windowRect, desktopRect;
+	
 	GetWindowRect(desktop, &desktopRect);
-
+	GetClientRect(window_handle, &clientRect);
+	GetWindowRect(window_handle, &windowRect);
+	
 	if (bounds.x == UserWindow::CENTERED)
 	{
 		bounds.x = (desktopRect.right - bounds.width) / 2;
@@ -625,8 +677,14 @@ void Win32UserWindow::SetBounds(Bounds bounds)
 	{
 		flags = SWP_HIDEWINDOW;
 	}
-	SetWindowPos(window_handle, NULL, bounds.x, bounds.y, bounds.width,
-			bounds.height, flags);
+	
+	// offset the size of the window chrome
+	//
+	int widthDelta = (windowRect.right - windowRect.left) - (clientRect.right - clientRect.left);
+	int heightDelta = (windowRect.bottom - windowRect.top) - (clientRect.bottom - clientRect.top);
+	
+	SetWindowPos(window_handle, NULL, bounds.x, bounds.y,
+		bounds.width + widthDelta, bounds.height + heightDelta, flags);
 }
 
 void Win32UserWindow::SetTitle(std::string& title)
@@ -715,8 +773,16 @@ bool Win32UserWindow::IsVisible()
 
 void Win32UserWindow::SetTransparency(double transparency)
 {
-	SetLayeredWindowAttributes(window_handle, 0, (BYTE) floor(transparency
-			* 255), LWA_ALPHA);
+	if (config->GetTransparency() < 1.0)
+	{
+		SetWindowLong( this->window_handle, GWL_EXSTYLE, WS_EX_LAYERED);
+		SetLayeredWindowAttributes(this->window_handle, 0, (BYTE) floor(
+		config->GetTransparency() * 255), LWA_ALPHA);
+	}
+	else
+	{
+		SetWindowLong( this->window_handle, GWL_EXSTYLE, WS_EX_APPWINDOW);
+	}
 }
 
 void Win32UserWindow::SetFullScreen(bool fullscreen)
@@ -929,9 +995,15 @@ void Win32UserWindow::ReloadTiWindowConfig()
 	//SetLayeredWindowAttributes(hWnd, 0, (BYTE)0, LWA_ALPHA);
 	if (config->GetTransparency() < 1.0)
 	{
+		SetWindowLong( this->window_handle, GWL_EXSTYLE, WS_EX_LAYERED);
 		SetLayeredWindowAttributes(this->window_handle, 0, (BYTE) floor(
 				config->GetTransparency() * 255), LWA_ALPHA);
 	}
+	else
+	{
+		SetWindowLong( this->window_handle, GWL_EXSTYLE, WS_EX_APPWINDOW);
+	}
+	
 	SetLayeredWindowAttributes(this->window_handle, transparencyColor, 0,
 			LWA_COLORKEY);
 }
@@ -997,61 +1069,59 @@ void Win32UserWindow::ShowWebInspector()
 	}
 }
 
-void Win32UserWindow::OpenFiles(
+void Win32UserWindow::OpenFileChooserDialog(
 	SharedKMethod callback,
 	bool multiple,
-	bool files,
-	bool directories,
+	std::string& title,
 	std::string& path,
-	std::string& file,
-	std::vector<std::string>& types)
+	std::string& defaultName,
+	std::vector<std::string>& types,
+	std::string& typesDescription)
 {
-	SharedKList results;
-	if (directories)
-	{
-		results = SelectDirectory(multiple, path, file);
-	}
-	else
-	{
-		results = SelectFile(callback, multiple, path, file, types, false);
-	}
 
-	ValueList args;
-	args.push_back(Value::NewList(results));
-	callback->Call(args);
+	SharedKList results = SelectFile(
+		false, multiple, title, path, defaultName, types, typesDescription);
+	callback->Call(ValueList(Value::NewList(results)));
 }
 
-void Win32UserWindow::OpenSaveAs(
+void Win32UserWindow::OpenFolderChooserDialog(
 	SharedKMethod callback,
+	bool multiple,
+	std::string& title,
 	std::string& path,
-	std::string& file,
-	std::vector<std::string>& types)
+	std::string& defaultName)
 {
-	SharedKList results;
+	SharedKList results = SelectDirectory(multiple, title, path, defaultName);
+	callback->Call(ValueList(Value::NewList(results)));
+}
 
-	results = SelectFile(callback, false, path, file, types, true);
-
-	ValueList args;
-	args.push_back(Value::NewList(results));
-	callback->Call(args);
+void Win32UserWindow::OpenSaveAsDialog(
+	SharedKMethod callback,
+	std::string& title,
+	std::string& path,
+	std::string& defaultName,
+	std::vector<std::string>& types,
+	std::string& typesDescription)
+{
+	SharedKList results = SelectFile(
+		true, false, title, path, defaultName, types, typesDescription);
+	callback->Call(ValueList(Value::NewList(results)));
 }
 
 SharedKList Win32UserWindow::SelectFile(
-	SharedKMethod callback,
+ 	bool saveDialog,
 	bool multiple,
+	std::string& title,
 	std::string& path,
-	std::string& file,
-	std::vector<
-	std::string>& types, bool saveDialog)
+	std::string& defaultName,
+	std::vector<std::string>& types,
+	std::string& typesDescription)
 {
-	//std::string filterName = props->GetString("typesDescription", "Filtered Files");
-	std::string filterName = "Filtered Files";
 	std::string filter;
-
 	if (types.size() > 0)
 	{
 		//"All\0*.*\0Test\0*.TXT\0";
-		filter.append(filterName);
+		filter.append(typesDescription);
 		filter.push_back('\0');
 
 		for (int i = 0; i < types.size(); i++)
@@ -1072,17 +1142,11 @@ SharedKList Win32UserWindow::SelectFile(
 	}
 
 	OPENFILENAME ofn;
-	char filen[8192];
-
+	char filen[MAX_PATH];
 	ZeroMemory(&filen, sizeof(filen));
-
-	if (file.size() == 0)
+	if (defaultName.size() >= 0)
 	{
-		filen[0] = '\0';
-	}
-	else
-	{
-		strcpy(filen, file.c_str());
+		strcpy(filen, defaultName.c_str());
 	}
 
 	// init OPENFILE
@@ -1091,14 +1155,19 @@ SharedKList Win32UserWindow::SelectFile(
 	ofn.hwndOwner = this->window_handle;
 	ofn.lpstrFile = filen;
 	ofn.nMaxFile = sizeof(filen);
-	ofn.lpstrFilter = (filter.length() == 0 ? NULL : filter.c_str());
+	ofn.lpstrFilter = (filter.empty() ? NULL : filter.c_str());
 	ofn.nFilterIndex = 1;
 	ofn.lpstrFileTitle = NULL;
 	ofn.nMaxFileTitle = 0;
 	ofn.lpstrInitialDir = (path.length() == 0 ? NULL : path.c_str());
 	ofn.Flags = OFN_EXPLORER;
 
-	if(!saveDialog)
+	if (!title.empty())
+	{
+		ofn.lpstrTitle = title.c_str();
+	}
+
+	if (!saveDialog)
 	{
 		ofn.Flags |= OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
 	}
@@ -1112,7 +1181,7 @@ SharedKList Win32UserWindow::SelectFile(
 	// display the open dialog box
 	BOOL result;
 
-	if(saveDialog)
+	if (saveDialog)
 	{
 		result = GetSaveFileName(&ofn);
 	}
@@ -1146,11 +1215,12 @@ SharedKList Win32UserWindow::SelectFile(
 			}
 		}
 	}
-	else {
+	else
+	{
 		DWORD error = CommDlgExtendedError();
 		printf("Error when opening files: %d\n", error);
 		switch(error)
-{
+		{
 			case CDERR_DIALOGFAILURE: printf("CDERR_DIALOGFAILURE\n"); break;
 			case CDERR_FINDRESFAILURE: printf("CDERR_FINDRESFAILURE\n"); break;
 			case CDERR_NOHINSTANCE: printf("CDERR_NOHINSTANCE\n"); break;
@@ -1171,24 +1241,33 @@ SharedKList Win32UserWindow::SelectFile(
 	return results;
 }
 
-SharedKList Win32UserWindow::SelectDirectory(bool multiple,
-		std::string& path, std::string& file)
+SharedKList Win32UserWindow::SelectDirectory(
+	bool multiple,
+	std::string& title,
+	std::string& path,
+	std::string& defaultName)
 {
 	SharedKList results = new StaticBoundList();
 
 	BROWSEINFO bi = { 0 };
-	//std::string title("Select a directory");
-	//bi.lpszTitle = title.c_str();
+	bi.lpszTitle = title.c_str();
 	bi.hwndOwner = this->window_handle;
+	bi.ulFlags = BIF_RETURNONLYFSDIRS;
 	LPITEMIDLIST pidl = SHBrowseForFolder(&bi);
 
 	if (pidl != 0)
 	{
-		// get folder name
 		TCHAR in_path[MAX_PATH];
 		if (SHGetPathFromIDList(pidl, in_path))
 		{
 			results->Append(Value::NewString(std::string(in_path)));
+		}
+
+		IMalloc * imalloc = 0;
+		if (SUCCEEDED(SHGetMalloc(&imalloc)))
+		{
+			imalloc->Free(pidl);
+			imalloc->Release();
 		}
 	}
 	return results;

@@ -25,13 +25,19 @@ namespace ti
 
 	OSXUserWindow::OSXUserWindow(SharedUIBinding binding, WindowConfig* config, SharedUserWindow& parent) :
 		UserWindow(binding, config, parent),
-		window(NULL),
+		window(nil),
 		opened(false),
 		closed(false),
 		osx_binding(binding.cast<OSXUIBinding>())
 	{
-		unsigned int mask = toWindowMask(config);
+		// Initialization of the window and its properties now happen in Open(),
+		// so that developers can tweak window properties before comitting to them
+		// by calling Open(...)
+	}
 
+	void OSXUserWindow::Open()
+	{
+		unsigned int mask = toWindowMask(config);
 		NSRect mainFrame = [[NSScreen mainScreen] frame];
 		NSRect frame = mainFrame;
 
@@ -87,63 +93,85 @@ namespace ti
 			[window miniaturize:window];
 		}
 
+		opened = true;
+		[window open];
+		UserWindow::Open();
 	}
+
 	OSXUserWindow::~OSXUserWindow()
 	{
-		window = nil; // don't release
 		UserWindow::Close();
 	}
+
 	void OSXUserWindow::Hide()
 	{
-		if (opened)
+		if (window != nil)
 		{
 			this->Unfocus();
 			[window fireWindowEvent:HIDDEN];
 		}
 	}
+
 	void OSXUserWindow::Focus()
 	{
-		if (!focused)
+		if (window != nil && ![window isKeyWindow])
 		{
-		    [window makeKeyAndOrderFront:nil];
-			this->Focused();	
+			[window makeKeyAndOrderFront:nil];
+			this->Focused();
 		}
 	}
+
 	void OSXUserWindow::Unfocus()
 	{
-		if (focused)
+		// Cocoa doesn't really have a concept of blurring a window, but
+		// we can send the window to the back of the window list.
+		if (window != nil && [window isKeyWindow])
 		{
-			[window orderOut:nil];
+			[window orderBack:nil];
 			this->Unfocused();
 		}
 	}
+
 	void OSXUserWindow::Show()
 	{
-		if (opened)
+		if (window != nil)
 		{
 			this->Focus();
 			[window fireWindowEvent:SHOWN];
 		}
 	}
+
 	void OSXUserWindow::Minimize()
 	{
-		if (opened)
+		if (window != nil)
 		{
 			[window miniaturize:window];
 		}
 	}
-	
+
 	void OSXUserWindow::Unminimize()
 	{
-		if (opened)
+		if (window != nil && [window isMiniaturized])
 		{
 			[window deminiaturize:window];
 		}
 	}
-	
+
+	bool OSXUserWindow::IsMinimized()
+	{
+		if (window != nil)
+		{
+			return [window isMiniaturized];
+		}
+		else
+		{
+			return this->config->IsMinimized();
+		}
+	}
+
 	void OSXUserWindow::Maximize()
 	{
-		if (opened)
+		if (window != nil)
 		{
 			[window zoom:window];
 		}
@@ -151,50 +179,78 @@ namespace ti
 	
 	void OSXUserWindow::Unmaximize()
 	{
-		if (opened && [window isZoomed])
+		if (window != nil && [window isZoomed])
 		{
 			[window zoom:window];
 		}
 	}
+
+	bool OSXUserWindow::IsMaximized()
+	{
+		if (window != nil)
+		{
+			return [window isZoomed];
+		}
+		else
+		{
+			return this->config->IsMinimized();
+		}
+	}
+
 	bool OSXUserWindow::IsUsingChrome()
 	{
 		return this->config->IsUsingChrome();
 	}
+
 	bool OSXUserWindow::IsUsingScrollbars()
 	{
 		return this->config->IsUsingScrollbars();
 	}
+
 	bool OSXUserWindow::IsFullScreen()
 	{
 		return this->config->IsFullScreen();
 	}
+
 	std::string OSXUserWindow::GetId()
 	{
 		return this->config->GetID();
 	}
-	void OSXUserWindow::Open()
-	{
-		opened = true;
-		[window open];
-		UserWindow::Open();
-	}
+
 	void OSXUserWindow::Close()
 	{
-		if (!closed)
+		if (window != nil && !closed)
 		{
 			opened = false;
 			closed = true;
 			[window close];
+			window = nil; // don't release
 			UserWindow::Close();
 		}
+	}
+
+	NSScreen* OSXUserWindow::GetWindowScreen()
+	{
+
+		NSScreen* screen = [window screen];
+		if (screen == nil) 
+		{
+			// Window is offscreen, so set things relative to the main screen.
+			// The other option in this case would be to use the "closest" screen,
+			// which might be better, but the real fix is to add support for multiple
+			// screens in the UI API.
+			screen = [NSScreen mainScreen];	
+
+		}
+		return screen;
 	}
 
 	NSRect OSXUserWindow::CalculateWindowFrame(double x, double y, double width, double height)
 	{
 		NSRect frame = [window frame];
-		NSRect screenFrame = [[window screen] frame];
 		NSRect contentFrame = [[window contentView] frame];
-
+		NSRect screenFrame = [this->GetWindowScreen() frame];
+		
 		// Center frame, if requested
 		if (y == UserWindow::CENTERED)
 		{
@@ -220,104 +276,207 @@ namespace ti
 
 	double OSXUserWindow::GetX()
 	{
-		return this->config->GetX();
+		if (window != nil)
+		{
+			// Cocoa frame coordinates are absolute on a plane with all
+			// screens, but Titanium wants them relative to the screen.
+			NSRect screenFrame = [this->GetWindowScreen() frame];
+			return [window frame].origin.x - screenFrame.origin.x;
+		}
+		else
+		{
+			return this->config->GetX();
+		}
 	}
 	
 	void OSXUserWindow::SetX(double x)
 	{
-		this->real_x = x; // Preserve input value
-		NSRect newRect = CalculateWindowFrame(x, real_y, real_w, real_h);
-		[window setFrameOrigin: newRect.origin];
+		if (window != nil)
+		{
+			this->real_x = x; // Preserve input value
+			NSRect newRect = CalculateWindowFrame(x, real_y, real_w, real_h);
+			[window setFrameOrigin: newRect.origin];
+		}
 	}
+
 	double OSXUserWindow::GetY()
 	{
-		return this->config->GetY();
+		if (window != nil)
+		{
+			// Cocoa frame coordinates are absolute on a plane with all
+			// screens, but Titanium wants them relative to the screen.
+			NSRect screenFrame = [this->GetWindowScreen() frame];
+			double y = [window frame].origin.y - screenFrame.origin.y;
+
+			// Adjust for the cartesian coordinate system
+			y = screenFrame.size.height - y - [window frame].size.height;
+			return y;
+		}
+		else
+		{
+			return this->config->GetX();
+		}
 	}
+
 	void OSXUserWindow::SetY(double y)
 	{
-		this->real_y = y; // Preserve input value
-		NSRect newRect = CalculateWindowFrame(real_x, real_y, real_w, real_h);
-		[window setFrameOrigin: newRect.origin];
+		if (window != nil)
+		{
+			this->real_y = y; // Preserve input value
+			NSRect newRect = CalculateWindowFrame(real_x, real_y, real_w, real_h);
+			[window setFrameOrigin: newRect.origin];
+		}
 	}
 
 	double OSXUserWindow::GetWidth()
 	{
-		return [[window contentView] frame].size.width;
+		if (window != nil)
+		{
+			return [[window contentView] frame].size.width;
+		}
+		else
+		{
+			return this->config->GetWidth();
+		}
 	}
 
 	void OSXUserWindow::SetWidth(double width)
 	{
-		this->real_w = width;
-		NSRect newFrame = CalculateWindowFrame(real_x, real_y, width, real_h);
-
-		if (!config->IsResizable())
+		if (window != nil)
 		{
-			[window setMinSize: newFrame.size];
-			[window setMaxSize: newFrame.size];
+			this->real_w = width;
+			NSRect newFrame = CalculateWindowFrame(real_x, real_y, width, real_h);
+
+			if (!config->IsResizable())
+			{
+				[window setMinSize: newFrame.size];
+				[window setMaxSize: newFrame.size];
+			}
+			[window setFrame:newFrame display:config->IsVisible() animate:YES];
 		}
-		[window setFrame:newFrame display:config->IsVisible() animate:YES];
 	}
 
 	double OSXUserWindow::GetHeight()
 	{
-		return [[window contentView] frame].size.height;
+		if (window != nil)
+		{
+			return [[window contentView] frame].size.height;
+		}
+		else
+		{
+			return this->config->GetHeight();
+		}
 	}
 
 	void OSXUserWindow::SetHeight(double height)
 	{
-		this->real_h = height;
-		NSRect newFrame = CalculateWindowFrame(real_x, real_y, real_w, real_h);
-
-		if (!config->IsResizable())
+		if (window != nil)
 		{
-			[window setMinSize: newFrame.size];
-			[window setMaxSize: newFrame.size];
+			this->real_h = height;
+			NSRect newFrame = CalculateWindowFrame(real_x, real_y, real_w, real_h);
+
+			if (!config->IsResizable())
+			{
+				[window setMinSize: newFrame.size];
+				[window setMaxSize: newFrame.size];
+			}
+			[window setFrame:newFrame display:config->IsVisible() animate:YES];
 		}
-		[window setFrame:newFrame display:config->IsVisible() animate:YES];
 	}
-	double OSXUserWindow::GetMaxWidth() {
-		return this->config->GetMaxWidth();
-	}
-	
-	void OSXUserWindow::SetMaxWidth(double width) {
-		this->ReconfigureWindowConstraints();
-	}
-	
-	double OSXUserWindow::GetMinWidth() {
-		return this->config->GetMinWidth();
-	}
-	
+
 	void OSXUserWindow::ReconfigureWindowConstraints()
 	{
-		NSSize min_size, max_size;
-		min_size.width = this->GetMinWidth();
-		min_size.height = this->GetMinHeight();
-		max_size.width = this->GetMaxWidth();
-		max_size.height = this->GetMaxHeight();
+		if (window == nil)
+		{
+			return;
+		}
 
-		[window setContentMinSize: min_size];
-		[window setContentMaxSize: max_size];
+		NSSize minSize, maxSize;
+		double maxWidth = (int) this->config->GetMaxWidth();
+		double minWidth = (int) this->config->GetMinWidth();
+		double maxHeight = (int) this->config->GetMaxHeight();
+		double minHeight = (int) this->config->GetMinHeight();
+
+		if (maxWidth == -1)
+		{
+			maxSize.width = FLT_MAX;
+		}
+		else
+		{
+			maxSize.width = maxWidth;
+		}
+
+		if (minWidth == -1)
+		{
+			minSize.width = 1;
+		}
+		else
+		{
+			minSize.width = minWidth;
+		}
+
+		if (maxHeight == -1)
+		{
+			maxSize.height = FLT_MAX;
+		}
+		else
+		{
+			maxSize.height = maxHeight;
+		}
+
+		if (minHeight == -1)
+		{
+			minSize.height = 1;
+		}
+		else
+		{
+			minSize.height = minHeight;
+		}
+
+		[window setContentMinSize:minSize];
+		[window setContentMaxSize:maxSize];
 	}
 
-	void OSXUserWindow::SetMinWidth(double width) {
+	double OSXUserWindow::GetMaxWidth()
+	{
+		return this->config->GetMaxWidth();
+	}
+
+	void OSXUserWindow::SetMaxWidth(double width)
+	{
 		this->ReconfigureWindowConstraints();
 	}
-	
-	double OSXUserWindow::GetMaxHeight() {
+
+	double OSXUserWindow::GetMinWidth()
+	{
+		return this->config->GetMinWidth();
+	}
+
+	void OSXUserWindow::SetMinWidth(double width)
+	{
+		this->ReconfigureWindowConstraints();
+	}
+
+	double OSXUserWindow::GetMaxHeight()
+	{
 		return this->config->GetMaxHeight();
 	}
-	
-	void OSXUserWindow::SetMaxHeight(double height) {
+
+	void OSXUserWindow::SetMaxHeight(double height)
+	{
 		this->ReconfigureWindowConstraints();
 	}
 	
-	double OSXUserWindow::GetMinHeight() {
+	double OSXUserWindow::GetMinHeight()
+	{
 		return this->config->GetMinHeight();
 	}
 	
-	void OSXUserWindow::SetMinHeight(double height) {
+	void OSXUserWindow::SetMinHeight(double height)
+	{
 		this->ReconfigureWindowConstraints();
 	}
+
 	Bounds OSXUserWindow::GetBounds()
 	{
 		Bounds b;
@@ -327,99 +486,140 @@ namespace ti
 		b.y = this->GetY();
 		return b;
 	}
+
 	void OSXUserWindow::SetBounds(Bounds bounds)
 	{
-		this->real_x = bounds.x;
-		this->real_y = bounds.y;
-		this->real_w = bounds.width;
-		this->real_h = bounds.height;
-		NSRect newFrame = CalculateWindowFrame(real_x, real_y, real_w, real_h);
-
-		if (!config->IsResizable())
+		if (window != nil)
 		{
-			[window setMinSize: newFrame.size];
-			[window setMaxSize: newFrame.size];
+			this->real_x = bounds.x;
+			this->real_y = bounds.y;
+			this->real_w = bounds.width;
+			this->real_h = bounds.height;
+			NSRect newFrame = CalculateWindowFrame(real_x, real_y, real_w, real_h);
+
+			if (!config->IsResizable())
+			{
+				[window setMinSize: newFrame.size];
+				[window setMaxSize: newFrame.size];
+			}
+			[window setFrame:newFrame display:config->IsVisible() animate:YES];
 		}
-		[window setFrame:newFrame display:config->IsVisible() animate:YES];
 	}
+
 	std::string OSXUserWindow::GetTitle()
 	{
 		return this->config->GetTitle();
 	}
+
 	void OSXUserWindow::SetTitle(std::string& title)
 	{
-		[window setTitle:[NSString stringWithCString:this->config->GetTitle().c_str()]];
+		if (window != nil)
+		{
+			[window setTitle:[NSString stringWithCString:this->config->GetTitle().c_str()]];
+		}
 	}
+
 	std::string OSXUserWindow::GetURL()
 	{
 		return this->config->GetURL();
 	}
+
 	void OSXUserWindow::SetURL(std::string& url)
 	{
-		if (opened)
+		if (window != nil)
 		{
 			std::string url_str = AppConfig::Instance()->InsertAppIDIntoURL(config->GetURL());
 			NSURL* url = [NSURL URLWithString: [NSString stringWithCString:url_str.c_str()]];
 			[[[window webView] mainFrame] loadRequest:[NSURLRequest requestWithURL:url]];
 		}
 	}
+
 	bool OSXUserWindow::IsResizable()
 	{
 		return this->config->IsResizable();
 	}
+
 	void OSXUserWindow::SetResizable(bool resizable)
 	{
-		[window setShowsResizeIndicator:resizable];
-		if (resizable)
+		if (window != nil)
 		{
-			[window setContentMinSize: NSMakeSize(config->GetMinWidth(), config->GetMinHeight())];
-			[window setContentMaxSize: NSMakeSize(config->GetMaxWidth(), config->GetMaxHeight())];
-		}
-		else
-		{
-			[window setMinSize: [window frame].size];
-			[window setMaxSize: [window frame].size];
+			[window setShowsResizeIndicator:resizable];
+			if (resizable)
+			{
+				[window setContentMinSize: NSMakeSize(config->GetMinWidth(), config->GetMinHeight())];
+				[window setContentMaxSize: NSMakeSize(config->GetMaxWidth(), config->GetMaxHeight())];
+			}
+			else
+			{
+				[window setMinSize: [window frame].size];
+				[window setMaxSize: [window frame].size];
+			}
 		}
 	}
+
 	bool OSXUserWindow::IsMaximizable()
 	{
 		return this->config->IsMaximizable();
 	}
+
 	void OSXUserWindow::SetMaximizable(bool maximizable)
 	{
-		[[window standardWindowButton:NSWindowZoomButton] setHidden:!maximizable];
+		if (window != nil)
+		{
+			[[window standardWindowButton:NSWindowZoomButton] setHidden:!maximizable];
+		}
 	}
+
 	bool OSXUserWindow::IsMinimizable()
 	{
 		return this->config->IsMinimizable();
 	}
+
 	void OSXUserWindow::SetMinimizable(bool minimizable)
 	{
-		[[window standardWindowButton:NSWindowMiniaturizeButton] setHidden:!minimizable];
+		if (window != nil)
+		{
+			[[window standardWindowButton:NSWindowMiniaturizeButton] setHidden:!minimizable];
+		}
 	}
+
 	bool OSXUserWindow::IsCloseable()
 	{
 		return this->config->IsCloseable();
 	}
+
 	void OSXUserWindow::SetCloseable(bool closeable)
 	{
-		[[window standardWindowButton:NSWindowCloseButton] setHidden:!closeable];
+		if (window != nil)
+		{
+			[[window standardWindowButton:NSWindowCloseButton] setHidden:!closeable];
+		}
 	}
+
 	bool OSXUserWindow::IsVisible()
 	{
 		return this->config->IsVisible();
 	}
+
 	double OSXUserWindow::GetTransparency()
 	{
 		return this->config->GetTransparency();
 	}
+
 	void OSXUserWindow::SetTransparency(double transparency)
 	{
-		[window setTransparency:transparency];
+		if (window != nil)
+		{
+			[window setTransparency:transparency];
+		}
 	}
+
 	void OSXUserWindow::SetFullScreen(bool fullscreen)
 	{
-		[window setFullScreen:fullscreen];
+		if (window != nil)
+		{
+			[window setFullScreen:fullscreen];
+		}
 	}
 
 	void OSXUserWindow::SetUsingChrome(bool chrome)
@@ -440,13 +640,12 @@ namespace ti
 			this->osx_binding->WindowFocused(this,m.get());
 		}
 	}
-	
 
 	SharedPtr<MenuItem> OSXUserWindow::GetMenu()
 	{
 		return this->menu;
 	}
-	
+
 	void OSXUserWindow::Focused()
 	{
 		this->focused = true;
@@ -481,7 +680,7 @@ namespace ti
 	{
 		STUB();
 	}
-	
+
 	SharedString OSXUserWindow::GetIcon()
 	{
 		STUB();
@@ -492,46 +691,50 @@ namespace ti
 	{
 		return this->topmost;
 	}
-	
+
 	void OSXUserWindow::SetTopMost(bool topmost)
 	{
-		if (topmost)
+		if (window != nil)
 		{
-			[window setLevel:NSPopUpMenuWindowLevel];
-			this->topmost = true;
-		}
-		else
-		{
-			[window setLevel:NSNormalWindowLevel];
-			this->topmost = false;
+			if (topmost)
+			{
+				[window setLevel:NSPopUpMenuWindowLevel];
+				this->topmost = true;
+			}
+			else
+			{
+				[window setLevel:NSNormalWindowLevel];
+				this->topmost = false;
+			}
 		}
 	}
-	
-	void OSXUserWindow::OpenFiles(
+
+	void OSXUserWindow::OpenChooserDialog(
+		bool files,
 		SharedKMethod callback,
 		bool multiple,
-		bool files,
-		bool directories,
+		std::string& title,
 		std::string& path,
-		std::string& file,
-		std::vector<std::string>& types)
+		std::string& defaultName,
+		std::vector<std::string>& types,
+		std::string& typesDescription)
 	{
 		SharedKList results = new StaticBoundList();
-
 		NSOpenPanel* openDlg = [NSOpenPanel openPanel];
+		[openDlg setTitle:[NSString stringWithUTF8String:title.c_str()]];
 		[openDlg setCanChooseFiles:files];
-		[openDlg setCanChooseDirectories:directories];
+		[openDlg setCanChooseDirectories:!files];
 		[openDlg setAllowsMultipleSelection:multiple];
 		[openDlg setResolvesAliases:YES];
 
 		NSMutableArray *filetypes = nil;
 		NSString *begin = nil, *filename = nil;
 
-		if (file != "")
+		if (!defaultName.empty())
 		{
-			filename = [NSString stringWithCString:file.c_str()];
+			filename = [NSString stringWithCString:defaultName.c_str()];
 		}
-		if (path != "")
+		if (!path.empty())
 		{
 			begin = [NSString stringWithCString:path.c_str()];
 		}
@@ -545,7 +748,7 @@ namespace ti
 			}
 		}
 
-		if ( [openDlg runModalForDirectory:begin file:filename types:filetypes] == NSOKButton )
+		if ([openDlg runModalForDirectory:begin file:filename types:filetypes] == NSOKButton)
 		{
 			NSArray* selected = [openDlg filenames];
 			for (int i = 0; i < (int)[selected count]; i++)
@@ -557,47 +760,77 @@ namespace ti
 		}
 		[filetypes release];
 
-		ValueList args;
-		args.push_back(Value::NewList(results));
-		callback->Call(args);
+		callback->Call(ValueList(Value::NewList(results)));
 		this->Show();
+
 	}
 
-	void OSXUserWindow::OpenSaveAs(
-			SharedKMethod callback,
-			std::string& path,
-			std::string& file,
-			std::vector<std::string>& types)
+	void OSXUserWindow::OpenFileChooserDialog(
+		SharedKMethod callback,
+		bool multiple,
+		std::string& title,
+		std::string& path,
+		std::string& defaultName,
+		std::vector<std::string>& types,
+		std::string& typesDescription)
+	{
+		this->OpenChooserDialog(
+			true, callback, multiple,
+			title, path, defaultName, types, typesDescription);
+	}
+
+	void OSXUserWindow::OpenFolderChooserDialog(
+		SharedKMethod callback,
+		bool multiple,
+		std::string& title,
+		std::string& path,
+		std::string& defaultName)
+	{
+		std::vector<std::string> types;
+		std::string typesDescription;
+		this->OpenChooserDialog(
+			false, callback, multiple,
+			title, path, defaultName, types, typesDescription);
+	}
+
+	void OSXUserWindow::OpenSaveAsDialog(
+		SharedKMethod callback,
+		std::string& title,
+		std::string& path,
+		std::string& defaultName,
+		std::vector<std::string>& types,
+		std::string& typesDescription)
 	{
 		int runResult;
-		
-		NSMutableArray *filetypes = [[[NSMutableArray alloc] init] autorelease];
-		
+
+		NSMutableArray *filetypes = [[NSMutableArray alloc] init];
 		std::vector<std::string>::const_iterator iter = types.begin();
-		while(iter!=types.end())
+		while (iter != types.end())
 		{
 			std::string ft = (*iter++);
 			[filetypes addObject:[NSString stringWithCString:ft.c_str()]];
 		}
 
 		NSSavePanel *sp = [NSSavePanel savePanel];
+		[sp setTitle:[NSString stringWithUTF8String:title.c_str()]];
 
 		if ([filetypes count] > 0)
 		{
 			[sp setAllowedFileTypes:filetypes];
 		}
 
-		runResult = [sp runModalForDirectory:[NSString stringWithCString:path.c_str()] file:[NSString stringWithCString:file.c_str()]];
+		runResult = [sp runModalForDirectory:[NSString stringWithCString:path.c_str()] file:[NSString stringWithCString:defaultName.c_str()]];
 
 		ValueList args;
 
+		SharedKList results = new StaticBoundList();
 		if (runResult == NSFileHandlingPanelOKButton) 
 		{
 			NSString *selected = [sp filename];
-			args.push_back(Value::NewString([selected UTF8String]));
+			results->Append(Value::NewString([selected UTF8String]));
 		}
-		
-		callback->Call(args);
+
+		callback->Call(ValueList(Value::NewList(results)));
 		this->Show();
 	}
 }

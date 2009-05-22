@@ -113,17 +113,17 @@ namespace ti
 		this->SetMethod("asyncCopy",&FilesystemBinding::ExecuteAsyncCopy);
 
 		/**
-		 * @tiapi(property=True,immutable=True,name=Filesystem.FILESTREAM_MODE_READ) file read constant
+		 * @tiapi(property=True,immutable=True,name=Filesystem.MODE_READ, since=0.3, type=int) file read constant
 		 */
-		this->Set("FILESTREAM_MODE_READ", Value::NewString(FileStream::MODE_READ));
+		this->Set("MODE_READ", Value::NewInt(MODE_READ));
 		/**
-		 * @tiapi(property=True,immutable=True,name=Filesystem.FILESTREAM_MODE_WRITE) file write constant
+		 * @tiapi(property=True,immutable=True,name=Filesystem.MODE_WRITE, since=0.3, type=int) file write constant
 		 */
-		this->Set("FILESTREAM_MODE_WRITE", Value::NewString(FileStream::MODE_WRITE));
+		this->Set("MODE_WRITE", Value::NewInt(MODE_WRITE));
 		/**
-		 * @tiapi(property=True,immutable=True,name=Filesystem.FILESTREAM_MODE_APPEND) file append constant
+		 * @tiapi(property=True,immutable=True,name=Filesystem.MODE_APPEND, since=0.3, type=int) file append constant
 		 */
-		this->Set("FILESTREAM_MODE_APPEND", Value::NewString(FileStream::MODE_APPEND));
+		this->Set("MODE_APPEND", Value::NewInt(MODE_APPEND));
 	}
 	FilesystemBinding::~FilesystemBinding()
 	{
@@ -172,20 +172,19 @@ namespace ti
 		{
 			// you can pass in an array of parts to join
 			SharedKList list = args.at(0)->ToList();
-			for (unsigned int c=0; c < list->Size(); c++)
+			for (size_t c = 0; c < list->Size(); c++)
 			{
 				std::string arg = list->At(c)->ToString();
-				filename = kroll::FileUtils::Join(filename.c_str(),arg.c_str(),NULL);
+				filename = kroll::FileUtils::Join(filename.c_str(), arg.c_str(), NULL);
 			}
 		}
 		else
 		{
-			// you can pass in vararg of strings which acts like
-			// a join
-			for (size_t c=0;c<args.size();c++)
+			// you can pass in vararg of strings which acts like  a join
+			for (size_t c = 0; c < args.size(); c++)
 			{
 				std::string arg = FileSystemUtils::GetFileName(args.at(c));
-				filename = kroll::FileUtils::Join(filename.c_str(),arg.c_str(),NULL);
+				filename = kroll::FileUtils::Join(filename.c_str(), arg.c_str(), NULL);
 			}
 		}
 		if (filename.empty())

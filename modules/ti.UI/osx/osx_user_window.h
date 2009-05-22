@@ -23,25 +23,49 @@ namespace ti
 			OSXUserWindow(SharedUIBinding, WindowConfig* config, SharedUserWindow& parent);
 			~OSXUserWindow();
 		public:
-			void OpenFiles(
+
+			void OSXUserWindow::OpenChooserDialog(
+				bool files,
 				SharedKMethod callback,
 				bool multiple,
-				bool files,
-				bool directories,
+				std::string& title,
 				std::string& path,
-				std::string& file,
-				std::vector<std::string>& types);
-			void OpenSaveAs(
-					SharedKMethod callback,
-					std::string& path,
-					std::string& file,
-					std::vector<std::string>& types);
+				std::string& defaultName,
+				std::vector<std::string>& types,
+				std::string& typesDescription);
+			
+			void OpenFileChooserDialog(
+				SharedKMethod callback,
+				bool multiple,
+				std::string& title,
+				std::string& path,
+				std::string& defaultName,
+				std::vector<std::string>& types,
+				std::string& typesDescription);
+
+			void OpenFolderChooserDialog(
+				SharedKMethod callback,
+				bool multiple,
+				std::string& title,
+				std::string& path,
+				std::string& defaultName);
+
+			void OpenSaveAsDialog(
+				SharedKMethod callback,
+				std::string& title,
+				std::string& path,
+				std::string& defaultName,
+				std::vector<std::string>& types,
+				std::string& typesDescription);
+
 			void Hide();
 			void Show();
 			void Minimize();
 			void Maximize();
 			void Unminimize();
 			void Unmaximize();
+			bool IsMinimized();
+			bool IsMaximized();
 			void Focus();
 			void Unfocus();
 			bool IsUsingChrome();
@@ -111,6 +135,7 @@ namespace ti
 			SharedPtr<OSXUIBinding> osx_binding;
 			static bool initial;
 
+			NSScreen* GetWindowScreen();
 			NSRect CalculateWindowFrame(double, double, double, double);
 			double real_x;
 			double real_y;

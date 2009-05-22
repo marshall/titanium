@@ -97,11 +97,11 @@ void WindowConfig::SetDefaults ()
 	this->x = WindowConfig::DEFAULT_POSITION;
 	this->y = WindowConfig::DEFAULT_POSITION;
 
-	this->minWidth = 0;
-	this->minHeight = 0;
-
-	this->maxWidth = 9000;
-	this->maxHeight = 9000;
+	// -1 in this case signifies no constraints
+	this->minWidth = -1;
+	this->minHeight = -1;
+	this->maxWidth = -1;
+	this->maxHeight = -1;
 
 	this->url = AppConfig::Instance()->InsertAppIDIntoURL("app://index.html");
 	this->title = "Titanium Application";
@@ -288,19 +288,38 @@ WindowConfig::WindowConfig(void* data)
 		child = child->next;
 	}
 
-	if (width < minWidth)
+	if (minWidth <= 0)
+	{
+		minWidth = -1;
+	}
+	else if (width < minWidth)
 	{
 		width = minWidth;
 	}
-	if (width > maxWidth)
+
+	if (maxWidth <= 0)
+	{
+		maxWidth = -1;
+	}
+	else if (width > maxWidth)
 	{
 		width = maxWidth;
 	}
-	if (height < minHeight)
+
+	if (minHeight <= 0)
+	{
+		minHeight = -1;
+	}
+	else if (height < minHeight)
 	{
 		height = minHeight;
 	}
-	if (height > maxHeight)
+
+	if (maxHeight <= 0)
+	{
+		maxHeight = -1;
+	}
+	else if (height > maxHeight)
 	{
 		height = maxHeight;
 	}

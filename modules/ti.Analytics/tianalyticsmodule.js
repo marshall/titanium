@@ -15,8 +15,9 @@
 		try
 		{
 			// if we're offline we don't even attempt these
-			if (qsv.event!='ti.start' && Titanium.Network.online===false)
+			if (qsv.event!='ti.start' && qsv.event!='ti.end' && Titanium.Network.online===false)
 			{
+				//TODO: we need to place these in DB and re-send later
 				Titanium.API.debug("we're not online - skipping analytics");
 				return;
 			}
@@ -27,15 +28,14 @@
 			qsv.mac_addr = Titanium.Platform.macaddress;
 			qsv.osver = Titanium.Platform.version;
 			qsv.platform = Titanium.platform;
-			qsv.version =Titanium.version;
-			qsv.app_version =Titanium.App.getVersion();
-			qsv.os =Titanium.Platform.name;
-			qsv.ostype =Titanium.Platform.ostype;
-			qsv.osarch =Titanium.Platform.architecture;
-			qsv.oscpu =Titanium.Platform.processorCount;
-			qsv.un =Titanium.Platform.username;
-			qsv.ip =Titanium.Platform.address;
-			
+			qsv.version = Titanium.version;
+			qsv.app_version = Titanium.App.getVersion();
+			qsv.os = Titanium.Platform.name;
+			qsv.ostype = Titanium.Platform.ostype;
+			qsv.osarch = Titanium.Platform.architecture;
+			qsv.oscpu = Titanium.Platform.processorCount;
+			qsv.un = Titanium.Platform.username;
+			qsv.ip = Titanium.Platform.address;
 			
 			var qs = '';
 			for (var p in qsv)
@@ -65,7 +65,7 @@
 		}
 		catch(E)
 		{
-			Titanium.API.debug("Error sending data: "+E);
+			Titanium.API.debug("Error sending analytics data: "+E);
 		}
 	}
 	
@@ -104,18 +104,7 @@
 			guid = Titanium.App.getGUID();
 			sid = Titanium.Platform.createUUID();
 			
-			send({
-				'platform': Titanium.platform,
-				'version':Titanium.version,
-				'app_version':Titanium.App.getVersion(),
-				'os':Titanium.Platform.name,
-				'ostype':Titanium.Platform.ostype,
-				'osarch':Titanium.Platform.architecture,
-				'oscpu':Titanium.Platform.processorCount,
-				'un':Titanium.Platform.username,
-				'ip':Titanium.Platform.address,
-				'event':'ti.start'
-			});
+			send({'event':'ti.start'});
 		}
 		catch(e)
 		{

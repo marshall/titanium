@@ -16,7 +16,6 @@ namespace ti {
 	}
 	OSXMenuItem::~OSXMenuItem()
 	{
-		KR_DUMP_LOCATION
 	}
 
 	void OSXMenuItem::SetParent(OSXMenuItem* parent)

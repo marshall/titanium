@@ -155,17 +155,8 @@ namespace ti
 	}
 	void AppBinding::GetGUID(const ValueList& args, SharedValue result)
 	{
-		std::string name = "KR_APP_GUID";
-		
-		if (Poco::Environment::has(name))
-		{
-			std::string value = Poco::Environment::get(name);
-			result->SetString(value);
-		}
-		else
-		{
-			result->SetNull();
-		}
+		std::string guid = host->GetApplication()->guid;
+		result->SetString(guid);
 	}
 	void AppBinding::Exit(const ValueList& args, SharedValue result)
 	{
