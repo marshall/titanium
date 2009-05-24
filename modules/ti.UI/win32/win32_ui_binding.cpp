@@ -21,24 +21,38 @@ namespace ti
 	Win32UIBinding::Win32UIBinding(Host *host) : UIBinding(host)
 	{
 
-		// We're not using registration-free COM because it requires that
-		// the DLL be in a subdirectory of the exe. Use Activation Context
-		// API instead. We just need to point it to the .manifest file as below.
-		ACTCTX actctx; 
-		ZeroMemory(&actctx, sizeof(actctx)); 
-		actctx.cbSize = sizeof(actctx); 
+		
+		if (!Win32UIBinding::IsWindowsXP())
+		{
+			// Use Activation Context API by pointing it at the WebKit
+			// manifest. This should allos us to load our COM object.
+			ACTCTX actctx; 
+			ZeroMemory(&actctx, sizeof(actctx)); 
+			actctx.cbSize = sizeof(actctx); 
 
-		std::string source = host->GetRuntimePath();
-		source = FileUtils::Join(source.c_str(), "WebKit.manifest", NULL);
-		actctx.lpSource = source.c_str(); // Path to the Side-by-Side Manifest File 
-		this->pActCtx = CreateActCtx(&actctx); 
-		ActivateActCtx(pActCtx, &this->lpCookie);
+			std::string source = host->GetRuntimePath();
+			source = FileUtils::Join(source.c_str(), "WebKit.manifest", NULL);
+			actctx.lpSource = source.c_str(); // Path to the Side-by-Side Manifest File 
+			this->pActCtx = CreateActCtx(&actctx); 
+			ActivateActCtx(pActCtx, &this->lpCookie);
+		}
 	}
 
 	Win32UIBinding::~Win32UIBinding()
 	{
-   		DeactivateActCtx(0, this->lpCookie); 
-		ReleaseActCtx(this->pActCtx);
+		if (!Win32UIBinding::IsWindowsXP())
+		{
+   			DeactivateActCtx(0, this->lpCookie); 
+			ReleaseActCtx(this->pActCtx);
+		}
+	}
+
+	bool Win32UIBinding::IsWindowsXP()
+	{
+		OSVERSIONINFO osVersion;
+		osVersion.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
+		::GetVersionEx(&osVersion);
+		return osVersion.dwMajorVersion == 5;
 	}
 
 	SharedUserWindow Win32UIBinding::CreateWindow(

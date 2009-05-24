@@ -32,6 +32,7 @@ namespace ti
 		long GetIdleTime();
 
 		static HMENU getContextMenuInUseHandle() { return contextMenuInUseHandle; }
+		static bool IsWindowsXP();
 
 	private:
 		SharedPtr<Win32MenuItemImpl> contextMenuInUse;
