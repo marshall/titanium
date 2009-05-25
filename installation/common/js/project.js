@@ -331,6 +331,38 @@ Titanium.Project =
 		}
 		return result;
 	},
+	writeTiXML:function(id,name,publisher,url,outdir)
+	{
+		var tiappxml = this.XML_PROLOG;
+		var year = new Date().getFullYear();
+		tiappxml+=this.makeEntry('id',id);
+		tiappxml+=this.makeEntry('name',name);
+		tiappxml+=this.makeEntry('version','1.0');
+		tiappxml+=this.makeEntry('publisher',publisher);
+		tiappxml+=this.makeEntry('url',url);
+		tiappxml+=this.makeEntry('copyright',year+' by '+publisher);
+		tiappxml+="<window>\n";
+		tiappxml+=this.makeEntry('id','initial');
+		tiappxml+=this.makeEntry('title',name);
+		tiappxml+=this.makeEntry('url','app://index.html');
+		tiappxml+=this.makeEntry('width','700');
+		tiappxml+=this.makeEntry('max-width','3000');
+		tiappxml+=this.makeEntry('min-width','0');
+		tiappxml+=this.makeEntry('height','800');
+		tiappxml+=this.makeEntry('max-height','3000');
+		tiappxml+=this.makeEntry('min-height','0');
+		tiappxml+=this.makeEntry('fullscreen','false');
+		tiappxml+=this.makeEntry('resizable','true');
+		tiappxml+=this.makeEntry('chrome','true',{'scrollbars':'true'});
+		tiappxml+=this.makeEntry('maximizable','true');
+		tiappxml+=this.makeEntry('minimizable','true');
+		tiappxml+=this.makeEntry('closeable','true');
+		tiappxml+="</window>\n";
+		tiappxml+=this.XML_EPILOG;
+		var ti = TFS.getFile(outdir,'tiapp.xml');
+		ti.write(tiappxml);
+		return ti;
+	},
 	create:function(options)
 	{
 		var name = options.name;
