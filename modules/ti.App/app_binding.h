@@ -20,6 +20,7 @@ namespace ti
 	private:
 		Host *host;
 		SharedKObject global;
+		
 		void GetID(const ValueList& args, SharedValue result);
 		void GetName(const ValueList& args, SharedValue result);
 		void GetVersion(const ValueList& args, SharedValue result);
@@ -36,6 +37,7 @@ namespace ti
 		void StdErr(const ValueList& args, SharedValue result);
 
 		void LoadProperties(const ValueList& args, SharedValue result);
+		void GetSystemProperties(const ValueList& args, SharedValue result);
 	};
 }
 

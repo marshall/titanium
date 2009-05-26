@@ -20,6 +20,7 @@ namespace ti {
 	class PropertiesBinding : public kroll::StaticBoundObject {
 	public:
 		PropertiesBinding(std::string& file_path);
+		PropertiesBinding();
 		virtual ~PropertiesBinding();
 
 		void GetBool(const ValueList& args, SharedValue result);
@@ -35,11 +36,14 @@ namespace ti {
 		void HasProperty(const ValueList& args, SharedValue result);
 		void ListProperties(const ValueList& args, SharedValue result);
 
+		Poco::AutoPtr<Poco::Util::PropertyFileConfiguration> GetConfig() { return config; }
+		
 	protected:
 		typedef enum {
 			Bool, Double, Int, String
 		} Type;
 
+		void Init();
 		void Getter(const ValueList& args, SharedValue result, Type type);
 		void Setter(const ValueList& args, Type type);
 

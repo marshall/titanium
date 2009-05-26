@@ -24,7 +24,16 @@ namespace ti
 
 		config = new Poco::Util::PropertyFileConfiguration(file_path);
 		this->file_path = file_path.c_str();
-
+	}
+	
+	PropertiesBinding::PropertiesBinding()
+	{
+		this->file_path = "";
+		this->config = new Poco::Util::PropertyFileConfiguration();
+	}
+	
+	void PropertiesBinding::Init()
+	{
 		/**
 		 * @tiapi(method=True,name=App.Properties.getBool,since=0.2) get value as boolean
 		 * @tiarg(for=App.Properties.getBool,name=name,type=string) the property name
@@ -99,7 +108,9 @@ namespace ti
 	}
 
 	PropertiesBinding::~PropertiesBinding() {
-		config->save(file_path);
+		if (file_path.size() > 0) {
+			config->save(file_path);
+		}
 	}
 
 	void PropertiesBinding::Getter(const ValueList& args, SharedValue result, Type type)
@@ -147,7 +158,9 @@ namespace ti
 					case String: config->setString(property, args.at(1)->ToString()); break;
 					default: break;
 				}
-				config->save(file_path);
+				if (file_path.size() > 0) {
+					config->save(file_path);
+				}
 			} catch(Poco::Exception &e) {
 				throw ValueException::FromString(eprefix + e.displayText());
 			}
@@ -235,7 +248,9 @@ namespace ti
 				}
 			}
 			config->setString(property, value);
-			config->save(file_path);
+			if (file_path.size() > 0) {
+				config->save(file_path);
+			}
 		}
 	}
 
