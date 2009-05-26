@@ -13,13 +13,13 @@ namespace ti
 	MediaBinding::MediaBinding(SharedKObject global) : global(global)
 	{
 		/**
-		 * @tiapi(method=True,name=Media.createSound,since=0.2) create a sound object
+		 * @tiapi(method=True,name=Media.createSound,since=0.2) Creates a sound object
 		 * @tiarg(for=Media.createSound,name=path,type=string) path or url to the sound file
-		 * @tiresult(for=Media.createSound,type=object) returns the sound object
+		 * @tiresult(for=Media.createSound,type=object) a Sound object
 		 */
 		this->SetMethod("createSound", &MediaBinding::_CreateSound);
 		/**
-		 * @tiapi(method=True,name=Media.beep,since=0.2) cause the system to beep
+		 * @tiapi(method=True,name=Media.beep,since=0.2) Causes the system to beep
 		 */
 		this->SetMethod("beep", &MediaBinding::_Beep);
 	}

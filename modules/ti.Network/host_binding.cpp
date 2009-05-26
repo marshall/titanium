@@ -51,28 +51,28 @@ namespace ti
 	{
 		this->invalid = false;
 		/**
-		 * @tiapi(method=True,name=Network.Host.toString,since=0.2) returns a string representation
-		 * @tiresult(for=Network.Host.toString,type=string) string
+		 * @tiapi(method=True,name=Network.Host.toString,since=0.2) Returns a string representation of a Host object
+		 * @tiresult(for=Network.Host.toString,type=string) the string representation of the Host object
 		 */
 		this->SetMethod("toString",&HostBinding::ToString);
 		/**
-		 * @tiapi(method=True,name=Network.Host.isInvalid,since=0.2) returns true if valid
-		 * @tiresult(for=Network.Host.isInvalid,type=boolean) true if invalid
+		 * @tiapi(method=True,name=Network.Host.isInvalid,since=0.2) Checks whether the Host object is invalid
+		 * @tiresult(for=Network.Host.isInvalid,type=boolean) true if the Host object is invalid, false if otherwise
 		 */
 		this->SetMethod("isInvalid",&HostBinding::IsInvalid);
 		/**
-		 * @tiapi(method=True,name=Network.Host.getName,since=0.2) returns the hostname
-		 * @tiresult(for=Network.Host.getName,type=string) hostname
+		 * @tiapi(method=True,name=Network.Host.getName,since=0.2) Return the hostname of a Host object
+		 * @tiresult(for=Network.Host.getName,type=string) the hostname of the Host object
 		 */
 		this->SetMethod("getName",&HostBinding::GetName);
 		/**
-		 * @tiapi(method=True,name=Network.Host.getAliases,since=0.2) returns a list of aliases
-		 * @tiresult(for=Network.Host.getAliases,type=list) return a list of aliases
+		 * @tiapi(method=True,name=Network.Host.getAliases,since=0.2) Returns the list of aliases for a Host object
+		 * @tiresult(for=Network.Host.getAliases,type=list) a list of aliases for the Host object
 		 */
 		this->SetMethod("getAliases",&HostBinding::GetAliases);
 		/**
-		 * @tiapi(method=True,name=Network.Host.getAddresses,since=0.2) returns a list of addresses
-		 * @tiresult(for=Network.Host.getAddresses,type=list) return a list of ip addresses
+		 * @tiapi(method=True,name=Network.Host.getAddresses,since=0.2) Returns the list of address for a Host object
+		 * @tiresult(for=Network.Host.getAddresses,type=list) a list of aliases for the Host object
 		 */
 		this->SetMethod("getAddresses",&HostBinding::GetAddresses);
 	}

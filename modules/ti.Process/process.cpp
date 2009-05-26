@@ -230,7 +230,15 @@ namespace ti
 		if (running && pid!=-1)
 		{
 			running = false;
+#ifdef OS_WIN32			
+			// win32 needs a kill to terminate process
 			Poco::Process::kill(this->pid);
+#else
+			// this sends a more graceful SIGINT instead of SIGKILL
+			// which is important for programs that manage child processes
+			// and handle their own signals
+			Poco::Process::requestTermination(this->pid);
+#endif			
 			this->Set("running",Value::NewBool(false));
 			this->parent->Terminated(this);
 		}

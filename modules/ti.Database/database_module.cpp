@@ -17,7 +17,7 @@ namespace ti
 	void DatabaseModule::Initialize()
 	{
 		/**
-		 * @tiapi(method=True,name=Database.open,since=0.4) open a database
+		 * @tiapi(method=True,name=Database.open,since=0.4) Opens a database
 		 * @tiarg(for=Database.open,name=name,type=string) database name
 		 */
 		this->SetMethod("open",&DatabaseModule::Open);
