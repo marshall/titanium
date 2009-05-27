@@ -25,7 +25,7 @@ namespace ti
 	ProcessBinding::ProcessBinding(Host *h, SharedKObject global) : host(h),global(global)
 	{
 		/**
-		 * @tiapi(property=True,type=integer,name=Process.pid,since=0.3) returns the process id from the application
+		 * @tiapi(property=True,type=integer,name=Process.pid,since=0.3) The process id of the application
 		 */
 #ifdef OS_OSX
 		NSProcessInfo *p = [NSProcessInfo processInfo];
@@ -37,31 +37,31 @@ namespace ti
 		//static void times(long& userTime, long& kernelTime);
 
 		/**
-		 * @tiapi(method=True,returns=list,name=Process.getEnv,since=0.2) returns a list of environment variables
+		 * @tiapi(method=True,returns=list,name=Process.getEnv,since=0.2) Gets the value of an environment variable in the system
 		 * @tiarg(for=Process.getEnv,name=name,type=string) name of the environment property
-		 * @tiresult(for=Process.getEnv,type=string) value for name
+		 * @tiresult(for=Process.getEnv,type=string) the value of the environment variable
 		 */
 		this->SetMethod("getEnv",&ProcessBinding::GetEnv);
 		/**
-		 * @tiapi(method=True,returns=void,name=Process.setEnv,since=0.2) sets an environment variable
-		 * @tiarg(for=Process.setEnv,name=name,type=string) name of the environment property
-		 * @tiarg(for=Process.setEnv,name=value,type=string) value of the environment property
+		 * @tiapi(method=True,returns=void,name=Process.setEnv,since=0.2) Sets the value of an environment variable in the system
+		 * @tiarg(for=Process.setEnv,name=name,type=string) name of the environment variable
+		 * @tiarg(for=Process.setEnv,name=value,type=string) value of the environment variable
 		 */
 		this->SetMethod("setEnv",&ProcessBinding::SetEnv);
 		/**
-		 * @tiapi(method=True,name=Process.hasEnv,since=0.2) returns true if a value exists in the environment
-		 * @tiarg(for=Process.hasEnv,name=name,type=string) name of the environment property
-		 * @tiresult(for=Process.hasEnv,type=boolean) returns true if found
+		 * @tiapi(method=True,name=Process.hasEnv,since=0.2) Checks whether an environment variable is present in the system
+		 * @tiarg(for=Process.hasEnv,name=name,type=string) name of the environment variable
+		 * @tiresult(for=Process.hasEnv,type=boolean) true if the system has the environment variable, false if otherwise
 		 */
 		this->SetMethod("hasEnv",&ProcessBinding::HasEnv);
 		/**
-		 * @tiapi(method=True,name=Process.launch,since=0.2) launch an external application and returns a Process object
-		 * @tiarg(for=Process.launch,name=command,type=string) command line
-		 * @tiresult(for=Process.launch,type=object) returns Process object
+		 * @tiapi(method=True,name=Process.launch,since=0.2) Launches an external process using a command string
+		 * @tiarg(for=Process.launch,name=command,type=string) command to use to launch the external process
+		 * @tiresult(for=Process.launch,type=object) a Process object
 		 */
 		this->SetMethod("launch",&ProcessBinding::Launch);
 		/**
-		 * @tiapi(method=True,returns=void,name=Process.restart,since=0.3) restart the application
+		 * @tiapi(method=True,returns=void,name=Process.restart,since=0.3) Restarts the application
 		 */
 		this->SetMethod("restart",&ProcessBinding::Restart);
 	}
