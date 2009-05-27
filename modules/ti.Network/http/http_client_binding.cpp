@@ -78,7 +78,7 @@ namespace ti
 		 */
 		this->SetMethod("sendDir",&HTTPClientBinding::SendDir);
 		/**
-		 * @tiapi(method=True,name=Network.HTTPClient.getResponseHeader,since=0.3) Gets the value of a response header
+		 * @tiapi(method=True,name=Network.HTTPClient.getResponseHeader,since=0.3) Returns the value of a response header
 		 * @tiarg(for=Network.HTTPClient.getResponseHeader,type=string,name=name) the response header name
 		 * @tiresult(for=Network.HTTPClient.getResponseHeader,type=string) the value of the response header
 		 */

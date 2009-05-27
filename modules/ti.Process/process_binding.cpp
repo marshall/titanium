@@ -37,7 +37,7 @@ namespace ti
 		//static void times(long& userTime, long& kernelTime);
 
 		/**
-		 * @tiapi(method=True,returns=list,name=Process.getEnv,since=0.2) Gets the value of an environment variable in the system
+		 * @tiapi(method=True,returns=list,name=Process.getEnv,since=0.2) Returns the value of an environment variable in the system
 		 * @tiarg(for=Process.getEnv,name=name,type=string) name of the environment property
 		 * @tiresult(for=Process.getEnv,type=string) the value of the environment variable
 		 */

@@ -41,12 +41,12 @@ namespace ti
 		 */
 		this->SetMethod("setNick",&IRCClientBinding::SetNick);
 		/**
-		 * @tiapi(method=True,name=Network.IRC.getNick,since=0.2) Gets the nick name for the connection
+		 * @tiapi(method=True,name=Network.IRC.getNick,since=0.2) Returns the nick name for the connection
 		 * @tiresult(for=Network.IRC.getNick,type=string) the nickname for the current connection
 		 */
 		this->SetMethod("getNick",&IRCClientBinding::GetNick);
 		/**
-		 * @tiapi(method=True,name=Network.IRC.getUsers,since=0.2) Gets a list of users for the channel
+		 * @tiapi(method=True,name=Network.IRC.getUsers,since=0.2) Returns a list of users for the channel
 		 * @tiresult(for=Network.IRC.getUsers,type=list) the users of the current channel
 		 */
 		this->SetMethod("getUsers",&IRCClientBinding::GetUsers);

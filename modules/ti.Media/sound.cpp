@@ -31,7 +31,7 @@ namespace ti
 		 */
 		this->SetMethod("setVolume",&Sound::SetVolume);
 		/**
-		 * @tiapi(method=True,name=Media.Sound.getVolume,since=0.2) Gets the volume value of a Sound object
+		 * @tiapi(method=True,name=Media.Sound.getVolume,since=0.2) Returns the volume value of a Sound object
 		 * @tiresult(for=Media.Sound.getVolume,type=double) returns the volume of the sound
 		 */
 		this->SetMethod("getVolume",&Sound::GetVolume);

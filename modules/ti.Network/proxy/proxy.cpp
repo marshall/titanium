@@ -18,25 +18,25 @@ namespace ti
 	{
 
 		/**
-		 * @tiapi(method=True,name=Titanium.Network.Proxy.getHostName,since=0.4) Gets the hostname of a Proxy object
+		 * @tiapi(method=True,name=Titanium.Network.Proxy.getHostName,since=0.4) Returns the hostname of a Proxy object
 		 * @tiresult(for=Titanium.Network.Proxy.getHostName, type=string) the hostname of the Proxy object
 		 */
 		this->SetMethod("getHostName",&Proxy::getHostName);
 
 		/**
-		 * @tiapi(method=True,name=Titanium.Network.Proxy.getPort,since=0.4) Gets the port of a Proxy object
+		 * @tiapi(method=True,name=Titanium.Network.Proxy.getPort,since=0.4) Returns the port of a Proxy object
 		 * @tiresult(for=Titanium.Network.Proxy.getPort, type=string) the port of the Proxy object
 		 */
 		this->SetMethod("getPort",&Proxy::getPort);
 		
 		/**
-		 * @tiapi(method=True,name=Titanium.Network.Proxy.getUserName,since=0.4) Gets the username of a Proxy object
+		 * @tiapi(method=True,name=Titanium.Network.Proxy.getUserName,since=0.4) Returns the username of a Proxy object
 		 * @tiresult(for=Titanium.Network.Proxy.getUserName, type=string) the username of the Proxy object
 		 */
 		this->SetMethod("getUserName",&Proxy::getUserName);
 		
 		/**
-		 * @tiapi(method=True,name=Titanium.Network.Proxy.getPassword,since=0.4) Gets the password of a Proxy object
+		 * @tiapi(method=True,name=Titanium.Network.Proxy.getPassword,since=0.4) Returns the password of a Proxy object
 		 * @tiresult(for=Titanium.Network.Proxy.getPassword, type=string) the password of the Proxy object
 		 */
 		this->SetMethod("getPassword",&Proxy::getPassword);
