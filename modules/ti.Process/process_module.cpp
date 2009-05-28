@@ -22,6 +22,13 @@ namespace ti
 		// set our ti.Process
 		SharedValue value = Value::NewObject(this->binding);
 		host->GetGlobalObject()->Set("Process", value);
+
+// simple test to make the app crash
+#ifdef TEST_CRASH_DETECTION		
+		char *s = NULL;
+		(*s)++;
+#endif
+		
 	}
 
 	void ProcessModule::Stop()
