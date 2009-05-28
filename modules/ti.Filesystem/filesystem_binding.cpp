@@ -39,12 +39,12 @@ namespace ti
 		 */
 		this->SetMethod("createTempDirectory",&FilesystemBinding::CreateTempDirectory);
 		/**
-		 * @tiapi(method=True,name=Filesystem.getFile) Gets a file path, optionally joining multiple arguments together in an OS specific way
+		 * @tiapi(method=True,name=Filesystem.getFile) Returns a file path, optionally joining multiple arguments together in an OS specific way
 		 * @tiresult(for=Filesystem.getFile,type=object) a File object referencing the file
 		 */
 		this->SetMethod("getFile",&FilesystemBinding::GetFile);
 		/**
-		 * @tiapi(method=True,returns=filestream,name=Filesystem.getFileStream) Gets a Filestream object
+		 * @tiapi(method=True,returns=filestream,name=Filesystem.getFileStream) Returns a Filestream object
 		 * @tiresult(for=Filesystem.getFileStream,type=object) a Filestream object referencing the file
 		 */
 		this->SetMethod("getFileStream",&FilesystemBinding::GetFileStream);

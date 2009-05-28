@@ -49,104 +49,104 @@ namespace ti
 		timeout(30000)
 	{
 		/**
-		 * @tiapi(method=True,name=Network.HTTPClient.abort,since=0.3) abort an in progress connection
+		 * @tiapi(method=True,name=Network.HTTPClient.abort,since=0.3) Aborts an in progress connection
 		 */
 		this->SetMethod("abort",&HTTPClientBinding::Abort);
 		/**
-		 * @tiapi(method=True,name=Network.HTTPClient.open,since=0.3) open the connection
+		 * @tiapi(method=True,name=Network.HTTPClient.open,since=0.3) Opens an HTTP connection
 		 */
 		this->SetMethod("open",&HTTPClientBinding::Open);
 		/**
-		 * @tiapi(method=True,name=Network.HTTPClient.setRequestHeader,since=0.3) set a request header
-		 * @tiarg(for=Network.HTTPClient.setRequestHeader,name=key,type=string) request key
-		 * @tiarg(for=Network.HTTPClient.setRequestHeader,name=value,type=string) request value
+		 * @tiapi(method=True,name=Network.HTTPClient.setRequestHeader,since=0.3) Sets a request header for the connection
+		 * @tiarg(for=Network.HTTPClient.setRequestHeader,name=header,type=string) request header name
+		 * @tiarg(for=Network.HTTPClient.setRequestHeader,name=value,type=string) request header value
 		 */
 		this->SetMethod("setRequestHeader",&HTTPClientBinding::SetRequestHeader);
 		/**
-		 * @tiapi(method=True,name=Network.HTTPClient.send,since=0.3) send data
+		 * @tiapi(method=True,name=Network.HTTPClient.send,since=0.3) Sends data through the HTTP connection
 		 * @tiarg(for=Network.HTTPClient.send,type=string,name=data) data to send
 		 */
 		this->SetMethod("send",&HTTPClientBinding::Send);
 		/**
-		 * @tiapi(method=True,name=Network.HTTPClient.sendFile,since=0.3) send file contents as body content
-		 * @tiarg(for=Network.HTTPClient.sendFile,type=string,name=data) file path to send
+		 * @tiapi(method=True,name=Network.HTTPClient.sendFile,since=0.3) Sends the contents of a file as body content
+		 * @tiarg(for=Network.HTTPClient.sendFile,type=string,name=data) path of file to send
 		 */
 		this->SetMethod("sendFile",&HTTPClientBinding::SendFile);
 		/**
-		 * @tiapi(method=True,name=Network.HTTPClient.sendDir,since=0.3) send a directory as a zipped body
-		 * @tiarg(for=Network.HTTPClient.sendDir,type=string,name=data) directory with contents to send
+		 * @tiapi(method=True,name=Network.HTTPClient.sendDir,since=0.3) Sends a directory as a zipped body content
+		 * @tiarg(for=Network.HTTPClient.sendDir,type=string,name=data) path of directory with contents to send
 		 */
 		this->SetMethod("sendDir",&HTTPClientBinding::SendDir);
 		/**
-		 * @tiapi(method=True,name=Network.HTTPClient.getResponseHeader,since=0.3) abort an in progress connection
+		 * @tiapi(method=True,name=Network.HTTPClient.getResponseHeader,since=0.3) Returns the value of a response header
 		 * @tiarg(for=Network.HTTPClient.getResponseHeader,type=string,name=name) the response header name
-		 * @tiresult(for=Network.HTTPClient.getResponseHeader,type=string) returns the response header by name
+		 * @tiresult(for=Network.HTTPClient.getResponseHeader,type=string) the value of the response header
 		 */
 		this->SetMethod("getResponseHeader",&HTTPClientBinding::GetResponseHeader);
 
 		/**
-		 * @tiapi(method=True,name=Network.HTTPClient.setTimeout,since=0.4) set timeout when request will be aborted if not completed
-		 * @tiarg(for=Network.HTTPClient.setTimeout,type=integer,name=timeout) value in milliseconds
+		 * @tiapi(method=True,name=Network.HTTPClient.setTimeout,since=0.4) Sets the timeout for the request
+		 * @tiarg(for=Network.HTTPClient.setTimeout,type=integer,name=timeout) timeout value in milliseconds
 		 */
 		this->SetMethod("setTimeout",&HTTPClientBinding::SetTimeout);
 
 		/**
-		 * @tiapi(property=True,type=integer,name=Network.HTTPClient.readyState,since=0.3) get the ready state property for the connection
+		 * @tiapi(property=True,type=integer,name=Network.HTTPClient.readyState,since=0.3) The ready-state status for the connection
 		 */
 		SET_INT_PROP("readyState",0)
 
 		/**
-		 * @tiapi(property=True,type=integer,name=Network.HTTPClient.UNSENT,since=0.3) the UNSENT readyState property
+		 * @tiapi(property=True,type=integer,name=Network.HTTPClient.UNSENT,since=0.3) The UNSENT readyState property
 		 */
 		SET_INT_PROP("UNSENT",0)
 		/**
-		 * @tiapi(property=True,type=integer,name=Network.HTTPClient.OPENED,since=0.3) the OPENED readyState property
+		 * @tiapi(property=True,type=integer,name=Network.HTTPClient.OPENED,since=0.3) The OPENED readyState property
 		 */
 		SET_INT_PROP("OPENED",1)
 		/**
-		 * @tiapi(property=True,type=integer,name=Network.HTTPClient.HEADERS_RECEIVED,since=0.3) the HEADERS_RECEIVED readyState property
+		 * @tiapi(property=True,type=integer,name=Network.HTTPClient.HEADERS_RECEIVED,since=0.3) The HEADERS_RECEIVED readyState property
 		 */
 		SET_INT_PROP("HEADERS_RECEIVED",2)
 		/**
-		 * @tiapi(property=True,type=integer,name=Network.HTTPClient.LOADING,since=0.3) the LOADING readyState property
+		 * @tiapi(property=True,type=integer,name=Network.HTTPClient.LOADING,since=0.3) The LOADING readyState property
 		 */
 		SET_INT_PROP("LOADING",3)
 		/**
-		 * @tiapi(property=True,type=integer,name=Network.HTTPClient.DONE,since=0.3) the DONE readyState property
+		 * @tiapi(property=True,type=integer,name=Network.HTTPClient.DONE,since=0.3) The DONE readyState property
 		 */
 		SET_INT_PROP("DONE",4)
 
 		/**
-		 * @tiapi(property=True,type=string,name=Network.HTTPClient.responseText,since=0.3) returns the response as text
+		 * @tiapi(property=True,type=string,name=Network.HTTPClient.responseText,since=0.3) The response of an HTTP request as text
 		 */
 		SET_NULL_PROP("responseText")
 		/**
-		 * @tiapi(property=True,type=object,name=Network.HTTPClient.responseXML,since=0.3) returns the response as DOM
+		 * @tiapi(property=True,type=object,name=Network.HTTPClient.responseXML,since=0.3) The response of an HTTP request as parsable XML
 		 */
 		SET_NULL_PROP("responseXML")
 		/**
-		 * @tiapi(property=True,type=integer,name=Network.HTTPClient.status,since=0.3) returns the status code
+		 * @tiapi(property=True,type=integer,name=Network.HTTPClient.status,since=0.3) The response status code of an HTTP request
 		 */
 		SET_NULL_PROP("status")
 		/**
-		 * @tiapi(property=True,type=string,name=Network.HTTPClient.statusText,since=0.3) returns the status text
+		 * @tiapi(property=True,type=string,name=Network.HTTPClient.statusText,since=0.3) The response status text of an HTTP Request
 		 */
 		SET_NULL_PROP("statusText")
 		/**
-		 * @tiapi(property=True,type=integer,name=Network.HTTPClient.connected,since=0.3) return true if the connection is connected
+		 * @tiapi(property=True,type=integer,name=Network.HTTPClient.connected,since=0.3) Whether an HTTPClient object is connected or not
 		 */
 		SET_BOOL_PROP("connected",false)
 
 		/**
-		 * @tiapi(property=True,type=method,name=Network.HTTPClient.onreadystatechange,since=0.3) set the ready state change function handler
+		 * @tiapi(property=True,type=method,name=Network.HTTPClient.onreadystatechange,since=0.3) The handler function that will be fired when the ready-state code of an HTTPClient object changes
 		 */
 		SET_NULL_PROP("onreadystatechange")
 		/**
-		 * @tiapi(property=True,type=method,name=Network.HTTPClient.ondatastream,since=0.3) set the function handler as the stream data is received
+		 * @tiapi(property=True,type=method,name=Network.HTTPClient.ondatastream,since=0.3) The handler function that will be fired as stream data is received from an HTTP request
 		 */
 		SET_NULL_PROP("ondatastream")
 		/**
-		 * @tiapi(property=True,type=method,name=Network.HTTPClient.onsendstream,since=0.3) set the function handler as the stream data is sent
+		 * @tiapi(property=True,type=method,name=Network.HTTPClient.onsendstream,since=0.3) The handler function that will be fired as the stream data is sent
 		 */
 		SET_NULL_PROP("onsendstream")
 

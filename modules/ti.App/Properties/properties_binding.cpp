@@ -26,31 +26,31 @@ namespace ti
 		this->file_path = file_path.c_str();
 
 		/**
-		 * @tiapi(method=True,name=App.Properties.getBool,since=0.2) Gets a property value as boolean
+		 * @tiapi(method=True,name=App.Properties.getBool,since=0.2) Returns a property value as boolean
 		 * @tiarg(for=App.Properties.getBool,name=name,type=string) the property name
 	     * @tiresult(for=App.Properties.getBool,type=boolean) returns the value as a boolean
 		 */
 		SetMethod("getBool", &PropertiesBinding::GetBool);
 		/**
-		 * @tiapi(method=True,name=App.Properties.getDouble,since=0.2) Gets a property value as double
+		 * @tiapi(method=True,name=App.Properties.getDouble,since=0.2) Returns a property value as double
 		 * @tiarg(for=App.Properties.getDouble,name=name,type=string) the property name
 	     * @tiresult(for=App.Properties.getDouble,type=double) returns the value as a double
 		 */
 		SetMethod("getDouble", &PropertiesBinding::GetDouble);
 		/**
-		 * @tiapi(method=True,name=App.Properties.getInt,since=0.2) Gets a property value as integer
+		 * @tiapi(method=True,name=App.Properties.getInt,since=0.2) Returns a property value as integer
 		 * @tiarg(for=App.Properties.getInt,name=name,type=string) the property name
 	     * @tiresult(for=App.Properties.getInt,type=integer) returns the value as an integer
 		 */
 		SetMethod("getInt", &PropertiesBinding::GetInt);
 		/**
-		 * @tiapi(method=True,name=App.Properties.getString,since=0.2) Gets a property value as string
+		 * @tiapi(method=True,name=App.Properties.getString,since=0.2) Returns a property value as string
 		 * @tiarg(for=App.Properties.getString,name=name,type=string) the property name
 	     * @tiresult(for=App.Properties.getString,type=string) returns the value as a string
 		 */
 		SetMethod("getString", &PropertiesBinding::GetString);
 		/**
-		 * @tiapi(method=True,name=App.Properties.getList,since=0.2) Gets a property value as a list
+		 * @tiapi(method=True,name=App.Properties.getList,since=0.2) Returns a property value as a list
 		 * @tiarg(for=App.Properties.getList,name=name,type=string) the property name
 	     * @tiresult(for=App.Properties.getList,type=list) returns the value as a list
 		 */
