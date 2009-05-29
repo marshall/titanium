@@ -1,10 +1,10 @@
 <html>
 <head>
 <script>
-	window.onload = function()
+	setTimeout(function()
 	{
 		Titanium.UI.currentWindow.close({'a':'b','out':Titanium.UI.getDialogParam('in')});
-	};
+	}, 50);
 </script>
 </head>
 <body>

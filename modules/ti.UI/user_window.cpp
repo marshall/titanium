@@ -1760,6 +1760,8 @@ void UserWindow::RegisterJSContext(JSGlobalContextRef context)
 	// window and global variable scope
 	this->Set("window", window_value);
 
+	UserWindow::LoadUIJavaScript(context);
+
 	SharedKObject event = new StaticBoundObject();
 	event->Set("scope", Value::NewObject(frame_global));
 	event->Set("url", Value::NewString(config->GetURL().c_str()));
@@ -1790,7 +1792,6 @@ void UserWindow::LoadUIJavaScript(JSGlobalContextRef context)
 void UserWindow::PageLoaded(
 	SharedKObject globalObject, std::string &url, JSGlobalContextRef context)
 {
-	UserWindow::LoadUIJavaScript(context);
 	SharedKObject event = new StaticBoundObject();
 	event->Set("scope", Value::NewObject(globalObject));
 	event->Set("url", Value::NewString(url.c_str()));

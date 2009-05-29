@@ -104,10 +104,13 @@
 	//
 	
 	/**
-	 * @tiapi(property=True,name=UI.isDialog,since=0.4) true if the current window is a UI Dialog
+	 * @tiapi(property=True,name=UI.Window.isDialog,since=0.4) true if this window is a UI Dialog
 	 */
-	Titanium.UI.isDialog = typeof(window._isDialog)=='undefined' ? false : window._isDialog;
-	if (window._isDialog) try { delete window._isDialog } catch(e) {};
+	Titanium.UI.getCurrentWindow().isDialog = function()
+	{
+		return Titanium.UI.getCurrentWindow()._isDialog;
+	}
+	Titanium.UI.getCurrentWindow()._isDialog = false;
 
 	var Dialog = function(params)
 	{
@@ -130,7 +133,6 @@
 					self.sub_dom_window = ev.scope;
 					self.sub_dom_window._isDialog = true;
 					self.sub_dom_window._DialogParams = kv;
-					self.sub_dom_window.Titanium.UI.isDialog = true;
 					var old_close = self.sub_dom_window.Titanium.UI.currentWindow.close;
 					self.sub_dom_window.Titanium.UI.currentWindow.close = function(r)
 					{
