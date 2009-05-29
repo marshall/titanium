@@ -7,6 +7,12 @@
 <url>blah.com</url>
 <copyright>2010</copyright>
 <description>cool like dat</description>
+<property name="teststring" type="string">stringvalue</property>
+<property name="testdouble" type="double">1.23</property>
+<property name="testint" type="int">1</property>
+<property name="testdefaultstring">stringvalue</property>
+<property name="badint" type="int">abc</property>
+<property name="baddouble" type="double">abc</property>
 <window>
 <id>initial</id>
 <title>Titanium Unit Test Driver (aka Drillbit)</title>

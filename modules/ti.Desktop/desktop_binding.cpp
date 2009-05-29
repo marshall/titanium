@@ -27,17 +27,17 @@ namespace ti
 	DesktopBinding::DesktopBinding(SharedKObject global) : global(global)
 	{
 		/**
-		 * @tiapi(method=True,name=Desktop.openApplication,since=0.2) opens an application by name using the operating system
+		 * @tiapi(method=True,name=Desktop.openApplication,since=0.2) Opens an application on the users system
 		 * @tiarg(for=Desktop.openApplication,type=string,name=path) the name or path to the application to open
 		 */
 		this->SetMethod("openApplication",&DesktopBinding::OpenApplication);
 		/**
-		 * @tiapi(method=True,name=Desktop.openURL,since=0.2) opens a URL in the default system browser
+		 * @tiapi(method=True,name=Desktop.openURL,since=0.2) Opens a URL in the default system browser
 		 * @tiarg(for=Desktop.openURL,name=url,type=string) the url
 		 */
 		this->SetMethod("openURL",&DesktopBinding::OpenURL);
 		/**
-		 * @tiapi(method=True,returns=void,name=Desktop.takeScreenshot,since=0.4) create a screenshot and saved to passed in file
+		 * @tiapi(method=True,returns=void,name=Desktop.takeScreenshot,since=0.4) Takes a screenshot of the users desktop and saves it to a file
 		 * @tiarg(for=Desktop.takeScreenshot,name=file,type=string) file to write the output
 		 */
 		this->SetMethod("takeScreenshot", &DesktopBinding::TakeScreenshot);

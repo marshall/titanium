@@ -327,7 +327,7 @@ TitaniumTest =
 	{
 		var text = [];
 		text.push("<html><body>");
-		text.push("<style>.failed{background-color:yellow;}</style>");
+		text.push("<style>.failed{background-color:yellow;} body {background-color: white;}</style>");
 		text.push("<table>");
 
 		text.push("<tr>");

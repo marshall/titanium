@@ -22,8 +22,7 @@ build = BuildConfig(
 	CONFIG_FILENAME = 'tiapp.xml',
 	BUILD_DIR = path.abspath('build'),
 	THIRD_PARTY_DIR = path.join(path.abspath('kroll'), 'thirdparty'),
-	BOOT_UPDATESITE_ENVNAME = 'TI_UPDATESITE',
-	CRASH_REPORT_URL = 'nosite'
+	CRASH_REPORT_URL = 'api.appcelerator.net/p/v1/app-crash-report'
 )
 build.set_kroll_source_dir(path.abspath('kroll'))
 
@@ -83,6 +82,10 @@ if clean or qclean:
 		dir_util.remove_tree(build.dir)
 	if not qclean: os.system('scons -c')
 	Exit(0)
+
+# forcing a crash to test crash detection
+if ARGUMENTS.get('test_crash', 0):
+	build.env.Append(CPPDEFINES = ('TEST_CRASH_DETECTION', 1))
 
 ## Kroll *must not be required* for installation
 SConscript('installation/SConscript')

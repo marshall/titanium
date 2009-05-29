@@ -106,31 +106,27 @@ namespace ti
 	DatabaseBinding::DatabaseBinding(Host *host) : host(host), database(NULL), session(NULL)
 	{
 		/**
-		 * @tiapi(method=True,name=Database.DB.execute,since=0.4) open a database
-		 * @tiarg(for=Database.DB.execute,name=sql,type=string) sql
+		 * @tiapi(method=True,name=Database.DB.execute,since=0.4) Executes an SQL query on the database.
+		 * @tiarg(for=Database.DB.execute,name=sql,type=string) the SQL query to execute.
 		 * @tiresult(for=Database.DB.execute,type=object) returns a Database.ResultSet
 		 */
 		this->SetMethod("execute",&DatabaseBinding::Execute);
 		/**
-		 * @tiapi(method=True,name=Database.DB.close,since=0.4) close an open database
+		 * @tiapi(method=True,name=Database.DB.close,since=0.4) Closes an open database
 		 */
 		this->SetMethod("close",&DatabaseBinding::Close);
 		/**
-		 * @tiapi(method=True,name=Database.DB.remove,since=0.4) remove a database
+		 * @tiapi(method=True,name=Database.DB.remove,since=0.4) Removes a database
 		 */
 		this->SetMethod("remove",&DatabaseBinding::Remove);
 
-		//
-		// we don't currently support the lastInsertRowId
-		// since poco doesn't (yet) support the method:
-		// sqlite3_last_insert_rowid
-		// which returns the value from sqlite.  we need
-		// to patch poco somehow to expose this..
-		//
+		/**
+		 * @tiapi(property=True,name=Database.DB.lastInsertRowId) The row id of the last insert operation.
+		 */
 		SET_INT_PROP("lastInsertRowId",0);
 		
 		/**
-		 * @tiapi(property=True,name=Database.DB.rowsAffected) the number of rows affected by the last execute
+		 * @tiapi(property=True,name=Database.DB.rowsAffected) The number of rows affected by the last execute
 		 */
 		SET_INT_PROP("rowsAffected",0);
 	}
@@ -265,6 +261,16 @@ namespace ti
 			logger->Debug("sql returned: %d rows for result",count);
 
 			SET_INT_PROP("rowsAffected",count);
+
+			// get the row insert id
+			Statement ss(session->GetSession());
+			ss << "select last_insert_rowid()", now;
+			RecordSet rr(ss);
+			Poco::DynamicAny value = rr.value(0);
+			int i;
+			value.convert(i);
+			SET_INT_PROP("lastInsertRowId",i);
+
 			
 			if (count > 0)
 			{

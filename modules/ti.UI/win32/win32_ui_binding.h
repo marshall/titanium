@@ -10,13 +10,15 @@
 #include "../ui_module.h"
 #include "win32_menu_item_impl.h"
 
+#include "script_evaluator.h"
+
 namespace ti
 {
 	class Win32UIBinding : public UIBinding
 	{
 
 	public:
-		Win32UIBinding(Host *host);
+		Win32UIBinding(Module* uiModule, Host *host);
 		~Win32UIBinding();
 
 		SharedUserWindow CreateWindow(WindowConfig*, SharedUserWindow& parent);
@@ -32,9 +34,13 @@ namespace ti
 		long GetIdleTime();
 
 		static HMENU getContextMenuInUseHandle() { return contextMenuInUseHandle; }
+		static bool IsWindowsXP();
 
 	private:
+		void InitCurl(Module *module);
+		
 		SharedPtr<Win32MenuItemImpl> contextMenuInUse;
+		ScriptEvaluator script_evaluator;
 		static HMENU contextMenuInUseHandle;
 		// Cookie and handle for WebKit Activation Context
 		ULONG_PTR lpCookie; 

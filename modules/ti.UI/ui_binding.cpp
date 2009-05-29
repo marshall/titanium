@@ -24,85 +24,85 @@ namespace ti
 		instance = this;
 
 		/**
-		 * @tiapi(method=True,name=UI.createMenu,version=0.2) creates a MenuItem object
-		 * @tiresult(for=UI.createMenu,type=object) returns a new MenuItem object
+		 * @tiapi(method=True,name=UI.createMenu,version=0.2) Creates a MenuItem object
+		 * @tiresult(for=UI.createMenu,type=object) a MenuItem object
 		 */
 		this->SetMethod("createMenu", &UIBinding::_CreateMenu);
 		/**
-		 * @tiapi(method=True,name=UI.createTrayMenu,version=0.2) creates a tray Menu object
-		 * @tiresult(for=UI.createTrayMenu,type=object) returns a new MenuItem object
+		 * @tiapi(method=True,name=UI.createTrayMenu,version=0.2) Creates a TrayItem object
+		 * @tiresult(for=UI.createTrayMenu,type=object) a TrayItem object
 		 */
 		this->SetMethod("createTrayMenu", &UIBinding::_CreateTrayMenu);
 		/**
-		 * @tiapi(method=True,name=UI.setMenu,version=0.2) sets a menu for the application
-		 * @tiarg(for=UI.setMenu,type=object,name=menu) menu
+		 * @tiapi(method=True,name=UI.setMenu,version=0.2) Sets a menu for the application
+		 * @tiarg(for=UI.setMenu,type=object,name=menu) a MenuItem object or null to unset
 		 */
 		this->SetMethod("setMenu", &UIBinding::_SetMenu);
 		/**
-		 * @tiapi(method=True,name=UI.getMenu,version=0.2) returns the application menu
-		 * @tiresult(for=UI.getMenu,type=object) returns the menu
+		 * @tiapi(method=True,name=UI.getMenu,version=0.2) Returns the application's main MenuItem
+		 * @tiresult(for=UI.getMenu,type=object) the application's main MenuItem
 		 */
 		this->SetMethod("getMenu", &UIBinding::_GetMenu);
 		/**
-		 * @tiapi(method=True,name=UI.setContextMenu,version=0.2) sets the application context menu
-		 * @tiarg(for=UI.setContextMenu,type=object,name=menu) menu
+		 * @tiapi(method=True,name=UI.setContextMenu,version=0.2) Sets the application's context menu
+		 * @tiarg(for=UI.setContextMenu,type=object,name=menu) a MenuItem object or null to unset
 		 */
 		this->SetMethod("setContextMenu", &UIBinding::_SetContextMenu);
 		/**
-		 * @tiapi(method=True,name=UI.getContextMenu,version=0.2) gets the application context menu
-		 * @tiresult(for=UI.getContextMenu,type=object) returns the menu
+		 * @tiapi(method=True,name=UI.getContextMenu,version=0.2) Returns the application context menu
+		 * @tiresult(for=UI.getContextMenu,type=object) the application's context MenuItem object
 		 */
 		this->SetMethod("getContextMenu", &UIBinding::_GetContextMenu);
 		/**
-		 * @tiapi(method=True,name=UI.setIcon,version=0.2) sets the application icon
-		 * @tiarg(for=UI.setIcon,type=object,name=menu) icon
+		 * @tiapi(method=True,name=UI.setIcon,version=0.2) Sets the application's icon
+		 * @tiarg(for=UI.setIcon,type=object,name=menu) path to the icon
 		 */
 		this->SetMethod("setIcon", &UIBinding::_SetIcon);
 		/**
-		 * @tiapi(method=True,name=UI.addTray,version=0.2) adds a tray menu
-		 * @tiarg(for=UI.addTray,type=object,name=menu) tray menu
+		 * @tiapi(method=True,name=UI.addTray,version=0.2) Adds a tray menu
+		 * @tiarg(for=UI.addTray,type=object,name=menu) a TrayItem to add
 		 */
 		this->SetMethod("addTray", &UIBinding::_AddTray);
 		/**
-		 * @tiapi(method=True,name=UI.clearTray,version=0.2) removes a tray menu
+		 * @tiapi(method=True,name=UI.clearTray,version=0.2) Removes a tray menu
 		 */
 		this->SetMethod("clearTray", &UIBinding::_ClearTray);
 		/**
-		 * @tiapi(method=True,name=UI.setDockIcon,version=0.2) set the dock icon
-		 * @tiarg(for=UI.setDockIcon,type=string,name=icon) icon
+		 * @tiapi(method=True,name=UI.setDockIcon,version=0.2) Sets the dock icon
+		 * @tiarg(for=UI.setDockIcon,type=string,name=icon) path to the icon
 		 */
 		this->SetMethod("setDockIcon", &UIBinding::_SetDockIcon);
 		/**
-		 * @tiapi(method=True,name=UI.setDockMenu,version=0.2) set the dock menu
-		 * @tiarg(for=UI.setDockMenu,type=object,name=menu) menu
+		 * @tiapi(method=True,name=UI.setDockMenu,version=0.2) Sets the dock menu
+		 * @tiarg(for=UI.setDockMenu,type=object,name=menu) a MenuItem object
 		 */
 		this->SetMethod("setDockMenu", &UIBinding::_SetDockMenu);
 		/**
-		 * @tiapi(method=True,name=UI.setBadge,version=0.2) set the application badge value
+		 * @tiapi(method=True,name=UI.setBadge,version=0.2) Sets the application's badge value
 		 * @tiarg(for=UI.setBadge,type=string,name=badge) badge value
 		 */
 		this->SetMethod("setBadge", &UIBinding::_SetBadge);
 		/**
-		 * @tiapi(method=True,name=UI.setBadgeImage,version=0.2) set the application badge image
-		 * @tiarg(for=UI.setBadge,type=string,name=badge_image) badge image path
+		 * @tiapi(method=True,name=UI.setBadgeImage,version=0.2) Sets the application's badge image
+		 * @tiarg(for=UI.setBadge,type=string,name=badge_image) path to badge image
 		 */
 		this->SetMethod("setBadgeImage", &UIBinding::_SetBadgeImage);
 
 		/**
-		 * @tiapi(method=True,name=UI.getIdleTime,version=0.2) get the user's idle time (for the machine, not just the application)
-		 * @tiresult(for=UI.getIdleTime,type=double) returns the idle time as a double
+		 * @tiapi(method=True,name=UI.getIdleTime,version=0.2) Returns the user's idle time (for the machine, not just the application)
+		 * @tiresult(for=UI.getIdleTime,type=double) the idle time as a double
 		 */
 		this->SetMethod("getIdleTime", &UIBinding::_GetIdleTime);
 
 		this->openWindowList = new StaticBoundList();
 		/**
-		 * @tiapi(method=True,name=UI.getOpenWindows,version=0.4) get the list of currently open windows
-		 * @tiresult(for=UI.getOpenWindows,type=list) returns the list of open windows
+		 * @tiapi(method=True,name=UI.getOpenWindows,version=0.4) Returns the list of currently open windows
+		 * @tiresult(for=UI.getOpenWindows,type=list) the list of open windows
 		 */
 		this->SetMethod("getOpenWindows", &UIBinding::_GetOpenWindows);
 
 		/**
-		 * @tiapi(property=True,name=UI.windows,version=0.2) gets a list of open user created windows
+		 * @tiapi(property=True,name=UI.windows,version=0.2) Returns a list of open user created windows
 		 * @tideprecated(for=UI.windows,version=0.4)
 		 */
 		this->Set("windows", Value::NewList(this->openWindowList));
@@ -120,7 +120,7 @@ namespace ti
 
 		SharedKObject global = host->GetGlobalObject();
 		/**
-		 * @tiapi(property=True,name=UI.mainWindow) get the main window 
+		 * @tiapi(property=True,name=UI.mainWindow) Returns the main window 
 		 */
 		global->SetNS("UI.mainWindow", Value::NewObject(main_window));
 

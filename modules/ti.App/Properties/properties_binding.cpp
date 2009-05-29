@@ -24,82 +24,97 @@ namespace ti
 
 		config = new Poco::Util::PropertyFileConfiguration(file_path);
 		this->file_path = file_path.c_str();
-
+		
+		this->Init();
+	}
+	
+	PropertiesBinding::PropertiesBinding()
+	{
+		this->file_path = "";
+		this->config = new Poco::Util::PropertyFileConfiguration();
+		
+		this->Init();
+	}
+	
+	void PropertiesBinding::Init()
+	{
 		/**
-		 * @tiapi(method=True,name=App.Properties.getBool,since=0.2) get value as boolean
+		 * @tiapi(method=True,name=App.Properties.getBool,since=0.2) Returns a property value as boolean
 		 * @tiarg(for=App.Properties.getBool,name=name,type=string) the property name
 	     * @tiresult(for=App.Properties.getBool,type=boolean) returns the value as a boolean
 		 */
 		SetMethod("getBool", &PropertiesBinding::GetBool);
 		/**
-		 * @tiapi(method=True,name=App.Properties.getDouble,since=0.2) get value as double
+		 * @tiapi(method=True,name=App.Properties.getDouble,since=0.2) Returns a property value as double
 		 * @tiarg(for=App.Properties.getDouble,name=name,type=string) the property name
 	     * @tiresult(for=App.Properties.getDouble,type=double) returns the value as a double
 		 */
 		SetMethod("getDouble", &PropertiesBinding::GetDouble);
 		/**
-		 * @tiapi(method=True,name=App.Properties.getInt,since=0.2) get value as integer
+		 * @tiapi(method=True,name=App.Properties.getInt,since=0.2) Returns a property value as integer
 		 * @tiarg(for=App.Properties.getInt,name=name,type=string) the property name
 	     * @tiresult(for=App.Properties.getInt,type=integer) returns the value as an integer
 		 */
 		SetMethod("getInt", &PropertiesBinding::GetInt);
 		/**
-		 * @tiapi(method=True,name=App.Properties.getString,since=0.2) get value as string
+		 * @tiapi(method=True,name=App.Properties.getString,since=0.2) Returns a property value as string
 		 * @tiarg(for=App.Properties.getString,name=name,type=string) the property name
 	     * @tiresult(for=App.Properties.getString,type=string) returns the value as a string
 		 */
 		SetMethod("getString", &PropertiesBinding::GetString);
 		/**
-		 * @tiapi(method=True,name=App.Properties.getList,since=0.2) get value as a list
+		 * @tiapi(method=True,name=App.Properties.getList,since=0.2) Returns a property value as a list
 		 * @tiarg(for=App.Properties.getList,name=name,type=string) the property name
 	     * @tiresult(for=App.Properties.getList,type=list) returns the value as a list
 		 */
 		SetMethod("getList", &PropertiesBinding::GetList);
 		/**
-		 * @tiapi(method=True,name=App.Properties.setBool,since=0.2) set value
+		 * @tiapi(method=True,name=App.Properties.setBool,since=0.2) Sets a boolean property value
 		 * @tiarg(for=App.Properties.setBool,name=name,type=string) the property name
 		 * @tiarg(for=App.Properties.setBool,name=value,type=boolean) the value
 		 */
 		SetMethod("setBool", &PropertiesBinding::SetBool);
 		/**
-		 * @tiapi(method=True,name=App.Properties.setDouble,since=0.2) set value
+		 * @tiapi(method=True,name=App.Properties.setDouble,since=0.2) Sets a double property value
 		 * @tiarg(for=App.Properties.setDouble,name=name,type=string) the property name
 		 * @tiarg(for=App.Properties.setDouble,name=value,type=double) the value
 		 */
 		SetMethod("setDouble", &PropertiesBinding::SetDouble);
 		/**
-		 * @tiapi(method=True,name=App.Properties.setInt,since=0.2) set value
+		 * @tiapi(method=True,name=App.Properties.setInt,since=0.2) Sets an integer property value
 		 * @tiarg(for=App.Properties.setInt,name=name,type=string) the property name
 		 * @tiarg(for=App.Properties.setInt,name=value,type=integer) the value
 		 */
 		SetMethod("setInt", &PropertiesBinding::SetInt);
 		/**
-		 * @tiapi(method=True,name=App.Properties.setString,since=0.2) set value
+		 * @tiapi(method=True,name=App.Properties.setString,since=0.2) Sets a string property value
 		 * @tiarg(for=App.Properties.setString,name=name,type=string) the property name
 		 * @tiarg(for=App.Properties.setString,name=value,type=string) the value
 		 */
 		SetMethod("setString", &PropertiesBinding::SetString);
 		/**
-		 * @tiapi(method=True,name=App.Properties.setList,since=0.2) set value
+		 * @tiapi(method=True,name=App.Properties.setList,since=0.2) Sets a list property value
 		 * @tiarg(for=App.Properties.setList,name=name,type=string) the property name
 		 * @tiarg(for=App.Properties.setList,name=value,type=list) the value
 		 */
 		SetMethod("setList", &PropertiesBinding::SetList);
 		/**
-		 * @tiapi(method=True,name=App.Properties.hasProperty,since=0.2) check to see if a property exists
+		 * @tiapi(method=True,name=App.Properties.hasProperty,since=0.2) Checks whether a property exists
 		 * @tiarg(for=App.Properties.hasProperty,name=name,type=string) the property name
 	     * @tiresult(for=App.Properties.hasProperty,type=boolean) returns true if the property exists
 		 */
 		SetMethod("hasProperty", &PropertiesBinding::HasProperty);
 		/**
-		 * @tiapi(method=True,name=App.Properties.listProperties,since=0.2) get a list of property values
+		 * @tiapi(method=True,name=App.Properties.listProperties,since=0.2) Returns a list of property values
 	     * @tiresult(for=App.Properties.listProperties,type=list) returns a list of property values
 		 */
 		SetMethod("listProperties", &PropertiesBinding::ListProperties);
 	}
 
 	PropertiesBinding::~PropertiesBinding() {
-		config->save(file_path);
+		if (file_path.size() > 0) {
+			config->save(file_path);
+		}
 	}
 
 	void PropertiesBinding::Getter(const ValueList& args, SharedValue result, Type type)
@@ -147,7 +162,9 @@ namespace ti
 					case String: config->setString(property, args.at(1)->ToString()); break;
 					default: break;
 				}
-				config->save(file_path);
+				if (file_path.size() > 0) {
+					config->save(file_path);
+				}
 			} catch(Poco::Exception &e) {
 				throw ValueException::FromString(eprefix + e.displayText());
 			}
@@ -235,7 +252,9 @@ namespace ti
 				}
 			}
 			config->setString(property, value);
-			config->save(file_path);
+			if (file_path.size() > 0) {
+				config->save(file_path);
+			}
 		}
 	}
 

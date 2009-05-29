@@ -21,6 +21,7 @@
 namespace ti {
 
 class WindowConfig;
+class PropertiesBinding;
 
 typedef std::vector<WindowConfig*> WindowConfigList ;
 
@@ -30,6 +31,7 @@ private:
 	const char* error;
 	std::string appName, appID, description, copyright, url, version, publisher;
 	WindowConfigList windows;
+	SharedPtr<PropertiesBinding> systemProperties;
 
 	// icon properties
 	std::string icon16, icon32, icon48;
@@ -48,13 +50,15 @@ public:
 	std::string& GetVersion() { return version; }
 	std::string& GetPublisher() { return publisher; }
 
+	SharedPtr<PropertiesBinding> GetSystemProperties() { return systemProperties; }
+	
 	std::string InsertAppIDIntoURL(std::string url);
 
 	WindowConfigList& GetWindows() { return windows; }
 	WindowConfig* GetWindow(std::string &id);
 	WindowConfig* GetWindowByURL(std::string url);
 	WindowConfig* GetMainWindow();
-
+	
 
 	//icon accessors
 	std::string& GetIcon16() { return icon16; }

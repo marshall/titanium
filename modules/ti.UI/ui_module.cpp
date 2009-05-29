@@ -34,7 +34,7 @@ namespace ti
 		api->Call("ti.UI.start", Value::Undefined);
 
 #ifdef OS_WIN32
-		UIBinding* binding = new Win32UIBinding(host);
+		UIBinding* binding = new Win32UIBinding(this, host);
 #elif OS_OSX
 		UIBinding* binding = new OSXUIBinding(host);
 #elif OS_LINUX

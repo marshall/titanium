@@ -70,7 +70,7 @@
 	}
 	
 	/**
-	 * @tiapi(method=True,name=Analytics.addEvent,since=0.3) send an analytics event associated with the application
+	 * @tiapi(method=True,name=Analytics.addEvent,since=0.3) Sends an analytics event associated with the application
 	 * @tiarg(for=Analytics.addEvent,type=string,name=event) event name
 	 * @tiarg(for=Analytics.addEvent,type=object,name=data,optional=True) event data
 	 */
