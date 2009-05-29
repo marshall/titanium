@@ -530,9 +530,7 @@ namespace ti
 		std::string uri = webkit_web_frame_get_uri(frame);
 	
 		GtkUserWindow* user_window = static_cast<GtkUserWindow*>(data);
-		user_window->PageLoaded(frame_global, uri);
-	
-		UIModule::GetInstance()->LoadUIJavascript(context);
+		user_window->PageLoaded(frame_global, uri, context);
 	}
 	
 	static void window_object_cleared_cb(

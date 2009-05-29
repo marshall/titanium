@@ -332,8 +332,6 @@
 	{
 		(*frames)[frame] = shared_global;
 	}
-	// apply patches
-	UIModule::GetInstance()->LoadUIJavascript(context);
 	return shared_global;
 }
 
@@ -370,7 +368,7 @@
 	// fire load event
 	UserWindow *user_window = [window userWindow];
 	std::string url_str = [[theurl absoluteString] UTF8String];
-	user_window->PageLoaded(global_object,url_str);
+	user_window->PageLoaded(global_object, url_str, context);
 	
 	if (![theurl isEqual:url])
 	{

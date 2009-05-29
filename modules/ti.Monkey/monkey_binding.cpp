@@ -13,26 +13,27 @@
 
 namespace ti
 {
-	MonkeyBinding::MonkeyBinding(Host *host, SharedKObject global) : global(global), registration(0)
+	MonkeyBinding::MonkeyBinding(Host *host, SharedKObject global) :
+		global(global),
+		registration(0),
+		logger(Logger::Get("Monkey"))
 	{
-		const std::string home = host->GetApplicationHomePath();
-		
-		// check to make sure we have a user scripts directory
-		std::string dir = FileUtils::Join(home.c_str(),"Resources","userscripts",NULL);
+		std::string resourcesPath = host->GetApplication()->GetResourcesPath();
+		std::string userscriptsPath = FileUtils::Join(
+			resourcesPath.c_str(), "userscripts", NULL);
 
-		PRINTD("USER SCRIPT DIR = " << dir);
-
-		if (FileUtils::IsDirectory(dir))
+		if (FileUtils::IsDirectory(userscriptsPath))
 		{
+			logger->Debug("Found userscripts directory at: %s\n", userscriptsPath.c_str());
 			std::vector<std::string> files;
-			FileUtils::ListDir(dir,files);
+			FileUtils::ListDir(userscriptsPath,files);
 			if (files.size()>0)
 			{
 				std::vector<std::string>::iterator iter = files.begin();
 				while(iter!=files.end())
 				{
 					std::string file = (*iter++);
-					std::string fn = FileUtils::Join(dir.c_str(),file.c_str(),NULL);
+					std::string fn = FileUtils::Join(userscriptsPath.c_str(),file.c_str(),NULL);
 					Poco::Path path(fn);
 					if (path.getExtension() == "js")
 					{
@@ -152,25 +153,17 @@ namespace ti
 				catch (ValueException &ex)
 				{
 					Logger* logger = Logger::Get("Monkey");
-					SharedValue v = ex.GetValue();
-					if (v->IsString())
+					SharedString ss = ex.DisplayString();
+					int line = -1;
+
+					if (ex.GetValue()->IsObject() &&
+						ex.GetValue()->ToObject()->Get("line")->IsNumber())
 					{
-						logger->Error("Exception generated evaluating user script for %s. Exception: %s",url_value.c_str(), v->ToString());
-						continue;
+						line = ex.GetValue()->ToObject()->Get("line")->ToInt();
 					}
-					else if (v->IsObject())
-					{
-						SharedKObject bo = v->ToObject();
-						SharedValue tm = bo->Get("toString");
-						if (tm->IsMethod())
-						{
-							SharedValue ln = bo->Get("line");
-							int lineNumber = (ln->IsInt() ? ln->ToInt() : -1);
-							logger->Error("+Exception generated evaluating user script for %s. Exception: %s at line: %d",url_value.c_str(), tm->ToMethod()->Call()->ToString(),lineNumber);
-							continue;
-						}
-					}
-					logger->Error("Exception generated evaluating user script for %s. Unknown Exception: %s",url_value.c_str(),v->ToTypeString());
+					logger->Error(
+						"Exception generated evaluating user script for %s "
+						"(line %i): %s", url_value.c_str(), line, ss->c_str());
 				}
 				catch (std::exception &ex)
 				{

@@ -82,7 +82,6 @@ namespace ti {
 
 		void Exiting(int exitcode);
 		void Start();
-		void LoadUIJavascript(JSContextRef context);
 
 		static void SetMenu(SharedPtr<MenuItem> menu);
 		static SharedPtr<MenuItem> GetMenu();

@@ -1762,13 +1762,37 @@ void UserWindow::RegisterJSContext(JSGlobalContextRef context)
 
 	SharedKObject event = new StaticBoundObject();
 	event->Set("scope", Value::NewObject(frame_global));
+	event->Set("url", Value::NewString(config->GetURL().c_str()));
 	this->FireEvent(INIT, event);
 }
 
-void UserWindow::PageLoaded(SharedKObject global_bound_object, std::string &url)
+void UserWindow::LoadUIJavaScript(JSGlobalContextRef context)
 {
+	std::string module_path = UIModule::GetInstance()->GetPath();
+	std::string js_path = FileUtils::Join(module_path.c_str(), "ui.js", NULL);
+	try
+	{
+		KJSUtil::EvaluateFile(context, (char*) js_path.c_str());
+	}
+	catch (kroll::ValueException &e)
+	{
+		SharedString ss = e.DisplayString();
+		Logger* logger = Logger::Get("UIModule");
+		logger->Error("Error loading %s: %s",js_path.c_str(),(*ss).c_str());
+	}
+	catch (...)
+	{
+		Logger* logger = Logger::Get("UIModule");
+		logger->Error("Unexpected error loading %s",js_path.c_str());
+	}
+}
+
+void UserWindow::PageLoaded(
+	SharedKObject globalObject, std::string &url, JSGlobalContextRef context)
+{
+	UserWindow::LoadUIJavaScript(context);
 	SharedKObject event = new StaticBoundObject();
-	event->Set("scope", Value::NewObject(global_bound_object));
+	event->Set("scope", Value::NewObject(globalObject));
 	event->Set("url", Value::NewString(url.c_str()));
 	this->FireEvent(LOAD, event);
 }

@@ -22,8 +22,6 @@ HRESULT STDMETHODCALLTYPE
 Win32WebKitFrameLoadDelegate::didFinishLoadForFrame(IWebView *webView, IWebFrame *frame)
 {
 	JSGlobalContextRef context = frame->globalContext();
-	UIModule::GetInstance()->LoadUIJavascript(context);
-
 	JSObjectRef global_object = JSContextGetGlobalObject(context);
 	SharedKObject frame_global = new KKJSObject(context, global_object);
 
@@ -38,7 +36,7 @@ Win32WebKitFrameLoadDelegate::didFinishLoadForFrame(IWebView *webView, IWebFrame
 	std::string url;
 	url.assign(u2.begin(), u2.end());
 
-	window->PageLoaded(frame_global,url);
+	window->PageLoaded(frame_global, url, context);
 	window->FrameLoaded();
 	return S_OK;
 }

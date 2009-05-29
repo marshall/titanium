@@ -16,7 +16,7 @@
 		// Add app:// support to jquery's http success function
 		if (window.jQuery) 
 		{
-		 	var originalHttpSuccess = jQuery.httpSuccess;
+			var originalHttpSuccess = jQuery.httpSuccess;
 			jQuery.extend({
 				httpSuccess: function(r){
 					if (location.protocol == 'app:' && r.status === 0) {
