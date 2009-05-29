@@ -63,27 +63,6 @@ namespace ti
 		binding->CreateMainWindow(main_window_config);
 	}
 
-	void UIModule::LoadUIJavascript(JSContextRef context)
-	{
-		std::string module_path = GetPath();
-		std::string js_path = FileUtils::Join(module_path.c_str(), "ui.js", NULL);
-		try
-		{
-			KJSUtil::EvaluateFile(context, (char*) js_path.c_str());
-		}
-		catch (kroll::ValueException &e)
-		{
-			SharedString ss = e.DisplayString();
-			Logger* logger = Logger::Get("UIModule");
-			logger->Error("Error loading %s: %s",js_path.c_str(),(*ss).c_str());
-		}
-		catch (...)
-		{
-			Logger* logger = Logger::Get("UIModule");
-			logger->Error("Unexpected error loading %s",js_path.c_str());
-		}
-	}
-
 	void UIModule::Exiting(int exitcode)
 	{
 		// send a stop notification - we need to do this before 
