@@ -14,47 +14,47 @@ namespace ti
 	AppBinding::AppBinding(Host *host, SharedKObject global) : host(host), global(global)
 	{
 		/**
-		 * @tiapi(method=True,immutable=True,name=App.getID,since=0.2) Gets the application id
+		 * @tiapi(method=True,immutable=True,name=App.getID,since=0.2) Returns the application id
 		 * @tiresult(for=App.getID,type=string) returns the id
 		 */
 		this->SetMethod("getID", &AppBinding::GetID);
 		/**
-		 * @tiapi(method=True,immutable=True,name=App.getName,since=0.2) Gets the application name
+		 * @tiapi(method=True,immutable=True,name=App.getName,since=0.2) Returns the application name
 	     * @tiresult(for=App.getName,type=string) returns the name
 		 */
 		this->SetMethod("getName", &AppBinding::GetName);
 		/**
-		 * @tiapi(method=True,immutable=True,name=App.getVersion,since=0.2) Gets the application version
+		 * @tiapi(method=True,immutable=True,name=App.getVersion,since=0.2) Returns the application version
 		 * @tiresult(for=App.getVersion,type=string) returns the version
 		 */
 		this->SetMethod("getVersion", &AppBinding::GetVersion);
 		/**
-		 * @tiapi(method=True,immutable=True,name=App.getPublisher,since=0.4) Gets the application publisher
+		 * @tiapi(method=True,immutable=True,name=App.getPublisher,since=0.4) Returns the application publisher
 	     * @tiresult(for=App.getPublisher,type=string) returns the publisher
 		 */
 		this->SetMethod("getPublisher", &AppBinding::GetPublisher);
 		/**
-		 * @tiapi(method=True,immutable=True,name=App.getURL,since=0.4) Gets the application url
+		 * @tiapi(method=True,immutable=True,name=App.getURL,since=0.4) Returns the application url
 	     * @tiresult(for=App.getURL,type=string) returns the url for the app
 		 */
 		this->SetMethod("getURL", &AppBinding::GetURL);
 		/**
-		 * @tiapi(method=True,immutable=True,name=App.getDescription,since=0.4) Gets the application description
+		 * @tiapi(method=True,immutable=True,name=App.getDescription,since=0.4) Returns the application description
 	     * @tiresult(for=App.getDescription,type=string) returns the description for the app
 		 */
 		this->SetMethod("getDescription", &AppBinding::GetDescription);
 		/**
-		 * @tiapi(method=True,immutable=True,name=App.getCopyright,since=0.4) Gets the application copyright information
+		 * @tiapi(method=True,immutable=True,name=App.getCopyright,since=0.4) Returns the application copyright information
 	     * @tiresult(for=App.getCopyright,type=string) returns the copyright for the app
 		 */
 		this->SetMethod("getCopyright", &AppBinding::GetCopyright);
 		/**
-		 * @tiapi(method=True,immutable=True,name=App.getGUID,since=0.2) Gets the application globally unique id
+		 * @tiapi(method=True,immutable=True,name=App.getGUID,since=0.2) Returns the application globally unique id
 	     * @tiresult(for=App.getGUID,type=string) returns the unique id
 		 */
 		this->SetMethod("getGUID", &AppBinding::GetGUID);
 		/**
-		 * @tiapi(method=True,immutable=True,name=App.getStreamURL,since=0.4) Gets the application stream URL for the update channel
+		 * @tiapi(method=True,immutable=True,name=App.getStreamURL,since=0.4) Returns the application stream URL for the update channel
 	     * @tiresult(for=App.getStreamURL,type=string) returns the stream URL
 		 */
 		this->SetMethod("getStreamURL", &AppBinding::GetStreamURL);
@@ -65,7 +65,7 @@ namespace ti
 		this->SetMethod("appURLToPath", &AppBinding::AppURLToPath);
 		
 		/**
-		 * @tiapi(property=True,immutable=True,type=string,name=App.path,since=0.2) Gets the full path to the application
+		 * @tiapi(property=True,immutable=True,type=string,name=App.path,since=0.2) Returns the full path to the application
 		 */
 #ifdef OS_OSX
 		NSString *path = [[NSBundle mainBundle] bundlePath];

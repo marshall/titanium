@@ -12,22 +12,22 @@ namespace ti
 	TrayItem::TrayItem() : StaticBoundObject()
 	{
 		/**
-		 * @tiapi(method=True,name=UI.Tray.setIcon,since=0.2) set the tray icon image
-		 * @tiarg(for=UI.Tray.setIcon,name=icon,type=string,optional=True) icon value or null to unset
+		 * @tiapi(method=True,name=UI.Tray.setIcon,since=0.2) Sets a TrayItem's icon
+		 * @tiarg(for=UI.Tray.setIcon,name=icon,type=string,optional=True) path to the icon or null to unset
 		 */
 		this->SetMethod("setIcon", &TrayItem::_SetIcon);
 		/**
-		 * @tiapi(method=True,name=UI.Tray.setMenu,since=0.2) set the tray menu
-		 * @tiarg(for=UI.Tray.setMenu,name=menu,type=object,optional=True) MenuItem value or null to unset
+		 * @tiapi(method=True,name=UI.Tray.setMenu,since=0.2) Sets a TrayItem's menu
+		 * @tiarg(for=UI.Tray.setMenu,name=menu,type=object,optional=True) a MenuItem value or null to unset
 		 */
 		this->SetMethod("setMenu", &TrayItem::_SetMenu);
 		/**
-		 * @tiapi(method=True,name=UI.Tray.setHint,since=0.2) set the tray hint tooltip
-		 * @tiarg(for=UI.Tray.setHint,name=hint,type=string,optional=True) hint value or null to unset
+		 * @tiapi(method=True,name=UI.Tray.setHint,since=0.2) Sets a TrayItem's tooltip
+		 * @tiarg(for=UI.Tray.setHint,name=hint,type=string,optional=True) tooltip value or null to unset
 		 */
 		this->SetMethod("setHint", &TrayItem::_SetHint);
 		/**
-		 * @tiapi(method=True,name=UI.Tray.remove,since=0.2) remove the tray item
+		 * @tiapi(method=True,name=UI.Tray.remove,since=0.2) Removes a TrayItem
 		 */
 		this->SetMethod("remove", &TrayItem::_Remove);
 	}

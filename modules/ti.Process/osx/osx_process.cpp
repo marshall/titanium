@@ -107,6 +107,9 @@
 }
 -(void)stop
 {
+	Logger *logger = Logger::Get("OSXProcess");
+	logger->Info("Process stop for task %d",[task isRunning]);
+	
 	if ([task isRunning])
 	{
 		[task terminate];
@@ -130,6 +133,9 @@
 }
 -(void)terminated: (NSNotification *)aNotification
 {
+	Logger *logger = Logger::Get("OSXProcess");
+	logger->Info("Process has terminated");
+
 	[[NSNotificationCenter defaultCenter] removeObserver:self name:NSFileHandleReadCompletionNotification object: [[task standardOutput] fileHandleForReading]];
 	[[NSNotificationCenter defaultCenter] removeObserver:self name:NSFileHandleReadCompletionNotification object: [[task standardError] fileHandleForReading]];
 	[[NSNotificationCenter defaultCenter] removeObserver:self name:NSTaskDidTerminateNotification object: task];
@@ -266,11 +272,17 @@ namespace ti
 	}
 	OSXProcess::~OSXProcess()
 	{
+		Logger *logger = Logger::Get("OSXProcess");
+		logger->Debug("OSXProcess destructor called");
+		
 		[process stop];
 		[process release];
 	}
 	void OSXProcess::Terminate(const ValueList& args, SharedValue result)
 	{
+		Logger *logger = Logger::Get("OSXProcess");
+		logger->Info("Terminate process called");
+		
 		[process stop];
 		[process setRead:NULL];
 		[process setExit:NULL];

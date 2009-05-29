@@ -36,15 +36,15 @@ namespace ti
 		}
 		
 		/**
-		 * @tiapi(property=True,type=string,name=Process.Process.command,version=0.2) returns the command for the process
+		 * @tiapi(property=True,type=string,name=Process.Process.command,version=0.2) The command used for the Process object
 		 */
 		this->Set("command",Value::NewString(cmd));
 		/**
-		 * @tiapi(property=True,type=integer,name=Process.Process.pid,version=0.2) returns the process id for the process
+		 * @tiapi(property=True,type=integer,name=Process.Process.pid,version=0.2) The process id of the Process object
 		 */
 		this->Set("pid",Value::NewNull());
 		/**
-		 * @tiapi(property=True,type=boolean,name=Process.Process.running,version=0.2) returns true if the command is running
+		 * @tiapi(property=True,type=boolean,name=Process.Process.running,version=0.2) The running status of the Process object
 		 */
 		this->Set("running",Value::NewBool(false)); 
 		 
@@ -52,41 +52,41 @@ namespace ti
 		this->shared_error = new SharedKObject(this->err);
 		
 		/**
-		 * @tiapi(property=True,type=object,name=Process.Process.err,version=0.2) returns the error stream as a Pipe object
+		 * @tiapi(property=True,type=object,name=Process.Process.err,version=0.2) The Pipe object of the error stream
 		 */
 		this->Set("err",Value::NewObject(*shared_error));
 		
 		this->out = new Pipe(new Poco::PipeInputStream(*outp));
 		this->shared_output = new SharedKObject(this->out);
 		/**
-		 * @tiapi(property=True,type=object,name=Process.Process.out,version=0.2) returns the output stream as a Pipe object
+		 * @tiapi(property=True,type=object,name=Process.Process.out,version=0.2) The Pipe object of the output stream
 		 */
 		this->Set("out",Value::NewObject(*shared_output));
 		
 		this->in = new Pipe(new Poco::PipeOutputStream(*inp));
 		this->shared_input = new SharedKObject(this->in);
 		/**
-		 * @tiapi(property=True,type=object,name=Process.Process.in,version=0.2) returns the input stream as a Pipe object
+		 * @tiapi(property=True,type=object,name=Process.Process.in,version=0.2) The Pipe object of the input stream
 		 */
 		this->Set("in",Value::NewObject(*shared_input));
 		
 		/**
-		 * @tiapi(method=True,name=Process.Process.terminate,version=0.2) terminate the process
+		 * @tiapi(method=True,name=Process.Process.terminate,version=0.2) Terminates a running process
 		 */
 		this->SetMethod("terminate",&Process::Terminate);
 		
 		/**
-		 * @tiapi(property=True,type=integer,name=Process.Process.exitCode,version=0.4) returns the exit code or null if not yet exited
+		 * @tiapi(property=True,type=integer,name=Process.Process.exitCode,version=0.4) The exit code or null if not yet exited
 		 */
 		this->Set("exitCode",Value::Null);
 
 		/**
-		 * @tiapi(property=True,type=method,name=Process.Process.onread,since=0.4) set the function handler to call when sys out is read
+		 * @tiapi(property=True,type=method,name=Process.Process.onread,since=0.4) The function handler to call when sys out is read
 		 */
 		SET_NULL_PROP("onread")
 
 		/**
-		 * @tiapi(property=True,type=method,name=Process.Process.onexit,since=0.4) set the function handler to call when the process exits
+		 * @tiapi(property=True,type=method,name=Process.Process.onexit,since=0.4) The function handler to call when the process exits
 		 */
 		SET_NULL_PROP("onexit")
 
