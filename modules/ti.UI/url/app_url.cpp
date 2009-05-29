@@ -27,17 +27,20 @@ namespace ti {
 	{
 		std::string urlString = url;
 		std::string appID = kroll::Host::GetInstance()->GetApplication()->id;
-		
-		if (urlString.find(appID) == 0)
-		{
-			urlString = urlString.substr(appID.size());
-			while (urlString.find('/') == 0) {
-				urlString = urlString.substr(1);
-			}
+
+		// strip the "appid" (even if it's not the same..
+		// eventually we'll need smarter logic here if we want to support intra-app URLs
+		int slashIndex = urlString.find('/');
+		while (slashIndex == 0) {
+			urlString = urlString.substr(1);
+			slashIndex = urlString.find('/');
 		}
+		urlString = urlString.substr(slashIndex+1);
+		
 		
 		std::string path = Poco::Environment::get("KR_HOME", "");
 		path = path + kAppURLPrefix + "/" + urlString;
+		
 		return strdup(path.c_str());
 	}
 
