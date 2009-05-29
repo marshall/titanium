@@ -272,15 +272,14 @@ namespace ti
 	void AppBinding::GetIcon(const ValueList& args, SharedValue result)
 	{
 		const SharedApplication app = this->host->GetApplication();
-		std::string icon = app->image;
-		if (icon.empty())
+		if (app->image.empty())
 		{
 			result->SetNull();
 		}
 		else
 		{
-			std::string path = Poco::Environment::get("KR_HOME", "");
-			result->SetString(std::string(path + KR_PATH_SEP + kAppURLPrefix + KR_PATH_SEP + icon).c_str());
+			std::string iconPath = app->image;
+			result->SetString(iconPath);
 		}
 	}
 }
