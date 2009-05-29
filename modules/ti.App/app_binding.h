@@ -29,6 +29,7 @@ namespace ti
 		void GetDescription(const ValueList& args, SharedValue result);
 		void GetURL(const ValueList& args, SharedValue result);
 		void GetGUID(const ValueList& args, SharedValue result);
+		void GetIcon(const ValueList& args, SharedValue result);
 		void GetStreamURL(const ValueList& args, SharedValue result);
 		void AppURLToPath(const ValueList& args, SharedValue result);
 		void SetMenu(const ValueList& args, SharedValue result);

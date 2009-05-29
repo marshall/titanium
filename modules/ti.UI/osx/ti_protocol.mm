@@ -80,9 +80,13 @@
 		}
 	}
 
+	Logger* logger = Logger::Get("UI.TiProtocol");
+	
 	if (!basedir.empty())
 	{
 		std::string resourcepath = kroll::FileUtils::Join(basedir.c_str(),[normpath UTF8String],NULL);
+
+		logger->Debug("RESOURCE PATH = %s", resourcepath.c_str());
 
 		if (kroll::FileUtils::IsFile(resourcepath))
 		{
@@ -92,7 +96,6 @@
 		}
 	}
 
-	Logger* logger = Logger::Get("UI.TiProtocol");
 	logger->Error("Error finding %s", [[url absoluteString] UTF8String]);
 
 	// File doesn't exist
