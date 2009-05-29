@@ -3,6 +3,11 @@
  * see LICENSE in the root folder for details on the license.
  * Copyright (c) 2009 Appcelerator, Inc. All Rights Reserved.
  */
+
+#define _WINSOCKAPI_
+#include <kroll/base.h>
+
+#include <winsock2.h> 
 #include "../ui_module.h"
 #include "win32_menu_item_impl.h"
 
@@ -11,17 +16,20 @@
 #include <shellapi.h>
 #include <shlobj.h>
 #include <string>
+#include <stdlib.h>
 #include "win32_tray_item.h"
+
+#include "../url/app_url.h"
+#include "../url/ti_url.h"
 
 namespace ti
 {
 	HMENU Win32UIBinding::contextMenuInUseHandle = NULL;
 
 
-	Win32UIBinding::Win32UIBinding(Host *host) : UIBinding(host)
+	Win32UIBinding::Win32UIBinding(Module *uiModule, Host *host) : UIBinding(host), script_evaluator(host)
 	{
-
-		
+	
 		if (!Win32UIBinding::IsWindowsXP())
 		{
 			// Use Activation Context API by pointing it at the WebKit
@@ -36,6 +44,27 @@ namespace ti
 			this->pActCtx = CreateActCtx(&actctx); 
 			ActivateActCtx(pActCtx, &this->lpCookie);
 		}
+		
+		INITCOMMONCONTROLSEX InitCtrlEx;
+
+		InitCtrlEx.dwSize = sizeof(INITCOMMONCONTROLSEX);
+		InitCtrlEx.dwICC = 0x00004000; //ICC_STANDARD_CLASSES;
+		InitCommonControlsEx(&InitCtrlEx);
+		
+		InitCurl(uiModule);
+		addScriptEvaluator(&script_evaluator);
+	}
+	
+	void Win32UIBinding::InitCurl(Module* uiModule)
+	{
+		std::string pemPath = FileUtils::Join(uiModule->GetPath().c_str(), "cacert.pem", NULL);
+		
+		// use _putenv since webkit uses stdlib's getenv which is incompatible with GetEnvironmentVariable
+		std::string var = "CURL_CA_BUNDLE_PATH=" + pemPath;
+		_putenv(var.c_str());
+		
+		curl_register_local_handler(&Titanium_app_url_handler);
+		curl_register_local_handler(&Titanium_ti_url_handler);
 	}
 
 	Win32UIBinding::~Win32UIBinding()

@@ -4,10 +4,8 @@
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
 
-#define _WINSOCKAPI_
 #include <kroll/base.h>
 
-#include <winsock2.h>
 #include "win32_user_window.h"
 #include "webkit_frame_load_delegate.h"
 #include "webkit_ui_delegate.h"
@@ -15,13 +13,12 @@
 //#include "webkit_javascript_listener.h"
 #include "win32_tray_item.h"
 #include "string_util.h"
-#include "../url/app_url.h"
-#include "../url/ti_url.h"
 #include <cmath>
 #include <shellapi.h>
 #include <comutil.h>
 #include <commdlg.h>
 #include <shlobj.h>
+#include <sstream>
 
 #define STUB() printf("Method is still a stub, %s:%i\n", __FILE__, __LINE__)
 #define SetFlag(x,flag,b) ((b) ? x |= flag : x &= ~flag)
@@ -225,81 +222,52 @@ Win32UserWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	return 0;
 }
 
-Win32UserWindow::Win32UserWindow(SharedUIBinding binding, WindowConfig* config, SharedUserWindow& parent) :
-	UserWindow(binding, config, parent),
-	script_evaluator(binding->GetHost()),
-	menuBarHandle(NULL),
-	menuInUse(NULL),
-	menu(NULL),
-	contextMenuHandle(NULL),
-	initial_icon(NULL),
-	web_inspector(NULL)
+void Win32UserWindow::InitWindow()
 {
-	static bool initialized = false;
-	win32_host = static_cast<kroll::Win32Host*>(binding->GetHost());
-	if (!initialized)
-	{
-		INITCOMMONCONTROLSEX InitCtrlEx;
-
-		InitCtrlEx.dwSize = sizeof(INITCOMMONCONTROLSEX);
-		InitCtrlEx.dwICC = 0x00004000; //ICC_STANDARD_CLASSES;
-		InitCommonControlsEx(&InitCtrlEx);
-
-		curl_register_local_handler(&Titanium_app_url_handler);
-		curl_register_local_handler(&Titanium_ti_url_handler);
-		addScriptEvaluator(&script_evaluator);
-	}
-
 	Win32UserWindow::RegisterWindowClass(win32_host->GetInstanceHandle());
-	window_handle
+	this->window_handle
 			= CreateWindowEx(WS_EX_APPWINDOW /*WS_EX_LAYERED*/, windowClassName,
 					config->GetTitle().c_str(), WS_CLIPCHILDREN, CW_USEDEFAULT,
 					0, CW_USEDEFAULT, 0, NULL, NULL,
 					win32_host->GetInstanceHandle(), NULL);
 
-	if (window_handle == NULL)
+	if (this->window_handle == NULL)
 	{
-		std::cout << "Error Creating Window: " << GetLastError() << std::endl;
+		std::ostringstream error;
+		error << "Error Creating Window: " << GetLastError();
+		logger->Error(error.str());
 	}
-	std::cout << "window_handle = " << (int) window_handle << std::endl;
+	
+	PRINTD("window_handle = " << (int) this->window_handle);
 
 	// make our HWND available to 3rd party devs without needing our headers
-	SharedValue windowHandle = Value::NewVoidPtr((void*) window_handle);
+	SharedValue windowHandle = Value::NewVoidPtr((void*) this->window_handle);
+	// these APIs are semi-private -- we probably shouldn't mark them
 	this->Set("windowHandle", windowHandle);
 	this->SetMethod("addMessageHandler", &Win32UserWindow::AddMessageHandler);
+	
+	SetWindowUserData(this->window_handle, this);
+}
 
-	SetWindowUserData(window_handle, this);
-
-	this->ReloadTiWindowConfig();
-	this->SetupDecorations(false);
-
-	Bounds b;
-	b.x = config->GetX();
-	b.y = config->GetY();
-	b.width = config->GetWidth();
-	b.height = config->GetHeight();
-	SetBounds(b);
-
-	//web_view = WebView::createInstance();
+void Win32UserWindow::InitWebKit()
+{
 	HRESULT hr = CoCreateInstance(CLSID_WebView, 0, CLSCTX_ALL, IID_IWebView,
-			(void**) &web_view);
+			(void**) &(this->web_view));
+	
 	if (FAILED(hr))
 	{
-		std::cerr << "Error Creating WebView: ";
-		if (hr == REGDB_E_CLASSNOTREG)
-			std::cerr << "REGDB_E_CLASSNOTREG" << std::endl;
-		else if (hr == CLASS_E_NOAGGREGATION)
-			std::cerr << "CLASS_E_NOAGGREGATION" << std::endl;
-		else if (hr == E_NOINTERFACE)
-			std::cerr << "E_NOINTERFACE" << std::endl;
-		else if (hr == E_UNEXPECTED)
-			std::cerr << "E_UNEXPECTED" << std::endl;
-		else if (hr == E_OUTOFMEMORY)
-			std::cerr << "E_OUTOFMEMORY" << std::endl;
-		else if (hr == E_INVALIDARG)
-			std::cerr << "E_INVALIDARG" << std::endl;
-		else
-			fprintf(stderr, "Unknown Error? %x\n", hr);
+		std::ostringstream createError;
+		createError << "Error Creating WebView: ";
+		switch (hr) {
+			case REGDB_E_CLASSNOTREG: createError << "REGDB_E_CLASSNOTREG"; break;
+			case CLASS_E_NOAGGREGATION: createError << "CLASS_E_NOAGGREGATION"; break;
+			case E_NOINTERFACE: createError << "E_NOINTERFACE"; break;
+			case E_UNEXPECTED: createError << "E_UNEXPECTED"; break;
+			case E_OUTOFMEMORY: createError << "E_OUTOFMEMORY"; break;
+			case E_INVALIDARG: createError << "E_INVALIDARG"; break;
+			default: createError << "Unknown Error: " << hr; break;
+		}
+		logger->Error(createError.str());
 	}
 
 	// set the custom user agent for Titanium
@@ -319,19 +287,18 @@ Win32UserWindow::Win32UserWindow(SharedUIBinding binding, WindowConfig* config, 
 	std::string ua_str = _bstr_t(uaresp);
 	global->Set("userAgent", Value::NewString(ua_str.c_str()));
 
-	std::cout << "create frame load delegate " << std::endl;
+	logger->Debug("create frame load delegate ");
 	frameLoadDelegate = new Win32WebKitFrameLoadDelegate(this);
 	uiDelegate = new Win32WebKitUIDelegate(this);
 	policyDelegate = new Win32WebKitPolicyDelegate(this);
 
-	std::cout << "set delegates, set host window, webview=" << (int) web_view
-			<< std::endl;
+	logger->Debug("set delegates, set host window");
 	hr = web_view->setFrameLoadDelegate(frameLoadDelegate);
 	hr = web_view->setUIDelegate(uiDelegate);
 	hr = web_view->setPolicyDelegate(policyDelegate);
 	hr = web_view->setHostWindow((OLE_HANDLE) window_handle);
 
-	std::cout << "init with frame" << std::endl;
+	logger->Debug("init with frame");
 	RECT client_rect;
 	GetClientRect(window_handle, &client_rect);
 	hr = web_view->initWithFrame(client_rect, 0, 0);
@@ -344,7 +311,7 @@ Win32UserWindow::Win32UserWindow(SharedUIBinding binding, WindowConfig* config, 
 			IID_IWebPreferences, (void**) &prefs);
 	if (FAILED(hr) || prefs == NULL)
 	{
-		std::cerr << "Couldn't create the preferences object" << std::endl;
+		logger->Error("Couldn't create the web preferences object");
 	}
 	else
 	{
@@ -362,7 +329,7 @@ Win32UserWindow::Win32UserWindow(SharedUIBinding binding, WindowConfig* config, 
 				(void**) &privatePrefs);
 		if (FAILED(hr))
 		{
-			std::cerr << "Failed to get private preferences" << std::endl;
+			logger->Error("Failed to get private preferences");
 		} else {
 			privatePrefs->setDeveloperExtrasEnabled(host->IsDebugMode());
 			//privatePrefs->setDeveloperExtrasEnabled(host->IsDebugMode());
@@ -395,20 +362,48 @@ Win32UserWindow::Win32UserWindow(SharedUIBinding binding, WindowConfig* config, 
 	hr = web_view_private->inspector(&web_inspector);
 	if (FAILED(hr) || web_inspector == NULL)
 	{
-		std::cerr << "Couldn't retrieve the web inspector object" << std::endl;
+		logger->Error("Couldn't retrieve the web inspector object");
 	}
 
 	web_view_private->Release();
 
-	_bstr_t inspector_url("ti://com.titaniumapp/runtime/inspector/inspector.html");
-	_bstr_t localized_strings_url("ti://com.titaniumapp/runtime/inspector/localizedStrings.js");
+	_bstr_t inspector_url("ti://runtime/inspector/inspector.html");
+	_bstr_t localized_strings_url("ti://runtime/inspector/localizedStrings.js");
 	web_inspector->setInspectorURL(inspector_url.copy());
 	web_inspector->setLocalizedStringsURL(localized_strings_url.copy());
 
 	hr = web_view->mainFrame(&web_frame);
 	//web_view->setShouldCloseWithWindow(TRUE);
+}
 
-	std::cout << "resize subviews" << std::endl;
+Win32UserWindow::Win32UserWindow(SharedUIBinding binding, WindowConfig* config, SharedUserWindow& parent) :
+	UserWindow(binding, config, parent),
+	menuBarHandle(NULL),
+	menuInUse(NULL),
+	menu(NULL),
+	contextMenuHandle(NULL),
+	initial_icon(NULL),
+	web_inspector(NULL)
+{
+	logger = Logger::Get("UI.Win32UserWindow");
+	
+	win32_host = static_cast<kroll::Win32Host*>(binding->GetHost());
+	this->InitWindow();
+
+	this->ReloadTiWindowConfig();
+	this->SetupDecorations(false);
+
+	Bounds b;
+	b.x = config->GetX();
+	b.y = config->GetY();
+	b.width = config->GetWidth();
+	b.height = config->GetHeight();
+	SetBounds(b);
+
+	this->InitWebKit();
+	
+	//web_view = WebView::createInstance();
+	logger->Debug("resize subviews");
 	ResizeSubViews();
 
 	// ensure we have valid restore values

@@ -6,11 +6,13 @@
  * A custom URL handler for app:// URLs
  */
 
+#include <kroll/base.h>
 #include "app_url.h"
 #include <Poco/Environment.h>
 #include <cstring>
 #include <algorithm>
 #include <cctype>
+#include <kroll/kroll.h>
 
 struct Curl_local_handler Titanium_app_url_handler = {
 	"app",
@@ -23,8 +25,19 @@ namespace ti {
 	/* TODO: Memory leak here */
 	const char * AppURLGetAbsolutePath(const char *url)
 	{
+		std::string urlString = url;
+		std::string appID = kroll::Host::GetInstance()->GetApplication()->id;
+		
+		if (urlString.find(appID) == 0)
+		{
+			urlString = urlString.substr(appID.size());
+			while (urlString.find('/') == 0) {
+				urlString = urlString.substr(1);
+			}
+		}
+		
 		std::string path = Poco::Environment::get("KR_HOME", "");
-		path = path + kAppURLPrefix + "/" + url;
+		path = path + kAppURLPrefix + "/" + urlString;
 		return strdup(path.c_str());
 	}
 

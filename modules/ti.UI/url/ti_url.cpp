@@ -38,21 +38,33 @@ namespace ti {
 		std::string runtime_path = Poco::Environment::get("KR_RUNTIME", "");
 		return runtime_path + path;
 	}
+	
+	std::string TiURLGetModulePath(std::string module, std::string path)
+	{
+		std::string& module_path = kroll::Host::GetInstance()->GetModuleByName(module)->GetPath();
+		return module_path + path;
+	}
 
 	/* TODO: Memory leak here */
 	const char* TiURLGetAbsolutePath(const char *url)
 	{
-		std::string url_str =  url;
-		Poco::StringTokenizer tokenizer(url_str, "/", Poco::StringTokenizer::TOK_TRIM | Poco::StringTokenizer::TOK_IGNORE_EMPTY);
+		std::string urlString = url;
+		Poco::StringTokenizer tokenizer(urlString, "/", Poco::StringTokenizer::TOK_TRIM | Poco::StringTokenizer::TOK_IGNORE_EMPTY);
 		std::string resource = tokenizer[0];
 
 		if (resource == "runtime") {
-			std::string absolute_path =  TiURLGetRuntimePath(JoinTokenizer(tokenizer, "/", 1));
-
+			std::string absolute_path = TiURLGetRuntimePath(JoinTokenizer(tokenizer, "/", 1));
+			std::cout << "  =>" << absolute_path << std::endl;
+			return strdup(absolute_path.c_str());
+		} else {
+			// assume a module
+			std::string absolute_path = TiURLGetModulePath(resource, JoinTokenizer(tokenizer, "/", 1));
+			
+			std::cout << "  =>" << absolute_path << std::endl;
 			return strdup(absolute_path.c_str());
 		}
 
-		// TODO - add real logic to determine path for ti:://appmodulename/path urls
+		// TODO - add real logic to determine path for ti://appmodulename/path urls
 		return "";
 	}
 }
