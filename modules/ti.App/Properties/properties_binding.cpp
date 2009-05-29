@@ -24,12 +24,16 @@ namespace ti
 
 		config = new Poco::Util::PropertyFileConfiguration(file_path);
 		this->file_path = file_path.c_str();
+		
+		this->Init();
 	}
 	
 	PropertiesBinding::PropertiesBinding()
 	{
 		this->file_path = "";
 		this->config = new Poco::Util::PropertyFileConfiguration();
+		
+		this->Init();
 	}
 	
 	void PropertiesBinding::Init()
