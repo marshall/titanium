@@ -52,13 +52,23 @@ namespace ti
 
 		app_properties += KR_PATH_SEP;
 		app_properties += "application.properties";
-
-		this->properties_binding = new PropertiesBinding(app_properties);
+		
+		PropertiesBinding *pb = new PropertiesBinding(app_properties);
+		this->properties_binding = pb;
 		SharedValue properties_value = Value::NewObject(this->properties_binding);
 		/**
 		 * @tiapi(property=True,type=object,name=App.Properties,since=0.2) The application's private Properties object
 		 */
 		this->app_binding->Set("Properties", properties_value);
+		
+		// write out the location of our application so 
+		// we can easily resolve an application data directory to a 
+		// specific location of where the application lives
+		ValueList args;
+		args.push_back(Value::NewString("ti.app.home"));
+		args.push_back(Value::NewString(home));
+		SharedValue result;
+		pb->SetString(args,result);
 	}
 
 	void AppModule::Stop()

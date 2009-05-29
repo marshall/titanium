@@ -433,6 +433,7 @@ window.onload = function()
 		args.push('--logpath="'+log_path+'"')
 		args.push('--bundled-component-override="'+app_dir+'"')
 		args.push('--no-console-logging');
+		args.push('--debug');
 		args.push('--results-dir="' + results_dir + '"');
 		var process = Titanium.Process.launch(app.executable.nativePath(),args);
 		process.onread = function(data)
@@ -455,6 +456,7 @@ window.onload = function()
 		var size = 0;
 		var timer = null;
 		var start_time = new Date().getTime();
+		var original_time = start_time;
 		
 		// start a stuck process monitor in which we check the 
 		// size of the profile file -- if we're not doing anything
@@ -463,9 +465,10 @@ window.onload = function()
 		{
 			var t = new Date().getTime();
 			var newsize = profile_path.size();
-			if (newsize == size)
+			var timed_out = (t-original_time) > 40000;
+			if (newsize == size || timed_out)
 			{
-				if (t-start_time>=entry.timeout)
+				if (timed_out || t-start_time>=entry.timeout)
 				{
 					clearInterval(timer);
 					current_test.failed = true;

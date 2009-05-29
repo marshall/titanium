@@ -380,7 +380,7 @@ namespace ti
 				[window setMinSize: newFrame.size];
 				[window setMaxSize: newFrame.size];
 			}
-			[window setFrame:newFrame display:config->IsVisible() animate:YES];
+			[window setFrame:newFrame display:config->IsVisible() animate:NO];
 		}
 	}
 

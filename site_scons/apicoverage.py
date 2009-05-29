@@ -129,7 +129,7 @@ def generate_api_coverage(dirs,fs):
 	res_pattern = '@tiresult\(([^\)]*)\)\s+(.*)'
 	dep_pattern = '@tideprecated\(([^\)]*)\)\s+(.*)'
 	
-	extensions = ['cc','c','cpp','m','mm','js','py','rb']
+	extensions = ['h','cc','c','cpp','m','mm','js','py','rb']
 
 	files = []
 	apis = {}
