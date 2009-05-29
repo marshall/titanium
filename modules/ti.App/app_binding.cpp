@@ -11,7 +11,7 @@
 
 namespace ti
 {
-	AppBinding::AppBinding(Host *host, SharedKObject global) : host(host),global(global)
+	AppBinding::AppBinding(Host *host, SharedKObject global) : host(host), global(global)
 	{
 		/**
 		 * @tiapi(method=True,immutable=True,name=App.getID,since=0.2) Returns the application id
@@ -120,6 +120,13 @@ namespace ti
 		 * @tiarg(for=App.stderr,type=string,name=data) data to write
 		 */
 		this->SetMethod("stderr", &AppBinding::StdErr);
+		
+		/**
+		 * @tiapi(method=True,name=App.getSystemProperties,since=0.4) get the system properties defined in tiapp.xml
+		 * @tiresult(for=App.getSystemProperties,type=Properties) returns the system properties object (see Titanium.App.Properties)
+		 */
+		this->SetMethod("getSystemProperties", &AppBinding::GetSystemProperties);
+
 	}
 
 	AppBinding::~AppBinding()
@@ -191,6 +198,11 @@ namespace ti
 			SharedKObject properties = new PropertiesBinding(file_path);
 			result->SetObject(properties);
 		}
+	}
+	
+	void AppBinding::GetSystemProperties(const ValueList& args, SharedValue result)
+	{
+		result->SetObject(AppConfig::Instance()->GetSystemProperties());
 	}
 
 	void AppBinding::StdOut(const ValueList& args, SharedValue result)

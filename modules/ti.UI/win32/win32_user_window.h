@@ -20,7 +20,6 @@
 #include <kroll/kroll.h>
 #include "../../../kroll/host/win32/host.h"
 #include "../user_window.h"
-#include "script_evaluator.h"
 #include "win32_menu_item_impl.h"
 
 #include <map>
@@ -32,6 +31,8 @@ class Win32WebKitUIDelegate;
 class Win32WebKitPolicyDelegate;
 class Win32WebKitJavascriptListener;
 
+extern std::string AppURLNormalizeURL(std::string originalURL, std::string appID);
+
 class Win32UserWindow : public UserWindow {
 
 protected:
@@ -41,7 +42,6 @@ protected:
 	Win32WebKitPolicyDelegate *policyDelegate;
 	Bounds restore_bounds;
 	long restore_styles;
-	ScriptEvaluator script_evaluator;
 
 	HWND window_handle, view_window_handle;
 	IWebView* web_view;
@@ -180,6 +180,10 @@ public:
 	void ShowWebInspector();
 
 private:
+	
+	void InitWindow();
+	void InitWebKit();
+	
 	void SetupPosition();
 	void SetupSize();
 	void SetupDecorations(bool showHide = true);
@@ -202,6 +206,7 @@ private:
 		std::string& defaultName);
 
 	static void ParseStringNullSeparated(const char *s, std::vector<std::string> &tokens);
+	Logger* logger;
 };
 
 }

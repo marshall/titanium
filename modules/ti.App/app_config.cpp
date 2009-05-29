@@ -12,12 +12,14 @@
 #include "window_config.h"
 #include "config_utils.h"
 #include "Poco/RegularExpression.h"
+#include "Properties/properties_binding.h"
 
 using namespace ti;
 AppConfig *AppConfig::instance_ = NULL;
 
 AppConfig::AppConfig(std::string& xmlfile)
 {
+	systemProperties = new PropertiesBinding();
 	instance_ = this;
 	error = NULL;
 	xmlParserCtxtPtr context = xmlNewParserCtxt();
@@ -84,6 +86,30 @@ AppConfig::AppConfig(std::string& xmlfile)
 							}
 						}
 						child = child->next;
+					}
+				}
+				else if (nodeNameEquals(node, "property"))
+				{
+					std::string name = ConfigUtils::GetPropertyValue(node, "name");
+					if (name.size() > 0) {
+						std::string type = ConfigUtils::GetPropertyValue(node, "type");
+						std::string value = ConfigUtils::GetNodeValue(node);
+					
+						PRINTD("system property " << name << " = " << value);
+						
+						if (type == "int") {
+							systemProperties->GetConfig()->setInt(name, atoi(value.c_str()));
+						}
+						else if (type == "bool") {
+							systemProperties->GetConfig()->setBool(name, ConfigUtils::StringToBool(value));
+						}
+						else if (type == "double")
+						{
+							systemProperties->GetConfig()->setDouble(name, atof(value.c_str()));
+						}
+						else {
+							systemProperties->GetConfig()->setString(name, value);
+						}
 					}
 				}
 			}

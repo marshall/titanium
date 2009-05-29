@@ -10,6 +10,7 @@
 
 #define ID_INPUT_FIELD 101
 
+
 namespace ti {
 	std::map<DWORD, Win32PopupDialog*> Win32PopupDialog::popups;
 
@@ -140,6 +141,22 @@ namespace ti {
 		return FALSE;
 	}
 
+	int Win32PopupDialog::ParseMessage(std::string stringMsg, std::string stringSearch)
+	{
+		int NumberOfOccurrences = 0;
+		size_t pos = 0; 
+		while (pos != std::string::npos) 
+		{
+			pos = stringMsg.find(stringSearch, pos);
+			if (pos!=std::string::npos)
+			{
+				NumberOfOccurrences++;
+				pos = pos+stringSearch.size();
+			}
+		}
+		return NumberOfOccurrences;
+	}
+	
 	BOOL Win32PopupDialog::ShowMessageBox(HWND hwnd)
 	{
 		BOOL fSuccess = FALSE;
@@ -156,9 +173,63 @@ namespace ti {
 				if(this->showCancelButton) controlCount++;
 				if(this->showInputText) controlCount++;
 
+				int NumberOfReturns = 0;
+				int NumberOfTabs = 0;
+				int NumberOfSpace = 0;
+				int messageLines = 0;
+				int messageHeight = 0;
+		
+				NumberOfReturns = ParseMessage(message, "\n");
+				NumberOfTabs    = ParseMessage(message, "\t");
+				NumberOfSpace   = ParseMessage(message, " ");
+
+				if( (NumberOfReturns == 0) && (NumberOfTabs == 0) && (NumberOfSpace == 0) )
+				{
+					std::string tempMessage = message;
+					if(tempMessage.length() != 0)
+					{
+						int insertAt = 60;
+						int count = 0;
+
+						std::string::iterator it;
+						for(it=tempMessage.begin();it < tempMessage.end(); it++)
+						{
+							count++;
+							if(count == 60)
+							{	
+								count = 0;
+								message.insert(insertAt,"\n");
+								insertAt = insertAt + 60;
+							}
+						}
+					}
+				}
+
+				if( (NumberOfReturns != 0) && (NumberOfTabs != 0) )
+				{
+					messageLines = (message.length()/60) + NumberOfReturns + (NumberOfTabs/14) + 1;
+					messageHeight = (messageLines * 12);
+				}
+				else if(NumberOfReturns != 0)
+				{
+					messageLines = (message.length()/60) + NumberOfReturns + 1;
+					messageHeight = (messageLines * 12);
+
+				}
+				else if(NumberOfTabs != 0)
+				{
+					messageLines = (message.length()/60) + (NumberOfTabs/14) + 1;
+					messageHeight = (messageLines * 12);
+				}
+				else
+				{
+					messageLines = message.length()/60;
+					messageHeight = (messageLines * 12);
+				}
+
 				int labelHeight = 14;
-				int width = 300;
-				int height = 90;
+				int width = 400;
+				int height = messageHeight +  56; //ButtonHeight+Space; //90;
 				int margin = 10;
 				int buttonWidth = 50;
 				int buttonHeight = 14;
@@ -174,7 +245,7 @@ namespace ti {
 				tmp.Write<WORD>(0xFFFF); // extended dialog template
 				tmp.Write<DWORD>(0); // help ID
 				tmp.Write<DWORD>(0); // extended style
-				tmp.Write<DWORD>(WS_CAPTION | DS_FIXEDSYS | DS_SETFONT | DS_MODALFRAME);	// DS_FIXEDSYS removes the close decoration
+				tmp.Write<DWORD>(WS_CAPTION | DS_ABSALIGN | DS_FIXEDSYS | DS_SETFONT | DS_MODALFRAME);	// DS_FIXEDSYS removes the close decoration
 				tmp.Write<WORD>(controlCount); // number of controls
 				tmp.Write<WORD>(32); // X
 				tmp.Write<WORD>(32); // Y
@@ -201,13 +272,15 @@ namespace ti {
 				tmp.AlignToDword();
 				tmp.Write<DWORD>(0); // help id
 				tmp.Write<DWORD>(0); // window extended style
-				tmp.Write<DWORD>(WS_CHILD | WS_VISIBLE); // style
+				tmp.Write<DWORD>(WS_CHILD | WS_VISIBLE | SS_LEFT); // style
 				tmp.Write<WORD>(margin); // x
 				tmp.Write<WORD>(margin); // y
 				tmp.Write<WORD>(width - (2 * margin)); // width
-				tmp.Write<WORD>(labelHeight); // height
+				//tmp.Write<WORD>(labelHeight); // height
+				tmp.Write<WORD>(messageHeight); // height
 				tmp.Write<DWORD>(-1); // control ID
 				tmp.Write<DWORD>(0x0082FFFF); // static
+				//tmp.Write<DWORD>(SS_LEFT);
 				tmp.WriteString(ws.assign(message.begin(), message.end()).c_str()); // text
 				tmp.Write<WORD>(0); // no extra data
 
@@ -264,7 +337,6 @@ namespace ti {
 			}
 			ReleaseDC(NULL, hdc); // fixed 11 May
 		}
-
 		return fSuccess;
 	}
 }

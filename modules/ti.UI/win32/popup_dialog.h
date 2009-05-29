@@ -6,7 +6,7 @@
 #ifndef TI_POPUP_DIALOG_H_
 #define TI_POPUP_DIALOG_H_
 
-#include <kroll/kroll.h>
+#include <api/base.h>
 #include <windows.h>
 #include <string>
 
@@ -25,6 +25,7 @@ namespace ti {
 		void SetInputText(std::string _inputText) { this->inputText = _inputText; }
 		std::string GetInputText() { return this->inputText; }
 		void SetShowCancelButton(bool flag) { this->showCancelButton = flag; }
+		int ParseMessage(std::string stringMsg, std::string stringSearch);
 
 		int Show();
 	private:
