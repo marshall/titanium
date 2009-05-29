@@ -107,6 +107,7 @@ describe("Ti.Database sync database tests",{
 		value_of(rs.fieldName(0)).should_be('name');
 		value_of(rs.fieldByName('name')).should_be('a');
 		value_of(rs.fieldCount()).should_be(1);
+		value_of(this.db.lastInsertRowId).should_be(1);
 		rs.close();
 
 		// drop table

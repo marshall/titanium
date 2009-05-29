@@ -120,13 +120,9 @@ namespace ti
 		 */
 		this->SetMethod("remove",&DatabaseBinding::Remove);
 
-		//
-		// we don't currently support the lastInsertRowId
-		// since poco doesn't (yet) support the method:
-		// sqlite3_last_insert_rowid
-		// which returns the value from sqlite.  we need
-		// to patch poco somehow to expose this..
-		//
+		/**
+		 * @tiapi(property=True,name=Database.DB.lastInsertRowId) The row id of the last insert operation.
+		 */
 		SET_INT_PROP("lastInsertRowId",0);
 		
 		/**
@@ -265,6 +261,16 @@ namespace ti
 			logger->Debug("sql returned: %d rows for result",count);
 
 			SET_INT_PROP("rowsAffected",count);
+
+			// get the row insert id
+			Statement ss(session->GetSession());
+			ss << "select last_insert_rowid()", now;
+			RecordSet rr(ss);
+			Poco::DynamicAny value = rr.value(0);
+			int i;
+			value.convert(i);
+			SET_INT_PROP("lastInsertRowId",i);
+
 			
 			if (count > 0)
 			{
