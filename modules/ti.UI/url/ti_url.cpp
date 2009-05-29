@@ -41,7 +41,7 @@ namespace ti {
 	
 	std::string TiURLGetModulePath(std::string module, std::string path)
 	{
-		std::string& module_path = kroll::Host::GetInstance()->GetModuleByName(module)->GetPath();
+		std::string module_path = kroll::Host::GetInstance()->GetModuleByName(module)->GetPath();
 		return module_path + path;
 	}
 
