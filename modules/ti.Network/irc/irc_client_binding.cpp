@@ -18,56 +18,56 @@ namespace ti
 		host(host), global(host->GetGlobalObject()), thread(NULL)
 	{
 		/**
-		 * @tiapi(property=True,type=boolean,name=Network.IRC.connected,since=0.2) The connected property of an IRCClient object
+		 * @tiapi(property=True,type=boolean,name=Network.IRCClient.connected,since=0.2) The connected property of an IRCClient object
 		 */
 		this->Set("connected",Value::NewBool(false));
 		/**
-		 * @tiapi(method=True,name=Network.IRC.connect,since=0.2) Connects an IRC to the host specified during creation of the IRCClient object
+		 * @tiapi(method=True,name=Network.IRCClient.connect,since=0.2) Connects an IRC to the host specified during creation of the IRCClient object
 		 */
 		this->SetMethod("connect",&IRCClientBinding::Connect);
 		/**
-		 * @tiapi(method=True,name=Network.IRC.disconnect,since=0.2) Disconnects an IRC connection
+		 * @tiapi(method=True,name=Network.IRCClient.disconnect,since=0.2) Disconnects an IRC connection
 		 */
 		this->SetMethod("disconnect",&IRCClientBinding::Disconnect);
 		/**
-		 * @tiapi(method=True,name=Network.IRC.send,since=0.2) Sends data to the IRC connection
-		 * @tiarg(for=Network.IRC.send,type=string,name=channel) the channel to send the data to
-		 * @tiarg(for=Network.IRC.send,type=string,name=message) message to send
+		 * @tiapi(method=True,name=Network.IRCClient.send,since=0.2) Sends data to the IRC connection
+		 * @tiarg(for=Network.IRCClient.send,type=string,name=channel) the channel to send the data to
+		 * @tiarg(for=Network.IRCClient.send,type=string,name=message) message to send
 		 */
 		this->SetMethod("send",&IRCClientBinding::Send);
 		/**
-		 * @tiapi(method=True,name=Network.IRC.setNick,since=0.2) Sets the nick name for the connection
-		 * @tiarg(for=Network.IRC.setNick,type=string,name=nick) nickname to use
+		 * @tiapi(method=True,name=Network.IRCClient.setNick,since=0.2) Sets the nick name for the connection
+		 * @tiarg(for=Network.IRCClient.setNick,type=string,name=nick) nickname to use
 		 */
 		this->SetMethod("setNick",&IRCClientBinding::SetNick);
 		/**
-		 * @tiapi(method=True,name=Network.IRC.getNick,since=0.2) Returns the nick name for the connection
-		 * @tiresult(for=Network.IRC.getNick,type=string) the nickname for the current connection
+		 * @tiapi(method=True,name=Network.IRCClient.getNick,since=0.2) Returns the nick name for the connection
+		 * @tiresult(for=Network.IRCClient.getNick,type=string) the nickname for the current connection
 		 */
 		this->SetMethod("getNick",&IRCClientBinding::GetNick);
 		/**
-		 * @tiapi(method=True,name=Network.IRC.getUsers,since=0.2) Returns a list of users for the channel
-		 * @tiresult(for=Network.IRC.getUsers,type=list) the users of the current channel
+		 * @tiapi(method=True,name=Network.IRCClient.getUsers,since=0.2) Returns a list of users for the channel
+		 * @tiresult(for=Network.IRCClient.getUsers,type=list) the users of the current channel
 		 */
 		this->SetMethod("getUsers",&IRCClientBinding::GetUsers);
 		/**
-		 * @tiapi(method=True,name=Network.IRC.join,since=0.2) Joins a channel
-		 * @tiarg(for=Network.IRC.join,type=string,name=channel) channel to join to
+		 * @tiapi(method=True,name=Network.IRCClient.join,since=0.2) Joins a channel
+		 * @tiarg(for=Network.IRCClient.join,type=string,name=channel) channel to join to
 		 */
 		this->SetMethod("join",&IRCClientBinding::Join);
 		/**
-		 * @tiapi(method=True,name=Network.IRC.unjoin,since=0.2) Leaves a channel
-		 * @tiarg(for=Network.IRC.unjoin,type=string,name=channel) channel to leave
+		 * @tiapi(method=True,name=Network.IRCClient.unjoin,since=0.2) Leaves a channel
+		 * @tiarg(for=Network.IRCClient.unjoin,type=string,name=channel) channel to leave
 		 */
 		this->SetMethod("unjoin",&IRCClientBinding::Unjoin);
 		/**
-		 * @tiapi(method=True,name=Network.IRC.isOp,since=0.2) Checks whether a user has OP status
-		 * @tiresult(for=Network.IRC.isOp,type=boolean) true if the user has OP status, false if otherwise
+		 * @tiapi(method=True,name=Network.IRCClient.isOp,since=0.2) Checks whether a user has OP status
+		 * @tiresult(for=Network.IRCClient.isOp,type=boolean) true if the user has OP status, false if otherwise
 		 */
 		this->SetMethod("isOp",&IRCClientBinding::IsOp);
 		/**
-		 * @tiapi(method=True,returns=boolean,name=Network.IRC.isVoice,since=0.2) Checks whether a user has VOICE status
-		 * @tiresult(for=Network.IRC.isVoice,type=boolean) true if the user has VOICE status, false if otherwise
+		 * @tiapi(method=True,returns=boolean,name=Network.IRCClient.isVoice,since=0.2) Checks whether a user has VOICE status
+		 * @tiresult(for=Network.IRCClient.isVoice,type=boolean) true if the user has VOICE status, false if otherwise
 		 */
 		this->SetMethod("isVoice",&IRCClientBinding::IsVoice);
 
