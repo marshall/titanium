@@ -71,7 +71,7 @@ static int totalJobs = 0;
 
 -(BOOL)needsDownload
 {
-	return path == nil;
+	return path == nil || isUpdate;
 }
 
 -(BOOL)isUpdate;
@@ -151,7 +151,13 @@ static int totalJobs = 0;
 
 	NSString* path = [job path];
 	NSURL* url = [job url];
-	if (url == nil)
+	if ([job isUpdate])
+	{
+		type = KrollUtils::APP_UPDATE;
+		name = @"update";
+		version = [NSString stringWithUTF8String:app->version.c_str()];
+	}
+	else if (url == nil)
 	{
 		// The file is either in the format of module-modname-version.zip for a
 		// module or runtime-version.zip for the runtime, so we need to split
@@ -229,6 +235,10 @@ static int totalJobs = 0;
 	else if (type == KrollUtils::SDK)
 	{
 		destDir = installDirectory;
+	}
+	else if (type == KrollUtils::APP_UPDATE)
+	{
+		destDir = [NSString stringWithUTF8String:app->path.c_str()];
 	}
 	else
 	{
@@ -510,7 +520,7 @@ static int totalJobs = 0;
 		}
 		else
 		{
-			[jobs addObject:[[Job alloc] init: arg]];
+			[jobs addObject:[[Job alloc] init:arg]];
 		}
 	}
 
@@ -526,6 +536,8 @@ static int totalJobs = 0;
 	else
 	{
 		app = Application::NewApplication([updateFile UTF8String], [appPath UTF8String]);
+		NSString* updateURL = [NSString stringWithUTF8String:app->GetUpdateURL().c_str()];
+		[jobs addObject:[[Job alloc] initUpdate:updateURL]];
 	}
 	NSString *appName, *appVersion, *appPublisher, *appURL, *appImage;
 	appName = appVersion = appPublisher = appURL = @"Unknown";
