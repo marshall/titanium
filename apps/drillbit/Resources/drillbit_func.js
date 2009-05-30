@@ -468,7 +468,14 @@ TitaniumTest.Scope.prototype.passed = function()
 	if (!this._completed)
 	{
 		this._completed = true;
-		TitaniumTest.testPassed(this._testName,TitaniumTest.currentSubject.lineNumber);
+		if (TitaniumTest.currentSubject)
+		{
+			TitaniumTest.testPassed(this._testName,TitaniumTest.currentSubject.lineNumber);
+		}
+		else
+		{
+			TitaniumTest.testPassed(this._testName,-1);
+		}
 		TitaniumTest.currentSubject = null;
 	}
 }

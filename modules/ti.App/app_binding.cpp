@@ -67,12 +67,13 @@ namespace ti
 		/**
 		 * @tiapi(property=True,immutable=True,type=string,name=App.path,since=0.2) Returns the full path to the application
 		 */
-#ifdef OS_OSX
-		NSString *path = [[NSBundle mainBundle] bundlePath];
-		this->Set("path",Value::NewString([path UTF8String]));
-#else
 		this->Set("path",Value::NewString(host->GetCommandLineArg(0)));
-#endif
+
+		/**
+		 * @tiapi(property=True,immutable=True,type=string,name=App.home,since=0.4) Returns the full path to the application home directory
+		 */
+		this->Set("home",Value::NewString(host->GetApplicationHomePath()));
+
 
 		/**
 		 * @tiapi(property=True,immutable=True,type=string,name=App.version,since=0.2) The Titanium product version
@@ -127,6 +128,11 @@ namespace ti
 		 */
 		this->SetMethod("getSystemProperties", &AppBinding::GetSystemProperties);
 
+		/**
+		 * @tiapi(method=True,name=App.getIcon,since=0.4) Returns the application icon
+		 * @tiresult(for=App.getIcon,type=string) returns the icon path
+		 */
+		this->SetMethod("getIcon", &AppBinding::GetIcon);
 	}
 
 	AppBinding::~AppBinding()
@@ -262,5 +268,18 @@ namespace ti
 		}
 		result->SetString(url);
 	}
-
+	
+	void AppBinding::GetIcon(const ValueList& args, SharedValue result)
+	{
+		const SharedApplication app = this->host->GetApplication();
+		if (app->image.empty())
+		{
+			result->SetNull();
+		}
+		else
+		{
+			std::string iconPath = app->image;
+			result->SetString(iconPath);
+		}
+	}
 }

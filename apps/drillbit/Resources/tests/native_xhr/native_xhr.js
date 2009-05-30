@@ -93,6 +93,7 @@ describe("native XHR tests",
 		// HTTPS connectivity
 		var url = 'https://api.appcelerator.net/p/v1/app-list';
 		var xhr = this.xhr;
+		var timer = null;
 		
 		this.xhr.onreadystatechange = function()
 		{

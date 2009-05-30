@@ -4,7 +4,7 @@
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
 #include "webkit_ui_delegate.h"
-#define FormatMessage FormatMessageA
+
 #include <comdef.h>
 #include "win32_user_window.h"
 #include "win32_ui_binding.h"
@@ -144,10 +144,12 @@ Win32WebKitUIDelegate::runJavaScriptAlertPanelWithMessage(
 		msg.append(bstr_t(message));
 	}
 
-	Win32PopupDialog popupDialog(handle);
-	popupDialog.SetTitle(title);
-	popupDialog.SetMessage(msg);
-	int r = popupDialog.Show();
+	//Win32PopupDialog popupDialog(handle);
+	//popupDialog.SetTitle(title);
+	//popupDialog.SetMessage(msg);
+	//int r = popupDialog.Show();
+
+	MessageBox(0,msg.c_str(),title.c_str(),0);
 
 	return S_OK;
 }
@@ -167,11 +169,13 @@ Win32WebKitUIDelegate::runJavaScriptConfirmPanelWithMessage(
 		msg.append(bstr_t(message));
 	}
 
-	Win32PopupDialog popupDialog(handle);
-	popupDialog.SetTitle(title);
-	popupDialog.SetMessage(msg);
-	popupDialog.SetShowCancelButton(true);
-	int r = popupDialog.Show();
+	//Win32PopupDialog popupDialog(handle);
+	//popupDialog.SetTitle(title);
+	//popupDialog.SetMessage(msg);
+	//popupDialog.SetShowCancelButton(true);
+	//int r = popupDialog.Show();
+
+	int r = MessageBox(0,msg.c_str(),title.c_str(),MB_ICONINFORMATION | MB_OKCANCEL);
 
 	*result = (r == IDYES);
 

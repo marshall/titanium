@@ -13,6 +13,7 @@
 #include <sstream>
 
 #include "app_api.h"
+#include "Properties/properties_binding.h"
 
 #define TITRUE 1
 #define TIFALSE 0

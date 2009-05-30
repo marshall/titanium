@@ -257,7 +257,8 @@ class UserWindow : public kroll::StaticBoundObject {
 
 		virtual void FireEvent(UserWindowEvent event_type, SharedKObject event=NULL);
 		virtual void RegisterJSContext(JSGlobalContextRef);
-		virtual void PageLoaded(SharedKObject scope,std::string &url);
+		virtual void PageLoaded(
+			SharedKObject scope, std::string &url, JSGlobalContextRef context);
 
 		SharedUserWindow GetSharedPtr();
 
@@ -284,6 +285,7 @@ class UserWindow : public kroll::StaticBoundObject {
 		DISALLOW_EVIL_CONSTRUCTORS(UserWindow);
 		SharedKMethod api;
 		static double Constrain(double, double, double);
+		static void LoadUIJavaScript(JSGlobalContextRef context);
 };
 
 }

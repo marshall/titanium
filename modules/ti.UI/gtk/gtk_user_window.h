@@ -147,36 +147,43 @@ namespace ti
 		void SetContextMenu(SharedPtr<MenuItem> menu);
 		SharedPtr<MenuItem> GetContextMenu();
 
-		void SetIcon(SharedString icon_path);
+		void SetIcon(SharedString iconPath);
 		SharedString GetIcon();
 
-		int gdk_width;
-		int gdk_height;
-		int gdk_x;
-		int gdk_y;
-		bool gdk_maximized;
-		bool gdk_minimized;
+		void SetInspectorWindow(GtkWidget* inspectorWindow);
+		GtkWidget *GetInspectorWindow();
+
+		int gdkWidth;
+		int gdkHeight;
+		int gdkX;
+		int gdkY;
+		bool gdkMaximized;
+		bool gdkMinimized;
 
 	protected:
-		GtkWindow* gtk_window;
+		GtkWindow* gtkWindow;
 		GtkWidget* vbox;
-		WebKitWebView* web_view;
+		WebKitWebView* webView;
 		bool topmost;
-		gulong destroy_cb_id;
+		gulong destroyCallbackId;
 
 		// The window-specific menu.
 		SharedPtr<GtkMenuItemImpl> menu;
-		/*
-		 * The menu this window is using. This
-		 * might just be a copy of the app menu.
-		 */
-		SharedPtr<GtkMenuItemImpl> menu_in_use;
+
+		// This window's menu -- may just be a pointer to the app menu
+		SharedPtr<GtkMenuItemImpl> menuInUse;
+
 		// The widget this window uses for a menu.
-		GtkWidget* menu_bar;
+		GtkWidget* menuBar;
+
 		// The path to this window's icon
-		SharedString icon_path;
+		SharedString iconPath;
+
 		// The widget this window uses for a context menu.
 		SharedPtr<GtkMenuItemImpl> context_menu;
+
+		// This window's web inspector window
+		GtkWidget *inspectorWindow;
 
 		void _FileChooserWork(const ValueList&, SharedValue);
 		static std::string openFilesDirectory;

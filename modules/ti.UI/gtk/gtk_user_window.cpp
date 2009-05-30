@@ -23,15 +23,15 @@ namespace ti
 		JSGlobalContextRef,
 		JSObjectRef, gpointer);
 	static void populate_popup_cb(
-		WebKitWebView *web_view,
+		WebKitWebView *webView,
 		GtkMenu *menu,
 		gpointer data);
 	static gint navigation_requested_cb(
-		WebKitWebView* web_view,
+		WebKitWebView* webView,
 		WebKitWebFrame* web_frame,
 		WebKitNetworkRequest* request);
 	static gint new_window_navigation_requested_cb(
-		WebKitWebView* web_view,
+		WebKitWebView* webView,
 		WebKitWebFrame* web_frame,
 		WebKitNetworkRequest* request,
 		gchar* frame_name);
@@ -39,24 +39,33 @@ namespace ti
 		WebKitWebView* view,
 		WebKitWebFrame* frame,
 		gpointer data);
+	static WebKitWebView* create_inspector_cb(
+		WebKitWebInspector* webInspector,
+		WebKitWebView* page,
+		gpointer data);
+	static gboolean inspector_show_window_cb(
+		WebKitWebInspector* inspector,
+		gpointer data);
+	static void hide_window_cb(GtkWidget *widget, gpointer data);
 	
 	GtkUserWindow::GtkUserWindow(SharedUIBinding binding, WindowConfig* config, SharedUserWindow& parent) :
 		UserWindow(binding, config, parent),
-		gdk_width(-1),
-		gdk_height(-1),
-		gdk_x(-1),
-		gdk_y(-1),
-		gdk_maximized(false),
-		gdk_minimized(false),
-		gtk_window(NULL),
+		gdkWidth(-1),
+		gdkHeight(-1),
+		gdkX(-1),
+		gdkY(-1),
+		gdkMaximized(false),
+		gdkMinimized(false),
+		gtkWindow(NULL),
 		vbox(NULL),
-		web_view(NULL),
+		webView(NULL),
 		topmost(false),
 		menu(NULL),
-		menu_in_use(NULL),
-		menu_bar(NULL),
-		icon_path(NULL),
-		context_menu(NULL)
+		menuInUse(NULL),
+		menuBar(NULL),
+		iconPath(NULL),
+		context_menu(NULL),
+		inspectorWindow(0)
 	{
 	}
 
@@ -67,79 +76,85 @@ namespace ti
 	
 	void GtkUserWindow::Open()
 	{
-		if (this->gtk_window == NULL)
+		if (this->gtkWindow == NULL)
 		{
-			WebKitWebView* web_view = WEBKIT_WEB_VIEW (webkit_web_view_new ());
+			WebKitWebView* webView = WEBKIT_WEB_VIEW(webkit_web_view_new ());
 	
 			g_signal_connect(
-				G_OBJECT(web_view), "window-object-cleared",
+				G_OBJECT(webView), "window-object-cleared",
 				G_CALLBACK(window_object_cleared_cb), this);
 			g_signal_connect(
-				G_OBJECT(web_view), "navigation-requested",
+				G_OBJECT(webView), "navigation-requested",
 				G_CALLBACK(navigation_requested_cb), this);
 			g_signal_connect(
-				G_OBJECT(web_view), "new-window-navigation-requested",
+				G_OBJECT(webView), "new-window-navigation-requested",
 				G_CALLBACK(new_window_navigation_requested_cb), this);
 			g_signal_connect(
-				G_OBJECT(web_view), "populate-popup",
+				G_OBJECT(webView), "populate-popup",
 				G_CALLBACK(populate_popup_cb), this);
 			g_signal_connect(
-				G_OBJECT(web_view), "load-finished",
+				G_OBJECT(webView), "load-finished",
 				G_CALLBACK(load_finished_cb), this);
 	
-			// Tell Titanium what Webkit is using for a user-agent
+			// Tell Titanium what WebKit is using for a user-agent
 			SharedKObject global = host->GetGlobalObject();
 			if (global->Get("userAgent")->IsUndefined())
 			{
-				gchar* user_agent = webkit_web_view_get_user_agent(G_OBJECT(web_view));
+				gchar* user_agent = webkit_web_view_get_user_agent(webView);
 				global->Set("userAgent", Value::NewString(user_agent));
 				g_free(user_agent);
 			}
 	
 			WebKitWebSettings* settings = webkit_web_settings_new();
 			g_object_set(G_OBJECT(settings), "enable-developer-extras", TRUE, NULL);
-			webkit_web_view_set_settings(WEBKIT_WEB_VIEW(web_view), settings);
-	
+			webkit_web_view_set_settings(WEBKIT_WEB_VIEW(webView), settings);
+
+			WebKitWebInspector *inspector = webkit_web_view_get_inspector(webView);
+			g_signal_connect(
+				G_OBJECT(inspector), "inspect-web-view",
+				G_CALLBACK(create_inspector_cb), this);
+			g_signal_connect(
+				G_OBJECT(inspector), "show-window",
+				G_CALLBACK(inspector_show_window_cb), this);
+
 			GtkWidget* view_container = NULL;
 			if (this->IsUsingScrollbars())
 			{
 				/* web view scroller */
-				GtkWidget* scrolled_window = gtk_scrolled_window_new (NULL, NULL);
+				GtkWidget* scrolledWindow = gtk_scrolled_window_new (NULL, NULL);
 				gtk_scrolled_window_set_policy(
-					GTK_SCROLLED_WINDOW(scrolled_window),
+					GTK_SCROLLED_WINDOW(scrolledWindow),
 					GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 				gtk_container_add(
-					GTK_CONTAINER (scrolled_window), GTK_WIDGET (web_view));
-				view_container = scrolled_window;
+					GTK_CONTAINER(scrolledWindow), GTK_WIDGET(webView));
+				view_container = scrolledWindow;
 			}
 			else // No scrollin' fer ya.
 			{
-				view_container = GTK_WIDGET(web_view);
+				view_container = GTK_WIDGET(webView);
 			}
 	
 			/* main window vbox */
 			this->vbox = gtk_vbox_new(FALSE, 0);
-			gtk_box_pack_start(GTK_BOX (vbox),
-			                   GTK_WIDGET(view_container),
-			                   TRUE, TRUE, 0);
+			gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(view_container), TRUE, TRUE, 0);
 	
 			/* main window */
 			GtkWidget* window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 			gtk_widget_set_name(window, this->config->GetTitle().c_str());
 			gtk_window_set_title(GTK_WINDOW(window), this->config->GetTitle().c_str());
 	
-			this->destroy_cb_id = g_signal_connect(
+			this->destroyCallbackId = g_signal_connect(
 				G_OBJECT(window), "destroy", G_CALLBACK(destroy_cb), this);
 			g_signal_connect(G_OBJECT(window), "event",
 			                 G_CALLBACK(event_cb), this);
 	
-			gtk_container_add(GTK_CONTAINER (window), vbox);
+			gtk_container_add(GTK_CONTAINER(window), vbox);
 	
 			webkit_web_view_register_url_scheme_as_local("app");
 			webkit_web_view_register_url_scheme_as_local("ti");
 	
-			this->gtk_window = GTK_WINDOW(window);
-			this->web_view = web_view;
+			this->gtkWindow = GTK_WINDOW(window);
+			this->webView = webView;
 
 			gtk_widget_realize(window);
 			this->SetupDecorations();
@@ -153,8 +168,8 @@ namespace ti
 			// TI-62: Transparency currently causes bad crashes
 			// this->SetupTransparency();
 
-			gtk_widget_grab_focus(GTK_WIDGET (web_view));
-			webkit_web_view_open(web_view, this->config->GetURL().c_str());
+			gtk_widget_grab_focus(GTK_WIDGET(webView));
+			webkit_web_view_open(webView, this->config->GetURL().c_str());
 	
 			if (this->IsVisible())
 			{
@@ -163,7 +178,7 @@ namespace ti
 	
 			if (this->config->IsFullScreen())
 			{
-				gtk_window_fullscreen(this->gtk_window);
+				gtk_window_fullscreen(this->gtkWindow);
 			}
 	
 			if (this->config->IsMaximized())
@@ -188,8 +203,8 @@ namespace ti
 	// Notify this GtkUserWindow that the GTK bits are invalid
 	void GtkUserWindow::Destroyed()
 	{
-		this->gtk_window = NULL;
-		this->web_view = NULL;
+		this->gtkWindow = NULL;
+		this->webView = NULL;
 	}
 	
 	static void destroy_cb(
@@ -206,11 +221,11 @@ namespace ti
 		// Destroy the GTK bits, if we have them first, because
 		// we need to assume the GTK window is gone for  everything
 		// below (this method might be called by destroy_cb)
-		if (this->gtk_window != NULL)
+		if (this->gtkWindow != NULL)
 		{
 			// We don't want the destroy signal handler to fire after now.
-			g_signal_handler_disconnect(this->gtk_window, this->destroy_cb_id);
-			gtk_widget_destroy(GTK_WIDGET(this->gtk_window));
+			g_signal_handler_disconnect(this->gtkWindow, this->destroyCallbackId);
+			gtk_widget_destroy(GTK_WIDGET(this->gtkWindow));
 			this->Destroyed();
 		}
 		this->RemoveOldMenu(); // Cleanup old menu
@@ -221,14 +236,14 @@ namespace ti
 	
 	void GtkUserWindow::SetupTransparency()
 	{
-		if (this->gtk_window != NULL)
+		if (this->gtkWindow != NULL)
 		{
 			GValue val = {0,};
 			g_value_init(&val, G_TYPE_BOOLEAN);
 			g_value_set_boolean(&val, 1);
-			g_object_set_property(G_OBJECT (this->web_view), "transparent", &val);
+			g_object_set_property(G_OBJECT(this->webView), "transparent", &val);
 	
-			GdkScreen* screen = gtk_widget_get_screen(GTK_WIDGET(this->gtk_window));
+			GdkScreen* screen = gtk_widget_get_screen(GTK_WIDGET(this->gtkWindow));
 			GdkColormap* colormap = gdk_screen_get_rgba_colormap(screen);
 			if (!colormap)
 			{
@@ -236,15 +251,15 @@ namespace ti
 				          << "True transparency not available." << std::endl;
 				colormap = gdk_screen_get_rgb_colormap(screen);
 			}
-			gtk_widget_set_colormap(GTK_WIDGET(this->gtk_window), colormap);
+			gtk_widget_set_colormap(GTK_WIDGET(this->gtkWindow), colormap);
 		}
 	}
 	
 	void GtkUserWindow::SetupDecorations()
 	{
-		if (this->gtk_window != NULL)
+		if (this->gtkWindow != NULL)
 		{
-			GdkWindow* gdk_window = GTK_WIDGET(this->gtk_window)->window;
+			GdkWindow* gdk_window = GTK_WIDGET(this->gtkWindow)->window;
 			int d = 0;
 	
 			if (this->config->IsUsingChrome())
@@ -268,7 +283,7 @@ namespace ti
 	
 	void GtkUserWindow::SetupSizeLimits()
 	{
-		if (this->gtk_window != NULL)
+		if (this->gtkWindow != NULL)
 		{
 			GdkGeometry hints;
 			int max_width = (int) this->config->GetMaxWidth();
@@ -312,13 +327,13 @@ namespace ti
 				hints.min_height = min_height;
 			}
 			GdkWindowHints mask = (GdkWindowHints) (GDK_HINT_MIN_SIZE | GDK_HINT_MAX_SIZE);
-			gtk_window_set_geometry_hints(this->gtk_window, NULL, &hints, mask);
+			gtk_window_set_geometry_hints(this->gtkWindow, NULL, &hints, mask);
 		}
 	}
 	
 	void GtkUserWindow::SetupPosition()
 	{
-		if (this->gtk_window != NULL)
+		if (this->gtkWindow != NULL)
 		{
 			int x = this->config->GetX();
 			int y = this->config->GetY();
@@ -334,23 +349,23 @@ namespace ti
 				y = (gdk_screen_get_height(screen) - this->GetHeight()) / 2;
 				this->config->SetY(y);
 			}
-			gtk_window_move(this->gtk_window, x, y);
+			gtk_window_move(this->gtkWindow, x, y);
 	
 			// Moving in GTK is asynchronous, so we prime the
 			// values here in hopes that things will turn out okay.
 			// Another alternative would be to block until a resize
 			// is detected, but that might leave the application in
 			// a funky state.
-			this->gdk_x = x;
-			this->gdk_y = y;
+			this->gdkX = x;
+			this->gdkY = y;
 		}
 	}
 	
 	void GtkUserWindow::SetupSize()
 	{
-		if (this->gtk_window != NULL)
+		if (this->gtkWindow != NULL)
 		{
-			gtk_window_resize(this->gtk_window,
+			gtk_window_resize(this->gtkWindow,
 				(int) this->config->GetWidth(),
 				(int) this->config->GetHeight());
 	
@@ -359,25 +374,25 @@ namespace ti
 			// Another alternative would be to block until a resize
 			// is detected, but that might leave the application in
 			// a funky state.
-			this->gdk_width = this->config->GetWidth();
-			this->gdk_height = this->config->GetHeight();
+			this->gdkWidth = this->config->GetWidth();
+			this->gdkHeight = this->config->GetHeight();
 		}
 	}
 	
 	void GtkUserWindow::SetupIcon()
 	{
-		if (this->gtk_window == NULL)
+		if (this->gtkWindow == NULL)
 			return;
 	
 		GdkPixbuf* icon = NULL; // NULL is an unset.
-		SharedString icon_path = this->icon_path;
-		if (icon_path.isNull() && !UIModule::GetIcon().isNull())
-			icon_path = UIModule::GetIcon();
+		SharedString iconPath = this->iconPath;
+		if (iconPath.isNull() && !UIModule::GetIcon().isNull())
+			iconPath = UIModule::GetIcon();
 	
-		if (!icon_path.isNull())
+		if (!iconPath.isNull())
 		{
 			GError* error = NULL;
-			icon = gdk_pixbuf_new_from_file(icon_path->c_str(), &error);
+			icon = gdk_pixbuf_new_from_file(iconPath->c_str(), &error);
 	
 			if (icon == NULL && error != NULL)
 			{
@@ -386,7 +401,7 @@ namespace ti
 				g_error_free(error);
 			}
 		}
-		gtk_window_set_icon(this->gtk_window, icon);
+		gtk_window_set_icon(this->gtkWindow, icon);
 	}
 
 	static gboolean event_cb(
@@ -439,26 +454,26 @@ namespace ti
 				window->FireEvent(MAXIMIZED);
 			}
 
-			window->gdk_minimized =
+			window->gdkMinimized =
 				f->new_window_state & GDK_WINDOW_STATE_ICONIFIED;
 
-			window->gdk_maximized =
+			window->gdkMaximized =
 				f->new_window_state & GDK_WINDOW_STATE_MAXIMIZED;
 		}
 		else if (event->type == GDK_CONFIGURE)
 		{
 			GdkEventConfigure* c = (GdkEventConfigure*) event;
-			if (c->x != window->gdk_x || c->y != window->gdk_y)
+			if (c->x != window->gdkX || c->y != window->gdkY)
 			{
-				window->gdk_x = c->x;
-				window->gdk_y = c->y;
+				window->gdkX = c->x;
+				window->gdkY = c->y;
 				window->FireEvent(MOVED);
 			}
 	
-			if (c->width != window->gdk_width || c->height != window->gdk_height)
+			if (c->width != window->gdkWidth || c->height != window->gdkHeight)
 			{
-				window->gdk_height = c->height;
-				window->gdk_width = c->width;
+				window->gdkHeight = c->height;
+				window->gdkWidth = c->width;
 				window->FireEvent(RESIZED);
 			}
 		}
@@ -467,7 +482,7 @@ namespace ti
 	}
 	
 	static gint navigation_requested_cb(
-		WebKitWebView* web_view,
+		WebKitWebView* webView,
 		WebKitWebFrame* web_frame,
 		WebKitNetworkRequest* request)
 	{
@@ -478,7 +493,7 @@ namespace ti
 	}
 	
 	static gint new_window_navigation_requested_cb(
-		WebKitWebView* web_view,
+		WebKitWebView* webView,
 		WebKitWebFrame* web_frame,
 		WebKitNetworkRequest* request,
 		gchar* frame_name)
@@ -515,13 +530,11 @@ namespace ti
 		std::string uri = webkit_web_frame_get_uri(frame);
 	
 		GtkUserWindow* user_window = static_cast<GtkUserWindow*>(data);
-		user_window->PageLoaded(frame_global, uri);
-	
-		UIModule::GetInstance()->LoadUIJavascript(context);
+		user_window->PageLoaded(frame_global, uri, context);
 	}
 	
 	static void window_object_cleared_cb(
-		WebKitWebView* web_view,
+		WebKitWebView* webView,
 		WebKitWebFrame* web_frame,
 		JSGlobalContextRef context,
 		JSObjectRef window_object,
@@ -533,7 +546,7 @@ namespace ti
 	}
 	
 	static void populate_popup_cb(
-		WebKitWebView *web_view,
+		WebKitWebView *webView,
 		GtkMenu *menu,
 		gpointer data)
 	{
@@ -561,56 +574,126 @@ namespace ti
 		m->AddChildrenTo(GTK_WIDGET(menu));
 	}
 	
-	
+
+	static WebKitWebView* create_inspector_cb(
+		WebKitWebInspector* webInspector,
+		WebKitWebView* page,
+		gpointer data)
+	{
+		GtkWidget* scrolledWindow;
+		GtkWidget* newWebView;
+		GtkUserWindow* userWindow = static_cast<GtkUserWindow*>(data);
+
+		GtkWidget* inspectorWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+		g_signal_connect(
+			G_OBJECT(inspectorWindow), "delete-event",
+			G_CALLBACK(hide_window_cb), userWindow);
+
+		gtk_window_set_title(GTK_WINDOW(inspectorWindow), "Inspector");
+		gtk_window_set_default_size(GTK_WINDOW(inspectorWindow), 400, 300);
+		gtk_widget_show(inspectorWindow);
+		gtk_window_resize(GTK_WINDOW(inspectorWindow), 700, 500);
+
+		scrolledWindow = gtk_scrolled_window_new(NULL, NULL);
+		gtk_scrolled_window_set_policy(
+			GTK_SCROLLED_WINDOW(scrolledWindow),
+			GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+		gtk_container_add(GTK_CONTAINER(inspectorWindow), scrolledWindow);
+		gtk_widget_show(scrolledWindow);
+
+		newWebView = webkit_web_view_new();
+		gtk_container_add(GTK_CONTAINER(scrolledWindow), newWebView);
+
+		userWindow->SetInspectorWindow(inspectorWindow);
+		return WEBKIT_WEB_VIEW(newWebView);
+	}
+
+	static gboolean inspector_show_window_cb(
+		WebKitWebInspector* inspector,
+		gpointer data)
+	{
+		GtkUserWindow* userWindow = static_cast<GtkUserWindow*>(data);
+		GtkWidget* inspectorWindow = userWindow->GetInspectorWindow();
+		if (inspectorWindow)
+		{
+			gtk_widget_show(inspectorWindow);
+			return TRUE;
+		}
+		else
+		{
+			return FALSE;
+		}
+	}
+
+	static void hide_window_cb(GtkWidget *widget, gpointer data)
+	{
+		GtkUserWindow* userWindow = static_cast<GtkUserWindow*>(data);
+		GtkWidget* inspectorWindow = userWindow->GetInspectorWindow();
+		if (inspectorWindow)
+		{
+			gtk_widget_hide(inspectorWindow);
+		}
+	}
+
+	void GtkUserWindow::SetInspectorWindow(GtkWidget* inspectorWindow)
+	{
+		this->inspectorWindow = inspectorWindow;
+	}
+
+	GtkWidget* GtkUserWindow::GetInspectorWindow()
+	{
+		return this->inspectorWindow;
+	}
+
 	void GtkUserWindow::Hide()
 	{
-		if (this->gtk_window != NULL)
+		if (this->gtkWindow != NULL)
 		{
-			gtk_widget_hide_all(GTK_WIDGET(this->gtk_window));
+			gtk_widget_hide_all(GTK_WIDGET(this->gtkWindow));
 		}
 	}
 	
 	void GtkUserWindow::Show()
 	{
-		if (this->gtk_window != NULL)
+		if (this->gtkWindow != NULL)
 		{
-			gtk_widget_show_all(GTK_WIDGET(this->gtk_window));
+			gtk_widget_show_all(GTK_WIDGET(this->gtkWindow));
 		}
 	}
 	
 	void GtkUserWindow::Minimize()
 	{
-		if (this->gtk_window != NULL)
+		if (this->gtkWindow != NULL)
 		{
-			gtk_window_iconify(this->gtk_window);
+			gtk_window_iconify(this->gtkWindow);
 		}
 		// Maximizing in GTK is asynchronous, so we prime the
 		// values here in hopes that things will turn out okay.
 		// Another alternative would be to block until a resize
 		// is detected, but that might leave the application in
 		// a funky state.
-		this->gdk_minimized = true;
+		this->gdkMinimized = true;
 	}
 	
 	void GtkUserWindow::Unminimize()
 	{
-		if (this->gtk_window != NULL)
+		if (this->gtkWindow != NULL)
 		{
-			gtk_window_deiconify(this->gtk_window);
+			gtk_window_deiconify(this->gtkWindow);
 		}
 		// Maximizing in GTK is asynchronous, so we prime the
 		// values here in hopes that things will turn out okay.
 		// Another alternative would be to block until a resize
 		// is detected, but that might leave the application in
 		// a funky state.
-		this->gdk_minimized = false;
+		this->gdkMinimized = false;
 	}
 
 	bool GtkUserWindow::IsMinimized()
 	{
-		if (this->gtk_window != NULL)
+		if (this->gtkWindow != NULL)
 		{
-			return this->gdk_minimized;
+			return this->gdkMinimized;
 		}
 		else
 		{
@@ -620,9 +703,9 @@ namespace ti
 
 	void GtkUserWindow::Maximize()
 	{
-		if (this->gtk_window != NULL)
+		if (this->gtkWindow != NULL)
 		{
-			gtk_window_maximize(this->gtk_window);
+			gtk_window_maximize(this->gtkWindow);
 		}
 
 		// Maximizing in GTK is asynchronous, so we prime the
@@ -630,14 +713,14 @@ namespace ti
 		// Another alternative would be to block until a resize
 		// is detected, but that might leave the application in
 		// a funky state.
-		this->gdk_maximized = true;
+		this->gdkMaximized = true;
 	}
 
 	void GtkUserWindow::Unmaximize()
 	{
-		if (this->gtk_window != NULL)
+		if (this->gtkWindow != NULL)
 		{
-			gtk_window_unmaximize(this->gtk_window);
+			gtk_window_unmaximize(this->gtkWindow);
 		}
 
 		// Maximizing in GTK is asynchronous, so we prime the
@@ -645,14 +728,14 @@ namespace ti
 		// Another alternative would be to block until a resize
 		// is detected, but that might leave the application in
 		// a funky state.
-		this->gdk_maximized = false;
+		this->gdkMaximized = false;
 	}
 
 	bool GtkUserWindow::IsMaximized()
 	{
-		if (this->gtk_window != NULL)
+		if (this->gtkWindow != NULL)
 		{
-			return this->gdk_maximized;
+			return this->gdkMaximized;
 		}
 		else
 		{
@@ -662,12 +745,12 @@ namespace ti
 	
 	void GtkUserWindow::Focus()
 	{
-		if (this->gtk_window != NULL)
-			gtk_window_present(this->gtk_window);
+		if (this->gtkWindow != NULL)
+			gtk_window_present(this->gtkWindow);
 	}
 	
 	void GtkUserWindow::Unfocus(){
-		if (gtk_window_has_toplevel_focus(this->gtk_window))
+		if (gtk_window_has_toplevel_focus(this->gtkWindow))
 		{
 			gdk_window_focus(
 				gdk_get_default_root_window(),
@@ -687,13 +770,13 @@ namespace ti
 	
 	void GtkUserWindow::SetFullScreen(bool fullscreen)
 	{
-		if (fullscreen && this->gtk_window != NULL)
+		if (fullscreen && this->gtkWindow != NULL)
 		{
-			gtk_window_fullscreen(this->gtk_window);
+			gtk_window_fullscreen(this->gtkWindow);
 		}
-		else if (this->gtk_window != NULL)
+		else if (this->gtkWindow != NULL)
 		{
-			gtk_window_unfullscreen(this->gtk_window);
+			gtk_window_unfullscreen(this->gtkWindow);
 		}
 	}
 	
@@ -706,7 +789,7 @@ namespace ti
 	
 	double GtkUserWindow::GetX()
 	{
-		return this->gdk_x;
+		return this->gdkX;
 	}
 	
 	void GtkUserWindow::SetX(double x)
@@ -716,81 +799,81 @@ namespace ti
 	
 	double GtkUserWindow::GetY()
 	{
-		return this->gdk_y;
+		return this->gdkY;
 	}
 	
 	void GtkUserWindow::SetY(double y)
 	{
 		this->SetupPosition();
 	}
-	
+
 	double GtkUserWindow::GetWidth()
 	{
-		return this->gdk_width;
+		return this->gdkWidth;
 	}
-	
+
 	void GtkUserWindow::SetWidth(double width)
 	{
 		this->SetupSize();
 	}
-	
+
 	double GtkUserWindow::GetMaxWidth()
 	{
 		return this->config->GetMaxWidth();
 	}
-	
+
 	void GtkUserWindow::SetMaxWidth(double width)
 	{
 		this->SetupSizeLimits();
 	}
-	
+
 	double GtkUserWindow::GetMinWidth()
 	{
 		return this->config->GetMinWidth();
 	}
-	
+
 	void GtkUserWindow::SetMinWidth(double width)
 	{
 		this->SetupSizeLimits();
 	}
-	
+
 	double GtkUserWindow::GetHeight()
 	{
-		return this->gdk_height;
+		return this->gdkHeight;
 	}
-	
+
 	void GtkUserWindow::SetHeight(double height)
 	{
 		this->SetupSize();
 	}
-	
+
 	double GtkUserWindow::GetMaxHeight()
 	{
 		return this->config->GetMaxHeight();
 	}
-	
+
 	void GtkUserWindow::SetMaxHeight(double height)
 	{
 		this->SetupSizeLimits();
 	}
-	
+
 	double GtkUserWindow::GetMinHeight()
 	{
 		return this->config->GetMinHeight();
 	}
-	
+
 	void GtkUserWindow::SetMinHeight(double height)
 	{
 		this->SetupSizeLimits();
 	}
-	
+
 	Bounds GtkUserWindow::GetBounds()
 	{
 		Bounds b;
-		b.width = gdk_width;
-		b.height = gdk_height;
-		b.x = gdk_x;
-		b.y = gdk_y;
+		b.width = gdkWidth;
+		b.height = gdkHeight;
+		b.x = gdkX;
+		b.y = gdkY;
 		return b;
 	}
 	
@@ -807,10 +890,10 @@ namespace ti
 	
 	void GtkUserWindow::SetTitle(std::string& title)
 	{
-		if (this->gtk_window != NULL)
+		if (this->gtkWindow != NULL)
 		{
 			std::string& ntitle = this->config->GetTitle();
-			gtk_window_set_title(this->gtk_window, ntitle.c_str());
+			gtk_window_set_title(this->gtkWindow, ntitle.c_str());
 		}
 	}
 	
@@ -821,8 +904,8 @@ namespace ti
 	
 	void GtkUserWindow::SetURL(std::string& uri)
 	{
-		if (this->gtk_window != NULL && this->web_view != NULL)
-			webkit_web_view_open(this->web_view, uri.c_str());
+		if (this->gtkWindow != NULL && this->webView != NULL)
+			webkit_web_view_open(this->webView, uri.c_str());
 	}
 	
 	bool GtkUserWindow::IsUsingChrome()
@@ -832,8 +915,8 @@ namespace ti
 	
 	void GtkUserWindow::SetUsingChrome(bool chrome)
 	{
-		if (this->gtk_window != NULL)
-			gtk_window_set_decorated(this->gtk_window, chrome);
+		if (this->gtkWindow != NULL)
+			gtk_window_set_decorated(this->gtkWindow, chrome);
 	}
 	
 	bool GtkUserWindow::IsResizable()
@@ -843,8 +926,8 @@ namespace ti
 	
 	void GtkUserWindow::SetResizable(bool resizable)
 	{
-		if (this->gtk_window != NULL)
-			gtk_window_set_resizable(this->gtk_window, resizable);
+		if (this->gtkWindow != NULL)
+			gtk_window_set_resizable(this->gtkWindow, resizable);
 	}
 	
 	bool GtkUserWindow::IsMaximizable()
@@ -873,8 +956,8 @@ namespace ti
 	}
 	void GtkUserWindow::SetCloseable(bool closeable)
 	{
-		if (this->gtk_window != NULL)
-			gtk_window_set_deletable(this->gtk_window, closeable);
+		if (this->gtkWindow != NULL)
+			gtk_window_set_deletable(this->gtkWindow, closeable);
 	}
 	
 	bool GtkUserWindow::IsVisible()
@@ -889,8 +972,8 @@ namespace ti
 	
 	void GtkUserWindow::SetTransparency(double alpha)
 	{
-		if (this->gtk_window != NULL)
-			gtk_window_set_opacity(this->gtk_window, alpha);
+		if (this->gtkWindow != NULL)
+			gtk_window_set_opacity(this->gtkWindow, alpha);
 	}
 	
 	bool GtkUserWindow::IsTopMost()
@@ -900,10 +983,10 @@ namespace ti
 	
 	void GtkUserWindow::SetTopMost(bool topmost)
 	{
-		if (this->gtk_window != NULL)
+		if (this->gtkWindow != NULL)
 		{
 			guint topmost_i = topmost ? TRUE : FALSE;
-			gtk_window_set_keep_above(this->gtk_window, topmost_i);
+			gtk_window_set_keep_above(this->gtkWindow, topmost_i);
 		}
 	}
 	
@@ -931,30 +1014,30 @@ namespace ti
 	}
 	
 	
-	void GtkUserWindow::SetIcon(SharedString icon_path)
+	void GtkUserWindow::SetIcon(SharedString iconPath)
 	{
-		this->icon_path = icon_path;
+		this->iconPath = iconPath;
 		this->SetupIcon();
 	}
 	
 	SharedString GtkUserWindow::GetIcon()
 	{
-		return this->icon_path;
+		return this->iconPath;
 	}
 	
 	void GtkUserWindow::RemoveOldMenu()
 	{
 	
 		// Only clear a realization if we have one
-		if (!this->menu_in_use.isNull() && this->menu_bar != NULL)
-			this->menu_in_use->ClearRealization(this->menu_bar);
+		if (!this->menuInUse.isNull() && this->menuBar != NULL)
+			this->menuInUse->ClearRealization(this->menuBar);
 	
 		// Only remove the old menu if we still have a window
-		if (this->gtk_window != NULL)
-			gtk_container_remove(GTK_CONTAINER(this->vbox), this->menu_bar);
+		if (this->gtkWindow != NULL)
+			gtk_container_remove(GTK_CONTAINER(this->vbox), this->menuBar);
 	
-		this->menu_in_use = NULL;
-		this->menu_bar = NULL;
+		this->menuInUse = NULL;
+		this->menuBar = NULL;
 	}
 	
 	void GtkUserWindow::SetupMenu()
@@ -969,22 +1052,22 @@ namespace ti
 		}
 	
 		// Only do this if the menu is actually changing.
-		if (menu == this->menu_in_use)
+		if (menu == this->menuInUse)
 			return;
 	
 		this->RemoveOldMenu();
 	
-		if (!menu.isNull() && this->gtk_window != NULL)
+		if (!menu.isNull() && this->gtkWindow != NULL)
 		{
-			GtkWidget* menu_bar = menu->GetMenuBar();
-			gtk_box_pack_start(GTK_BOX(this->vbox), menu_bar,
+			GtkWidget* menuBar = menu->GetMenuBar();
+			gtk_box_pack_start(GTK_BOX(this->vbox), menuBar,
 			                   FALSE, FALSE, 2);
-			gtk_box_reorder_child(GTK_BOX(this->vbox), menu_bar, 0);
-			gtk_widget_show(menu_bar);
-			this->menu_bar = menu_bar;
+			gtk_box_reorder_child(GTK_BOX(this->vbox), menuBar, 0);
+			gtk_widget_show(menuBar);
+			this->menuBar = menuBar;
 		}
 	
-		this->menu_in_use = menu;
+		this->menuInUse = menu;
 	
 	}
 	
@@ -998,7 +1081,7 @@ namespace ti
 	
 	void GtkUserWindow::AppIconChanged()
 	{
-		if (this->icon_path.isNull())
+		if (this->iconPath.isNull())
 		{
 			this->SetupIcon();
 		}
@@ -1116,7 +1199,7 @@ namespace ti
 		std::string& typesDescription)
 	{
 		FileChooserJob* job = new FileChooserJob;
-		job->window = this->gtk_window;
+		job->window = this->gtkWindow;
 		job->callback = callback;
 		job->title = title;
 		job->host = host;

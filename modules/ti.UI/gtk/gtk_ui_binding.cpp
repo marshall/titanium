@@ -24,10 +24,10 @@ namespace ti
 		addScriptEvaluator(evaluator);
 
 		char buf[256];
-		//TI-303 we need to add safari UA to our UA to resolve broken
-		//sites that look at Safari and not WebKit for UA
-		snprintf(buf, 256, "Version/4.0 Safari/528.16 %s/%s", PRODUCT_NAME, STRING(PRODUCT_VERSION));
+		snprintf(buf, 256, "%s/%s", PRODUCT_NAME, STRING(PRODUCT_VERSION));
 		g_set_prgname(buf);
+
+		webkit_titanium_set_inspector_path(host->GetRuntimePath().c_str());
 	}
 
 	SharedUserWindow GtkUIBinding::CreateWindow(
