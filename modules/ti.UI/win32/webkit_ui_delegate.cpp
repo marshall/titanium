@@ -5,9 +5,9 @@
  */
 #include "webkit_ui_delegate.h"
 
-#include <comdef.h>
 #include "win32_user_window.h"
 #include "win32_ui_binding.h"
+#include <comutil.h>
 
 using namespace ti;
 
