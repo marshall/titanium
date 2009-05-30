@@ -116,6 +116,7 @@ Win32UserWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			return DefWindowProc(hWnd, message, wParam, lParam);
 		case WM_CLOSE:
 			window->Close();
+			PRINTD("FireEvent: CLOSED");
 			window->FireEvent(CLOSED);
 			return DefWindowProc(hWnd, message, wParam, lParam);
 		case WM_GETMINMAXINFO:
@@ -554,6 +555,7 @@ void Win32UserWindow::Close()
 {
 	DestroyWindow(window_handle);
 	UserWindow::Close();
+	FireEvent(CLOSED);
 }
 
 double Win32UserWindow::GetX()
