@@ -495,7 +495,7 @@ TitaniumTest.Subject.prototype.should_be = function(expected,lineNumber)
 	this.lineNumber = lineNumber;
 	if (this.target != expected)
 	{
-		throw new TitaniumTest.Error('should be: '+expected+', was: '+this.target,lineNumber);
+		throw new TitaniumTest.Error('should be: "'+expected+'", was: "'+this.target+'"',lineNumber);
 	}
 };
 
