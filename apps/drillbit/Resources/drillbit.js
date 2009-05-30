@@ -117,6 +117,11 @@ window.onload = function()
 	
 	results_dir.createDirectory();
 	
+	var f = Titanium.Filesystem.getFile(results_dir, "results.html");
+	if (f.exists()) {
+		f.deleteFile();
+	}
+	
 	for (var c=0;c<dir_list.length;c++)
 	{
 		var f = dir_list[c];
