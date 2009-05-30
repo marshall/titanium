@@ -373,7 +373,7 @@ void Win32UserWindow::InitWebKit()
 	web_inspector->setLocalizedStringsURL(localized_strings_url.copy());
 
 	hr = web_view->mainFrame(&web_frame);
-	web_view->setShouldCloseWithWindow(TRUE);
+	//web_view->setShouldCloseWithWindow(TRUE);
 }
 
 Win32UserWindow::Win32UserWindow(SharedUIBinding binding, WindowConfig* config, SharedUserWindow& parent) :

@@ -28,13 +28,16 @@ namespace ti
 			SharedPtr<File> file = bo.cast<File>();
 			if (file.isNull())
 			{
-				throw ValueException::FromString("invalid type");
+				throw ValueException::FromString("can't convert NULL object to filename");
 			}
 			return file->GetFilename().c_str();
 		}
 		else
 		{
-			throw ValueException::FromString("invalid type");
+			std::string message = "can't convert object of type ";
+			message += v->ToTypeString();
+			message += " to filename: don't know what to do";
+			throw ValueException::FromString(message);
 		}
 	}
 }
