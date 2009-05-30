@@ -10,6 +10,7 @@ var total_files = 0;
 var running_assertions = 0;
 var running_completed = 0;
 var auto_run = false;
+var auto_close = false;
 var test_failures = false;
 
 function update_status(msg,hide)
@@ -148,6 +149,7 @@ window.onload = function()
 		catch(EX)
 		{
 			alert("error loading: "+f+". Exception: "+EX);
+			Titanium.API.debug("error loading: "+f+". Exception: "+EX);
 		}
 	}
 
@@ -517,7 +519,6 @@ window.onload = function()
 		};
 	}
 	
-
 	function run_next_test()
 	{
 		if (executing_tests==null || executing_tests.length == 0)
@@ -529,7 +530,7 @@ window.onload = function()
 			update_status('Testing complete ... took ' + test_duration + ' seconds',true);
 			var f = TFS.getFile(results_dir,'drillbit.json');
 			f.write("{\"success\":" + String(!test_failures) + "}");
-			if (auto_run)
+			if (auto_close)
 			{
 				Titanium.App.exit(test_failures ? 1 : 0);
 			}
@@ -574,7 +575,11 @@ window.onload = function()
 		{
 			auto_run = true;
 			run_button.click();
-			break;
+			//break;
+		}
+		else if (Titanium.App.arguments[c] == 'autoclose')
+		{
+			auto_close = true;
 		}
 	}
 };
