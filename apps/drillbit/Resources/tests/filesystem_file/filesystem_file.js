@@ -88,7 +88,11 @@ describe("Ti.Filesystem File tests",
 		value_of(f.isHidden()).should_be_false();
 		value_of(f.isSymbolicLink()).should_be_false();
 		// directories are by default executable
-		value_of(f.isExecutable()).should_be_true();
+		// -- in win32 this impl only checks to see if this is an .exe (so skip)
+		if (Titanium.platform != "win32") {
+			value_of(f.isExecutable()).should_be_true();
+		}
+
 		value_of(f.isReadonly()).should_be_false();
 		value_of(f.isWriteable()).should_be_true();
 		value_of(f.createTimestamp()).should_not_be_null();
@@ -188,7 +192,13 @@ describe("Ti.Filesystem File tests",
 		value_of(f).should_not_be_null();
 		value_of(f.exists()).should_be_true();
 		
-		var shortcutFile = Titanium.Filesystem.getFile(this.base, "my-shortcut");
+		// use .lnk in win32
+		var shortcutFilename = "my-shortcut";
+		if (Titanium.platform == "win32") {
+			shortcutFilename += ".lnk";
+		}
+		
+		var shortcutFile = Titanium.Filesystem.getFile(this.base, shortcutFilename);
 		var r = f.createShortcut(shortcutFile);
 		value_of(r).should_be_true();
 		value_of(shortcutFile.exists()).should_be_true();
@@ -204,11 +214,14 @@ describe("Ti.Filesystem File tests",
 		value_of(f.isReadonly()).should_be_false();
 		value_of(f.isWriteable()).should_be_true();
 		
-		f.setExecutable(true);
-		value_of(f.isExecutable()).should_be_true();
+		if (Titanium.platform != "win32") {
+			// POCO doesn't implement executable for win32
+			f.setExecutable(true);
+			value_of(f.isExecutable()).should_be_true();
 
-		f.setExecutable(false);
-		value_of(f.isExecutable()).should_be_false();
+			f.setExecutable(false);
+			value_of(f.isExecutable()).should_be_false();
+		}
 
 		f.setReadonly(false);
 		value_of(f.isReadonly()).should_be_false();

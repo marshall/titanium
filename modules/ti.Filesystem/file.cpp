@@ -333,7 +333,7 @@ namespace ti
 		{
 #ifdef OS_WIN32
 			Poco::File file(this->filename);
-			result->SetBool(!file.canRead());
+			result->SetBool(file.canRead() && !file.canWrite());
 #else
 			struct stat sb;
 			stat(this->filename.c_str(),&sb);
@@ -742,19 +742,19 @@ namespace ti
 		NSString *p = [NSString stringWithCString:this->filename.c_str()];
 		unsigned long avail = [[[[NSFileManager defaultManager] fileSystemAttributesAtPath:p] objectForKey:NSFileSystemFreeSize] longValue];
 		result->SetDouble(avail);
-#elif OS_WIN32
+#elif defined(OS_WIN32)
 		unsigned __int64 i64FreeBytesToCaller;
 		unsigned __int64 i64TotalBytes;
 		unsigned __int64 i64FreeBytes;
 		if (GetDiskFreeSpaceEx(
-			path.absolute().getFileName().c_str(),
+			this->filename.c_str(),
 			(PULARGE_INTEGER) &i64FreeBytesToCaller,
 			(PULARGE_INTEGER) &i64TotalBytes,
 			(PULARGE_INTEGER) &i64FreeBytes))
 		{
 			result->SetDouble((double) i64FreeBytesToCaller);
 		}
-#elif OS_LINUX
+#elif defined(OS_LINUX)
 		struct statvfs stats;
 		if (statvfs(this->filename.c_str(), &stats) == 0)
 		{
@@ -809,7 +809,7 @@ namespace ti
 		{
 			[[NSFileManager defaultManager] changeCurrentDirectoryPath:cwd];
 		}
-#elif OS_WIN32
+#elif defined(OS_WIN32)
 		HRESULT hResult;
 		IShellLink* psl;
 
@@ -833,7 +833,10 @@ namespace ti
 			if(SUCCEEDED(hResult))
 			{
 				// ensure to ends with .lnk
-				to.append(".lnk");
+				if (to.substr(to.size()-4) != ".lnk") {
+					to.append(".lnk");
+				}
+				
 				WCHAR wsz[MAX_PATH];
 
 				// ensure string is unicode
@@ -852,7 +855,7 @@ namespace ti
 			}
 		}
 		result->SetBool(false);
-#elif OS_LINUX
+#elif defined(OS_LINUX)
 		result->SetBool(link(this->filename.c_str(), to.c_str()) == 0);
 #else
 		result->SetBool(false);
