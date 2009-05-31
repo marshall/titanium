@@ -111,11 +111,9 @@
 	{
 		try
 		{
-			//https://api.appcelerator.net/p/v1/release-list?version=0.4&name=ruby&limit=1&mid=0493910C-D3FF-49E2-9FF0-8BC038EB83E3
-//			var url = Titanium.App.getStreamURL("release-list");
-			var url = 'http://localhost/~jhaynie/foo';
+			var url = Titanium.App.getStreamURL("release-list");
 			var xhr = Titanium.Network.createHTTPClient();
-			var qs = 'version='+version+'&name='+component+'&mid='+Titanium.Platform.id+'&limit=1';
+			var qs = 'version='+Titanium.Network.encodeURIComponent(version)+'&name='+Titanium.Network.encodeURIComponent(component)+'&mid='+Titanium.Network.encodeURIComponent(Titanium.Platform.id)+'&limit=1&guid='+Titanium.Network.encodeURIComponent(Titanium.App.getGUID());
 			xhr.onreadystatechange = function()
 			{
 				if (this.readyState==4)
@@ -187,6 +185,8 @@
 			return;
 		}
 		
+		//TODO: fix release notes
+		
 		// ok, we'll handle it then...
 		window.Titanium.UI.showDialog({
 			'url': 'ti://tianalytics/update.html',
@@ -204,8 +204,13 @@
 			{
 				if (result == 'install')
 				{
-					// we need to start the install
-					window.alert('starting the install...');
+					// write our the new manifest for the update
+					var datadir = Titanium.Filesystem.getApplicationDataDirectory();
+					var update = Titanium.Filesystem.getFile(datadir,'.update');
+					update.write(updateSpec.manifest);
+					
+					// restart ourselves to cause the install
+					Titanium.Process.restart();
 				}
 			}
 		});
@@ -227,7 +232,7 @@
 	}
 	function sendUpdateCheck()
 	{
-		updateCheck(Titanium.App.getGUID(),null,function(success,update)
+		updateCheck('app-update',null,function(success,update)
 		{
 			if (isUpdateRequired(update.version,Titanium.App.getVersion()))
 			{

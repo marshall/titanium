@@ -319,6 +319,11 @@ void ProcessURL(string url, Progress *p, HINTERNET hINet)
 		type = SDK;
 		path = "sdk-";
 	}
+	else if (string(MOBILESDK_UUID) == uuid)
+	{
+		type = MOBILESDK;
+		path = "mobilesdk-";
+	}
 	else
 	{
 		return;

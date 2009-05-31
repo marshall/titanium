@@ -25,6 +25,7 @@
 
 - (void)startUrlRequest: (NSURL *) url;
 {
+	NSLog(@"Starting URL request for %@",url);
 	[data release];
 	[downloadRequest release];
 	downloadRequest = [[NSMutableURLRequest alloc] initWithURL:url];

@@ -45,6 +45,13 @@ namespace ti
 				select , use(*b);
 				bools.push_back(b);
 			}
+			else if (arg->IsNull() || arg->IsUndefined())
+			{
+				// in this case, we bind a null string (dequoted)
+				std::string *s = new std::string("null");
+				select , use(s);
+				strings.push_back(s);
+			}
 			else
 			{
 				char msg[255];

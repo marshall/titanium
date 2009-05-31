@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 #
-# Copyright (c) 2009 Appcelerator, Inc. All Rights Reserved.
-# Released under Apache Public License V2.
+# This script is the property of Appcelerator, Inc. and
+# is Confidential and Proprietary. All Rights Reserved.
+# Redistribution without expression written permission
+# is not allowed.
 #
 # Titanium application packaging script
 #
@@ -17,6 +19,7 @@ import sys, os.path, platform, re, subprocess
 
 VERSION = '0.1'
 PLATFORMS = ['win32','osx','linux','iphone','android']
+cwd = os.path.abspath(os.path.dirname(sys._getframe(0).f_code.co_filename))
 
 def log(options,msg):
 	if options.verbose:
@@ -195,6 +198,11 @@ def main(options,appdir):
 	if not options.mobile and options.run:
 		subprocess.call([options.executable])
 
+def dequote(s):
+    if s[0:1] == '"':
+	return s[1:-1]
+    return s
+	
 if __name__ == '__main__':
 	parser = OptionParser(usage="%prog [options] appdir", version="%prog " + VERSION)
 	parser.add_option("-d","--dest",dest="destination",help="destination folder for output",metavar="FILE")	
@@ -208,16 +216,24 @@ if __name__ == '__main__':
 	parser.add_option("-r","--run",action="store_true",dest="run",default=False,help="run the packaged app after building")	
 	parser.add_option("-p","--package",dest="package",default=True,help="build the installation package")	
 	(options, args) = parser.parse_args()
+	options.packager = False
 	if len(args) == 0:
 		parser.print_help()
 		sys.exit(1)
-	appdir = os.path.join(args[0])
+	appdir = os.path.abspath(os.path.expanduser(dequote(args[0])))
 	if appdir == "":
 		parser.print_help()
 		sys.exit(1)
 	if not os.path.exists(appdir):
 		print "Couldn't find application directory at: %s" % appdir
 		sys.exit(1)
+	
+	magicmarker = os.path.join(cwd,'.packager')
+	if os.path.exists(magicmarker):
+		options.source = cwd
+		options.assets = cwd
+		options.packager = True
+		
 	main(options,args[0])
 	
 	

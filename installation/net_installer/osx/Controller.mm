@@ -9,6 +9,7 @@
 #define RUNTIME_UUID_FRAGMENT @"uuid="RUNTIME_UUID
 #define MODULE_UUID_FRAGMENT @"uuid="MODULE_UUID
 #define SDK_UUID_FRAGMENT @"uuid="SDK_UUID
+#define MOBILESDK_UUID_FRAGMENT @"uuid="MOBILESDK_UUID
 
 @implementation Job
 static int totalDownloads = 0;
@@ -116,7 +117,7 @@ static int totalJobs = 0;
 {
 	NSLog(@"Bailing with error: %@", errorString);
 	NSRunCriticalAlertPanel(nil, errorString, @"Cancel", nil, nil);
-	[NSApp terminate:nil];
+	exit(1);
 }
 
 -(void)createDirectory:(NSString*)path;
@@ -187,6 +188,12 @@ static int totalJobs = 0;
 			name = [parts objectAtIndex:0];
 			version = [parts objectAtIndex:1];
 		}
+		else if ([typeString isEqualToString:@"mobilesdk"])
+		{
+			type = KrollUtils::MOBILESDK;;
+			name = [parts objectAtIndex:0];
+			version = [parts objectAtIndex:1];
+		}
 		else
 		{
 			// Unknown file!
@@ -211,6 +218,10 @@ static int totalJobs = 0;
 			else if ([thisPart isEqualToString:SDK_UUID_FRAGMENT])
 			{
 				type = KrollUtils::SDK;
+			}
+			else if ([thisPart isEqualToString:MOBILESDK_UUID_FRAGMENT])
+			{
+				type = KrollUtils::MOBILESDK;
 			}
 			else if ([thisPart hasPrefix:@"name="])
 			{
@@ -248,9 +259,9 @@ static int totalJobs = 0;
 
 #ifdef DEBUG
 	NSLog(@"name=%@,version=%@,module=%d", name, version, type);
+	NSLog(@"Installing %@ into %@", path, destDir);
 #endif
 
-	NSLog(@"Installing %@ into %@", path, destDir);
 	[self createDirectory:destDir];
 	std::string cmdline = "/usr/bin/ditto --noqtn -x -k --rsrc ";
 	cmdline+="\"";
@@ -258,11 +269,21 @@ static int totalJobs = 0;
 	cmdline+="\" \"";
 	cmdline+=[destDir UTF8String];
 	cmdline+="\"";
-	system(cmdline.c_str());
+	
+#ifdef DEBUG
+	NSLog(@"Executing: %s", cmdline.c_str());
+#endif
+
+	int ec = system(cmdline.c_str());
 
 #ifdef DEBUG
-	NSLog(@"After unzip %@ to %@", path, destDir);
+	NSLog(@"After unzip %@ to %@, exitcode:%d", path, destDir,ec);
 #endif
+
+	if (ec!=0)
+	{
+		[self bailWithMessage:@"Download file extraction failed. Possibly it was corrupted or couldn't be properly downloaded."];
+	}
 }
 
 -(void)downloadAndInstall:(Controller*)controller 
@@ -528,6 +549,7 @@ static int totalJobs = 0;
 	{
 		[self bailWithMessage:@"Sorry, but the installer was not given enough information to continue."];
 	}
+	bool skipPromptDialog = false;
 
 	if (updateFile == nil)
 	{
@@ -535,6 +557,7 @@ static int totalJobs = 0;
 	}
 	else
 	{
+		skipPromptDialog = true; // we can just auto-start and not wait...
 		app = Application::NewApplication([updateFile UTF8String], [appPath UTF8String]);
 		NSString* updateURL = [NSString stringWithUTF8String:app->GetUpdateURL().c_str()];
 		[jobs addObject:[[Job alloc] initUpdate:updateURL]];
@@ -571,54 +594,57 @@ static int totalJobs = 0;
 		appImage = [NSString stringWithUTF8String:app->image.c_str()];
 	}
 
-	[self createInstallerMenu:appName];
-	[progressAppName setStringValue:appName];
-	[introAppName setStringValue:appName];
-	[progressAppVersion setStringValue:appVersion];
-	[introAppVersion setStringValue:appVersion];
-	[progressAppPublisher setStringValue:appPublisher];
-	[introAppPublisher setStringValue:appPublisher];
-	[progressAppURL setStringValue:appURL];
-	[introAppURL setStringValue:appURL];
-
-	[introAppVersion setFont:[NSFont boldSystemFontOfSize:12]];
-	[introAppPublisher setFont:[NSFont boldSystemFontOfSize:12]];
-	[introAppURL setFont:[NSFont boldSystemFontOfSize:12]];
-
-
-	if (appImage != nil)
+	if (!skipPromptDialog)
 	{
-		NSImage* img = [[NSImage alloc] initWithContentsOfFile:appImage];
-		if ([img isValid])
+		[self createInstallerMenu:appName];
+		[progressAppName setStringValue:appName];
+		[introAppName setStringValue:appName];
+		[progressAppVersion setStringValue:appVersion];
+		[introAppVersion setStringValue:appVersion];
+		[progressAppPublisher setStringValue:appPublisher];
+		[introAppPublisher setStringValue:appPublisher];
+		[progressAppURL setStringValue:appURL];
+		[introAppURL setStringValue:appURL];
+
+		[introAppVersion setFont:[NSFont boldSystemFontOfSize:12]];
+		[introAppPublisher setFont:[NSFont boldSystemFontOfSize:12]];
+		[introAppURL setFont:[NSFont boldSystemFontOfSize:12]];
+
+
+		if (appImage != nil)
 		{
-			[progressImage setImage:img];
-			[introImage setImage:img];
+			NSImage* img = [[NSImage alloc] initWithContentsOfFile:appImage];
+			if ([img isValid])
+			{
+				[progressImage setImage:img];
+				[introImage setImage:img];
+			}
 		}
-	}
 
-	NSString* licensePath = [appPath stringByAppendingPathComponent: @LICENSE_FILENAME];
-	NSFileManager *fm = [NSFileManager defaultManager];
-	if ([fm fileExistsAtPath:licensePath])
-	{
-		NSString* licenseText = [NSString
-			stringWithContentsOfFile: licensePath
-			encoding:NSUTF8StringEncoding
-			error:nil];
-		NSAttributedString* licenseAttrText = [[NSAttributedString alloc] initWithString:licenseText];
-		[[introLicenseText textStorage] setAttributedString:licenseAttrText];
-		[introLicenseText setEditable:NO];
-	}
-	else
-	{
-		[introLicenseLabel setHidden:YES];
-		[introLicenseBox setHidden:YES];
-		NSRect frame = [introWindow frame];
-		frame.size.width = 650;
-		frame.size.height = 275;
-		[introWindow setMinSize:frame.size];
-		[introWindow setMaxSize:frame.size];
-		[introWindow setShowsResizeIndicator:NO];
-		[introWindow setFrame:frame display:YES];
+		NSString* licensePath = [appPath stringByAppendingPathComponent: @LICENSE_FILENAME];
+		NSFileManager *fm = [NSFileManager defaultManager];
+		if ([fm fileExistsAtPath:licensePath])
+		{
+			NSString* licenseText = [NSString
+				stringWithContentsOfFile: licensePath
+				encoding:NSUTF8StringEncoding
+				error:nil];
+			NSAttributedString* licenseAttrText = [[NSAttributedString alloc] initWithString:licenseText];
+			[[introLicenseText textStorage] setAttributedString:licenseAttrText];
+			[introLicenseText setEditable:NO];
+		}
+		else
+		{
+			[introLicenseLabel setHidden:YES];
+			[introLicenseBox setHidden:YES];
+			NSRect frame = [introWindow frame];
+			frame.size.width = 650;
+			frame.size.height = 275;
+			[introWindow setMinSize:frame.size];
+			[introWindow setMaxSize:frame.size];
+			[introWindow setShowsResizeIndicator:NO];
+			[introWindow setFrame:frame display:YES];
+		}
 	}
 
 	std::string tempDir = FileUtils::GetTempDirectory();
@@ -645,9 +671,18 @@ static int totalJobs = 0;
 	[installDirectory retain];
 	
 
-	[NSApp arrangeInFront:introWindow];
+	if (skipPromptDialog)
+	{
+		[self continueIntro:self];
+	}
+	else
+	{
+		[NSApp arrangeInFront:introWindow];
+	}
+
 	[progressWindow makeKeyAndOrderFront:progressWindow];
 	[NSApp activateIgnoringOtherApps:YES];
+	
 }
 - (BOOL)canBecomeKeyWindow
 {
@@ -659,9 +694,12 @@ static int totalJobs = 0;
 }
 -(void)applicationDidFinishLaunching:(NSNotification *) notif
 {
-	[introWindow center];
-	[progressWindow orderOut:self];
-	[introWindow makeKeyAndOrderFront:self];
+	if (updateFile == nil)
+	{
+		[introWindow center];
+		[progressWindow orderOut:self];
+		[introWindow makeKeyAndOrderFront:self];
+	}
 }
 
 -(IBAction)cancelProgress: (id)sender
