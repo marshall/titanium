@@ -36,7 +36,7 @@ namespace ti
 	{
 
 		public:
-		GtkUserWindow(SharedUIBinding, WindowConfig*, SharedUserWindow&);
+		GtkUserWindow(WindowConfig*, SharedUserWindow&);
 		virtual ~GtkUserWindow();
 		void Destroyed();
 		void SetupDecorations();

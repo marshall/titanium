@@ -14,10 +14,10 @@ using namespace ti;
 // Initialize our constants here
 int UserWindow::CENTERED = WindowConfig::DEFAULT_POSITION;
 
-UserWindow::UserWindow(SharedUIBinding binding, WindowConfig *config, SharedUserWindow& parent) :
+UserWindow::UserWindow(WindowConfig *config, SharedUserWindow& parent) :
 	kroll::StaticBoundObject(),
-	binding(binding),
-	host(binding->GetHost()),
+	binding(UIModule::GetInstance()->GetUIBinding()),
+	host(kroll::Host::GetInstance()),
 	config(config),
 	parent(parent),
 	next_listener_id(0),
@@ -460,11 +460,6 @@ SharedUserWindow UserWindow::GetSharedPtr()
 Host* UserWindow::GetHost()
 {
 	return this->host;
-}
-
-SharedUIBinding UserWindow::GetBinding()
-{
-	return this->binding;
 }
 
 void UserWindow::Open()

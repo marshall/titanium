@@ -75,8 +75,7 @@ void Win32UserWindow::RegisterWindowClass(HINSTANCE hInstance)
 		ATOM result = RegisterClassEx(&wcex);
 		if (result == NULL)
 		{
-			std::cout << "Error Registering Window Class: " << GetLastError()
-					<< std::endl;
+			Logger::Get("UI.Win32UserWindow")->Error("Error Registering Window Class: %d", GetLastError());
 		}
 
 		class_initialized = true;
@@ -116,6 +115,7 @@ Win32UserWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			return DefWindowProc(hWnd, message, wParam, lParam);
 		case WM_CLOSE:
 			window->Close();
+			PRINTD("FireEvent: CLOSED");
 			window->FireEvent(CLOSED);
 			return DefWindowProc(hWnd, message, wParam, lParam);
 		case WM_GETMINMAXINFO:
@@ -376,8 +376,8 @@ void Win32UserWindow::InitWebKit()
 	//web_view->setShouldCloseWithWindow(TRUE);
 }
 
-Win32UserWindow::Win32UserWindow(SharedUIBinding binding, WindowConfig* config, SharedUserWindow& parent) :
-	UserWindow(binding, config, parent),
+Win32UserWindow::Win32UserWindow(WindowConfig* config, SharedUserWindow& parent) :
+	UserWindow(config, parent),
 	menuBarHandle(NULL),
 	menuInUse(NULL),
 	menu(NULL),
@@ -531,8 +531,8 @@ void Win32UserWindow::Unfocus()
 
 void Win32UserWindow::Open()
 {
-	std::cout << "Opening window_handle=" << (int) window_handle
-			<< ", view_window_handle=" << (int) view_window_handle << std::endl;
+	PRINTD("Opening window_handle=" << (int) window_handle
+			<< ", view_window_handle=" << (int) view_window_handle);
 
 	UpdateWindow(window_handle);
 	UpdateWindow(view_window_handle);
@@ -554,6 +554,7 @@ void Win32UserWindow::Close()
 {
 	DestroyWindow(window_handle);
 	UserWindow::Close();
+	FireEvent(CLOSED);
 }
 
 double Win32UserWindow::GetX()
@@ -692,8 +693,8 @@ void Win32UserWindow::SetURL(std::string& url_)
 	std::string url = url_;
 
 	url = AppURLNormalizeURL(url, AppConfig::Instance()->GetAppID());
-	std::cout << "SetURL: " << url << std::endl;
-
+	logger->Debug("SetURL: %s", url.c_str());
+	
 	IWebMutableURLRequest* request = 0;
 	std::wstring method =L"GET" ;
 
@@ -706,27 +707,27 @@ void Win32UserWindow::SetURL(std::string& url_)
 	}
 	std::wstring wurl = UTF8ToWide(url);
 
-	std::cout << "CoCreateInstance " << std::endl;
+	logger->Debug("CoCreateInstance");
 	HRESULT hr = CoCreateInstance(CLSID_WebMutableURLRequest, 0, CLSCTX_ALL, IID_IWebMutableURLRequest, (void**)&request);
 	if (FAILED(hr))
 		goto exit;
 
-	std::cout << "initWithURL: " << url << std::endl;
+	logger->Debug("initWithURL: %s", url.c_str());
 	hr = request->initWithURL(SysAllocString(wurl.c_str()), WebURLRequestUseProtocolCachePolicy, 60);
 	if (FAILED(hr))
 		goto exit;
 
-	std::cout << "set HTTP method" << std::endl;
+	logger->Debug("set HTTP method");
 	hr = request->setHTTPMethod(SysAllocString(method.c_str()));
 	if (FAILED(hr))
 		goto exit;
 
-	std::cout << "load request" << std::endl;
+	logger->Debug("load request");
 	hr = web_frame->loadRequest(request);
 	if (FAILED(hr))
 		goto exit;
 
-	std::cout << "set focus" << std::endl;
+	logger->Debug("set focus");
 	SetFocus(view_window_handle);
 
 exit:

@@ -58,7 +58,7 @@ Win32WebKitJavascriptListener::exceptionWasRaised(
     /* [in] */ int lineNumber,
     /* [in] */ IWebFrame *forWebFrame)
 {
-	std::cout << "$$$$$$$$$$$$ exceptionWasRaised()" << std::endl;
+	Logger::Get("UI.Win32WebKitJavascriptListener")->Debug("exceptionWasRaised()" );
 	 return S_OK;
 }
 

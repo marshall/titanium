@@ -314,7 +314,7 @@ namespace ti
 				}
 				catch(...)
 				{
-					std::cout << "Menu callback failed" << std::endl;
+					Logger::GetRootLogger()->Error("Menu callback failed");
 				}
 
 				return true;

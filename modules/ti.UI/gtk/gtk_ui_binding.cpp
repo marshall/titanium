@@ -34,7 +34,7 @@ namespace ti
 		WindowConfig* config,
 		SharedUserWindow& parent)
 	{
-		UserWindow* w = new GtkUserWindow(this, config, parent);
+		UserWindow* w = new GtkUserWindow(config, parent);
 		return w->GetSharedPtr();
 	}
 

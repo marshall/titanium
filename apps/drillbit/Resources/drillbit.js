@@ -11,6 +11,7 @@ var running_assertions = 0;
 var running_completed = 0;
 var auto_run = false;
 var auto_close = false;
+var debug_tests = false;
 var test_failures = false;
 
 function update_status(msg,hide)
@@ -116,6 +117,11 @@ window.onload = function()
 	var dir_list = test_dir.getDirectoryListing();
 	
 	results_dir.createDirectory();
+	
+	var f = Titanium.Filesystem.getFile(results_dir, "results.html");
+	if (f.exists()) {
+		f.deleteFile();
+	}
 	
 	for (var c=0;c<dir_list.length;c++)
 	{
@@ -436,6 +442,10 @@ window.onload = function()
 		args.push('--bundled-component-override="'+app_dir+'"')
 		args.push('--no-console-logging');
 		args.push('--debug');
+		if (debug_tests) {
+			args.push('--attach-debugger');
+		}
+		
 		args.push('--results-dir="' + results_dir + '"');
 		var process = Titanium.Process.launch(app.executable.nativePath(),args);
 		process.onread = function(data)
@@ -577,9 +587,13 @@ window.onload = function()
 			run_button.click();
 			//break;
 		}
-		else if (Titanium.App.arguments[c] == 'autoclose')
+		else if (Titanium.App.arguments[c] == '--autoclose')
 		{
 			auto_close = true;
+		}
+		else if (Titanium.App.arguments[c] == '--debug-tests')
+		{
+			debug_tests = true;
 		}
 	}
 };

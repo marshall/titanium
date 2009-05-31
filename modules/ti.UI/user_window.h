@@ -51,11 +51,10 @@ enum UserWindowEvent
 
 class UserWindow : public kroll::StaticBoundObject {
 	public:
-		UserWindow(SharedUIBinding binding, WindowConfig *config, SharedUserWindow& parent);
+		UserWindow(WindowConfig *config, SharedUserWindow& parent);
 		virtual ~UserWindow();
 		void UpdateWindowForURL(std::string url);
 		Host* GetHost();
-		SharedUIBinding GetBinding();
 
 	private:
 		void ReadChooserDialogObject(

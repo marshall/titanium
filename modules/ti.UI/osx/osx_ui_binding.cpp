@@ -51,7 +51,7 @@ namespace ti
 		WindowConfig* config,
 		SharedUserWindow& parent)
 	{
-		UserWindow* w = new OSXUserWindow(this, config, parent);
+		UserWindow* w = new OSXUserWindow(config, parent);
 		return w->GetSharedPtr();
 	}
 

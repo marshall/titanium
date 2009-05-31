@@ -88,7 +88,7 @@ namespace ti
 		WindowConfig* config,
 		SharedUserWindow& parent)
 	{
-		UserWindow* w = new Win32UserWindow(this, config, parent);
+		UserWindow* w = new Win32UserWindow(config, parent);
 		return w->GetSharedPtr();
 	}
 
