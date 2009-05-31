@@ -262,11 +262,11 @@ class UserWindow : public kroll::StaticBoundObject {
 		SharedUserWindow GetSharedPtr();
 
 	protected:
+		SharedUIBinding binding;
 		Host* host;
 		WindowConfig *config;
 		SharedUserWindow parent;
 		SharedUserWindow shared_this;
-		SharedUIBinding binding;
 		std::vector<SharedUserWindow> children;
 		long next_listener_id;
 		bool active;

@@ -48,8 +48,8 @@ namespace ti
 		gpointer data);
 	static void hide_window_cb(GtkWidget *widget, gpointer data);
 	
-	GtkUserWindow::GtkUserWindow(SharedUIBinding binding, WindowConfig* config, SharedUserWindow& parent) :
-		UserWindow(binding, config, parent),
+	GtkUserWindow::GtkUserWindow(WindowConfig* config, SharedUserWindow& parent) :
+		UserWindow(config, parent),
 		gdkWidth(-1),
 		gdkHeight(-1),
 		gdkX(-1),
