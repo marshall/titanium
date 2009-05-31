@@ -20,7 +20,7 @@ namespace ti
 	class OSXUserWindow : public UserWindow
 	{
 		public:
-			OSXUserWindow(SharedUIBinding, WindowConfig* config, SharedUserWindow& parent);
+			OSXUserWindow(WindowConfig* config, SharedUserWindow& parent);
 			~OSXUserWindow();
 		public:
 

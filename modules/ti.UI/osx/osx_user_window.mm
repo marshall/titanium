@@ -23,8 +23,8 @@ namespace ti
 		}
 	}
 
-	OSXUserWindow::OSXUserWindow(SharedUIBinding binding, WindowConfig* config, SharedUserWindow& parent) :
-		UserWindow(binding, config, parent),
+	OSXUserWindow::OSXUserWindow(WindowConfig* config, SharedUserWindow& parent) :
+		UserWindow(config, parent),
 		window(nil),
 		opened(false),
 		closed(false),
