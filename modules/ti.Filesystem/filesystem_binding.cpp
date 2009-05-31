@@ -208,8 +208,7 @@ namespace ti
 	}
 	void FilesystemBinding::GetApplicationDirectory(const ValueList& args, SharedValue result)
 	{
-		std::string dir = FileUtils::GetApplicationDirectory();
-		ti::File* file = new ti::File(dir);
+		ti::File* file = new ti::File(host->GetApplication()->path);
 		result->SetObject(file);
 	}
 	void FilesystemBinding::GetApplicationDataDirectory(const ValueList& args, SharedValue result)
@@ -227,8 +226,7 @@ namespace ti
 	}
 	void FilesystemBinding::GetResourcesDirectory(const ValueList& args, SharedValue result)
 	{
-		std::string dir = FileUtils::GetResourcesDirectory();
-		ti::File* file = new ti::File(dir);
+		ti::File* file = new ti::File(host->GetApplication()->GetResourcesPath());
 		result->SetObject(file);
 	}
 	void FilesystemBinding::GetProgramsDirectory(const ValueList &args, SharedValue result)
