@@ -21,6 +21,8 @@ class Win32WebKitUIDelegate : public IWebUIDelegate {
 protected:
 	int ref_count;
 	Win32UserWindow *window;
+	Logger* logger;
+	
 public:
 	Win32WebKitUIDelegate(Win32UserWindow *window);
 

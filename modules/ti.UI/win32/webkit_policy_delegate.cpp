@@ -151,7 +151,7 @@ namespace ti {
 		/* [in] */ IWebFrame *frame,
 		/* [in] */ IWebPolicyDecisionListener *listener)
 	{
-		std::cout << "ppppppppppppp  decidePolicyForMIMEType() called" << std::endl;
+		Logger::Get("UI.Win32WebKitPolicyDelegate")->Debug("decidePolicyForMIMEType() not implemented");
 		return E_NOTIMPL;
 	}
 
@@ -160,7 +160,7 @@ namespace ti {
 		/* [in] */ IWebError *error,
 		/* [in] */ IWebFrame *frame)
 	{
-		std::cout << "ppppppppppppp  unableToImplementPolicyWithError() called" << std::endl;
+		Logger::Get("UI.Win32WebKitPolicyDelegate")->Debug("unableToImplementPolicyWithError() not implemented");
 		return E_NOTIMPL;
 	}
 

@@ -34,11 +34,11 @@ namespace ti
 		api->Call("ti.UI.start", Value::Undefined);
 
 #ifdef OS_WIN32
-		UIBinding* binding = new Win32UIBinding(this, host);
+		this->uiBinding = new Win32UIBinding(this, host);
 #elif OS_OSX
-		UIBinding* binding = new OSXUIBinding(host);
+		this->uiBinding = new OSXUIBinding(host);
 #elif OS_LINUX
-		UIBinding* binding = new GtkUIBinding(host);
+		this->uiBinding = new GtkUIBinding(host);
 #endif
 
 		AppConfig *config = AppConfig::Instance();
@@ -46,7 +46,7 @@ namespace ti
 		{
 			std::string msg = "Error loading tiapp.xml. Your application "
 			                  "is not properly configured or packaged.";
-			binding->ErrorDialog(msg);
+			this->uiBinding->ErrorDialog(msg);
 			throw ValueException::FromString(msg.c_str());
 			return;
 		}
@@ -55,12 +55,12 @@ namespace ti
 		{
 			std::string msg ="Error loading tiapp.xml. Your application "
 			                 "window is not properly configured or packaged.";
-			binding->ErrorDialog(msg);
+			this->uiBinding->ErrorDialog(msg);
 			throw ValueException::FromString(msg.c_str());
 			return;
 		}
 
-		binding->CreateMainWindow(main_window_config);
+		this->uiBinding->CreateMainWindow(main_window_config);
 	}
 
 	void UIModule::Exiting(int exitcode)

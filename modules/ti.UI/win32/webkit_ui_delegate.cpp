@@ -12,7 +12,7 @@
 using namespace ti;
 
 Win32WebKitUIDelegate::Win32WebKitUIDelegate(Win32UserWindow *window_) : window(window_), ref_count(1) {
-
+	logger = Logger::Get("UI.Win32WebKitUIDelegate");
 }
 
 HRESULT STDMETHODCALLTYPE
@@ -59,7 +59,7 @@ Win32WebKitUIDelegate::createWebViewWithRequest(
 	/* [in] */ IWebURLRequest *request,
 	/* [retval][out] */ IWebView **newWebView)
 {
-	std::cout << "&&&&&&&&&&&&&&  createWebViewWithRequest() called" << std::endl;
+	logger->Debug("createWebViewWithRequest() not implemented");
 	return E_NOTIMPL;
 }
 
@@ -67,7 +67,7 @@ HRESULT STDMETHODCALLTYPE
 Win32WebKitUIDelegate::webViewClose(
 	/* [in] */ IWebView *sender)
 {
-	std::cout << "&&&&&&&&&&&&&&  webViewClose() called" << std::endl;
+	logger->Debug("webViewClose() not implemented");
 	return E_NOTIMPL;
 }
 
@@ -75,7 +75,7 @@ HRESULT STDMETHODCALLTYPE
 Win32WebKitUIDelegate::webViewFocus(
 	/* [in] */ IWebView *sender)
 {
-	std::cout << "&&&&&&&&&&&&&&  webViewFocus() called" << std::endl;
+	logger->Debug("webViewFocus() called");
 	return E_NOTIMPL;
 }
 
@@ -83,7 +83,7 @@ HRESULT STDMETHODCALLTYPE
 Win32WebKitUIDelegate::webViewUnfocus(
 	/* [in] */ IWebView *sender)
 {
-	std::cout << "&&&&&&&&&&&&&&  webViewUnfocus() called" << std::endl;
+	logger->Debug("webViewUnfocus() called");
 	return E_NOTIMPL;
 }
 
@@ -98,7 +98,7 @@ Win32WebKitUIDelegate::setStatusText(
 	{
 		s.append(_bstr_t(text));
 	}
-	std::cout << "&&&&&&&&&&&&&&  setStatusText() called '" << s << "'" << std::endl;
+	logger->Debug("setStatusText() called '%s'", s);
 	return E_NOTIMPL;
 }
 
@@ -223,7 +223,7 @@ Win32WebKitUIDelegate::runBeforeUnloadConfirmPanelWithMessage(
 	/* [in] */ IWebFrame *initiatedByFrame,
 	/* [retval][out] */ BOOL *result)
 {
-	std::cout << "&&&&&&&&&&&&&&  runBeforeUnloadConfirmPanelWithMessage() called" << std::endl;
+	logger->Debug("runBeforeUnloadConfirmPanelWithMessage() not implemented");
 	return E_NOTIMPL;
 }
 
@@ -268,7 +268,7 @@ Win32WebKitUIDelegate::registerUndoWithTarget(
 	/* [in] */ BSTR actionName,
 	/* [in] */ IUnknown *actionArg)
 {
-	std::cout << "&&&&&&&&&&&&&&  registerUndoWithTarget() called" << std::endl;
+	logger->Debug("registerUndoWithTarget() not implemented");
 	return E_NOTIMPL;
 }
 
@@ -276,7 +276,7 @@ HRESULT STDMETHODCALLTYPE
 Win32WebKitUIDelegate::removeAllActionsWithTarget(
 	/* [in] */ IWebUndoTarget *target)
 {
-	std::cout << "&&&&&&&&&&&&&&  removeAllActionsWithTarget() called " << (int)target << std::endl;
+	logger->Debug("removeAllActionsWithTarget() not implemented");
 	return E_NOTIMPL;
 }
 
@@ -284,21 +284,21 @@ HRESULT STDMETHODCALLTYPE
 Win32WebKitUIDelegate::setActionTitle(
 	/* [in] */ BSTR actionTitle)
 {
-	std::cout << "&&&&&&&&&&&&&&  setActionTitle() called" << std::endl;
+	logger->Debug("setActionTitle() not implemented");
 	return E_NOTIMPL;
 }
 
 HRESULT STDMETHODCALLTYPE
 Win32WebKitUIDelegate::undo()
 {
-	std::cout << "&&&&&&&&&&&&&&  undo() called" << std::endl;
+	logger->Debug("undo() not implemented");
 	return E_NOTIMPL;
 }
 
 HRESULT STDMETHODCALLTYPE
 Win32WebKitUIDelegate::redo()
 {
-	std::cout << "&&&&&&&&&&&&&&  redo() called" << std::endl;
+	logger->Debug("redo() not implemented");
 	return E_NOTIMPL;
 }
 
@@ -306,7 +306,7 @@ HRESULT STDMETHODCALLTYPE
 Win32WebKitUIDelegate::canUndo(
 	/* [retval][out] */ BOOL *result)
 {
-	std::cout << "&&&&&&&&&&&&&&  canUndo() called" << std::endl;
+	logger->Debug("canUndo() not implemented");
 	return E_NOTIMPL;
 }
 
@@ -314,7 +314,7 @@ HRESULT STDMETHODCALLTYPE
 Win32WebKitUIDelegate::canRedo(
 	/* [retval][out] */ BOOL *result)
 {
-	std::cout << "&&&&&&&&&&&&&&  canRedo() called" << std::endl;
+	logger->Debug("canRedo() not implemented");
 	return E_NOTIMPL;
 }
 
@@ -326,7 +326,7 @@ Win32WebKitUIDelegate::webViewAddMessageToConsole(
 	/* [in] */ BSTR url,
 	/* [in] */ BOOL isError)
 {
-	std::cout << "&&&&&&&&&&&&&&  webViewAddMesageToConsole() called" << std::endl;
+	logger->Debug("webViewAddMesageToConsole() not implemented");
 	return E_NOTIMPL;
 }
 
@@ -338,7 +338,7 @@ Win32WebKitUIDelegate::doDragDrop(
 	/* [in] */ DWORD okEffect,
 	/* [retval][out] */ DWORD *performedEffect)
 {
-	std::cout << "&&&&&&&&&&&&&&  doDragDrop() called" << std::endl;
+	logger->Debug("doDragDrop() not implemented");
 	return E_NOTIMPL;
 }
 
@@ -348,7 +348,7 @@ Win32WebKitUIDelegate::webViewGetDlgCode(
 	/* [in] */ UINT keyCode,
 	/* [retval][out] */ LONG_PTR *code)
 {
-	std::cout << "&&&&&&&&&&&&&&  webViewGetDlgCode() called" << std::endl;
+	logger->Debug("webViewGetDlgCode() not implemented");
 	return E_NOTIMPL;
 }
 
@@ -356,7 +356,7 @@ HRESULT STDMETHODCALLTYPE
 Win32WebKitUIDelegate::webViewPainted(
 	/* [in] */ IWebView *sender)
 {
-	std::cout << "&&&&&&&&&&&&&&  webViewPainted() called" << std::endl;
+	logger->Debug("webViewPainted() not implemented");
 	return E_NOTIMPL;
 }
 
@@ -367,7 +367,7 @@ Win32WebKitUIDelegate::exceededDatabaseQuota(
 	/* [in] */ IWebSecurityOrigin *origin,
 	/* [in] */ BSTR databaseIdentifier)
 {
-	std::cout << "&&&&&&&&&&&&&&  exceededDatabaseQuota() called" << std::endl;
+	logger->Debug("exceededDatabaseQuota() not implemented");
 
     static const unsigned long long defaultQuota = 100 * 1024 * 1024;	// 100MB
     origin->setQuota(defaultQuota);
