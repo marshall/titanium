@@ -102,7 +102,6 @@
 	//
 	// UI Dialog class
 	//
-	
 	/**
 	 * @tiapi(property=True,name=UI.Window.isDialog,since=0.4) true if this window is a UI Dialog
 	 */
@@ -112,73 +111,6 @@
 	}
 	Titanium.UI.getCurrentWindow()._isDialog = false;
 
-	var Dialog = function(params)
-	{
-		Titanium.API.debug("creating dialog with url: "+params.url);
-		var kv = params.parameters || {};
-		params.visible = true;
-		this.window = Titanium.UI.createWindow(params);
-		this.result = null;
-		this.sub_dom_window = null;
-		var w = this.window;
-		var closed = false;
-		var self = this;
-		self.onclose = params.onclose;
-		w.addEventListener(function(name,ev)
-		{
-			try
-			{
-				if (name == 'page.init')
-				{
-					self.sub_dom_window = ev.scope;
-					self.sub_dom_window._isDialog = true;
-					self.sub_dom_window._DialogParams = kv;
-					var old_close = self.sub_dom_window.Titanium.UI.currentWindow.close;
-					self.sub_dom_window.Titanium.UI.currentWindow.close = function(r)
-					{
-						if (arguments.length > 0)
-						{
-							// only set it if it was passed in
-							self.result = r;
-						}
-						old_close();
-					};
-				}
-				else if (name == 'closed' && !closed)
-				{
-					closed = true;
-					if (self.onclose)
-					{
-						self.onclose(self.result);
-					}
-					self.sub_dom_window = null;
-				}
-			}
-			catch(e)
-			{
-				Titanium.API.error("error in "+name+", exception: "+e);
-			}
-		});
-		w.open();
-		w.show();
-	};
-	
-	/**
-	 * @tiapi(method=True,name=UI.Dialog.getResult,since=0.4) get results from UI dialog
-	 */
-	Dialog.prototype.getResult = function()
-	{
-		return this.result;
-	};
-	
-	/**
-	 * @tiapi(method=True,name=UI.Dialog.close,since=0.4) close UI dialog
-	 */
-	Dialog.prototype.close = function()
-	{
-		this.window.close();
-	};
-	
 	/**
 	 * @tiapi(method=True,name=UI.showDialog,since=0.4) create a UI dialog
 	 * @tiarg(for=UI.showDialog,name=params,type=object) options to pass in to create window
@@ -186,28 +118,50 @@
 	 */
 	Titanium.UI.showDialog = function(params)
 	{
-		return new Dialog(params);
+		Titanium.API.debug("creating dialog with url: "+params.url);
+		var dialogWindow = Titanium.UI.createWindow(params);
+
+		dialogWindow._dialogResult = null;
+		dialogWindow._dialogParameters = params.parameters || {};
+		dialogWindow._isDialog = true;
+		dialogWindow._dialogCloseCallback = params.onclose || null;
+
+		/**
+		 * @tiapi(method=True,name=UI.Dialog.getDialogResult,since=0.4) get results from UI dialog
+		 */
+		dialogWindow.getDialogResult = function()
+		{
+			return dialogWindow._dialogResult;
+		}
+
+		/**
+		 * @tiapi(method=True,name=UI.Dialog.getDialogParameter,since=0.4) get an incoming UI dialog parameter
+		 * @tiarg(for=UI.getDialogParam,name=name,type=string) name of the parameter
+		 * @tiarg(for=UI.getDialogParam,name=default,type=string,optional=True) default value if not found
+		 * @tiresult(for=UI.getDialogParam,type=string) result
+		 */
+		dialogWindow.getDialogParameter = function(name, defaultValue)
+		{
+			var v = dialogWindow._dialogParameters[name];
+			return v || defaultValue;
+		};
+
+
+		var originalClose = dialogWindow.close;
+		dialogWindow.close = function(result)
+		{
+			var onclose = dialogWindow._dialogCloseCallback;
+			dialogWindow._dialogResult = result || null;	
+			originalClose();
+			onclose(dialogWindow._dialogResult);
+		}
+
+		//var get_result_text = function(result) { var text = "\n"; for (var x in result) { text += x + ": " + result[x] + "\n"; } return text; }
+		dialogWindow.open();
+		dialogWindow.show();
+		return dialogWindow;
 	};
 	
-	/**
-	 * @tiapi(method=True,name=UI.getDialogParam,since=0.4) get an incoming UI dialog parameter
-	 * @tiarg(for=UI.getDialogParam,name=name,type=string) name of the parameter
-	 * @tiarg(for=UI.getDialogParam,name=default,type=string,optional=True) default value if not found
-	 * @tiresult(for=UI.getDialogParam,type=string) result
-	 */
-	Titanium.UI.getDialogParam = function(name,defvalue)
-	{
-		if (typeof(window._DialogParams)!='undefined')
-		{
-			var v = window._DialogParams[name];
-			if (typeof(v)!='undefined')
-			{
-				return v;
-			}
-		}
-		return defvalue;
-	};
-
 	/**
 	 * @tiapi(method=True,name=JSON.stringify,since=0.4) Convert a Javascript object to a JSON string
 	 * @tiarg(for=JSON.stringify,name=object,type=object) Javascript object to convert
