@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 #
-# Copyright (c) 2009 Appcelerator, Inc. All Rights Reserved.
-# Released under Apache Public License V2.
+# This script is the property of Appcelerator, Inc. and
+# is Confidential and Proprietary. All Rights Reserved.
+# Redistribution without expression written permission
+# is not allowed.
 #
 # Titanium application packaging script
 #
