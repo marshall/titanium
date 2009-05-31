@@ -21,9 +21,9 @@ static void TiReachabilityCallback(SCNetworkReachabilityRef  target,
 // Our response to this notification is simply to print a line 
 // recording the transition.
 {
-  BOOL online = (flags & kSCNetworkFlagsReachable) && !(flags & kSCNetworkFlagsTransientConnection);
-  NetworkReachability *network = (NetworkReachability*)info;
-  [network triggerChange:online];
+	BOOL online = (flags & kSCNetworkFlagsReachable) && !(flags & kSCNetworkFlagsTransientConnection) && !(flags & kSCNetworkFlagsConnectionRequired);
+  	NetworkReachability *network = (NetworkReachability*)info;
+  	[network triggerChange:online];
 }
 
 @implementation NetworkReachability
@@ -57,7 +57,7 @@ static void TiReachabilityCallback(SCNetworkReachabilityRef  target,
     thisContext.copyDescription = NULL;
 
     // Create the target with the most reachable internet site in the world
-    thisTarget = SCNetworkReachabilityCreateWithName(NULL, "google.com");
+    thisTarget = SCNetworkReachabilityCreateWithName(NULL, "www.google.com");
 
     // Set our callback and install on the runloop.
     if (thisTarget) 
@@ -67,8 +67,24 @@ static void TiReachabilityCallback(SCNetworkReachabilityRef  target,
       	SCNetworkConnectionFlags flags;
       	if ( SCNetworkReachabilityGetFlags(thisTarget, &flags) ) 
       	{
-        	BOOL yn = (flags & kSCNetworkFlagsReachable) && !(flags & kSCNetworkFlagsTransientConnection);
-        	[self triggerChange:yn];
+			if ((flags & kSCNetworkFlagsReachable) && !(flags & kSCNetworkFlagsConnectionRequired))
+			{
+	        	[self triggerChange:YES];
+			}
+			else
+			{
+				// this occurs on startup where the runloop hasn't scheduled
+				// the check and the flags are 0 ... in this case we check
+				// directly another site to make sure we're OK
+				if (SCNetworkCheckReachabilityByName("www.yahoo.com", &flags) && (flags & kSCNetworkFlagsReachable))
+				{
+		        	[self triggerChange:YES];
+				}
+				else
+				{
+		        	[self triggerChange:NO];
+				}
+			}
       	}
     }
 	[pool release];

@@ -185,6 +185,8 @@
 			return;
 		}
 		
+		//TODO: fix release notes
+		
 		// ok, we'll handle it then...
 		window.Titanium.UI.showDialog({
 			'url': 'ti://tianalytics/update.html',
@@ -202,14 +204,13 @@
 			{
 				if (result == 'install')
 				{
-					// we need to start the install
-					window.alert('starting the install...');
-					
+					// write our the new manifest for the update
 					var datadir = Titanium.Filesystem.getApplicationDataDirectory();
 					var update = Titanium.Filesystem.getFile(datadir,'.update');
+					update.write(updateSpec.manifest);
 					
-					//TODO: write out the manifest in appdata .update
-					//TODO: restart
+					// restart ourselves to cause the install
+					Titanium.Process.restart();
 				}
 			}
 		});
