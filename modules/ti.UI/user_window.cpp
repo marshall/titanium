@@ -804,6 +804,7 @@ void UserWindow::_SetWidth(const kroll::ValueList& args, kroll::SharedValue resu
 		if (w > 0)
 		{
 			w = UserWindow::Constrain(w, config->GetMinWidth(), config->GetMaxWidth());
+			Logger::Get("UI.UserWindow")->Debug("config->SetWidth(%0.2f)", w);
 			this->config->SetWidth(w);
 			if (this->active)
 			{

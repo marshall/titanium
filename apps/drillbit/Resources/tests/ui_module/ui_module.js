@@ -338,10 +338,19 @@ describe("UI Module Tests",{
 		value_of(w.getX()).should_be(-10000);
 		value_of(w.getY()).should_be(-10001);
 
+		
+		// max positive location in win32 (after being opened) is 32767x32767
 		w.setX(100000);
 		w.setY(200000);
-		value_of(w.getX()).should_be(100000);
-		value_of(w.getY()).should_be(200000);
+		
+		if (Titanium.platform != "win32") {
+			value_of(w.getX()).should_be(100000);
+			value_of(w.getY()).should_be(200000);
+		}
+		else {
+			value_of(w.getX()).should_be(32767);
+			value_of(w.getY()).should_be(32767);
+		}
 	},
 	test_window_bounds: function()
 	{
