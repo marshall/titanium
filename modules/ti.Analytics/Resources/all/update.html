@@ -47,12 +47,13 @@
    }
 	$(function()
 	{
-		var name = Titanium.UI.getDialogParam('name');
-		var icon = Titanium.UI.getDialogParam('icon');
-		var ver_from = Titanium.UI.getDialogParam('ver_from');
-		var ver_to = Titanium.UI.getDialogParam('ver_to');
-		var notes_url = Titanium.UI.getDialogParam('notes_url');
-		var parent = Titanium.UI.currentWindow.getParent();
+		var currentWindow = Titanium.UI.getCurrentWindow();
+		var name = currentWindow.getDialogParameter('name');
+		var icon = currentWindow.getDialogParameter('icon');
+		var ver_from = currentWindow.getDialogParameter('ver_from');
+		var ver_to = currentWindow.getDialogParameter('ver_to');
+		var notes_url = currentWindow.getDialogParameter('notes_url');
+		var parent = currentWindow.getParent();
 		
 		Titanium.UI.currentWindow.setTitle(name+' Update Available');
 		
@@ -63,8 +64,8 @@
 		else
 		{
 			$('#notes_body').css('display','none');
-			Titanium.UI.currentWindow.setHeight(170);
-			Titanium.UI.currentWindow.setWidth(450);
+			currentWindow.setHeight(170);
+			currentWindow.setWidth(450);
 		}
 		$('.name').html(name);
 		$('.tover').html(ver_to);
@@ -72,12 +73,12 @@
 		
 		$('#btn_later').click(function()
 		{
-			Titanium.UI.currentWindow.close('later');
+			currentWindow.close('later');
 		});
 		
 		$('#btn_install').click(function()
 		{
-			Titanium.UI.currentWindow.close('install');
+			currentWindow.close('install');
 		});
 		
 		if (icon)

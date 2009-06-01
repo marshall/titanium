@@ -3,7 +3,8 @@
 <script>
 	setTimeout(function()
 	{
-		Titanium.UI.currentWindow.close({'a':'b','out':Titanium.UI.getDialogParam('in')});
+		var currentWindow = Titanium.UI.currentWindow;
+		currentWindow.close({'a':'b','out':currentWindow.getDialogParameter('in')});
 	}, 50);
 </script>
 </head>

@@ -154,8 +154,8 @@ window.onload = function()
 		}
 		catch(EX)
 		{
-			alert("error loading: "+f+". Exception: "+EX);
-			Titanium.API.debug("error loading: "+f+". Exception: "+EX);
+			alert("error loading: "+f+". Exception: "+EX+" (line: "+EX.line+")");
+			Titanium.API.debug("error loading: "+f+". Exception: "+EX+" (line: "+EX.line+")");
 		}
 	}
 
