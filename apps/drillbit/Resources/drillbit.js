@@ -13,6 +13,7 @@ var auto_run = false;
 var auto_close = false;
 var debug_tests = false;
 var test_failures = false;
+var specific_tests = null;
 
 function update_status(msg,hide)
 {
@@ -103,6 +104,24 @@ function toggle_test_includes()
 			$(this).addClass('checked');
 		}
 	});
+}
+
+function select_tests(tests)
+{
+	// clear the table
+	$.each($('#table .checkbox'),function()
+	{
+		if ($(this).is('.checked')) {
+			$(this).removeClass('checked');
+		}
+	});
+	
+	//select tests
+	for (var t=0; t < tests.length; t++) {
+		var test = tests[t];
+		
+		$('#test_'+test+' .checkbox').addClass('checked');
+	}
 }
 
 var tests = {};
@@ -199,7 +218,7 @@ window.onload = function()
 			$(this).addClass('checked');
 		}
 	});
-	
+		
 	// get the runtime dir
 	var runtime_dir = TFS.getFile(Titanium.Process.getEnv('KR_RUNTIME'));
 	var modules_dir = TFS.getFile(TFS.getApplicationDirectory(),'modules');
@@ -581,19 +600,26 @@ window.onload = function()
 	// if you pass in --autorun, just go ahead and start
 	for (var c=0;c<Titanium.App.arguments.length;c++)
 	{
-		if (Titanium.App.arguments[c] == '--autorun')
+		var arg = Titanium.App.arguments[c];
+		
+		if (arg == '--autorun')
 		{
 			auto_run = true;
 			run_button.click();
 			//break;
 		}
-		else if (Titanium.App.arguments[c] == '--autoclose')
+		else if (arg == '--autoclose')
 		{
 			auto_close = true;
 		}
-		else if (Titanium.App.arguments[c] == '--debug-tests')
+		else if (arg == '--debug-tests')
 		{
 			debug_tests = true;
+		}
+		else if (arg.indexOf('--tests=')==0)
+		{
+			specific_tests = arg.substring(8).split(',');
+			select_tests(specific_tests);
 		}
 	}
 };
