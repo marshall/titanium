@@ -13,6 +13,7 @@
 #include "native_window.h"
 #include "webview_delegate.h"
 
+#include "script_evaluator.h"
 #include "osx_ui_binding.h"
 #include "native_window.h"
 #include "osx_user_window.h"

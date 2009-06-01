@@ -516,7 +516,7 @@ namespace ti
 			PRINTD("Waiting on HTTP Client thread to finish (sync)");
 			Poco::Stopwatch sw;
 			sw.start();
-			while (!this->shutdown && sw.elapsedSeconds() < this->timeout)
+			while (!this->shutdown && sw.elapsedSeconds() * 1000 < this->timeout)
 			{
 				this->thread->tryJoin(100);
 			}

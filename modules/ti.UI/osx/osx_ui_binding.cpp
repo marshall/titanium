@@ -5,6 +5,7 @@
  */
 
 #include "../ui_module.h"
+#include "osx_ui_binding.h"
 #include "osx_menu_item.h"
 #include "osx_tray_item.h"
 #include "osx_user_window.h"
@@ -29,7 +30,9 @@
 
 namespace ti
 {
-	OSXUIBinding::OSXUIBinding(Host *host) : UIBinding(host)
+	OSXUIBinding::OSXUIBinding(Host *host) :
+		UIBinding(host),
+		scriptEvaluator(nil)
 	{
 		[TiProtocol registerSpecialProtocol];
 		[AppProtocol registerSpecialProtocol];
@@ -38,10 +41,15 @@ namespace ti
 		[nsapp setDelegate:application];
 		[NSBundle loadNibNamed:@"MainMenu" owner:nsapp];
 		InstallMenu(NULL); // force default app menu
+
+		// Add the custom script evaluator which will dynamically
+		// dispatch unknown script types to loaded Kroll modules.
+		scriptEvaluator = [[ScriptEvaluator alloc] initWithHost:host];
 	}
 
 	OSXUIBinding::~OSXUIBinding()
 	{
+		[scriptEvaluator release];
 		[application release];
 		[appDockMenu release];
 		[savedDockView release];

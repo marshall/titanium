@@ -28,8 +28,7 @@ namespace ti
 		void SetMenu(SharedPtr<MenuItem>);
 		void SetContextMenu(SharedPtr<MenuItem>);
 		void SetIcon(SharedString icon_path);
-		SharedPtr<TrayItem> AddTray(SharedString icon_path,
-		                            SharedKMethod cb);
+		SharedPtr<TrayItem> AddTray(SharedString icon_path, SharedKMethod cb);
 
 		virtual void SetDockIcon(SharedString icon_path);
 		virtual void SetDockMenu(SharedPtr<MenuItem>);
@@ -56,6 +55,7 @@ namespace ti
 		NSMenu* appDockMenu;
 		NSObject* application;
 		OSXMenuItem *activeMenu;
+		ScriptEvaluator* scriptEvaluator;
 
 		void InstallMenu (OSXMenuItem*);
 	};
