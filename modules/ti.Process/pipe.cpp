@@ -78,7 +78,7 @@ namespace ti
 		char *buf = NULL;
 		try
 		{
-			int size = 1024;
+			int size = 8192;
 			// allow the size of the returned buffer to be 
 			// set by the caller - defaults to 1024 if not specified
 			if (args.size() > 0 && args.at(0)->IsInt())

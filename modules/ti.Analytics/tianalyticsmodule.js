@@ -130,52 +130,7 @@
 	Titanium.API.set("UpdateManager.install", function(name,version)
 	{
 		var url = Titanium.App.getComponentUpdateURL(name,version);
-		var xhr = Titanium.Network.createHTTPClient();
-		var tmpfile = Titanium.Filesystem.createTempFile();
-		var filestream = Titanium.Filesystem.createFileStream(tmpfile);
-		filestream.open(filestream.MODE_WRITE,true,false);
-		xhr.onchange = function()
-		{
-			filestream.close();
-			if (name == 'runtime')
-			{
-			}
-			else if (name == 'sdk')
-			{
-			}
-			else if (name == 'mobilesdk')
-			{
-			}
-			else
-			{
-				// module
-			}
-			// unzip it to the correct location
-
-			// if (type == KrollUtils::MODULE) 
-			// {
-			// 	destDir = [NSString stringWithFormat:@"%@/modules/osx/%@/%@", installDirectory, name, version];
-			// }
-			// else if (type == KrollUtils::RUNTIME) 
-			// {
-			// 	destDir = [NSString stringWithFormat:@"%@/runtime/osx/%@", installDirectory, version];
-			// }
-			// else if (type == KrollUtils::SDK || type == KrollUtils::MOBILESDK)
-			// {
-			// 	destDir = installDirectory;
-			// }
-			// else if (type == KrollUtils::APP_UPDATE)
-			// {
-			// 	destDir = [NSString stringWithUTF8String:app->path.c_str()];
-			// }
-
-		};
-		xhr.ondatastream = function(count,size,buffer,buffer_length)
-		{
-			filestream.write(buffer);
-		};
-		xhr.open('POST',url,true);
-		xhr.send(null);
+		Titanium.App.installComponentURL(url);
 	});
 	
 
