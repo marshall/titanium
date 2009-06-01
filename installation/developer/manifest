@@ -1,6 +1,6 @@
-#appname: Titanium Developer
-#appid: com.titaniumapp.developer
-#guid:CC835453-7FF6-48A3-A64F-DB1CCB0F28D7
+#appname: Titanium SDK Installer
+#appid: com.titaniumapp.sdk.installer
+#guid:ABBAE566-6499-4999-8A8E-7A72BA7A5C5D
 runtime: 0.4
 api:0.4
 javascript:0.4
