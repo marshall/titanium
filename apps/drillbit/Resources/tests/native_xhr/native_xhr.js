@@ -149,5 +149,31 @@ describe("native XHR tests",
 		{
 			callback.failed('native XHR HTTP timed out');
 		},20000);
+	},
+	test_encode_decode: function()
+	{
+		var foo = Titanium.Network.encodeURIComponent(null);
+		value_of(foo).should_be('');
+		
+		foo = Titanium.Network.encodeURIComponent('');
+		value_of(foo).should_be('');
+		
+		foo = Titanium.Network.encodeURIComponent('a');
+		value_of(foo).should_be('a');
+
+		foo = Titanium.Network.decodeURIComponent(null);
+		value_of(foo).should_be('');
+
+		foo = Titanium.Network.decodeURIComponent('');
+		value_of(foo).should_be('');
+
+		foo = Titanium.Network.decodeURIComponent('a');
+		value_of(foo).should_be('a');
+		
+		foo = Titanium.Network.encodeURIComponent('a b');
+		value_of(foo).should_be('a%20b');
+
+		foo = Titanium.Network.decodeURIComponent(foo);
+		value_of(foo).should_be('a b');
 	}
 });

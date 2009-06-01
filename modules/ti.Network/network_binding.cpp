@@ -316,16 +316,56 @@ namespace ti
 
 	void NetworkBinding::EncodeURIComponent(const ValueList &args, SharedValue result)
 	{
-		std::string src = args.at(0)->ToString();
-	   	std::string sResult = DataUtils::EncodeURIComponent(src);
-		result->SetString(sResult);
+		if (args.at(0)->IsNull() || args.at(0)->IsUndefined())
+		{
+			result->SetString("");
+		}
+		else if (args.at(0)->IsString())
+		{
+			std::string src = args.at(0)->ToString();
+		   	std::string sResult = DataUtils::EncodeURIComponent(src);
+			result->SetString(sResult);
+		}
+		else if (args.at(0)->IsDouble())
+		{
+			std::stringstream str;
+			str << args.at(0)->ToDouble();
+			result->SetString(str.str().c_str());
+		}
+		else if (args.at(0)->IsBool())
+		{
+			std::stringstream str;
+			str << args.at(0)->ToBool();
+			result->SetString(str.str().c_str());
+		}
+		else if (args.at(0)->IsInt())
+		{
+			std::stringstream str;
+			str << args.at(0)->ToInt();
+			result->SetString(str.str().c_str());
+		}
+		else
+		{
+			throw ValueException::FromString("Could not encodeURIComponent with type passed");
+		}
 	}
 
 	void NetworkBinding::DecodeURIComponent(const ValueList &args, SharedValue result)
 	{
-		std::string src = args.at(0)->ToString();
-		std::string sResult = DataUtils::DecodeURIComponent(src);
-		result->SetString(sResult);
+		if (args.at(0)->IsNull() || args.at(0)->IsUndefined())
+		{
+			result->SetString("");
+		}
+		else if (args.at(0)->IsString())
+		{
+			std::string src = args.at(0)->ToString();
+			std::string sResult = DataUtils::DecodeURIComponent(src);
+			result->SetString(sResult);
+		}
+		else
+		{
+			throw ValueException::FromString("Could not decodeURIComponent with type passed");
+		}
 	}
 	
 	void NetworkBinding::SetProxy(const ValueList& args, SharedValue result)

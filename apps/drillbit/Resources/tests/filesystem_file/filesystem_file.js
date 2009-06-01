@@ -75,6 +75,17 @@ describe("Ti.Filesystem File tests",
 		value_of(f.modificationTimestamp()).should_not_be_null();
 		value_of(f.nativePath()).should_not_be_null();
 		value_of(f.size()).should_not_be_null();	
+		
+		// this should throw exception
+		try
+		{
+			f.write(null);
+			failed('should have failed on null write');
+		}
+		catch(e)
+		{
+			//good
+		}
 	},
 	
 	directory_props:function()

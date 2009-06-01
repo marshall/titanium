@@ -209,6 +209,10 @@ namespace ti
 			text = (char*)ostr.str().c_str();
 			size = ostr.str().length();
 		}
+		else
+		{
+			throw ValueException::FromString("Could not write with type passed");
+		}
 
 		if (size==0)
 		{
@@ -375,6 +379,10 @@ namespace ti
 			ostr << args.at(0)->ToDouble();
 			text = (char*)ostr.str().c_str();
 			size = ostr.str().length();
+		}
+		else
+		{
+			throw ValueException::FromString("Could not write with type passed");
 		}
 
 		if (size==0)
