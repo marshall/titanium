@@ -243,7 +243,7 @@ static int totalJobs = 0;
 	{
 		destDir = [NSString stringWithFormat:@"%@/runtime/osx/%@", installDirectory, version];
 	}
-	else if (type == KrollUtils::SDK)
+	else if (type == KrollUtils::SDK || type == KrollUtils::MOBILESDK)
 	{
 		destDir = installDirectory;
 	}
@@ -254,6 +254,7 @@ static int totalJobs = 0;
 	else
 	{
 		// Unknown file!
+		NSLog(@"Unknown file type for url: %@",url);
 		return;
 	}
 
