@@ -75,7 +75,11 @@ namespace ti
 		void RemoveConnectivityListener(const ValueList& args, SharedValue result);
 		void FireOnlineStatusChange(const ValueList& args, SharedValue result);
 		void SetProxy(const ValueList& args, SharedValue result);
-		void GetProxy(const ValueList& args, SharedValue result);		
+		void GetProxy(const ValueList& args, SharedValue result);	
+		
+		// called by the module
+		void Shutdown();	
+		friend class NetworkModule;
 	};
 }
 

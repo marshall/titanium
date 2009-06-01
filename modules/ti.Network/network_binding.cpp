@@ -131,6 +131,13 @@ namespace ti
 		delete this->net_status;
 #endif
 	}
+	void NetworkBinding::Shutdown()
+	{
+		PRINTD("NetworkBinding::Shutdown start");
+		bindings.clear();
+		listeners.clear();
+		PRINTD("NetworkBinding::Shutdown finish");
+	}
 	void NetworkBinding::_GetByHost(std::string hostname, SharedValue result)
 	{
 		SharedPtr<HostBinding> binding = new HostBinding(hostname);

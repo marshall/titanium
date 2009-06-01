@@ -45,6 +45,9 @@ namespace ti
 		std::string datastream;
 		std::string dirstream;
 		int timeout;
+		bool shutdown;
+		SharedKMethod readystate;
+		SharedKMethod onchange;
 		static bool initialized;
 		
 		static void Run(void*);
@@ -58,7 +61,7 @@ namespace ti
 		DECLAREBOUNDMETHOD(GetResponseHeader)
 		DECLAREBOUNDMETHOD(SetTimeout)
 		
-		void ChangeState(int readyState);
+		void ChangeState(int readyState, bool wait=true);
 	};
 }
 

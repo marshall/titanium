@@ -120,5 +120,34 @@ describe("native XHR tests",
 		{
 			callback.failed('native XHR HTTPS timed out');
 		},20000);
+	},
+	http_test_with_onchange_as_async: function(callback)
+	{
+		var url = 'http://api.appcelerator.net/p/v1/echo';
+		var xhr = this.xhr;
+		var timer = null;
+		
+		this.xhr.onchange = function()
+		{
+			try
+			{
+				// if we get here, we connected and received 
+				// HTTPS encrypted content
+				clearTimeout(timer);
+				callback.passed();
+			}
+			catch(e)
+			{
+				clearTimeout(timer);
+				callback.failed(e);
+			}
+		};
+		this.xhr.open("GET",url);
+		this.xhr.send(null);
+		
+		timer = setTimeout(function()
+		{
+			callback.failed('native XHR HTTP timed out');
+		},20000);
 	}
 });

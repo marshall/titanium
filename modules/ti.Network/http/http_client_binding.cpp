@@ -20,6 +20,7 @@
 #include <Poco/Net/FilePartSource.h>
 #include <Poco/File.h>
 #include <Poco/Timespan.h>
+#include <Poco/Stopwatch.h>
 #include <Poco/Net/HTMLForm.h>
 #include <Poco/Zip/Compress.h>
 #include <Poco/Zip/ZipCommon.h>
@@ -46,7 +47,7 @@ namespace ti
 	HTTPClientBinding::HTTPClientBinding(Host* host, std::string path) :
 		host(host),modulePath(path),global(host->GetGlobalObject()),
 		thread(NULL),response(NULL),async(true),filestream(NULL),
-		timeout(30000)
+		timeout(30000),shutdown(false)
 	{
 		/**
 		 * @tiapi(method=True,name=Network.HTTPClient.abort,since=0.3) Aborts an in progress connection
@@ -155,6 +156,7 @@ namespace ti
 	HTTPClientBinding::~HTTPClientBinding()
 	{
 		KR_DUMP_LOCATION
+		this->shutdown = true;
 		if (this->thread!=NULL)
 		{
 			delete this->thread;
@@ -392,8 +394,8 @@ namespace ti
 			}
 			SharedValue totalValue = Value::NewInt(total);
 			binding->response = &res;
-			binding->ChangeState(2); // headers received
-			binding->ChangeState(3); // loading
+			binding->ChangeState(2,!binding->shutdown&&binding->async); // headers received
+			binding->ChangeState(3,!binding->shutdown&&binding->async); // loading
 
 			int count = 0;
 			char buf[8096];
@@ -428,7 +430,7 @@ namespace ti
 							list->Append(Value::NewObject(new Blob(buf,c))); // buffer
 							list->Append(Value::NewInt(c)); // buffer length
 
-							binding->host->InvokeMethodOnMainThread(streamer,args,true);
+							binding->host->InvokeMethodOnMainThread(streamer,args,binding->shutdown || !binding->async ? false : true);
 						}
 						else
 						{
@@ -468,8 +470,9 @@ namespace ti
 			f.remove();
 		}
 
+		binding->shutdown = true;
 		binding->Set("connected",Value::NewBool(false));
-		binding->ChangeState(4); // closed
+		binding->ChangeState(4,!binding->shutdown&&binding->async); // closed
 		binding->response = NULL; // must be done after change state
 		NetworkBinding::RemoveBinding(binding);
 #ifdef OS_OSX
@@ -510,8 +513,14 @@ namespace ti
 		this->thread->start(&HTTPClientBinding::Run,(void*)this);
 		if (!this->async)
 		{
-			PRINTD("Waiting on HTTP Client thread to finish");
-			this->thread->join();
+			PRINTD("Waiting on HTTP Client thread to finish (sync)");
+			Poco::Stopwatch sw;
+			sw.start();
+			while (!this->shutdown && sw.elapsedSeconds() < this->timeout)
+			{
+				this->thread->tryJoin(100);
+			}
+			PRINTD("HTTP Client thread finished (sync)");
 		}
 	}
 	void HTTPClientBinding::SendFile(const ValueList& args, SharedValue result)
@@ -599,6 +608,7 @@ namespace ti
 	}
 	void HTTPClientBinding::Abort(const ValueList& args, SharedValue result)
 	{
+		this->shutdown=true;
 		SET_BOOL_PROP("connected",false)
 	}
 	void HTTPClientBinding::Open(const ValueList& args, SharedValue result)
@@ -620,6 +630,17 @@ namespace ti
 		if (args.size()>4)
 		{
 			this->password = args.at(4)->ToString();
+		}
+		// assign it here (helps prevent deadlock)
+		SharedValue v = this->Get("onreadystatechange");
+		if (v->IsMethod())
+		{
+			this->readystate = v->ToMethod()->Get("call")->ToMethod();
+		}
+		SharedValue vc = this->Get("onchange");
+		if (vc->IsMethod())
+		{
+			this->onchange = vc->ToMethod()->Get("call")->ToMethod();
 		}
 		this->ChangeState(1); // opened
 	}
@@ -652,24 +673,42 @@ namespace ti
 	{
 		this->timeout = args.at(0)->ToInt();
 	}
-	void HTTPClientBinding::ChangeState(int readyState)
+	void HTTPClientBinding::ChangeState(int readyState, bool wait)
 	{
+		static Logger* logger = Logger::Get("Network.HTTPClient");
+		logger->Debug("BEFORE CHANGE STATE %d, waiting: %d",readyState,wait);
 		SET_INT_PROP("readyState",readyState)
-		SharedValue v = this->Get("onreadystatechange");
-		if (v->IsMethod())
+		if (!readystate.isNull())
 		{
 			try
 			{
-				SharedKMethod m = v->ToMethod()->Get("call")->ToMethod();
 				ValueList args;
 				args.push_back(this->self);
-				this->host->InvokeMethodOnMainThread(m,args,true);
+				this->host->InvokeMethodOnMainThread(readystate,args,wait);
 			}
 			catch (std::exception &ex)
 			{
-				Logger* logger = Logger::Get("Network.HTTPClient");
 				logger->Error("Exception calling readyState. Exception: %s",ex.what());
 			}
+		}
+		if (readyState == 4)
+		{
+			// onchange listener allows you to just get the final state
+			// and is implemented in WebKit XHR
+			if (!this->onchange.isNull())
+			{
+				try
+				{
+					ValueList args;
+					args.push_back(this->self);
+					this->host->InvokeMethodOnMainThread(this->onchange,args,wait);
+				}
+				catch(std::exception &ex)
+				{
+					logger->Error("Exception calling onchange. Exception: %s",ex.what());
+				}
+			}
+			this->readystate = NULL;
 		}
 	}
 }
