@@ -58,6 +58,10 @@ namespace ti
 	     * @tiresult(for=App.getStreamURL,type=string) returns the stream URL
 		 */
 		this->SetMethod("getStreamURL", &AppBinding::GetStreamURL);
+		
+		//THIS IS NOT DOCUMENTED - it's a private interface
+		this->SetMethod("getComponentUpdateURL", &AppBinding::GetComponentUpdateURL);
+		
 		/**
 		 * @tiapi(method=True,immutable=True,name=App.appURLToPath,since=0.2) Returns the full path equivalent of an app: protocol path
 		 * @tiresult(for=App.appURLToPath,type=string) returns the path
@@ -231,6 +235,26 @@ namespace ti
 			std::cerr << s;
 		}
 		std::cerr << std::endl;
+	}
+
+	void AppBinding::GetComponentUpdateURL(const ValueList &args, SharedValue result)
+	{
+		SharedApplication app = this->host->GetApplication();
+		
+		std::string name;
+		std::string version;
+		
+		if (args.at(0)->IsString())
+		{
+			name = args.at(0)->ToString();
+		}
+		if (args.size() > 1)
+		{
+			version = args.at(0)->ToString();
+		}
+		SharedDependency d = Dependency::NewDependency(name,version);
+		std::string url = app->GetURLForDependency(d);
+		result->SetString(url);
 	}
 
 	void AppBinding::GetStreamURL(const ValueList& args, SharedValue result)

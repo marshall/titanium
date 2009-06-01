@@ -8,7 +8,7 @@
 	body.unfocused.osx #divider {position:absolute;top:0;left:0;right:0;height:1px;visibility:hidden;}
 	#logo{position:absolute;top:10px;left:10px;width:78px;height:78px;background:transparent;}
 	#logo img {visibility:hidden;}
-	#explain{position:absolute;top:40px;left:110px;right:10px;font-size:12px;font-weight:normal;}
+	#explain{position:absolute;top:60px;left:110px;right:10px;font-size:12px;font-weight:normal;}
 	#title{position:absolute;top:10px;left:110px;font-weight:bold;font-size:15px;}
 	#notes_header{position:absolute;top:80px;left:110px;overflow:auto;right:10px;font-size:12px;font-weight:bold;}
 	#notes{position:absolute;top:100px;left:110px;overflow:auto;right:20px;height:174px;border:1px solid #888;background-color:#fff;color:#111;padding:0;margin:0;font-size:12px;}
@@ -83,6 +83,11 @@
 		
 		if (icon)
 		{
+			$('#icon').get(0).onerror = function()
+			{
+				// hide if we can't find it
+				$('#icon').css('visibility','hidden');
+			};
 			$('#icon').attr('src',icon).css('visibility','visible');
 		}
 		

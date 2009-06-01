@@ -3,13 +3,11 @@
 //
 (function()
 {
-	// var update_check_delay = 10000; // how many ms before we initiate check
-	// var update_check_interval_secs = (60000 * 24) / 1000; // once per 24 hours
-	
-	// TESTING:
-	var update_check_interval_secs = 100000000000000;
-	var update_check_delay = 100; 
+	var update_check_delay = 5000; // how many ms before we initiate check
 
+//	var update_check_interval_secs = (60000 * 24) / 1000; // once per 24 hours
+	var update_check_interval_secs = 1; // once per startup during testing
+	
 	var url = Titanium.App.getStreamURL("app-track");
 	var guid = null;
 	var sid = null;
@@ -97,16 +95,90 @@
 	});
 	
 	/**
-	 * @tiapi(method=True,name=UpdateManager.check,since=0.4) Check the update service for a new version
-	 * @tiarg(for=UpdateManager.check,name=component,type=string) Name of the component
-	 * @tiarg(for=UpdateManager.check,name=version,type=string) Version of the component or null to get the latest
-	 * @tiarg(for=UpdateManager.check,name=callback,type=function) Function callback to call when completed
+	 * @tiapi(method=True,name=UpdateManager.startMonitor,since=0.4) Check the update service for a new version
+	 * @tiarg(for=UpdateManager.startMonitor,name=component,type=string) Name of the component
+	 * @tiarg(for=UpdateManager.startMonitor,name=callback,type=function) Function callback to call when completed
+	 * @tiarg(for=UpdateManager.startMonitor,name=interval,type=int) Interval in milliseconds for how often to check for an update
+	 * @tiresult(for=UpdateManager.startMonitor,type=int) Returns a handle which should use used to cancel the monitor
 	 */
-	Titanium.API.set("UpdateManager.check", function(f)
+	Titanium.API.set("UpdateManager.startMonitor", function(component,callback,interval)
 	{
-		update_handler = f;
+		if (interval == undefined || interval == null || interval < (60000) * 5)
+		{
+			interval = 60000*5;	//default is 5 minutes
+		}
+		
+		// schedule the timer to fire
+		var timer = window.setInterval(function()
+		{
+			// perform the check
+			updateCheck(component,null,callback);	
+		});
+		return timer;
+	});
+
+	/**
+	 * @tiapi(method=True,name=UpdateManager.cancelMonitor,since=0.4) Check the update service for a new version
+	 * @tiarg(for=UpdateManager.cancelMonitor,name=id,type=int) The monitor id returned from startMonitor
+	 */
+	Titanium.API.set("UpdateManager.cancelMonitor", function(id)
+	{
+		window.clearInterval(id);
 	});
 	
+	// NOTE: this is a private api and not documented
+	Titanium.API.set("UpdateManager.install", function(name,version)
+	{
+		var url = Titanium.App.getComponentUpdateURL(name,version);
+		var xhr = Titanium.Network.createHTTPClient();
+		var tmpfile = Titanium.Filesystem.createTempFile();
+		var filestream = Titanium.Filesystem.createFileStream(tmpfile);
+		filestream.open(filestream.MODE_WRITE,true,false);
+		xhr.onchange = function()
+		{
+			filestream.close();
+			if (name == 'runtime')
+			{
+			}
+			else if (name == 'sdk')
+			{
+			}
+			else if (name == 'mobilesdk')
+			{
+			}
+			else
+			{
+				// module
+			}
+			// unzip it to the correct location
+
+			// if (type == KrollUtils::MODULE) 
+			// {
+			// 	destDir = [NSString stringWithFormat:@"%@/modules/osx/%@/%@", installDirectory, name, version];
+			// }
+			// else if (type == KrollUtils::RUNTIME) 
+			// {
+			// 	destDir = [NSString stringWithFormat:@"%@/runtime/osx/%@", installDirectory, version];
+			// }
+			// else if (type == KrollUtils::SDK || type == KrollUtils::MOBILESDK)
+			// {
+			// 	destDir = installDirectory;
+			// }
+			// else if (type == KrollUtils::APP_UPDATE)
+			// {
+			// 	destDir = [NSString stringWithUTF8String:app->path.c_str()];
+			// }
+
+		};
+		xhr.ondatastream = function(count,size,buffer,buffer_length)
+		{
+			filestream.write(buffer);
+		};
+		xhr.open('POST',url,true);
+		xhr.send(null);
+	});
+	
+
 	function updateCheck(component,version,callback)
 	{
 		try

@@ -39,6 +39,9 @@ namespace ti
 
 		void LoadProperties(const ValueList& args, SharedValue result);
 		void GetSystemProperties(const ValueList& args, SharedValue result);
+		
+		// private, not documented
+		void GetComponentUpdateURL(const ValueList& args, SharedValue result);
 	};
 }
 
