@@ -197,6 +197,7 @@ static int totalJobs = 0;
 		else
 		{
 			// Unknown file!
+			NSLog(@"Unknown file type for url: %@",url);
 			return;
 		}
 	}
