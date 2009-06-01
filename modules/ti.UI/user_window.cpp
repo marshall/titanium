@@ -712,7 +712,11 @@ void UserWindow::_GetId(const kroll::ValueList& args, kroll::SharedValue result)
 void UserWindow::_Open(const kroll::ValueList& args, kroll::SharedValue result)
 {
 	// Don't allow a window to be opened twice
-	if (!this->active && !this->initialized)
+	if (this->active || this->initialized)
+	{
+		throw ValueException::FromString("Cannot open a window more than once");
+	}
+	else
 	{
 		this->Open();
 	}

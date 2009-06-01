@@ -18,9 +18,9 @@ def package_app_builder(target, source, env):
 	if not 'VERSION' in env:
 		env['VERSION'] = build.version
 	if not 'PUBLISHER' in env:
-		env['PUBLISHER'] = None
+		env['PUBLISHER'] = 'Appcelerator'
 	if not 'URL' in env:
-		env['URL'] = None
+		env['URL'] = 'http://appcelerator.org'
 
 	installed = False
 	if 'INSTALLED' in env:

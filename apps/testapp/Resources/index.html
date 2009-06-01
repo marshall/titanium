@@ -65,12 +65,12 @@
 			}
 		</script>
 	</head>
-	<body onload="openTest()">
+	<body>
 		<div id="navbar">
 			<span id="title"><img src="images/logo_small.png"/>Titanium Test App</span>
 			Select a Test:
 			<select id="tests" onchange="openTest();">
-				<option selected="selected">/test-base.html</option>
+				<option selected="selected">test-base.html</option>
 				<option>test-app.html</option>
 				<option>test-filesystem.html</option>
 				<option>test-filesystem-filestream.html</option>
@@ -113,11 +113,11 @@
 					for (var i = 0; i < $('tests').options.length; i++) {
 						if ($('tests').options[i].value == test) { 
 							$('tests').selectedIndex = i;
-							openTest();
 							break;
 						}
 					}
 				}
+			openTest();
 			}
 		</script>
 	</body>

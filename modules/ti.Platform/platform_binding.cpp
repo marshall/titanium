@@ -39,7 +39,32 @@ namespace ti
 	PlatformBinding::PlatformBinding(SharedKObject global) : global(global)
 	{
 		std::string os_name = Poco::Environment::osName();
+#ifdef OS_OSX
+		NSString *str;
+#if MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_4
+		SInt32 major, minor, bugfix;
+		OSErr err1 = Gestalt(gestaltSystemVersionMajor, &major);
+		OSErr err2 = Gestalt(gestaltSystemVersionMinor, &minor);
+		OSErr err3 = Gestalt(gestaltSystemVersionBugFix, &bugfix);
+		if (!err1 && !err2 && !err3)
+		{
+		    str = [NSString stringWithFormat:@"%d.%d.%d", major, minor, bugfix];
+		}
+		else
+		{
+			// just let poco give it to us
+			std::string os_version = Poco::Environment::osVersion();
+			str = [NSString stringWithFormat:@"%s",os_version.c_str()];
+		}
+#else
+		// on 10.5+ we have a nice plist
+		NSString *versionPlistPath = @"/System/Library/CoreServices/SystemVersion.plist";
+		str = [[NSDictionary dictionaryWithContentsOfFile:versionPlistPath] objectForKey:@"ProductVersion"];
+#endif	
+		std::string os_version = std::string([str UTF8String]);
+#else	
 		std::string os_version = Poco::Environment::osVersion();
+#endif
 		std::string arch = Poco::Environment::osArchitecture();
 		std::string address = "127.0.0.1";
 
