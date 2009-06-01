@@ -5,6 +5,7 @@
  */
 #import "Controller.h"
 #import <string>
+#import <sys/mount.h>
 
 #define RUNTIME_UUID_FRAGMENT @"uuid="RUNTIME_UUID
 #define MODULE_UUID_FRAGMENT @"uuid="MODULE_UUID
@@ -328,8 +329,19 @@ static int totalJobs = 0;
 	[NSApp terminate:self];
 }
 
+- (BOOL)isVolumeReadOnly
+{  
+  struct statfs statfs_info;
+  statfs([[[NSBundle mainBundle] bundlePath] fileSystemRepresentation], &statfs_info);
+  return (statfs_info.f_flags & MNT_RDONLY);
+}
+
 -(void)finishInstallation
 {
+	if ([self isVolumeReadOnly])
+	{
+		return;
+	}
 	// Write the .installed file
 	NSFileManager *fm = [NSFileManager defaultManager];
 	NSString* ifile = [NSString stringWithUTF8String:app->path.c_str()];
