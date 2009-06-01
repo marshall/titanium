@@ -98,7 +98,7 @@ Win32WebKitUIDelegate::setStatusText(
 	{
 		s.append(_bstr_t(text));
 	}
-	logger->Debug("setStatusText() called '%s'", s);
+	logger->Debug("setStatusText() called '%s'", s.c_str());
 	return E_NOTIMPL;
 }
 

@@ -130,6 +130,19 @@ Win32UserWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				int max_height = (int) window->GetMaxHeight();
 				int min_height = (int) window->GetMinHeight();
 
+				// offset the size of the window chrome
+				if (window->IsUsingChrome()) {
+					if (max_width > -1)
+						max_width += window->chromeWidth;
+					if (min_width > -1)
+						min_width += window->chromeWidth;
+					
+					if (max_height > -1)
+						max_height += window->chromeHeight;
+					if (min_height > -1)
+						min_height += window->chromeHeight;
+				}
+				
 				if (max_width == -1)
 				{
 					mmi->ptMaxTrackSize.x = INT_MAX; // Uncomfortably large
@@ -547,6 +560,15 @@ void Win32UserWindow::Open()
 		ShowWindow(view_window_handle, SW_SHOW);
 	}
 
+	this->SetupSize();
+	this->SetupPosition();
+	if (this->config->IsMaximized()) {
+		this->Maximize();
+	}
+	else if (this->config->IsMinimized()) {
+		this->Minimize();
+	}
+	
 	FireEvent(OPENED);
 }
 
@@ -604,6 +626,7 @@ double Win32UserWindow::GetMaxWidth()
 
 void Win32UserWindow::SetMaxWidth(double width)
 {
+	this->SetupSize();
 }
 
 double Win32UserWindow::GetMinWidth()
@@ -613,6 +636,7 @@ double Win32UserWindow::GetMinWidth()
 
 void Win32UserWindow::SetMinWidth(double width)
 {
+	this->SetupSize();
 }
 
 double Win32UserWindow::GetMaxHeight()
@@ -622,6 +646,7 @@ double Win32UserWindow::GetMaxHeight()
 
 void Win32UserWindow::SetMaxHeight(double height)
 {
+	this->SetupSize();
 }
 
 double Win32UserWindow::GetMinHeight()
@@ -631,6 +656,7 @@ double Win32UserWindow::GetMinHeight()
 
 void Win32UserWindow::SetMinHeight(double height)
 {
+	this->SetupSize();
 }
 
 Bounds Win32UserWindow::GetBounds()
@@ -638,24 +664,23 @@ Bounds Win32UserWindow::GetBounds()
 	Bounds bounds;
 
 	RECT rect;
-	GetWindowRect(window_handle, &rect);
+	GetClientRect(window_handle, &rect);
 
 	bounds.x = rect.left;
 	bounds.y = rect.top;
 	bounds.width = rect.right - rect.left;
 	bounds.height = rect.bottom - rect.top;
-
+	logger->Debug("get window rect: (%0.2f,%0.2f) %0.2f x %0.2f", bounds.x, bounds.y, bounds.width, bounds.height);
+	
 	return bounds;
 }
 
 void Win32UserWindow::SetBounds(Bounds bounds)
 {
 	HWND desktop = GetDesktopWindow();
-	RECT clientRect, windowRect, desktopRect;
+	RECT desktopRect, boundsRect;
 	
 	GetWindowRect(desktop, &desktopRect);
-	GetClientRect(window_handle, &clientRect);
-	GetWindowRect(window_handle, &windowRect);
 	
 	if (bounds.x == UserWindow::CENTERED)
 	{
@@ -674,13 +699,33 @@ void Win32UserWindow::SetBounds(Bounds bounds)
 		flags = SWP_HIDEWINDOW;
 	}
 	
+	boundsRect.left = bounds.x;
+	boundsRect.right = bounds.x + bounds.width;
+	boundsRect.top = bounds.y;
+	boundsRect.bottom = bounds.y + bounds.height;
+	
 	// offset the size of the window chrome
 	//
-	int widthDelta = (windowRect.right - windowRect.left) - (clientRect.right - clientRect.left);
-	int heightDelta = (windowRect.bottom - windowRect.top) - (clientRect.bottom - clientRect.top);
+	//int widthDelta = (windowRect.right - windowRect.left) - (clientRect.right - clientRect.left);
+	//int heightDelta = (windowRect.bottom - windowRect.top) - (clientRect.bottom - clientRect.top);
+	if (IsUsingChrome()) {
+		AdjustWindowRect(&boundsRect, GetWindowLong(window_handle, GWL_STYLE), !menu.isNull());
+		this->chromeWidth = boundsRect.right - boundsRect.left - (int)bounds.width;
+		this->chromeHeight = boundsRect.bottom - boundsRect.top - (int)bounds.height;
+	}
+	else {
+		this->chromeWidth = 0;
+		this->chromeHeight = 0;
+	}
 	
-	SetWindowPos(window_handle, NULL, bounds.x, bounds.y,
-		bounds.width + widthDelta, bounds.height + heightDelta, flags);
+	//MoveWindow(window_handle, boundsRect.left, boundsRect.top, boundsRect.right - boundsRect.left, boundsRect.bottom - boundsRect.top, TRUE);
+	
+	logger->Debug("SetWindowPos(%0.2f,%0.2f,%0.2f,%0.2f)", bounds.x, bounds.y, bounds.width + chromeWidth, bounds.height + chromeHeight);
+	
+	SetWindowPos(window_handle, NULL, bounds.x, bounds.y, bounds.width + chromeWidth, bounds.height + chromeHeight, flags);
+	
+	//SetWindowPos(window_handle, NULL, bounds.x, bounds.y,
+	//	bounds.width + widthDelta, bounds.height + heightDelta, flags);
 }
 
 void Win32UserWindow::SetTitle(std::string& title)
@@ -696,7 +741,7 @@ void Win32UserWindow::SetURL(std::string& url_)
 	logger->Debug("SetURL: %s", url.c_str());
 	
 	IWebMutableURLRequest* request = 0;
-	std::wstring method =L"GET" ;
+	std::wstring method = L"GET" ;
 
 	if (url.length() > 0 && (PathFileExists(url.c_str()) || PathIsUNC(url.c_str())))
 {
@@ -1038,9 +1083,10 @@ void Win32UserWindow::SetupPosition()
 	Bounds b = GetBounds();
 	b.x = this->config->GetX();
 	b.y = this->config->GetY();
-
+	
 	this->SetBounds(b);
 }
+
 
 void Win32UserWindow::SetupSize()
 {
@@ -1048,6 +1094,7 @@ void Win32UserWindow::SetupSize()
 	b.width = this->config->GetWidth();
 	b.height = this->config->GetHeight();
 
+	logger->Debug("SetupSize: %d x %d", config->GetWidth(), config->GetHeight());
 	this->SetBounds(b);
 }
 

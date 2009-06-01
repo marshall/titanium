@@ -42,6 +42,7 @@ protected:
 	Win32WebKitPolicyDelegate *policyDelegate;
 	Bounds restore_bounds;
 	long restore_styles;
+	int chromeWidth, chromeHeight;
 
 	HWND window_handle, view_window_handle;
 	IWebView* web_view;
