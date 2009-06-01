@@ -559,9 +559,8 @@ void Win32UserWindow::Open()
 		ShowWindow(window_handle, SW_SHOW);
 		ShowWindow(view_window_handle, SW_SHOW);
 	}
-
-	this->SetupSize();
-	this->SetupPosition();
+	
+	this->SetupBounds();
 	if (this->config->IsMaximized()) {
 		this->Maximize();
 	}
@@ -671,9 +670,18 @@ Bounds Win32UserWindow::GetBounds()
 	bounds.y = windowRect.top;
 	bounds.width = rect.right - rect.left;
 	bounds.height = rect.bottom - rect.top;
-	logger->Debug("get window rect: (%0.2f,%0.2f) %0.2f x %0.2f", bounds.x, bounds.y, bounds.width, bounds.height);
 	
 	return bounds;
+}
+
+void Win32UserWindow::SetupBounds()
+{
+	Bounds bounds;
+	bounds.x = this->config->GetX();
+	bounds.y = this->config->GetY();
+	bounds.width = this->config->GetWidth();
+	bounds.height = this->config->GetHeight();
+	this->SetBounds(bounds);
 }
 
 void Win32UserWindow::SetBounds(Bounds bounds)
@@ -705,10 +713,6 @@ void Win32UserWindow::SetBounds(Bounds bounds)
 	boundsRect.top = bounds.y;
 	boundsRect.bottom = bounds.y + bounds.height;
 	
-	// offset the size of the window chrome
-	//
-	//int widthDelta = (windowRect.right - windowRect.left) - (clientRect.right - clientRect.left);
-	//int heightDelta = (windowRect.bottom - windowRect.top) - (clientRect.bottom - clientRect.top);
 	if (IsUsingChrome()) {
 		AdjustWindowRect(&boundsRect, GetWindowLong(window_handle, GWL_STYLE), !menu.isNull());
 		this->chromeWidth = boundsRect.right - boundsRect.left - (int)bounds.width;
@@ -719,14 +723,7 @@ void Win32UserWindow::SetBounds(Bounds bounds)
 		this->chromeHeight = 0;
 	}
 	
-	//MoveWindow(window_handle, boundsRect.left, boundsRect.top, boundsRect.right - boundsRect.left, boundsRect.bottom - boundsRect.top, TRUE);
-	
-	logger->Debug("SetWindowPos(%0.2f,%0.2f,%0.2f,%0.2f)", bounds.x, bounds.y, bounds.width + chromeWidth, bounds.height + chromeHeight);
-	
 	SetWindowPos(window_handle, NULL, bounds.x, bounds.y, bounds.width + chromeWidth, bounds.height + chromeHeight, flags);
-	
-	//SetWindowPos(window_handle, NULL, bounds.x, bounds.y,
-	//	bounds.width + widthDelta, bounds.height + heightDelta, flags);
 }
 
 void Win32UserWindow::SetTitle(std::string& title)
@@ -1095,7 +1092,6 @@ void Win32UserWindow::SetupSize()
 	b.width = this->config->GetWidth();
 	b.height = this->config->GetHeight();
 
-	logger->Debug("SetupSize: %d x %d", config->GetWidth(), config->GetHeight());
 	this->SetBounds(b);
 }
 
