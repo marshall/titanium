@@ -10,3 +10,8 @@ body
 	-webkit-user-select: none;
 }
 
+a, h1, h2, h3, h4, blockquote
+{
+	-webkit-user-select: text;
+}
+

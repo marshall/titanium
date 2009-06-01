@@ -49,6 +49,7 @@ enum IType
 	MODULE,
 	UPDATE,
 	SDK,
+	MOBILESDK,
 	UNKNOWN
 };
 
@@ -256,7 +257,7 @@ void Install(IType type, string name, string version, string path)
 		destination = FileUtils::Join(
 			componentInstallPath.c_str(), "runtime", OS_NAME, version.c_str(), NULL);
 	}
-	else if (type == SDK)
+	else if (type == SDK || type == MOBILESDK)
 	{
 		destination = componentInstallPath;
 	}
@@ -364,6 +365,11 @@ void ProcessFile(string fullPath, Progress *p)
 	{
 		type = SDK;
 		name = "sdk";
+	}
+	else if (partOne == "mobilesdk")
+	{
+		type = MOBILESDK;
+		name = "mobilesdk";
 	}
 	else if (partOne == "module")
 	{

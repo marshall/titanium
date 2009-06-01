@@ -135,7 +135,6 @@ namespace ti
 			VectorOfPatterns include = e.first.first;
 			VectorOfPatterns exclude = e.first.second;
 
-			printf("\n\n\nti.monkey callback url: %s\n", url_value.c_str());
 			if (Matches(exclude,url_value))
 			{
 				continue;

@@ -4,6 +4,7 @@
  * Copyright (c) 2008 Appcelerator, Inc. All Rights Reserved.
  */
 #include <kroll/kroll.h>
+#include <sstream>
 
 #include "network_binding.h"
 #include "tcp_socket_binding.h"
@@ -13,6 +14,7 @@
 #include "http/http_client_binding.h"
 #include "http/http_server_binding.h"
 #include "proxy/proxy.h"
+
 
 using kroll::DataUtils;
 

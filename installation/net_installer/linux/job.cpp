@@ -100,6 +100,11 @@ void Job::ParseFile(std::string url)
 		this->componentType = KrollUtils::SDK;
 		this->name = "sdk";
 	}
+	else if (partOne == "mobilesdk")
+	{
+		this->componentType = KrollUtils::MOBILESDK;
+		this->name = "mobilesdk";
+	}
 	else if (partOne == "module")
 	{
 		this->componentType = KrollUtils::MODULE;
@@ -141,6 +146,10 @@ void Job::ParseURL(std::string url)
 	else if (this->name == std::string("sdk"))
 	{
 		this->componentType = KrollUtils::SDK;
+	}
+	else if (this->name == std::string("mobilesdk"))
+	{
+		this->componentType = KrollUtils::MOBILESDK;
 	}
 	else
 	{

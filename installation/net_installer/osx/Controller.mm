@@ -5,6 +5,7 @@
  */
 #import "Controller.h"
 #import <string>
+#import <sys/mount.h>
 
 #define RUNTIME_UUID_FRAGMENT @"uuid="RUNTIME_UUID
 #define MODULE_UUID_FRAGMENT @"uuid="MODULE_UUID
@@ -197,6 +198,7 @@ static int totalJobs = 0;
 		else
 		{
 			// Unknown file!
+			NSLog(@"Unknown file type for url: %@",url);
 			return;
 		}
 	}
@@ -243,7 +245,7 @@ static int totalJobs = 0;
 	{
 		destDir = [NSString stringWithFormat:@"%@/runtime/osx/%@", installDirectory, version];
 	}
-	else if (type == KrollUtils::SDK)
+	else if (type == KrollUtils::SDK || type == KrollUtils::MOBILESDK)
 	{
 		destDir = installDirectory;
 	}
@@ -254,6 +256,7 @@ static int totalJobs = 0;
 	else
 	{
 		// Unknown file!
+		NSLog(@"Unknown file type for url: %@",url);
 		return;
 	}
 
@@ -326,8 +329,19 @@ static int totalJobs = 0;
 	[NSApp terminate:self];
 }
 
+- (BOOL)isVolumeReadOnly
+{  
+  struct statfs statfs_info;
+  statfs([[[NSBundle mainBundle] bundlePath] fileSystemRepresentation], &statfs_info);
+  return (statfs_info.f_flags & MNT_RDONLY);
+}
+
 -(void)finishInstallation
 {
+	if ([self isVolumeReadOnly])
+	{
+		return;
+	}
 	// Write the .installed file
 	NSFileManager *fm = [NSFileManager defaultManager];
 	NSString* ifile = [NSString stringWithUTF8String:app->path.c_str()];
