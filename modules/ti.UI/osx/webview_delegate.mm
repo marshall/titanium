@@ -548,7 +548,11 @@
 								 nil,									// alt button
 								 nil);									// other button	
 
-	[window userWindow]->Show();
+	// only show if already visible									
+	if ([window userWindow]->IsVisible())
+	{
+		[window userWindow]->Show();
+	}
 }
 
 
@@ -559,7 +563,11 @@
 													NSLocalizedString(@"OK", @""),			// default button
 													NSLocalizedString(@"Cancel", @""),		// alt button
 													nil);
-	[window userWindow]->Show();
+	// only show if already visible									
+	if ([window userWindow]->IsVisible())
+	{
+		[window userWindow]->Show();
+	}
 	return NSAlertDefaultReturn == result;	
 }
 
@@ -573,6 +581,11 @@
 						modalDelegate:self
 					   didEndSelector:@selector(openPanelDidEnd:returnCode:contextInfo:) 
 						  contextInfo:resultListener];	
+	// only show if already visible									
+	if ([window userWindow]->IsVisible())
+	{
+		[window userWindow]->Show();
+	}
 	[window userWindow]->Show();
 }
 
@@ -580,6 +593,11 @@
 - (void)openPanelDidEnd:(NSSavePanel *)openPanel returnCode:(int)returnCode contextInfo:(void *)contextInfo 
 {
 	id <WebOpenPanelResultListener>resultListener = (id <WebOpenPanelResultListener>)contextInfo;
+	// only show if already visible									
+	if ([window userWindow]->IsVisible())
+	{
+		[window userWindow]->Show();
+	}
 	[window userWindow]->Show();
 	if (NSOKButton == returnCode) {
 		[resultListener chooseFilename:[openPanel filename]];

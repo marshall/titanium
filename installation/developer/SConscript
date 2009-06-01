@@ -4,17 +4,17 @@ from app import App
 Import('build')
 
 def package_developer(target, source, env):
-	print "Packaging Titanium Developer (the SDK)..."
+	print "Packaging Titanium SDK Installer..."
 	cwd = build.cwd()
 	developer = App(
 		build,
-		fullname='Titanium Developer', 
-		id='com.titaniumapp.developer',
+		fullname='Titanium SDK Installer', 
+		id='com.titaniumapp.sdk.installer',
 		version=build.version,
-		guid='CC835453-7FF6-48A3-A64F-DB1CCB0F28D7',
+		guid='ABBAE566-6499-4999-8A8E-7A72BA7A5C5D',
 		image='images/default_app_logo.png',
 		publisher='Appcelerator, Inc',
-		url='http://www.titaniumapp.com')
+		url='http://appcelerator.org')
 
 	# Titanium Developer should depend on all installed modules
 	# so that all modules will be installed when it first starts.
@@ -26,7 +26,7 @@ def package_developer(target, source, env):
 	if 'PACKAGE_DIST' in env:
 		package_dist = env['PACKAGE_DIST']
 
-	destdir = p.join(build.dir, 'Titanium Developer')
+	destdir = p.join(build.dir, 'Titanium SDK Installer')
 	if build.is_osx(): destdir += ".app"
 
 	developer.stage(destdir, src_resources=p.join(cwd, 'Resources'), bundle=False)
@@ -54,9 +54,9 @@ def package_developer(target, source, env):
 		developer.package(
 			out_dir=build.dist_dir,
 			# osx options
-			app_name="Titanium Developer",
+			app_name="Titanium SDK Installer",
 			vol_name="Titanium",
-			dmg_name='titanium-developer-' + build.version,
+			dmg_name='titanium-sdkinstaller-' + build.version,
 			icns_file=p.join(cwd, 'osx', 'VolumeIcon.icns'),
 			ds_store_file=p.join(cwd, 'osx', 'installer_DS_Store'),
 			ds_store_extras=[p.join(cwd, 'osx', 'background.jpg')])
@@ -71,7 +71,6 @@ AlwaysBuild(developer_bundled) # incremental builder doesn't work
 AlwaysBuild(developer_netinst) # incremental builder doesn't work
 
 developer_targets = [developer_bundled]
-Alias('sdk', developer_targets)
-Alias('developer', developer_targets)
+Alias('sdkinstaller', developer_targets)
 
 
