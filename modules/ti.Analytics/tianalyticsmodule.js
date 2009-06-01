@@ -113,6 +113,7 @@
 		{
 			var url = Titanium.App.getStreamURL("release-list");
 			var xhr = Titanium.Network.createHTTPClient();
+			xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
 			var qs = 'version='+Titanium.Network.encodeURIComponent(version)+'&name='+Titanium.Network.encodeURIComponent(component)+'&mid='+Titanium.Network.encodeURIComponent(Titanium.Platform.id)+'&limit=1&guid='+Titanium.Network.encodeURIComponent(Titanium.App.getGUID());
 			xhr.onreadystatechange = function()
 			{
@@ -147,8 +148,8 @@
 					}
 				}
 			}
-			xhr.open('GET',url,true);
-			xhr.send(null);
+			xhr.open('POST',url,true);
+			xhr.send(qs);
 		}
 		catch(e)
 		{
@@ -217,6 +218,7 @@
 	}
 	function isUpdateRequired(newVersion, oldVersion)
 	{
+		return true;//FIXME
 		var a = newVersion.split('.');
 		var b = oldVersion.split('.');
 		var c = 0;
@@ -232,9 +234,9 @@
 	}
 	function sendUpdateCheck()
 	{
-		updateCheck('app-update',null,function(success,update)
+		updateCheck('app-update',Titanium.App.getVersion(),function(success,update)
 		{
-			if (isUpdateRequired(update.version,Titanium.App.getVersion()))
+			if (success && isUpdateRequired(update.version,Titanium.App.getVersion()))
 			{
 				updateDetected(update);
 			}
