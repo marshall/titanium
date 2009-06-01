@@ -262,9 +262,7 @@
 		}
 		catch(e)
 		{
-			// first time through... init but don't check
-			createUpdateTable(db);
-			initial = true;
+			Titanium.API.error("Error in ti.Analytics checkForUpdate. Error="+e);	
 		}
 		insertUpdateTimestamp(db,initial);
 		db.close();
