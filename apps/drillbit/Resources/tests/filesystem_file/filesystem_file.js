@@ -245,6 +245,35 @@ describe("Ti.Filesystem File tests",
 
 		f.setWriteable(true);
 		value_of(f.isWriteable()).should_be_true();
+	},
+	
+	test_file_readLine_isEmpty:function()
+	{
+		this.createFile(this.base,"readline.txt","\nfoo\n\n");
+		var f = Titanium.Filesystem.getFile(this.base, "readline.txt");
+		value_of(f).should_not_be_null();
+		var c=0;
+		while(c<5)
+		{
+			var line = f.readLine(c==0 ? true : false);
+			switch(c)
+			{
+				case 0:
+				case 2:
+					value_of(line).should_be('');
+					break;
+				case 1:
+					value_of(line).should_be('foo');
+					break;
+				case 3:
+					value_of(line).should_be_null();
+					break;
+			}
+			c++;
+			if (line==null) break;
+		}
+		value_of(c).should_be(4);
 	}
+	
 });
 
