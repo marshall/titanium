@@ -324,17 +324,34 @@ namespace ti
 			else
 			{
 				std::string line;
-				std::getline(*fis, line);
+				std::istream& i = std::getline(*fis, line);
 #ifdef OS_WIN32
 				// In some cases std::getline leaves a CR on the end of the line in win32 -- why God, why?
-				char lastChar = line.at(line.size()-1);
-				if (lastChar == '\r') {
-					line = line.substr(0, line.size()-1);
+				if (!line.empty())
+				{
+					char lastChar = line.at(line.size()-1);
+					if (lastChar == '\r') {
+						line = line.substr(0, line.size()-1);
+					}
 				}
 #endif
-				
-				PRINTD("readline='"<<line<<"'");
-				result->SetObject(new Blob((std::string)line));
+				if (line.empty() || line.size()==0)
+				{
+					if (fis->eof())
+					{
+						// if this is EOF, return null
+						result->SetNull();
+					}
+					else
+					{
+						// this is an empty line, just empty blob
+						result->SetObject(new Blob());
+					}
+				}
+				else
+				{
+					result->SetObject(new Blob((std::string)line));
+				}
 			}
 		}
 		catch (Poco::Exception& exc)

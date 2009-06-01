@@ -20,7 +20,7 @@ namespace ti
 		this->SetMethod("getID", &AppBinding::GetID);
 		/**
 		 * @tiapi(method=True,immutable=True,name=App.getName,since=0.2) Returns the application name
-	     * @tiresult(for=App.getName,type=string) returns the name
+		 * @tiresult(for=App.getName,type=string) returns the name
 		 */
 		this->SetMethod("getName", &AppBinding::GetName);
 		/**
@@ -30,37 +30,35 @@ namespace ti
 		this->SetMethod("getVersion", &AppBinding::GetVersion);
 		/**
 		 * @tiapi(method=True,immutable=True,name=App.getPublisher,since=0.4) Returns the application publisher
-	     * @tiresult(for=App.getPublisher,type=string) returns the publisher
+		 * @tiresult(for=App.getPublisher,type=string) returns the publisher
 		 */
 		this->SetMethod("getPublisher", &AppBinding::GetPublisher);
 		/**
 		 * @tiapi(method=True,immutable=True,name=App.getURL,since=0.4) Returns the application url
-	     * @tiresult(for=App.getURL,type=string) returns the url for the app
+		 * @tiresult(for=App.getURL,type=string) returns the url for the app
 		 */
 		this->SetMethod("getURL", &AppBinding::GetURL);
 		/**
 		 * @tiapi(method=True,immutable=True,name=App.getDescription,since=0.4) Returns the application description
-	     * @tiresult(for=App.getDescription,type=string) returns the description for the app
+		 * @tiresult(for=App.getDescription,type=string) returns the description for the app
 		 */
 		this->SetMethod("getDescription", &AppBinding::GetDescription);
 		/**
 		 * @tiapi(method=True,immutable=True,name=App.getCopyright,since=0.4) Returns the application copyright information
-	     * @tiresult(for=App.getCopyright,type=string) returns the copyright for the app
+		 * @tiresult(for=App.getCopyright,type=string) returns the copyright for the app
 		 */
 		this->SetMethod("getCopyright", &AppBinding::GetCopyright);
 		/**
 		 * @tiapi(method=True,immutable=True,name=App.getGUID,since=0.2) Returns the application globally unique id
-	     * @tiresult(for=App.getGUID,type=string) returns the unique id
+		 * @tiresult(for=App.getGUID,type=string) returns the unique id
 		 */
 		this->SetMethod("getGUID", &AppBinding::GetGUID);
 		/**
 		 * @tiapi(method=True,immutable=True,name=App.getStreamURL,since=0.4) Returns the application stream URL for the update channel
-	     * @tiresult(for=App.getStreamURL,type=string) returns the stream URL
+		 * @tiresult(for=App.getStreamURL,type=string) returns the stream URL
 		 */
 		this->SetMethod("getStreamURL", &AppBinding::GetStreamURL);
-		
-		//THIS IS NOT DOCUMENTED - it's a private interface
-		this->SetMethod("getComponentUpdateURL", &AppBinding::GetComponentUpdateURL);
+
 		
 		/**
 		 * @tiapi(method=True,immutable=True,name=App.appURLToPath,since=0.2) Returns the full path equivalent of an app: protocol path
@@ -235,26 +233,6 @@ namespace ti
 			std::cerr << s;
 		}
 		std::cerr << std::endl;
-	}
-
-	void AppBinding::GetComponentUpdateURL(const ValueList &args, SharedValue result)
-	{
-		SharedApplication app = this->host->GetApplication();
-		
-		std::string name;
-		std::string version;
-		
-		if (args.at(0)->IsString())
-		{
-			name = args.at(0)->ToString();
-		}
-		if (args.size() > 1)
-		{
-			version = args.at(0)->ToString();
-		}
-		SharedDependency d = Dependency::NewDependency(name,version);
-		std::string url = app->GetURLForDependency(d);
-		result->SetString(url);
 	}
 
 	void AppBinding::GetStreamURL(const ValueList& args, SharedValue result)
