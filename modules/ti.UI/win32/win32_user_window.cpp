@@ -663,11 +663,12 @@ Bounds Win32UserWindow::GetBounds()
 {
 	Bounds bounds;
 
-	RECT rect;
+	RECT rect, windowRect;
+	GetWindowRect(window_handle, &windowRect);
 	GetClientRect(window_handle, &rect);
 
-	bounds.x = rect.left;
-	bounds.y = rect.top;
+	bounds.x = windowRect.left;
+	bounds.y = windowRect.top;
 	bounds.width = rect.right - rect.left;
 	bounds.height = rect.bottom - rect.top;
 	logger->Debug("get window rect: (%0.2f,%0.2f) %0.2f x %0.2f", bounds.x, bounds.y, bounds.width, bounds.height);
