@@ -533,6 +533,7 @@ static int totalJobs = 0;
 { 
 	[NSApp setDelegate:self];
 
+	BOOL quiet = NO;;
 	updateFile = nil;
 	NSString *appPath = nil;
 	jobs = [[NSMutableArray alloc] init];
@@ -553,6 +554,10 @@ static int totalJobs = 0;
 			[updateFile retain];
 			i++;
 		}
+		else if ([arg isEqual:@"-quiet"])
+		{
+			quiet = YES;
+		}
 		else
 		{
 			[jobs addObject:[[Job alloc] init:arg]];
@@ -563,7 +568,6 @@ static int totalJobs = 0;
 	{
 		[self bailWithMessage:@"Sorry, but the installer was not given enough information to continue."];
 	}
-	bool skipPromptDialog = false;
 
 	if (updateFile == nil)
 	{
@@ -571,7 +575,7 @@ static int totalJobs = 0;
 	}
 	else
 	{
-		skipPromptDialog = true; // we can just auto-start and not wait...
+		quiet = YES; // An update will happen silently
 		app = Application::NewApplication([updateFile UTF8String], [appPath UTF8String]);
 		NSString* updateURL = [NSString stringWithUTF8String:app->GetUpdateURL().c_str()];
 		[jobs addObject:[[Job alloc] initUpdate:updateURL]];
@@ -608,59 +612,6 @@ static int totalJobs = 0;
 		appImage = [NSString stringWithUTF8String:app->image.c_str()];
 	}
 
-	if (!skipPromptDialog)
-	{
-		[self createInstallerMenu:appName];
-		[progressAppName setStringValue:appName];
-		[introAppName setStringValue:appName];
-		[progressAppVersion setStringValue:appVersion];
-		[introAppVersion setStringValue:appVersion];
-		[progressAppPublisher setStringValue:appPublisher];
-		[introAppPublisher setStringValue:appPublisher];
-		[progressAppURL setStringValue:appURL];
-		[introAppURL setStringValue:appURL];
-
-		[introAppVersion setFont:[NSFont boldSystemFontOfSize:12]];
-		[introAppPublisher setFont:[NSFont boldSystemFontOfSize:12]];
-		[introAppURL setFont:[NSFont boldSystemFontOfSize:12]];
-
-
-		if (appImage != nil)
-		{
-			NSImage* img = [[NSImage alloc] initWithContentsOfFile:appImage];
-			if ([img isValid])
-			{
-				[progressImage setImage:img];
-				[introImage setImage:img];
-			}
-		}
-
-		NSString* licensePath = [appPath stringByAppendingPathComponent: @LICENSE_FILENAME];
-		NSFileManager *fm = [NSFileManager defaultManager];
-		if ([fm fileExistsAtPath:licensePath])
-		{
-			NSString* licenseText = [NSString
-				stringWithContentsOfFile: licensePath
-				encoding:NSUTF8StringEncoding
-				error:nil];
-			NSAttributedString* licenseAttrText = [[NSAttributedString alloc] initWithString:licenseText];
-			[[introLicenseText textStorage] setAttributedString:licenseAttrText];
-			[introLicenseText setEditable:NO];
-		}
-		else
-		{
-			[introLicenseLabel setHidden:YES];
-			[introLicenseBox setHidden:YES];
-			NSRect frame = [introWindow frame];
-			frame.size.width = 650;
-			frame.size.height = 275;
-			[introWindow setMinSize:frame.size];
-			[introWindow setMaxSize:frame.size];
-			[introWindow setShowsResizeIndicator:NO];
-			[introWindow setFrame:frame display:YES];
-		}
-	}
-
 	std::string tempDir = FileUtils::GetTempDirectory();
 	temporaryDirectory = [NSString stringWithUTF8String:tempDir.c_str()];
 	[self createDirectory: temporaryDirectory];
@@ -685,27 +636,94 @@ static int totalJobs = 0;
 	[installDirectory retain];
 	
 
-	if (skipPromptDialog)
+	if (quiet)
 	{
 		[self continueIntro:self];
 	}
 	else
 	{
-		[NSApp arrangeInFront:introWindow];
+		[self showIntroDialog:appName
+			path:appPath
+			version:appVersion
+			publisher:appPublisher
+			url:appURL
+			image:appImage];
 	}
 
 	[progressWindow makeKeyAndOrderFront:progressWindow];
 	[NSApp activateIgnoringOtherApps:YES];
 	
 }
+
+-(void)showIntroDialog: (NSString*)appName
+	path:(NSString*)appPath
+	version:(NSString*)appVersion
+	publisher:(NSString*)appPublisher
+	url:(NSString*)appURL
+	image:(NSString*)appImage
+{
+	[self createInstallerMenu:appName];
+	[progressAppName setStringValue:appName];
+	[introAppName setStringValue:appName];
+	[progressAppVersion setStringValue:appVersion];
+	[introAppVersion setStringValue:appVersion];
+	[progressAppPublisher setStringValue:appPublisher];
+	[introAppPublisher setStringValue:appPublisher];
+	[progressAppURL setStringValue:appURL];
+	[introAppURL setStringValue:appURL];
+
+	[introAppVersion setFont:[NSFont boldSystemFontOfSize:12]];
+	[introAppPublisher setFont:[NSFont boldSystemFontOfSize:12]];
+	[introAppURL setFont:[NSFont boldSystemFontOfSize:12]];
+
+
+	if (appImage != nil)
+	{
+		NSImage* img = [[NSImage alloc] initWithContentsOfFile:appImage];
+		if ([img isValid])
+		{
+			[progressImage setImage:img];
+			[introImage setImage:img];
+		}
+	}
+
+	NSString* licensePath = [appPath stringByAppendingPathComponent: @LICENSE_FILENAME];
+	NSFileManager *fm = [NSFileManager defaultManager];
+	if ([fm fileExistsAtPath:licensePath])
+	{
+		NSString* licenseText = [NSString
+			stringWithContentsOfFile: licensePath
+			encoding:NSUTF8StringEncoding
+			error:nil];
+		NSAttributedString* licenseAttrText = [[NSAttributedString alloc] initWithString:licenseText];
+		[[introLicenseText textStorage] setAttributedString:licenseAttrText];
+		[introLicenseText setEditable:NO];
+	}
+	else
+	{
+		[introLicenseLabel setHidden:YES];
+		[introLicenseBox setHidden:YES];
+		NSRect frame = [introWindow frame];
+		frame.size.width = 650;
+		frame.size.height = 275;
+		[introWindow setMinSize:frame.size];
+		[introWindow setMaxSize:frame.size];
+		[introWindow setShowsResizeIndicator:NO];
+		[introWindow setFrame:frame display:YES];
+	}
+	[NSApp arrangeInFront:introWindow];
+}
+
 - (BOOL)canBecomeKeyWindow
 {
 	return YES;
 }
+
 - (BOOL)canBecomeMainWindow
 {
 	return YES;
 }
+
 -(void)applicationDidFinishLaunching:(NSNotification *) notif
 {
 	if (updateFile == nil)
@@ -723,6 +741,7 @@ static int totalJobs = 0;
 	[progressText setStringValue:@"Cancelling..."];
 	[NSApp terminate:self];
 }
+
 -(IBAction)cancelIntro:(id)sender
 {
 	[NSApp terminate:self];
