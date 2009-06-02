@@ -14,7 +14,8 @@ def package_developer(target, source, env):
 		guid='ABBAE566-6499-4999-8A8E-7A72BA7A5C5D',
 		image='images/default_app_logo.png',
 		publisher='Appcelerator, Inc',
-		url='http://appcelerator.org')
+		url='http://appcelerator.org',
+		sdk=True)
 
 	# Titanium Developer should depend on all installed modules
 	# so that all modules will be installed when it first starts.

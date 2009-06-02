@@ -93,7 +93,8 @@ def desktop_setup(options,appdir):
 	options.runtime = runtime	
 
 	for name in depends:
-		if name == 'runtime':
+		# these are special
+		if name == 'runtime' or name == 'sdk' or name == 'mobilesdk':
 			continue
 		version = depends[name]
 		entry = {'name':name,'version':version}
