@@ -247,12 +247,32 @@ namespace ti
 
 	void Win32MenuItemImpl::Enable()
 	{
-		STUB();
+		for(std::vector<NativeMenuItem*>::iterator
+			iter = this->instances.begin();
+			iter != this->instances.end();
+			iter++)
+		   {
+				NativeMenuItem* menu_item = (*iter);
+				if (menu_item != NULL)
+				{
+					EnableMenuItem(menu_item->parent_menu, menu_item->menuItemID, MF_ENABLED);
+				}
+			} 
 	}
 
 	void Win32MenuItemImpl::Disable()
 	{
-		STUB();
+		for(std::vector<NativeMenuItem*>::iterator
+			iter = this->instances.begin();
+			iter != this->instances.end();
+			iter++)
+		{
+			NativeMenuItem* menu_item = (*iter);
+			if (menu_item != NULL)
+			{
+				EnableMenuItem(menu_item->parent_menu, menu_item->menuItemID, MF_GRAYED);
+			}
+		}
 	}
 
 	void Win32MenuItemImpl::SetLabel(std::string label)
