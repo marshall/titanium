@@ -267,10 +267,10 @@
 			'resizable':false,
 			'parameters':{
 				'name':Titanium.App.getName(),
-				'icon':Titanium.App.getIcon(),
+				'icon':'file://'+Titanium.App.getIcon(),
 				'ver_from':Titanium.App.getVersion(),
 				'ver_to':updateSpec.version,
-				'notes_url':null
+				'notes_url':updateSpec.release_notes
 			},
 			'onclose':function(result)
 			{
@@ -289,19 +289,9 @@
 	}
 	function isUpdateRequired(newVersion, oldVersion)
 	{
-		return true;//FIXME
-		var a = newVersion.split('.');
-		var b = oldVersion.split('.');
-		var c = 0;
-		while ( c < a.length )
-		{
-			var foo = parseInt(a[c]);
-			if (b.length < c) return true;
-			var bar = parseInt(b[c]);
-			if (foo > bar) return true;
-			c++;
-		}
-		return false;
+		// for now, trivial check
+		// in the future we may want something more sophisticated
+		return oldVersion!=newVersion;
 	}
 	function sendUpdateCheck()
 	{
