@@ -34,6 +34,8 @@
 -(void)getOutData: (NSNotification *)aNotification;
 -(void)getErrData: (NSNotification *)aNotification;
 -(void)terminated: (NSNotification *)aNotification;
+-(ti::OSXPipe*) output;
+-(ti::OSXPipe*) error;
 @end
 
 namespace ti
@@ -44,6 +46,7 @@ namespace ti
 		OSXProcess(ProcessBinding* parent, std::string& cmd, std::vector<std::string>& args);
 		virtual ~OSXProcess();
 	private:
+		Host *host;
 		TiOSXProcess *process;
 	public:
 
