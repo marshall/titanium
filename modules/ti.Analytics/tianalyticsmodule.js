@@ -3,10 +3,8 @@
 //
 (function()
 {
-	var update_check_delay = 5000; // how many ms before we initiate check
-
-//	var update_check_interval_secs = (60000 * 24) / 1000; // once per 24 hours
-	var update_check_interval_secs = 1; // once per startup during testing
+	var update_check_delay = 30000; // how many ms before we initiate check
+	var update_check_interval_secs = (60000 * 15) / 1000; // once per 15 min
 	
 	var url = Titanium.App.getStreamURL("app-track");
 	var guid = null;
@@ -175,6 +173,27 @@
 			}
 		});
 	});
+
+	/**
+	 * @tiapi(method=True,name=UpdateManager.installAppUpdate,since=0.4) Install an application update received from update monitor. This method will cause the process to first be restarted for the update to begin.
+	 * @tiarg(for=UpdateManager.installAppUpdate,name=spec,type=object) Update spec object received from update service.
+	 */
+	Titanium.API.set("UpdateManager.installAppUpdate", function(updateSpec)
+	{
+		installAppUpdate(updateSpec);
+	});
+	
+	
+	function installAppUpdate(updateSpec)
+	{
+		// write our the new manifest for the update
+		var datadir = Titanium.Filesystem.getApplicationDataDirectory();
+		var update = Titanium.Filesystem.getFile(datadir,'.update');
+		update.write(updateSpec.manifest);
+		
+		// restart ourselves to cause the install
+		Titanium.Process.restart();
+	}
 	
 
 	function updateCheck(component,version,callback,limit)
@@ -276,13 +295,7 @@
 			{
 				if (result == 'install')
 				{
-					// write our the new manifest for the update
-					var datadir = Titanium.Filesystem.getApplicationDataDirectory();
-					var update = Titanium.Filesystem.getFile(datadir,'.update');
-					update.write(updateSpec.manifest);
-					
-					// restart ourselves to cause the install
-					Titanium.Process.restart();
+					installAppUpdate(updateSpec);
 				}
 			}
 		});

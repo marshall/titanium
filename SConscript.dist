@@ -25,7 +25,7 @@ build.mark_dist_target(zips)
 
 
 def build_sdk(target, source, env):
-	sdkZipPath = path.join(build.dist_dir, 'titanium-sdk-%s.zip' % build.version)
+	sdkZipPath = path.join(build.dist_dir, 'sdk-%s.zip' % build.version)
 	print "Packing %s " % sdkZipPath
 	
 	sdkZip = zipfile.ZipFile(sdkZipPath, 'w', zipfile.ZIP_DEFLATED)
