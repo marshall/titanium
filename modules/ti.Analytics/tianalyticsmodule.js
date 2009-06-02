@@ -3,10 +3,8 @@
 //
 (function()
 {
-	var update_check_delay = 5000; // how many ms before we initiate check
-
-//	var update_check_interval_secs = (60000 * 24) / 1000; // once per 24 hours
-	var update_check_interval_secs = 1; // once per startup during testing
+	var update_check_delay = 30000; // how many ms before we initiate check
+	var update_check_interval_secs = (60000 * 15) / 1000; // once per 15 min
 	
 	var url = Titanium.App.getStreamURL("app-track");
 	var guid = null;
