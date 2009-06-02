@@ -13,12 +13,10 @@
 from optparse import OptionParser
 from desktop_builder import DesktopBuilder
 from desktop_packager import DesktopPackager
-from mobile_builder import MobileBuilder
-from mobile_packager import MobilePackager
 import sys, os.path, platform, re, subprocess
 
 VERSION = '0.1'
-PLATFORMS = ['win32','osx','linux','iphone','android']
+PLATFORMS = ['win32','osx','linux']
 cwd = os.path.abspath(os.path.dirname(sys._getframe(0).f_code.co_filename))
 
 def log(options,msg):
@@ -70,9 +68,6 @@ def find_titanium_base():
 			f = '/opt/titanium'
 	return f	
 	
-def is_mobile(options):
-	return options.platform == 'iphone' or options.platform == 'android'
-	
 def get_platform():
 	if 'Darwin' in platform.platform():
 		return 'osx'
@@ -81,9 +76,6 @@ def get_platform():
 	elif 'Linux' in platform.platform():
 		return 'linux'
 
-def mobile_setup(options,appdir):
-	return MobileBuilder(options,log)
-	
 def desktop_setup(options,appdir):
 	# now resolve all the modules and the runtime by version
 	depends = options.manifest['modules']
@@ -149,8 +141,6 @@ def main(options,appdir):
 		print "Must be one of: %s" % str(PLATFORMS)
 		sys.exit(1)
 
-	options.mobile = is_mobile(options)
-
 	log(options,'Packaging for target: %s' % options.platform)
 	
 	if options.destination == None:
@@ -177,10 +167,7 @@ def main(options,appdir):
 	options.version = get_version_from_tiapp(appdir)
 	
 	# run the builders
-	if options.mobile:
-		builder = mobile_setup(options,appdir)
-	else:
-		builder = desktop_setup(options,appdir)
+    builder = desktop_setup(options,appdir)
 	
 	# allow post-build scripts
 	if os.path.exists("post_builder.py"):
@@ -188,14 +175,11 @@ def main(options,appdir):
 		eval('PostBuilder(builder)')
 	
 	# run the packagers	
-	if options.mobile:
-		MobilePackager(builder)
-	else:
-		DesktopPackager(builder)
+    DesktopPackager(builder)
 			
 	log(options,"Packaging complete, location: %s"%os.path.abspath(options.destination))
 	
-	if not options.mobile and options.run:
+	if options.run:
 		subprocess.call([options.executable])
 
 def dequote(s):
