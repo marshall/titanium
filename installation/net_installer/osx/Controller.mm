@@ -533,7 +533,7 @@ static int totalJobs = 0;
 { 
 	[NSApp setDelegate:self];
 
-	BOOL quiet = NO;;
+	quiet = NO;;
 	updateFile = nil;
 	NSString *appPath = nil;
 	jobs = [[NSMutableArray alloc] init];
@@ -726,11 +726,15 @@ static int totalJobs = 0;
 
 -(void)applicationDidFinishLaunching:(NSNotification *) notif
 {
-	if (updateFile == nil)
+	if (updateFile == nil && quiet == NO)
 	{
 		[introWindow center];
 		[progressWindow orderOut:self];
 		[introWindow makeKeyAndOrderFront:self];
+	}
+	else if (quiet == YES)
+	{
+		[progressWindow makeKeyAndOrderFront:self];
 	}
 }
 
