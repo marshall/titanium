@@ -117,17 +117,24 @@
 				{
 					if (success)
 					{
+						var found = false;
 						var list = Titanium.API.getInstalledComponents();
 						for (var x=0;x<list.length;x++)
 						{
 							if (list[x].getName() == details.name)
 							{
+								found = true;
 								if (list[x].getVersion()!=details.version)
 								{
 									// update detected
 									callback(details);
 								}
 							}
+						}
+						if (!found)
+						{
+							// update detected because you don't have it installed
+							callback(details);
 						}
 					}
 				});	
