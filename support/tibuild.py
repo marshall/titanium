@@ -168,15 +168,16 @@ def main(options,appdir):
 	options.version = get_version_from_tiapp(appdir)
 	
 	# run the builders
-    builder = desktop_setup(options,appdir)
+	builder = desktop_setup(options,appdir)
 	
 	# allow post-build scripts
 	if os.path.exists("post_builder.py"):
 		exec('from post_builder import PostBuilder')
 		eval('PostBuilder(builder)')
 	
-	# run the packagers	
-    DesktopPackager(builder)
+	# run the packagers 
+	if not options.run and options.package:
+		DesktopPackager(builder)
 			
 	log(options,"Packaging complete, location: %s"%os.path.abspath(options.destination))
 	
@@ -184,26 +185,32 @@ def main(options,appdir):
 		subprocess.call([options.executable])
 
 def dequote(s):
-    if s[0:1] == '"':
-	return s[1:-1]
-    return s
+	if s[0:1] == '"':
+		return s[1:-1]
+	return s
 	
 if __name__ == '__main__':
 	parser = OptionParser(usage="%prog [options] appdir", version="%prog " + VERSION)
-	parser.add_option("-d","--dest",dest="destination",help="destination folder for output",metavar="FILE")	
-	parser.add_option("-s","--src",dest="source",help="source folder which contains dist files",metavar="FILE")	
-	parser.add_option("-v","--verbose",action="store_true",dest="verbose",default=False,help="turn on verbose logging")	
+	parser.add_option("-d","--dest",dest="destination",help="destination folder for output",metavar="FILE") 
+	parser.add_option("-s","--src",dest="source",help="source folder which contains dist files",metavar="FILE") 
+	parser.add_option("-v","--verbose",action="store_true",dest="verbose",default=False,help="turn on verbose logging") 
 	parser.add_option("-o","--os",dest="platform",default=None,help="platform if different than %s" % get_platform())	
 	parser.add_option("-t","--type",dest="type",default="network",help="package type: network or bundle")	
-	parser.add_option("-a","--assets",dest="assets_dir",default=None,help="location of platform assets",metavar="FILE")	
+	parser.add_option("-a","--assets",dest="assets_dir",default=None,help="location of platform assets",metavar="FILE") 
 	parser.add_option("-l","--license",dest="license_file",default=None,help="location of application license",metavar="FILE")	
-	parser.add_option("-n","--noinstall",action="store_true",dest="no_install",default=False,help="don't include installer dialog in packaged app")	
-	parser.add_option("-r","--run",action="store_true",dest="run",default=False,help="run the packaged app after building")	
+	parser.add_option("-n","--noinstall",action="store_true",dest="no_install",default=False,help="don't include installer dialog in packaged app") 
+	parser.add_option("-r","--run",action="store_true",dest="run",default=False,help="run the packaged app after building") 
 	parser.add_option("-p","--package",dest="package",default=True,help="build the installation package")	
 	(options, args) = parser.parse_args()
 	options.packager = False
 	if len(args) == 0:
 		parser.print_help()
+		print 
+		print "An example of running this command:"
+		print
+		print " Build and then run in the current directory from a project in ~/tmp/myproject"
+		print "	> tibuild.py -d . -s /Library/Application\ Support/Titanium -r ~/tmp/myproject -a /Library/Application\ Support/Titanium/sdk/osx/0.4.0"
+		print
 		sys.exit(1)
 	appdir = os.path.abspath(os.path.expanduser(dequote(args[0])))
 	if appdir == "":
