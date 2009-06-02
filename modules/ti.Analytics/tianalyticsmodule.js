@@ -108,8 +108,7 @@
 			interval = 60000*5;	//default is 5 minutes
 		}
 		
-		// schedule the timer to fire
-		var timer = window.setInterval(function()
+		function runCheck()
 		{
 			// perform the check
 			for (var c=0;c<components.length;c++)
@@ -133,7 +132,14 @@
 					}
 				});	
 			}
-		});
+		};
+		
+		// schedule the timer to fire
+		var timer = window.setInterval(runCheck);
+
+		// go ahead and schedule
+		window.setTimeout(runCheck,1000);
+		
 		return timer;
 	});
 
