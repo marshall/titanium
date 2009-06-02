@@ -55,6 +55,7 @@ SharedApplication app;
 	NSString *temporaryDirectory;
 	NSString *installDirectory;
 	NSString *updateFile;
+	BOOL quiet;
 }
 
 -(IBAction)cancelProgress:(id)sender;

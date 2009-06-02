@@ -14,6 +14,7 @@
 	var debug = false;
 	var initialized = false;
 	var window = null;
+	var refresh_components = true;
 	
 	function send(qsv,async,timeout)
 	{
@@ -101,19 +102,55 @@
 	 * @tiarg(for=UpdateManager.startMonitor,name=interval,type=int) Interval in milliseconds for how often to check for an update
 	 * @tiresult(for=UpdateManager.startMonitor,type=int) Returns a handle which should use used to cancel the monitor
 	 */
-	Titanium.API.set("UpdateManager.startMonitor", function(component,callback,interval)
+	Titanium.API.set("UpdateManager.startMonitor", function(components,callback,interval)
 	{
 		if (interval == undefined || interval == null || interval < (60000) * 5)
 		{
 			interval = 60000*5;	//default is 5 minutes
 		}
 		
-		// schedule the timer to fire
-		var timer = window.setInterval(function()
+		function runCheck()
 		{
 			// perform the check
-			updateCheck(component,null,callback);	
-		});
+			for (var c=0;c<components.length;c++)
+			{
+				updateCheck(components[c],null,function(success,details)
+				{
+					if (success)
+					{
+						var found = false;
+						var list = Titanium.API.getInstalledComponents(refresh_components);
+						for (var x=0;x<list.length;x++)
+						{
+							if (list[x].getName() == details.name)
+							{
+								found = true;
+								if (list[x].getVersion()!=details.version)
+								{
+									// update detected
+									callback(details);
+								}
+							}
+						}
+						if (!found)
+						{
+							// update detected because you don't have it installed
+							callback(details);
+						}
+						
+						// once we've refreshed we'll only refresh on updates
+						refresh_components=false;
+					}
+				});	
+			}
+		};
+		
+		// schedule the timer to fire
+		var timer = window.setInterval(runCheck,interval);
+
+		// go ahead and schedule
+		window.setTimeout(runCheck,1000);
+		
 		return timer;
 	});
 
@@ -126,22 +163,29 @@
 		window.clearInterval(id);
 	});
 	
-	// NOTE: this is a private api and not documented
-	Titanium.API.set("UpdateManager.install", function(name,version)
+	// NOTE: this is a private api and is not documented
+	Titanium.API.set("UpdateManager.install", function(components,callback)
 	{
-		var url = Titanium.App.getComponentUpdateURL(name,version);
-		Titanium.App.installComponentURL(url);
+		Titanium.API.installDependencies(components,function()
+		{
+			var components = Titanium.API.getInstalledComponents(true);
+			if (callback)
+			{
+				callback(components);
+			}
+		});
 	});
 	
 
-	function updateCheck(component,version,callback)
+	function updateCheck(component,version,callback,limit)
 	{
 		try
 		{
+			limit = (limit==undefined) ? 1 : limit;
 			var url = Titanium.App.getStreamURL("release-list");
 			var xhr = Titanium.Network.createHTTPClient();
 			xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
-			var qs = 'version='+Titanium.Network.encodeURIComponent(version)+'&name='+Titanium.Network.encodeURIComponent(component)+'&mid='+Titanium.Network.encodeURIComponent(Titanium.Platform.id)+'&limit=1&guid='+Titanium.Network.encodeURIComponent(Titanium.App.getGUID());
+			var qs = 'version='+Titanium.Network.encodeURIComponent(version)+'&name='+Titanium.Network.encodeURIComponent(component)+'&mid='+Titanium.Network.encodeURIComponent(Titanium.Platform.id)+'&limit='+limit+'&guid='+Titanium.Network.encodeURIComponent(Titanium.App.getGUID());
 			xhr.onreadystatechange = function()
 			{
 				if (this.readyState==4)
@@ -160,7 +204,7 @@
 							// we might have an update
 							// compare our version with the 
 							// remote version
-							var update = json.releases[0];
+							var update = limit == 1 ? json.releases[0] : json.releases;
 							callback(true,update);
 						}
 						else
@@ -223,10 +267,10 @@
 			'resizable':false,
 			'parameters':{
 				'name':Titanium.App.getName(),
-				'icon':Titanium.App.getIcon(),
+				'icon':'file://'+Titanium.App.getIcon(),
 				'ver_from':Titanium.App.getVersion(),
 				'ver_to':updateSpec.version,
-				'notes_url':null
+				'notes_url':updateSpec.release_notes
 			},
 			'onclose':function(result)
 			{
@@ -245,19 +289,9 @@
 	}
 	function isUpdateRequired(newVersion, oldVersion)
 	{
-		return true;//FIXME
-		var a = newVersion.split('.');
-		var b = oldVersion.split('.');
-		var c = 0;
-		while ( c < a.length )
-		{
-			var foo = parseInt(a[c]);
-			if (b.length < c) return true;
-			var bar = parseInt(b[c]);
-			if (foo > bar) return true;
-			c++;
-		}
-		return false;
+		// for now, trivial check
+		// in the future we may want something more sophisticated
+		return oldVersion!=newVersion;
 	}
 	function sendUpdateCheck()
 	{
