@@ -732,10 +732,6 @@ static int totalJobs = 0;
 		[progressWindow orderOut:self];
 		[introWindow makeKeyAndOrderFront:self];
 	}
-	else if (quiet == YES)
-	{
-		[progressWindow makeKeyAndOrderFront:self];
-	}
 }
 
 -(IBAction)cancelProgress: (id)sender
