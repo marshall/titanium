@@ -185,6 +185,7 @@ private:
 	void InitWindow();
 	void InitWebKit();
 	
+	void SetupBounds();
 	void SetupPosition();
 	void SetupSize();
 	void SetupDecorations(bool showHide = true);
