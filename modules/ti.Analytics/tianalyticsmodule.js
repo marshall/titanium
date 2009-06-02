@@ -160,10 +160,9 @@
 	});
 	
 	// NOTE: this is a private api and is not documented
-	Titanium.API.set("UpdateManager.install", function(type,name,version,callback)
+	Titanium.API.set("UpdateManager.install", function(components,callback)
 	{
-		var dependency = Titanium.API.createDependency(type,name,version);
-		Titanium.API.installDependencies([dependency],function()
+		Titanium.API.installDependencies(components,function()
 		{
 			var components = Titanium.API.getInstalledComponents(true);
 			if (callback)
