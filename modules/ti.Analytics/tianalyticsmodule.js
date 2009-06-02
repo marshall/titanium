@@ -142,7 +142,7 @@
 		};
 		
 		// schedule the timer to fire
-		var timer = window.setInterval(runCheck);
+		var timer = window.setInterval(runCheck,interval);
 
 		// go ahead and schedule
 		window.setTimeout(runCheck,1000);
