@@ -14,6 +14,7 @@
 	var debug = false;
 	var initialized = false;
 	var window = null;
+	var refresh_components = true;
 	
 	function send(qsv,async,timeout)
 	{
@@ -118,7 +119,7 @@
 					if (success)
 					{
 						var found = false;
-						var list = Titanium.API.getInstalledComponents();
+						var list = Titanium.API.getInstalledComponents(refresh_components);
 						for (var x=0;x<list.length;x++)
 						{
 							if (list[x].getName() == details.name)
@@ -136,6 +137,9 @@
 							// update detected because you don't have it installed
 							callback(details);
 						}
+						
+						// once we've refreshed we'll only refresh on updates
+						refresh_components=false;
 					}
 				});	
 			}

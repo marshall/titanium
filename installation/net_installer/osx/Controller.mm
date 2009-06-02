@@ -639,6 +639,7 @@ static int totalJobs = 0;
 	if (quiet)
 	{
 		[self continueIntro:self];
+		return;
 	}
 	else
 	{
@@ -749,18 +750,21 @@ static int totalJobs = 0;
 
 -(IBAction)continueIntro:(id)sender;
 {
-	[introWindow orderOut:self];
-	[progressText setStringValue:@"Connecting to download site..."];
-	[progressBar setUsesThreadedAnimation:NO];
-	[progressBar setIndeterminate:NO];
-	[progressBar setMinValue:0.0];
-	[progressBar setMaxValue:100.0];
-	[progressBar setDoubleValue:0.0];
-
-	[progressWindow center];
-	if ([jobs count] > 0)
+	if (quiet == NO)
 	{
-		[progressWindow orderFront:self];
+		[introWindow orderOut:self];
+		[progressText setStringValue:@"Connecting to download site..."];
+		[progressBar setUsesThreadedAnimation:NO];
+		[progressBar setIndeterminate:NO];
+		[progressBar setMinValue:0.0];
+		[progressBar setMaxValue:100.0];
+		[progressBar setDoubleValue:0.0];
+
+		[progressWindow center];
+		if ([jobs count] > 0)
+		{
+			[progressWindow orderFront:self];
+		}
 	}
 	[NSThread detachNewThreadSelector:@selector(downloadAndInstall:) toTarget:self withObject:self];
 }
