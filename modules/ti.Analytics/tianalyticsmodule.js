@@ -173,6 +173,27 @@
 			}
 		});
 	});
+
+	/**
+	 * @tiapi(method=True,name=UpdateManager.installAppUpdate,since=0.4) Install an application update received from update monitor. This method will cause the process to first be restarted for the update to begin.
+	 * @tiarg(for=UpdateManager.installAppUpdate,name=spec,type=object) Update spec object received from update service.
+	 */
+	Titanium.API.set("UpdateManager.installAppUpdate", function(updateSpec)
+	{
+		installAppUpdate(updateSpec);
+	});
+	
+	
+	function installAppUpdate(updateSpec)
+	{
+		// write our the new manifest for the update
+		var datadir = Titanium.Filesystem.getApplicationDataDirectory();
+		var update = Titanium.Filesystem.getFile(datadir,'.update');
+		update.write(updateSpec.manifest);
+		
+		// restart ourselves to cause the install
+		Titanium.Process.restart();
+	}
 	
 
 	function updateCheck(component,version,callback,limit)
@@ -274,13 +295,7 @@
 			{
 				if (result == 'install')
 				{
-					// write our the new manifest for the update
-					var datadir = Titanium.Filesystem.getApplicationDataDirectory();
-					var update = Titanium.Filesystem.getFile(datadir,'.update');
-					update.write(updateSpec.manifest);
-					
-					// restart ourselves to cause the install
-					Titanium.Process.restart();
+					installAppUpdate(updateSpec);
 				}
 			}
 		});
