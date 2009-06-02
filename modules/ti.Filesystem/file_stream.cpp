@@ -324,7 +324,7 @@ namespace ti
 			else
 			{
 				std::string line;
-				std::istream& i = std::getline(*fis, line);
+				std::getline(*fis, line);
 #ifdef OS_WIN32
 				// In some cases std::getline leaves a CR on the end of the line in win32 -- why God, why?
 				if (!line.empty())

@@ -101,19 +101,52 @@
 	 * @tiarg(for=UpdateManager.startMonitor,name=interval,type=int) Interval in milliseconds for how often to check for an update
 	 * @tiresult(for=UpdateManager.startMonitor,type=int) Returns a handle which should use used to cancel the monitor
 	 */
-	Titanium.API.set("UpdateManager.startMonitor", function(component,callback,interval)
+	Titanium.API.set("UpdateManager.startMonitor", function(components,callback,interval)
 	{
 		if (interval == undefined || interval == null || interval < (60000) * 5)
 		{
 			interval = 60000*5;	//default is 5 minutes
 		}
 		
-		// schedule the timer to fire
-		var timer = window.setInterval(function()
+		function runCheck()
 		{
 			// perform the check
-			updateCheck(component,null,callback);	
-		});
+			for (var c=0;c<components.length;c++)
+			{
+				updateCheck(components[c],null,function(success,details)
+				{
+					if (success)
+					{
+						var found = false;
+						var list = Titanium.API.getInstalledComponents();
+						for (var x=0;x<list.length;x++)
+						{
+							if (list[x].getName() == details.name)
+							{
+								found = true;
+								if (list[x].getVersion()!=details.version)
+								{
+									// update detected
+									callback(details);
+								}
+							}
+						}
+						if (!found)
+						{
+							// update detected because you don't have it installed
+							callback(details);
+						}
+					}
+				});	
+			}
+		};
+		
+		// schedule the timer to fire
+		var timer = window.setInterval(runCheck);
+
+		// go ahead and schedule
+		window.setTimeout(runCheck,1000);
+		
 		return timer;
 	});
 
@@ -126,22 +159,23 @@
 		window.clearInterval(id);
 	});
 	
-	// NOTE: this is a private api and not documented
-	Titanium.API.set("UpdateManager.install", function(name,version)
+	// NOTE: this is a private api and is not documented
+	Titanium.API.set("UpdateManager.install", function(type,name,version,callback)
 	{
-		var url = Titanium.App.getComponentUpdateURL(name,version);
-		Titanium.App.installComponentURL(url);
+		var dependency = Titanium.API.createDependency(type,name,version);
+		Titanium.API.installDependencies([dependency],callback);
 	});
 	
 
-	function updateCheck(component,version,callback)
+	function updateCheck(component,version,callback,limit)
 	{
 		try
 		{
+			limit = (limit==undefined) ? 1 : limit;
 			var url = Titanium.App.getStreamURL("release-list");
 			var xhr = Titanium.Network.createHTTPClient();
 			xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
-			var qs = 'version='+Titanium.Network.encodeURIComponent(version)+'&name='+Titanium.Network.encodeURIComponent(component)+'&mid='+Titanium.Network.encodeURIComponent(Titanium.Platform.id)+'&limit=1&guid='+Titanium.Network.encodeURIComponent(Titanium.App.getGUID());
+			var qs = 'version='+Titanium.Network.encodeURIComponent(version)+'&name='+Titanium.Network.encodeURIComponent(component)+'&mid='+Titanium.Network.encodeURIComponent(Titanium.Platform.id)+'&limit='+limit+'&guid='+Titanium.Network.encodeURIComponent(Titanium.App.getGUID());
 			xhr.onreadystatechange = function()
 			{
 				if (this.readyState==4)
@@ -160,7 +194,7 @@
 							// we might have an update
 							// compare our version with the 
 							// remote version
-							var update = json.releases[0];
+							var update = limit == 1 ? json.releases[0] : json.releases;
 							callback(true,update);
 						}
 						else
