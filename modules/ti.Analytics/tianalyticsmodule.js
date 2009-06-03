@@ -83,16 +83,6 @@
 		send({'event':event,'data':data});
 	});
 	
-	var update_handler;
-
-	/**
-	 * @tiapi(property=True,name=UpdateManager.onupdate,since=0.4) Set the update handler implementation function that will be invoked when an update is detected
-	 */
-	Titanium.API.set("UpdateManager.onupdate", function(f)
-	{
-		update_handler = f;
-	});
-	
 	/**
 	 * @tiapi(method=True,name=UpdateManager.startMonitor,since=0.4) Check the update service for a new version
 	 * @tiarg(for=UpdateManager.startMonitor,name=component,type=string) Name of the component
@@ -160,6 +150,12 @@
 	{
 		window.clearInterval(id);
 	});
+
+	/**
+	 * @tiapi(property=True,name=UpdateManager.onupdate,since=0.4) Set the update handler implementation function that will be invoked when an update is detected
+	 */
+	Titanium.UpdateManager.onupdate = null;
+		
 	
 	// NOTE: this is a private api and is not documented
 	Titanium.API.set("UpdateManager.install", function(components,callback)
@@ -270,19 +266,26 @@
 	{
 		// if we have a handler, delegate to that dude
 		// and he's now responsible for doing the update stuff
-		if (typeof update_handler == 'function')
+		if (typeof Titanium.UpdateManager.onupdate == 'function')
 		{
-			update_handler(updateSpec);
+			Titanium.UpdateManager.onupdate(updateSpec);
 			return;
 		}
 		
-		//TODO: fix release notes
-		
+		var width = 450;
+		var height = 170;
+	
+		if (updateSpec.release_notes)
+		{
+			width = 600;
+			height = 350;
+		}
+	
 		// ok, we'll handle it then...
 		window.Titanium.UI.showDialog({
 			'url': 'ti://tianalytics/update.html',
-			'width': 450,  //600,
-			'height': 170,  //350,
+			'width': width,
+			'height': height,
 			'resizable':false,
 			'parameters':{
 				'name':Titanium.App.getName(),
