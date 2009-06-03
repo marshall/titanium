@@ -149,23 +149,44 @@ namespace ti
 		SET_NULL_PROP("onexit")
 		SET_NULL_PROP("onread")
 	}
+	void Process::StartReadThreads()
+	{
+		Logger::Get("Process")->Debug("Starting read threads");
+		if (this->thread2 == NULL)
+		{
+			this->thread2 = new Poco::Thread();
+			this->thread2->start(&Process::ReadOut,(void*)this);
+		}
+		if (this->thread3 == NULL)
+		{
+			this->thread3 = new Poco::Thread();
+			this->thread3->start(&Process::ReadErr,(void*)this);
+		}
+	}
 	void Process::WaitExit(void *data)
 	{
 		Process *process = static_cast<Process*>(data);
 		process->Set("running",Value::NewBool(true));
+		process->running = true;
 		int exitCode = -1;
 		try
 		{
 			Poco::ProcessHandle ph = Poco::Process::launch(process->command,process->arguments,process->inp,process->outp,process->errp);
+			process->StartReadThreads();
 			process->pid = (int)ph.id();
 			process->Set("pid",Value::NewInt(process->pid));
 			exitCode = ph.wait();
 			process->Set("exitCode",Value::NewInt(exitCode));
+			Logger::Get("Process")->Debug("Finished running %s", process->command.c_str());
 			process->ran = true;
 		}
 		catch (Poco::SystemException &se)
 		{
-			std::cerr << "System Exception starting: " << process->command << ",message: " << se.what() << std::endl;
+			Logger::Get("Process")->Error("System Exception starting: %s, message: %s", process->command.c_str(), se.what());
+		}
+		catch (std::exception &e)
+		{
+			Logger::Get("Process")->Error("Exception starting: %s, message: %s", process->command.c_str(), e.what());
 		}
 		process->running = false;
 		process->pid = -1;
@@ -187,12 +208,19 @@ namespace ti
 		
 		while (process->running)
 		{
-			SharedValue result;
+			SharedValue result = Value::NewString("");
 			process->out->Read(a,result);
+			
 			SharedValue sv = process->Get("onread");
-			if (sv->IsMethod())
+			if (!sv.isNull() && sv->IsMethod() && !result->IsNull())
 			{
 				ValueList args;
+				/*if (result->IsString() && process->out_buffer.size() > 0) {
+					std::string strdata = result->ToString();
+					strdata = process->out_buffer + strdata;
+					process->out_buffer = "";
+					result->SetString(strdata);
+				}*/
 				args.push_back(result);
 				args.push_back(Value::NewBool(false));
 				SharedKMethod callback = sv->ToMethod();
@@ -201,6 +229,16 @@ namespace ti
 					process->parent->GetHost()->InvokeMethodOnMainThread(callback,args,false);
 				} catch (std::exception &e) {
 					Logger::Get("Process")->Error("Caught exception on sending process output stream: %s", e.what());
+				}
+			}
+			else {
+				if (!result.isNull() && result->IsString()) {
+					if (process->out_buffer.size() >= MAX_MEMORY_BUFFER) {
+						process->out_buffer = result->ToString();
+					}
+					else {
+						process->out_buffer += result->ToString();
+					}
 				}
 			}
 		}
@@ -213,12 +251,18 @@ namespace ti
 		
 		while (process->running)
 		{
-			SharedValue result;
+			SharedValue result = Value::NewString("");
 			process->err->Read(a,result);
 			SharedValue sv = process->Get("onread");
-			if (sv->IsMethod())
+			if (!sv.isNull() && sv->IsMethod() && !result->IsNull())
 			{
 				ValueList args;
+				/*if (result->IsString() && process->err_buffer.size() > 0) {
+					std::string strdata = result->ToString();
+					strdata = process->err_buffer + strdata;
+					process->err_buffer = "";
+					result->SetString(strdata);
+				}*/
 				args.push_back(result);
 				args.push_back(Value::NewBool(true));
 				SharedKMethod callback = sv->ToMethod();
@@ -226,6 +270,16 @@ namespace ti
 					process->parent->GetHost()->InvokeMethodOnMainThread(callback,args,false);
 				} catch (std::exception &e) {
 					Logger::Get("Process")->Error("Caught exception on sending process error stream: %s", e.what());
+				}
+			}
+			else {
+				if (!result.isNull() && result->IsString()) {
+					if (process->err_buffer.size() >= MAX_MEMORY_BUFFER) {
+						process->err_buffer = result->ToString();
+					}
+					else {
+						process->err_buffer += result->ToString();
+					}
 				}
 			}
 		}
@@ -256,16 +310,25 @@ namespace ti
 	void Process::Bound(const char *name, SharedValue value)
 	{
 		if (std::string(name) == "onread")
-		{	
-			if (this->thread2 == NULL)
+		{
+			if (!this->running && this->ran)
 			{
-				this->thread2 = new Poco::Thread();
-				this->thread2->start(&Process::ReadOut,(void*)this);
-			}
-			if (this->thread3 == NULL)
-			{
-				this->thread3 = new Poco::Thread();
-				this->thread3->start(&Process::ReadErr,(void*)this);
+				if (!value.isNull() && value->IsMethod()) {
+					if (out_buffer.size() > 0) {
+						ValueList args;
+						args.push_back(Value::NewString(out_buffer));
+						args.push_back(Value::NewBool(false));
+						this->parent->GetHost()->InvokeMethodOnMainThread(value->ToMethod(), args, true);
+						out_buffer = "";
+					}
+					if (err_buffer.size() > 0) {
+						ValueList args;
+						args.push_back(Value::NewString(err_buffer));
+						args.push_back(Value::NewBool(true));
+						this->parent->GetHost()->InvokeMethodOnMainThread(value->ToMethod(), args, true);
+						err_buffer = "";
+					}
+				}
 			}
 		}
 		else if (std::string(name) == "onexit") {
