@@ -45,6 +45,8 @@ namespace ti
 		SharedKObject *shared_input;
 		SharedKObject *shared_output;
 		SharedKObject *shared_error;
+		std::string out_buffer;
+		std::string err_buffer;
 
 		void Terminate(const ValueList& args, SharedValue result);
 		void Terminate();
@@ -54,6 +56,7 @@ namespace ti
 		
 	protected:
 		void Bound(const char *name, SharedValue value);
+		void StartReadThreads();
 		
 	};
 }

@@ -7,7 +7,7 @@ describe("process tests",
 		
 		if (Titanium.platform == 'win32')
 		{
-			p = Titanium.Process.launch('cmd.exe /c dir',['/s']);
+			p = Titanium.Process.launch('C:\\Windows\\system32\\cmd.exe',['/c', 'dir', '/s']);
 		}
 		else
 		{
@@ -52,7 +52,7 @@ describe("process tests",
 		
 		if (Titanium.platform == 'win32')
 		{
-			p = Titanium.Process.launch('cmd.exe /c dir',['/s']);
+			p = Titanium.Process.launch('C:\\Windows\\system32\\cmd.exe',['/c', 'dir', '/s']);
 		}
 		else
 		{
@@ -62,11 +62,15 @@ describe("process tests",
 		var timer = null;
 		value_of(p).should_not_be_null();
 		var output = '';
+		var throwException = true;
 		
 		p.onread = function(buf)
 		{
 			// test throwing exception from onread
-			throw "this is an exception";
+			if (throwException) {
+				throw "this is an exception";
+				throwException = false;
+			}
 		};
 		p.onexit = function()
 		{
