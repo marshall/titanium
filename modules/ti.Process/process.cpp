@@ -14,7 +14,7 @@ namespace ti
 	Process::Process(ProcessBinding* parent, std::string& cmd, std::vector<std::string>& args) : 
 		thread1(0),thread2(0),thread3(0),thread1Running(false),
 		thread2Running(false),thread3Running(false),running(false),
-		pid(-1),errp(0),outp(0),inp(0)
+		pid(-1),errp(0),outp(0),inp(0),ran(false)
 	{
 		this->parent = parent;
 		this->errp = new Poco::Pipe();
@@ -161,6 +161,7 @@ namespace ti
 			process->Set("pid",Value::NewInt(process->pid));
 			exitCode = ph.wait();
 			process->Set("exitCode",Value::NewInt(exitCode));
+			process->ran = true;
 		}
 		catch (Poco::SystemException &se)
 		{
@@ -268,7 +269,7 @@ namespace ti
 			}
 		}
 		else if (std::string(name) == "onexit") {
-			if (!this->running) {
+			if (!this->running && this->ran) {
 				// call immediately
 				if (!value.isNull() && value->IsMethod()) {
 					ValueList args;
