@@ -502,13 +502,13 @@ bool FinishInstallation()
 {
 	if (!app->IsInstalled())
 	{
-		string installedFile = FileUtils::Join(appInstallPath.c_str(), ".installed", NULL);
+		string installedFile = FileUtils::Join(app->GetDataPath().c_str(), ".installed", NULL);
 		FILE* file = fopen(installedFile.c_str(), "w");
 		fprintf(file, "%s\n", appInstallPath.c_str());
 		fclose(file);
 
 		// Inform the boot where the application installed to
-		installedFile = FileUtils::Join(app->path.c_str(), ".installedto", NULL);
+		installedFile = FileUtils::Join(app->GetDataPath().c_str(), ".installedto", NULL);
 		file = fopen(installedFile.c_str(), "w");
 		fprintf(file, "%s\n", appInstallPath.c_str());
 		fclose(file);

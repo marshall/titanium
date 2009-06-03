@@ -32,7 +32,7 @@ namespace ti
 		bool thread1Running;
 		bool thread2Running;
 		bool thread3Running;
-		bool running;
+		bool running, ran;
 		int pid;
 		std::vector<std::string> arguments;
 		std::string command;

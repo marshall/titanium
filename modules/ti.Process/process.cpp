@@ -7,14 +7,14 @@
 #include "process.h"
 #include "pipe.h"
 #include <Poco/Path.h>
-
+#define MAX_MEMORY_BUFFER 16384
 
 namespace ti
 {
 	Process::Process(ProcessBinding* parent, std::string& cmd, std::vector<std::string>& args) : 
 		thread1(0),thread2(0),thread3(0),thread1Running(false),
 		thread2Running(false),thread3Running(false),running(false),
-		pid(-1),errp(0),outp(0),inp(0)
+		pid(-1),errp(0),outp(0),inp(0),ran(false)
 	{
 		this->parent = parent;
 		this->errp = new Poco::Pipe();
@@ -161,6 +161,7 @@ namespace ti
 			process->Set("pid",Value::NewInt(process->pid));
 			exitCode = ph.wait();
 			process->Set("exitCode",Value::NewInt(exitCode));
+			process->ran = true;
 		}
 		catch (Poco::SystemException &se)
 		{
@@ -195,7 +196,12 @@ namespace ti
 				args.push_back(result);
 				args.push_back(Value::NewBool(false));
 				SharedKMethod callback = sv->ToMethod();
-				process->parent->GetHost()->InvokeMethodOnMainThread(callback,args,false);
+				
+				try {
+					process->parent->GetHost()->InvokeMethodOnMainThread(callback,args,false);
+				} catch (std::exception &e) {
+					Logger::Get("Process")->Error("Caught exception on sending process output stream: %s", e.what());
+				}
 			}
 		}
 		process->thread2Running = false;
@@ -216,7 +222,11 @@ namespace ti
 				args.push_back(result);
 				args.push_back(Value::NewBool(true));
 				SharedKMethod callback = sv->ToMethod();
-				process->parent->GetHost()->InvokeMethodOnMainThread(callback,args,false);
+				try {
+					process->parent->GetHost()->InvokeMethodOnMainThread(callback,args,false);
+				} catch (std::exception &e) {
+					Logger::Get("Process")->Error("Caught exception on sending process error stream: %s", e.what());
+				}
 			}
 		}
 		process->thread3Running = false;
@@ -246,7 +256,7 @@ namespace ti
 	void Process::Bound(const char *name, SharedValue value)
 	{
 		if (std::string(name) == "onread")
-		{
+		{	
 			if (this->thread2 == NULL)
 			{
 				this->thread2 = new Poco::Thread();
@@ -256,6 +266,16 @@ namespace ti
 			{
 				this->thread3 = new Poco::Thread();
 				this->thread3->start(&Process::ReadErr,(void*)this);
+			}
+		}
+		else if (std::string(name) == "onexit") {
+			if (!this->running && this->ran) {
+				// call immediately
+				if (!value.isNull() && value->IsMethod()) {
+					ValueList args;
+					args.push_back(this->Get("exitCode"));
+					this->parent->GetHost()->InvokeMethodOnMainThread(value->ToMethod(), args, true);
+				}
 			}
 		}
 	}

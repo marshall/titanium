@@ -43,7 +43,7 @@ describe("process tests",
 		timer = setTimeout(function()
 		{
 			test.failed('timed out');
-		},2000);
+		},5000);
 	},
 	test_process_exception_as_async: function(test)
 	{
@@ -76,6 +76,6 @@ describe("process tests",
 		timer = setTimeout(function()
 		{
 			test.failed('timed out');
-		},2000);
+		},5000);
 	}
 });
