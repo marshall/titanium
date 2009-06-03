@@ -13,7 +13,7 @@
 from optparse import OptionParser
 from desktop_builder import DesktopBuilder
 from desktop_packager import DesktopPackager
-import sys, os.path, platform, re, subprocess
+import sys, os.path, platform, re, subprocess, signal
 
 VERSION = '0.1'
 PLATFORMS = ['win32','osx','linux']
@@ -131,7 +131,33 @@ def desktop_setup(options,appdir):
 		sys.exit(1)
 
 	return DesktopBuilder(options,log)
-			
+
+def run(options):
+	
+	p = None
+	running = True
+	
+	def handler(signum, frame):
+		print "signal caught: %d" % signum
+		if not p == None:
+			if get_platform() != 'win32':
+				print "kill app with pid %d" % p.pid
+				os.system("kill -9 %d" % p.pid)
+		running = False	
+	
+	signal.signal(signal.SIGHUP, handler)
+	signal.signal(signal.SIGINT, handler)
+	signal.signal(signal.SIGQUIT, handler)
+	signal.signal(signal.SIGABRT, handler)
+	signal.signal(signal.SIGTERM, handler)
+	
+	try:
+		p = subprocess.Popen([options.executable])
+		os.waitpid(p.pid,0)
+	except OSError:
+		handler(3,None)
+		
+				
 def main(options,appdir):
 
 	if options.platform == None:
@@ -180,10 +206,13 @@ def main(options,appdir):
 		DesktopPackager(builder)
 			
 	log(options,"Packaging complete, location: %s"%os.path.abspath(options.destination))
+
 	
 	if options.run:
-		subprocess.call([options.executable])
+		run(options)
 
+	sys.exit(0)
+		
 def dequote(s):
 	if s[0:1] == '"':
 		return s[1:-1]
