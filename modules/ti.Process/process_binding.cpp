@@ -111,6 +111,7 @@ namespace ti
 	}
 	void ProcessBinding::Terminated(Process* p)
 	{
+		PRINTD("Process Terminated");
 		std::vector<SharedKObject>::iterator i = processes.begin();
 		while(i!=processes.end())
 		{

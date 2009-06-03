@@ -72,6 +72,11 @@ namespace ti
 			[data appendString:str];
 		}
 	}
+	NSString* OSXPipe::GetData()
+	{
+		return data;
+	}
+	
 	void OSXPipe::Read(const ValueList& args, SharedValue result)
 	{
 		if (closed)

@@ -67,7 +67,7 @@
 		// schedule reads
 		[[[task standardOutput] fileHandleForReading] readInBackgroundAndNotify];
 		[[[task standardError] fileHandleForReading] readInBackgroundAndNotify];
-		
+
 		bound->Set("running",Value::NewBool(true));
 	}
 	return self;
@@ -149,7 +149,7 @@
 		args.push_back(Value::NewInt([task terminationStatus]));
 		try
 		{
-			host->InvokeMethodOnMainThread(*onexit,args,true);
+			host->InvokeMethodOnMainThread(*onexit,args,false);
 		}
 		catch(...)
 		{
@@ -180,7 +180,15 @@
 			ValueList args;
 			args.push_back(Value::NewString([str UTF8String]));
 			args.push_back(Value::NewBool(false));
-			host->InvokeMethodOnMainThread(*onread,args,false);
+			try
+			{
+				host->InvokeMethodOnMainThread(*onread,args,false);
+			}
+			catch(std::exception &e)
+			{
+				Logger *logger = Logger::Get("OSXProcess");
+				logger->Error("Caught exception on sending process output stream. Error = %s",e.what());
+			}
 		}
 		else
 		{
@@ -208,7 +216,15 @@
 			ValueList args;
 			args.push_back(Value::NewString([str UTF8String]));
 			args.push_back(Value::NewBool(true));
-			host->InvokeMethodOnMainThread(*onread,args,false);
+			try
+			{
+				host->InvokeMethodOnMainThread(*onread,args,false);
+			}
+			catch(std::exception &e)
+			{
+				Logger *logger = Logger::Get("OSXProcess");
+				logger->Error("Caught exception on sending process error stream. Error = %s",e.what());
+			}
 		}
 		else
 		{
@@ -218,6 +234,14 @@
 
     // we need to schedule the file handle go read more data in the background again.
     [[aNotification object] readInBackgroundAndNotify];
+}
+-(ti::OSXPipe*) output
+{
+	return output;
+}
+-(ti::OSXPipe*) error
+{
+	return error;
 }
 @end
 
@@ -253,22 +277,33 @@ namespace ti
 				cmd = fn;
 			}
 		}
+		host = parent->GetHost();
 		process = [[TiOSXProcess alloc] initWithPath:[NSString stringWithCString:cmd.c_str()] args:arguments host:parent->GetHost() bound:this];
-		[arguments release];
-		
-		// start the process
-		[process start];
 		
 		this->Set("command",Value::NewString(cmd));
 		
 		SET_BOOL_PROP("running",false);
-		SET_INT_PROP("pid",[[process task] processIdentifier]);
 		
 		SET_NULL_PROP("exitCode")
 		SET_NULL_PROP("onread")
 		SET_NULL_PROP("onexit")
 
 		this->SetMethod("terminate",&OSXProcess::Terminate);
+
+		SET_INT_PROP("pid",-1);
+
+		[arguments release];
+
+		// start the process
+		@try
+		{
+			[process start];	
+			SET_INT_PROP("pid",[[process task] processIdentifier]);
+		}
+		@catch(NSException *e)
+		{
+			throw ValueException::FromString([[e reason] UTF8String]);
+		}
 	}
 	OSXProcess::~OSXProcess()
 	{
@@ -290,13 +325,73 @@ namespace ti
 	void OSXProcess::Bound(const char *name, SharedValue value)
 	{
 		std::string fn(name);
-		if (fn == "onread")
+		if (fn == "onread" && !value.isNull() && value->IsMethod())
 		{
-			[process setRead:new SharedKMethod(value->ToMethod())];
+			if (process && [[process task] isRunning])
+			{
+				[process setRead:new SharedKMethod(value->ToMethod())];
+			}
+			else
+			{
+				// if we get here, we need to pull the data from the 
+				// pipe(s) and send it to the listener since we've exited
+				// before we can attach the read listeners
+				NSString *stdout = [process output]->GetData();
+				if ([stdout length] > 0)
+				{
+					try
+					{
+						ValueList args;
+						args.push_back(Value::NewString([stdout UTF8String]));
+						host->InvokeMethodOnMainThread(value->ToMethod(),args,true);
+					}
+					catch(std::exception &e)
+					{
+						Logger *logger = Logger::Get("OSXProcess");
+						logger->Error("Caught exception on sending stdout onexit. Error = %s",e.what());
+					}
+				}
+				NSString *stderr = [process error]->GetData();
+				if ([stderr length] > 0)
+				{
+					try
+					{
+						ValueList args;
+						args.push_back(Value::NewString([stderr UTF8String]));
+						host->InvokeMethodOnMainThread(value->ToMethod(),args,true);
+					}
+					catch(std::exception &e)
+					{
+						Logger *logger = Logger::Get("OSXProcess");
+						logger->Error("Caught exception on sending stderr onexit. Error = %s",e.what());
+					}
+				}
+			}
 		}
-		else if (fn == "onexit")
+		else if (fn == "onexit" && !value.isNull() && value->IsMethod())
 		{
-			[process setExit:new SharedKMethod(value->ToMethod())];
+			if (process && [[process task] isRunning])
+			{
+				[process setExit:new SharedKMethod(value->ToMethod())];
+			}
+			else
+			{
+				// if we get here, we've exited before we attach the 
+				// onexit listener in which case we need to immediately
+				// notify the listener
+				try
+				{
+					SharedValue exitCode = this->Get("exitCode");
+					ValueList args;
+					args.push_back(exitCode);
+					host->InvokeMethodOnMainThread(value->ToMethod(),args,true);
+				}
+				catch(std::exception &e)
+				{
+					Logger *logger = Logger::Get("OSXProcess");
+					logger->Error("Caught exception on sending immediate onexit. Error = %s",e.what());
+				}
+			}
 		}
 	}
 }

@@ -29,6 +29,8 @@ namespace ti
 		void Read(const ValueList& args, SharedValue result);
 		void Close(const ValueList& args, SharedValue result);
 		void Close();
+		
+		NSString* GetData();
 	};
 }
 
