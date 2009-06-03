@@ -255,6 +255,7 @@ class UserWindow : public kroll::StaticBoundObject {
 		virtual void SetTopMost(bool topmost) = 0;
 
 		virtual void FireEvent(UserWindowEvent event_type, SharedKObject event=NULL);
+		virtual bool ShouldHaveTitaniumObject(JSGlobalContextRef, JSObjectRef);
 		virtual void RegisterJSContext(JSGlobalContextRef);
 		virtual void PageLoaded(
 			SharedKObject scope, std::string &url, JSGlobalContextRef context);

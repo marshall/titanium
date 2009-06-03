@@ -1701,11 +1701,58 @@ void UserWindow::RemoveChild(SharedUserWindow child)
 	}
 }
 
+bool UserWindow::ShouldHaveTitaniumObject(
+	JSGlobalContextRef ctx, JSObjectRef global)
+{
+	// We really only want URLs that are loaded via the
+	// app, ti or file protocol to have the Titanium object.
+	// Other URLs won't have access for security considerations.
+	JSStringRef docPropName = JSStringCreateWithUTF8CString("document");
+	JSValueRef docValue = JSObjectGetProperty(ctx, global, docPropName, NULL);
+	if (!docValue)
+	{
+		return false;
+	}
+
+	JSObjectRef docObject = JSValueToObject(ctx, docValue, NULL);
+	if (!docObject)
+	{
+		return false;
+	}
+
+	JSStringRef locPropName = JSStringCreateWithUTF8CString("location");
+	JSValueRef locValue = JSObjectGetProperty(ctx, docObject, locPropName, NULL);
+	if (!locValue)
+	{
+		return false;
+	}
+
+	JSStringRef locString = JSValueToStringCopy(ctx, locValue, NULL);
+	if (!locString)
+	{
+		return false;
+	}
+
+	char* cStringURL = KJSUtil::ToChars(locString);
+	string url = cStringURL;
+	free(cStringURL);
+
+	transform(url.begin(), url.end(), url.begin(), tolower);
+	return url.find("app://") == 0 || 
+		url.find("ti://") == 0 ||
+		url.find("file://") == 0;
+}
+
 void UserWindow::RegisterJSContext(JSGlobalContextRef context)
 {
-	JSObjectRef global_object = JSContextGetGlobalObject(context);
-	KJSUtil::RegisterGlobalContext(global_object, context);
+	JSObjectRef globalObject = JSContextGetGlobalObject(context);
+	KJSUtil::RegisterGlobalContext(globalObject, context);
 	KJSUtil::ProtectGlobalContext(context);
+
+	if (!this->ShouldHaveTitaniumObject(context, globalObject))
+	{
+		return;
+	}
 
 	// Produce a delegating object to represent the top-level
 	// Titanium object. When a property isn't found in this object
@@ -1743,7 +1790,7 @@ void UserWindow::RegisterJSContext(JSGlobalContextRef context)
 	}
 
 	// Get the global object into a KKJSObject
-	SharedKObject frame_global = new KKJSObject(context, global_object);
+	SharedKObject frame_global = new KKJSObject(context, globalObject);
 
 	// Copy the document and window properties to the Titanium object
 	SharedValue doc_value = frame_global->Get("document");
