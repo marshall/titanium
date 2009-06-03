@@ -130,7 +130,8 @@ void Installer::Finish()
 		if (!in_sudo_mode)
 		{
 			FILE *file;
-			string path = FileUtils::Join(this->app->path.c_str(), ".installed", NULL);
+			string dataPath = app->GetDataPath();
+			string path = FileUtils::Join(dataPath.c_str(), ".installed", NULL);
 			file = fopen(path.c_str(),"w"); 
 			fprintf(file, "\n");
 			fclose(file);
