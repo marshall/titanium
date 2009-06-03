@@ -96,8 +96,19 @@ Installer::Installer(vector<Job*> jobs, int installType) :
 
 	this->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 
-	GdkPixbuf* titanium_icon = gdk_pixbuf_new_from_xpm_data(titanium_xpm);
-	gtk_window_set_icon(GTK_WINDOW(this->window), titanium_icon);
+	gboolean windowHasIcon = FALSE;
+	if (!app->image.empty())
+	{
+		windowHasIcon = gtk_window_set_icon_from_file(
+			GTK_WINDOW(this->window),
+			app->image.c_str(),
+			NULL);
+	}
+	if (!windowHasIcon)
+	{
+		GdkPixbuf* titanium_icon = gdk_pixbuf_new_from_xpm_data(titanium_xpm);
+		gtk_window_set_icon(GTK_WINDOW(this->window), titanium_icon);
+	}
 
 	string title = this->app->name + " Installer";
 	gtk_window_set_title(GTK_WINDOW(this->window), title.c_str());
