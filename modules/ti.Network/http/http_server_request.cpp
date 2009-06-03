@@ -11,7 +11,9 @@
 namespace ti
 {
 	HttpServerRequest::HttpServerRequest(Host *host, SharedKMethod callback, Poco::Net::HTTPServerRequest &request) :
-		host(host),callback(callback),request(request)
+		host(host),
+		callback(callback),
+		request(request)
 	{
 		SetMethod("getMethod",&HttpServerRequest::GetMethod);
 		SetMethod("getVersion",&HttpServerRequest::GetVersion);
@@ -21,18 +23,34 @@ namespace ti
 		SetMethod("getHeader",&HttpServerRequest::GetHeader);
 		SetMethod("hasHeader",&HttpServerRequest::HasHeader);
 		SetMethod("read",&HttpServerRequest::Read);
+
+		// FIXME: This is a memory leak -- Poco manages the reference
+		// count of this objects, yet we need to pass it into Kroll.
+		// Things we could do:
+		// 1. Keep a static registration of all SharedPtr* to these objects
+		//    and lazily free them.
+		// - Why not: Poco keeps an AutoPtr to this object and may try to free
+		//   it before or after we do.
+		//
+		// 2. Bump the reference count and try to manage destruction ourselves.
+		// - Why not: We have no good way of knowing when Poco is done
+		//   with the object, so we can't ever safely delete it.
+		//
+		// Solution for now: leak.
+		// Solution for later: move from SharedPtr to AutoPtr
+		this->sharedPtr = new SharedPtr<HttpServerRequest>(this);
 	}
+
 	HttpServerRequest::~HttpServerRequest()
 	{
 	}
+
 	void HttpServerRequest::handleRequest(Poco::Net::HTTPServerRequest &request, Poco::Net::HTTPServerResponse &response)
 	{
-		SharedKObject req = SharedKObject(this);
-		SharedKObject resp = new HttpServerResponse(response);
 		ValueList args;
-		args.push_back(Value::NewObject(req));
-		args.push_back(Value::NewObject(resp));
-		host->InvokeMethodOnMainThread(callback,args);
+		args.push_back(Value::NewObject(*this->sharedPtr));
+		args.push_back(Value::NewObject(new HttpServerResponse(response)));
+		host->InvokeMethodOnMainThread(callback, args);
 	}
 	void HttpServerRequest::GetMethod(const ValueList& args, SharedValue result)
 	{

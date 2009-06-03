@@ -394,8 +394,8 @@ namespace ti
 			}
 			SharedValue totalValue = Value::NewInt(total);
 			binding->response = &res;
-			binding->ChangeState(2,!binding->shutdown&&binding->async); // headers received
-			binding->ChangeState(3,!binding->shutdown&&binding->async); // loading
+			binding->ChangeState(2); // headers received
+			binding->ChangeState(3); // loading
 
 			int count = 0;
 			char buf[8096];
@@ -472,13 +472,13 @@ namespace ti
 
 		binding->shutdown = true;
 		binding->Set("connected",Value::NewBool(false));
-		binding->ChangeState(4,!binding->shutdown&&binding->async); // closed
+		binding->ChangeState(4); // closed
 		binding->response = NULL; // must be done after change state
 		NetworkBinding::RemoveBinding(binding);
 #ifdef OS_OSX
 		[pool release];
 #endif
-
+		binding->self = NULL;
 	}
 	void HTTPClientBinding::Send(const ValueList& args, SharedValue result)
 	{
@@ -673,18 +673,26 @@ namespace ti
 	{
 		this->timeout = args.at(0)->ToInt();
 	}
-	void HTTPClientBinding::ChangeState(int readyState, bool wait)
+	void HTTPClientBinding::ChangeState(int readyState)
 	{
 		static Logger* logger = Logger::Get("Network.HTTPClient");
-		logger->Debug("BEFORE CHANGE STATE %d, waiting: %d",readyState,wait);
+		logger->Debug("BEFORE CHANGE STATE %d", readyState);
 		SET_INT_PROP("readyState",readyState)
+
+		// Don't call onreadystate change callbacks if we are using this
+		// symchronously. That would put us into deadlock.
+		if (!this->async)
+		{
+			return;
+		}
+
 		if (!readystate.isNull())
 		{
 			try
 			{
 				ValueList args;
 				args.push_back(this->self);
-				this->host->InvokeMethodOnMainThread(readystate,args,wait);
+				this->host->InvokeMethodOnMainThread(readystate, args, true);
 			}
 			catch (std::exception &ex)
 			{
@@ -701,7 +709,7 @@ namespace ti
 				{
 					ValueList args;
 					args.push_back(this->self);
-					this->host->InvokeMethodOnMainThread(this->onchange,args,wait);
+					this->host->InvokeMethodOnMainThread(this->onchange, args, true);
 				}
 				catch(std::exception &ex)
 				{

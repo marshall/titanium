@@ -61,7 +61,7 @@ namespace ti
 		DECLAREBOUNDMETHOD(GetResponseHeader)
 		DECLAREBOUNDMETHOD(SetTimeout)
 		
-		void ChangeState(int readyState, bool wait=true);
+		void ChangeState(int readyState);
 	};
 }
 
