@@ -338,13 +338,9 @@ static int totalJobs = 0;
 
 -(void)finishInstallation
 {
-	if ([self isVolumeReadOnly])
-	{
-		return;
-	}
 	// Write the .installed file
 	NSFileManager *fm = [NSFileManager defaultManager];
-	NSString* ifile = [NSString stringWithUTF8String:app->path.c_str()];
+	NSString* ifile = [NSString stringWithUTF8String:app->GetDataPath().c_str()];
 	ifile  = [ifile stringByAppendingPathComponent:@".installed"];
 	[fm createFileAtPath:ifile contents:[NSData data] attributes:nil];
 

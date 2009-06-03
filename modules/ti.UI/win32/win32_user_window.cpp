@@ -187,6 +187,7 @@ Win32UserWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		if (wParam == SIZE_MAXIMIZED)
 		{
 			window->FireEvent(MAXIMIZED);
+			window->FireEvent(RESIZED);
 		}
 		else if (wParam == SIZE_MINIMIZED)
 		{

@@ -106,5 +106,50 @@ describe("UI Module Tests",{
 				callback.passed();
 			}
 		}, 1000);
+	},
+	test_window_maximize_fires_resize_as_async: function(callback)
+	{
+		var w = Titanium.UI.getCurrentWindow().createWindow('app://blahblah.html');
+		w.open();
+
+		var resizedFired = false;
+		var maximizedFired = false;
+
+		w.addEventListener(function(eventName, eventData)
+		{
+			if (eventName == "resized")
+			{
+				resizedFired = true;
+			}
+			else if (eventName == "maximized")
+			{
+				maximizedFired = true;
+			}
+		});
+
+		var stageTwo = function()
+		{
+			w.close();
+			if (!maximizedFired)
+			{
+				callback.failed("Did not detect maximized message");
+			}
+			if (!resizedFired)
+			{
+				callback.failed("Did not detect resized message");
+			}
+			callback.passed();
+		}
+
+		setTimeout(function()
+		{
+			w.maximize();
+			setTimeout(function()
+			{
+				stageTwo();
+			}, 300);
+		}, 300);
+
+
 	}
 });

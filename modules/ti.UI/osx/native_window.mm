@@ -138,9 +138,10 @@
 {
 	[self fireWindowEvent:MINIMIZED];
 }
-- (void)windowDidDeminiaturize:(NSNotification*)notification
+- (BOOL)windowShouldZoom:(NSWindow*)window toFrame:(NSRect)proposedFrame
 {
 	[self fireWindowEvent:MAXIMIZED];
+	return YES;
 }
 - (void)setTransparency:(double)transparency
 {
