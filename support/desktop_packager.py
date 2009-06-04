@@ -81,7 +81,8 @@ class DesktopPackager(object):
 		dmg = os.path.join(self.options.destination, builder.appname)
 		temp_dmg = dmg+'_'
 
-#		volname = "/Volumes/%s" % builder.appname
+		app_icns = builder.app_icns
+
 		volname = os.path.join(self.options.destination,'mnt')
 		if os.path.exists(volname):
 			try:
@@ -118,7 +119,16 @@ class DesktopPackager(object):
 
 		imagedir = os.path.join(volname,'.background')
 		os.makedirs(imagedir)
-		builder.invoke("ditto \"%s/background.jpg\" \"%s\"" % (self.options.assets_dir,imagedir))
+		if self.options.dmg_background:
+			dmg_bg_ext = os.path.splitext(builder.dmg_background)[1]
+			print dmg_bg_ext
+			imgdest = os.path.join(imagedir,'background'+dmg_bg_ext)
+			print imgdest
+			print builder.dmg_background
+			builder.invoke("ditto \"%s\" \"%s\"" % (builder.dmg_background,imgdest))
+		else:
+			dmg_bg_ext = '.jpg'
+			builder.invoke("ditto \"%s/background.jpg\" \"%s\"" % (self.options.assets_dir,imagedir))
 
 		OSA = """
 tell application "Finder"
@@ -135,7 +145,7 @@ tell application "Finder"
 		delay 1 -- Sync
 		set icon size of the icon view options of container window to 128
 		set arrangement of the icon view options of container window to not arranged
-		set background picture of the icon view options of container window to file ".background:background.jpg"
+		set background picture of the icon view options of container window to file ".background:background%s"
 		set position of item "%s.app" to {120, 150}
 		set position of item "Applications" to {350, 150}
 		set the bounds of the container window to {50, 100, 520, 550}
@@ -148,16 +158,18 @@ tell application "Finder"
 	-- Sync
 	delay 5
 end tell
-""" % (os.path.abspath(volname), self.appname)
+""" % (os.path.abspath(volname), dmg_bg_ext, self.appname)
+		
 		
 		osa = os.path.join(self.options.destination,'osa')
 		osafile = open(osa,'w+')
 		osafile.write(OSA)
 		osafile.close()
 		self.log("Executing finder configuration ... one moment")
+		self.log("OSAscript: \n%s" % OSA)
 		builder.invoke("osascript \"%s\"" % osa)
 
-		builder.invoke("ditto \"%s/titanium.icns\" %s/.VolumeIcon.icns\"" % (self.options.assets_dir,volname))
+		builder.invoke("ditto \"%s\" \"%s/.VolumeIcon.icns\"" % (app_icns,volname))
 		builder.invoke("/Developer/Tools/SetFile -a C \"%s\"" % volname)
 		builder.invoke("/Developer/Tools/SetFile -a V \"%s/.background/background.jpg\"" % volname)
 
@@ -169,7 +181,6 @@ end tell
 		os.remove(temp_dmg+'.dmg')
 
 		self.log("osx packager created: \"%s.dmg\"" % dmg)
-
 
 		try:
 			builder.invoke("hdiutil detach \"%s\" 2>/dev/null" % volname)
