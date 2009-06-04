@@ -52,7 +52,7 @@ class DesktopBuilder(object):
 		# copy the boot
 		if options.platform == 'win32':
 			kboot = os.path.join(options.runtime_dir, 'template', 'kboot.exe')
-			options.executable = os.path.join(self.executable_dir, 'installer.exe')
+			options.executable = os.path.join(self.executable_dir, self.appname+'.exe')
 			shutil.copy(kboot, options.executable)
 		else:
 			kboot = os.path.join(options.runtime_dir, 'template', 'kboot')

@@ -162,9 +162,11 @@ def run(options):
 				os.system("kill -9 %d" % p.pid)
 		running = False	
 	
-	signal.signal(signal.SIGHUP, handler)
+	if get_platform() != 'win32':
+		signal.signal(signal.SIGHUP, handler)
+		signal.signal(signal.SIGQUIT, handler)
+		
 	signal.signal(signal.SIGINT, handler)
-	signal.signal(signal.SIGQUIT, handler)
 	signal.signal(signal.SIGABRT, handler)
 	signal.signal(signal.SIGTERM, handler)
 	

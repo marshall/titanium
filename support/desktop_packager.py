@@ -10,6 +10,7 @@
 #
 #
 import os, shutil, distutils.dir_util as dir_util, zipfile, tarfile, time, sys
+import glob
 
 class DesktopPackager(object):
 	def __init__(self, builder):
@@ -29,7 +30,8 @@ class DesktopPackager(object):
 
 	def create_zip(self, builder):
 		extractor = os.path.join(self.options.assets_dir, 'self_extractor.exe')
-		exe = os.path.join(self.options.destination,builder.options.executable)
+		#exe = os.path.join(self.options.destination,builder.options.executable)
+		exe = builder.options.executable
 		shutil.copy(extractor,exe)
 		builder.log("making win32 binary at %s, this will take a sec..." % exe)
 		zf = zipfile.ZipFile(exe, 'a', zipfile.ZIP_DEFLATED)
@@ -39,12 +41,16 @@ class DesktopPackager(object):
 			zf.write(f,'Microsoft.VC80.CRT/'+os.path.basename(f))
 
 		kboot = os.path.join(builder.options.runtime_dir, 'template', 'kboot.exe')
+		installer = os.path.join(builder.options.runtime_dir, 'installer', 'Installer.exe')
+		
 		zf.write(kboot,'template/kboot.exe')
-
-		for walk in os.walk(builder.base_dir):
+		zf.write(kboot, builder.appname + '.exe')
+		zf.write(installer, 'installer/Installer.exe')
+		for walk in os.walk(builder.options.appdir):
 			for file in walk[2]:
 				file = os.path.join(walk[0], file)
-				arcname = file.replace(builder.base_dir + '/', "")
+				arcname = file.replace(builder.options.appdir, "")
+				builder.log("Adding " + arcname)
 				zf.write(file, arcname)
 		zf.close()
 		return exe
