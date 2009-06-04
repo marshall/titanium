@@ -42,6 +42,7 @@ string componentInstallPath;
 string temporaryPath;
 bool doInstall = false;
 bool installStartMenuIcon = false;
+bool forceInstall = false;
 
 enum IType
 {
@@ -389,7 +390,7 @@ void ProcessFile(string fullPath, Progress *p)
 
 bool InstallApplication(Progress *p)
 {
-	if (!app->IsInstalled())
+	if (forceInstall || !app->IsInstalled())
 	{
 		p->SetLineText(2, string("Installing to ") + appInstallPath, true);
 		FileUtils::CreateDirectory(appInstallPath);
@@ -500,7 +501,7 @@ bool CreateLink(LPCSTR lpszPathObj, LPCSTR lpszPathLink, LPCSTR lpszDesc)
 
 bool FinishInstallation()
 {
-	if (!app->IsInstalled())
+	if (forceInstall || !app->IsInstalled())
 	{
 		string installedFile = FileUtils::Join(app->GetDataPath().c_str(), ".installed", NULL);
 		FILE* file = fopen(installedFile.c_str(), "w");
@@ -519,7 +520,7 @@ bool FinishInstallation()
 		DeleteFile(updateFile.c_str());
 	}
 
-	if (installStartMenuIcon && !app->IsInstalled())
+	if (installStartMenuIcon && (forceInstall || !app->IsInstalled()))
 	{
 		string newExe = FileUtils::Basename(exePath);
 		newExe = FileUtils::Join(appInstallPath.c_str(), newExe.c_str(), NULL);
@@ -558,7 +559,7 @@ int WINAPI WinMain(
 	vector<string> jobs;
 	string jobsFile;
 	bool quiet = false;
-
+	
 	for (int i = 1; i < argc; i++)
 	{
 		string arg = argv[i];
@@ -581,6 +582,10 @@ int WINAPI WinMain(
 		else if (arg == "-quiet")
 		{
 			quiet = true;
+		}
+		else if (arg == "-forceInstall")
+		{
+			forceInstall = true;
 		}
 		else
 		{

@@ -35,6 +35,9 @@ def get_from_tiapp(appdir,name,defv):
 
 def get_icon_from_tiapp(appdir):
 	return get_from_tiapp(appdir,'icon','default_app_logo.png')
+
+def get_dmg_background_from_tiapp(appdir):
+	return get_from_tiapp(appdir,'dmg_background',None)
 	
 def get_version_from_tiapp(appdir):
 	return get_from_tiapp(appdir,'version','1.0')
@@ -127,6 +130,10 @@ def desktop_setup(options,appdir):
 	
 	# assign icon
 	options.icon = get_icon_from_tiapp(appdir)
+	
+	# get the DMG background (OSX only)
+	if options.platform == 'osx':
+		options.dmg_background = get_dmg_background_from_tiapp(appdir)
 	
 	# convert this option
 	if options.package == 'false' or options.package == 'no':
@@ -248,7 +255,7 @@ if __name__ == '__main__':
 		print "An example of running this command:"
 		print
 		print " Build and then run in the current directory from a project in ~/tmp/myproject"
-		print "	> tibuild.py -d . -s /Library/Application\ Support/Titanium -r ~/tmp/myproject -a /Library/Application\ Support/Titanium/sdk/osx/0.4.0"
+		print "	> tibuild.py -d . -s /Library/Application\ Support/Titanium -r ~/tmp/myproject -a /Library/Application\ Support/Titanium/sdk/osx/0.4.0 myapp"
 		print
 		sys.exit(1)
 	appdir = os.path.abspath(os.path.expanduser(dequote(args[0])))
