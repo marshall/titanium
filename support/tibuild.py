@@ -23,15 +23,22 @@ def log(options,msg):
 	if options.verbose:
 		print msg
 
-def get_version_from_tiapp(appdir):
+def get_from_tiapp(appdir,name,defv):
 	f = os.path.join(appdir,'tiapp.xml')
 	if not os.path.exists(f):
 		print "Couldn't find tiapp.xml at: %s" % appdir
 		sys.exit(1)
 	xml = open(f).read()
-	m = re.search('<version>(.*?)</version>',xml)
+	m = re.search('<%s>(.*?)</%s>' % (name,name),xml)
+	if m==None: return defv
 	return str(m.group(1)).strip()
+
+def get_icon_from_tiapp(appdir):
+	return get_from_tiapp(appdir,'icon','default_app_logo.png')
 	
+def get_version_from_tiapp(appdir):
+	return get_from_tiapp(appdir,'version','1.0')
+			
 def examine_manifest(appdir):
 	f = os.path.join(appdir,'manifest')
 	if not os.path.exists(f):
@@ -117,6 +124,9 @@ def desktop_setup(options,appdir):
 	
 	# assign appdir
 	options.appdir = appdir
+	
+	# assign icon
+	options.icon = get_icon_from_tiapp(appdir)
 	
 	# convert this option
 	if options.package == 'false' or options.package == 'no':

@@ -52,6 +52,11 @@ Iain Sheppard
 cpIRC - C++ class based IRC protocol wrapper
 LGPL [8]
 
+Nicolas Weber
+makeicns - converts images to Apple's icns format
+Belongs to docerator, http://code.google.com/p/docerator/
+MIT [9]
+
 ==============================================================================
 [1] WebKit, KJS and related
 
@@ -272,6 +277,13 @@ Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+
+
+==============================================================================
+[9] makeicns - Converts images to Apple's icns format.
+
+Written by nicolasweber@gmx.de, released under MIT license.
+Belongs to docerator, http://code.google.com/p/docerator/
 
 
 ==============================================================================
