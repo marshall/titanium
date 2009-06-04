@@ -27,7 +27,7 @@ BOOL CALLBACK UnzipDialogProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam);
 BOOL UnzipWithProgress(const TCHAR *zipfn, const TCHAR *dest, HWND hprog);
 void PumpMessages();
 bool abort_p=false;
-
+std::string exeName = "";
 
 int WINAPI WinMain(HINSTANCE hInstance,HINSTANCE,LPSTR,int)
 //int main (int argc, char **argv)
@@ -124,7 +124,7 @@ BOOL CALLBACK UnzipDialogProc(HWND hwnd,UINT msg,WPARAM,LPARAM)
 				else
 				{
 					//run the bundled file
-					std::string fn = "installer.exe";
+					std::string fn = exeName;
 					size_t i = fn.rfind("\\");
 					if (i!=std::string::npos)
 					{
@@ -133,7 +133,7 @@ BOOL CALLBACK UnzipDialogProc(HWND hwnd,UINT msg,WPARAM,LPARAM)
 					std::ostringstream ostr;
 					ostr << tempdir << "\\" << fn;
 					ostr << " --force-install";
-					printf("%s\n", ostr.str().c_str());
+					
 					STARTUPINFO si;
 					PROCESS_INFORMATION pi;
 					ZeroMemory( &si, sizeof(si) );
@@ -185,7 +185,6 @@ BOOL CALLBACK UnzipDialogProc(HWND hwnd,UINT msg,WPARAM,LPARAM)
 
 BOOL UnzipWithProgress(const TCHAR *zipfn, const TCHAR *dest, HWND hprog)
 {
-	std::string exeName = "";
 	HZIP hz = OpenZip(zipfn,0);
 	ZIPENTRY ze;
 	GetZipItem(hz,-1,&ze);
