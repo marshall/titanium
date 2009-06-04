@@ -68,7 +68,12 @@ class DesktopBuilder(object):
 			shutil.copy(os.path.join(options.runtime_dir, 'template','MainMenu.nib'), self.lproj)
 			self.app_icns = os.path.join(self.lproj,'titanium.icns')
 			self.make_osx_icon(os.path.join(self.resources_dir,options.icon),self.app_icns)
-
+			if options.dmg_background:
+				bg = os.path.abspath(os.path.join(options.appdir,'Resources',options.dmg_background))
+				if os.path.exists(bg):
+					self.dmg_background = bg
+					log(options,"Found custom DMG background at %s" % bg)
+					
 		# copy the installer
 		if options.platform == 'osx':
 			installer = os.path.join(self.contents_dir,'installer','Installer App.app')
