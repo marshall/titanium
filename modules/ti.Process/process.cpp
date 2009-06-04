@@ -309,7 +309,6 @@ namespace ti
 
 	void Process::Terminate()
 	{
-		KR_DUMP_LOCATION
 		if (running)
 		{
 			this->running = false;
@@ -329,7 +328,6 @@ namespace ti
 
 	void Process::Set(const char *name, SharedValue value)
 	{
-		KR_DUMP_LOCATION
 		// We need to check the previous value of certain incomming values
 		// *before* we actually do the Set(...) on this object.
 		Poco::ScopedLock<Poco::Mutex> lock(outputBufferMutex);
