@@ -120,42 +120,15 @@ Titanium.AppCreator = {
 		var appExecutable = TFS.getFile(appDir, name + '.exe');
 		kboot.copy(appExecutable);
 		
-		// in win32 because of COM manifest crap, we gotta put
-		// the WebKit.dll and it's cohorts in the app folder
-		var localRuntime = TFS.getFile(appDir,'runtime');
-		localRuntime.createDirectory();
-		var dlls = runtime.getDirectoryListing();
-		for (var c=0;c<dlls.length;c++)
-		{
-			var dll = dlls[c];
-			if (dll.extension()=="dll" || dll.name()=="manifest")
-			{
-				dll.copy(localRuntime);
-			}
-		}
-		
 		// we also need to copy the MSVCRT for win xp
-		var localRuntimeMsvcrt = TFS.getFile(localRuntime, 'Microsoft.VC80.CRT');
 		var runtimeMsvcrt = TFS.getFile(runtime, 'Microsoft.VC80.CRT');
 		var localMsvcrt = TFS.getFile(appDir, 'Microsoft.VC80.CRT');
 		localMsvcrt.createDirectory(true);
-		localRuntimeMsvcrt.createDirectory(true);
 		var msvcrtResources = runtimeMsvcrt.getDirectoryListing();
 		for (var r=0;r<msvcrtResources.length;r++) {
 			//Titanium.API.debug("copying " + mresource.name() + " to " + localMsvcrt.path() + "...");
 			var mresource = msvcrtResources[r];
 			mresource.copy(localMsvcrt);
-			mresource.copy(localRuntimeMsvcrt);
-		}
-		
-		// also copy the inspector..
-		var runtimeInspector = TFS.getFile(runtime, "inspector");
-		var localInspector = TFS.getFile(localRuntime, "inspector");
-		localInspector.createDirectory(true);
-		var inspectorResources = runtimeInspector.getDirectoryListing();
-		for (var r = 0; r < inspectorResources.length; r++) {
-			var inspectorResource = inspectorResources[r];
-			inspectorResource.copy(localInspector);
 		}
 		
 		

@@ -7,7 +7,7 @@ describe("process tests",
 		
 		if (Titanium.platform == 'win32')
 		{
-			p = Titanium.Process.launch('C:\\Windows\\system32\\cmd.exe',['/c', 'dir', '/s']);
+			p = Titanium.Process.launch('C:\\Windows\\system32\\cmd.exe',['/c', 'dir']);
 		}
 		else
 		{
@@ -47,7 +47,7 @@ describe("process tests",
 		
 		if (Titanium.platform == 'win32')
 		{
-			p = Titanium.Process.launch('C:\\Windows\\system32\\cmd.exe',['/c', 'dir', '/s']);
+			p = Titanium.Process.launch('C:\\Windows\\system32\\cmd.exe',['/c', 'dir']);
 		}
 		else
 		{
