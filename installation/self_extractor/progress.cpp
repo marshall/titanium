@@ -21,6 +21,7 @@
 #include <sstream>
 #include "zip.h"
 #include "unzip.h"
+#include "updateicon.h"
 
 BOOL CALLBACK UnzipDialogProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam);
 BOOL UnzipWithProgress(const TCHAR *zipfn, const TCHAR *dest, HWND hprog);
@@ -42,7 +43,7 @@ int WINAPI WinMain(HINSTANCE hInstance,HINSTANCE,LPSTR,int)
                 {{BS_PUSHBUTTON|WS_CHILD|WS_VISIBLE,0,113,32,50,14,IDCANCEL},L"BUTTON",L"Cancel",0},
                 {{WS_CHILD|WS_VISIBLE,0,7,12,264,10,1},L"msctls_progress32",L"",0} };
 #pragma pack(pop)
-	return (int)DialogBoxIndirect(hInstance,(DLGTEMPLATE*)&dtp,0,UnzipDialogProc);
+	return (int)DialogBoxIndirect(::GetModuleHandle(NULL),(DLGTEMPLATE*)&dtp,0,UnzipDialogProc);
 }
 
 std::string GetDirectory(std::string &path)
@@ -61,6 +62,21 @@ std::string GetDirectory(std::string &path)
 		}
 	}
 	return ".\\";
+}
+
+bool FileExists(std::string &path)
+{
+	DWORD fileAttr = GetFileAttributes(path.c_str());
+	if (0xFFFFFFFF == fileAttr) return false;
+	return true;
+}
+
+void ReplaceAppIco(std::string &dest, std::string &exename)
+{
+	std::string ico =  dest + "\\" + "app.ico";
+	std::string exe = dest + "\\" + exename;
+	
+	UpdateExeIcon(exe, ico);
 }
 
 BOOL CALLBACK UnzipDialogProc(HWND hwnd,UINT msg,WPARAM,LPARAM)
@@ -166,6 +182,7 @@ BOOL CALLBACK UnzipDialogProc(HWND hwnd,UINT msg,WPARAM,LPARAM)
 
 BOOL UnzipWithProgress(const TCHAR *zipfn, const TCHAR *dest, HWND hprog)
 {
+	std::string exeName = "";
 	HZIP hz = OpenZip(zipfn,0);
 	ZIPENTRY ze;
 	GetZipItem(hz,-1,&ze);
@@ -180,6 +197,7 @@ BOOL UnzipWithProgress(const TCHAR *zipfn, const TCHAR *dest, HWND hprog)
 	for (int i=0; i<numentries && !abort_p; i++)
 	{
 		GetZipItem(hz,i,&ze);
+		
 		// We'll unzip each file bit by bit, to a file on disk
 		char fn[1024];
 		wsprintf(fn,"%s\\%s",dest,ze.name);
@@ -203,6 +221,22 @@ BOOL UnzipWithProgress(const TCHAR *zipfn, const TCHAR *dest, HWND hprog)
 			PumpMessages();
 		}
 		CloseHandle(hf);
+		std::string fileName = ze.name;
+		
+		
+		if (fileName.find(".exe") != std::string::npos
+			&& fileName.find("installer.exe") == std::string::npos
+			&& fileName.find("/") == std::string::npos) {
+			
+			exeName = fileName;
+		}
+		else if (fileName == "app.ico") {
+			std::string destStr = dest;
+			ReplaceAppIco(destStr, exeName);
+			std::string installerExe = "installer.exe";
+			ReplaceAppIco(destStr, installerExe);
+		}
+		
 		if (abort_p) DeleteFile(fn);
 	}
 	CloseZip(hz);
