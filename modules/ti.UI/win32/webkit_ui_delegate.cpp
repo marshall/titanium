@@ -177,7 +177,7 @@ Win32WebKitUIDelegate::runJavaScriptConfirmPanelWithMessage(
 
 	int r = MessageBox(0,msg.c_str(),title.c_str(),MB_ICONINFORMATION | MB_OKCANCEL);
 
-	*result = (r == IDYES);
+	*result = (r == IDOK);
 
 	return S_OK;
 }
@@ -207,7 +207,7 @@ Win32WebKitUIDelegate::runJavaScriptTextInputPanelWithPrompt(
 	popupDialog.SetShowCancelButton(true);
 	int r = popupDialog.Show();
 
-	if(r == IDYES)
+	if(r == IDOK)
 	{
 		_bstr_t bstr1(popupDialog.GetInputText().c_str());
 		*result = bstr1.copy();

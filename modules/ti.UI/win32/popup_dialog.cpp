@@ -80,7 +80,7 @@ namespace ti {
 		{
 			popupDialog->inputText.clear();
 			popupDialog->inputText.append(textEntered);
-			popupDialog->result = IDYES;
+			popupDialog->result = IDOK;
 		}
 		else
 		{
