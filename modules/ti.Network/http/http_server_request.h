@@ -35,7 +35,8 @@ namespace ti
 		DECLAREBOUNDMETHOD(GetHeader)
 		DECLAREBOUNDMETHOD(HasHeader)
 		DECLAREBOUNDMETHOD(Read)
-		
+
+		SharedPtr<HttpServerRequest>* sharedPtr;
 	};
 }
 
