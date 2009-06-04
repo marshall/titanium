@@ -7,24 +7,29 @@
 #include "process.h"
 #include "pipe.h"
 #include <Poco/Path.h>
-#define MAX_MEMORY_BUFFER 16384
+#include <Poco/RunnableAdapter.h>
+#include <Poco/ScopedLock.h>
+
+using Poco::RunnableAdapter;
 
 namespace ti
 {
-	Process::Process(ProcessBinding* parent, std::string& cmd, std::vector<std::string>& args) : 
-		thread1(0),thread2(0),thread3(0),thread1Running(false),
-		thread2Running(false),thread3Running(false),running(false),
-		pid(-1),errp(0),outp(0),inp(0),ran(false)
+	Process::Process(ProcessBinding* parent, std::string& cmd, std::vector<std::string>& args) :
+		running(false),
+		complete(false),
+		pid(-1),
+		exitCode(-1),
+		errp(0),
+		outp(0),
+		inp(0),
+		logger(Logger::Get("Process.Process"))
 	{
 		this->parent = parent;
 		this->errp = new Poco::Pipe();
 		this->outp = new Poco::Pipe();
 		this->inp = new Poco::Pipe();
 
-#ifdef DEBUG
-		std::cout << "Running process: " << cmd << std::endl;
-#endif
-
+		logger->Debug("Running process %s", cmd.c_str());
 		try
 		{
 			this->arguments = args;
@@ -34,267 +39,280 @@ namespace ti
 		{
 			throw ValueException::FromString(e.what());
 		}
-		
+
 		/**
-		 * @tiapi(property=True,type=string,name=Process.Process.command,version=0.2) The command used for the Process object
+		 * @tiapi(property=True,type=string,name=Process.Process.command,version=0.2)
+		 * @tiapi The command used for the Process object
 		 */
-		this->Set("command",Value::NewString(cmd));
+		this->SetString("command", cmd);
+
 		/**
-		 * @tiapi(property=True,type=integer,name=Process.Process.pid,version=0.2) The process id of the Process object
+		 * @tiapi(property=True,type=integer,name=Process.Process.pid,version=0.2)
+		 * @tiapi The process id of the Process object
 		 */
-		this->Set("pid",Value::NewNull());
+		this->SetNull("pid");
+
 		/**
-		 * @tiapi(property=True,type=boolean,name=Process.Process.running,version=0.2) The running status of the Process object
+		 * @tiapi(property=True,type=boolean,name=Process.Process.running,version=0.2)
+		 * @tiapi The running status of the Process object
 		 */
-		this->Set("running",Value::NewBool(false)); 
-		 
+		this->SetBool("running", false);
+
+		/**
+		 * @tiapi(property=True,type=object,name=Process.Process.err,version=0.2)
+		 * @tiapi The Pipe object of the error stream
+		 */
 		this->err = new Pipe(new Poco::PipeInputStream(*errp));
 		this->shared_error = new SharedKObject(this->err);
-		
+		this->SetObject("err", *shared_error);
+
 		/**
-		 * @tiapi(property=True,type=object,name=Process.Process.err,version=0.2) The Pipe object of the error stream
+		 * @tiapi(property=True,type=object,name=Process.Process.out,version=0.2)
+		 * @tiapi The Pipe object of the output stream
 		 */
-		this->Set("err",Value::NewObject(*shared_error));
-		
 		this->out = new Pipe(new Poco::PipeInputStream(*outp));
 		this->shared_output = new SharedKObject(this->out);
+		this->SetObject("out", *shared_output);
+
 		/**
-		 * @tiapi(property=True,type=object,name=Process.Process.out,version=0.2) The Pipe object of the output stream
+		 * @tiapi(property=True,type=object,name=Process.Process.in,version=0.2)
+		 * @tiapi The Pipe object of the input stream
 		 */
-		this->Set("out",Value::NewObject(*shared_output));
-		
 		this->in = new Pipe(new Poco::PipeOutputStream(*inp));
 		this->shared_input = new SharedKObject(this->in);
-		/**
-		 * @tiapi(property=True,type=object,name=Process.Process.in,version=0.2) The Pipe object of the input stream
-		 */
-		this->Set("in",Value::NewObject(*shared_input));
-		
-		/**
-		 * @tiapi(method=True,name=Process.Process.terminate,version=0.2) Terminates a running process
-		 */
-		this->SetMethod("terminate",&Process::Terminate);
-		
-		/**
-		 * @tiapi(property=True,type=integer,name=Process.Process.exitCode,version=0.4) The exit code or null if not yet exited
-		 */
-		this->Set("exitCode",Value::Null);
+		this->SetObject("in", *shared_input);
 
 		/**
-		 * @tiapi(property=True,type=method,name=Process.Process.onread,since=0.4) The function handler to call when sys out is read
+		 * @tiapi(method=True,name=Process.Process.terminate,version=0.2)
+		 * @tiapi Terminates a running process
 		 */
-		SET_NULL_PROP("onread")
+		this->SetMethod("terminate", &Process::Terminate);
 
 		/**
-		 * @tiapi(property=True,type=method,name=Process.Process.onexit,since=0.4) The function handler to call when the process exits
+		 * @tiapi(property=True,type=integer,name=Process.Process.exitCode,version=0.4)
+		 * @tiapi The exit code or null if not yet exited
 		 */
-		SET_NULL_PROP("onexit")
+		this->SetNull("exitCode");
 
-		// setup threads which can read output and also
-		// monitor the exit
-		this->thread1 = new Poco::Thread();
-		this->thread1->start(&Process::WaitExit,(void*)this);
+		/**
+		 * @tiapi(property=True,type=method,name=Process.Process.onread,since=0.4)
+		 * @tiapi The function handler to call when sys out is read
+		 */
+		this->SetNull("onread");
+
+		/**
+		 * @tiapi(property=True,type=method,name=Process.Process.onexit,since=0.4)
+		 * @tiapi The function handler to call when the process exits
+		 */
+		this->SetNull("onexit");
+
+		// setup threads which can read output and also monitor the exit
+		this->monitorAdapter = new RunnableAdapter<Process>(*this, &Process::Monitor);
+		this->exitMonitorThread.start(*monitorAdapter);
 	}
+
 	Process::~Process()
 	{
 		Terminate();
-		if (this->thread1)
+
+		if (this->exitMonitorThread.isRunning())
 		{
-			if (this->thread1Running)
+			try
 			{
-				try
-				{
-					this->thread1->join();
-				}
-				catch(...)
-				{
-				}
+				this->exitMonitorThread.join();
 			}
-			delete this->thread1;
-			this->thread1 = NULL;
+			catch (Poco::Exception& e)
+			{
+				logger->Error(
+					"Exception while try to join with exit monitor thread: %s",
+					e.displayText().c_str());
+			}
 		}
-		if (this->thread2)
+
+		if (this->stdOutThread.isRunning())
 		{
-			if (this->thread2Running)
+			try
 			{
-				try
-				{
-					this->thread2->join();
-				}
-				catch (...)
-				{
-				}
+				this->stdOutThread.join();
 			}
-			delete this->thread2;
-			this->thread2 = NULL;
+			catch (Poco::Exception& e)
+			{
+				logger->Error(
+					"Exception while try to join with stdout thread: %s",
+					e.displayText().c_str());
+			}
 		}
-		if (this->thread3)
+
+		if (this->stdErrorThread.isRunning())
 		{
-			if (this->thread3Running)
+			try
 			{
-				try
-				{
-					this->thread3->join();
-				}
-				catch(...)
-				{
-				}
+				this->stdErrorThread.join();
 			}
-			delete this->thread3;
-			this->thread3 = NULL;
+			catch (Poco::Exception& e)
+			{
+				logger->Error(
+					"Exception while try to join with stderr thread: %s",
+					e.displayText().c_str());
+			}
 		}
+
+		delete monitorAdapter;
+		delete stdOutAdapter;
+		delete stdErrorAdapter;
 		delete shared_output;
 		delete shared_input;
 		delete shared_error;
-		SET_NULL_PROP("onexit")
-		SET_NULL_PROP("onread")
 	}
+
 	void Process::StartReadThreads()
 	{
-		Logger::Get("Process")->Debug("Starting read threads");
-		if (this->thread2 == NULL)
+		this->logger->Debug("Starting output handler threads...");
+		if (!stdOutThread.isRunning())
 		{
-			this->thread2 = new Poco::Thread();
-			this->thread2->start(&Process::ReadOut,(void*)this);
+			this->stdOutAdapter = new RunnableAdapter<Process>(*this, &Process::ReadStdOut);
+			stdOutThread.start(*stdOutAdapter);
 		}
-		if (this->thread3 == NULL)
+
+		if (!stdErrorThread.isRunning())
 		{
-			this->thread3 = new Poco::Thread();
-			this->thread3->start(&Process::ReadErr,(void*)this);
+			RunnableAdapter<Process> adapter(*this, &Process::ReadStdError);
+			this->stdErrorAdapter = new RunnableAdapter<Process>(*this, &Process::ReadStdError);
+			stdErrorThread.start(*stdErrorAdapter);
 		}
 	}
-	void Process::WaitExit(void *data)
+
+	void Process::Monitor()
 	{
-		Process *process = static_cast<Process*>(data);
-		process->Set("running",Value::NewBool(true));
-		process->running = true;
-		int exitCode = -1;
+		this->Set("running", Value::NewBool(true));
+		this->running = true;
+
 		try
 		{
-			Poco::ProcessHandle ph = Poco::Process::launch(process->command,process->arguments,process->inp,process->outp,process->errp);
-			process->StartReadThreads();
-			process->pid = (int)ph.id();
-			process->Set("pid",Value::NewInt(process->pid));
-			exitCode = ph.wait();
-			process->Set("exitCode",Value::NewInt(exitCode));
-			Logger::Get("Process")->Debug("Finished running %s", process->command.c_str());
-			process->ran = true;
+			Poco::ProcessHandle ph = Poco::Process::launch(
+				this->command, this->arguments,
+				this->inp, this->outp, this->errp);
+			this->StartReadThreads();
+			this->pid = (int) ph.id();
+			this->Set("pid", Value::NewInt(this->pid));
+
+			this->exitCode = ph.wait();
+			this->Set("exitCode", Value::NewInt(this->exitCode));
+			logger->Debug("%s exited with return code %i", 
+				this->command.c_str(), this->exitCode);
 		}
 		catch (Poco::SystemException &se)
 		{
-			Logger::Get("Process")->Error("System Exception starting: %s, message: %s", process->command.c_str(), se.what());
+			logger->Error("System Exception starting: %s, message: %s",
+				this->command.c_str(), se.what());
 		}
 		catch (std::exception &e)
 		{
-			Logger::Get("Process")->Error("Exception starting: %s, message: %s", process->command.c_str(), e.what());
+			logger->Error("Exception starting: %s, message: %s",
+				this->command.c_str(), e.what());
 		}
-		process->running = false;
-		process->pid = -1;
-		process->Set("running",Value::NewBool(false));
-		SharedValue sv = process->Get("onexit");
-		if (sv->IsMethod())
+
+		this->Set("running", Value::NewBool(false));
+		this->running = false;
+
+		this->InvokeOnExitCallback();
+
+		// We must set complete to true after we call the callback, so
+		// that it is only called once -- see this->Set(...)
+		this->complete = true;
+
+		this->parent->Terminated(this);
+	}
+
+	void Process::InvokeOnExitCallback()
+	{
+		SharedValue sv = this->Get("onexit");
+		if (!sv->IsMethod())
 		{
-			ValueList args;
-			args.push_back(Value::NewInt(exitCode));
+			return;
+		}
+
+		ValueList args(Value::NewInt(this->exitCode));
+		SharedKMethod callback = sv->ToMethod();
+		this->parent->GetHost()->InvokeMethodOnMainThread(
+			callback, args, false);
+	}
+
+	void Process::InvokeOnReadCallback(bool isStdError)
+	{
+		Poco::ScopedLock<Poco::Mutex> lock(outputBufferMutex);
+		SharedValue sv = this->Get("onread");
+		if (!sv->IsMethod())
+		{
+			return;
+		}
+
+		std::string output;
+		if (isStdError)
+		{
+			output = stdErrorBuffer.str();
+			stdErrorBuffer.str("");
+		}
+		else
+		{
+			output = stdOutBuffer.str();
+			stdOutBuffer.str("");
+		}
+
+		if (!output.empty())
+		{
+			ValueList args(
+				Value::NewString(output),
+				Value::NewBool(isStdError));
 			SharedKMethod callback = sv->ToMethod();
-			process->parent->GetHost()->InvokeMethodOnMainThread(callback,args,false);
+			this->parent->GetHost()->InvokeMethodOnMainThread(
+				callback, args, false);
 		}
-		process->parent->Terminated(process);
 	}
-	void Process::ReadOut(void *data)
+
+	void Process::ReadStdOut()
 	{
-		Process *process = static_cast<Process*>(data);
-		ValueList a;
-		
-		while (process->running)
+		while (this->running)
 		{
-			SharedValue result = Value::NewString("");
-			process->out->Read(a,result);
-			
-			SharedValue sv = process->Get("onread");
-			if (!sv.isNull() && sv->IsMethod() && !result->IsNull())
+			Poco::ScopedLock<Poco::Mutex> lock(outputBufferMutex);
+			SharedValue result = Value::NewUndefined();
+			this->out->Read(ValueList(), result);
+
+			if (result->IsString())
 			{
-				ValueList args;
-				/*if (result->IsString() && process->out_buffer.size() > 0) {
-					std::string strdata = result->ToString();
-					strdata = process->out_buffer + strdata;
-					process->out_buffer = "";
-					result->SetString(strdata);
-				}*/
-				args.push_back(result);
-				args.push_back(Value::NewBool(false));
-				SharedKMethod callback = sv->ToMethod();
-				
-				try {
-					process->parent->GetHost()->InvokeMethodOnMainThread(callback,args,false);
-				} catch (std::exception &e) {
-					Logger::Get("Process")->Error("Caught exception on sending process output stream: %s", e.what());
-				}
-			}
-			else {
-				if (!result.isNull() && result->IsString()) {
-					if (process->out_buffer.size() >= MAX_MEMORY_BUFFER) {
-						process->out_buffer = result->ToString();
-					}
-					else {
-						process->out_buffer += result->ToString();
-					}
-				}
+				stdOutBuffer << result->ToString();
+				this->InvokeOnReadCallback(false);
 			}
 		}
-		process->thread2Running = false;
 	}
-	void Process::ReadErr(void *data)
+
+	void Process::ReadStdError()
 	{
-		Process *process = static_cast<Process*>(data);
-		ValueList a;
-		
-		while (process->running)
+		while (this->running)
 		{
-			SharedValue result = Value::NewString("");
-			process->err->Read(a,result);
-			SharedValue sv = process->Get("onread");
-			if (!sv.isNull() && sv->IsMethod() && !result->IsNull())
+			Poco::ScopedLock<Poco::Mutex> lock(outputBufferMutex);
+			SharedValue result = Value::NewUndefined();
+			this->err->Read(ValueList(), result);
+
+			if (result->IsString())
 			{
-				ValueList args;
-				/*if (result->IsString() && process->err_buffer.size() > 0) {
-					std::string strdata = result->ToString();
-					strdata = process->err_buffer + strdata;
-					process->err_buffer = "";
-					result->SetString(strdata);
-				}*/
-				args.push_back(result);
-				args.push_back(Value::NewBool(true));
-				SharedKMethod callback = sv->ToMethod();
-				try {
-					process->parent->GetHost()->InvokeMethodOnMainThread(callback,args,false);
-				} catch (std::exception &e) {
-					Logger::Get("Process")->Error("Caught exception on sending process error stream: %s", e.what());
-				}
-			}
-			else {
-				if (!result.isNull() && result->IsString()) {
-					if (process->err_buffer.size() >= MAX_MEMORY_BUFFER) {
-						process->err_buffer = result->ToString();
-					}
-					else {
-						process->err_buffer += result->ToString();
-					}
-				}
+				stdErrorBuffer << result->ToString();
+				this->InvokeOnReadCallback(true);
 			}
 		}
-		process->thread3Running = false;
 	}
+
 	void Process::Terminate(const ValueList& args, SharedValue result)
 	{
 		Terminate();
 	}
+
 	void Process::Terminate()
 	{
-		if (running && pid!=-1)
+		if (running)
 		{
-			running = false;
-#ifdef OS_WIN32			
+			this->running = false;
+#ifdef OS_WIN32
 			// win32 needs a kill to terminate process
 			Poco::Process::kill(this->pid);
 #else
@@ -303,43 +321,39 @@ namespace ti
 			// and handle their own signals
 			Poco::Process::requestTermination(this->pid);
 #endif			
-			this->Set("running",Value::NewBool(false));
+			this->Set("running", Value::NewBool(false));
 			this->parent->Terminated(this);
 		}
 	}
-	void Process::Bound(const char *name, SharedValue value)
+
+	void Process::Set(const char *name, SharedValue value)
 	{
-		if (std::string(name) == "onread")
+		// We need to check the previous value of certain incomming values
+		// *before* we actually do the Set(...) on this object.
+		Poco::ScopedLock<Poco::Mutex> lock(outputBufferMutex);
+		bool flushOnRead = 
+			(!strcmp("onread", name)) && (!this->Get("onread")->IsMethod());
+		bool flushOnExit = 
+			(!strcmp("onexit", name)) && (!this->Get("onexit")->IsMethod());
+
+
+		StaticBoundObject::Set(name, value);
+
+		if (flushOnRead)
 		{
-			if (!this->running && this->ran)
-			{
-				if (!value.isNull() && value->IsMethod()) {
-					if (out_buffer.size() > 0) {
-						ValueList args;
-						args.push_back(Value::NewString(out_buffer));
-						args.push_back(Value::NewBool(false));
-						this->parent->GetHost()->InvokeMethodOnMainThread(value->ToMethod(), args, true);
-						out_buffer = "";
-					}
-					if (err_buffer.size() > 0) {
-						ValueList args;
-						args.push_back(Value::NewString(err_buffer));
-						args.push_back(Value::NewBool(true));
-						this->parent->GetHost()->InvokeMethodOnMainThread(value->ToMethod(), args, true);
-						err_buffer = "";
-					}
-				}
-			}
+			// If we had no previous onread callback flush our output
+			// buffers, so that onread will be called even when it is
+			// attached after a process finishes executing.
+			this->InvokeOnReadCallback(false);
+			this->InvokeOnReadCallback(true);
 		}
-		else if (std::string(name) == "onexit") {
-			if (!this->running && this->ran) {
-				// call immediately
-				if (!value.isNull() && value->IsMethod()) {
-					ValueList args;
-					args.push_back(this->Get("exitCode"));
-					this->parent->GetHost()->InvokeMethodOnMainThread(value->ToMethod(), args, true);
-				}
-			}
+
+		// this->complete is the signal that monitor thread has already
+		// attempted to call the onexit callback. If it's false, the monitor
+		// thread will take care of calling it.
+		if (flushOnExit && this->complete)
+		{
+			this->InvokeOnExitCallback();
 		}
 	}
 }

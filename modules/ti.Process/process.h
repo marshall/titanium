@@ -11,6 +11,7 @@
 #include <Poco/Process.h>
 #include <Poco/Pipe.h>
 #include <Poco/Thread.h>
+#include <Poco/RunnableAdapter.h>
 #include <Poco/Mutex.h>
 #include <Poco/Condition.h>
 #include "pipe.h"
@@ -22,18 +23,23 @@ namespace ti
 	{
 	public:
 		Process(ProcessBinding* parent, std::string& command, std::vector<std::string>& args);
+
 	protected:
 		virtual ~Process();
+		virtual void Set(const char *name, SharedValue value);
+
 	private:
 		ProcessBinding *parent;
-		Poco::Thread *thread1;
-		Poco::Thread *thread2;
-		Poco::Thread *thread3;
-		bool thread1Running;
-		bool thread2Running;
-		bool thread3Running;
-		bool running, ran;
+		Poco::Thread exitMonitorThread;
+		Poco::Thread stdOutThread;
+		Poco::Thread stdErrorThread;
+		Poco::RunnableAdapter<Process>* monitorAdapter;
+		Poco::RunnableAdapter<Process>* stdOutAdapter;
+		Poco::RunnableAdapter<Process>* stdErrorAdapter;
+		bool running;
+		bool complete;
 		int pid;
+		int exitCode;
 		std::vector<std::string> arguments;
 		std::string command;
 		Pipe *in;
@@ -45,19 +51,19 @@ namespace ti
 		SharedKObject *shared_input;
 		SharedKObject *shared_output;
 		SharedKObject *shared_error;
-		std::string out_buffer;
-		std::string err_buffer;
+		std::ostringstream stdOutBuffer;
+		std::ostringstream stdErrorBuffer;
+		Logger* logger;
+		Poco::Mutex outputBufferMutex;
 
 		void Terminate(const ValueList& args, SharedValue result);
 		void Terminate();
-		static void WaitExit(void*);
-		static void ReadOut(void*);
-		static void ReadErr(void*);
-		
-	protected:
-		void Bound(const char *name, SharedValue value);
+		void Monitor();
+		void ReadStdOut();
+		void ReadStdError();
 		void StartReadThreads();
-		
+		void InvokeOnExitCallback();
+		void InvokeOnReadCallback(bool isStdError);
 	};
 }
 

@@ -59,7 +59,7 @@ namespace ti
 			os->write(data,len);
 			result->SetInt(len);
 		}
-		catch (Poco::WriteFileException &e)
+		catch (Poco::Exception &e)
 		{
 			throw ValueException::FromString(e.what());
 		}
@@ -88,7 +88,7 @@ namespace ti
 			buf = new char[size+1];
 			is->read(buf,size);
 			int count = is->gcount();
-			if (count <=0)
+			if (count <= 0)
 			{
 				result->SetNull();
 			}
@@ -99,7 +99,7 @@ namespace ti
 			}
 			delete [] buf;
 		}
-		catch (Poco::ReadFileException &e)
+		catch (Poco::Exception &e)
 		{
 			if (buf) delete[] buf;
 			throw ValueException::FromString(e.what());
