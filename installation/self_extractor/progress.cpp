@@ -133,7 +133,6 @@ BOOL CALLBACK UnzipDialogProc(HWND hwnd,UINT msg,WPARAM,LPARAM)
 					std::ostringstream ostr;
 					ostr << tempdir << "\\" << fn;
 					ostr << " --force-install";
-					MessageBox(NULL, ostr.str().c_str(), "app", MB_OK);
 					
 					STARTUPINFO si;
 					PROCESS_INFORMATION pi;
