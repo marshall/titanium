@@ -6,13 +6,14 @@
 import glob, re, os.path as path
 import fnmatch, os, sys
 import simplejson as json
+import traceback
 
 class GlobDirectoryWalker:
 	# a forward iterator that traverses a directory tree
 
-	def __init__(self, directory, pattern="*"):
+	def __init__(self, directory, patterns=['*']):
 		self.stack = [directory]
-		self.pattern = pattern
+		self.patterns = patterns
 		self.files = []
 		self.index = 0
 
@@ -31,8 +32,9 @@ class GlobDirectoryWalker:
 				fullname = os.path.join(self.directory, file)
 				if os.path.isdir(fullname) and not os.path.islink(fullname):
 					self.stack.append(fullname)
-				if fnmatch.fnmatch(file, self.pattern):
-					return fullname
+				for pattern in self.patterns:
+					if fnmatch.fnmatch(file, pattern):
+						return fullname
 
 def convert_type(value):
 	# trivial type conversions
@@ -123,38 +125,60 @@ def get_api_names(name):
 	tok.pop(0)
 	return module,'.'.join(tok)
 
+def get_last_method_before(method_index, start):
+	current_start = None
+
+	method_starts = method_index.keys()
+	method_starts.sort()
+	for method_start in method_starts:
+		print "%s %s" % (method_start, start)
+		if method_start > start:
+			break
+		else:
+			current_start = method_start
+
+	if current_start:
+		return method_index[current_start]
+	else:
+		return None
+
 def generate_api_coverage(dirs,fs):
 	api_pattern = '@tiapi\(([^\)]*)\)\s+(.*)'
 	arg_pattern = '@tiarg\(([^\)]*)\)\s+(.*)'
 	res_pattern = '@tiresult\(([^\)]*)\)\s+(.*)'
 	dep_pattern = '@tideprecated\(([^\)]*)\)\s+(.*)'
-	
-	extensions = ['h','cc','c','cpp','m','mm','js','py','rb']
 
-	files = []
+	context_sensitive_api_description = '@tiapi (.*)'
+	context_sensitive_arg_pattern = '@tiarg\[([^]]+)\](.*)'
+	context_sensitive_result_pattern = '@tiresult\[([^]]+)\](.*)'
+
+	files = set()
 	apis = {}
 	api_count = 0
 	file_count = 0
 	module_count = 0
 
-	for ext in extensions:
-		for dirname in dirs:
-			for i in GlobDirectoryWalker(dirname,'*.'+ext):
-				try:
-					files.index(i)
-				except:
-					files.append(i)
+	extensions = ['h','cc','c','cpp','m','mm','js','py','rb']
+	extensions = ['*.' + x for x in extensions]
+	for dirname in dirs:
+		print dirname
+		for i in GlobDirectoryWalker(dirname, extensions):
+			files.add(i)
 
 	for f in files:
 		fh = open(str(f),'r')
 		content = fh.read()
 		found = False
 		match = None
+
+		start_index_to_method = {}
+
 		try:
 			for m in re.finditer(api_pattern,content):
 				match = m
 				description,metadata = parse_pattern(m)
 				module_name,fn_name = get_api_names(metadata['name'])
+				print "adding %s -- %s" % (module_name, fn_name)
 				if not apis.has_key(module_name):
 					apis[module_name] = {}
 					module_count+=1
@@ -163,6 +187,44 @@ def generate_api_coverage(dirs,fs):
 					apis[module_name][fn_name]=api
 					api_count+=1
 					found = True
+
+					# Record the index of the start of this match so we can
+					# use context sensitive arguments, etc later.
+					start_index_to_method[m.start()] = api
+
+			for m in re.finditer(context_sensitive_arg_pattern, content):
+				match = m
+				api = get_last_method_before(start_index_to_method, m.start())
+				if not api: continue
+
+				print m.group(1)
+				bits = m.group(1).split(',', 2)
+				metadata = {}
+				metadata['for'] = api.name
+				metadata['type'] = bits[0].strip()
+				metadata['name'] = bits[1].strip()
+				metadata['description'] = m.group(2).strip()
+				if len(bits) > 2: metadata['optional'] = True
+				api.add_argument(APIArgument(metadata, metadata['description']))
+
+			for m in re.finditer(context_sensitive_result_pattern, content):
+				match = m
+				api = get_last_method_before(start_index_to_method, m.start())
+				if not(api): continue
+
+				metadata = {}
+				metadata['type'] = m.group(1).strip()
+				metadata['description'] = m.group(2).strip()
+				metadata['for'] = api.name
+				api.set_return_type(APIReturnType(metadata, metadata['description']))
+
+			for m in re.finditer(context_sensitive_api_description, content):
+				match = m
+				description = m.group(1)
+				api = get_last_method_before(start_index_to_method, m.start())
+				if api:
+					api['description'] += ' ' + description.strip()
+
 			for m in re.finditer(arg_pattern,content):
 				match = m
 				description,metadata = parse_pattern(m)
@@ -183,11 +245,13 @@ def generate_api_coverage(dirs,fs):
 				api.set_deprecated(description,metadata['version'])
 			if found:
 				file_count+=1
-		except:
+		except Exception, e:
 			print "Exception parsing API metadata in file: %s" % str(f)
+			#print e
+			#print traceback.print_tb(sys.exc_info()[2])
 			if match:
 				print "Error was for: %s" % str(match.group(0))
-			sys.exit(1)
+			raise
 
 	fs.write(json.dumps(apis, sort_keys=True, indent=4))
 

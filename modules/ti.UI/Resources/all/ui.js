@@ -135,10 +135,11 @@
 		}
 
 		/**
-		 * @tiapi(method=True,name=UI.Dialog.getDialogParameter,since=0.4) get an incoming UI dialog parameter
-		 * @tiarg(for=UI.getDialogParam,name=name,type=string) name of the parameter
-		 * @tiarg(for=UI.getDialogParam,name=default,type=string,optional=True) default value if not found
-		 * @tiresult(for=UI.getDialogParam,type=string) result
+		 * @tiapi(method=True,name=UI.Dialog.getDialogParameter,since=0.4)
+		 * @tiapi Get an incoming UI dialog parameter
+		 * @tiarg[string, name] Name of the parameter
+		 * @tiarg[string, value] Default value of the parameter
+		 * @tiresult[value] The parameter
 		 */
 		dialogWindow.getDialogParameter = function(name, defaultValue)
 		{

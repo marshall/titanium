@@ -8,7 +8,7 @@ def apicoverage_builder(target, source, env):
 	print 'Building API coverage report...',
 	sys.stdout.flush()
 	f = open(str(target[0]), 'w')
-	apicoverage.generate_api_coverage('.',f)
+	apicoverage.generate_api_coverage(['kroll', 'modules'], f)
 	print 'done'
 
 build.env.Append(BUILDERS = {'APICoverage' : Builder(
