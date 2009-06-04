@@ -139,7 +139,7 @@ class DesktopBuilder(object):
 	def make_osx_icon(self,icon,dest):
 		makeicns = os.path.join(self.options.assets_dir,'makeicns')
 		if os.path.exists(makeicns):
-			self.log('"%s" -in "%s" -out "%s"' % (makeicns,icon,dest))
+			if self.options.verbose: self.log('"%s" -in "%s" -out "%s"' % (makeicns,icon,dest))
 			os.system('"%s" -in "%s" -out "%s"' % (makeicns,icon,dest))
 
 	def invoke(self,cmd):
