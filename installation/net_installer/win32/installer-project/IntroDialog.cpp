@@ -28,6 +28,7 @@ extern string runtimeHome;
 extern string appInstallPath;
 extern bool doInstall;
 extern bool installStartMenuIcon;
+extern bool forceInstall;
 
 extern wstring StringToWString(string);
 
@@ -112,7 +113,7 @@ void IntializeDialog(HWND hwnd)
 	}
 
 	// Hide installation location controls when this isn't a full app installation
-	if (app->IsInstalled())
+	if (forceInstall || app->IsInstalled())
 	{
 		::ShowWindow(installLocationButton , SW_HIDE);
 		::ShowWindow(startMenuCheck , SW_HIDE);

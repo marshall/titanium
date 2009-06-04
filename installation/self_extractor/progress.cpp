@@ -30,6 +30,7 @@ bool abort_p=false;
 
 
 int WINAPI WinMain(HINSTANCE hInstance,HINSTANCE,LPSTR,int)
+//int main (int argc, char **argv)
 {
 	InitCommonControls();
 #pragma pack(push,1)
@@ -131,6 +132,8 @@ BOOL CALLBACK UnzipDialogProc(HWND hwnd,UINT msg,WPARAM,LPARAM)
 					}
 					std::ostringstream ostr;
 					ostr << tempdir << "\\" << fn;
+					ostr << " --force-install";
+					printf("%s\n", ostr.str().c_str());
 					STARTUPINFO si;
 					PROCESS_INFORMATION pi;
 					ZeroMemory( &si, sizeof(si) );
