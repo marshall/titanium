@@ -71,9 +71,9 @@ bool FileExists(std::string &path)
 	return true;
 }
 
-void ReplaceAppIco(std::string &dest, std::string &exename)
+void ReplaceAppIco(std::string dest, std::string exename)
 {
-	std::string ico =  dest + "\\" + "app.ico";
+	std::string ico =  dest + "\\Resources\\app.ico";
 	std::string exe = dest + "\\" + exename;
 	
 	UpdateExeIcon(exe, ico);
@@ -223,18 +223,15 @@ BOOL UnzipWithProgress(const TCHAR *zipfn, const TCHAR *dest, HWND hprog)
 		CloseHandle(hf);
 		std::string fileName = ze.name;
 		
-		
 		if (fileName.find(".exe") != std::string::npos
 			&& fileName.find("installer.exe") == std::string::npos
 			&& fileName.find("/") == std::string::npos) {
 			
 			exeName = fileName;
 		}
-		else if (fileName == "app.ico") {
-			std::string destStr = dest;
-			ReplaceAppIco(destStr, exeName);
-			std::string installerExe = "installer.exe";
-			ReplaceAppIco(destStr, installerExe);
+		else if (fileName == "Resources/app.ico") {
+			ReplaceAppIco(dest, exeName);
+			ReplaceAppIco(dest, "installer\\Installer.exe");
 		}
 		
 		if (abort_p) DeleteFile(fn);
