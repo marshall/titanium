@@ -17,11 +17,6 @@ def package_developer(target, source, env):
 		url='http://appcelerator.org',
 		sdk=True)
 
-	# Titanium Developer should depend on all installed modules
-	# so that all modules will be installed when it first starts.
-	# modules = []
-	# developer.set_modules(modules)
-
 	# Create the basic application shell
 	package_dist = True
 	if 'PACKAGE_DIST' in env:
@@ -34,18 +29,14 @@ def package_developer(target, source, env):
 
 	if package_dist:
 		# Copy the zip files from the dist directory to developer.contents/dist
-		print "    -> Copying zips from %s to %s" % (build.dist_dir, p.join(developer.contents, 'dist'))
-		futils.CopyTree(build.dist_dir, p.join(developer.contents, 'dist'), filter=lambda x: not p.isdir(x) and x.endswith('.zip'))
+		print "    -> Copying sdk zip from %s to %s" % (build.dist_dir, p.join(developer.contents, 'dist'))
+		futils.CopyToDir(p.join(build.dist_dir, "sdk-" + build.version + ".zip"), p.join(developer.contents, 'dist'))
 
 	# The SDK installer application is staged.
 	# -- so now we do pre-package processing
 	to_copy = ['tiapp.xml', 'LICENSE.txt']
 	for item in to_copy:
 		futils.CopyToDir(p.join(cwd, item), developer.contents)
-	
-	# Copy in common js files into all applications
-	common_js = p.join(build.titanium_source_dir, 'installation', 'common', 'js')
-	futils.CopyTree(common_js, p.join(developer.contents, 'Resources', 'js'))
 
 	# Don't mark this application as installed, because we want
 	# the appinstaller to run when it is first executed

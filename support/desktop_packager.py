@@ -24,7 +24,7 @@ class DesktopPackager(object):
 			if self.options.platform == 'osx':
 				self.package = self.create_dmg(builder)
 			elif builder.options.platform == 'linux':
-				self.package = self.create_sea(builder)
+				self.package = self.create_tgz(builder)
 			elif builder.options.platform == 'win32':
 				self.package = self.create_zip(builder)
 
@@ -61,7 +61,7 @@ class DesktopPackager(object):
 			for file in walk[2]:
 				callback(os.path.join(walk[0], file))
 				
-	def create_sea(self, builder):
+	def create_tgz(self, builder):
 		outtarfile = os.path.join(builder.options.destination, builder.appname + '.tgz')
 		tar = tarfile.open(outtarfile, 'w:gz')
 		def tarcb(f):
@@ -69,19 +69,8 @@ class DesktopPackager(object):
 			tar.add(f, arcname)
 		self.walk_dir(builder.base_dir, tarcb)
 		tar.close()
+		return outtarfile
 
-		outfile = os.path.join(builder.options.destination, builder.appname + '.bin')
-		out = open(outfile, 'wb')
-		extractor = open(os.path.join(builder.options.assets_dir, 'self_extracting.sh'), 'r').read()
-
-		sane_name = builder.appname.replace("\"", "\\\"")
-		extractor = extractor.replace('APPNAME', sane_name)
-		out.write(extractor)
-		out.write(open(outtarfile, 'rb').read())
-		out.close()
-
-		return outfile
-		
 	def create_dmg(self,builder):	
 
 		dmg = os.path.join(self.options.destination, builder.appname)
