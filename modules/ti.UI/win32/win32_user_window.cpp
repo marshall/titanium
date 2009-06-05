@@ -714,7 +714,7 @@ void Win32UserWindow::SetBounds(Bounds bounds)
 	boundsRect.top = bounds.y;
 	boundsRect.bottom = bounds.y + bounds.height;
 	
-	if (IsUsingChrome()) {
+	if (this->config->IsUsingChrome()) {
 		AdjustWindowRect(&boundsRect, GetWindowLong(window_handle, GWL_STYLE), !menu.isNull());
 		this->chromeWidth = boundsRect.right - boundsRect.left - (int)bounds.width;
 		this->chromeHeight = boundsRect.bottom - boundsRect.top - (int)bounds.height;
@@ -788,7 +788,8 @@ SetWindowLong(wnd, GWL_STYLE, window_style);
 
 void Win32UserWindow::SetResizable(bool resizable)
 {
-	SetGWLFlag(window_handle, WS_OVERLAPPEDWINDOW, this->config->IsUsingChrome() && !resizable);
+	SetGWLFlag(window_handle, WS_SIZEBOX, this->config->IsUsingChrome() && resizable);
+	this->SetupSize();
 }
 
 void Win32UserWindow::SetMaximizable(bool maximizable)
