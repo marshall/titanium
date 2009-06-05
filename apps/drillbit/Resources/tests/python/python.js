@@ -161,4 +161,8 @@ describe("Python Tests",
 	{
 		value_of(test_js_type_bool(false)).should_be_true();
 	},
+	test_py_override_delegators: function()
+	{
+		value_of(Titanium.UI.currentWindow).should_be_object();
+	},
 });
