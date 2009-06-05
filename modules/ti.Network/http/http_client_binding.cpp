@@ -635,12 +635,12 @@ namespace ti
 		SharedValue v = this->Get("onreadystatechange");
 		if (v->IsMethod())
 		{
-			this->readystate = v->ToMethod()->Get("call")->ToMethod();
+			this->readystate = v->ToMethod();
 		}
 		SharedValue vc = this->Get("onchange");
 		if (vc->IsMethod())
 		{
-			this->onchange = vc->ToMethod()->Get("call")->ToMethod();
+			this->onchange = vc->ToMethod();
 		}
 		this->ChangeState(1); // opened
 	}
@@ -692,7 +692,9 @@ namespace ti
 			{
 				ValueList args;
 				args.push_back(this->self);
-				this->host->InvokeMethodOnMainThread(readystate, args, true);
+				SharedKMethod callMethod = this->readystate->Get("call")->ToMethod();
+				
+				this->host->InvokeMethodOnMainThread(callMethod, args, true);
 			}
 			catch (std::exception &ex)
 			{
@@ -709,7 +711,8 @@ namespace ti
 				{
 					ValueList args;
 					args.push_back(this->self);
-					this->host->InvokeMethodOnMainThread(this->onchange, args, true);
+					SharedKMethod callMethod = this->onchange->Get("call")->ToMethod();
+					this->host->InvokeMethodOnMainThread(callMethod, args, true);
 				}
 				catch(std::exception &ex)
 				{
