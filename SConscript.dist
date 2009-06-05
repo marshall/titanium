@@ -64,6 +64,9 @@ def build_sdk(target, source, env):
 	bundleSupport(supportDir)
 	bundleSupport(platformSupportDir)
 	
+	if build.is_win32():
+		sdkZip.write(os.path.join(build.dir, 'self_extractor.exe'), '/'.join(['sdk', build.os, baseVersion, 'self_extractor.exe']))
+	
 	futils.ZipDir(path.join(build.dir, 'include'), sdkZip, dest_path='sdk/%s/%s/include' % (build.os, baseVersion))
 	sdkZip.close()
 
