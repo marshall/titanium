@@ -282,6 +282,8 @@ void Win32UserWindow::InitWebKit()
 			default: createError << "Unknown Error: " << hr; break;
 		}
 		logger->Error(createError.str());
+		MessageBox(NULL, createError.str().c_str(), "Error Initializing WebKit", MB_ICONERROR | MB_OK);
+		exit(-1);
 	}
 
 	// set the custom user agent for Titanium
