@@ -78,7 +78,7 @@ namespace ti
 		char *buf = NULL;
 		try
 		{
-			int size = 8192;
+			int size = 128;
 			// allow the size of the returned buffer to be 
 			// set by the caller - defaults to 1024 if not specified
 			if (args.size() > 0 && args.at(0)->IsInt())
@@ -102,6 +102,7 @@ namespace ti
 		catch (Poco::Exception &e)
 		{
 			if (buf) delete[] buf;
+			Logger::Get("Process.Pipe")->Error(e.what());
 			throw ValueException::FromString(e.what());
 		}
 	}
