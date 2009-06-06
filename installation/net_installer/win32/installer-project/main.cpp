@@ -245,7 +245,14 @@ bool DownloadURL(Progress *p, HINTERNET hINet, std::wstring url, std::wstring ou
 	return !failed;
 }
 
-void Install(IType type, string name, string version, string path)
+void UnzipProgress(char *message, int current, int total, void *data)
+{
+	Progress* progress = (Progress*)data;
+	progress->SetLineText(2, message, true);
+	progress->Update(current, total);
+}
+
+void Install(IType type, Progress *progress, string name, string version, string path)
 {
 	string destination;
 	if (type == MODULE)
@@ -273,7 +280,7 @@ void Install(IType type, string name, string version, string path)
 
 	// Recursively create directories
 	FileUtils::CreateDirectory(destination, true);
-	FileUtils::Unzip(path, destination);
+	FileUtils::Unzip(path, destination, &UnzipProgress, (void*)progress);
 }
 
 void ProcessUpdate(Progress *p, HINTERNET hINet)
@@ -291,7 +298,7 @@ void ProcessUpdate(Progress *p, HINTERNET hINet)
 	if (downloaded)
 	{
 		p->SetLineText(2, string("Installing ") + name + "-" + version + "...", true);
-		Install(UPDATE, name, version, path);
+		Install(UPDATE, p, name, version, path);
 	}
 }
 
@@ -342,7 +349,7 @@ void ProcessURL(string url, Progress *p, HINTERNET hINet)
 	if (downloaded)
 	{
 		p->SetLineText(2, string("Installing ") + name + "-" + version + "...", true);
-		Install(type, name, version, path);
+		Install(type, p, name, version, path);
 	}
 }
 
@@ -385,7 +392,7 @@ void ProcessFile(string fullPath, Progress *p)
 	version = path.substr(start, end - start);
 
 	p->SetLineText(2, string("Installing ") + name + "-" + version + "...", true);
-	Install(type, name, version, fullPath);
+	Install(type, p, name, version, fullPath);
 }
 
 bool InstallApplication(Progress *p)
