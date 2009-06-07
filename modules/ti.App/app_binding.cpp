@@ -240,8 +240,7 @@ namespace ti
 		const SharedApplication app = this->host->GetApplication();
 		std::string stream = app->stream;
 		
-		// TODO: switch to HTTPS once the ti.Network XHR supports it
-		std::string url = "http://api.appcelerator.net/";
+		std::string url = "https://api.appcelerator.net/";
 		if (stream == "production")
 		{
 			url+="p/v1";
