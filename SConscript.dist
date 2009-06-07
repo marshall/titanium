@@ -4,7 +4,7 @@ import os.path as path, futils, os, zipfile, sys
 # Network installable zip files for distribution. We must
 # encase this in a builder because the files necessary for zipping
 # don't exist when this file is processed.
-excludes = ['.pdb', '.exp', '.ilk', '.db', '.gitignore']
+excludes = ['.pdb', '.exp', '.ilk', '.db', '.gitignore','.psd']
 def build_dist_zips(target, source, env):
 	
 	f = path.join(build.dist_dir, 'runtime-%s.zip' % build.version)
