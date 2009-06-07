@@ -116,10 +116,7 @@ class DesktopPackager(object):
 		os.makedirs(imagedir)
 		if self.options.dmg_background:
 			dmg_bg_ext = os.path.splitext(builder.dmg_background)[1]
-			print dmg_bg_ext
 			imgdest = os.path.join(imagedir,'background'+dmg_bg_ext)
-			print imgdest
-			print builder.dmg_background
 			builder.invoke("ditto \"%s\" \"%s\"" % (builder.dmg_background,imgdest))
 		else:
 			dmg_bg_ext = '.jpg'
@@ -141,8 +138,8 @@ tell application "Finder"
 		set icon size of the icon view options of container window to 128
 		set arrangement of the icon view options of container window to not arranged
 		set background picture of the icon view options of container window to file ".background:background%s"
-		set position of item "%s.app" to {120, 150}
-		set position of item "Applications" to {350, 150}
+		set position of item "%s.app" to {120, 180}
+		set position of item "Applications" to {350, 180}
 		set the bounds of the container window to {50, 100, 520, 550}
 		set shows item info of the icon view options of container window to false
 		set position of the container window to {395, 190}

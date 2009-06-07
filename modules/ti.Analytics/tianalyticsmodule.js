@@ -274,11 +274,14 @@
 		
 		var width = 450;
 		var height = 170;
+		var notes_url = null;
 	
 		if (updateSpec.release_notes)
 		{
 			width = 600;
 			height = 350;
+			// FOR NOW, turn off until we can clean up UI
+			// notes_url = updateSpec.release_notes;
 		}
 	
 		// ok, we'll handle it then...
@@ -292,7 +295,7 @@
 				'icon':'file://'+Titanium.App.getIcon(),
 				'ver_from':Titanium.App.getVersion(),
 				'ver_to':updateSpec.version,
-				'notes_url':updateSpec.release_notes
+				'notes_url':notes_url 
 			},
 			'onclose':function(result)
 			{
