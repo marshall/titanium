@@ -23,7 +23,7 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
 //
-// TEXTINCLUDE
+// TEXTINCLUDEs
 //
 
 1 TEXTINCLUDE 
@@ -96,6 +96,14 @@ BEGIN
         TOPMARGIN, 7
         BOTTOMMARGIN, 291
     END
+
+    IDD_UPDATEDIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 349
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 115
+    END
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -110,7 +118,7 @@ STYLE DS_SETFONT | DS_MODALFRAME | DS_SETFOREGROUND | DS_FIXEDSYS | WS_POPUP | W
 CAPTION "Titanium Installer"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "Run",IDC_RUN,293,277,50,14
+    DEFPUSHBUTTON   "Install",IDC_RUN,293,277,50,14
     PUSHBUTTON      "Cancel",IDC_CANCEL,237,277,50,14
     CONTROL         "Static",IDC_NAME_LABEL,"Static",SS_LEFTNOWORDWRAP | WS_GROUP,76,7,261,20
     LTEXT           "Version:",IDC_STATIC,76,28,36,8
@@ -130,6 +138,19 @@ BEGIN
     CONTROL         "",IDC_LICENSETEXT,"RichEdit20A",ES_MULTILINE | ES_READONLY | WS_VSCROLL | WS_TABSTOP,6,76,337,143,WS_EX_STATICEDGE
 END
 
+IDD_UPDATEDIALOG DIALOGEX 0, 0, 356, 122
+STYLE DS_SETFONT | DS_MODALFRAME | DS_SETFOREGROUND | DS_FIXEDSYS | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "Updates Available"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         140,IDC_STATIC,"Static",SS_BITMAP,6,7,52,48
+    CONTROL         "The following components have updates available:",IDC_NAME_LABEL,
+                    "Static",SS_LEFTNOWORDWRAP | WS_GROUP,74,7,261,20
+    CONTROL         "",IDC_UPDATELIST,"SysTreeView32",TVS_FULLROWSELECT | WS_BORDER | WS_TABSTOP,73,23,276,69,WS_EX_TRANSPARENT
+    DEFPUSHBUTTON   "Install Updates",IDC_UPDATEINSTALL,234,97,57,18
+    PUSHBUTTON      "Cancel",IDC_UPDATECANCEL,295,98,54,17
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -137,6 +158,7 @@ END
 //
 
 IDB_BITMAP1             BITMAP                  "titanium.bmp"
+IDB_UPDATE              BITMAP                  "update.bmp"
 #endif    // English (U.S.) resources
 /////////////////////////////////////////////////////////////////////////////
 

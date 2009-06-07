@@ -6,10 +6,11 @@ Import('build')
 Env = build.env.Clone()
 Env.Append(CPPDEFINES=['USE_NO_EXPORT=1'])
 
-Env.Append(LIBS=['wininet', 'urlmon', 'comdlg32', 'ole32', 'kernel32', 'user32', 'shell32', 'advapi32', 'gdi32', 'iphlpapi'])
+Env.Append(LIBS=['wininet', 'urlmon', 'comctl32', 'comdlg32', 'ole32', 'kernel32', 'user32', 'shell32', 'advapi32', 'gdi32', 'iphlpapi'])
 build.add_thirdparty(Env, 'poco')
 
 Env.Append(CPPPATH=['C:\\Program Files\\Microsoft Visual Studio 8\\VC\\atlmfc\\include'])
+Env.Append(LIBPATH=['C:\\Program Files\\Microsoft Visual Studio 8\\VC\\atlmfc\\lib'])
 
 ccf = Env['CCFLAGS']
 if '/MD' in ccf: ccf.remove('/MD')
@@ -17,7 +18,7 @@ ccf.append('/MT')
 ccf.append('/Os')
 ccf.append('/O1')
 Env.Append(CCFLAGS=ccf)
-
+#Env.Append(LINKFLAGS=['/SUBSYSTEM:CONSOLE'])
 sources = Glob("installer-project/*.cpp") + Env.RES("installer-project/progress.rc")
 out_file = path.join(build.runtime_build_dir, 'installer', 'Installer.exe')
 
