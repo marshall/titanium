@@ -18,6 +18,7 @@
 #include "Progress.h"
 #include "Resource.h"
 #include "IntroDialog.h"
+#include "UpdateDialog.h"
 #include "api/utils/utils.h"
 
 using std::string;
@@ -52,6 +53,12 @@ enum IType
 	SDK,
 	MOBILESDK,
 	UNKNOWN
+};
+
+class Job
+{
+public:
+	std::string name, version, url;
 };
 
 wstring StringToWString(string in)
@@ -141,33 +148,31 @@ void MyCopyRecursive(string &dir, string &dest, string exclude)
 	}
 }
 
-std::wstring ProgressString(DWORD size, DWORD total)
+std::wstring SizeString(DWORD size)
 {
-	char str[1024];
+	char str[512];
 
 #define KB 1024
 #define MB KB * 1024
 
-	if (total < KB) {
-		sprintf(str, "%0.2f of %0.2f bytes", size, total);
+	if (size < KB) {
+		sprintf(str, "%0.2f bytes", size);
 	}
 
 	else if (size < MB) {
-		double totalKB = total/1024.0;
 		double sizeKB = size/1024.0;
-		sprintf(str, "%0.2f of %0.2f KB", sizeKB, totalKB);
+		sprintf(str, "%0.2f KB", sizeKB);
 	}
 	
 	else {
 		// hopefully we shouldn't ever need to count more than 1023 in a single file!
-		double totalMB = total/1024.0/1024.0;
 		double sizeMB = size/1024.0/1024.0;
-		sprintf(str, "%0.2f of %0.2f MB", size, total);
+		sprintf(str, "%0.2f MB", sizeMB);
 	}
 	
-	wchar_t wstr[1024];
-	mbtowc(wstr, str, strlen(str));
-	return std::wstring(wstr);
+	std::string string(str);
+	std::wstring wstr(string.begin(),string.end());
+	return wstr;
 }
 
 bool DownloadURL(Progress *p, HINTERNET hINet, std::wstring url, std::wstring outFilename, std::wstring intro)
@@ -221,6 +226,14 @@ bool DownloadURL(Progress *p, HINTERNET hINet, std::wstring url, std::wstring ou
 	wchar_t msg[255];
 	
 	HttpSendRequest( hRequest, NULL, 0, NULL, 0);
+		
+	DWORD contentLength = 0;
+	DWORD size = sizeof(contentLength);
+	
+	HttpQueryInfo(hRequest, HTTP_QUERY_CONTENT_LENGTH | HTTP_QUERY_FLAG_NUMBER,
+		(LPDWORD)&contentLength, (LPDWORD)&size, NULL);
+	
+	std::wstring contentLengthStr = SizeString(contentLength);
 	while( InternetReadFile( hRequest, buffer, 2047, &dwRead ) )
 	{
 		if ( dwRead == 0)
@@ -235,8 +248,8 @@ bool DownloadURL(Progress *p, HINTERNET hINet, std::wstring url, std::wstring ou
 		buffer[dwRead] = '\0';
 		total+=dwRead;
 		ostr.write(buffer, dwRead);
-		wsprintfW(msg,L"%s - %d KB", intro.c_str(), total/1024);
-		p->SetLineText(2,msg,true);
+		p->SetLineText(2,intro + L": " + SizeString(total) + L" of " + contentLengthStr,true);
+		p->Update(total, contentLength);
 	}
 	ostr.close();
 	InternetCloseHandle(hConnection);
@@ -406,7 +419,7 @@ bool InstallApplication(Progress *p)
 	return true;
 }
 
-bool HandleAllJobs(vector<string> jobs, Progress* p)
+bool HandleAllJobs(vector<ti::InstallJob*> jobs, Progress* p)
 {
 	temporaryPath = FileUtils::GetTempDirectory();
 	FileUtils::CreateDirectory(temporaryPath);
@@ -431,23 +444,25 @@ bool HandleAllJobs(vector<string> jobs, Progress* p)
 
 	// For each URL, fetch the URL and then unzip it
 	DWORD x = 0;
+		
 	for (int i = 0; i < jobs.size(); i++)
 	{
 		p->Update(x++, count);
-		std::string url = jobs[i];
-
-		if (url == string("update"))
+		ti::InstallJob *job = jobs[i];
+		
+		p->SetLineText(3, "Downloading: " + job->url, true);
+		if (job->url == string("update"))
 		{
 			ProcessUpdate(p, hINet);
 		}
 
-		if (FileUtils::IsFile(url))
+		if (FileUtils::IsFile(job->url))
 		{
-			ProcessFile(url, p);
+			ProcessFile(job->url, p);
 		}
 		else
 		{
-			ProcessURL(url, p, hINet);
+			ProcessURL(job->url, p, hINet);
 		}
 
 		if (p->IsCancelled())
@@ -557,13 +572,14 @@ int WINAPI WinMain(
 	HINSTANCE hPrevInstance,
 	LPSTR lpCmdLine,
 	int nCmdShow)
+//int main(int argc, char **argv)
 {
-	mainInstance = hInstance;
-	mainIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDR_MAINFRAME));
+	mainInstance = ::GetModuleHandle(NULL);
+	mainIcon = LoadIcon(mainInstance, MAKEINTRESOURCE(IDR_MAINFRAME));
 
 	int argc = __argc;
 	char** argv = __argv;
-	vector<string> jobs;
+	vector<ti::InstallJob*> jobs;
 	string jobsFile;
 	bool quiet = false;
 	
@@ -584,7 +600,6 @@ int WINAPI WinMain(
 		{
 			i++;
 			updateFile = argv[i];
-			jobs.push_back("update");
 		}
 		else if (arg == "-quiet")
 		{
@@ -606,15 +621,23 @@ int WINAPI WinMain(
 		return __LINE__;
 	}
 
+	bool updateDialog = false;
 	if (updateFile.empty())
 	{
 		app = Application::NewApplication(appPath);
 	}
 	else
 	{
+		updateDialog = true;
 		app = Application::NewApplication(updateFile, appPath);
 	}
 
+	//printf("exePath=%s,basename=%s,appPath=%s",exePath.c_str(),FileUtils::Basename(exePath).c_str(),appPath.c_str());
+	
+	if (!exePath.empty() && FileUtils::Dirname(exePath) == appPath) {
+		updateDialog = true;
+	}
+	
 	if (app.isNull())
 	{
 		ShowError("The installer could not read the application manifest.");
@@ -632,36 +655,29 @@ int WINAPI WinMain(
 
 	componentInstallPath = FileUtils::GetSystemRuntimeHomeDirectory();
 
-	// Read all jobs from the jobs file
-	if (!jobsFile.empty() && FileUtils::IsFile(jobsFile))
-	{
-		std::ifstream file(jobsFile.c_str());
-		if (!file.bad() && !file.fail() && !file.eof())
-		{
-			string line;
-			while(!std::getline(file, line).eof())
-			{
-				jobs.push_back(line);
-			}
-		}
+	jobs = ti::InstallJob::ReadJobs(jobsFile);
+	if (!updateFile.empty()) {
+		jobs.push_back(new ti::InstallJob(true));
 	}
-
+	
 	// Major WTF here, Redmond.
 	LoadLibrary(TEXT("Riched20.dll"));
 	CoInitialize(NULL);
 
 	if (!quiet)
 	{
-		HWND introDialog = CreateDialog(
-			hInstance,
-			MAKEINTRESOURCE(IDD_INTRODIALOG),
-			0,
-			DialogProc);
-
-		if (!introDialog)
+		ti::Dialog *dialog = NULL;
+		if (updateDialog) {
+			dialog = new ti::UpdateDialog(jobs);
+		}
+		else {
+		
+			dialog = new ti::IntroDialog();
+		}
+		if (!dialog->GetWindow())
 		{
 			int i = GetLastError();
-			ShowError("The installer could not create the introductory dialog.");
+			ShowError("The installer failed to open a dialog.");
 			return __LINE__;
 		}
 
@@ -676,7 +692,7 @@ int WINAPI WinMain(
 				ShowError(buf);
 				return -1;
 			}
-			if (!IsDialogMessage(introDialog, &msg))
+			if (!IsDialogMessage(dialog->GetWindow(), &msg))
 			{
 				TranslateMessage(&msg);
 				DispatchMessage(&msg);
