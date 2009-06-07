@@ -9,6 +9,7 @@
 #include <Poco/Path.h>
 #include <Poco/RunnableAdapter.h>
 #include <Poco/ScopedLock.h>
+#include <Poco/PipeImpl.h>
 
 using Poco::RunnableAdapter;
 
@@ -272,10 +273,17 @@ namespace ti
 
 	void Process::ReadStdOut()
 	{
+		char buffer[512];
 		while (this->running)
 		{
 			Poco::ScopedLock<Poco::Mutex> lock(outputBufferMutex);
 			SharedValue result = Value::NewUndefined();
+			/*Poco::PipeImpl* pipeImpl = reinterpret_cast<Poco::PipeImpl*>(this->outp);
+			
+			int bytesRead = pipeImpl->readBytes(buffer, 511);
+			buffer[bytesRead] = '\0';
+			stdOutBuffer << buffer;
+			this->InvokeOnReadCallback(false);*/
 			this->out->Read(ValueList(), result);
 
 			if (result->IsString())

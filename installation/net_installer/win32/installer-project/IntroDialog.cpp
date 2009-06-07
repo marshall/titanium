@@ -77,7 +77,7 @@ namespace ti {
 
 		// Set license text
 		string licenseText = app->GetLicenseText();
-		if (licenseText.empty())
+		if (licenseText.empty() || (!forceInstall && app->IsInstalled()))
 		{
 			::ShowWindow(licenseTextBox , SW_HIDE);
 			::ShowWindow(licenseBlurb , SW_HIDE);
@@ -104,7 +104,7 @@ namespace ti {
 		}
 
 		// Hide installation location controls when this isn't a full app installation
-		if (forceInstall || app->IsInstalled())
+		if (!forceInstall && app->IsInstalled())
 		{
 			::ShowWindow(installLocationButton , SW_HIDE);
 			::ShowWindow(startMenuCheck , SW_HIDE);

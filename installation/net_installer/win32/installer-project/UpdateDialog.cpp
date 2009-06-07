@@ -3,8 +3,10 @@
 #include "Resource.h"
 #include <commctrl.h>
 #include <iostream>
+#include "api/utils/utils.h"
 
 extern bool doInstall;
+extern KrollUtils::SharedApplication app;
 
 namespace ti
 {
@@ -50,7 +52,9 @@ namespace ti
 		SendMessage(updateList, TVM_SETIMAGELIST, 0, (LPARAM)imageList);
 		
 		for (int i = 0; i < jobs.size(); i++) {
-			InsertUpdate(jobs[i]->name, jobs[i]->version);
+			if (jobs[i]->isUpdate) {
+				InsertUpdate(jobs[i]->name, jobs[i]->version);
+			}
 		}
 		
 		Dialog::Initialize(window);

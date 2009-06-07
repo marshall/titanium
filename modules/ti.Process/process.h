@@ -14,6 +14,7 @@
 #include <Poco/RunnableAdapter.h>
 #include <Poco/Mutex.h>
 #include <Poco/Condition.h>
+#include <sstream>
 #include "pipe.h"
 #include "process_binding.h"
 

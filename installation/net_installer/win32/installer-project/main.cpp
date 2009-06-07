@@ -305,7 +305,7 @@ void ProcessUpdate(Progress *p, HINTERNET hINet)
 	string path = "update-update.zip";
 	path = FileUtils::Join(temporaryPath.c_str(), path.c_str(), NULL);
 
-		// Figure out the path and destination
+	// Figure out the path and destination
 	string intro = string("Downloading application update");
 	bool downloaded = DownloadURL(p, hINet, StringToWString(url), StringToWString(path), StringToWString(intro));
 	if (downloaded)
@@ -451,7 +451,7 @@ bool HandleAllJobs(vector<ti::InstallJob*> jobs, Progress* p)
 		ti::InstallJob *job = jobs[i];
 		
 		p->SetLineText(3, "Downloading: " + job->url, true);
-		if (job->url == string("update"))
+		if (job->isUpdate)
 		{
 			ProcessUpdate(p, hINet);
 		}
@@ -634,9 +634,9 @@ int WINAPI WinMain(
 
 	//printf("exePath=%s,basename=%s,appPath=%s",exePath.c_str(),FileUtils::Basename(exePath).c_str(),appPath.c_str());
 	
-	if (!exePath.empty() && FileUtils::Dirname(exePath) == appPath) {
-		updateDialog = true;
-	}
+	//if (!exePath.empty() && FileUtils::Dirname(exePath) == appPath) {
+	//	updateDialog = true;
+	//}
 	
 	if (app.isNull())
 	{
@@ -657,7 +657,10 @@ int WINAPI WinMain(
 
 	jobs = ti::InstallJob::ReadJobs(jobsFile);
 	if (!updateFile.empty()) {
-		jobs.push_back(new ti::InstallJob(true));
+		ti::InstallJob* updateJob = new ti::InstallJob(true);
+		updateJob->name = app->name;
+		updateJob->version = app->version;
+		jobs.push_back(updateJob);
 	}
 	
 	// Major WTF here, Redmond.
