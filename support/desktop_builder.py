@@ -16,6 +16,7 @@ class DesktopBuilder(object):
 		self.options = options
 		self.logger = log
 		self.appname = options.manifest['appname']
+		self.appversion = options.version
 		log(options,"Packaging application named: %s, version: %s"%(self.appname,options.version))
 		if options.platform == 'osx':
 			self.base_dir = os.path.join(options.destination,('%s.app'%self.appname))

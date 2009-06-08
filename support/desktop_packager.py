@@ -66,6 +66,7 @@ class DesktopPackager(object):
 		tar = tarfile.open(outtarfile, 'w:gz')
 		def tarcb(f):
 			arcname = f.replace(builder.base_dir + os.sep, "")
+			arcname = builder.appname + "-" + builder.appversion + "/" + arcname
 			tar.add(f, arcname)
 		self.walk_dir(builder.base_dir, tarcb)
 		tar.close()
