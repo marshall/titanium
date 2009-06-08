@@ -121,7 +121,7 @@ namespace ti
 		while(i!=processes.end())
 		{
 			SharedKObject obj = (*i);
-			if (obj.get()==p)
+			if (obj.get()==(void*)p)
 			{
 				processes.erase(i);
 				break;
