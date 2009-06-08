@@ -77,7 +77,7 @@ namespace ti {
 
 		// Set license text
 		string licenseText = app->GetLicenseText();
-		if (licenseText.empty() || (!forceInstall && app->IsInstalled()))
+		if (!forceInstall && (licenseText.empty() || app->IsInstalled()))
 		{
 			::ShowWindow(licenseTextBox , SW_HIDE);
 			::ShowWindow(licenseBlurb , SW_HIDE);
