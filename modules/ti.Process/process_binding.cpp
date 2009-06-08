@@ -7,16 +7,15 @@
 #include <Poco/Environment.h>
 #include <Poco/Process.h>
 #include "process_binding.h"
-#include "process.h"
 
 #ifdef OS_OSX
 	#include <Foundation/Foundation.h>
 	#include "osx/osx_process.h"
-#endif
-
-
-#ifdef OS_WIN32
-#include <windows.h>
+#elif defined(OS_WIN32)
+# include <windows.h>
+# include "win32/win32_process.h"
+#else
+# include "process.h"
 #endif
 
 
@@ -103,13 +102,19 @@ namespace ti
 		}
 #ifdef OS_OSX
 		SharedKObject p = new OSXProcess(this, cmd, arguments);
+#elif defined(OS_WIN32)
+		SharedKObject p = new Win32Process(this, cmd, arguments);
 #else
 		SharedKObject p = new Process(this, cmd, arguments);
 #endif
 		processes.push_back(p);
 		result->SetObject(p);
 	}
+#ifdef OS_WIN32
+	void ProcessBinding::Terminated(Win32Process *p)
+#else
 	void ProcessBinding::Terminated(Process* p)
+#endif
 	{
 		PRINTD("Process Terminated");
 		std::vector<SharedKObject>::iterator i = processes.begin();
