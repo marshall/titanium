@@ -274,16 +274,9 @@ namespace ti
 
 	void Process::ReadStdOut()
 	{
-		char buffer[512];
 		while (this->running)
 		{
 			SharedValue result = Value::NewUndefined();
-			/*Poco::PipeImpl* pipeImpl = reinterpret_cast<Poco::PipeImpl*>(this->outp);
-			
-			int bytesRead = pipeImpl->readBytes(buffer, 511);
-			buffer[bytesRead] = '\0';
-			stdOutBuffer << buffer;
-			this->InvokeOnReadCallback(false);*/
 			this->out->Read(ValueList(), result);
 
 			if (result->IsString())
