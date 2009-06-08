@@ -18,6 +18,8 @@
 #define NO_LICENSE_WINDOW_HEIGHT 150
 #define PROGRESS_WINDOW_WIDTH 350 
 #define PROGRESS_WINDOW_HEIGHT 130
+#define BADGE_MAX_DIMENSION 100
+#define ICON_MAX_DIMENSION 30
 
 #define UNKNOWN_INSTALL 0
 #define HOMEDIR_INSTALL 1
@@ -96,15 +98,13 @@ Installer::Installer(vector<Job*> jobs, int installType) :
 
 	this->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 
-	gboolean windowHasIcon = FALSE;
+	GdkPixbuf* applicationIcon = NULL;
 	if (!app->image.empty())
 	{
-		windowHasIcon = gtk_window_set_icon_from_file(
-			GTK_WINDOW(this->window),
-			app->image.c_str(),
-			NULL);
+		applicationIcon = this->GetApplicationPixbuf(ICON_MAX_DIMENSION);
+		gtk_window_set_icon(GTK_WINDOW(this->window), applicationIcon);
 	}
-	if (!windowHasIcon)
+	if (!applicationIcon)
 	{
 		GdkPixbuf* titanium_icon = gdk_pixbuf_new_from_xpm_data(titanium_xpm);
 		gtk_window_set_icon(GTK_WINDOW(this->window), titanium_icon);
@@ -431,18 +431,50 @@ GtkWidget* Installer::GetTitaniumIcon()
 
 }
 
+GdkPixbuf* Installer::GetApplicationPixbuf(int maxDimension)
+{
+	GdkPixbuf *iconPixbuf = gdk_pixbuf_new_from_file(this->app->image.c_str(), NULL);
+	if (iconPixbuf == NULL)
+	{
+		return NULL;
+	}
+
+	// If the image is hugenormous, try to scale it down to a reasonable size
+	double scale = 1.0;
+	int width = gdk_pixbuf_get_width(iconPixbuf);
+	int height = gdk_pixbuf_get_height(iconPixbuf);
+	if (width >= height && width > maxDimension)
+	{
+		scale = ((double) maxDimension) / ((double) width);
+	}
+	else if (height > width && height > maxDimension)
+	{
+		scale = ((double) maxDimension) / ((double) height);
+	}
+
+	if (scale != 1.0)
+	{
+		width = scale * width;
+		height = scale * height;
+		iconPixbuf = gdk_pixbuf_scale_simple(
+			iconPixbuf, width, height, GDK_INTERP_BILINEAR);
+	}
+	return iconPixbuf;
+
+}
+
 GtkWidget* Installer::GetApplicationIcon()
 {
-	GtkWidget* icon;
-	if (this->app->image != "")
+	GdkPixbuf* appPixbuf;
+	if (this->app->image != ""
+		&& ((appPixbuf = this->GetApplicationPixbuf(BADGE_MAX_DIMENSION))))
 	{
-		icon = gtk_image_new_from_file(this->app->image.c_str());
+		return gtk_image_new_from_pixbuf(appPixbuf);
 	}
 	else // Use default Titanium icon
 	{
 		return this->GetTitaniumIcon();
 	}
-	return icon;
 }
 
 void Installer::StartInstallProcess()
