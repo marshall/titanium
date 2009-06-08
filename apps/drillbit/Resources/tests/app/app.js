@@ -30,11 +30,11 @@ describe("ti.App tests",
 		value_of(Titanium.App.stderr).should_be_function();
 		
 		// this should be the default stream if not specified in the manifest
-		value_of(Titanium.App.getStreamURL()).should_be('http://api.appcelerator.net/p/v1');
+		value_of(Titanium.App.getStreamURL()).should_be('https://api.appcelerator.net/p/v1');
 		// test passing arg
-		value_of(Titanium.App.getStreamURL('foo')).should_be('http://api.appcelerator.net/p/v1/foo');
+		value_of(Titanium.App.getStreamURL('foo')).should_be('https://api.appcelerator.net/p/v1/foo');
 		// test passing multiple args
-		value_of(Titanium.App.getStreamURL('foo','bar')).should_be('http://api.appcelerator.net/p/v1/foo/bar');
+		value_of(Titanium.App.getStreamURL('foo','bar')).should_be('https://api.appcelerator.net/p/v1/foo/bar');
 	},
 	//comment out for now, this test function causes the app test to timeout in win32,
 	test_system_properties: function()
