@@ -241,7 +241,6 @@ namespace ti
 
 	void Process::InvokeOnReadCallback(bool isStdError)
 	{
-		Poco::ScopedLock<Poco::Mutex> lock(outputBufferMutex);
 		SharedValue sv = this->Get("onread");
 		if (!sv->IsMethod())
 		{
@@ -251,11 +250,13 @@ namespace ti
 		std::string output;
 		if (isStdError)
 		{
+			Poco::ScopedLock<Poco::Mutex> lock(outputBufferMutex);
 			output = stdErrorBuffer.str();
 			stdErrorBuffer.str("");
 		}
 		else
 		{
+			Poco::ScopedLock<Poco::Mutex> lock(outputBufferMutex);
 			output = stdOutBuffer.str();
 			stdOutBuffer.str("");
 		}
@@ -276,7 +277,6 @@ namespace ti
 		char buffer[512];
 		while (this->running)
 		{
-			Poco::ScopedLock<Poco::Mutex> lock(outputBufferMutex);
 			SharedValue result = Value::NewUndefined();
 			/*Poco::PipeImpl* pipeImpl = reinterpret_cast<Poco::PipeImpl*>(this->outp);
 			
@@ -288,6 +288,7 @@ namespace ti
 
 			if (result->IsString())
 			{
+				Poco::ScopedLock<Poco::Mutex> lock(outputBufferMutex);
 				stdOutBuffer << result->ToString();
 				this->InvokeOnReadCallback(false);
 			}
@@ -298,12 +299,12 @@ namespace ti
 	{
 		while (this->running)
 		{
-			Poco::ScopedLock<Poco::Mutex> lock(outputBufferMutex);
 			SharedValue result = Value::NewUndefined();
 			this->err->Read(ValueList(), result);
 
 			if (result->IsString())
 			{
+				Poco::ScopedLock<Poco::Mutex> lock(outputBufferMutex);
 				stdErrorBuffer << result->ToString();
 				this->InvokeOnReadCallback(true);
 			}
@@ -338,7 +339,6 @@ namespace ti
 	{
 		// We need to check the previous value of certain incomming values
 		// *before* we actually do the Set(...) on this object.
-		Poco::ScopedLock<Poco::Mutex> lock(outputBufferMutex);
 		bool flushOnRead = 
 			(!strcmp("onread", name)) && (!this->Get("onread")->IsMethod());
 		bool flushOnExit = 

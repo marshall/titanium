@@ -131,7 +131,7 @@ def get_last_method_before(method_index, start):
 	method_starts = method_index.keys()
 	method_starts.sort()
 	for method_start in method_starts:
-		print "%s %s" % (method_start, start)
+#		print "%s %s" % (method_start, start)
 		if method_start > start:
 			break
 		else:
@@ -256,3 +256,13 @@ def generate_api_coverage(dirs,fs):
 	fs.write(json.dumps(apis, sort_keys=True, indent=4))
 
 	print "Found %i APIs for %i modules in %i files" % (api_count,module_count,file_count)
+
+if __name__ == '__main__':
+	if len(sys.argv)!=3:
+		print "Usage: %s <dir> <outfile>" % os.path.basename(sys.argv[0])
+		sys.exit(1)
+	f = open(os.path.expanduser(sys.argv[2]), 'w')
+	dirs = []
+	dirs.append(os.path.abspath(os.path.expanduser(sys.argv[1])))
+	generate_api_coverage(dirs,f)	
+	
