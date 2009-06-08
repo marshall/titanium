@@ -62,7 +62,6 @@ namespace ti
 		void Monitor();
 		void ReadStdOut();
 		void ReadStdError();
-		void ReadLoop();
 		void StartReadThreads();
 		void InvokeOnExitCallback();
 		void InvokeOnReadCallback(bool isStdError);
