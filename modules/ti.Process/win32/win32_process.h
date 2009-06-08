@@ -8,6 +8,7 @@
 #define _WIN32_PROCESS_H_
 
 #include "win32_pipe.h"
+#include <sstream>
 
 namespace ti
 {
