@@ -131,7 +131,6 @@ def get_last_method_before(method_index, start):
 	method_starts = method_index.keys()
 	method_starts.sort()
 	for method_start in method_starts:
-#		print "%s %s" % (method_start, start)
 		if method_start > start:
 			break
 		else:
@@ -143,14 +142,14 @@ def get_last_method_before(method_index, start):
 		return None
 
 def generate_api_coverage(dirs,fs):
-	api_pattern = '@tiapi\(([^\)]*)\)\s+(.*)'
-	arg_pattern = '@tiarg\(([^\)]*)\)\s+(.*)'
-	res_pattern = '@tiresult\(([^\)]*)\)\s+(.*)'
-	dep_pattern = '@tideprecated\(([^\)]*)\)\s+(.*)'
+	api_pattern = '@tiapi\(([^\)]*)\)(.*)\n'
+	arg_pattern = '@tiarg\(([^\)]*)\)(.*)\n'
+	res_pattern = '@tiresult\(([^\)]*)\)(.*)\n'
+	dep_pattern = '@tideprecated\(([^\)]*)\)(.*)\n'
 
-	context_sensitive_api_description = '@tiapi (.*)'
-	context_sensitive_arg_pattern = '@tiarg\[([^]]+)\](.*)'
-	context_sensitive_result_pattern = '@tiresult\[([^]]+)\](.*)'
+	context_sensitive_api_description = '@tiapi (.*)\n'
+	context_sensitive_arg_pattern = '@tiarg\[([^]]+)\](.*)\n'
+	context_sensitive_result_pattern = '@tiresult\[([^]]+)\](.*)\n'
 
 	files = set()
 	apis = {}
@@ -197,7 +196,6 @@ def generate_api_coverage(dirs,fs):
 				api = get_last_method_before(start_index_to_method, m.start())
 				if not api: continue
 
-				print m.group(1)
 				bits = m.group(1).split(',', 2)
 				metadata = {}
 				metadata['for'] = api.name
@@ -223,7 +221,8 @@ def generate_api_coverage(dirs,fs):
 				description = m.group(1)
 				api = get_last_method_before(start_index_to_method, m.start())
 				if api:
-					api['description'] += ' ' + description.strip()
+					description = api['description'] + ' ' + description.strip()
+					api['description'] = description.strip()
 
 			for m in re.finditer(arg_pattern,content):
 				match = m
@@ -247,8 +246,6 @@ def generate_api_coverage(dirs,fs):
 				file_count+=1
 		except Exception, e:
 			print "Exception parsing API metadata in file: %s" % str(f)
-			#print e
-			#print traceback.print_tb(sys.exc_info()[2])
 			if match:
 				print "Error was for: %s" % str(match.group(0))
 			raise
