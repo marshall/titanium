@@ -68,6 +68,9 @@ describe("native XHR tests",
 				else if (this.readyState == xhr.DONE)
 				{
 					clearTimeout(timer);
+					var text = xhr.responseText;
+					value_of(text).should_be_string();
+					value_of(text.length > 0).should_be_true();
 					callback.passed();
 				}
 			}

@@ -52,5 +52,29 @@ describe("file-based ajax tests",
 		{
 			callback.failed('ajax request timed out after 30s');
 		},2000)		
+	},
+	test_query_string_as_async: function(callback)
+	{
+		var timer = 0;
+		$.getJSON('app://url.js?q=1', function(data)
+		{
+			clearTimeout(timer);
+			try
+			{
+				value_of(data).should_be_object();
+				value_of(data.success).should_be_true();
+				value_of(data.abc).should_be(123);
+				callback.passed();
+			}
+			catch(e)
+			{
+				callback.failed(e);
+			}
+		});
+		
+		timer = setTimeout(function()
+		{
+			callback.failed('ajax request timed out after 2s');
+		},2000);
 	}
 });

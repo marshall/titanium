@@ -9,6 +9,8 @@ var total_assertions = 0;
 var total_files = 0;
 var running_assertions = 0;
 var running_completed = 0;
+var running_passed = 0;
+var running_failed = 0;
 var auto_run = false;
 var auto_close = false;
 var debug_tests = false;
@@ -32,6 +34,35 @@ function test_status(name,classname)
 	el.html(classname);
 	el.removeClass('untested').removeClass('failed').removeClass('running')
 	  .removeClass('passed').addClass(classname.toLowerCase());
+}
+
+function progress(passed,failed,total,progress)
+{
+	var passed_percent = Math.floor((passed/total) * 100);
+	var failed_percent = Math.floor((failed/total) * 100);
+	progress.html(
+		'<div class="passed-progress" style="width: '+passed_percent+'%;">&nbsp;</div>'+
+		'<div class="failed-progress" style="width: '+failed_percent+'%;">&nbsp;</div>'
+	);
+}
+
+function suite_progress(passed,failed,total)
+{
+	progress(passed,failed,total,$('#suite-progress'));
+}
+
+function total_progress(passed,failed,total)
+{
+	progress(passed,failed,total,$('#total-progress'));
+	
+	var passed_percent = Math.floor((passed/total) * 100);
+	var failed_percent = Math.floor((failed/total) * 100);
+	$('#progress-message').html('<img src="images/check_on.png"/>'+passed+'&nbsp;&nbsp; <img src="images/check_off.png"/>'+failed);
+}
+
+function show_current_test(suite_name, test_name)
+{
+	$('#current-test-message').text(suite_name + ': ' + test_name);
 }
 
 function describe(description,test)
@@ -58,7 +89,7 @@ function describe(description,test)
 	
 	total_files++;
 	
-	$('#header').html(total_assertions+' assertions in '+total_files+' files');
+	$('#header').html(total_assertions+' tests in '+total_files+' files');
 
 	current_test_load = null;
 }
@@ -387,6 +418,7 @@ window.onload = function()
 				
 				us+="try {\n";
 				us+="TitaniumTest.currentTest='" + f + "';\n";
+				us+="TitaniumTest.runningTest('"+entry.name+"','" + f + "');\n";
 				us+=make_function(entry.test[f],'xscope');
 				
 				i = f.indexOf('_as_async');
@@ -467,21 +499,43 @@ window.onload = function()
 		
 		args.push('--results-dir="' + results_dir + '"');
 		var process = Titanium.Process.launch(app.executable.nativePath(),args);
-		process.onread = function(data)
+		var passed = 0;
+		var failed = 0;
+		process.onread = function(d)
 		{
-			var i = data.indexOf('DRILLBIT_');
-			if (i != -1)
+			var lines = d.split('\n');
+			for (var l = 0; l < lines.length; l++)
 			{
-				var test_name = data.substring(15,data.length-1);
-				var test_passed = data.indexOf('_PASS:')!=-1;
-				running_completed++;
-				var msg = "Completed: " +entry.name + " ... " + running_completed + "/" + running_assertions;
-				update_status(msg);
-				Titanium.API.debug("test ["+ test_name + "], passed:"+test_passed);
-			}
-			else
-			{
-				Titanium.API.debug("PROCESS:"+data);
+				var data = lines[l];
+				var i = data.indexOf('DRILLBIT_');
+				if (i != -1)
+				{
+					if (data.indexOf('DRILLBIT_TEST:') != -1) {
+						var comma = data.indexOf(',');
+						var suite_name = data.substring(15,comma);
+						var test_name = data.substring(comma+1,data.length-1);
+					
+						show_current_test(suite_name,test_name);
+						continue;
+					}
+						
+					var test_name = data.substring(15,data.length-1);
+					var test_passed = data.indexOf('_PASS:')!=-1;
+					running_completed++;
+					if (test_passed) { passed++; running_passed++; }
+					else { failed ++; running_failed++; }
+					
+					suite_progress(passed, failed, current_test.assertion_count);
+					total_progress(running_passed, running_failed, total_assertions);
+					
+					var msg = "Completed: " +entry.name + " ... " + running_completed + "/" + running_assertions;
+					update_status(msg);
+					Titanium.API.debug("test ["+ test_name + "], passed:"+test_passed);
+				}
+				else
+				{
+					Titanium.API.debug("PROCESS:"+data);
+				}
 			}
 		};
 		var size = 0;
