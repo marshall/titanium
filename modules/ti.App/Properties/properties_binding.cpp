@@ -12,10 +12,10 @@ using namespace kroll;
 
 namespace ti
 {
-	PropertiesBinding::PropertiesBinding(std::string& file_path)
+	PropertiesBinding::PropertiesBinding(std::string& file_path) :
+		StaticBoundObject(),
+		logger(Logger::Get("App.Properties"))
 	{
-		PRINTD("Application properties path=" << file_path);
-
 		Poco::File file(file_path);
 		if (!file.exists()) 
 		{
@@ -40,32 +40,37 @@ namespace ti
 	{
 		/**
 		 * @tiapi(method=True,name=App.Properties.getBool,since=0.2) Returns a property value as boolean
-		 * @tiarg(for=App.Properties.getBool,name=name,type=string) the property name
-	     * @tiresult(for=App.Properties.getBool,type=boolean) returns the value as a boolean
+		 * @tiarg[string, name] The name of the property to return
+		 * @tiarg[bool, default] The value to return if this property is not set
+		 * @tiresult[bool] The value of the property with the given name
 		 */
 		SetMethod("getBool", &PropertiesBinding::GetBool);
 		/**
 		 * @tiapi(method=True,name=App.Properties.getDouble,since=0.2) Returns a property value as double
-		 * @tiarg(for=App.Properties.getDouble,name=name,type=string) the property name
-	     * @tiresult(for=App.Properties.getDouble,type=double) returns the value as a double
+		 * @tiarg[string, name] The name of the property to return
+		 * @tiarg[double, default] The value to return if this property is not set
+		 * @tiresult[double] The value of the property with the given name
 		 */
 		SetMethod("getDouble", &PropertiesBinding::GetDouble);
 		/**
 		 * @tiapi(method=True,name=App.Properties.getInt,since=0.2) Returns a property value as integer
-		 * @tiarg(for=App.Properties.getInt,name=name,type=string) the property name
-	     * @tiresult(for=App.Properties.getInt,type=integer) returns the value as an integer
+		 * @tiarg[string, name] The name of the property to return
+		 * @tiarg[int, default] The value to return if this property is not set
+		 * @tiresult[int] The value of the property with the given name
 		 */
 		SetMethod("getInt", &PropertiesBinding::GetInt);
 		/**
 		 * @tiapi(method=True,name=App.Properties.getString,since=0.2) Returns a property value as string
-		 * @tiarg(for=App.Properties.getString,name=name,type=string) the property name
-	     * @tiresult(for=App.Properties.getString,type=string) returns the value as a string
+		 * @tiarg[string, name] The name of the property to return
+		 * @tiarg[string, default] The value to return if this property is not set
+		 * @tiresult[string] The value of the property with the given name
 		 */
 		SetMethod("getString", &PropertiesBinding::GetString);
 		/**
 		 * @tiapi(method=True,name=App.Properties.getList,since=0.2) Returns a property value as a list
-		 * @tiarg(for=App.Properties.getList,name=name,type=string) the property name
-	     * @tiresult(for=App.Properties.getList,type=list) returns the value as a list
+		 * @tiarg[list, name] The name of the property to return
+		 * @tiarg[list, default] The value to return if this property is not set
+		 * @tiresult[list] The value of the property with the given name
 		 */
 		SetMethod("getList", &PropertiesBinding::GetList);
 		/**
@@ -101,49 +106,77 @@ namespace ti
 		/**
 		 * @tiapi(method=True,name=App.Properties.hasProperty,since=0.2) Checks whether a property exists
 		 * @tiarg(for=App.Properties.hasProperty,name=name,type=string) the property name
-	     * @tiresult(for=App.Properties.hasProperty,type=boolean) returns true if the property exists
+		 * @tiresult(for=App.Properties.hasProperty,type=boolean) returns true if the property exists
 		 */
 		SetMethod("hasProperty", &PropertiesBinding::HasProperty);
 		/**
 		 * @tiapi(method=True,name=App.Properties.listProperties,since=0.2) Returns a list of property values
-	     * @tiresult(for=App.Properties.listProperties,type=list) returns a list of property values
+		 * @tiresult(for=App.Properties.listProperties,type=list) returns a list of property values
 		 */
 		SetMethod("listProperties", &PropertiesBinding::ListProperties);
 	}
 
-	PropertiesBinding::~PropertiesBinding() {
-		if (file_path.size() > 0) {
+	PropertiesBinding::~PropertiesBinding()
+	{
+		if (file_path.size() > 0)
+		{
 			config->save(file_path);
 		}
 	}
 
 	void PropertiesBinding::Getter(const ValueList& args, SharedValue result, Type type)
 	{
-		if (args.size() > 0 && args.at(0)->IsString()) {
+		if (args.size() > 0 && args.at(0)->IsString())
+		{
 			std::string eprefix = "PropertiesBinding::Get: ";
-			try {
+			try
+			{
 				std::string property = args.at(0)->ToString();
-				if (args.size() == 1) {
-					switch (type) {
-						case Bool: result->SetBool(config->getBool(property)); break;
-						case Double: result->SetDouble(config->getDouble(property)); break;
-						case Int: result->SetInt(config->getInt(property)); break;
-						case String: result->SetString(config->getString(property).c_str()); break;
+				if (args.size() == 1)
+				{
+					switch (type)
+					{
+						case Bool: 
+							result->SetBool(config->getBool(property));
+							break;
+						case Double:
+							result->SetDouble(config->getDouble(property));
+							break;
+						case Int:
+							result->SetInt(config->getInt(property));
+							break;
+						case String:
+							result->SetString(config->getString(property).c_str());
+							break;
+						default:
+							break;
+					}
+					return;
+				}
+
+				else if (args.size() >= 2)
+				{
+					switch (type)
+					{
+						case Bool:
+							result->SetBool(config->getBool(property, args.at(1)->ToBool()));
+							break;
+						case Double:
+							result->SetDouble(config->getDouble(property, args.at(1)->ToDouble()));
+							break;
+						case Int:
+							result->SetInt(config->getInt(property, args.at(1)->ToInt()));
+							break;
+						case String:
+							result->SetString(config->getString(property, args.at(1)->ToString()).c_str());
+							break;
 						default: break;
 					}
 					return;
 				}
-				else if (args.size() >= 2) {
-					switch (type) {
-						case Bool: result->SetBool(config->getBool(property, args.at(1)->ToBool())); break;
-						case Double: result->SetDouble(config->getDouble(property, args.at(1)->ToDouble())); break;
-						case Int: result->SetInt(config->getInt(property, args.at(1)->ToInt())); break;
-						case String: result->SetString(config->getString(property, args.at(1)->ToString()).c_str()); break;
-						default: break;
-					}
-					return;
-				}
-			} catch(Poco::Exception &e) {
+			}
+			catch(Poco::Exception &e)
+			{
 				throw ValueException::FromString(eprefix + e.displayText());
 			}
 		}
@@ -151,21 +184,36 @@ namespace ti
 
 	void PropertiesBinding::Setter(const ValueList& args, Type type)
 	{
-		if (args.size() >= 2 && args.at(0)->IsString()) {
+		if (args.size() >= 2 && args.at(0)->IsString())
+			{
 			std::string eprefix = "PropertiesBinding::Set: ";
-			try {
+			try
+			{
 				std::string property = args.at(0)->ToString();
-				switch (type) {
-					case Bool: config->setBool(property, args.at(1)->ToBool()); break;
-					case Double: config->setDouble(property, args.at(1)->ToDouble()); break;
-					case Int: config->setInt(property, args.at(1)->ToInt()); break;
-					case String: config->setString(property, args.at(1)->ToString()); break;
+				switch (type)
+				{
+					case Bool:
+						config->setBool(property, args.at(1)->ToBool());
+						break;
+					case Double:
+						config->setDouble(property, args.at(1)->ToDouble());
+						break;
+					case Int:
+						config->setInt(property, args.at(1)->ToInt());
+						break;
+					case String:
+						config->setString(property, args.at(1)->ToString());
+						break;
 					default: break;
 				}
-				if (file_path.size() > 0) {
+
+				if (file_path.size() > 0)
+				{
 					config->save(file_path);
 				}
-			} catch(Poco::Exception &e) {
+			}
+			catch(Poco::Exception &e)
+			{
 				throw ValueException::FromString(eprefix + e.displayText());
 			}
 		}
@@ -196,11 +244,13 @@ namespace ti
 		SharedValue stringValue = Value::Null;
 		GetString(args, stringValue);
 
-		if (!stringValue->IsNull()) {
+		if (!stringValue->IsNull())
+		{
 			SharedPtr<StaticBoundList> list = new StaticBoundList();
 			std::string string = stringValue->ToString();
 			Poco::StringTokenizer t(string, ",", Poco::StringTokenizer::TOK_TRIM);
-			for (size_t i = 0; i < t.count(); i++) {
+			for (size_t i = 0; i < t.count(); i++)
+			{
 				SharedValue token = Value::NewString(t[i].c_str());
 				list->Append(token);
 			}
@@ -232,17 +282,20 @@ namespace ti
 
 	void PropertiesBinding::SetList(const ValueList& args, SharedValue result)
 	{
-		if (args.size() >= 2 && args.at(0)->IsString() && args.at(1)->IsList()) {
+		if (args.size() >= 2 && args.at(0)->IsString() && args.at(1)->IsList())
+		{
 			std::string property = args.at(0)->ToString();
 			SharedKList list = args.at(1)->ToList();
 
 			std::string value = "";
-			for (unsigned int i = 0; i < list->Size(); i++) {
+			for (unsigned int i = 0; i < list->Size(); i++)
+			{
 				SharedValue arg = list->At(i);
 				if (arg->IsString())
 				{
 					value += list->At(i)->ToString();
-					if (i < list->Size() - 1) {
+					if (i < list->Size() - 1)
+					{
 						value += ",";
 					}
 				}
@@ -252,7 +305,8 @@ namespace ti
 				}
 			}
 			config->setString(property, value);
-			if (file_path.size() > 0) {
+			if (file_path.size() > 0)
+			{
 				config->save(file_path);
 			}
 		}
@@ -262,7 +316,8 @@ namespace ti
 	{
 		result->SetBool(false);
 
-		if (args.size() >= 1 && args.at(0)->IsString()) {
+		if (args.size() >= 1 && args.at(0)->IsString())
+		{
 			std::string property = args.at(0)->ToString();
 			result->SetBool(config->hasProperty(property));
 		}
@@ -274,7 +329,8 @@ namespace ti
 		config->keys(keys);
 
 		SharedPtr<StaticBoundList> property_list = new StaticBoundList();
-		for (size_t i = 0; i < keys.size(); i++) {
+		for (size_t i = 0; i < keys.size(); i++)
+		{
 			std::string property_name = keys.at(i);
 			SharedValue name_value = Value::NewString(property_name.c_str());
 			property_list->Append(name_value);
