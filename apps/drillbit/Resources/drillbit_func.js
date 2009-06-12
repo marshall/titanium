@@ -257,6 +257,12 @@ TitaniumTest =
 	success:0,
 	failed:0,
 	
+	runningTest:function(suite,name)
+	{
+		Titanium.App.stdout('DRILLBIT_TEST: '+suite+','+name);
+		Titanium.API.debug('DRILLBIT_TEST: '+suite+','+name);
+	},
+	
 	testPassed:function(name, lineNumber)
 	{
 		this.success++;

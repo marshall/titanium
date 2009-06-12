@@ -27,9 +27,48 @@ button
 	float:right;
 }
 
+#suite-progress, #total-progress
+{
+	background-color: #111;
+	margin-bottom: 10px;
+	border: 1px solid #666;
+	width: 250px;
+	height: 8px;
+	
+	margin: 1px;
+}
+
+#progress-bars {
+	float: left;
+	clear: none;
+}
+
+#current-test-message, #progress-message
+{
+	float: left;
+	font-size: 12px;
+	margin-left: 5px;
+}
+
+.passed-progress, .failed-progress
+{
+	float: left;
+	clear: none;
+	height: 8px;
+}
+
+.passed-progress { 
+	background-color: #3c3;
+}
+
+.failed-progress
+{
+	background-color: #c33;
+}
+
 #header
 {
-	font-size:10px;
+	font-size:12px;
 	margin-bottom:10px;
 	float:right;
 }
