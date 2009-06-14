@@ -284,7 +284,7 @@ void Install(IType type, Progress *progress, string name, string version, string
 	}
 	else if (type == UPDATE)
 	{
-		destination == app->path;
+		destination = app->path;
 	}
 	else
 	{
@@ -435,7 +435,7 @@ bool HandleAllJobs(vector<ti::InstallJob*> jobs, Progress* p)
 	wsprintfW(buf,L"Preparing to download %d file%s", count, (count > 1 ? L"s" : L""));
 	p->SetLineText(2,std::wstring(buf),true);
 	p->Update(0, count);
-
+	
 	// Initialize the Interent DLL
 	HINTERNET hINet = InternetOpenW(
 		L"Mozilla/5.0 (compatible; Titanium_Downloader/0.1; Win32)",
@@ -444,7 +444,7 @@ bool HandleAllJobs(vector<ti::InstallJob*> jobs, Progress* p)
 
 	// For each URL, fetch the URL and then unzip it
 	DWORD x = 0;
-		
+	
 	for (int i = 0; i < jobs.size(); i++)
 	{
 		p->Update(x++, count);
