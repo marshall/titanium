@@ -171,7 +171,7 @@ def run(options):
 	signal.signal(signal.SIGTERM, handler)
 	
 	try:
-		p = subprocess.Popen([options.executable])
+		p = subprocess.Popen([options.executable,'--debug'])
 		os.waitpid(p.pid,0)
 	except OSError:
 		handler(3,None)
